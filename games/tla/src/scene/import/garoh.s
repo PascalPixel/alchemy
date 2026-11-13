@@ -33,11 +33,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02005164
 	.thumb_func
 Func_02005164:
@@ -50,14 +50,14 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Map_PlayMapEdit
+	.global MapGrid_PlayMapEdit
 	.thumb_func
-Map_PlayMapEdit:
-	overlay_veneer Map_PlayMapEditFar
-	.global Map_CopyCellPictureIndicesRect
+MapGrid_PlayMapEdit:
+	overlay_veneer MapGrid_PlayMapEditFar
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -102,10 +102,10 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_Stop:
 	overlay_veneer Actor_StopFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToAndWaitById
 	.thumb_func
 Actor_WalkToAndWaitById:
@@ -150,10 +150,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Actor_FaceActorById:
 	overlay_veneer Actor_FaceActorByIdFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -174,14 +174,14 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
-	.global Battle_ShowPairedUnitWorkAndWait
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
+	.global Event_ShowTwoMessagesAndWait
 	.thumb_func
-Battle_ShowPairedUnitWorkAndWait:
-	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
+Event_ShowTwoMessagesAndWait:
+	overlay_veneer Event_ShowTwoMessagesAndWaitFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
@@ -194,18 +194,18 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_020052b4
 	.thumb_func
 Func_020052b4:
@@ -274,10 +274,10 @@ Djinn_JoinParty:
 	.thumb_func
 Actor_LaunchFromLeader:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

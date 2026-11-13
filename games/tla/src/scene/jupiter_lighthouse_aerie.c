@@ -98,7 +98,7 @@ void Func_020001b4(void) {
   } else {
     Test_ReceiveFlint(2);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
@@ -122,7 +122,7 @@ void Func_02000264(void) {
   } else {
     Test_ReceiveFlint(3);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
@@ -342,7 +342,7 @@ DEFINE_FUNC_02000378(Func_020008dc, Func_02002a78, Func_02002b58)
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 void Func_02000930(void) {
@@ -396,9 +396,9 @@ void Func_02000930(void) {
     i++;
     System_Wait(1);
   }
-  Actor_WaitForMove(shadow);
+  FieldActor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
   Event_End();
@@ -538,14 +538,14 @@ void Func_02001010(struct Actor *object) {
   *fill = 2;
   switch (phase) {
   case 1:
-    Animation_ApplyChildValues(object, 13);
+    Actor_SetSpriteColorMode(object, 13);
     break;
   case 0:
   case 2:
-    Animation_ApplyChildValues(object, 4);
+    Actor_SetSpriteColorMode(object, 4);
     break;
   case 3:
-    Animation_ApplyChildValues(object, 4);
+    Actor_SetSpriteColorMode(object, 4);
     break;
   }
   (*step)++;
@@ -558,7 +558,7 @@ void Func_0200105c(struct Actor *object) {
 
 void Func_02001070(struct Actor *object) {
   WORD_AT(object, 108) = 0;
-  Animation_ApplyChildValues(object, 4);
+  Actor_SetSpriteColorMode(object, 4);
 }
 
 struct BeamWork {

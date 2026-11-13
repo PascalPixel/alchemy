@@ -216,7 +216,7 @@ void Func_02000568(void) {
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(240), 1);
   Func_02001174();
   Camera_SetSpeedParameters(0x6666, 0xccc);
-  Camera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(186), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(186), 1);
   Sound_Play(168);
   Actor_SetPosition(14, PIXELS(136), PIXELS(258));
   Actor_SetPosition(19, PIXELS(184), PIXELS(258));
@@ -291,14 +291,14 @@ void Func_020007a0(void) {
     Event_Start();
     Event_ResolvePendingActions(1);
     Sound_Play(161);
-    Map_CopyCellPictureIndicesRect(72, 63, 36, 38, 1, 2);
+    MapGrid_CopyCellPictureIndicesRect(72, 63, 36, 38, 1, 2);
     Event_Wait(40);
     Sound_Play(188);
-    Map_CopyCellPictureIndicesRect(71, 66, 97, 39, 2, 2);
+    MapGrid_CopyCellPictureIndicesRect(71, 66, 97, 39, 2, 2);
     wait(2);
-    Map_CopyCellPictureIndicesRect(73, 66, 97, 39, 2, 2);
+    MapGrid_CopyCellPictureIndicesRect(73, 66, 97, 39, 2, 2);
     wait(2);
-    Map_CopyCellPictureIndicesRect(75, 66, 97, 39, 2, 2);
+    MapGrid_CopyCellPictureIndicesRect(75, 66, 97, 39, 2, 2);
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
     GameFlag_SetBit(0x8cb);
@@ -415,7 +415,7 @@ void Func_02000a88(void) {
   cell = object->x >> 16;
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                       object->z);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetMovementTypeById(party->currentOwner, gData_0200121c);
   wait(12);
@@ -436,7 +436,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Sound_Play(188);
   else
     Sound_Play(158);
-  Map_CopyCellPictureIndicesRect(a, b, c, d, mode, f);
+  MapGrid_CopyCellPictureIndicesRect(a, b, c, d, mode, f);
   Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
@@ -444,7 +444,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     cell = object->x >> 16;
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                         object->z);
-    Script_WaitForEventTimeout(object);
+    Actor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200121c);
@@ -525,7 +525,7 @@ void Func_02000dcc(void) {
   Func_02000038(gData_020013ca);
   Func_020011c4__madra_catacombs(gData_020013c4);
   if (GameFlag_Test(0x8cb) != 0) {
-    Map_CopyCellPictureIndicesRect(75, 66, 97, 39, 2, 2);
+    MapGrid_CopyCellPictureIndicesRect(75, 66, 97, 39, 2, 2);
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
   }

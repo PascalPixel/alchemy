@@ -25,12 +25,12 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.ifndef TLA_EDITION_JA
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.endif
 	.global GameFlag_GetByte
 	.thumb_func
@@ -52,9 +52,9 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Script_WaitForEventTimeout
+	.global Actor_WaitForMove
 	.thumb_func
-Script_WaitForEventTimeout:
+Actor_WaitForMove:
 	overlay_veneer Actor_CommitPosition
 	.global Map_CopyCellAttributeRect
 	.thumb_func
@@ -92,10 +92,10 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_SetDestinationOffsetById
 	.thumb_func
 Actor_SetDestinationOffsetById:

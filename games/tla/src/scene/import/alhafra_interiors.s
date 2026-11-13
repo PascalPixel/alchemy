@@ -9,12 +9,12 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.ifndef TLA_EDITION_JA
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.endif
 	.global Event_Wait
 	.thumb_func
@@ -112,10 +112,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
@@ -128,14 +128,14 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
-	.global Camera_MoveWithinMapBounds
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02000b7c
 	.thumb_func
 Func_02000b7c:

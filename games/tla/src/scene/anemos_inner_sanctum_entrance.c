@@ -72,8 +72,8 @@ void Func_02000408(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(151);
-  Actor_SetPartAttribute(Actor_GetById(8), 7);
-  Actor_SetPartAttribute(Actor_GetById(15), 7);
+  Actor_SetSpriteColor(Actor_GetById(8), 7);
+  Actor_SetSpriteColor(Actor_GetById(15), 7);
   Event_Wait(20);
   Sound_Play(190);
   Actor_MoveToObject(15, 8);
@@ -170,7 +170,7 @@ void Func_02000588(void) {
   Event_ResolvePendingActions(0);
   if (!GameFlag_Test(0x200))
     return;
-  if (GetMapCellCollision(object->terrainId, object->x, object->z) != 77)
+  if (MapGrid_GetCellBehaviorAt(object->terrainId, object->x, object->z) != 77)
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
 #if TLA_PATCH_1
@@ -216,7 +216,7 @@ lower:
   }
   if (++i <= 14)
     goto lower;
-  Script_WaitForEventTimeout(Actor_GetById(9));
+  Actor_WaitForMove(Actor_GetById(9));
   wait(40);
   i = 9;
 land:
@@ -412,8 +412,8 @@ void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
 
   Iwram_ClearWordsEntry(gData_02001ce0, 64);
-  Resource_DecodeType01(gField_CachedTilesD, buffer);
-  gData_02001cdc = Resource_FindFreeEntry();
+  Decompress_TaggedLz(gField_CachedTilesD, buffer);
+  gData_02001cdc = VramCache_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0x1800, buffer);
   Heap_Release(buffer);
   Task_Add(Func_02000858, TASK_PASS_VBLANK);

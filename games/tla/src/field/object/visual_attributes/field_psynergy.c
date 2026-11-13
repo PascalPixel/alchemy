@@ -17,7 +17,7 @@ void Func_080dbb40(void) {
   if (scene->active != 0) {
     scene->active = 0;
     Task_Remove(BattleEffect_DrawSceneSprite);
-    Resource_ResetEntry(scene->vramSlot);
+    VramCache_FreeEntry(scene->vramSlot);
   }
 }
 
@@ -231,8 +231,8 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
     magnitude = Random16();
     magnitude -= Random16();
     object->velocityY = magnitude;
-    Motion_SetTargetPositionFromMagnitudeAngle(
-        object, Random16() * 24 + 0x80000, Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + 0x80000,
+                                              Random16());
   }
   return object;
 }
@@ -271,7 +271,7 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
     if (alt == NULL) {
       *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
     } else {
-      Resource_ResetEntry(obj->vramBlock);
+      VramCache_FreeEntry(obj->vramBlock);
       obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
       *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
       obj = alt;

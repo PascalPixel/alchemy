@@ -134,7 +134,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           frame = 395;
       }
 
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
 
       if (frame == 16)
@@ -337,7 +337,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           alive = 0;
           shake[0] = 0;
           shake[1] = 0;
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyPosition(shake);
 
           // Until frame 330 the scattered sparks gather on the centre, each
@@ -483,8 +483,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               mark->y += 2;
 
               if (frame < threshold + 8) {
-                SceneTransform_ApplyRoll(-2048);
-                SceneTransform_ApplyYaw(-4096);
+                Transform_ApplyRoll(-2048);
+                Transform_ApplyYaw(-4096);
 
                 slot = 0;
                 spark = &work->particles[32];
@@ -687,7 +687,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         }
         frame = 160;
       }
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       if (frame == 178)
         BattlePlayback_StartFar(134);

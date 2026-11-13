@@ -300,7 +300,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     HeapSlot_Release(HEAP_BLITTER);
 
     // The motes, until their life runs out, bouncing off the ground.
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     BattleEffect_LoadBlitter(
         HEAP_BLITTER,

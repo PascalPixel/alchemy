@@ -29,15 +29,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global Func_02001b7c
 	.thumb_func
 Func_02001b7c:
 	overlay_veneer Actor_SetMode
-	.global Map_PlayMapEdit
+	.global MapGrid_PlayMapEdit
 	.thumb_func
-Map_PlayMapEdit:
-	overlay_veneer Map_PlayMapEditFar
+MapGrid_PlayMapEdit:
+	overlay_veneer MapGrid_PlayMapEditFar
 	.global MapGrid_CopyCellPictureCellsRect
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
@@ -46,10 +46,10 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_SetIndexAndInitializeObjects
+	.global Actor_SetFirstSpriteAnimation
 	.thumb_func
-Animation_SetIndexAndInitializeObjects:
-	overlay_veneer Animation_SetIndexAndInitializeObjectsFar
+Actor_SetFirstSpriteAnimation:
+	overlay_veneer Actor_SetFirstSpriteAnimationFar
 	.global Actor_SetSpritePriorityDirect
 	.thumb_func
 Actor_SetSpritePriorityDirect:
@@ -98,10 +98,10 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_RefreshSelectorById:
 	overlay_veneer Actor_RefreshSelectorByIdFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToAndWaitById
 	.thumb_func
 Actor_WalkToAndWaitById:
@@ -170,10 +170,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
@@ -186,14 +186,14 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
-	.global Camera_MoveWithinMapBounds
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02001cc4
 	.thumb_func
 Func_02001cc4:

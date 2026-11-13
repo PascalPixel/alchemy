@@ -42,18 +42,18 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Resource_ResetEntry
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -61,11 +61,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02003fdc
 	.thumb_func
 Func_02003fdc:
@@ -86,10 +86,10 @@ Func_02003ff4:
 	.thumb_func
 Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Map_CopyCellPictureIndicesRect
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -98,14 +98,14 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Map_SetScreenShake
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
-	.global Animation_ApplyChildValues
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
+	.global Actor_SetSpriteColorMode
 	.thumb_func
-Animation_ApplyChildValues:
-	overlay_veneer Animation_ApplyChildValuesFar
+Actor_SetSpriteColorMode:
+	overlay_veneer Actor_SetSpriteColorModeFar
 	.global Actor_SetSpritePriorityDirect
 	.thumb_func
 Actor_SetSpritePriorityDirect:
@@ -230,10 +230,10 @@ Actor_FaceActorById:
 	.thumb_func
 Actor_TurnToFaceEachOther:
 	overlay_veneer Actor_TurnToFaceEachOtherFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -258,14 +258,14 @@ Event_AskYesNoAndShowResponse:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
-	.global Battle_ShowPairedUnitWorkAndWait
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
+	.global Event_ShowTwoMessagesAndWait
 	.thumb_func
-Battle_ShowPairedUnitWorkAndWait:
-	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
+Event_ShowTwoMessagesAndWait:
+	overlay_veneer Event_ShowTwoMessagesAndWaitFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
@@ -278,18 +278,18 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_0200419c
 	.thumb_func
 Func_0200419c:
@@ -306,14 +306,14 @@ Event_SetDestination:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Party_SetFields1eeAnd1f0
+	.global Event_SetAfterBattleDestination
 	.thumb_func
-Party_SetFields1eeAnd1f0:
-	overlay_veneer Party_SetFields1eeAnd1f0Far
-	.global Field_SetDestination
+Event_SetAfterBattleDestination:
+	overlay_veneer Event_SetAfterBattleDestinationFar
+	.global Event_LeaveFor
 	.thumb_func
-Field_SetDestination:
-	overlay_veneer Field_SetDestinationFar
+Event_LeaveFor:
+	overlay_veneer Event_LeaveForFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:
@@ -346,10 +346,10 @@ Func_020041fc:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Party_PlaySavedMusic
+	.global Scene_PlayMusic
 	.thumb_func
-Party_PlaySavedMusic:
-	overlay_veneer Party_PlaySavedMusicFar
+Scene_PlayMusic:
+	overlay_veneer Scene_PlayMusicFar
 	.global Djinn_JoinParty
 	.thumb_func
 Djinn_JoinParty:

@@ -13,11 +13,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02000c9c
 	.thumb_func
 Func_02000c9c:

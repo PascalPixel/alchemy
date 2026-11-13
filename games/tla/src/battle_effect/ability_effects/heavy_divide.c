@@ -27,15 +27,15 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -213,18 +213,18 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
             continue;
           }
           texture.pixels = work->sheet + i * 0x1000;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160((source.x / 2 - 64) << 16, (source.y - 88) << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 0) {
-            SceneTransform_ApplyRoll(0x8000 - step->variant);
+            Transform_ApplyRoll(0x8000 - step->variant);
           } else {
-            SceneTransform_ApplyRoll(step->variant + 0x8000);
+            Transform_ApplyRoll(step->variant + 0x8000);
           }
           Func_08015160(0, 0xfff00000, 0);
           SceneTransform_ApplyScale3(size << 15, size * 13192, size << 13);
           if (effect->side == 0) {
-            SceneTransform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(0x8000);
           }
           Render_TransformVertices(Data_081991c0, vertices, 4);
           Render_DrawModelList(model);
@@ -252,13 +252,13 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
         s32 scale = 80000;
 
         texture.pixels = work->sheet;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(work->particles[0].x - 0x400000,
                       work->particles[0].y - 0x400000, 0);
         SceneTransform_ApplyScale3(scale >> 1, scale, 0x8000);
-        SceneTransform_ApplyRoll(work->particles[0].z);
+        Transform_ApplyRoll(work->particles[0].z);
         if (effect->side == 0) {
-          SceneTransform_ApplyYaw(0x8000);
+          Transform_ApplyYaw(0x8000);
         }
         Render_TransformVertices(Data_081991e0, vertices, 4);
         Render_DrawModelList(model);
@@ -729,10 +729,10 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       if (frame > 63) {
         last->variant = level - 24;
       }
-      Render_ResetTransformState();
+      Transform_Reset();
       Func_08015160(last->x - 0x400000, last->y - 0x400000, 0);
       SceneTransform_ApplyScale3(scale * 2, scale, scale * 2);
-      SceneTransform_ApplyPitch(-0x2000);
+      Transform_ApplyPitch(-0x2000);
       Render_TransformVertices(gData_08199210, vertices, 4);
       Render_DrawModelList(model);
     }
@@ -756,10 +756,10 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     if (frame > i * 4 + 64) {
       model->shade = zero;
       texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
-      Render_ResetTransformState();
+      Transform_Reset();
       Func_08015160(drop->x - 0x400000, drop->y - 0x300000, 0);
       SceneTransform_ApplyScale3(splash >> 1, splash, splash >> 1);
-      SceneTransform_ApplyPitch(-0x4000);
+      Transform_ApplyPitch(-0x4000);
       Render_TransformVertices(gData_08199210, vertices, 4);
       Render_DrawModelList(model);
       BattleEffectKernels_IntegrateVector2(drop, 60, -0x8000);
@@ -882,7 +882,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     // screen; it waits 4 frames more than the one before it.
     if (frame == 0) {
       camera->yaw = savedYaw;
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       flame = work->particles;
       for (i = 0; i != FLAMES; i++, flame++) {
@@ -964,10 +964,10 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
           if (square->variant > 15)
             brightness = (16 - square->variant) * 8;
           model->shade = brightness;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160((square->x - 64) << 16, (square->y - 64) << 16, 0);
-          SceneTransform_ApplyRoll(square->velocityZ);
-          SceneTransform_ApplyPitch(square->velocityY);
+          Transform_ApplyRoll(square->velocityZ);
+          Transform_ApplyPitch(square->velocityY);
           Func_0801521c(roll);
           Render_TransformVertices(Data_081991e0, vertices, 4);
           Render_DrawModelList(model);

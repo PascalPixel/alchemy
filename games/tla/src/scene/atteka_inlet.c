@@ -91,8 +91,8 @@ void Func_02000120(void) {
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
-      Actor_ResetAndSetPosition(18, *(s16 *)((u8 *)object + 10),
-                                *(s16 *)((u8 *)object + 18));
+      Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
+                               *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     GameFlag_SetBit(0x201);
@@ -107,7 +107,7 @@ void Func_02000208(void) {
   if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
+    FieldCamera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
     {
       s32 angle = 208;
 
@@ -129,7 +129,7 @@ void Func_02000208(void) {
     Actor_Jump(10, 6, 0);
     Actor_MoveToAndWait(10, 90, 288);
     Actor_WalkToAndWaitById(10, 80, 316);
-    Actor_ArmCallbackAndRefresh(10, FACING_EAST);
+    Actor_FaceDirectionById(10, FACING_EAST);
     Actor_GetById(9)->velocityY = 0x40000;
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
@@ -180,7 +180,7 @@ void Func_020003e4(void) {
     Func_020010e0();
     Event_Wait(40);
     Camera_SetSpeedParameters(0x4cccc, 0x9999);
-    Camera_MoveWithinMapBounds(PIXELS(520), PIXELS(32), PIXELS(372), 1);
+    FieldCamera_MoveWithinMapBounds(PIXELS(520), PIXELS(32), PIXELS(372), 1);
     Func_020010e0();
     Event_Wait(20);
     Actor_FaceDirectionAndWait(23, 0x3000);
@@ -211,7 +211,7 @@ void Func_020003e4(void) {
     Actor_WalkToAndWaitById(23, 504, 360);
     Event_Wait(1);
     Actor_GetById(23)->actionFlags |= 1;
-    Actor_ArmCallbackAndRefresh(23, 0x3000);
+    Actor_FaceDirectionById(23, 0x3000);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
     GameFlag_SetBit(0x9b1);
@@ -233,7 +233,7 @@ void Func_02000640(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_SetSpeed(18, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(18, 532, 248);
-  Actor_ArmCallbackAndRefresh(18, 0x3000);
+  Actor_FaceDirectionById(18, 0x3000);
   Event_SetMessageId(MsgAreWeSetting);
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -252,8 +252,8 @@ void Func_02000640(void) {
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
-      Actor_ResetAndSetPosition(18, *(s16 *)((u8 *)object + 10),
-                                *(s16 *)((u8 *)object + 18));
+      Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
+                               *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -297,7 +297,7 @@ void Func_020007ac(void) {
     Actor_Jump(14, 4, 10);
     GameFlag_SetBit(0x300);
     if (moved)
-      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
+      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
     Event_End();
   }
 }
@@ -348,7 +348,7 @@ void Func_0200097c(void) {
   Actor_ShowEmote(24, 265, 0);
   Event_ShowMessageAndWait(24, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
-  Actor_ArmCallbackAndRefresh(24, angle);
+  Actor_FaceDirectionById(24, angle);
   Actor_GetById(24)->actionFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 384);
   Event_Wait(1);
@@ -364,10 +364,10 @@ void Func_0200097c(void) {
   Actor_FaceDirection(24, 0xb000, 10);
   Motion_SetModeAndWaitAnimation(24, 3);
   Actor_WalkToAndWait(24, 520, 434);
-  Camera_MoveWithinMapBounds(PIXELS(512), -1, PIXELS(348), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(512), -1, PIXELS(348), 1);
   Actor_WalkToAndWait(24, 504, 460);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
-  Actor_ArmCallbackAndRefresh(23, angle);
+  Actor_FaceDirectionById(23, angle);
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmoteById(23, 265, 0);
   Event_ShowMessageAndWait(23, 0);
@@ -462,11 +462,11 @@ s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1 && GameFlag_Test(0x9d0)) {
-    Map_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
-    Map_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
-    Map_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
-    Map_CopyCellPictureIndicesRect(65, 43, 21, 20, 10, 3);
-    Map_CopyCellPictureIndicesRect(4, 47, 4, 50, 10, 3);
+    MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
+    MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
+    MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
+    MapGrid_CopyCellPictureIndicesRect(65, 43, 21, 20, 10, 3);
+    MapGrid_CopyCellPictureIndicesRect(4, 47, 4, 50, 10, 3);
   }
   return 0;
 }

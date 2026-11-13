@@ -170,7 +170,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
           GetBattleObjectSlotFar(effect->actors[k])->object;
       s32 start = k * 16;
 
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = target->x;
       point[1] = 0;
@@ -213,7 +213,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
         struct MotionObject *target =
             GetBattleObjectSlotFar(effect->actors[i])->object;
 
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->pos);
         if (frame == start + 72)
           BattleEffect_TintBattler(effect->actors[i], 1, -1, -1, 0);
@@ -414,7 +414,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     struct EffectStep *burst;
     struct EffectStep *piece;
 
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
 
     // The shots: each starts four frames after the last, flies under

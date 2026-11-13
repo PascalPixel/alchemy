@@ -99,7 +99,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 u32 __umodsi3(u32 a, u32 b);
 
 DEFINE_FUNC_02000038_58(Func_020002a4)
@@ -122,9 +122,9 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
   s32 rise;
 
   if (gFrameCount & 2)
-    Animation_ApplyChildValues(marker, 10);
+    Actor_SetSpriteColorMode(marker, 10);
   else
-    Animation_ApplyChildValues(marker, 7);
+    Actor_SetSpriteColorMode(marker, 7);
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = 0x27880000;
@@ -309,13 +309,13 @@ void Func_02000574(void) {
   leader->terrainHeight = 0x40000;
   Func_02004b48(leader);
   FieldActor_SetMoveTarget(leader, ship->x, 0, ship->z);
-  Actor_WaitForMove(leader);
+  FieldActor_WaitForMove(leader);
   Func_02004b18(leader, 6);
   System_Wait(6);
   leader->terrainHeight = 0;
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   Scene_ChooseMusic();
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Event_End();
   *(s16 *)work->unk15c = 0;
 #if TLA_PATCH_1
@@ -392,12 +392,12 @@ void Func_020006d0(void) {
     leader->motionFlags = flags;
     Func_02004b48(leader);
     FieldActor_SetMoveTarget(leader, position[0], 0, position[2]);
-    Actor_WaitForMove(leader);
+    FieldActor_WaitForMove(leader);
     Func_02004b18(leader, 6);
     System_Wait(6);
     Event_End();
     Scene_ChooseMusic();
-    Party_PlaySavedMusic();
+    Scene_PlayMusic();
     *(s16 *)work->unk15c = 0;
   }
 }
@@ -431,8 +431,8 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   Actor_SetModeById(actor, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(actor, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
 }
@@ -681,7 +681,7 @@ s32 Scene_Initialize(void) {
     break;
   case 72:
     Func_02003d44(2);
-    Actor_SetSpriteColor(Actor_GetById(7), 15);
+    FieldActor_SetSpriteColor(Actor_GetById(7), 15);
     Actor_SetPosition(7, 0x1c6d0000, 0x1c840000);
     wait(1);
     FieldEvent_SetMessageId((s32)MsgIVeHeard);
@@ -878,7 +878,7 @@ void Func_020012bc(s32 entrance) {
     {
       s32 worldMap = (s32)&SceneId_WorldMap;
 
-      Event_SetAfterBattleDestination(worldMap, 73);
+      FieldEvent_SetAfterBattleDestination(worldMap, 73);
       Party_SetFields1f2And1f4(worldMap, 74);
     }
     Func_02004db0();
@@ -896,7 +896,7 @@ void Func_020012bc(s32 entrance) {
       Actor_SetPositionAndFacing(23, 0x27a80000, 0x25c00000, a3);
     }
     Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, 0xa000);
-    FieldCamera_FollowActor(4, 0);
+    EventCamera_FollowActor(4, 0);
     WorldMap_StartZoom(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
     Actor_SetSingleChildFlags(Actor_Get(4), 0);
@@ -947,7 +947,7 @@ void Func_020012bc(s32 entrance) {
     Actor_SetPositionAndFacing(22, 0x27c80000, 0x25a00000, eastB);
     Actor_SetPositionAndFacing(23, 0x27b00000, 0x25d00000, westB);
     Actor_SetPositionAndFacing(4, 0x27c00000, 0x25d00000, westB);
-    FieldCamera_FollowActor(4, 0);
+    EventCamera_FollowActor(4, 0);
     WorldMap_StartZoom(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1258,7 +1258,7 @@ void Func_02001e34(void) {
     Actor_FaceActorById(owner, 9, 0);
     wait(16);
     djinni->update = 0;
-    Animation_ApplyChildValues(djinni, 0);
+    Actor_SetSpriteColorMode(djinni, 0);
     djinni->gravity = 0x10000;
     FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
@@ -1421,7 +1421,7 @@ refused:
   // leaves is shared by the first visit's stores of 0 and its reloads take
   // other registers (differ 26).
   FieldDjinn_JoinParty(9, zero, 7);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Event_End();
   Event_ClearFlag(0x16e);
   Event_ClearFlag(0x16f);
@@ -1489,11 +1489,11 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
-  Camera_MoveWithinMapBounds(a, b, c, d);
+  FieldCamera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Func_02004b78_(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetScreenShake(a, b, c);
 }
 
 static __inline__ void Func_02004d78_(s32 a, s32 b) {
@@ -1600,7 +1600,7 @@ void Func_020028cc(void) {
   spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;
-  Actor_SetSpriteColor(obj, 9);
+  FieldActor_SetSpriteColor(obj, 9);
   Func_02004b18(obj, 2);
   Actor_StartScript(obj, gData_02004f10);
 }
@@ -1619,9 +1619,9 @@ void Func_020029a4(void) {
   FieldEffect_ScheduleRatioTransition(0x9999, 1);
   actor->scaleX = 0x13333;
   actor->scaleY = 0x13333;
-  FieldCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(8, 1);
   System_Wait(1);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetSingleChildFlags(Actor_Get(8), 0);
   Actor_SetSpeedParameters_(8, 0x6666, 0x3333);
@@ -1657,7 +1657,7 @@ void Func_02002ab0(void) {
   boat->scaleY = 0x13333;
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetSingleChildFlags(Actor_Get(10), 0);
   Actor_SetSpeed(10, 0x6666, 0x3333);
@@ -1706,13 +1706,13 @@ void Func_02002ab0(void) {
   map->unk11c = 0xe000;
   System_Wait(1);
   FieldCamera_MoveTo(0x0e470000, -1, 0x1dd00000, 0);
-  Map_UpdateCurrentTileBlock();
+  WorldMap_UpdateCurrentTileBlock();
   Actor_SetPosition(8, 0x0e6a0000, 0x1dc00000);
   Actor_SetPosition(9, 0x0e3e0000, 0x1dff0000);
   Actor_SetPosition(4, 0x0e550000, 0x1df00000);
   Actor_SetPosition(5, 0x0e490000, 0x1dc50000);
   Actor_SetPosition(6, 0x0e770000, 0x1de30000);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
   Func_02004da8();
@@ -1757,7 +1757,7 @@ void Func_02002e00(void) {
      * in tla-en. */
     register s32 mode asm("r3") = 1;
 
-    Camera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);
+    FieldCamera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);
   }
   // Entered at its test: as a while loop the test is copied ahead of it and
   // gInput hoisted (differ 17).
@@ -1939,7 +1939,7 @@ void Func_02003144(void) {
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(40);
   Event_ShowMessage(23, 0);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Func_02004db0();
   i = 0;
   {
@@ -1959,7 +1959,7 @@ void Func_02003144(void) {
 
 s32 Func_02003418(struct Actor *object) {
   if (Random16Far() < 0x4000)
-    Animation_ApplyChildValues(object, Random16Far() * 8 >> 16);
+    Actor_SetSpriteColorMode(object, Random16Far() * 8 >> 16);
   return 0;
 }
 
@@ -1992,7 +1992,7 @@ static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x, s32 z) {
 void Func_02003490(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_Get(gMainRoutineWork.currentOwner)->update = Func_0200343c;
   Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x2000;

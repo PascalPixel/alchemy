@@ -15,7 +15,7 @@
 void Func_02002368();
 #endif
 s32 Func_02003168(s32 layer, s32 x, s32 z);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 struct RideEvent {
   u8 unk000[0x15a];
@@ -95,7 +95,7 @@ s32 Func_02002708(void) {
   }
   FieldEvent_Wait(30);
   leader->update = 0;
-  Animation_ApplyChildValues(leader, 0);
+  Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
 
@@ -242,7 +242,7 @@ void Func_02002870(struct Actor *actor) {
       object->acceleration = 0;
       object->bounce = Q16_ONE / 2;
       source = work->owner->sprite;
-      Resource_ResetEntry(sprite->vramBlock);
+      VramCache_FreeEntry(sprite->vramBlock);
       sprite->unk11_0 = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);

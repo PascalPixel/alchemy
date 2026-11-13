@@ -139,7 +139,7 @@ void BattleSummon_UpdateAvailabilityFar(void);
 
 s32 Portrait_Load(s32 portrait, s32 slot);
 
-void Camera_ConfigureSceneFar(s32 mode);
+void BattleCamera_SetCommandViewFar(s32 mode);
 
 extern s8 gMenu_SaveSlotActionByPosition[];
 

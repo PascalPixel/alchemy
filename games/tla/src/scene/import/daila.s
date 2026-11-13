@@ -9,7 +9,7 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -38,10 +38,10 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_MoveToAndWaitById
 	.thumb_func
 Actor_MoveToAndWaitById:

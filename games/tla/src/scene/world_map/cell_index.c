@@ -14,7 +14,7 @@
 #include "module/scene/staff_credit.h"
 #include "module/scene/world_map.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }

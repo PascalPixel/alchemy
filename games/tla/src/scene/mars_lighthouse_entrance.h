@@ -46,6 +46,6 @@ extern u8 gInventorySnapshot[];
 
 #define RIDE_WORK ((struct RideWork *)(gInventorySnapshot + 0x188))
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 #endif

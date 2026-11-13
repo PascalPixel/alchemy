@@ -43,7 +43,7 @@ struct MapWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels.
   s32 *origin;
   /// Screen shake amplitudes and the factor that scales them each frame;
-  /// Map_SetScreenShake keeps a component given as negative.
+  /// MapGrid_SetScreenShake keeps a component given as negative.
   s32 shakeX, shakeY, shakeDecay;
   u8 *script;
   u16 flags;

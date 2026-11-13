@@ -197,7 +197,7 @@ void Actor_UpdateAllMotion(void) {
   }
 }
 
-s32 Script_Wait(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_Wait(struct ScriptInterpreter *interpreter) {
   s16 cursor = interpreter->cursor;
 
   interpreter->lookupResult = interpreter->script[cursor + 1] - 1;
@@ -237,7 +237,7 @@ s32 ActorScript_InvokeCallback(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
+s32 ActorScript_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   u32 *entries;
   s32 index;
   s16 *field = &interpreter->lookupResult;
@@ -260,7 +260,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   return 0;
 }
 
-s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
   s32 jumpKey;
@@ -271,13 +271,13 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   repeatLimit = *arguments++;
   jumpKey = *arguments;
   if (repeatLimit == 0xFFFF) {
-    interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
+    interpreter->cursor = ActorScript_FindLabel(interpreter, jumpKey);
   } else {
     repeatCount = &interpreter->repeatCount;
     nextCount = *repeatCount + 1;
     *repeatCount = nextCount;
     if ((s32)(u8)nextCount < (s32)(s16)repeatLimit) {
-      interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
+      interpreter->cursor = ActorScript_FindLabel(interpreter, jumpKey);
     } else {
       *repeatCount = 0;
       interpreter->cursor = interpreter->cursor + 3;
@@ -286,8 +286,8 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter) {
-  interpreter->cursor = Script_FindLabel(
+s32 ActorScript_JumpToLabel(struct ScriptInterpreter *interpreter) {
+  interpreter->cursor = ActorScript_FindLabel(
       interpreter, interpreter->script[interpreter->cursor + 1]);
   return 1;
 }
@@ -298,7 +298,7 @@ u32 ActorScript_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   u32 value = table[index + 1];
 
   if (interpreter->conditionResult != 0) {
-    interpreter->cursor = Script_FindLabel(interpreter, value);
+    interpreter->cursor = ActorScript_FindLabel(interpreter, value);
   } else {
     interpreter->cursor += 2;
   }
@@ -311,14 +311,14 @@ u32 ActorScript_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   u32 value = table[index + 1];
 
   if (interpreter->conditionResult == 0) {
-    interpreter->cursor = Script_FindLabel(interpreter, value);
+    interpreter->cursor = ActorScript_FindLabel(interpreter, value);
   } else {
     interpreter->cursor += 2;
   }
   return 1;
 }
 
-s32 Script_End(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_End(struct ScriptInterpreter *interpreter) {
   s32 result;
 
   interpreter->script = gScript_MainScript;
@@ -326,7 +326,7 @@ s32 Script_End(struct ScriptInterpreter *interpreter) {
   return result;
 }
 
-s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_TestFlag(struct ScriptInterpreter *interpreter) {
   s32 done;
 
   interpreter->conditionResult =
@@ -340,7 +340,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
  * flag_call.h has void GameFlag_SetBit(s32 flag). */
 extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_SetBit");
 
-s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
@@ -350,7 +350,7 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_ClearFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
@@ -373,7 +373,7 @@ s32 ActorScript_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_SetAnimation(struct ScriptInterpreter *interpreter) {
   Actor_SelectAnimation((struct Actor *)interpreter,
                         interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
@@ -387,7 +387,7 @@ s32 Actor_ReleaseAndClear(void *object) {
   return 0;
 }
 
-s32 Script_Nop(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_Nop(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }
@@ -406,7 +406,7 @@ s32 Script_CallWithOperand(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values) {
+s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values) {
   s32 index;
   u8 *flags;
   struct Actor *entry = Ram_HeapSlots->scriptObjects;
@@ -422,8 +422,8 @@ s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values) {
   return 0;
 }
 
-struct Actor *ScriptObject_FindOverlappingEntry(struct Actor *object,
-                                                s32 *values) {
+struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
+                                               s32 *values) {
   s32 index;
   u8 *flags;
   struct Actor *entry = Ram_HeapSlots->scriptObjects;
@@ -519,7 +519,7 @@ s32 ActorScript_ApplyRelativePosition(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Script_StoreAngleToWatchedObject(struct ActorScriptView *object) {
+s32 ActorScript_StoreAngleToWatchedActor(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
@@ -529,7 +529,7 @@ s32 Script_StoreAngleToWatchedObject(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Script_ApplyWatchedObjectPosition(struct ActorScriptView *object) {
+s32 ActorScript_ApplyWatchedActorPosition(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
@@ -539,7 +539,7 @@ s32 Script_ApplyWatchedObjectPosition(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Script_ApplyLocalOffsetPosition(struct Actor *object) {
+s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *object) {
   s32 offset[3];
 
   Actor_SetMoveTarget(object, object->x + offset[0], object->y + offset[1],
@@ -779,13 +779,13 @@ struct ScriptObjectEntry;
 extern void Vector_AddPolarOffset__resource_slot(
     s32 radius, s32 angle,
     struct FieldPosition *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(offset): routine ScriptObject_CheckOverlap as s32
- * ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
- * the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32
+/* VIEW(offset): routine ActorScript_CheckOverlap as s32
+ * ActorScript_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
+ * the definition has s32 ActorScript_CheckOverlap(struct Actor *object, s32
  * *values). */
 extern s32 ScriptObject_CheckOverlap__offset(
     struct ScriptObjectEntry *object,
-    s32 *position) __asm__("ScriptObject_CheckOverlap");
+    s32 *position) __asm__("ActorScript_CheckOverlap");
 
 /// SC_WANDER(base, range, limit), as The Broken Seal's: walks to a random
 /// point base to base + range away within 90 degrees of its heading, that
@@ -1036,8 +1036,8 @@ void ActorScript_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareFacing(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s32 result;
 
   if (operation == 0) {
@@ -1111,8 +1111,8 @@ void ActorScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
   u32 current;
 
@@ -1449,8 +1449,8 @@ void ActorScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
+                                              s32 operation, s32 value) {
   s32 result;
 
   if (operation == 0) {
@@ -1468,7 +1468,7 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
 }
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-extern OperandFunc gScript_OperandHandlerTable[];
+extern OperandFunc gActorScript_OperandHandlerTable[];
 
 void ActorScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
                                           s32 operation, s32 value) {
@@ -1642,7 +1642,7 @@ void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
 s32 ActorScript_ApplyOperandSet(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
-  OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
+  OperandFunc callback = gActorScript_OperandHandlerTable[entry[0]];
 
   if (callback != 0)
     callback(work, 0, entry[1]);
@@ -1653,7 +1653,7 @@ s32 ActorScript_ApplyOperandSet(struct ScriptOperands *work) {
 s32 ActorScript_ApplyOperandAdd(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
-  OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
+  OperandFunc callback = gActorScript_OperandHandlerTable[entry[0]];
 
   if (callback != 0)
     callback(work, 1, entry[1]);
@@ -1664,7 +1664,7 @@ s32 ActorScript_ApplyOperandAdd(struct ScriptOperands *work) {
 s32 ActorScript_ApplyOperandCompare(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
-  OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
+  OperandFunc callback = gActorScript_OperandHandlerTable[entry[0]];
 
   if (callback != 0)
     callback(work, 2, entry[1]);

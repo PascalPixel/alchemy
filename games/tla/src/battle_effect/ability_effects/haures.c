@@ -25,15 +25,15 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -471,10 +471,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->texture = &texture;
           model->mesh = gData_08199340;
           model->vertices = verts;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(0, 0x240000, 0);
-          SceneTransform_ApplyPitch(4000);
-          SceneTransform_ApplyYaw(-t << 8);
+          Transform_ApplyPitch(4000);
+          Transform_ApplyYaw(-t << 8);
           s = t << 10;
           if (s > 60000) {
             s = 60000;
@@ -490,7 +490,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->mesh = Data_08199244;
           model->vertices = verts;
           model->shade = sh;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(0, 0x240000, 0);
           s = (t * 3 << 8) + 1024;
           if (s > 38768) {
@@ -651,7 +651,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->texture = &texture2;
         model->mesh = gData_08199364;
         model->vertices = verts;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(0, -0x40000, 0);
         s = 0x1d8f0;
         if (frame > 268) {
@@ -676,7 +676,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             texture2.logHeight = 7;
             texture2.pixels = buffer;
             model->mesh = Data_08199388;
-            Render_ResetTransformState();
+            Transform_Reset();
             Func_08015160(0, -0x40000, 0);
             SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, 0x20000);
             Render_TransformVertices(Data_081991e0, verts, 4);
@@ -811,25 +811,25 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             model->mesh = mesh + i * 12;
             if ((u32)(HALF_HI(p->x) + 16) <= 152 && (p->y >> 16) >= -16 &&
                 (p->y >> 16) <= 136) {
-              Render_ResetTransformState();
+              Transform_Reset();
               Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               switch (i & 3) {
               case 0:
-                SceneTransform_ApplyPitch(p->z);
-                SceneTransform_ApplyRoll(p->z);
+                Transform_ApplyPitch(p->z);
+                Transform_ApplyRoll(p->z);
                 break;
               case 1:
-                SceneTransform_ApplyPitch(p->z);
-                SceneTransform_ApplyRoll(-p->z);
+                Transform_ApplyPitch(p->z);
+                Transform_ApplyRoll(-p->z);
                 break;
               case 2:
-                SceneTransform_ApplyPitch(p->z);
-                SceneTransform_ApplyYaw(p->z);
+                Transform_ApplyPitch(p->z);
+                Transform_ApplyYaw(p->z);
                 break;
               case 3:
-                SceneTransform_ApplyRoll(p->z);
-                SceneTransform_ApplyYaw(-p->z);
+                Transform_ApplyRoll(p->z);
+                Transform_ApplyYaw(-p->z);
                 break;
               }
               Render_TransformVertices(cells + i * 16, verts, 4);
@@ -1050,13 +1050,13 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         for (m = 0; m != 3; m++) {
           s32 y = -4;
           x = m * 20 - 16;
-          Render_ResetTransformState();
+          Transform_Reset();
           if (i == 0) {
             Func_08015160(x << 16, y << 16, 0);
-            SceneTransform_ApplyRoll(-0x2000);
+            Transform_ApplyRoll(-0x2000);
           } else {
             Func_08015160((x - 16) << 16, y << 16, 0);
-            SceneTransform_ApplyRoll(0x27d0);
+            Transform_ApplyRoll(0x27d0);
           }
           SceneTransform_ApplyScale3(0x30000, amp, 0x20000);
           Render_TransformVertices(Data_081991e0, verts, 4);

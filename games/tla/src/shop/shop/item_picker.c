@@ -452,7 +452,7 @@ void ItemIconGrid_Release(void) {
   Task_Remove(ItemIconGrid_Draw);
   for (i = 0; i < ICON_COUNT; i++) {
     if (work->resources[i] != ICON_NONE)
-      Resource_ResetEntry(work->resources[i]);
+      VramCache_FreeEntry(work->resources[i]);
   }
 }
 
@@ -482,14 +482,14 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
 
   for (i = 0; i < ICON_COUNT; i++) {
     if (work->resources[i] != ICON_NONE) {
-      Resource_ResetEntry(work->resources[i]);
+      VramCache_FreeEntry(work->resources[i]);
       work->resources[i] = ICON_NONE;
     }
   }
   sprite = work->sprites;
   for (i = 0; i < ICON_COUNT && i != count; i++, sprite++) {
     if (items[i] != 0) {
-      entry = Resource_FindFreeEntry();
+      entry = VramCache_FindFreeEntry();
       if (entry <= 95) {
         u32 *attr;
 

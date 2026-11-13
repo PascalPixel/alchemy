@@ -13,10 +13,10 @@ Resource_FarCall009:
 	export BattleStaging_ConfigurePaletteFadeFar, BattleStaging_ConfigurePaletteFade
 	export BattleBackground_LoadFar, BattleBackground_Load
 	export BattleBackground_SetPaletteLevelFar, BattleBackground_SetPaletteLevel
-	export BattleClass_GetEffectHeightFar, BattleClass_GetEffectHeight
-	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
-	export BattleClass_GetAttackHopFar, BattleClass_GetAttackHop
-	export BattleClass_IsSmallFar, BattleClass_IsSmall
+	export BattleSprite_GetEffectHeightFar, BattleSprite_GetEffectHeight
+	export BattleSprite_HasHeavyImpactFar, BattleSprite_HasHeavyImpact
+	export BattleSprite_GetAttackHopFar, BattleSprite_GetAttackHop
+	export BattleSprite_IsSmallFar, BattleSprite_IsSmall
 	export BattleUnit_GetEffectHeightFar, BattleUnit_GetEffectHeight
 	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
 	export BattleMotion_LeapBackFar, BattleMotion_LeapBack
@@ -29,7 +29,7 @@ Resource_FarCall009:
 	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
 	export BattleUnit_ListLivingFar, BattleParty_ListLivingUnits
 	export BattleParty_PrepareMembersFar, BattleParty_PrepareMembers
-	export Camera_ConfigureSceneFar, Camera_ConfigureScene
+	export BattleCamera_SetCommandViewFar, BattleCamera_SetCommandView
 	export GetMotionRecordFar, GetMotionRecord
 	export BattleHighlight_SetModesFar, BattleHighlight_SetModes
 	export BattlePlayback_StartFar, BattlePlayback_Start

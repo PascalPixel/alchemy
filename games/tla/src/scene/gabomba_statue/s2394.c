@@ -47,7 +47,7 @@ void Func_02002394(void) {
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   i = 0;
@@ -210,11 +210,11 @@ void Func_020027cc(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_FaceDirection(23, FACING_NORTHWEST + FACING_STEP, 60);
   Event_PlaySound(130);
-  Actor_SetSpriteColor(Actor_Get(9), 7);
-  Actor_SetSpriteColor(Actor_Get(10), 7);
+  FieldActor_SetSpriteColor(Actor_Get(9), 7);
+  FieldActor_SetSpriteColor(Actor_Get(10), 7);
   System_Wait(8);
-  Actor_SetSpriteColor(Actor_Get(10), 3);
-  Actor_SetSpriteColor(Actor_Get(9), 0);
+  FieldActor_SetSpriteColor(Actor_Get(10), 3);
+  FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
   ((struct Wanderer *)Actor_Get(gMainRoutineWork.currentOwner))->timer =
       (Random16Far() * 40 >> 16) + 10;
@@ -482,7 +482,7 @@ void Func_02002f70(void) {
 void Func_02003338(void) {
   Func_0200533c();
   Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
-  Actor_SetSpriteColor(Actor_Get(23), 15);
+  FieldActor_SetSpriteColor(Actor_Get(23), 15);
   System_Wait(10);
   FieldEvent_SetMessageId(MsgGabombaChannelTiming);
   Event_ShowMessage(23, 0);
@@ -607,16 +607,16 @@ void Func_02003634(void) {
   const u8 *table;
 
   t1 = ((s32)Actor_Get(10));
-  Actor_SetSpriteColor(t1, 3);
+  FieldActor_SetSpriteColor(t1, 3);
   Task_AddFrame((s32)Func_02002074, 0x480);
   t4 = ((s32)Actor_Get(11));
-  Actor_SetSpriteColor(t4, 11);
+  FieldActor_SetSpriteColor(t4, 11);
   t6 = ((s32)Actor_Get(12));
-  Actor_SetSpriteColor(t6, 11);
+  FieldActor_SetSpriteColor(t6, 11);
   t8 = ((s32)Actor_Get(13));
-  Actor_SetSpriteColor(t8, 10);
+  FieldActor_SetSpriteColor(t8, 10);
   t10 = ((s32)Actor_Get(14));
-  Actor_SetSpriteColor(t10, 10);
+  FieldActor_SetSpriteColor(t10, 10);
   t12 = ((s32)Actor_Get(16));
   Actor_SetSingleChildFlags(t12, 0);
   t14 = ((s32)Actor_Get(17));
@@ -762,7 +762,7 @@ void Func_020038ac(void) {
   s32 handle;
 
   Func_020055cc(gField_CachedTilesA, buffer);
-  handle = Resource_FindFreeEntry();
+  handle = VramCache_FindFreeEntry();
   VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
   Heap_Release(buffer);
@@ -1993,7 +1993,7 @@ void Func_020052a4(s32 mode) {
   Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
-  clock->tileEntry = Resource_FindFreeEntry();
+  clock->tileEntry = VramCache_FindFreeEntry();
   Vram_Load(clock->tileEntry, 320, NULL);
   clock->mode = mode;
   if (mode)

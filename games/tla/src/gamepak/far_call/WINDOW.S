@@ -30,7 +30,7 @@ Resource_FarCall004:
 	export Text_SetStyleFar, Text_SetStyle
 	export WindowSprite_CreateFar, WindowSprite_Create
 	export WindowSprite_CreateFromResourceFar, WindowSprite_CreateFromResource
-	export SideObject_CreateFar, CreateSideObject
+	export SideObject_CreateFar, Portrait_Create
 	export Portrait_ReloadFar, Portrait_Reload
 	export WindowSprite_SetMotionFar, WindowSprite_SetMotion
 	export WindowSprite_SetInvertedSentinelFar, WindowSprite_SetInvertedSentinel

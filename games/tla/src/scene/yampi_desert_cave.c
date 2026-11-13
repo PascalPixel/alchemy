@@ -308,7 +308,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   Sound_Play(298);
   Sound_Play(213);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
@@ -740,8 +740,8 @@ void Func_0200130c(void) {
   Event_Wait(60);
   leader = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214)));
   if (leader != 0)
-    Actor_ResetAndSetPosition(9, FIELD_AT(leader, s16, 10),
-                              FIELD_AT(leader, s16, 18));
+    Actor_SetDestinationById(9, FIELD_AT(leader, s16, 10),
+                             FIELD_AT(leader, s16, 18));
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
    * call's first argument ahead of the scene store's address, where without it

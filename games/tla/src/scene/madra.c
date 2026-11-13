@@ -79,7 +79,7 @@ next:
     s32 x = gData_02003308__madra[index].x;
     s32 y = gData_02003308__madra[index].y;
 
-    Map_PlayMapEdit(gData_02003308__madra[index].data, x, y);
+    MapGrid_PlayMapEdit(gData_02003308__madra[index].data, x, y);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -177,7 +177,7 @@ void Actor_WaitForMoveById(s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Map_PlayMapEdit(const void *data, s32 a, s32 b);
+void MapGrid_PlayMapEdit(const void *data, s32 a, s32 b);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y,
                                                     s32 z);
@@ -325,7 +325,7 @@ static __inline__ void ObjSetPos(s32 id, s32 x, s32 z) {
 }
 
 static __inline__ void ObjCall2bf8(s32 id, s32 a) {
-  Actor_ArmCallbackAndRefresh(id, a);
+  Actor_FaceDirectionById(id, a);
 }
 
 void Func_0200051c(void) {
@@ -560,20 +560,21 @@ void Actor_WalkToById(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
-/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit,
- * s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32
- * b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32
- * destinationX, u32 destinationY), it does not compile in tla-ja:
- * games/tla/src/scene/madra.c:547: conflicting types for `Map_PlayMapEdit'. */
+/* VIEW(s0ac4): routine MapGrid_PlayMapEdit as s32 MapGrid_PlayMapEdit(const
+ * void *edit, s32 a, s32 b); events_b has void MapGrid_PlayMapEdit(const void
+ * *data, s32 a, s32 b); tried as the definition's void MapGrid_PlayMapEdit(u16
+ * *steps, s32 destinationX, u32 destinationY), it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:547: conflicting types for `MapGrid_PlayMapEdit'.
+ */
 extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a,
-                                  s32 b) __asm__("Map_PlayMapEdit");
+                                  s32 b) __asm__("MapGrid_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 void Func_02002c50(s32 item, s32 a);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
-void Camera_FollowActor(s32 id, s32 mode);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
+void FieldCamera_FollowActor(s32 id, s32 mode);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 
 static __inline__ struct Actor *Emote(s32 id, s32 emote, s32 frames) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
@@ -696,7 +697,7 @@ void Func_02000ac4(void) {
   Actor_SetSpeed(24, 0x4ccc, 0x2666);
   Actor_SetSpeed(25, 0x4ccc, 0x2666);
   Actor_WalkBy(24, 3, -8);
-  Actor_OffsetPositionAndReset(25, -3, -8);
+  Actor_WalkByById(25, -3, -8);
   Actor_WaitForMoveById(24);
   Actor_WaitForMoveById(25);
   Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -709,8 +710,8 @@ void Func_02000ac4(void) {
   Actor_SetModeById(32, 2);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
-    Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(32, ((s16 *)&object->x)[1],
+                             ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
   GameFlag_SetBit(0x910);
@@ -726,7 +727,7 @@ void Func_02000f80(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
   Func_02002c28();
   Actor_SetSpeed(33, 0xcccc, 0x6666);
   Actor_SetSpeed(34, 0xcccc, 0x6666);
@@ -889,7 +890,7 @@ void Func_020014fc(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgHeyYouLot);
   Event_ShowMessageThenWait(24, 0, 2);
-  Camera_MoveWithinMapBounds(PIXELS(476), -1, PIXELS(400), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(476), -1, PIXELS(400), 1);
   Actor_WalkByAndWait(24, -3, 8);
   Actor_WalkToAndWaitById(4, 472, 426);
   Event_Wait(10);
@@ -898,7 +899,7 @@ void Func_020014fc(void) {
   Func_02002c28();
   Actor_WaitForMoveById(32);
   Actor_WalkByAndWaitById(25, 3, 8);
-  Actor_ArmCallbackAndRefresh(25, FACING_EAST);
+  Actor_FaceDirectionById(25, FACING_EAST);
   Actor_SetModeById(25, 4);
   Event_Wait(20);
   Event_ShowMessageThenWait(25, 0, 10);
@@ -995,7 +996,7 @@ void Func_020014fc(void) {
   Actor_SetSpeed(24, 0x4ccc, 0x2666);
   Actor_SetSpeed(25, 0x4ccc, 0x2666);
   Actor_WalkBy(24, 3, -8);
-  Actor_OffsetPositionAndReset(25, -3, -8);
+  Actor_WalkByById(25, -3, -8);
   Actor_WaitForMoveById(24);
   Actor_WaitForMoveById(25);
   Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -1011,8 +1012,8 @@ void Func_020014fc(void) {
   Actor_SetModeById(32, 2);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
-    Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(32, ((s16 *)&object->x)[1],
+                             ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
@@ -1052,7 +1053,7 @@ void Func_020019d8(void) {
   Event_SetMessageId(MsgWait3);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_WalkToAndWait(4, 150, 280);
-  Actor_OffsetPositionAndReset(4, 16, 0);
+  Actor_WalkByById(4, 16, 0);
   FieldActor_LaunchFromLeader(5, 8, 16, FACING_NORTH);
   FieldActor_LaunchFromLeader(32, 0, 0, FACING_NORTH);
   FieldActor_LaunchFromLeader(6, -8, 16, FACING_NORTH);
@@ -1184,7 +1185,7 @@ void Func_020019d8(void) {
   Actor_FaceActorById(5, 33, 0);
   Actor_FaceActorById(32, 33, 0);
   Event_Wait(20);
-  Camera_FollowActor(33, 1);
+  FieldCamera_FollowActor(33, 1);
   Event_Wait(60);
   Sound_Play(36);
   Emote(33, 0x107, 30);
@@ -1204,7 +1205,7 @@ void Func_020019d8(void) {
   Actor_FaceActorById(32, 33, 0);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(33, FACING_WEST);
-  Actor_ArmCallbackAndRefresh(33, FACING_EAST);
+  Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
   Emote(6, 0x102, 30);
@@ -1323,11 +1324,11 @@ void Func_020019d8(void) {
   Actor_ShowEmoteById(4, 0x100, 30);
   Actor_ShowEmoteById(33, 0x101, 30);
   Event_ShowMessageAndWait(33, 0);
-  Actor_ArmCallbackAndRefresh(33, FACING_EAST);
+  Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(33, FACING_WEST);
   Event_Wait(20);
-  Actor_ArmCallbackAndRefresh(33, FACING_EAST);
+  Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
   Actor_ArmCallback(33, FACING_WEST, 0);
@@ -1370,8 +1371,8 @@ void Func_020019d8(void) {
   Actor_WalkByAndWaitById(33, 24, 24);
   Actor_WalkByAndWaitById(33, 132, 0);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
-  Party_PlaySavedMusic();
-  Camera_FollowActor(4, 1);
+  Scene_PlayMusic();
+  FieldCamera_FollowActor(4, 1);
   Actor_ShowEmoteById(6, 0x102, 30);
   Event_ShowMessageAndWait(6, 0);
   SET_MODE(5, 3);
@@ -1411,7 +1412,7 @@ void Func_020019d8(void) {
   Actor_FaceActorById(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 10);
+  Actor_SetSpriteColor(Actor_GetById(5), 10);
   Event_ShowMessageAndWait(5, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Event_Wait(20);
@@ -1422,7 +1423,7 @@ void Func_020019d8(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndWait(32, FACING_SOUTH);
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 0);
+  Actor_SetSpriteColor(Actor_GetById(5), 0);
   Event_Wait(20);
   Actor_ShowEmoteById(5, 0x100, 30);
   Actor_FaceActorById(5, 32, 0);
@@ -1430,14 +1431,14 @@ void Func_020019d8(void) {
   Event_ShowMessageAndWait(5, 0);
   Emote(6, 0x108, 30);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 10);
+  Actor_SetSpriteColor(Actor_GetById(5), 10);
   Actor_FaceActorById(5, 6, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
   Motion_SetVarCbAndRefresh(32, 2);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 0);
+  Actor_SetSpriteColor(Actor_GetById(5), 0);
   Actor_FaceActorById(4, 32, 0);
   Actor_FaceActorById(5, 32, 0);
   Actor_FaceActorById(6, 32, 0);
@@ -1469,7 +1470,7 @@ void Func_020019d8(void) {
   SET_MODE(32, 3);
   Event_Wait(20);
   Event_Wait(20);
-  Actor_ArmCallbackAndRefresh(32, FACING_EAST);
+  Actor_FaceDirectionById(32, FACING_EAST);
   Event_ShowMessageAndWait(32, 0);
   SET_MODE(4, 3);
   Event_Wait(20);
@@ -1490,32 +1491,29 @@ void Func_020019d8(void) {
   SET_MODE(32, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(32, ((s16 *)&object->x)[1],
+                             ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
   Actor_SetSpeed(5, 0x00013333, 0x9999);
   SET_MODE(5, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(5, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(5, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
   Actor_SetSpeed(6, 0x00013333, 0x9999);
   SET_MODE(6, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(6, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(6, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   Actor_SetSpeed(7, 0x00013333, 0x9999);
   SET_MODE(7, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(7, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(7, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   GameFlag_SetBit(0x980);

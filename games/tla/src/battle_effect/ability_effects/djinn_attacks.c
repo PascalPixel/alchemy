@@ -342,7 +342,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   }
   if (skip_pal != 0)
     res += 128;
-  Resource_DecodeType01(res, dst);
+  Decompress_TaggedLz(res, dst);
 }
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.

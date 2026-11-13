@@ -458,8 +458,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++) {
     if (record->minimumCounts[memberOrEnemyIndex] != 0) {
       s32 requiredSlots =
-          2 -
-          (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] + 8) != 0);
+          2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
+                                    8) != 0);
 
       freeSpriteSlots -=
           requiredSlots * record->minimumCounts[memberOrEnemyIndex];
@@ -476,8 +476,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     additionalRoom = maximum - minimum;
     if (additionalRoom > 0) {
       s32 memberSlots =
-          2 -
-          (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] + 8) != 0);
+          2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
+                                    8) != 0);
 
       fittingCount = freeSpriteSlots / memberSlots;
       if (fittingCount < additionalRoom)
@@ -495,7 +495,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
          memberOrEnemyIndex++) {
       classId = record->memberIds[memberOrEnemyIndex] + 8;
       if (extraCounts[memberOrEnemyIndex] != 0) {
-        spriteSlots = 2 - (BattleClass_IsSmall(classId) != 0);
+        spriteSlots = 2 - (BattleSprite_IsSmall(classId) != 0);
         if (spriteSlots > freeSpriteSlots) {
           extraCounts[memberOrEnemyIndex] = 0;
         } else {
@@ -601,7 +601,7 @@ assigned:
   return memberOrEnemyIndex;
 }
 
-u32 BattleClass_GetDefeatSoundKind(s32 index) {
+u32 BattleSprite_GetDefeatSound(s32 index) {
   u32 kind = gSummon_EntryTable[index].layoutKind;
 
   if ((s32)kind > 4)
@@ -609,19 +609,19 @@ u32 BattleClass_GetDefeatSoundKind(s32 index) {
   return kind;
 }
 
-s32 BattleClass_GetSprite(s32 index) {
+s32 BattleSprite_GetSprite(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].animation;
 }
 
-s32 BattleClass_GetPalette(s32 index) {
+s32 BattleSprite_GetPalette(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].layoutBits1;
 }
 
-s32 BattleClass_IsSmall(s32 index) {
+s32 BattleSprite_IsSmall(s32 index) {
 
   s32 result;
   u32 flags;
@@ -635,7 +635,7 @@ s32 BattleClass_IsSmall(s32 index) {
   return result;
 }
 
-u32 BattleClass_GetAttackEffect(u32 index) {
+u32 BattleSprite_GetAttackEffect(u32 index) {
   u16 value;
 
   if (index > 386)
@@ -644,7 +644,7 @@ u32 BattleClass_GetAttackEffect(u32 index) {
   return value ? value : 1;
 }
 
-u32 BattleClass_GetAttackHop(u32 index) {
+u32 BattleSprite_GetAttackHop(u32 index) {
   u16 value;
 
   if (index > 386)
@@ -653,13 +653,13 @@ u32 BattleClass_GetAttackHop(u32 index) {
   return value ? value : 0;
 }
 
-s32 Summon_IsEntrySecondaryFlagged(s32 index) {
+s32 BattleSprite_HasHeavyImpact(s32 index) {
   if ((u32)index > 386)
     return 0;
   return gSummon_EntryTable[index].layoutBit0;
 }
 
-u32 BattleClass_GetEffectHeight(u32 index) {
+u32 BattleSprite_GetEffectHeight(u32 index) {
   u8 *table;
   u32 offset;
 

@@ -28,15 +28,15 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -209,7 +209,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           Sound_PlayFar(145);
         }
       }
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt((s32 *)camera, (s32 *)camera + 3);
 
       if (mode == 0) {
@@ -434,9 +434,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         SceneTransform_ApplyPosition(focus);
         Func_08015160(0, 0x100000, 0);
         if (effect->side == 0) {
-          SceneTransform_ApplyRoll(20576);
+          Transform_ApplyRoll(20576);
         } else {
-          SceneTransform_ApplyRoll(44960);
+          Transform_ApplyRoll(44960);
         }
         scale = 0xa000;
         if (frame > 31) {

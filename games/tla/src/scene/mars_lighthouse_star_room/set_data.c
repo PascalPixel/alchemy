@@ -13,7 +13,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_0200236c(void);
 
 void Func_02003384(u16 value) { gData_02004cf0[0] = value; }
@@ -29,8 +29,7 @@ struct Position {
   s32 z;
 };
 
-
 DEFINE_FUNC_02003390(Func_02003390, Func_02002d90, Func_020041cc, Func_02002d04,
-    Func_0200428c)
+                     Func_0200428c)
 
 #include "../../field/object/set_sprite_priority.c"

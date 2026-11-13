@@ -169,7 +169,7 @@ void wait(s32 frames) {
     gFrameVBlanks = 0;
     System_WaitForFrameInterrupt();
     HeapSlot_Release(80);
-    Render_ResetFrame();
+    Oam_ResetFrame();
     gFrameCount++;
     gFrameWaitCount++;
     Input_UpdateKeyRepeatAndDirection();

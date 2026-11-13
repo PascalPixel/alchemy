@@ -77,7 +77,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
           GetBattleObjectSlotFar(effect->actors[k])->object;
 
       // Each target's skulls turn about a point 20 pixels above it.
-      Render_ResetTransformState();
+      Transform_Reset();
       // The look-at call in a once-only block, so the eye loads before the
       // point it looks at; as the plain call, 2 of 355 instructions differ in
       // tla-en.
@@ -89,7 +89,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
       point[2] = target->z;
       SceneTransform_ApplyPosition(point);
       if (frame > k * 32) {
-        SceneTransform_ApplyPitch(frame << 9);
+        Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
           BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 32);
 
@@ -203,7 +203,7 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
       }
     }
 
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     member = 0;
     if (effect->count != 0) {
@@ -355,7 +355,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
       else
         BattlePlayback_StartFar(133);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.

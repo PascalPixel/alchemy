@@ -45,8 +45,8 @@ void FieldPsynergy_FadeToCastColor(void);
 void Camera_WorldToScreen(s32 *position);
 void wait(s32 frames);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 void Func_080e807c(void);
 /* VIEW(f0e82cc): routine Func_080e7f94 as void Func_080e7f94(u8 *canvas, s32
  * radius, s32 angle, s32 color); the definition has void Func_080e7f94(s32
@@ -137,9 +137,9 @@ void FieldPsynergy_Unnamed28(void) {
       } while (0);
       REG_BG0CNT = control;
     }
-    Resource_DecodeType01(
+    Decompress_TaggedLz(
         Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
-    entry = Resource_FindFreeEntry();
+    entry = VramCache_FindFreeEntry();
     tile = VramCache_Load(entry, 0x100, work);
     for (i = 0, mote = work->sparks; i < 64; i++, mote++) {
       sprite = &work->sparkSprites[i];
@@ -226,15 +226,14 @@ void FieldPsynergy_Unnamed28(void) {
       timer++;
     } while (phase != 999);
 
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
-                          picture);
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
+                        picture);
     Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
             REG_DMA3);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data1ED),
-                          work);
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1ED), work);
     {
       s32 heading;
-      s32 moteEntry = Resource_FindFreeEntry();
+      s32 moteEntry = VramCache_FindFreeEntry();
       s32 moteTile = VramCache_Load(moteEntry, 0x200, work);
       s32 *place;
 
@@ -263,7 +262,7 @@ void FieldPsynergy_Unnamed28(void) {
         mote++;
       }
     }
-    Resource_ResetEntry(entry);
+    VramCache_FreeEntry(entry);
     FieldPsynergy_FadeFromCastColor();
   }
   work->cycling = 1;
@@ -361,9 +360,9 @@ void FieldPsynergy_EndUnnamed28(void) {
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;
   wait(1);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
-                        work);
-  slot = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
+                      work);
+  slot = VramCache_FindFreeEntry();
   tile = VramCache_Load(slot, 0x100, work);
 
   i = 0;
@@ -406,8 +405,8 @@ void FieldPsynergy_EndUnnamed28(void) {
     }
     wait(1);
   }
-  Resource_ResetEntry(slot);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(slot);
+  VramCache_FreeEntry(work->resource);
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(92);
 }
@@ -428,7 +427,7 @@ struct MapBounds {
 };
 
 void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
-void Map_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
+void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 
 // Opens the whole map to the view: keeps the view centre's position and the
 // map's view bounds for Func_080e8c9c to restore, notes which edges the view
@@ -456,22 +455,22 @@ void Func_080e89e4(s32 direction) {
 #if TLA_PATCH_1
   if (*(s32 *)map->unk0fc != 0) {
     if (direction & VIEW_MOVE_X) {
-      Map_SetScreenShakeFar(0x30000, 0, 0x10000);
+      MapGrid_SetScreenShakeFar(0x30000, 0, 0x10000);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      Map_SetScreenShakeFar(0, 0x30000, 0x10000);
+      MapGrid_SetScreenShakeFar(0, 0x30000, 0x10000);
       return;
     }
   }
 #endif
   if (event->controlMode == 3) {
     if (direction & VIEW_MOVE_X) {
-      Map_SetScreenShakeFar(0x30000, 0, 0x10000);
+      MapGrid_SetScreenShakeFar(0x30000, 0, 0x10000);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      Map_SetScreenShakeFar(0, 0x30000, 0x10000);
+      MapGrid_SetScreenShakeFar(0, 0x30000, 0x10000);
       return;
     }
   }
@@ -592,7 +591,7 @@ struct EffectScene__f0e82cc {
   s16 firstObjectId;
 };
 
-void Camera_FollowActor(s32 id, s32 mode);
+void FieldCamera_FollowActor(s32 id, s32 mode);
 
 // Ends a view move: gives the map back the view bounds Func_080e89e4 kept
 // and lets the view follow the scene's first object again. Where the view
@@ -608,13 +607,13 @@ void Func_080e8c9c(void) {
 #else
   if (event->controlMode == 3) {
 #endif
-    Map_SetScreenShakeFar(0, 0, 0);
+    MapGrid_SetScreenShakeFar(0, 0, 0);
   } else {
     map->minX = work->savedMinX;
     map->maxX = work->savedMaxX;
     map->minZ = work->savedMinZ;
     map->maxZ = work->savedMaxZ;
-    Camera_FollowActor(scene->firstObjectId, 1);
+    FieldCamera_FollowActor(scene->firstObjectId, 1);
   }
 }
 

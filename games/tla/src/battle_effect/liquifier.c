@@ -240,10 +240,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
           model->shade = 0;
           age = frame - start;
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((from.x - 128) << 16, (from.y - 74) << 16, 0);
-          SceneTransform_ApplyRoll((i << 12) - 0x3800);
+          Transform_ApplyRoll((i << 12) - 0x3800);
           SceneTransform_ApplyScale3(
               0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2, 0x8000);
           Render_TransformVertices(Data_08199ea4, projected, 4);
@@ -267,10 +267,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
           scale = 0x20000 - ((frame - start) << 13);
           model->shade = zero;
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
-          SceneTransform_ApplyRoll(step->z);
+          Transform_ApplyRoll(step->z);
           SceneTransform_ApplyScale3(scale, 0x10000, 0x8000);
           Render_TransformVertices(Data_081991c0, projected, 4);
           Render_DrawModelList(model);
@@ -297,10 +297,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
             shade += 64;
           }
           model->shade = shade;
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
-          SceneTransform_ApplyPitch(0x3c00);
+          Transform_ApplyPitch(0x3c00);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Render_TransformVertices(Data_081991e0, projected, 4);
           Render_DrawModelList(model);
@@ -317,12 +317,12 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           if (shade > 0)
             shade = 0;
           model->shade = shade;
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((from.x - 128) << 16, (from.y - 80) << 16, 0);
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
-          SceneTransform_ApplyRoll(0x6000 - (i << 14));
-          SceneTransform_ApplyPitch(-0x1000);
+          Transform_ApplyRoll(0x6000 - (i << 14));
+          Transform_ApplyPitch(-0x1000);
           Render_TransformVertices(gData_08199210, projected, 4);
           Render_DrawModelList(model);
         }

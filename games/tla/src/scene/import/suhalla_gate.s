@@ -13,11 +13,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global Map_CopyCellPictureIndicesRect
+	overlay_veneer GameFlag_SetFar
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -38,10 +38,10 @@ Event_End:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_MoveToAndWaitById
 	.thumb_func
 Actor_MoveToAndWaitById:
@@ -102,14 +102,14 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_ShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
-	.global Camera_MoveWithinMapBounds
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02000a30
 	.thumb_func
 Func_02000a30:
@@ -126,10 +126,10 @@ Field_RequestBattleFromEncounterTable:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Party_SetFields1eeAnd1f0
+	.global Event_SetAfterBattleDestination
 	.thumb_func
-Party_SetFields1eeAnd1f0:
-	overlay_veneer Party_SetFields1eeAnd1f0Far
+Event_SetAfterBattleDestination:
+	overlay_veneer Event_SetAfterBattleDestinationFar
 	.global Party_SetFields1f2And1f4
 	.thumb_func
 Party_SetFields1f2And1f4:

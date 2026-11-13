@@ -69,8 +69,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
-  Task_Add(Graphics_ResetBg2Pa, TASK_PASS_FRAME);
-  Irq_SetHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
+  Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_FRAME);
+  Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = 0x2137;
@@ -83,7 +83,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
     Iwram_CopyWords((void *)0x05000200, sheet, 0x200);
     sheet += 0x200;
-    Resource_DecodeType01(sheet, tiles);
+    Decompress_TaggedLz(sheet, tiles);
     for (i = 0; i != 8; i++) {
       struct SpriteObject *object =
           Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
@@ -233,7 +233,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 152) {
-      Irq_SetHandler(2, 96, Graphics_SetBg2AffineScaleHalf);
+      Irq_SetHandler(2, 96, BattleEffect_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
@@ -413,11 +413,11 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   transition[4] = 0;
   Irq_SetHandler(2, 0, 0);
   BattleEffect_SetupBlendedDisplay();
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)0x050000bc = *(u16 *)0x050001e8;
-  Task_Remove(Graphics_ResetBg2Pa);
+  Task_Remove(BattleEffect_ResetBg2Pa);
   REG_WIN0H = 0xf0;
   work->transferMode = 2;
   work->transferValue = 75;

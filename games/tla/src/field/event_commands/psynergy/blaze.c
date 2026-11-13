@@ -58,8 +58,8 @@ void wait(s32 frames);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void FieldPsynergy_FadeFromCastColor(void);
@@ -211,8 +211,8 @@ void FieldPsynergy_Blaze(void) {
     resourceId = (s32)&ResourceId_RedFlameBurst;
     break;
   }
-  Resource_DecodeType01(Resource_GetTableEntry(resourceId), work);
-  dropSlot = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry(resourceId), work);
+  dropSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(dropSlot, 0x1000, work);
   work->dropTile = tile;
   cursor.particle = work->dropMotion;
@@ -227,9 +227,8 @@ void FieldPsynergy_Blaze(void) {
     cursor.particle->timer = -1;
     cursor.particle++;
   }
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
-                        work);
-  puffSlot = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  puffSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(puffSlot, 0x800, work);
   work->puffTile = tile;
   cursor.particle = work->puffMotion;
@@ -275,8 +274,8 @@ void FieldPsynergy_Blaze(void) {
     wait(1);
   }
   Task_Remove(Func_080e38c8);
-  Resource_ResetEntry(dropSlot);
-  Resource_ResetEntry(puffSlot);
+  VramCache_FreeEntry(dropSlot);
+  VramCache_FreeEntry(puffSlot);
 end:
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
@@ -425,7 +424,7 @@ void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
 
   Iwram_ClearWordsEntry(buffer, size);
   if (source->format == PICTURE_FORMAT_TYPE01) {
-    Resource_DecodeType01(source->pictures[source->picture], buffer);
+    Decompress_TaggedLz(source->pictures[source->picture], buffer);
   } else if (source->format == PICTURE_FORMAT_COMPRESSED) {
     const void *stream =
         Iwram_Decompress(source->pictures[source->picture], buffer);

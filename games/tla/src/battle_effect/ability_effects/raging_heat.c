@@ -24,15 +24,15 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -249,7 +249,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         s32 step = size << 5;
         s32 scale;
 
-        Render_ResetTransformState();
+        Transform_Reset();
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (i == 0) {
           Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000,
@@ -258,9 +258,9 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           Func_08015160((centerX << 16) - 0x800000,
                         ((baseY + 8) << 16) - 0x400000, 0);
         }
-        SceneTransform_ApplyPitch(2000);
+        Transform_ApplyPitch(2000);
         if (frame <= 47) {
-          SceneTransform_ApplyPitch((48 - frame) << 9);
+          Transform_ApplyPitch((48 - frame) << 9);
         }
         if (i == 0) {
           scale = (frame - 16) * step;
@@ -271,7 +271,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
             scale = largest - step * (frame * 2 - 120);
           }
           texture.pixels = work->sheet;
-          SceneTransform_ApplyYaw(-frame * 3 << 8);
+          Transform_ApplyYaw(-frame * 3 << 8);
         } else {
           scale = (frame * 4 - 224) * step;
           if (scale < 0) {
@@ -429,13 +429,13 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       s32 x;
       s32 y;
 
-      Render_ResetTransformState();
+      Transform_Reset();
       Func_08015160(ring->x - (128 << 16), ring->y - (64 << 16), 0);
-      SceneTransform_ApplyRoll(frame * 256);
-      SceneTransform_ApplyPitch(frame * 256 + 500);
+      Transform_ApplyRoll(frame * 256);
+      Transform_ApplyPitch(frame * 256 + 500);
       if (i > 7)
-        SceneTransform_ApplyPitch(0x4000);
-      SceneTransform_ApplyYaw(
+        Transform_ApplyPitch(0x4000);
+      Transform_ApplyYaw(
           (frame * 4 + i * Data_0819940c[effect->variant][RING_SPACING]) << 8);
       place = vector;
       place[0] = 0;

@@ -61,7 +61,7 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 }
 
 static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
+  MapGrid_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
 static __inline__ void CopyCells2(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {

@@ -14,13 +14,13 @@
 #include "frame.h"
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #include "map.h"
@@ -114,7 +114,7 @@ struct FieldSpriteFlags {
 
 s32 Math_Cosine(s32 angle);
 void Heap_Release(void *block);
-void Resource_DecodeType01(const void *source, void *destination);
+void Decompress_TaggedLz(const void *source, void *destination);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Map_CenterOnFollowedPoint(void);
@@ -124,7 +124,7 @@ void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Func_02003e54(void);
 void Func_02003e6c(void);
-void BattleParty_ApplyDrain(s32 a, s32 b);
+void Party_AddPp(s32 a, s32 b);
 void Func_02003ecc(s32 a);
 void Func_02002bd4(struct Actor *object);
 s32 Func_02002ed4(struct Actor *object);
@@ -175,7 +175,7 @@ static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  Camera_MoveWithinMapBounds(x, a, z, b);
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02003d14_(s32 a, s32 b, s32 c, s32 d, s32 e,

@@ -30,22 +30,22 @@ HeapSlot_AllocFar:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
-	.global Resource_ResetEntry
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -57,11 +57,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global Map_PlayMapEdit
+	overlay_veneer GameFlag_SetFar
+	.global MapGrid_PlayMapEdit
 	.thumb_func
-Map_PlayMapEdit:
-	overlay_veneer Map_PlayMapEditFar
+MapGrid_PlayMapEdit:
+	overlay_veneer MapGrid_PlayMapEditFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -74,10 +74,10 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Map_SetScreenShake
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
 	.global Func_0200343c
 	.thumb_func
 Func_0200343c:
@@ -130,10 +130,10 @@ Actor_RefreshSelectorById:
 	.thumb_func
 Actor_Stop:
 	overlay_veneer Actor_StopFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToById
 	.thumb_func
 Actor_WalkToById:
@@ -202,10 +202,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
@@ -218,14 +218,14 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
-	.global Camera_MoveWithinMapBounds
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02003564
 	.thumb_func
 Func_02003564:
@@ -242,10 +242,10 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Party_SetFields1eeAnd1f0
+	.global Event_SetAfterBattleDestination
 	.thumb_func
-Party_SetFields1eeAnd1f0:
-	overlay_veneer Party_SetFields1eeAnd1f0Far
+Event_SetAfterBattleDestination:
+	overlay_veneer Event_SetAfterBattleDestinationFar
 	.global Party_SetFields1f2And1f4
 	.thumb_func
 Party_SetFields1f2And1f4:
@@ -270,10 +270,10 @@ Func_020035ac:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Party_PlaySavedMusic
+	.global Scene_PlayMusic
 	.thumb_func
-Party_PlaySavedMusic:
-	overlay_veneer Party_PlaySavedMusicFar
+Scene_PlayMusic:
+	overlay_veneer Scene_PlayMusicFar
 	.global Camera_WorldToScreen
 	.thumb_func
 Camera_WorldToScreen:
@@ -282,10 +282,10 @@ Camera_WorldToScreen:
 	.thumb_func
 Actor_LaunchFromLeader:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

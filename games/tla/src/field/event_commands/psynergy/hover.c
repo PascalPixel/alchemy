@@ -70,8 +70,8 @@ void FieldPsynergy_Hover(void) {
 
   pending = Scene_FindPsynergyTrigger(0x50000005, scene->kind,
                                       Func_080ce31c(scene->kind));
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
-  slot = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
+  slot = VramCache_FindFreeEntry();
   tile = VramCache_Load(slot, 0x800, work);
   work->resource = slot;
   work->tile = tile;
@@ -126,7 +126,7 @@ void FieldPsynergy_Hover(void) {
     }
     wait(5);
     Task_Remove(Func_080e9940);
-    Resource_ResetEntry(work->resource);
+    VramCache_FreeEntry(work->resource);
     HeapSlot_Release(92);
   } else {
     player->motionFlags = 0;
@@ -188,7 +188,7 @@ void FieldPsynergy_EndHover(void) {
   object->velocityY = 0;
   object->y = object->terrainHeight;
   object->gravity = 0x10000;
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(92);
 }
 

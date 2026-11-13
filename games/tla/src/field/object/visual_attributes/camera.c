@@ -9,8 +9,8 @@
 /// 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
 /// screen never shows past its edge. With useSetter 0 the camera jumps there
 /// at once; otherwise it travels at its own speed.
-void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
-                                s32 useSetter) {
+void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
+                                     s32 requestedZ, s32 useSetter) {
   s32 shouldUseSetter;
   struct EventWork *runtimeBlock;
   s32 minimumX;
@@ -75,13 +75,13 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   }
 }
 
-/// The event command "camera move to actor": Camera_MoveWithinMapBounds to
+/// The event command "camera move to actor": FieldCamera_MoveWithinMapBounds to
 /// the actor's x and z.
 void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
-    Camera_MoveWithinMapBounds(obj->x, -1, obj->z, use_setter);
+    FieldCamera_MoveWithinMapBounds(obj->x, -1, obj->z, use_setter);
 }
 
 /// As FieldCamera_MoveToActorById, to the actor's height too.
@@ -89,7 +89,7 @@ void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
-    Camera_MoveWithinMapBounds(obj->x, obj->y, obj->z, use_setter);
+    FieldCamera_MoveWithinMapBounds(obj->x, obj->y, obj->z, use_setter);
 }
 
 /// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.

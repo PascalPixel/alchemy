@@ -31,7 +31,7 @@ void Func_020012a8(s32 objectId) {
   s32 z;
 
   object = Actor_Get(objectId);
-  params.update = Effect_AdvanceMotion;
+  params.update = FieldEffect_AdvanceMotion;
   // A goto loop: the vector's address is formed after the cosine call on every
   // pass, where a for loop hoists it.
   angleStep = 0;
@@ -251,7 +251,7 @@ loop1:
   FieldEvent_Wait(20);
   Actor_FaceDirection(8, 0x2000, 0);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(8, 1);
   Actor_SetAnimation(8, 2);
   x = bird->x;
   z = bird->z;
@@ -518,7 +518,7 @@ loop2:
   if (Event_GetFlag(7)) {
     FOLLOW_LEADER(7);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Event_End();
 }
 
@@ -619,7 +619,7 @@ void Func_020022f4(void) {
      * before the others; as the plain call, 2 of 362 instructions differ in
      * tla-en. */
     asm volatile("" : "+l"(a0));
-    FieldCamera_FollowActor(a0, 1);
+    EventCamera_FollowActor(a0, 1);
   }
   Func_020052b4();
   FieldEvent_Wait(20);
@@ -832,7 +832,7 @@ L_0200a8b2:;
   FieldEvent_Wait(10);
   Func_02001454(11);
   Actor_SetPosition(11, 0, 0);
-  FieldCamera_FollowActor(10, 1);
+  EventCamera_FollowActor(10, 1);
   FieldEvent_Wait(20);
   Actor_WalkBy(8, 0, 24);
   Actor_WalkByAndWait(10, 0, 24);
@@ -1464,7 +1464,7 @@ L_0200b83e:;
   Actor_SetPosition(7, 0, 0);
 L_0200b84e:;
   p2 = (s32)&gMainRoutineWork;
-  FieldCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
+  EventCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
   Func_02001344();
   FieldEvent_SetExitRequest(11);
   Event_End();
@@ -1554,7 +1554,7 @@ L_0200b920:;
   FieldEvent_Wait(20);
   Func_02001454(11);
   Actor_SetPosition(11, 0, 0);
-  FieldCamera_FollowActor(10, 1);
+  EventCamera_FollowActor(10, 1);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(10, 0, 48);
   Actor_FaceDirection(9, 0xe000, 0);
@@ -2433,7 +2433,7 @@ L_0200d0fa:;
   p2 = (s32)&gMainRoutineWork;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
-    FieldCamera_FollowActor(a0, 1);
+    EventCamera_FollowActor(a0, 1);
   }
   Event_End();
 }

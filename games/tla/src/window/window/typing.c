@@ -82,8 +82,8 @@ void Message_UpdateAll(void) {
 
 extern const u8 gText_SpeedDelays[];
 extern const u8 gData_080aa0df[];
-extern const u8 gText_SpeedSteps[];
-extern const u8 gText_SpeedCueGaps[];
+extern const u8 gMessageSpeed_Steps[];
+extern const u8 gMessageSpeed_VoiceGaps[];
 
 void Text_ScrollCanvasUp(s32 step);
 void Text_StartCanvasScroll(struct UiChannelSlot *channel);
@@ -106,7 +106,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   // DEAD: the ROM reads the held keys here once and never uses the value.
   u32 keys = *(volatile u32 *)&gInput.held;
-  s32 glyphsLeft = gText_SpeedSteps[TEXT_SPEED];
+  s32 glyphsLeft = gMessageSpeed_Steps[TEXT_SPEED];
   s32 frameVBlanks;
   u32 code;
   u32 nextCode;
@@ -237,7 +237,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         channel->outline = 0;
         channel->lineSpacing = 10;
         Message_ApplyStyle(channel);
-        Resource_ResetEntry(work->glyphResource);
+        VramCache_FreeEntry(work->glyphResource);
         work->glyphResource = 99;
         break;
 
@@ -314,7 +314,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
     } else {
       pixelX = (channel->x + 128) / 256;
       pixelY = (channel->y + 128) / 256;
-      voiceGap = gText_SpeedCueGaps[TEXT_SPEED];
+      voiceGap = gMessageSpeed_VoiceGaps[TEXT_SPEED];
       nextEntryIndex = channel->entry;
 #if !TLA_PATCH_2
       if (work->mode != 0)

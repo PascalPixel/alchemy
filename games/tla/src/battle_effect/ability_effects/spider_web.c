@@ -270,15 +270,15 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -746,10 +746,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           if (draw) {
             // Offset first, as the listing adds it.
             texture.pixels = (u8 *)((u << 12) + (s32)portraits);
-            Render_ResetTransformState();
+            Transform_Reset();
             Func_08015160(mx, my, 0);
-            SceneTransform_ApplyPitch(0xc000);
-            SceneTransform_ApplyYaw(step->z);
+            Transform_ApplyPitch(0xc000);
+            Transform_ApplyYaw(step->z);
             Func_0801521c(s);
             Render_TransformVertices(gData_08199210, verts, 4);
             Render_DrawModelList(model);
@@ -840,9 +840,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           // register of its own.
           s32 sc;
 
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(0x80000, 0, 0);
-          SceneTransform_ApplyPitch(0x4000);
+          Transform_ApplyPitch(0x4000);
           if (j == 0) {
             sc = t * 3072 - 0x12000;
             if (t <= 39) {
@@ -852,16 +852,16 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
               }
             }
             Func_0801521c(sc);
-            SceneTransform_ApplyYaw(-t * 512);
+            Transform_ApplyYaw(-t * 512);
           } else {
             if (t > 23) {
               sc = 0x1c000 - (t << 11);
               Func_0801521c(sc);
             } else {
-              SceneTransform_ApplyPitch(0x3ff0 - t * 682);
-              SceneTransform_ApplyRoll(t * 169 + 0xf028);
+              Transform_ApplyPitch(0x3ff0 - t * 682);
+              Transform_ApplyRoll(t * 169 + 0xf028);
             }
-            SceneTransform_ApplyYaw(t << 9);
+            Transform_ApplyYaw(t << 9);
           }
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);

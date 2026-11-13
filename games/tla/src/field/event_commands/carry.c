@@ -27,16 +27,15 @@ void FieldPsynergy_Carry(void) {
   pos.x = work->x;
   pos.y = work->y + 0x100000;
   pos.z = work->z;
-  pair[0] =
-      BattleEffect_SpawnItemBreakMode1(pos.x + 0x200000, pos.y, pos.z, 0x8000);
-  pair[1] = BattleEffect_SpawnItemBreakMode1(pos.x - 0x200000, pos.y, pos.z, 0);
+  pair[0] = FieldEffect_SpawnCarryHand(pos.x + 0x200000, pos.y, pos.z, 0x8000);
+  pair[1] = FieldEffect_SpawnCarryHand(pos.x - 0x200000, pos.y, pos.z, 0);
 
   wait(15);
   walk = pair;
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
   }
 
   Actor_CommitPosition(pair[0]);
@@ -52,7 +51,7 @@ void FieldPsynergy_Carry(void) {
       obj->acceleration = 0x20000;
       obj->motionFlags = 0;
       dist = Random16() * 24 + 0x80000;
-      Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
     }
   }
 
@@ -65,7 +64,7 @@ void FieldPsynergy_Carry(void) {
 
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
-struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
+struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *object;
   s32 scale;
 

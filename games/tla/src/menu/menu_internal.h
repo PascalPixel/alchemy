@@ -316,7 +316,7 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode);
 s32 Ability_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 s32 Ability_PlayUseAnimation(s32 action);
 void DjinnFigures_InitializeTopRow(void);
-void MenuIcon_ReleaseObjects(void);
+void DjinnFigures_ReleaseTopRow(void);
 void Menu_ResetTwoResourceEntries(void);
 extern u8 gMenu_BackdropBorderTile[];
 void WindowSprite_PrepareForRedrawFar(s32 window);

@@ -25,7 +25,7 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global Func_020027f4
 	.thumb_func
 Func_020027f4:
@@ -42,10 +42,10 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Map_SetScreenShake
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
 	.global Party_RemoveMember
 	.thumb_func
 Party_RemoveMember:
@@ -78,10 +78,10 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_Stop:
 	overlay_veneer Actor_StopFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToAndWaitById
 	.thumb_func
 Actor_WalkToAndWaitById:
@@ -150,10 +150,10 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_020028f4
 	.thumb_func
 Func_020028f4:

@@ -4,7 +4,7 @@
 
 #include "../system_internal.h"
 
-void Render_ResetFrame(void) {
+void Oam_ResetFrame(void) {
   gObjAffineCount = 0;
   Iwram_ClearWordsEntry(gOamBucketMasks, 32);
 }

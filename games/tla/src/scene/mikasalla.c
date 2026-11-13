@@ -133,7 +133,7 @@ void Func_02000188(void) {
 }
 
 void Func_020001e0(void) {
-  Map_CopyCellPictureIndicesRect(5, 49, 5, 41, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(5, 49, 5, 41, 1, 1);
   MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
   GameFlag_SetBit(0x85b);
 }
@@ -143,8 +143,8 @@ void Func_02000218(void) {
     Func_02000620(0);
     Func_02000620(1);
     Func_02000620(2);
-    Map_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
-    Map_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
+    MapGrid_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
+    MapGrid_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
     MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
     MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
     Map_CopyCellsRect(28, 90, 4, 4, 17, 89);
@@ -181,8 +181,8 @@ s32 Scene_PrepareMap(void) {
       Func_02000620(0);
       Func_02000620(1);
       Func_02000620(2);
-      Map_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
-      Map_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
+      MapGrid_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
+      MapGrid_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
       Map_CopyCellsRect(28, 23, 16, 16, 15, 23);
       MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
       Map_CopyCellsRect(28, 90, 4, 4, 17, 89);

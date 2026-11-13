@@ -93,7 +93,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     }
     if (frame == 16)
       BattlePlayback_StartFar(134);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
 
     if (frame < 64) {

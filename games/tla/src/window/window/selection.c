@@ -124,7 +124,7 @@ void SelectionMenu_Create(void) {
   work->rows[0].state = 0;
   work->rows[1].state = 0;
   table = gMenu_AnimatedCursorTiles;
-  work->slot = Resource_FindFreeEntry();
+  work->slot = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->slot, 256, table);
   work->field2e2 = 0;
   work->field2fa = 0;
@@ -636,7 +636,7 @@ void SelectionMenu_Close(void) {
   node = state->head;
   while (node != 0) {
     if (node->kind != 0) {
-      Resource_ResetEntry(node->slot);
+      VramCache_FreeEntry(node->slot);
       node->kind = 0;
     }
     node = node->next;
@@ -644,19 +644,19 @@ void SelectionMenu_Close(void) {
   node = state->path;
   while (node != 0) {
     if (node->kind != 0) {
-      Resource_ResetEntry(node->slot);
+      VramCache_FreeEntry(node->slot);
       node->kind = 0;
     }
     node = node->next;
   }
   Resource_ResetPendingTransfer();
   if (state->records[0].y != 0) {
-    Resource_ResetEntry(state->records[0].slot);
+    VramCache_FreeEntry(state->records[0].slot);
     if (state->records[0].y != 0) {
-      Resource_ResetEntry(state->records[1].slot);
+      VramCache_FreeEntry(state->records[1].slot);
     }
   }
-  Resource_ResetEntry(state->records[14].slot);
+  VramCache_FreeEntry(state->records[14].slot);
   HeapSlot_Release(72);
 }
 
@@ -717,7 +717,7 @@ void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
       state->records[0].kind = 1;
   }
   if (state->records[side].y == 0) {
-    state->records[side].slot = Resource_FindFreeEntry();
+    state->records[side].slot = VramCache_FindFreeEntry();
     state->records[side].tile =
         VramCache_Load(state->records[side].slot, 128, arrowTiles);
     state->records[side].y = state->baseY;
@@ -1228,7 +1228,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
       wait(1);
     } while (p->scale != 0);
     screen->head = p->next;
-    Resource_ResetEntry(p->slot);
+    VramCache_FreeEntry(p->slot);
     p->kind = 0;
     p = p->next;
     p->prev = NULL;
@@ -1270,7 +1270,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     } while (p->scale != 256);
     while (p->next != NULL)
       p = p->next;
-    Resource_ResetEntry(p->slot);
+    VramCache_FreeEntry(p->slot);
     p->kind = 0;
     p->prev->next = NULL;
   }
@@ -1289,7 +1289,7 @@ s32 Resource_LoadByMode(u32 mode, s32 value) {
     Icon_BuildCommandIconTiles(value, 0, &result, &output, 0);
     break;
   case 2:
-    result = Resource_FindFreeEntry();
+    result = VramCache_FindFreeEntry();
     if (result == 96)
       return -1;
     Icon_CopyResourceToSlot(value, 0x1a, result);
@@ -1306,7 +1306,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 original = result;
 
   if (result == -1) {
-    result = Resource_FindFreeEntry();
+    result = VramCache_FindFreeEntry();
     if (result == 0x60)
       return original;
   }
@@ -1454,7 +1454,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   wait(2);
   for (other = screen->head; other != NULL; other = other->next) {
     if (other != node) {
-      Resource_ResetEntry(other->slot);
+      VramCache_FreeEntry(other->slot);
       other->kind = 0;
     }
   }
@@ -1559,7 +1559,7 @@ struct MenuSprite {
 /// MenuArrow_Release.
 void MenuArrow_Create(struct MenuSprite *object, s32 *slot) {
   const void *data = gMenu_CursorActorTiles;
-  s32 value = Resource_FindFreeEntry();
+  s32 value = VramCache_FindFreeEntry();
 
   *slot = value;
   object->oam.f.tile = VramCache_Load(value, 0x80, data);
@@ -1596,7 +1596,7 @@ void MenuArrow_SetPosition(struct TextResourcePosition *obj, s32 arg1,
 }
 
 /// Frees an arrow sprite's tile slot.
-void MenuArrow_Release(s32 value) { Resource_ResetEntry(value); }
+void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
@@ -1634,7 +1634,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   Resource_DecodeByteLzInRam(resource, buffer);
 
   if (transfer->kind == 0)
-    transfer->slot = Resource_FindFreeEntry();
+    transfer->slot = VramCache_FindFreeEntry();
   transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
   transfer->kind = 1;
   transfer->base = no;
@@ -1649,7 +1649,7 @@ void Resource_ResetPendingTransfer(void) {
       &((struct SelectionScreen *)Ram_HeapSlots->menuWork)->records[15];
 
   if (transfer->kind != 0) {
-    Resource_ResetEntry(transfer->slot);
+    VramCache_FreeEntry(transfer->slot);
     transfer->kind = 0;
   }
 }
@@ -1657,7 +1657,7 @@ void Resource_ResetPendingTransfer(void) {
 void PartyStatus_CreateWindow(s32 flags);
 s32 FieldMenu_SelectCommand(s32);
 s32 DjinnMenu_RunFar(void);
-s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
+s32 Actor_GetTriggerCellAheadOfCurrentFar(void);
 s32 PsynergyMenu_RunFar(void);
 s32 ItemMenu_RunFar(void);
 s32 StatusScreen_RunFar(void);
@@ -1690,7 +1690,7 @@ loop:
 
   switch (selection) {
   case 0:
-    ret = Actor_GetTriggerTileAheadOfCurrentFar();
+    ret = Actor_GetTriggerCellAheadOfCurrentFar();
     if (ret == 0)
       ret = 0xff;
     *(u16 *)(state + 0x162) = ret;

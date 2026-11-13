@@ -186,7 +186,7 @@ s32 DebugBrowser_Icons(void) {
           Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
           WindowSprite_Create(slot, 0x40000000, window, x, y);
         } else {
-          slot = Resource_FindFreeEntry();
+          slot = VramCache_FindFreeEntry();
           Icon_BuildMiscIconTiles(i, 0, slot);
           WindowSprite_Create(slot, 0x40000000, window, x, y);
         }

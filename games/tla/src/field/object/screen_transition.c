@@ -492,7 +492,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank.
 // As ☀️'s FieldEffect_StartWindowHBlankDma does.
-void BattleEffect_StartWindowHBlankDma(void) {
+void FieldEffect_StartWindowHBlankDma(void) {
   struct ScreenTransitionState *work;
   u16 *src;
   volatile u16 *channel;
@@ -586,7 +586,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
           REG_DISPCNT &= 0x9fff;
         if (REG_DISPCNT & 0x8000)
           REG_WINOUT |= 0x1f;
-        Task_Remove(BattleEffect_StartWindowHBlankDma);
+        Task_Remove(FieldEffect_StartWindowHBlankDma);
         Task_Remove(ScreenTransition_UpdateScanlineTable);
         {
           volatile u16 *dma0 = (volatile u16 *)0x040000b0;
@@ -915,14 +915,14 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   state->mask = 0x3f3f;
   state->active = (REG_WINOUT & 0xff00) | 1;
   Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
-  Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
+  Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
 }
 
 /// Unused: suspends the window transition's two tasks. Nothing calls it,
 /// by name, far-call entry or table.
 UNUSED void ScreenTransition_SuspendCallbacks(void) {
   Task_SuspendAll(ScreenTransition_UpdateScanlineTable);
-  Task_SuspendAll(BattleEffect_StartWindowHBlankDma);
+  Task_SuspendAll(FieldEffect_StartWindowHBlankDma);
 }
 
 /// Allocates the screen transition state (heap slot 124) and clears it.
@@ -948,8 +948,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   variant = mode & 0xff;
   switch (transitionKind) {
   case 0:
-    Fade_ToBlack(0);
-    Fade_FromBlack(frames);
+    ScreenFade_ToBlack(0);
+    ScreenFade_FromBlack(frames);
     wait(1);
     break;
   case 1:
@@ -968,7 +968,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->mask = 63;
     state->active = (REG_WINOUT & 0xff00) | 1;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
-    Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
@@ -1034,8 +1034,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
   variant = mode & 0xff;
   switch (transitionKind) {
   case 0:
-    Fade_FromBlack(0);
-    Fade_ToBlack(frames);
+    ScreenFade_FromBlack(0);
+    ScreenFade_ToBlack(frames);
     break;
   case 1:
     BattleEffect_ApplyColorToTargetBuffer(0x8000, 0);
@@ -1049,7 +1049,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->mask = 63;
     state->active = (REG_WINOUT & 0xff00) | 1;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
-    Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
     wait(1);
     state->start = 32;
     state->end = 64;
@@ -1106,11 +1106,11 @@ s32 Func_080d072c(void) {
 
 /// The layer flags read through a volatile pointer, which keeps them the AND's
 /// second operand and builds the mask in the result register; as map->flags,
-/// 24 of 31 instructions of Map_ClearLayerFlags differ in tla-en.
+/// 24 of 31 instructions of ScreenTransition_HideBackgrounds differ in tla-en.
 #define MAP_LAYER_FLAGS(map) (*(volatile u16 *)&(map)->flags)
 
 /// Clears the flag of each map layer whose argument is nonzero.
-void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2) {
+void ScreenTransition_HideBackgrounds(s32 layer0, s32 layer1, s32 layer2) {
   struct MapLayerFlags *map;
   u16 flags;
 
@@ -1424,8 +1424,6 @@ void BattlePalette_UpdateBlend(void) {
 #define gColorBuffer_ChannelCurve Data_080f0246
 #define gColorBuffer_ChannelCurveLight Data_080f0286
 #define gColorBuffer_ChannelCurveContrast Data_080f02c6
-#define PaletteFade_ClampComponent Graphics_ClampRgb555Channel
-#define PaletteFade_ClampShiftedComponent Graphics_ClampRgb555Component
 
 void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
@@ -1830,7 +1828,7 @@ void BattleEffect_LoadBufferPalette(const u16 *colours) {
 // Palette: clamp RGB555 components.
 
 /// Clamps a five-bit component to 0-31.
-s32 Graphics_ClampRgb555Channel(s32 val) {
+s32 PaletteFade_ClampComponent(s32 val) {
   if (val > 31)
     return 31;
   if (val < 0)
@@ -1840,7 +1838,7 @@ s32 Graphics_ClampRgb555Channel(s32 val) {
 
 /// Clamps to an upper bound of 0x7c00 (RGB555 maximum blue), with no lower
 /// bound.
-s32 Graphics_ClampRgb555Component(s32 val) {
+s32 PaletteFade_ClampShiftedComponent(s32 val) {
   if (val > 0x7c00)
     val = 0x7c00;
   return val;
@@ -1913,7 +1911,7 @@ void FadeOverlay_DrawMarks(void) {
 /// Clears the overlay tiles to colour 1, sets the blend registers and starts
 /// FadeOverlay_DrawMarks at priority 0x480 on a 28-byte work block whose last
 /// word is the object (the selected owner's when none is given).
-void BattleEffect_StartFadeOverlay(void *object) {
+void FieldEffect_StartFadeOverlay(void *object) {
   u32 *work;
   u8 *tiles;
   volatile u32 fill;
@@ -2095,7 +2093,7 @@ void Func_080d1e18(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
 
 /// Finds the battle effect definition of id among the first 243 entries; when
 /// none matches it returns entry 243.
-struct BattleFxDefinition *BattleEffect_FindDefinition(u32 id) {
+struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
   struct BattleFxDefinition *entry = gData_080f0308;
   u32 index = 0;
 
@@ -2110,7 +2108,7 @@ struct BattleFxDefinition *BattleEffect_FindDefinition(u32 id) {
   return entry;
 }
 
-s32 BattleEffect_GetAnimationValue(u32 objectId) {
+s32 Speaker_GetActorSprite(u32 objectId) {
   struct BattleRenderObject *object =
       (struct BattleRenderObject *)ObjectTable_Get(objectId);
 
@@ -2124,15 +2122,15 @@ s32 BattleEffect_GetAnimationValue(u32 objectId) {
 #include "module/field/screen_transition.h"
 #include "resource_ids.h"
 
-/* VIEW(definition_flags): routine BattleEffect_GetAnimationValue as s32
- * BattleEffect_GetAnimationValue(void); the definition has s32
- * BattleEffect_GetAnimationValue(u32 objectId); tried as the definition's s32
- * BattleEffect_GetAnimationValue(u32 objectId), which the object already
+/* VIEW(definition_flags): routine Speaker_GetActorSprite as s32
+ * Speaker_GetActorSprite(void); the definition has s32
+ * Speaker_GetActorSprite(u32 objectId); tried as the definition's s32
+ * Speaker_GetActorSprite(u32 objectId), which the object already
  * declares, it does not compile in tla-ja:
  * games/tla/src/field/object/f0cf050.c:2239: too few arguments to function
- * `BattleEffect_GetAnimationValue'. */
+ * `Speaker_GetActorSprite'. */
 extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
-    "BattleEffect_GetAnimationValue");
+    "Speaker_GetActorSprite");
 
 /// Returns the voice sound of sprite id's messages, its definition's value
 /// plus 0x100, or 0 for none (0xff) or with option 3
@@ -2143,13 +2141,13 @@ s32 Speaker_GetVoice(s32 id) {
   u8 value;
 
   if (party->battleFxEnabled == 0 ||
-      (value = BattleEffect_FindDefinition(id)->value) == 0xff)
+      (value = Speaker_FindDefinition(id)->value) == 0xff)
     return 0;
   return value + 0x100;
 }
 
 u8 BattleEffect_GetFlags(void) {
-  return BattleEffect_FindDefinition(
+  return Speaker_FindDefinition(
              BattleEffect_GetAnimationValue__definition_flags())
       ->flags;
 }

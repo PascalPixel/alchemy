@@ -50,7 +50,7 @@ s32 LuckyDice_Start(void) {
 
 /// Resets the scene camera and its projection.
 // As The Broken Seal's.
-void Camera_ResetSceneDefaults(void) {
+void Camera_ResetViewDefaults(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;
   s32 *result;
@@ -67,10 +67,10 @@ void Camera_ResetSceneDefaults(void) {
   gCameraSceneParameters[4] = 0;
   state->unk18 = 0;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition(&state->pos[0]);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  Transform_ApplyYaw((s16)state->yaw);
+  Transform_ApplyPitch((s16)state->pitch);
 
   local.x = 0;
   local.y = 0;
@@ -293,7 +293,7 @@ void LuckyDice_Run(void) {
   sprites = HeapSlot_AllocEwram(180, 0x614);
   camera = HeapSlot_AllocEwram(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
-  Camera_ResetSceneDefaults();
+  Camera_ResetViewDefaults();
   Task_ResetAll();
   gRenderOamEnabled = 0;
 
@@ -316,9 +316,9 @@ void LuckyDice_Run(void) {
   // The Broken Seal's LuckyDice_Run does; typed calls keep the cell buffer
   // in a register for the transfer after each decode (137 against 108).
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
 #else
-  Call2((void (*)())Resource_DecodeType01, resourceAddress,
+  Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
   Dma_Set(Ram_MapCellBuffer, (void *)0x06004000,
@@ -331,9 +331,9 @@ void LuckyDice_Run(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
 #else
-  Call2((void (*)())Resource_DecodeType01, resourceAddress,
+  Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
   Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
@@ -414,7 +414,7 @@ void LuckyDice_Run(void) {
       LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
                                   256);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 
     spriteCount = 0;

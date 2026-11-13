@@ -71,8 +71,8 @@ void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
                               s32 frames);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
+void Transform_ApplyRoll(s32 angle);
+void Transform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18b868): routine Render_DrawModelList as void
@@ -198,12 +198,12 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           alpha = 0;
         if (alpha > -64) {
           model->alpha = alpha;
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((BITE_ANCHOR(i)->x - 128) << 16,
                         (BITE_ANCHOR(i)->y - 64) << 16, 0);
-          SceneTransform_ApplyRoll((i << 14) + 0x2000);
-          SceneTransform_ApplyPitch(-0x1000);
+          Transform_ApplyRoll((i << 14) + 0x2000);
+          Transform_ApplyPitch(-0x1000);
           Func_0801521c(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList__f18b868(model);

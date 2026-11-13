@@ -713,7 +713,7 @@ void TileMap_ConvertBuffer(s32 map, void *destination) {
   entry = gData_0802f380[map];
   buffer = Heap_Alloc(0x200);
   backdrop = *(s16 *)0x05000000;
-  Resource_DecodeType01(
+  Decompress_TaggedLz(
       Resource_GetTableEntry(entry[1] + (u32)&ResourceId_Map000), buffer);
   buffer[0] = backdrop;
   Dma_Set(buffer, destination, DMA_COPY_WORDS(112), REG_DMA3);

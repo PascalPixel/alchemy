@@ -494,7 +494,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = gBlitter;
@@ -613,11 +613,11 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= 8 && frame <= 17) {
         s32 scale = Trig_Sin(((frame - 8) << 11) + 0x3000) * 612 >> 8;
 
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160((targetPosition.x / 2 - 64) << 16,
                       (targetPosition.y - 64) << 16, 0);
-        SceneTransform_ApplyPitch(0x4000);
-        SceneTransform_ApplyYaw(0x2000);
+        Transform_ApplyPitch(0x4000);
+        Transform_ApplyYaw(0x2000);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
         Render_TransformVertices(gData_08199210, corners, 4);
         Render_DrawModelList(model);
@@ -890,7 +890,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
               43);
       HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
 
     // The first 32 flecks turn 0x400, rise 5 pixels and widen 4 pixels a

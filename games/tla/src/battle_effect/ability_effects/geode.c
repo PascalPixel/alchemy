@@ -20,8 +20,8 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattlePlayback_StartFar(s32 phase);
@@ -332,12 +332,12 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       model->vertices = projected;
       model->scrollU = 0;
       model->scrollV = 0;
-      Render_ResetTransformState();
+      Transform_Reset();
       if (frame > 7) {
         pitch += Trig_Sin(frame * 924 - 7392) >> 5;
-        SceneTransform_ApplyPitch(pitch * 3 / 2);
+        Transform_ApplyPitch(pitch * 3 / 2);
       }
-      SceneTransform_ApplyYaw(frame << 9);
+      Transform_ApplyYaw(frame << 9);
       Render_TransformVertices(vertices, projected, 256);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -381,14 +381,14 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
           continue;
         }
         rings->shade = shade;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160((target.x / 2 - 64) << 16, Data_08198b5a[i] << 16, 0);
         SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale >> 1);
-        SceneTransform_ApplyPitch(1000);
+        Transform_ApplyPitch(1000);
         if (i & 1) {
-          SceneTransform_ApplyYaw((i * 4 + frame) << 11);
+          Transform_ApplyYaw((i * 4 + frame) << 11);
         } else {
-          SceneTransform_ApplyYaw((i * 4 - frame) << 11);
+          Transform_ApplyYaw((i * 4 - frame) << 11);
         }
         Render_TransformVertices(Data_08199050, ring, 32);
         Render_DrawModelList(rings);

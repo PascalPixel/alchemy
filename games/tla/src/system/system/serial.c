@@ -59,7 +59,7 @@ void Serial_Initialize(void) {
   gSerialSendSize = 0;
   gSerialReceiveDest = 0;
   gSerialReceivedSize = 0;
-  BattleLink_ResetTransferState();
+  LinkBattle_ResetTransferState();
   IRQ_UNLOCK(interruptEnable);
 }
 
@@ -449,7 +449,7 @@ s32 Serial_GetActiveTransfers(void) {
   return flags;
 }
 
-void BattleLink_ResetTransferState(void) {
+void LinkBattle_ResetTransferState(void) {
   struct SerialTransferState *state;
   volatile u16 *ime;
   u32 saved;

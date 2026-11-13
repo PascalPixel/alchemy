@@ -33,19 +33,19 @@ HeapSlot_Release:
 	.global Func_02000560
 	.thumb_func
 Func_02000560:
-	overlay_veneer Resource_DecodeType01Far
-	.global Resource_ResetEntry
+	overlay_veneer Decompress_TaggedLzFar
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -57,7 +57,7 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:

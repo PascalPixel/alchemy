@@ -7,7 +7,7 @@
 
 void wait(s32 frames);
 void System_WaitForFrameInterrupt(void);
-void Render_ResetFrame(void);
+void Oam_ResetFrame(void);
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 u32 Random16(void);
@@ -90,10 +90,10 @@ void LuckyDice_Run(void);
 void Actor_WaitForValue16Far(struct Actor *);
 void Actor_NoOp(void);
 void Actor_SetMotionActionCallback(struct Actor *, s32);
-void Resource_LoadCode(u32 index, void *destination);
+void Overlay_Load(u32 index, void *destination);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 void ResourceMetadata_ClearRecord(void *destination);
-void NumberText_FormatHex(u32);
+void String_FormatHex(u32);
 
 void Iwram_Halt(void);
 

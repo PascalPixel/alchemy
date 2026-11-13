@@ -455,7 +455,7 @@ struct EffectSprite {
 struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
                                    s32 flags) {
   struct EffectSprite *found = NULL;
-  s32 vramEntry = Resource_FindFreeEntry();
+  s32 vramEntry = VramCache_FindFreeEntry();
   struct EffectSprite *sprite = Ram_HeapSlots->unk0c[1];
   s32 i = 0;
   struct ObjectSystemWork *objects;

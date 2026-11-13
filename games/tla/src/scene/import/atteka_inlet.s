@@ -17,15 +17,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
-	.global Map_CopyCellPictureIndicesRect
+	overlay_veneer GameFlag_ClearFar
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -58,10 +58,10 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_MoveToAndWaitById
 	.thumb_func
 Actor_MoveToAndWaitById:
@@ -122,10 +122,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
@@ -138,10 +138,10 @@ Actor_ShowEmoteById:
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_020010e0
 	.thumb_func
 Func_020010e0:

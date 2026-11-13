@@ -7,9 +7,9 @@
 #include "ram_buffer.h"
 #include "resource_ids.h"
 
-void NumberText_FormatHex(u32 value) {
+void String_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
-  const u8 *digits = gText_HexDigits;
+  const u8 *digits = gString_HexDigits;
   s32 index = 7;
 
   do {
@@ -24,7 +24,7 @@ void NumberText_FormatHex(u32 value) {
   }
 }
 
-void NumberText_FormatDecimal(s32 value) {
+void String_FormatDecimal(s32 value) {
   s32 negative;
   s32 i;
   s32 q;
@@ -103,7 +103,7 @@ void DebugText_PrintHex(u32 value, s32 digits) {
   if ((n - 1) > 7U) {
     n = 8;
   }
-  NumberText_FormatHex(value);
+  String_FormatHex(value);
   DebugText_Print((const u8 *)(((u32)&gNumberTextHexEnd) - n));
 }
 
@@ -115,7 +115,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
   if ((n - 1) > 9U) {
     n = 10;
   }
-  NumberText_FormatDecimal(value);
+  String_FormatDecimal(value);
   DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }
 
@@ -163,7 +163,7 @@ void Window_LoadGraphics(void) {
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }
 
-void Palette_LoadBasicObjColors(void) {
+void Palette_LoadBasicSpriteColors(void) {
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }

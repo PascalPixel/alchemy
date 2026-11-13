@@ -65,7 +65,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
+  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -78,7 +78,7 @@ retry:
     angle = (angle + 0x2000) & 0xc000;
   }
   FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -116,8 +116,8 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -148,14 +148,14 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   System_Wait(2);
   goto retry;
 changed:
@@ -228,7 +228,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
+  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -241,7 +241,7 @@ retry:
     angle = (angle + 0x2000) & 0xc000;
   }
   FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -259,7 +259,7 @@ retry:
   Actor_SetMoveTarget(object, x, object->y, z);
   Func_02001fe0(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->update = (void (*)(void))Func_020016b0;
   goto walk;
 walkNext:
@@ -275,8 +275,8 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -307,14 +307,14 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   System_Wait(2);
   goto retry;
 changed:

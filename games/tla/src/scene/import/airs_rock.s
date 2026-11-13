@@ -42,10 +42,10 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
 	.global DebugText_Clear
 	.thumb_func
 DebugText_Clear:
@@ -65,11 +65,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02003b28
 	.thumb_func
 Func_02003b28:
@@ -98,14 +98,14 @@ Map_CenterOnFollowedPoint:
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Script_WaitForEventTimeout
+	.global Actor_WaitForMove
 	.thumb_func
-Script_WaitForEventTimeout:
+Actor_WaitForMove:
 	overlay_veneer Actor_CommitPosition
-	.global Map_CopyCellPictureIndicesRect
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Func_02003b70
 	.thumb_func
 Func_02003b70:
@@ -122,14 +122,14 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_SetStateFlags
+	.global Actor_SetBlendMode
 	.thumb_func
-Animation_SetStateFlags:
-	overlay_veneer Animation_SetStateFlagsFar
-	.global Map_SetScreenShake
+Actor_SetBlendMode:
+	overlay_veneer Actor_SetBlendModeFar
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
 	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
 MapGrid_WaitForShakeToSettle:
@@ -178,10 +178,10 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -190,18 +190,18 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02003c30
 	.thumb_func
 Func_02003c30:

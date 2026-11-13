@@ -57,11 +57,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02001fe0
 	.thumb_func
 Func_02001fe0:
@@ -86,22 +86,22 @@ Func_02002000:
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Script_WaitForEventTimeout
+	.global Actor_WaitForMove
 	.thumb_func
-Script_WaitForEventTimeout:
+Actor_WaitForMove:
 	overlay_veneer Actor_CommitPosition
-	.global Map_CopyCellPictureIndicesRect
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer MapGrid_GetTerrainHeightFar
-	.global GetMapCellCollision
+	.global MapGrid_GetCellBehaviorAt
 	.thumb_func
-GetMapCellCollision:
-	overlay_veneer GetMapCellCollisionFar
+MapGrid_GetCellBehaviorAt:
+	overlay_veneer MapGrid_GetCellBehaviorAtFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -110,10 +110,10 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_SetStateFlags
+	.global Actor_SetBlendMode
 	.thumb_func
-Animation_SetStateFlags:
-	overlay_veneer Animation_SetStateFlagsFar
+Actor_SetBlendMode:
+	overlay_veneer Actor_SetBlendModeFar
 	.global Func_02002048
 	.thumb_func
 Func_02002048:
@@ -186,10 +186,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -206,14 +206,14 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
-	.global Camera_MoveWithinMapBounds
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

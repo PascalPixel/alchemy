@@ -51,7 +51,8 @@ void Func_0802c58c(void) {
         tile = (((y0 + row) & 31) << 5) + ((x0 + col) & 31);
         tile = window->tileIds[tile];
         tile += layer << 10;
-        if (Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) != 0)
+        if (WorldMap_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) !=
+            0)
           return;
       }
     }
@@ -97,41 +98,41 @@ void Func_0802c58c(void) {
     {
       u8 *anim = Data_0202d000;
       BattleEffect_LoadBufferPaletteFar(buffer);
-      Resource_DecodeType01(Resource_GetTableEntry(resources[1]), anim);
+      Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), anim);
       TilesetAnim_StartAll((const u16 *)anim);
     }
-    Resource_DecodeType01(Resource_GetTableEntry(resources[2]), gMapCollision);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[2]), gMapCollision);
     break;
   }
   case 11:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
     break;
   case 10:
     Dma_Set(gData_02038000, (void *)0x06008000, 0x84000800, REG_DMA3);
     break;
   case 9:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
     break;
   case 8:
     Dma_Set(gData_0203a000, (void *)0x0600a000, 0x84000800, REG_DMA3);
     break;
   case 7:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gData_0203c000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
     break;
   case 6:
     Dma_Set(gData_0203c000, (void *)0x0600c000, 0x84000800, REG_DMA3);
     break;
   case 5:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[6]), gData_0203e000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
     break;
   case 4:
     Dma_Set(gData_0203e000, (void *)0x0600e000, 0x84000800, REG_DMA3);
     break;
   case 3:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
     break;
   case 1:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
     break;
   }
   window->reloadSteps--;
@@ -173,12 +174,12 @@ void MapAnimation_Start(void) {
   active = &work->animationActive;
   one = 1;
   *active = one;
-  Task_SuspendAll(MapAnimation_Update);
+  Task_SuspendAll(TilesetAnim_Update);
   work->picturePending = one;
   resources = work->resources;
-  Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
   if (work->extraTiles != 0)
-    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
   work->extraTiles = 0;
   Dma_Set((void *)0x06004000, gData_0201c000, DMA_COPY_WORDS(0x2000 / 4),
           REG_DMA3);
@@ -222,43 +223,42 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[3]), gData_02038000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gData_0203c000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[6]), gData_0203e000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
   gData_030011f8 = Map_ShowBg1FromBuffer;
   state->windowTop = 0;
   state->windowBottom = 159;
   wait(1);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), buffer);
-  Map_UpdateCurrentTileBlock();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
+                      buffer);
+  WorldMap_UpdateCurrentTileBlock();
   state->animationActive = 0;
-  Task_ResumeAll(MapAnimation_Update);
+  Task_ResumeAll(TilesetAnim_Update);
   state->picturePending = 0;
   state->pictureShown = 0;
   Func_0802d088(state->area, 0);
   wait(1);
 }
 
-void Map_LoadDefaultCellsAndUpdateBlock(void) {
+void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->mapWork;
 
   gData_030011f8 = Map_ShowBg1FromBuffer;
   work->windowTop = 0;
   work->windowBottom = 0x9f;
   wait(1);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
-      Ram_MapCellBuffer);
-  Map_UpdateCurrentTileBlock();
-  Task_ResumeAll(MapAnimation_Update);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
+                      Ram_MapCellBuffer);
+  WorldMap_UpdateCurrentTileBlock();
+  Task_ResumeAll(TilesetAnim_Update);
   wait(1);
 }
 
-void MapAnimation_Update(void) {
+void TilesetAnim_Update(void) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
   u32 i;
 
@@ -353,18 +353,18 @@ void TilesetAnim_StartAll(const u16 *script) {
     }
     command = *script++;
   }
-  if (count != 0 && Task_Find(MapAnimation_Update) == -1)
-    Task_Add(MapAnimation_Update, TASK_PASS_VBLANK);
+  if (count != 0 && Task_Find(TilesetAnim_Update) == -1)
+    Task_Add(TilesetAnim_Update, TASK_PASS_VBLANK);
 }
 
 void Map_EnableUpdateCallback(void) {
   if (((struct MapViewWork *)Ram_HeapSlots->mapWork)->animationActive == 0)
-    Task_SuspendAll(MapAnimation_Update);
+    Task_SuspendAll(TilesetAnim_Update);
 }
 
 void Map_DisableUpdateCallback(void) {
   if (((struct MapViewWork *)Ram_HeapSlots->mapWork)->animationActive == 0)
-    Task_ResumeAll(MapAnimation_Update);
+    Task_ResumeAll(TilesetAnim_Update);
 }
 
 void BlendScript_Run(void) {
@@ -422,7 +422,7 @@ count_down:
   state->delay = value + 0xffff;
 }
 
-void DisplayBlend_StartScript(u16 *script) {
+void BlendScript_Start(u16 *script) {
   struct BlendScriptState *state;
   s32 started;
   volatile u32 zero;
@@ -445,13 +445,9 @@ void DisplayBlend_StartScript(u16 *script) {
     Task_Add((s32)(BlendScript_Run), TASK_PASS_VBLANK);
 }
 
-void DisplayBlend_EnableRunScript(void) {
-  Task_SuspendAll((u32)BlendScript_Run);
-}
+void BlendScript_Suspend(void) { Task_SuspendAll((u32)BlendScript_Run); }
 
-void DisplayBlend_DisableRunScript(void) {
-  Task_ResumeAll((u32)BlendScript_Run);
-}
+void BlendScript_Resume(void) { Task_ResumeAll((u32)BlendScript_Run); }
 
 #include "palette_snapshots.h"
 
@@ -482,15 +478,13 @@ void PaletteCycle_Initialize(void) {
 #include "../palqueue_add.c"
 
 void PaletteQueue_Stop(void) {
-  Task_Remove(PaletteQueue_StepCycles);
+  Task_Remove(PaletteCycle_Step);
   HeapSlot_Release(112);
 }
 
-void PaletteQueue_Start(void) {
-  Task_Add(PaletteQueue_StepCycles, TASK_PASS_VBLANK);
-}
+void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK); }
 
-void PaletteQueue_StepCycles(void) {
+void PaletteCycle_Step(void) {
   struct PaletteSnapshotWork *work = gPaletteWork;
   u8 i;
   u16 count = work->count & 3;
@@ -936,7 +930,7 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
   return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
 }
 
-u8 GetMapCellCollision(s32 layer, s32 x, s32 y) {
+u8 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapWork *state;
   struct MapCell *cells;
 
@@ -951,7 +945,7 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   return cells->collisionCode;
 }
 
-void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
+void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
 
   x >>= 20;

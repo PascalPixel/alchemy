@@ -307,7 +307,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       command = selectionUi->commandKinds[0];
       break;
     }
-    QueueIoWriteDelay2(0x04000000, 0x1741);
+    IoWriteQueue_Store16(0x04000000, 0x1741);
     work->holdTilemapUpload = 0;
     wait(1);
   }
@@ -316,7 +316,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   else
     NAVIGATION->commandSelection[0] = selectionUi->selectedIndex;
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
-    Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
+    VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
   work->holdTilemapUpload = 1;
   Window_Close(selectionUi->window, 1);
   {

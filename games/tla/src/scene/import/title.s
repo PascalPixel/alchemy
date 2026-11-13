@@ -18,18 +18,18 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Func_020005ac
 	.thumb_func
 Func_020005ac:
@@ -42,14 +42,14 @@ Resource_GetTableEntry:
 	.thumb_func
 Resource_ReservedNoOp:
 	overlay_veneer Resource_ReservedNoOpFar
-	.global Fade_ToBlack
+	.global ScreenFade_ToBlack
 	.thumb_func
-Fade_ToBlack:
-	overlay_veneer Fade_ToBlackFar
-	.global Fade_Wait
+ScreenFade_ToBlack:
+	overlay_veneer ScreenFade_ToBlackFar
+	.global ScreenFade_Wait
 	.thumb_func
-Fade_Wait:
-	overlay_veneer Fade_WaitFar
+ScreenFade_Wait:
+	overlay_veneer ScreenFade_WaitFar
 	.global Func_020005d4
 	.thumb_func
 Func_020005d4:
@@ -97,7 +97,7 @@ Func_02000624:
 	.global Func_0200062c
 	.thumb_func
 Func_0200062c:
-	overlay_veneer Title_ShowSplashScreenFar
+	overlay_veneer Title_ShowNintendoLogoFar
 	.global Func_02000634
 	.thumb_func
 Func_02000634:

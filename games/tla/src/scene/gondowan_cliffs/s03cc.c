@@ -562,8 +562,8 @@ void Func_02000fcc(s32 unused, s32 value) {
   if (!Event_GetFlag(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Resource_DecodeType01(gField_Tiles64D, buffer);
-  work->entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(gField_Tiles64D, buffer);
+  work->entry = VramCache_FindFreeEntry();
   Vram_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);

@@ -50,15 +50,15 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -173,7 +173,7 @@ void Func_08179e6c(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_StepPaletteToResource(s32 palette);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
@@ -263,7 +263,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
       Iwram_CopyWordsEntry((void *)0x050003e0, e, 32);
       e += 32;
-      Resource_DecodeType01(e, source);
+      Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
         struct FloraObject *obj =
@@ -288,7 +288,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
       e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
       e += 480;
-      Resource_DecodeType01(e, source);
+      Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
         struct FloraObject *obj = Func_0815b290__f179f18(32, 32, 0x80002000, 0);
@@ -674,13 +674,13 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         }
         model->shade = sh;
         if (sh > -64) {
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(Data_08199446[i] << 16, Data_0819944a[i] << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          SceneTransform_ApplyRoll(Data_08199436[i]);
-          SceneTransform_ApplyPitch(Data_0819943e[i]);
+          Transform_ApplyRoll(Data_08199436[i]);
+          Transform_ApplyPitch(Data_0819943e[i]);
           Func_0801521c(scale);
-          SceneTransform_ApplyYaw(frame << 11);
+          Transform_ApplyYaw(frame << 11);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
         }
@@ -688,14 +688,14 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     Heap_Release(model);
     Heap_Release(verts);
-    Render_ResetTransformState();
-    SceneTransform_ApplyPitch(0x9400);
-    SceneTransform_ApplyYaw(0x6800);
+    Transform_Reset();
+    Transform_ApplyPitch(0x9400);
+    Transform_ApplyYaw(0x6800);
     if (frame == 156) {
       spin = 512;
       angle = 0;
     }
-    SceneTransform_ApplyRoll(angle);
+    Transform_ApplyRoll(angle);
     if (frame == 156) {
       Sound_PlayFar(142);
     }
@@ -780,9 +780,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       sy = 36 - c;
       dot[0] = c;
       dot[1] = c;
-      SceneTransform_ApplyRoll(frame << 10);
+      Transform_ApplyRoll(frame << 10);
       if (frame <= 221) {
-        SceneTransform_ApplyPitch(sy << 10);
+        Transform_ApplyPitch(sy << 10);
       }
       if (sx < 0) {
         sx = 0;
@@ -849,7 +849,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   for (i = 0; i != 44; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   Dma_Set((const void *)OBJ_PLTT, (void *)0x050000a0, 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)0x050000bc = *(u16 *)0x050001e8;
@@ -882,7 +882,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
 
     Iwram_CopyWordsEntry((void *)BG_PLTT, e, 32);
     e += 32;
-    Resource_DecodeType01(e, SheetOf(work));
+    Decompress_TaggedLz(e, SheetOf(work));
     sheet = work->sheet + 0x1000;
     i = 0;
     mask = 15;
@@ -1078,7 +1078,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         y += 8 << 16;
       }
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     gCameraSceneParameters[4] = 104;
 
     // The eight strikes.
@@ -1124,10 +1124,10 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         dagger->velocityX = drift;
         dagger->velocityZ = 0;
       }
-      Render_ResetTransformState();
+      Transform_Reset();
       Func_08015160(dagger->x - (64 << 16), dagger->y - (64 << 16), 0);
       Func_0801521c(0x8000);
-      SceneTransform_ApplyRoll(dagger->z);
+      Transform_ApplyRoll(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)

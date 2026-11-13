@@ -931,7 +931,7 @@ void Func_02000510(void) {
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
-  FieldCamera_FollowActor(5, 1);
+  EventCamera_FollowActor(5, 1);
   Event_End();
 }
 
@@ -973,7 +973,8 @@ void Func_02001a2c(void) {
   Actor_WalkBy(22, 0x1a, 0);
   FieldEvent_Wait(8);
   Actor_SetAnimation(22, 1);
-  Event_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance, 0x63);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance,
+                                       0x63);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 0x62);
   gMainRoutineWork.battleRule24b = 2;
   Call2(Field_RequestBattleFromEncounterTable, 9, 0);
@@ -1288,7 +1289,7 @@ void Func_020023a4(s32 id) {
   work->y = actor->y;
   work->z = actor->z + 0x20000;
   Func_02002824(gField_Tiles64D, work);
-  resource = Resource_FindFreeEntry();
+  resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
   work->tile = tile;
   work->tileTop = tile + 32;
@@ -1328,7 +1329,7 @@ void Func_020023a4(s32 id) {
   }
   FieldTask_Remove(Func_02001fd0);
   Func_02002874(effect);
-  Resource_ResetEntry(resource);
+  VramCache_FreeEntry(resource);
   HeapSlot_Release(220);
 }
 
@@ -1441,7 +1442,7 @@ void Func_020026f4(void) {
   struct SparkSprite__s26f4 *sprite;
 
   Func_02002824(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
-  resource = Resource_FindFreeEntry();
+  resource = VramCache_FindFreeEntry();
   tileBase = Vram_Load(resource, 0x800, work);
   work->tileBase = tileBase;
   work->resource = resource;
@@ -1484,7 +1485,7 @@ void VenusLighthouseEntrance_StopSparks(void) {
   struct SparkWork__sparks *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_0200258c);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 

@@ -59,14 +59,14 @@ const u8 gData_0802eb44[8] = {
 };
 
 /// The order a tile's 64 pixels dissolve in.
-const u8 gMap_TileDissolveOrder[64] = {
+const u8 gSpriteDissolve_PixelOrder[64] = {
     4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
     50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
     11, 56, 33, 7, 30, 35, 36, 32, 42, 62, 21, 13, 2, 22, 45, 14,
     6, 48, 52, 9, 43, 28, 0, 40, 24, 34, 20, 47, 54, 39, 38, 18,
 };
 
-const u16 gMap_TileDissolveTail = 0x01ff;
+const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
 /// Two 1.0s (Q16), The Lost Age's own.
 const s32 gData_0802eb90[2] = {
@@ -94,7 +94,7 @@ const s32 gScript_MainScript[1] = {
     SC_END,
 };
 
-const s16 gScript_MainScriptTail[8] = {
+const s16 gActorScript_EndScriptTail[8] = {
     0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
 };
 

@@ -42,7 +42,7 @@ void Func_02000478(s32 radius, u32 count) {
   s32 angle;
 
   object = Actor_Get(8);
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   options.priority = ((struct FieldSprite *)object->sprite)->priority;
@@ -67,7 +67,11 @@ next:
 #define ACTOR(id) (Actor_Get(id))
 #define FIELD(p, off) (*(s32 *)((u8 *)(p) + (off)))
 
-/* VIEW(s0478): tag struct EventWorkView as struct EventWorkView__s0478; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mt_aleph_summit/s0478.c:108: dereferencing pointer to incomplete type. */
+/* VIEW(s0478): tag struct EventWorkView as struct EventWorkView__s0478;
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mt_aleph_summit/s0478.c:108: dereferencing pointer to
+ * incomplete type. */
 struct EventWorkView__s0478 {
   u8 unk000[0x1ac];
   s32 unk1ac;
@@ -92,7 +96,8 @@ s32 Scene_Initialize(void) {
 
   buffer = Heap_AllocEwram(0x200);
   Window_LoadGraphics();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   Actor_SetPosition(4, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
@@ -100,8 +105,7 @@ s32 Scene_Initialize(void) {
   } else if (mode == 2) {
     FieldCamera_MoveTo(0x1000000, -1, 0x800000, 0);
     FieldCamera_SetSpeed(0x10000, 0x2000);
-    Call2((void (*)())Actor_SetSingleChildFlags,
-          (s32)(s32)Actor_Get(8), 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, (s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
     ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
@@ -299,8 +303,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(50);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    Call2((void (*)())Actor_SetSingleChildFlags,
-          (s32)(s32)Actor_Get(9), 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, (s32)(s32)Actor_Get(9), 0);
     Actor_WalkToAndWait(9, 216, 96);
     Actor_FaceDirection(8, 0x2000, 0);
     Actor_ShowEmote(8, 0x102, 30);
@@ -532,8 +535,7 @@ s32 Scene_Initialize(void) {
       if (*held & 1)
         break;
       if (j == 0) {
-        Call2((void (*)())Actor_SetSingleChildFlags,
-              (s32)(s32)Actor_Get(8), 0);
+        Call2((void (*)())Actor_SetSingleChildFlags, (s32)(s32)Actor_Get(8), 0);
         Actor_SetAnimation(8, 12);
       }
     }

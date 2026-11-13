@@ -13,11 +13,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -46,10 +46,10 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_Stop:
 	overlay_veneer Actor_StopFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToAndWaitById
 	.thumb_func
 Actor_WalkToAndWaitById:
@@ -114,18 +114,18 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -154,14 +154,14 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Party_PlaySavedMusic
+	.global Scene_PlayMusic
 	.thumb_func
-Party_PlaySavedMusic:
-	overlay_veneer Party_PlaySavedMusicFar
-	.global Actor_OffsetPositionAndReset
+Scene_PlayMusic:
+	overlay_veneer Scene_PlayMusicFar
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

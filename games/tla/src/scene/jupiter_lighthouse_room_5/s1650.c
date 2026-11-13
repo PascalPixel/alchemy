@@ -71,7 +71,11 @@ void Func_02001650(s32 count) {
 #include "actor.h"
 #include "main_routine_work.h"
 
-/* VIEW(s1650): routine Func_020029f0 as s32 Func_020029f0(struct Actor *object); module/scene/scene.h has void Func_020029f0(struct FieldEffect *effect, s32 mode); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5/s1650.c:98: too few arguments to function `Func_020029f0'. */
+/* VIEW(s1650): routine Func_020029f0 as s32 Func_020029f0(struct Actor
+ * *object); module/scene/scene.h has void Func_020029f0(struct FieldEffect
+ * *effect, s32 mode); tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5/s1650.c:98:
+ * too few arguments to function `Func_020029f0'. */
 extern s32 Func_020029f0__s1650(struct Actor *object) __asm__("Func_020029f0");
 
 void Func_02001718(const s32 *from, const s32 *to) {
@@ -89,8 +93,9 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->to[0] = to[0];
   work->to[1] = to[1];
   work->to[2] = to[2];
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
+                      work);
+  entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x400, work);
   work->tile = tile;
   work->vramEntry = entry;
@@ -127,7 +132,7 @@ void Func_0200185c(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_02001538);
-  Resource_ResetEntry(work->vramEntry);
+  VramCache_FreeEntry(work->vramEntry);
   HeapSlot_Release(220);
 }
 
@@ -135,25 +140,29 @@ extern struct LightOam gData_02003488[];
 
 void Func_020027d8(struct LightOam *oam, s32 depth);
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 DEFINE_FUNC_02000AAC(Func_02001888, gData_02003444, gData_02003488,
-    gData_02003446, gData_02003448, gData_02003548, gData_0200354a,
-    Func_020029f0__s1650, Func_020027d8)
+                     gData_02003446, gData_02003448, gData_02003548,
+                     gData_0200354a, Func_020029f0__s1650, Func_020027d8)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_FUNC_02000A98(Func_02001a44, gData_02003448, gData_02003444,
-    Func_02001888, gData_02003446, gData_02003548, gData_0200354a)
+                     Func_02001888, gData_02003446, gData_02003548,
+                     gData_0200354a)
 
 DEFINE_FUNC_02000CE8(Func_02001ac4, gData_02003448, gData_02003444,
-    Func_02001888, gData_02003446, gData_02003548, gData_0200354a)
+                     Func_02001888, gData_02003446, gData_02003548,
+                     gData_0200354a)
 
 DEFINE_FUNC_02000D68(Func_02001b44, gData_02003448, gData_02003444,
-    Func_02001888, gData_02003446, gData_02003548, gData_0200354a)
+                     Func_02001888, gData_02003446, gData_02003548,
+                     gData_0200354a)
 
 DEFINE_FUNC_02000DF0(Func_02001bcc, gData_02003446, gData_02003448)
 

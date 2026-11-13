@@ -382,9 +382,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
   wait(1);
-  Resource_ResetEntry(cursorHandle);
+  VramCache_FreeEntry(cursorHandle);
   for (i = 0; i < 5; i++)
-    Resource_ResetEntry(iconSlots[i]);
+    VramCache_FreeEntry(iconSlots[i]);
   wait(1);
   return result;
 }

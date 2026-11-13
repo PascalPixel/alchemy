@@ -179,8 +179,8 @@ void Func_080e2acc(void) {
 
   work->frame = 0;
   work->active = 1;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Leaves), work);
-  resource = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Leaves), work);
+  resource = VramCache_FindFreeEntry();
   vram = VramCache_Load(resource, 384, work);
   work->resource = resource;
   work->vram = vram;

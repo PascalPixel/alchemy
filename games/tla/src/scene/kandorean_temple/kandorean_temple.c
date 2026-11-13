@@ -152,7 +152,7 @@ void Func_020004a8(void) {
     Event_Wait(20);
     Event_SetMessageId((s32)&MsgKandoreanTemple11);
     Event_ShowMessageAndWait(14, 0);
-    Actor_ArmCallbackAndRefresh(14, FACING_SOUTHEAST);
+    Actor_FaceDirectionById(14, FACING_SOUTHEAST);
     Event_Wait(30);
     Actor_SetModeById(14, 3);
     Motion_SetModeAndWaitAnimation(4, 3);
@@ -161,8 +161,8 @@ void Func_020004a8(void) {
     Actor_SetModeById(14, 2);
     object = Actor_GetById(4);
     if (object)
-      Actor_ResetAndSetPosition(14, ((s16 *)&object->x)[1],
-                                ((s16 *)&object->z)[1]);
+      Actor_SetDestinationById(14, ((s16 *)&object->x)[1],
+                               ((s16 *)&object->z)[1]);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     Event_End();
@@ -358,7 +358,7 @@ void Func_02000930(struct Actor *object, s32 priority) {
   Actor_SetSingleChildFlags(object, 0);
   Func_02005130(object, 2);
   Actor_StartScript(object, gData_02005494);
-  Actor_SetPartAttribute(object, 9);
+  Actor_SetSpriteColor(object, 9);
   object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
@@ -378,7 +378,7 @@ void Func_0200098c(s32 *position, s32 value) {
     object->timer = timer;
     Func_02000930(object, 3);
     object->update = (void (*)(void))Func_02000864;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -448,7 +448,7 @@ void Func_02000adc(void) {
     object->timer = timer;
     Func_02000930(object, 1);
     object->update = (void (*)(void))Func_02000a0c;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -1202,11 +1202,11 @@ void Func_02001e58(void) {
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWaitById(party->currentOwner, 168, 80);
-  Actor_ArmCallbackAndRefresh(party->currentOwner, FACING_NORTH);
+  Actor_FaceDirectionById(party->currentOwner, FACING_NORTH);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
   Actor_SetMoveTarget(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
-  Script_WaitForEventTimeout(leader);
+  Actor_WaitForMove(leader);
   Actor_SetModeById(party->currentOwner, 10);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -1215,9 +1215,9 @@ void Func_02001e58(void) {
 }
 
 void Func_02001f3c(void) {
-  Map_CopyCellPictureIndicesRect(39, 39, 24, 38, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(39, 39, 24, 38, 2, 2);
   wait(10);
-  Map_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
   wait(20);
   GameFlag_SetBit(0x212);
 }
@@ -1227,7 +1227,7 @@ void Func_02001f7c(void) {
   Event_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 400, 648);
-  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
   if (GameFlag_Test(0x212) == 0) {
     Sound_Play(188);
     Func_02001f3c();
@@ -1335,12 +1335,12 @@ void Func_02002248(void) {
   Event_ResolvePendingActions(0);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 20);
   Sound_Play(132);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 10);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 10);
   leader->velocityY = PIXELS(6);
   wait(20);
   while (leader->velocityY != 0)
     wait(1);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Event_End();
 }
 
@@ -1348,7 +1348,7 @@ void Func_020022c0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(188);
-  Map_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
   MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
   GameFlag_SetBit(0x212);
@@ -1377,8 +1377,8 @@ void Func_02002314(void) {
   Actor_SetModeById(14, 2);
   object = Actor_GetById(4);
   if (object)
-    Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)object + 10),
-                              *(s16 *)((u8 *)object + 18));
+    Actor_SetDestinationById(14, *(s16 *)((u8 *)object + 10),
+                             *(s16 *)((u8 *)object + 18));
   Actor_WaitForMoveById(14);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Event_End();
@@ -1463,7 +1463,7 @@ void Func_0200269c(void) {
 void Func_020026cc(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
   Func_020052e8();
   Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
@@ -1478,7 +1478,7 @@ void Func_020026cc(void) {
   Actor_SetModeById(13, 2);
   Actor_GetById(12)->velocityY = PIXELS(6);
   Actor_GetById(13)->velocityY = PIXELS(6);
-  Actor_ResetAndSetPosition(12, 300, 164);
+  Actor_SetDestinationById(12, 300, 164);
   Actor_MoveToAndWaitById(13, 356, 164);
   Event_Wait(40);
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
@@ -1488,7 +1488,7 @@ void Func_020026cc(void) {
   do {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov653Room3, 3);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov653Room3, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
 }
@@ -1606,7 +1606,7 @@ void Func_02002a84(void) {
       s32 e = 1;
       s32 f = 4;
 
-      Map_CopyCellPictureIndicesRect(41, 0, 20, 0, e, f);
+      MapGrid_CopyCellPictureIndicesRect(41, 0, 20, 0, e, f);
     }
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);

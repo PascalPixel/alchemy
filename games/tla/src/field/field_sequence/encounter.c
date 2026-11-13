@@ -98,7 +98,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
     return 0;
   if (party->renderMode == 7)
     rule = gData_080eef34;
-  behavior = GetWorldMapTerrainBehaviorFar(position, (s32 *)&kind);
+  behavior = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&kind);
   kind %= 20;
   zone = 0;
   for (; rule->kind != -1; rule++) {
@@ -117,7 +117,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
-s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
+s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct EncounterWork *work;
   const struct EncounterZone *entry;
   s32 rate;
@@ -194,17 +194,17 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;
 
-  return Encounter_SelectEnemyGroup(table[index], steps);
+  return Encounter_CountStepsAndSelectFormation(table[index], steps);
 }
 
 /// Chooses a world-map encounter from the terrain zone and step weight.
 s32 Encounter_RollWorldMap(s32 position, s32 steps) {
-  return Encounter_SelectEnemyGroup(
+  return Encounter_CountStepsAndSelectFormation(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)position), steps);
 }
 
 /// Returns the selected group from a fourteen-halfword encounter row.
-u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
+u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
   u16 *table;
   s32 byteOffset;
 
@@ -217,15 +217,15 @@ u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
 }
 
 /// Resolves the Djinni table's zone and slot pair to its enemy group.
-u16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
+u16 Encounter_GetDjinnFormation(s32 djinni) {
   u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
 
 #ifdef UBFIX
-  return Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #else
   // UB: no return statement; the native leaves the called getter's result in
   // r0.
-  Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #endif
 }
 

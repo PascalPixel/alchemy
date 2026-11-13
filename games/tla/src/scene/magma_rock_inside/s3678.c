@@ -58,7 +58,7 @@ s32 Scene_Initialize(void) {
     Func_02000800(8, gData_02005074, 768);
     if (!GameFlag_Test(768)) {
       CLOSED_BLEND();
-      Map_CopyCellPictureIndicesRect(71, 64, 47, 98, 1, 1);
+      MapGrid_CopyCellPictureIndicesRect(71, 64, 47, 98, 1, 1);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2) {
     s32 j;
@@ -111,7 +111,7 @@ s32 Scene_Initialize(void) {
         Func_020034f0();
       } else {
         CLOSED_BLEND();
-        Map_CopyCellPictureIndicesRect(71, 64, 35, 82, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(71, 64, 35, 82, 1, 1);
       }
     } else {
       Actor_GetById(23)->priorityFlags |= 32;
@@ -186,7 +186,7 @@ s32 Scene_Initialize(void) {
       Func_02000694(0, 53, 40, 0);
     } else {
       CLOSED_BLEND();
-      Map_CopyCellPictureIndicesRect(71, 64, 50, 102, 1, 1);
+      MapGrid_CopyCellPictureIndicesRect(71, 64, 50, 102, 1, 1);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room7) {
     i = 0;
@@ -282,12 +282,12 @@ s32 Func_02004ef0(s32 unused, s32 key, s32 value);
 /// On entering, sets each listed pillar from its two flags, then lifts the
 /// leader onto the ground under it.
 DEFINE_FUNC_02002D08(Func_02003f44, Func_02004ed0, Func_02004d20, Func_02004df8,
-    Func_02004ef0, Func_02004c98)
+                     Func_02004ef0, Func_02004c98)
 
 #include "../shared/trial_road.h"
 
 DEFINE_FUNC_0200406C(Func_0200406c, Func_02004e38, Func_02004ef8, Func_02004c98,
-    Func_020046e8, Func_020049c0, Func_0200481c)
+                     Func_020046e8, Func_020049c0, Func_0200481c)
 
 void Func_02004200(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -340,7 +340,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
 DEFINE_FUNC_020030BC(Func_020042f8, Func_020042e0, Func_02004ed0, Func_02004d20,
-    Func_02004df8, Func_02004ef0)
+                     Func_02004df8, Func_02004ef0)
 
 void Func_02004460(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -381,15 +381,15 @@ next:
       Func_02004460(partner, trap);
       wait(1);
       Sound_Play(125);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
       Func_02004c98(partner, 0);
       ObjectVisual_CopyAttributes(id, 9);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(4);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(8), 0);
       Func_020046e8(0);
       Func_02004460(trap, partner);
       wait(1);

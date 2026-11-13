@@ -124,7 +124,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->motionFlags = 0;
         other->speedLimit = 0x10000;
         FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
-        Actor_WaitForMove(other);
+        FieldActor_WaitForMove(other);
         Actor_StartScript(block, gData_02001404);
         Func_0200104c(other);
         other->x = 0;

@@ -145,7 +145,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
 
     // The shards, projected from the battle camera.
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame > 3) {
       BattleEffect_FetchRectangleBlitters(effect->side, draw);

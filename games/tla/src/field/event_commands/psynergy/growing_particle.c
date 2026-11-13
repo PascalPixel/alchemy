@@ -57,10 +57,10 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 void Func_080e42d4(void);
 void *Resource_GetTableEntry(s32 resourceId);
 extern char ResourceId_DustPuffA;
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 /* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void
  * *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has
  * void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct
@@ -75,13 +75,13 @@ extern void Func_080e4510__growing_particle(void *sprite,
                                             s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
-void Animation_SetIndexAndInitializeObjectsFar(struct Actor *object, s32 index);
+void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
-void Camera_FollowActor(s32 actor, s32 mode);
+void FieldCamera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
 /* VIEW(growing_particle): routine Scene_FindPsynergyTrigger as struct
  * PendingEvent *Scene_FindPsynergyTrigger(u32 filter, s32 kind, s32 selector);
@@ -118,9 +118,8 @@ void FieldPsynergy_EndSand(void) {
   gMainRoutineWork__growing_particle[620] = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(Func_080e42d4);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
-                        work);
-  particleEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  particleEntry = VramCache_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   i = 0;
   particle = work + 0x1200;
@@ -134,7 +133,7 @@ void FieldPsynergy_EndSand(void) {
     delay -= 2;
     particle += 28;
   }
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
   // Set before the move: 63 is held in a saved register across both calls.
@@ -142,7 +141,7 @@ void FieldPsynergy_EndSand(void) {
   Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                      owner->z);
   party = gMainRoutineWork__growing_particle;
-  Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
+  Actor_SetFirstSpriteAnimationFar(owner, *(s32 *)(party + 532));
   ((u8 *)owner->sprite)[5] &= mask;
   mask &= ((u8 *)owner->sprite)[7];
   mask |= 128;
@@ -172,7 +171,7 @@ void FieldPsynergy_EndSand(void) {
    * the animation's set, keeps it live in r6 to here; without it, 79 of 332
    * instructions differ in tla-en. */
   asm("" : : "r"(party));
-  pictureEntry = Resource_FindFreeEntry();
+  pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
   Func_080e4510__growing_particle(work + 0x1900, sprite);
   wait(1);
@@ -194,7 +193,7 @@ void FieldPsynergy_EndSand(void) {
       Actor_SetMode(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
       Actor_SetSingleChildFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
-      Camera_FollowActor(*(s16 *)(effect + 24), 1);
+      FieldCamera_FollowActor(*(s16 *)(effect + 24), 1);
       Sound_PlayFar(539);
       if (*(s8 *)(event + 394) == 3) {
         Data_02000452 = 1;
@@ -221,8 +220,8 @@ void FieldPsynergy_EndSand(void) {
     ripple += 3;
   }
   Actor_SetOthersPaused(owner, 0, 16);
-  Resource_ResetEntry(pictureEntry);
-  Resource_ResetEntry(particleEntry);
+  VramCache_FreeEntry(pictureEntry);
+  VramCache_FreeEntry(particleEntry);
   HeapSlot_Release(92);
 }
 

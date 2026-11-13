@@ -45,7 +45,7 @@ s32 Func_02000a64(struct Actor *object) {
   return 0;
 }
 
-void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
+void Actor_SetSpriteColorMode(struct PositionedActor *object, s32 value);
 
 DEFINE_FUNC_0200091C(Func_02000b04)
 
@@ -57,7 +57,12 @@ DEFINE_FUNC_0200091C(Func_02000b04)
 #include "map.h"
 #include "vram_tab.h"
 
-/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4; module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's extern u16 gData_020024f4[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_basement/s098c.c:225: `gData_020024f4' has an incomplete type. */
+/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4;
+ * module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's
+ * extern u16 gData_020024f4[], which the object already declares, it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_basement/s098c.c:225: `gData_020024f4'
+ * has an incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
 void Func_02001bc4(struct LightOam *oam, s32 depth);
@@ -139,13 +144,16 @@ void Func_02000c94(void) {
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_FUNC_02000A98(Func_02000e50, gData_020023f4, gData_020023f0,
-    Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
+                     Func_02000c94, gData_020023f2, gData_020024f4__s098c,
+                     gData_020024f6)
 
 DEFINE_FUNC_02000CE8(Func_02000ed0, gData_020023f4, gData_020023f0,
-    Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
+                     Func_02000c94, gData_020023f2, gData_020024f4__s098c,
+                     gData_020024f6)
 
 DEFINE_FUNC_02000D68(Func_02000f50, gData_020023f4, gData_020023f0,
-    Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
+                     Func_02000c94, gData_020023f2, gData_020024f4__s098c,
+                     gData_020024f6)
 
 DEFINE_FUNC_02000DF0(Func_02000fd8, gData_020023f2, gData_020023f4)
 

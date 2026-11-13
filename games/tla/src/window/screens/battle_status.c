@@ -1156,13 +1156,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     s32 *slot = iconSlots;
 
     for (i = 3; i >= 0; i--)
-      Resource_ResetEntry(*slot++);
+      VramCache_FreeEntry(*slot++);
     slot = statusSlots;
     for (i = 10; i >= 0; i--)
-      Resource_ResetEntry(*slot++);
+      VramCache_FreeEntry(*slot++);
   }
-  Resource_ResetEntry(portraitSlot);
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(portraitSlot);
+  VramCache_FreeEntry(cursorSlot);
   wait(1);
 #if TLA_PATCH_1
   Window_MarkVisibleTextTiles();

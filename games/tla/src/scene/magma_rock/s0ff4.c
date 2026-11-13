@@ -28,14 +28,14 @@ void Func_02000ff4(struct Actor *object) {
 
   if (object->timer > 528) {
     if (object->timer & 2)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (object->timer > 400) {
     if (object->timer & 16)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else {
     object->update = Func_02001738;
     object->timer = 1;
@@ -212,7 +212,7 @@ stop:
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->update = NULL;
   Func_02003a6c(object);
   for (i = 0; i != 16; i++) {
@@ -234,7 +234,7 @@ stop:
     System_Wait(1);
   }
   System_Wait(24);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
   System_Wait(10);
   return Func_02003af4();
@@ -246,13 +246,13 @@ hit:
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->update = NULL;
   Func_02003a6c(object);
   Event_SetFlag(0x2f0);
   Func_02000c08(i);
   Event_ClearFlag(0x2f0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
   System_Wait(10);
   return Func_02003af4();
@@ -270,9 +270,9 @@ void Func_02001444(void) {
   FieldEvent_Wait(10);
   object = work->target;
   object->update = NULL;
-  Actor_SetSpriteColor(object, 7);
+  FieldActor_SetSpriteColor(object, 7);
   FieldEvent_Wait(3);
-  Actor_SetSpriteColor(work->target, 0);
+  FieldActor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
   Func_020011e4(work->target);
   Func_02003af4();
@@ -455,7 +455,7 @@ void Func_02001738(struct Actor *object) {
 
   if ((gFrameCount & 15) == 0)
     Func_02003c4c(object, 136);
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
 
@@ -508,7 +508,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3 - i;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetPartAttribute(part, 3);
+      Actor_SetSpriteColor(part, 3);
     }
     {
       struct Actor *part = parts[0];
@@ -524,7 +524,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetPartAttribute(part, 3);
+      Actor_SetSpriteColor(part, 3);
     }
     id = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
@@ -550,7 +550,7 @@ void Func_02001738(struct Actor *object) {
     fifthPart->update = Func_020015e4;
     object->timer++;
   } else if (object->timer > 364) {
-    Actor_SetPartAttribute(object, 0);
+    Actor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
   // screenStatus read unsigned: as work->screenStatus, 39 of 294 instructions
@@ -641,7 +641,7 @@ void Func_02001c00(void) {
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x260);
   Sound_Play(133);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 6);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
   opt = &options;
@@ -664,7 +664,7 @@ first:
   i++;
   if (i != 8)
     goto first;
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
   gMainRoutineWork.renderMode = 0;
   leader->motionFlags = 3;
   leader->gravity = 0xcccc;
@@ -689,13 +689,13 @@ second:
   Sound_Play(188);
   Actor_SetSingleChildFlags(leader, 1);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-  Call3((void (*)())Map_SetScreenShake, 0x50000, 0x80000, 0x10000);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x50000, 0x80000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
   Actor_SetModeById(gMainRoutineWork.currentOwner, 4);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
   GameFlag_ClearBit(0x260);
   leader->gravity = 0x10000;

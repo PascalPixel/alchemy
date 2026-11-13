@@ -287,7 +287,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
         }
       }
 
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != ROCK_COUNT; i++) {
         struct EffectStep *rock = &work->particles[i];

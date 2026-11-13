@@ -125,8 +125,8 @@ void Func_020001fc(s32 actor) {
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17);
     Event_OpenMessage(actor, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(
-            FieldParty_GetLeaderActor(), 0) == 0) {
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+        0) {
       FieldEvent_Wait(10);
       FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17 + 1);
     } else {
@@ -179,7 +179,7 @@ s32 Scene_Initialize(void) {
              Event_GetFlag(34))
       Actor_SetPosition(18, 0, 0);
     else
-      Actor_SetSpriteColor(Actor_Get(18), 4);
+      FieldActor_SetSpriteColor(Actor_Get(18), 4);
     return 0;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2) {
@@ -211,8 +211,9 @@ void Func_020004dc(void);
 
 void Func_02000470(void) {
   if (Event_GetFlag(0xa39)) {
-    FieldEvent_SetMessageId(Event_GetFlag(0x340) ? (s32)MsgMikasallaInteriors20
-                                            : (s32)MsgMikasallaInteriors21);
+    FieldEvent_SetMessageId(Event_GetFlag(0x340)
+                                ? (s32)MsgMikasallaInteriors20
+                                : (s32)MsgMikasallaInteriors21);
     Event_ShowMessage(18, 0);
   } else {
     Func_020004dc();
@@ -370,12 +371,19 @@ struct Trigger gData_02000bac[] = {
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors31)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020002e4)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_020001fc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors18)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors33)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors34)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors28)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(Func_02000078)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_020000a0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors34)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors28)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     EVENT(Func_02000078)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     EVENT(Func_020000a0)},
     {TRIGGERS_END},
 };

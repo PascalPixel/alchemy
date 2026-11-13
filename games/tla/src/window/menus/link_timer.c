@@ -11,12 +11,18 @@
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
-/* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]. */
-extern struct LinkSignature gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
+/* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature
+ * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]. */
+extern struct LinkSignature
+    gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 
-/* VIEW(countdown): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4); menus has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
-extern void Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
-                             s32 arg4) __asm__("Text_DrawNumberInWindow");
+/* VIEW(countdown): routine Text_DrawNumberInWindow as void
+ * Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32
+ * arg4); menus has void Text_DrawNumberInWindow(s32 value, s32 digits, struct
+ * TargetWindow *window, s32 x, s32 y). */
+extern void
+Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
+                                   s32 arg4) __asm__("Text_DrawNumberInWindow");
 
 void UpdateLinkSessionCountdown(void) {
   struct LinkCountdownState *state =
@@ -48,7 +54,7 @@ void UpdateLinkSessionCountdown(void) {
       }
       newOffset = current + step;
       state->currentOffset = newOffset;
-      Camera_ConfigureSceneFar(newOffset);
+      BattleCamera_SetCommandViewFar(newOffset);
     }
 
     entry = state->entries;
@@ -113,17 +119,25 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlayFar(108);
 
     if (state->displayHandle != 0)
-      Text_DrawNumberInWindow__countdown(seconds, 2, state->displayHandle, 16, 8);
+      Text_DrawNumberInWindow__countdown(seconds, 2, state->displayHandle, 16,
+                                         8);
   }
 
 done:
   return;
 }
 
-/* VIEW(menus): routine Text_FillCanvasBackground as unsigned char Text_FillCanvasBackground(void); module/window/window.h has void Text_FillCanvasBackground(void). */
-extern unsigned char Text_FillCanvasBackground__menus(void) __asm__("Text_FillCanvasBackground");
-/* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); menus has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
-extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
+/* VIEW(menus): routine Text_FillCanvasBackground as unsigned char
+ * Text_FillCanvasBackground(void); module/window/window.h has void
+ * Text_FillCanvasBackground(void). */
+extern unsigned char
+Text_FillCanvasBackground__menus(void) __asm__("Text_FillCanvasBackground");
+/* VIEW(countdown): routine Text_DrawWideStringAtOffset as void
+ * Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); menus has void
+ * Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
+ * s32 y). */
+extern void Text_DrawWideStringAtOffset__countdown(
+    s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
 // The Japanese edition decodes the message (Message_DecodeRaw) into at most 32
 // halfwords; the others copy its text (Message_CopyExpanded) into at most 52.
@@ -135,13 +149,23 @@ extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-/* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32, s32, s32); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
-extern s32 Window_Create__countdown(s32, s32, s32, s32, s32) __asm__("Window_Create");
+/* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32,
+ * s32, s32); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32
+ * width, s32 height, s32 flags). */
+extern s32 Window_Create__countdown(s32, s32, s32, s32,
+                                    s32) __asm__("Window_Create");
 
-/* VIEW(countdown): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32, s16 *, s32); menus has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:977: conflicting types for `Message_CopyExpanded'. */
-extern s32 Message_CopyExpanded__countdown(s32, s16 *, s32) __asm__("Message_CopyExpanded");
+/* VIEW(countdown): routine Message_CopyExpanded as s32
+ * Message_CopyExpanded(s32, s16 *, s32); menus has void
+ * Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the
+ * definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32
+ * capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:977:
+ * conflicting types for `Message_CopyExpanded'. */
+extern s32 Message_CopyExpanded__countdown(s32, s16 *,
+                                           s32) __asm__("Message_CopyExpanded");
 
-/* VIEW(countdown): variable MsgNoTimeToRun as extern char MsgNoTimeToRun; msg_ids.h has extern u8 MsgNoTimeToRun[]. */
+/* VIEW(countdown): variable MsgNoTimeToRun as extern char MsgNoTimeToRun;
+ * msg_ids.h has extern u8 MsgNoTimeToRun[]. */
 extern char MsgNoTimeToRun__countdown __asm__("MsgNoTimeToRun");
 
 /// Tests whether the party may not run from this battle: battle types 3 and

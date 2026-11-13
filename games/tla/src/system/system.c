@@ -14,10 +14,11 @@
 ///   handler),
 ///                   Irq_SetHandler
 ///                   task.c: Task_Add
-///   Screen          screen_fade.c: Fade_Start; oam.c: Oam_AddSpriteAtDepth;
+///   Screen          screen_fade.c: ScreenFade_Start; oam.c:
+///   Oam_AddSpriteAtDepth;
 ///                   vram_cache.c: VramCache_Load
 ///   Memory          heap.c: HeapSlot_Alloc, Heap_Alloc
-///   3D              transform.c: SceneTransform_ApplyRotationTranslation,
+///   3D              transform.c: Transform_ApplyRotationTranslation,
 ///                   Render_ProjectPoint
 ///   Saving          save.c: Save_ReadPart, Save_InvalidateSector
 ///   Link cable      serial.c: Serial_Initialize

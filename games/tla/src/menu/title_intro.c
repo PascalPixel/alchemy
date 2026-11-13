@@ -135,7 +135,7 @@ s32 Func_081a6154(s32 mode) {
   if (mode == 0) {
     PaletteFade_Initialize();
   }
-  PaletteFade_SetCurrent(2, 0);
+  PaletteFade_SetSource(2, 0);
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x600;
   if (mode == 0) {
@@ -208,7 +208,7 @@ s32 Func_081a6154(s32 mode) {
     PaletteFade_SetTarget(0x7fff, 0);
     TitlePaletteFade_Start(1);
     if (Title_WaitOrPress(2)) {
-      Fade_Wait();
+      ScreenFade_Wait();
       return 0;
     }
   }
@@ -248,7 +248,7 @@ s32 Func_081a6638(void) {
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
 
-  PaletteFade_SetCurrent(0, 0);
+  PaletteFade_SetSource(0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x800;
   TitlePaletteFade_Start(40);
@@ -310,7 +310,7 @@ s32 Func_081a6724(void) {
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
 
-  PaletteFade_SetCurrent(0, 0);
+  PaletteFade_SetSource(0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x900;
   TitlePaletteFade_Start(40);
@@ -781,7 +781,7 @@ s32 Title_ShowIntro(s32 prompt) {
   u32 holdFrames;
 
   Task_ResetAll();
-  Fade_ToWhite(1);
+  ScreenFade_ToWhite(1);
   DebugText_Clear();
   VramCache_Reset();
   wait(1);
@@ -808,7 +808,7 @@ s32 Title_ShowIntro(s32 prompt) {
   {
     u8 *cells = Ram_MapCellBuffer;
 
-    Resource_DecodeType01(data + 0x1c0, cells);
+    Decompress_TaggedLz(data + 0x1c0, cells);
     Dma_Set(cells, (void *)0x06006800, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   }
   {
@@ -848,7 +848,7 @@ column:
     Resource_DecodeByteLzInRam(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILE_BLOCKS; i++) {
       s32 vramBlock =
-          VramCache_Load(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
+          VramCache_Load(VramCache_FindFreeEntry(), 128, buffer + (i << 8) / 2);
       u32 *spriteWords = (u32 *)sprite;
 
       *spriteWords++ = 0;
@@ -858,8 +858,8 @@ column:
     }
     HeapSlot_Release(56);
   }
-  Fade_FromWhite(30);
-  Fade_Wait();
+  ScreenFade_FromWhite(30);
+  ScreenFade_Wait();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (prompt != 0)
@@ -932,7 +932,7 @@ void Title_NoOpPalette(void) {}
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
 /// fades out, faster once skipped. Returns -1 when A or Start skipped it.
 // As The Broken Seal's function of the same name.
-s32 Title_ShowSplashScreen(s32 mode) {
+s32 Title_ShowNintendoLogo(s32 mode) {
   s32 result;
   u8 *data;
   u16 *map;
@@ -947,7 +947,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   resource = (s32)&ResourceId_NintendoLogo;
   blank = 0x1ff;
   Task_ResetAll();
-  Fade_ToBlack(1);
+  ScreenFade_ToBlack(1);
   DebugText_Clear();
   wait(1);
   {
@@ -967,7 +967,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   {
     u8 *cells = Ram_MapCellBuffer;
 
-    Resource_DecodeType01(data + 448, cells);
+    Decompress_TaggedLz(data + 448, cells);
     Dma_Set(cells, (void *)0x06004000, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   }
   {
@@ -1007,8 +1007,8 @@ col:
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (mode == 0) {
-    Fade_FromBlack(1);
-    Fade_Wait();
+    ScreenFade_FromBlack(1);
+    ScreenFade_Wait();
     for (y = 0; y < 120; y++) {
       if (gInput.pressed & (KEY_A | KEY_START)) {
         result = -1;
@@ -1026,10 +1026,10 @@ col:
     wait(1);
   }
   if (result != 0)
-    Fade_FromBlack(8);
+    ScreenFade_FromBlack(8);
   else
-    Fade_FromBlack(60);
-  Fade_Wait();
+    ScreenFade_FromBlack(60);
+  ScreenFade_Wait();
   if (result == 0) {
     for (y = 0; y < 180; y++) {
       if (gInput.pressed & (KEY_A | KEY_START)) {
@@ -1040,10 +1040,10 @@ col:
     }
   }
   if (result != 0)
-    Fade_ToBlack(8);
+    ScreenFade_ToBlack(8);
   else
-    Fade_ToBlack(60);
-  Fade_Wait();
+    ScreenFade_ToBlack(60);
+  ScreenFade_Wait();
   return result;
 }
 
@@ -1059,14 +1059,14 @@ s32 Title_ShowCamelotLogo(void) {
   result = 0;
   resource = (s32)&ResourceId_CamelotLogo;
   Task_ResetAll();
-  Fade_ToBlack(1);
+  ScreenFade_ToBlack(1);
   DebugText_Clear();
   wait(1);
   REG_BG2CNT = 0x685;
   REG_DISPCNT = 0x1440;
   gBgScroll[2].y = result;
   buffer = Resource_GetTableEntry(resource);
-  Resource_DecodeType01(buffer, Ram_MapCellBuffer);
+  Decompress_TaggedLz(buffer, Ram_MapCellBuffer);
   buffer = Ram_MapCellBuffer;
   Dma_Set(buffer, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1c0 / 4,
           REG_DMA3);
@@ -1084,8 +1084,8 @@ s32 Title_ShowCamelotLogo(void) {
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   Window_LoadGraphics();
   DebugText_Clear();
-  Fade_FromWhite(1);
-  Fade_Wait();
+  ScreenFade_FromWhite(1);
+  ScreenFade_Wait();
   REG_DISPCNT = 0x1540;
   for (i = 0; i < 120; i++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer, BG_CHAR_BLOCK(1) + 0x100,
@@ -1355,9 +1355,9 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       tintedRed = colorWork * tintRed;
       green = colorWork * tintGreen;
       blue = colorWork * tintBlue;
-      tintedRed = BattleEffect_ClampRgb555Component(tintedRed);
-      green = BattleEffect_ClampRgb555Component(green);
-      blue = BattleEffect_ClampRgb555Component(blue);
+      tintedRed = TitlePaletteFade_ClampShiftedComponent(tintedRed);
+      green = TitlePaletteFade_ClampShiftedComponent(green);
+      blue = TitlePaletteFade_ClampShiftedComponent(blue);
       destination[colorIndex * 3 + 0] = blue;
       destination[colorIndex * 3 + 1] = green;
       destination[colorIndex * 3 + 2] = tintedRed;
@@ -1439,7 +1439,7 @@ void PaletteFade_SetTarget(s32 index, s32 transform) {
     Palette_Transform(index, target->palette, target->target, transform);
 }
 
-void PaletteFade_SetCurrent(s32 index, s32 transform) {
+void PaletteFade_SetSource(s32 index, s32 transform) {
   struct PaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
@@ -1472,7 +1472,7 @@ s32 BattleEffect_ClampRgb555Channel(s32 value) {
   return value;
 }
 
-s32 BattleEffect_ClampRgb555Component(s32 value) {
+s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
   if (value > 31744)
     value = 31744;
   return value;

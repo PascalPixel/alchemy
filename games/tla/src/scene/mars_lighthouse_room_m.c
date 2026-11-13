@@ -70,7 +70,7 @@ struct RideWork {
   void *handle;
 };
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 #include "main_routine_work.h"
 
 void Func_0200166c(void);
@@ -351,12 +351,12 @@ void Func_0200080c(void) {
   System_Wait(1);
 }
 
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Suspend(void);
 
 void Func_02000934(s32 entrance) {
   s32 cell = -1;
   s16 *blend;
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   blend = &Data_02003a7c;
   if (entrance == 8)
     cell = 20;
@@ -511,7 +511,7 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(0xa31);
         Event_PlaySound(80);
         Sound_WaitForBgmRestore();
-        Party_PlaySavedMusic();
+        Scene_PlayMusic();
         Event_End();
       }
     }
@@ -554,25 +554,25 @@ s32 Scene_PrepareMap(void) {
   if (scene == (s32)&SceneId_Ov6ACRoom6) {
     switch (entrance) {
     case 1:
-      Actor_SetSpriteColor(Actor_Get(8), 1);
+      FieldActor_SetSpriteColor(Actor_Get(8), 1);
       Func_02000058__s0b64(9, 4);
       Func_02003150__mars_lighthouse_room_m(4);
       Func_02003150__mars_lighthouse_room_m(5);
       break;
     case 2:
-      Actor_SetSpriteColor(Actor_Get(8), 3);
+      FieldActor_SetSpriteColor(Actor_Get(8), 3);
       Func_02000058__s0b64(9, 5);
       Func_02003150__mars_lighthouse_room_m(6);
       Func_02003150__mars_lighthouse_room_m(7);
       break;
     case 3:
-      Actor_SetSpriteColor(Actor_Get(8), 0);
+      FieldActor_SetSpriteColor(Actor_Get(8), 0);
       Func_02000058__s0b64(9, 2);
       Func_02003150__mars_lighthouse_room_m(0);
       Func_02003150__mars_lighthouse_room_m(1);
       break;
     case 4:
-      Actor_SetSpriteColor(Actor_Get(8), 4);
+      FieldActor_SetSpriteColor(Actor_Get(8), 4);
       Func_02000058__s0b64(9, 3);
       Func_02003150__mars_lighthouse_room_m(2);
       Func_02003150__mars_lighthouse_room_m(3);
@@ -732,7 +732,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
     Func_020012a4(px, pz, 0);
   }
   wait(4);
-  Map_CopyCellPictureIndicesRect(c, d, e + 64, f, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(c, d, e + 64, f, 1, 1);
 }
 
 /// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
@@ -820,7 +820,7 @@ DEFINE_FUNC_02001608(Func_02001608, 15, 16)
 
 extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_02003130(void *handle);
 void Func_020024e4(void);
 s32 Func_02002708(void);
@@ -1132,7 +1132,7 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
     object->timer = angle;
     ((void (*)())Func_02001ed4)(object, 2);
     object->update = Func_02001e38;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 

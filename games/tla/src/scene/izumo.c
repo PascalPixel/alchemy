@@ -35,14 +35,15 @@ void GameFlag_ClearBit(s32 flag);
 void FieldEvent_Wait(s32 frames);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void Camera_FollowActor(s32 id, s32 mode);
+void FieldCamera_FollowActor(s32 id, s32 mode);
 void Actor_SetDestinationOffsetById(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
 void Actor_WalkToById(s32 id, s32 x, s32 z);
 void Actor_FaceActorById(s32 id, s32 target, s32 frames);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02000d60(const u8 *message);
@@ -95,13 +96,13 @@ void Func_02000048(void) {
   Sound_Play(132);
   if (x == 20 && z == 9) {
     if (Flag_IsSet(0x301)) {
-      Map_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
+      MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     }
     if (!Flag_IsSet(0x924)) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      Camera_FollowActor(22, 1);
+      FieldCamera_FollowActor(22, 1);
       Func_02000da0();
       Func_02000d88(22, 257, 0);
       FieldEvent_Wait(60);
@@ -123,7 +124,7 @@ void Func_02000048(void) {
   } else if (x == 19 && z == 9) {
     Flag_Clear(0x250);
     if (Flag_IsSet(0x301)) {
-      Map_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
+      MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
     }
   }
@@ -518,20 +519,20 @@ void Func_02000b08(void) {
 
   GameFlag_SetBit(769);
   if (GameFlag_Test(592)) {
-    Map_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                              PIXELS(376), PIXELS(136));
   } else {
-    Map_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
   }
 }
 
 void Func_02000ba4(void) {
   GameFlag_ClearBit(769);
-  Map_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
+  MapGrid_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Map_CopyCellAttributeRect, 40, 8, 3, 3, 22, 8);
 }
 

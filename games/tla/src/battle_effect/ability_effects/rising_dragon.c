@@ -39,15 +39,15 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -182,7 +182,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
     for (frame = 0; frame != effect->variant * 10 + 60; frame++) {
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       if (frame == 0) {
         arcs[0] = 0;
@@ -355,7 +355,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           texture.pixels = work->sheet;
           model->mesh = stripMesh;
           model->scrollU = 127 & ~(frame << 3);
-          Render_ResetTransformState();
+          Transform_Reset();
           if (effect->side == 0) {
             Func_08015160((source.x / 2 - 68) << 16,
                           (source.y << 16) - 0x600000, 0);
@@ -365,9 +365,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           }
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 1) {
-            SceneTransform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(0x8000);
           }
-          SceneTransform_ApplyRoll(i * 14192 - 0x1000);
+          Transform_ApplyRoll(i * 14192 - 0x1000);
           Func_0801521c(0x40000);
           Render_TransformVertices(strip0 + i * 66, vertices, 66);
           Render_DrawModelList(model);
@@ -378,7 +378,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             model->mesh = gData_08199340;
             texture.pixels = work->sheet + 0x4000;
             Func_08015160(endX[i] << 16, endY[i] << 16, 0);
-            SceneTransform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
+            Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
             Func_0801521c(20768);
             Render_TransformVertices(Data_081991e0, vertices, 4);
             Render_DrawModelList(model);

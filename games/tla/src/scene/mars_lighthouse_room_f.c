@@ -306,7 +306,7 @@ void Func_0200055c(s32 id) {
         object->velocityX = vx;
         object->bounce = 0x8000;
       }
-      Animation_ApplyChildValues(object, 1);
+      Actor_SetSpriteColorMode(object, 1);
     }
   }
 }
@@ -494,7 +494,7 @@ void Func_02000b40(void) {
       struct Actor *object = Actor_Get(12);
 
       object->update = NULL;
-      Animation_ApplyChildValues(object, 0);
+      Actor_SetSpriteColorMode(object, 0);
       Actor_SetAnimation(12, 6);
       Flag_Clear(0x221);
       Func_02000cb8(12);
@@ -503,7 +503,7 @@ void Func_02000b40(void) {
       struct Actor *object = Actor_Get(11);
 
       object->update = NULL;
-      Animation_ApplyChildValues(object, 0);
+      Actor_SetSpriteColorMode(object, 0);
       Actor_SetAnimation(11, 6);
       Flag_Clear(0x220);
       Func_02000cb8(11);
@@ -948,9 +948,9 @@ void Func_0200167c(void) {
     if (i <= 59 && actor->velocityY != 0)
       goto settle;
   }
-  Actor_WaitForMove(shadow);
+  FieldActor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unk_d46 = 1;
   work->unk_154 = 0;
   Event_End();
@@ -1036,8 +1036,8 @@ void Func_02001bcc(void) {
     }
     actor23->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues(Actor_GetById(9), 4);
-    Animation_ApplyChildValues(Actor_GetById(11), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(9), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(11), 4);
   }
   if (Value1((s32 (*)())GameFlag_Test, 0xa0b)) {
     actor10->y.fixed += 0x66640;
@@ -1048,8 +1048,8 @@ void Func_02001bcc(void) {
     }
     actor23->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(Actor_GetById(10), 4);
-    Animation_ApplyChildValues(Actor_GetById(12), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(10), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(12), 4);
   }
   if (GameFlag_Test(0xa0a) && GameFlag_Test(0xa0b)) {
     actor9->y.fixed += 0x199900;
@@ -1079,7 +1079,7 @@ DEFINE_FUNC_02001A80_117(Func_02001dc0)
 #undef Camera_SetBounds
 /* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has
  * static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
- * Camera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried:
+ * FieldCamera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried:
  * Camera_SetBounds__s1e20 was not found. */
 #undef SceneWork
 /* VIEW(s1e20): tag struct SceneWork as struct SceneWork__s1e20; room.h has

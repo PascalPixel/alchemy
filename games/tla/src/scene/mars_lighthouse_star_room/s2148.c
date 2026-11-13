@@ -32,7 +32,7 @@ struct Work020023c4 {
 
 s32 Func_0200424c(struct Actor *actor, struct Vector3 *position);
 s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
-void Animation_ApplyChildValues(struct Actor *actor, s32 a);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 void Func_02002120(void);
 extern u8 gInventorySnapshot[];
 
@@ -101,7 +101,7 @@ void Func_02002354(void) {
 #include "../mars_lighthouse_star_room.h"
 
 extern u8 gInventorySnapshot[];
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 struct RideEvent {
   u8 unk000[0x15a];
@@ -189,7 +189,7 @@ s32 Func_0200236c(void) {
   }
   FieldEvent_Wait(30);
   leader->update = 0;
-  Animation_ApplyChildValues(leader, 0);
+  Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
 
@@ -291,7 +291,7 @@ void Func_020024d4(struct Actor *actor) {
       object->bounce = 0x8000;
       sprite = object->sprite;
       source = work->owner->sprite;
-      Resource_ResetEntry(sprite->vramBlock);
+      VramCache_FreeEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);
@@ -344,7 +344,7 @@ next:
       object->scaleX = scale;
       object->scaleY = object->scaleX;
       object->bounce = 0x8000;
-      Animation_ApplyChildValues(object, 1);
+      Actor_SetSpriteColorMode(object, 1);
     }
   }
   if (--i >= 0)
@@ -417,7 +417,7 @@ DEFINE_FUNC_02002AD0(Func_02002ad0, Func_0200274c)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 DEFINE_FUNC_02002B98(Func_02002b98, Func_020041cc)
 

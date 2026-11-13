@@ -68,16 +68,17 @@ void GameFlag_ClearBit(s32 flag);
 struct KibomboObject *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y,
                                      s32 z);
-void Actor_SetPartAttribute(struct KibomboObject *object, s32 value);
+void Actor_SetSpriteColor(struct KibomboObject *object, s32 value);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_SetSpritePriority(s32 actor, s32 variant);
 
-void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
+void Actor_FaceDirectionById(s32 actor, s32 angle);
 void Func_02005b8c(s32 actor);
 void Func_02005c6c(const void *script);
 void Func_02005c84(s32 shop, s32 keeper);
@@ -89,7 +90,7 @@ struct KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005a24(struct KibomboObject *object, s32 mode);
 void Func_02005a3c(struct KibomboObject *object);
 void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value);
-void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
+void Actor_SetBlendMode(struct KibomboObject *object, s32 flags);
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
@@ -107,12 +108,12 @@ void Func_02005c54(void);
 void Func_02005c5c(s32 a, s32 b, s32 c, s32 d);
 void Func_02005c64(const void *script);
 void Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z);
-void Script_WaitForEventTimeout(struct KibomboObject *object);
+void Actor_WaitForMove(struct KibomboObject *object);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
-  Actor_ArmCallbackAndRefresh(actor, angle);
+  Actor_FaceDirectionById(actor, angle);
 }
 
 static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -134,7 +135,7 @@ static inline void Kibombo_ObjSetPos(struct KibomboObject *object, s32 x, s32 y,
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct KibomboObject *FieldCamera_GetActor(void);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -150,7 +151,7 @@ void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void Kibombo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Kibombo_CamSpeed(s32 speed, s32 acceleration) {
@@ -179,7 +180,7 @@ static inline void Kibombo_ObjPlace(s32 actor, s32 x, s32 z) {
 }
 
 static inline void Kibombo_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
+  MapGrid_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
 static inline void Kibombo_SePlay(s32 cue) { Sound_Play(cue); }

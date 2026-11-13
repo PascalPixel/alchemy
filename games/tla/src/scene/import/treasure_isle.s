@@ -17,11 +17,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02000f7c
 	.thumb_func
 Func_02000f7c:
@@ -46,14 +46,14 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_SetStateFlags
+	.global Actor_SetBlendMode
 	.thumb_func
-Animation_SetStateFlags:
-	overlay_veneer Animation_SetStateFlagsFar
-	.global Map_SetScreenShake
+Actor_SetBlendMode:
+	overlay_veneer Actor_SetBlendModeFar
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
 FieldMessage_ShowCentered:
@@ -74,10 +74,10 @@ Func_02000fd4:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
@@ -86,18 +86,18 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_StartRepeatedMotion:
 	overlay_veneer Actor_StartRepeatedMotionFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02001014
 	.thumb_func
 Func_02001014:

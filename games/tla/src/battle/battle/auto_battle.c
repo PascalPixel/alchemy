@@ -409,7 +409,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   work.kind = 3;
   BattleEffect_RunElementPillarFar(&work);
   work.kind = 0;
-  BattleEffect_RunTableEffectFar(&work);
+  BattleEffect_RunFromTableFar(&work);
   Actor_SetMode((struct Actor *)object, 1);
   // An empty once-only loop ends CSE's knowledge of work's address, so the
   // return loop's exit test addresses work afresh; without it, 103 of 180
@@ -461,7 +461,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
     MessageArgument_PushFar(unitId, 1);
   }
 
-  BattleMotion_SetMode5AndActivateSlot(unitId);
+  BattleMotion_PlayFall(unitId);
   if (unitId <= 7) {
     if (character->hp <= 0) {
       MessageArgument_PushFar(unitId, 1);
@@ -478,7 +478,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 
 s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
 
-void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
+void BattleMotion_PlayFall(s32 unitId) {
   struct BattleObjectAnimation *animation;
   struct AnimationEntry *entry;
 

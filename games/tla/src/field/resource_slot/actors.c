@@ -30,7 +30,7 @@ void Animation_WaitForTrackEnd(struct AnimObject *object) {
   }
 }
 
-void Map_RenderAnimatedTilePicture(u8 *object, u32 position) {
+void SpriteDissolve_Step(u8 *object, u32 position) {
   u16 *destination;
   s32 count;
   u32 row;
@@ -45,7 +45,7 @@ void Map_RenderAnimatedTilePicture(u8 *object, u32 position) {
   row = 0;
 
   if (row < (u32)count) {
-    table = gMap_TileDissolveOrder;
+    table = gSpriteDissolve_PixelOrder;
     highMask = 0xFF00;
     indexMask = 0x3F;
     offsetMask = 0x3E;
@@ -74,10 +74,10 @@ void SpriteDissolve_Run(u8 *object) {
 
   pos = 0;
   do {
-    Map_RenderAnimatedTilePicture(object, pos);
-    Map_RenderAnimatedTilePicture(object, pos + 1);
-    Map_RenderAnimatedTilePicture(object, pos + 2);
-    Map_RenderAnimatedTilePicture(object, pos + 3);
+    SpriteDissolve_Step(object, pos);
+    SpriteDissolve_Step(object, pos + 1);
+    SpriteDissolve_Step(object, pos + 2);
+    SpriteDissolve_Step(object, pos + 3);
     pos += 4;
     wait(1);
   } while (pos <= 0x7f);
@@ -102,11 +102,11 @@ void SpriteDissolve_RunMany(u8 **table, s32 cnt) {
       pos3 = pos + 3;
       n = cnt;
       do {
-        Map_RenderAnimatedTilePicture(*p, pos);
-        Map_RenderAnimatedTilePicture(*p, pos1);
-        Map_RenderAnimatedTilePicture(*p, pos2);
+        SpriteDissolve_Step(*p, pos);
+        SpriteDissolve_Step(*p, pos1);
+        SpriteDissolve_Step(*p, pos2);
         n -= 1;
-        Map_RenderAnimatedTilePicture(*p++, pos3);
+        SpriteDissolve_Step(*p++, pos3);
       } while (n != 0);
     }
     wait(1U);
@@ -143,7 +143,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
 /// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
 /// 0x480, the others ActorSystem_PlaceSprites).
 // No ☀️ twin found; ☀️'s field.c starts its map animations the same way.
-void ObjectSystem_Initialize(s32 mode) {
+void ActorSystem_Initialize(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
@@ -151,7 +151,7 @@ void ObjectSystem_Initialize(s32 mode) {
 
   work = HeapSlot_AllocEwram(24, sizeof(*work));
   buffer = HeapSlot_AllocEwram(20, 0x2000);
-  ObjectSystem_Configure(mode);
+  ActorSystem_Configure(mode);
   Dma_Fill32Cell(zero, 0, buffer, 0x2000);
   Dma_Fill32Cell(zero, 0, work, sizeof(*work));
   if (mode == 4) {
@@ -237,7 +237,7 @@ extern s32 ResourceMetadata_Register__render_animated_tile_picture(
 
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
-void *Actor_FindFreeObject(void) {
+void *Actor_FindFree(void) {
   struct Actor *obj = Ram_HeapSlots->scriptObjects;
   void *ret = 0;
   s32 n = 0;
@@ -296,7 +296,7 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
 
   kind = id / 4096;
   id &= 0xfff;
-  object = Actor_FindFreeObject();
+  object = Actor_FindFree();
   if (object != NULL) {
     object->radius = 16;
     switch (kind) {
@@ -449,7 +449,7 @@ void Actor_SetSpriteRotation(struct Actor *object, u32 value) {
     ((struct ActorSpriteView *)object->sprite)->value12 = value;
 }
 
-void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index) {
+void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index) {
   struct ActorSpriteView *child;
 
   if (object != NULL && (object->animationKind & 0xf) == 1) {
@@ -561,12 +561,12 @@ void Actor_WaitForCommandEnd(struct Actor *object) {
   }
 }
 
-void Actor_SetChildByteValue(struct Actor *object, u32 value) {
+void Actor_SetSpriteFlags(struct Actor *object, u32 value) {
   if (object != NULL && (object->animationKind & 0xf) == 1)
     ((struct ActorSpriteView *)object->sprite)->value1a = value;
 }
 
-void Animation_SetStateFlags(struct Actor *object, u32 value) {
+void Actor_SetBlendMode(struct Actor *object, u32 value) {
   if (object != NULL && object->animationKind == 1)
     ((struct ActorSpriteView *)object->sprite)->stateFlags = value;
 }
@@ -578,7 +578,7 @@ void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
 
 #include "field_sprite.h"
 
-void Animation_ApplyChildValues(struct Actor *object, u32 value) {
+void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
   if (object != NULL && object->animationKind == 1)
     Animation_ApplyChildValuesToRecord(
         ((struct ActorSpriteView *)object->sprite), value);
@@ -930,7 +930,7 @@ void ActorSystem_PlaceSprites(void) {
 void Func_0802254c(void *sprite, s32 *point, const s32 *scale, s32 facing,
                    s32 depth);
 
-s32 ObjectCamera_ReturnTrue(void) { return 1; }
+s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
@@ -999,7 +999,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
   if (GameFlag_Test(363)) {
-    Render_ResetTransformState();
+    Transform_Reset();
     angle += 0xffffe000;
     Iwram_TransformMatrixEntry(gData_0802eb98);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
@@ -1033,21 +1033,21 @@ s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc) {
 }
 
 /// Clears byte54 and advances to the next command.
-s32 Script_ClearByte54(struct ScriptInterpreter *sc) {
+s32 ActorScript_HideSprites(struct ScriptInterpreter *sc) {
   sc->byte54 = 0;
   sc->cursor++;
   return 1;
 }
 
 /// Sets byte54 to 1 and advances to the next command.
-s32 Script_SetByte54(struct ScriptInterpreter *sc) {
+s32 ActorScript_ShowSprite(struct ScriptInterpreter *sc) {
   sc->byte54 = 1;
   sc->cursor++;
   return 1;
 }
 
 /// Waits up to 600 frames for a field object's movement target to be unset.
-void Script_WaitForEventTimeout(void *fieldObject) {
+void Actor_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
   waitedFrames = 0;

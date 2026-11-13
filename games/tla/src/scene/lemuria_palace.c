@@ -160,9 +160,9 @@ void Func_020001d8(void) {
   second->motionFlags = 0;
   FieldActor_SetMoveTarget(second, first->x + PIXELS(8), first->y - PIXELS(4),
                            first->z);
-  Actor_WaitForMove(first);
+  FieldActor_WaitForMove(first);
   Func_02001f9c(first);
-  Actor_WaitForMove(second);
+  FieldActor_WaitForMove(second);
   Func_02001f9c(second);
   FieldEvent_Wait(30);
 }
@@ -291,9 +291,9 @@ void Func_020003a0(void) {
 
   Io_Write16(0x3f40, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
-  Resource_DecodeType01(Data_02002620, buffer);
+  Decompress_TaggedLz(Data_02002620, buffer);
   firstSlot = &gData_02003020;
-  *firstSlot = Resource_FindFreeEntry();
+  *firstSlot = VramCache_FindFreeEntry();
   firstTile = &Data_02003088;
   *firstTile = Vram_Load(gData_02003020, 0x1000, buffer);
   Func_02002104(&Data_02003060__s03a0, 0, 0, 0xc0000000, Data_02003088);
@@ -302,9 +302,9 @@ void Func_020003a0(void) {
   Data_02003060__s03a0.shape = 1;
   Data_02003060__s03a0.blend = 1;
   Data_02003060__s03a0.palette = 0;
-  Resource_DecodeType01(Data_02002af8, buffer);
+  Decompress_TaggedLz(Data_02002af8, buffer);
   secondSlot = &gData_02003094;
-  *secondSlot = Resource_FindFreeEntry();
+  *secondSlot = VramCache_FindFreeEntry();
   secondTile = &Data_02003058;
   *secondTile = Vram_Load(gData_02003094, 0x1000, buffer);
   Func_02002104(&Data_02003030__s03a0, 0, 0, 0xc0000000, Data_02003058);
@@ -323,8 +323,8 @@ void Func_020003a0(void) {
 
 void Func_020004e8(void) {
   FieldTask_Remove(Func_020002b4);
-  Resource_ResetEntry(gData_02003020);
-  Resource_ResetEntry(gData_02003094);
+  VramCache_FreeEntry(gData_02003020);
+  VramCache_FreeEntry(gData_02003094);
 }
 
 static __inline__ void Blend_WriteAlpha(s32 value) {
@@ -412,8 +412,7 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_SetMessageId((s32)MsgLemuriaPalace11);
   Call3((void (*)())Actor_SetSpeedParameters, 16, 0x13333, 0x9999);
   Call3((void (*)())Actor_WalkByAndWaitById, 16, -24, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 16,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 16, FACING_SOUTH + FACING_STEP);
   {
     s32 party = (s32)&gMainRoutineWork;
 
@@ -430,8 +429,7 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_ShowMessageThenWait(16, 0, 5);
   Actor_WalkByAndWaitById(FIELD_AT(r5_1, s32, 0), 0, 16);
   Actor_WalkByAndWaitById(16, 24, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 16,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 16, FACING_SOUTH + FACING_STEP);
   v2 = Func_02001fd4__s03a0();
   r0 = v2;
   goto L_02009f20;
@@ -451,14 +449,13 @@ L_0200863c:
   Call3((void (*)())Actor_SetSpeedParameters, 14, 0xb333, 0x5999);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0xb333, 0x5999);
   Call3((void (*)())Actor_WalkToAndWaitById, 4, 872, 528);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(408),
-        1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(872), -1,
+        PIXELS(408), 1);
   Func_020020ac__lemuria_palace();
   Event_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH + FACING_STEP, 0);
   Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x100, 45);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
@@ -467,10 +464,9 @@ L_0200863c:
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 15,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 15, FACING_SOUTH + FACING_STEP);
   Event_Wait(30);
-  Actor_ArmCallbackAndRefresh(14, FACING_EAST);
+  Actor_FaceDirectionById(14, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
@@ -479,12 +475,12 @@ L_0200863c:
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Motion_SetVarCbAndRefresh(15, 2);
   Event_Wait(5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 15, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 15, FACING_WEST);
   Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x103, 30);
   Event_ShowMessageThenWait(15, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_NORTHEAST, 0);
   Actor_ArmCallback(13, FACING_EAST, 0);
-  Actor_ArmCallbackAndRefresh(14, FACING_EAST);
+  Actor_FaceDirectionById(14, FACING_EAST);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Event_ShowMessageThenWait(13, 0, 5);
@@ -493,13 +489,12 @@ L_0200863c:
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
-  Camera_FollowActor(13, 1);
+  FieldCamera_FollowActor(13, 1);
   Call3((void (*)())Actor_WalkToById, 13, 864, 444);
   Event_Wait(20);
   Call3((void (*)())Actor_WalkToById, 14, 848, 444);
@@ -513,9 +508,9 @@ L_0200863c:
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WaitForMoveById(7);
   Actor_SetModeById(7, 1);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 7, FACING_SOUTH);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(496),
-        1);
+  Call2((void (*)())Actor_FaceDirectionById, 7, FACING_SOUTH);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(872), -1,
+        PIXELS(496), 1);
   Func_020020ac__lemuria_palace();
   Event_Wait(5);
   Call4((void (*)())Actor_LaunchFromLeader, 17, 16, 0,
@@ -528,42 +523,40 @@ L_0200863c:
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
-  Actor_ArmCallbackAndRefresh(7, FACING_EAST);
+  Actor_FaceDirectionById(7, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(7, 3);
   Event_Wait(10);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 7, FACING_SOUTH);
+  Call2((void (*)())Actor_FaceDirectionById, 7, FACING_SOUTH);
   Event_Wait(10);
   Event_ShowMessageThenWait(7, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTH + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_SOUTH + FACING_STEP);
   Call3((void (*)())Actor_WalkByAndWaitById, 6, 0, -8);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(6, 3);
   Event_Wait(10);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 7, FACING_SOUTH);
+  Call2((void (*)())Actor_FaceDirectionById, 7, FACING_SOUTH);
   Event_ShowMessageThenWait(7, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_SOUTH + FACING_STEP);
   Call3((void (*)())Actor_WalkByAndWaitById, 5, 0, -8);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(5, 3);
   Event_Wait(10);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 7, FACING_SOUTHEAST);
+  Call2((void (*)())Actor_FaceDirectionById, 7, FACING_SOUTHEAST);
   Event_ShowMessageThenWait(7, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Call3((void (*)())Actor_WalkByAndWaitById, 4, 0, -8);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(4, 3);
   Event_Wait(10);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 7, FACING_SOUTHEAST);
+  Call2((void (*)())Actor_FaceDirectionById, 7, FACING_SOUTHEAST);
   Event_ShowMessageThenWait(7, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   v6 = Actor_GetById(17);
   v6->actionFlags &= ~1;
@@ -574,15 +567,15 @@ L_0200863c:
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(14, FACING_EAST);
+  Actor_FaceDirectionById(14, FACING_EAST);
   Event_Wait(10);
   Event_ShowMessageThenWait(14, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_WEST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(20);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
@@ -595,11 +588,10 @@ L_0200863c:
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 0);
   Event_ShowMessageThenWait(15, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
-        FACING_NORTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_NORTH + FACING_STEP);
   Event_Wait(15);
   Event_ShowMessageThenWait(15, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
@@ -611,11 +603,11 @@ L_0200863c:
   Event_ShowMessageThenWait(15, 0, 5);
   Motion_SetVarCbAndRefresh(7, 2);
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(7, FACING_NORTHEAST);
+  Actor_FaceDirectionById(7, FACING_NORTHEAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(7, 4);
   Event_ShowMessageThenWait(7, 0, 5);
-  Actor_ArmCallbackAndRefresh(13, FACING_NORTH + FACING_STEP);
+  Actor_FaceDirectionById(13, FACING_NORTH + FACING_STEP);
   Event_Wait(5);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
@@ -624,7 +616,7 @@ L_0200863c:
   Event_ShowMessageThenWait(17, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
@@ -668,24 +660,24 @@ L_0200863c:
   Event_ShowMessageThenWait(17, 0, 5);
   Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
-  Actor_ArmCallbackAndRefresh(6, FACING_EAST);
+  Actor_FaceDirectionById(6, FACING_EAST);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 6, 0x101, 30);
   Event_ShowMessageThenWait(6, 0, 5);
   Actor_WalkByAndWaitById(17, 0, 16);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 17, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 17, FACING_WEST);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x109, 30);
   Event_ShowMessageThenWait(17, 0, 5);
   Actor_ShowEmoteById(5, 0x100, 30);
-  Actor_ArmCallbackAndRefresh(5, FACING_EAST);
+  Actor_FaceDirectionById(5, FACING_EAST);
   Event_Wait(5);
   Event_ShowMessageThenWait(5, 0, 5);
   Motion_SetVarCbAndRefresh(14, 2);
   Event_ShowMessageThenWait(14, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 17, FACING_NORTHWEST + FACING_STEP, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
-  Actor_ArmCallbackAndRefresh(6, FACING_NORTH);
+  Actor_FaceDirectionById(6, FACING_NORTH);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
@@ -703,15 +695,15 @@ L_0200863c:
   Event_ShowMessageThenWait(15, 0, 5);
   Call3((void (*)())Actor_SetSpeedParameters, 15, 0x10000, 0x8000);
   Call3((void (*)())Actor_WalkToAndWaitById, 15, 888, 444);
-  Actor_ArmCallbackAndRefresh(15, FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionById(15, FACING_SOUTH + FACING_STEP);
   Event_Wait(5);
-  Camera_MoveWithinMapBounds(PIXELS(872), -1, PIXELS(472), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(872), -1, PIXELS(472), 1);
   Func_020020ac__lemuria_palace();
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(15, FACING_WEST);
+  Actor_FaceDirectionById(15, FACING_WEST);
   Event_Wait(10);
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_ArmCallbackAndRefresh(13, FACING_EAST);
+  Actor_FaceDirectionById(13, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 4);
   Event_ShowMessageThenWait(13, 0, 5);
@@ -719,7 +711,7 @@ L_0200863c:
   Event_Wait(5);
   Event_ShowMessageThenWait(15, 0, 5);
   Actor_ShowEmoteById(13, 0x109, 30);
-  Actor_ArmCallbackAndRefresh(13, FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionById(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Func_020001d8__s03a0(13);
   Sound_Play(153);
@@ -738,7 +730,7 @@ L_02008ff2:
   Func_020004e8();
   Field_StartPaletteTransition(32);
   Event_Wait(40);
-  Actor_ArmCallbackAndRefresh(13, FACING_EAST);
+  Actor_FaceDirectionById(13, FACING_EAST);
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
   Motion_SetVarCbAndRefresh(13, 2);
@@ -747,10 +739,10 @@ L_02008ff2:
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_Wait(15);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(13, 0x7fff);
+  Actor_FaceDirectionById(13, 0x7fff);
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
-  Actor_ArmCallbackAndRefresh(7, FACING_EAST);
+  Actor_FaceDirectionById(7, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(7, 3);
   Event_Wait(10);
@@ -765,7 +757,7 @@ L_02008ff2:
   Value3((s32 (*)())Actor_ShowEmoteById, 14, 0x100, 0);
   Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x100, 50);
   Actor_ArmCallback(14, FACING_EAST, 0);
-  Actor_ArmCallbackAndRefresh(13, FACING_EAST);
+  Actor_FaceDirectionById(13, FACING_EAST);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(15, 2);
   Event_ShowMessageThenWait(15, 0, 5);
@@ -778,13 +770,13 @@ L_02008ff2:
   Call3((void (*)())Actor_ArmCallback, 13, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_EAST);
+  Actor_FaceDirectionById(4, FACING_EAST);
   Event_Wait(25);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 17, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 17, FACING_WEST);
   Event_Wait(20);
   Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x102, 30);
   Event_ShowMessageThenWait(17, 0, 5);
-  Actor_ArmCallbackAndRefresh(17, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionById(17, FACING_NORTHWEST + FACING_STEP);
   Event_Wait(15);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
@@ -806,16 +798,16 @@ L_02008ff2:
   Event_ShowMessageThenWait(7, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_NORTH);
+  Actor_FaceDirectionById(4, FACING_NORTH);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(14, 4);
   Event_ShowMessageThenWait(14, 0, 5);
   Actor_ShowEmoteById(15, 0x102, 40);
-  Actor_ArmCallbackAndRefresh(15, FACING_WEST);
+  Actor_FaceDirectionById(15, FACING_WEST);
   Event_Wait(10);
   Event_ShowMessageThenWait(15, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
-  Actor_ArmCallbackAndRefresh(13, FACING_EAST);
+  Actor_FaceDirectionById(13, FACING_EAST);
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
   Actor_ShowEmoteById(15, 0x101, 50);
@@ -825,10 +817,10 @@ L_02008ff2:
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
   Actor_ShowEmoteById(15, 0x100, 45);
-  Actor_ArmCallbackAndRefresh(13, FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionById(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(5);
   Event_ShowMessageThenWait(13, 0, 5);
-  Actor_ArmCallbackAndRefresh(15, FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionById(15, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x103, 30);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
@@ -846,11 +838,11 @@ L_02008ff2:
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
     Event_ShowMessageThenWait(15, 0, 5);
   }
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 15, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 15, FACING_WEST);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x107, 30);
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_ArmCallbackAndRefresh(13, FACING_EAST);
+  Actor_FaceDirectionById(13, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
@@ -871,7 +863,7 @@ L_02008ff2:
   Call3((void (*)())Actor_ArmCallback, 17, FACING_NORTH + FACING_STEP, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTHEAST, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_NORTHEAST);
+  Actor_FaceDirectionById(4, FACING_NORTHEAST);
   Event_Wait(5);
   Motion_SetVarCbAndRefresh(15, 2);
   Event_Wait(10);
@@ -903,7 +895,7 @@ L_02008ff2:
   Actor_WatchAndSetScript(5, 15);
   Actor_WatchAndSetScript(6, 15);
   Actor_WatchAndSetScript(17, 15);
-  Camera_FollowActor(15, 1);
+  FieldCamera_FollowActor(15, 1);
   Call3((void (*)())Actor_WalkByAndWaitById, 15, -8, 32);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH + FACING_STEP, 0);
   Actor_StartRepeatedMotion(4, 3);
@@ -913,36 +905,35 @@ L_02008ff2:
   Event_Wait(37);
   Call3((void (*)())Actor_SetSpeedParameters, 4, 0x23333, 0x11999);
   Call3((void (*)())Actor_SetSpeedParameters, 5, 0x23333, 0x11999);
-  Call3((void (*)())Actor_OffsetPositionAndReset, 5, -8, 16);
+  Call3((void (*)())Actor_WalkByById, 5, -8, 16);
   Actor_WalkByAndWaitById(4, 8, 16);
   Actor_WaitForMoveById(5);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(5, FACING_EAST);
+  Actor_FaceDirectionById(5, FACING_EAST);
   Event_Wait(15);
   Actor_WatchAndSetScript(4, 15);
   Actor_WatchAndSetScript(5, 15);
   Actor_WalkByAndWaitById(15, 0, 64);
   Event_Wait(15);
-  Actor_ArmCallbackAndRefresh(15, FACING_NORTH + FACING_STEP);
+  Actor_FaceDirectionById(15, FACING_NORTH + FACING_STEP);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x107, 40);
   Event_ShowMessageThenWait(15, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 15,
-        FACING_SOUTH + FACING_STEP);
+  Call2((void (*)())Actor_FaceDirectionById, 15, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 16, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 16, FACING_WEST);
   Event_Wait(15);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 16,
+  Call2((void (*)())Actor_FaceDirectionById, 16,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(15);
   Actor_SetModeById(16, 5);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
   Actor_WalkByAndWaitById(15, 0, 96);
   Event_Wait(20);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
   Call3((void (*)())Actor_SetSpeedParameters, 5, 0x10000, 0x8000);
-  Call3((void (*)())Actor_OffsetPositionAndReset, 5, 8, -16);
+  Call3((void (*)())Actor_WalkByById, 5, 8, -16);
   Actor_WalkByAndWaitById(4, -8, -16);
   Actor_WaitForMoveById(5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
@@ -951,12 +942,12 @@ L_02008ff2:
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
-  Camera_MoveWithinMapBounds(PIXELS(872), -1, PIXELS(480), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(872), -1, PIXELS(480), 1);
   Func_020020ac__lemuria_palace();
   Event_Wait(10);
   Actor_Stop(16);
   Actor_SetModeById(16, 1);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 17,
+  Call2((void (*)())Actor_FaceDirectionById, 17,
         FACING_NORTHWEST + FACING_STEP);
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 5);
@@ -969,7 +960,7 @@ L_02008ff2:
   Actor_ArmCallback(6, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_WEST, 0);
   Call3((void (*)())Actor_ArmCallback, 17, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_EAST);
+  Actor_FaceDirectionById(4, FACING_EAST);
   Event_Wait(40);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -977,7 +968,7 @@ L_02008ff2:
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 17, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_NORTH);
+  Actor_FaceDirectionById(4, FACING_NORTH);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(13, 2);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
@@ -985,14 +976,14 @@ L_02008ff2:
   Event_ShowMessageThenWait(6, 0, 5);
   Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Event_ShowMessageThenWait(0x200d, 0, 5);
-  Actor_ArmCallbackAndRefresh(13, FACING_WEST);
+  Actor_FaceDirectionById(13, FACING_WEST);
   Event_Wait(20);
-  Actor_ArmCallbackAndRefresh(14, FACING_EAST);
+  Actor_FaceDirectionById(14, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(20);
   Call3((void (*)())Actor_ArmCallback, 13, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_ArmCallbackAndRefresh(14, FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionById(14, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(5);
   Actor_WalkByAndWaitById(14, 24, 26);
   Actor_WalkByAndWaitById(14, 0, 8);
@@ -1018,7 +1009,7 @@ L_02009988:
   Value3((s32 (*)())Actor_ShowEmoteById, 4, 0x101, 60);
   Call3((void (*)())Actor_WalkByAndWaitById, 14, -24, -26);
   Actor_WalkByAndWaitById(14, 0, -8);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 14,
+  Call2((void (*)())Actor_FaceDirectionById, 14,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(14, 2);
@@ -1027,25 +1018,25 @@ L_02009988:
   Actor_ArmCallback(6, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_WEST, 0);
   Call3((void (*)())Actor_ArmCallback, 17, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_EAST);
+  Actor_FaceDirectionById(4, FACING_EAST);
   Event_Wait(30);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 17, FACING_NORTHWEST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 4, FACING_NORTH);
+  Call2((void (*)())Actor_FaceDirectionById, 4, FACING_NORTH);
   Event_Wait(15);
   Motion_SetVarCbAndRefresh(13, 2);
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
-  Actor_ArmCallbackAndRefresh(7, FACING_EAST);
+  Actor_FaceDirectionById(7, FACING_EAST);
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 7, 0x101, 30);
   Event_ShowMessageThenWait(7, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_WEST);
   Motion_SetModeAndWaitAnimation(13, 4);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(5);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
@@ -1053,13 +1044,13 @@ L_02009988:
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 5);
   Actor_ArmCallback(14, FACING_EAST, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 13, FACING_WEST);
   Event_Wait(30);
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(20);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
@@ -1077,7 +1068,7 @@ L_02009988:
   Actor_ArmCallback(6, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_WEST, 0);
   Call3((void (*)())Actor_ArmCallback, 17, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_EAST);
+  Actor_FaceDirectionById(4, FACING_EAST);
   Event_Wait(30);
   Actor_SetModeById(4, 3);
   Actor_SetModeById(5, 3);
@@ -1087,25 +1078,25 @@ L_02009988:
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 17, FACING_NORTHWEST + FACING_STEP, 0);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 4, FACING_NORTH);
+  Call2((void (*)())Actor_FaceDirectionById, 4, FACING_NORTH);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(13, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x200d, 0, 10);
-  Actor_ArmCallbackAndRefresh(13, FACING_NORTH + FACING_STEP);
+  Actor_FaceDirectionById(13, FACING_NORTH + FACING_STEP);
   Event_Wait(5);
   Call3((void (*)())Actor_WalkToAndWaitById, 13, 864, 392);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
+  Call2((void (*)())Actor_FaceDirectionById, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Motion_SetVarCbAndRefresh(14, 2);
   Event_Wait(5);
   Event_ShowMessageThenWait(14, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 14, FACING_WEST);
+  Call2((void (*)())Actor_FaceDirectionById, 14, FACING_WEST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(14, 0, 5);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 14,
+  Call2((void (*)())Actor_FaceDirectionById, 14,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(14, 2);
@@ -1114,7 +1105,7 @@ L_02009988:
   Call3((void (*)())Actor_ArmCallback, 17, FACING_WEST, 0);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_EAST);
+  Actor_FaceDirectionById(4, FACING_EAST);
   Event_Wait(20);
   Actor_SetModeById(4, 3);
   Actor_SetModeById(5, 3);
@@ -1131,7 +1122,7 @@ L_02009988:
   }
   v24 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v24 != 0) {
-    Actor_ResetAndSetPosition(17, ((s16 *)&v24->x)[1], ((s16 *)&v24->z)[1]);
+    Actor_SetDestinationById(17, ((s16 *)&v24->x)[1], ((s16 *)&v24->z)[1]);
   }
   Actor_WaitForMoveById(17);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
@@ -1139,7 +1130,7 @@ L_02009988:
   Actor_SetModeById(5, 2);
   v25 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v25 != 0) {
-    Actor_ResetAndSetPosition(5, ((s16 *)&v25->x)[1], ((s16 *)&v25->z)[1]);
+    Actor_SetDestinationById(5, ((s16 *)&v25->x)[1], ((s16 *)&v25->z)[1]);
   }
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
@@ -1147,7 +1138,7 @@ L_02009988:
   Actor_SetModeById(6, 2);
   v26 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v26 != 0) {
-    Actor_ResetAndSetPosition(6, ((s16 *)&v26->x)[1], ((s16 *)&v26->z)[1]);
+    Actor_SetDestinationById(6, ((s16 *)&v26->x)[1], ((s16 *)&v26->z)[1]);
   }
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
@@ -1155,7 +1146,7 @@ L_02009988:
   Call3((void (*)())Actor_WalkByAndWaitById, 4, -32, -48);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTH + FACING_STEP, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_NORTH);
+  Actor_FaceDirectionById(4, FACING_NORTH);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(4, 3);
   Event_Wait(20);
@@ -1165,7 +1156,7 @@ L_02009988:
   Actor_SetModeById(7, 2);
   v27 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v27 != 0) {
-    Actor_ResetAndSetPosition(7, ((s16 *)&v27->x)[1], ((s16 *)&v27->z)[1]);
+    Actor_SetDestinationById(7, ((s16 *)&v27->x)[1], ((s16 *)&v27->z)[1]);
   }
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
@@ -1173,7 +1164,7 @@ L_02009988:
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(15);
   Call3((void (*)())Actor_WalkToAndWaitById, 14, 840, 408);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 14,
+  Call2((void (*)())Actor_FaceDirectionById, 14,
         FACING_SOUTHEAST + FACING_STEP);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(10);

@@ -9,7 +9,7 @@
 
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 
-void ObjectSystem_InitializeFar(s32 mode);
+void ActorSystem_InitializeFar(s32 mode);
 
 void Animation_ApplyChildArgumentFar(void *, s32);
 

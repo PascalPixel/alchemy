@@ -161,7 +161,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
       if (frame > total - 16)
         REG_BLDALPHA = (total - frame) | 0x1000;
 
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       for (k = 0; k != effect->count; k++) {
         // Each target's streaks set out with the mode's cry.
@@ -378,7 +378,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   if (mode != MODE_SLAVER)
     frames = 128;
   for (frame = 0; frame != frames; frame++) {
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (mode == MODE_SLAVER && frame == 0)
       Sound_PlayFar(103);

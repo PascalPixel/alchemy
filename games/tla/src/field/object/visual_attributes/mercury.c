@@ -110,7 +110,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   if (djinni == NULL)
     return;
 
-  BattleEffect_InitializeSlots();
+  FieldEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->effectWork;
   Shop_SaveAndTintFieldPaletteFar(0x204084);
   wait(30);
@@ -143,7 +143,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
       copy->collisionFlags |= 1;
       copy->callback = (void *)Actor_MoveHalfwayTowardTargetCopy;
       copy->facing = djinni->facing;
-      Animation_ApplyChildValuesFar((struct Actor *)copy, 9);
+      Actor_SetSpriteColorModeFar((struct Actor *)copy, 9);
       Actor_SetMode(copy, 0);
       Actor_SetSingleChildFlagsFar((struct Actor *)copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
@@ -164,7 +164,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   for (remaining = 7; remaining >= 0; remaining--)
     Actor_Destroy__f0d8740(*list++);
   if (resourceId != 96)
-    Resource_ResetEntry(resourceId);
+    VramCache_FreeEntry(resourceId);
   wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
@@ -207,7 +207,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
 
   wait(50);
   Shop_RestoreFieldPaletteFar();
-  BattleEffect_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ReleaseSlots();
 }
 
 // XXX: what the work block in heap slot 39 holds, and what this family does;
@@ -218,8 +218,8 @@ void Func_080d897c(void) {
   void *buffer = Heap_Alloc(0x100);
 
   Dma_Fill32(0, work, sizeof(struct Work9c));
-  work->vramEntry = Resource_FindFreeEntry();
-  Resource_DecodeType01(gData_080f0c04, buffer);
+  work->vramEntry = VramCache_FindFreeEntry();
+  Decompress_TaggedLz(gData_080f0c04, buffer);
   VramCache_Load(work->vramEntry, 0x100, buffer);
   Task_Add(Func_080d8a00, TASK_PASS_VBLANK);
   Task_Add(Func_080d8c10, TASK_PASS_VBLANK + 15);

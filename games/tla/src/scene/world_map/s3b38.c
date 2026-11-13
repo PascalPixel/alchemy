@@ -20,7 +20,7 @@
 #include "module/system/system.h"
 #include "resource.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 DEFINE_FUNC_020011F4(Func_02003b38, Func_020039f4)
 
@@ -44,15 +44,15 @@ static inline void QueueBlend(u32 address, u32 value) {
    * their own order: the native finishes the value's orr before the register
    * address's add; as direct calls, 4 of 31 instructions of Func_02003c50
    * differ in tla-en. */
-  QueueIoWriteDelay2(address, value);
+  IoWriteQueue_Store16(address, value);
 }
 
 /// Every other two frames the world map's blend alternates between two
 /// strengths.
 void Func_02003c50(void) {
 
-  QueueIoWriteDelay2((u32)&REG_BLDCNT,
-                     BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2)
     QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 12);
   else
@@ -65,7 +65,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
    * shifts z before it starts the -1, where called directly the -1 starts
    * first; as direct calls, 6 of 66 instructions of Func_02003ca8 differ in
    * tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
@@ -98,8 +98,8 @@ void Func_02003d44(s32 mode) {
   }
   Func_02004da8();
   buffer = Heap_AllocEwram(0x4000);
-  Resource_DecodeType01(gWorldMapPackedTiles, buffer);
-  Resource_DecodeType01(gWorldMapPackedPictures, buffer + 0x1000);
+  Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
+  Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                       0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
@@ -159,11 +159,11 @@ void Func_02003d44(s32 mode) {
     FieldTask_Remove(Func_02003c50);
     DebugText_Clear();
     /* FAKEMATCH(temporary): the blend read into blend before each of the two
-     * QueueIoWriteDelay2 calls; as QueueIoWriteDelay2((u32)&REG_BLDALPHA,
+     * IoWriteQueue_Store16 calls; as IoWriteQueue_Store16((u32)&REG_BLDALPHA,
      * gData_02006e08) at both, 2 of 593 instructions differ in tla-en. */
     blend = gData_02006e08;
-    QueueIoWriteDelay2((u32)&REG_BLDALPHA, blend);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   } else {
     gData_02006e08 = 0xd00;
     FieldEvent_Wait(4);
@@ -176,8 +176,8 @@ void Func_02003d44(s32 mode) {
     FieldTask_Remove(Func_02003c50);
     DebugText_Clear();
     blend = gData_02006e08;
-    QueueIoWriteDelay2((u32)&REG_BLDALPHA, blend);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(0x101);
@@ -190,14 +190,14 @@ void Func_020042e0(void) {
   u16 scrollY;
   s32 mode;
 
-  Resource_DecodeType01(gWorldMapPackedTilesB, buffer);
+  Decompress_TaggedLz(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
-  Resource_DecodeType01(gWorldMapPackedPicturesB, frames);
+  Decompress_TaggedLz(gWorldMapPackedPicturesB, frames);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000400);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)frames, 0x84000800);
-  QueueIoWriteDelay2(0x04000050, 0x3f41);
-  QueueIoWriteDelay2(0x04000052, 0x1010);
+  IoWriteQueue_Store16(0x04000050, 0x3f41);
+  IoWriteQueue_Store16(0x04000052, 0x1010);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
   IO_WRITE_QUEUE_PUSH(0x04000008, 0xc200, 0x20000);
@@ -223,7 +223,7 @@ void Func_020042e0(void) {
   mode = 0;
   PaletteFade_ApplyTarget(0x7fff, mode);
   PaletteFade_Interpolate(1);
-  QueueIoWriteDelay2(0x04000052, 0x1000);
+  IoWriteQueue_Store16(0x04000052, 0x1000);
   System_Wait(1);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);
@@ -272,7 +272,7 @@ void Func_02004634(struct Actor *parent) {
       if (sprite != NULL) {
         Animation_ApplyChildArgument(sprite, 0);
         sprite->nextFrame = 0;
-        Resource_ResetEntry(sprite->vramBlock);
+        VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
         // A one-bit field: as a byte `|= 1` its zero mask moves the
         // motionFlags address out of r3 (differ 15).

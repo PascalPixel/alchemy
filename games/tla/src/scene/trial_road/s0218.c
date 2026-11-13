@@ -297,7 +297,7 @@ void Func_0200082c(s32 a, s32 id) {
       struct Actor *object = Actor_GetById(id);
 
       object->update = NULL;
-      Animation_ApplyChildValues(object, 0);
+      Actor_SetSpriteColorMode(object, 0);
       Actor_SetModeById(id, 6);
       Func_0200070c(id, -16);
       GameFlag_SetBit(flag);
@@ -628,7 +628,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
                                  dz << 3);
   Event_Wait(24);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   if (toX <= 17) {
     Func_020057c8(object, 1);
     Sound_Play(298);
@@ -638,7 +638,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     Actor_SetMoveTarget(object, 312 << 16, 0, z);
     Event_Wait(30);
     Func_020057c8(object, 8);
-    Script_WaitForEventTimeout(object);
+    Actor_WaitForMove(object);
     {
       /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3; as
        * object->priorityFlags = 2, 8 of 240 instructions differ in tla-en. */

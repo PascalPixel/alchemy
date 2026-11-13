@@ -83,7 +83,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   Actor_CommitPosition(obj);
 }
 
-void Camera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void FieldCamera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 s32 Entrance_PlayArrival(void) {
   s32 result = 0;
@@ -109,7 +109,7 @@ s32 Entrance_PlayArrival(void) {
         id = gMainRoutineWork.currentOwner;
         object = ObjectTable_Get(id);
         object->y += 0x00a00000;
-        Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+        FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (object->y + object->velocityY > object->terrainHeight) {
           wait(1);
         }
@@ -117,7 +117,7 @@ s32 Entrance_PlayArrival(void) {
         object->y = object->terrainHeight;
         Actor_SetMode(object, 22);
         Event_Wait(15);
-        Camera_FollowActor(id, 1);
+        FieldCamera_FollowActor(id, 1);
         result = 3;
       }
     }

@@ -95,7 +95,7 @@ void MenuCursor_AdvanceFar(union OptionCursor *cursor);
 void MenuCursor_MoveTowardTargetFar(union OptionCursor *cursor);
 void WindowSprite_Pulse(void *object);
 
-void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
+void SettingsMenu_AnimateCursors(void) {
   s32 src0;
   s32 src1;
   s32 selection;
@@ -128,7 +128,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
   work->cursorFrame++;
 }
 
-void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
+void SettingsMenu_AnimateCursors(void);
 
 /// Allocates the settings menu's work block (heap slot 208), copies five
 /// settings into it with how many values each takes (24, 15, 3, 2 and 2), and
@@ -152,15 +152,15 @@ void SettingsMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gMainRoutineWork.unk244[6];
   work->optionCount[4] = 2;
-  Task_Add(GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
+  Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_VBLANK);
 }
 
-void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
+void SettingsMenu_AnimateCursors(void);
 
 /// Stops the settings menu's VBlank task and frees its work block.
 /// The task goes first, since it reads the work block.
 void SettingsMenu_Release(void) {
-  Task_Remove(GraphicsPalette_LoadSelectionResourcesAndAdvance);
+  Task_Remove(SettingsMenu_AnimateCursors);
   HeapSlot_Release(208);
 }
 
@@ -272,7 +272,7 @@ struct RenderInput *SettingsMenu_Open(void) {
   y = (s16)win->y * 8 + 12;
   MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
 
-  x = Resource_FindFreeEntry();
+  x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     Dma_Set(Data_080aa0e8, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
             0x80000020, REG_DMA3);
@@ -291,7 +291,7 @@ struct RenderInput *SettingsMenu_Open(void) {
     out->sprite.oam.palette = 15;
   }
 
-  x = Resource_FindFreeEntry();
+  x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
@@ -303,7 +303,7 @@ struct RenderInput *SettingsMenu_Open(void) {
     MenuCursor_SetPositionImmediateFar(&work->marker[0], x, y);
   }
 
-  x = Resource_FindFreeEntry();
+  x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);

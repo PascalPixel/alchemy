@@ -228,7 +228,7 @@ s32 Scene_Initialize(void) {
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   }
   if (gMainRoutineWork.entrance == 99) {
-    Camera_MoveWithinMapBounds(152 << 17, cameraY, cameraZ, 0);
+    FieldCamera_MoveWithinMapBounds(152 << 17, cameraY, cameraZ, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -239,7 +239,7 @@ s32 Scene_Initialize(void) {
        * literal, 2 of 128 instructions differ in tla-en. */
       register s32 mode asm("r3") = 1;
 
-      Camera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, mode);
+      FieldCamera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, mode);
     }
     goto check;
     do {
@@ -265,8 +265,8 @@ void Func_020015f0(void);
     Actor_SetModeById((id), 2);                                                \
     leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
     if (leader_ != 0)                                                          \
-      Actor_ResetAndSetPosition((id), ((s16 *)&leader_->x)[1],                 \
-                                ((s16 *)&leader_->z)[1]);                      \
+      Actor_SetDestinationById((id), ((s16 *)&leader_->x)[1],                  \
+                               ((s16 *)&leader_->z)[1]);                       \
     Actor_WaitForMoveById((id));                                               \
     Actor_SetHorizontalPositionWithTerrain((id), 0, 0);                        \
   }
@@ -388,7 +388,7 @@ void Func_02000658(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_SetSpeed(11, 0x19999, 0xcccc);
@@ -503,9 +503,9 @@ void Func_02000658(void) {
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_Jump(12, 6, 0);
   Actor_Jump(11, 6, 25);
-  Actor_OffsetPositionAndReset(12, 0, 24);
+  Actor_WalkByById(12, 0, 24);
   Actor_WalkByAndWait(11, -16, 16);
-  Actor_OffsetPositionAndReset(11, 0, 24);
+  Actor_WalkByById(11, 0, 24);
   Actor_WaitForMoveById(12);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_WaitForMoveById(11);
@@ -571,15 +571,15 @@ void Func_02000658(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(20);
-  Actor_OffsetPositionAndReset(9, 0, 24);
+  Actor_WalkByById(9, 0, 24);
   Actor_WalkByAndWait(8, -16, 16);
-  Actor_OffsetPositionAndReset(8, 0, 24);
+  Actor_WalkByById(8, 0, 24);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(8);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Event_Wait(30);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Actor_ShowEmoteById(7, 265, 30);
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmoteById(6, 263, 30);
@@ -625,7 +625,7 @@ void Func_02000658(void) {
   WALK_TO_LEADER(5);
   WALK_TO_LEADER(6);
   WALK_TO_LEADER(13);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Event_End();
   EVENT_WORD(0x1b4) = 16;
   EVENT_WORD(0x1ac) = 521;

@@ -22,8 +22,8 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags);
 void FieldEffect_SpawnRevealMarkers(void);
 
 void Func_080daecc(s32 objectId, s32 grow);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle);
+void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
+                                               s32 magnitude, s32 angle);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
@@ -71,8 +71,8 @@ extern const u32 gData_0802ed34[4][9];
 
 void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
 
-s32 Graphics_ClampRgb555Channel(s32 value);
-s32 Graphics_ClampRgb555Component(s32 value);
+s32 PaletteFade_ClampComponent(s32 value);
+s32 PaletteFade_ClampShiftedComponent(s32 value);
 void BattleEffect_SetPrimaryBufferValue(u32 value);
 
 extern char ResourceId_DefaultMapAnimation;
@@ -138,16 +138,16 @@ void BattleEffect_DrawSceneSprite(void);
 
 void Func_080d64f0(void);
 
-void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
-void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
+void FieldEffect_ShrinkActorAndDestroyFast(void *obj);
+void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
-void BattleEffect_InitializeSlots(void);
-void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
+void FieldEffect_InitializeSlots(void);
+void FieldEffect_ReleaseSlots(void);
 
 void BattleEffect_SetObjectAlternatingWords(u8 *object);
-void BattleEffect_SpinUpAngle(void *obj);
-void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
-void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
+void FieldEffect_AdvanceAngleWithRamp(void *obj);
+void FieldEffect_ShrinkActorAndDestroySlow(void *obj);
+void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect);
 
 void BattleEffect_AdvanceSpinAngle();
 

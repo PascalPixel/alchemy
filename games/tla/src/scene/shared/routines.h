@@ -111,7 +111,7 @@
       if (--k >= 0)                                                            \
         goto fill;                                                             \
     }                                                                          \
-    table->tile = Resource_FindFreeEntry();                                    \
+    table->tile = VramCache_FindFreeEntry();                                   \
     Vram_Load(table->tile, 0x100, buffer);                                     \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, 0x480);                                               \
@@ -234,9 +234,8 @@
       }                                                                        \
       actor23->x.fixed -= 0x28f40;                                             \
       sprite->rotation += 0x800;                                               \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4); \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)),    \
-                                 4);                                           \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(9)), 4);   \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(11)), 4);  \
     }                                                                          \
     if (Event_GetFlag(0xa0b)) {                                                \
       actor10->y.fixed += 0x66640;                                             \
@@ -247,10 +246,8 @@
       }                                                                        \
       actor23->x.fixed += 0x28f40;                                             \
       sprite->rotation -= 0x800;                                               \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)),    \
-                                 4);                                           \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)),    \
-                                 4);                                           \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(10)), 4);  \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(12)), 4);  \
     }                                                                          \
     if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {                        \
       actor9->y.fixed += 0x199900;                                             \
@@ -371,9 +368,9 @@
           break;                                                               \
       } while (actor->velocityY != 0);                                         \
     }                                                                          \
-    Actor_WaitForMove(shadow);                                                 \
+    FieldActor_WaitForMove(shadow);                                            \
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;              \
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
     work->unkd46 = 1;                                                          \
     work->exit = 0;                                                            \
     Event_End();                                                               \
@@ -404,7 +401,7 @@
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
-    options.update = Effect_AdvanceMotion;                                     \
+    options.update = FieldEffect_AdvanceMotion;                                \
     options.startScaleX = 0xa3d7;                                              \
     options.startScaleY = 0xa3d7;                                              \
     i = 0;                                                                     \
@@ -520,9 +517,9 @@
       i++;                                                                     \
       System_Wait(1);                                                          \
     }                                                                          \
-    Actor_WaitForMove(shadow);                                                 \
+    FieldActor_WaitForMove(shadow);                                            \
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;              \
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
     work->unkd46 = 1;                                                          \
     work->exit = 0;                                                            \
     Event_End();                                                               \
@@ -618,7 +615,7 @@
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
-    options.update = Effect_AdvanceMotion;                                     \
+    options.update = FieldEffect_AdvanceMotion;                                \
     options.startScaleX = 0xa3d7;                                              \
     options.startScaleY = 0xa3d7;                                              \
     i = 0;                                                                     \
@@ -703,8 +700,8 @@
     u8 *buffer = BumpAlloc(0xc00);                                             \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Resource_DecodeType01(gField_CachedTilesA, buffer);                        \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesA, buffer);                          \
+    data2 = VramCache_FindFreeEntry();                                         \
     VramCache_Load(data2, 0xc00, buffer);                                      \
     Heap_Release(buffer);                                                      \
     Task_Add(call1, TASK_PASS_VBLANK);                                         \
@@ -749,8 +746,8 @@
     u8 *buffer = Heap_Alloc(0xc00);                                            \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Resource_DecodeType01(gField_CachedTilesB, buffer);                        \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesB, buffer);                          \
+    data2 = VramCache_FindFreeEntry();                                         \
     Vram_Load(data2, 0x800, buffer);                                           \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, TASK_PASS_VBLANK);                                    \
@@ -772,8 +769,8 @@
     u8 *buffer = BumpAlloc(0x800);                                             \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Resource_DecodeType01(gField_CachedTilesC, buffer);                        \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesC, buffer);                          \
+    data2 = VramCache_FindFreeEntry();                                         \
     Vram_Load(data2, 0x800, buffer);                                           \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, TASK_PASS_VBLANK);                                    \
@@ -1239,7 +1236,7 @@
       {                                                                        \
         s32 half = (object->timer / 2) & 1;                                    \
                                                                                \
-        Animation_ApplyChildValues(object->watchedObject, half * 7);           \
+        Actor_SetSpriteColorMode(object->watchedObject, half * 7);             \
       }                                                                        \
     } else {                                                                   \
       call1(object->watchedObject, 1);                                         \
@@ -1273,7 +1270,7 @@
       {                                                                        \
         s32 half = (object->timer / 2) & 1;                                    \
                                                                                \
-        Animation_ApplyChildValues(object->watchedObject, half * 7);           \
+        Actor_SetSpriteColorMode(object->watchedObject, half * 7);             \
       }                                                                        \
     } else {                                                                   \
       call1(object->watchedObject, 1);                                         \
@@ -1346,7 +1343,7 @@
     leader->update = 0;                                                        \
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
-    Actor_WaitForMove(object);                                                 \
+    FieldActor_WaitForMove(object);                                            \
     Event_PlaySound(298);                                                      \
     Event_PlaySound(213);                                                      \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
@@ -1432,7 +1429,7 @@
     leader->update = 0;                                                        \
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
-    Actor_WaitForMove(object);                                                 \
+    FieldActor_WaitForMove(object);                                            \
     Event_PlaySound(298);                                                      \
     Event_PlaySound(213);                                                      \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
@@ -1613,14 +1610,14 @@
       Event_Start();                                                           \
       if (!GameFlag_Test(flag)) {                                              \
         Sound_Play(125);                                                       \
-        Actor_SetPartAttribute(Actor_GetById(id), 7);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 7);                            \
         wait(2);                                                               \
         call3(trap, 0);                                                        \
-        Actor_SetPartAttribute(Actor_GetById(id), 0);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 0);                            \
         wait(2);                                                               \
-        Actor_SetPartAttribute(Actor_GetById(id), 7);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 7);                            \
         wait(4);                                                               \
-        Actor_SetPartAttribute(Actor_GetById(id), 0);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 0);                            \
         call4(0);                                                              \
         GameFlag_SetBit(flag);                                                 \
       } else {                                                                 \
@@ -1723,9 +1720,9 @@
           break;                                                               \
       } while (actor->velocityY != 0);                                         \
     }                                                                          \
-    Actor_WaitForMove(shadow);                                                 \
+    FieldActor_WaitForMove(shadow);                                            \
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;              \
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
     work->unkd46 = 1;                                                          \
     work->exit = 0;                                                            \
     Event_End();                                                               \
@@ -2016,7 +2013,7 @@
       t0->motionFlags = 0;                                                     \
       t0->collisionFlags = 8;                                                  \
       Actor_SetSingleChildFlags(t0, 0);                                        \
-      Actor_SetSpriteColor(t0, 0xf);                                           \
+      FieldActor_SetSpriteColor(t0, 0xf);                                      \
       t0->priorityFlags = 0x22 | t0->priorityFlags;                            \
       return t0;                                                               \
     }                                                                          \
@@ -2239,14 +2236,14 @@
       leader->motionFlags = flag;                                              \
       Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,                  \
                         (((s16 *)&leader->z)[1] << 16) - 0x100000);            \
-      Actor_SetSpriteColor(Actor_Get(*owner), 9);                              \
+      FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                         \
       Actor_SetSingleChildFlags(Actor_Get(*owner), 0);                         \
       Event_StartScreenTransition();                                           \
       Event_PlaySound(228);                                                    \
       leader->update = (void (*)(void))call1;                                  \
       Actor_SetSpeed(*owner, 0x6666, 0x3333);                                  \
       Actor_WalkByAndWait(*owner, 0, 8);                                       \
-      Actor_SetSpriteColor(Actor_Get(*owner), 0);                              \
+      FieldActor_SetSpriteColor(Actor_Get(*owner), 0);                         \
       Actor_SetSingleChildFlags(Actor_Get(*owner), 1);                         \
       ((struct FieldSprite *)leader->sprite)->priority = 1;                    \
       offset = 10;                                                             \
@@ -2307,9 +2304,9 @@
 #define DEFINE_FUNC_020011F4(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     if ((gFrameCount & 2) != 0) {                                              \
-      Animation_ApplyChildValues(object, 7);                                   \
+      Actor_SetSpriteColorMode(object, 7);                                     \
     } else {                                                                   \
-      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                     \
     }                                                                          \
     if ((gFrameCount & 15) == 0) {                                             \
       call1(object);                                                           \
@@ -2528,8 +2525,8 @@
         CameraMove((x << 16) - 0x10000, -1, (z << 16) + 0x10000, 1);           \
         break;                                                                 \
       case 1: {                                                                \
-        Camera_MoveWithinMapBounds((x << 16) + 0x10000, -1,                    \
-                                   (z << 16) - 0x10000, 1);                    \
+        FieldCamera_MoveWithinMapBounds((x << 16) + 0x10000, -1,               \
+                                        (z << 16) - 0x10000, 1);               \
         break;                                                                 \
       }                                                                        \
       case 2:                                                                  \
@@ -2583,7 +2580,7 @@
     Actor_SetAnimation(*owner, 2);                                             \
     Actor_SetDestinationOffset(*owner, 0, -8);                                 \
     FieldActor_WaitForMoveById(*owner);                                        \
-    Actor_SetSpriteColor(Actor_Get(*owner), 9);                                \
+    FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                           \
     Actor_SetSingleChildFlags(Actor_Get(*owner), 0);                           \
     leader->update = 0;                                                        \
     Event_FinishScreenTransition();                                            \
@@ -2730,7 +2727,7 @@
 #define DEFINE_FUNC_02001F38(name, call1)                                      \
   void name(s32 id) {                                                          \
     call1(id);                                                                 \
-    Actor_SetPartAttribute(Actor_GetById(id), 15);                             \
+    Actor_SetSpriteColor(Actor_GetById(id), 15);                               \
     Actor_SetSpritePriority(id, 1);                                            \
     Actor_GetById(id)->priorityFlags |= 2;                                     \
   }
@@ -2804,7 +2801,7 @@
       object->velocityY = 0;                                                   \
       gMainRoutineWork.renderMode = 2;                                         \
       object->actionFlags = 1;                                                 \
-      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);               \
+      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);               \
       Map_CenterOnFollowedPoint();                                             \
       System_Wait(1);                                                          \
     }                                                                          \
@@ -2826,7 +2823,7 @@
       object->timer = spin;                                                    \
       call2(object, 2);                                                        \
       object->update = (void (*)(void))call3;                                  \
-      Animation_SetStateFlags(object, 1);                                      \
+      Actor_SetBlendMode(object, 1);                                           \
     }                                                                          \
   }
 
@@ -2913,7 +2910,7 @@
       object->motionFlags = 0;                                                 \
       object->collisionFlags = 8;                                              \
       Actor_SetSingleChildFlags(object, 0);                                    \
-      Actor_SetSpriteColor(object, 15);                                        \
+      FieldActor_SetSpriteColor(object, 15);                                   \
       object->priorityFlags |= 0x22;                                           \
       return object;                                                           \
     }                                                                          \
@@ -2987,7 +2984,7 @@
     Actor_SetSingleChildFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
-    Actor_SetSpriteColor(object, 10);                                          \
+    FieldActor_SetSpriteColor(object, 10);                                     \
     object->timer = 0;                                                         \
     object->speedLimit = 0;                                                    \
     object->acceleration = 0;                                                  \
@@ -3085,7 +3082,7 @@
   void name(struct Actor *object, s32 mode) {                                  \
     if (mode == 0) {                                                           \
       object->update = 0;                                                      \
-      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                     \
       Event_PlaySound(390);                                                    \
     } else if (mode == 1) {                                                    \
       object->update = (void (*)(void))call1;                                  \
@@ -3118,7 +3115,7 @@
     Actor_SetSingleChildFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
-    Actor_SetSpriteColor(object, 10);                                          \
+    FieldActor_SetSpriteColor(object, 10);                                     \
     object->timer = 0;                                                         \
     object->speedLimit = 0;                                                    \
     object->acceleration = 0;                                                  \
@@ -3132,7 +3129,7 @@
     Actor_SetSingleChildFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
-    Actor_SetSpriteColor(object, 10);                                          \
+    FieldActor_SetSpriteColor(object, 10);                                     \
     object->timer = 0;                                                         \
     object->speedLimit = 0;                                                    \
     object->acceleration = 0;                                                  \
@@ -3285,7 +3282,7 @@
 #define DEFINE_FUNC_0200122C(name, data1, data2, call1)                        \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 1) {                                                     \
-      Animation_ApplyChildValues(object, data1[data2]);                        \
+      Actor_SetSpriteColorMode(object, data1[data2]);                          \
       data2 = (data2 + 1) & 3;                                                 \
     }                                                                          \
     if (!(gFrameCount & 3)) {                                                  \
@@ -3322,7 +3319,7 @@
     u32 frame = gFrameCount;                                                   \
                                                                                \
     if (frame & 1)                                                             \
-      Animation_ApplyChildValues(object, (frame >> 1) % 6);                    \
+      Actor_SetSpriteColorMode(object, (frame >> 1) % 6);                      \
     if ((gFrameCount & 15) == 0)                                               \
       call1(object);                                                           \
   }
@@ -3330,8 +3327,8 @@
 /// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001E58(name, data1, data2, data3, data4, call1)          \
   void name(void) {                                                            \
-    Resource_DecodeType01(gWorldMapPackedTilesC, data1);                       \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gWorldMapPackedTilesC, data1);                         \
+    data2 = VramCache_FindFreeEntry();                                         \
     Vram_Load(data2, 0x100, 0);                                                \
     data3 = -1;                                                                \
     data4 = 10;                                                                \
@@ -3420,14 +3417,14 @@
     u32 frame = gFrameCount;                                                   \
                                                                                \
     if (frame & 1)                                                             \
-      Animation_ApplyChildValues(object, (frame >> 1) % 6);                    \
+      Actor_SetSpriteColorMode(object, (frame >> 1) % 6);                      \
   }
 
 /// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001EB8(name, data1, data2, data3, call1)                 \
   void name(void) {                                                            \
-    Resource_DecodeType01(gWorldMapPackedTilesC, data1);                       \
-    Resource_ResetEntry(data2);                                                \
+    Decompress_TaggedLz(gWorldMapPackedTilesC, data1);                         \
+    VramCache_FreeEntry(data2);                                                \
     data3 = -1;                                                                \
     FieldTask_Remove(call1);                                                   \
   }
@@ -3591,7 +3588,7 @@
       object->motionFlags = 0;                                                 \
       object->collisionFlags = 8;                                              \
       Actor_SetSingleChildFlags(object, 0);                                    \
-      Actor_SetPartAttribute(object, 15);                                      \
+      Actor_SetSpriteColor(object, 15);                                        \
       object->priorityFlags |= n1;                                             \
       return object;                                                           \
     }                                                                          \
@@ -3700,7 +3697,7 @@
     if (effect != 0) {                                                         \
       sprite = effect->sprite;                                                 \
       Actor_StartScript(effect, data1);                                        \
-      Actor_SetSpriteColor(effect, 1);                                         \
+      FieldActor_SetSpriteColor(effect, 1);                                    \
       effect->motionFlags = 0;                                                 \
       angle = Random16Far() & 0xffff000;                                       \
       effect->angle = angle;                                                   \
@@ -3720,10 +3717,10 @@
   void name(struct Actor *object) {                                            \
     switch (gFrameCount & 7) {                                                 \
     case 0:                                                                    \
-      Animation_ApplyChildValues(object, n1);                                  \
+      Actor_SetSpriteColorMode(object, n1);                                    \
       break;                                                                   \
     case n2:                                                                   \
-      Animation_ApplyChildValues(object, n3);                                  \
+      Actor_SetSpriteColorMode(object, n3);                                    \
       break;                                                                   \
     }                                                                          \
   }
@@ -3734,7 +3731,7 @@
 #define DEFINE_FUNC_020027F8(name, n1, n2, n3)                                 \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
-    Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
+    FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);          \
     Actor_WalkToAndWaitById(14, n1, n2);                                       \
     Actor_GetById(14)->state = n3;                                             \
     Func_020027d4();                                                           \
@@ -3772,7 +3769,7 @@
       GameFlag_SetBit(0x206);                                                  \
     } else {                                                                   \
       Event_Wait(5);                                                           \
-      Camera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);            \
+      FieldCamera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(153);                                                         \
       Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
@@ -3822,7 +3819,7 @@
       *state = n2;                                                             \
       GameFlag_SetBit(0x206);                                                  \
     } else {                                                                   \
-      Camera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);            \
+      FieldCamera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(153);                                                         \
       Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
@@ -3857,7 +3854,7 @@
       wait(1);                                                                 \
     }                                                                          \
     Actor_SetSpritePriority(n1, 2);                                            \
-    Map_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                      \
+    MapGrid_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                  \
     MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
     Sound_Play(188);                                                           \
     MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
@@ -4305,7 +4302,7 @@
       struct Actor *object = Actor_Get(id);                                    \
                                                                                \
       WORD_AT(object, 108) = 0;                                                \
-      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                     \
       Actor_SetAnimation(id, 6);                                               \
       Flag_Clear(n1);                                                          \
       Func_02000cb8(id);                                                       \
@@ -4359,9 +4356,9 @@
 #define DEFINE_FUNC_02000780(name, n1)                                         \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 2)                                                       \
-      Animation_ApplyChildValues(object, n1);                                  \
+      Actor_SetSpriteColorMode(object, n1);                                    \
     else                                                                       \
-      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                     \
   }
 
 /// 2 copies: islets, lemurian_ship_deck/s0b84.
@@ -4412,7 +4409,7 @@
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
     Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),    \
                               0);                                              \
-    Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);  \
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);    \
     wait(1);                                                                   \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
@@ -4424,9 +4421,9 @@
 #define DEFINE_FUNC_02000DA4(name, n1)                                         \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & object->unk5c[7])                                        \
-      Actor_SetSpriteColor(object, n1);                                        \
+      FieldActor_SetSpriteColor(object, n1);                                   \
     else                                                                       \
-      Actor_SetSpriteColor(object, 0);                                         \
+      FieldActor_SetSpriteColor(object, 0);                                    \
   }
 
 /// 2 copies: yampi_desert_cave, yampi_desert_cave.
@@ -4501,7 +4498,7 @@
 #define DEFINE_FUNC_0200291C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
-    Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
+    FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);          \
     ShrineOfTheSeaGod_ObjWalk(14, n3, 248);                                    \
     ShrineOfTheSeaGod_ObjWalk(14, n1, 248);                                    \
     Actor_WalkToAndWaitById(14, n1, n2);                                       \
@@ -4647,7 +4644,7 @@
 #define DEFINE_FUNC_0200217C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
-      Actor_SetSpriteColor(Actor_Get(n2), 15);                                 \
+      FieldActor_SetSpriteColor(Actor_Get(n2), 15);                            \
       Actor_SetPosition(n2, PIXELS(n3), PIXELS(n4));                           \
       Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = 0x1000;                  \
     }                                                                          \
@@ -4658,8 +4655,9 @@
   void name(void) {                                                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
-    Call6((void (*)())Map_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1, 2);   \
-    Map_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
+    Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1,   \
+          2);                                                                  \
+    MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                  \
   }
 
 /// 2 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_4.
@@ -4813,7 +4811,7 @@
       if (--count >= 0)                                                        \
         goto fill;                                                             \
     }                                                                          \
-    table->tile = Resource_FindFreeEntry();                                    \
+    table->tile = VramCache_FindFreeEntry();                                   \
     Vram_Load(table->tile, 0x100, buffer);                                     \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, 0x480);                                               \
@@ -4945,7 +4943,7 @@
     x = startX;                                                                \
     z = startZ;                                                                \
     layer = &actor->terrainId;                                                 \
-    startBehavior = MapGrid_GetCellBehaviorAt(*layer, x, z);                   \
+    startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);              \
     dz = z - actor->z;                                                         \
     dx = x - actor->x;                                                         \
     distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);                    \
@@ -4960,7 +4958,7 @@
     }                                                                          \
     FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);                   \
     nextBehavior =                                                             \
-        MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
+        FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);      \
     if (nextBehavior == 255 ||                                                 \
         Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >    \
             PIXELS(8)) {                                                       \
@@ -4979,7 +4977,7 @@
     FieldActor_SetMoveTarget(actor, startX, actor->y, startZ);                 \
     call2(actor, 2);                                                           \
     Actor_SetAnimationSpeed(actor, 48);                                        \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                             \
     actor->update = call3;                                                     \
     goto test;                                                                 \
   body:                                                                        \
@@ -5010,7 +5008,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = 0x1999;                                              \
     FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                             \
     if (nextBehavior != startBehavior) {                                       \
       goto blocked;                                                            \
     }                                                                          \
@@ -5027,7 +5025,7 @@
       step = NULL;                                                             \
     }                                                                          \
     next = &probe;                                                             \
-    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
+    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);   \
     if (nextBehavior != 255) {                                                 \
       goto body;                                                               \
     }                                                                          \
@@ -5035,7 +5033,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = PIXELS(1);                                           \
     FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                             \
     System_Wait(2);                                                            \
     goto top;                                                                  \
                                                                                \
@@ -5099,11 +5097,11 @@
     position->z = startZ = (actor->z & 0xfff00000) + i;                        \
     x = startX;                                                                \
     z = startZ;                                                                \
-    startBehavior = MapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),    \
-                                              startX, startZ);                 \
+    startBehavior = FieldMapGrid_GetCellBehaviorAt(                            \
+        *(layer = &actor->terrainId), startX, startZ);                         \
     FieldVector_AddPolarOffset(PIXELS(16), heading, position);                 \
     nextBehavior =                                                             \
-        MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
+        FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);      \
     if (nextBehavior == 255 ||                                                 \
         Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >    \
             i) {                                                               \
@@ -5155,7 +5153,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = 0x1999;                                              \
     FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                             \
     if (nextBehavior != startBehavior) {                                       \
       goto blocked;                                                            \
     }                                                                          \
@@ -5171,7 +5169,7 @@
      * differ in tla-en. */                                                    \
     step = NULL;                                                               \
     next = &probe;                                                             \
-    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
+    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);   \
     if (nextBehavior != 255) {                                                 \
       goto body;                                                               \
     }                                                                          \
@@ -5179,7 +5177,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = PIXELS(1);                                           \
     FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                             \
     System_Wait(2);                                                            \
     goto top;                                                                  \
                                                                                \
@@ -5547,7 +5545,7 @@
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
-    options.update = Effect_AdvanceMotion;                                     \
+    options.update = FieldEffect_AdvanceMotion;                                \
     options.startScaleX = 0xa3d7;                                              \
     options.startScaleY = 0xa3d7;                                              \
     i = 0;                                                                     \
@@ -5811,7 +5809,7 @@
     lead->moveRateX = rate;                                                    \
     lead->moveRateZ = rate;                                                    \
     FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);                       \
-    Actor_WaitForMove(next);                                                   \
+    FieldActor_WaitForMove(next);                                              \
     Event_NoOp();                                                              \
     next->x.fixed = dst.x;                                                     \
     {                                                                          \
@@ -5868,7 +5866,7 @@
         object->scaleX = scale;                                                \
         object->scaleY = object->scaleX;                                       \
         object->bounce = 0x8000;                                               \
-        Animation_ApplyChildValues(object, 1);                                 \
+        Actor_SetSpriteColorMode(object, 1);                                   \
       }                                                                        \
     }                                                                          \
     if (--i >= 0)                                                              \
@@ -6015,7 +6013,7 @@
            * here, which loads its first halfword before the 1 is built; as    \
            * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */      \
           dest = data2;                                                        \
-          Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);        \
+          MapGrid_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);    \
         }                                                                      \
       } else {                                                                 \
         if (*cell != 0)                                                        \

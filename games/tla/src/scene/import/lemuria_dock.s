@@ -13,15 +13,15 @@ GameFlag_Test:
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
-	.global Map_PlayMapEdit
+	overlay_veneer GameFlag_ClearFar
+	.global MapGrid_PlayMapEdit
 	.thumb_func
-Map_PlayMapEdit:
-	overlay_veneer Map_PlayMapEditFar
-	.global Map_CopyCellPictureIndicesRect
+MapGrid_PlayMapEdit:
+	overlay_veneer MapGrid_PlayMapEditFar
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -46,10 +46,10 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToAndWaitById
 	.thumb_func
 Actor_WalkToAndWaitById:
@@ -94,10 +94,10 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.ifndef TLA_EDITION_JA
 	.global Actor_SetSpritePriority
 	.thumb_func

@@ -148,7 +148,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   u32 result;
 
   if (canvas->menuState == 0) {
-    Dma_Set((const void *)Palette_GetBasicObjColors(),
+    Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
   }

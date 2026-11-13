@@ -9,7 +9,7 @@ GameFlag_Test:
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02000178
 	.thumb_func
 Func_02000178:

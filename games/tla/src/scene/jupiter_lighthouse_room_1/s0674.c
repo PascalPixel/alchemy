@@ -31,7 +31,7 @@ s32 Func_02000648(s32 *from, s32 *to);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_FUNC_020005E4(Func_02000674, Func_02001bbc, Func_02000648,
-    gData_02002234, Data_02002254)
+                     gData_02002234, Data_02002254)
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
@@ -42,31 +42,35 @@ DEFINE_FUNC_020007E8(Func_02000834, Func_02001a94, Func_02000674, Func_02000f3c)
 
 DEFINE_FUNC_0200090C(Func_0200090c, Func_02000f3c)
 
-void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
+void Actor_SetSpriteColorMode(struct PositionedActor *object, s32 value);
 
 DEFINE_FUNC_0200091C(Func_020009ac)
 
 extern struct LightOam gData_020022dc[];
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 DEFINE_FUNC_02000AAC(Func_02000b3c, gData_02002298, gData_020022dc,
-    gData_0200229a, gData_0200229c, gData_0200239c, gData_0200239e,
-    Func_02001bb4, Func_02001a64)
+                     gData_0200229a, gData_0200229c, gData_0200239c,
+                     gData_0200239e, Func_02001bb4, Func_02001a64)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_FUNC_02000A98(Func_02000cf8, gData_0200229c, gData_02002298,
-    Func_02000b3c, gData_0200229a, gData_0200239c, gData_0200239e)
+                     Func_02000b3c, gData_0200229a, gData_0200239c,
+                     gData_0200239e)
 
 DEFINE_FUNC_02000CE8(Func_02000d78, gData_0200229c, gData_02002298,
-    Func_02000b3c, gData_0200229a, gData_0200239c, gData_0200239e)
+                     Func_02000b3c, gData_0200229a, gData_0200239c,
+                     gData_0200239e)
 
 DEFINE_FUNC_02000D68(Func_02000df8, gData_0200229c, gData_02002298,
-    Func_02000b3c, gData_0200229a, gData_0200239c, gData_0200239e)
+                     Func_02000b3c, gData_0200229a, gData_0200239c,
+                     gData_0200239e)
 
 DEFINE_FUNC_02000DF0(Func_02000e80, gData_0200229a, gData_0200229c)
 

@@ -628,7 +628,7 @@ void Func_02000fa4(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void CopyRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  Map_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
+  MapGrid_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void BlendRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {

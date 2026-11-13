@@ -189,7 +189,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             Text_SetColor(9);
           work->textPalette = 5;
           Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityNothing,
-                                     window, 16, i * 16);
+                                  window, 16, i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
           Text_SetColor(15);
           work->textPalette = 15;
@@ -331,8 +331,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   Window_Close(window, 1);
   wait(1);
   for (i = 0; i < 5; i++)
-    Resource_ResetEntry(iconSlots[i]);
-  Resource_ResetEntry(cursorHandle);
+    VramCache_FreeEntry(iconSlots[i]);
+  VramCache_FreeEntry(cursorHandle);
   wait(1);
   return result;
 }

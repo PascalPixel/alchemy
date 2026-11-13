@@ -13,11 +13,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -62,10 +62,10 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_SetMovementTypeById:
 	overlay_veneer Actor_SetMovementTypeByIdFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToById
 	.thumb_func
 Actor_WalkToById:
@@ -122,10 +122,10 @@ Actor_FaceActorById:
 	.thumb_func
 Actor_TurnToFaceEachOther:
 	overlay_veneer Actor_TurnToFaceEachOtherFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -142,10 +142,10 @@ Event_ShowMessageThenWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -158,10 +158,10 @@ FieldEffect_SetAttached:
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02001180
 	.thumb_func
 Func_02001180:
@@ -186,10 +186,10 @@ Field_RequestBattleFromEncounterTable:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Party_SetFields1eeAnd1f0
+	.global Event_SetAfterBattleDestination
 	.thumb_func
-Party_SetFields1eeAnd1f0:
-	overlay_veneer Party_SetFields1eeAnd1f0Far
+Event_SetAfterBattleDestination:
+	overlay_veneer Event_SetAfterBattleDestinationFar
 	.global Party_SetFields1f2And1f4
 	.thumb_func
 Party_SetFields1f2And1f4:
@@ -222,10 +222,10 @@ FieldYesNo_Ask:
 	.thumb_func
 Actor_LaunchFromLeader:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_ShowItemIconById
 	.thumb_func
 Actor_ShowItemIconById:

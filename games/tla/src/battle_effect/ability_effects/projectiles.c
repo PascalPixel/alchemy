@@ -39,9 +39,9 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void SceneTransform_ApplyPosition(const s32 *pos);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void Transform_Pop(void);
 /// Flashes an actor in a palette for some frames.
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 a, s32 timer,
@@ -138,7 +138,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
      instructions differ in tla-en. */
   asm("");
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
 
   // Additive and max blitters, clipped (flipped for side 1).
@@ -242,7 +242,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
       Func_08164abc(2, 2, 2);
     if (frame == 8)
       Sound_PlayFar(212);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 6 && frame <= 45) {
       base[0] += step[0];
@@ -267,17 +267,17 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
           Transform_Push();
           switch (i & 3) {
           case 0:
-            SceneTransform_ApplyYaw(frame * (i * 32 + 256));
+            Transform_ApplyYaw(frame * (i * 32 + 256));
             break;
           case 1:
-            SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+            Transform_ApplyPitch(-frame * (i * 32 + 256));
             break;
           case 2:
-            SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+            Transform_ApplyRoll(-frame * (i * 32 + 256));
             break;
           case 3:
-            SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
-            SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+            Transform_ApplyPitch(-frame * (i * 32 + 256));
+            Transform_ApplyRoll(-frame * (i * 32 + 256));
             break;
           }
           EffectPosition_ProjectPoint(&spark->x, &position);
@@ -887,7 +887,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       }
 
       // The shots.
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       index = 0;
       for (i = 0; i != effect->count; i++) {

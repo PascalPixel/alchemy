@@ -47,9 +47,9 @@ s32 Test_ReceiveFlint(struct KibomboObject *object) {
 
 void Func_020000a0(struct KibomboObject *object) {
   if (gFrameCount & 2)
-    Actor_SetPartAttribute(object, 10);
+    Actor_SetSpriteColor(object, 10);
   else
-    Actor_SetPartAttribute(object, 0);
+    Actor_SetSpriteColor(object, 0);
 }
 
 s32 Func_020000c4(struct KibomboObject *object) {
@@ -99,32 +99,33 @@ struct Actor;
 extern void Actor_SetSingleChildFlags__kibombo(
     struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__kibombo
-/* VIEW(kibombo): routine Animation_SetStateFlags as void
- * Animation_SetStateFlags(struct Actor *object, u32 value); kibombo.h has void
- * Animation_SetStateFlags(struct KibomboObject *object, s32 flags); tried as
- * the definition's void Animation_SetStateFlags(struct Actor *object, u32
+/* VIEW(kibombo): routine Actor_SetBlendMode as void
+ * Actor_SetBlendMode(struct Actor *object, u32 value); kibombo.h has void
+ * Actor_SetBlendMode(struct KibomboObject *object, s32 flags); tried as
+ * the definition's void Actor_SetBlendMode(struct Actor *object, u32
  * value), which the object already declares, it does not compile in tla-ja:
  * games/tla/include/field/field.h:58: conflicting types for
- * `Animation_SetStateFlags'. */
+ * `Actor_SetBlendMode'. */
 struct Actor;
 extern void
 Animation_SetStateFlags__kibombo(struct Actor *object,
-                                 u32 value) __asm__("Animation_SetStateFlags");
-#define Animation_SetStateFlags Animation_SetStateFlags__kibombo
-/* VIEW(kibombo): routine Actor_SetPartAttribute as void
- * Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has
- * void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried
- * as the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+                                 u32 value) __asm__("Actor_SetBlendMode");
+#define Actor_SetBlendMode Animation_SetStateFlags__kibombo
+/* VIEW(kibombo): routine Actor_SetSpriteColor as void
+ * Actor_SetSpriteColor(struct Actor *object, s32 attribute); kibombo.h has
+ * void Actor_SetSpriteColor(struct KibomboObject *object, s32 value); tried
+ * as the definition's void Actor_SetSpriteColor(struct Actor *object, s32
  * attribute), which the object already declares, it does not compile in tla-ja:
  * games/tla/include/field/field.h:93: conflicting types for
- * `Actor_SetPartAttribute'. */
+ * `Actor_SetSpriteColor'. */
 struct Actor;
-extern void Actor_SetPartAttribute__kibombo(
-    struct Actor *object, s32 attribute) __asm__("Actor_SetPartAttribute");
-#define Actor_SetPartAttribute Actor_SetPartAttribute__kibombo
+extern void
+Actor_SetPartAttribute__kibombo(struct Actor *object,
+                                s32 attribute) __asm__("Actor_SetSpriteColor");
+#define Actor_SetSpriteColor Actor_SetPartAttribute__kibombo
 #include "field.h"
-#undef Actor_SetPartAttribute
-#undef Animation_SetStateFlags
+#undef Actor_SetSpriteColor
+#undef Actor_SetBlendMode
 #undef Actor_SetSingleChildFlags
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
@@ -377,7 +378,7 @@ void Func_02000590(s32 show, s32 first, u32 count) {
 void Func_020005d0(void) { Func_02005c6c(gData_02006324); }
 
 void Func_020005e0(void) {
-  Map_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
   Kibombo_BlendStart(34, 33, 1, 1, 23, 18);
   GameFlag_SetBit(0x86a);
 }
@@ -388,7 +389,7 @@ void Func_02000618(s32 mode) {
 }
 
 void Func_02000624(void) {
-  Map_CopyCellPictureIndicesRect(36, 34, 16, 7, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(36, 34, 16, 7, 1, 1);
   Kibombo_BlendStart(36, 34, 1, 1, 16, 7);
   GameFlag_SetBit(0x204);
 }
@@ -399,7 +400,7 @@ void Func_0200065c(s32 mode) {
 }
 
 void Func_02000668(void) {
-  Map_CopyCellPictureIndicesRect(38, 34, 16, 11, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(38, 34, 16, 11, 1, 1);
   Kibombo_BlendStart(38, 34, 1, 1, 16, 11);
   GameFlag_SetBit(0x205);
 }
@@ -410,7 +411,7 @@ void Func_020006a0(s32 mode) {
 }
 
 void Func_020006ac(void) {
-  Map_CopyCellPictureIndicesRect(36, 36, 14, 9, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(36, 36, 14, 9, 1, 1);
   Kibombo_BlendStart(36, 36, 1, 1, 14, 9);
   GameFlag_SetBit(0x206);
 }
@@ -421,7 +422,7 @@ void Func_020006e4(s32 mode) {
 }
 
 void Func_020006f0(void) {
-  Map_CopyCellPictureIndicesRect(38, 36, 18, 9, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(38, 36, 18, 9, 1, 1);
   Kibombo_BlendStart(38, 36, 1, 1, 18, 9);
   GameFlag_SetBit(0x207);
 }
@@ -460,7 +461,7 @@ void Func_020007c8(void) {
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   Camera_SetSpeedParameters(0x9999, 0x1333);
-  Camera_MoveWithinMapBounds(PIXELS(88), -1, PIXELS(392), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(88), -1, PIXELS(392), 1);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 72, 392);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 88, 392);
@@ -584,7 +585,7 @@ void Func_02000c90(void) {
   Event_ResolvePendingActions(0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Camera_MoveWithinMapBounds(PIXELS(280), -1, PIXELS(88), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(280), -1, PIXELS(88), 1);
   Func_02005bb4();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouVeCome);
@@ -596,8 +597,8 @@ void Func_02000c90(void) {
   Actor_SetModeById(7, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(7, *(s16 *)((u8 *)leader + 10),
-                              *(s16 *)((u8 *)leader + 18));
+    Actor_SetDestinationById(7, *(s16 *)((u8 *)leader + 10),
+                             *(s16 *)((u8 *)leader + 18));
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   GameFlag_ClearBit(0x92f);
@@ -634,7 +635,7 @@ void Func_02000d74(void) {
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
                                   PIXELS(344));
   Camera_SetSpeedParameters(0x6666, 0xccc);
-  Camera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Kibombo_ObjWalk(17, 264, 374);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
@@ -675,7 +676,7 @@ void Func_02000d74(void) {
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(17, 0);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  Camera_MoveWithinMapBounds(PIXELS(264), PIXELS(16), PIXELS(420), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(264), PIXELS(16), PIXELS(420), 1);
   Kibombo_ObjSpeed(17, 0x19999, 0xcccc);
   Actor_WalkToAndWaitById(17, 264, 392);
   Event_Wait(20);
@@ -684,7 +685,7 @@ void Func_02000d74(void) {
   Sound_Play(11);
   Func_020032b0();
   Event_Wait(80);
-  Camera_MoveWithinMapBounds(PIXELS(88), PIXELS(32), PIXELS(392), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(88), PIXELS(32), PIXELS(392), 1);
   Func_02005bb4();
   Event_Wait(40);
   Event_ShowMessageAndWait(7, 0);
@@ -712,7 +713,7 @@ void Func_02000d74(void) {
   Actor_WalkToById(26, 104, 368);
   Event_Wait(20);
   Camera_SetSpeedParameters(0xcccc, 0x1999);
-  Camera_MoveWithinMapBounds(PIXELS(111), -1, PIXELS(356), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(111), -1, PIXELS(356), 1);
   Actor_WaitForMoveById(26);
   Actor_SetModeById(26, 1);
   Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 40);
@@ -747,7 +748,7 @@ void Func_02001218(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Actor_WalkToAndWaitById(7, 62, 444);
-  Actor_ArmCallbackAndRefresh(7, FACING_SOUTHEAST);
+  Actor_FaceDirectionById(7, FACING_SOUTHEAST);
   Event_SetMessageId((s32)MsgNowThatIKnow);
   Event_ShowMessageAndWait(7, 0);
   Actor_GetById(7)->priorityFlags |= 1;
@@ -828,28 +829,28 @@ extern void Actor_SetPositionAndResetMotion__s1318(
     struct Actor *object, s32 x, s32 y,
     s32 z) __asm__("Actor_SetPositionAndResetMotion");
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s1318
-/* VIEW(s1318): routine Actor_SetPartAttribute as void
- * Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has
- * void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried
- * as the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+/* VIEW(s1318): routine Actor_SetSpriteColor as void
+ * Actor_SetSpriteColor(struct Actor *object, s32 attribute); kibombo.h has
+ * void Actor_SetSpriteColor(struct KibomboObject *object, s32 value); tried
+ * as the definition's void Actor_SetSpriteColor(struct Actor *object, s32
  * attribute), which the object already declares, it does not compile in tla-ja:
  * games/tla/include/field/event.h:112: conflicting types for
- * `Actor_SetPartAttribute'. */
+ * `Actor_SetSpriteColor'. */
 struct Actor;
 extern void
 Actor_SetPartAttribute__s1318(struct Actor *object,
-                              s32 attribute) __asm__("Actor_SetPartAttribute");
-#define Actor_SetPartAttribute Actor_SetPartAttribute__s1318
-/* VIEW(s1318): routine Script_WaitForEventTimeout as void
- * Script_WaitForEventTimeout(struct Actor *actor); kibombo.h has void
- * Script_WaitForEventTimeout(struct KibomboObject *object); tried as the
- * definition's void Script_WaitForEventTimeout(void *fieldObject), it does not
+                              s32 attribute) __asm__("Actor_SetSpriteColor");
+#define Actor_SetSpriteColor Actor_SetPartAttribute__s1318
+/* VIEW(s1318): routine Actor_WaitForMove as void
+ * Actor_WaitForMove(struct Actor *actor); kibombo.h has void
+ * Actor_WaitForMove(struct KibomboObject *object); tried as the
+ * definition's void Actor_WaitForMove(void *fieldObject), it does not
  * compile in tla-ja: games/tla/include/field/event.h:115: conflicting types for
- * `Script_WaitForEventTimeout'. */
+ * `Actor_WaitForMove'. */
 struct Actor;
 extern void Script_WaitForEventTimeout__s1318(struct Actor *actor) __asm__(
-    "Script_WaitForEventTimeout");
-#define Script_WaitForEventTimeout Script_WaitForEventTimeout__s1318
+    "Actor_WaitForMove");
+#define Actor_WaitForMove Script_WaitForEventTimeout__s1318
 /* VIEW(s1318): routine FieldCamera_GetActor as struct Actor
  * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
  * *FieldCamera_GetActor(void); tried as the definition's struct Actor
@@ -860,8 +861,8 @@ extern struct Actor *Func_080d4568__s1318(void) __asm__("FieldCamera_GetActor");
 #define FieldCamera_GetActor Func_080d4568__s1318
 #include "event_inline.h"
 #undef FieldCamera_GetActor
-#undef Script_WaitForEventTimeout
-#undef Actor_SetPartAttribute
+#undef Actor_WaitForMove
+#undef Actor_SetSpriteColor
 #undef Actor_SetPositionAndResetMotion
 #undef Actor_SetSpritePriority
 #undef Import_ActorCreate
@@ -976,7 +977,7 @@ void Func_02001318(void) {
   Event_ShowMessage(0x101a, 0);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
   Event_ShowMessageAndWait(0x2007, 0);
-  Actor_ArmCallbackAndRefresh(26, FACING_EAST);
+  Actor_FaceDirectionById(26, FACING_EAST);
   Actor_SetModeById(26, 3);
   Event_ShowMessage(0x101a, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
@@ -1155,7 +1156,7 @@ void Func_02001318(void) {
     Event_ShowMessageAndWait(0x101a, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
     Event_ShowMessageAndWait(0x1005, 0);
-    Actor_ArmCallbackAndRefresh(6, FACING_EAST);
+    Actor_FaceDirectionById(6, FACING_EAST);
     Event_ShowMessageAndWait(0x1006, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
@@ -1265,7 +1266,7 @@ void Func_02002050(void) {
   Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 40);
   Event_ShowMessageAndWait(0x801a, 0);
-  Camera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
   Actor_WalkToAndWaitById(26, 218, 156);
   Actor_ArmCallback(26, FACING_EAST, 40);
   Actor_Stop(gMainRoutineWork.currentOwner);
@@ -1347,7 +1348,7 @@ ask:
   Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
   Motion_SetModeAndWaitAnimation(26, 3);
   Actor_FaceDirection(6, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(26, FACING_EAST);
+  Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
   Event_ShowMessageAndWait(26, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
@@ -1416,14 +1417,14 @@ ask:
   Event_ShowMessageAndWait(5, 0);
   Actor_ShowEmote(26, 0x100, 20);
   Event_ShowMessageAndWait(26, 0);
-  Camera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirection(6, FACING_WEST, 0);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 40);
   Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 40);
-  Actor_ArmCallbackAndRefresh(26, FACING_EAST);
+  Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
   Actor_SetAttachedEffect(26, 258);
   Event_ShowMessageAndWait(26, 0);
@@ -1443,7 +1444,7 @@ ask:
   Actor_SetModeById(26, 4);
   Event_ShowMessageAndWait(0x201a, 0);
   Actor_ShowEmoteById(7, 257, 40);
-  Actor_ArmCallbackAndRefresh(26, FACING_EAST);
+  Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
   Actor_ShowEmote(7, 0x100, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);

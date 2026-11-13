@@ -9,11 +9,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global Map_PlayMapEdit
+	overlay_veneer GameFlag_SetFar
+	.global MapGrid_PlayMapEdit
 	.thumb_func
-Map_PlayMapEdit:
-	overlay_veneer Map_PlayMapEditFar
+MapGrid_PlayMapEdit:
+	overlay_veneer MapGrid_PlayMapEditFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -130,18 +130,18 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02001ccc
 	.thumb_func
 Func_02001ccc:
@@ -170,10 +170,10 @@ ObjectEvent_PlaceOnGround:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

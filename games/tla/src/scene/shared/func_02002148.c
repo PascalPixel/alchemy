@@ -147,7 +147,7 @@ void SHARED_F02002148_NAME(void) {
   done:
 #endif
     actor->update = 0;
-    Animation_ApplyChildValues(actor, 0);
+    Actor_SetSpriteColorMode(actor, 0);
   }
 #if !TLA_PATCH_1
   /* FAKEMATCH(barrier): an empty asm reading work before the last store; as

@@ -556,7 +556,7 @@ end:
   FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
   Func_02004e10_(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(flame);
+  FieldActor_WaitForMove(flame);
   flame->update = 0;
   Func_02004cb0(flame);
   id = 0;
@@ -582,7 +582,7 @@ spark:
     Event_End();
     return;
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   System_Wait(10);
   Event_End();
@@ -594,13 +594,13 @@ hit:
   FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
   Func_02004e10_(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(flame);
+  FieldActor_WaitForMove(flame);
   flame->update = 0;
   Func_02004cb0(flame);
   Event_SetFlag(0x2f0);
   Func_02000ce4__s0e20((u16)id);
   Event_ClearFlag(0x2f0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   System_Wait(10);
   Event_End();
@@ -619,9 +619,9 @@ void Func_02001148(void) {
   FieldEvent_Wait(10);
   object = work->target;
   object->update = NULL;
-  Actor_SetSpriteColor(object, 7);
+  FieldActor_SetSpriteColor(object, 7);
   FieldEvent_Wait(3);
-  Actor_SetSpriteColor(work->target, 0);
+  FieldActor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
   Func_02000ed0(work->target);
   Event_End();
@@ -703,8 +703,9 @@ extern const s32 gData_02005050[];
 static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): Func_02004cd8_ forwarded inline; as direct calls to
-   * Map_CopyCellPictureIndicesRect, 20 of 537 instructions differ in tla-en. */
-  Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
+   * MapGrid_CopyCellPictureIndicesRect, 20 of 537 instructions differ in
+   * tla-en. */
+  MapGrid_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
 void Func_02001350(void) {
@@ -813,13 +814,13 @@ rise:
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_Wait(30);
-  Map_CopyCellPictureIndicesRect(71, 70, srcX, srcZ, 3, 6);
+  MapGrid_CopyCellPictureIndicesRect(71, 70, srcX, srcZ, 3, 6);
   effectOptions->type = 403;
   effectOptions->priority = 1;
   effectOptions->palette = 10;
   effectOptions->script = gData_0200502c;
   if (t != 0) {
-    Map_CopyCellPictureIndicesRect(68, 70, srcX, srcZ, 3, 6);
+    MapGrid_CopyCellPictureIndicesRect(68, 70, srcX, srcZ, 3, 6);
     Event_Wait(30);
     burstPosition[2] -= 0x280000;
   } else {
@@ -837,11 +838,11 @@ rise:
     if (i != 6)
       goto column;
     wait(3);
-    Map_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
+    MapGrid_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
     row++;
     if (row != 12)
       goto row;
-    Map_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, 8);
+    MapGrid_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, 8);
     t = 0;
   frame:
     if ((t & 3) == 0) {
@@ -901,7 +902,7 @@ last:
     goto last;
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_CopyCellPictureIndicesRect(68, 64, srcX, srcZ, 3, 6);
+  MapGrid_CopyCellPictureIndicesRect(68, 64, srcX, srcZ, 3, 6);
   FieldMapGrid_WaitForShakeToSettle();
   Event_Wait(30);
   work = &gMainRoutineWork;
@@ -1106,7 +1107,7 @@ extern const s32 gData_02005050[];
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, 194 << 18, 248 << 16);
-  Actor_ResetAndSetPosition(id, x, z);
+  Actor_SetDestinationById(id, x, z);
   Actor_GetById(id)->velocityY = 0xc0000;
   Actor_GetById(id)->gravity = 0x8000;
   Actor_GetById(id)->timer = 0;
@@ -1123,7 +1124,7 @@ void Func_02001d64(void) {
   Sound_Play(107);
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_Wait(30);
-  Camera_MoveWithinMapBounds(194 << 18, -1, 136 << 17, 1);
+  FieldCamera_MoveWithinMapBounds(194 << 18, -1, 136 << 17, 1);
   Func_02004e20();
   options.type = 403;
   options.priority = 2;
@@ -1175,7 +1176,7 @@ loop:
   Sound_Play(288);
   Event_Wait(40);
   Event_SetFlag(2552);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   wait(10);
   Event_End();
@@ -1186,7 +1187,7 @@ void Func_02002128(void) {
 
   *(work + 0xd38) = 1;
   if (!Event_GetFlag(0x304)) {
-    Actor_SetSpriteColor(Actor_Get(22), 15);
+    FieldActor_SetSpriteColor(Actor_Get(22), 15);
     Actor_SetPosition(22, PIXELS(632), PIXELS(312));
     Actor_Get(22)->scaleX = Actor_Get(22)->scaleY = 0x1000;
   }
@@ -1204,7 +1205,7 @@ void Func_020021c0(void) {
   s32 i;
 
   object = Actor_GetById(((s8 *)work)[0xd30]);
-  Actor_SetPartAttribute(object, 0);
+  Actor_SetSpriteColor(object, 0);
   Sound_Play(136);
   i = 0;
   do {
@@ -1478,7 +1479,7 @@ void Func_020028ac(void) {
   s32 i;
 
   object = Actor_Get(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
-  Actor_SetSpriteColor(object, 0);
+  FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(136);
   i = 0;
   do {
@@ -1538,11 +1539,11 @@ void Func_02002a14(struct Actor *source) {
   object->scaleY = 0x6666;
   object->scaleX = 0x6666;
   object->motionFlags = 0;
-  Actor_SetSpriteColor(object, 10);
+  FieldActor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 1);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02005534);
 }
 
@@ -1688,9 +1689,9 @@ void Func_02002cd0(s32 a, s32 b) {
   Sound_Play(78);
   Event_Wait(30);
   FieldCamera_SetSpeed(0x8000, 0x1000);
-  Camera_MoveWithinMapBounds(((s16 *)&first->x)[1] << 16,
-                             ((s16 *)&first->y)[1] << 16,
-                             ((s16 *)&first->z)[1] << 16, 1);
+  FieldCamera_MoveWithinMapBounds(((s16 *)&first->x)[1] << 16,
+                                  ((s16 *)&first->y)[1] << 16,
+                                  ((s16 *)&first->z)[1] << 16, 1);
   Sound_Play(141);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
@@ -1715,11 +1716,11 @@ burst:
   object->speedLimit = 0x80000;
   object->acceleration = 0x3333;
   object->motionFlags = 0;
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 7);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02005544);
   REG_BLDALPHA = 0x1004;
   wait(2);
@@ -1752,11 +1753,11 @@ spiral:
   spark->unk4c = 0x7a0000;
   spark->watchedObject = second;
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-  Actor_SetPartAttribute(spark, 10);
+  Actor_SetSpriteColor(spark, 10);
   Scene_SetActorSpritePriority(spark, 1);
   Func_02004c98(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
-  Animation_SetStateFlags(spark, 1);
+  Actor_SetBlendMode(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Actor_StartScript(spark, gData_02005560);
   if (i == 3) {
@@ -1787,10 +1788,10 @@ column:
   riser->watchedObject = second;
   riser->motionFlags = (u16)0;
   riser->priorityFlags = 1;
-  Actor_SetPartAttribute(riser, 10);
+  Actor_SetSpriteColor(riser, 10);
   Func_02004c98(riser, 7);
   Actor_SetSingleChildFlags(riser, 0);
-  Animation_SetStateFlags(riser, 1);
+  Actor_SetBlendMode(riser, 1);
   Actor_StartScript(riser, gData_02005570);
   i += 2;
   if (i != 32)
@@ -1812,7 +1813,7 @@ column:
   wait(120);
   second->update = 0;
   Sound_Play(390);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   wait(1);
 }
 

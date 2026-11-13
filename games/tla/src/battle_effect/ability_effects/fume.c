@@ -46,15 +46,15 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -295,12 +295,12 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           texture.pixels = work->sheet;
           model->mesh = strip;
           model->scrollU = 127 & ~(frame << 3);
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160((caster.x / 2 - 64) << 16,
                         (caster.y << 16) + 0xffc00000, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 1) {
-            SceneTransform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(0x8000);
           }
           Func_0801521c(0x40000);
           Render_TransformVertices(corners, buffer, 66);
@@ -314,7 +314,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             model->scrollU = 0;
             texture.pixels = work->sheet + 0x4000;
             Func_08015160(endX << 16, endY << 16, 0);
-            SceneTransform_ApplyRoll(0x4000 - arc.head * 32);
+            Transform_ApplyRoll(0x4000 - arc.head * 32);
             Func_0801521c(width * 28 / 32);
             Render_TransformVertices(Data_081991e0, buffer, 4);
             Render_DrawModelList(model);

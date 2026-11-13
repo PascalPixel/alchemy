@@ -405,9 +405,9 @@ void Func_080eb960(s32 objectId) {
   s32 frame;
   s32 position[3];
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
-                        work);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
+                      work);
+  entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, sizeof(work->picture), work);
 
   i = 0;
@@ -511,7 +511,7 @@ void Func_080eb960(s32 objectId) {
     wait(1);
     frame++;
   } while (phase != PHASE_DONE);
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   HeapSlot_Release(HEAP_SLOT_SPARKS);
 }
 
@@ -529,12 +529,12 @@ void FieldParticle_Update(struct FieldParticle *effect) {
       if (effect->updateMotion != 0)
         FieldParticle_UpdateMotion(effect);
       if (effect->render != 0)
-        BattleEffect_DrawScaledObject(effect);
+        FieldEffect_DrawScaledActor(effect);
     }
   }
 }
 
-void BattleEffect_DrawScaledObject(struct FieldParticle *object) {
+void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   struct ScaledSprite *sprite;
   s32 offset;
   s32 scale[2];
@@ -675,7 +675,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   FieldParticle_SetActorMode(effect, 1);
 }
 
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot) {
+void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
   if (slot->object)
     ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
   Dma_Fill32(0, slot, sizeof *slot);

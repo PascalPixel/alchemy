@@ -429,7 +429,7 @@ void Func_02000524(void) {
 #endif
         GameFlag_SetBit(0x301);
       } else {
-        Actor_ResetAndSetPosition(14, 491, 398);
+        Actor_SetDestinationById(14, 491, 398);
         Actor_WaitForMoveById(14);
         Actor_ArmCallback(14, FACING_SOUTH, 0);
         Actor_SetSingleChildFlags(

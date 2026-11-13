@@ -229,7 +229,7 @@ void Func_0200029c(void) {
   struct RockSprite *sprite;
 
   Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
   work->resource = entry;
@@ -257,7 +257,7 @@ void Func_02000358(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_0200015c);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 

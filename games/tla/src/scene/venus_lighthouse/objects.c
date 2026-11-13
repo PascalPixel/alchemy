@@ -14,14 +14,14 @@
 #define Actor_SetSingleChildFlags                                              \
   ((void (*)(struct Actor *, s32))Actor_SetSingleChildFlags)
 
-#define Actor_SetPartAttribute                                                 \
-  ((void (*)(struct Actor *, s32))Actor_SetPartAttribute)
+#define Actor_SetSpriteColor                                                   \
+  ((void (*)(struct Actor *, s32))Actor_SetSpriteColor)
 
 void ConfigureOverlayObject(struct Actor *object, s32 parameter) {
   object->motionFlags = 0;
   object->collisionFlags = 8;
   Actor_SetSingleChildFlags(object, 0);
-  Actor_SetSpriteColor(object, parameter);
+  FieldActor_SetSpriteColor(object, parameter);
 }
 
 struct Actor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind) {
@@ -30,7 +30,7 @@ struct Actor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind) {
   if (object != 0) {
     Scene_SetActorSpritePriority(object, 0);
     ConfigureOverlayObject(object, 14);
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
     return object;
   }
   return 0;

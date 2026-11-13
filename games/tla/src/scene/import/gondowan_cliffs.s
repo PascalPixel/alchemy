@@ -42,18 +42,18 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Func_0200119c
 	.thumb_func
 Func_0200119c:
@@ -65,7 +65,7 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global Func_020011b4
 	.thumb_func
 Func_020011b4:
@@ -94,14 +94,14 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_SetStateFlags
+	.global Actor_SetBlendMode
 	.thumb_func
-Animation_SetStateFlags:
-	overlay_veneer Animation_SetStateFlagsFar
-	.global Map_SetScreenShake
+Actor_SetBlendMode:
+	overlay_veneer Actor_SetBlendModeFar
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
 	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
 MapGrid_WaitForShakeToSettle:
@@ -130,10 +130,10 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_Stop:
 	overlay_veneer Actor_StopFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_WalkToAndWaitById
 	.thumb_func
 Actor_WalkToAndWaitById:
@@ -170,10 +170,10 @@ Actor_FaceActorById:
 	.thumb_func
 Actor_TurnToFaceEachOther:
 	overlay_veneer Actor_TurnToFaceEachOtherFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:

@@ -148,7 +148,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   actor = BattleObject_Get(plan->actorId)->object;
   Actor_SetMode(actor, 3);
   Actor_SelectAnimationFar((struct Actor *)actor, 16);
-  QueueIoWriteDelay2(0x04000050, 0x3f40);
+  IoWriteQueue_Store16(0x04000050, 0x3f40);
   Sound_PlayFar(154);
   wait(10);
   if (single) {
@@ -182,14 +182,14 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   else
     saved->buffer = Data_02018000;
   i = SpritePictureCache_LoadFar(7, saved->buffer,
-                                 BattleClass_GetSprite(saved->classId),
-                                 BattleClass_GetPalette(saved->classId));
+                                 BattleSprite_GetSprite(saved->classId),
+                                 BattleSprite_GetPalette(saved->classId));
   if (i != 0) {
-    battleObject->resource = BattleClass_GetSprite(saved->classId) + 0x7000;
+    battleObject->resource = BattleSprite_GetSprite(saved->classId) + 0x7000;
     if (!single)
       saved->buffer = NULL;
   } else {
-    battleObject->resource = BattleClass_GetSprite(saved->classId);
+    battleObject->resource = BattleSprite_GetSprite(saved->classId);
     if (single)
       Heap_Release(saved->buffer);
     saved->buffer = (u32 *)i;
@@ -241,7 +241,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
 
   unitId = saved->unitId;
   object = BattleObject_Get(unitId)->object;
-  QueueIoWriteDelay2(0x04000050, 0x3f40);
+  IoWriteQueue_Store16(0x04000050, 0x3f40);
   BattleHighlight_SetSpriteMode(unitId, 1);
   for (i = 0; i != 16; i++) {
     s32 fade;
@@ -270,7 +270,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   } else {
     count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++) {
-      s32 resource = SummonSlot_RegisterActorSprites(ids[i]);
+      s32 resource = EnemySprite_LoadIntoSlots(ids[i]);
 
       if (resource)
         BattleObject_Get(ids[i])->resource = resource;
@@ -298,16 +298,16 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   }
 }
 
-/* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32
- * BattleClass_GetAttackHop(s32 classId); the definition has void
+/* VIEW(f11e3ac): routine BattleSprite_GetAttackHop as s32
+ * BattleSprite_GetAttackHop(s32 classId); the definition has void
  * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) { void
  * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000;
  * s32 zoom; struc...; tried as the one declaration s32
- * BattleClass_GetAttackHop(s32 classId), it does not compile in tla-ja:
+ * BattleSprite_GetAttackHop(s32 classId), it does not compile in tla-ja:
  * games/tla/src/battle/presentation.c:7982: conflicting types for
- * `BattleClass_GetAttackHop'. */
+ * `BattleSprite_GetAttackHop'. */
 extern s32 BattleClass_GetAttackHop__presentation(s32 classId) __asm__(
-    "BattleClass_GetAttackHop");
+    "BattleSprite_GetAttackHop");
 
 s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
@@ -406,13 +406,13 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
 
   if (missed != 0) {
     wait(10);
-    BattleMotion_ResetObjectAtScaledAnchor(work.actors[0]);
+    BattleMotion_HopBack(work.actors[0]);
     wait(2);
     wait(4);
     wait(10);
-    BattleEvent_Push(0, plan->targetIds[0]);
-    BattleEvent_Push(4, (u32)&MsgNimblyDodgesBlow);
-    BattleEvent_DispatchQueued();
+    BattlePlayback_Push(0, plan->targetIds[0]);
+    BattlePlayback_Push(4, (u32)&MsgNimblyDodgesBlow);
+    BattlePlayback_RunAll();
     BattleMotion_ReturnToSpot(work.actors[0]);
   } else {
     zoomOnCritical = 0;
@@ -446,14 +446,14 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
         wait(1);
       }
     }
-    Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
+    Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (work.kind != 0) {
       if (saved)
         Func_0811e7dc(saved);
       if (plan->presentationFlags & 0x4000)
         BattleEffect_DispatchByIdRangeFar(&work);
       else
-        BattleEffect_RunTableEffectFar(&work);
+        BattleEffect_RunFromTableFar(&work);
     }
     if (saved) {
       Func_0811e830(saved);
@@ -462,7 +462,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     BattlePlayback_WaitForReady();
     if (critical != 0) {
       view->flag = 0;
-      BattleParty_ListAllUnitsAndSubmit();
+      BattleUnit_ListAllAndSubmit();
       BattleCamera_SetView(0, 0, 0, 100);
     }
     BattleMotion_ReturnToSpot(work.actors[0]);
@@ -542,7 +542,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
           animation->entries[entryIndex]->param;
   }
 
-  Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
+  Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
   if (work.kind != 0) {
     s32 fade;
     struct HeapSlots *heap;
@@ -567,7 +567,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     if (plan->presentationFlags & 0x4000)
       BattleEffect_DispatchByIdRangeFar(&work);
     else
-      BattleEffect_RunTableEffectFar(&work);
+      BattleEffect_RunFromTableFar(&work);
   } else {
     wait(60);
   }
@@ -599,10 +599,10 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     }
   } else if (itemDefinition->useType == 2) {
     if ((Battle_RandomFar() & 7) == 0) {
-      BattleEvent_Push(2, unit->inventory[selection->parameter]);
-      BattleEvent_Push(4, (u32)&MsgItemBroke);
+      BattlePlayback_Push(2, unit->inventory[selection->parameter]);
+      BattlePlayback_Push(4, (u32)&MsgItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
-      BattleEvent_DispatchQueued();
+      BattlePlayback_RunAll();
     }
   } else if (itemDefinition->useType == 4) {
     if ((inventoryEntry & 0x1ff) == 184)
@@ -614,7 +614,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
 /// Sets the first child's value of each of the object's records and clears the
 /// others, hiding every child's frame.
-void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
+void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   s32 index = 0;
   s32 child_index;
   s32 count;
@@ -737,23 +737,23 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattleEvent_Push(0, plan->actorId);
-      BattleEvent_Push(4, (u32)&MsgPsynergyBlocked);
+      BattlePlayback_Push(0, plan->actorId);
+      BattlePlayback_Push(4, (u32)&MsgPsynergyBlocked);
     } else {
-      BattleEvent_Push(4, (u32)&MsgCastLacksPp);
+      BattlePlayback_Push(4, (u32)&MsgCastLacksPp);
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
     if (((s32 *)plan)[25] == 0)
-      Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
+      Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (work.kind) {
       if (saved)
         Func_0811e7dc(saved);
       if (plan->presentationFlags & 0x4000)
         BattleEffect_DispatchByIdRangeFar(&work);
       else
-        BattleEffect_RunTableEffectFar(&work);
+        BattleEffect_RunFromTableFar(&work);
     } else {
       BattleBackground_RestorePalette();
     }
@@ -786,13 +786,13 @@ void BattleMotion_FlashHit(s32 id) {
     selected[1] = target;
     selected[0] = id;
     PartyStatus_HighlightMembersFar(selected);
-    BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object, 7);
+    BattleObject_SetColorMode(BattleObject_Get(id)->object, 7);
     wait(2);
 
     selected[0] = id;
     PartyStatus_HighlightMembersFar(selected);
-    BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object,
-                                      BattleMotion_GetSlotPalette(id));
+    BattleObject_SetColorMode(BattleObject_Get(id)->object,
+                              BattleMotion_GetSlotPalette(id));
     wait(2);
     remaining--;
   } while (remaining >= 0);
@@ -805,7 +805,7 @@ void BattleMotion_FlashHit(s32 id) {
 /// Removes the unit from the ally and enemy formations and the planned
 /// actions. Returns 0 on removal, or -1 if absent from both formations.
 /// id: unit ID.
-s32 BattleActor_RemoveFromLists(s32 id) {
+s32 BattleObject_RemoveFromLists(s32 id) {
   struct BattleWork *work;
   s32 i;
   u32 j;
@@ -875,7 +875,7 @@ void BattleMotion_ShowDowned(s32 id) {
       n++;
     }
     wait(4);
-    BattleActor_RemoveFromLists(id);
+    BattleObject_RemoveFromLists(id);
     SpriteDissolve_RunManyFar(recs, n); // Erase pixel by pixel.
     BattleObject_MarkForRelease(id);
   }

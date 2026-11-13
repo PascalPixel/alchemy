@@ -22,7 +22,7 @@ struct MagmaRockEventWork {
 };
 
 s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion();
+void FieldEffect_AdvanceMotion();
 void Map_CenterOnFollowedPoint(void);
 void Func_02003af4(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -52,7 +52,7 @@ void Func_020022ac(void) {
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.scaleX = 0xcccc;
   options.scaleY = 0xcccc;
   i = 0;
@@ -98,7 +98,7 @@ void Func_020024c8(void) {
     object->terrainHeight = height;
     object->y = height;
     object->targetY = PIXELS(-32768);
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   }
 }
 
@@ -134,7 +134,7 @@ static inline void AttachPart(struct Actor *part, struct Actor *anchor,
   BYTE_AT(part, 98) = order;
   part->watchedObject = anchor;
   part->update = Func_02001528;
-  Actor_SetPartAttribute(part, 3);
+  Actor_SetSpriteColor(part, 3);
 }
 
 static inline void BuildParts(struct Actor *anchor) {
@@ -463,14 +463,14 @@ body:
       Event_Start();
       if (!GameFlag_Test(flag)) {
         Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Func_02003a54(target, 0);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         Func_020034ac(0);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
@@ -607,15 +607,15 @@ body:
         Func_02003224(actor8, target);
         wait(1);
         Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Func_02003a54(actor8, 0);
         ObjectVisual_CopyAttributes(id, 9);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         Func_020034ac(0);
         Func_02003224(target, actor8);
         wait(1);

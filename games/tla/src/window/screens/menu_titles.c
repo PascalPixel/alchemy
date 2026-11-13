@@ -33,7 +33,7 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
   struct WindowSprite *first;
   struct WindowSprite *second;
 
-  index = Resource_FindFreeEntry();
+  index = VramCache_FindFreeEntry();
   if (index > 95)
     return NULL;
 
@@ -91,7 +91,7 @@ struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
   s32 index;
   struct WindowSprite *entity;
 
-  index = Resource_FindFreeEntry();
+  index = VramCache_FindFreeEntry();
   entity = NULL;
   if (index != 0x60) {
     CommandIcon_Load(arg0, index, arg1);
@@ -405,7 +405,8 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
   return ret;
 }
 
-void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
+void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
+                                    s32 tile) {
   GlyphTransfer *decoded;
   u8 *font;
   u8 *remapped;
@@ -451,7 +452,8 @@ void BattleCommandRow_LoadIcon(u8 *base, s32 index, u32 value) {
 
   offset = index * 28;
   entry = base + offset + 0x104;
-  Text_LoadRemappedGlyph((struct GlyphPalette *)base, value, index * 16);
+  BattleCommandRow_LoadIconTiles((struct GlyphPalette *)base, value,
+                                 index * 16);
   store_offset = offset + 0x11C;
   *(u32 *)(base + store_offset) = value;
   // The sprite's shape and its cleared attributes 2 and 3 in a once-only

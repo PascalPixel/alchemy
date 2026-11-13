@@ -14,18 +14,18 @@ wait:
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
-	.global Resource_ResetEntry
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Unit_Get
 	.thumb_func
 Unit_Get:
@@ -37,11 +37,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -54,10 +54,10 @@ Map_CopyCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_ApplyChildValues
+	.global Actor_SetSpriteColorMode
 	.thumb_func
-Animation_ApplyChildValues:
-	overlay_veneer Animation_ApplyChildValuesFar
+Actor_SetSpriteColorMode:
+	overlay_veneer Actor_SetSpriteColorModeFar
 	.global Actor_SetItemIcon
 	.thumb_func
 Actor_SetItemIcon:

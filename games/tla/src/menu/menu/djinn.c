@@ -6,7 +6,7 @@
 
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1) { return (arg0 + arg1) % arg1; }
 
-s32 Menu_SetFirstObjectRowCoordinates(s32 arg0) {
+s32 Menu_SetFirstActorRowCoordinates(s32 arg0) {
   u8 *current;
   s32 value;
   s32 count;
@@ -84,7 +84,7 @@ s32 DjinnMenu_Run(void) {
   menu->memberCount = Party_ListMembersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);
-  Menu_SetFirstObjectRowCoordinates(0);
+  Menu_SetFirstActorRowCoordinates(0);
   Palette_LightenHighlight(14);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, 2);
   menu->pairEntries[0] = 255;
@@ -95,7 +95,7 @@ s32 DjinnMenu_Run(void) {
   menu->selection[1] = 0;
   DjinnFigures_InitializeTopRow();
   DjinnMenu_RunScreen();
-  MenuIcon_ReleaseObjects();
+  DjinnFigures_ReleaseTopRow();
   Menu_ResetTwoResourceEntries();
   wait(1);
   ItemMenu_Close();
@@ -191,7 +191,7 @@ s32 DjinnMenu_RunScreen(void) {
       step = 2;
       break;
     case 2:
-      Menu_SetFirstObjectRowCoordinates(0);
+      Menu_SetFirstActorRowCoordinates(0);
       MenuIcon_SetPosition(1, 0, 200);
       result = DjinnMenu_SelectDjinn(0);
       step = 15;
@@ -229,7 +229,7 @@ s32 DjinnMenu_RunScreen(void) {
       step = 2;
       break;
     case 3:
-      Menu_SetFirstObjectRowCoordinates(-8);
+      Menu_SetFirstActorRowCoordinates(-8);
       menu->owner = menu->owners[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->owners[menu->selectedColumn[0]];
       MenuIcon_SetPosition(0, menu->selectedColumn[0] * 56 + 48, 54);
@@ -440,7 +440,7 @@ void DjinnMenu_AdjustPalettes(s32 d) {
 extern char ResourceId_ShopGemTiles;
 
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
-s32 Palette_GetBasicObjColors(void);
+s32 Palette_GetBasicSpriteColors(void);
 
 /// Opens the Djinn menu's backdrop screen, the twin of The Broken Seal's
 /// Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
@@ -470,7 +470,7 @@ void Menu_OpenBackdropScreen(void) {
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropBorderTile, 32);
-  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set(Palette_GetBasicSpriteColors(), (void *)&BG_PLTT_COLOR(5, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
@@ -485,7 +485,7 @@ void Menu_OpenBackdropScreen(void) {
   icon = Icon_CreateWithResource(window, -8, 11);
   icon->active = 13;
   menu->cursor = icon;
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   if (entry < 96) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
@@ -726,8 +726,8 @@ void DjinnMenu_DrawFirstPage(struct DjinnMenuBackdrop *backdrop) {
   DjinnMenu_DrawPage(backdrop, 0);
 }
 
-void UiPanel_SetRectHighlight(struct UiPanel *panel, s32 x, s32 y, s32 width,
-                              s32 height, s32 style) {
+void Window_SetInteriorPaletteBitRect(struct UiPanel *panel, s32 x, s32 y,
+                                      s32 width, s32 height, s32 style) {
   Window_HighlightRectFar(panel->x + x + 1, panel->y + y + 1, width, height,
                           style);
 }
@@ -739,8 +739,8 @@ void UiPanel_HighlightGridCell(struct UiPanel *panel, s32 index, s32 row,
   s32 style = ((0u - selected) | selected) >> 31;
 
   style = 15 - style;
-  UiPanel_SetRectHighlight(panel, index % 4 * 7 + 1, row + 2, GRID_CELL_WIDTH,
-                           1, style);
+  Window_SetInteriorPaletteBitRect(panel, index % 4 * 7 + 1, row + 2,
+                                   GRID_CELL_WIDTH, 1, style);
 }
 
 #undef GRID_CELL_WIDTH
@@ -805,8 +805,8 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   }
 }
 
-void UiPanel_SetRectPalette(struct UiPanel *panel, s32 x, s32 y, s32 width,
-                            s32 height, s32 palette) {
+void Window_SetInteriorRectPalette(struct UiPanel *panel, s32 x, s32 y,
+                                   s32 width, s32 height, s32 palette) {
   Window_SetRectPalette(panel->x + x + 1, panel->y + y + 1, width, height,
                         palette);
 }
@@ -846,7 +846,7 @@ s32 DjinnMenu_ShowHelp(void) {
   message++;
   Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 16);
   Window_SetRectPalette(1, 1, 11, 3, 6);
-  UiPanel_SetRectPalette(menu->listWindow, 0, 0, 28, 10, 6);
+  Window_SetInteriorRectPalette(menu->listWindow, 0, 0, 28, 10, 6);
   list = Window_CreateFar(0, 9, 8, 10, 6);
   helpWindow = Window_CreateFar(8, 12, 22, 7, 2);
   statusWindow = Window_CreateFar(8, 9, 22, 3, 2);
@@ -866,8 +866,8 @@ s32 DjinnMenu_ShowHelp(void) {
     Text_DrawMessageFar(selection + (s32)MsgDjinnInfoTopic, statusWindow, 0, 0);
     channel =
         Message_OpenDecodedFar(helpWindow, selection + (s32)MsgDjinnInfoText);
-    UiPanel_SetRectHighlight(list, 0, previous, 6, 1, 15);
-    UiPanel_SetRectHighlight(list, 0, selection, 6, 1, 14);
+    Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, 15);
+    Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1, 14);
     previous = selection;
     for (;;) {
       MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
@@ -902,7 +902,7 @@ s32 DjinnMenu_ShowHelp(void) {
       }
     }
     if (render->glyphResource != 99) {
-      Resource_ResetEntry(render->glyphResource);
+      VramCache_FreeEntry(render->glyphResource);
       render->glyphResource = 99;
     }
     ((struct WindowWork *)Ram_HeapSlots->windowTiles)->unk1388 = 0;
@@ -1068,8 +1068,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           if (fromX / 4 * 4 == page) {
             height = backdrop->counts[fromX];
             UiPanel_HighlightGridCell(listWindow, fromX, fromY, 1);
-            UiPanel_SetRectPalette(listWindow, (fromX - page) * 7 + 1, 2,
-                                   GRID_CELL_WIDTH, height, 6);
+            Window_SetInteriorRectPalette(listWindow, (fromX - page) * 7 + 1, 2,
+                                          GRID_CELL_WIDTH, height, 6);
             menu->rowY[0] = 54;
           } else {
             menu->rowY[0] = 200;

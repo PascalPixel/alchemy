@@ -49,7 +49,7 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
-  Map_PlayMapEdit(step->script, step->x, step->z);
+  MapGrid_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -302,7 +302,7 @@ void Func_0200047c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
-  Camera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
+  FieldCamera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
   Func_02001ccc__alhafra();
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(29, 2);
@@ -351,7 +351,7 @@ void Func_0200047c(void) {
   Actor_SetAnimation(30, 6);
   Actor_FaceDirection(29, 0x4000, 0);
   Actor_FaceDirection(28, 0xc000, 0);
-  FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
+  EventCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
   Func_02001ccc__alhafra();
   Event_End();
 }
@@ -805,7 +805,7 @@ void Func_02000aa0(s32 a0) {
   Actor_FaceDirection(29, 0x8000, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  FieldCamera_FollowActor(29, 1);
+  EventCamera_FollowActor(29, 1);
   Func_02001ccc__alhafra();
   Actor_WalkToAndWait(29, 488, 808);
   Actor_FaceDirection(31, 0, 0);
@@ -896,7 +896,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetSpeed(34, 0x8000, 0x4000);
   Actor_SetSpeed(35, 0x8000, 0x4000);
   Actor_SetSpeed(17, 0x8000, 0x4000);
-  FieldCamera_FollowActor(30, 1);
+  EventCamera_FollowActor(30, 1);
   Func_02001ccc__alhafra();
   if (a0 == 0x15) {
     FieldActor_SetSpritePriority(30, 2);
@@ -1011,7 +1011,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetPosition(34, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(35, 0, 0);
   Event_Wait(15);
-  Camera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
+  FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
   Func_02001ccc__alhafra();
   Event_End();
 }

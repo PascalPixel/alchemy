@@ -90,7 +90,7 @@ void RuntimeDispatch_ReservedNoOpD(void) {}
 
 void RuntimeDispatch_ReservedNoOpE(void) {}
 
-s32 System_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
+s32 Stub_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 
 /// Copies the build stamp resource (three words) into gBuildStamp and
 /// writes the zero word that ends it. Called at power-up, before the window
@@ -154,12 +154,12 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   }
 }
 
-void Resource_LoadCode(u32 index, void *destination) {
+void Overlay_Load(u32 index, void *destination) {
   void (*routine)(void *, s32);
   s32 end;
 
-  end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index),
-                              destination);
+  end = Decompress_TaggedLz((const void *)Resource_GetTableEntry(index),
+                            destination);
   RamCode_Load(routine, Resource_PatchThumbBranchCode,
                Resource_PatchThumbBranchCodeSize);
   routine(destination, end);

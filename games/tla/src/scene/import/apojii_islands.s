@@ -54,10 +54,10 @@ Func_02001c24:
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Oam_AddSpriteAtDepth
 	.thumb_func
 Oam_AddSpriteAtDepth:
@@ -69,11 +69,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -98,9 +98,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Script_WaitForEventTimeout
+	.global Actor_WaitForMove
 	.thumb_func
-Script_WaitForEventTimeout:
+Actor_WaitForMove:
 	overlay_veneer Actor_CommitPosition
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -114,14 +114,14 @@ Func_02001c9c:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_SetStateFlags
+	.global Actor_SetBlendMode
 	.thumb_func
-Animation_SetStateFlags:
-	overlay_veneer Animation_SetStateFlagsFar
-	.global Animation_ApplyChildValues
+Actor_SetBlendMode:
+	overlay_veneer Actor_SetBlendModeFar
+	.global Actor_SetSpriteColorMode
 	.thumb_func
-Animation_ApplyChildValues:
-	overlay_veneer Animation_ApplyChildValuesFar
+Actor_SetSpriteColorMode:
+	overlay_veneer Actor_SetSpriteColorModeFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -186,10 +186,10 @@ Actor_JumpDownLedge:
 	.thumb_func
 Actor_FaceActorById:
 	overlay_veneer Actor_FaceActorByIdFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -222,10 +222,10 @@ FieldEffect_SetAttached:
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02001d8c
 	.thumb_func
 Func_02001d8c:

@@ -48,7 +48,7 @@ struct RideWork {
   void *handle;
 };
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 

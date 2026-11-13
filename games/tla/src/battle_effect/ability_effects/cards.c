@@ -100,9 +100,9 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18ad40): routine Render_DrawModelList as void
@@ -345,23 +345,23 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       model->kind = 8;
       model->texture = &texture;
       model->mesh = Data_081992b0;
-      Render_ResetTransformState();
+      Transform_Reset();
       SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
       Func_08015160(overflow << 16, (card.y << 16) - (64 << 16), 0);
       if (frame <= 47) {
         if (effect->side == 0)
-          SceneTransform_ApplyRoll((frame << 10) - 0xd000);
+          Transform_ApplyRoll((frame << 10) - 0xd000);
         else
-          SceneTransform_ApplyRoll((52 - frame) << 10);
-        SceneTransform_ApplyPitch((52 - frame) << 10);
+          Transform_ApplyRoll((52 - frame) << 10);
+        Transform_ApplyPitch((52 - frame) << 10);
       } else {
         if (effect->side == 0)
-          SceneTransform_ApplyRoll(-0x1000);
+          Transform_ApplyRoll(-0x1000);
         else
-          SceneTransform_ApplyRoll(0x1000);
-        SceneTransform_ApplyPitch(0x1000);
+          Transform_ApplyRoll(0x1000);
+        Transform_ApplyPitch(0x1000);
       }
-      SceneTransform_ApplyYaw(0x1770);
+      Transform_ApplyYaw(0x1770);
       Func_0801521c(scale);
       SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);

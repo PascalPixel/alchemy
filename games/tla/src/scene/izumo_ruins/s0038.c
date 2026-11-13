@@ -58,14 +58,21 @@ L_0200809c:
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/izumo_ruins/s00a4.c ----
-// The overlay code of scene/izumo_ruins between two shared objects, in ROM order.
+// The overlay code of scene/izumo_ruins between two shared objects, in ROM
+// order.
 
 #include "izumo_ruins.h"
 #include "map.h"
 #include "../shared/trial_road.h"
 
-/* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/izumo_ruins/s0038.c:102: conflicting types for `Func_02000128'. */
-extern void Func_02000128__s00a4(s32 id, u32 kind, s32 flag, s32 layer) __asm__("Func_02000128");
+/* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind,
+ * s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the
+ * definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), which
+ * the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/izumo_ruins/s0038.c:102: conflicting types for
+ * `Func_02000128'. */
+extern void Func_02000128__s00a4(s32 id, u32 kind, s32 flag,
+                                 s32 layer) __asm__("Func_02000128");
 
 // Finds the current target's table row and shrinks it.
 void Func_020000a4(u16 *list, s32 mode, s32 count) {
@@ -177,14 +184,14 @@ body:
       Event_Start();
       if (!GameFlag_Test(flag)) {
         Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Func_02001428(pillar, 0);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         Func_02000974(0);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
@@ -356,15 +363,15 @@ body:
         Func_020006ec(helper, pillar);
         wait(1);
         Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Func_02001428(helper, 0);
         ObjectVisual_CopyAttributes(id, 9);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         Func_02000974(0);
         Func_020006ec(pillar, helper);
         wait(1);

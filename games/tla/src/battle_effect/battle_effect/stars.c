@@ -103,7 +103,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         size = (frame - start) / 4 + 2;
         if (size > 10)
           size = 10;
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera, camera + 3);
         SceneTransform_ApplyPosition(bolt);
         nearest = 0;
@@ -111,15 +111,15 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           s32 depth;
 
           Transform_Push();
-          SceneTransform_ApplyRoll((frame - start) << 10);
-          SceneTransform_ApplyYaw(0x4000);
+          Transform_ApplyRoll((frame - start) << 10);
+          Transform_ApplyYaw(0x4000);
           scale[0] = ((frame - start) << 12) + 0x1000;
           if (scale[0] > 0x10000)
             scale[0] = 0x10000;
           scale[1] = scale[0];
           scale[2] = scale[0];
           SceneTransform_ApplyScale(scale);
-          SceneTransform_ApplyRoll(j * 0x199a);
+          Transform_ApplyRoll(j * 0x199a);
           depth = EffectPosition_ProjectPoint(&gStar_Points[(j & 1) * 3], &pos);
           if (nearest < depth)
             nearest = depth;
@@ -269,7 +269,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
         // Project the star and, while it is on screen, lay out its ring of
         // ten points (the velocity fields of the map buffer's steps), then
         // join each point to the next with a row of dots.
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera, camera + 3);
         EffectPosition_ProjectPoint((s32 *)star, &pos);
         pos.x >>= 1;

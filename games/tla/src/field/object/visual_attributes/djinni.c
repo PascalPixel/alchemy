@@ -126,7 +126,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->update = (void (*)(void))Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       ((struct AnimationObject *)copy->sprite)->image.priority = 0;
-      Animation_ApplyChildValuesFar(copy, tint);
+      Actor_SetSpriteColorModeFar(copy, tint);
       Actor_SetMode(copy, 0);
       Actor_SetSingleChildFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
@@ -137,7 +137,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni->speedLimit = 0x4ccc;
   djinni->acceleration = 0x4ccc;
-  Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
   Sound_PlayFar(LEAP_SOUND);
   Actor_Jump(djinniId, 6, 5);
   wait(24);
@@ -317,7 +317,7 @@ struct BattleFxScene__motes {
 
 #define BATTLE_EFFECT_SLOT 224
 
-void BattleEffect_UpdateAllSlots(void) {
+void FieldEffect_UpdateAllSlots(void) {
   struct BattleFxScene__motes *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
@@ -332,25 +332,25 @@ void BattleEffect_UpdateAllSlots(void) {
   } while (remainingSlots >= 0);
 }
 
-void BattleEffect_InitializeSlots(void) {
+void FieldEffect_InitializeSlots(void) {
   void *work;
 
   work =
       HeapSlot_Alloc(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene__motes));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene__motes));
-  Task_Add((s32)BattleEffect_UpdateAllSlots, TASK_PASS_VBLANK);
+  Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
+void FieldEffect_ReleaseSlots(void) {
   struct BattleFxScene__motes *scene = Ram_HeapSlots->effectWork;
   struct FieldParticle *slot;
   s32 i;
 
-  Task_Remove((u32)BattleEffect_UpdateAllSlots);
+  Task_Remove((u32)FieldEffect_UpdateAllSlots);
   for (i = 0; i < 24; i++) {
     slot = &scene->slots[i];
     if (slot->active != 0)
-      BattleEffect_ClearOwnedSlot(slot);
+      FieldEffect_ClearOwnedSlot(slot);
   }
   HeapSlot_Release(BATTLE_EFFECT_SLOT);
   wait(1);
@@ -418,7 +418,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
       particle->state += 1;
     }
   } else if (particle->state == 4) {
-    BattleEffect_ClearOwnedSlot(particle);
+    FieldEffect_ClearOwnedSlot(particle);
   }
   position.x = particle->originX;
   position.z = particle->originZ;

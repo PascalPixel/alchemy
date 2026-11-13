@@ -31,7 +31,7 @@ void Actor_ArmCallback(s32 objectId, s32 angle, s32 frames) {
   }
 }
 
-void Actor_ArmCallbackAndRefresh(s32 objectId, s32 angle) {
+void Actor_FaceDirectionById(s32 objectId, s32 angle) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -102,9 +102,11 @@ void Func_080d3940(u32 id, u32 angle) {
     angle = (angle + 0x2000) & 0xc000;
     position[0] = object->x;
     position[2] = object->z;
-    SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+    MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                                 255);
     Vector_AddPolarOffset(0x100000, angle, position);
-    SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+    MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                                 255);
     switch (angle) {
     case 0:
       sprite->offsetX -= 3;
@@ -140,9 +142,11 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   position[0] = object->x;
   angle = (angle + 0x2000) & 0xc000;
   position[2] = object->z;
-  SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+  MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                               255);
   Vector_AddPolarOffset(0x100000, angle, position);
-  SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+  MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                               255);
   switch (angle) {
   case 0:
     object->x += 0x80000;
@@ -224,7 +228,7 @@ s32 Actor_GetSpriteById(s32 key) {
   return result;
 }
 
-s32 ObjectTable_FindActiveByValue(s32 value) {
+s32 Actor_FindBySprite(s32 value) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
   s32 index = 8;

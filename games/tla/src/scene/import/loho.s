@@ -22,22 +22,22 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
-	.global Resource_ResetEntry
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Func_02001268
 	.thumb_func
 Func_02001268:
@@ -46,14 +46,14 @@ Func_02001268:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Fade_ToWhite
+	.global ScreenFade_ToWhite
 	.thumb_func
-Fade_ToWhite:
-	overlay_veneer Fade_ToWhiteFar
-	.global Fade_FromWhite
+ScreenFade_ToWhite:
+	overlay_veneer ScreenFade_ToWhiteFar
+	.global ScreenFade_FromWhite
 	.thumb_func
-Fade_FromWhite:
-	overlay_veneer Fade_FromWhiteFar
+ScreenFade_FromWhite:
+	overlay_veneer ScreenFade_FromWhiteFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -61,19 +61,19 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
-	.global Map_PlayMapEdit
+	overlay_veneer GameFlag_ClearFar
+	.global MapGrid_PlayMapEdit
 	.thumb_func
-Map_PlayMapEdit:
-	overlay_veneer Map_PlayMapEditFar
-	.global Map_CopyCellPictureIndicesRect
+MapGrid_PlayMapEdit:
+	overlay_veneer MapGrid_PlayMapEditFar
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -86,10 +86,10 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Map_SetScreenShake
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -126,10 +126,10 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_RefreshSelectorById:
 	overlay_veneer Actor_RefreshSelectorByIdFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_MoveToAndWaitById
 	.thumb_func
 Actor_MoveToAndWaitById:
@@ -194,10 +194,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -210,10 +210,10 @@ FieldEffect_SetAttached:
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_020013c8
 	.thumb_func
 Func_020013c8:
@@ -246,10 +246,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Djinn_JoinParty:
 	overlay_veneer Djinn_JoinPartyFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

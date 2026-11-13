@@ -166,7 +166,7 @@ void Func_020006bc(void) {
 }
 
 void Func_02000770(struct Actor *object) {
-  Animation_ApplyChildValues(object, 0);
+  Actor_SetSpriteColorMode(object, 0);
   object->update = 0;
 }
 
@@ -195,7 +195,7 @@ static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
 }
 
 static inline void ApojiiIslands_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 /// An Apojii Islands scene inside an event: the actor takes Func_02000780 as
@@ -542,7 +542,7 @@ void Func_020011a8(void) {
       FieldActor_SetMoveTarget(leader, leader->x, leader->y,
                                leader->z + 0x80000);
       Func_02001c6c(leader, 49);
-      Actor_WaitForMove(leader);
+      FieldActor_WaitForMove(leader);
       do {
         System_Wait(1);
       } while (leader->y != leader->terrainHeight);
@@ -667,7 +667,7 @@ void Func_020015f8(void) {
 /// block and no source, then schedules Func_020015f8.
 void Func_020017bc(void) {
   Iwram_ClearWordsEntry(&gData_02002aa0, 0x1004);
-  gData_02002aa0.block = Resource_FindFreeEntry();
+  gData_02002aa0.block = VramCache_FindFreeEntry();
   Vram_Load(gData_02002aa0.block, 0x200, 0);
   FieldTask_AddFrame(Func_020015f8, 0x480);
 }
@@ -760,7 +760,7 @@ void Func_02001ad8(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
   Func_02001c24(gField_Tiles679, buf);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(56);
   work->field808 = size;

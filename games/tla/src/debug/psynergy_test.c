@@ -532,7 +532,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
   }
 }
 
-void Animation_ApplyChildValues(struct Actor *, u32);
+void Actor_SetSpriteColorMode(struct Actor *, u32);
 
 void Func_02000ad0(struct Actor *object) {
   struct Vector3 position;
@@ -543,7 +543,7 @@ void Func_02000ad0(struct Actor *object) {
   struct SparkleSprite *sprite;
 
   if (*count & 1)
-    Animation_ApplyChildValues(
+    Actor_SetSpriteColorMode(
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
@@ -553,8 +553,8 @@ void Func_02000ad0(struct Actor *object) {
     }
   } else if (((u8 *)object)[98] == 1) {
     if (work->unka0[0] > 31 && work->unka0[1] > 31) {
-      Animation_ApplyChildValues(object, 0);
-      Resource_ResetEntry(work->vramEntry);
+      Actor_SetSpriteColorMode(object, 0);
+      VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
       return;
     }
@@ -793,7 +793,7 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   s32 col;
   s32 offset;
 
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   Vram_Load(work->vramEntry, 256, gData_02000f44);
   work->unka6 = 0;
   work->unka0 = 999;

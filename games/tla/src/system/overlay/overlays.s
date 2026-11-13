@@ -1,6 +1,6 @@
 @ Each overlay's code and data is one compressed directory resource.
 @ Streams are rounded to four bytes. PACKER rows name a proven buffer
-@ writer or mark unused residue after the native terminator. Resource_LoadCode
+@ writer or mark unused residue after the native terminator. Overlay_Load
 @ uses decoded RAM and output length; an unknown residue writer stays unknown.
 	.section .overlays,"a"
 
@@ -1481,19 +1481,19 @@ Resource_Overlay696:
 Resource_Overlay697:
 	.incbin "overlays/resource_697.lz"
 	.ifdef TLA_EDITION_JA
-	.byte 0xcc	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0xcc	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.ifdef TLA_EDITION_DE
-	.byte 0xcc	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0xcc	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.ifdef TLA_EDITION_ES
-	.byte 0x01, 0x44, 0xcc	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0x01, 0x44, 0xcc	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.ifdef TLA_EDITION_FR
-	.byte 0x01, 0x44, 0xcc	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0x01, 0x44, 0xcc	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.ifdef TLA_EDITION_IT
-	.byte 0xcc	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0xcc	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.balign 4, 0
 
@@ -1900,16 +1900,16 @@ Resource_Overlay6AC:
 Resource_Overlay6AD:
 	.incbin "overlays/resource_6ad.lz"
 	.ifdef TLA_EDITION_EN
-	.byte 0x01, 0xff, 0x00	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0x01, 0xff, 0x00	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.ifdef TLA_EDITION_DE
-	.byte 0xff, 0x00	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0xff, 0x00	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.ifdef TLA_EDITION_FR
-	.byte 0x01, 0xff, 0x00	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0x01, 0xff, 0x00	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.ifdef TLA_EDITION_IT
-	.byte 0x01, 0xff, 0x00	@ PACKER: unused post-stream residue; Resource_LoadCode uses decoded RAM and output length; writer unknown
+	.byte 0x01, 0xff, 0x00	@ PACKER: unused post-stream residue; Overlay_Load uses decoded RAM and output length; writer unknown
 	.endif
 	.balign 4, 0
 

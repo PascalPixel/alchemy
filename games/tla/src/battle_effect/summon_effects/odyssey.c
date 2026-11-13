@@ -84,8 +84,8 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 mode, s32 timer,
@@ -377,11 +377,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           s32 scale = (age << 14) + 0x4000;
 
           model->look.shade = shade;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160((from.x / 2 - 64) << 16, 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
-          SceneTransform_ApplyPitch(Data_08199f2a[i]);
-          SceneTransform_ApplyYaw(Data_08199f2e[i]);
+          Transform_ApplyPitch(Data_08199f2a[i]);
+          Transform_ApplyYaw(Data_08199f2e[i]);
           Render_TransformVertices(Data_081991e0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -401,11 +401,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 scale = 0x30000 - ((frame - start) << 14);
 
         model->look.shade = 0;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160((from.x / 2 - 64) << 16, 0, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
-        SceneTransform_ApplyPitch(Data_08199f2a[i]);
-        SceneTransform_ApplyYaw(Data_08199f2e[i]);
+        Transform_ApplyPitch(Data_08199f2a[i]);
+        Transform_ApplyYaw(Data_08199f2e[i]);
         Render_TransformVertices(Data_081991e0, projected, 4);
         Render_DrawModelList(model);
       }
@@ -422,11 +422,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           s32 scale = (age << 14) + 0x4000;
 
           model->look.shade = shade;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160((to.x / 2 - 64) << 16, 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
-          SceneTransform_ApplyPitch(Data_08199f2a[i]);
-          SceneTransform_ApplyYaw(Data_08199f2e[i]);
+          Transform_ApplyPitch(Data_08199f2a[i]);
+          Transform_ApplyYaw(Data_08199f2e[i]);
           Render_TransformVertices(Data_081991e0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -453,15 +453,15 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       for (i = 0, step = Data_02016000; i != 128; i++) {
         color[0] = (i & 7) + 32;
         model->look.color = color;
-        Render_ResetTransformState();
+        Transform_Reset();
         x = step->x;
         y = step->y;
         center = -(64 << 16);
         Func_08015160(x + center, y + center, 0);
         SceneTransform_ApplyScale3(step->variant * 3, step->variant * 6,
                                    step->variant);
-        SceneTransform_ApplyPitch(step->z);
-        SceneTransform_ApplyYaw(step->z);
+        Transform_ApplyPitch(step->z);
+        Transform_ApplyYaw(step->z);
         Render_TransformVertices(Data_081991a4, projected, 3);
         Render_DrawModelList(model);
         BattleEffectKernels_IntegrateVector3(step, 62, 0);
@@ -557,7 +557,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
    * Iwram_CopyWords, 22 of 468 instructions differ in tla-en. */
   Swirl_CopyPalette(palette);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
   Iwram_CopyWordsEntry((void *)&BG_PLTT[96], palette, 128);
   for (i = 0; i != 0x4000; i++)
@@ -830,7 +830,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 }
 
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 mode);
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 
 // Summon 25's teardown: sets each target back on the ground at the battle
 // origin with the usual bounce (The Broken Seal's 0xab85 motion strength)
@@ -858,7 +858,7 @@ void Func_08191cc4(void) {
   transition->active = 0;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   // The battle's background (The Broken Seal's battle->background).
   BattleBackground_LoadFar(1, *(u16 *)battle->unk670, 24);
 }

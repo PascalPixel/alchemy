@@ -50,7 +50,7 @@ void Func_02000384(void) {
   FieldEvent_SetExitRequest(13);
 }
 
-// Includes the shared Effect_AdvanceMotion in this scene.
+// Includes the shared FieldEffect_AdvanceMotion in this scene.
 // Neither it nor its caller Func_02000418 exists in the Japanese scene.
 #if TLA_PATCH_1
 #include "../field/field_effect/advance_motion.c"
@@ -101,7 +101,7 @@ void Func_02000418(void) {
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;
@@ -687,7 +687,7 @@ fill:
   if (i >= 0)
     goto fill;
   // Spelled through a pointer: a member store shares its zero mask.
-  *(s16 *)&work->tile = Resource_FindFreeEntry();
+  *(s16 *)&work->tile = VramCache_FindFreeEntry();
   Vram_Load(work->tile, 128, tiles);
   Heap_Release(tiles);
   work->unk08 = ((s32 *)layer->unk08)[0];
@@ -1052,7 +1052,7 @@ void Func_020020fc(void) {
       Func_02002eb4();
       Task_AddFrame(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
-      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
       Func_02002eb4();
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);

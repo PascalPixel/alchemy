@@ -9,9 +9,9 @@
 //--------------------------------------------------------------------------
 
 /// The cursor's bob, indexed by (gFrameCount >> 1) & 7
-u8 gUiMenu_CursorBobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
-u8 gUiMenu_CursorBobY[9] = {0,    0xff, 0xff, 0xfe, 0xfe,
-                            0xff, 0xff, 0,    0}; // 0, -1, -1, -2 ...
+u8 gMenuCursor_BobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
+u8 gMenuCursor_BobY[9] = {0,    0xff, 0xff, 0xfe, 0xfe,
+                          0xff, 0xff, 0,    0}; // 0, -1, -1, -2 ...
 
 /// List orders, each ending in 0xff; ⚓️ adds entries 10 and 11
 u8 gMenu_ListOrderDefault[13] = {0, 1, 4, 3, 2, 5, 10, 6, 7, 8, 9, 11, 0xff};
@@ -37,9 +37,9 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 
 // The command names' widths
 #if (LANGUAGE == LANGUAGE_FRENCH)
-u8 gCharacterMenu_CursorWidths[5] = {6, 7, 7, 6, 6};
+u8 gStatusScreen_CursorWidths[5] = {6, 7, 7, 6, 6};
 #else
-u8 gCharacterMenu_CursorWidths[5] = {9, 4, 6, 5, 7};
+u8 gStatusScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
 #endif
 
 s32 gMenuIcon_ResourceIds[4] = {0xf3, 0xf4, 0xf5, 0xf6};

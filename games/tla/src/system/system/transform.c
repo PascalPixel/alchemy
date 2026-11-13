@@ -23,7 +23,7 @@ struct ProjectedPoint {
 void Render_EmptyHook(void) {}
 
 /// Allocates the matrix-save storage and sets the current matrix to identity.
-void Render_ResetTransformState(void) {
+void Transform_Reset(void) {
   gTransformStackTop = HeapSlot_AllocEwram(8, sizeof(gTransform));
   gTransformStackDepth = 0;
   CAMELOT_ASM("the fixed-register identity store of transform.h")
@@ -60,14 +60,14 @@ void Transform_Pop(void) {
 }
 
 /// Sets the current matrix to identity.
-void SceneTransform_ResetMatrix(void) {
+void Transform_ResetMatrix(void) {
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();
 }
 
 /// Applies rotations around the X, Y and Z axes.
 /// ang: the three axis angles.
-void SceneTransform_ApplyRotation(s32 *ang) {
+void Transform_ApplyRotation(s32 *ang) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];
 
@@ -107,7 +107,7 @@ static __inline__ void Render_SetIdentity(void *matrix) {
 }
 
 /// Applies a rotation about the X axis.
-void SceneTransform_ApplyPitch(s32 ang) {
+void Transform_ApplyPitch(s32 ang) {
   s32 m[12];
   s32 sin, cos;
 
@@ -123,7 +123,7 @@ void SceneTransform_ApplyPitch(s32 ang) {
 }
 
 /// Applies a rotation about the Y axis.
-void SceneTransform_ApplyYaw(s32 ang) {
+void Transform_ApplyYaw(s32 ang) {
   s32 m[12];
   s32 sin, cos;
 
@@ -154,7 +154,7 @@ void Func_080150ac(s32 ang) {
 }
 
 /// Applies a rotation about the Z axis.
-void SceneTransform_ApplyRoll(s32 ang) {
+void Transform_ApplyRoll(s32 ang) {
   s32 m[12];
   s32 sin, cos;
 
@@ -235,7 +235,7 @@ void Func_0801521c(s32 scale) {
   m[8] = scale;
   Iwram_TransformMatrix(m);
 }
-void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
+void Transform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];
 
@@ -261,7 +261,7 @@ void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
 
 /// Applies rotation, scaling by row and translation together.
 /// scale: scale factors for rows 1-3 of the rotation matrix.
-void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
+void Transform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 s;
   s32 m[12];

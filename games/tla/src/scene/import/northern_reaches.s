@@ -38,22 +38,22 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
-	.global Resource_ResetEntry
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Func_02000a10
 	.thumb_func
 Func_02000a10:
@@ -69,10 +69,10 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global Script_WaitForEventTimeout
+	overlay_veneer GameFlag_SetFar
+	.global Actor_WaitForMove
 	.thumb_func
-Script_WaitForEventTimeout:
+Actor_WaitForMove:
 	overlay_veneer Actor_CommitPosition
 	.global Map_CopyCellAttributeRect
 	.thumb_func
@@ -86,14 +86,14 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Map_SetScreenShake
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
-	.global Animation_ApplyChildValues
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
+	.global Actor_SetSpriteColorMode
 	.thumb_func
-Animation_ApplyChildValues:
-	overlay_veneer Animation_ApplyChildValuesFar
+Actor_SetSpriteColorMode:
+	overlay_veneer Actor_SetSpriteColorModeFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -154,18 +154,18 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Event_ShowMessageThenWait:
 	overlay_veneer Event_ShowMessageThenWaitFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
-	.global Camera_FollowActor
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
-	.global Camera_MoveWithinMapBounds
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02000af0
 	.thumb_func
 Func_02000af0:
@@ -202,10 +202,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Func_02000b40
 	.thumb_func
 Func_02000b40:

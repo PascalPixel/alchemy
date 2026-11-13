@@ -94,7 +94,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     Window_Close(window, 2);
     wait(1);
-    Resource_ResetEntry(slot);
+    VramCache_FreeEntry(slot);
   }
 }
 
@@ -149,7 +149,7 @@ void Party_ShowJoinedMessage(s32 member) {
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
     Window_Close(window, 2);
     wait(1);
-    Resource_ResetEntry(slot);
+    VramCache_FreeEntry(slot);
   }
 }
 
@@ -224,8 +224,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     Window_Close(window, 2);
     wait(1);
-    Resource_ResetEntry(handle1);
-    Resource_ResetEntry(handle2);
+    VramCache_FreeEntry(handle1);
+    VramCache_FreeEntry(handle2);
   }
 }
 
@@ -314,7 +314,7 @@ void Func_08044dc8(s32 summon) {
   while ((gInput.pressed & 0x303) == 0);
   Window_Close(window, 2);
   wait(1);
-  Resource_ResetEntry(resource);
+  VramCache_FreeEntry(resource);
 }
 
 #undef DJINN_JOIN_X

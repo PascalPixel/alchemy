@@ -30,14 +30,14 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
-	.global Resource_FindFreeEntry
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Window_LoadGraphics
 	.thumb_func
 Window_LoadGraphics:
@@ -46,10 +46,10 @@ Window_LoadGraphics:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Fade_ToBlack
+	.global ScreenFade_ToBlack
 	.thumb_func
-Fade_ToBlack:
-	overlay_veneer Fade_ToBlackFar
+ScreenFade_ToBlack:
+	overlay_veneer ScreenFade_ToBlackFar
 	.global Serial_Initialize
 	.thumb_func
 Serial_Initialize:
@@ -73,11 +73,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Window_Create
 	.thumb_func
 Window_Create:

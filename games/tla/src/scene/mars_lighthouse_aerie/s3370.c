@@ -88,7 +88,7 @@ void Func_02003370(void) {
 
       sprite = object->sprite;
       Actor_StartScript(object, gData_02006180);
-      Actor_SetSpriteColor(object, 1);
+      FieldActor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {
         /* FAKEMATCH(temporary): the masked value held in a local; as
@@ -220,15 +220,15 @@ void Func_02003658(void) {
   HeapSlot_Release(68);
   A(object)->motionFlags = zero;
   FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1180000);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   A(object)->motionFlags = 4;
   FieldEvent_Wait(60);
   A(object)->motionFlags = zero;
   FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1080000);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   FieldEvent_Wait(20);
   FieldActor_SetMoveTarget(object, 0x2000000, 0x500000, 0xfc0000);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   FieldEvent_Wait(20);
   Func_0200557c(object);
 L_0200b8ac:
@@ -240,13 +240,13 @@ L_0200b8ac:
   FieldActor_SetSpritePriority(27, 2);
   Event_PlaySound(141);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
-  Actor_SetSpriteColor(((s32)Actor_Get(23)), 7);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 7);
   beam = (s32)Actor_Get(23);
   A(beam)->scaleX = 0x1999;
   A(beam)->scaleY = 0xffff0000;
   A(beam)->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(beam, 0x2000000, 0x400000, 0xcc0000);
-  Actor_SetSpriteColor(((s32)Actor_Get(24)), 7);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(24)), 7);
   beam2 = (s32)Actor_Get(24);
   A(beam2)->scaleX = 0x1999;
   A(beam2)->scaleY = 0xffff0000;
@@ -275,19 +275,19 @@ L_0200b8ac:
   Event_SetFlag(0x200);
   A(((s32)Actor_Get(23)))->y = 0xffc80000;
   A(((s32)Actor_Get(24)))->y = 0xffe80000;
-  Actor_SetSpriteColor(((s32)Actor_Get(25)), 7);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(25)), 7);
   piece = (s32)Actor_Get(25);
   A(piece)->scaleY = 0xffff0000;
   A(piece)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
   A(piece)->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(piece, 0x2000000, 0x80000, 0xcc0000);
-  Actor_SetSpriteColor(((s32)Actor_Get(26)), 7);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(26)), 7);
   piece2 = (s32)Actor_Get(26);
   A(piece2)->scaleY = 0xffff0000;
   A(piece2)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
   A(piece2)->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(piece2, 0x2000000, 0x280000, 0xcc0000);
-  Actor_SetSpriteColor(((s32)Actor_Get(27)), 7);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(27)), 7);
   piece3 = (s32)Actor_Get(27);
   A(piece3)->scaleY = 0xffff0000;
   A(piece3)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
@@ -340,14 +340,14 @@ L_0200b8ac:
   Actor_SetScript(26, gData_02006120);
   Actor_RunScriptAndWait(27, gData_02006120);
   Event_PlaySound(0x186);
-  Actor_SetSpriteColor(((s32)Actor_Get(23)), 15);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 15);
   FieldEvent_Wait(20);
   Actor_RunScriptAndWait(23, gData_02006150);
   FieldTask_Remove(glowTask);
   actor = (s32)Actor_Get(8);
   A(actor)->motionFlags = zero;
-  Animation_SetStateFlags(actor, 1);
-  Actor_SetSpriteColor(((s32)Actor_Get(8)), 7);
+  Actor_SetBlendMode(actor, 1);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(8)), 7);
   FieldActor_SetSpritePriority(8, 2);
   *(s32 *)(s32)&Data_02006ccc = zero;
   *(s32 *)(s32)&Data_02006b68 = 240;
@@ -552,7 +552,7 @@ void Func_02003ff4(void) {
   Actor_ShowEmote(1, 0x103, 20);
   Event_ShowMessage(1, 0);
   t76 = Actor_Get(28);
-  Actor_SetSpriteColor(t76, 15);
+  FieldActor_SetSpriteColor(t76, 15);
   Actor_SetPosition(28, 0x2000000, 0x1680000);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
@@ -662,12 +662,12 @@ void Func_02003ff4(void) {
   FieldTask_Remove((s32)Func_020004a4);
   Event_PlaySound(140);
   t184 = Actor_Get(8);
-  Actor_SetSpriteColor(t184, 12);
+  FieldActor_SetSpriteColor(t184, 12);
   t186 = Actor_Get(9);
-  Actor_SetSpriteColor(t186, 12);
+  FieldActor_SetSpriteColor(t186, 12);
   FieldActor_SetSpritePriority(23, 2);
   t189 = Actor_Get(23);
-  Actor_SetSpriteColor(t189, 7);
+  FieldActor_SetSpriteColor(t189, 7);
   actor = Actor_Get(23);
   ((struct Actor *)actor)->scaleY = 0xffff0000;
   ((struct Actor *)actor)->scaleX = 0x1999;
@@ -769,7 +769,7 @@ L_0200c72a:
   FieldCamera_MoveTo(0x2000000, -1, 0x1380000, 1);
   Actor_SetPosition(8, 0, 0);
   t271 = Actor_Get(9);
-  Actor_SetSpriteColor(t271, 7);
+  FieldActor_SetSpriteColor(t271, 7);
   FieldActor_SetSpritePriority(9, 1);
   t274 = Actor_Get(9);
   ((struct Actor *)t274)->priorityFlags &= 253;
@@ -919,7 +919,7 @@ void Func_02004d50(s32 id) {
     ones.value = 0xffff;
     party->held = raw.value | ones.value;
     Actor_Get(held)->update = (void *)zero;
-    Actor_SetSpriteColor(Actor_Get(held), 0);
+    FieldActor_SetSpriteColor(Actor_Get(held), 0);
   }
 }
 
@@ -1080,7 +1080,7 @@ void Func_020051e0(void) {
 
 #include "system/vector3.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 void Func_02005268(struct Actor *object) {
   struct Vector3 position;
@@ -1091,7 +1091,7 @@ void Func_02005268(struct Actor *object) {
   struct SparkleSprite *sprite;
 
   if (*count & 1)
-    Animation_ApplyChildValues(
+    Actor_SetSpriteColorMode(
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
@@ -1101,8 +1101,8 @@ void Func_02005268(struct Actor *object) {
     }
   } else if (((u8 *)object)[98] == 1) {
     if (work->unka0[0] > 31 && work->unka0[1] > 31) {
-      Animation_ApplyChildValues(object, 0);
-      Resource_ResetEntry(work->vramEntry);
+      Actor_SetSpriteColorMode(object, 0);
+      VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
       return;
     }
@@ -1192,7 +1192,7 @@ void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
   s32 col;
   s32 offset;
 
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   Vram_Load(work->vramEntry, 256, gData_020057e4);
   work->unka6 = 0;
   work->unka0 = 999;

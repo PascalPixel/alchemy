@@ -38,7 +38,7 @@ void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020029a8(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
+void Actor_SetBlendMode(struct Actor *object, u32 value);
 
 extern s32 gData_02003458;
 extern s32 gData_0200345c;
@@ -107,7 +107,7 @@ extern const u8 gData_02002af4[];
 extern s32 gData_020035f0;
 extern u8 gMapShapeGrid[];
 void Map_CenterOnFollowedPoint(void);
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Suspend(void);
 void Func_02001eb8(void);
 void Func_02001ff0(s32 x, s32 z);
 void Func_0200237c(void);
@@ -665,7 +665,7 @@ void Func_02000c24(void) {
   object = FieldActor_Create(0x11d, x, 0, z);
   Actor_StartScript(object, gData_020029c8);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   if (gData_02003458 == 0)
     FieldTask_Remove(Func_02000c24);
 }
@@ -1264,7 +1264,7 @@ s32 Scene_Initialize(void) {
         Func_02002114(0);
     }
     if ((u32)(entrance - 4) <= 1)
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
   }
   return 0;
 }
@@ -1467,7 +1467,7 @@ s32 Scene_Initialize(void) {
         Func_02002114(0);
     }
     if ((u32)(entrance - 4) <= 1)
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
   }
   return 0;
 }
@@ -1538,7 +1538,7 @@ static __inline__ void Blend_SetAlpha(s32 value) {
 }
 
 void Func_02002084(s32 fade) {
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   if (fade) {
     Blend_SetAlpha(0xe06);
     /* FAKEMATCH(dead): the empty once-only block finishes the blend value
@@ -1646,7 +1646,7 @@ void Func_020022ac(void) {
     FieldEvent_ResolvePendingActions(0);
     Func_02002818_(object, (object->x & 0xfff00000) + 0x80000, object->y,
                    (object->z & 0xfff00000) + 0x80000);
-    Actor_WaitForMove(object);
+    FieldActor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;
       sprite->dirty = 1;
@@ -1709,7 +1709,7 @@ void Func_02002554(s32 *position, s32 base) {
     object->timer = angle;
     Func_020024f8(object, 3);
     object->update = (void (*)(void))Func_02002400;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 

@@ -28,7 +28,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_SetWideSprite(s32 actor, s32 value);
 void Task_RemoveFar(TaskFunc func);
 void FieldPsynergy_RunHandler(s32 type);
@@ -48,7 +48,8 @@ void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode);
 void Func_020032c4(void);
 void Func_02003820(const void *script);
 void Func_0200388c(const void *script, s32 a, s32 b);
-void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
@@ -71,7 +72,7 @@ void Func_02000918(u16 *list);
 void Func_0200095c(u16 *list);
 void Actor_FaceActorById(s32 id, s32 target, s32 flags);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
-void Camera_FollowActor(s32 id, s32 mode);
+void FieldCamera_FollowActor(s32 id, s32 mode);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 void FieldEvent_Wait(s32 frames);
 void PartyInventory_GiveItem(s32 item, s32 flags);
@@ -85,10 +86,10 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003fe0(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003fe8(struct Actor *object);
-void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
+void Actor_FaceDirectionById(s32 actor, s32 angle);
 void Func_02004138(s32 mode);
 void Camera_SetSpeedParameters(s32 a, s32 b);
-void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_Stop(s32 id);
 void Func_020021d4(void);
@@ -131,7 +132,7 @@ static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration) {
 }
 
 static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
-  Camera_MoveWithinMapBounds(x, a, z, b);
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {

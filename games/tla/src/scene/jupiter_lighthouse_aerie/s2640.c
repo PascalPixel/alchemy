@@ -16,23 +16,22 @@
 #include "module/scene/scene.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetScreenShake(a, b, c);
 }
 
 DEFINE_FUNC_02001E24(Func_02002640, Func_02001e78)
 
 DEFINE_FUNC_0200180C(Func_020027d8, gData_02003488, Func_02002438,
-    Func_020024a8)
+                     Func_020024a8)
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
-  struct CellTarget *work =
-      &gData_02003488;
+  struct CellTarget *work = &gData_02003488;
   s32 x = FieldGameFlag_GetByte(work->flagByte);
   s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
 

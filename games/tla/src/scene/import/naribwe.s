@@ -9,11 +9,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global Map_PlayMapEdit
+	overlay_veneer GameFlag_SetFar
+	.global MapGrid_PlayMapEdit
 	.thumb_func
-Map_PlayMapEdit:
-	overlay_veneer Map_PlayMapEditFar
+MapGrid_PlayMapEdit:
+	overlay_veneer MapGrid_PlayMapEditFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:

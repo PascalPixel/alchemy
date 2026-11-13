@@ -42,22 +42,22 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
-	.global Resource_ResetEntry
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global DebugText_Clear
 	.thumb_func
 DebugText_Clear:
@@ -74,10 +74,10 @@ Window_LoadGraphics:
 	.thumb_func
 Render_ProjectPoint:
 	overlay_veneer Render_ProjectPointFar
-	.global QueueIoWriteDelay2
+	.global IoWriteQueue_Store16
 	.thumb_func
-QueueIoWriteDelay2:
-	overlay_veneer QueueIoWriteDelay2Far
+IoWriteQueue_Store16:
+	overlay_veneer IoWriteQueue_Store16Far
 	.global Unit_Get
 	.thumb_func
 Unit_Get:
@@ -89,11 +89,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -118,10 +118,10 @@ Import_ActorCreate:
 	.thumb_func
 Func_02004b38:
 	overlay_veneer Actor_Destroy
-	.global Map_UpdateCurrentTileBlock
+	.global WorldMap_UpdateCurrentTileBlock
 	.thumb_func
-Map_UpdateCurrentTileBlock:
-	overlay_veneer Map_UpdateCurrentTileBlockFar
+WorldMap_UpdateCurrentTileBlock:
+	overlay_veneer WorldMap_UpdateCurrentTileBlockFar
 	.global Func_02004b48
 	.thumb_func
 Func_02004b48:
@@ -130,14 +130,14 @@ Func_02004b48:
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Script_WaitForEventTimeout
+	.global Actor_WaitForMove
 	.thumb_func
-Script_WaitForEventTimeout:
+Actor_WaitForMove:
 	overlay_veneer Actor_CommitPosition
-	.global Map_SetWindowCellTile
+	.global WorldMap_SetWindowCellTile
 	.thumb_func
-Map_SetWindowCellTile:
-	overlay_veneer Map_SetWindowCellTileFar
+WorldMap_SetWindowCellTile:
+	overlay_veneer WorldMap_SetWindowCellTileFar
 	.global WorldMap_SetWindowCellTileAndDraw
 	.thumb_func
 WorldMap_SetWindowCellTileAndDraw:
@@ -146,14 +146,14 @@ WorldMap_SetWindowCellTileAndDraw:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Map_SetScreenShake
+	.global MapGrid_SetScreenShake
 	.thumb_func
-Map_SetScreenShake:
-	overlay_veneer Map_SetScreenShakeFar
-	.global Animation_ApplyChildValues
+MapGrid_SetScreenShake:
+	overlay_veneer MapGrid_SetScreenShakeFar
+	.global Actor_SetSpriteColorMode
 	.thumb_func
-Animation_ApplyChildValues:
-	overlay_veneer Animation_ApplyChildValuesFar
+Actor_SetSpriteColorMode:
+	overlay_veneer Actor_SetSpriteColorModeFar
 	.global Func_02004b88
 	.thumb_func
 Func_02004b88:
@@ -262,10 +262,10 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_RefreshSelectorById:
 	overlay_veneer Actor_RefreshSelectorByIdFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
 	.global Actor_MoveToAndWaitById
 	.thumb_func
 Actor_MoveToAndWaitById:
@@ -318,10 +318,10 @@ Actor_FaceActorById:
 	.thumb_func
 Actor_TurnToFaceEachOther:
 	overlay_veneer Actor_TurnToFaceEachOtherFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -342,10 +342,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Actor_ArmCallbackAndRefresh
+	.global Actor_FaceDirectionById
 	.thumb_func
-Actor_ArmCallbackAndRefresh:
-	overlay_veneer Actor_ArmCallbackAndRefreshFar
+Actor_FaceDirectionById:
+	overlay_veneer Actor_FaceDirectionByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -354,18 +354,18 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Camera_MoveWithinMapBounds
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02004d30
 	.thumb_func
 Func_02004d30:
@@ -386,10 +386,10 @@ Field_RequestBattleFromEncounterTable:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Party_SetFields1eeAnd1f0
+	.global Event_SetAfterBattleDestination
 	.thumb_func
-Party_SetFields1eeAnd1f0:
-	overlay_veneer Party_SetFields1eeAnd1f0Far
+Event_SetAfterBattleDestination:
+	overlay_veneer Event_SetAfterBattleDestinationFar
 	.global Party_SetFields1f2And1f4
 	.thumb_func
 Party_SetFields1f2And1f4:
@@ -438,10 +438,10 @@ Func_02004db0:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Party_PlaySavedMusic
+	.global Scene_PlayMusic
 	.thumb_func
-Party_PlaySavedMusic:
-	overlay_veneer Party_PlaySavedMusicFar
+Scene_PlayMusic:
+	overlay_veneer Scene_PlayMusicFar
 	.global Scene_ChooseMusic
 	.thumb_func
 Scene_ChooseMusic:
@@ -454,10 +454,10 @@ Djinn_JoinParty:
 	.thumb_func
 Actor_LaunchFromLeader:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

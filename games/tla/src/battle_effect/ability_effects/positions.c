@@ -16,7 +16,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   camera = Ram_HeapSlots->cameraWork;
   object = GetBattleObjectSlotFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(camera, camera + 12);
   scale = Iwram_MulQ16(Render_ProjectPoint(object + 2, screen),
                        *(s32 *)(info + 12));
@@ -112,7 +112,7 @@ extern u16 gBattleEffect_FlarePictures[];
 
 void *Resource_GetTableEntry(s32 id);
 
-s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
+s32 BattleSprite_HasHeavyImpactFar(s32 enemyId);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectSprite(s32 actor, struct EffectPosition *position);
@@ -280,7 +280,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 32; frame++) {
     // The battle resumes: hit cue 134 for a flagged summon entry, else 133.
     if (frame == 5) {
-      if (Summon_IsEntrySecondaryFlaggedFar(unit->enemyId))
+      if (BattleSprite_HasHeavyImpactFar(unit->enemyId))
         BattlePlayback_StartFar(134);
       else
         BattlePlayback_StartFar(133);
@@ -345,7 +345,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
     if (frame >= 4 && frame <= 15)
       draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
               anchor.x - 16, anchor.y - 24, 40, 48);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
@@ -384,10 +384,10 @@ extern char ResourceId_GreyCrescentSheet;
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
 void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 // The roll step of the scene transform.
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 
 void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
@@ -518,10 +518,10 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
         if (mote->x >= 0 && frame >= i / 4) {
           s32 size = (i & 1) + 5;
 
-          Render_ResetTransformState();
-          SceneTransform_ApplyRoll(mote->velocityZ);
-          SceneTransform_ApplyPitch(mote->velocityX);
-          SceneTransform_ApplyYaw(mote->velocityY);
+          Transform_Reset();
+          Transform_ApplyRoll(mote->velocityZ);
+          Transform_ApplyPitch(mote->velocityX);
+          Transform_ApplyYaw(mote->velocityY);
           EffectPosition_ProjectPoint(&mote->x, &point);
           point.x += 64;
           point.y = point.y + pos.y + 24;
@@ -602,7 +602,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
       draw[0](canvas, Ram_MapCellBuffer + 0x4000, -4, 0, 128, 128);
     else if (frame <= 7)
       draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.

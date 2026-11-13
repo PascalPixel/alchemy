@@ -114,7 +114,7 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot) {
         icon = (struct StatusIconEntry *)slot->animationEntry;
         if (icon != 0) {
           icon->priority = 3;
-          Animation_SetWorkEntryFar(icon, 0);
+          SpriteAnimation_StartFar(icon, 0);
         }
       }
 
@@ -270,7 +270,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
           entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record,
                                                                      spriteId);
           battleObject->animationEntry = entry;
-          Animation_SetWorkEntryFar(entry, 0);
+          SpriteAnimation_StartFar(entry, 0);
           entry->priority = 3;
         }
         if ((spriteId = battleObject->effect) != 0) {
@@ -547,7 +547,7 @@ extern s32 Transform_SetLookAt__battle(void *,
 s32 BattleCamera_ApplyTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   if (GameFlag_Test(0x16B) != 0) {
     Iwram_TransformMatrix(gData_08128868);
     return Transform_ApplyLookAt__battle(state, state->pos);
@@ -605,10 +605,10 @@ void Camera_InitializeDefaultTransform(void) {
   state->followPos = 0;
   state->unk18 = 0;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition(&state->pos[0]);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  Transform_ApplyYaw((s16)state->yaw);
+  Transform_ApplyPitch((s16)state->pitch);
 
   transfer.x = 0;
   transfer.y = 0;

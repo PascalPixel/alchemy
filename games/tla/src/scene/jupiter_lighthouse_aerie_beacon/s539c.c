@@ -19,11 +19,11 @@ void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  Camera_MoveWithinMapBounds(x, y, z, use_setter);
+  FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
 static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetScreenShake(a, b, c);
 }
 
 void Func_0200539c(void) {
@@ -48,7 +48,7 @@ void Func_0200539c(void) {
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   for (i = 0; i <= 16; i++) {

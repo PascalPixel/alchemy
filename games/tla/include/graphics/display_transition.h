@@ -95,6 +95,6 @@ void ScreenTransition_UpdateDissolve(void);
 void ScreenTransition_FillTilemapAndSolidTile(s32 color);
 void ScreenTransition_InitializeState(s32 mode);
 void ScreenTransition_UpdateScanlineTable(void);
-void BattleEffect_StartWindowHBlankDma(void);
+void FieldEffect_StartWindowHBlankDma(void);
 
 #endif

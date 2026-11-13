@@ -128,7 +128,7 @@ extern struct ActorPlacement gData_02005a54[];
 extern s32 gData_02005ee4;
 extern s32 gData_02005e28[];
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 /// Return the table for the current room.
 const void *Scene_GetPlacements(void) {
@@ -150,7 +150,7 @@ void Func_02000a60(struct Actor *object) {
 
   if ((gData_02005ee4 & 7) <= 0)
     value = 7;
-  Animation_ApplyChildValues(object, value & 7);
+  Actor_SetSpriteColorMode(object, value & 7);
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleX = 0x10000;
     Actor_StartScript(object, gData_02005e28);
@@ -164,7 +164,7 @@ void Func_02000aac(struct Actor *object) {
 
   if ((gData_02005ee4 & 7) <= 0)
     value = 7;
-  Animation_ApplyChildValues(object, value & 7);
+  Actor_SetSpriteColorMode(object, value & 7);
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleY = 0x10000;
     Actor_StartScript(object, gData_02005d6c);
@@ -192,14 +192,14 @@ void Func_02000af8(s32 unused, u32 id) {
   System_Wait(20);
 }
 
-/// Unless MapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36, 23) to
-/// (38, 25), moves a leader standing on that cell aside, and sets flag 0x30a,
-/// or 0x9bf once flag 0x927 is set.
+/// Unless FieldMapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36,
+/// 23) to (38, 25), moves a leader standing on that cell aside, and sets flag
+/// 0x30a, or 0x9bf once flag 0x927 is set.
 void Func_02000b6c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
   Call7(Func_02004ff4, 37, 26, 0, 3, 3, 61, 0);
-  if (MapGrid_GetCellBehaviorAt(2, 152 << 18, 200 << 17) == 0) {
+  if (FieldMapGrid_GetCellBehaviorAt(2, 152 << 18, 200 << 17) == 0) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -281,8 +281,8 @@ void Func_02000d18(void) {
     return;
   count = 0;
   for (i = 0; i <= 11; i++) {
-    if (GetMapCellCollision(2, gData_020051d8[i].position[0] << 20,
-                            gData_020051d8[i].position[1] << 20) == 0)
+    if (MapGrid_GetCellBehaviorAt(2, gData_020051d8[i].position[0] << 20,
+                                  gData_020051d8[i].position[1] << 20) == 0)
       count++;
   }
   if (count <= 0)
@@ -410,7 +410,7 @@ void Func_02001048(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside02);
-  FieldCamera_FollowActor(10, 1);
+  EventCamera_FollowActor(10, 1);
   if (object->script == gData_02005610 || object->script == gData_0200559c)
     FieldActor_RefreshSelectorById(9);
   Func_02000f00();
@@ -432,7 +432,7 @@ void Func_02001048(void) {
   FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(392), 1);
   Func_02004f54();
   Event_ShowMessage(10, 0);
-  FieldCamera_FollowActor(10, 1);
+  EventCamera_FollowActor(10, 1);
   Func_02004f54();
   Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
   FieldEvent_Wait(10);
@@ -526,11 +526,11 @@ void Func_02001314(s32 a0) {
   FIELD_AT(t0, s32, 28) = 0x6666;
   FIELD_AT(t0, s32, 24) = 0x6666;
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
-  Actor_SetSpriteColor(t0, 2);
+  FieldActor_SetSpriteColor(t0, 2);
   Scene_SetActorSpritePriority(t0, 1);
   Func_02004d9c(t0, 1);
   Actor_SetSingleChildFlags(t0, 0);
-  Animation_SetStateFlags(t0, 1);
+  Actor_SetBlendMode(t0, 1);
   Func_02004dac__s12ac(t0, (s32)gData_02005208);
 }
 #undef FIELD_AT

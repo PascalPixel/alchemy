@@ -113,7 +113,7 @@ extern u8 BattleEffect_ExpandCodeSize[];
 
 s32 Func_08038418(s32 message, u8 *canvas, s32 align);
 
-extern const u8 gDisplayScroll_GlyphWidths[];
+extern const u8 gCredits_GlyphWidths[];
 
 extern const u8 gDisplayScroll_Font[];
 
@@ -124,7 +124,7 @@ extern const u8 BattleEffect_Expand2Code[];
 extern u8 BattleEffect_Expand2CodeSize[];
 
 extern char ResourceId_Data018;
-void PaletteFade_SetCurrent(s32 index, s32 transform);
+void PaletteFade_SetSource(s32 index, s32 transform);
 
 extern u8 Data_02026800[];
 
@@ -150,6 +150,6 @@ extern u16 Data_081a87ba[];
 extern u16 Data_081a87fa[];
 
 s32 BattleEffect_ClampRgb555Channel(s32 value);
-s32 BattleEffect_ClampRgb555Component(s32 value);
+s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 
 #endif

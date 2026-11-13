@@ -52,7 +52,7 @@ struct RideWork {
   void *handle;
 };
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 
@@ -215,7 +215,7 @@ s32 Func_0200297c(void) {
   done:
 #endif
     actor->update = 0;
-    Animation_ApplyChildValues(actor, 0);
+    Actor_SetSpriteColorMode(actor, 0);
   }
   work->unk04 = 0;
 }
@@ -289,7 +289,7 @@ s32 Func_02002ba0(void) {
   }
   FieldEvent_Wait(30);
   leader->update = 0;
-  Animation_ApplyChildValues(leader, 0);
+  Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
 
@@ -337,7 +337,7 @@ struct Work {
 };
 
 extern u8 gData_02005dbc[];
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 
 #define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
@@ -388,7 +388,7 @@ void Func_02002d08(struct Actor *actor) {
       object->bounce = Q16_ONE / 2;
       sprite = object->sprite;
       source = work->owner->sprite;
-      Resource_ResetEntry(sprite->vramBlock);
+      VramCache_FreeEntry(sprite->vramBlock);
       sprite->retainCacheEntry = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);

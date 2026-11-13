@@ -52,8 +52,8 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 
 /* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition
  * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
@@ -159,7 +159,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       if (frame > 95) {
         REG_BLDALPHA = (0xce - frame * 2) | 0x1000;
       }
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera, (u8 *)camera + 12);
 
       // The pillar of light.
@@ -214,7 +214,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       }
 
       // The crystal, spinning and growing from frame 16.
-      Render_ResetTransformState();
+      Transform_Reset();
       gCameraSceneParameters[4] = 104;
       {
         void *vertices = Heap_AllocEwram(32);
@@ -234,10 +234,10 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
             scale = 0x1bd50;
           }
           model->shade = 0;
-          SceneTransform_ApplyPitch(-0xbb8);
+          Transform_ApplyPitch(-0xbb8);
           Func_08015160((center[0] / 2 - 64) << 16, 0x280000, 0);
           Func_0801521c(scale >> 1);
-          SceneTransform_ApplyYaw(frame << 9);
+          Transform_ApplyYaw(frame << 9);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);
         }

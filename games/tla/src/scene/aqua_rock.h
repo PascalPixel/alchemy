@@ -20,8 +20,8 @@ void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(u32 objectId);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -32,14 +32,14 @@ void Actor_FaceActorById(s32 id, s32 target, s32 flags);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Task_RemoveFar(TaskFunc func);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -113,7 +113,7 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  Camera_MoveWithinMapBounds(x, a, z, b);
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -131,7 +131,7 @@ static __inline__ void Func_02002a20_(s32 a, s32 b) {
 }
 
 static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
-  Actor_ResetAndSetPosition(id, x, z);
+  Actor_SetDestinationById(id, x, z);
 }
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }

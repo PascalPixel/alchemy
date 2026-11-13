@@ -46,7 +46,7 @@ void Func_020016d8(void) {
     ship->facing = FACING_WEST;
   }
   Actor_SetPosition(10, PIXELS(186), PIXELS(164));
-  Actor_SetSpriteColor(Actor_Get(10), 15);
+  FieldActor_SetSpriteColor(Actor_Get(10), 15);
   Actor_SetSingleChildFlags(Actor_Get(10), 0);
   System_Wait(1);
   Event_StartScreenTransition();
@@ -190,7 +190,7 @@ void Func_020016d8(void) {
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_SetSingleChildFlags(Actor_Get(10), 1);
-  Actor_SetSpriteColor(Actor_Get(10), 0);
+  FieldActor_SetSpriteColor(Actor_Get(10), 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_EAST, 40);
   Actor_SetAnimation(10, 3);
@@ -919,8 +919,10 @@ struct Trigger gIdejimaEventsWake[] = {
     {TRIGGER_EXAMINE, 10, 0x863, EVENT(Func_020000f0)},
     {TRIGGER_EXAMINE, 11, 0x864, EVENT(Func_020002b4)},
     {TRIGGER_EXAMINE, 12, 0x865, EVENT(Func_0200049c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT(Func_020000f0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x405, CONDITION_ALWAYS, EVENT(Func_020002b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS,
+     EVENT(Func_020000f0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x405, CONDITION_ALWAYS,
+     EVENT(Func_020002b4)},
     {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Func_020006a8)},
     {TRIGGER_STEP, 8, 0x867, EVENT(Idejima_RunAlexDeparture)},
     {TRIGGERS_END},

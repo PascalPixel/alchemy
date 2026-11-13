@@ -153,7 +153,7 @@ L_0200821e:
   FieldActor_StartRepeatedMotion(4, 3);
   Actor_SetAttachedEffect(4, 0x102);
   Actor_WalkByAndWait(4, 24, 12);
-  Actor_ArmCallbackAndRefresh(4, 0xc000);
+  Actor_FaceDirectionById(4, 0xc000);
   Event_Wait(30);
   Sound_Play(144);
   FieldActor_ShowItemIconById(21, 0x1cc);
@@ -162,15 +162,15 @@ L_0200821e:
   Actor_SetSpeed(21, 0x30000, 0x18000);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   Actor_SetDestination(21, 0x1e8, 0x12c);
-  Camera_MoveWithinMapBounds(0x1e80000, -1, 0x1340000, 1);
+  FieldCamera_MoveWithinMapBounds(0x1e80000, -1, 0x1340000, 1);
   Actor_WaitForMoveById(21);
   Actor_SetPosition(21, 0, 0);
   MapGrid_SetShake(0x70000, 0x70000, 0x10000);
   table = (struct Unk16 *)Heap_AllocEwram(0x600);
   p = (struct Unk16 *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
-  Resource_DecodeType01(t38, p);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(t38, p);
+  entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
   p = (struct Unk16 *)&table->unk_0c;
@@ -198,7 +198,7 @@ L_020083b6:
 L_020083c4:
   if (i != 30)
     goto L_020083d4;
-  Fade_ToWhite(90);
+  ScreenFade_ToWhite(90);
   Sound_Play(141);
 L_020083d4:
   p = table;
@@ -236,7 +236,7 @@ L_02008474:
   i = (i + 1);
   if (i <= 119)
     goto L_020083b6;
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   Heap_Release(table);
   FieldCamera_MoveTo(0x1e80000, -1, 0x1860000, 1);
   Actor_SetPositionAndFacing(14, 0xf80000, 0x1e00000, 0);
@@ -244,7 +244,7 @@ L_02008474:
   MapGrid_SetShake(0, 0, 0x10000);
   Sound_Play(0x186);
   Event_Wait(180);
-  Fade_FromWhite(120);
+  ScreenFade_FromWhite(120);
   Event_SetMessageId((s32)MsgLoho28);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
@@ -295,7 +295,7 @@ L_02008474:
   Actor_FaceDirection(18, 0x5000, 0);
   Event_ShowMessage(18, 0);
   Actor_SetSpeed(17, 0xcccc, 0x6666);
-  Actor_OffsetPositionAndReset(17, 0, 16);
+  Actor_WalkByById(17, 0, 16);
   Actor_WaitForMoveById(17);
   Actor_FaceDirectionAndWait(17, 0x2000);
   Actor_SetAnimation(17, 4);
@@ -335,19 +335,19 @@ L_02008474:
   Actor_SetSpeed(17, 0x6666, 0x3333);
   Actor_SetMovementTypeById(17, (s32)gData_0200154c);
   Actor_RefreshSelectorById(16);
-  Actor_ArmCallbackAndRefresh(16, 0x6000);
+  Actor_FaceDirectionById(16, 0x6000);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, 0x8000);
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(16, 0xa000);
+  Actor_FaceDirectionById(16, 0xa000);
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(16, 0xe000);
+  Actor_FaceDirectionById(16, 0xe000);
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(16, 0);
+  Actor_FaceDirectionById(16, 0);
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(16, 0x2000);
+  Actor_FaceDirectionById(16, 0x2000);
   Event_Wait(10);
-  Actor_ArmCallbackAndRefresh(16, 0x5000);
+  Actor_FaceDirectionById(16, 0x5000);
   Event_Wait(40);
   Actor_SetModeById(16, 3);
   Event_Wait(60);
@@ -423,7 +423,7 @@ L_020089c4:
   Actor_RefreshSelectorById(20);
   Actor_SetSpeed(20, 0x4ccc, 0x2666);
   FieldCamera_SetSpeed(0x4ccc, 0x999);
-  Camera_MoveWithinMapBounds(0x1cc0000, -1, 0x15e0000, 1);
+  FieldCamera_MoveWithinMapBounds(0x1cc0000, -1, 0x15e0000, 1);
   Event_Wait(30);
   t233 = ((s32)Actor_GetById(16));
   FIELD_AT(t233, u8, 90) &= 254;
@@ -560,7 +560,7 @@ void Func_02000e3c(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020012a0_(const void *data, s32 a, s32 b) {
-  Map_PlayMapEdit(data, a, b);
+  MapGrid_PlayMapEdit(data, a, b);
 }
 
 static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
@@ -624,7 +624,7 @@ void Func_02000eec(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 destX, s32 destY) {
-  Map_CopyCellPictureIndicesRect(srcX, srcY, width, height, destX, destY);
+  MapGrid_CopyCellPictureIndicesRect(srcX, srcY, width, height, destX, destY);
 }
 
 void Func_02000f38(void) {

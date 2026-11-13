@@ -92,7 +92,7 @@ void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
   Task_Remove((u32)Func_080e2c38);
-  Resource_ResetEntry(*(s16 *)(work + 0x1b00));
+  VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
 }
 
 #include "fixed_math.h"
@@ -239,7 +239,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
 void Func_080e2acc(void);
 void Func_080e249c(void);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void FieldPsynergy_Cyclone(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
@@ -349,7 +349,7 @@ void FieldPsynergy_Cyclone(void) {
       canvas->command = 3;
       wait(1);
     }
-    Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+    FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
     Actor_SetSingleChildFlagsFar(owner, 0);
     Actor_SetSpritePriority(*(s16 *)(effect + 24), 1);
@@ -384,7 +384,7 @@ void FieldPsynergy_Cyclone(void) {
       canvas->command = 3;
       wait(1);
     }
-    Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+    FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
     Actor_SetSingleChildFlagsFar(owner, 0);
     owner->motionFlags = 0;
@@ -474,7 +474,7 @@ void Func_080e3698(s32 actor) {
   s32 position[3];
   s32 i;
 
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   object->motionFlags = 0;
   object->update = BattleEffect_SpinObject;
   ring = Actor_Spawn(280, object->x, object->y, object->z);
@@ -511,7 +511,7 @@ void Func_080e3698(s32 actor) {
   object->facing = angle;
   object->motionFlags = motionFlags;
   wait(1);
-  Camera_FollowActor(actor, 1);
+  FieldCamera_FollowActor(actor, 1);
 }
 
 void Event_WaitTransitionFrames(void);

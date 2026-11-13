@@ -15,7 +15,7 @@
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
 /// set.
 // As ☀️'s function of the same name.
-s32 Party_RemapCharacterIdByFlags(s32 character) {
+s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
   sprite = character;
@@ -76,7 +76,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       if (work->mode != 3 && !GameFlag_IsConditionActive(condition + 80))
         continue;
     }
-    character = Party_RemapCharacterIdByFlags(entry->sprite);
+    character = Party_GetCharacterSprite(entry->sprite);
     object = ObjectTable_Get(index);
     if (object == NULL) {
       if (entry->flags & 2) {
@@ -101,7 +101,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
           resource = sprite->slot;
           sprite = object->sprite;
           sprite->displayFlags |= 1;
-          Resource_ResetEntry(sprite->slot);
+          VramCache_FreeEntry(sprite->slot);
           sprite->slot = resource;
         }
       }
@@ -275,7 +275,7 @@ void Func_080caa4c(s32 table) {
   work->viewCenter = camera;
 }
 
-s32 ObjectTable_FindLastActiveId(void) {
+s32 Actor_FindLastActiveId(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   s32 last = 7;
   s32 i;

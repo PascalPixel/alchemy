@@ -23,7 +23,7 @@ struct LayeredSprite {
 extern const s32 *gData_080f3978[];
 
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 
 void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
@@ -46,7 +46,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
                        gData_080f3978[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   sprite->nextFrame = 0;
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -58,7 +58,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute((struct Actor *)effect, options->palette);
+    Actor_SetSpriteColor((struct Actor *)effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     sprite->priority = options->priority;

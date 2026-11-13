@@ -26,7 +26,7 @@
  * has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares,
  * BattleAI_ChooseTarget moves: 5 of 776 instructions,
- * BattleActor_ResetRuntimeFields moves: 1 of 97 instructions,
+ * BattleUnit_ClearStatuses moves: 1 of 97 instructions,
  * BattleObject_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in
  * tla-ja. */
 extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
@@ -380,7 +380,7 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
   return targetPositions[(Random16() * targetCount) >> 16];
 }
 
-void BattleActor_ResetRuntimeFields(s32 actor) {
+void BattleUnit_ClearStatuses(s32 actor) {
   u8 *state;
   u8 *cursor;
   s32 count;
@@ -451,8 +451,8 @@ void BattleMessage_WaitForAdvance(void) {
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
     window = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->window;
     offset = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->offset;
-    QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
-    QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(16, &REG_BLDALPHA);
     ((u32 *)prompt)[1] = 0xa400;
     ((u32 *)prompt)[2] = 0;
@@ -473,7 +473,7 @@ void BattleMessage_WaitForAdvance(void) {
     wait(1);
   }
   Sound_PlayFar(111);
-  Resource_ResetEntry(tileSlot);
+  VramCache_FreeEntry(tileSlot);
   wait(1);
 }
 
@@ -494,8 +494,8 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
-    QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
-    QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(16, &REG_BLDALPHA);
     ((s32 *)prompt)[1] = 0x40000000;
     ((s32 *)prompt)[2] = 0;
@@ -507,7 +507,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
       break;
     wait(1);
   }
-  Resource_ResetEntry(tileSlot);
+  VramCache_FreeEntry(tileSlot);
   wait(1);
   return 1;
 }
@@ -526,7 +526,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
   creature = Unit_Get__f11f66c(arg0);
   if (creature->side == 1) {
     Unit_SetHpFar(creature, 0);
-    BattleActor_RemoveFromLists(arg0);
+    BattleObject_RemoveFromLists(arg0);
     BattleObject_MarkForRelease(arg0);
     runtime = BattleObject_Get(arg0);
     Actor_Destroy((struct Actor *)runtime->object);
@@ -535,8 +535,8 @@ s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
   }
 }
 
-void BattleEvent_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
-                                 u32 operand) {
+void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
+                                    u32 operand) {
   runtime->flags |= 1;
 }
 
@@ -551,7 +551,7 @@ BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
                                s32 b) __asm__("BattleMotion_FlashHit");
 
 /// Runs the queued battle events in order, then resets the queue.
-u32 BattleEvent_DispatchQueued(void) {
+u32 BattlePlayback_RunAll(void) {
   struct BattleWork *work;
   struct BattleEventState *runtime;
   struct BattleEventQueue *queue;
@@ -566,7 +566,7 @@ u32 BattleEvent_DispatchQueued(void) {
     if (opcode <= 15)
       switch (opcode) {
       case BATTLE_EVENT_DJINN_BONUS:
-        BattleEvent_GrantDjinnBonus(runtime, queue->operands[i]);
+        BattlePlayback_GrantDjinnBonus(runtime, queue->operands[i]);
         break;
       case BATTLE_EVENT_REMOVE_UNIT:
         BattleObject_DestroyTemporaryObject(queue->operands[i]);
@@ -607,7 +607,7 @@ u32 BattleEvent_DispatchQueued(void) {
         break;
       case BATTLE_EVENT_DEFEAT:
         BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
-        BattleActor_ResetRuntimeFields(queue->operands[i]);
+        BattleUnit_ClearStatuses(queue->operands[i]);
         BattleMotion_ShowDowned(queue->operands[i]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:
@@ -619,14 +619,14 @@ u32 BattleEvent_DispatchQueued(void) {
         BattleObject_UpdatePose(queue->operands[i]);
         break;
       case 15:
-        BattleActor_RemoveFromLists(queue->operands[i]);
+        BattleObject_RemoveFromLists(queue->operands[i]);
         break;
       }
   }
   return BattlePlayback_Reset();
 }
 
-void BattleEvent_Push(u32 opcode, u32 operand) {
+void BattlePlayback_Push(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
   u32 index = queue->count;
 
@@ -641,7 +641,7 @@ void BattleEvent_Push(u32 opcode, u32 operand) {
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the user.
 /// effect: effect ID.
-s32 BattleEffect_CheckDead(s32 effect) {
+s32 Ability_EffectAppliesToDowned(s32 effect) {
   switch (effect) {
   case 31: // Drain HP.
   case 32: // Drain PP.
@@ -740,7 +740,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
       bonus = power - target->element[element].resistance;                     \
   }
 
-#define MESSAGE_PUSH(m) BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)(m))
+#define MESSAGE_PUSH(m) BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)(m))
 
 #define MESSAGE_SIDE(m, e)                                                     \
   {                                                                            \
@@ -767,7 +767,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
   {                                                                            \
     target->resistanceStage += (d);                                            \
     STEP_LIM(target->resistanceStage);                                         \
-    BattleEvent_Push(BATTLE_EVENT_NUMBER, (v));                                \
+    BattlePlayback_Push(BATTLE_EVENT_NUMBER, (v));                             \
     MESSAGE_PUSH(message);                                                     \
     target->resistanceTurns = 7;                                               \
   }
@@ -846,8 +846,8 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   switch (target->enemyId) {
   case 221:
     if (plan->command == 1 && (u32)(aid ^ tid) >> 7 != 0) {
-      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       MESSAGE_PUSH(MsgDissipated);
       goto done;
     }
@@ -856,16 +856,16 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   case 102:
   case 103:
     if (abilityId != 573 && work->unk868 != 0 && (u32)(aid ^ tid) >> 7 != 0) {
-      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       MESSAGE_PUSH(MsgFieldProtects);
       goto done;
     }
     break;
   }
   if (target->guardLevel == 4 && (u32)(aid ^ tid) >> 7 != 0) {
-    BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
-    BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+    BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+    BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
     MESSAGE_PUSH(MsgNoEffect);
     goto done;
   }
@@ -912,7 +912,7 @@ power_end:
     chance += 30;
     chance *= 65536 / 100;
     if (chance > (Battle_RandomFar() & 0xffff))
-      BattleEvent_Push(BATTLE_EVENT_DJINN_BONUS, 5);
+      BattlePlayback_Push(BATTLE_EVENT_DJINN_BONUS, 5);
   }
 
   if (abilityId == 686 || abilityId == 357)
@@ -999,7 +999,7 @@ power_end:
         for (cnt = 0; cnt < num; cnt++)
           BattleMotion_ReturnToSpot((u16)list[cnt]);
       }
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, ent);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, ent);
       if (action->effect == 87)
         MESSAGE_PUSH(MsgUpToFight);
       else if (abilityId != 503)
@@ -1030,7 +1030,7 @@ power_end:
       skip = 1;
     } else if (action->effect == 55) {
       if (actor->hp != 0)
-        BattleEvent_Push(BATTLE_EVENT_REMOVE_UNIT, aid);
+        BattlePlayback_Push(BATTLE_EVENT_REMOVE_UNIT, aid);
     } else if (action->effect == 32) {
       if (target->pp != 0)
         type = 10;
@@ -1094,14 +1094,14 @@ power_end:
             dmg = dmg * 3 / 2;
           dmg += (target->level / 5) + 6;
           if (pass == 0) {
-            BattleEvent_Push(BATTLE_EVENT_MARK, 0);
+            BattlePlayback_Push(BATTLE_EVENT_MARK, 0);
             {
               s32 message;
 
               message = (s32)MsgCritical;
               if (ALLY_CHECK(tid))
                 message += 1;
-              BattleEvent_Push(BATTLE_EVENT_MESSAGE_NO_WAIT, message);
+              BattlePlayback_Push(BATTLE_EVENT_MESSAGE_NO_WAIT, message);
             }
           }
         }
@@ -1122,9 +1122,9 @@ power_end:
         pass++;
       } while (pass <= 1);
       hp -= dmg;
-      BattleEvent_Push(BATTLE_EVENT_HIT, tid);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
+      BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
       {
         s32 message;
 
@@ -1132,20 +1132,20 @@ power_end:
           message = (s32)MsgDmgEmphP + aff;
         else
           message = (s32)MsgDmgEmphE + aff;
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, message);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, message);
       }
 
       if (hp <= 0 && BattleUnit_KeepsOneHp(tid) != 0)
         hp = 1;
       if (hp <= 0) {
         hp = 0;
-        BattleEvent_Push(BATTLE_EVENT_DEFEAT, tid);
+        BattlePlayback_Push(BATTLE_EVENT_DEFEAT, tid);
         if (target->enemyId != 369 && target->enemyId != 373) {
-          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+          BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
           MESSAGE_SIDE(MsgGoesDown, MsgFelled);
         }
       } else
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->hp - hp;
       target->hp = hp;
       Unit_RecalculateGaugesFar(tid);
@@ -1169,9 +1169,9 @@ power_end:
       if (dmg > pp)
         dmg = pp;
 
-      BattleEvent_Push(BATTLE_EVENT_HIT, tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       {
         s32 message;
 
@@ -1179,12 +1179,12 @@ power_end:
           message = (s32)MsgPpLossP;
         else
           message = (s32)MsgPpLossE;
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, message);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, message);
         pp -= dmg;
       }
       if (pp <= 0)
         pp = 0;
-      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->pp - pp;
       target->pp = pp;
       Unit_RecalculateGaugesFar(tid);
@@ -1208,11 +1208,11 @@ power_end:
         cur = target->maxHp;
         dmg = cur - target->hp;
       }
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       if (cur == target->maxHp)
         MESSAGE_PUSH(MsgHpFull);
       else {
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
         MESSAGE_PUSH(MsgHpRecover);
       }
       dealt = target->hp - cur;
@@ -1233,9 +1233,9 @@ power_end:
       dmg = dmg * gPpDmgTable[dist] / 100;
       dmg *= adj;
       GUARD_CUT();
-      BattleEvent_Push(BATTLE_EVENT_HIT, tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       {
         s32 message;
 
@@ -1243,12 +1243,12 @@ power_end:
           message = (s32)MsgDmgP;
         else
           message = (s32)MsgDmgE;
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, message);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, message);
         pp -= dmg;
       }
       if (pp <= 0)
         pp = 0;
-      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       target->pp = pp;
       Unit_RecalculateGaugesFar(tid);
       break;
@@ -1365,9 +1365,9 @@ power_end:
         }
         round++;
       } while (round <= 1);
-      BattleEvent_Push(BATTLE_EVENT_HIT, tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       {
         s32 message;
 
@@ -1375,7 +1375,7 @@ power_end:
           message = (s32)MsgDmgEmphP + aff;
         else
           message = (s32)MsgDmgEmphE + aff;
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, message);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, message);
         cur -= dmg;
       }
 
@@ -1384,8 +1384,8 @@ power_end:
       if (gMainRoutineWork.battleRule24b == 6)
         cur = 0;
       if (cur <= 0) {
-        BattleEvent_Push(BATTLE_EVENT_DEFEAT, tid);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_DEFEAT, tid);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         {
           s32 message;
 
@@ -1394,10 +1394,10 @@ power_end:
             message = (s32)MsgGoesDown;
           else
             message = (s32)MsgFelled;
-          BattleEvent_Push(BATTLE_EVENT_MESSAGE, message);
+          BattlePlayback_Push(BATTLE_EVENT_MESSAGE, message);
         }
       } else
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->hp - cur;
       target->hp = cur;
       Unit_RecalculateGaugesFar(tid);
@@ -1417,11 +1417,11 @@ power_end:
         pp = target->maxPp;
         dmg = pp - target->pp;
       }
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       if (pp == target->maxPp)
         MESSAGE_PUSH(MsgPpFull);
       else {
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
         MESSAGE_PUSH(MsgPpRecover);
       }
       target->pp = pp;
@@ -1447,9 +1447,9 @@ power_end:
         dmg *= adj;
         dmg = dmg * gHpDmgTable[dist] / 100;
         GUARD_CUT();
-        BattleEvent_Push(BATTLE_EVENT_HIT, tid);
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_HIT, tid);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         {
           s32 message;
 
@@ -1457,42 +1457,42 @@ power_end:
             message = (s32)MsgDmgP;
           else
             message = (s32)MsgDmgE;
-          BattleEvent_Push(BATTLE_EVENT_MESSAGE, message);
+          BattlePlayback_Push(BATTLE_EVENT_MESSAGE, message);
           cur -= dmg;
         }
 
         if (cur <= 0 && BattleUnit_KeepsOneHp(tid) != 0)
           cur = 1;
         if (cur <= 0) {
-          BattleEvent_Push(BATTLE_EVENT_DEFEAT, tid);
+          BattlePlayback_Push(BATTLE_EVENT_DEFEAT, tid);
           cur = 0;
           if (target->enemyId != 369 && target->enemyId != 373) {
-            BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+            BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
             MESSAGE_SIDE(MsgGoesDown, MsgFelled);
           }
         } else
-          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+          BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
         dealt = target->hp - cur;
         target->hp = cur;
         Unit_RecalculateGaugesFar(tid);
         break;
       }
-      BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       MESSAGE_PUSH(MsgNoEffect);
       break;
     }
   }
 
   if (work->unk868 != 0 && abilityId == 573) {
-    BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+    BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
     MESSAGE_PUSH(MsgFieldBroken);
     work->unk868 = 0;
   }
-  BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+  BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
   if ((action->effect != 75 || slot != 0) &&
       (Battle_IsReviveEffectFar(action->effect) != 0 || target->hp != 0 ||
-       BattleEffect_CheckDead(action->effect) != 0) &&
+       Ability_EffectAppliesToDowned(action->effect) != 0) &&
       hit != 0) {
     switch (action->effect) {
 
@@ -1500,71 +1500,71 @@ power_end:
       if (target->delusion != 0) {
         target->delusion = 0;
         MESSAGE_PUSH(MsgCureDelusion);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       }
       if (target->stun != 0) {
         target->stun = 0;
-        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         MESSAGE_PUSH(MsgCureStun);
       }
       if (target->sleep != 0) {
         target->sleep = 0;
         MESSAGE_PUSH(MsgWakes);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       }
       if (target->psySeal != 0) {
         target->psySeal = 0;
         MESSAGE_PUSH(MsgCureSeal);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       }
       if (target->grimReaper != 0) {
         target->grimReaper = 0;
         MESSAGE_PUSH(MsgCureCurse);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       }
       if (target->haunt != 0) {
         target->haunt = 0;
         MESSAGE_PUSH(MsgCureSpirit);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       }
       if (target->poison != 0) {
         MESSAGE_PUSH(MsgCurePoison);
         target->poison = 0;
       }
-      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
       break;
 
     case 4:
       if (target->delusion != 0) {
         target->delusion = 0;
-        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         MESSAGE_PUSH(MsgCureDelusion);
       }
       if (target->stun != 0) {
         target->stun = 0;
-        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         MESSAGE_PUSH(MsgCureStun);
       }
       if (target->sleep != 0) {
         target->sleep = 0;
-        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         MESSAGE_PUSH(MsgWakes);
       }
       if (target->psySeal != 0) {
         target->psySeal = 0;
-        BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         MESSAGE_PUSH(MsgCureSeal);
       }
       if (target->grimReaper == 0)
         break;
       target->grimReaper = 0;
-      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+      BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
       MESSAGE_PUSH(MsgCureCurse);
       break;
 
@@ -1624,7 +1624,7 @@ power_end:
       if (heal == (s16)maxu)
         MESSAGE_PUSH(MsgHpFull);
       else {
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, tmp);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, tmp);
         MESSAGE_PUSH(MsgHpRecover);
       }
       target->hp = heal;
@@ -1670,7 +1670,7 @@ power_end:
       if (heal == (s16)maxu)
         MESSAGE_PUSH(MsgPpFull);
       else {
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, tmp);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, tmp);
         MESSAGE_PUSH(MsgPpRecover);
       }
       target->pp = heal;
@@ -1682,7 +1682,7 @@ power_end:
       target->agilityStage = 8;
       target->agilityTurns = 5;
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->agi - bak->agi);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, target->agi - bak->agi);
       MESSAGE_PUSH(MsgAgiUp);
       break;
 
@@ -1696,7 +1696,7 @@ power_end:
       }
       target->agilityTurns = 5;
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, bak->agi - target->agi);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, bak->agi - target->agi);
       MESSAGE_PUSH(MsgAgiDown);
       break;
 
@@ -1704,7 +1704,7 @@ power_end:
       target->attackStage -= 1;
       STEP_LIM(target->attackStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, bak->atk - target->atk);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, bak->atk - target->atk);
       MESSAGE_PUSH(MsgAtkDown);
       target->attackTurns = 7;
       break;
@@ -1713,7 +1713,7 @@ power_end:
       target->attackStage -= 2;
       STEP_LIM(target->attackStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, bak->atk - target->atk);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, bak->atk - target->atk);
       MESSAGE_PUSH(MsgAtkDown);
       target->attackTurns = 7;
       break;
@@ -1722,7 +1722,7 @@ power_end:
       target->attackStage += 1;
       STEP_LIM(target->attackStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->atk - bak->atk);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, target->atk - bak->atk);
       MESSAGE_PUSH(MsgAtkUp);
       target->attackTurns = 7;
       break;
@@ -1731,7 +1731,7 @@ power_end:
       target->attackStage += 2;
       STEP_LIM(target->attackStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->atk - bak->atk);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, target->atk - bak->atk);
       MESSAGE_PUSH(MsgAtkUp);
       target->attackTurns = 7;
       break;
@@ -1740,7 +1740,7 @@ power_end:
       target->defenseStage -= 1;
       STEP_LIM(target->defenseStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, bak->def - target->def);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, bak->def - target->def);
       MESSAGE_PUSH(MsgDefDown);
       target->defenseTurns = 7;
       break;
@@ -1749,7 +1749,7 @@ power_end:
       target->defenseStage -= 2;
       STEP_LIM(target->defenseStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, bak->def - target->def);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, bak->def - target->def);
       MESSAGE_PUSH(MsgDefDown);
       target->defenseTurns = 7;
       break;
@@ -1758,7 +1758,7 @@ power_end:
       target->defenseStage += 1;
       STEP_LIM(target->defenseStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->def - bak->def);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, target->def - bak->def);
       MESSAGE_PUSH(MsgDefUp);
       target->defenseTurns = 7;
       break;
@@ -1767,7 +1767,7 @@ power_end:
       target->defenseStage += 2;
       STEP_LIM(target->defenseStage);
       Unit_CalculateFar(tid);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->def - bak->def);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, target->def - bak->def);
       MESSAGE_PUSH(MsgDefUp);
       target->defenseTurns = 7;
       break;
@@ -1821,8 +1821,9 @@ power_end:
         target->resistanceStage = -4;
       if (target->resistanceStage > 4)
         target->resistanceStage = 4;
-      BattleEvent_Push(BATTLE_EVENT_NUMBER,
-                       (bak->resistanceStage - target->resistanceStage) * 20);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER,
+                          (bak->resistanceStage - target->resistanceStage) *
+                              20);
       MESSAGE_PUSH(MsgResDown);
       target->resistanceTurns = 7;
     } break;
@@ -1838,8 +1839,9 @@ power_end:
         target->resistanceStage = -4;
       if (target->resistanceStage > 4)
         target->resistanceStage = 4;
-      BattleEvent_Push(BATTLE_EVENT_NUMBER,
-                       (target->resistanceStage - bak->resistanceStage) * 20);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER,
+                          (target->resistanceStage - bak->resistanceStage) *
+                              20);
       MESSAGE_PUSH(MsgResUp);
       target->resistanceTurns = 7;
     } break;
@@ -1893,7 +1895,7 @@ power_end:
     case 27:
       if (BattleUnit_KeepsOneHp(tid) != 0)
         break;
-      BattleEvent_Push(BATTLE_EVENT_DEFEAT, tid);
+      BattlePlayback_Push(BATTLE_EVENT_DEFEAT, tid);
       if (target->side == ALLY)
         MESSAGE_PUSH(MsgKoDown);
       else if (abilityId == 219)
@@ -1929,12 +1931,12 @@ power_end:
         dmg = actor->maxHp;
         kind = dmg - actor->hp;
       }
-      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, aid);
+      BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, aid);
       if (dmg == actor->maxHp)
         MESSAGE_PUSH(MsgHpFull);
       else {
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, kind);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, kind);
         MESSAGE_PUSH(MsgHpRecover);
       }
       actor->hp = dmg;
@@ -1952,12 +1954,12 @@ power_end:
         heal = actor->maxPp;
         amt = heal - actor->pp;
       }
-      BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, aid);
+      BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, aid);
       if (heal == actor->maxPp)
         MESSAGE_PUSH(MsgPpFull);
       else {
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, amt);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, amt);
         MESSAGE_PUSH(MsgPpRecover);
       }
       actor->pp = heal;
@@ -1973,7 +1975,7 @@ power_end:
         dmg = actor->maxPp - actor->pp;
       if (dmg == 0)
         break;
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
       MESSAGE_SIDE(MsgLeechTake, MsgLeechGain);
       Unit_AddPpFar(aid, dmg);
       break;
@@ -1984,7 +1986,7 @@ power_end:
         dmg = target->pp;
       if (dmg == 0)
         break;
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, dmg);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
       MESSAGE_SIDE(MsgMorePpLossP, MsgMorePpLossE);
       Unit_AddPpFar(tid, -dmg);
       break;
@@ -2026,7 +2028,7 @@ power_end:
       if (target->grimReaper <= 1)
         break;
       target->grimReaper -= 1;
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, target->grimReaper);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, target->grimReaper);
       MESSAGE_PUSH(MsgDeathCount);
       break;
 
@@ -2080,7 +2082,7 @@ power_end:
       break;
 
     case 45:
-      BattleEvent_Push(BATTLE_EVENT_MESSAGE, -1);
+      BattlePlayback_Push(BATTLE_EVENT_MESSAGE, -1);
       break;
 
     case 81:
@@ -2090,7 +2092,7 @@ power_end:
 
     case 82:
       MESSAGE_PUSH(MsgBlownAway);
-      BattleEvent_Push(15, tid);
+      BattlePlayback_Push(15, tid);
       break;
 
     case 74:
@@ -2104,7 +2106,7 @@ power_end:
   }
 
 done:
-  BattleEvent_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
+  BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
   if (plan->command != 9 && (s8)target->equipBonus[1] != 0 &&
       action->targetMode == 1 && target->hp != 0) {
     work->unk858 = tid;
@@ -2115,7 +2117,7 @@ done:
     if (target->sleep != 0)
       if (target->sleep <= 6 && dealt > 0 && (3 & Battle_RandomFar()) == 0) {
         target->sleep = 0;
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
         MESSAGE_PUSH(MsgWakes);
       }
   }
@@ -2123,7 +2125,7 @@ done:
   Unit_CalculateFar(tid);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   if (target->hp != 0)
-    BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
+    BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
   if (abilityId != 403 && actor->haunt != 0 && (Battle_RandomFar() & 3) == 0 &&
       dealt > 0) {
     s32 share;

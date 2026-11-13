@@ -230,7 +230,7 @@ s32 Scene_Initialize(void) {
 
 #include "task.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 void Func_020002f8(void) {
   struct AlhafranCaveMapWork *map =
@@ -251,9 +251,9 @@ void Func_020002f8(void) {
   object = Actor_Get(10);
   object->motionFlags = 0;
   object->y = 0xc0000;
-  Animation_ApplyChildValues(Actor_Get(8), 6);
-  Animation_ApplyChildValues(Actor_Get(9), 6);
-  Animation_ApplyChildValues(Actor_Get(10), 6);
+  Actor_SetSpriteColorMode(Actor_Get(8), 6);
+  Actor_SetSpriteColorMode(Actor_Get(9), 6);
+  Actor_SetSpriteColorMode(Actor_Get(10), 6);
   object = Actor_Get(12);
   object->motionFlags = 0;
   object->y = 0x100000;
@@ -270,9 +270,9 @@ void Func_020002f8(void) {
   Actor_Get(11)->priorityFlags |= 2;
   Actor_Get(12)->priorityFlags |= 2;
   Actor_Get(13)->priorityFlags |= 2;
-  Animation_ApplyChildValues(Actor_Get(11), 6);
-  Animation_ApplyChildValues(Actor_Get(12), 6);
-  Animation_ApplyChildValues(Actor_Get(13), 6);
+  Actor_SetSpriteColorMode(Actor_Get(11), 6);
+  Actor_SetSpriteColorMode(Actor_Get(12), 6);
+  Actor_SetSpriteColorMode(Actor_Get(13), 6);
   if (Event_GetFlag(0x8a7)) {
     Actor_SetPosition(14, 0xc80000, 0x880000);
     Actor_SetPosition(15, 0x1880000, 0x1680000);
@@ -341,9 +341,9 @@ void Func_0200051c(void) {
   Actor_Get(12)->priorityFlags |= 2;
   Actor_Get(13)->priorityFlags |= 2;
   Actor_Get(14)->priorityFlags |= 2;
-  Animation_ApplyChildValues(Actor_Get(12), 6);
-  Animation_ApplyChildValues(Actor_Get(13), 6);
-  Animation_ApplyChildValues(Actor_Get(14), 6);
+  Actor_SetSpriteColorMode(Actor_Get(12), 6);
+  Actor_SetSpriteColorMode(Actor_Get(13), 6);
+  Actor_SetSpriteColorMode(Actor_Get(14), 6);
   if (Event_GetFlag(0x8a7)) {
     Actor_SetPosition(15, 0, 0);
     Actor_SetPosition(18, 0, 0);
@@ -462,7 +462,7 @@ void Func_02000818(void) {
   FieldActor_StartRepeatedMotion(24, 3);
   Actor_SetAttachedEffect(24, 0x102);
   FieldEvent_Wait(40);
-  FieldCamera_FollowActor(24, 1);
+  EventCamera_FollowActor(24, 1);
   Func_02001508();
   Actor_SetSpeed(24, 0x18000, 0xc000);
   Actor_SetScript(24, gData_02001610);
@@ -498,7 +498,7 @@ void Func_02000818(void) {
   position[2] = actor15->z;
   FieldVector_AddPolarOffset(0x100000, 0xc000, position);
   FieldActor_SetMoveTarget(effect, position[0], position[1], position[2]);
-  BattleEffect_SnapScaleToFull(effect);
+  FieldEffect_SnapScaleToFull(effect);
   Func_020013f0(effect, 4);
   actor15->update = Func_02001228;
   Actor_FaceDirection(4, 0x6000, 0);
@@ -534,7 +534,7 @@ void Func_02000818(void) {
   FieldEvent_ShowMessageThenWait(18, 0, 20);
   Actor_ShowEmote(21, 0x100, 30);
   actor15->update = 0;
-  Animation_ApplyChildValues(actor15, 0);
+  Actor_SetSpriteColorMode(actor15, 0);
   UpdateRisingParticleBurst(effect);
   BattleEffect_SetObjectUpdateMode(Actor_Get(21), 0);
   BattleEffect_WaitForArcGroups();
@@ -698,7 +698,7 @@ void Func_02000818(void) {
   Actor_SetPosition(22, 0, 0);
   Actor_SetPosition(21, 0, 0);
   Actor_SetActionCallback(Actor_Get(24), 9);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Event_End();
 }
 

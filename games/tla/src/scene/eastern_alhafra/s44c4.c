@@ -64,8 +64,7 @@ void Func_020044c4(struct PushTarget target) {
     s32 deltaX = (target.x - from[0]) >> 17;
     s32 deltaZ = (target.z - from[2]) >> 17;
 
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX,
-                                       deltaZ);
+    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX, deltaZ);
   }
   Actor_Get(gMainRoutineWork.currentOwner)->update = Func_02004774;
   System_Wait(4);
@@ -80,8 +79,8 @@ void Func_020044c4(struct PushTarget target) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                                     (gData_02004cc8[direction] << 16) >> 31,
-                                     (gData_02004cc8[direction] << 16) >> 17);
+                             (gData_02004cc8[direction] << 16) >> 31,
+                             (gData_02004cc8[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -89,7 +88,7 @@ void Func_020044c4(struct PushTarget target) {
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Event_PlaySound(298);
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
@@ -113,9 +112,8 @@ void Func_020044c4(struct PushTarget target) {
   Event_NoOp();
 }
 
-
 DEFINE_FUNC_02004774(Func_02004774, Func_02004c3c, gData_02004ca4,
-    Func_02004a64)
+                     Func_02004a64)
 
 void Func_020047fc(const u16 *list) {
   const u16 *spec;

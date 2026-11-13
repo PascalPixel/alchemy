@@ -330,7 +330,7 @@ void Func_02000638(void) {
       Actor_WalkToAndWait(4, 314, 580);
       Actor_FaceDirection(4, FACING_SOUTH, 0);
       FieldEvent_Wait(10);
-      FieldCamera_FollowActor(29, 1);
+      EventCamera_FollowActor(29, 1);
       Func_02002b3c();
       FieldEvent_Wait(40);
       Actor_WalkToAndWait(29, 314, 624);
@@ -443,7 +443,7 @@ void Func_02000638(void) {
       FieldEvent_Wait(10);
       Actor_SetAnimationAndWait(29, 3);
       FieldEvent_Wait(10);
-      FieldCamera_FollowActor(4, 1);
+      EventCamera_FollowActor(4, 1);
       Actor_SetSpeed(29, 0x13333, 0x9999);
       Actor_WalkBy(29, 0, 100);
       FieldEvent_Wait(10);
@@ -1143,7 +1143,7 @@ void Func_02000e30(void) {
   FieldActor_WatchAndSetScript(28, 25);
   Actor_SetSpeed(25, 0x10000, 0x8000);
   Actor_WalkByAndWait(25, 22, 24);
-  FieldCamera_FollowActor(25, 1);
+  EventCamera_FollowActor(25, 1);
   Actor_WalkByAndWait(25, 0, 32);
   Actor_WalkByAndWait(25, -16, 16);
   Actor_WalkByAndWait(25, 0, 8);

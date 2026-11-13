@@ -50,7 +50,7 @@ void Func_0200036c(void) {
   FieldEvent_SetExitRequest(8);
 }
 
-// Includes the shared Effect_AdvanceMotion in this scene.
+// Includes the shared FieldEffect_AdvanceMotion in this scene.
 // Neither it nor its caller Func_0200042c exists in the Japanese scene.
 #if TLA_PATCH_1
 #include "../../field/field_effect/advance_motion.c"
@@ -89,7 +89,7 @@ s32 Func_0200042c(void) {
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;

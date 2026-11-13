@@ -92,7 +92,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     if (entryNumber == number)
       break;
   }
-  size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
+  size = Decompress_TaggedLz(Resource_GetTableEntry(resource), buffer);
 
   offset = buffer;
   for (count = 0; count < 256; count++) {
@@ -326,7 +326,7 @@ void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
   }
 }
 
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no) {
+void SpriteAnimation_Start(struct AnimationEntry *work, s32 no) {
   s32 hi;
   struct AnimationMetadata *info;
   s32 value;
@@ -437,7 +437,7 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
 /// entry 93 and copies the strided tile copier into RAM.
 // As ☀️'s function of the same name.
-void ObjectSystem_Configure(s32 mode) {
+void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
   volatile u32 zero;
@@ -453,7 +453,7 @@ void ObjectSystem_Configure(s32 mode) {
     layers = HeapSlot_Alloc(12, ANIMATION_OBJECT_COUNT *
                                     sizeof(struct AnimationEntry));
   }
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   Dma_Fill32Cell(zero, 0, sprites,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
   Dma_Fill32Cell(zero, 0, layers,
@@ -467,7 +467,7 @@ void ObjectSystem_Configure(s32 mode) {
   }
 }
 
-void VramBlock_Reset93(void) { Resource_ResetEntry(93); }
+void VramBlock_Reset93(void) { VramCache_FreeEntry(93); }
 
 void VramBlock_Load93(void) {
   const u8 *data = gData_0802e89c;
@@ -571,7 +571,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 
   freeSprite = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   sprite = Ram_HeapSlots->unk0c[1];
   if (metadata->width == 0)
     return NULL;
@@ -657,7 +657,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
 
   if (work) {
     if (!(work->flags & 1))
-      Resource_ResetEntry(work->resource);
+      VramCache_FreeEntry(work->resource);
     child = work->children;
     n = 3;
     do {

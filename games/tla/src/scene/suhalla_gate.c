@@ -145,9 +145,9 @@ void Func_02000308(void) {
 
   Actor_GetById(0)->motionFlags = 0;
   Sound_Play(158);
-  Map_CopyCellPictureIndicesRect(66, 36, 71, 8, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(66, 36, 71, 8, 2, 2);
   wait(4);
-  Map_CopyCellPictureIndicesRect(68, 36, 71, 8, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(68, 36, 71, 8, 2, 2);
   wait(4);
   Actor_CenterAndWalk(0, 3, -16);
   Sound_Play(123);
@@ -172,7 +172,7 @@ void Func_020003ac(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 472, 320);
-  Camera_MoveWithinMapBounds(PIXELS(456), -1, PIXELS(280), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(456), -1, PIXELS(280), 1);
   Func_02000a30();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
@@ -191,7 +191,7 @@ void Func_020003ac(void) {
   Event_Wait(30);
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_WalkToAndWait(8, 456, 312);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);
+  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate1, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;
   Field_RequestBattleFromEncounterTable(9, 1);
@@ -234,7 +234,7 @@ void Func_02000494(void) {
   Actor_SetAnimationAndWait(13, 3);
   Actor_SetAnimation(14, 3);
   Actor_SetAnimationAndWait(15, 3);
-  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate2, 99);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_SuhallaGate2, 99);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 98);
   *((u8 *)work + 0x24b) = 2;
   Field_RequestBattleFromEncounterTable(9, 2);
@@ -247,10 +247,10 @@ void Func_020005e8(void) {
   Actor_Jump(8, 4, 0);
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
   if (owner != NULL)
-    Actor_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
-                              *(s16 *)((u8 *)owner + 18));
+    Actor_SetDestinationById(8, *(s16 *)((u8 *)owner + 10),
+                             *(s16 *)((u8 *)owner + 18));
   Event_Wait(20);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
+  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;
   Field_RequestBattleFromEncounterTable(9, 3);
@@ -264,7 +264,7 @@ void Func_02000650(void) {
   Event_Wait(16);
   Actor_FaceActorById(gMainRoutineWork.currentOwner, 8, 0);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
-  Camera_FollowActor(8, 1);
+  FieldCamera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
@@ -294,7 +294,7 @@ void Func_0200071c(void) {
   Event_Wait(16);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);
   Event_Wait(16);
-  Camera_FollowActor(8, 1);
+  FieldCamera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
@@ -333,8 +333,7 @@ void Func_02000800(void) {
   Actor_SetModeById(9, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(9, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(10);
@@ -353,8 +352,8 @@ void Func_020008cc(void) {
   Actor_SetModeById(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_ResetAndSetPosition(16, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(16, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Event_Wait(10);

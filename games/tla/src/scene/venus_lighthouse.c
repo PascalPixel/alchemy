@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x64e that its scene tables belong to, in ROM order; the rest of the overlay is in venus_lighthouse/.
+/// The scene code of overlay 0x64e that its scene tables belong to, in ROM
+/// order; the rest of the overlay is in venus_lighthouse/.
 
 #include "shared/routines.h"
 #include "types.h"
@@ -16,7 +17,7 @@ void Func_02001b2c(struct StagedActor *object, s32 mode);
 s32 Func_02001b64(struct StagedActor *object, struct FieldPosition *position);
 
 DEFINE_FUNC_0200038C(Func_0200038c, gData_02001d8c, Func_02001b64,
-    Func_02001b2c)
+                     Func_02001b2c)
 
 #include "../field/map/cell_fill_byte.c"
 
@@ -35,13 +36,13 @@ DEFINE_FUNC_0200038C(Func_0200038c, gData_02001d8c, Func_02001b64,
 
 void Func_0200056c(void) {}
 
-#define Actor_SetSpriteColor ((void (*)(void *, s32))Actor_SetPartAttribute)
+#define FieldActor_SetSpriteColor ((void (*)(void *, s32))Actor_SetSpriteColor)
 
 s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   if ((gFrameCount & 3) == 0)
-    Actor_SetSpriteColor(obj, 7);
+    FieldActor_SetSpriteColor(obj, 7);
   else
-    Actor_SetSpriteColor(obj, 0);
+    FieldActor_SetSpriteColor(obj, 0);
 
   if ((gFrameCount & 7) == 0)
     Event_PlaySound(138);
@@ -72,7 +73,7 @@ done:
   return 0;
 }
 
-#define Actor_SetSingleChildFlags                                     \
+#define Actor_SetSingleChildFlags                                              \
   ((void (*)(void *, s32))Actor_SetSingleChildFlags)
 
 extern const struct ActorPlacement gActorPlacementsEntrance99[];
@@ -84,7 +85,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 s32 SceneActor_ApplyCounterLowBitsAsMode(struct Actor *actor) {
-  Actor_SetSpriteColor(actor, actor->timer & 15);
+  FieldActor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
 

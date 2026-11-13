@@ -131,10 +131,10 @@ s32 StatusScreen_Run(void) {
 
   result = StatusScreen_RunPages();
 
-  Menu_EnsureCancelSound();
+  Menu_StopWatchingStart();
   MenuIcon_ReleaseSlots();
   WindowSprite_ClearListFar(state->statusWindow);
-  MenuIcon_ReleaseObjects();
+  DjinnFigures_ReleaseTopRow();
   Menu_ResumeFieldTasks();
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
@@ -296,7 +296,7 @@ void DjinnMenu_ShowCurrentList(void) {
       WindowSprite_RedrawSavedRectFar(window);
       wait(1);
       Window_DrawDividerLineFar(window, 0, 11, 28, 11);
-      Menu_DrawPageIndicator(window, pages, 1, page, 28);
+      PagedList_DrawPageNumbers(window, pages, 1, page, 28);
       for (element = 0; element < 4; element++) {
         for (row = 0; row <= 8; row++) {
           djinn = element * 20 + (row + (page * 8 + page) + 7) % 18;
@@ -372,7 +372,7 @@ struct CharacterMenuState {
   s16 rowY[4];
 };
 
-void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
+void StatusScreen_ShowMemberStatus(s32 resource, s32 frame);
 
 s32 PartyMemberChooser_MoveEntry(s32 selection, s32 direction);
 
@@ -416,7 +416,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
       Unit_Get(menu->ownerIds[ownerIndex]);
       page = (page + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->ownerIds[ownerIndex], page);
+      StatusScreen_ShowMemberStatus(menu->ownerIds[ownerIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
@@ -517,7 +517,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       selection = (selection + count) % count;
       Unit_Get(menu->ownerIds[selection]);
       page = (page + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->ownerIds[selection], page);
+      StatusScreen_ShowMemberStatus(menu->ownerIds[selection], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[selection]);
       menu->psynergyCount = PsynergyMenu_CollectActions(
           Unit_Get(menu->ownerIds[selection]), menu->psynergies, 0);
@@ -652,7 +652,7 @@ void StatusScreen_DrawStatusAilments(s32, s32,
 /// window was just made). The work block holds the window at 0x28, the object
 /// at 0x170 and the mode at 0x21c. frame is not used.
 // ☀️'s version also creates eight entry objects.
-void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
+void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   s32 created;
   s32 handle;
   void *object;
@@ -866,7 +866,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     while (index <= 4) {
       if (entries[index] != 0) {
         if (selected == count) {
-          width = gCharacterMenu_CursorWidths[index];
+          width = gStatusScreen_CursorWidths[index];
           break;
         }
         count++;
@@ -1451,7 +1451,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   }
 
   Menu_SetPageIcons(PAGE_ROWS, first, window, PAGE_ICONS_X, PAGE_ICONS_Y);
-  Menu_DrawPageIndicator(window, res->entryCount, PAGE_ROWS, res->page, 28);
+  PagedList_DrawPageNumbers(window, res->entryCount, PAGE_ROWS, res->page, 28);
 
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                              HEADING_X, 0);
@@ -1782,7 +1782,8 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
   if (rowCount > PAGE_ROWS)
     rowCount = PAGE_ROWS;
   Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, 52);
-  Menu_DrawPageIndicator(window, state->entryCount, PAGE_ROWS, state->page, 28);
+  PagedList_DrawPageNumbers(window, state->entryCount, PAGE_ROWS, state->page,
+                            28);
   if (menu->itemCount == 0) {
     Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X, 8);
   } else {

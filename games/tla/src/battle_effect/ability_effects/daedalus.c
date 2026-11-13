@@ -171,7 +171,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
         quad->texture = &texture;
         quad->unk14 = gData_081994e0[mode];
         quad->vertices = vertices;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(0, (target.y - 58) << 16, 0);
         Func_0801521c(gData_081994d0[mode] << 1);
         Render_TransformVertices(gData_081991f0, vertices, 4);
@@ -420,11 +420,11 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 
-void SceneTransform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyPitch(s32);
+void Transform_ApplyRoll(s32 angle);
+void Transform_ApplyPitch(s32);
 
 void BattleEffect_SetupBlendedDisplay(void);
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 
@@ -496,7 +496,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       const u8 *src;
       Sprite *obj;
 
-      Resource_ResetEntry(bank[21]);
+      VramCache_FreeEntry(bank[21]);
       gCameraSceneParameters[4] = 240;
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
@@ -557,7 +557,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           (s32)&ResourceId_ForestCanopyTiles);
       Iwram_CopyWords((void *)0x050003e0, src, 32);
       src += 32;
-      Resource_DecodeType01(src, work->frames);
+      Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 8; i++) {
           obj = Func_0815b290__f17e698(32, 32, 0x80000000, 0xf000);
@@ -576,7 +576,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           (s32)&ResourceId_BronzeAutomatonTiles);
       Iwram_CopyWords((void *)0x05000200, src, 0x1c0);
       src += 0x1c0;
-      Resource_DecodeType01(src, DECODE_BUFFER);
+      Decompress_TaggedLz(src, DECODE_BUFFER);
       for (i = 0; i != 21; i++) {
         obj = Func_0815b290__f17e698(32, 32, 0x80002000, 0);
         obj->priority = 3;
@@ -599,7 +599,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
       Iwram_CopyWords((void *)0x050003c0, src, 32);
       src += 32;
-      Resource_DecodeType01(src, DECODE_BUFFER);
+      Decompress_TaggedLz(src, DECODE_BUFFER);
       obj = Func_0815b290__f17e698(16, 8, 0x4000, 0xe000);
       obj->priority = 1;
       work->sprites[41] = obj;
@@ -1147,10 +1147,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           z = 0;
         if (z >= -63) {
           beam[5] = z;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(camera + 0x20000, 0x80000, 0);
-          SceneTransform_ApplyRoll(0x4300);
-          SceneTransform_ApplyPitch(-0x800);
+          Transform_ApplyRoll(0x4300);
+          Transform_ApplyPitch(-0x800);
           Func_0801521c((v << 14) + 0x4180);
           Render_TransformVertices(gData_08199210, buffer, 4);
           Render_DrawModelList(beam);
@@ -1359,7 +1359,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     for (i = 0; i != 57; i++)
       ResourceObject_ReleaseFar(work->sprites[i]);
     bank[21] = VramCache_AllocEntry(128);
-    Palette_LoadBasicObjColors();
+    Palette_LoadBasicSpriteColors();
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010,
             (vu32 *)0x040000d4);
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
@@ -1545,7 +1545,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 
@@ -1814,12 +1814,12 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         if ((u32)ring->variant <= 47) {
           s32 k;
 
-          Render_ResetTransformState();
+          Transform_Reset();
           k = i & 3;
           Func_08015160((k << 17) + ringX + ringOffset,
                         discY - ((k + 2) << 16) + ringOffset, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
-          SceneTransform_ApplyRoll(ring->x);
+          Transform_ApplyRoll(ring->x);
           SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + 0x10000,
                                      0x20000, 0x10000);
           Render_TransformVertices(gData_081991b0, vertices, 4);

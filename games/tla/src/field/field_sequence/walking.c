@@ -11,7 +11,7 @@
 
 s32 Func_080caf6c(void) { return 0; }
 
-void BattleEffect_ResetCounters(void) {
+void Field_ClearRequests(void) {
   s16 value;
   struct BattleEffectCounterState *state;
 
@@ -237,7 +237,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     if (distance > 0xffff) {
       amount = distance / 0x10000;
       work->walkingDistance = distance & 0xffff;
-      BattleParty_ApplyDrain(amount, 0);
+      Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(139);
       Event_ClearValidPackedIds();
@@ -292,7 +292,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   }
 }
 
-void BattleParty_ApplyDrain(s32 amount, s32 unused) {
+void Party_AddPp(s32 amount, s32 unused) {
   s32 targetCount = Party_CountMembersFar();
   s32 i;
 

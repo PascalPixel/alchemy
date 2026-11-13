@@ -4,8 +4,8 @@
 /// type 285. The including file names its overlay's copy and the imports it
 /// calls: EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
 /// EFFECT_SCRIPTS. Copies that also define EFFECT_SPRITE_PRIORITY give the
-/// sprite the requested priority themselves before Scene_SetActorSpritePriority,
-/// as overlays 663, 664, 66b, 679 and 67b do.
+/// sprite the requested priority themselves before
+/// Scene_SetActorSpritePriority, as overlays 663, 664, 66b, 679 and 67b do.
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
@@ -23,10 +23,10 @@ static inline struct FieldEffect *Effect_CreateActor(s32 type, s32 x, s32 y,
 extern void EFFECT_SET_MODE(struct FieldEffect *effect, s32 mode);
 extern void EFFECT_SET_SCRIPT(struct FieldEffect *effect, const s32 *script);
 extern const s32 *EFFECT_SCRIPTS[];
-extern void Actor_SetSingleChildFlags(struct FieldEffect *effect,
-                                               u32 flags);
-extern void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
-extern void Actor_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
+extern void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
+extern void Scene_SetActorSpritePriority(struct FieldEffect *effect,
+                                         s32 priority);
+extern void Actor_SetSpriteColor(struct FieldEffect *effect, s32 attribute);
 
 void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
@@ -59,7 +59,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   EFFECT_SET_SCRIPT(effect, EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -71,7 +71,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute(effect, options->palette);
+    Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
 #ifdef EFFECT_SPRITE_PRIORITY
     effect->priorityFlags &= ~1;

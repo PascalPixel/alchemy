@@ -91,7 +91,7 @@ void Func_0200006c(void) {
       Actor_SetModeById(8, 2);
       leader = Actor_GetById(party->currentOwner);
       if (leader != NULL)
-        Actor_ResetAndSetPosition(8, S16_AT(leader, 10), S16_AT(leader, 18));
+        Actor_SetDestinationById(8, S16_AT(leader, 10), S16_AT(leader, 18));
       Actor_WaitForMoveById(8);
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     }
@@ -116,7 +116,7 @@ void Func_02000158(void) {
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(5);
     Actor_Jump(8, 4, 0);
-    Actor_ArmCallbackAndRefresh(8, FACING_EAST);
+    Actor_FaceDirectionById(8, FACING_EAST);
     Event_Wait(5);
     party = &gMainRoutineWork;
     z = Actor_GetById(party->currentOwner)->z;
@@ -127,7 +127,7 @@ void Func_02000158(void) {
     else
       Actor_WalkToAndWaitById(id, 472, 408);
     id = 4;
-    Actor_ArmCallbackAndRefresh(id, FACING_EAST);
+    Actor_FaceDirectionById(id, FACING_EAST);
     Event_Wait(10);
 
     gMainRoutineWork.ownerOverride = 1;
@@ -145,7 +145,7 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
-  Map_PlayMapEdit(warp->scene, warp->x, warp->z);
+  MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -211,11 +211,11 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (!Flag_IsSet(0x8df)) {
-    Map_CopyCellPictureIndicesRect(57, 52, 64, 15, 1, 1);
-    Map_CopyCellPictureIndicesRect(60, 53, 67, 16, 6, 3);
-    Map_CopyCellPictureIndicesRect(50, 52, 16, 16, 6, 3);
-    Map_CopyCellPictureIndicesRect(50, 61, 16, 28, 10, 3);
-    Map_CopyCellPictureIndicesRect(61, 61, 16, 63, 10, 3);
+    MapGrid_CopyCellPictureIndicesRect(57, 52, 64, 15, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(60, 53, 67, 16, 6, 3);
+    MapGrid_CopyCellPictureIndicesRect(50, 52, 16, 16, 6, 3);
+    MapGrid_CopyCellPictureIndicesRect(50, 61, 16, 28, 10, 3);
+    MapGrid_CopyCellPictureIndicesRect(61, 61, 16, 63, 10, 3);
   }
   return 0;
 }

@@ -25,7 +25,7 @@ struct ArticleTable {
   u8 *text[ARTICLE_KINDS];
 };
 
-extern const struct ArticleTable gText_ArticleTable;
+extern const struct ArticleTable gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
 extern const struct ArticleTable gText_IndefiniteArticles;
 #endif
@@ -65,7 +65,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   }
   if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
-    table = gText_ArticleTable;
+    table = gArticle_Table;
     head = name[0];
     if (head == 29) {
       kind = name[1] - 1;
@@ -184,7 +184,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
       name += 2;
   } else {
     kind = 0;
-    table = gText_ArticleTable;
+    table = gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
     indefiniteTable = gText_IndefiniteArticles;
 #endif

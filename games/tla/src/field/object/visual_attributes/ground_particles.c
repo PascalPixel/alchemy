@@ -42,7 +42,7 @@ void Func_080d690c(void) {
   Dma_Fill32(zero, work, sizeof(struct GroundParticleWork__ground_particles));
   words = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f3798, words);
-  work->entry = Resource_FindFreeEntry();
+  work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
   HeapSlot_Release(56);
   for (i = 0; i < 64; i++) {
@@ -150,7 +150,7 @@ void Func_080d6b90(void) {
   Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f385e, tiles);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);
   for (i = 0; i < 64; i++, particle++) {

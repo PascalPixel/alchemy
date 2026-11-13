@@ -635,8 +635,8 @@ void Actor_ApplyRandomChildValues(struct Actor *owner) {
   }
 }
 
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle) {
+void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
+                                               s32 magnitude, s32 angle) {
   s32 values[3];
 
   if (object != 0) {
@@ -727,7 +727,7 @@ void Func_080dba5c(void) {
     do {
     } while (0);
     Iwram_FillWordsEntry(buffer, 0x200, 0);
-    slot = Resource_FindFreeEntry();
+    slot = VramCache_FindFreeEntry();
     tiles = VramCache_Load(slot, 0x200, buffer);
     scene->vramSlot = slot;
     Heap_Release(buffer);

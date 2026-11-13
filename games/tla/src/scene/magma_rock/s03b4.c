@@ -8,7 +8,6 @@
 
 extern s32 gData_02003d10[];
 
-
 void Func_020003b4(void) {
   struct FieldPosition dst;
   struct StagedActor *lead;
@@ -67,7 +66,7 @@ void Func_020003b4(void) {
   lead->moveRateX = rate;
   lead->moveRateZ = rate;
   FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);
-  Actor_WaitForMove(next);
+  FieldActor_WaitForMove(next);
   Event_NoOp();
   next->x.fixed = dst.x;
   {

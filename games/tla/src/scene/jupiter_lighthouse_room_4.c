@@ -149,7 +149,7 @@ void Func_02000300(void) {
     object->timer = Random16Far();
     object->unk66 = phase;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     phase += 5;
   }

@@ -496,7 +496,7 @@ void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
       *statePointer = result;
   } else if (state == 2) {
     if (FieldParticle_HasPendingTargetFar(effect) == 0)
-      BattleEffect_ClearOwnedSlotFar(effect);
+      FieldEffect_ClearOwnedSlotFar(effect);
   }
 }
 
@@ -593,7 +593,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
       flagEntry += sizeof(struct BurstSprite);
       if (flag != 0) {
-        BattleEffect_ClearOwnedSlotFar((struct Effect_080b2f4c *)effectSlot);
+        FieldEffect_ClearOwnedSlotFar((struct Effect_080b2f4c *)effectSlot);
       }
       effectSlot++;
     }

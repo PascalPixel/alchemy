@@ -81,7 +81,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect, gData_0200474c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -94,7 +94,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute(effect, options->palette);
+    Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Scene_SetActorSpritePriority(effect, options->priority);
@@ -422,7 +422,7 @@ void Func_02000af4(void) {
   Contigo_Jump(14, 259, 0);
   Actor_FaceDirection(14, FACING_WEST, 20);
   Event_ShowMessageAndWait(14, 0);
-  Actor_ArmCallbackAndRefresh(15, FACING_EAST);
+  Actor_FaceDirectionById(15, FACING_EAST);
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(15, 3);
@@ -785,13 +785,13 @@ void Func_020014d4(void) {
 
 void Func_0200152c(void) {
   MapGrid_CopyCellsTo(27, 4, 48, 12, 1, 2);
-  Map_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
+  MapGrid_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 1, 2, 1, 48, 19);
 }
 
 void Func_0200156c(void) {
   MapGrid_CopyCellsTo(27, 8, 48, 12, 1, 2);
-  Map_CopyCellPictureIndicesRect(27, 10, 49, 12, 1, 2);
+  MapGrid_CopyCellPictureIndicesRect(27, 10, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
 }
 
@@ -819,7 +819,7 @@ void Func_020015ac(void) {
     Func_02000430(object->x, object->y, object->z, velocity[0],
                   velocity[1] + 0x1999, velocity[2], 0x20000, &options);
   }
-  Actor_SetPartAttribute(Actor_GetById(17), 0);
+  Actor_SetSpriteColor(Actor_GetById(17), 0);
   Actor_SetSingleChildFlags(Actor_GetById(17), 1);
   Actor_SetSpeed(17, 0x30000, 0x18000);
   object->velocityY = 0xc0000;
@@ -832,7 +832,7 @@ void Func_020015ac(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 68, 680);
   }
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetScreenShake(0, 0, 0);
   Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 17, 0);
   Event_Wait(10);
   GameFlag_SetBit(2535);
@@ -841,9 +841,9 @@ void Func_020015ac(void) {
 
 void Func_02001724(void) {
   MapGrid_CopyCellsTo(0, 1, 26, 42, 1, 2);
-  Map_CopyCellPictureIndicesRect(0, 1, 26, 48, 1, 2);
-  Map_CopyCellPictureIndicesRect(0, 1, 11, 54, 1, 2);
-  Map_CopyCellPictureIndicesRect(0, 1, 16, 54, 1, 2);
+  MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 48, 1, 2);
+  MapGrid_CopyCellPictureIndicesRect(0, 1, 11, 54, 1, 2);
+  MapGrid_CopyCellPictureIndicesRect(0, 1, 16, 54, 1, 2);
   Map_CopyCellAttributeRect(0, 32, 1, 1, 26, 45);
   Map_CopyCellAttributeRect(0, 32, 1, 1, 26, 51);
   Map_CopyCellAttributeRect(0, 32, 1, 1, 11, 57);
@@ -907,7 +907,7 @@ void Func_020017f4(void) {
 extern void
 MessageArgument_Push__contigo(s32 value,
                               s32 digits) __asm__("MessageArgument_Push");
-void Field_SetDestination(s32 scene, s32 entrance);
+void Event_LeaveFor(s32 scene, s32 entrance);
 
 /// The lucky wheels attendant: checks the game tickets and free item slots,
 /// then sends the player in.
@@ -966,8 +966,8 @@ void Func_02001938(s32 spoken) {
   GameFlag_SetBit(265);
   GameFlag_SetBit(0x9e5);
   wait(1);
-  Field_SetDestination(508, 0);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 20);
+  Event_LeaveFor(508, 0);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 20);
 }
 
 struct ContigoTopicState {
@@ -1027,8 +1027,8 @@ void Func_02001abc(void) {
     GameFlag_SetBit(0x109);
     GameFlag_SetBit(0x9e5);
     wait(1);
-    Field_SetDestination(0x1fd, 0);
-    Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 19);
+    Event_LeaveFor(0x1fd, 0);
+    Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 19);
   } else {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
     Event_ShowMessageAndWait(14, 0);
@@ -1061,8 +1061,8 @@ void Func_02001b84(void) {
     GameFlag_SetBit(0x109);
     GameFlag_SetBit(0x9e5);
     wait(1);
-    Field_SetDestination(0x1fb, 0);
-    Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 18);
+    Event_LeaveFor(0x1fb, 0);
+    Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 18);
   } else {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
     Event_ShowMessageAndWait(8, 0);
@@ -1086,8 +1086,8 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
     s32 width = 1;
     s32 height = 2;
 
-    Map_CopyCellPictureIndicesRect(a, b, c, d, width, height);
-    Map_CopyCellPictureIndicesRect(a, b + 2, c + 1, d, width, height);
+    MapGrid_CopyCellPictureIndicesRect(a, b, c, d, width, height);
+    MapGrid_CopyCellPictureIndicesRect(a, b + 2, c + 1, d, width, height);
   }
   Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -1219,7 +1219,7 @@ void Func_02001d50(void) {
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
   Camera_SetSpeedParameters(0xcccc, 0x1999);
-  Camera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
   Actor_WalkToAndWait(9, 172, 342);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
@@ -1377,7 +1377,7 @@ void Func_02001d50(void) {
   Contigo_Jump(0, 261, 0);
   Contigo_Jump(1, 261, 20);
   Sound_Play(0);
-  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(8)), 15);
+  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
   angle = 0xb000;
   Actor_SetHorizontalPositionAndAngleWithTerrain(8, PIXELS(160), PIXELS(466),
                                                  angle);
@@ -1391,7 +1391,7 @@ void Func_02001d50(void) {
   Actor_WatchAndSetScript(1, 8);
   Actor_WatchAndSetScript(3, 8);
   Actor_WatchAndSetScript(2, 8);
-  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(8)), 0);
+  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
   FieldCamera_SetSpeed(0x26666, 0x4ccc);
   FieldCamera_MoveTo(PIXELS(180), -1, PIXELS(410), 1);
   Func_0200419c();
@@ -1450,7 +1450,7 @@ void Func_02001d50(void) {
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Event_ShowMessageAndWait(6, 0);
   Contigo_Jump(8, 265, 0);
-  Actor_ArmCallbackAndRefresh(8, FACING_EAST);
+  Actor_FaceDirectionById(8, FACING_EAST);
   Event_ShowMessageAndWait(0x1008, 0);
   Actor_SetSpeed(2, 0xcccc, 0x6666);
   Actor_WalkToAndWait(2, 130, 400);
@@ -1501,7 +1501,7 @@ void Func_02001d50(void) {
   Actor_SetAttachedEffect(6, 258);
   Actor_SetAttachedEffect(2, 258);
   Event_Wait(20);
-  Actor_ArmCallbackAndRefresh(8, angle);
+  Actor_FaceDirectionById(8, angle);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Actor_ArmCallback(0, FACING_EAST, 0);
@@ -1532,15 +1532,15 @@ void Func_02001d50(void) {
   Actor_WalkToAndWait(8, 160, 466);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Camera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
   Func_0200419c();
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Contigo_Jump(5, 265, 20);
   Event_ShowMessageAndWait(5, 0);
   Actor_FaceDirection(1, FACING_SOUTH, 0);
   Actor_FaceDirection(0, FACING_NORTH, 20);
   Actor_ArmCallback(1, FACING_EAST, 0);
-  Actor_ArmCallbackAndRefresh(0, FACING_EAST);
+  Actor_FaceDirectionById(0, FACING_EAST);
   Actor_SetModeById(1, 3);
   Motion_SetModeAndWaitAnimation(0, 3);
   Actor_Jump(5, 2, 0);
@@ -1609,7 +1609,7 @@ void Func_02002e18(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0xcccc, 0x1999);
-    Camera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(368), 1);
+    FieldCamera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(368), 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 158, 394);
     Actor_FaceDirection(8, 0x5000, 0);
@@ -1679,7 +1679,7 @@ void Func_02002e18(void) {
     Actor_FaceDirectionAndWait(8, 0x5000);
     Event_ShowMessageAndWait(8, 0);
     Event_ShowMessage(0x8009, 0);
-    Actor_ArmCallbackAndRefresh(8, FACING_EAST);
+    Actor_FaceDirectionById(8, FACING_EAST);
     Motion_SetModeAndWaitAnimation(8, 3);
     Actor_FaceDirection(2, FACING_NORTHWEST, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
@@ -1879,7 +1879,7 @@ void Func_02003720(void) {
   if (GameFlag_Test(0x9e7) != 0 && GameFlag_Test(0x9e6) == 0) {
     Actor_SetPosition(17, PIXELS(32), PIXELS(708));
   } else {
-    Actor_SetPartAttribute(Actor_GetById(17), 15);
+    Actor_SetSpriteColor(Actor_GetById(17), 15);
     Actor_SetSingleChildFlags(Actor_GetById(17), 0);
   }
   if (GameFlag_Test(0x109) == 0) {
@@ -1897,7 +1897,7 @@ void Func_02003720(void) {
   }
   if (GameFlag_Test(0x200) != 0) {
     Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
-    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Map_CenterOnFollowedPoint();
     wait(1);
   }
@@ -2008,10 +2008,10 @@ void Func_02003a8c(void) {
   Func_02001c44(17);
   Func_02001c44(19);
   Func_02001c44(20);
-  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(14)), 1);
-  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(15)), 2);
-  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(8)), 0);
-  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(9)), 3);
+  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(14)), 1);
+  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(15)), 2);
+  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
+  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(9)), 3);
   if (!Event_GetFlag(0x9e5))
     return;
   GameFlag_ClearBit(0x9e5);
@@ -2131,7 +2131,7 @@ struct CounterBits {
   u8 rest : 7;
 };
 
-void Animation_ApplyChildValues(struct Actor *, u32);
+void Actor_SetSpriteColorMode(struct Actor *, u32);
 void Func_0200424c(struct SparkleSprite *sprite);
 s32 Func_0200425c(struct Actor *object);
 
@@ -2146,7 +2146,7 @@ void Func_02003cd8(struct Actor *object) {
   struct SparkleSprite *sprite;
 
   if (*count & 1)
-    Animation_ApplyChildValues(
+    Actor_SetSpriteColorMode(
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
@@ -2156,8 +2156,8 @@ void Func_02003cd8(struct Actor *object) {
     }
   } else if (((u8 *)object)[98] == 1) {
     if (work->unka0[0] > 31 && work->unka0[1] > 31) {
-      Animation_ApplyChildValues(object, 0);
-      Resource_ResetEntry(work->vramEntry);
+      Actor_SetSpriteColorMode(object, 0);
+      VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
       return;
     }
@@ -2253,7 +2253,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
   s32 row;
   s32 col;
 
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 256, gData_020042bc);
   work->unka6 = 0;
   work->unka0 = 999;

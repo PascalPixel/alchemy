@@ -233,7 +233,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *);
 
 void BattleEffect_DispatchByIdRangeFar(struct BattlePresentationWork *work);
-void BattleEffect_RunTableEffectFar(struct BattlePresentationWork *work);
+void BattleEffect_RunFromTableFar(struct BattlePresentationWork *work);
 void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *work);
 
 s32 Battle_RunEncounter(s32 enemyGroup);
@@ -324,15 +324,15 @@ s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *entries,
 
 extern struct BattlePresentationTransition *gTransitionWork;
 
-void Animation_SetWorkEntryFar(void *work, s32 no);
+void SpriteAnimation_StartFar(void *work, s32 no);
 
 s32 Func_0811d79c(s32 kind);
 
-s32 SummonSlot_RegisterActorSprites(s32 unit);
+s32 EnemySprite_LoadIntoSlots(s32 unit);
 
 void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
 
-void BattleParty_ListAllUnitsAndSubmit(void);
+void BattleUnit_ListAllAndSubmit(void);
 
 s32 BattlePlayback_WaitForReady(void);
 

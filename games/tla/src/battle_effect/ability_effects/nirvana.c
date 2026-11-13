@@ -22,8 +22,8 @@ void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
                               s32 frames);
 void Transform_Pop(void);
 void Func_08015160(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32);
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyPitch(s32);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffect_CountDownBattlerTints(void);
@@ -74,7 +74,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
 
     if (frame == 64)
       BattlePlayback_StartFar(134);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame == 72)
       BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
@@ -92,10 +92,10 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
         Transform_Push();
         Func_08015160(orb->x, orb->y, orb->z);
         if (i <= 11)
-          SceneTransform_ApplyPitch(frame << 9);
+          Transform_ApplyPitch(frame << 9);
         else
-          SceneTransform_ApplyPitch((frame << 9) + 0x4000);
-        SceneTransform_ApplyRoll(i * 5461 + (frame << 10));
+          Transform_ApplyPitch((frame << 9) + 0x4000);
+        Transform_ApplyRoll(i * 5461 + (frame << 10));
         Func_08015160(0, Trig_Sin(frame * 409) << 6, 0);
         point[0] = 0;
         point[1] = 0;
@@ -519,7 +519,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       user = GetBattleObjectSlotFar(effect->actor)->object;
       userHalfHeight = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       for (i = 0; i != MOTES; i++) {
         struct EffectStep *mote = &work->particles[SPARKS * 2 + i];
@@ -619,7 +619,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
@@ -833,7 +833,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       savedScrollX = gCameraSceneParameters[3];
       savedScrollY = gCameraSceneParameters[4];
       gCameraSceneParameters[4] = savedScrollY - 16;
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       world[0] = target->x;
       world[1] = 0;
@@ -986,8 +986,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             BattleEffectKernels_IntegrateVector3(p, 62, 0x400);
             Transform_Push();
             Func_08015160(p->x, p->y, p->z);
-            SceneTransform_ApplyPitch(angle);
-            SceneTransform_ApplyRoll(angle);
+            Transform_ApplyPitch(angle);
+            Transform_ApplyRoll(angle);
             Func_0801521c(0x10000);
             Render_ProjectVertices(Data_081991a4, vertices, 3);
             Render_DrawModelList(model);

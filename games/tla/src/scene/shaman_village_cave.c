@@ -365,7 +365,7 @@ void Func_02000430(void) {
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
@@ -383,7 +383,7 @@ void Func_0200083c(void) {
     do {
     } while (0);
   }
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
@@ -609,7 +609,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(770)) {
     object = Actor_Get(16);
     Actor_SetAnimation(16, 5);
-    Actor_SetSpriteColor(Actor_Get(16), 0);
+    FieldActor_SetSpriteColor(Actor_Get(16), 0);
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->y = 0;
@@ -617,9 +617,9 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(518))
     ShamanVillageCave_ObjPlace(17, PIXELS(328), PIXELS(792));
-  Actor_SetSpriteColor(Actor_Get(19), 1);
-  Actor_SetSpriteColor(Actor_Get(20), 0);
-  Actor_SetSpriteColor(Actor_Get(21), 2);
+  FieldActor_SetSpriteColor(Actor_Get(19), 1);
+  FieldActor_SetSpriteColor(Actor_Get(20), 0);
+  FieldActor_SetSpriteColor(Actor_Get(21), 2);
   if ((!Event_GetFlag(265) &&
        (gMainRoutineWork.entrance == 20 || gMainRoutineWork.entrance == 21)) ||
       Event_GetFlag(0xa71)) {

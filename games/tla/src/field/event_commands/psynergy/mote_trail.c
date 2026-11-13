@@ -15,10 +15,10 @@ s32 Party_GetLeaderActor(void);
 void Field_StartColorTransition(s32 frames, s32 color);
 void Camera_WorldToScreen(s32 *position);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 u32 Random16(void);
 void wait(s32 frames);
 void Event_Wait(s32 frames);
@@ -73,8 +73,8 @@ void Func_080ea14c(s32 targetId) {
   Camera_WorldToScreen(pos);
   targetX = pos[0];
   targetZ = pos[2];
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Runes), work);
-  moteEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Runes), work);
+  moteEntry = VramCache_FindFreeEntry();
   moteTile = VramCache_Load(moteEntry, 0x800, work);
   mote = work->motes;
   i = 0;
@@ -93,8 +93,8 @@ void Func_080ea14c(s32 targetId) {
     sprite++;
     mote++;
   }
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Pebbles), work);
-  sparkEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Pebbles), work);
+  sparkEntry = VramCache_FindFreeEntry();
   sparkTile = VramCache_Load(sparkEntry, 0x800, work);
   work->sparkTile = sparkTile;
   mote = work->sparks;
@@ -271,8 +271,8 @@ void Func_080ea14c(s32 targetId) {
   Event_Wait(10);
   Task_Remove(Func_080e9f68);
   FieldPsynergy_FadeFromCastColor();
-  Resource_ResetEntry(moteEntry);
-  Resource_ResetEntry(sparkEntry);
+  VramCache_FreeEntry(moteEntry);
+  VramCache_FreeEntry(sparkEntry);
   HeapSlot_Release(92);
 }
 

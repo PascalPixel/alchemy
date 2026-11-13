@@ -50,7 +50,7 @@ void FieldMotes_Start(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x205, REG_DMA3);
   tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f385e, tiles);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);
   i = 0;
@@ -127,7 +127,7 @@ void Weather_StartRain(s32 withCue) {
   Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(Data_080f3901, tiles);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);
   i = 0;
@@ -314,7 +314,7 @@ void FieldEffect_InitializeSparkles(void) {
           REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f38b2, buf);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x200, buf);
   HeapSlot_Release(56);
 
@@ -372,21 +372,21 @@ void BattleEffect_StartTwelveFrameBlend(void) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_SetBlock30ValuesMaxZero(void) {
+void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 0x7fff;
   state->enabled = 0;
 }
 
-void BattleEffect_SetBlock30Values12Zero(void) {
+void Weather_LastLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
 
-void BattleEffect_SetBlock30Values128One(void) {
+void Weather_ResumeLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 128;

@@ -663,7 +663,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
+void Transform_ApplyPitch(s32 angle);
 
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 
@@ -730,7 +730,7 @@ extern struct SpriteObject *
 Func_0815b290__actor_move_random(s32 width, s32 height, u32 shape,
                                  u32 attributes) __asm__("Func_0815b290");
 
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 speed);
 void Graphics_LoadGreyRamp(void);
 

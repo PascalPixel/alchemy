@@ -25,8 +25,8 @@
 
 extern u32 Data_02018000[];
 
-u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
-                              s32 *terrainKind) {
+u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
+                                 s32 *terrainKind) {
   s32 selector = WorldMap_GetCollision(position);
   s32 x = position->x;
   s32 y;
@@ -60,7 +60,7 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
-void Map_SetScreenShake(s32 value0, s32 value1, s32 value2) {
+void MapGrid_SetScreenShake(s32 value0, s32 value1, s32 value2) {
   struct MapWork *work;
 
   work = Ram_HeapSlots->mapWork;
@@ -227,14 +227,14 @@ void SpriteViewer_Run(void) {
   REG_BLDCNT = 0x3f42;
   *(volatile u16 *)0x05000000 = 0x7c00;
   REG_DISPCNT = 0x1140;
-  Fade_FromBlack(1);
+  ScreenFade_FromBlack(1);
 
 restart:
   Heap_Initialize();
   Task_ResetAll();
   ring = HeapSlot_AllocEwram(36, 160);
   VramCache_Reset();
-  ObjectSystem_Initialize(2);
+  ActorSystem_Initialize(2);
   SpritePictureCache_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
   if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
     SpritePictureCache_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
@@ -268,7 +268,7 @@ restart:
     }
   }
   SpriteViewer_BuildProbeRing(x, y, ring);
-  Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
+  Task_Add(SpriteViewer_PlaceRing, 0x480);
 
 next:
   wait(1);
@@ -427,7 +427,7 @@ next:
     }
     if (gInput.repeat & 4) {
       Task_ResetAll();
-      System_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
+      Stub_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
       goto restart;
     }
     if (gInput.pressed & 2) {
@@ -687,7 +687,7 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
 
 extern struct Vec2 gBattle_FormationPlacementScale;
 
-void Battle_PlaceActorsByFormationKind(void) {
+void SpriteViewer_PlaceRing(void) {
   u8 *actor = Ram_HeapSlots->unk0c[1];
   u32 kind = (*(u8 **)(actor + 40))[4];
   struct Vec2 scale;

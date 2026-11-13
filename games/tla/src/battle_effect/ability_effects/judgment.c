@@ -53,7 +53,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
   Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
   pal += 512;
-  Resource_DecodeType01(pal, cells);
+  Decompress_TaggedLz(pal, cells);
   for (i = 0; i != 16; i++) {
     struct JudgmentObject *obj =
         Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
@@ -100,7 +100,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
       pal += 512;
-      Resource_DecodeType01(pal, Ram_MapCellBuffer);
+      Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         struct JudgmentObject *obj = work->objects[i];
 
@@ -131,10 +131,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         s32 size;
 
         if (frame > i / 4 + 80 && p->x > 0) {
-          Render_ResetTransformState();
-          SceneTransform_ApplyRoll(p->velocityY);
-          SceneTransform_ApplyPitch(p->velocityX);
-          SceneTransform_ApplyYaw(p->velocityY + (frame << 9));
+          Transform_Reset();
+          Transform_ApplyRoll(p->velocityY);
+          Transform_ApplyPitch(p->velocityX);
+          Transform_ApplyYaw(p->velocityY + (frame << 9));
           anchor[0] = p->x;
           p->x -= 2;
           if (p->x < 0) {
@@ -187,7 +187,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightBTiles);
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
       pal += 512;
-      Resource_DecodeType01(pal, Ram_MapCellBuffer);
+      Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         QUEUE_PUSH_PARTED(OBJ_TILES((struct JudgmentObject *)work->objects[i]),
                           (u32)(cells + i * 0x400), 0x84000100);
@@ -197,7 +197,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
       pal += 512;
-      Resource_DecodeType01(pal, Ram_MapCellBuffer);
+      Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES((struct JudgmentObject *)work->objects[Data_08198ab4[i]]),
@@ -315,10 +315,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         shade = (frame * -8) + 1216;
       }
       model->shade = shade;
-      Render_ResetTransformState();
+      Transform_Reset();
       Func_08015160(-0x40000, 0x180000, 0);
       Func_0801521c(s);
-      SceneTransform_ApplyPitch(3000);
+      Transform_ApplyPitch(3000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -335,7 +335,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
   wait(1);
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
           REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
@@ -594,10 +594,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         shade = (frame * -8) + 640;
       }
       model->shade = shade;
-      Render_ResetTransformState();
+      Transform_Reset();
       Func_08015160(-0x40000, 0x80000, 0);
       Func_0801521c(s);
-      SceneTransform_ApplyPitch(5000);
+      Transform_ApplyPitch(5000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);
       Heap_Release(model);

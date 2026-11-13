@@ -17,11 +17,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:
@@ -42,10 +42,10 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_ApplyChildValues
+	.global Actor_SetSpriteColorMode
 	.thumb_func
-Animation_ApplyChildValues:
-	overlay_veneer Animation_ApplyChildValuesFar
+Actor_SetSpriteColorMode:
+	overlay_veneer Actor_SetSpriteColorModeFar
 	.global Func_02001420
 	.thumb_func
 Func_02001420:
@@ -154,14 +154,14 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global Camera_FollowActor
+	.global FieldCamera_FollowActor
 	.thumb_func
-Camera_FollowActor:
-	overlay_veneer Camera_FollowActorFar
-	.global Camera_MoveWithinMapBounds
+FieldCamera_FollowActor:
+	overlay_veneer FieldCamera_FollowActorFar
+	.global FieldCamera_MoveWithinMapBounds
 	.thumb_func
-Camera_MoveWithinMapBounds:
-	overlay_veneer Camera_MoveWithinMapBoundsFar
+FieldCamera_MoveWithinMapBounds:
+	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
 	.global Func_02001508
 	.thumb_func
 Func_02001508:
@@ -186,18 +186,18 @@ Event_ResolvePendingActions:
 	.thumb_func
 BattleEffect_StartItemBreak:
 	overlay_veneer BattleEffect_StartItemBreakFar
-	.global BattleEffect_SnapScaleToFull
+	.global FieldEffect_SnapScaleToFull
 	.thumb_func
-BattleEffect_SnapScaleToFull:
-	overlay_veneer BattleEffect_SnapScaleToFullFar
+FieldEffect_SnapScaleToFull:
+	overlay_veneer FieldEffect_SnapScaleToFullFar
 	.global UpdateRisingParticleBurst
 	.thumb_func
 UpdateRisingParticleBurst:
 	overlay_veneer UpdateRisingParticleBurstFar
-	.global Actor_OffsetPositionAndReset
+	.global Actor_WalkByById
 	.thumb_func
-Actor_OffsetPositionAndReset:
-	overlay_veneer Actor_OffsetPositionAndResetFar
+Actor_WalkByById:
+	overlay_veneer Actor_WalkByByIdFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

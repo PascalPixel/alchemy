@@ -77,10 +77,10 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_08020330(struct Actor *object);
 void FieldPsynergy_FadeToCastColor(void);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void Func_080e89e4(s32 direction);
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
@@ -165,8 +165,8 @@ void FieldPsynergy_GrindOnTarget(void) {
   FieldPsynergy_FadeToCastColor();
   source = Resource_GetTableEntry((s32)&ResourceId_WaterSplash);
   picture = work->picture;
-  Resource_DecodeType01(source, picture);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(source, picture);
+  entry = VramCache_FindFreeEntry();
   tile = VramCache_Load(entry, 0x400, picture);
   particle = work->particles;
   for (i = 0; i < 64; i++) {
@@ -301,7 +301,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   Sound_PlayFar(390);
   Func_080e8c9c();
   FieldPsynergy_FadeFromCastColor();
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
 end:
   HeapSlot_Release(92);
 }

@@ -346,8 +346,8 @@ void Func_020019b8(void) {
         record = &gData_020041b8[i * 6];
         x = *record++;
         y = *record++;
-        Map_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1],
+                                           x, y, 1, 1);
       }
     } else {
       if (*record != 0)
@@ -417,17 +417,17 @@ void Func_02001a30(void) {
       s16 scene = gMainRoutineWork.scene;
       y = *record++;
       if (scene == SCENE(Ov655Room1))
-        Map_CopyCellPictureIndicesRect(gData_02003fd2[2], gData_02003fd2[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fd2[2], gData_02003fd2[3],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room2))
-        Map_CopyCellPictureIndicesRect(gData_02003fda[2], gData_02003fda[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fda[2], gData_02003fda[3],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room3))
-        Map_CopyCellPictureIndicesRect(gData_02003fe2[2], gData_02003fe2[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fe2[2], gData_02003fe2[3],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room5))
-        Map_CopyCellPictureIndicesRect(gData_02003fea[2], gData_02003fea[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[2], gData_02003fea[3],
+                                           x, y, 1, 1);
     }
     index = *record++;
     cellX = index * 2;
@@ -439,30 +439,35 @@ void Func_02001a30(void) {
         {
           s32 srcX = gData_02003ff2[cellX], srcY = gData_02003ff2[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       } else if (scene == SCENE(Ov655Room2)) {
         {
           s32 srcX = gData_02004012[cellX], srcY = gData_02004012[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       } else if (scene == SCENE(Ov655Room3)) {
         {
           s32 srcX = gData_02004032[cellX], srcY = gData_02004032[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       } else if (scene == SCENE(Ov655Room5)) {
         if ((n == 0 && GameFlag_Test(0x241)) ||
             (n == 11 && GameFlag_Test(0x24c))) {
           s32 srcX = gData_02004052[8], srcY = gData_02004052[9], width = 1,
               height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         } else {
           s32 srcX = gData_02004052[cellX], srcY = gData_02004052[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       }
     }
@@ -505,17 +510,17 @@ void Func_02001a30(void) {
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room1))
-        Map_CopyCellPictureIndicesRect(gData_02003fd2[0], gData_02003fd2[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fd2[0], gData_02003fd2[1],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room2))
-        Map_CopyCellPictureIndicesRect(gData_02003fda[0], gData_02003fda[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fda[0], gData_02003fda[1],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room3))
-        Map_CopyCellPictureIndicesRect(gData_02003fe2[0], gData_02003fe2[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fe2[0], gData_02003fe2[1],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room5))
-        Map_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1],
+                                           x, y, 1, 1);
     }
     Event_Wait(12);
     GameFlag_SetBit(flag);
@@ -668,8 +673,8 @@ void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02002180(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                    s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
 void Func_02001804(void);
 
 extern const u16 gData_02003fd2[];
@@ -701,7 +706,7 @@ void Task_RemoveFar(void (*func)(void));
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  Camera_MoveWithinMapBounds(a, b, c, d);
+  FieldCamera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
@@ -716,18 +721,18 @@ void Func_020021e8(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
-  Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   Func_02003cf0();
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
-  Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(161);
   Func_020021b4();
   GameFlag_SetBit(0x247);
   Actor_MoveTo(24, 664, 104);
-  Map_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
   Sound_Play(229);
   Func_020021b4();
   Event_Wait(10);
@@ -741,7 +746,7 @@ void Func_020021e8(void) {
 void Func_020022e0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   Func_02003cf0();
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(24, 0x100, 40);
@@ -760,7 +765,7 @@ void Func_020022e0(void) {
 void Func_02002390(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
+  FieldCamera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   Func_02003cf0();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(25, 0x100, 40);
@@ -787,7 +792,7 @@ void Func_02002458(void) {
   Func_02003cf0();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(25, 0x100, 20);
-  Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
@@ -796,7 +801,7 @@ void Func_02002458(void) {
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
   GameFlag_SetBit(0x241);
-  Map_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
   Sound_Play(161);
   Func_020021b4();
   Actor_MoveTo(25, 456, 216);

@@ -235,7 +235,7 @@ void FieldPsynergy_Douse(void) {
         mote->motionFlags = 0;
         ((struct Effect05Sprite *)mote->sprite)->mode = 2;
         Actor_SetMode(mote, 8);
-        Animation_ApplyChildValuesFar((struct Actor *)mote, 7);
+        Actor_SetSpriteColorModeFar((struct Actor *)mote, 7);
       }
       wait(6);
     }
@@ -276,7 +276,7 @@ void FieldPsynergy_Douse(void) {
 
 /// Each frame: one falling particle 8 to 24 pixels above the lifted object,
 /// 0 to 48 pixels out in a random direction.
-void BattleEffect_SpawnFallingParticles(void) {
+void FieldEffect_SpawnFallingParticles(void) {
   struct Actor *src;
   struct FallVector pos;
   struct Actor *obj;
@@ -327,7 +327,7 @@ struct EffectWork__f0decb8 {
 };
 
 void Actor_ApplyRandomChildValues(void);
-void BattleEffect_SpawnRadialParticleRing(struct FxObject *object);
+void FieldEffect_SpawnRadialParticleRing(struct FxObject *object);
 
 static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
                                         struct FxPosition *position) {
@@ -369,10 +369,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   p->x = work->x;
   p->y = work->y + 0x100000;
   p->z = work->z;
-  object =
-      BattleEffect_SpawnItemBreakMode1(p->x + 0x200000, p->y, p->z, 0x8000);
+  object = FieldEffect_SpawnCarryHand(p->x + 0x200000, p->y, p->z, 0x8000);
   anchors[0] = object;
-  right = BattleEffect_SpawnItemBreakMode1(p->x - 0x200000, p->y, p->z, 0);
+  right = FieldEffect_SpawnCarryHand(p->x - 0x200000, p->y, p->z, 0);
   anchors[1] = right;
   if (anchors[0] == NULL || right == NULL) {
     FieldPsynergy_FadeFromCastColor();
@@ -391,7 +390,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   right->x = p->x - 0x100000;
   right->velocityX = 0;
   target->callback = Actor_ApplyRandomChildValues;
-  Task_Add((s32)BattleEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
+  Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(130);
   target->flag = 4;
   Actor_SetSingleChildFlagsFar((struct Actor *)target, 0);
@@ -442,7 +441,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     position.y = target->ground;
     position.z = target->z;
     Vector_AddPolarOffset(0x100000, angle, &position);
-    i = ScriptObject_CheckOverlapFar(target, &position);
+    i = ActorScript_CheckOverlapFar(target, &position);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     // path as the ROM lays them out; written as one || test, 389 of 551
     // instructions differ in tla-en.
@@ -489,7 +488,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   }
   Actor_SetMode(anchors[0], 4);
   Actor_SetMode(anchors[1], 4);
-  Task_Remove((u32)BattleEffect_SpawnFallingParticles);
+  Task_Remove((u32)FieldEffect_SpawnFallingParticles);
   Sound_PlayFar(135);
   wait(15);
   Sound_PlayFar(135);
@@ -513,15 +512,15 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
         object->lift = 0x20000;
         object->flag = 0;
         magnitude = Random16() * 24 + 0x80000;
-        Motion_SetTargetPositionFromMagnitudeAngle(object, magnitude,
-                                                   Random16());
+        Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude,
+                                                  Random16());
       }
     }
   }
   Sound_PlayFar(131);
   Actor_Destroy(anchors[0]);
   Actor_Destroy(anchors[1]);
-  Animation_ApplyChildValuesFar((struct Actor *)target, work->palette);
+  Actor_SetSpriteColorModeFar((struct Actor *)target, work->palette);
   Actor_StartScriptFar((struct Actor *)target, (u32)(work->script));
   target->callback = work->callback;
   target->flag = 3;
@@ -529,14 +528,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->gravity = 0x3333;
   target->mode = 0;
   source->callback = NULL;
-  Animation_ApplyChildValuesFar((struct Actor *)source, 0);
+  Actor_SetSpriteColorModeFar((struct Actor *)source, 0);
   if ((s8)work->falls != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);
     wait(1);
     for (i = 0; i < 90 && target->velocityY < 0; i++)
       wait(1);
-    BattleEffect_SpawnRadialParticleRing(target);
+    FieldEffect_SpawnRadialParticleRing(target);
     FieldPsynergy_FadeFromCastColor();
     wait(30);
   } else {

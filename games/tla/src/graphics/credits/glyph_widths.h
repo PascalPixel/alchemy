@@ -4,7 +4,7 @@
 /// line tables, as The Broken Seal's credits.c includes its own copy.
 // clang-format off
 #include "edition.h"
-const u8 gDisplayScroll_GlyphWidths[96] = {
+const u8 gCredits_GlyphWidths[96] = {
     7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6,
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7,
     8, 8, 8, 8, 8, 8, 8, 8, 8, 5, 6, 8, 8, 8, 8, 8,

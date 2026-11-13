@@ -49,7 +49,7 @@ struct Window *SaveProgress_Open(u32 kind) {
 
   window = Window_Create(0, 0, 30, 20, 0);
   tiles = Heap_AllocEwram(0x100);
-  Resource_DecodeType01(gWindow_ProgressBarTiles, tiles);
+  Decompress_TaggedLz(gWindow_ProgressBarTiles, tiles);
   Dma_Set(tiles, (void *)0x06001000, DMA_COPY_WORDS(64), REG_DMA3);
   switch (kind) {
   case 0:
@@ -1137,7 +1137,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       break;
     }
   }
-  MenuIcon_ReleaseObjectsFar();
+  DjinnFigures_ReleaseTopRowFar();
   Menu_ClearFirstObjectRowAndScheduleUpdate();
   Window_Close(djinnWindow, 2);
   Window_Close(partyWindow, 2);

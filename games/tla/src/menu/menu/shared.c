@@ -487,7 +487,7 @@ s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
   s32 icon;
 
   icon = 0;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot != 0) {
     VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
     icon = (s32)WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
@@ -546,14 +546,14 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   sentinel -= 255;
   work->tabIndex[1] = zero;
   work->sideIcon[1]->sentinel = sentinel;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->active = 13;
     work->arrows[0] = icon;
   }
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
@@ -589,8 +589,8 @@ void Menu_PlacePartyFigures(void) {
   }
 }
 
-extern u8 gUiMenu_CursorBobX[];
-extern u8 gUiMenu_CursorBobY[];
+extern u8 gMenuCursor_BobX[];
+extern u8 gMenuCursor_BobY[];
 
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
 
@@ -601,9 +601,9 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor = work->sideIcon[0];
 
-  cursor->sprite.oam.x = cursor->x = gUiMenu_CursorBobX[CURSOR_BOB_STEP()] +
+  cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
                                      xOffset + work->auxiliaryWindow->x * 8 + 8;
-  cursor->sprite.oam.y = cursor->y = gUiMenu_CursorBobY[CURSOR_BOB_STEP()] +
+  cursor->sprite.oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] +
                                      yOffset + work->auxiliaryWindow->y * 8 + 8;
 }
 
@@ -755,7 +755,7 @@ void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
 /// for A, B or Start and clears it again.
 // As The Broken Seal's ItemMenu_ShowMessage: in Japanese its first
 // form, from patch 1 its TBS_PATCH_1 form less the redraw after the wait.
-void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
+void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct RenderInput *window;
   s32 height;
@@ -1017,8 +1017,8 @@ void Palette_LightenHighlight(s32 paletteNumber) {
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
-void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
-                            s32 selectedPage, s32 rightEdge) {
+void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
+                               s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
   s32 page;
   s32 x;
@@ -1121,7 +1121,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   }
 }
 
-void Text_DrawWorkValueWithLabel(s32 work) {
+void Menu_DrawCoins(s32 work) {
   Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
   Text_DrawMessageAsTilesFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
                              0x40, 0);
@@ -1193,7 +1193,7 @@ void Menu_CancelSoundReset(void) {
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }
 
-void Menu_EnsureCancelSound(void) {
+void Menu_StopWatchingStart(void) {
   if (GameFlag_Test(0x150) == 0) {
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }

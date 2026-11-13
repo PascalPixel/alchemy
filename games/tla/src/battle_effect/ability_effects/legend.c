@@ -70,9 +70,9 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f189b14): routine Render_DrawModelList as void
@@ -259,15 +259,15 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         if (scale > 0x20000)
           scale = 0x20000;
         model->alpha = alpha;
-        Render_ResetTransformState();
+        Transform_Reset();
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Func_08015160((start.x - 128) << 16, height << 16, 0);
-        SceneTransform_ApplyPitch(0x5900);
+        Transform_ApplyPitch(0x5900);
         if (effect->side == 0)
-          SceneTransform_ApplyYaw(0x1900);
+          Transform_ApplyYaw(0x1900);
         else
-          SceneTransform_ApplyYaw(-0x1900);
-        SceneTransform_ApplyRoll(frame << 9);
+          Transform_ApplyYaw(-0x1900);
+        Transform_ApplyRoll(frame << 9);
         Func_0801521c(scale);
         SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
@@ -286,15 +286,15 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           if (alpha > -64) {
             scale = age * 12384 + 0x8000;
             model->alpha = alpha;
-            Render_ResetTransformState();
+            Transform_Reset();
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
             Func_08015160((start.x - 128) << 16, -48 << 16, 0);
-            SceneTransform_ApplyPitch(0x5900);
+            Transform_ApplyPitch(0x5900);
             if (effect->side == 0)
-              SceneTransform_ApplyYaw(0x1900);
+              Transform_ApplyYaw(0x1900);
             else
-              SceneTransform_ApplyYaw(-0x1900);
-            SceneTransform_ApplyRoll(frame << 9);
+              Transform_ApplyYaw(-0x1900);
+            Transform_ApplyRoll(frame << 9);
             Func_0801521c(scale);
             Render_TransformVertices(Data_081991e0, vertices, 4);
             Render_DrawModelList__f189b14(model);
@@ -310,11 +310,11 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         model->mesh = Data_081992b0;
         for (i = 0; i != 8; i++) {
           model->alpha = 0;
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((start.x - 128) << 16, -80 << 16, 0);
-          SceneTransform_ApplyPitch(0x47d0);
-          SceneTransform_ApplyRoll((frame + i * 16) << 9);
+          Transform_ApplyPitch(0x47d0);
+          Transform_ApplyRoll((frame + i * 16) << 9);
           scale = (frame << 12) - 0x4000;
           if (scale > 0x10000)
             scale = 0x10000;
@@ -663,19 +663,19 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     model->vertices = vertices;
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.
-      Render_ResetTransformState();
+      Transform_Reset();
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       Func_08015160((card.x << 16) - (128 << 16), (card.y << 16) - (64 << 16),
                     0);
       if (frame <= 47) {
-        SceneTransform_ApplyPitch((48 - frame) << 10);
+        Transform_ApplyPitch((48 - frame) << 10);
         if (effect->side == 0)
           Func_08015160(-Trig_Sin(frame * 682) << 7, 0, 0);
         else
           Func_08015160(Trig_Sin(frame * 682) << 7, 0, 0);
       }
-      SceneTransform_ApplyYaw(0x1770);
-      SceneTransform_ApplyRoll(frame << 10);
+      Transform_ApplyYaw(0x1770);
+      Transform_ApplyRoll(frame << 10);
       Func_0801521c(scale);
       SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
@@ -741,12 +741,12 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         struct EffectStep *step = &work->particles[i];
 
         texture.pixels = work->sheet + step->z;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160((step->x - 60) << 16, (step->y - 64) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (effect->side == 1)
-          SceneTransform_ApplyYaw(0x8000);
-        SceneTransform_ApplyRoll(step->velocityZ);
+          Transform_ApplyYaw(0x8000);
+        Transform_ApplyRoll(step->velocityZ);
         if (mode == CARD_BRAMBLE) {
           s32 length = (frame << 13) - 0x60000;
 

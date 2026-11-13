@@ -199,7 +199,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
       motion = GetBattleObjectSlotFar(effect->actors[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera, camera + 3);
         vector[0] = motion->x;
         vector[1] = motion->y;
@@ -213,16 +213,16 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
         if (memberFrame <= 67) {
           for (j = 0; j != CORNERS; j++) {
             point = &work->particles[member * 32 + j];
-            Render_ResetTransformState();
+            Transform_Reset();
             if (memberFrame <= 63) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
               SceneTransform_ApplyScale(scale);
-              SceneTransform_ApplyRoll((64 - memberFrame) << 9);
-              SceneTransform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((64 - memberFrame) << 9);
+              Transform_ApplyYaw((64 - memberFrame) << 9);
             }
-            SceneTransform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(Data_0819790c,
                                         (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
@@ -336,7 +336,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
       object = GetBattleObjectSlotFar(effect->actors[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera, camera + 3);
         vector[0] = object->x;
         vector[1] = object->y;
@@ -350,16 +350,16 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
         if (memberFrame <= 67) {
           for (j = 0; j != CORNERS; j++) {
             point = &work->particles[member * 32 + j];
-            Render_ResetTransformState();
+            Transform_Reset();
             if (memberFrame <= 63) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
               SceneTransform_ApplyScale(scale);
-              SceneTransform_ApplyRoll((64 - memberFrame) << 9);
-              SceneTransform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((64 - memberFrame) << 9);
+              Transform_ApplyYaw((64 - memberFrame) << 9);
             }
-            SceneTransform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(Data_08197918,
                                         (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;

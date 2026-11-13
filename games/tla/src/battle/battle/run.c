@@ -153,7 +153,7 @@ extern u8 Data_02018000[];
 // The ROM's call here keeps the whole return register, as an s32 return
 // does; system/system/flags.c defines it returning u8.
 s32 GameFlag_GetByte(s32 flag);
-void ObjectSystem_InitializeFar(s32 mode);
+void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
 struct BattleSortedUnitEntry;
 /* VIEW(battle): routine Window_CloseFar as void Window_CloseFar(s32 window, s32
@@ -196,7 +196,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   *(volatile u16 *)0x04000000 = 1;
   GameFlag_SetBit(0x103);
   GameFlag_SetBit(0x169);
-  Render_ResetTransformState();
+  Transform_Reset();
 
   // The camera's fill in a once-only block keeps its entry's load after the
   // transform reset; as the plain call, 12 of 885 instructions differ in
@@ -216,7 +216,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(16, 0xe00);
   HeapSlot_AllocEwram(12, 0x600);
-  ObjectSystem_InitializeFar(4);
+  ActorSystem_InitializeFar(4);
   if (GameFlag_Test(0x16e) != 0)
     WindowSystem_InitBattleFar(1);
   else
@@ -255,7 +255,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     for (copyIndex = 0; copyIndex < 0x7c8; copyIndex++)
       *ownerStateDestination++ = Data_02018000[copyIndex];
     enemyCount = GameFlag_GetByte(0x3f0);
-    BattleParty_AssignMemberSlots();
+    BattleParty_AssignOpponentSlots();
     battle->battleType = 0;
   }
   Task_Add(BattleCamera_Update, 0x47f);
@@ -323,7 +323,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     PartyStatus_DrawFar(battle->partyStatus);
 
     Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
-    Resource_ResetEntry(battle->promptSlot);
+    VramCache_FreeEntry(battle->promptSlot);
     if (GameFlag_Test(0x16a) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
@@ -434,7 +434,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
 won:
   scripted = enemyGroup - 74;
 won_scripted:
-  BattleStaging_ClearLinkPayload();
+  Battle_ClearSerialTransferPayload();
   if ((u32)scripted > 1) {
     if (enemyGroup != 80 && GameFlag_Test(0x16e) == 0) {
       if (battle->twoSided != 0)
@@ -454,15 +454,15 @@ won_scripted:
     }
     Sound_PlayFar(78);
   }
-  Fade_ToBlack(30);
-  Fade_Wait();
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   result = battle->defeated;
   goto finished;
 
 aborted:
   scripted = enemyGroup - 74;
 aborted_scripted:
-  BattleStaging_ClearLinkPayload();
+  Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
   *(volatile u16 *)0x04000000 = 1;
   result = battle->defeated;
@@ -470,7 +470,7 @@ aborted_scripted:
   goto finished;
 
 party_lost:
-  BattleStaging_ClearLinkPayload();
+  Battle_ClearSerialTransferPayload();
   scripted = enemyGroup - 74;
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
@@ -484,15 +484,15 @@ party_lost:
     }
     Sound_PlayFar(78);
   }
-  Fade_ToBlack(30);
+  ScreenFade_ToBlack(30);
   result = -1;
-  Fade_Wait();
+  ScreenFade_Wait();
   goto finished;
 
 fled:
   Sound_PlayFar(78);
-  Fade_ToBlack(30);
-  Fade_Wait();
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   result = 999;
   scripted = enemyGroup - 74;
 

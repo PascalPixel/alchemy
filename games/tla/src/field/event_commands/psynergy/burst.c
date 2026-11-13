@@ -33,11 +33,11 @@ void FieldPsynergy_FadeToCastColor(void);
 void Camera_WorldToScreen(s32 *position);
 s32 Func_080db9a8(struct Actor *object, s32 facing);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
+s32 Decompress_TaggedLz(const void *source, void *destination);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -84,7 +84,7 @@ void FieldPsynergy_Burst(void) {
   if (scene->facing == 0xc000)
     canvas->depth -= 4;
 
-  sparkEntry = Resource_FindFreeEntry();
+  sparkEntry = VramCache_FindFreeEntry();
   sparkTile = VramCache_Load(sparkEntry, 64, Data_080f3984);
   for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
       sprite = work->sparkSprites;
@@ -109,9 +109,9 @@ void FieldPsynergy_Burst(void) {
     particle++;
   }
 
-  Resource_DecodeType01(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
-  burstEntry = Resource_FindFreeEntry();
+  burstEntry = VramCache_FindFreeEntry();
   tile = VramCache_Load(burstEntry, 0x400, work);
   work->burstTile = tile;
   particle = work->bursts;
@@ -126,8 +126,8 @@ void FieldPsynergy_Burst(void) {
     burstSprite++;
     particle++;
   }
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
-                        Ram_HeapSlots->battleFxWork[1]);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
+                      Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
   Sound_PlayFar(130);
   wait(1);
@@ -148,8 +148,8 @@ void FieldPsynergy_Burst(void) {
     frame++;
   }
   Task_Remove(Func_080e4d9c);
-  Resource_ResetEntry(sparkEntry);
-  Resource_ResetEntry(burstEntry);
+  VramCache_FreeEntry(sparkEntry);
+  VramCache_FreeEntry(burstEntry);
   FieldPsynergy_FadeFromCastColor();
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(92);
@@ -199,7 +199,7 @@ struct BlendWork {
 extern void BattleEffect_IntegrateVector2__f0e572c(
     struct ShineParticle *particle, s32 frames,
     s32 flags) __asm__("BattleEffect_IntegrateVector2");
-void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
+void MapGrid_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 void Func_080e5a64(void) {
   struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
@@ -260,7 +260,7 @@ void Func_080e5a64(void) {
     if (work->timer == 8) {
       blend->scaleX = 0x2000;
       blend->scaleY = 0x2000;
-      Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
+      MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
       Sound_PlayFar(567);
       work->sparkles = 1;
       work->fading = 1;
@@ -289,7 +289,7 @@ void Func_080e5a64(void) {
     break;
   case 3:
     if (work->timer == 0)
-      Map_SetScreenShakeFar(1, 1, 1);
+      MapGrid_SetScreenShakeFar(1, 1, 1);
     if (work->timer == 10) {
       work->state++;
       work->timer = -1;

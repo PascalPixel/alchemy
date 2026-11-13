@@ -409,8 +409,8 @@ L_020089e4:
   object3 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object3 == 0)
     goto L_02008a36;
-  Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)object3 + 10),
-                            *(s16 *)((u8 *)object3 + 18));
+  Actor_SetDestinationById(12, *(s16 *)((u8 *)object3 + 10),
+                           *(s16 *)((u8 *)object3 + 18));
 L_02008a36:
   Actor_WaitForMoveById(12);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);

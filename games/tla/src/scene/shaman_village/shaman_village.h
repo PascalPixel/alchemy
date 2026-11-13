@@ -70,7 +70,7 @@ void Func_02004a84(s32 shop, s32 keeper);
 void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Func_0200481c(struct ShamanVillageObject *object);
 void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value);
-void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags);
+void Actor_SetBlendMode(struct ShamanVillageObject *object, s32 flags);
 void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -87,7 +87,7 @@ void BattleEffect_EndArcEffect(void);
 void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object,
                                       s32 value);
-void Party_PlaySavedMusic(void);
+void Scene_PlayMusic(void);
 void Func_020048b4(void);
 
 #define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \

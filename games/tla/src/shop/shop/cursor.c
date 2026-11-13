@@ -77,7 +77,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
       }
     }
   }
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot != 96) {
     VramCache_Load(slot, 0x100, buf);
     sprite = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X32,
@@ -201,8 +201,7 @@ void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
 
 /// Puts the cursor at x, y at once: both its position and its target, and its
 /// sprite with them.
-void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x,
-                                     s32 y) {
+void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
   {
     struct ShopCursorSprite3 *sprite =
         (struct ShopCursorSprite3 *)cursor->anchor;

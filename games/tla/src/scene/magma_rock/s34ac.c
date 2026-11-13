@@ -77,7 +77,7 @@ void Func_020035e0(void) {
   state = 0;
   for (i = 0; i <= 16; i++) {
     effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
-                                                      leader->z);
+                                                     leader->z);
     if (effect != 0) {
       state = Func_02003bd4(effect->sprite, state);
       zero = 0;
@@ -157,7 +157,7 @@ void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
       entry->velocityY = 0x50000;
       entry->velocityZ = 0;
       FieldVector_AddPolarOffset(Random16Far() * 2 + 0x20000, angle,
-                               &entry->velocityX);
+                                 &entry->velocityX);
       {
         s32 mask = 63;
 
@@ -217,7 +217,7 @@ void Func_020038dc(void) {
   struct RockSprite *sprite;
 
   Func_02003a14(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
   work->resource = entry;
@@ -243,7 +243,7 @@ void Func_02003998(void) {
   struct MagmaRockSparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_0200379c);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 
@@ -490,9 +490,11 @@ struct Trigger gData_0200460c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 19, CONDITION_ALWAYS, 0},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8d5, EVENT(Func_02000940)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     0x8d5, EVENT(Func_02000940)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8d5, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0x8d6, EVENT(Func_02000940)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
+     0x8d6, EVENT(Func_02000940)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x8d6, EVENT(Func_02000a48)},
     {0x50009705, 31, 0x200, EVENT(Func_020019e8)},
     {0x50009705, 32, 0x201, EVENT(Func_02001a38)},
@@ -514,9 +516,12 @@ struct Trigger gData_02004720[] = {
     {0x202, 20, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000940)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x8d7, EVENT(Func_02000940)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     CONDITION_ALWAYS, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS,
+     EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15,
+     0x8d7, EVENT(Func_02000940)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x8d7, EVENT(Func_02000a48)},
     {0x50009705, 31, 0x200, EVENT(Func_020019e8)},
     {TRIGGER_STEP, 50, 0x212, EVENT(Func_02001bc0)},
@@ -532,7 +537,8 @@ struct Trigger gData_020047e0[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x8d8, EVENT(Func_02000940)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16,
+     0x8d8, EVENT(Func_02000940)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x8d8, EVENT(Func_02000a48)},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001110)},
@@ -550,7 +556,8 @@ struct Trigger gData_0200487c[] = {
     {0x602, 40, 0x8, EVENT(Func_02001e08)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8d9, EVENT(Func_02000940)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     0x8d9, EVENT(Func_02000940)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8d9, EVENT(Func_02000a48)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 14, 0x250, 0},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
@@ -568,9 +575,11 @@ struct Trigger gData_02004930[] = {
     {0x8602, 40, CONDITION_ALWAYS, EVENT(Func_02001edc)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8da, EVENT(Func_02000940)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     0x8da, EVENT(Func_02000940)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8da, EVENT(Func_02000a48)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x8db, EVENT(Func_02000940)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
+     0x8db, EVENT(Func_02000940)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x8db, EVENT(Func_02000a48)},
     {0x80009705, 30, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 30, 0x2f0, EVENT(Func_02001110)},

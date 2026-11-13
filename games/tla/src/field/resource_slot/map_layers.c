@@ -41,7 +41,7 @@ s32 MapGrid_LoadMap(s32 index) {
 
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-  Fade_FromBlack(0);
+  ScreenFade_FromBlack(0);
   sceneResources = &gData_0802f380__f02a6b8[index];
   work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
   Iwram_ClearWordsEntry(work, sizeof(struct MapScrollWork));
@@ -49,27 +49,27 @@ s32 MapGrid_LoadMap(s32 index) {
       sceneResources->resources[0] + (u32)&ResourceId_Map000);
   encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
   TileMap_DecodeStagedBuffer(
-      Resource_DecodeType01(encodedData, Ram_MapCellBuffer + 1));
+      Decompress_TaggedLz(encodedData, Ram_MapCellBuffer + 1));
   Dma_Fill32(-1, Ram_MapCollision, 0x2000);
   encodedData = (u8 *)sceneHeader + sceneHeader->collision;
-  Resource_DecodeType01(encodedData, Ram_MapCollision);
+  Decompress_TaggedLz(encodedData, Ram_MapCollision);
   encodedData = (u8 *)sceneHeader + sceneHeader->tilemap;
-  Resource_DecodeType01(encodedData, Ram_MapCellBuffer);
+  Decompress_TaggedLz(encodedData, Ram_MapCellBuffer);
   Tilemap_ConvertBuffer();
   encodedData = (u8 *)sceneHeader + sceneHeader->shapes;
-  Resource_DecodeType01(encodedData, gMapShapeGrid);
+  Decompress_TaggedLz(encodedData, gMapShapeGrid);
   if (sceneHeader->animation != 0) {
     encodedData = (u8 *)sceneHeader + sceneHeader->animation;
-    Resource_DecodeType01(encodedData, Ram_MapCollision + 0x1000);
+    Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x1000);
     TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));
   }
   if (sceneHeader->blend != 0) {
     encodedData = (u8 *)sceneHeader + sceneHeader->blend;
-    Resource_DecodeType01(encodedData, Ram_MapCollision + 0x1e00);
-    DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
+    Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x1e00);
+    BlendScript_Start((u16 *)(Ram_MapCollision + 0x1e00));
   }
   encodedData = (u8 *)sceneHeader + sceneHeader->script;
-  Resource_DecodeType01(encodedData, Ram_MapCollision + 0x2000);
+  Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x2000);
   work->minX = sceneHeader->origin[0] << 19;
   work->minY = sceneHeader->origin[1] << 19;
   work->maxX = sceneHeader->origin[2] << 19;
@@ -145,10 +145,9 @@ s32 MapGrid_LoadMap(s32 index) {
     graphicsBuffer = Heap_Alloc(0x4000);
     if (graphicsBuffer != NULL) {
       backdrop = *(s16 *)BG_PLTT;
-      Resource_DecodeType01(
-          Resource_GetTableEntry(sceneResources->resources[1] +
-                                 (u32)&ResourceId_Map000),
-          graphicsBuffer);
+      Decompress_TaggedLz(Resource_GetTableEntry(sceneResources->resources[1] +
+                                                 (u32)&ResourceId_Map000),
+                          graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
       Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
       Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[2] +
@@ -535,8 +534,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   }
 }
 
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
-                                    u32 width, u32 height) {
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
+                                        u32 width, u32 height) {
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
@@ -613,7 +612,7 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
 
 void wait(s32 frames);
 
-void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
+void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)steps;
   u32 sourceX = copyCommand->source;
   u32 endMarker;
@@ -640,8 +639,8 @@ void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       s32 delay = rectangleArgs[3];
       rectangleArgs += 5;
 
-      Map_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
-                                     destinationY, (u16)width, (u16)height);
+      MapGrid_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
+                                         destinationY, (u16)width, (u16)height);
       copyCommand++;
       wait((u16)delay);
       sourceX = copyCommand->source;
@@ -679,7 +678,7 @@ void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 /// dstX, dstY: destination top left, in cells.
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                        s32 dstY) {
-  Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
+  MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 
@@ -837,7 +836,7 @@ void Func_0802b590(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
-void Map_SetShownLayers(u32 v) {
+void MapGrid_SetShownLayers(u32 v) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
   u32 mask = v & 0xe00;
   u32 flags = state->flags;
@@ -866,7 +865,7 @@ next:
     if (entry & 0x1000)
       Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
     else
-      Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
+      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   } else {
     cursor += 6;
   }
@@ -912,7 +911,7 @@ next:
     if (attributes != 0)
       Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
     else
-      Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
+      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   } else {
     cursor += 6;
   }
@@ -944,13 +943,13 @@ void Map_LoadCellsAndShapes(void) {
       (u32)&ResourceId_Map000);
 
   source = (u8 *)header + header->cells;
-  Resource_DecodeType01(source, Ram_MapCellBuffer);
+  Decompress_TaggedLz(source, Ram_MapCellBuffer);
   Tilemap_ConvertBuffer();
   source = (u8 *)header + header->shapes;
-  Resource_DecodeType01(source, gMapShapeGrid);
+  Decompress_TaggedLz(source, gMapShapeGrid);
 }
 
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
+s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveTiles *perspective =
       (struct PerspectiveTiles *)Ram_HeapSlots->mapWork;
   u32 *tileOffsets = perspective->tiles;

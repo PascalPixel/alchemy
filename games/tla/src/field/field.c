@@ -44,7 +44,7 @@ struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
 /// 0: read two bytes, high then low; zero terminates.
 /// Low 12 bits give distance; high 4 bits + 2 give length, or the next byte +
 /// 18 if those 4 bits are zero. Copy from that distance behind source + 2.
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
+u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;
   u32 sentinel;
@@ -245,7 +245,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
       arg = layer->script[layer->pos++];
       switch (picture) {
       case 254:
-        Animation_SetWorkEntry(layer, arg);
+        SpriteAnimation_Start(layer, arg);
         obj->lastNo = arg;
         break;
       case 253:
@@ -371,13 +371,13 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
     for (i = 0; i < drawCount; i++) {
       layer = obj->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == 1) {
-        Resource_DecodeType01(layer->pictures[layer->picture], pixels);
+        Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == 3) {
         if (layer->param != 0) {
           unpacked = Heap_Alloc(0x400);
           decodePicture(
-              Resource_DecompressLz(layer->pictures[layer->picture], unpacked),
-              pixels, layer->param);
+              Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
+              layer->param);
           Heap_Release(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->pictures[layer->picture], pixels);

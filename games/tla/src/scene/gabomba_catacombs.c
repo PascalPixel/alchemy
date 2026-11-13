@@ -256,7 +256,7 @@ s32 Func_020009bc(struct Actor *object) {
 #include "actor.h"
 #include "main_routine_work.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
 void Func_02001214(s32 actor, s32 a);
 
@@ -290,7 +290,7 @@ void Func_020009d4(void) {
   Sound_Play(220);
   glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
   Actor_StartScript(glow, gData_020012a4);
-  Animation_ApplyChildValues(glow, 1);
+  Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
   glow->x = statue->x;
   glow->y = statue->y + 0x80000;
@@ -303,12 +303,12 @@ void Func_020009d4(void) {
   glow->z = 0;
   glow->update = 0;
   TALK();
-  Actor_ResetAndSetPosition(gMainRoutineWork.currentOwner, 166, 188);
+  Actor_SetDestinationById(gMainRoutineWork.currentOwner, 166, 188);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   speed = 0x10000;
   follower->speedLimit = speed;
-  Actor_ResetAndSetPosition(9, 184, 188);
+  Actor_SetDestinationById(9, 184, 188);
   Actor_WaitForMoveById(9);
   Actor_FaceDirection(9, 0x8000, 0);
   Event_ShowMessageAndWait(9, 0);
@@ -353,13 +353,12 @@ void Func_020009d4(void) {
   Actor_SetModeById(9, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(9, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(9);
   GameFlag_SetBit(0x9ce);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   PaletteFade_ApplyTarget(speed, 0);
   PaletteFade_StartInterpolation(60);
   Func_02001214(gMainRoutineWork.currentOwner, 1);

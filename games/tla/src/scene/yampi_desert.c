@@ -80,7 +80,7 @@ void Func_02000c34(void) {
   Func_02000b84(0x1600000, 0, 0xf80000);
   Sound_Play(176);
   Actor_GetById(16)->velocityY = 0x60000;
-  Actor_SetPartAttribute(Actor_GetById(16), 0);
+  Actor_SetSpriteColor(Actor_GetById(16), 0);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Actor_MoveToAndWaitById(16, 380, 248);
   Actor_Stop(gMainRoutineWork.currentOwner);
@@ -99,7 +99,7 @@ void Func_02000d50(void) {
   Func_020021d4();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Camera_MoveWithinMapBounds(PIXELS(246), -1, PIXELS(616), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(246), -1, PIXELS(616), 1);
   Scene_SetPositionAndCommit(21, 248, 648);
   Scene_SetPositionAndCommit(21, 248, 576);
   Task_RemoveFar(Func_02002180);
@@ -111,7 +111,7 @@ void Func_02000d50(void) {
   Func_02000b84(0xf80000, 0, 0x2400000);
   Sound_Play(176);
   Actor_GetById(21)->velocityY = 0x60000;
-  Actor_SetPartAttribute(Actor_GetById(21), 0);
+  Actor_SetSpriteColor(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Actor_MoveToAndWaitById(21, 256, 560);
   FieldEvent_Wait(20);
@@ -133,7 +133,7 @@ void Func_02000e78(void) {
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(328), 1);
   Scene_SetPositionAndCommit(21, 232, 328);
-  Camera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
   Scene_SetPositionAndCommit(21, 232, 280);
   Actor_MoveToAndWaitById(21, 232, 168);
   Task_RemoveFar(Func_02002180);
@@ -181,7 +181,7 @@ void Func_02000f24(void) {
       }
     }
   }
-  Map_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
+  MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
 }
 
 #define OBJ(p) ((struct Actor *)(p))
@@ -229,12 +229,12 @@ loop_3:
   partner->velocityY = 0x60000;
   partner->priorityFlags &= ~2;
   Actor_SetSpritePriority(21, 2);
-  Actor_SetPartAttribute(Actor_GetById(21), 0);
+  Actor_SetSpriteColor(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
-  Actor_ArmCallbackAndRefresh(21, 0);
+  Actor_FaceDirectionById(21, 0);
   FieldEvent_Wait(20);
   Func_02002ca0();
   Sound_Play(136);
@@ -256,7 +256,7 @@ step_13:
   i++;
   if (i <= 13)
     goto step_13;
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Sound_Play(153);
   partner->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(21), 0);
@@ -285,7 +285,7 @@ void Func_02001288(s32 mode) {
 
   if (mode == 1) {
     object = Actor_GetById(9);
-    Map_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
     Scene_Call4090(9, PIXELS(232), PIXELS(200));
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->y = height;
@@ -313,9 +313,9 @@ void Func_020012dc(void) {
 
   if (object != NULL)
     Scene_Call4090(64, 154 << 18, 222 << 17);
-  Map_CopyCellPictureIndicesRect(82, 82, 15, 40, 5, 6);
+  MapGrid_CopyCellPictureIndicesRect(82, 82, 15, 40, 5, 6);
   Scene_Call4000(82, 82, 5, 6, 15, 40);
-  Map_CopyCellPictureIndicesRect(88, 82, 36, 25, 5, 5);
+  MapGrid_CopyCellPictureIndicesRect(88, 82, 36, 25, 5, 5);
   Scene_Call4000(88, 82, 5, 5, 36, 25);
   if (column == 15) {
     if (row == 41)
@@ -352,9 +352,9 @@ void Func_020013f8(void) {
 
   if (Actor_GetById(64) != NULL)
     Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
-  Map_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
+  MapGrid_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
   Scene_Call4000(82, 89, 5, 6, 15, 40);
-  Map_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
+  MapGrid_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
   Scene_Call4000(88, 89, 5, 5, 36, 25);
   if (column == 15 && row == 44)
     MOVE_LEADER_TO(15, 43)
@@ -388,7 +388,7 @@ void Func_0200157c(void) {
 }
 
 void Func_02001594(void) {
-  Map_CopyCellPictureIndicesRect(64, 64, 72, 32, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(64, 64, 72, 32, 1, 1);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 32);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 96);
 }
@@ -458,7 +458,7 @@ void Func_02001690(s32 p0) {
   Call3((void (*)())Actor_ArmCallback, *owner, 0x8000, 0);
   ((struct Actor *)Func_02004130())->motionFlags = 0;
   Call2((void (*)())Camera_SetSpeedParameters, 0x19999, 0x3333);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
   Func_02004128();
   Call2((void (*)())Event_ShowMessageAndWait, 12, 0);
   Call3((void (*)())Actor_ArmCallback, 11, 0, 10);
@@ -477,7 +477,8 @@ void Func_02001690(s32 p0) {
   Call3((void (*)())Actor_SetSpeedParameters, 13, 0x10000, 0x8000);
   Call2((void (*)())Actor_SetMovementTypeById, 14, (s32)gData_0200468c);
   Call2((void (*)())Camera_SetSpeedParameters, 0xcccc, 0x1999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000, 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000,
+        1);
   Func_02004128();
   Call1((void (*)())Actor_Stop, 8);
   Call1((void (*)())Actor_Stop, 9);
@@ -486,7 +487,7 @@ void Func_02001690(s32 p0) {
   Call1((void (*)())Actor_Stop, 12);
   Call1((void (*)())Actor_Stop, 13);
   Call2((void (*)())Camera_SetSpeedParameters, 0x26666, 0x4ccc);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
   Func_02004128();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
@@ -528,7 +529,8 @@ void Func_02001690(s32 p0) {
     Call1((void (*)())FieldEvent_Wait, 10);
     Call2((void (*)())Actor_SetMovementTypeById, 12, path);
     Call2((void (*)())Camera_SetSpeedParameters, 0x6666, 0xccc);
-    Call4((void (*)())Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000, 1);
+    Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000,
+          1);
     Call2((void (*)())Actor_SetMovementTypeById, 8, path);
     Call1((void (*)())FieldEvent_Wait, 10);
     Call2((void (*)())Actor_SetMovementTypeById, 9, path);
@@ -999,7 +1001,7 @@ void Func_02002318(void) {
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(17, 3);
   Scene_SetSpeed(16, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(16, 3);
   Func_020040f8(16);
   Actor_GetById(16)->motionFlags = 3;
@@ -1099,7 +1101,7 @@ void Func_020026a0(void) {
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(22, 3);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
   Actor_GetById(21)->motionFlags = 3;
@@ -1210,7 +1212,7 @@ void Func_02002b84(void) {
   Actor_SetSpritePriority(22, 3);
   (*followed)->motionFlags = 3;
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
   Actor_GetById(21)->motionFlags = 3;
@@ -1231,7 +1233,7 @@ void Func_02002b84(void) {
 
 void Func_02002c6c(void) {
   if (*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 0x7c4) != 0)
-    Map_CopyCellPictureIndicesRect(73, 76, 78, 11, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(73, 76, 78, 11, 1, 1);
 }
 
 void Func_02002ca0(void) {
@@ -1270,7 +1272,7 @@ void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWaitById(party->currentOwner, x, z);
-  Actor_ArmCallbackAndRefresh(party->currentOwner, 0xc000);
+  Actor_FaceDirectionById(party->currentOwner, 0xc000);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
   Func_02003fe0(object, object->x, object->y - 0xa0000, object->z);
@@ -1312,7 +1314,7 @@ void Func_02002e98(void) {
   Func_02002d6c(Actor_GetById(gMainRoutineWork.currentOwner), 408, 432, 2);
 }
 
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
+void Event_SetAfterBattleDestination(s32 scene, s32 entrance);
 void Func_02000b84(s32 x, s32 y, s32 z);
 
 void Func_02002ebc(void) {
@@ -1326,8 +1328,8 @@ void Func_02002ebc(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(78);
-  Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
+  Call4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Call4(FieldCamera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
@@ -1376,7 +1378,7 @@ void Func_02002ebc(void) {
   Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(8, 232, 184);
   party->battleRule24b = 2;
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov661Room10, 2);
   Field_RequestBattleFromEncounterTable(10, 0);
 }
 
@@ -1540,10 +1542,10 @@ void Func_02003404(void) {
     Actor_SetHorizontalPositionWithTerrain(20, 328 << 16, 392 << 16);
     if (GameFlag_Test(0x88c)) {
       if (GameFlag_Test(0x8ed)) {
-        Map_CopyCellPictureIndicesRect(68, 77, 13, 9, 3, 3);
+        MapGrid_CopyCellPictureIndicesRect(68, 77, 13, 9, 3, 3);
         Scene_Call4000(68, 77, 3, 3, 13, 9);
       } else {
-        Map_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
+        MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
         Scene_Call4000(74, 71, 3, 3, 13, 9);
       }
       Scene_Call4000(63, 77, 3, 3, 13, 73);
@@ -1635,7 +1637,7 @@ void Func_0200371c(void) {
       Func_02001bec();
   }
   if (GameFlag_Test(0x8ed)) {
-    Map_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
     Scene_Call4090(9, 232 << 16, 200 << 16);
   }
   Func_02003da0(0, 240);
@@ -1900,8 +1902,8 @@ void Func_02003da0(s32 unused, s32 value) {
   if (!GameFlag_Test(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Resource_DecodeType01(gField_Tiles64D, buffer);
-  work->entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(gField_Tiles64D, buffer);
+  work->entry = VramCache_FindFreeEntry();
   VramCache_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);

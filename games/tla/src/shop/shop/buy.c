@@ -709,7 +709,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   count = 0;
   window = Window_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
   if (window != 0) {
-    slot = Resource_FindFreeEntry();
+    slot = VramCache_FindFreeEntry();
     if (slot != 96) {
       VramCache_Load(slot, 0x100, 0);
       WindowSprite_CreateFar(slot, OUTPUT_SIZE_32X8,

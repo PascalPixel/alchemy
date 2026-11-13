@@ -36,7 +36,7 @@ void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect, gData_020021b0[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -49,7 +49,7 @@ void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetSpriteColor(effect, options->palette);
+    FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Scene_SetActorSpritePriority(effect, options->priority);

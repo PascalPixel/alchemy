@@ -39,7 +39,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   reg += 0x21;
   *reg = 0x3eee;
 
-  Fade_ToBlack(16);
+  ScreenFade_ToBlack(16);
   for (i = 0; i <= 15; i++) {
     Random16();
     Random16();
@@ -291,7 +291,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     REG_WIN1V = 0x88;
     REG_WININ = 0x3537;
     REG_WINOUT = 0x3f21;
-    QueueIoWriteDelay2(0x04000000, 0x7741);
+    IoWriteQueue_Store16(0x04000000, 0x7741);
     BattleCamera_SetView(0, 0, 0, 180);
     *timer = zero;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
@@ -301,8 +301,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     wait(1);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     wait(20);
-    QueueIoWriteDelay10(0x04000008, 2);
-    QueueIoWriteDelay6(0x04000008, 0);
+    IoWriteQueue_ClearBits16(0x04000008, 2);
+    IoWriteQueue_SetBits16(0x04000008, 0);
     if ((u32)(kind - 74) <= 2 || kind == 638)
       wait(60);
     else
@@ -346,8 +346,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     wait(1);
     wait(20);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
-    QueueIoWriteDelay10(0x04000008, 2);
-    QueueIoWriteDelay6(0x04000008, 0);
+    IoWriteQueue_ClearBits16(0x04000008, 2);
+    IoWriteQueue_SetBits16(0x04000008, 0);
     REG_BLDCNT = 0x3f40;
     count = BattleParty_ListActorIds(3, shown);
     shown[count] = 255;

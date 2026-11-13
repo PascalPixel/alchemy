@@ -42,8 +42,7 @@ s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 /// sheet (WindowWork.glyphTiles, four for each sprite); with no sprite free
 /// nothing is drawn and it returns 0. The sprite stays until its window is
 /// cleared or closed.
-s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y,
-                  s32 mode) {
+s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 width;
   u32 spacingX = work->glyphSpacing;
@@ -149,7 +148,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y,
     if ((u8)output->active == 2) {
       sprite = &output->sprite;
       if (work->glyphResource == 99)
-        work->glyphResource = Resource_FindFreeEntry();
+        work->glyphResource = VramCache_FindFreeEntry();
       sprite->oam.x = (window->x << 3) + ((window->width - 2) << 3) + ARROW_X;
       sprite->oam.y = (window->y << 3) + ((window->height - 2) << 3) + ARROW_Y;
     } else {
@@ -338,7 +337,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     sprite = &out->sprite;
     slot = &base->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
-      *slot = Resource_FindFreeEntry();
+      *slot = VramCache_FindFreeEntry();
     // column holds its one constant, -2 as a halfword: added inline, it folds
     // into the width check above (52 of 116 instructions differ in tla-en).
     column = (u16)-2;
@@ -411,7 +410,7 @@ enum {
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
-                              u32 mode) {
+                            u32 mode) {
   u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->tilemap[0];
   s32 palette;
   s32 index;
@@ -495,7 +494,8 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     break;
   case 12:
     if (windowSprite->animStep <= 7)
-      scale = gWindowSprite_BounceScales[windowSprite->animStep++ * 2 + 16] >> 1;
+      scale =
+          gWindowSprite_BounceScales[windowSprite->animStep++ * 2 + 16] >> 1;
     break;
   }
   if (scale == 256) {
@@ -559,8 +559,8 @@ struct PopTransform {
 };
 
 extern const u8 Data_0805ec84[];
-extern const u8 gUiSprite_CursorBobOffsets[];
-extern const s8 gUiSprite_WobbleOffsets[][2];
+extern const u8 gWindowSprite_CursorBobOffsets[];
+extern const s8 gWindowSprite_WobbleOffsets[][2];
 extern const s8 gUiSprite_BounceOffsets[];
 
 void WindowSprite_UpdateAll(void) {
@@ -595,7 +595,7 @@ void WindowSprite_UpdateAll(void) {
           sprite->size = 0;
           sprite->shape = 2;
           sprite->y =
-              output->y + gUiSprite_CursorBobOffsets[gVBlankCount % 80] + 2;
+              output->y + gWindowSprite_CursorBobOffsets[gVBlankCount % 80] + 2;
           sprite->affine = 0;
           sprite->affineIndex = 0;
         }
@@ -643,9 +643,9 @@ void WindowSprite_UpdateAll(void) {
         if (gVBlankCount & 1)
           output->animStep++;
         sprite->x =
-            output->x + gUiSprite_WobbleOffsets[output->animStep % 20][0];
-        sprite->y =
-            output->y + gUiSprite_WobbleOffsets[output->animStep % 20][1] - 2;
+            output->x + gWindowSprite_WobbleOffsets[output->animStep % 20][0];
+        sprite->y = output->y +
+                    gWindowSprite_WobbleOffsets[output->animStep % 20][1] - 2;
         break;
       case 17:
         output->animStep++;

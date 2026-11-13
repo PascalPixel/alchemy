@@ -46,7 +46,7 @@ s32 PsynergyMenu_Run(void) {
 
   Menu_CancelSoundReset();
   result = PsynergyMenu_RunSteps(&owner, &target, &item);
-  Menu_EnsureCancelSound();
+  Menu_StopWatchingStart();
   if (result == 1) {
     u8 *event = Ram_HeapSlots->eventWork;
     u16 request;
@@ -210,13 +210,13 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
               PsynergyMenu_SetShortcut(menu->memberIds[0], chosenAction,
                                        PSYNERGY_SHORTCUT_L);
               WindowSprite_ClearListFar(menu->infoWindow);
-              InventoryMenu_ShowModalMessage((s32)MsgShortcutSetL, -1, -1);
+              ItemMenu_ShowMessage((s32)MsgShortcutSetL, -1, -1);
               WindowSprite_RedrawSavedRectFar(menu->infoWindow);
             } else {
               PsynergyMenu_SetShortcut(menu->memberIds[0], chosenAction,
                                        PSYNERGY_SHORTCUT_R);
               WindowSprite_ClearListFar(menu->infoWindow);
-              InventoryMenu_ShowModalMessage((s32)MsgShortcutSetR, -1, -1);
+              ItemMenu_ShowMessage((s32)MsgShortcutSetR, -1, -1);
               WindowSprite_RedrawSavedRectFar(menu->infoWindow);
             }
             step = PSYNERGY_STEP_MEMBER;
@@ -295,13 +295,12 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
           Ability_PlayUseAnimation(mask);
         }
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage(menu->useResult + (s32)MsgItemUseResult,
-                                       0, -1);
+        ItemMenu_ShowMessage(menu->useResult + (s32)MsgItemUseResult, 0, -1);
       } else {
         Sound_PlayFar(114);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage(menu->useResult + (s32)MsgItemUseResult,
-                                       useResult, useResult);
+        ItemMenu_ShowMessage(menu->useResult + (s32)MsgItemUseResult, useResult,
+                             useResult);
       }
       if (useResult == -1) {
         menu->skipSlide = 1;
@@ -434,7 +433,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 
-void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId);
+void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId);
 
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
 
@@ -470,7 +469,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     if (redraw) {
       window = menu->statusWindow;
       unit = Unit_Get(ownerIds[selection]);
-      PsynergyMenu_RefreshOwnerPsynergy(ownerIds[selection]);
+      PsynergyMenu_RefreshMemberPsynergy(ownerIds[selection]);
       StatusPanel_Draw(window, ownerIds[selection], 0, 0);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, ownerIds[selection]);
       PsynergyMenu_CallIconRoutineWithValue(menu, ownerIds[selection]);
@@ -485,7 +484,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         // Japanese does not redraw the info window here.
         WindowSprite_RedrawSavedRectFar(menu->infoWindow);
 #endif
-        Text_DrawWorkValueWithLabel(menu->infoWindow);
+        Menu_DrawCoins(menu->infoWindow);
         shown = 1;
       } else {
         GameFlag_ClearBit(0x151);
@@ -540,7 +539,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 
 /// Collects the owner's Psynergy and redraws the list, saying when it is
 /// empty.
-void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
+void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   u16 *psynergies;
   struct PsynergyMenuState *menu;
   void *owner;
@@ -1029,7 +1028,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   }
 
   Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 0x22);
-  Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
+  PagedList_DrawPageNumbers(window, state->entryCount, 5, state->page, 15);
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                              HEADING_X, 0);
 

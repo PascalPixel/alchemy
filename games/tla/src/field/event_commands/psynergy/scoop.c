@@ -293,8 +293,8 @@ s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbc04(s32 x, s32 z, s32 layer);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
@@ -348,7 +348,7 @@ void FieldPsynergy_Scoop(void) {
   Actor_SetMode(object, 0);
   alternate = &scene->alternate;
   if (*alternate != 0)
-    Animation_ApplyChildValuesFar(object, 6);
+    Actor_SetSpriteColorModeFar(object, 6);
   if (*alternate == 0)
     other = Actor_Spawn(354, scene->x, scene->y, scene->z);
   else
@@ -412,9 +412,9 @@ void FieldPsynergy_Scoop(void) {
   }
 
   if (work->mode == 0) {
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
-                          work);
-    particleEntry = Resource_FindFreeEntry();
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
+                        work);
+    particleEntry = VramCache_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x800, work);
     work->particleTile = particleTile;
     i = 0;
@@ -442,8 +442,8 @@ void FieldPsynergy_Scoop(void) {
       data = Resource_GetTableEntry((s32)&ResourceId_DustPuffA);
     else
       data = Resource_GetTableEntry((s32)&ResourceId_DustPuffB);
-    Resource_DecodeType01(data, work);
-    particleEntry = Resource_FindFreeEntry();
+    Decompress_TaggedLz(data, work);
+    particleEntry = VramCache_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x800, work);
     work->particleTile = particleTile;
     i = 0;
@@ -466,9 +466,9 @@ void FieldPsynergy_Scoop(void) {
       particle->timer = -i;
     }
   } else if (work->mode == 3) {
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhiteSparkle),
-                          work);
-    particleEntry = Resource_FindFreeEntry();
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhiteSparkle),
+                        work);
+    particleEntry = VramCache_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x80, work);
     work->particleTile = particleTile;
     i = 0;
@@ -491,9 +491,8 @@ void FieldPsynergy_Scoop(void) {
   }
 
   if (work->mode == 0) {
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data1E9),
-                          work);
-    pictureEntry = Resource_FindFreeEntry();
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1E9), work);
+    pictureEntry = VramCache_FindFreeEntry();
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
@@ -564,9 +563,9 @@ void FieldPsynergy_Scoop(void) {
   Sound_PlayFar(114);
   Func_080dbf94(object, object->x, object->y, object->z);
   if (particleEntry != 96)
-    Resource_ResetEntry(particleEntry);
+    VramCache_FreeEntry(particleEntry);
   if (pictureEntry != 96)
-    Resource_ResetEntry(pictureEntry);
+    VramCache_FreeEntry(pictureEntry);
 end:
   Actor_Destroy(object);
   Actor_Destroy(other);
@@ -695,9 +694,9 @@ void Func_080e7238(void) {
   s32 frame;
   s32 radius;
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
-                        work);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
+                      work);
+  entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
@@ -799,7 +798,7 @@ void Func_080e7238(void) {
     wait(1);
     frame++;
   } while (state != 999);
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   HeapSlot_Release(92);
   Func_080dc954();
 }
@@ -846,9 +845,9 @@ void Func_080e74d8(void) {
 
   wait(20);
   FieldPsynergy_FadeToCastColor();
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
-                        work);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
+                      work);
+  entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
     sprite = &work->sprites[i];
@@ -960,7 +959,7 @@ void Func_080e74d8(void) {
     wait(1);
     frame++;
   } while (state != 999);
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   HeapSlot_Release(92);
 }
 
@@ -1113,7 +1112,7 @@ loaded:
   {
     void *source = Resource_GetTableEntry((s32)&ResourceId_GlowDisc);
     dst = (u8 *)0x06011000 + vramWork->glyphTiles * 32;
-    Resource_DecodeType01(source, work);
+    Decompress_TaggedLz(source, work);
   }
   Dma_Set(work, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
   screen[0] = pos[0];
@@ -1124,9 +1123,8 @@ loaded:
   work->discY = screen[2];
   work->discScaleX = 0;
   work->discScaleY = 0;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhitePuff),
-                        work);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhitePuff), work);
+  entry = VramCache_FindFreeEntry();
   tile = VramCache_Load(entry, 0x800, work);
   particle = work->particles;
   for (i = 0; i < 64; i++) {
@@ -1346,7 +1344,7 @@ loaded:
   if (pending != NULL)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
                            scene->secondObjectId);
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   if (result == 2)
     BattleEffect_FadeToSavedPalettes(100);
   else

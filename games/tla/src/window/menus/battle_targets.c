@@ -764,7 +764,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       break;
   }
   wait(1);
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(cursorSlot);
   if (conditionWindow != NULL)
     Window_Close__menus(conditionWindow, 1);
   Window_Close__menus(window, 1);

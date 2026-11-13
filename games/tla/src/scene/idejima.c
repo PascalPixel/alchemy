@@ -222,8 +222,7 @@ void Func_0200049c(void) {
   Actor_SetModeById(6, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(6, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   Event_PrepareObjectAndApplyValue(6, 1);
@@ -293,8 +292,8 @@ void Func_020006a8(void) {
     Actor_SetAnimation(8, 2);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != 0)
-      Actor_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
-                                ((s16 *)&leader->z)[1]);
+      Actor_SetDestinationById(8, ((s16 *)&leader->x)[1],
+                               ((s16 *)&leader->z)[1]);
     FieldActor_WaitForMoveById(8);
     Actor_SetPosition(8, 0, 0);
     Message_ShowCentered((s32)MsgIdejimaHeyFelix + 8, 1);

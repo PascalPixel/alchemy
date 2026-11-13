@@ -322,7 +322,7 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 /// If the actor has graphics, ends the window of the speaker its graphics ID
 /// names.
 /// id: actor ID.
-void ObjectTable_RunIfActive(s32 id) {
+void Actor_ClosePortrait(s32 id) {
   s32 no;
 
   no = Actor_GetSpriteById(id);
@@ -336,11 +336,11 @@ void ObjectTable_RunIfActive(s32 id) {
 /// for the first to finish, checking every delay frames. Waits for A, B, L or
 /// R, then closes both.
 // As ☀️'s function of the same name, which has no delay.
-void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
-                                      s32 firstPortraitX, s32 firstPortraitY,
-                                      s32 second, s32 secondX, s32 secondY,
-                                      s32 secondPortraitX, s32 secondPortraitY,
-                                      s32 delay) {
+void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
+                                  s32 firstPortraitX, s32 firstPortraitY,
+                                  s32 second, s32 secondX, s32 secondY,
+                                  s32 secondPortraitX, s32 secondPortraitY,
+                                  s32 delay) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 firstSprite = Actor_GetSpriteById(first);
   s32 secondSprite = Actor_GetSpriteById(second);
@@ -403,7 +403,7 @@ void Message_SetVoiceFromActor(s32 key) {
   }
 }
 
-void Camera_FollowActor(s32 id, s32 flag) {
+void FieldCamera_FollowActor(s32 id, s32 flag) {
   struct Actor *obj;
   struct Actor *target;
   struct EventWork *work;

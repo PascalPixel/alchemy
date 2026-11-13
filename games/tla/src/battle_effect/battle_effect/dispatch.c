@@ -145,7 +145,7 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
 
 /// Runs one battle effect script: takes the effect's three work blocks, calls
 /// the handler its first word selects, then gives the blocks back.
-void BattleEffect_RunTableEffect(s32 *script) {
+void BattleEffect_RunFromTable(s32 *script) {
   struct FxRunWork *work;
 
   HeapSlot_Alloc(100, 0x302);

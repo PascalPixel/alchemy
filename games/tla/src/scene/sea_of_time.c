@@ -750,7 +750,7 @@ void Func_02001108(void) {
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
   Camera_SetSpeedParameters(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
   Func_02001ffc();
   Actor_WaitForMoveById(8);
   Sound_Play(78);
@@ -759,7 +759,7 @@ void Func_02001108(void) {
   fill = RGB(11, 6, 23);
   Dma_Set((const void *)&fill, (void *)&BG_PLTT_COLOR(3, 1),
           (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 14, REG_DMA3);
-  Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
+  MapGrid_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
   // Steps each colour's red, green and blue by one toward the saved palette
   // every 10 frames until none changes.
 fade:
@@ -866,7 +866,7 @@ next:
   Func_02001f4c(object, 1);
   Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov687Room2, 4);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov687Room2, 4);
   Field_RequestBattleFromEncounterTable(12, 6);
   Func_02001fb4();
 }
@@ -1061,7 +1061,7 @@ void Func_02001a14(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0);
-  Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
+  MapGrid_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
   actor->update = (void (*)(void))Func_020010a8;
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 0);
@@ -1075,7 +1075,7 @@ void Func_02001a14(void) {
   Func_02001928(47, 27, 12);
   Func_02001928(59, 19, 13);
   MapGrid_WaitForShakeToSettle();
-  Camera_MoveWithinMapBounds(0x1600000, -1, 0xc40000, 1);
+  FieldCamera_MoveWithinMapBounds(0x1600000, -1, 0xc40000, 1);
   Func_02001ffc();
   GameFlag_SetBit(0x200);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
@@ -1165,7 +1165,7 @@ void Func_02001a14(void) {
     gData_020022cc += gFrameCount & 1;
   } while (changed);
   Task_RemoveFar(Func_02001650);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   GameFlag_SetBit(0x940);
   Func_02001fb4();
 }

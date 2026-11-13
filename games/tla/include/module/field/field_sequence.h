@@ -351,7 +351,7 @@ extern const struct SceneMusicEntry Data_080ee6d4[];
 extern struct TerrainRule gData_080eedbc[];
 extern struct TerrainRule gData_080eef34[];
 
-s32 GetWorldMapTerrainBehaviorFar(void *position, s32 *kind);
+s32 WorldMap_GetBattleEnvironmentFar(void *position, s32 *kind);
 
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
@@ -381,7 +381,7 @@ extern const s16 Data_080efd1c[];
 void WorldMap_InitializePerspectiveFar(void);
 void MapGrid_LoadMapFar(s32 map);
 
-void Map_UpdateCurrentTileBlockFar(void);
+void WorldMap_UpdateCurrentTileBlockFar(void);
 
 void Map_ApplySetFlagEditsFar(void);
 

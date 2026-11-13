@@ -25,8 +25,8 @@ void Func_08124cc0(void);
 
 void BattleBackground_Free(void);
 
-s32 BattleClass_GetSprite(s32 index);
-s32 BattleClass_GetPalette(s32 index);
+s32 BattleSprite_GetSprite(s32 index);
+s32 BattleSprite_GetPalette(s32 index);
 
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan);
@@ -39,8 +39,8 @@ void BattleStaging_ConfigurePaletteFade(s32 mode, s32 background, s32 value);
 
 s32 Func_08122514(struct BattleActionRecord *request, s32 retry);
 
-u32 BattleClass_GetAttackEffect(u32 index);
-u32 BattleClass_GetDefeatSoundKind(s32 index);
+u32 BattleSprite_GetAttackEffect(u32 index);
+u32 BattleSprite_GetDefeatSound(s32 index);
 
 s32 BattleAI_ChooseRandomTarget(s32 party);
 
@@ -346,7 +346,7 @@ extern const u16 Data_08130c5c[];
 
 void BattleMessage_OpenFar(s32 message);
 
-void Map_RenderAnimatedTilePictureFar(void *record, s32 step);
+void SpriteDissolve_StepFar(void *record, s32 step);
 
 extern u16 Data_0200049c;
 

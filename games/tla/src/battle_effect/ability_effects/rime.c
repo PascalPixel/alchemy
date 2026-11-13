@@ -67,8 +67,8 @@ void BattleEffect_RunDjinniEntrance(
     struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     s32 *world); // BattleEffect_RunDjinniEntrance
 void Func_08015160(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -183,7 +183,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
               height);
     }
 
-    Render_ResetTransformState();
+    Transform_Reset();
     gCameraSceneParameters[4] = 104;
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
@@ -212,13 +212,13 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
           continue;
         if (scale < 0x10000)
           scale = 0x10000;
-        Render_ResetTransformState();
-        SceneTransform_ApplyPitch(-0x4000);
+        Transform_Reset();
+        Transform_ApplyPitch(-0x4000);
         if (frame <= 31) {
           if (i == 0)
-            SceneTransform_ApplyYaw((32 - frame) << 9);
+            Transform_ApplyYaw((32 - frame) << 9);
           else
-            SceneTransform_ApplyYaw((frame << 9) - 0x4000);
+            Transform_ApplyYaw((frame << 9) - 0x4000);
         }
         SceneTransform_ApplyScale3(scale >> 1, scale >> 1, scale >> 1);
         Render_TransformVertices(gData_08199210, vertices, 4);
@@ -238,11 +238,11 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
           s32 swell = Trig_Sin(star->variant << 11) * star->z;
           s32 size;
 
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(star->x, star->y, 0);
           size = swell >> 8;
-          SceneTransform_ApplyPitch(0x4000);
-          SceneTransform_ApplyYaw(frame << 9);
+          Transform_ApplyPitch(0x4000);
+          Transform_ApplyYaw(frame << 9);
           size /= 2;
           SceneTransform_ApplyScale3(size, size, size);
           Render_TransformVertices(gData_08199210, vertices, 4);

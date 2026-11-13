@@ -27,15 +27,15 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -603,25 +603,25 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (i = 0; i != 31; i++) {
         p = &work->particles[i];
         model->mesh = &faces[i * 3];
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         switch (i & 3) {
         case 0:
-          SceneTransform_ApplyPitch(p->z);
-          SceneTransform_ApplyRoll(p->z);
+          Transform_ApplyPitch(p->z);
+          Transform_ApplyRoll(p->z);
           break;
         case 1:
-          SceneTransform_ApplyPitch(p->z);
-          SceneTransform_ApplyRoll(-p->z);
+          Transform_ApplyPitch(p->z);
+          Transform_ApplyRoll(-p->z);
           break;
         case 2:
-          SceneTransform_ApplyPitch(p->z);
-          SceneTransform_ApplyYaw(p->z);
+          Transform_ApplyPitch(p->z);
+          Transform_ApplyYaw(p->z);
           break;
         case 3:
-          SceneTransform_ApplyRoll(p->z);
-          SceneTransform_ApplyYaw(-p->z);
+          Transform_ApplyRoll(p->z);
+          Transform_ApplyYaw(-p->z);
           break;
         }
         Render_TransformVertices(&verts[i * 4], vertices, 4);
@@ -725,12 +725,12 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model->shade = shade;
       model->scrollU = shade;
       model->scrollV = shade;
-      Render_ResetTransformState();
+      Transform_Reset();
       Func_08015160(pos.x / 2 + -0x440000, pos.y + -0x500000, 0);
       SceneTransform_ApplyScale3(scale, scale * 2, scale);
       Func_08015160(-0x280000, 0, 0);
-      SceneTransform_ApplyPitch(frame << 10);
-      SceneTransform_ApplyYaw(frame << 10);
+      Transform_ApplyPitch(frame << 10);
+      Transform_ApplyYaw(frame << 10);
       Render_TransformVertices(sphere, verts, 256);
       Render_DrawModelList(model);
       if (frame > 137) {
@@ -750,9 +750,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
             texture2.logHeight = 7;
           } while (0);
           model->shade = shade;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(0x2c0000, 0, 0);
-          SceneTransform_ApplyYaw(0x3448);
+          Transform_ApplyYaw(0x3448);
           Func_0801521c(size);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
@@ -767,10 +767,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         texture2.pixels = gData_02014000;
         model->shade = shade;
         model->mesh = gData_08199340;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(-0x100000, pos.y + -0x500000, 0);
         SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
-        SceneTransform_ApplyRoll(frame << 11);
+        Transform_ApplyRoll(frame << 11);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
       }
@@ -843,8 +843,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
-                                     s32 gravity) {
+void Particle_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
+                                   s32 gravity) {
   s32 vx = step->velocityX;
   s32 vy = step->velocityY;
   s32 vz = step->velocityZ;
@@ -856,8 +856,8 @@ void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                vz * damping / 64);
 }
 
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
-                                     s32 gravity) {
+void Particle_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
+                                   s32 gravity) {
   s32 x = step->x;
   s32 vx = step->velocityX;
   s32 vy = step->velocityY;

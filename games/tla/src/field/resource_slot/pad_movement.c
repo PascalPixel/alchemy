@@ -459,7 +459,7 @@ push_objects:
       testPosition.z = other->z;
       heading = direction;
       Vector_AddPolarOffset__resource_slot(0x4000, direction, &testPosition);
-      if (!ScriptObject_CheckOverlap(other, &testPosition.x)) {
+      if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
         testPosition.x = other->x;
         testPosition.y = other->y;
         testPosition.z = other->z;
@@ -1107,7 +1107,7 @@ update_object:
         }
       }
     } else {
-      Actor_SetChildByteValue(object, gFrameCount & kind);
+      Actor_SetSpriteFlags(object, gFrameCount & kind);
     }
   }
 

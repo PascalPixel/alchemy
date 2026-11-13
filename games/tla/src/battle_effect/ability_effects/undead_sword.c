@@ -638,14 +638,14 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     texture.logWidth = 6;
     texture.logHeight = 6;
     texture.pixels = work->sheet + 0x400;
-    Render_ResetTransformState();
+    Transform_Reset();
     if (mode != 0) {
-      SceneTransform_ApplyPitch(4000);
+      Transform_ApplyPitch(4000);
     }
     if (effect->side == 0) {
-      SceneTransform_ApplyYaw(camera[27]);
+      Transform_ApplyYaw(camera[27]);
     } else {
-      SceneTransform_ApplyYaw(camera[27] + 0x8000);
+      Transform_ApplyYaw(camera[27] + 0x8000);
     }
     {
       s32 shift = 128 - frame * 8;
@@ -729,12 +729,12 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         if (shade <= -64) {
           continue;
         }
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160((target.x / 2 - 64) << 16, (target.y - 64) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-        SceneTransform_ApplyRoll((i << 14) + 0x2000);
-        SceneTransform_ApplyPitch(0x1000);
-        SceneTransform_ApplyYaw(angle);
+        Transform_ApplyRoll((i << 14) + 0x2000);
+        Transform_ApplyPitch(0x1000);
+        Transform_ApplyYaw(angle);
         Func_0801521c(t * 0x3000);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);
@@ -954,7 +954,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     model = Render_AllocateModelList(1);
     vertices = Data_02010108;
@@ -982,13 +982,13 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     model->vertices = vertices;
     model->shade = shade;
     for (k = 0; k != Data_08198b24[mode]; k++) {
-      Render_ResetTransformState();
+      Transform_Reset();
       if (mode == 0) {
         s32 scale;
 
         Func_08015160((screen.x / 2 - 64) << 16, 0x280000, 0);
-        SceneTransform_ApplyPitch(k << 11);
-        SceneTransform_ApplyYaw(k * 21000 + yaw);
+        Transform_ApplyPitch(k << 11);
+        Transform_ApplyYaw(k * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
@@ -998,8 +998,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         s32 scale;
 
         Func_08015160((screen.x / 2 - 64) << 16, (k << 20) + 0x100000, 0);
-        SceneTransform_ApplyPitch((k << 12) - 0x800);
-        SceneTransform_ApplyYaw(k * 21000 + yaw);
+        Transform_ApplyPitch((k << 12) - 0x800);
+        Transform_ApplyYaw(k * 21000 + yaw);
         scale = 0x10000 - Trig_Sin(frame * 682) / 4;
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
@@ -1240,11 +1240,11 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           continue;
         }
         model->shade = shade;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160((centerX - 64) << 16, Data_08198b2e[k] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
-        SceneTransform_ApplyPitch(3000);
+        Transform_ApplyPitch(3000);
         Render_TransformVertices(Data_08198cac, vertices, 32);
         Render_DrawModelList(model);
       }
@@ -1273,12 +1273,12 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         if (shade <= -64) {
           continue;
         }
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160((target.x / 2 - 64) << 16, (target.y - 80) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-        SceneTransform_ApplyYaw((effect->side << 15) + 0x8000);
-        SceneTransform_ApplyRoll(Data_08198b32[k]);
-        SceneTransform_ApplyPitch(Data_08198b42[k]);
+        Transform_ApplyYaw((effect->side << 15) + 0x8000);
+        Transform_ApplyRoll(Data_08198b32[k]);
+        Transform_ApplyPitch(Data_08198b42[k]);
         Func_0801521c(scale);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);

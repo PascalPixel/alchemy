@@ -73,22 +73,22 @@ void Shop_InitializeWork(void) {
   work->partyMemberCount = Party_ListMembersFar(work->partyMemberIds);
   Palette_CopyObjectBankToBackground14Far();
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->cursorIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_UiIconTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->previousPageIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->nextPageIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->gemIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopGemTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->statDownIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuSmallDownArrowTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->statUpIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuArrowTiles);
   Task_Add(MenuCursor_Step, TASK_PASS_VBLANK);
@@ -104,12 +104,12 @@ void Shop_ReleaseWork(void) {
   ItemIconGrid_Release();
   Task_Remove(MenuCursor_Step);
   Message_CloseFinishedWindowsFar();
-  Resource_ResetEntry(state->cursorIcon);
-  Resource_ResetEntry(state->previousPageIcon);
-  Resource_ResetEntry(state->nextPageIcon);
-  Resource_ResetEntry(state->gemIcon);
-  Resource_ResetEntry(state->statUpIcon);
-  Resource_ResetEntry(state->statDownIcon);
+  VramCache_FreeEntry(state->cursorIcon);
+  VramCache_FreeEntry(state->previousPageIcon);
+  VramCache_FreeEntry(state->nextPageIcon);
+  VramCache_FreeEntry(state->gemIcon);
+  VramCache_FreeEntry(state->statUpIcon);
+  VramCache_FreeEntry(state->statDownIcon);
   HeapSlot_Release(220);
 }
 

@@ -124,12 +124,11 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Dma_Set(palette, (void *)BG_PLTT, 0x84000020, REG_DMA3);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + PILLAR_SHEET);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data134),
-                        cells);
+  Decompress_TaggedLz(palette, work->sheet + PILLAR_SHEET);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data134), cells);
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -756,8 +755,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // BattleEffect_BuildBlitter
 
 void SceneTransform_ApplyPosition(const s32 *pos);
-void SceneTransform_ApplyRoll(s32 roll); // SceneTransform_ApplyRoll
-void SceneTransform_ApplyYaw(s32 yaw);
+void Transform_ApplyRoll(s32 roll); // Transform_ApplyRoll
+void Transform_ApplyYaw(s32 yaw);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleActor_CommitPlacementFar(void);
 
@@ -1122,10 +1121,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       point.x = 0;
       point.y = 0;
       point.depth = 0x2000000;
-      Render_ResetTransformState();
+      Transform_Reset();
       SceneTransform_ApplyPosition(&point.x);
-      SceneTransform_ApplyRoll(0x800);
-      SceneTransform_ApplyYaw(frame << 8);
+      Transform_ApplyRoll(0x800);
+      Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
         vector[0] = (gParticleStreams_OrbitPoints[i][0] / 2) << 16;
         vector[1] = (gParticleStreams_OrbitPoints[i][1] + frame) << 16;
@@ -1251,7 +1250,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     }
 
     // The embers fountain up from the ground in front of the camera.
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     for (i = 0; i != 64; i++) {
       struct EffectStep *ember = &EMBERS[i];

@@ -74,7 +74,7 @@ s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts) {
   return found;
 }
 
-s32 Battle_GetTaggedSlotValue(s32 tag);
+s32 Battle_GetUnitAtPlace(s32 tag);
 
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
@@ -176,7 +176,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     return 0;
   }
 
-  selectedTargetId = Battle_GetTaggedSlotValue(request->target);
+  selectedTargetId = Battle_GetUnitAtPlace(request->target);
   BattlePlayback_Reset();
   ((s32 *)plan)[25] = 0;
   plan->hauntDamage = 0;
@@ -209,11 +209,11 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       if (id == 254)
         continue;
       if (Unit_AddHpFar(id, 0xc0000000) == 0) {
-        BattleEvent_Push(BATTLE_EVENT_HIT, id);
-        BattleEvent_Push(BATTLE_EVENT_DEFEAT, id);
+        BattlePlayback_Push(BATTLE_EVENT_HIT, id);
+        BattlePlayback_Push(BATTLE_EVENT_DEFEAT, id);
       }
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
     return -2;
   }
 
@@ -468,14 +468,14 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         Unit_CalculateFar(request->unitId);
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(30);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, request->unitId);
-        BattleEvent_Push(BATTLE_EVENT_ABILITY_NAME,
-                         ((request->parameter >> 8) & 15) * 20 +
-                             (request->parameter & 255) + 300);
-        BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
-        BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, request->unitId);
+        BattlePlayback_Push(BATTLE_EVENT_ABILITY_NAME,
+                            ((request->parameter >> 8) & 15) * 20 +
+                                (request->parameter & 255) + 300);
+        BattlePlayback_Push(BATTLE_EVENT_SOUND, 175);
+        BattlePlayback_Push(BATTLE_EVENT_DRAW_STATUS, 0);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
+        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
         Actor_SelectAnimationFar(
@@ -567,7 +567,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     plan->outcome = 2;
     if (actor->classIndex == 0) {
       plan->presentationFlags =
-          BattleClass_GetAttackEffect(actor->enemyId) | 0x4000;
+          BattleSprite_GetAttackEffect(actor->enemyId) | 0x4000;
     } else {
       plan->presentationFlags = 0;
       plan->presentationFlags = Func_0811d79c(actor->enemyId);
@@ -686,7 +686,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
       plan->actorId2 = plan->targetIds[0];
       do {
-        plan->targetIds[0] = Battle_GetTaggedSlotValue(
+        plan->targetIds[0] = Battle_GetUnitAtPlace(
             BattleAI_ChooseRandomTarget(plan->actorId2 <= 7));
         if (plan->targetIds[0] != plan->actorId2)
           break;

@@ -92,9 +92,10 @@ void Func_02000098(void) {
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
   sprite = &gData_02000a00;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GreenPanel), buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
+                      buffer);
   slot = &Data_020008f0;
-  value = Resource_FindFreeEntry();
+  value = VramCache_FindFreeEntry();
   *slot = value;
   tileSlot = &Data_02000a30;
   value = Vram_Load(value, 0x800, buffer);
@@ -111,8 +112,7 @@ void Func_02000098(void) {
   FieldTask_AddFrame(Func_0200005c, priority);
 }
 
-struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
-                                                s32 resource);
+struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y, s32 resource);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
 /// message is set, a name window at left and line that Func_0200005c follows;
@@ -127,8 +127,8 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
   name = 0;
   wide = 0x8000 & message;
   message &= 0x7fff;
-  window = Message_OpenWindow(
-      gData_02000a28, x, y, (BattleEffect_GetResourceId(message) << 16) | 4);
+  window = Message_OpenWindow(gData_02000a28, x, y,
+                              (BattleEffect_GetResourceId(message) << 16) | 4);
   if (!wide) {
     /* FAKEMATCH(temporary): the name window held in a temporary until after
      * the stores; as name = Func_02000804(...), 2 of 100 instructions differ

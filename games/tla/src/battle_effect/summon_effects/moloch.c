@@ -59,7 +59,7 @@ s32 Trig_Sin(s32 angle);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 angle);
+void Transform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 
@@ -308,10 +308,10 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
           if (shade <= -64)
             continue;
           model->shade = shade;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(16 << 16, Data_08199f3c[i] << 16, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
-          SceneTransform_ApplyPitch(0xbb8);
+          Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_TransformVertices(Data_08198cac, projected, 32);
           Render_DrawModelList(model);
@@ -527,7 +527,7 @@ void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
   vertices[5].y = height;
   vertices[4].y = height;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   position.x = (x << 16) - (63 << 16);
   position.y = (63 - height) << 16;
   position.z = 0;
@@ -572,9 +572,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 
 void BattleMotion_ApplyKnockbackFar(
     s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
@@ -736,14 +736,14 @@ struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
 struct IrisSprite *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
 void BattleEffect_ConfigureEffectDisplay(void);
 
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Func_08164b2c(s32 red, s32 green, s32 blue);
 void Func_08191958(u8 side, u8 speed, void (*midpoint)(void));
 void Func_08191cc4(void);
 void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
                                           s32 scale);
-void SceneTransform_ResetMatrix(void);
+void Transform_ResetMatrix(void);
 void SceneTransform_ApplyScale(s32 *scale);
 
 #define SLOT_ALT 188 // unkb8[1]
@@ -762,7 +762,7 @@ void SceneTransform_ApplyScale(s32 *scale);
 
 #define DECODE_01(src, dest)                                                   \
   do {                                                                         \
-    Resource_DecodeType01(src, dest);                                          \
+    Decompress_TaggedLz(src, dest);                                            \
   } while (0)
 
 // A splash where a drop lands: rings spread from (x, y) for twice the
@@ -1049,7 +1049,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           texture.logWidth = 5;
           texture.logHeight = 6;
           texture.pixels = work->sheet + 0x1810 + offset;
-          SceneTransform_ResetMatrix();
+          Transform_ResetMatrix();
           place[0] = work->particles[i].x - 0x400000;
           place[1] = work->particles[i].y - 0x400000;
           place[2] = 0;
@@ -1170,7 +1170,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   Graphics_LoadGreyRamp();
   frame = 0;
   HeapSlot_Release(SLOT_ALT);
-  Render_ResetTransformState();
+  Transform_Reset();
 
   for (;;) {
     motesMask = 31;
@@ -1187,7 +1187,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           for (i = 0; i != 16; i++)
             ResourceObject_ReleaseFar(work->objects[i]);
           BattleEffect_SelectLivingTargets(work->effect);
-          Palette_LoadBasicObjColors();
+          Palette_LoadBasicSpriteColors();
           for (i = 0; i != work->effect->count; i++)
             BattleEffect_TintBattler(work->effect->actors[i], -1, 5, -1, 0);
         }
@@ -1354,7 +1354,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       colors = Resource_GetTableEntry((s32)&ResourceId_RobedGoddessTiles);
       Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
       colors += 0x200;
-      Resource_DecodeType01(colors, tileBuffer);
+      Decompress_TaggedLz(colors, tileBuffer);
       tiles = Data_02010578;
       for (i = 0; i != 16; i++) {
         struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
@@ -1461,7 +1461,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         for (i = 0; i != 16; i++)
           ResourceObject_ReleaseFar(work->objects[i]);
         BattleEffect_SelectLivingTargets(work->effect);
-        Palette_LoadBasicObjColors();
+        Palette_LoadBasicSpriteColors();
         for (i = 0; i != work->effect->count; i++)
           BattleEffect_TintBattler(work->effect->actors[i], -1, 5, -1, 0);
       }
@@ -1764,7 +1764,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     // The fountain: the second backdrop, the motes and the light shafts.
     if (frame == 446) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-      Render_ResetTransformState();
+      Transform_Reset();
       BattleBackground_LoadFar(1, (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = 0x302;
       {
@@ -1872,7 +1872,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       texture.logWidth = 5;
       texture.logHeight = 6;
-      SceneTransform_ResetMatrix();
+      Transform_ResetMatrix();
       model->kind = 4;
       model->mesh = Data_0819a0d4;
       model->vertices = verts;
@@ -2105,12 +2105,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       texture2.logWidth = 5;
       texture2.logHeight = 5;
       texture2.pixels = work->sheet + 0x5810;
-      SceneTransform_ResetMatrix();
+      Transform_ResetMatrix();
       place[0] = 0x200000;
       place[1] = -0x180000;
       place[2] = 0;
       SceneTransform_ApplyPosition(place);
-      SceneTransform_ApplyRoll(0x9800);
+      Transform_ApplyRoll(0x9800);
       grow[0] = 0x10000;
       grow[1] = (frame - 758) << 10;
       if (grow[1] > 0x10000)

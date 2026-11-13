@@ -655,7 +655,7 @@ extern u8 gData_02000504[];
 void ObjectTable_SnapshotFar(void);
 
 void DjinnFigures_InitializeTopRowFar(void);
-void MenuIcon_ReleaseObjectsFar(void);
+void DjinnFigures_ReleaseTopRowFar(void);
 void Menu_SetEntryObjectsHiddenFar(s32 shown);
 
 void MenuIcon_SetPositionFar(s32 index, s32 x, s32 y);

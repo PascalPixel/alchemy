@@ -30,18 +30,18 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Func_02000c3c
 	.thumb_func
 Func_02000c3c:
@@ -53,11 +53,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02000c5c
 	.thumb_func
 Func_02000c5c:
@@ -74,26 +74,26 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Script_WaitForEventTimeout
+	.global Actor_WaitForMove
 	.thumb_func
-Script_WaitForEventTimeout:
+Actor_WaitForMove:
 	overlay_veneer Actor_CommitPosition
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer MapGrid_GetTerrainHeightFar
-	.global GetMapCellCollision
+	.global MapGrid_GetCellBehaviorAt
 	.thumb_func
-GetMapCellCollision:
-	overlay_veneer GetMapCellCollisionFar
+MapGrid_GetCellBehaviorAt:
+	overlay_veneer MapGrid_GetCellBehaviorAtFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_SetStateFlags
+	.global Actor_SetBlendMode
 	.thumb_func
-Animation_SetStateFlags:
-	overlay_veneer Animation_SetStateFlagsFar
+Actor_SetBlendMode:
+	overlay_veneer Actor_SetBlendModeFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
 FieldMessage_ShowCentered:
@@ -134,10 +134,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_StartRepeatedMotion:
 	overlay_veneer Actor_StartRepeatedMotionFar
-	.global Actor_SetPartAttribute
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:

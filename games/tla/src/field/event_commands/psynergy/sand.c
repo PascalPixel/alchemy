@@ -28,10 +28,10 @@ void FieldPsynergy_FadeFromCastColor(void);
 void Func_080e42d4(void);
 void FieldPsynergy_EndSand(void);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 /* VIEW(f0e4a34): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void
  * *particle, s32 index, s32 tiles, s32 high); the definition has void
  * Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle
@@ -57,13 +57,13 @@ extern void Func_080e46ac__f0e4a34(void *sprite, void *particle, s32 index,
  * PictureSource *source, void *buffer, s32 size). */
 extern void Func_080e43a4__f0e4a34(void *source, void *buffer,
                                    s32 size) __asm__("Func_080e43a4");
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
-void Animation_SetIndexAndInitializeObjectsFar(struct Actor *actor, s32 index);
+void Actor_SetFirstSpriteAnimationFar(struct Actor *actor, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
-void Camera_FollowActor(s32 actor, s32 mode);
+void FieldCamera_FollowActor(s32 actor, s32 mode);
 
 void FieldPsynergy_Sand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
@@ -96,9 +96,8 @@ void FieldPsynergy_Sand(void) {
   else
     event->standing = 0;
   FieldPsynergy_FadeToCastColor();
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
-                        work);
-  particleEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  particleEntry = VramCache_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   i = 0;
   particle = work + 0x1200;
@@ -111,7 +110,7 @@ void FieldPsynergy_Sand(void) {
     delay -= 2;
     particle += 28;
   }
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
   Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
   *motionFlags = 0;
@@ -127,7 +126,7 @@ void FieldPsynergy_Sand(void) {
   owner->facing = 0x4000;
   wait(1);
   Func_080e43a4__f0e4a34(*(void **)((u8 *)owner->sprite + 40), work, 0x400);
-  pictureEntry = Resource_FindFreeEntry();
+  pictureEntry = VramCache_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
   Func_080e4510__f0e4a34(work + 0x1900, pictureTiles);
   frame = 15;
@@ -149,12 +148,12 @@ void FieldPsynergy_Sand(void) {
     if (frame == 45)
       Sound_PlayFar(136);
     if (frame == 60) {
-      Animation_SetIndexAndInitializeObjectsFar(owner, 251);
+      Actor_SetFirstSpriteAnimationFar(owner, 251);
       ((u8 *)owner->sprite)[5] &= 63;
       ((u8 *)owner->sprite)[7] = (((u8 *)owner->sprite)[7] & 63) | 64;
       Actor_SetMode(owner, 1);
       Actor_SetSingleChildFlagsFar(Actor_GetById(effect->firstObjectId), 0);
-      Camera_FollowActor(effect->firstObjectId, 1);
+      FieldCamera_FollowActor(effect->firstObjectId, 1);
       owner->y = savedY;
       *motionFlags = savedFlags;
     }
@@ -173,8 +172,8 @@ void FieldPsynergy_Sand(void) {
   if (event->standing == 0)
     Task_Add(Func_080e42d4, 0x480);
   Actor_SetOthersPaused(owner, 0, 16);
-  Resource_ResetEntry(pictureEntry);
-  Resource_ResetEntry(particleEntry);
+  VramCache_FreeEntry(pictureEntry);
+  VramCache_FreeEntry(particleEntry);
   FieldPsynergy_FadeFromCastColor();
 end:
   HeapSlot_Release(92);
@@ -221,7 +220,7 @@ void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 extern void EffectSprite_DrawAtWorldPosition__f0e4a34(
     struct EffectSprite *sprite,
     struct GlowParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
-void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
+void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -355,7 +354,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 0)
         Sound_PlayFar(144);
       if ((work->timer & 7) == 0) {
-        Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -367,7 +366,7 @@ void Func_080e4d9c(void) {
       if ((work->timer & 15) == 0)
         Sound_PlayFar(144);
       if ((work->timer & 7) == 0) {
-        Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -384,7 +383,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 4)
         work->newBursts = 10;
       if (work->timer == 0) {
-        Map_SetScreenShakeFar(0xc0000, 0xc0000, 0xe666);
+        MapGrid_SetScreenShakeFar(0xc0000, 0xc0000, 0xe666);
         Sound_PlayFar(145);
         if (work->timer == 0)
           work->shake = 3;
@@ -474,7 +473,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 0) {
         work->paletteMode = 2;
         if (work->timer == 0) {
-          Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+          MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
           work->newBursts = 1;
           Sound_PlayFar(144);
         }

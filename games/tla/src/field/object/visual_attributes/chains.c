@@ -676,8 +676,8 @@ void Func_080d9b08(void) {
   void *buffer = Heap_Alloc(0x900);
 
   Dma_Fill32(0, work, sizeof(struct WorkA0));
-  work->vramEntry = Resource_FindFreeEntry();
-  Resource_DecodeType01(gData_080f0c04, buffer);
+  work->vramEntry = VramCache_FindFreeEntry();
+  Decompress_TaggedLz(gData_080f0c04, buffer);
   VramCache_Load(work->vramEntry, 64, buffer);
   Task_Add(Func_080d9b80, TASK_PASS_VBLANK);
   Task_Add(Func_080d9d40, TASK_PASS_VBLANK + 15);
@@ -1281,18 +1281,18 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   size = 4 * PICTURE_SIZE;
   pictures = Heap_Alloc(size);
   Dma_Fill32(0, work, sizeof(struct TileEffectWork));
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   if (kind == TILE_EFFECT_KIND_ALT) {
-    Resource_DecodeType01(Data_080f0c1c, pictures);
-    Resource_DecodeType01(Data_080f0c63, pictures + PICTURE_SIZE);
-    Resource_DecodeType01(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
-    Resource_DecodeType01(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
+    Decompress_TaggedLz(Data_080f0c1c, pictures);
+    Decompress_TaggedLz(Data_080f0c63, pictures + PICTURE_SIZE);
+    Decompress_TaggedLz(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
+    Decompress_TaggedLz(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
   } else {
-    Resource_DecodeType01(Data_080f0d5e, pictures);
-    Resource_DecodeType01(Data_080f0dbb, pictures + PICTURE_SIZE);
-    Resource_DecodeType01(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
-    Resource_DecodeType01(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
+    Decompress_TaggedLz(Data_080f0d5e, pictures);
+    Decompress_TaggedLz(Data_080f0dbb, pictures + PICTURE_SIZE);
+    Decompress_TaggedLz(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
+    Decompress_TaggedLz(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
     /* FAKEMATCH(barrier): an empty asm closing the arm keeps each decode's
      * destination set before its source loads; without it, 4 of 95

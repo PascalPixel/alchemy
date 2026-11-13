@@ -42,7 +42,7 @@ struct Box {
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 s32 Func_0200246c(s32 index, s32 value);
@@ -77,7 +77,7 @@ static inline struct Actor *Func_02004bd8_(s32 kind, s32 x, s32 y, s32 z) {
 }
 
 static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  Camera_MoveWithinMapBounds(x, y, z, use_setter);
+  FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
 #endif

@@ -198,10 +198,10 @@ void Actor_SetSpritePalette(void *object, s32 value);
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
 
-s32 ScriptObject_CheckOverlapFar(struct Actor *object,
-                                 struct Effect04Vector *position);
+s32 ActorScript_CheckOverlapFar(struct Actor *object,
+                                struct Effect04Vector *position);
 
-void FieldEffect_WatchLeaderDistance(void);
+void FieldPsynergy_WatchLeaderDistance(void);
 
 void FieldEffect_SpawnBurstParticleField(void);
 
@@ -210,16 +210,16 @@ s32 Func_08020330(struct Actor *object);
 
 extern const s32 gFieldEffect_SourceHoldScript[];
 
-struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
+struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle);
 
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
+void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
 void FieldPsynergy_Ply(void);
 void FieldPsynergy_EndCloak(void);
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
-struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
+struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
 
 void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
                                          s32 height, s32 fromX, s32 fromZ);
@@ -256,7 +256,7 @@ extern s16 gData_0202a642;
 
 void FieldPsynergy_Lash(void);
 
-void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object);
+void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object);
 
 void Camera_WorldToScreen(struct EffectVector *position);
 
@@ -287,7 +287,7 @@ void Func_080e2718(void);
 
 void Djinn_RestoreActorAfterBattle(void);
 
-void FieldEffect_ResumeCloakCheck(void);
+void FieldPsynergy_ResumeCloakCheck(void);
 
 void Func_080e7804(void);
 void Func_080e7238(void);
@@ -842,8 +842,8 @@ extern const u8 gData_080f0ef8[];
 extern const u8 gData_080f0e58[];
 extern u8 gData_080f0e9c[];
 
-struct Actor *ScriptObject_FindOverlappingEntryFar(struct Actor *object,
-                                                   struct Vec3 *position);
+struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
+                                                  struct Vec3 *position);
 
 extern const u8 Data_080f0ee4[];
 

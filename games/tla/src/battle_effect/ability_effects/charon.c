@@ -206,7 +206,7 @@ void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32, s32);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void wait(s32);
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -233,9 +233,9 @@ s32 __divsi3(s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32, s32, s32);
 void Func_08015160(s32, s32, s32);
-void SceneTransform_ApplyPitch(s32);
-void SceneTransform_ApplyRoll(s32);
-void SceneTransform_ApplyYaw(s32);
+void Transform_ApplyPitch(s32);
+void Transform_ApplyRoll(s32);
+void Transform_ApplyYaw(s32);
 void Func_0801521c(s32);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f175f74): routine Render_DrawModelList as void
@@ -339,7 +339,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   REG_WININ = 0x2737;
   REG_WIN0H = 240;
   wait(1);
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   scene->unk867 = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Func_08164b2c(0, -20, -20);
@@ -354,7 +354,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedSlashTiles);
   Iwram_CopyWords(PLTT + 0x120, source, 0x140);
   source += 0x140;
-  Resource_DecodeType01(source, work->buffer);
+  Decompress_TaggedLz(source, work->buffer);
   for (i = 0; i != 0x1000; i++) {
     if (work->buffer[i] != 0) {
       work->buffer[i] += 32;
@@ -376,7 +376,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteArrowsTiles);
   Iwram_CopyWords(PLTT + 0x1f0, source, 32);
   source += 32;
-  Resource_DecodeType01(source, work->buffer);
+  Decompress_TaggedLz(source, work->buffer);
   for (i = 0; i != 16; i++) {
     struct SpriteObject__f175f74 *object =
         Func_0815b290__f175f74(16, 16, 0, 0xf000);
@@ -701,7 +701,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
         Iwram_FillWords(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
-        Resource_DecodeType01(source, work->buffer + 0x2400);
+        Decompress_TaggedLz(source, work->buffer + 0x2400);
         for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
           struct SpriteObject__f175f74 *object =
               Func_0815b290__f175f74(32, 32, 0x80002000, 0);
@@ -715,7 +715,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Iwram_CopyWords(PLTT + 0x1e0, source, 32);
         Iwram_FillWords(PLTT + 0x1e0, 32, 0x7fff7fff);
         source += 32;
-        Resource_DecodeType01(source, work->buffer + 0x2400);
+        Decompress_TaggedLz(source, work->buffer + 0x2400);
         {
           struct SpriteObject__f175f74 *object =
               Func_0815b290__f175f74(64, 64, 0xc0000000, 0xe000);
@@ -754,7 +754,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
         Iwram_FillWords(PLTT + 0x1c0, 64, 0);
         source += 64;
-        Resource_DecodeType01(source, gData_02014000);
+        Decompress_TaggedLz(source, gData_02014000);
         for (i = 0; i != 0x1000; i++) {
           if (gData_02014000[i] != 0) {
             gData_02014000[i] += 192;
@@ -853,12 +853,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         model->mesh = gData_08199364;
         model->texture = texture;
         if (frame <= 282) {
-          Render_ResetTransformState();
+          Transform_Reset();
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale * 2);
           Func_08015160(-0x100000, -0x80000, 0);
-          SceneTransform_ApplyPitch(0xe000);
-          SceneTransform_ApplyRoll(0x4000 - t * 256);
-          SceneTransform_ApplyYaw(-t << 10);
+          Transform_ApplyPitch(0xe000);
+          Transform_ApplyRoll(0x4000 - t * 256);
+          Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList__f175f74(model);
         }
@@ -880,11 +880,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           model->mesh = gData_08199340;
           model->kind = 7;
           model->texture = texture;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(-0x80000, -0x80000, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
-          SceneTransform_ApplyPitch(0xc000);
-          SceneTransform_ApplyYaw(-t << 10);
+          Transform_ApplyPitch(0xc000);
+          Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList__f175f74(model);
         }
@@ -1030,17 +1030,17 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                 depth2 = 0;
               }
               model->depth = depth2;
-              Render_ResetTransformState();
+              Transform_Reset();
               Func_08015160(-0x80000, -0x80000, 0);
               SceneTransform_ApplyScale3(size / 2, size, size / 2);
               if (k == 0) {
-                SceneTransform_ApplyRoll(0xf000);
+                Transform_ApplyRoll(0xf000);
               } else if (k == 1) {
-                SceneTransform_ApplyRoll(0x2000);
+                Transform_ApplyRoll(0x2000);
               } else {
-                SceneTransform_ApplyRoll(0xe000);
+                Transform_ApplyRoll(0xe000);
               }
-              SceneTransform_ApplyPitch(0x800);
+              Transform_ApplyPitch(0x800);
               Render_TransformVertices(gData_08199210, texture, 4);
               Render_DrawModelList__f175f74(model);
             }
@@ -1220,7 +1220,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         work->transferValue = 0x04040404;
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_Data0B5);
         source += 32;
-        Resource_DecodeType01(source, work->buffer + 0x2400);
+        Decompress_TaggedLz(source, work->buffer + 0x2400);
         for (y = 0; y != 80; y++) {
           for (x = 0; x != 184; x += 2) {
             u16 *dst =
@@ -1304,14 +1304,14 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       model->texture = texture;
       if (depth > -48) {
         model->depth = depth;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(0x40000, 0, 0);
         SceneTransform_ApplyScale3(scale112, scale112, scale112);
-        SceneTransform_ApplyPitch(0x2000);
+        Transform_ApplyPitch(0x2000);
         if (frame > 55) {
-          SceneTransform_ApplyYaw(frame << 10);
+          Transform_ApplyYaw(frame << 10);
         } else {
-          SceneTransform_ApplyYaw(-frame << 10);
+          Transform_ApplyYaw(-frame << 10);
         }
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList__f175f74(model);
@@ -1321,11 +1321,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         model->depth = depth;
       }
       if (depth > -48) {
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(0x40000, -0x100000, 0);
         Func_0801521c(-0xa710);
-        SceneTransform_ApplyPitch(0x2000);
-        SceneTransform_ApplyYaw(-frame << 9);
+        Transform_ApplyPitch(0x2000);
+        Transform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList__f175f74(model);
       }
@@ -1337,11 +1337,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           last = -32;
         }
         model->depth = last;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(0x20000, -0x200000, 0);
         Func_0801521c(0x58f0);
-        SceneTransform_ApplyPitch(0x2000);
-        SceneTransform_ApplyYaw(frame << 10);
+        Transform_ApplyPitch(0x2000);
+        Transform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList__f175f74(model);
         /* FAKEMATCH(dead): twice raised to frame though nothing reads it again;
@@ -1351,11 +1351,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           twice = frame;
         }
         if (frame > -48) {
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160(0x20000, -0x300000, 0);
           Func_0801521c(-0x31e0);
-          SceneTransform_ApplyPitch(0x2000);
-          SceneTransform_ApplyYaw(-frame << 10);
+          Transform_ApplyPitch(0x2000);
+          Transform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList__f175f74(model);
         }
@@ -1382,7 +1382,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   HeapSlot_Release(188);
   HeapSlot_Release(104);
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   REG_DISPCNT = 0x141;
   wait(1);
   scene->unk867 = 0;
@@ -1807,11 +1807,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
             member->timer = timer + 1;
             model->depth = depth;
-            Render_ResetTransformState();
+            Transform_Reset();
             Func_08015160((member->x / 2 - 56) << 16, (member->y - 56) << 16,
                           0);
             SceneTransform_ApplyScale3(size / 3, size, size);
-            SceneTransform_ApplyPitch(0xc000);
+            Transform_ApplyPitch(0xc000);
             Render_TransformVertices(gData_08199210, texture, 4);
             Render_DrawModelList__f175f74(model);
           }

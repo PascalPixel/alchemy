@@ -52,7 +52,7 @@ void Func_020000c8(void) {
     Event_ResolvePendingActions(0);
     if (Event_GetFlag(0x301) == 0) {
       Camera_SetSpeedParameters(0x18000, 0x3000);
-      Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
+      FieldCamera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
       Actor_WalkTo(gMainRoutineWork.currentOwner, 158, 316);
     }
     Actor_GetById(8)->actionFlags &= ~1;
@@ -86,7 +86,7 @@ void Func_02000224(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
-  Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
   Func_02000338();
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);

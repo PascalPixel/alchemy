@@ -347,7 +347,7 @@ void Sanctum_DrawFee(s32 window, s32 unitId);
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind);
 void Sanctum_RunMemberIconBurst(s32 member);
 
-void BattleEffect_ClearOwnedSlotFar(struct Effect_080b2f4c *);
+void FieldEffect_ClearOwnedSlotFar(struct Effect_080b2f4c *);
 
 extern s8 Data_0810cf28[];
 

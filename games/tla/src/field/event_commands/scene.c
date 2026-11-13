@@ -276,7 +276,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   for (i = 0; i < 24; i++) {
     struct FieldParticle *slot = &work->slots[i];
     if (slot->active)
-      BattleEffect_ClearOwnedSlot(slot);
+      FieldEffect_ClearOwnedSlot(slot);
   }
   // A local that holds one constant: it makes the first test cmp #17; blt as
   // the native (with the literal, 4 of 171 differ in tla-en).

@@ -29,7 +29,8 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-/* VIEW(screens): tag struct DjinnMenuWork as struct DjinnMenuWork__screens; djinn_menu.h has another definition. */
+/* VIEW(screens): tag struct DjinnMenuWork as struct DjinnMenuWork__screens;
+ * djinn_menu.h has another definition. */
 struct DjinnMenuWork__screens {
   u8 unk00[3];
   u8 dirty;
@@ -139,7 +140,9 @@ s32 BattleDjinnMenu_Run(s32 member) {
         u32 v;
         s32 k;
 
-        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar((u32)member > 7 ? 1 : 0))->list;
+        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+                     (u32)member > 7 ? 1 : 0))
+                    ->list;
         for (k = 0; k < list->count; k++) {
           if (list->entries[k].unitId == member &&
               list->entries[k].element == element &&
@@ -221,15 +224,16 @@ s32 BattleDjinnMenu_Run(s32 member) {
               previewPage = 0;
             }
           } else {
-            previewWindow = BattleDjinnMenu_ShowChangePreview(previewWindow, member, selectedDjinn,
-                                          previewPage, &previewPages);
+            previewWindow = BattleDjinnMenu_ShowChangePreview(
+                previewWindow, member, selectedDjinn, previewPage,
+                &previewPages);
             Message_CopyExpanded((s32)MsgReadyToSummon, messageText,
                                  DJINN_MESSAGE_CAPACITY);
             standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
           }
         } else {
-          previewWindow = BattleDjinnMenu_ShowChangePreview(previewWindow, member, selectedDjinn,
-                                        previewPage, &previewPages);
+          previewWindow = BattleDjinnMenu_ShowChangePreview(
+              previewWindow, member, selectedDjinn, previewPage, &previewPages);
           DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) * 20 +
                                  (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
                              messageText, DJINN_MESSAGE_CAPACITY);
@@ -264,9 +268,8 @@ s32 BattleDjinnMenu_Run(s32 member) {
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
             Text_SetColor(2);
           Text_DrawMessageAsTiles(((encodedDjinn & 0xf00) >> 8) * 20 +
-                                         (encodedDjinn & 0xff) +
-                                         (s32)MsgDjinnName,
-                                     listWindow, 8, j * 16);
+                                      (encodedDjinn & 0xff) + (s32)MsgDjinnName,
+                                  listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_DrawNumberAtOffset(
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
@@ -527,7 +530,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
       Window_HighlightRect(owner->window->x + 1, owner->window->y + 1, 4, 4,
                            15);
   }
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(cursorSlot);
   Window_Close(messageWindow, 1);
   Window_Close(previewWindow, 1);
   Window_Close(listWindow, 1);

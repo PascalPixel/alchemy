@@ -17,13 +17,13 @@
 extern void
 Projection_Set__resource_slot(s32 distance, s32 nearPlane,
                               s32 farPlane) __asm__("Projection_Set");
-/* VIEW(f02b998): routine Render_ResetTransformState as u32
- * Render_ResetTransformState(void); graphics.h has void
- * Render_ResetTransformState(void); tried as the definition's void
- * Render_ResetTransformState(void), which the object already declares,
+/* VIEW(f02b998): routine Transform_Reset as u32
+ * Transform_Reset(void); graphics.h has void
+ * Transform_Reset(void); tried as the definition's void
+ * Transform_Reset(void), which the object already declares,
  * WorldMap_InitializePerspective moves: 1 of 372 instructions in tla-ja. */
 extern u32 Render_ResetTransformState__f02b998(void) __asm__(
-    "Render_ResetTransformState"); // Returns void; see the tag.
+    "Transform_Reset"); // Returns void; see the tag.
 /* VIEW(resource_slot): routine SceneTransform_ApplyPosition as void
  * SceneTransform_ApplyPosition(void *position); module/system/system.h has void
  * SceneTransform_ApplyPosition(const s32 *pos). */
@@ -32,7 +32,7 @@ extern void SceneTransform_ApplyPosition__resource_slot(void *position) __asm__(
 void WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
 
 void WorldMap_InitializePerspective(void) {
-  /* FAKEMATCH(signature): Render_ResetTransformState declared returning u32;
+  /* FAKEMATCH(signature): Transform_Reset declared returning u32;
    * as void, 2 of 376 instructions differ in tla-en. */
   u8 *perspective;
   struct WorldView *view;
@@ -46,7 +46,7 @@ void WorldMap_InitializePerspective(void) {
   s32 tileIndex;
 
   REG_DISPCNT &= 0xc1ff;
-  Fade_FromBlack(0);
+  ScreenFade_FromBlack(0);
   perspective = HeapSlot_Alloc(32, 0x978);
   view = (struct WorldView *)perspective;
   Dma_Fill32Cell(fill, 0, perspective, 0x978);
@@ -62,12 +62,12 @@ void WorldMap_InitializePerspective(void) {
   Io_Write16(0x3f9e, &REG_BLDCNT);
   Io_Write16(0x1010, &REG_BLDALPHA);
   REG_BLDY = 0;
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
+                      gMapCellBuffer);
   view->unk014 = 0x1f00;
   view->unk016 = 0x80;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data199),
-                        gData_0202e000);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data199),
+                      gData_0202e000);
   Io_Write16(0xa80a, &REG_BG3CNT);
   Io_Write16(0xaa0e, &REG_BG2CNT);
   Io_Write16(0x8501, &REG_BG1CNT);
@@ -103,8 +103,8 @@ void WorldMap_InitializePerspective(void) {
   cameraPosition[2] = 0;
   Render_ResetTransformState__f02b998();
   SceneTransform_ApplyPosition__resource_slot(cameraPosition);
-  SceneTransform_ApplyYaw(view->yaw);
-  SceneTransform_ApplyPitch(view->pitch);
+  Transform_ApplyYaw(view->yaw);
+  Transform_ApplyPitch(view->pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = farPlane;
@@ -129,8 +129,8 @@ void WorldMap_InitializePerspective(void) {
   view->yaw = 0;
   Render_ResetTransformState__f02b998();
   SceneTransform_ApplyPosition__resource_slot(cameraPosition);
-  SceneTransform_ApplyYaw(view->yaw);
-  SceneTransform_ApplyPitch(view->pitch);
+  Transform_ApplyYaw(view->yaw);
+  Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
     eyeOffset.x = 0;
     eyeOffset.y = 0;
@@ -155,7 +155,7 @@ void WorldMap_InitializePerspective(void) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
+void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   struct MapTileWindow_08010d48 *window;
   s32 *position;
   s32 originX;
@@ -181,12 +181,12 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   window->tiles[(py / 2) & 31][(px / 2) & 31] = tile;
 
   if (ABS(originX - px) <= 1 && ABS(originY - py) <= 1) {
-    Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
-    Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
+    WorldMap_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
+    WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
   }
 }
 
-/// Map_SetWindowCellTile without its view test: puts world map tile
+/// WorldMap_SetWindowCellTile without its view test: puts world map tile
 /// (x / 16, y / 16) at cell (px / 16, py / 16) of the tile grid and draws it in
 /// both layers.
 void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
@@ -208,8 +208,8 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
   py >>= 3;
   tile = (y << 5) + x;
   window->tiles[(py / 2) & 31][(px / 2) & 31] = tile;
-  Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
-  Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
+  WorldMap_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
+  WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
 }
 
 #include "fixed_math.h"
@@ -270,27 +270,27 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   BattleEffect_LoadBufferPaletteFar(buffer);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[1]),
-                        Ram_MapCollision + 0x1000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[1]),
+                      Ram_MapCollision + 0x1000);
   TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));
-  Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_MapCollision);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[2]), Ram_MapCollision);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer);
   Dma_Set(Ram_BgTileBuffer, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048), REG_DMA3);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[4]),
-                        Ram_BgTileBuffer + 0x2000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+                      Ram_BgTileBuffer + 0x2000);
   Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[5]),
-                        Ram_BgTileBuffer + 0x4000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]),
+                      Ram_BgTileBuffer + 0x4000);
   Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
           REG_DMA3);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[6]),
-                        Ram_BgTileBuffer + 0x6000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
+                      Ram_BgTileBuffer + 0x6000);
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[8]),
-                        gWorldMapWork__world_map);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]),
+                      gWorldMapWork__world_map);
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01810180;
@@ -431,7 +431,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
 
 /// Draws world map tile column tileColumn (two screen columns) into the BG map
 /// at 0x06004000.
-void Map_RenderPaletteMappedColumn(u32 tileColumn) {
+void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *cellBytes;
   u8 *screenTile;
   u32 row;
@@ -504,9 +504,9 @@ void WorldMap_UpdateView(void) {
     tileRow = y / 0x100000;
     if ((view->viewX ^ x) & 0x100000) {
       if (view->viewX < x)
-        Map_RenderPaletteMappedColumn(tileColumn + 16);
+        WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
       else
-        Map_RenderPaletteMappedColumn(tileColumn - 16);
+        WorldMap_RenderPaletteMappedColumn(tileColumn - 16);
     }
     if ((view->viewY ^ y) & 0x100000) {
       if (view->viewY < y)
@@ -528,17 +528,17 @@ void WorldMap_UpdateView(void) {
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 96;
   Projection_Set__resource_slot(distance, height / 2, height * 2);
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition__resource_slot(cameraPosition);
-  SceneTransform_ApplyYaw(view->yaw);
-  SceneTransform_ApplyPitch(view->pitch);
+  Transform_ApplyYaw(view->yaw);
+  Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
     eyeOffset.x = 0;
     eyeOffset.y = 0;
     eyeOffset.z = height + 0x10000;
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
   if (gScanlinePitch != view->pitch) {
     s32 cosine = Trig_Cos(view->pitch);
@@ -562,7 +562,7 @@ struct MapTileWindow__resource_slot {
   u16 tileIds[32 * 32];
 };
 
-void Map_UpdateCurrentTileBlock(void) {
+void WorldMap_UpdateCurrentTileBlock(void) {
   struct MapTileWindow__resource_slot *window =
       (struct MapTileWindow__resource_slot *)Ram_HeapSlots->mapWork;
   s32 x0 = 0;
@@ -587,7 +587,7 @@ void Map_UpdateCurrentTileBlock(void) {
         tile = (((y0 + row) & 31) << 5) + ((x0 + col) & 31);
         tile = window->tileIds[tile];
         tile += layer << 10;
-        Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
+        WorldMap_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
       }
     }
   }

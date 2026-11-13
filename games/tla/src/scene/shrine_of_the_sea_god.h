@@ -79,8 +79,8 @@ void Event_Start(void);
 void Event_End(void);
 void Event_ResolvePendingActions(s32 skip);
 void Func_02003aa0(s32 actor);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width, s32 height,
-                                    s32 destX, s32 destY);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width,
+                                        s32 height, s32 destX, s32 destY);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Field_RequestDjinnBattle(s32 actor, s32 value);
 void Func_02003b28(void);
@@ -93,10 +93,10 @@ void Func_0200142c(struct ShrineOfTheSeaGodObject *object);
 static inline void ShrineOfTheSeaGod_CopyRect(s32 sx, s32 sy, s32 w, s32 h,
                                               s32 dx, s32 dy) {
   /* FAKEMATCH(wrapper): the rectangle copy reaches the main image through one
-   * inline layer; as direct Map_CopyCellPictureIndicesRect calls, 19 of 360
+   * inline layer; as direct MapGrid_CopyCellPictureIndicesRect calls, 19 of 360
    * instructions differ in tla-en (Func_02000994), and 55 in all over the
    * seven callers that change. */
-  Map_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
+  MapGrid_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
 }
 
 static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
@@ -119,13 +119,13 @@ void FieldEffect_SetAttached(s32 actor, s32 emote);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Func_02003ac8(void);
 struct ShrineOfTheSeaGodObject *FieldCamera_GetActor(void);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
+void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Actor_Stop(s32 actor);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_WatchAndSetScript(s32 actor, s32 target);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
@@ -179,7 +179,7 @@ static inline void ShrineOfTheSeaGod_CamSpeed(s32 speed, s32 acceleration) {
 }
 
 static inline void ShrineOfTheSeaGod_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void ShrineOfTheSeaGod_MessagePut(s32 speaker, s32 flags) {

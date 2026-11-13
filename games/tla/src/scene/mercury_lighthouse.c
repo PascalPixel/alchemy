@@ -28,9 +28,9 @@
 
 s32 Func_02000038(struct Actor *object) {
   if ((gData_020007e4 >> 1) & 1)
-    Actor_SetPartAttribute(object, 15);
+    Actor_SetSpriteColor(object, 15);
   else
-    Actor_SetPartAttribute(object, 7);
+    Actor_SetSpriteColor(object, 7);
   return 0;
 }
 
@@ -117,7 +117,7 @@ void Func_020001b0(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   wait(1);
   gData_020007e4 = 0;
   Task_Add(Func_020000f4, TASK_PASS_VBLANK);
@@ -145,7 +145,7 @@ void Func_020001b0(void) {
   Func_02000608();
   Actor_SetModeById(9, 3);
   Event_ShowMessage(0x8009, 0);
-  Actor_ArmCallbackAndRefresh(12, FACING_EAST);
+  Actor_FaceDirectionById(12, FACING_EAST);
   Event_ShowMessageAndWait(0x800c, 0);
   Actor_FaceDirectionAndWait(11, FACING_WEST);
   Actor_SetModeById(11, 4);

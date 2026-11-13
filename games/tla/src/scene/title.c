@@ -98,8 +98,8 @@ s32 Title_Run(void) {
     Sound_Play(68);
     Func_0200061c(1);
     Sound_Play(78);
-    Fade_ToBlack(60);
-    Fade_Wait();
+    ScreenFade_ToBlack(60);
+    ScreenFade_Wait();
     Event_Wait(240);
     Sound_Play(0);
     Event_SetDestination((s32)&SceneId_Title, 2);
@@ -116,8 +116,8 @@ s32 Title_Run(void) {
         Func_0200063c(1);
         if (Func_02000624(1) == 0) {
           Sound_Play(78);
-          Fade_ToBlack(30);
-          Fade_Wait();
+          ScreenFade_ToBlack(30);
+          ScreenFade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
            * after the wait call, where sched2 would fill the call's stall
            * with it; without it, 2 of 155 instructions differ in tla-en. */
@@ -158,8 +158,8 @@ s32 Title_Run(void) {
     }
   }
   Sound_Play(78);
-  Fade_ToBlack(30);
-  Fade_Wait();
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   Event_Wait(60);
   Sound_Play(0);
   return 0;
@@ -173,9 +173,9 @@ void Title_LoadSprites(s32 unused) {
 
   buffer = Heap_AllocEwram(0x520);
   if (gTitleVramBlock == -1)
-    gTitleVramBlock = Resource_FindFreeEntry();
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
-                        buffer);
+    gTitleVramBlock = VramCache_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
+                      buffer);
   Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
   VramCache_Load(gTitleVramBlock, 0x500, buffer + 32);
   dma = (volatile s32 *)REG_DMA3;
@@ -272,7 +272,7 @@ static __inline__ void Decode_(void *source, void *destination) {
    * buffer address a constant of each call, as The Broken Seal's system call
    * layer does; as a direct call, which keeps the address in r5, 17
    * of 94 instructions differ in tla-en. */
-  Resource_DecodeType01(source, destination);
+  Decompress_TaggedLz(source, destination);
 }
 
 /// The title logo: its palette, its tiles decoded and copied to VRAM, a 30 by
@@ -289,7 +289,7 @@ void Title_LoadBackground(void) {
   s32 blankTile;
 
   resourceId = (s32)&ResourceId_LogoOnBlack;
-  Fade_ToBlack(0);
+  ScreenFade_ToBlack(0);
   REG_BG2CNT = 0x681;
   gBgScroll[2].y = 0;
   blankTile = 0x1ff;

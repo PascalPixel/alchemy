@@ -116,7 +116,7 @@ done:
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
     leader->velocityY = 0;
     leader->targetY = 0x80000000;
-    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   }
 }
 
@@ -278,7 +278,7 @@ void Func_0200087c(void) {
     object->motionFlags = 3;
     object->bounce = 0;
     wait(1);
-    kind = GetMapCellCollision(2, object->x, object->z);
+    kind = MapGrid_GetCellBehaviorAt(2, object->x, object->z);
     if (kind != 0) {
       object->priorityFlags |= 2;
       *(u16 *)0x4000052 = 0x1000;
@@ -463,9 +463,9 @@ L_02008d24:
 }
 
 void Func_02000d28(void) {
-  Map_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
+  MapGrid_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
   MapGrid_CopyCellAttributes(35, 12, 3, 3, 18, 12);
-  Map_CopyCellPictureIndicesRect(84, 13, 83, 13, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(84, 13, 83, 13, 1, 1);
   return;
 }
 

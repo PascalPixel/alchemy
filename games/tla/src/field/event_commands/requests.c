@@ -10,14 +10,14 @@
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  event->encounterEnemyGroup = Encounter_GetEnemyGroupAtSlot(row, column);
+  event->encounterEnemyGroup = Encounter_GetFormationAtSlot(row, column);
   if (event->controlMode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
   BattleEffect_SelectBattleCue(row, column);
 }
 
-s32 Encounter_GetDjinnEnemyGroup(s32 djinn);
+s32 Encounter_GetDjinnFormation(s32 djinn);
 
 extern s8 gData_02001000[];
 
@@ -47,14 +47,14 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
   gMainRoutineWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
-  *(s16 *)(work + 356) = Encounter_GetDjinnEnemyGroup(djinn);
+  *(s16 *)(work + 356) = Encounter_GetDjinnFormation(djinn);
   if (*(s8 *)(work + 394) == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &ObjectTable_Get(Party_GetLeaderActor())->x);
   BattleEffect_SelectBattleCue(0, 0);
 }
 
-void Party_SetFields1eeAnd1f0(u16 first, u16 second) {
+void Event_SetAfterBattleDestination(u16 first, u16 second) {
   gMainRoutineWork.pair1ee[0] = first;
   gMainRoutineWork.pair1ee[1] = second;
 }
@@ -64,7 +64,7 @@ void Party_SetFields1f2And1f4(u16 first, u16 second) {
   gMainRoutineWork.pair1f2[1] = second;
 }
 
-void Field_SetDestination(s16 scene, s16 entrance) {
+void Event_LeaveFor(s16 scene, s16 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   gMainRoutineWork.scene = scene;

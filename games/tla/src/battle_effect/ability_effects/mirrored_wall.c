@@ -83,7 +83,7 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
@@ -224,13 +224,13 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     quad->vertices = vertices;
     quad->brightness = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
-      Render_ResetTransformState();
+      Transform_Reset();
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       Func_08015160((caster.x - 128) << 16, (caster.y - 88) << 16, 0);
       SceneTransform_ApplyScale3(Data_081994b8[mode] << 1,
                                  Data_081994b8[mode] << 1, Data_081994b8[mode]);
       if (effect->side == 1)
-        SceneTransform_ApplyYaw(0x8000);
+        Transform_ApplyYaw(0x8000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(quad);
     }
@@ -253,7 +253,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       texture.pixels = flashPixels;
       quad->kind = 7;
       quad->faces = gData_08199364;
-      Render_ResetTransformState();
+      Transform_Reset();
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       if (effect->side == 0)
         Func_08015160((target.x - 144) << 16, (target.y - 84) << 16, 0);
@@ -282,7 +282,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     if (frame >= LUNGE_HIT_FRAME && frame < 64) {
       struct EffectStep *spark;
 
-      Render_ResetTransformState();
+      Transform_Reset();
       spark = gData_02014000;
       /* FAKEMATCH(barrier): an empty asm on spark, which ranks it over the
        * screen pointer; with spark set after the look-at and no asm, 2 of 601

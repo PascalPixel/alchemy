@@ -24,7 +24,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   if (djinni == NULL)
     return;
 
-  BattleEffect_InitializeSlots();
+  FieldEffect_InitializeSlots();
   effectSlots = gEffectWork;
   Shop_SaveAndTintFieldPaletteFar(0x201204);
   wait(30);
@@ -38,15 +38,15 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   Sound_PlayFar(153);
   Actor_Jump(arg, 8, 22);
   Sound_PlayFar(140);
-  Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
-  djinni->callback = (void *)BattleEffect_ShrinkObjectAndDestroyFast;
+  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
+  djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SetMode((struct Actor *)djinni, 3);
   wait(90);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
   Actor_SetMode(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(30);
-  Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
+  MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
   position[0] = djinni->x;
   position[1] = djinni->y;
@@ -57,7 +57,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   remaining = 23;
   do {
     FieldParticle_Initialize__mars_join(slot, 672, position[0], position[2]);
-    FieldParticle_SetCallback(slot, (void *)BattleEffect_UpdateRadialSpread);
+    FieldParticle_SetCallback(slot, (void *)FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(slot, 7);
     Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
     ((struct FieldParticle *)slot)->scaleX = 0x8000;
@@ -84,7 +84,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   }
 
   wait(20);
-  Map_SetScreenShakeFar(1, 1, 1);
+  MapGrid_SetScreenShakeFar(1, 1, 1);
   wait(30);
 
   for (remaining = 0; remaining <= 23; remaining++) {
@@ -124,7 +124,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     djinni->gravity = 0x50000;
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
-    Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
     Animation_ApplyChildValuesFar__mars_join(djinni, 11);
     djinni->lifetime = 8;
     Actor_StartScriptFar((struct Actor *)djinni,
@@ -133,7 +133,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
 
   wait(15);
   Shop_RestoreFieldPaletteFar();
-  BattleEffect_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ReleaseSlots();
 }
 
 struct BattleFxScene;
@@ -163,7 +163,8 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       position.z = source->z;
       Camera_WorldToScreen__mars_join(p);
     }
-    Vector_AddPolarOffset__mars_join(Random16() * 6 + 0x20000, Random16(), &position);
+    Vector_AddPolarOffset__mars_join(Random16() * 6 + 0x20000, Random16(),
+                                     &position);
 
     {
       s32 accel = 0x30000;
@@ -202,6 +203,6 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->callbackDelay = 6;
     }
   } else if (state == 3) {
-    BattleEffect_ClearOwnedSlot(effect);
+    FieldEffect_ClearOwnedSlot(effect);
   }
 }

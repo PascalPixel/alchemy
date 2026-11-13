@@ -12,7 +12,7 @@ enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_SPANISH
 };
 
-s32 System_ReturnZero(s32 unused0, const u8 *unused1);
+s32 Stub_ReturnZero(s32 unused0, const u8 *unused1);
 
 struct IoWriteQueue;
 
@@ -58,24 +58,24 @@ void DebugText_Clear(void);
 
 void VramCache_Reset(void);
 
-void SceneTransform_ApplyYaw(s32 ang);
+void Transform_ApplyYaw(s32 ang);
 
 s32 ArcTan2(s32 x, s32 y);
 
-void Fade_ToBlack(s32 vblanks);
-void Fade_Wait(void);
+void ScreenFade_ToBlack(s32 vblanks);
+void ScreenFade_Wait(void);
 
 void Func_080150ac(s32 ang);
-void SceneTransform_ApplyPitch(s32 ang);
+void Transform_ApplyPitch(s32 ang);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
 void Func_08015160(s32 x, s32 y, s32 z); // translate
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyRoll(s32 ang);
+void Transform_ApplyRoll(s32 ang);
 void Transform_Pop(void);
 
-void Palette_LoadBasicObjColors(void);
+void Palette_LoadBasicSpriteColors(void);
 
 void Resource_ReservedNoOp(s32 count);
 
@@ -83,20 +83,20 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 void Func_080140d8(void *entry, s32 slot);
 
-void Resource_DecompressHalfwords(const void *source, void *destination);
+void Decompress_Halfwords(const void *source, void *destination);
 
-void Fade_FromBlack(s32 vblanks);
+void ScreenFade_FromBlack(s32 vblanks);
 
 s32 Resource_DecodeType2(const void *source, void *destination);
 
-s32 Palette_GetBasicObjColors(void);
+s32 Palette_GetBasicSpriteColors(void);
 
 void Input_ResetKeyRepeat(void);
 
-void Fade_ToWhite(s32 vblanks);
-void Fade_FromWhite(s32 vblanks);
+void ScreenFade_ToWhite(s32 vblanks);
+void ScreenFade_FromWhite(s32 vblanks);
 
-void Party_PlaySavedMusic(void);
+void Scene_PlayMusic(void);
 
 s32 Battle_RunEncounterFar(s32 entrance);
 
@@ -105,9 +105,9 @@ s32 Resource_FarCall00E(s32 entrance);
 s32 Resource_FarCall00F(s32 entrance);
 
 void Scene_Arrive(s32 unused, s32 keep);
-void BattleEffect_LoadResourceGroup(s32 unused);
+void Scene_LoadOverlay(s32 unused);
 
-extern const u8 gText_HexDigits[];
+extern const u8 gString_HexDigits[];
 
 extern u16 *gDebugTextCursor;
 

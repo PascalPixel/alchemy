@@ -15,10 +15,10 @@
 #include "text/msg_ids.h"
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001bf4(void *callback);
 void Func_02001bfc(void *callback);
@@ -88,13 +88,12 @@ extern const u8 gField_Tiles679[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
-                                                             s32 y, s32 z) {
+static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
+                                                    s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
-                                                    s32 offset) {
+static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
   Actor_CenterOnColumn(id, column, offset);
 }
 
@@ -103,7 +102,7 @@ static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  Camera_MoveWithinMapBounds(x, a, z, b);
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02001d04_(s32 id, s32 x, s32 z) {

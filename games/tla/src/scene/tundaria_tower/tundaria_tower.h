@@ -38,7 +38,8 @@ void Func_02000708(struct TundariaTowerPosition *position, s32 count,
                    s32 scale);
 void Func_02002c1c(s32 a, s32 b, s32 owner);
 void Func_02002cc0(void);
-void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003048(void);
 void Func_02003050(void);
@@ -68,7 +69,7 @@ extern struct Trigger gData_02003c90[];
 void Func_02000840(struct Actor *object);
 void Func_02002ebc(void);
 
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 b);
 void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 b);
 
@@ -79,7 +80,7 @@ static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
 }
 
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetScreenShake(a, b, c);
 }
 
 #endif

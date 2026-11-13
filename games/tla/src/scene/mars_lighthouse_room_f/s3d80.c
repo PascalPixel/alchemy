@@ -21,11 +21,11 @@
 #include "module/system/system.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetScreenShake(a, b, c);
 }
 
 DEFINE_FUNC_02001E24(Func_02003d80, Func_020035b8)
@@ -96,7 +96,12 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 
 #include "input.h"
 
-/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[]; the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, }; tried as the definition's extern struct Trigger gData_02005ef8[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160: incompatible types in assignment. */
+/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[];
+ * the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32)
+ * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, };
+ * tried as the definition's extern struct Trigger gData_02005ef8[], it does not
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160:
+ * incompatible types in assignment. */
 extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
 
 DEFINE_FUNC_02002D04(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
@@ -114,11 +119,16 @@ struct Position {
   s32 z;
 };
 
-/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02005f38[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:243: `gData_02005f38__s3d80' undeclared (first use in this function). */
+/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the
+ * definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32)
+ * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
+ * definition's extern s32 gData_02005f38[], it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:243:
+ * `gData_02005f38__s3d80' undeclared (first use in this function). */
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
 DEFINE_FUNC_02002DC4(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
-    Func_02005480, Func_02004080, Func_02005538)
+                     Func_02005480, Func_02004080, Func_02005538)
 
 #include "version.h"
 
@@ -149,12 +159,17 @@ void Func_02004700(s32 value) { gData_020074c8 = value; }
 #include "system/main_routine_work.h"
 
 DEFINE_FUNC_02003390(Func_0200470c, Func_0200410c, Func_02005480, Func_02004080,
-    Func_02005538)
+                     Func_02005538)
 
 #include "field_sprite.h"
 
 extern u16 gData_02005f58[];
-/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32 gData_02005f64[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:668: subscripted value is neither array nor pointer. */
+/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the
+ * definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0,
+ * 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32
+ * gData_02005f64[], it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:668: subscripted value is
+ * neither array nor pointer. */
 extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -184,8 +199,12 @@ s32 Func_02004938(s32 id) {
   j = (u16)i;
   if (j == 6)
     return 0;
-  width = (ABS(gData_02005f64__s4700[j][0]) + ABS(gData_02005f64__s4700[j][2])) >> 4;
-  height = (ABS(gData_02005f64__s4700[j][1]) + ABS(gData_02005f64__s4700[j][3])) >> 4;
+  width =
+      (ABS(gData_02005f64__s4700[j][0]) + ABS(gData_02005f64__s4700[j][2])) >>
+      4;
+  height =
+      (ABS(gData_02005f64__s4700[j][1]) + ABS(gData_02005f64__s4700[j][3])) >>
+      4;
   x = (object->x + (gData_02005f64__s4700[j][0] << 16)) >> 20;
   z = (object->z + (gData_02005f64__s4700[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
@@ -216,7 +235,12 @@ void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
   }
 }
 
-/* VIEW(s4700): variable gData_02005f7c as extern s32 gData_02005f7c[]; the definition has s16 gData_02005f7c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0, 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0, - 1...; tried as the definition's extern s16 gData_02005f7c[], Func_02004a8c moves: 12 of 171 instructions, Func_02004bf4 moves: 41 of 132 instructions, Func_02004d10 moves: 27 of 304 instructions in tla-ja. */
+/* VIEW(s4700): variable gData_02005f7c as extern s32 gData_02005f7c[]; the
+ * definition has s16 gData_02005f7c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0,
+ * 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0,
+ * - 1...; tried as the definition's extern s16 gData_02005f7c[], Func_02004a8c
+ * moves: 12 of 171 instructions, Func_02004bf4 moves: 41 of 132 instructions,
+ * Func_02004d10 moves: 27 of 304 instructions in tla-ja. */
 extern s32 gData_02005f7c__s4700[] __asm__("gData_02005f7c");
 
 static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
@@ -228,7 +252,7 @@ static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
 /// (Func_020054f8 returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
 DEFINE_FUNC_02000C44(Func_02004a8c, Func_02004bf4, gData_02005f64__s4700,
-    gData_02005f7c__s4700, Func_020054f8_)
+                     gData_02005f7c__s4700, Func_020054f8_)
 
 #include "event_work.h"
 
@@ -237,15 +261,15 @@ DEFINE_FUNC_02000C44(Func_02004a8c, Func_02004bf4, gData_02005f64__s4700,
 #define PIXELS(v) (((s16 *)&(v))[1])
 
 DEFINE_FUNC_02000DAC(Func_02004bf4, gData_02005f58, gData_02005f7c__s4700,
-    gData_02005f64__s4700)
+                     gData_02005f64__s4700)
 
 #undef PIXELS
 
 DEFINE_FUNC_02003A5C(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
-    Func_02004fc0, Func_02005480, gData_02005f7c__s4700)
+                     Func_02004fc0, Func_02005480, gData_02005f7c__s4700)
 
 DEFINE_FUNC_02004774(Func_02004fc0, Func_02005680, gData_02005f58,
-    Func_020054f8)
+                     Func_020054f8)
 #undef ABS
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
@@ -254,16 +278,18 @@ DEFINE_FUNC_02004774(Func_02004fc0, Func_02005680, gData_02005f58,
 #define MapLayer MapLayer__s5048
 #include "map.h"
 #undef MapLayer
-/* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has another definition; not tried: struct MapLayer__s5048 was not found. */
+/* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has
+ * another definition; not tried: struct MapLayer__s5048 was not found. */
 #include "field_event.h"
 #include "vram_tab.h"
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 DEFINE_FUNC_02000AAC(Func_02005048, gData_020074cc, Data_0200f510,
-    gData_020074ce, gData_020074d0, gData_020075d0, gData_020075d2,
-    Func_02005698, Func_02005440)
+                     gData_020074ce, gData_020074d0, gData_020075d0,
+                     gData_020075d2, Func_02005698, Func_02005440)
 
 #include "iwram_call.h"
 #include "task.h"
@@ -273,13 +299,16 @@ DEFINE_FUNC_02000AAC(Func_02005048, gData_020074cc, Data_0200f510,
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_FUNC_02000A98(Func_02005204, gData_020074d0, gData_020074cc,
-    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
+                     Func_02005048, gData_020074ce, gData_020075d0,
+                     gData_020075d2)
 
 DEFINE_FUNC_02000CE8(Func_02005284, gData_020074d0, gData_020074cc,
-    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
+                     Func_02005048, gData_020074ce, gData_020075d0,
+                     gData_020075d2)
 
 DEFINE_FUNC_02000D68(Func_02005304, gData_020074d0, gData_020074cc,
-    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
+                     Func_02005048, gData_020074ce, gData_020075d0,
+                     gData_020075d2)
 
 DEFINE_FUNC_02000DF0(Func_0200538c, gData_020074ce, gData_020074d0)
 

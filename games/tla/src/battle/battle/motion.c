@@ -75,7 +75,7 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   Actor_SetMode(start, 2);
 }
 
-void BattleMotion_SetObjectPosition(struct BattleObj *slot) {
+void BattleMotion_ReturnObjectToSpot(struct BattleObj *slot) {
   struct MotionObject *object = slot->object;
 
   object->acceleration = 0x20000;
@@ -86,7 +86,7 @@ void BattleMotion_SetObjectPosition(struct BattleObj *slot) {
   Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
 }
 
-void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
+void BattleMotion_HopBack(s32 objectId) {
   u32 scaledX;
   struct BattleObj *slot;
   struct MotionObject *object;
@@ -208,7 +208,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   Actor_SetMode(object, 2);
 }
 
-void BattleMotion_ResetSlotObjectMode2(s32 id) {
+void BattleMotion_RestartLeap(s32 id) {
   struct MotionObject *object;
 
   object = BattleObject_Get(id)->object;
@@ -220,7 +220,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 id) {
 #undef Actor_SetTargetPosition
 #undef Actor_SetMode
 
-void BattleMotion_NoOp(void *position, s32 speed) {}
+void BattleMotion_MidpointNoOp(void *position, s32 speed) {}
 
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObj *secondSlot;
@@ -261,10 +261,10 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   pos.y = 0;
   pos.z = (z1 + z2) / 2;
 
-  BattleMotion_NoOp(&pos, 0x1000);
+  BattleMotion_MidpointNoOp(&pos, 0x1000);
 }
 
-void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
+void BattleMotion_PlayHitFlash(s32 slot) {
   struct SlotEffectEntry *entry =
       (struct SlotEffectEntry *)BattleObject_Get(slot);
   u8 *effect;
@@ -274,7 +274,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
       effect =
           (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
       if (effect != NULL) {
-        Animation_SetWorkEntryFar(effect, 1);
+        SpriteAnimation_StartFar(effect, 1);
         effect[6] = 3;
       }
       wait(10);
@@ -311,22 +311,22 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
 
   BattleCamera_ApplyTransform();
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
-  if (BattleClass_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
+  if (BattleSprite_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
     screen[1] -= Iwram_MulQ16(scale, 24);
   else
     screen[1] -= Iwram_MulQ16(scale, 48);
   return 0;
 }
 
-u8 BattleClass_GetEffectHeight(s32 index);
+u8 BattleSprite_GetEffectHeight(s32 index);
 
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
-  s32 value = BattleClass_GetEffectHeight(
+  s32 value = BattleSprite_GetEffectHeight(
                   ((struct SummonOwnerState *)Unit_Get(unitId))->summon)
               << 16;
 
   if (value == 0) {
-    if (BattleClass_IsSmall(
+    if (BattleSprite_IsSmall(
             ((struct SummonOwnerState *)Unit_Get(unitId))->summon) != 0)
       value = 0x180000;
     else

@@ -586,8 +586,8 @@ void Func_080ece20(void) {
     // z is reused for the map cell's index; a local of its own differs.
     z = (column & 31) + (unwrapped << 5);
     tile = (z + 128) % 768 + 256;
-    Resource_DecodeType01((u8 *)graphics + graphics[unwrapped + 1],
-                          buffer + (bufferRow << 12));
+    Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
+                        buffer + (bufferRow << 12));
     // x is reused for the cell pointer; a local of its own differs.
     x = bufferRow << 6;
     x += column;
@@ -644,8 +644,8 @@ void Func_080ecf74(u32 column, s32 row) {
   cell = (row << 6) + column;
   tile = (column & 31) + (row << 5);
   tile = (tile + 128) % 768 + 256;
-  Resource_DecodeType01((u8 *)graphics + graphics[unwrapped + 1],
-                        Ram_MapCellBuffer + (row << 12));
+  Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
+                      Ram_MapCellBuffer + (row << 12));
   // From patch 1 the copy stops at the map's last column instead of running
   // past it.
 #if TLA_PATCH_1

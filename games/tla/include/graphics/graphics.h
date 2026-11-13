@@ -11,13 +11,13 @@ struct Window;
 
 extern u8 gBlendBrighten;
 // volatile: ScreenFade_Update, which the VBlank handler runs, clears it at the
-// fade's end while Fade_Wait waits on it, so it is no device.
+// fade's end while ScreenFade_Wait waits on it, so it is no device.
 extern volatile u8 gBlendDuration;
 extern u8 gBlendVBlanksLeft;
 extern u16 gBlendLayers;
 extern u8 gBlendStartLevel;
-// volatile: Fade_Start sets it for ScreenFade_Update, which the VBlank handler
-// runs, so it is no device.
+// volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
+// handler runs, so it is no device.
 extern volatile u8 gBlendTargetLevel;
 extern u8 gRomShiftedTilePair[];
 extern const u32 RelocatedQ16DotProduct[];
@@ -40,7 +40,7 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
 s32 PartyStatus_HighlightMembers(u16 *ids);
 #endif
 void FileList_UpdatePulse(void);
-void Render_ResetTransformState(void);
+void Transform_Reset(void);
 s32 Text_ClearCanvas(void);
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void Portrait_ReloadFar(s32 a, s32 b, s32 c);
@@ -90,7 +90,7 @@ s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 #endif
 s32 Resource_LoadByMode(u32 mode, s32 value);
 void SpriteColor_RemapPixelsFar(void *buffer, s32 size);
-void NumberText_FormatDecimal(s32);
+void String_FormatDecimal(s32);
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                 s32 arg4);
 void Icon_BuildAbilityIconTiles(u32 icon, s32 with_base, s32 *slot, s32 *tile,

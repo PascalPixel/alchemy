@@ -79,7 +79,7 @@ struct EffectOptions {
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void MapGrid_WaitForShakeToSettle(void);
 s32 Math_Sine(s32 angle);
 void Task_RemoveFar(void (*func)(void));
@@ -108,9 +108,9 @@ void Func_02001474(void) {
     wait(1);
   while (*(s32 *)((u8 *)leader + 40) != 0);
   Sound_Play(227);
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x20000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x20000, 0x10000);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   for (i = 0; i <= 16;) {
@@ -129,7 +129,7 @@ void Func_02001474(void) {
   }
   *(s32 *)((u8 *)leader + 40) = 0x40000;
   wait(2);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   Task_RemoveFar(Func_02001464);
   spin = 0x200;
   for (i = 0; i <= 7;) {
@@ -308,7 +308,7 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_ObjWalk(12, 488, 226);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  Camera_MoveWithinMapBounds(264 << 16, -1, 320 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(264 << 16, -1, 320 << 16, 1);
   Func_02003ac8();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_ArmCallback(14, 0, 20);
@@ -317,8 +317,8 @@ void Func_02001a3c(void) {
   Actor_SetModeById(14, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != NULL)
-    Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(14, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(14);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
@@ -329,10 +329,10 @@ void Func_02001a3c(void) {
 extern const u8 gData_02003c58[];
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
+void Actor_FaceDirectionById(s32 actor, s32 angle);
 
 static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
-  Actor_ArmCallbackAndRefresh(actor, angle);
+  Actor_FaceDirectionById(actor, angle);
 }
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 
@@ -356,7 +356,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjPlace(14, 344 << 16, 184 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 356, 196);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through the inline
+  /* FAKEMATCH(wrapper): Actor_FaceDirectionById called through the inline
    * ShrineOfTheSeaGod_ObjAngle, here and below; as direct calls, 128 of 656
    * instructions differ in tla-en. */
   ShrineOfTheSeaGod_ObjAngle(14, 0xb000);
@@ -508,7 +508,7 @@ void Func_02001d24(void) {
   Actor_SetModeById(14, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != NULL)
-    Actor_ResetAndSetPosition(14, leader->x >> 16, leader->z >> 16);
+    Actor_SetDestinationById(14, leader->x >> 16, leader->z >> 16);
   Actor_WaitForMoveById(14);
   ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
   GameFlag_SetBit(0x873);
@@ -521,7 +521,7 @@ void Func_02002384(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = off;
-  Camera_MoveWithinMapBounds(480 << 16, 32 << 16, 340 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(480 << 16, 32 << 16, 340 << 16, 1);
   Func_02003ac8();
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(15, 0x100, 40);
@@ -543,7 +543,7 @@ void Func_02002430(void) {
   Event_ResolvePendingActions(0);
   Actor_Stop(15);
   FieldCamera_GetActor()->motionFlags = off;
-  Camera_MoveWithinMapBounds(564 << 16, 32 << 16, 344 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(564 << 16, 32 << 16, 344 << 16, 1);
   Func_02003ac8();
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(15, 0x100, 40);
@@ -605,7 +605,7 @@ void Func_020025fc(void) {
     Event_ResolvePendingActions(0);
     Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
     FieldCamera_GetActor()->motionFlags = done;
-    Camera_MoveWithinMapBounds(328 << 16, 48 << 16, 552 << 16, 1);
+    FieldCamera_MoveWithinMapBounds(328 << 16, 48 << 16, 552 << 16, 1);
     Func_02003ac8();
     done = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 424 << 16, 520 << 16, done);
@@ -635,7 +635,7 @@ void Func_020026f8(void) {
     Event_ResolvePendingActions(0);
     off = 0;
     FieldCamera_GetActor()->motionFlags = off;
-    Camera_MoveWithinMapBounds(320 << 16, -1, 300 << 16, 1);
+    FieldCamera_MoveWithinMapBounds(320 << 16, -1, 300 << 16, 1);
     ShrineOfTheSeaGod_Jump(14, 0x100, 40);
     ShrineOfTheSeaGod_ObjSpeed(14, 0x13333, 0x9999);
     ShrineOfTheSeaGod_ObjWalk(14, 345, 296);
@@ -755,7 +755,7 @@ extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
 extern const u8 gData_02003cbc[];
 extern const u8 gData_02003c10[];
 
-void Actor_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
+void Actor_SetSpriteColor(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b20(s32 a, s32 b, s32 c, s32 d);
 void Func_02003b30(const void *script);
 void Func_02001128(void);
@@ -831,7 +831,7 @@ void Func_02003024(void) {
     Actor_SetModeById(id, 0);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
-    Actor_SetPartAttribute(Actor_GetById(id), 12);
+    Actor_SetSpriteColor(Actor_GetById(id), 12);
     sprite = object->sprite;
     object->x = spot->x;
     object->z = spot->z;

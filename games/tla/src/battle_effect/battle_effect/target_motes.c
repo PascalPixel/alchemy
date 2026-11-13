@@ -215,7 +215,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                                                            COMPOSITE_CLIP_X |
                                                            COMPOSITE_CLIP_Y);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = object->x;
       point[1] = 160 << 13;
@@ -224,9 +224,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 
       // From its turn on, the target's motes turn around it.
       if (frame > member * 8) {
-        SceneTransform_ApplyYaw(frame << 9);
+        Transform_ApplyYaw(frame << 9);
         if (mode <= 1 || mode == 4)
-          SceneTransform_ApplyPitch(frame << 9);
+          Transform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
           struct EffectStep *mote = &PARTICLES[member * 64 + i];
           s32 distance;
@@ -385,7 +385,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
       struct MotionObject *object;
 
       object = GetBattleObjectSlotFar(effect->actors[member])->object;
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       record[0] = object->x;
       record[1] = 160 << 14;
@@ -592,7 +592,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       Sound_PlayFar(212);
     if (frame == 80)
       Sound_PlayFar(142);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
@@ -618,17 +618,17 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
         Transform_Push();
         switch (i & 3) {
         case 0:
-          SceneTransform_ApplyYaw(frame * (i * 32 + 256));
+          Transform_ApplyYaw(frame * (i * 32 + 256));
           break;
         case 1:
-          SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * (i * 32 + 256));
           break;
         case 2:
-          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         case 3:
-          SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
-          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         }
         EffectPosition_ProjectPoint((s32 *)spark, &screen);
@@ -683,7 +683,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
     // The Djinn sways over the targets, then rises away for the last 32
     // frames.
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= effect->count * 8 + 40)
       target[1] += 0x40000;
@@ -701,7 +701,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
           GetBattleObjectSlotFar(effect->actors[member])->object;
       s32 start = member * 8;
 
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       position[0] = object->x;
       position[1] = 160 << 14;
@@ -714,7 +714,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       if (frame == start + 64)
         BattleEffect_TintBattler(effect->actors[member], 0, -1, -1, 0);
       if (frame > start) {
-        SceneTransform_ApplyYaw((frame - start) << 9);
+        Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {
           struct EffectStep *spark = &PARTICLES[member * 64 + i];
 

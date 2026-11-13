@@ -181,7 +181,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     }
     if (frame == 224)
       work->transferMode = 0;
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 31) {
       work->shakeFrames = 8;
@@ -769,7 +769,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       Sound_PlayFar(134);
     if (frame == 226)
       Sound_PlayFar(145);
-    Render_ResetTransformState();
+    Transform_Reset();
 
     // Each time rocks crumble, 32 pieces of debris fly up.
     if (frame == 32) {
@@ -1061,7 +1061,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
     SHARDS[i].variant = -1;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(camera, camera + 3);
 
   // Scatter each target's shards around the middle of its body.
@@ -1264,7 +1264,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
     if (frame == 64)
       BattlePlayback_StartFar(133);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 40)
       BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
@@ -1503,7 +1503,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
   }
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + DJINNI_SHEET);
+  Decompress_TaggedLz(palette, work->sheet + DJINNI_SHEET);
   BattleEffect_FetchRectangleBlitters(effect->side,
                                       draw = blit); // [0] MAX, [1] ADDITIVE
 
@@ -1661,7 +1661,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       s32 start = member * 8;
 
       // The motes turn about a point 40 pixels above the target.
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = object->x;
       point[1] = 40 << 16;
@@ -1681,22 +1681,22 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       if (frame > start) {
         if (mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10 ||
             mode == 12) {
-          SceneTransform_ApplyYaw((frame - start) << 9);
+          Transform_ApplyYaw((frame - start) << 9);
         } else if (mode == 9) {
-          SceneTransform_ApplyYaw((frame - start) << 11);
+          Transform_ApplyYaw((frame - start) << 11);
         } else if (mode == 11) {
         } else if (mode == 13) {
-          SceneTransform_ApplyRoll(frame << 9);
+          Transform_ApplyRoll(frame << 9);
         } else if (mode == 1) {
-          SceneTransform_ApplyPitch(frame << 9);
-          SceneTransform_ApplyRoll(frame << 9);
+          Transform_ApplyPitch(frame << 9);
+          Transform_ApplyRoll(frame << 9);
         } else if (mode == 2 || mode == 12) {
-          SceneTransform_ApplyYaw((frame - member * 40) << 9);
+          Transform_ApplyYaw((frame - member * 40) << 9);
         } else if (mode == 3) {
-          SceneTransform_ApplyYaw((frame - start) << 9);
+          Transform_ApplyYaw((frame - start) << 9);
         } else {
-          SceneTransform_ApplyYaw((frame - start) << 9);
-          SceneTransform_ApplyPitch((frame - start) << 9);
+          Transform_ApplyYaw((frame - start) << 9);
+          Transform_ApplyPitch((frame - start) << 9);
         }
 
         // Four motes come out a frame; in modes 3-5 each fades at
@@ -2068,7 +2068,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
       if (frame == member * 8 + 80)
         Sound_PlayFar(212);
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       // The lights turn about two thirds of the target's height.
       point[0] = object->x;
@@ -2099,13 +2099,13 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
             draw[1] = (DrawRectangle)*slot;
           }
           if (mode == 0) {
-            SceneTransform_ApplyPitch(-frame << 10);
+            Transform_ApplyPitch(-frame << 10);
           } else if (mode == 1) {
           } else if (mode == 2) {
-            SceneTransform_ApplyYaw(frame << 10);
+            Transform_ApplyYaw(frame << 10);
           } else {
-            SceneTransform_ApplyYaw(frame << 10);
-            SceneTransform_ApplyRoll(frame << 10);
+            Transform_ApplyYaw(frame << 10);
+            Transform_ApplyRoll(frame << 10);
           }
           for (i = 0; i != 32; i++) {
             struct EffectStep *flare = &FLARES[member * FLARES_PER_MEMBER + i];
@@ -2364,12 +2364,12 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
       object = GetBattleObjectSlotFar(effect->actors[j])->object;
       if (time > 0) {
         // The picture stands 40 pixels above the target.
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->pos);
         point[0] = object->x;
         point[1] = 160 << 13;
         point[2] = object->z;
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->pos);
         SceneTransform_ApplyPosition(point);
         origin[0] = 0;
@@ -2646,7 +2646,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != gQuake_Timings[effect->variant][TIMING_FRAMES];
        frame++) {
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     // The results begin 16 frames before the end.
     if (frame == gQuake_Timings[effect->variant][TIMING_FRAMES] - 16)
@@ -2798,7 +2798,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     if (frame == (gFire_Counts[effect->variant] >> 1) + 108)
       BattlePlayback_StartFar(133);
     BattleCamera_SetViewFar(0, 0, 0, 100);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
 
     // The embers in flight, two more each frame.
@@ -2956,7 +2956,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     point[0] = 0;
     point[1] = 0;
     point[2] = 512 << 16;
-    Render_ResetTransformState();
+    Transform_Reset();
     SceneTransform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       Sound_PlayFar(115);
@@ -3396,7 +3396,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     struct BattleCamera *camera;
 
     camera = Ram_HeapSlots->cameraWork;
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 2)
       Sound_PlayFar(144);
@@ -4302,7 +4302,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         object = GetBattleObjectSlotFar(effect->actor)->object;
         half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
         camera = Ram_HeapSlots->cameraWork;
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_SetLookAt(camera, camera + 3);
         for (i = 0; i != 24; i++) {
           struct EffectStep *mote = &MOTES[i];
@@ -4412,7 +4412,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 
     // The stars turn about a point 80 pixels in front of the camera.
     camera = Ram_HeapSlots->cameraWork;
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     SceneTransform_ApplyPosition(record);
     star = STARS;
@@ -4423,17 +4423,17 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
         Transform_Push();
         switch (i & 3) {
         case 0:
-          SceneTransform_ApplyYaw(frame * (i + 32) * 8);
+          Transform_ApplyYaw(frame * (i + 32) * 8);
           break;
         case 1:
-          SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * (i + 32) * 8);
           break;
         case 2:
-          SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyRoll(-frame * (i + 32) * 8);
           break;
         case 3:
-          SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
-          SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * (i + 32) * 8);
+          Transform_ApplyRoll(-frame * (i + 32) * 8);
           break;
         }
         EffectPosition_ProjectPoint((s32 *)star, &pos);
@@ -4541,7 +4541,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
 
       // The puffs rise from 40 pixels above the target.
       memberObject = GetBattleObjectSlotFar(effect->actors[member])->object;
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       record[0] = memberObject->x;
       record[1] = 160 << 13;
@@ -4668,7 +4668,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   // Two steps: one `+= 512` reuses the size's constant across the call.
   picture += 256;
   picture += 256;
-  Resource_DecodeType01(picture, tiles);
+  Decompress_TaggedLz(picture, tiles);
   for (i = 0; i != GIANT_PIECES; i++) {
     struct SpriteObject *piece = Func_0815b290(32, 32, 0x80002000, 0);
 
@@ -4716,10 +4716,10 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     slash->variant = 0;
     for (j = 0; j != 24; j++) {
       TRAILS[i * 24 + j].x = (Random16() & 15) + 48;
-      Render_ResetTransformState();
-      SceneTransform_ApplyRoll(Random16() & 0xffff);
-      SceneTransform_ApplyPitch(Random16() & 0xffff);
-      SceneTransform_ApplyYaw(Random16() & 0xffff);
+      Transform_Reset();
+      Transform_ApplyRoll(Random16() & 0xffff);
+      Transform_ApplyPitch(Random16() & 0xffff);
+      Transform_ApplyYaw(Random16() & 0xffff);
       Transform_Store(MATRICES + (i * 24 + j) * 48);
     }
   }
@@ -4842,7 +4842,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   presentation->active = 0;
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
           (volatile u32 *)0x040000d4);
   BG_PLTT[94] = BG_PLTT[244];

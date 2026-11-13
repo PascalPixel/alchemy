@@ -240,7 +240,7 @@ void Func_0200042c(s32 mode, s32 id) {
     FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(560), 1);
   Func_02000200(mode, id);
   if (open)
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
 
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
@@ -306,7 +306,7 @@ void Func_02000514(void) {
       Event_PlaySound(240);
       Actor_SetAnimation(15, 8);
       FieldEvent_Wait(60);
-      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
       Event_End();
     }
   }
@@ -852,7 +852,7 @@ L_02009504:
 L_02009550:
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004b94();
   Event_End();
   return;
@@ -1282,7 +1282,7 @@ void Func_02001cb0(void) {
   FieldActor_Stop(4);
   Actor_SetPosition(24, 0, 0);
   Actor_SetPosition(23, 0, 0);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   Func_02004b94();
   Event_End();
 }
@@ -1349,7 +1349,7 @@ void Func_02002048(void) {
   Actor_SetScript(28, gData_0200d5d0);
   Actor_SetScript(29, gData_02005620);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(25, 1);
+  EventCamera_FollowActor(25, 1);
   Actor_WalkBy(25, 64, 0);
   Actor_WalkByAndWait(27, 64, 0);
   Actor_WalkTo(25, 168, 616);
@@ -1976,7 +1976,7 @@ void Func_02003274(void) {
   Actor_SetSpeed(28, 0xcccc, 0x6666);
   Actor_SetSpeed(30, 0xcccc, 0x6666);
   Actor_SetSpeed(31, 0xcccc, 0x6666);
-  FieldCamera_FollowActor(25, 1);
+  EventCamera_FollowActor(25, 1);
   Actor_WalkByAndWait(25, -16, 16);
   Actor_WalkByAndWait(25, 0, 16);
   Actor_WalkTo(25, 152, 504);
@@ -2062,7 +2062,7 @@ void Func_02003274(void) {
   Actor_ArmCallback(26, 0x5000, 0);
   FieldActor_RefreshSelectorById(30);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   Func_02004b94();
   FieldEvent_Wait(40);
   Func_02004b6c_(0x1a, 0x105, 0x32);

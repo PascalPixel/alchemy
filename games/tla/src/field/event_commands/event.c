@@ -72,9 +72,9 @@ void Event_End(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
     if (party->ownerOverride == 0)
-      Camera_FollowActor(party->currentOwner, 1);
+      FieldCamera_FollowActor(party->currentOwner, 1);
     else
-      Camera_FollowActor(8, 1);
+      FieldCamera_FollowActor(8, 1);
     GameFlag_RefreshLureCapFar();
   }
 }
@@ -92,7 +92,7 @@ struct Actor *Event_RunObjectHookAndWait(s32 object) {
 
 void Event_CallWithLastActiveObjectId(s32 event_id) {
   Event_SpawnObjectTable((struct ActorPlacement *)event_id,
-                         ObjectTable_FindLastActiveId());
+                         Actor_FindLastActiveId());
 }
 
 void Event_SetSceneEvents(s32 events) {

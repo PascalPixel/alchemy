@@ -19,7 +19,7 @@ void BattleObject_Put(void) {
 
 /// Readies every unit's battle graphics, releasing those of departed units,
 /// and keeps their display modes and motions.
-void BattleParty_ListAllUnitsAndSubmit(void) {
+void BattleUnit_ListAllAndSubmit(void) {
   s16 list[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
@@ -35,7 +35,7 @@ s32 Enemy_HasSpriteRoom(s32 arg0) {
   s32 i;
   struct Layout *ptr;
 
-  retval = BattleClass_IsSmall(arg0);
+  retval = BattleSprite_IsSmall(arg0);
   ptr = (struct Layout *)Ram_HeapSlots->battleWork;
   i = 0;
   for (; i < 6; i++) {
@@ -55,12 +55,12 @@ s32 Enemy_HasSpriteRoom(s32 arg0) {
 /// the sprite value below, or 0 when a load fails.
 // The Broken Seal's function of the same name, keyed by the enemy id, with
 // seven two-part sprites.
-s32 SummonSlot_RegisterActorSprites(s32 unit) {
+s32 EnemySprite_LoadIntoSlots(s32 unit) {
   s32 pass;
   struct BattleSpriteSlots *table =
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
   struct BattleUnit *actor = Unit_Get(unit);
-  s32 singleSlot = BattleClass_IsSmall(actor->enemyId);
+  s32 singleSlot = BattleSprite_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
    * pass a copy of its register (mov r4, r10); as an s32 set to 0, 2 of 134
    * instructions differ in tla-en. */
@@ -73,7 +73,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
 
   result.halves[0] = 0;
   result.halves[1] = 0;
-  spriteValue = BattleClass_GetSprite(actor->enemyId);
+  spriteValue = BattleSprite_GetSprite(actor->enemyId);
   pass = result.value;
   do {
     s32 slot;
@@ -98,7 +98,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
     // differ in tla-en.
     slotBuffers = (s32)Data_02018000;
     {
-      s32 flag = BattleClass_GetPalette(actor->enemyId);
+      s32 flag = BattleSprite_GetPalette(actor->enemyId);
       s32 bufferAddr = (slot << 14) + slotBuffers;
 
       if (SpritePictureCache_LoadFar(slot, (u32 *)bufferAddr,

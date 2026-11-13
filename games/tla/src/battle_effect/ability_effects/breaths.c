@@ -104,9 +104,9 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18bc98): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void
@@ -406,19 +406,19 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
 
             model->alpha = alpha;
             for (i = 0; i != count; i++) {
-              Render_ResetTransformState();
+              Transform_Reset();
               if (mode == BREATH_BLAST) {
                 Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
                 SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
-                SceneTransform_ApplyRoll((i << 14) + 0x2000);
-                SceneTransform_ApplyPitch(-0x1000);
+                Transform_ApplyRoll((i << 14) + 0x2000);
+                Transform_ApplyPitch(-0x1000);
               } else {
                 if (effect->side == 0)
                   Func_08015160((mouthX - 72) << 16, (mouthY - 64) << 16, 0);
                 else
                   Func_08015160((mouthX - 56) << 16, (mouthY - 64) << 16, 0);
-                SceneTransform_ApplyYaw(0x32c8);
-                SceneTransform_ApplyPitch(0x4000);
+                Transform_ApplyYaw(0x32c8);
+                Transform_ApplyPitch(0x4000);
               }
               if (mode == BREATH_PIKE)
                 scale /= 2;
@@ -446,7 +446,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                 alpha = 0;
               if (alpha > -64) {
                 model->alpha = alpha;
-                Render_ResetTransformState();
+                Transform_Reset();
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
                   if (effect->side == 0)
@@ -468,9 +468,9 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                                   (mouthY - 64) << 16, 0);
                 }
                 SceneTransform_ApplyScale3(scale, scale, scale);
-                SceneTransform_ApplyYaw(0x36b0);
-                SceneTransform_ApplyPitch(0x4000);
-                SceneTransform_ApplyYaw(frame << 10);
+                Transform_ApplyYaw(0x36b0);
+                Transform_ApplyPitch(0x4000);
+                Transform_ApplyYaw(frame << 10);
                 Render_TransformVertices(Data_08198cac, vertices, 32);
                 Render_DrawModelList__f18bc98(model);
               }
@@ -492,14 +492,14 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           model->kind = 7;
           model->mesh = Data_08199220;
           texture.pixels = work->sheet;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
           if (effect->side == 1)
             angle = -angle;
-          SceneTransform_ApplyRoll(angle);
+          Transform_ApplyRoll(angle);
           SceneTransform_ApplyScale3(0x40000, 0x20000, 0x10000);
           Render_TransformVertices(Data_081991c0, vertices, 4);
           Render_DrawModelList__f18bc98(model);

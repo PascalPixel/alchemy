@@ -24,9 +24,9 @@ void Func_02000038(struct Actor *object) {
 
 void Test_ReceiveFizz(struct Actor *object) {
   if ((gFrameCount >> 1) & 1)
-    Actor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, 15);
   else
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
 }
 
 /// Shrinks the object toward its normal size, and when its timer runs out
@@ -122,7 +122,7 @@ extern const u8 gData_02005ab4[];
 extern const u8 gData_02005ae0[];
 extern const u8 gData_02005b0c[];
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_020004a4(void);
 
@@ -135,7 +135,7 @@ void Func_020001d8(void) {
   for (i = 10; i <= 16; i++) {
     object = Actor_Get(i);
     object->priorityFlags |= 0x80;
-    Animation_ApplyChildValues(object, 5);
+    Actor_SetSpriteColorMode(object, 5);
   }
   if (!Event_GetFlag(0xa3c))
     return;
@@ -146,7 +146,7 @@ void Func_020001d8(void) {
   object = Actor_Get(8);
   object->motionFlags = 4;
   object->y = 0x700000;
-  Animation_ApplyChildValues(object, 5);
+  Actor_SetSpriteColorMode(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(9, 2);
@@ -155,11 +155,11 @@ void Func_020001d8(void) {
   object->y = 0x700000;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
-  Animation_ApplyChildValues(object, 5);
+  Actor_SetSpriteColorMode(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;
   object->priorityFlags |= 2;
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Data_0200eb60 = 0;
   FieldTask_AddFrame(Func_020004a4, 0x480);
 }
@@ -243,7 +243,7 @@ void Func_020004a4(void) {
 
       sprite = object->sprite;
       Actor_StartScript(object, gData_02006ad0);
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
       {
         /* FAKEMATCH(temporary): the masked value held in a local; as
@@ -349,7 +349,7 @@ void Func_0200065c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t4 = Actor_Get(18);
-  Actor_SetSpriteColor(t4, 15);
+  FieldActor_SetSpriteColor(t4, 15);
   Actor_SetPosition(18, 0x2000000, 0x1140000);
   System_Wait(1);
   FieldActor_SetSpritePriority(6, 1);
@@ -547,7 +547,7 @@ void Func_0200065c(void) {
   Func_02000640(3);
   Func_02000640(2);
   t191 = Actor_Get(18);
-  Actor_SetSpriteColor(t191, 0);
+  FieldActor_SetSpriteColor(t191, 0);
   actor = Actor_Get(18);
   FIELD_AT(actor, u8, 85) = 0;
   t194 = Actor_Get(18);
@@ -902,10 +902,10 @@ L_02009638:
   Event_PlaySound(0x23c);
   Actor_SetSpriteColorById(18, 0);
   t528 = Actor_Get(18);
-  Actor_SetSpriteColor(t528, 7);
+  FieldActor_SetSpriteColor(t528, 7);
   FieldEvent_Wait(20);
   t531 = Actor_Get(18);
-  Actor_SetSpriteColor(t531, 0);
+  FieldActor_SetSpriteColor(t531, 0);
   Actor_FaceDirection(0, 0xc000, 0);
   Actor_FaceDirection(1, 0xc000, 0);
   Actor_FaceDirection(2, 0xc000, 0);
@@ -1081,24 +1081,24 @@ L_02009638:
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(0x2013, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
   Call2(Field_RequestBattleFromEncounterTable, 102, 1);
   return;
 }
 
 void Func_02001eb0(struct Actor *object) {
   if ((gData_02006b64 >> gData_02006b6c) & 1)
-    Actor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, 15);
   else
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
   gData_02006b64++;
 }
 
 void Func_02001ee4(struct Actor *object) {
   if ((gData_02006b64 >> gData_02006b6c) & 1)
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
   else
-    Actor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, 15);
 }
 
 extern u8 gData_02005f08[];
@@ -1148,9 +1148,9 @@ void Func_02001f10(void) {
   PaletteFade_ApplySource(0, 0);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(1);
-  Actor_SetSpriteColor((Actor_Get(30)), 15);
-  Actor_SetSpriteColor((Actor_Get(31)), 15);
-  Actor_SetSpriteColor((Actor_Get(32)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(30)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(31)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(32)), 15);
   System_Wait(1);
   FieldActor_SetSpritePriority(21, 1);
   FieldActor_SetSpritePriority(20, 1);
@@ -1204,13 +1204,13 @@ void Func_02001f10(void) {
   FIELD_AT((spill), s32, 108) = 0;
   System_Wait(1);
   Event_PlaySound(103);
-  Actor_SetSpriteColor((Actor_Get(30)), 9);
-  Actor_SetSpriteColor((Actor_Get(31)), 9);
-  Actor_SetSpriteColor((Actor_Get(32)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(30)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(31)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(32)), 9);
   FieldEvent_Wait(20);
-  Actor_SetSpriteColor((Actor_Get(30)), 0);
-  Actor_SetSpriteColor((Actor_Get(31)), 0);
-  Actor_SetSpriteColor((Actor_Get(32)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(30)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(31)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(32)), 0);
   FieldEvent_Wait(20);
   t85 = Random16Far();
   FIELD_AT(t1, u8, 98) = (((u32)(((t85 << 2) + t85) << 4) >> 16) + 40);
@@ -1627,7 +1627,7 @@ void Func_020029ac(void) {
   Party_RemoveMemberRestored(1);
   Actor_Get(20)->collisionFlags |= 8;
   Actor_Get(21)->collisionFlags |= 8;
-  Actor_SetSpriteColor(Actor_Get(28), 0xf);
+  FieldActor_SetSpriteColor(Actor_Get(28), 0xf);
   Actor_SetPosition(28, PIXELS(568), PIXELS(274));
   Actor_Get(17)->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(Actor_Get(17), PIXELS(492), PIXELS(96),

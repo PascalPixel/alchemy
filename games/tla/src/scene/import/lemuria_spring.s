@@ -37,7 +37,7 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global Func_020012e8
 	.thumb_func
 Func_020012e8:
@@ -46,10 +46,10 @@ Func_020012e8:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SelectAnimationFar
-	.global Map_CopyCellPictureIndicesRect
+	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyCellPictureIndicesRect:
-	overlay_veneer Map_CopyCellPictureIndicesRectFar
+MapGrid_CopyCellPictureIndicesRect:
+	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
 	.global Window_Create
 	.thumb_func
 Window_Create:

@@ -44,7 +44,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                         gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags__s00b8(effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -57,7 +57,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute(effect, options->palette);
+    Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Scene_SetActorSpritePriority(effect, options->priority);
@@ -132,18 +132,19 @@ struct Actor;
 extern void Actor_SetSingleChildFlags__scene_tables(
     struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__scene_tables
-/* VIEW(scene_tables): routine Animation_SetStateFlags as void
- * Animation_SetStateFlags(struct Actor *object, u32 value); shaman_village.h
- * has void Animation_SetStateFlags(struct ShamanVillageObject *object, s32
- * flags); tried as the definition's void Animation_SetStateFlags(struct Actor
+/* VIEW(scene_tables): routine Actor_SetBlendMode as void
+ * Actor_SetBlendMode(struct Actor *object, u32 value); shaman_village.h
+ * has void Actor_SetBlendMode(struct ShamanVillageObject *object, s32
+ * flags); tried as the definition's void Actor_SetBlendMode(struct Actor
  * *object, u32 value), which the object already declares, it does not compile
  * in tla-ja: games/tla/include/field/field.h:58: conflicting types for
- * `Animation_SetStateFlags'. */
-extern void Animation_SetStateFlags__scene_tables(
-    struct Actor *object, u32 value) __asm__("Animation_SetStateFlags");
-#define Animation_SetStateFlags Animation_SetStateFlags__scene_tables
+ * `Actor_SetBlendMode'. */
+extern void
+Animation_SetStateFlags__scene_tables(struct Actor *object,
+                                      u32 value) __asm__("Actor_SetBlendMode");
+#define Actor_SetBlendMode Animation_SetStateFlags__scene_tables
 #include "field.h"
-#undef Animation_SetStateFlags
+#undef Actor_SetBlendMode
 #undef Actor_SetSingleChildFlags
 #include "game.h"
 #include "graphics.h"
@@ -240,7 +241,7 @@ void Func_02000420(void) {
 void Func_02000458(struct ShamanVillageObject *object) {
   s32 bit = (((u32)gFrameCount & 3) >> *((u8 *)object + 99)) & 1;
 
-  Actor_SetPartAttribute(object, (u8)(bit * *((u8 *)object + 98)));
+  Actor_SetSpriteColor(object, (u8)(bit * *((u8 *)object + 98)));
 }
 
 // ---- games/tla/src/field/field_effect/circle_blink.c ----
@@ -266,7 +267,7 @@ void Effect_CircleAndBlink(struct Actor *object) {
       Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
-  Actor_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
+  Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
 }
 #undef WORD_AT
 
@@ -375,12 +376,12 @@ row:
       Import_ActorSetMode((struct Actor *)spark, 7);
       Import_ActorSetScript((struct Actor *)spark, gData_02004ae0);
       Actor_SetSingleChildFlags(spark, 0);
-      Actor_SetPartAttribute(spark, 2);
+      Actor_SetSpriteColor(spark, 2);
       spark->update = Effect_CircleAndBlink;
     }
     Event_Wait(1);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020049f4();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(424), 1);
@@ -403,8 +404,8 @@ rise:
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   REG_BLDALPHA = 0x1000;
   REG_BLDCNT = 0x3f42;
-  Map_CopyCellPictureIndicesRect(2, 83, 36, 64, 16, 16);
-  Map_CopyCellPictureIndicesRect(64, 64, 2, 83, 16, 16);
+  MapGrid_CopyCellPictureIndicesRect(2, 83, 36, 64, 16, 16);
+  MapGrid_CopyCellPictureIndicesRect(64, 64, 2, 83, 16, 16);
   REG_BG1CNT &= ~3;
   Task_Add(Func_02000420, 0x480);
   i = 0;
@@ -419,7 +420,7 @@ swirl:
     s32 width = 13;
     s32 height = 11;
 
-    Map_CopyCellPictureIndicesRect(45, 90, 4, 19, width, height);
+    MapGrid_CopyCellPictureIndicesRect(45, 90, 4, 19, width, height);
   }
   {
     s32 control = 0x602;
@@ -477,7 +478,7 @@ frame:
     s32 width = 9;
     s32 height = 11;
 
-    Map_CopyCellPictureIndicesRect(47, 19, 38, 19, width, height);
+    MapGrid_CopyCellPictureIndicesRect(47, 19, 38, 19, width, height);
   }
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0x3f42;
@@ -492,7 +493,7 @@ clear:
   Task_RemoveFar(Func_02000420);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
-  Map_CopyCellPictureIndicesRect(36, 64, 2, 83, 16, 16);
+  MapGrid_CopyCellPictureIndicesRect(36, 64, 2, 83, 16, 16);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
   MapGrid_SetShake(-1, -1, 0xe666);
@@ -516,7 +517,7 @@ fade:
     OBJ14_BYTE(99) = zero;
     wait(30);
     Actor_GetById(14)->update = (void *)zero;
-    Actor_SetPartAttribute(Actor_GetById(14), 6);
+    Actor_SetSpriteColor(Actor_GetById(14), 6);
     MapGrid_WaitForShakeToSettle();
     Event_Wait(60);
     REG_BLDCNT = zero;
@@ -531,7 +532,7 @@ fade:
   REG_DISPCNT |= DISPCNT_BG2_ON;
   Map_CenterOnFollowedPoint();
   wait(1);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020049f4();
   {
     s32 width = 6;
@@ -594,12 +595,12 @@ void Func_02000d68(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     FieldCamera_SetSpeed(0x19999, 0x3333);
-    Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
+    FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 246, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 204, 292);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 182, 280);
-    Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0);
     Event_ShowMessageAndWait(0x200f, 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
@@ -618,10 +619,10 @@ void Func_02000e3c(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     FieldCamera_SetSpeed(0x19999, 0x3333);
-    Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
+    FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 182, 280);
-    Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0);
     Event_ShowMessageAndWait(0x200f, 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
@@ -835,7 +836,7 @@ void Func_0200122c(void) {
       Event_ShowMessageAndWait(17, 0);
       GameFlag_SetBit(0x301);
     }
-    Party_PlaySavedMusic();
+    Scene_PlayMusic();
   }
   Event_End();
 }
@@ -877,7 +878,7 @@ void Func_02001380(void) {
     Func_020049f4();
     Event_Wait(20);
     Event_ShowMessageAndWait(15, 0);
-    Camera_MoveWithinMapBounds(PIXELS(226), -1, PIXELS(280), 1);
+    FieldCamera_MoveWithinMapBounds(PIXELS(226), -1, PIXELS(280), 1);
     Func_020049f4();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
     Event_ShowMessageAndWait(0x200f, 0);
@@ -896,7 +897,7 @@ void Func_02001380(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(15, FACING_NORTH, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(182), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(182), 1);
   Actor_WalkToById(16, 184, 128);
   Actor_WalkToAndWait(17, 264, 128);
   Actor_SetModeById(16, 1);
@@ -923,7 +924,7 @@ void Func_02001644(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_ShowMessageAndWait(15, 0);
     Camera_SetSpeedParameters(0x4cccc, 0x9999);
-    Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(368), 1);
+    FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(368), 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 368);
     GameFlag_ClearBit(0x201);
@@ -931,7 +932,7 @@ void Func_02001644(void) {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Event_ShowMessageAndWait(15, 0);
     Camera_SetSpeedParameters(0x13333, 0x2666);
-    Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(280), 1);
+    FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(280), 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 280);
   }
@@ -942,13 +943,13 @@ void Func_02001764(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x1cccc, 0xe666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_FaceDirection(16, FACING_WEST, 0);
   Actor_FaceDirection(17, FACING_WEST, 0);
-  Actor_ArmCallbackAndRefresh(15, FACING_WEST);
+  Actor_FaceDirectionById(15, FACING_WEST);
   Event_SetMessageId((s32)MsgShamanChallengeTrialRoadPrompt);
   Event_OpenMessage(0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
@@ -994,7 +995,7 @@ void Func_02001880(void) {
   Actor_SetModeById(16, 2);
   target = ((struct ShamanVillageObject *)Actor_GetById(15));
   if (target != NULL)
-    Actor_ResetAndSetPosition(16, ((s16 *)target)[5], ((s16 *)target)[9]);
+    Actor_SetDestinationById(16, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Actor_SetModeById(15, 3);
@@ -1007,14 +1008,14 @@ void Func_02001880(void) {
   Actor_SetModeById(17, 2);
   target = ((struct ShamanVillageObject *)Actor_GetById(15));
   if (target != NULL)
-    Actor_ResetAndSetPosition(17, ((s16 *)target)[5], ((s16 *)target)[9]);
+    Actor_SetDestinationById(17, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(17);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   Event_ShowMessageAndWait(15, 0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Camera_SetSpeedParameters(0x19999, 0x3333);
-  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(200), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(200), 1);
   owner->unk63 = 0;
   shaman->unk63 = 0;
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02004c5c);
@@ -1024,7 +1025,7 @@ void Func_02001880(void) {
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
   Func_02003040();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_SetSpeed(15, 0x19999, 0xcccc);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 184, 128);
@@ -1059,7 +1060,7 @@ void Func_02001aa4(void) {
   Actor_SetModeById(17, 2);
   target = ((struct ShamanVillageObject *)Actor_GetById(15));
   if (target != NULL)
-    Actor_ResetAndSetPosition(17, ((s16 *)target)[5], ((s16 *)target)[9]);
+    Actor_SetDestinationById(17, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(17);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   Actor_SetModeById(15, 3);
@@ -1072,14 +1073,14 @@ void Func_02001aa4(void) {
   Actor_SetModeById(16, 2);
   target = ((struct ShamanVillageObject *)Actor_GetById(15));
   if (target != NULL)
-    Actor_ResetAndSetPosition(16, ((s16 *)target)[5], ((s16 *)target)[9]);
+    Actor_SetDestinationById(16, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Event_ShowMessageAndWait(15, 0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Camera_SetSpeedParameters(0x19999, 0x3333);
-  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(200), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(200), 1);
   owner->unk63 = 0;
   shaman->unk63 = 0;
   Actor_SetMovementTypeById(15, gData_02004c5c);
@@ -1089,7 +1090,7 @@ void Func_02001aa4(void) {
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
   Func_02003040();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_SetSpeed(15, 0x19999, 0xcccc);
   Actor_WalkToById(15, 184, 128);
@@ -1162,10 +1163,10 @@ void Func_02001d3c(void) {
   Event_ShowMessageAndWait(15, 0);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   ((struct ShamanVillageObject *)FieldCamera_GetActor())->motionFlags = 0;
-  Camera_MoveWithinMapBounds(PIXELS(120), 0x320000, PIXELS(224), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(120), 0x320000, PIXELS(224), 1);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 120, 256);
-  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
   ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
       ->actionFlags &= ~1;

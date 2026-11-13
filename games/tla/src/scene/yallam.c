@@ -59,8 +59,8 @@ s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Func_02000088(struct Actor *object, struct Actor *target,
-                  s32 range, s32 force);
+s32 Func_02000088(struct Actor *object, struct Actor *target, s32 range,
+                  s32 force);
 void Func_02001688(void);
 void Func_02002448(struct Actor *object, s32 mode);
 #include "version.h"
@@ -79,8 +79,8 @@ void Func_02002448(struct Actor *object, s32 mode);
 #include "ram_buffer.h"
 #include "macros.h"
 
-s32 Func_02000088(struct Actor *object, struct Actor *target,
-                  s32 range, s32 force) {
+s32 Func_02000088(struct Actor *object, struct Actor *target, s32 range,
+                  s32 force) {
   s32 result = 0;
   s32 *targetPos;
   s32 *objectPos;
@@ -1402,7 +1402,7 @@ void Func_02001944(void) {
   Event_PlaySound(17);
   Actor_FaceDirectionAndWait(8, 0xc000);
   Event_ShowMessage(8, 0);
-  FieldCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(8, 1);
   Actor_SetScript(8, gData_02002998);
   Actor_SetScript(10, gData_020029c0);
   Actor_RunScriptAndWait(9, gData_02002a04);
@@ -1709,7 +1709,8 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 && Event_GetFlag(0x300))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
+      Event_GetFlag(0x300))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;
 }
@@ -1740,7 +1741,7 @@ void Func_020022f8(void) {
     System_Wait(1);
     step += 40;
   }
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   FieldEvent_Wait(2);
   Event_PlaySound(240);
   i = 0;

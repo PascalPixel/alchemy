@@ -51,15 +51,15 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void SceneTransform_ApplyPitch(s32 angle);
-void SceneTransform_ApplyYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void SceneTransform_ApplyRoll(s32 angle);
+void Transform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -273,7 +273,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
         }
       }
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       if (mode <= 1) {
         s32 k = 4;
@@ -506,10 +506,10 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           Transform_Push();
           Func_08015160(0, ((y - i * 8) << 16) + 0x300000, 0);
           if (effect->side == 1) {
-            SceneTransform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(0x8000);
           }
-          SceneTransform_ApplyRoll((i << 10) + 256);
-          SceneTransform_ApplyPitch((i << 13) - (frame << 11));
+          Transform_ApplyRoll((i << 10) + 256);
+          Transform_ApplyPitch((i << 13) - (frame << 11));
           SceneTransform_ApplyScale3(0x21770, 0x10000, 0x10000);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
@@ -535,12 +535,12 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             }
             model->shade = shade;
             if (shade > -64) {
-              Render_ResetTransformState();
+              Transform_Reset();
               Func_08015160((apos.x / 2 - 64) << 16, (apos.y - 64) << 16, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-              SceneTransform_ApplyRoll((i << 14) + 0x2000);
-              SceneTransform_ApplyPitch(-0x1000);
-              SceneTransform_ApplyYaw(frame << 12);
+              Transform_ApplyRoll((i << 14) + 0x2000);
+              Transform_ApplyPitch(-0x1000);
+              Transform_ApplyYaw(frame << 12);
               Func_0801521c(s);
               Render_TransformVertices(gData_08199210, vertices, 4);
               Render_DrawModelList(model);
@@ -574,14 +574,13 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           // complement, not the scroll, is the running value.
           scroll &= 127;
           model->scrollU = scroll;
-          Render_ResetTransformState();
+          Transform_Reset();
           Func_08015160((spos.x / 2 - 64) << 16, (spos.y << 16) - 0x340000, 0);
           if (effect->side == 1) {
-            SceneTransform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(0x8000);
           }
-          SceneTransform_ApplyPitch(i << 15);
-          SceneTransform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >>
-                                   16);
+          Transform_ApplyPitch(i << 15);
+          Transform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >> 16);
           SceneTransform_ApplyScale3(0x14e20, 0x8000, 0x10000);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
@@ -610,13 +609,13 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           for (i = 0; i != 3; i++) {
             Transform_Push();
             if (effect->side == 1) {
-              SceneTransform_ApplyYaw(0x8000);
+              Transform_ApplyYaw(0x8000);
             }
-            SceneTransform_ApplyRoll((i << 10) + 3096);
+            Transform_ApplyRoll((i << 10) + 3096);
             if (mode != 1) {
-              SceneTransform_ApplyPitch((frame + i * 4) << 11);
+              Transform_ApplyPitch((frame + i * 4) << 11);
             } else {
-              SceneTransform_ApplyPitch((i << 13) - (frame << 11));
+              Transform_ApplyPitch((i << 13) - (frame << 11));
             }
             SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
             Render_ProjectVertices(gMapCellBuffer, vertices, 66);

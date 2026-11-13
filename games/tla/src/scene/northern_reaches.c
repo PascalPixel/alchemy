@@ -66,7 +66,7 @@ void Func_020000a8(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
   object1 = Actor_Get(8);
-  Actor_WaitForMove((s32)object1);
+  FieldActor_WaitForMove((s32)object1);
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
@@ -88,7 +88,7 @@ void Func_02000108(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
   object1 = Actor_Get(8);
-  Actor_WaitForMove((s32)object1);
+  FieldActor_WaitForMove((s32)object1);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(176), 1);
@@ -114,7 +114,7 @@ L_020081d2:
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 Animation_ApplyChildValues();
+s32 Actor_SetSpriteColorMode();
 
 void Func_020001d8(void) {
   s32 from[3];
@@ -176,7 +176,7 @@ L_020082ea:
     goto L_0200832c;
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Actor_SetDestinationOffset(8, 0, 16);
-  Actor_WaitForMove(v_r7);
+  FieldActor_WaitForMove(v_r7);
   FieldEvent_Wait(5);
   goto L_020085c6;
 L_0200832c:
@@ -193,7 +193,7 @@ L_0200832c:
   FIELD_AT(v_r8, s32, 24) = 0x18000;
   FIELD_AT(v_r8, s32, 28) = 0x18000;
   t45 = (s32)Actor_Get(10);
-  Animation_ApplyChildValues(t45, 6);
+  Actor_SetSpriteColorMode(t45, 6);
   Actor_SetPosition(10, 0x1d00000, 0xc80000);
   Actor_SetAnimation(10, 1);
   FIELD_AT(v_r6, s32, 24) = 0x8000;
@@ -240,7 +240,7 @@ L_020083da:
   FieldEvent_ShowMessageThenWait(0x2006, 0, 5);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_MoveToAndWait(8, 0x1d0, 176);
-  FieldCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(8, 1);
   Actor_MoveToAndWait(8, 0x1d0, 152);
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
   t79 = FIELD_AT(v_r7, s32, 28);
@@ -341,9 +341,9 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
 
   work = HeapSlot_AllocFar(220, 0x1e58);
   flying = 0;
-  Resource_DecodeType01(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard), work);
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x500, work);
   i = 0;
   particle = work->particles;
@@ -372,9 +372,9 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
    * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
-  Resource_DecodeType01(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), sheet);
-  sparkEntry = Resource_FindFreeEntry();
+  sparkEntry = VramCache_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);
   Heap_Release(sheet);
   timer = &sparks->timer;
@@ -437,11 +437,11 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
     } while ((s32)spark <= (s32)&sparks[95]);
     wait(1);
   }
-  Resource_ResetEntry(sparkEntry);
+  VramCache_FreeEntry(sparkEntry);
   Heap_Release(sparks);
   FieldEvent_Wait(40);
   MapGrid_SetShake(0, 0, 0);
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   HeapSlot_Release(220);
 }
 

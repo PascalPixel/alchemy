@@ -214,6 +214,6 @@ s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
 u32 BattleEffect_HasTrigger(u16 effectId) {
   s32 result;
 
-  result = Event_FindFacingTrigger(effectId);
+  result = Field_FindItemTrigger(effectId);
   return (u32)((0 - result) | result) >> 31;
 }

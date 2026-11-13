@@ -83,17 +83,17 @@ static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading,
 }
 
 /// Changes the cell behavior of the cell at (x, y), in 16.16 pixels,
-/// opening or closing the way (SetMapCellCollision).
+/// opening or closing the way (MapGrid_SetCellBehaviorAt).
 static inline void Field_SetCellBehaviorAt(s32 layer, s32 x, s32 y,
                                            s32 behavior) {
-  SetMapCellCollision(layer, x, y, behavior);
+  MapGrid_SetCellBehaviorAt(layer, x, y, behavior);
 }
 
 /// Changes one 512-pixel tile of the World Map, drawn at once when it's next to
-/// the view (Map_SetWindowCellTile).
+/// the view (WorldMap_SetWindowCellTile).
 static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 px,
                                                    s32 py) {
-  Map_SetWindowCellTile(x, y, px, py);
+  WorldMap_SetWindowCellTile(x, y, px, py);
 }
 
 /// Holds the event for frames while the field goes on (Event_Wait).
@@ -101,7 +101,7 @@ static inline void FieldEvent_Wait(s32 frames) { Event_Wait(frames); }
 
 /// Turns an actor to a direction and holds the event until it has turned.
 static inline void Actor_FaceDirectionAndWait(s32 actorId, s32 facing) {
-  Actor_ArmCallbackAndRefresh(actorId, facing);
+  Actor_FaceDirectionById(actorId, facing);
 }
 
 /// Places an actor at a point at once, as Actor_SetPosition does, facing a
@@ -172,9 +172,9 @@ static inline void FieldEvent_SetMessageId(s32 message) {
   Event_SetMessageId(message);
 }
 
-/// Makes the camera follow an actor (Camera_FollowActor).
-static inline void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
-  Camera_FollowActor(actorId, keepPosition);
+/// Makes the camera follow an actor (FieldCamera_FollowActor).
+static inline void EventCamera_FollowActor(s32 actorId, s32 keepPosition) {
+  FieldCamera_FollowActor(actorId, keepPosition);
 }
 
 /// Actor_SetPositionAndResetMotion, from an event.
@@ -190,9 +190,9 @@ static inline void FieldActor_RefreshSelectorById(s32 actorId) {
   Actor_RefreshSelectorById(actorId);
 }
 
-/// Sets a sprite param of an actor's sprite (Actor_SetPartAttribute).
-static inline void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
-  Actor_SetPartAttribute(actor, param);
+/// Sets a sprite param of an actor's sprite (Actor_SetSpriteColor).
+static inline void FieldActor_SetSpriteColor(struct Actor *actor, s32 param) {
+  Actor_SetSpriteColor(actor, param);
 }
 
 /// Actor_Stop, from an event.
@@ -204,9 +204,9 @@ static inline void FieldEvent_SetExitRequest(s32 request) {
 }
 
 /// Holds the event until an actor has reached its destination
-/// (Script_WaitForEventTimeout).
-static inline void Actor_WaitForMove(void *actor) {
-  Script_WaitForEventTimeout(actor);
+/// (Actor_WaitForMove).
+static inline void FieldActor_WaitForMove(void *actor) {
+  Actor_WaitForMove(actor);
 }
 
 /// PartyInventory_FindMember, from an event.
@@ -233,9 +233,10 @@ static inline s32 FieldEvent_AskYesNoWithActorAnimation(s32 actorId,
 }
 
 /// Sets where the party goes after the event's battle
-/// (Party_SetFields1eeAnd1f0).
-static inline void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
-  Party_SetFields1eeAnd1f0(sceneId, entrance);
+/// (Event_SetAfterBattleDestination).
+static inline void FieldEvent_SetAfterBattleDestination(s32 sceneId,
+                                                        s32 entrance) {
+  Event_SetAfterBattleDestination(sceneId, entrance);
 }
 
 /// Sets where the party goes if it loses the event's battle
@@ -285,9 +286,9 @@ static inline void FieldMapGrid_WaitForShakeToSettle(void) {
   MapGrid_WaitForShakeToSettle();
 }
 
-/// The cell behavior of the cell at (x, y) (GetMapCellCollision).
-static inline s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
-  return GetMapCellCollision(layer, x, y);
+/// The cell behavior of the cell at (x, y) (MapGrid_GetCellBehaviorAt).
+static inline s32 FieldMapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
+  return MapGrid_GetCellBehaviorAt(layer, x, y);
 }
 
 /// Sets how fast an actor's animation runs (Actor_SetActionById).

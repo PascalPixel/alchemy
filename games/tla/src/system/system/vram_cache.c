@@ -112,7 +112,7 @@ s32 VramCache_FreeBlocks(s32 resourceId) {
 
 /// Frees a cache entry and the VRAM it holds; returns -1 for an index out of
 /// range.
-s32 Resource_ResetEntry(u32 resourceIndex) {
+s32 VramCache_FreeEntry(u32 resourceIndex) {
   struct VramBlockCacheEntry *entry = &gResourceTableEntries[resourceIndex];
 
   if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
@@ -155,7 +155,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
     return 0;
   if (entry->size > 16) {
     if (entry->size != size) {
-      Resource_ResetEntry(no);
+      VramCache_FreeEntry(no);
       offset = VramCache_AllocateBlocks(no, size);
     } else {
       offset = entry->offset;
@@ -204,7 +204,7 @@ void VramCache_Reset(void) {
 
 /// Returns the first free cache entry, or VRAM_CACHE_ENTRY_COUNT when all are
 /// in use.
-s32 Resource_FindFreeEntry(void) {
+s32 VramCache_FindFreeEntry(void) {
   s32 ret = VRAM_CACHE_ENTRY_COUNT;
   s32 no;
   struct VramBlockCacheEntry *entry = gResourceTableEntries;
@@ -221,7 +221,7 @@ s32 Resource_FindFreeEntry(void) {
 s32 VramCache_AllocEntry(s32 size) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   VramCache_Load(slot, size, 0);
   return slot;
 }

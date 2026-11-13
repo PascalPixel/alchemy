@@ -605,7 +605,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
                                          Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
-        Resource_ResetEntry(handle);
+        VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto psynergy_menu;
@@ -686,7 +686,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                          Battle_ClassifyEntryKind(ability));
         command->range = ability->range;
         state->iconShown[1] = 0;
-        Resource_ResetEntry(summonIconSlot);
+        VramCache_FreeEntry(summonIconSlot);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto summon_menu;
@@ -853,7 +853,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
                                          Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
-        Resource_ResetEntry(handle);
+        VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto item_menu;
@@ -904,8 +904,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   }
   if (state->timerWindow != NULL)
     Window_Close(state->timerWindow, 1);
-  Resource_ResetEntry(smallIconSlot);
-  Resource_ResetEntry(largeIconSlot);
+  VramCache_FreeEntry(smallIconSlot);
+  VramCache_FreeEntry(largeIconSlot);
   Task_Remove(UpdateLinkSessionCountdown);
   if (state->linkTimer != 0) {
     struct BattleWork *link;
@@ -962,7 +962,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     if (state->timerWindow != NULL)
       Window_Close(state->timerWindow, 1);
   }
-  Camera_ConfigureSceneFar(0);
+  BattleCamera_SetCommandViewFar(0);
   HeapSlot_Release(228);
   if (commandCount >= 0)
     commandCount += forcedCount;
@@ -1164,7 +1164,7 @@ void IconMenu_Close(void) {
   i = 0;
   while (i < (s32)FIELD_AT_OFFSET(work, s16 *, 0x8E)) {
     entry = (u16 *)((u8 *)work + 0x12) + i * 10;
-    Resource_ResetEntry(*entry);
+    VramCache_FreeEntry(*entry);
     i += 1;
   }
   HeapSlot_Release(232);
@@ -1326,7 +1326,7 @@ void IconMenu_AddIcon(s32 no) {
   if (index <= 5) {
     work->count++;
     entry = &work->entries[index];
-    slot = Resource_FindFreeEntry();
+    slot = VramCache_FindFreeEntry();
     CommandIcon_LoadIntoSlot(slot, no);
     entry->x = index * 24 + 32;
     flags = 136;

@@ -33,7 +33,7 @@ struct Work020023c4 {
 void Func_020024c0();
 void Func_02004bc0(struct Actor *actor, s32 a);
 s32 Func_02004c38(struct Actor *actor, struct Vector3 *position);
-void Animation_ApplyChildValues(struct Actor *actor, s32 a);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 void Func_02002614(void);
 extern u8 gInventorySnapshot[];
 
@@ -152,7 +152,7 @@ int Func_02002860(void) {
   }
   FieldEvent_Wait(30);
   leader->update = 0;
-  Animation_ApplyChildValues(leader, 0);
+  Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
 
@@ -251,7 +251,7 @@ void Func_020029c8(struct Actor *actor) {
       object->bounce = 0x8000;
       sprite = object->sprite;
       source = work->owner->sprite;
-      Resource_ResetEntry(sprite->vramBlock);
+      VramCache_FreeEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);

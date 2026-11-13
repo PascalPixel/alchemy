@@ -43,7 +43,8 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
-s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count) {
+s32 LuckyWheels_ScaleRgb555(u16 *source, u16 *destination, s32 scale,
+                            s32 count) {
   s32 remaining;
   u32 red_mask;
   u32 green_mask;
@@ -80,7 +81,7 @@ s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count) {
 /// Sends the 256x128 8bpp canvas to VRAM 0x06003500 on the frames its transfer
 /// is pending, then clears or fades it; a task, as The Broken
 /// Seal's.
-void BattleStaging_ProcessPendingTileTransfer(void) {
+void LuckyWheels_TransferCanvas(void) {
   struct BattleFxTransferWork *work;
   u8 *buf;
 
@@ -106,7 +107,7 @@ void BattleStaging_ProcessPendingTileTransfer(void) {
   }
 }
 
-void Palette_DarkenSceneStep(void) {
+void Palette_DarkenScreenStep(void) {
   u16 *color;
   s32 i;
 
@@ -1091,12 +1092,12 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+                      sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_SlotsMachinePicture);
   Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
   entry += 32;
-  Resource_DecodeType01(entry, tiles);
+  Decompress_TaggedLz(entry, tiles);
   j = 0;
   for (k = 0; k != 20; k++) {
     for (i = 0; i != 30; i++) {
@@ -1157,12 +1158,12 @@ void LuckyWheels_Run(void) {
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
     Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
     entry += 480;
-    Resource_DecodeType01(entry, tiles);
+    Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)0x06010000, 0x84001b30, REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpotBanner);
     Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
     entry += 32;
-    Resource_DecodeType01(entry, tiles);
+    Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)JACKPOT_TILES, JACKPOT_COPY, REG_DMA3);
     WindowSystem_InitFieldFar();
     LuckyWheels_InitializeTitle();
@@ -1205,8 +1206,8 @@ void LuckyWheels_Run(void) {
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
     Dma_Set((void *)0x05000000, bgShade, 0x84000080, REG_DMA3);
     Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
-    Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
-    Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
+    LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
     REG_DISPCNT = 0x3740;
     if (PartyInventory_CountItemFar(228) == 1) {
       struct Window *window = Window_CreateFar(
@@ -1227,12 +1228,12 @@ void LuckyWheels_Run(void) {
     work->transferPending = 0;
     Task_Add(LuckyWheels_Update, 0x480);
     Task_Add(Func_081b3294, 0xc80);
-    Task_Add(BattleStaging_ProcessPendingTileTransfer, 0xc80);
+    Task_Add(LuckyWheels_TransferCanvas, 0xc80);
 
     for (frame = 0; state->state != 10; frame++) {
       if (frame <= 16) {
-        Graphics_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
-        Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12, 0x100);
       }
       if (state->state == 3) {
         s32 phase = frame % 80;
@@ -1248,7 +1249,7 @@ void LuckyWheels_Run(void) {
         else
           Palette_StepTowardResource((s32)&ResourceId_JupiterDjinnSheet);
         if (state->timer <= 15)
-          Palette_DarkenSceneStep();
+          Palette_DarkenScreenStep();
         if (state->timer > 16 && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
@@ -1345,15 +1346,15 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
-                           0x100);
-      Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0x10000 - (j << 12),
-                           0x100);
+      LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
+                              0x100);
+      LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0x10000 - (j << 12),
+                              0x100);
       wait(1);
     }
     HeapSlot_Release(188);
     HeapSlot_Release(104);
-    Task_Remove(BattleStaging_ProcessPendingTileTransfer);
+    Task_Remove(LuckyWheels_TransferCanvas);
     Task_Remove(LuckyWheels_Update);
     Task_Remove(Func_081b3294);
     HeapSlot_Release(180);

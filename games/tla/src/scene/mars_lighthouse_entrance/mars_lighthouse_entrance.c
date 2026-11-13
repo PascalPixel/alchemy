@@ -173,7 +173,7 @@ next:
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = 0x8000;
-      Animation_ApplyChildValues(object, 1);
+      Actor_SetSpriteColorMode(object, 1);
     }
   }
   if (--i >= 0)
@@ -227,7 +227,7 @@ void Func_02000590(void) {
     FieldEvent_ResolvePendingActions(0);
     Func_02004dd0();
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
-    Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
     FieldCamera_MoveTo(PIXELS(688), -1, PIXELS(360), 1);
     Func_02004d20();
@@ -509,7 +509,7 @@ fill:
   *word++ = 0x11111111;
   if (--count >= 0)
     goto fill;
-  gData_020068a2 = Resource_FindFreeEntry();
+  gData_020068a2 = VramCache_FindFreeEntry();
   Vram_Load(gData_020068a2, 0x100, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02000d18, TASK_PASS_VBLANK);

@@ -348,8 +348,8 @@ s32 Scene_Initialize(void) {
       ActorPlace(29, 0, 0);
       ActorPlace(30, 0, 0);
     } else {
-      Actor_SetSpriteColor(Actor_Get(29), 3);
-      Actor_SetSpriteColor(Actor_Get(30), 5);
+      FieldActor_SetSpriteColor(Actor_Get(29), 3);
+      FieldActor_SetSpriteColor(Actor_Get(30), 5);
     }
     if (FlagCheck(0x8ab)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
@@ -372,9 +372,9 @@ s32 Scene_Initialize(void) {
   }
   Func_02000534();
   if (FlagCheck(0x8ff))
-    Actor_SetSpriteColor(Actor_Get(33), 2);
+    FieldActor_SetSpriteColor(Actor_Get(33), 2);
   else
-    Actor_SetSpriteColor(Actor_Get(28), 2);
+    FieldActor_SetSpriteColor(Actor_Get(28), 2);
   return 0;
 }
 
@@ -596,7 +596,7 @@ void Func_020007dc(void) {
   Actor_SetSpriteColorById(8, 0);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_WaitForAnimationChange(8);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   Func_02001e68();
   Actor_FaceEachOther(11, 4, 0);
   Actor_RunRepeatedMotion(11, 2);

@@ -50,7 +50,7 @@ void Func_020013f0(void) {
   Actor_ArmCallback(4, FACING_SOUTH, 0);
   Actor_WaitForMoveById(6);
   Event_Wait(10);
-  Camera_MoveWithinMapBounds(PIXELS(432), -1, PIXELS(368), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(432), -1, PIXELS(368), 1);
   Func_020028f4();
   Event_Wait(10);
   Actor_ShowEmote(18, 0x101, 30);
@@ -465,7 +465,7 @@ void Func_020013f0(void) {
   Actor_WalkByAndWaitById(18, 0, -12);
   Event_Wait(1);
   Actor_GetById(18)->actionFlags |= 1;
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetScreenShake(0, 0, 0);
   Event_Wait(10);
   Actor_ShowEmote(18, 0x102, 30);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
@@ -497,7 +497,7 @@ void Func_020013f0(void) {
   target->update = 0;
   Actor_SetSingleChildFlags((s32)Actor_GetById(18), 1);
   Event_Wait(40);
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetScreenShake(0, 0, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, 0x108, 30);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
@@ -542,24 +542,22 @@ void Func_020013f0(void) {
   Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(12, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(12);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetModeById(5, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetModeById(6, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(6, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   Event_End();

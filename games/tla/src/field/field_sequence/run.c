@@ -97,8 +97,8 @@ s32 FieldSequence_Run(void) {
   else
     Func_080e2718();
   WindowSystem_InitFieldFar();
-  ObjectSystem_InitializeFar(mode);
-  BattleEffect_ResetCounters();
+  ActorSystem_InitializeFar(mode);
+  Field_ClearRequests();
   work->events = (const void *)OVERLAY_CALL(9);
   BattleMap_ApplySceneEntranceView();
   Func_080caa4c(OVERLAY_CALL(7));
@@ -109,7 +109,7 @@ s32 FieldSequence_Run(void) {
     Djinn_RestoreActorAfterBattle();
   work->queuedSound = -1;
   if (mode == 3) {
-    Map_UpdateCurrentTileBlockFar();
+    WorldMap_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gMainRoutineWork.x, gMainRoutineWork.z);
   } else {
     Map_ApplySetFlagEditsFar();
@@ -137,7 +137,7 @@ s32 FieldSequence_Run(void) {
     gMainRoutineWork.pausedObject = -1;
     gMainRoutineWork.cloaked = 0;
   }
-  FieldEffect_ResumeCloakCheck();
+  FieldPsynergy_ResumeCloakCheck();
   /* FAKEMATCH(signature): Field_GetSceneAttributes declared returning s32,
    * though it returns s16; as s16, 17 of 1300 instructions differ in
    * tla-en. */
@@ -348,7 +348,7 @@ s32 FieldSequence_Run(void) {
         work->raisedEvent = 0;
       } else if (work->coordEvent != 0) {
         work->busy = 1;
-        Scene_RunTouchOrExit(work->coordEvent);
+        Scene_RunStepTriggerOrExit(work->coordEvent);
         work->busy = 0;
         work->coordEvent = 0;
       } else if (work->pushCell != 0) {
@@ -380,7 +380,7 @@ s32 FieldSequence_Run(void) {
         if (talk) {
           work->talk = value | 0x4000;
           work->menu = 0;
-        } else if ((talk = Actor_GetTriggerTileAheadOfCurrent()) != 0) {
+        } else if ((talk = Actor_GetTriggerCellAheadOfCurrent()) != 0) {
           work->searchCell = talk;
           work->menu = 0;
         } else {
@@ -443,7 +443,7 @@ s32 FieldSequence_Run(void) {
         if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
           DebugSceneSelect_RunFar();
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
-          Debug_RunPaletteEditor();
+          PaletteEditor_Run();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
         } else {
@@ -514,7 +514,7 @@ struct Object__field_sequence {
   u8 kind;
 };
 
-s32 Actor_GetTriggerTileAheadOfCurrent(void) {
+s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *mapBytes;
   struct Object__field_sequence *leader;

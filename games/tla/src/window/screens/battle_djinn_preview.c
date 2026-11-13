@@ -30,7 +30,7 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   u8 *src;
 
   dst = out;
-  NumberText_FormatDecimal(value);
+  String_FormatDecimal(value);
   src = gNumberTextBuffer;
   n = 0xD;
   do {
@@ -117,7 +117,7 @@ s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
                                    s32 ability) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Resource_LoadIndexedEntryToBuffer(ability, slot);
     WindowSprite_Create(slot, OUTPUT_SIZE_16X16, input, x, y);

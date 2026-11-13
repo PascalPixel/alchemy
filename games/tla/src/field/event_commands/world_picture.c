@@ -35,7 +35,7 @@ void WorldPicture_Initialize(void) {
   Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;
-  work->vramBlock = Resource_FindFreeEntry();
+  work->vramBlock = VramCache_FindFreeEntry();
   work->unk644 = 0;
   work->unk648 = 0;
   Dma_Fill32(0, markerTiles, 0x80);
@@ -109,8 +109,8 @@ void WorldPicture_Initialize(void) {
 #include "system.h"
 
 void WorldPicture_Release(void) {
-  Resource_ResetEntry(gWorldMapWork.vramBlock);
-  Resource_ResetEntry(gWorldMapWork.windowSlot);
+  VramCache_FreeEntry(gWorldMapWork.vramBlock);
+  VramCache_FreeEntry(gWorldMapWork.windowSlot);
   Window_CloseFar((u32)gWorldMapWork.window, 2);
 }
 

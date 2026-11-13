@@ -470,7 +470,7 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
     Func_02001214(actor, 3);
   }
   Sound_Play(226);
-  Script_WaitForEventTimeout(leader);
+  Actor_WaitForMove(leader);
   Func_02001214(actor, 2);
   Sound_Play(298);
   Event_End();
@@ -632,11 +632,10 @@ void Func_020010ac(void) {
   Event_Wait(60);
   t12 = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 532)));
   if (t12 != 0) {
-    Actor_ResetAndSetPosition(8, FIELD_AT(t12, s16, 10),
-                              FIELD_AT(t12, s16, 18));
+    Actor_SetDestinationById(8, FIELD_AT(t12, s16, 10), FIELD_AT(t12, s16, 18));
   }
   Event_Wait(20);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
   FIELD_AT(&gMainRoutineWork, u8, 587) = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the

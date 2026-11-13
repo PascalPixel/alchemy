@@ -50,7 +50,7 @@ s32 Func_0200508c(u16 *list);
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MarsLighthouseAerie_ObjTurn(s32 id, s32 angle) {
-  Actor_ArmCallbackAndRefresh(id, angle);
+  Actor_FaceDirectionById(id, angle);
 }
 
 #endif

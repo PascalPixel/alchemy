@@ -269,24 +269,24 @@ void MainRoutine_Run(s32 mode) {
       if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
         GameFlag_ClearBit(0x11a);
       else
-        Party_PlaySavedMusic();
+        Scene_PlayMusic();
     } else if (gMainRoutineWork.returnCue != -1) {
       Sound_PlayFar(gMainRoutineWork.returnCue);
     } else {
-      Party_PlaySavedMusic();
+      Scene_PlayMusic();
     }
     gMainRoutineWork.map = record->mapIndex;
-    BattleEffect_LoadResourceGroup(0);
+    Scene_LoadOverlay(0);
     entrance = FieldSequence_Run(entrance);
     Scene_TakeExit(entrance);
   }
 }
 
-void BattleEffect_LoadResourceGroup(s32 unused) {
+void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table = gScenes;
   s16 scene = gMainRoutineWork.scene;
 
-  Resource_LoadCode(table[scene].resourceId, &gOverlayArea);
+  Overlay_Load(table[scene].resourceId, &gOverlayArea);
 }
 
 #define SCENE_RECORD(id) (&gScenes[id])
@@ -338,7 +338,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
   GameFlag_RefreshLureCapFar();
 }
 
-void Party_PlaySavedMusic(void) { Sound_PlayFar(gMainRoutineWork.cue); }
+void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.cue); }
 
 #undef EXIT_SCENE_MASK
 #undef EXIT_ENTRANCE

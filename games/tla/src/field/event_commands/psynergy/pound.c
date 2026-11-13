@@ -73,10 +73,10 @@ void Func_080dba5c(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+s32 Decompress_TaggedLz(const void *source, void *destination);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -187,8 +187,8 @@ void FieldPsynergy_Pound(void) {
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
-                        Ram_HeapSlots->battleFxWork[1]);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
+                      Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
 
   // A once-only block: without it the canvas mode load is scheduled one row
@@ -196,7 +196,7 @@ void FieldPsynergy_Pound(void) {
   do {
     Iwram_FillWordsEntry(work, size, 0);
   } while (0);
-  glowEntry = Resource_FindFreeEntry();
+  glowEntry = VramCache_FindFreeEntry();
   glowTile = VramCache_Load(glowEntry, size, work);
   glow = &work->glow;
   Func_080eaf98(glow, 32, 32, 0xc0000000, glowTile);
@@ -212,9 +212,8 @@ void FieldPsynergy_Pound(void) {
   glow->x = pos[0];
   glow->y = pos[2];
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GoldStar),
-                        work);
-  starEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GoldStar), work);
+  starEntry = VramCache_FindFreeEntry();
   starTile = VramCache_Load(starEntry, 0x100, work);
   for (j = 0, particle = work->particles; j < 32; j++, particle++) {
     sprite = &work->sprites[j];
@@ -282,8 +281,8 @@ void FieldPsynergy_Pound(void) {
     Func_080dbf94(shine, shine->x, shine->y, shine->z);
   }
   Actor_Destroy(shine);
-  Resource_ResetEntry(starEntry);
-  Resource_ResetEntry(glowEntry);
+  VramCache_FreeEntry(starEntry);
+  VramCache_FreeEntry(glowEntry);
   BattleEffect_EndCanvasSprite();
 end:
   FieldPsynergy_FadeFromCastColor();

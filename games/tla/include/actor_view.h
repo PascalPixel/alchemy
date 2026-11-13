@@ -30,7 +30,7 @@ struct ActorSpriteView {
 
 struct FieldSprite;
 
-/// struct Actor as BattleEffect_SetRandomTableValueOnObject and its restorer
+/// struct Actor as FieldPsynergy_UpdateHaltedActor and its restorer
 /// read it (age_and_cue.c): as struct Actor, its update hook's type
 /// disagrees with the routine it stores there.
 struct ActorView {
@@ -45,7 +45,7 @@ struct ActorView {
   union {
     struct ActorSpriteView *child;     ///< kind 1
     struct ActorSpriteView **children; ///< kind 2
-    struct FieldSprite *sprite;      ///< kind 1
+    struct FieldSprite *sprite;        ///< kind 1
     struct AnimationObject *animation;
   } target;
   u8 kind;     ///< 1 one sprite, 2 a group of sprites
@@ -70,8 +70,8 @@ void Actor_StartScript(struct Actor *, const s32 *);
 void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32);
 void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32);
-void Animation_ApplyChildValues(struct Actor *, u32);
-void Animation_ApplyChildValuesFar(struct Actor *, u32);
+void Actor_SetSpriteColorMode(struct Actor *, u32);
+void Actor_SetSpriteColorModeFar(struct Actor *, u32);
 void Actor_SetSpritePriorityDirect(struct Actor *, s32);
 
 extern const s32 gActor_CameraScript[];

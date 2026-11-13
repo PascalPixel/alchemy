@@ -9,11 +9,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
 Map_CenterOnFollowedPoint:
@@ -33,7 +33,7 @@ Func_020007d4:
 	.global Func_020007dc
 	.thumb_func
 Func_020007dc:
-	overlay_veneer Map_SetShownLayersFar
+	overlay_veneer MapGrid_SetShownLayersFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
 FieldMessage_ShowCentered:

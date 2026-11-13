@@ -144,7 +144,7 @@ FieldEffect_WaterSplash:
 	.global FieldEffect_IceShard
 FieldEffect_IceShard:
 	.incbin "games/tla/src/graphics/field_effects/ice_shard.8bpp.lz"
-	.byte 0x08	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x08	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.global FieldEffect_WhiteSparkle
 FieldEffect_WhiteSparkle:
 	.incbin "games/tla/src/graphics/field_effects/white_sparkle.8bpp.lz"
@@ -178,7 +178,7 @@ FieldEffect_StarSparkleFade:
 	.ifdef TLA_EDITION_JA
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.else
-	.byte 0x01, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x01, 0x00, 0x00	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.endif
 	.global FieldEffect_WhitePuff
 FieldEffect_WhitePuff:
@@ -186,5 +186,5 @@ FieldEffect_WhitePuff:
 	.ifdef TLA_EDITION_JA
 	.byte 0x00, 0x0b	@ PACKER: left in the buffer by FieldEffect_Explosion+0x1d2
 	.else
-	.byte 0x12, 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x12, 0x40	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.endif

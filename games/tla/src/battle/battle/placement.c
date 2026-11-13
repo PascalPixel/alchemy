@@ -70,12 +70,12 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_Get(unitId);
   palette = 0;
-  registeredSprite = SummonSlot_RegisterActorSprites(unitId);
+  registeredSprite = EnemySprite_LoadIntoSlots(unitId);
 
   if (unit->classIndex == 0) {
-    sprite = BattleClass_GetSprite(unit->enemyId);
+    sprite = BattleSprite_GetSprite(unit->enemyId);
     if (registeredSprite == 0)
-      palette = BattleClass_GetPalette(unit->enemyId);
+      palette = BattleSprite_GetPalette(unit->enemyId);
     else
       sprite = registeredSprite;
   } else {
@@ -453,8 +453,8 @@ void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
 /// flagged and 38 when not.
 // The Broken Seal's function of the same name, keyed by the enemy id, with
 // nine enemies forward where it names two.
-void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
-                            s32 *zPositions) {
+void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
+                                   s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
   s32 z = ((count - 1) * totalSpacing) / 2;
   s32 index;
@@ -470,7 +470,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       spacing = 25;
       if ((u16)(actorIds[index] - 254) > 1) {
         actor = Unit_Get(actorIds[index]);
-        spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
+        spacing = BattleSprite_IsSmall(actor->enemyId) ? 27 : 38;
         enemy = actor->enemyId;
         if (enemy == 357 || enemy == 348 || enemy == 91 || enemy == 92 ||
             enemy == 93 || enemy == 94 || enemy == 95 || enemy == 96 ||
@@ -485,7 +485,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     if ((u16)(actorIds[index] - 254) > 1) {
       struct BattleUnit *actor = Unit_Get(actorIds[index]);
 
-      spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
+      spacing = BattleSprite_IsSmall(actor->enemyId) ? 27 : 38;
     }
     z -= spacing / 2;
   }
@@ -529,7 +529,7 @@ void Enemy_Update(void) {
     count++;
   }
   total = last + 1;
-  Summon_LayoutPositions(unitIds, total, x, z);
+  BattlePlacement_LayoutEnemies(unitIds, total, x, z);
   for (i = 0; i < total; i++) {
     s32 id = unitIds[i];
 
@@ -580,7 +580,7 @@ void BattleUnit_RefreshPlacement(void) {
   for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
     ids[i] = work->enemyIds[i];
   count = i;
-  Summon_LayoutPositions(ids, count, x, z);
+  BattlePlacement_LayoutEnemies(ids, count, x, z);
   for (i = 0; i < count; i++, stand++) {
     s32 id = work->enemyIds[i];
 

@@ -89,8 +89,8 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   actor->unk30 = distance / 16;
   actor->unk34 = from->y;
   actor->unk14 = (from->y - to->y) / 16;
-  Animation_SetStateFlags(actor, 1);
-  Actor_SetSpriteColor(actor, (u16)part);
+  Actor_SetBlendMode(actor, 1);
+  FieldActor_SetSpriteColor(actor, (u16)part);
   Scene_SetActorSpritePriority(actor, 2);
   Func_020032e0(actor, 7);
   Actor_SetSingleChildFlags(actor, 0);
@@ -109,8 +109,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
   s32 i;
 
   for (i = 0; i != 16;) {
-    struct Actor *object =
-        (FieldActor_Create(0x2a0, x, y, 0x980000));
+    struct Actor *object = (FieldActor_Create(0x2a0, x, y, 0x980000));
     s32 angle = i << 12;
 
     FieldVector_AddPolarOffset(0x200000, angle, &object->x);
@@ -122,8 +121,8 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     object->unk4c = 0x200000;
     object->gravity = y;
     object->motionFlags = 0;
-    Animation_SetStateFlags(object, 1);
-    Actor_SetSpriteColor(object, (u16)part);
+    Actor_SetBlendMode(object, 1);
+    FieldActor_SetSpriteColor(object, (u16)part);
     Scene_SetActorSpritePriority(object, 2);
     Func_020032e0(object, 7);
     Actor_SetSingleChildFlags(object, 0);
@@ -137,7 +136,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 
   t0 = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), 0x980000);
   t0->motionFlags = 4;
-  Actor_SetSpriteColor(t0, (u16)a2);
+  FieldActor_SetSpriteColor(t0, (u16)a2);
   Scene_SetActorSpritePriority(t0, 2);
   Func_020032e0(t0, 7);
   Actor_SetSingleChildFlags(t0, 0);

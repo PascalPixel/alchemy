@@ -33,8 +33,8 @@ extern u8 gMapCellBuffer[];
  * games/tla/src/scene/venus_lighthouse/floor.c:71: invalid type argument of
  * `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                    s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 /* VIEW(floor): routine Actor_RefreshSelectorById as void
  * Actor_RefreshSelectorById(s32 actor); actor.h has void
@@ -43,21 +43,21 @@ void Actor_SetMovementTypeById(s32 actor, const void *callback);
  * instructions in tla-ja. */
 extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__(
     "Actor_RefreshSelectorById");
-/* VIEW(floor): routine Actor_SetPartAttribute as void
- * Actor_SetPartAttribute(struct VenusActor *object, s32 value); event.h has
- * void Actor_SetPartAttribute(struct Actor *object, s32 attribute); tried as
- * the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+/* VIEW(floor): routine Actor_SetSpriteColor as void
+ * Actor_SetSpriteColor(struct VenusActor *object, s32 value); event.h has
+ * void Actor_SetSpriteColor(struct Actor *object, s32 attribute); tried as
+ * the definition's void Actor_SetSpriteColor(struct Actor *object, s32
  * attribute), which the object already declares, Func_020006ac moves: 3 of 85
  * instructions in tla-ja. */
 extern void
 Actor_SetPartAttribute__floor(struct VenusActor *object,
-                              s32 value) __asm__("Actor_SetPartAttribute");
+                              s32 value) __asm__("Actor_SetSpriteColor");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_02001b2c(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Script_WaitForEventTimeout(struct Actor *actor);
+void Actor_WaitForMove(struct Actor *actor);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
 /* VIEW(floor): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
  * actor, s32 height, s32 frames); event.h has s32 Actor_ShowEmoteById(s32
@@ -76,7 +76,7 @@ static inline s32 Venus_FlagCheck(s32 flag) { return GameFlag_Test(flag); }
 
 static inline void Venus_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w,
                                    s32 h) {
-  Map_CopyCellPictureIndicesRect(sx, sy, dx, dy, w, h);
+  MapGrid_CopyCellPictureIndicesRect(sx, sy, dx, dy, w, h);
 }
 
 void Func_020006ac(void) {
@@ -132,7 +132,7 @@ void Func_0200078c(void) {
   s32 z = leader->zPixel;
 
   if ((u32)(leader->xPixel - 676) > 7 || z < 788 || z >= 796) {
-    Map_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     Venus_CopyCells(55, 117, 41, 117, 3, 5);
     GameFlag_ClearBit(0x201);
     leader->motionFlags |= 1;
@@ -142,7 +142,7 @@ void Func_0200078c(void) {
     Import_EventStart();
     Event_ResolvePendingActions(0);
     Event_Wait(5);
-    Map_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     Venus_CopyCells(52, 117, 41, 117, 3, 5);
     GameFlag_SetBit(0x201);
     Sound_Play(161);
@@ -254,8 +254,8 @@ void SceneState_ApplySixRectsAfterFlag161(void) {
   MapGrid_CopyCellsTo(117, 55, 110, 55, a, a);
 }
 
-#define Actor_SetPartAttribute                                                 \
-  ((void (*)(struct Actor *, s32))Actor_SetPartAttribute)
+#define Actor_SetSpriteColor                                                   \
+  ((void (*)(struct Actor *, s32))Actor_SetSpriteColor)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -294,16 +294,16 @@ s32 VenusLighthouse_Start(void) {
     Func_02000d30();
     Import_EventEnd();
   } else {
-    Actor_SetSpriteColor(Actor_Get(10), 6);
-    Actor_SetSpriteColor(Actor_Get(17), 6);
-    Actor_SetSpriteColor(Actor_Get(18), 6);
-    Actor_SetSpriteColor(Actor_Get(19), 6);
-    Actor_SetSpriteColor(Actor_Get(20), 6);
-    Actor_SetSpriteColor(Actor_Get(21), 6);
-    Actor_SetSpriteColor(Actor_Get(22), 6);
-    Actor_SetSpriteColor(Actor_Get(23), 6);
-    Actor_SetSpriteColor(Actor_Get(24), 6);
-    Actor_SetSpriteColor(Actor_Get(25), 6);
+    FieldActor_SetSpriteColor(Actor_Get(10), 6);
+    FieldActor_SetSpriteColor(Actor_Get(17), 6);
+    FieldActor_SetSpriteColor(Actor_Get(18), 6);
+    FieldActor_SetSpriteColor(Actor_Get(19), 6);
+    FieldActor_SetSpriteColor(Actor_Get(20), 6);
+    FieldActor_SetSpriteColor(Actor_Get(21), 6);
+    FieldActor_SetSpriteColor(Actor_Get(22), 6);
+    FieldActor_SetSpriteColor(Actor_Get(23), 6);
+    FieldActor_SetSpriteColor(Actor_Get(24), 6);
+    FieldActor_SetSpriteColor(Actor_Get(25), 6);
   }
   return 0;
 }
@@ -328,16 +328,16 @@ s32 VenusLighthouse_Start(void) {
     Func_02000d30();
     Import_EventEnd();
   } else {
-    Actor_SetSpriteColor(Actor_Get(10), 6);
-    Actor_SetSpriteColor(Actor_Get(17), 6);
-    Actor_SetSpriteColor(Actor_Get(18), 6);
-    Actor_SetSpriteColor(Actor_Get(19), 6);
-    Actor_SetSpriteColor(Actor_Get(20), 6);
-    Actor_SetSpriteColor(Actor_Get(21), 6);
-    Actor_SetSpriteColor(Actor_Get(22), 6);
-    Actor_SetSpriteColor(Actor_Get(23), 6);
-    Actor_SetSpriteColor(Actor_Get(24), 6);
-    Actor_SetSpriteColor(Actor_Get(25), 6);
+    FieldActor_SetSpriteColor(Actor_Get(10), 6);
+    FieldActor_SetSpriteColor(Actor_Get(17), 6);
+    FieldActor_SetSpriteColor(Actor_Get(18), 6);
+    FieldActor_SetSpriteColor(Actor_Get(19), 6);
+    FieldActor_SetSpriteColor(Actor_Get(20), 6);
+    FieldActor_SetSpriteColor(Actor_Get(21), 6);
+    FieldActor_SetSpriteColor(Actor_Get(22), 6);
+    FieldActor_SetSpriteColor(Actor_Get(23), 6);
+    FieldActor_SetSpriteColor(Actor_Get(24), 6);
+    FieldActor_SetSpriteColor(Actor_Get(25), 6);
   }
   return 0;
 }
@@ -364,7 +364,7 @@ static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
 }
 
 static inline void Venus_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Venus_MessagePut(s32 actor, s32 value) {
@@ -449,7 +449,7 @@ void Func_02000d30(void) {
   struct EventWork *work;
 
   FieldEvent_SetMessageId((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
-  FieldCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(8, 1);
   Func_02001c4c();
   FieldEvent_Wait(30);
   Venus_ObjWalk(5, 664, 840);
@@ -1080,4 +1080,4 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(SceneState_ApplySixRectsAfter161)},
     {TRIGGERS_END},
 };
-#undef Actor_SetPartAttribute
+#undef Actor_SetSpriteColor

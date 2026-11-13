@@ -850,7 +850,7 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     FIELD_AT((t0 + 0x55), u8, 0) = 0;
     FIELD_AT(((t0 + 0x55) + 0xf), u16, 0) = 0;
     FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-    Actor_SetSpriteColor(t0, 7);
+    FieldActor_SetSpriteColor(t0, 7);
     FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
         ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
     Actor_SetSingleChildFlags(t0, 0);
@@ -859,7 +859,7 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     FIELD_AT(t0, s32, 104) = 0x3c;
     FIELD_AT(t0, s32, 108) = (s32)Func_0200181c;
     Call2(Func_020043c4, t0, 5);
-    Animation_SetStateFlags(t0, 1);
+    Actor_SetBlendMode(t0, 1);
   }
 }
 
@@ -909,7 +909,7 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     cell = object->x >> 16;
     FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x,
                              object->y, object->z);
-    Actor_WaitForMove(object);
+    FieldActor_WaitForMove(object);
     object->facing = 0xc000;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner, gData_020046f8);
@@ -947,7 +947,7 @@ void Func_02001b7c(void) {
   cell = object->x >> 16;
   FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x,
                            object->y, object->z - 0x40000);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->facing = 0xc000;
   Event_PlaySound(128);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
@@ -1381,7 +1381,7 @@ void Func_020027e4(void) {
     }
   }
   FieldActor_SetSpritePriority(20, 1);
-  Actor_SetSpriteColor(((s32)Actor_Get(20)), 0xf);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(20)), 0xf);
 }
 
 void Func_02002878(void) {
@@ -1395,7 +1395,7 @@ void Func_02002878(void) {
   s32 t20;
 
   FieldActor_SetSpritePriority(19, 1);
-  Actor_SetSpriteColor(((s32)Actor_Get(19)), 0xf);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(19)), 0xf);
   t3 = Event_GetFlag(0xa3d);
   if (t3 == 0) {
     t4 = Event_GetFlag(0x9c0);
@@ -2081,9 +2081,9 @@ void Func_02004254(void) {
   struct Rock *rock;
   struct RockSprite__s4254 *sprite;
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
-                        work);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
+                      work);
+  entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
   work->resource = entry;
@@ -2114,7 +2114,7 @@ void Func_02004310(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_02004114);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 

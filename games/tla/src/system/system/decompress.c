@@ -5,7 +5,7 @@
 #include "../system_internal.h"
 #include "ram_code.h"
 
-void Resource_DecompressHalfwords(const void *source, void *destination) {
+void Decompress_Halfwords(const void *source, void *destination) {
   u8 routine[(u32)Resource_DecompressHalfwordsCodeSize];
 
   Dma_Set((const void *)Resource_DecodeHalfwordLzCode, routine,
@@ -14,7 +14,7 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
   ((void (*)(const void *, void *))routine)(source, destination);
 }
 
-s32 Resource_DecodeType01(const void *source, void *destination) {
+s32 Decompress_TaggedLz(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;
 

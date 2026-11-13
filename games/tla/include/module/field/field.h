@@ -938,7 +938,7 @@ s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 
 s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
-void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
+void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position);
 
@@ -967,9 +967,9 @@ extern u8 Grid_DrawOutlineCodeSize[];
 
 extern const u8 Data_080209a8[];
 
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
+void SpriteAnimation_Start(struct AnimationEntry *work, s32 no);
 
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
+u8 *Decompress_Lz(const u8 *source, u8 *destination);
 
 s32 Party_CheckItemLimit(s32 item);
 
@@ -984,22 +984,22 @@ void BattleBackground_SelectForMap(void);
 s32 Func_080ca9cc(s32 id, s32 *position);
 void ObjectTable_Clear(void);
 
-void BattleParty_ApplyDrain(s32 amount, s32 unused);
+void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 scaled);
 s32 Party_ApplyPoisonDamage(void);
 void *WorldMap_Unfreeze(void);
 
-s32 Actor_GetTriggerTileAheadOfCurrent(void);
+s32 Actor_GetTriggerCellAheadOfCurrent(void);
 u32 Stream_ReadU16(u8 **cursor);
 s16 Stream_ReadS16(u8 **cursor);
 void BattleMap_ApplySceneEntranceView(void);
 
-void Debug_RunPaletteEditor(void);
+void PaletteEditor_Run(void);
 
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
 s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedEvent(s32 id);
-s32 Scene_RunTouchOrExit(s32 value);
+s32 Scene_RunStepTriggerOrExit(s32 value);
 s32 Field_RunPushCell(s32 keys);
 s32 Func_080cd808(s32 id);
 
@@ -1019,7 +1019,7 @@ void ObjectEvent_SetMode6WithCue(u32 objectId);
 struct Actor *ObjectEvent_GetObject(u32 objectId);
 void ObjectEvent_Remove(u32 objectId);
 
-void Camera_ResetSceneDefaults(void);
+void Camera_ResetViewDefaults(void);
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
 extern char ResourceId_FarCall00C;
@@ -1040,18 +1040,18 @@ extern char ResourceId_SlotsJackpotBanner;
 
 extern u8 gData_02028000[];
 
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
+s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 void BattleEffect_LoadBufferPaletteFar(void *palette);
 
 void TilesetAnim_StartAll(const u16 *script);
 extern char ResourceId_DefaultMapCells;
 
-void Map_UpdateCurrentTileBlock(void);
+void WorldMap_UpdateCurrentTileBlock(void);
 
 extern const u16 gData_0802f054[8];
 
-void ObjectSystem_Initialize(s32 mode);
+void ActorSystem_Initialize(s32 mode);
 
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 
@@ -1065,16 +1065,16 @@ void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
 void ActorScript_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
                                     s32 value);
-void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareFacing(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
 void ActorScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
                                s32 value);
 void ActorScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
                                s32 value);
 void ActorScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
                                s32 value);
-void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
-                               s32 value);
+void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
 void ActorScript_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
                                     s32 value);
 void ActorScript_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
@@ -1111,8 +1111,8 @@ void ActorScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
                                          s32 operation, s32 value);
 void ActorScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
                                          s32 operation, s32 value);
-void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
+                                              s32 operation, s32 value);
 void ActorScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
                                           s32 operation, s32 value);
 void ActorScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
@@ -1142,7 +1142,7 @@ void Icon_DrawItemFar(s32 item);
 
 s32 Func_080cec24(s32 value, s32 *out);
 
-void SetMapCellCollisionFar(s32 terrain, s32 x, s32 z, s32 value);
+void MapGrid_SetCellBehaviorAtFar(s32 terrain, s32 x, s32 z, s32 value);
 
 void ResourceMetadata_ClearRecordFar(void *record);
 
@@ -1175,7 +1175,7 @@ extern const u8 gData_080f38b2[];
 
 void Func_080203a0(struct Actor *object, s32 kind);
 
-s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 z);
 
 s32 MapGrid_IsWallAtFar(s32 *position);
 
@@ -1209,7 +1209,7 @@ extern const s32 gData_0802f1e8[];
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
+s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 struct Actor *Actor_Create(s32 kind, s32 x, s32 y, s32 z);
@@ -1237,7 +1237,7 @@ void ObjectTable_Snapshot(void);
 
 void Actor_ResetTargetsAndVelocity(u32 objectId);
 
-void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index);
+void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index);
 
 void Scene_ChooseMusic(void);
 void Func_080c9de0(s32 id, s32 variant);

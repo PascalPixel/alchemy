@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 
-extern u8 gCharacterMenu_CursorWidths[];
+extern u8 gStatusScreen_CursorWidths[];
 extern u8 gMenu_ListOrderDefault[];
 extern u8 gMenu_ListOrderMode0[];
 extern u8 gMenu_ListOrderMode1[];

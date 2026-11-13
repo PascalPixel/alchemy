@@ -49,7 +49,7 @@ struct RideWork {
   void *handle;
 };
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_0200236c(void);
 
 s32 Func_02000038(struct Actor *object) {
@@ -125,7 +125,7 @@ next:
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = 0x8000;
-      Animation_ApplyChildValues(object, 1);
+      Actor_SetSpriteColorMode(object, 1);
     }
   }
   if (--i >= 0)
@@ -360,7 +360,7 @@ void Func_020005b0(void) {
   Actor_SetAnimation(12, 4);
   FieldEvent_Wait(60);
   gMainRoutineWork.battleRule24b = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov6abRoom1, 20);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6abRoom1, 20);
   gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66c;
   Field_RequestBattleFromEncounterTable(102, 0);
 }
@@ -374,7 +374,7 @@ void Func_020005b0(void) {
 
 void Event_End();
 void Actor_MoveToObject();
-void Party_PlaySavedMusic();
+void Scene_PlayMusic();
 extern u8 MsgMarsStar01[];
 extern u8 gData_0200491c[];
 extern u8 gData_02004958[];
@@ -400,9 +400,9 @@ void Func_02000714(void) {
   t10 = Actor_Get(14);
   Actor_SetSingleChildFlags(t10, 0);
   t12 = Actor_Get(15);
-  Actor_SetSpriteColor(t12, 7);
+  FieldActor_SetSpriteColor(t12, 7);
   t14 = Actor_Get(16);
-  Actor_SetSpriteColor(t14, 7);
+  FieldActor_SetSpriteColor(t14, 7);
   System_Wait(1);
   FieldActor_SetPositionAndResetMotion(v5, FIELD_AT(v5, s32, 8), 0,
                                        (FIELD_AT(v5, s32, 16) + -0x80000));
@@ -428,13 +428,13 @@ void Func_02000714(void) {
   FieldEvent_Wait(20);
   Event_PlaySound(151);
   t28 = Actor_Get(11);
-  Actor_SetSpriteColor(t28, 7);
+  FieldActor_SetSpriteColor(t28, 7);
   t30 = Actor_Get(12);
-  Actor_SetSpriteColor(t30, 7);
+  FieldActor_SetSpriteColor(t30, 7);
   t32 = Actor_Get(13);
-  Actor_SetSpriteColor(t32, 7);
+  FieldActor_SetSpriteColor(t32, 7);
   t34 = Actor_Get(14);
-  Actor_SetSpriteColor(t34, 7);
+  FieldActor_SetSpriteColor(t34, 7);
   FieldEvent_Wait(20);
   Event_PlaySound(190);
   Actor_MoveToObject(15, 11);
@@ -450,9 +450,9 @@ void Func_02000714(void) {
   Actor_RunScriptAndWait(16, (s32)&gData_02004958);
   FieldEvent_Wait(10);
   t50 = Actor_Get(13);
-  Actor_SetSpriteColor(t50, 0);
+  FieldActor_SetSpriteColor(t50, 0);
   t52 = Actor_Get(14);
-  Actor_SetSpriteColor(t52, 0);
+  FieldActor_SetSpriteColor(t52, 0);
   FieldEvent_Wait(80);
   Actor_RunRepeatedMotion(13, 2);
   Actor_SetAnimation(13, 5);
@@ -519,7 +519,7 @@ L_02008a2c:
   Actor_SetAnimation(13, 10);
   Actor_SetAnimation(14, 9);
   Event_SetFlag(0xa3b);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Event_End();
 }
 
@@ -633,7 +633,7 @@ void Func_02000bd8(void) {
     object->acceleration = 0x20000;
     FieldActor_SetMoveTarget(object, leader->x, leader->y + 0x200000,
                              leader->z);
-    Actor_WaitForMove(Data_02004cec);
+    FieldActor_WaitForMove(Data_02004cec);
     Event_PlaySound(83);
     PartyInventory_Remove(224);
     Inventory_AddItem(4, 222);
@@ -736,7 +736,7 @@ void Func_02000e50(void) {
 extern char SceneId_Ov6ACRoom3;
 extern char SceneId_Ov66d;
 
-void Party_PlaySavedMusic(void);
+void Scene_PlayMusic(void);
 void Func_02001424(void);
 
 #if !TLA_PATCH_1
@@ -826,14 +826,14 @@ void Func_02000e80(void) {
     object->speedLimit = 0x20000;
     object->acceleration = 0x10000;
     FieldActor_SetMoveTarget(object, 0x2a00000, 0, 0xa00000);
-    Actor_WaitForMove((s32)*slot);
+    FieldActor_WaitForMove((s32)*slot);
     Event_PlaySound(135);
     object = *slot;
     object->acceleration = 0x8000;
     object->velocityY = 0x40000;
     object->speedLimit = 0x10000;
     FieldActor_SetMoveTarget(object, 0x2980000, 0, 0x9e0000);
-    Actor_WaitForMove((s32)*slot);
+    FieldActor_WaitForMove((s32)*slot);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
@@ -848,7 +848,7 @@ void Func_02000e80(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
   FieldEvent_Wait(1);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Event_SetFlag(0xa30);
   gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66d;
   Event_End();
@@ -906,14 +906,14 @@ L_02008ea2:
     object->speedLimit = 0x20000;
     object->acceleration = 0x10000;
     FieldActor_SetMoveTarget(object, 0x2a00000, 0, 0xa00000);
-    Actor_WaitForMove((s32)*slot);
+    FieldActor_WaitForMove((s32)*slot);
     Event_PlaySound(135);
     object = *slot;
     object->acceleration = 0x8000;
     object->velocityY = 0x40000;
     object->speedLimit = 0x10000;
     FieldActor_SetMoveTarget(object, 0x2980000, 0, 0x9e0000);
-    Actor_WaitForMove((s32)*slot);
+    FieldActor_WaitForMove((s32)*slot);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
@@ -925,7 +925,7 @@ L_02008ea2:
   if (object != 0)
     Func_020041ec(object);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Event_End();
   goto L_020093b0;
 L_0200905c:
@@ -1004,14 +1004,14 @@ L_0200905c:
     object2->speedLimit = 0x20000;
     object2->acceleration = 0x10000;
     FieldActor_SetMoveTarget(object2, 0x2a00000, 0, 0xa00000);
-    Actor_WaitForMove((s32)*slot2);
+    FieldActor_WaitForMove((s32)*slot2);
     Event_PlaySound(135);
     object2 = *slot2;
     object2->acceleration = 0x8000;
     object2->velocityY = 0x40000;
     object2->speedLimit = 0x10000;
     FieldActor_SetMoveTarget(object2, 0x2980000, 0, 0x9e0000);
-    Actor_WaitForMove((s32)*slot2);
+    FieldActor_WaitForMove((s32)*slot2);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
@@ -1023,7 +1023,7 @@ L_0200905c:
   if (object2 != 0)
     Func_020041ec(object2);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Event_SetFlag(0xa30);
   Event_SetFlag(0xa9e);
   gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66d;
@@ -1057,7 +1057,7 @@ void Func_020013e4(struct Actor *object) {
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1424.c ----
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
+void Actor_SetBlendMode(struct Actor *object, u32 value);
 
 void Func_02001424(void) {
   u32 frame = gFrameCount;
@@ -1111,7 +1111,7 @@ void Func_02001424(void) {
     *(s32 *)&object->watchedObject = 60;
     object->update = Func_020013e4;
     Func_020041cc(object, 5);
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -1347,7 +1347,7 @@ extern const u8 gData_02004744[];
 DEFINE_FUNC_02001B38(Func_02001b38, Func_020041cc, gData_02004744)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1b78.c ----
-void Animation_SetStateFlags(struct Actor *object, u32 value);
+void Actor_SetBlendMode(struct Actor *object, u32 value);
 void Func_02001a9c();
 /* VIEW(s1b78): routine Func_02001b38 as void Func_02001b38(struct Actor
  * *object, s32 priority); the definition has void Func_02001b38(struct Actor
@@ -1376,7 +1376,7 @@ void Func_02001b78(s32 *position, s32 base) {
     object->timer = angle;
     Func_02001b38__s1b78(object, 2);
     object->update = Func_02001a9c;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 

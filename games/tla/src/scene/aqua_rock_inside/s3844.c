@@ -35,7 +35,7 @@ void Func_020039f0(s32 *position, s32 base) {
     object->timer = angle;
     Func_02003994(object, 3);
     object->update = (void (*)(void))Func_0200389c;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 

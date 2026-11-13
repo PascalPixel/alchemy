@@ -22,6 +22,6 @@ s32 Battle_CalculatePsynergyPowerFar(s32 value, s32 selector, s32 multiplier);
 s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 s16 Unit_AddPpFar(s32 unit, s32 amount);
 s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
-s32 BattleEffect_CheckDead(s32 effect);
+s32 Ability_EffectAppliesToDowned(s32 effect);
 
 #endif

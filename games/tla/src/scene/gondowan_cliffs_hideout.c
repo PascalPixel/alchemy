@@ -45,7 +45,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
     Camera_SetSpeedParameters(0x10000, 0x2000);
-    Camera_FollowActor(8, 1);
+    FieldCamera_FollowActor(8, 1);
     Func_0200020c();
     Actor_FaceActorById(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
     {

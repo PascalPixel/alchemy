@@ -367,10 +367,10 @@ void Func_02000a8c(void) {
   Event_ResolvePendingActions(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov661Room4) {
-    Camera_FollowActor(16, 1);
+    FieldCamera_FollowActor(16, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   } else if (scene == (s32)&SceneId_Ov661Room5) {
-    Camera_FollowActor(21, 1);
+    FieldCamera_FollowActor(21, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   }
   // Entered at its test, which keeps the test single and the address load

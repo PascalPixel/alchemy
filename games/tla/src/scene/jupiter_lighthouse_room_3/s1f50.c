@@ -19,11 +19,11 @@ void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetScreenShake(a, b, c);
 }
 
 DEFINE_FUNC_02001E24(Func_02001f50, Func_02001788)
@@ -32,7 +32,7 @@ void Func_02001d48();
 void Func_02001db8();
 
 DEFINE_FUNC_0200180C(Func_020020e8, gData_02002e34, Func_02001d48,
-    Func_02001db8)
+                     Func_02001db8)
 
 #include "cell_target.h"
 

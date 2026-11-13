@@ -108,9 +108,9 @@ void FieldPsynergy_TremorOnTarget(void) {
     goto release;
 
   FieldPsynergy_FadeToCastColor();
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ShakeTiles),
-                        work->picture);
-  tiles = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ShakeTiles),
+                      work->picture);
+  tiles = VramCache_FindFreeEntry();
   tile = VramCache_Load(tiles, 64, work->picture);
   for (i = 0, particle = work->particles; i < SHAKE_SPRITE_COUNT;
        i++, particle++) {
@@ -210,7 +210,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   }
   Func_080e8c9c();
   ViewMove_RestoreNearbySprites();
-  Resource_ResetEntry(tiles);
+  VramCache_FreeEntry(tiles);
   FieldPsynergy_FadeFromCastColor();
 release:
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);

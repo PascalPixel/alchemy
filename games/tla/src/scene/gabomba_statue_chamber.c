@@ -263,7 +263,7 @@ void Func_02000184(void) {
   Sound_Play(0);
   Sound_Play(220);
   Actor_SetModeById(8, 3);
-  Actor_SetPartAttribute(((s32)Actor_GetById(13)), 7);
+  Actor_SetSpriteColor(((s32)Actor_GetById(13)), 7);
   Actor_SetPosition(13, 0x1a80000, 0x680000);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(40);
@@ -291,7 +291,7 @@ void Func_02000184(void) {
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_FaceDirection(9, 0xd000, 0);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 392, 104);
-  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0xc000);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   if (gData_02002058 != 0) {
     leader = OBJECT(gMainRoutineWork.currentOwner);
@@ -299,7 +299,7 @@ void Func_02000184(void) {
     object->motionFlags = 0;
     Actor_SetMoveTarget((s32)object, leader->x, leader->y + 0x240000,
                         leader->z);
-    Script_WaitForEventTimeout((s32)gData_02002058);
+    Actor_WaitForMove((s32)gData_02002058);
   }
   PartyInventory_GiveItem(242, 0);
   if (gData_02002058 != 0)
@@ -382,7 +382,7 @@ void Func_02000a98(s32 x, s32 z) {
                             0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Actor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -415,7 +415,7 @@ void Func_02000b70(void) {
   Func_02000a98(424, 100);
 }
 
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Suspend(void);
 
 void Func_02000be8(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -425,7 +425,7 @@ void Func_02000be8(void) {
 
   Func_02001da0();
   Event_ResolvePendingActions(0);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   step = 1;
   for (i = 0; i < 352; i++) {
     if (i >= 17 && i < 80) {
@@ -476,11 +476,11 @@ void Func_02000d3c(void) {
 
   Func_02001da0();
   Event_ResolvePendingActions(0);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 0, -8);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0x4000);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0x4000);
   Sound_Play(308);
   step = 1;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -512,7 +512,7 @@ void Func_02000e50(void) { GameFlag_ClearBit(518); }
 void Func_02000e60(void) {
   Func_02001da0();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(120), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(120), 1);
   Func_02001ea8();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgIHaveFollowed);
@@ -520,7 +520,7 @@ void Func_02000e60(void) {
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
   Event_ShowMessageAndWait(10, 0);
-  Actor_ArmCallbackAndRefresh(10, FACING_EAST);
+  Actor_FaceDirectionById(10, FACING_EAST);
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionAndWait(10, FACING_NORTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(10, 4);
@@ -542,10 +542,10 @@ DEFINE_FUNC_02000F00(Func_02000f00, 230)
 DEFINE_FUNC_02000F00(Func_02000f88, 242)
 
 void Func_02001010(void) {
-  Map_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);
+  MapGrid_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);
   MapGrid_CopyCellAttributes(85, 78, 5, 11, 22, 15);
   MapGrid_CopyCellsTo(86, 30, 86, 20, 5, 2);
-  Map_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
+  MapGrid_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
 }
 
 void Func_02001064(void) {
@@ -554,8 +554,8 @@ void Func_02001064(void) {
 }
 
 void Func_02001094(void) {
-  Map_CopyCellPictureIndicesRect(0, 1, 26, 6, 1, 1);
-  Map_CopyCellPictureIndicesRect(0, 65, 26, 70, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 6, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(0, 65, 26, 70, 1, 1);
   MapGrid_CopyCellAttributes(0, 2, 3, 3, 25, 5);
 }
 
@@ -661,12 +661,12 @@ void Func_020010d4(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Actor_ShowEmoteById(11, 0x100, 40);
   Event_ShowMessage(0x400b, 0);
   Actor_ShowEmoteById(6, 261, 20);
   Event_ShowMessage(0x4006, 0);
-  Actor_ArmCallbackAndRefresh(5, turnA);
+  Actor_FaceDirectionById(5, turnA);
   Event_ShowMessageAndWait(0x1005, 0);
   Actor_ArmCallback(5, FACING_NORTHWEST, 0);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
@@ -698,7 +698,7 @@ void Func_020010d4(void) {
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
   Camera_SetSpeedParameters(0x19999, 0x3333);
-  Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(200), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(200), 1);
   Actor_SetSpeed(12, 0x13333, 0x9999);
   Actor_WalkToAndWait(12, 404, 220);
   Actor_Jump(12, 4, 10);
@@ -732,7 +732,7 @@ void Func_020010d4(void) {
   Actor_ShowEmoteById(5, 261, 20);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
   Actor_WalkToAndWait(5, 420, 228);
-  Actor_ArmCallbackAndRefresh(5, FACING_NORTHWEST);
+  Actor_FaceDirectionById(5, FACING_NORTHWEST);
   Event_Wait(10);
   Actor_SetSpeed(5, 0x19999, 0xcccc);
   Actor_WalkToAndWait(5, 412, 222);
@@ -928,7 +928,7 @@ void Func_02001b14(void) {
 
 #include "../../include/system/io_reg.h"
 
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Suspend(void);
 
 void Func_02001ba8(void) {
   if (GameFlag_Test(265)) {
@@ -940,7 +940,7 @@ void Func_02001ba8(void) {
       s32 blend = 1;
       s32 i;
 
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
       i = 0;
     loop:
       if (i >= 17 && i <= 79) {

@@ -19,7 +19,7 @@ struct PaletteSnapshot {
 /// The palette cycling queue: four cycles and how many are in use.
 struct PaletteSnapshotWork {
   struct PaletteSnapshot entries[4];
-  /// Cycles in use, 0 to 4; PaletteQueue_StepCycles masks four to none.
+  /// Cycles in use, 0 to 4; PaletteCycle_Step masks four to none.
   u16 count;
 };
 
@@ -32,9 +32,9 @@ STATIC_ASSERT(sizeof(struct PaletteSnapshotWork) == 0xb4);
 STATIC_ASSERT(offsetof(struct PaletteSnapshotWork, count) == 0xb0);
 
 void PaletteCycle_Initialize(void);
-s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
+s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count);
 void PaletteQueue_Stop(void);
-void PaletteQueue_StepCycles(void);
+void PaletteCycle_Step(void);
 
 struct PaletteCycle {
   u16 *source;

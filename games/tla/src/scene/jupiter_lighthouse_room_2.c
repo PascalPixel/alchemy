@@ -86,7 +86,7 @@ void Func_020000d0(s32 kind) {
 
     Task_AddFrame(Func_020000b4, priority);
   }
-  FieldCamera_FollowActor(owner, 1);
+  EventCamera_FollowActor(owner, 1);
   for (i = 35; i >= 0; i--) {
     leader->y += -0x10000;
     System_Wait(1);
@@ -147,7 +147,7 @@ void Func_02000230(s32 kind) {
 
     Task_AddFrame(Func_020000b4, priority);
   }
-  FieldCamera_FollowActor(owner, 1);
+  EventCamera_FollowActor(owner, 1);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
@@ -378,7 +378,7 @@ void Func_020007d0(void) {
     object->timer = Random16Far();
     object->unk66 = phase;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
   }
 }

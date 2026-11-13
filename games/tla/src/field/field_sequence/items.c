@@ -56,7 +56,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
 /// Rewritten from The Broken Seal's form: The Lost Age asks
 /// Party_GetLeaderActor for the actor and Item_MatchesFilter for
 /// the trigger's item.
-s32 Event_FindFacingTrigger(s32 source) {
+s32 Field_FindItemTrigger(s32 source) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
@@ -156,7 +156,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
   }
 
-  event = (struct ItemTrigger *)Event_FindFacingTrigger(itemId);
+  event = (struct ItemTrigger *)Field_FindItemTrigger(itemId);
   if (event != 0 && event->value != 0) {
     GameFlag_ClearBit(0x143);
     GameFlag_ClearBit(0x142);

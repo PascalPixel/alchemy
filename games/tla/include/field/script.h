@@ -19,8 +19,8 @@ struct ScriptInterpreter {
   u8 conditionResult; ///< the last flag test, read by SC_IF and SC_IFNOT
   u8 padding58[5];    ///< the object's own fields; not read by the commands
   u8 repeatCount;     ///< SC_LOOP's count of jumps so far
-  /// Frames left of SC_WAIT (n - 1 when it starts); Script_FindLabel clears
-  /// it.
+  /// Frames left of SC_WAIT (n - 1 when it starts); ActorScript_FindLabel
+  /// clears it.
   s16 lookupResult;
   /// Frames a solid object has blocked the object; SC_SYNC stops waiting
   /// after 60 and clears it.
@@ -96,7 +96,7 @@ STATIC_ASSERT(offsetof(struct ScriptOperands, word6c) == 0x6c);
 STATIC_ASSERT(sizeof(struct ScriptOperands) == 0x70);
 
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *interpreter);
-s32 Script_ClearByte54(struct ScriptInterpreter *interpreter);
-s32 Script_SetByte54(struct ScriptInterpreter *interpreter);
+s32 ActorScript_HideSprites(struct ScriptInterpreter *interpreter);
+s32 ActorScript_ShowSprite(struct ScriptInterpreter *interpreter);
 
 #endif

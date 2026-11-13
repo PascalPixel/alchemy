@@ -369,7 +369,7 @@ void Func_020007a4(s32 unused, s32 id) {
     object->priorityFlags &= ~2;
     FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
     Event_Wait(30);
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
     Func_02002bd4();
     Event_End();
     return;
@@ -473,7 +473,7 @@ void Func_02000a74(void) {
   }
   object->motionFlags = 0;
   FieldEvent_Wait(30);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02002bd4();
 }
 
@@ -699,7 +699,7 @@ DEFINE_FUNC_02000378(Func_020012a8, Func_02002b54, Func_02002c44)
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 DEFINE_FUNC_020012FC(Func_020012fc)

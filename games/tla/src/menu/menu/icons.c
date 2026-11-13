@@ -19,12 +19,12 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   struct ItemMenuBlocks *activeState;
 
   activeState = Ram_HeapSlots->menuRuntime;
-  firstSlot = Resource_FindFreeEntry();
+  firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = (s16)firstSlot;
   if (firstSlot != -1) {
     VramBlock_LoadResourceFar(firstSlot, 0x80, (s32)&ResourceId_ItemMenuTilesA);
   }
-  secondSlot = Resource_FindFreeEntry();
+  secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = (s16)secondSlot;
   if (secondSlot != -1) {
     VramBlock_LoadResourceFar(secondSlot, 0x80,
@@ -35,8 +35,8 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 void Menu_ResetTwoResourceEntries(void) {
   struct ItemMenuBlocks *state = Ram_HeapSlots->menuRuntime;
 
-  Resource_ResetEntry((u16)state->resourceSlots[0]);
-  Resource_ResetEntry((u16)state->resourceSlots[1]);
+  VramCache_FreeEntry((u16)state->resourceSlots[0]);
+  VramCache_FreeEntry((u16)state->resourceSlots[1]);
 }
 
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
@@ -57,7 +57,7 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
                                   s32 resourceId) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot != 0x60) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
     WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
@@ -276,7 +276,7 @@ struct FigureMenuState {
   u8 unk50b[1];
 };
 
-s32 Party_RemapCharacterIdByFlagsFar(s32 id);
+s32 Party_GetCharacterSpriteFar(s32 id);
 
 void Func_08104e38(s32 first, s32 second) {
   struct FigureMenuState *menu =
@@ -299,7 +299,7 @@ void Func_08104e38(s32 first, s32 second) {
       id = second;
     if (id != -1) {
       menu->ids[i] = id;
-      figure = ResourceObject_CreateFar(Party_RemapCharacterIdByFlagsFar(id));
+      figure = ResourceObject_CreateFar(Party_GetCharacterSpriteFar(id));
       if (figure != NULL) {
         Animation_ApplyChildArgumentFar(figure, 1);
         figure->image.priority = 0;
@@ -328,7 +328,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
     menu->ids[i] = owners[first + i];
     object = ResourceObject_CreateFar(
-        Party_RemapCharacterIdByFlagsFar(owners[first + i]));
+        Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
       Animation_ApplyChildArgumentFar(object, 1);
       ((s8 *)object)[9] &= -13;
@@ -473,7 +473,7 @@ void DjinnFigures_InitializeTopRow(void) {
   Task_Add(MenuIcon_UpdateTransforms, TASK_PASS_VBLANK);
 }
 
-void MenuIcon_ReleaseObjects(void) {
+void DjinnFigures_ReleaseTopRow(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   s32 i;
 
@@ -554,7 +554,7 @@ void Func_081053a8(void) {
   s32 offset = 0;
 
   for (i = 0; i < 5; i++) {
-    entry = Resource_FindFreeEntry();
+    entry = VramCache_FindFreeEntry();
     if (entry <= 95) {
       u32 *attributes;
 
@@ -582,7 +582,7 @@ void MenuIcon_ReleaseSlots(void) {
   Task_Remove(MenuIcon_PushSlots);
   resource = menu->resources;
   for (i = 4; i >= 0; i--)
-    Resource_ResetEntry(*resource++);
+    VramCache_FreeEntry(*resource++);
 }
 
 struct MenuSlotAttr {

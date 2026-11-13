@@ -160,7 +160,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
     // The quads: each a render job of one textured face, placed by its own
     // translation, scale, pitch and roll.
-    Render_ResetTransformState();
+    Transform_Reset();
     gCameraSceneParameters[4] = 104;
     // DEAD: frame never passes 63 here; the source keeps the test.
     if (frame <= 63) {
@@ -190,8 +190,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           s32 across;
           s32 deep;
 
-          Render_ResetTransformState();
-          SceneTransform_ApplyPitch(3000);
+          Transform_Reset();
+          Transform_ApplyPitch(3000);
           if (mode == QUADS_RISING)
             quad->y -= quad->velocityY;
           else
@@ -205,8 +205,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           quad->x += 0x200;
           Func_08015160(across, quad->y, deep);
           SceneTransform_ApplyScale3(scale, scale, scale);
-          SceneTransform_ApplyPitch(quad->velocityX);
-          SceneTransform_ApplyRoll(quad->velocityZ);
+          Transform_ApplyPitch(quad->velocityX);
+          Transform_ApplyRoll(quad->velocityZ);
           quad->velocityX += 0x400;
           quad->velocityZ += 0x400;
           Render_TransformVertices(gData_08199210, vertices, 4);
@@ -587,10 +587,10 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
           continue;
         }
         model->shade = shade;
-        Render_ResetTransformState();
+        Transform_Reset();
         Func_08015160(-0x100000, Data_08197a9c[k] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale * 4 / 3, scale);
-        SceneTransform_ApplyPitch(3000);
+        Transform_ApplyPitch(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;
         Render_TransformVertices(Data_08198cac, vertices, 32);
         Render_DrawModelList(model);

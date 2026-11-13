@@ -291,17 +291,17 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set__presentation(span, result, span * 2);
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition__presentation(pos);
-  SceneTransform_ApplyYaw((s16)scene->yaw);
-  SceneTransform_ApplyPitch((s16)scene->pitch);
+  Transform_ApplyYaw((s16)scene->yaw);
+  Transform_ApplyPitch((s16)scene->pitch);
   renderBounds[0] = 0;
   renderBounds[1] = 0;
   renderBounds[2] = scene->distance;
   Iwram_TransformVector(renderBounds, scene->eye);
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
@@ -342,10 +342,10 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set__presentation(span, result, span * 2);
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition__presentation(pos);
-  SceneTransform_ApplyYaw((s16)scene->yaw);
-  SceneTransform_ApplyPitch((s16)scene->pitch);
+  Transform_ApplyYaw((s16)scene->yaw);
+  Transform_ApplyPitch((s16)scene->pitch);
   {
     /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound
      * stores; as Iwram_TransformVector(renderBounds, (s32 *)scene), 2 of
@@ -359,7 +359,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   }
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
@@ -663,7 +663,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     Io_Write16(mode, &REG_BLDY);
     BattleHighlight_ClearAllSpriteModes();
     wait(1);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   if (battle != NULL && mode != 0) {
     battle->highlightMode = mode;
@@ -691,7 +691,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
       }
     }
     wait(1);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
     Task_Add(Graphics_AdvancePaletteCycle, TASK_PASS_FRAME);
   }
 }
@@ -863,7 +863,7 @@ extern char ResourceId_BlueRingSheet;
 extern char ResourceId_RedPaletteC;
 extern char ResourceId_VioletPaletteD;
 
-s32 Resource_DecodeType01(const void *source, void *destination);
+s32 Decompress_TaggedLz(const void *source, void *destination);
 s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 // The Broken Seal's five-argument blitter loader, named but never called.
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
@@ -936,7 +936,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   data = Resource_GetTableEntry__presentation((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
   data += 128;
-  Resource_DecodeType01(data, work);
+  Decompress_TaggedLz(data, work);
   switch (mode) {
   case 0:
     data =
@@ -1029,16 +1029,16 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   wait(1);
   BattleStaging_ConfigurePaletteFade(1, session->background, 0);
   Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
-  QueueIoWriteDelay2(0x04000000, 0x3741);
-  QueueIoWriteDelay2(0x0400000c, 0x784);
-  QueueIoWriteDelay2(0x04000050, 0x3f44);
+  IoWriteQueue_Store16(0x04000000, 0x3741);
+  IoWriteQueue_Store16(0x0400000c, 0x784);
+  IoWriteQueue_Store16(0x04000050, 0x3f44);
   wait(1);
   Io_Write16(240, &REG_WIN0H);
   Io_Write16(0x1088, &REG_WIN0V);
   Io_Write16(63, &REG_WININ);
   Io_Write16(17, &REG_WINOUT);
   if (mode == 0) {
-    QueueIoWriteDelay2(0x04000052, 0x100e);
+    IoWriteQueue_Store16(0x04000052, 0x100e);
     ElementGlow_InitializeStarField(kind);
     for (frame = 0, pos = &position; frame <= 44; frame++) {
       brightness = &session->brightness;

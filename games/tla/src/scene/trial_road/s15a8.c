@@ -68,7 +68,7 @@ void Func_020017e0(void) {
   party->battleRule24b = 2;
   do {
   } while (0);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov697Room2, 4);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov697Room2, 4);
   Party_SetFields1f2And1f4((s32)&SceneId_Ov697Room2, 5);
   Field_RequestBattleFromEncounterTable(13, 4 - count);
 }
@@ -742,10 +742,10 @@ s32 Scene_PrepareMap(void) {
         SET_LAYER(34, x1);
         layer = &map->layers[2];
         SET_LAYER(68, x2);
-        Actor_SetPartAttribute(Actor_GetById(9), 3);
-        Actor_SetPartAttribute(Actor_GetById(10), 3);
-        Actor_SetPartAttribute(Actor_GetById(11), 3);
-        Actor_SetPartAttribute(Actor_GetById(12), 3);
+        Actor_SetSpriteColor(Actor_GetById(9), 3);
+        Actor_SetSpriteColor(Actor_GetById(10), 3);
+        Actor_SetSpriteColor(Actor_GetById(11), 3);
+        Actor_SetSpriteColor(Actor_GetById(12), 3);
         Func_02005828(0, 12, 1, 21, 0, 13);
         Func_02005828(x1, 12, 1, 21, x1, 13);
         Func_02005828(x2, 12, 1, 21, x2, 13);
@@ -804,10 +804,10 @@ s32 Scene_PrepareMap(void) {
           Actor_SetPosition(11, 184 << 16, 152 << 16);
           Actor_SetPosition(12, 200 << 16, 152 << 16);
         }
-        Actor_SetPartAttribute(Actor_GetById(9), 3);
-        Actor_SetPartAttribute(Actor_GetById(10), 3);
-        Actor_SetPartAttribute(Actor_GetById(11), 3);
-        Actor_SetPartAttribute(Actor_GetById(12), 3);
+        Actor_SetSpriteColor(Actor_GetById(9), 3);
+        Actor_SetSpriteColor(Actor_GetById(10), 3);
+        Actor_SetSpriteColor(Actor_GetById(11), 3);
+        Actor_SetSpriteColor(Actor_GetById(12), 3);
         destinationY = 13;
         value = state->pattern;
         px = gData_02005bac__s1fc4[value][0];
@@ -1003,7 +1003,7 @@ void Func_02002dec(void) {
   object->motionFlags = 0;
   Actor_SetMoveTarget(object, object->x, object->y + 0x580000, object->z);
   Func_020057c8(object, 2);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   Func_020057c8(object, 1);
   object->motionFlags = 2;
   object->terrainHeight = 0x800000;
@@ -1011,20 +1011,20 @@ void Func_02002dec(void) {
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   Actor_SetMoveTarget(object, object->x, object->y, object->z - 0x100000);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(12);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   FieldActor_SetMoveTarget(object, Func_02002d20(41) << 16, object->y,
                            264 << 16);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(6);
   Sound_Play(152);
   object->velocityY = 0x60000;
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   Actor_SetMoveTarget(object, Func_02002d20(37) << 16, object->y, 264 << 16);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(6);
   Actor_MoveToObject(13, 8);
   Actor_MoveToObject(14, 8);
@@ -1059,16 +1059,16 @@ void Func_02002dec(void) {
   Actor_SetSpeedParameters(8, 0x20000, 0x10000);
   Actor_SetSpeed(13, 0x1e666, 0xf333);
   Actor_SetSpeedParameters(14, 0x1b333, 0xd999);
-  Actor_OffsetPositionAndReset(4, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(8, Func_02002d38(-3), 0);
+  Actor_WalkByById(4, Func_02002d38(3), 0);
+  Actor_WalkByById(8, Func_02002d38(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(5, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(13, Func_02002d38(-3), 0);
+  Actor_WalkByById(5, Func_02002d38(3), 0);
+  Actor_WalkByById(13, Func_02002d38(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(7, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(14, Func_02002d38(-3), 0);
+  Actor_WalkByById(7, Func_02002d38(3), 0);
+  Actor_WalkByById(14, Func_02002d38(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(6, Func_02002d38(3), 0);
+  Actor_WalkByById(6, Func_02002d38(3), 0);
   wait(1);
   Event_Wait(6);
 }
@@ -1077,7 +1077,7 @@ void Func_0200322c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(264), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(264), 1);
   Actor_MoveToObject(5, 4);
   Actor_MoveToObject(6, 4);
   Actor_MoveToObject(7, 4);
@@ -1117,16 +1117,16 @@ void Func_0200322c(void) {
   Actor_SetSpeed(8, 0x20000, 0x10000);
   Actor_SetSpeed(13, 0x1e666, 0xf333);
   Actor_SetSpeedParameters(14, 0x1b333, 0xd999);
-  Actor_OffsetPositionAndReset(4, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(8, Func_02002d38(-3), 0);
+  Actor_WalkByById(4, Func_02002d38(3), 0);
+  Actor_WalkByById(8, Func_02002d38(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(5, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(13, Func_02002d38(-3), 0);
+  Actor_WalkByById(5, Func_02002d38(3), 0);
+  Actor_WalkByById(13, Func_02002d38(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(7, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(14, Func_02002d38(-3), 0);
+  Actor_WalkByById(7, Func_02002d38(3), 0);
+  Actor_WalkByById(14, Func_02002d38(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(6, Func_02002d38(3), 0);
+  Actor_WalkByById(6, Func_02002d38(3), 0);
   wait(1);
   Event_Wait(6);
 }
@@ -1199,7 +1199,7 @@ void Func_020034b4(void) {
   Event_Wait(20);
   Actor_ShowEmoteById(8, 261, 10);
   Event_ShowMessageAndWait(8, 0);
-  Actor_ArmCallbackAndRefresh(8, Func_02002d50(0));
+  Actor_FaceDirectionById(8, Func_02002d50(0));
   Actor_FaceActorById(13, 8, 0);
   Actor_FaceActorById(14, 8, 0);
   Motion_SetModeAndWaitAnimation(8, 3);
@@ -1393,7 +1393,7 @@ void Func_02003900(void) {
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_ShowMessageAndWait(8, 0);
-  Camera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
   Func_02005980();
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gData_02005ed4);
@@ -1666,7 +1666,7 @@ void Func_02004188(s32 a, s32 b) {
     Iwram_ClearWords(gauge, 0x1c8);
   buffer = Pool_Alloc(0x800);
   Func_02005770(gField_Tiles64D, buffer);
-  gauge->handle = Resource_FindFreeEntry();
+  gauge->handle = VramCache_FindFreeEntry();
   VramCache_Load((s16)gauge->handle, 0x800, buffer);
   Heap_Release(buffer);
   gauge->buffer = Heap_AllocEwram(0x3c0);
@@ -1953,15 +1953,15 @@ void Func_02004828(const u16 *table) {
       Func_0200480c(partner, trap);
       wait(1);
       Sound_Play(125);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
       Func_020057c8(partner, 0);
       ObjectVisual_CopyAttributes(id, 9);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(4);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(8), 0);
       Func_02004a94(0);
       Func_0200480c(trap, partner);
       wait(1);
@@ -2005,7 +2005,7 @@ void Func_02004828(const u16 *table) {
 }
 
 /// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
-/// Effect_AdvanceMotion, then the leader's sprite priority for the effect.
+/// FieldEffect_AdvanceMotion, then the leader's sprite priority for the effect.
 void Func_02004a14(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
@@ -2548,7 +2548,7 @@ void Func_020055c4(s32 a, s32 b) {
   *unkda = zero;
   *unke0 = zero;
   Func_02005770(gData_020062d4, buffer);
-  *vramEntry = Resource_FindFreeEntry();
+  *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
   Task_Add(Func_020051a0, 0x476);
   Heap_Release(buffer);

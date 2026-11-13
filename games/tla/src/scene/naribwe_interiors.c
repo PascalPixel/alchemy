@@ -782,7 +782,7 @@ s32 Scene_Initialize(void) {
 
   Actor_SetSingleChildFlags(Actor_Get(19), 0);
   Actor_SetSingleChildFlags(Actor_Get(20), 0);
-  Actor_SetSpriteColor(Actor_Get(20), 4);
+  FieldActor_SetSpriteColor(Actor_Get(20), 4);
   return 0;
 }
 

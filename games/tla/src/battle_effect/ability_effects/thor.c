@@ -171,7 +171,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       work->transferValue = 75;
     }
     Projection_Set(0x1fe0000, RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
-    Render_ResetTransformState();
+    Transform_Reset();
     if (frame > 128) {
       s32 sinkFrame = frame - 128;
       if (sinkFrame > 22) {
@@ -183,10 +183,10 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         size = 8;
       }
       SceneTransform_ApplyPosition(position);
-      SceneTransform_ApplyPitch(-0x1000);
-      SceneTransform_ApplyRoll(0x8000);
-      SceneTransform_ApplyPitch(0x8000);
-      SceneTransform_ApplyYaw(sinkFrame << 12);
+      Transform_ApplyPitch(-0x1000);
+      Transform_ApplyRoll(0x8000);
+      Transform_ApplyPitch(0x8000);
+      Transform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
         SET_VECTOR(scale, ((frame * 2 + frame) << 11) - 0xd9400, scale[0],
                    scale[0]);
@@ -198,9 +198,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     } else {
       SET_VECTOR(position, 0, 0, 0x1000000);
       SceneTransform_ApplyPosition(position);
-      SceneTransform_ApplyPitch(-0x1000);
-      SceneTransform_ApplyRoll(frame << 8);
-      SceneTransform_ApplyPitch(frame << 8);
+      Transform_ApplyPitch(-0x1000);
+      Transform_ApplyRoll(frame << 8);
+      Transform_ApplyPitch(frame << 8);
     }
 
     // The three lines, drawn dot by dot between pairs of points.

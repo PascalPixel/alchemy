@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_effect.h"
 
-void Effect_AdvanceMotion(union FieldObject *object) {
+void FieldEffect_AdvanceMotion(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX;
   s32 velocityZ;

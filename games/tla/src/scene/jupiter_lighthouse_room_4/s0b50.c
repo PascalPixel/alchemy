@@ -49,7 +49,7 @@ s32 Func_02000c28(struct Actor *object) {
   return 0;
 }
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 void Func_02000cc8(void) {
   struct Actor *left = Actor_Get(9);
@@ -73,16 +73,16 @@ void Func_02000cc8(void) {
     rider->y += 0x1eb80;
     rider->x += -0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues(Actor_Get(9), 4);
-    Animation_ApplyChildValues(Actor_Get(11), 4);
+    Actor_SetSpriteColorMode(Actor_Get(9), 4);
+    Actor_SetSpriteColorMode(Actor_Get(11), 4);
   }
   if (Event_GetFlag(0xa0b)) {
     right->y += 0x66640;
     rider->y += 0x1eb80;
     rider->x += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(Actor_Get(10), 4);
-    Animation_ApplyChildValues(Actor_Get(12), 4);
+    Actor_SetSpriteColorMode(Actor_Get(10), 4);
+    Actor_SetSpriteColorMode(Actor_Get(12), 4);
   }
   if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
     left->y += 0x199900;
@@ -94,31 +94,39 @@ void Func_02000cc8(void) {
   }
 }
 
-/* VIEW(s0b50): variable gData_02002760 as struct Actor *gData_02002760[]; module/scene/alhafra.h has s16 gData_02002760[]; tried as the definition's extern s16 gData_02002760[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_4/s0b50.c:143: `gData_02002760' undeclared (first use in this function). */
+/* VIEW(s0b50): variable gData_02002760 as struct Actor *gData_02002760[];
+ * module/scene/alhafra.h has s16 gData_02002760[]; tried as the definition's
+ * extern s16 gData_02002760[], which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_4/s0b50.c:143:
+ * `gData_02002760' undeclared (first use in this function). */
 extern struct Actor *gData_02002760__s0b50[] __asm__("gData_02002760");
 
 s32 Func_02001ee0(struct Actor *actor);
 void Func_02001d80(struct LightOam *oam, s32 depth);
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 DEFINE_FUNC_02000AAC(Func_02000e58, gData_0200275c, gData_020027a0,
-    gData_0200275e, gData_02002760__s0b50, gData_02002860, gData_02002862,
-    Func_02001ee0, Func_02001d80)
+                     gData_0200275e, gData_02002760__s0b50, gData_02002860,
+                     gData_02002862, Func_02001ee0, Func_02001d80)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_FUNC_02000A98(Func_02001014, gData_02002760__s0b50, gData_0200275c,
-    Func_02000e58, gData_0200275e, gData_02002860, gData_02002862)
+                     Func_02000e58, gData_0200275e, gData_02002860,
+                     gData_02002862)
 
 DEFINE_FUNC_02000CE8(Func_02001094, gData_02002760__s0b50, gData_0200275c,
-    Func_02000e58, gData_0200275e, gData_02002860, gData_02002862)
+                     Func_02000e58, gData_0200275e, gData_02002860,
+                     gData_02002862)
 
 DEFINE_FUNC_02000D68(Func_02001114, gData_02002760__s0b50, gData_0200275c,
-    Func_02000e58, gData_0200275e, gData_02002860, gData_02002862)
+                     Func_02000e58, gData_0200275e, gData_02002860,
+                     gData_02002862)
 
 DEFINE_FUNC_02000DF0(Func_0200119c, gData_0200275e, gData_02002760__s0b50)
 

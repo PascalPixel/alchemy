@@ -75,13 +75,13 @@ typedef s32 (*MotionCommand)(struct MotionObject *object);
 extern const MotionCommand gData_0802f204[];
 extern const s32 gData_0802ebc8[];
 
-/* VIEW(f023680): routine ScriptObject_CheckOverlap as s32
- * ScriptObject_CheckOverlap(struct MotionObject *object, s32 *values); the
- * definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32
+/* VIEW(f023680): routine ActorScript_CheckOverlap as s32
+ * ActorScript_CheckOverlap(struct MotionObject *object, s32 *values); the
+ * definition has s32 ActorScript_CheckOverlap(struct Actor *object, s32
  * *values). */
 extern s32 ScriptObject_CheckOverlap__f023680(
     struct MotionObject *object,
-    s32 *values) __asm__("ScriptObject_CheckOverlap");
+    s32 *values) __asm__("ActorScript_CheckOverlap");
 
 #define TARGET_UNSET ((s32)0x80000000)
 

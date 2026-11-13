@@ -49,9 +49,9 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
    * a constant of each call, as ☀️'s system call layer does; as a direct call
-   * the address is kept in r5; as Resource_DecodeType01 called directly, 21 of
+   * the address is kept in r5; as Decompress_TaggedLz called directly, 21 of
    * 103 instructions differ in tla-en (Func_0200005c). */
-  Resource_DecodeType01(source, destination);
+  Decompress_TaggedLz(source, destination);
 }
 
 /// The logo background, as the title's Title_LoadBackground, then the party
@@ -68,7 +68,7 @@ void Func_0200005c(void) {
   s32 blank;
 
   id = (s32)&ResourceId_LogoOnBlack;
-  Fade_ToBlack(0);
+  ScreenFade_ToBlack(0);
   REG_BG2CNT = 0x681;
   gBgScroll[2].y = 0;
   blank = 0x1ff;
@@ -1010,7 +1010,7 @@ s32 Func_02000e44(void) {
     work->shown[i] = 99;
     Iwram_ClearWordsEntry(work->cells[i], 128);
   }
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   if (entry <= 95) {
     Resource_CopyFixedBlockB();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
@@ -1018,7 +1018,7 @@ s32 Func_02000e44(void) {
     Cursor_Attach(&cursorStore, sprite);
     Cursor_Place(&cursorStore, (s16)window->x * 8 - 2, (s16)window->y * 8 + 12);
   }
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   if (entry <= 95) {
     Resource_CopyFixedBlockA();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
@@ -1321,7 +1321,7 @@ void Func_02001804(struct Panel_02001804 *panel, const void *source) {
   s32 row;
   s32 column;
 
-  Resource_DecodeType01(source, work);
+  Decompress_TaggedLz(source, work);
   offset = panel->y * 32 + panel->x;
 
   offset *= 2;

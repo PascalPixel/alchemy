@@ -268,7 +268,7 @@ s32 Scene_TalkToActor(s32 id) {
         Sound_PlayFar(83);
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
-        BattleParty_ApplyDrain(1999, 0);
+        Party_AddPp(1999, 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(126);
         if (Party_CountMembersFar() == 1)
@@ -305,9 +305,9 @@ s32 Scene_TalkToActor(s32 id) {
           gMainRoutineWork.pendingDjinnEvent = flag | 0x1000;
         if (contents > 7)
           *(u16 *)(work + 356) =
-              Encounter_GetEnemyGroupAtSlot(105, contents - 8);
+              Encounter_GetFormationAtSlot(105, contents - 8);
         else
-          *(u16 *)(work + 356) = Encounter_GetEnemyGroupAtSlot(104, contents);
+          *(u16 *)(work + 356) = Encounter_GetFormationAtSlot(104, contents);
         gMainRoutineWork.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gMainRoutineWork.sceneCue);
@@ -498,8 +498,8 @@ s32 Scene_RunRaisedEvent(s32 id) {
 /// Runs the touch event (kind 2) of what the leader touched, or else takes its
 /// exit (kind 1): plays the exit's sound (and effect) and records where it
 /// leads. Returns 0 when something ran, -1 when there was nothing.
-// As ☀️'s Scene_RunTouchOrExit.
-s32 Scene_RunTouchOrExit(s32 value) {
+// As ☀️'s Scene_RunStepTriggerOrExit.
+s32 Scene_RunStepTriggerOrExit(s32 value) {
   struct TouchEvent *event;
   s32 handled;
   struct TouchWork__field_sequence *work;

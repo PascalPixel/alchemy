@@ -6,7 +6,7 @@ Resource_FarCall00C:
 	export Func_08138000, Func_08196404
 	export BattleEffect_DispatchByIdRangeFar, BattleEffect_DispatchByIdRange
 	export BattleEffect_RunSceneEffectFar, BattleEffect_RunSceneEffect
-	export BattleEffect_RunTableEffectFar, BattleEffect_RunTableEffect
+	export BattleEffect_RunFromTableFar, BattleEffect_RunFromTable
 	export BattleEffect_RunElementPillarFar, BattleEffect_RunElementPillar
 	export BattleEffect_RunShatteringOpeningFar, BattleEffect_RunShatteringOpening
 	export BattleEffect_RunElementBurstFar, BattleEffect_RunElementBurst

@@ -258,8 +258,8 @@ void Func_0200063c(s32 x, s32 y) {
   }
 }
 
-void DisplayBlend_EnableRunScript(void);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void BlendScript_Suspend(void);
+void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void Import_EventSetExitRequest(s32 value);
 
 void Func_02000688(void) {
@@ -267,9 +267,9 @@ void Func_02000688(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Camera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
   Func_02003ac8();
   Sound_Play(244);
   Io_Write16(BLEND_ALPHA(1, 16), &REG_BLDALPHA);
@@ -280,7 +280,7 @@ void Func_02000688(void) {
   wait(10);
   Io_Write16(BLEND_ALPHA(4, 16), &REG_BLDALPHA);
   wait(10);
-  Call3((void (*)())Map_SetScreenShake, 0, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0, 0x10000, 0x10000);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -289,7 +289,7 @@ void Func_02000688(void) {
   Actor_SetSpritePriority(10, 1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   wait(10);
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   Func_0200063c(65, 51);
   Func_0200063c(65, 58);
   Io_Write16(BLEND_ALPHA(5, 15), &REG_BLDALPHA);
@@ -402,7 +402,7 @@ void Func_02000994(void) {
   Actor_SetSpritePriority(8, 1);
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpritePriority(10, 1);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   wait(1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(84, 100, 6, 56, 18, 6);
@@ -423,7 +423,7 @@ void Func_02000994(void) {
       ->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   Sound_Play(245);
   i = 0;
   do {
@@ -457,11 +457,11 @@ void Func_02000994(void) {
   Func_0200094c(65, 58);
   Io_Write16(0xf05, &REG_BLDALPHA);
   Func_0200094c(65, 51);
-  Call3((void (*)())Map_SetScreenShake, 0, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0, 0x10000, 0x10000);
   Io_Write16(0x1004, &REG_BLDALPHA);
   wait(10);
   Sound_Play(390);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   Io_Write16(0x1003, &REG_BLDALPHA);
   wait(10);
   Io_Write16(0x1002, &REG_BLDALPHA);
@@ -504,7 +504,7 @@ void Func_02000ce8(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(244);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  Camera_MoveWithinMapBounds(172 << 17, -1, 248 << 16, 0);
+  FieldCamera_MoveWithinMapBounds(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   wait(1);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -517,7 +517,7 @@ void Func_02000ce8(void) {
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 515;
   Event_StartScreenTransition();
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   // A goto loop: as a for, while or do loop, loop.c hoists the 0x8000 the
   // bytes rebuild on every pass (differ 64).
   i = 0;
@@ -538,7 +538,7 @@ loop:
     goto loop;
   Sound_Play(288);
   Sound_Play(390);
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetScreenShake(0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -562,13 +562,13 @@ void Func_02000e38(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  Camera_MoveWithinMapBounds(344 << 16, -1, 248 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   object->motionFlags = 0;
   Sound_Play(245);
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   // A goto loop: the bytes reload the step on every pass, and a for loop
   // hoists it (differ 30).
   i = 0;

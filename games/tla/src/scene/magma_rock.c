@@ -319,23 +319,23 @@ void Func_02000c40(struct Actor *object) {
                     phase, 0x320001, &params);
     }
     if (gFrameCount & 4)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (*timer < 100) {
     if (gFrameCount & 4)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (*timer < 140) {
     if (gFrameCount & 2)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (*timer < 144) {
-    Actor_SetSpriteColor(object, 7);
+    FieldActor_SetSpriteColor(object, 7);
   } else {
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
     object->update = NULL;
     linked->x = object->x;
     linked->y = object->y;

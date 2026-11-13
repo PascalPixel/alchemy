@@ -6,7 +6,7 @@
 
 enum { BATTLE_EVENT_CAPACITY = 64 };
 
-/// BattleEventState.phase: how far BattleEvent_Playback has got through the
+/// BattleEventState.phase: how far BattlePlayback_Run has got through the
 /// plan's targets.
 enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_IDLE = 0,           ///< paused until the effect resumes it
@@ -29,8 +29,8 @@ STATIC_ASSERT(offsetof(struct BattleEventQueue, operands) == 0x040);
 STATIC_ASSERT(offsetof(struct BattleEventQueue, targetIndex) == 0x140);
 STATIC_ASSERT(offsetof(struct BattleEventQueue, count) == 0x144);
 
-/// The battle events BattleEvent_Push queues, each with one operand, for
-/// BattleEvent_Playback (or BattleEvent_DispatchQueued) to play in order. The
+/// The battle events BattlePlayback_Push queues, each with one operand, for
+/// BattlePlayback_Run (or BattlePlayback_RunAll) to play in order. The
 /// names, numbers and messages build what the player reads: the arguments
 /// first, then the message that shows them.
 enum BattleEventOpcode {
@@ -53,7 +53,7 @@ enum BattleEventOpcode {
 
 s32 BattleObject_DestroyTemporaryObject(s32 unitId);
 
-void BattleEvent_Push(u32 opcode, u32 operand);
-u32 BattleEvent_DispatchQueued(void);
+void BattlePlayback_Push(u32 opcode, u32 operand);
+u32 BattlePlayback_RunAll(void);
 
 #endif

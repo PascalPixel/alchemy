@@ -300,7 +300,7 @@ s32 LinkBattle_SyncTurn(void) {
   return 0;
 }
 
-s32 BattleParty_AssignMemberSlots(void) {
+s32 BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
   u8 *battleState = (u8 *)Ram_HeapSlots->battleWork;
   s32 partySize = BattleParty_PrepareMembers(activeMembers);
@@ -314,6 +314,6 @@ s32 BattleParty_AssignMemberSlots(void) {
   }
 }
 
-void BattleStaging_ClearLinkPayload(void) {
+void Battle_ClearSerialTransferPayload(void) {
   Iwram_ClearWordsEntry(gSerialTransfer.payload, 16);
 }

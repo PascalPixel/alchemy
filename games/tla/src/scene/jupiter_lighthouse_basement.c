@@ -164,9 +164,9 @@ void Func_02000298(void) {
     object->update = (void (*)(void))Func_020001d8;
     OBJECT_BYTE(object, 99) = i << 3;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
     action = &object->timer;
     timer = (s16 *)&object->unk66;
     next = i + 1;

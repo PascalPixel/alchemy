@@ -497,8 +497,8 @@ again:
     if (work != NULL)
       work->walkingDistance +=
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
-    if (GetMapCellCollisionFar(leader->terrainId, position[0], position[2]) ==
-        254) {
+    if (MapGrid_GetCellBehaviorAtFar(leader->terrainId, position[0],
+                                     position[2]) == 254) {
       Actor_SetMode(leader, 1);
       wait(6);
       goto again;

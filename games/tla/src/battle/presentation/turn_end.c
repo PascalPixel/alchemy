@@ -205,21 +205,21 @@ s32 sub_08124af8(s32 id) {
       hp = max;
     gain = hp - before;
     if (gain != 0) {
-      BattleEvent_Push(0, id);
+      BattlePlayback_Push(0, id);
       if (hp == unit->maxHp) {
-        BattleEvent_Push(4, (u32)&MsgHpFull);
+        BattlePlayback_Push(4, (u32)&MsgHpFull);
       } else {
         {
           u32 opcode = 1;
 
-          BattleEvent_Push(opcode, gain);
+          BattlePlayback_Push(opcode, gain);
         }
-        BattleEvent_Push(4, (u32)&MsgHpRecover);
+        BattlePlayback_Push(4, (u32)&MsgHpRecover);
       }
       unit->hp = hp;
       Unit_RecalculateGaugesFar(id);
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
     if (--unit->refrain == 0)
       return 1;
   }
@@ -351,12 +351,12 @@ s32 Func_08124cc4(s32 side) {
           result = 2;
           BattlePlayback_Reset();
           BattlePlayback_SchedulePhase(30);
-          BattleEvent_Push(0, id);
-          BattleEvent_Push(3, entry->element * 20 + entry->index + 300);
-          BattleEvent_Push(14, 175);
-          BattleEvent_Push(10, 0);
-          BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
-          BattleEvent_Push(11, id);
+          BattlePlayback_Push(0, id);
+          BattlePlayback_Push(3, entry->element * 20 + entry->index + 300);
+          BattlePlayback_Push(14, 175);
+          BattlePlayback_Push(10, 0);
+          BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
+          BattlePlayback_Push(11, id);
           if (BattleUnit_IsListed(id)) {
             Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, 3);
             Actor_SelectAnimationFar(
@@ -466,13 +466,13 @@ void Battle_ProcessTurnEnd(void) {
           if (BattleObject_Get(unitId) != 0) {
             BattlePlayback_Reset();
             BattlePlayback_SchedulePhase(30);
-            BattleEvent_Push(0, unitId);
-            BattleEvent_Push(3, expiredEntry->element * 20 +
-                                    expiredEntry->index + 300);
-            BattleEvent_Push(14, 175);
-            BattleEvent_Push(10, 0);
-            BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
-            BattleEvent_Push(11, unitId);
+            BattlePlayback_Push(0, unitId);
+            BattlePlayback_Push(3, expiredEntry->element * 20 +
+                                       expiredEntry->index + 300);
+            BattlePlayback_Push(14, 175);
+            BattlePlayback_Push(10, 0);
+            BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
+            BattlePlayback_Push(11, unitId);
             Sound_PlayFar(212);
             if (BattleUnit_IsListed(unitId)) {
               Actor_SetMode(BattleObject_Get(unitId)->object, 3);
@@ -641,9 +641,9 @@ again:
       DjinnRecovery_AddStandbyFar(unitId, element, djinni);
       Djinn_PutOnStandbyFar(unitId, element, djinni);
       if (announce) {
-        BattleEvent_Push(0, unitId);
-        BattleEvent_Push(3, element * 20 + djinni + 300);
-        BattleEvent_Push(4, (u32)&MsgDjinnOnStandby);
+        BattlePlayback_Push(0, unitId);
+        BattlePlayback_Push(3, element * 20 + djinni + 300);
+        BattlePlayback_Push(4, (u32)&MsgDjinnOnStandby);
         return;
       }
     } else if (announce) {
@@ -688,17 +688,17 @@ again:
 
     if (!shown) {
       shown = 1;
-      BattleEvent_Push(0, unitId);
+      BattlePlayback_Push(0, unitId);
       if (!all) {
         s32 message;
 
-        BattleEvent_Push(3, element * 20 + djinni + 300);
+        BattlePlayback_Push(3, element * 20 + djinni + 300);
         message = (u32)&MsgDjinnDrained;
         if (unitId < 0 || unitId > 7)
           message++;
-        BattleEvent_Push(4, message);
+        BattlePlayback_Push(4, message);
       } else {
-        BattleEvent_Push(4, (u32)&MsgAllDjinnDrained);
+        BattlePlayback_Push(4, (u32)&MsgAllDjinnDrained);
       }
     }
     if (all)
@@ -798,13 +798,13 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       if (gain > 0) {
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(25);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, gain);
-        BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
+        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattlePlayback_Push(BATTLE_EVENT_NUMBER, gain);
+        BattlePlayback_Push(BATTLE_EVENT_SOUND, 175);
         // Messages 3285 to 3288, 3232, 3240, 3185, 3191 and 3188 in English;
         // all but MsgGoesDown still need their names in the PO catalogs.
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
+        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(unitId)->object, 3);
         Actor_SelectAnimationFar(
@@ -821,36 +821,36 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
 
     BattlePlayback_Reset();
     if (plan->hauntDamage != 0) {
-      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, plan->hauntDamage);
-      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgCurseDamage);
+      BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, plan->hauntDamage);
+      BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgCurseDamage);
       if (Unit_AddHpFar(unitId, -plan->hauntDamage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         } else {
-          BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
-          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattleEvent_Push(BATTLE_EVENT_MESSAGE,
-                           unitId <= 7 ? (u32)MsgGoesDown
-                                       : (u32)MsgStrengthExhausted);
+          BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
+          BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+          BattlePlayback_Push(BATTLE_EVENT_MESSAGE,
+                              unitId <= 7 ? (u32)MsgGoesDown
+                                          : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
     BattlePlayback_Reset();
     poison = &unit->poison;
     if (*poison != 0) {
       s32 damage = unit->maxHp * *poison / 10;
       struct BattleWork *state = Ram_HeapSlots->battleWork;
 
-      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, damage);
-      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgPoisonDamage);
+      BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_NUMBER, damage);
+      BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
         state->events.pendingCue = 134;
       } else {
@@ -859,35 +859,35 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {
           Unit_AddHpFar(unitId, 1);
-          BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+          BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         } else {
-          BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
-          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-          BattleEvent_Push(BATTLE_EVENT_MESSAGE,
-                           unitId <= 7 ? (u32)MsgGoesDown
-                                       : (u32)MsgStrengthExhausted);
+          BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
+          BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+          BattlePlayback_Push(BATTLE_EVENT_MESSAGE,
+                              unitId <= 7 ? (u32)MsgGoesDown
+                                          : (u32)MsgStrengthExhausted);
         }
       } else {
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
     BattlePlayback_Reset();
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
         Unit_AddHpFar(unitId, 0xc0000000) == 0) {
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls);
-      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
-      BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls);
+      BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_DEFEAT, unitId);
+      BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, unitId);
       if (unitId <= 7) {
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls - 3);
       } else {
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
+        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgReaperCalls + 3);
       }
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
   }
   if (BattleObject_Get(unitId)->object != 0)
     Unit_CalculateFar(unitId);

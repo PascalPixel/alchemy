@@ -709,8 +709,8 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
-                     s32 y);
+s32 Portrait_Create(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
+                    s32 y);
 
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -726,8 +726,8 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
-                     s32 y);
+s32 Portrait_Create(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
+                    s32 y);
 
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
@@ -810,7 +810,7 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
     win = Window_Create(x, y, 5, 5, 2);
   }
   if (win != 0) {
-    CreateSideObject(speaker, portraitOption, -1, win, offset, minusFour);
+    Portrait_Create(speaker, portraitOption, -1, win, offset, minusFour);
   }
   return win;
 }

@@ -63,7 +63,7 @@ void Func_08044348(struct Window *window, const void *resource) {
   s32 col;
 
   source = buffer;
-  Resource_DecodeType01(resource, buffer);
+  Decompress_TaggedLz(resource, buffer);
   offset = (((s16)window->y << 5) + (s16)window->x) * 2;
   map = (u16 *)((u8 *)work->tilemap + offset);
   vram = (u16 *)(offset + 0x06002000);
@@ -129,7 +129,7 @@ void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
   return slot;
 }
@@ -166,7 +166,7 @@ s32 Text_SetString(const u8 *str) {
   return width;
 }
 
-void Text_DrawPaddedLabel(s32 output, u8 *input) {
+void NameEntry_DrawName(s32 output, u8 *input) {
   u8 text[20];
   s32 length = 0;
 
@@ -319,7 +319,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   editedName[NAME_MAX_BYTES] = 0;
   Text_DrawString(originalName, (s32)nameWindow, 0, 0);
   keyColumn = NAME_COMMAND_COLUMN;
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   keyRow = NAME_FINISH_ROW;
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
@@ -333,7 +333,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   } else {
     keyMotion = &keyCursor.cursor;
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
@@ -604,9 +604,9 @@ s32 NameEntry_EditMemberName(s32 member) {
     }
   }
   editedName[NAME_MAX_BYTES] = 0;
-  Text_DrawPaddedLabel((s32)nameWindow, originalName);
+  NameEntry_DrawName((s32)nameWindow, originalName);
   keyRow = 5;
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   keyColumn = NAME_COMMAND_COLUMN;
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
@@ -620,7 +620,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   } else {
     keyMotion = &keyCursor.cursor;
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
@@ -728,7 +728,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         letterCount--;
         *--end = 0;
         WindowSprite_PrepareForRedraw(nameWindow);
-        Text_DrawPaddedLabel((s32)nameWindow, editedName);
+        NameEntry_DrawName((s32)nameWindow, editedName);
         textDirty = 1;
         continue;
       }
@@ -743,7 +743,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         if (letterCount == 0) {
           nameCaret.sprite->active = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
-          Text_DrawPaddedLabel((s32)nameWindow, originalName);
+          NameEntry_DrawName((s32)nameWindow, originalName);
           wait(10);
         } else {
           u8 *dst = originalName;
@@ -775,7 +775,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         cursorDirty = 1;
       }
       WindowSprite_PrepareForRedraw(nameWindow);
-      Text_DrawPaddedLabel((s32)nameWindow, editedName);
+      NameEntry_DrawName((s32)nameWindow, editedName);
       textDirty = 1;
     }
   }

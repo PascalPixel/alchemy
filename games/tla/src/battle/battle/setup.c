@@ -49,7 +49,7 @@ void BattleCamera_Update(void) {
 
   SceneTransform_RewindStack();
   Func_080150ac((s16)camera->yaw);
-  SceneTransform_ApplyPitch((s16)camera->pitch);
+  Transform_ApplyPitch((s16)camera->pitch);
   SceneTransform_SetPosition(focus);
 
   eyeOffset.x = 0;

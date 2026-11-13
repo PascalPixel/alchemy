@@ -46,7 +46,7 @@ inner:
 }
 
 // Overlay 674 keeps its own palette queue between its allocation and step
-// functions; its PaletteQueue_Add is the main image's.
+// functions; its PaletteCycle_Add is the main image's.
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -72,7 +72,11 @@ void Func_020034ec(void) {
   return;
 }
 
-/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410; palette_snapshots.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/islets/s3410.c:82: structure has no member named `count'. */
+/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
+ * palette_snapshots.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/islets/s3410.c:82: structure has no member named `count'.
+ */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
@@ -354,4 +358,4 @@ void Func_02003d0c(void);
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 DEFINE_FUNC_02003A5C(Func_02003a5c, gData_0200407c, Func_02003790,
-    Func_02003d0c, Func_02003de4, gData_02004094)
+                     Func_02003d0c, Func_02003de4, gData_02004094)

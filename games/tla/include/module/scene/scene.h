@@ -806,8 +806,8 @@ struct MadraPlacement {
   u16 y;
 };
 
-/// A map edit and where it applies (Map_PlayMapEdit forwards
-/// to Map_PlayMapEdit).
+/// A map edit and where it applies (MapGrid_PlayMapEdit forwards
+/// to MapGrid_PlayMapEdit).
 struct CellPictureCopyEntry {
   const s16 *steps;
   u16 unk04;

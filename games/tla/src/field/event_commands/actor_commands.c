@@ -88,7 +88,7 @@ void Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action) {
   }
 }
 
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
+void Actor_SetDestinationById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -176,7 +176,7 @@ void Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset) {
   }
 }
 
-void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset, s32 zOffset) {
+void Actor_WalkByById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -191,7 +191,7 @@ void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset, s32 zOffset) {
 void Actor_WalkByAndWaitById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
-  Actor_OffsetPositionAndReset(objectId, xOffset, zOffset);
+  Actor_WalkByById(objectId, xOffset, zOffset);
   if (object != NULL) {
     Actor_CommitPosition(object);
     Actor_SetMode(object, 1);
@@ -383,7 +383,7 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant) {
   Actor_RefreshSelectorById(objectId);
 }
 
-void FieldEffect_UpdateParticleLinearMotion(struct Actor *object) {
+void FieldEffect_UpdateDustPuff(struct Actor *object) {
   s32 driftX;
   s32 driftZ;
   s32 pos;
@@ -432,7 +432,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     }
 
     if (param != 0)
-      Actor_SetPartAttribute(object, param);
+      Actor_SetSpriteColor(object, param);
 
     object->motionFlags = 0;
     speed = Random16() % 10 + 5;
@@ -443,7 +443,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     object->timer = 0;
     object->priorityFlags |= 2;
     ((u8 *)object)[0x61] = 1;
-    object->update = (void (*)(void))FieldEffect_UpdateParticleLinearMotion;
+    object->update = (void (*)(void))FieldEffect_UpdateDustPuff;
     child->flags = 0;
     child->priority = ((struct ParticleSprite *)source->sprite)->priority;
   }
@@ -593,7 +593,7 @@ void Actor_ConfigureSpriteColor(s32 objectId, s32 value) {
       return;
     }
     object->update = NULL;
-    Actor_SetPartAttribute(object, value);
+    Actor_SetSpriteColor(object, value);
   }
 }
 
@@ -616,7 +616,7 @@ void Actor_ApplyIndexedChildValue(struct Actor *object) {
   }
 }
 
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute) {
   struct ObjectPartList *list;
   struct ObjectPart *part;
   s32 i;
@@ -638,8 +638,8 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
 /// distance of 40 pixels (action 40), the target's top speed with twice its
 /// acceleration, to keep up with it, and no collision flags, so it cannot
 /// block the target. The Broken Seal's ObjectEvent_SetTargetAndCallback.
-void Actor_SetTargetAndCallback(u32 objectId, s32 targetId,
-                                const void *callback) {
+void Actor_WatchAndStartScript(u32 objectId, s32 targetId,
+                               const void *callback) {
   struct Actor *follower = ObjectTable_Get(objectId);
   struct Actor *target = ObjectTable_Get(targetId & 0xff);
 

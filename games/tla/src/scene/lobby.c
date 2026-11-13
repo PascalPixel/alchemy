@@ -498,7 +498,7 @@ done:
   return result;
 }
 
-/// Resets the transfer state, as BattleLink_ResetTransferState does.
+/// Resets the transfer state, as LinkBattle_ResetTransferState does.
 // In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
@@ -698,10 +698,10 @@ s32 Func_02000864(void) {
     set = Event_GetFlag(0x173);
     scene = (s32)&SceneId_Ov6b5;
     if (set) {
-      Party_SetFields1eeAnd1f0(scene, 8);
+      Event_SetAfterBattleDestination(scene, 8);
       Party_SetFields1f2And1f4(scene, 9);
     } else {
-      Party_SetFields1eeAnd1f0(scene, 10);
+      Event_SetAfterBattleDestination(scene, 10);
       Party_SetFields1f2And1f4(scene, 11);
     }
     gMainRoutineWork.battleRule24b = 4;
@@ -1064,8 +1064,8 @@ void Func_02000fbc(s32 actor) {
 s32 Func_02000f6c(s32 id);
 void Serial_RemoveIrqHandlers(void);
 void Map_CenterOnFollowedPoint(void);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                    s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
 void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
 void Event_Start(void);
@@ -1254,7 +1254,7 @@ void Func_02001414(s32 value) {
   // A goto loop; as ☀️'s for loop, loop.c keeps the stacked 1 in r7 (differ
   // 12).
 next:
-  Map_CopyCellPictureIndicesRect(27, value % 10, 16 - i, 8, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(27, value % 10, 16 - i, 8, 1, 1);
   value /= 10;
   i++;
   if (i <= 2)

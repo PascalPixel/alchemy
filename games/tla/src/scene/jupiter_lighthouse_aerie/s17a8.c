@@ -67,8 +67,9 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
 
   work->first = Actor_Get(a);
   work->second = Actor_Get(b);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
-  smallEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade),
+                      work);
+  smallEntry = VramCache_FindFreeEntry();
   smallTile = Vram_Load(smallEntry, 256, work);
   work->smallTile = smallTile;
   spark = work->sparks;
@@ -83,8 +84,9 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
     *(u16 *)&sprite->depth = 240;
     spark->age = age;
   }
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident), work);
-  largeEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident),
+                      work);
+  largeEntry = VramCache_FindFreeEntry();
   {
     /* FAKEMATCH(temporary): sprite also holds the size; as a plain argument, 7
      * of 316 instructions differ in tla-en. */
@@ -121,7 +123,8 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   carrier->speedLimit = 0x8000;
   carrier->acceleration = 0x8000;
   Func_02002a20(carrier);
-  FieldActor_SetMoveTarget(carrier, work->start[0], work->start[1], work->start[2]);
+  FieldActor_SetMoveTarget(carrier, work->start[0], work->start[1],
+                           work->start[2]);
   Event_PlaySound(142);
   Func_0200105c(work->first);
   FieldEvent_Wait(40);
@@ -134,32 +137,36 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   while (work->step != 999)
     System_Wait(1);
   FieldTask_Remove(Func_02001080);
-  Resource_ResetEntry(largeEntry);
-  Resource_ResetEntry(smallEntry);
+  VramCache_FreeEntry(largeEntry);
+  VramCache_FreeEntry(smallEntry);
   HeapSlot_Release(220);
 }
 
 extern s16 gData_02003380;
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 DEFINE_FUNC_02000AAC(Func_02001a78, gData_02003380, Data_020033c4,
-    gData_02003382, gData_02003384, gData_02003484, gData_02003486,
-    Func_02002b48, Func_020029c0)
+                     gData_02003382, gData_02003384, gData_02003484,
+                     gData_02003486, Func_02002b48, Func_020029c0)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_FUNC_02000A98(Func_02001c34, gData_02003384, gData_02003380,
-    Func_02001a78, gData_02003382, gData_02003484, gData_02003486)
+                     Func_02001a78, gData_02003382, gData_02003484,
+                     gData_02003486)
 
 DEFINE_FUNC_02000CE8(Func_02001cb4, gData_02003384, gData_02003380,
-    Func_02001a78, gData_02003382, gData_02003484, gData_02003486)
+                     Func_02001a78, gData_02003382, gData_02003484,
+                     gData_02003486)
 
 DEFINE_FUNC_02000D68(Func_02001d34, gData_02003384, gData_02003380,
-    Func_02001a78, gData_02003382, gData_02003484, gData_02003486)
+                     Func_02001a78, gData_02003382, gData_02003484,
+                     gData_02003486)
 
 DEFINE_FUNC_02000DF0(Func_02001dbc, gData_02003382, gData_02003384)
 

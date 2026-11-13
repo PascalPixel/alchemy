@@ -230,7 +230,7 @@ void Actor_SetSpritePalette(void *object, s32 value) {
 
   if (value == 0)
     child = gData_080f0e9c[(gFrameCount >> 1) & 7];
-  Animation_ApplyChildValuesFar(object, child);
+  Actor_SetSpriteColorModeFar(object, child);
 }
 
 u16 BattleEffect_GetCycledTableWord(void) {
@@ -398,7 +398,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   position.z = target->z;
   Vector_AddPolarOffset__f0dcb44(16 << 16, angle, &position);
   Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
-  BattleEffect_SnapScaleToFull(pusher);
+  FieldEffect_SnapScaleToFull(pusher);
   pusher->speedLimit = 4 << 16;
   pusher->acceleration = Q16_ONE / 2;
   pusher->motionFlags = 4;
@@ -458,7 +458,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
         Sound_PlayFar(114);
       continue;
     }
-    hit = ScriptObject_FindOverlappingEntryFar(target, &position);
+    hit = ActorScript_FindOverlappingEntryFar(target, &position);
     if (hit != NULL) {
       if (hit != user) {
         Actor_SetMode(pusher, 4);
@@ -523,7 +523,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
 
   *layer = savedLayer;
   // The palette byte sits at 0x40 here, not the struct's savedPalette at 0x44.
-  Animation_ApplyChildValuesFar(target, scene->unk40[0]);
+  Actor_SetSpriteColorModeFar(target, scene->unk40[0]);
   Actor_StartScriptFar(target, scene->savedScript);
   target->update = (void (*)(void))scene->savedCallback;
   if (pushed) {
@@ -545,7 +545,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   UpdateRisingParticleBurst(pusher);
 }
 
-void BattleEffect_UpdateOrbitAndReturn(struct FieldParticle *effect) {
+void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
   struct Output_08097f80 position;
   s8 *statePointer = &effect->state;
   s32 state;
@@ -590,7 +590,7 @@ next_state:
   }
 
   if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
-    BattleEffect_ClearOwnedSlot(effect);
+    FieldEffect_ClearOwnedSlot(effect);
 }
 #undef MOVE_CELL_MASK
 
@@ -605,7 +605,7 @@ void FieldPsynergy_Move(void) {
 
   FieldPsynergy_FadeToCastColor();
   object = BattleEffect_StartItemBreak(object);
-  BattleEffect_SnapScaleToFull(object);
+  FieldEffect_SnapScaleToFull(object);
   if (object != 0) {
     Actor_SetMode(object, 4);
     wait(30);
@@ -655,7 +655,7 @@ void *BattleEffect_StartItemBreak(void *object) {
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
   Actor_SetMode(parent, 3);
-  Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
+  Actor_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
     child = Actor_Spawn__item_break(673, source->x, source->y + (16 << 16),
@@ -671,7 +671,7 @@ void *BattleEffect_StartItemBreak(void *object) {
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
-      Motion_SetTargetPositionFromMagnitudeAngle(
+      Actor_SetTargetPositionFromMagnitudeAngle(
           child, radius, ((jitter - Random16()) >> 3) + source->facing);
     }
   }
@@ -681,7 +681,7 @@ void *BattleEffect_StartItemBreak(void *object) {
 
 /// Raises the object's scale in sixteenths to full size and commits its
 /// position.
-void BattleEffect_SnapScaleToFull(struct Actor *object) {
+void FieldEffect_SnapScaleToFull(struct Actor *object) {
   s32 next;
   s32 scale;
 
@@ -735,7 +735,7 @@ void UpdateRisingParticleBurst(void *object) {
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
       dist += 8 << 16;
-      Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
+      Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
   Sound_PlayFar(131);
@@ -755,7 +755,7 @@ loop:
 /// As The Broken Seal's, with this game's offsets: counts the timer down and,
 /// once the leader is 60 pixels from the centre or the timer has run out,
 /// requests the effect's end.
-void FieldEffect_WatchLeaderDistance(void) {
+void FieldPsynergy_WatchLeaderDistance(void) {
   u8 *work;
   struct Actor *actor;
   s16 *timer;
@@ -850,7 +850,7 @@ void FieldPsynergy_Reveal(void) {
     frame++;
   } while (frame <= 18);
   if ((s8)scene->mode == 0)
-    Task_Add(FieldEffect_WatchLeaderDistance, 0x480);
+    Task_Add(FieldPsynergy_WatchLeaderDistance, 0x480);
 }
 
 void FieldPsynergy_EndReveal(void) {
@@ -861,7 +861,7 @@ void FieldPsynergy_EndReveal(void) {
 
   if (event->active != 0) {
     Sound_PlayFar(167);
-    Task_Remove(FieldEffect_WatchLeaderDistance);
+    Task_Remove(FieldPsynergy_WatchLeaderDistance);
     event->active = 0;
     event->frames = 0;
     BattleEffect_RunBusyWaitDelay__f0dd820(0);
@@ -1041,7 +1041,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       obj->acceleration = 0x18000;
       obj->speedLimit = 0x18000;
       obj->motionFlags = 0;
-      Animation_ApplyChildValuesFar(obj, 11);
+      Actor_SetSpriteColorModeFar(obj, 11);
       Actor_SetMode(obj, 7);
       Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript + 1);
 
@@ -1092,16 +1092,16 @@ void FieldPsynergy_LiftOnTarget(void) {
   position[1] = y;
   z = scene->z;
   position[2] = z;
-  anchors[0] = BattleEffect_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
-  anchors[1] = BattleEffect_SpawnItemBreakMode3(position[0] - 0x200000,
-                                                position[1], position[2], 0);
+  anchors[0] = FieldEffect_SpawnLiftHand(x + 0x200000, y, z, 0x8000);
+  anchors[1] = FieldEffect_SpawnLiftHand(position[0] - 0x200000, position[1],
+                                         position[2], 0);
 
   wait(15);
   for (index = 0; index < 2; index++) {
     void *anchor = anchors[index];
     if (anchor != 0)
-      Motion_SetTargetPositionFromMagnitudeAngle(anchor, 0xe0000,
-                                                 *(u16 *)((u8 *)anchor + 6));
+      Actor_SetTargetPositionFromMagnitudeAngle(anchor, 0xe0000,
+                                                *(u16 *)((u8 *)anchor + 6));
   }
 
   Actor_CommitPosition(anchors[0]);
@@ -1140,16 +1140,15 @@ void FieldPsynergy_Lift(void) {
   pos.x = work->x;
   pos.y = work->y + 0x100000;
   pos.z = work->z;
-  pair[0] =
-      BattleEffect_SpawnItemBreakMode3(pos.x + 0x200000, pos.y, pos.z, 0x8000);
-  pair[1] = BattleEffect_SpawnItemBreakMode3(pos.x - 0x200000, pos.y, pos.z, 0);
+  pair[0] = FieldEffect_SpawnLiftHand(pos.x + 0x200000, pos.y, pos.z, 0x8000);
+  pair[1] = FieldEffect_SpawnLiftHand(pos.x - 0x200000, pos.y, pos.z, 0);
 
   wait(15);
   walk = pair;
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
   }
 
   Actor_CommitPosition(pair[0]);
@@ -1165,7 +1164,7 @@ void FieldPsynergy_Lift(void) {
       obj->acceleration = 0x20000;
       obj->motionFlags = 0;
       dist = Random16() * 24 + 0x80000;
-      Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
     }
   }
 
@@ -1176,7 +1175,7 @@ void FieldPsynergy_Lift(void) {
 
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
-struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
+struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *object;
   s32 scale;
 
@@ -1221,11 +1220,11 @@ struct EffectWork {
  * EffectVector *position). */
 extern void Camera_WorldToScreen__f0dcb44(struct EffectPosition *value) __asm__(
     "Camera_WorldToScreen");
-/* VIEW(f0dd820): routine BattleEffect_ClearOwnedSlot as void
- * BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has
- * void BattleEffect_ClearOwnedSlot(struct FieldParticle *). */
+/* VIEW(f0dd820): routine FieldEffect_ClearOwnedSlot as void
+ * FieldEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has
+ * void FieldEffect_ClearOwnedSlot(struct FieldParticle *). */
 extern void BattleEffect_ClearOwnedSlot__f0dd820(
-    struct RadialBurstEffect *effect) __asm__("BattleEffect_ClearOwnedSlot");
+    struct RadialBurstEffect *effect) __asm__("FieldEffect_ClearOwnedSlot");
 
 void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->effectWork;
@@ -1302,7 +1301,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
       frag->speedLimit = Random16() + (1 << 16);
       frag->acceleration = 1 << 16;
       frag->motionFlags = 0;
-      Motion_SetTargetPositionFromMagnitudeAngle(
+      Actor_SetTargetPositionFromMagnitudeAngle(
           frag, Random16() * 24 + (8 << 16), Random16());
     }
   }
@@ -1415,7 +1414,7 @@ void FieldPsynergy_Force(void) {
   object->acceleration = 0x40000;
   object->motionFlags = 0;
   Actor_SetMode(object, 5);
-  Animation_ApplyChildValuesFar(object, 3);
+  Actor_SetSpriteColorModeFar(object, 3);
   scale = object->scaleX;
   if (scale < 0x10000) {
     do {
@@ -1440,7 +1439,7 @@ void FieldPsynergy_Force(void) {
       copy->acceleration = 0x40000;
       copy->motionFlags = 0;
       Actor_SetMode(copy, 5);
-      Animation_ApplyChildValuesFar(copy, 2);
+      Actor_SetSpriteColorModeFar(copy, 2);
       resource = Sprite_ShareVramCacheEntry__f0dcb44(copy->sprite, resource);
     }
   }
@@ -1479,7 +1478,7 @@ void FieldPsynergy_Force(void) {
     pos.z = target->z;
     Vector_AddPolarOffset__f0de21c(0x100000, scene->angle, &pos);
     if (Func_08020210__f0de21c(target, &pos) == 0 &&
-        ScriptObject_CheckOverlapFar(target, &pos) == 0) {
+        ActorScript_CheckOverlapFar(target, &pos) == 0) {
       target->acceleration = 0x10000;
       target->speedLimit = 0x10000;
       Actor_SetTargetPosition(target, pos.x, pos.y, pos.z);
@@ -1493,23 +1492,23 @@ void FieldPsynergy_Force(void) {
   FieldPsynergy_FadeFromCastColor();
   wait(20);
   if (marker != 96)
-    Resource_ResetEntry(marker);
+    VramCache_FreeEntry(marker);
 }
 
 struct OrbitingParticle;
 
-s32 BattleEffect_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
+s32 FieldEffect_UpdateFrostGlint(struct OrbitingParticle *particle) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {
-    Animation_ApplyChildValuesFar((struct Actor *)particle, 2);
+    Actor_SetSpriteColorModeFar((struct Actor *)particle, 2);
   } else if (phase == 2) {
-    Animation_ApplyChildValuesFar((struct Actor *)particle, 0);
+    Actor_SetSpriteColorModeFar((struct Actor *)particle, 0);
   }
   return 0;
 }
 
-void BattleEffect_UpdateOrbitingParticleFade(struct Actor *object) {
+void FieldEffect_UpdateOrbitingParticleFade(struct Actor *object) {
   s32 scale;
 
   if (object != NULL) {
@@ -1522,7 +1521,7 @@ void BattleEffect_UpdateOrbitingParticleFade(struct Actor *object) {
   }
 }
 
-void BattleEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
+void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
   s32 count;
@@ -1539,13 +1538,12 @@ void BattleEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
                                      (s16)particle->unk66 + (life << 11), &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
-      particle->update =
-          (void (*)(void))BattleEffect_UpdateOrbitingParticleFade;
+      particle->update = (void (*)(void))FieldEffect_UpdateOrbitingParticleFade;
     }
   }
 }
 
-void BattleEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
+void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
   struct OrbitingParticleVector pos;
   s16 life;
   s32 count;
@@ -1562,8 +1560,7 @@ void BattleEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
                                      (s16)particle->unk66 - (life << 11), &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
-      particle->update =
-          (void (*)(void))BattleEffect_UpdateOrbitingParticleFade;
+      particle->update = (void (*)(void))FieldEffect_UpdateOrbitingParticleFade;
     }
   }
 }
@@ -1611,15 +1608,15 @@ void FieldPsynergy_Frost(void) {
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
         particle->update =
-            (void (*)(void))BattleEffect_UpdateOrbitingParticleLeft;
+            (void (*)(void))FieldEffect_UpdateOrbitingParticleLeft;
       else
         particle->update =
-            (void (*)(void))BattleEffect_UpdateOrbitingParticleRight;
+            (void (*)(void))FieldEffect_UpdateOrbitingParticleRight;
 
       particle->facing = Random16();
       particle->timer = 60;
       particle->unk66 = Random16();
-      Animation_ApplyChildValuesFar((struct Actor *)particle, 9);
+      Actor_SetSpriteColorModeFar((struct Actor *)particle, 9);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
       dist = (Random16() << 2) + (2 << 16);
@@ -1642,9 +1639,9 @@ void FieldPsynergy_Frost(void) {
 
     cnt = 7;
     do {
-      Animation_ApplyChildValuesFar((struct Actor *)target, 7);
+      Actor_SetSpriteColorModeFar((struct Actor *)target, 7);
       wait(1);
-      Animation_ApplyChildValuesFar((struct Actor *)target, 0);
+      Actor_SetSpriteColorModeFar((struct Actor *)target, 0);
       wait(4);
       cnt--;
     } while (cnt >= 0);
@@ -1654,7 +1651,7 @@ void FieldPsynergy_Frost(void) {
       Actor_SetMode(target, 2);
     }
 
-    target->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleMain;
+    target->update = (void (*)(void))FieldEffect_UpdateFrostGlint;
     ev = Scene_FindPsynergyTrigger(0x50000005, 6, Func_080ce31c(6));
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, scene->firstObjectId, scene->secondObjectId);
@@ -1668,7 +1665,7 @@ void FieldPsynergy_Frost(void) {
 
 /// Per-frame update: sways 4 pixels either side of the anchor, once every
 /// 128 frames.
-void BattleEffect_SwayParticle(struct SwayObject *object) {
+void FieldEffect_SwayParticle(struct SwayObject *object) {
   s16 *phase = &object->phase;
   s32 amplitude = 0x40000;
 
@@ -1679,7 +1676,7 @@ void BattleEffect_SwayParticle(struct SwayObject *object) {
 
 /// The particle circles 10 pixels above the scene's position, its radius in
 /// pixels the frames it has left; at 0 it runs the shared particle script.
-void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
+void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *object) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct OrbitVector pos;
   s16 life;
@@ -1732,13 +1729,13 @@ void FieldEffect_RunSparkEmitter(struct SparkObject *obj) {
     Vector_AddPolarOffset__f0de21c(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn__f0de21c(673, pos[0], pos[1], pos[2]);
     if (spark != 0) {
-      spark->update = BattleEffect_SwayParticle;
+      spark->update = FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999;
       spark->motionFlags = 2;
       spark->gravity = 458;
       spark->phase = Random16() >> 9;
       spark->anchorX = spark->x;
-      Animation_ApplyChildValuesFar(spark, 9);
+      Actor_SetSpriteColorModeFar(spark, 9);
       spark->unk5e = 72;
       Actor_StartScriptFar((struct Actor *)spark,
                            gBattleEffect_SharedParticleScript);
@@ -1771,7 +1768,7 @@ void FieldPsynergy_Ply(void) {
     if (object != 0) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
-      object->update = (void (*)(void))BattleEffect_UpdateShrinkingOrbitObject;
+      object->update = (void (*)(void))FieldEffect_UpdateShrinkingOrbitActor;
       object->timer = 120;
       object->unk66 = i << 13;
       object->motionFlags = 4;
@@ -1791,7 +1788,7 @@ void FieldPsynergy_Ply(void) {
     target->scaleX = 0xb333;
     SET_POSITION(target, scene->x, scene->y + 0x100000, scene->z);
     target->motionFlags = 4;
-    Animation_ApplyChildValuesFar(target, 7);
+    Actor_SetSpriteColorModeFar(target, 7);
   }
 
   Sound_PlayFar(131);
@@ -1803,14 +1800,14 @@ void FieldPsynergy_Ply(void) {
        * 188 instructions differ in tla-en. */
       target = object;
       if (i & 3)
-        Animation_ApplyChildValuesFar(object, 9);
+        Actor_SetSpriteColorModeFar(object, 9);
       else
-        Animation_ApplyChildValuesFar(object, 10);
+        Actor_SetSpriteColorModeFar(object, 10);
       wait(2);
     }
   }
 
-  Animation_ApplyChildValuesFar(object, 0);
+  Actor_SetSpriteColorModeFar(object, 0);
   Sound_PlayFar(84);
   if (object != 0) {
     target->update = (void (*)(void))FieldEffect_RunSparkEmitter;
@@ -1826,12 +1823,12 @@ void FieldPsynergy_Ply(void) {
     target->speedLimit = 0x50000;
     target->acceleration = 0x6666;
     target->actionFlags = 0;
-    Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
+    Actor_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
     Actor_CommitPosition(target);
     Actor_Destroy(target);
   }
   if (marker != 0x60)
-    Resource_ResetEntry(marker);
+    VramCache_FreeEntry(marker);
   if (scene->finishCallback != 0)
     scene->finishCallback();
   FieldPsynergy_FadeFromCastColor();
@@ -1905,7 +1902,7 @@ void FieldPsynergy_EndCloak(void) {
   gMainRoutineWork.cloaked = 0;
 }
 
-void FieldEffect_ResumeCloakCheck(void) {
+void FieldPsynergy_ResumeCloakCheck(void) {
   if (gMainRoutineWork.cloaked != 0)
     Task_Add(FieldEffect_CheckCloakTile, 0x480);
 }

@@ -1,19 +1,13 @@
 /// @file
 /// The Judgment summon.
-/// The folder README describes its two parts, the gathering and the sweep,
-/// under "Effect families".
 
 #include "../battle_effect_internal.h"
 
 /// The bytes of Judgment's work block before its dimmed mote copies.
 #define JUDGMENT_SHEET_BYTES 10000
 
-/// Judgment's work block, laid over struct BattleEffectWork from its start.
-/// It is the HEAP_SLOT_BATTLE_EFFECT block BattleEffect_RunSummon lends
-/// the effect and frees after it; only BattleEffect_RunJudgment reads it this
-/// way. The sweep's 120x120 wave picture (14,400 bytes from the block's start)
-/// later overwrites sheet and the dimmed copies up to most of copy 5, which
-/// only the gathering reads.
+/// Judgment's work block, laid over struct BattleEffectWork from its start; the
+/// sweep's wave picture later overwrites the gathering's part of it.
 struct JudgmentWork {
   /// The gathering's pictures: the pink burst, the burst's quarters and the
   /// tornado sheet.
@@ -68,8 +62,9 @@ struct JudgmentWork {
    work->sheet[(bottom) * JUDGMENT_WAVE_SIZE + (left)] = 20,                   \
    work->sheet[(top) * JUDGMENT_WAVE_SIZE + (left)] = 20)
 
-/// The battle wipes away to a violet sky where a formation flies forward while
-/// motes gather into it, bursts in a flash and sends out a ring of light.
+/// The battle wipes away to a violet sky where Judgment flies forward while
+/// motes gather into her; she bursts in a flash, and the blast falls on the
+/// land below and spreads in rings of light.
 ///
 /// Abilities: Judgment.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
@@ -113,14 +108,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   work = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
   view = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                         HEAP_SLOT_BATTLE_BACKGROUND);
-  // The sheet slot is one mote set (MOTE_SET_BYTES): the undimmed motes.
   ramp = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
-  // The backdrop and colour 1, which the first wipe fills the canvas with,
-  // are black.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -138,13 +130,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
-  // The effect owns BG1's scroll until frame 280 of the sweep.
   view->busy = 1;
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(16);
-  // The formation starts 64 pixels back and comes forward 8 pixels a frame;
-  // the depth range is kept only by the dead spark stage.
   depth = -px(64);
   zoom = px(8);
   minimumDepth = 0xffff;
@@ -157,7 +146,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              work->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
-  // Eight ever darker copies of the particle sprites, for fading.
   for (i = 0; i != 8; i++) {
     u8 *src = ramp;
     for (j = 0; j != MOTE_SET_BYTES; j++) {
@@ -167,15 +155,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
   }
 
-  // The canvas ramp, background colours 0 to 63, takes the blue crescent
-  // sheet's palette over the pink burst's, which the first load copied.
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet),
                   128);
 
   for (i = 0; i != 128; i++) {
-    // A mote's radius is its x, 72 to 87 pixels as a plain integer, and its
-    // angles its velocities.
     PARTICLES[i].x = (Random16() & 15) + 72;
     PARTICLES[i].velocityX = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].velocityY = Random16() & 0xffff;
@@ -183,7 +167,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
 
   for (i = 0; i != 128; i++) {
-    // Sparks on a ring of radius 63.75 pixels (255 / 4), 32 to 95 pixels up.
     s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 amp = 255;
     s32 speed = 0;
@@ -195,7 +178,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     JUDGMENT_SPARKS[i].variant = angle;
   }
 
-  // Trails keep 50% a frame.
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -204,7 +186,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   for (frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
-    // The heap slot table, read as blitters by the frames after 143.
     blitters = EFFECT_BLITTERS;
     if (frame == 143) {
       Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
@@ -252,14 +233,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // The battle background starts its 24-frame fade
-    // (Palette_StepFadeTransfer).
     if (frame == 72) {
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
 
-    // Motes 0 to 63 are drawn flat, without perspective.
     anchor[2] = 0;
     anchor[1] = 0;
     for (i = 0; i != 64; i++) {
@@ -291,9 +269,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Place the 4x4 formation at its natural size, 32 pixels apart, then move
-    // it: it slows over the first 48 frames and eases towards a stop from frame
-    // 33, jumps back on frame 144 and drifts forward from 146.
+    // The formation slows to a stop, jumps back and drifts forward again.
     pair = unitScale;
     place.groundHeight = 0;
     place.height = 0;
@@ -392,7 +368,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       r = frame * 10 - 1424;
       work->transferValue = CANVAS_FADE_THREE_QUARTERS;
       if (n <= 6) {
-        // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
         s32 picture = n * MOTE_SET_BYTES + gBattleEffect_MotePictures[7] +
                       JUDGMENT_SHEET_BYTES;
         s32 high = 8;
@@ -437,8 +412,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 
   {
-    // Darken the mote sheet for the sweep: levels above 32 lose 32 (224
-    // added to a byte wraps), and the other nonzero levels become 1.
     u8 *c = ramp;
     for (i = 0; i != MOTE_SET_BYTES; i++, c++) {
       if (*c > 32) {
@@ -462,10 +435,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   fill = 0;
   Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
 
-  // The rings' centre in the wave picture (cx, cy), their width in eighths
-  // (sx, which also scales them above the centre), their depth below it
-  // (squash) and how many are drawn a frame. shift is the explosion
-  // front's x.
   cx = 60;
   cy = 44;
   squash = 6;
@@ -474,7 +443,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   rings = 2;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Clear the wave picture over the gathering's pictures (shift is still 0).
   fill = shift;
   Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
 
@@ -497,7 +465,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
 
-    // A or B jumps to the next part: 150, 214 or 280.
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       if (frame >= 5 && frame < 150) {
         frame = 150;
@@ -533,7 +500,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 69, 182 and 238 flash the whole canvas.
     if (frame == 69) {
       fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
@@ -546,8 +512,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                                   (s32)&ResourceId_AerialViewBackdrop, 7);
     }
 
-    // Frame 150, the beach: the rings restart from (112, 32), four a frame
-    // and as deep below the centre as they are wide.
+    // The beach: the rings restart, four a frame.
     if (frame == 150) {
       cx = 112;
       cy = 32;
@@ -600,8 +565,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY, 0);
     }
 
-    // From frame 280 the canvas's palette ramp, background colours 1 to 63,
-    // brightens one step a channel each frame, reaching white by frame 311.
+    // The canvas's colours brighten to white.
     if (frame > 279) {
       volatile u16 *pal = &BG_PLTT_COLOR(0, 1);
       for (i = 0; i != 63; i++, pal++) {
@@ -712,15 +676,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame > 85) {
-      // Draw that many more rings a frame into the wave picture, each one pixel
-      // wider than the last.
+      // More rings each frame, each one pixel wider than the last.
       if (frame <= 213) {
         for (i = 0; i != rings; i++, ring++) {
           s32 radius = ring;
           s32 slope = 0;
           s32 err = ring;
-          // A midpoint circle, one point plotting all eight octants, scaled by
-          // sx and squash.
           while (radius >= slope) {
             s32 half;
             s32 halfSlope;
@@ -730,8 +691,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             s32 bottom;
             s32 dx;
 
-            // The steep octants: across by half the radius, up and down by
-            // the slope, each point clamped to the 120 by 120 picture.
             half = radius / 2;
             dx = (half * sx) / 8;
             right = cx + dx;
@@ -759,8 +718,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
               right = JUDGMENT_WAVE_SIZE - 1;
             JUDGMENT_PLOT_RING_POINTS(left, right, top, bottom);
 
-            // The flat octants: across by half the slope, up and down by the
-            // radius.
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
             right = cx + dx;
@@ -816,7 +773,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                         COMPOSITE_ADDITIVE);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     if (frame > 85) {
-      // From frame 86 add the wave picture over the canvas.
       draw[1](canvas, work->sheet, 0, 0, JUDGMENT_WAVE_SIZE,
               JUDGMENT_WAVE_SIZE);
     }
@@ -847,9 +803,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
     }
 
-    // From frame 214 each live debris sprite is placed from its particle (x and
-    // y on the field, 255 pixels below the ground line, scaled by z plus 1/128
-    // of y but never below 1/32) and rises.
+    // Debris rises from the field.
     if (frame > 213) {
       debrisPlace.groundHeight = 0;
       debrisPlace.height = 0;
@@ -911,8 +865,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
-    // From frame 64 the battle background shakes up and down: BG1's vertical
-    // scroll jumps between 30 and 33 pixels.
+    // The battle background shakes up and down.
     if (frame > 63) {
       s32 shake = (Random16() & 3) + 30;
 
@@ -922,7 +875,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // The finish: release the debris sprites, then the canvas and its blitter.
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }

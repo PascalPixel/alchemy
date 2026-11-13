@@ -4,8 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-/// 910 sparks from Ram_MapGridCellBuffer + 3160; the glint pictures that draw
-/// the crackles of lightning come before them.
+/// The sparks; the glint pictures that draw the crackles of lightning come
+/// before them.
 #define THOR_PARTICLES ((struct Particle *)(Ram_MapGridCellBuffer + 3160))
 
 /// The particle sprites, after the light fan pictures.
@@ -16,12 +16,7 @@
 
 #define THOR_DIMMED_DOTS 10000 ///< the darker copies of the dot pictures
 
-/// Launches up to max sparks from (startX, startY), 16.16, into the free slots
-/// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
-/// index. Each flies at angle (0 straight up, a full turn TRIG_TURN) at a
-/// random speed of 32 to 1055 128ths of a pixel a frame across, twice that
-/// up and down, and lives 32 to 39 frames. Used for the pillar's 512 sparks
-/// and each bolt's 16; the mote's sparks are launched inline.
+/// Launches up to max sparks from a point, each at angle at a random speed.
 #define THOR_LAUNCH_SPARKS(spark, index, startX, startY, angleExpr, max)       \
   {                                                                            \
     s32 spawned = 0;                                                           \
@@ -49,8 +44,6 @@
 ///
 /// Abilities: Thor.
 void BattleEffect_RunThor(struct BattleEffectParams *args) {
-  // The three lines' end points, in pairs: x and z on a plane, 96 being its
-  // centre.
   static s16 points[6][2] = {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
   };
@@ -83,7 +76,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
-  // Open the canvas and load the pictures.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
@@ -91,8 +83,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              work->sheet + THOR_SPRITE_PICTURES, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // Eight copies of the dot pictures, each with its colour levels capped 7
-  // lower than the one before.
   {
     s32 offset;
     for (i = 0, offset = 0; i != 8; i++) {
@@ -116,8 +106,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work->scrollInterval = 2;
   work->scrollStepX = 1;
   work->scrollStepY = 0;
-  // The dusk clouds scroll a pixel every other frame; busy keeps the battle
-  // camera off BG1's scroll meanwhile.
   view->busy = 1;
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
@@ -125,8 +113,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_DuskCloudsBackdrop, 0);
-  // The projection centre moves down to line 240 for the dusk part;
-  // BattleEffect_SetupBlendedDisplay puts it back.
   gProjection.centerY = 240;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
@@ -136,7 +122,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(15);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // One row of the beam: brightest in the middle, darker to each side.
   for (i = 0; i != 16; i++) {
     ramp[i] = i * 8 + 3;
     ramp[31 - i] = i * 8 + 3;
@@ -150,7 +135,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
-  // First part, 170 frames (A or B skips it).
+  // First part (A or B skips it): the ring, the triangle and the beam.
   for (frame = 0; frame != 170; frame++) {
     size = 2;
     count = frame * 2;
@@ -166,19 +151,15 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       break;
     }
-    // Red, green and blue sway a third of a turn apart, so the canvas
-    // colours cycle through the hues.
+    // The colours cycle through the hues.
     BattleEffect_UpdatePhasePalette(frame * 2, TRIG_TURN - TRIG_TURN / 3,
                                     TRIG_TURN / 3, 0);
-    // The frame before the beam fills the canvas with level 26 (26 in each
-    // byte) instead of fading it.
     if (frame == 150) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(26));
     } else {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
     }
-    // Place the circle and lines.
     Projection_Set(BATTLE_CAMERA_DISTANCE,
                    Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, Q16_ONE * 3 / 4),
                    0x7fff0000);
@@ -214,7 +195,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       Transform_ApplyPitch(frame << 8);
     }
 
-    // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
         SET_VECTOR(point, px(points[i][0] - 96), 0, px(points[i][1] - 96));
@@ -241,10 +221,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
     }
 
-    // The circle of up to 128 dots, two more each frame, darkening once the
-    // beam has fallen: from frame 140 it takes the brighter pixel instead of
-    // adding, and from frame 157 each frame draws it with a darker copy of the
-    // dots, down to the seventh.
+    // The ring of dots, two more each frame, darkening once the beam has
+    // fallen.
     if (frame <= 179) {
       DrawRectangle drawAlt;
       s32 level = 0;
@@ -286,7 +264,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
-    // The beam, frames 151 to 167.
     if ((u32)(frame - 151) <= 16) {
       s32 inset = 0;
       s32 beamHeight = (frame - 151) * 20 + 44;
@@ -327,13 +304,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // Second part, 192 frames.
+  // Second part: the pillar, Thor and his bolts.
   view->busy = 0;
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->args);
-  // Thor: nine sprites of SPRITE_THOR, placed as SUMMON_FORMATION_THOR and
-  // released at the end.
   BattleEffect_SpawnObjects(9, SPRITE_THOR, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                              Ram_MapGridCellBuffer, 1, 0);
@@ -371,8 +346,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     Sound_PlayFar(SE_CRASH);
-    // The pillar is 48 pixels wide at canvas x 36 and reaches from the top
-    // down to line 112; its sparks start at its foot, x 60.
 
     for (frame = 0; frame != 192; frame++) {
       s32 stormFrame;
@@ -380,8 +353,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
                                    work->sheet, 1, 0);
       }
-      // A heavy impact sound every 8 frames from frame 80 to 136, under
-      // the bolts.
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -389,9 +360,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       if (frame == 140) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
-      // The pillar of lightning, frames 8 to 16: its body on frames 9 to
-      // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown
-      // up from its foot.
+      // The pillar of lightning, throwing sparks up from its foot.
       // DEAD: a loop over one pillar, j being 0; the ROM keeps its counter,
       // the step of start by 128 and its exit test.
       for (j = 0; j != 1; j++) {
@@ -410,7 +379,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           }
         }
       }
-      // The pillar strikes every target on frame 10.
       if (frame == 10) {
         EFFECT_FOR_EACH_TARGET(i, work->args) {
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
@@ -455,7 +423,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           }
         }
         {
-          // The mote: a random offset 8 to 15 pixels from where it rests.
           s32 radius = (Random16() & 7) + 8;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
           moteX = (Trig_Sin(angle) * radius) >> 16;
@@ -488,9 +455,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_PICTURE, mirrorX, moteY, 12, 24);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        // Four sparks a frame from the right-hand copies, in any direction,
-        // at 64 to 127 128ths of a pixel a frame (twice that up and down),
-        // living 16 to 23 frames.
+        // Sparks fly off the bolts.
         j = 0;
         for (i = 0, spark = THOR_PARTICLES; i != 910; i++, spark++) {
           if (spark->variant == 0) {
@@ -513,10 +478,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
       {
-        // Live sparks keep their line, slowing to 60/64 a frame with no
-        // gravity, and one past the ground (y 120) bounces back at half
-        // speed instead of being drawn; those on the canvas shrink from 3
-        // pixels wide to 1 as their life runs out.
+        // Sparks slow and bounce off the ground, shrinking as they die.
         DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
         struct Particle *spark;
         for (i = 0, spark = THOR_PARTICLES; i != 910; i++, spark++) {
@@ -536,7 +498,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
-      // Thor is placed from frame 16 at (80, 64) and pushed back from frame 32.
+      // Thor stands over the targets, then is pushed back.
       if (frame > 15) {
         if (frame == 32) {
           thorSpeedX = px(4);

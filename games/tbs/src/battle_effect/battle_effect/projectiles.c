@@ -6,7 +6,6 @@
 
 /// Sparks swirl around a point that travels from the user to the goal and
 /// gather into a Djinni, which sways for 16 frames and bursts into motes.
-/// Leaves the canvas cleared for the effect that follows.
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
                                     s32 element, s32 side, s32 anchor,
                                     s32 *outX, s32 *outY) {
@@ -54,7 +53,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     sheetId = (s32)&ResourceId_JupiterDjinnSmallSheet;
     break;
   }
-  // The small Djinni's resource is its palette, then its picture.
   palette = Resource_GetTableEntry(sheetId);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Decompress_TaggedLz(palette + 128, work->sheet);
@@ -76,8 +74,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // Sparks spread out flat from the centre, 20 to 51 pixels up, at 4 to 12
-  // pixels a frame (speed / 32).
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -89,11 +85,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     spark->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  // The centre moves from the user to the goal, 60 pixels up, over frames
-  // 6 to 45.
   SET_VECTOR(center, user->x.fixed, 0, user->z.fixed);
-  // Every caller passes a literal anchor, so goal is always set before the
-  // interpolation starts; none passes DJINNI_ANCHOR_USER_X.
   switch (anchor) {
   case DJINNI_ANCHOR_OVER_TARGET:
     SET_VECTOR(goal, target->x.fixed, px(60), target->z.fixed);
@@ -116,8 +108,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
-    // The long version fades the canvas out over its last 8 frames; the sound
-    // plays on frame 8.
     if (frame > 75)
       REG_BLDALPHA = BLEND_ALPHA(168 - frame * 2, 16);
     if (frame == 8)
@@ -135,7 +125,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     if (frame == 24)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
-    // Only the first 32 sparks are drawn.
     for (i = 0; i != 32; i++) {
       struct Particle *spark = &PARTICLES[i];
 
@@ -181,8 +170,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         }
       }
     }
-    // The Djinni sways 4 pixels either side of the centre on frames 54 to
-    // 69; the short version ends on frame 63, before its burst.
+    // The Djinni sways over the goal.
     if (frame >= 54 && frame <= 69) {
       SET_VECTOR(point, (Trig_Sin(frame * (TRIG_TURN / 64)) * 4), 0, 0);
       Projection_Point(point, &position);
@@ -191,9 +179,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       position.x >>= 1;
       draw[0](canvas, work->sheet, position.x - 10, position.y - 20, 20, 40);
     }
-    // On frame 64 (long version only), 64 motes burst from the Djinni, each
-    // lasting 9 to 24 frames, thrown in a random direction at 2 to 6 pixels a
-    // frame (speed / 64) with the vertical part doubled.
+    // The long version's Djinni bursts into motes.
     if (frame == 64) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];
@@ -207,7 +193,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         mote->variant = (Random16() & 15) + 8;
       }
     }
-    // Live motes shrink as their frames run out.
     if (frame > 63) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];
@@ -224,8 +209,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  // Leave the canvas cleared and fully shown for the effect that follows,
-  // without closing the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   Task_Remove(Palette_StepFadeTransfer);
@@ -233,9 +216,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 }
-
-// Projectile volleys and rushing strikes.
-// The folder README describes them under "Effect families".
 
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST                                  \
   (ANIMATION_STEP_NORMAL * 3) ///< the user's, while firing
@@ -280,8 +260,7 @@ void BattleEffect_RunWingStroke(struct BattleEffectParams *args) {
 void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_WING_BEAT);
 }
-/// Puts the user into its leap pose and fires the volley in this mode
-/// while its effect runs fast.
+/// Fires the volley from the user's leap pose.
 static inline void
 BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
   struct Actor *user;
@@ -307,9 +286,7 @@ void BattleEffect_RunCuttingEdge(struct BattleEffectParams *args) {
 void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
   BattleEffect_RunVolleyWithAction(args, PROJECTILE_VOLLEY_HEAT_WAVE);
 }
-/// Thirty ice chips fall from high above the user onto each target, without
-/// shaking the screen or knocking the target back; the battle shows the damage
-/// on frame 48.
+/// Thirty ice chips fall from high above the user onto each target.
 ///
 /// Abilities: Sleet.
 void BattleEffect_RunSleet(struct BattleEffectParams *args) {
@@ -330,8 +307,6 @@ void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
   BattleEffect_RunVolleyWithAction(args, PROJECTILE_VOLLEY_BLIZZARD);
 }
 
-/// PARTICLES holds the hit flashes from 0, the sparks from 100 and the
-/// fireball trails from 512.
 #define PROJECTILE_VOLLEY_PARTICLE_COUNT 1024
 
 /// The bytes of a gProjectileVolley_Modes row.
@@ -343,7 +318,6 @@ enum VolleyField {
   PROJECTILE_VOLLEY_SPARKS   ///< sparks thrown on each hit
 };
 
-// Where the volley's pictures sit in the sheet.
 #define PROJECTILE_VOLLEY_COMET_PICTURES 4096  ///< comets: the top half of each
 #define PROJECTILE_VOLLEY_STREAK_PICTURES 8192 ///< wind streaks
 /// The hit flashes turned on their side, after the upright ones.
@@ -379,7 +353,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   s32 steps;
   struct Actor *user;
   s32 k;
-  // The trail particles placed, and later the sparks' speed shift.
   s32 trailsOrShift;
   s32 hit;
   s32 x;
@@ -391,7 +364,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   soundCooldown = 0;
   work->args = args;
   comet = args->variant;
-  // The canvas's BG priority: 0 for Ice Blessing, 1 for the others.
   if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
     BattleEffect_StartCanvasLayer(0);
   else
@@ -400,8 +372,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     BattleEffect_RunDjinniEntrance(args, ELEMENT_MERCURY, work->args->side,
                                    DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
-  // The main blitter, mirrored on EFFECT_SIDE_PARTY: brightest-wins for Cutting
-  // Edge, additive for the others.
   if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
     if (work->args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -421,7 +391,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   }
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
-  // The shot pictures, and how long each mode's trails last.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == PROJECTILE_VOLLEY_SLASH ||
       mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
@@ -442,7 +411,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
-    // The ice palette is copied twice, before and after the streaks load.
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       Iwram_CopyWords((void *)BG_PLTT, pal, 128);
@@ -477,7 +445,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    // The ice chips, and the small Mercury Djinni the prelude draws.
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
@@ -487,7 +454,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   shots = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
   steps = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
@@ -496,13 +462,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     s32 delay = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
     s32 height = BattleUnit_GetEffectHeightFar(work->args->user);
 
-    // Keep the shots within work->particles' 64.
     if (work->args->targetCount * shots > 63)
       work->args->targetCount = 1;
 
-    // Each shot starts at the user, at a height its mode picks, and is aimed to
-    // reach its target in `steps` frames: straight across for sparks and
-    // Cutting Edge, at a random height near the target for the others.
+    // Each shot starts at the user and is aimed at its target.
 
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       struct Actor *target =
@@ -563,23 +526,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         shot->variant = 0;
       }
     }
-    // Free every flash, spark and trail.
     for (i = 0; i != PROJECTILE_VOLLEY_PARTICLE_COUNT; i++)
       PARTICLES[i].variant = 0;
-    // Every shot's flight, then 16 frames (32 for fireballs) for the last
-    // hits to fade.
     if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
       total = work->args->targetCount * delay + shots * stagger + 32;
     else
       total = work->args->targetCount * delay + shots * stagger + 16;
 
-    // Each frame: the prelude's Djinni, the shots and their hits, the hit
-    // flashes, the sparks and the trails, in that order.
     for (frame = 0; frame != total; frame++) {
       s32 index;
 
-      // The battle shows the damage on frame 16, 32 for Heat Wave and 48 for
-      // Sleet; Cutting Edge shows it on its first hit instead.
       if (soundCooldown > 0)
         soundCooldown--;
       if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
@@ -595,9 +551,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
       }
 
-      // Prelude: the small Djinni circles, 4 pixels across and 2 up and down
-      // every 32 frames, and from frame 70 rises away 2 pixels a frame; it is
-      // drawn twice on the first four frames.
+      // The prelude's small Djinni circles, then rises away.
       if (work->args->prelude == 1) {
         s32 x = ((-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) >> 16) +
                 screenX / 2 - 10;
@@ -621,7 +575,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
 
-      // The shots.
       EFFECT_VIEW_FROM_CAMERA(camera);
       index = 0;
       EFFECT_FOR_EACH_TARGET(i, work->args) {
@@ -632,15 +585,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           if (j * stagger + i * delay < frame) {
             struct Particle *shot = &work->particles[i * shots + j];
 
-            // The screen position (half across, on the canvas).
             Projection_Point(shot, &position);
             position.x >>= 1;
             shot->x += shot->velocityX;
             shot->y += shot->velocityY;
             shot->z += shot->velocityZ;
             if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
-              // Leave two trail particles behind the fireball, drifting up to
-              // 4 pixels a frame each way and living 32 to 39 frames.
+              // A fireball leaves a trail of embers.
               trailsOrShift = 0;
               for (k = PROJECTILE_VOLLEY_FIRST_TRAIL;
                    k != PROJECTILE_VOLLEY_PARTICLE_COUNT; k++) {
@@ -659,8 +610,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               }
             }
             if (shot->variant == 0) {
-              // A shot hits once it is on the target's side of the field and
-              // past the target's x.
+              // A shot hits once it passes its target.
               x = shot->x;
               if (target->x.fixed < 0) {
                 hit = x < 0;
@@ -696,12 +646,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   soundCooldown = 8;
                   Sound_PlayFar(SE_WATER);
                 }
-                // The hit: the shot's flash starts where it was drawn, the
-                // screen shakes (but for Sleet), the target flashes and,
-                // but for the ice chips, recoils.
+                // The hit: a flash, a shake, and the target flinches.
                 if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-                  // Pellets bounce back, up or down at random, gaining 2 to 4
-                  // pixels a frame of vertical speed.
+                  // Pellets bounce off, up or down.
                   s32 kick = ((Random16() & 31) + 32) << 12;
 
                   if (Random16() & 1)
@@ -726,8 +673,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                     BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                                    KNOCKBACK_SKID);
                 }
-                // Sparks: the mode's count, in the first free slots from 100,
-                // living 16 to 23 frames, at up to 4 pixels a frame each way.
+                // Sparks fly from the hit.
                 trailsOrShift =
                     mode == PROJECTILE_VOLLEY_CUTTING_EDGE ? 12 : 11;
                 for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
@@ -752,12 +698,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               }
             }
           drawShot:
-            // Draw the shot, hit or not.
             if (mode == PROJECTILE_VOLLEY_SLASH ||
                 mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
                 mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
-              // The picture holds the top half; the bottom half is drawn
-              // flipped.
               if (work->args->side == EFFECT_SIDE_PARTY)
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -785,7 +728,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
-              // Shurikens vanish once past their target.
               if (ABS(shot->x) <= ABS(target->x.fixed))
                 draw[0](canvas, work->sheet + frame % 6 * (32 * 24),
                         position.x - 16, position.y - 12, 32, 24);
@@ -818,7 +760,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         }
       }
 
-      // Hit flashes, 12 frames.
       if (mode == PROJECTILE_VOLLEY_SLASH ||
           mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
           mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
@@ -881,9 +822,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         }
       }
 
-      // Sparks fall and bounce off the bottom (y 112) at half speed,
-      // shrinking as their frames run out: a gravity of 1/16 pixel a frame
-      // each frame, keeping 60/64 of their speed.
+      // Sparks fall and bounce, shrinking as they die.
       for (i = PROJECTILE_VOLLEY_FIRST_SPARK;
            i != PROJECTILE_VOLLEY_FIRST_TRAIL; i++) {
         struct Particle *particle = &PARTICLES[i];
@@ -900,8 +839,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         }
       }
 
-      // Fireball trails rise, gaining 1/4 pixel a frame of upward speed each
-      // frame, and shrink as they fade.
+      // Fireball trails rise and fade.
       for (i = PROJECTILE_VOLLEY_FIRST_TRAIL;
            i != PROJECTILE_VOLLEY_PARTICLE_COUNT; i++) {
         struct Particle *particle = &PARTICLES[i];
@@ -940,9 +878,7 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
   Actor_SelectAnimationFar(actor, POSE_STANDING);
 }
 
-/// Moves a unit 80% of the way to another one over a number of frames,
-/// in its leap pose. The speed is that distance over the frames; the
-/// distance is taken in 1/256 pixels so its square fits in 32 bits.
+/// Moves a unit 80% of the way to another one, in its leap pose.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);

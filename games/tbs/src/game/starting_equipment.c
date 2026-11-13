@@ -3,7 +3,7 @@
 
 #include "game/starting_equipment.h"
 #include "types.h"
-#include "character_ids.h"
+#include "game/character_ids.h"
 
 /// Characters given starting equipment, terminated by -1.
 /// Party_InitializeCharacters reads it at a new game: each listed character

@@ -41,10 +41,10 @@
 /// in its floor. The family is put out of sight
 /// (places/kolima-interiors_cursed/map-8.png).
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "flags.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -58,15 +58,15 @@ extern struct ActorPlacement gLogRoomsC_ActorPlacements[];
 extern struct Trigger gLogRoomsC_Triggers[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
 
 #include "text/msg_ids.h"
 #include "ability_ids.h"

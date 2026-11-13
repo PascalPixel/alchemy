@@ -8,9 +8,9 @@
 #include "game/game.h"
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
+#include "gamepak/far_call.h"
+#include "battle/playback_queue.h"
+#include "battle/battle_action_run.h"
 #include "static_assert.h"
 
 struct Unit;

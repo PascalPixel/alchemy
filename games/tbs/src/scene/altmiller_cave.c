@@ -59,11 +59,11 @@
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 
-#include "main_routine_work.h"
-#include "heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/heap_slots.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct LightWheel;
 
@@ -94,30 +94,30 @@ extern struct Trigger gAltmillerCave_DraughtTriggers[];
 
 #include "scene/walk_into_leader.h"
 #include "system/main_routine.h"
-#include "io_write.h"
+#include "system/io_write.h"
 #include "macros.h"
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "djinn_ids.h"
-#include "pushed_actor.h"
-#include "actor_builtin_scripts.h"
-#include "dma.h"
-#include "event_inline.h"
+#include "field/pushed_actor.h"
+#include "field/actor_builtin_scripts.h"
+#include "system/dma.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "display_transition.h"
+#include "graphics/display_transition.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "field_psynergy_work.h"
+#include "field/actor_script.h"
+#include "field/field_psynergy_work.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
 /// the two men from Tolbi who come looking for him.

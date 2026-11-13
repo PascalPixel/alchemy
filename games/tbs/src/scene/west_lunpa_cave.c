@@ -55,11 +55,11 @@
 /// camera bounds, so Frost can never reach it
 /// (WestLunpaCave_UnusedFreezePuddle).
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event.h"
+#include "field/event.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern const struct SceneEntrance gCaveEntrances[];
 extern const u32 gCaveExits[];
@@ -70,8 +70,8 @@ extern const struct Trigger gCaveTriggers[];
 
 #include "types.h"
 #include "ability_ids.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 #include "flags.h"
 #include "sounds.h"
 

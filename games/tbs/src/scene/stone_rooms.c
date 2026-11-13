@@ -26,9 +26,9 @@
 ///   uses the thieves' tables, so its chests and exit sit in the same
 ///   trigger table as the thieves' talk and the Vault door.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern const struct SceneEntrance gStoneRooms_Entrances[];
 extern const u32 gStoneRooms_Exits[];
@@ -38,16 +38,16 @@ extern const struct Trigger gStoneRooms_ThiefTriggers[];
 extern const struct Trigger gStoneRooms_PrisonerTriggers[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "ability_ids.h"
-#include "event.h"
+#include "field/event.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "text/msg_ids.h"

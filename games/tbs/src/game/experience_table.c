@@ -2,7 +2,7 @@
 /// Each character's lighthouse group and the experience each needs for each
 /// level.
 
-#include "game.h"
+#include "game/game.h"
 
 const u8 gCharacter_ElementGroupTable[] = {0, 0, 1, 1, 0, 0, 1, 1};
 

@@ -1,4 +1,4 @@
-#include "field_psynergy_work.h"
+#include "field/field_psynergy_work.h"
 
 // Vale and the World Map: the particles that rise around a glowing
 // actor.

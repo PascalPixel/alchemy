@@ -8,11 +8,11 @@
 #include "window/screens.h"
 #include "types.h"
 #include "static_assert.h"
-#include "dma.h"
-#include "heap_slots.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
 #include "fixed_math.h"
-#include "flash.h"
-#include "heap.h"
+#include "gamepak/flash.h"
+#include "system/heap.h"
 
 /// The header of a save sector in flash: its signature, the part it holds,
 /// its checksum and its counter.

@@ -5,13 +5,13 @@
 #include "field/actor_update_arm.h"
 #include "field/actor_script.h"
 #include "types.h"
-#include "irq.h"
-#include "iwram_call.h"
-#include "mul_q16.h"
-#include "actor_arm_view.h"
+#include "system/irq.h"
+#include "system/iwram_call.h"
+#include "system/mul_q16.h"
+#include "field/actor_arm_view.h"
 #include "macros.h"
 #include "fixed_math.h"
-#include "heap.h"
+#include "system/heap.h"
 
 #define ACTOR_SLOTS 8 ///< script-driven actors updated each frame
 #define TARGET_UNSET ((s32)0x80000000) ///< no movement target

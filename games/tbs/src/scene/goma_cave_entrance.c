@@ -38,7 +38,7 @@
 /// (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// World Map.
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gGomaCaveEntranceTallIvyScript[];
 extern struct SceneEntrance gGomaCaveEntranceEntrances[];
@@ -49,25 +49,25 @@ extern struct Trigger gGomaCaveEntranceTriggers[];
 #include "scene/field_effect_spawn.h"
 #include "field/event_commands.h"
 #include "game/game.h"
-#include "battle.h"
-#include "field.h"
-#include "menu.h"
-#include "system.h"
-#include "event.h"
-#include "create_configured_actor.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "menu/menu.h"
+#include "system/system.h"
+#include "field/event.h"
+#include "field/create_configured_actor.h"
 #include "debug.h"
-#include "game.h"
-#include "graphics.h"
-#include "sound.h"
-#include "inventory.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "sound/sound.h"
+#include "game/inventory.h"
 #include "text/msg_ids.h"
-#include "actor_script.h"
-#include "heap_slots.h"
+#include "field/actor_script.h"
+#include "system/heap_slots.h"
 #include "ability_ids.h"
 #include "macros.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "field_psynergy_work.h"
+#include "field/field_psynergy_work.h"
 
 /// The room's actors.
 ///

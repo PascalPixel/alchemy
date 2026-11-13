@@ -51,11 +51,11 @@
 /// Coming back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
 /// Sanctum (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is
 /// not shown again.
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "djinn_ids.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -82,22 +82,22 @@ extern struct Trigger gXian_Triggers[];
 #include "system/system.h"
 #include "macros.h"
 
-#include "actor.h"
-#include "event.h"
-#include "iwram_call.h"
-#include "battle.h"
+#include "field/actor.h"
+#include "field/event.h"
+#include "system/iwram_call.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
 
 #include "shared/field_effect_create.c"

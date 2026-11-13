@@ -4,7 +4,7 @@
 
 #include "field/actor_script.h"
 #include "field/field.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 
 /// The script Actor_Create gives every new actor: it does nothing and
 /// returns to the idle script.

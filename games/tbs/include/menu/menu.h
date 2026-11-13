@@ -6,8 +6,8 @@
 
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
-#include "heap.h"
+#include "gamepak/far_call.h"
+#include "system/heap.h"
 
 /// The Status screen highlight's width in tiles on each status row: Down,
 /// Poison, Venom, Curse and Haunt.

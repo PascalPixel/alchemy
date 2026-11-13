@@ -71,11 +71,11 @@
 /// copies of West Lunpa Cave's exits and actor placements, which these
 /// scenes never read.
 
-#include "main_routine_work.h"
-#include "event.h"
+#include "system/main_routine_work.h"
+#include "field/event.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gLunpaFortressRandomPick;
 extern s32 gSecondPatrolRoute[];
@@ -107,38 +107,38 @@ extern u32 gLunpaFortressUpperFloorDoorCells[];
 extern u32 gLunpaFortressGroundFloorDoorCells[];
 
 #include "scene/walk_into_leader.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "io_write.h"
-#include "heap_slots.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/io_write.h"
+#include "system/heap_slots.h"
 
 #include "edition.h"
 #include "types.h"
 
 #include "static_assert.h"
-#include "scene_tables.h"
-#include "system.h"
+#include "field/scene_tables.h"
+#include "system/system.h"
 
-#include "main_routine_work.h"
-#include "event.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event.h"
+#include "field/event_inline.h"
 
-#include "pushed_actor.h"
-#include "map_grid_scroll.h"
+#include "field/pushed_actor.h"
+#include "field/map_grid_scroll.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
 #include "djinn_ids.h"
-#include "sound_driver_symbols.h"
-#include "io_reg.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorActorPlacements from ACTOR_FIRST_PLACED,

@@ -5,6 +5,6 @@
 /// A scene overlay's imports: queueing a scene sound and setting up its record
 /// buffer.
 
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 
 #endif

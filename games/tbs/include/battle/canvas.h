@@ -2,6 +2,6 @@
 #define ALCHEMY_CANVAS_H
 
 #include "types.h"
-#include "blitter.h"
+#include "battle/blitter.h"
 
 #endif

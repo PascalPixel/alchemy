@@ -1,7 +1,7 @@
 /// @file
 /// Each item's rare item counter number plus one, by item id.
 
-#include "game.h"
+#include "game/game.h"
 
 // clang-format off
 const u8 gItem_ArtifactSlotTable[] = {

@@ -7,7 +7,7 @@
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 /// A cursor stop among the Status screen's stats: its help entry, where the
 /// cursor points and the run of the row it highlights.

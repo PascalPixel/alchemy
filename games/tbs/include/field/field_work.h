@@ -8,7 +8,7 @@
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"
-#include "heap.h"
+#include "system/heap.h"
 
 struct ActorPlacement;
 struct Trigger;

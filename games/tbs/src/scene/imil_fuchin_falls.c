@@ -101,14 +101,14 @@
 /// The first room's inscription points the way: `The dragon's flame illuminates
 /// the path of truth in darkness.`
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "input.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
+#include "system/input.h"
 #include "scene_ids.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
-#include "field_effect.h"
+#include "field/scene_tables.h"
+#include "field/field_effect.h"
 
 extern s32 gImilFuchinFalls_TrackLeader;
 const struct SceneEntrance *Scene_GetEntrances(void);
@@ -152,34 +152,34 @@ extern s32 gImilFuchinFalls_MediumDustScript[];
 extern s32 gImilFuchinFalls_LongDustScript[];
 
 #include "system/main_routine.h"
-#include "battle.h"
-#include "event_inline.h"
+#include "battle/battle.h"
+#include "field/event_inline.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
-#include "input.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "system/input.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 #include "item_ids.h"
 
 extern void *gHeapSlots[];
 
 #include "djinn_ids.h"
-#include "battle_side.h"
-#include "display_transition.h"
-#include "field_psynergy_work.h"
+#include "battle/battle_side.h"
+#include "graphics/display_transition.h"
+#include "field/field_psynergy_work.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "ground_mask.h"
-#include "io_reg.h"
+#include "field/ground_mask.h"
+#include "system/io_reg.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
-#include "map_grid.h"
+#include "sound/sound_driver_symbols.h"
+#include "field/map_grid.h"
 
 /// The placed actors, numbering each scene's placement rows from
 /// ACTOR_FIRST_PLACED: Fever in Imil Falls Cave, the floating logs of Fuchin

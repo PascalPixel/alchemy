@@ -81,10 +81,10 @@
 /// The jar's row finds nothing on the stormy night. After Kalay it is there
 /// only from the third patch on.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -107,21 +107,21 @@ extern u16 gValeKradensCottage_DoorOpens[];
 #include "system/main_routine.h"
 #include "field/event_commands.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 #include "scene/walk_into_leader.h"
 
 /// The placed actors, numbered in the order of

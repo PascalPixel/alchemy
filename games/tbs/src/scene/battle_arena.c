@@ -4,7 +4,7 @@
 
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern const s32 gBattleArena_SlotValues[];
 u8 *BattleArena_GetEntrances(void);
@@ -26,23 +26,23 @@ extern struct Trigger gBattleArenaTriggers[];
 #include "window/window.h"
 #include "window/screens.h"
 #include "system/system.h"
-#include "battle.h"
-#include "input.h"
+#include "battle/battle.h"
+#include "system/input.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "serial.h"
-#include "iwram_call.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
+#include "system/serial.h"
+#include "system/iwram_call.h"
 #include "text/msg_ids.h"
-#include "battle_side.h"
-#include "sound_driver_symbols.h"
+#include "battle/battle_side.h"
+#include "sound/sound_driver_symbols.h"
 #include "flags.h"
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 
 /// The attendant has asked the player to take part. Every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.

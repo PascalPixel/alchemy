@@ -36,10 +36,10 @@
 /// over a shadow that shrinks with him. The platform's actor,
 /// ACTOR_PLATFORM_SHADOW, draws that shadow.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -66,17 +66,17 @@ extern s32 gSolSanctum_RingScaleSteps[];
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 
 enum CollapseActorId {
   /// The shadow on the platform under each who leaves with Saturos: a
@@ -93,7 +93,7 @@ enum CollapseActorId {
   ACTOR_ALEX
 };
 
-#include "ground_mask.h"
+#include "field/ground_mask.h"
 
 extern s32 gEmberState[16];
 extern s32 gEmberTimer;
@@ -103,18 +103,18 @@ extern s32 gEmberMask;
 extern s32 gEmberLevel;
 extern s32 gEmberLevelTimer;
 
-#include "event_inline.h"
-#include "iwram_call.h"
-#include "field_effect.h"
+#include "field/event_inline.h"
+#include "system/iwram_call.h"
+#include "field/field_effect.h"
 #include "text/msg_ids.h"
-#include "heap_slots.h"
-#include "vram_cache.h"
+#include "system/heap_slots.h"
+#include "system/vram_cache.h"
 #include "macros.h"
 #include "flags.h"
-#include "io_reg.h"
-#include "sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "sound/sound_driver_symbols.h"
 #include "item_ids.h"
-#include "field_psynergy_work.h"
+#include "field/field_psynergy_work.h"
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.

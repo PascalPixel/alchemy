@@ -29,14 +29,14 @@
 /// every scene temp flag it is cleared when the party next comes in, so the log
 /// is back on the bank, but a battle keeps it.
 
-#include "script_operands.h"
+#include "field/script_operands.h"
 #include "flags.h"
-#include "character_ids.h"
-#include "main_routine_work.h"
-#include "heap_slots.h"
+#include "game/character_ids.h"
+#include "system/main_routine_work.h"
+#include "system/heap_slots.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -64,22 +64,22 @@ extern s32 gFallingEffectScript[];
 #include "field/field_sequence.h"
 #include "system/main_routine.h"
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "system_call.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
+#include "system/system_call.h"
 #include "scene/kolima.h"
-#include "pushed_actor.h"
+#include "field/pushed_actor.h"
 #include "text/msg_ids.h"
-#include "actor_script.h"
-#include "io_reg.h"
-#include "sound_driver_symbols.h"
+#include "field/actor_script.h"
+#include "system/io_reg.h"
+#include "sound/sound_driver_symbols.h"
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
 /// numbering the rows of gKolimaForestEntrance_ActorPlacements from

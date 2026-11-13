@@ -3,7 +3,7 @@
 /// moves, item uses, Djinn and summons. Each name is the English release's
 /// (MsgAbilityName plus the ability's number).
 
-#include "game.h"
+#include "game/game.h"
 #include "ability_ids.h"
 
 // clang-format off

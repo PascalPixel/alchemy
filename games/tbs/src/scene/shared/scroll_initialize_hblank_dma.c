@@ -1,4 +1,4 @@
-#include "system_call.h"
+#include "system/system_call.h"
 
 // The Lemurian ship: the ripple of the water, a wave in each axis of the
 // background's scrolling, changed line by line in the horizontal blank.

@@ -2,10 +2,10 @@
 /// Effect tables: actor scripts, curves and lookup tables of the field sequence
 /// bank.
 
-#include "speaker.h"
+#include "field/speaker.h"
 #include "field/event_commands.h"
-#include "actor_script.h"
-#include "scene_tables.h"
+#include "field/actor_script.h"
+#include "field/scene_tables.h"
 
 // Their readers declare them in battle.h, field.h, graphics.h, line_scroll.h,
 // field_effect_scripts.h and field_sequence_internal.h, and palette_fade.c

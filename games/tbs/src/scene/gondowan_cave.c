@@ -57,12 +57,12 @@
 /// 11) from either side either way, and the pillar settles at the same height
 /// in each of columns 41 to 44 either way.
 
-#include "main_routine_work.h"
-#include "heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/heap_slots.h"
 #include "scene_ids.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern struct SceneEntrance gGondowanCaveEntrancesOther[];
 extern struct SceneEntrance gGondowanPassageEntrances[];
@@ -82,17 +82,17 @@ extern struct Trigger gGondowanCaveTriggers[];
 
 #include "scene/field_effect_spawn.h"
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "pushed_actor.h"
-#include "field_effect.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
+#include "field/pushed_actor.h"
+#include "field/field_effect.h"
 #include "text/msg_ids.h"
 #include "flags.h"
 #include "ability_ids.h"

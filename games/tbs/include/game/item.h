@@ -6,7 +6,7 @@
 
 #include "static_assert.h"
 #include "edition.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 struct Unit;
 

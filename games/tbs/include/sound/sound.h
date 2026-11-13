@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "sound_driver_types.h"
+#include "sound/sound_driver_types.h"
 
 struct MusicPlayerInfo;
 struct MusicPlayerTrack;

@@ -1,7 +1,7 @@
 /// @file
 /// Each layout's resources, by map number; the comment names its folder.
 
-#include "map_grid.h"
+#include "field/map_grid.h"
 
 // clang-format off
 const struct MapResources gMaps[] = {

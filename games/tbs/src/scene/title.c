@@ -5,10 +5,10 @@
 ///
 /// Title_Run chooses by entrance.
 
-#include "main_routine_work.h"
-#include "vram_cache.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Title_GetEntrances(void);
 const u32 *Title_GetExits(void);
@@ -27,24 +27,24 @@ extern s16 gTitleVramBlock;
 #include "window/window.h"
 #include "window/screens.h"
 #include "system/system.h"
-#include "battle.h"
-#include "input.h"
+#include "battle/battle.h"
+#include "system/input.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "save.h"
-#include "event_inline.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/heap_slots.h"
+#include "system/save.h"
+#include "field/event_inline.h"
 #include "resource_ids.h"
 #include "scene/title.h"
-#include "io_write_queue.h"
-#include "ram_buffer.h"
-#include "map_grid_scroll.h"
-#include "sound_driver_symbols.h"
+#include "system/io_write_queue.h"
+#include "system/ram_buffer.h"
+#include "field/map_grid_scroll.h"
+#include "sound/sound_driver_symbols.h"
 
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);

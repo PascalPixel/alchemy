@@ -1,4 +1,4 @@
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 // Crossbone Isle Cave (SceneId_CrossboneIsleSteppingStones to
 // SceneId_CrossboneIsleDragonStatue) and Kolima Forest

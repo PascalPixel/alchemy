@@ -114,13 +114,13 @@
 /// The getters choose each scene's tables. The cave and the passage have no
 /// actor placements, and an empty set serves any other scene.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field/field.h"
-#include "system_call.h"
+#include "system/system_call.h"
 #include "scene_ids.h"
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -169,27 +169,27 @@ extern s32 gKalay_TunnelParticleScript[];
 #include "scene/actor_orbit.h"
 #include "system/main_routine.h"
 #include "window/screens.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "script_operands.h"
+#include "field/actor_script.h"
+#include "field/script_operands.h"
 
-#include "ground_mask.h"
+#include "field/ground_mask.h"
 
 #include "scene/orbit.h"
 
 #include "flags.h"
 #include "djinn_ids.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 #include "scene/catch_nut.h"
 
 /// Kalay's actors (Kalay), numbering the rows of

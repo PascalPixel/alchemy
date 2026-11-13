@@ -8,7 +8,7 @@
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
-#include "render_placement.h"
+#include "graphics/render_placement.h"
 
 /// SpriteAnimation.colorMode: how Render_DecodePicture colours a layer's
 /// pixels.

@@ -8,9 +8,9 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "battle_action.h"
+#include "battle/battle_action.h"
 #include "edition.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 struct Actor;
 

@@ -1,4 +1,4 @@
-#include "map_grid_scroll.h"
+#include "field/map_grid_scroll.h"
 
 // Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
 // the sparkling dust that falls over the party when Tret's curse strikes

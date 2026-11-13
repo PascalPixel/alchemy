@@ -1,5 +1,5 @@
-#include "affine.h"
-#include "dma.h"
+#include "system/affine.h"
+#include "system/dma.h"
 
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the large lettering a race starts with. It reads "The 1st Match", "3", "2",

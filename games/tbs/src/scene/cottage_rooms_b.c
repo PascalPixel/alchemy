@@ -97,10 +97,10 @@
 /// ValeKradensCottage, Vale and ValePrologue) or between this scene's own
 /// parts.
 
-#include "main_routine_work.h"
-#include "vram_cache.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -141,26 +141,26 @@ extern struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[];
 #include "window/window.h"
 #include "window/screens.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_blend.h"
-#include "map_grid_scroll.h"
-#include "event.h"
-#include "ram_buffer.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/field_blend.h"
+#include "field/map_grid_scroll.h"
+#include "field/event.h"
+#include "system/ram_buffer.h"
 #include "text/msg_ids.h"
-#include "io_reg.h"
-#include "field_effect.h"
+#include "system/io_reg.h"
+#include "field/field_effect.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "io_write.h"
+#include "system/io_write.h"
 #include "flags.h"
-#include "field_psynergy_work.h"
+#include "field/field_psynergy_work.h"
 
 static void CottageRoomsB_DoraWakesIsaac(void);
 static void CottageRoomsB_HurryToThePlaza(void);

@@ -2,7 +2,7 @@
 /// The eight party members' growth curves, element bonuses, starting levels
 /// and starting equipment.
 
-#include "game.h"
+#include "game/game.h"
 #include "item_ids.h"
 
 // clang-format off

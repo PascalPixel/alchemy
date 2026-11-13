@@ -3,7 +3,7 @@
 
 #include "system/math_table.h"
 #include "types.h"
-#include "system.h"
+#include "system/system.h"
 
 /// A quarter-wave sine table, scaled by 65536: entry i is the sine of i/1024 of
 /// a turn.

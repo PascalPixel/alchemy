@@ -1,7 +1,7 @@
 /// @file
 /// WorldMapRenderWork, the map renderer's work.
 
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 #ifndef ALCHEMY_WORLD_MAP_RENDER_WORK_H
 #define ALCHEMY_WORLD_MAP_RENDER_WORK_H
 

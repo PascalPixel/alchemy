@@ -58,11 +58,11 @@
 /// fortieth a frame as it climbs ever more slowly and drifts right ever faster
 /// (CottageRoomsA_AdvanceSleepZ).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -85,13 +85,13 @@ extern struct Trigger gCottageRoomsA_Triggers[];
 extern struct Trigger gCottageRoomsA_TriggersAfterLeaving[];
 extern struct Trigger gCottageRoomsA_TriggersAfterKalay[];
 
-#include "event.h"
-#include "field_blend.h"
-#include "event_inline.h"
+#include "field/event.h"
+#include "field/field_blend.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
 #include "sounds.h"
 

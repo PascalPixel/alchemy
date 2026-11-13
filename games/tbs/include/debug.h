@@ -10,7 +10,7 @@
 #include "window/window.h"
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 /// The palette editor's swatch tiles, compressed; it decompresses them to
 /// tile 208 of character block 0, one tile a colour.

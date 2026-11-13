@@ -27,11 +27,11 @@
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -54,14 +54,14 @@ extern struct Trigger gStuccoRoomsA_SanctumTriggers[];
 extern u16 gStuccoRoomsA_DoorCellSteps[];
 extern struct MapGridCellAnimation gStuccoRoomsA_DoorCells[];
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

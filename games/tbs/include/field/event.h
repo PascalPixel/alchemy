@@ -23,11 +23,11 @@
 #include "fixed_math.h"
 #include "edition.h"
 #include "types.h"
-#include "heap.h"
+#include "system/heap.h"
 
 #include "static_assert.h"
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 // A scene stores into its own const tables: an overlay's data is in RAM.
 #ifdef MODERN
@@ -44,9 +44,9 @@ extern u8 gSceneLocalState[];
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
 #define gColossoWork (*(u8 **)&gHeapSlots[HEAP_SLOT_COLOSSO_RACE])
 
-#include "frame.h"
+#include "system/frame.h"
 
-#include "actor.h"
+#include "field/actor.h"
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's
 // speaker, as FieldMessage_ShowAtActor reads them.

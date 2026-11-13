@@ -48,9 +48,9 @@
 ///
 /// McCoy speaks with his portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gPalace_FacingActions[];
 extern s32 gPalace_PacingActions[];
@@ -64,20 +64,20 @@ extern struct Trigger gMcCoyPalaceTriggers[];
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "flags.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 
 /// The palace's people and the treasure room's chests, numbering
 /// gMcCoyPalaceActorPlacements' rows from ACTOR_FIRST_PLACED.

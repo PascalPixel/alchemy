@@ -17,12 +17,12 @@
 /// cliff runs across its north side above the river and the logs
 /// (places/kolima-forest-cliff_cursed/map-0.png).
 
-#include "speaker.h"
+#include "field/speaker.h"
 #include "flags.h"
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -37,19 +37,19 @@ extern struct Trigger gKolimaForestCliffTriggers[];
 
 #include "scene/kolima_palette.h"
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "macros.h"
 
-#include "pushed_actor.h"
-#include "main_routine_work.h"
-#include "event.h"
+#include "field/pushed_actor.h"
+#include "system/main_routine_work.h"
+#include "field/event.h"
 
 /// The scene's actors, numbering the rows of
 /// gKolimaForestCliffActorPlacements.

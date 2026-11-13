@@ -16,8 +16,8 @@
 
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
-#include "heap.h"
+#include "gamepak/far_call.h"
+#include "system/heap.h"
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;

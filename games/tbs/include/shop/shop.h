@@ -5,13 +5,13 @@
 /// ShopWork, a shop's work, and the shop screen's tiles.
 
 #include "shop/shop.h"
-#include "heap_slots.h"
-#include "item.h"
+#include "system/heap_slots.h"
+#include "game/item.h"
 #include "static_assert.h"
-#include "render_input.h"
-#include "field_particle.h"
-#include "sprite.h"
-#include "cursor.h"
+#include "graphics/render_input.h"
+#include "field/field_particle.h"
+#include "field/sprite.h"
+#include "window/cursor.h"
 
 /// A shop's work: its windows, the party members' icons, the stock, the cursor
 /// and its icons, and the field effect sprites.

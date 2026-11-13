@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_FIELD_SEQUENCE_H
 
 #include "types.h"
-#include "field_particle.h"
+#include "field/field_particle.h"
 
 struct SpeakerDefinition;
 struct Actor;

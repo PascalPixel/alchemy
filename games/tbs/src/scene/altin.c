@@ -60,11 +60,11 @@
 /// Each merchant opens across the counter once the shop has dried, and a cook
 /// from Xian paces between his pots (gCottageRoomsD_CookScript).
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 
 extern s32 gCottageRoomsD_CookScript[];
 extern struct SceneEntrance gAltin_NoEntrances[];
@@ -86,16 +86,16 @@ extern u16 gAltin_NorthAndWestDoorCells[];
 extern u16 gAltin_NortheastDoorCells[];
 extern struct MapGridCellAnimation gAltin_Doors[];
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "system_call.h"
-#include "field_effect.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "field/field_effect.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"

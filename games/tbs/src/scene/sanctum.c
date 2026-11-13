@@ -57,11 +57,11 @@
 /// - Sanctum, the name the game gives every other entrance, which leaves only
 ///   SANCTUM_UNUSED. No exit leads there, and it places nobody.
 
-#include "speaker.h"
+#include "field/speaker.h"
 #include "flags.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -100,23 +100,23 @@ extern s32 gSanctum_SparkEndScript[];
 #include "window/screens.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "battle.h"
-#include "input.h"
+#include "battle/battle.h"
+#include "system/input.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_effect.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/field_effect.h"
 #include "text/msg_ids.h"
-#include "save.h"
-#include "event_inline.h"
-#include "actor_builtin_scripts.h"
+#include "system/save.h"
+#include "field/event_inline.h"
+#include "field/actor_builtin_scripts.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 
 /// After the quest is refused, the Great Healer has warned that stepping
 /// outside the village is final.

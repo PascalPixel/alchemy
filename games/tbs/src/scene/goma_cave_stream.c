@@ -35,9 +35,9 @@
 ///   river. It has no actors and only its two exits. They lead back south
 ///   into SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern struct SceneEntrance gGomaCaveStreamEntrances[];
 extern struct SceneEntrance gGomaCaveBridgeEntrances[];
@@ -50,17 +50,17 @@ extern struct Trigger gGomaCaveBridgeTriggers[];
 #include "scene/field_effect_spawn.h"
 #include "field/event_commands.h"
 #include "field/field.h"
-#include "actor.h"
-#include "event.h"
-#include "battle.h"
+#include "field/actor.h"
+#include "field/event.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "actor_script.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/actor_script.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "ability_ids.h"

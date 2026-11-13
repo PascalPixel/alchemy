@@ -5,8 +5,8 @@
 /// The pushed actors' movement probes and footprint bounds.
 
 #include "types.h"
-#include "actor.h"
-#include "scene.h"
+#include "field/actor.h"
+#include "field/scene.h"
 #include "static_assert.h"
 
 /// A pixel step packed as one word: X in the upper halfword, Z in the lower.

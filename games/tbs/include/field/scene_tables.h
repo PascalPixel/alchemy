@@ -8,9 +8,9 @@
 #include "static_assert.h"
 #include "scene_ids.h"
 #include "scene_exits.h"
-#include "character_ids.h"
+#include "game/character_ids.h"
 #include "sprite_ids.h"
-#include "field_work.h"
+#include "field/field_work.h"
 #include "fixed_math.h"
 
 /// The sixteen compass headings in 1/65536 turns, from east through south: a

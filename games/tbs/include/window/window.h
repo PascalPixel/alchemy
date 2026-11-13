@@ -10,8 +10,8 @@
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"
-#include "render_input.h"
-#include "heap.h"
+#include "graphics/render_input.h"
+#include "system/heap.h"
 
 /// Where the windows are drawn (WindowWork.battleMode).
 enum WindowBattleMode {
@@ -162,7 +162,7 @@ struct WindowWork {
 
 #include "types.h"
 #include "edition.h"
-#include "glyph.h"
+#include "graphics/glyph.h"
 
 struct AbilityListEntry;
 struct BattleAction;

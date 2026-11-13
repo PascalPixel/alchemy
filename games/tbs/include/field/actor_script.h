@@ -109,7 +109,7 @@ enum ActorScriptValue {
 };
 
 #include "types.h"
-#include "script_operands.h"
+#include "field/script_operands.h"
 
 /// Commands receive the actor's interpreter view. A nonzero result continues
 /// its script this frame; zero waits until the next frame.

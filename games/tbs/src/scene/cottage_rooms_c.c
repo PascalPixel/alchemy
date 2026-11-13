@@ -48,7 +48,7 @@
 /// priority 2 draws him in front of it, as the other diners are.
 
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -63,15 +63,15 @@ extern struct Trigger gCottageRoomsCTriggers[];
 
 #include "flags.h"
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

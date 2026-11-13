@@ -57,13 +57,13 @@
 /// (BabiLighthouse_CloseTruthDoor, FLAG_BEYOND_DOOR). Beyond it lies the Tunnel
 /// Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
 
-#include "main_routine_work.h"
-#include "heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/heap_slots.h"
 #include "scene_ids.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
-#include "scene.h"
+#include "field/scene_tables.h"
+#include "field/scene.h"
 
 const u32 *BabiLighthouse_GetExits(void);
 s32 BabiLighthouse_SetupMap(void);
@@ -87,20 +87,20 @@ extern struct Trigger gBabiLighthouse_RoadTriggers[];
 #include "scene/field_effect_spawn.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "event.h"
+#include "field/event.h"
 #include "djinn_ids.h"
-#include "field_effect.h"
-#include "pushed_actor.h"
-#include "battle.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_psynergy_work.h"
-#include "event_inline.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/field_psynergy_work.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"

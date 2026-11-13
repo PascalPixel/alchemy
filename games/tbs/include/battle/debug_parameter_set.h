@@ -5,7 +5,7 @@
 /// The debug parameter sets.
 
 #include "types.h"
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 
 /// One row of the debug parameter sets: a party member, the level to raise
 /// them to, the Djinn of each element to give them, the items to equip and up

@@ -50,12 +50,12 @@
 ///
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
-#include "script_operands.h"
-#include "heap_slots.h"
+#include "field/script_operands.h"
+#include "system/heap_slots.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
-#include "field_effect.h"
+#include "field/scene_tables.h"
+#include "field/field_effect.h"
 
 extern s32 gGomaCavePillar_WitnessFrames;
 extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;
@@ -67,19 +67,19 @@ extern u32 gGomaCavePillar_Exits[];
 extern struct ActorPlacement gGomaCavePillar_ActorPlacements[];
 extern struct Trigger gGomaCavePillar_Triggers[];
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "djinn_ids.h"
-#include "pushed_actor.h"
-#include "event_inline.h"
+#include "field/pushed_actor.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
-#include "fixed_point_position.h"
+#include "system/fixed_point_position.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 

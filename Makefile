@@ -172,10 +172,8 @@ ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
 # One include path, as pret has: a header names its bank folder in its
-# path (#include "field/actor.h"). The Broken Seal still finds its headers
-# through each bank folder too.
-INCLUDES_tbs := $(addprefix -Igames/tbs/include/,battle field game gamepak graphics menu shop sound system window)
-INCLUDES := -Igames/$(GAME)/include $(INCLUDES_$(GAME))
+# path (#include "field/actor.h").
+INCLUDES := -Igames/$(GAME)/include
 
 # Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game;
 # ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.
@@ -188,7 +186,7 @@ CPPFLAGS_ARM := -lang-c -nostdinc '-Acpu(arm)' '-Amachine(arm)' -D__CHAR_UNSIGNE
                 -D__ARM_ARCH_4T__ -D__APCS_32__ -D__ARMEL__ -Darm_elf -D__ELF__
 CPPFLAGS_AGBCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include -D__GNUC__=2 -D__GNUC_MINOR__=9 \
                   -D__GNUC_PATCHLEVEL__=0 -D__THUMBEL__ -Dthumb -D__thumb__ -D$(DEFINE)=1 -I$(BUILD)
-CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$(GAME)/include,$(INCLUDES)) \
+CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) $(INCLUDES) \
                   -D__GNUC__=2 -D__GNUC_MINOR__=95 -D__GNUC_PATCHLEVEL__=2 -Darm -D__arm__ -D$(DEFINE)=1 -I$(BUILD)
 SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/driver.c \
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/sound/player_work_copy.c \

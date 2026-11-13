@@ -38,10 +38,10 @@
 /// Entering by ROOM_GATE_TO_SUHALLA makes the house the place a defeated party
 /// wakes and hides the area name.
 
-#include "main_routine_work.h"
-#include "event.h"
+#include "system/main_routine_work.h"
+#include "field/event.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern const struct SceneEntrance gRockRooms_Entrances[];
 extern const u32 gRockRooms_Exits[];
@@ -53,8 +53,8 @@ extern const struct Trigger gRockRooms_GateToSuhallaTriggers[];
 #include "types.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
 

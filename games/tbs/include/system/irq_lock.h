@@ -4,7 +4,7 @@
 /// @file
 /// Saving, disabling and restoring the interrupt master enable.
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 #include "types.h"
 
 // The three steps take ime, a pointer to REG_IME. Disabling writes the

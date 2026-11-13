@@ -42,12 +42,12 @@
 /// always answers first, and the entrance
 /// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no exit leads.
 
-#include "main_routine_work.h"
-#include "event.h"
+#include "system/main_routine_work.h"
+#include "field/event.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
-#include "scene.h"
+#include "field/scene_tables.h"
+#include "field/scene.h"
 
 extern struct SceneEntrance gTimberRoomsAEntrances[];
 extern struct SceneExitRegion gTimberRoomsARegions[];
@@ -58,7 +58,7 @@ extern struct Trigger gTimberRoomsATriggers[];
 extern struct Trigger gTimberRoomsATriggersAfterAudience[];
 
 #include "system/main_routine.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

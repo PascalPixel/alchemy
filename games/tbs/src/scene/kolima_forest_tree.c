@@ -52,11 +52,11 @@
 /// way back, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the
 /// Floodgate Switch's scene (SceneId_KolimaForestFloodgate).
 
-#include "speaker.h"
-#include "main_routine_work.h"
+#include "field/speaker.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
-#include "scene.h"
+#include "field/scene_tables.h"
+#include "field/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -80,23 +80,23 @@ extern s32 gKolimaForestTreeEffectScript[];
 #include "field/event_commands.h"
 #include "game/game.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_effect.h"
-#include "system_call.h"
-#include "io_reg.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/field_effect.h"
+#include "system/system_call.h"
+#include "system/io_reg.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "macros.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 
 /// The actors, numbering gKolimaForestTreeActorPlacements' rows
 /// from ACTOR_FIRST_PLACED.

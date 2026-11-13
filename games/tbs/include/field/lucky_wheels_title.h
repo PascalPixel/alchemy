@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 extern const u8 gLuckyWheels_TitleLetterTiles[];
 /// Each title letter's advance, LUCKY_WHEELS_TITLE_LETTERS of them

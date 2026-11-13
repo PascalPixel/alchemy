@@ -48,9 +48,9 @@
 /// Searching finds a turban, the symbol of Kalay's soldiers, and two books,
 /// `Business and You` and `The Good Host`. A chest holds a Water Jacket and a
 /// barrel a Nut.
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gHammetPalace_PartyActions[];
 extern struct SceneEntrance gHammetPalaceEntrancesOther[];
@@ -63,19 +63,19 @@ extern struct Trigger gHammetPalaceTriggers[];
 
 #include "field/event_commands.h"
 #include "field/field.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or has freed him, so

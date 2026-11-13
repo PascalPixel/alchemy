@@ -6,10 +6,10 @@
 /// numbers and sleep.
 
 #include "types.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "edition.h"
-#include "far_call.h"
-#include "heap.h"
+#include "gamepak/far_call.h"
+#include "system/heap.h"
 
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
@@ -82,8 +82,8 @@ void Iwram_Halt(void);
 void Mixer_Enter(void);
 
 #include "types.h"
-#include "task.h"
-#include "irq.h"
+#include "system/task.h"
+#include "system/irq.h"
 
 struct AffineTransform;
 

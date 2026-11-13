@@ -2,9 +2,9 @@
 /// The battle sprite rows, by unit id: the eight characters', then the
 /// enemies'. Each enemy's name is the English release's.
 
-#include "battle_sprites.h"
+#include "battle/battle_sprites.h"
 #include "sprite_ids.h"
-#include "character_ids.h"
+#include "game/character_ids.h"
 #include "enemy_ids.h"
 
 // clang-format off

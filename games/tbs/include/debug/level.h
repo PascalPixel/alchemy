@@ -2,7 +2,7 @@
 #define ALCHEMY_DEBUG_LEVEL_H
 
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 u8 *IncreaseItemAndLevel_GetEntrances(void);
 u8 *IncreaseItemAndLevel_GetExits(void);

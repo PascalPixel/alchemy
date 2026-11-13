@@ -7,8 +7,8 @@
 #include "battle_effect/battle_effect_table.h"
 #include "battle_effect/battle_effect.h"
 #include "types.h"
-#include "vector3.h"
-#include "render_placement.h"
+#include "system/vector3.h"
+#include "graphics/render_placement.h"
 #include "fixed_math.h"
 
 // Keep the definitions in link order.

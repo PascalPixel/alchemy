@@ -6,7 +6,7 @@
 /// multipliers rolled.
 
 #include "static_assert.h"
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 
 enum {
   /// Targets an action can hold: as many units as BattleWork.objects holds, 8

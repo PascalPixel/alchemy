@@ -6,13 +6,13 @@
 
 #include "types.h"
 #include "edition.h"
-#include "battle_sprites.h"
-#include "battle_unit.h"
-#include "item.h"
-#include "character_ids.h"
-#include "character.h"
-#include "enemy_element_preset.h"
-#include "far_call.h"
+#include "battle/battle_sprites.h"
+#include "battle/battle_unit.h"
+#include "game/item.h"
+#include "game/character_ids.h"
+#include "game/character.h"
+#include "game/enemy_element_preset.h"
+#include "gamepak/far_call.h"
 
 struct ItemDefinition;
 struct SummonDefinition;

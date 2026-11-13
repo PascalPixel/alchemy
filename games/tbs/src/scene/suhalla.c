@@ -31,9 +31,9 @@
 /// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout. A return that
 ///   keeps the party's position, as after a battle, draws it grown again.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern struct SceneEntrance gSuhallaEntrances[];
 extern u32 gSuhallaExits[];
@@ -46,15 +46,15 @@ extern struct Trigger gSuhallaTriggers[];
 extern struct Trigger gSuhallaTriggersLater[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

@@ -1,5 +1,5 @@
-#include "field_effect.h"
-#include "far_call.h"
+#include "field/field_effect.h"
+#include "gamepak/far_call.h"
 
 // Twenty-four scenes, and the main image's field Psynergy (whirlwind.c, with
 // EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn, which places a small effect moving

@@ -60,13 +60,13 @@
 /// - FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM: a byte, the storm that caught the
 ///   leader.
 
-#include "script_operands.h"
+#include "field/script_operands.h"
 #include "flags.h"
-#include "main_routine_work.h"
-#include "map_grid_scroll.h"
-#include "system_call.h"
+#include "system/main_routine_work.h"
+#include "field/map_grid_scroll.h"
+#include "system/system_call.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gSuhallaDesertStormScript[];
 extern s32 gSuhallaDesertFourthStormScript[];
@@ -84,24 +84,24 @@ extern struct Trigger gSuhallaDesertTriggersOther[];
 extern struct Trigger gSuhallaDesertCavesTriggers[];
 
 #include "scene/field_effect_spawn.h"
-#include "actor.h"
-#include "event.h"
+#include "field/actor.h"
+#include "field/event.h"
 #include "djinn_ids.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_psynergy_work.h"
-#include "io_write_queue.h"
-#include "field_effect.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/field_psynergy_work.h"
+#include "system/io_write_queue.h"
+#include "field/field_effect.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "io_write.h"
+#include "system/io_write.h"
 #include "scene/walk_into_leader.h"
 
 /// Storms doused in the first and second scenes, one flag per storm from the

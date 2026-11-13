@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "glyph.h"
+#include "graphics/glyph.h"
 
 struct Window;
 struct WindowSprite;

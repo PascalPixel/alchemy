@@ -4,7 +4,7 @@
 /// The ability names in the comments are the English release's; `?` is the
 /// name MsgAbilityName gives those ids.
 
-#include "ability_staging.h"
+#include "battle/ability_staging.h"
 #include "battle_effect/battle_effect.h"
 
 // clang-format off

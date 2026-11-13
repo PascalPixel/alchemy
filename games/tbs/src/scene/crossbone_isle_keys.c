@@ -43,13 +43,13 @@
 ///
 ///   Talked to while Halt holds it, Bane joins the party.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "djinn_ids.h"
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 #include "scene_ids.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
 extern s32 gCrossboneIsleKeys_BaneWalkTargets[][2];
@@ -72,21 +72,21 @@ extern s32 gCrossboneIsleKeys_IconTimer;
 #include "field/event_commands.h"
 #include "game/game.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "pushed_actor.h"
-#include "dma.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
+#include "field/pushed_actor.h"
+#include "system/dma.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "io_write.h"
-#include "field_effect.h"
+#include "system/io_write.h"
+#include "field/field_effect.h"
 #include "flags.h"
 
 // Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to

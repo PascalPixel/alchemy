@@ -4,7 +4,7 @@
 /// @file
 /// DMA channel registers, and the DMA and CPU fills.
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 #include "types.h"
 
 /// A DMA channel's registers (DMAxSAD, DMAxDAD, DMAxCNT).

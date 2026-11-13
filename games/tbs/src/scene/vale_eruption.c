@@ -33,9 +33,9 @@
 /// The scene sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it. Sol
 /// Sanctum's entrance scene does (sol_sanctum_entrance.c).
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -53,17 +53,17 @@ extern struct Trigger gValeEruption_Triggers[];
 extern u16 gValeEruption_SanctumDoorOpens[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
 #include "text/msg_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
 
 /// The placed actors, numbered in the order of gValeEruption_ActorPlacements.

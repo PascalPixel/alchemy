@@ -2,7 +2,7 @@
 /// Window text tables: each edition's articles and possessives, the kana
 /// marks and the sprite motion curves.
 
-#include "text_font.h"
+#include "window/text_font.h"
 
 // Articles and possessives, by edition.
 

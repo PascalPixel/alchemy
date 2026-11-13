@@ -34,10 +34,10 @@
 /// - A jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and
 ///   a Warrior's Helm.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "djinn_ids.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -57,16 +57,16 @@ extern struct Trigger gLaliveroTriggers[];
 extern struct Trigger gLaliveroTriggersAfterLighthouse[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "field_effect.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
+#include "field/field_effect.h"
 #include "item_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

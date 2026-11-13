@@ -6,9 +6,9 @@
 
 #include "types.h"
 #include "edition.h"
-#include "vector3.h"
-#include "speaker.h"
-#include "far_call.h"
+#include "system/vector3.h"
+#include "field/speaker.h"
+#include "gamepak/far_call.h"
 
 struct BattleAction;
 struct BattleEffectParams;

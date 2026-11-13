@@ -60,8 +60,8 @@
 /// out onto the World Map.
 
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Tolbi_GetEntrances(void);
 const struct SceneExitRegion *Tolbi_GetRegions(void);
@@ -86,13 +86,13 @@ extern struct MapGridCellAnimation gTolbiDoors[];
 #include "edition.h"
 
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
-#include "field_effect.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
+#include "field/field_effect.h"
 #include "tbs_edition.h"
-#include "window.h"
-#include "scene.h"
-#include "heap.h"
+#include "window/window.h"
+#include "field/scene.h"
+#include "system/heap.h"
 
 #include "scene/colosso_story_flags.h"
 #include "flags.h"
@@ -198,13 +198,13 @@ enum {
   KID_TALKING = 2, ///< set while the party talks to this child
 };
 
-#include "iwram_call.h"
-#include "event_inline.h"
+#include "system/iwram_call.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "sounds.h"
-#include "map_grid.h"
+#include "field/map_grid.h"
 
 #if TBS_PATCH_1
 #define TOLBI_JAR_SEARCH_KIND                                                  \

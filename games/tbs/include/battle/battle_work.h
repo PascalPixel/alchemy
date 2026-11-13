@@ -7,9 +7,9 @@
 #include "battle/battle.h"
 #include "types.h"
 #include "static_assert.h"
-#include "battle_action_run.h"
-#include "playback_queue.h"
-#include "battle_action.h"
+#include "battle/battle_action_run.h"
+#include "battle/playback_queue.h"
+#include "battle/battle_action.h"
 
 /// One OAM entry in a sprite list: the arrow that waits for the player to
 /// advance a battle message. The playback pushes it each frame it waits

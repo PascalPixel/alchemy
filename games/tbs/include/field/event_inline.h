@@ -15,9 +15,9 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "system/system.h"
-#include "event.h"
-#include "system_call.h"
-#include "far_call.h"
+#include "field/event.h"
+#include "system/system_call.h"
+#include "gamepak/far_call.h"
 
 /// Turns two actors toward each other, as a conversation between them
 /// begins.

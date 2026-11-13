@@ -5,7 +5,7 @@
 /// order a sprite dissolves in.
 
 #include "field/facing.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 
 /// Facing tables: for each enum AnimationFacingKind, the picture to draw for
 /// each sector of the facing angle.

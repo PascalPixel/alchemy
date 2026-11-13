@@ -6,8 +6,8 @@
 /// Djinni's list entry.
 
 #include "types.h"
-#include "heap_slots.h"
-#include "render_input.h"
+#include "system/heap_slots.h"
+#include "graphics/render_input.h"
 #include "djinn_ids.h"
 
 // A Djinni's list entry, as Djinn_ListUnitEntries writes it into

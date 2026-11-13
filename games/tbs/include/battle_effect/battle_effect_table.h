@@ -2,8 +2,8 @@
 #define ALCHEMY_BATTLE_EFFECT_BATTLE_EFFECT_TABLE_H
 
 #include "types.h"
-#include "render_placement.h"
-#include "vector3.h"
+#include "graphics/render_placement.h"
+#include "system/vector3.h"
 
 // The two kinds of target strike (gTargetStrike_Styles).
 #define STRIKE_KIND_SLASH 0 ///< sideways slashes

@@ -6,12 +6,12 @@
 
 #include "types.h"
 #include "edition.h"
-#include "actor.h"
-#include "scene.h"
-#include "scene_tables.h"
-#include "menu_list.h"
-#include "far_call.h"
-#include "heap.h"
+#include "field/actor.h"
+#include "field/scene.h"
+#include "field/scene_tables.h"
+#include "window/menu_list.h"
+#include "gamepak/far_call.h"
+#include "system/heap.h"
 
 struct Actor;
 
@@ -244,7 +244,7 @@ extern const u8 gSpriteColorTables[][256];
 /// 93.
 extern const u8 gActor_ShadowTiles[];
 
-#include "render_placement.h"
+#include "graphics/render_placement.h"
 
 #include "types.h"
 

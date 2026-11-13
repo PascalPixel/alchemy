@@ -78,10 +78,10 @@
 ///   number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO. That entrance
 ///   sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "djinn_ids.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -118,24 +118,24 @@ extern struct Trigger gKalayTolbiDocks_RoomTriggersStranded[];
 #include "game/game.h"
 #include "window/window.h"
 #include "window/screens.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
-#include "speaker.h"
-#include "window.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "window/window.h"
 
 #include "text/msg_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "ability_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
 #include "item_ids.h"
 

@@ -2,7 +2,7 @@
 /// The element tables: class series by element, element power and resistance
 /// by level, the enemies' element presets and the power and resistance curve.
 
-#include "game.h"
+#include "game/game.h"
 
 /// gClass_SeriesByElements, read as [strongest * 4 + second], a row for each
 /// strongest element and a column for each second, in element order (Venus,

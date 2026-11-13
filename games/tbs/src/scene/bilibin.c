@@ -104,13 +104,13 @@
 /// Bilibin_JillGivesHardNut, which gives the leader a Hard Nut
 /// (FLAG_BILIBIN_JILL_GIFT_RECEIVED). From then on the three turn to watch him.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "djinn_ids.h"
 #include "flags.h"
 #include "scene_ids.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -150,26 +150,26 @@ extern s32 gBilibin_RippleScript[];
 
 #include "field/event_commands.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 
 #include "item_ids.h"
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "pushed_actor.h"
+#include "field/actor_script.h"
+#include "field/pushed_actor.h"
 
 static void Bilibin_RestoreVillageActors(void);
 static void Bilibin_UpdateVillageStatueCells(void);

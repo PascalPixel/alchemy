@@ -1,7 +1,7 @@
 /// @file
 /// The five sprite colour tables, 256 bytes each.
 
-#include "system.h"
+#include "system/system.h"
 
 // clang-format off
 const u8 gSpriteColorTables[][256] = {

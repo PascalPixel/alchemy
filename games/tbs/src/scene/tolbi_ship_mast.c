@@ -55,13 +55,13 @@
 /// At sea the lookout says he is the lookout, not an oarsman. At the island he
 /// warns of monsters and wonders at its treasures.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
-#include "scene.h"
+#include "field/scene_tables.h"
+#include "field/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -98,22 +98,22 @@ extern struct Trigger gTolbiShipMast_Triggers[];
 extern u32 gTolbiShipMast_PassengerRowValues[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/heap_slots.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "map_grid_scroll.h"
+#include "field/actor_script.h"
+#include "field/map_grid_scroll.h"
 #include "macros.h"
 
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);

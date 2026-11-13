@@ -53,11 +53,11 @@
 /// Two cells start a battle once each (slots 2 and 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -103,23 +103,23 @@ extern u16 gValePrologue_GrandparentsDoorCloses[];
 #include "scene/event_psynergy.h"
 #include "field/event_commands.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
-#include "field_effect.h"
-#include "heap_slots.h"
-#include "vram_cache.h"
+#include "field/field_effect.h"
+#include "system/heap_slots.h"
+#include "system/vram_cache.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
-#include "io_reg.h"
-#include "field_psynergy_work.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "field/field_psynergy_work.h"
 #include "scene/walk_into_leader.h"
 
 static void ValePrologue_DoraSendsIsaacToThePlaza(void);

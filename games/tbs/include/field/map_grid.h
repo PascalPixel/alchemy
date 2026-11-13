@@ -8,7 +8,7 @@
 #include "field/field.h"
 #include "types.h"
 #include "static_assert.h"
-#include "heap.h"
+#include "system/heap.h"
 
 /// A map cell's cell behavior (`MapGridCell.behavior`): what stepping
 /// on, pushing against or searching the cell does.

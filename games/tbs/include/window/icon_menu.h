@@ -6,8 +6,8 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "window.h"
-#include "heap.h"
+#include "window/window.h"
+#include "system/heap.h"
 
 /// A command icon of the icon menu: its OAM attributes, its place and its
 /// VRAM cache slot.

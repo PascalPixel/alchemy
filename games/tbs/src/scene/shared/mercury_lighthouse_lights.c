@@ -1,5 +1,5 @@
-#include "dma.h"
-#include "ram_buffer.h"
+#include "system/dma.h"
+#include "system/ram_buffer.h"
 
 // Mercury Lighthouse and its entrance: the lights that carry the leader over
 // the pool (mercury_lighthouse_pillar.c).

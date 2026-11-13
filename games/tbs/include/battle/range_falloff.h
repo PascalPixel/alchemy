@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 // Percentages by a target's distance from the aimed position, 0 for the aimed
 // target to 5 for the farthest: BattleAbility_ApplyToTarget scales an amount by

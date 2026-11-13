@@ -5,9 +5,9 @@
 /// The map layers' scroll work and the background scroll values.
 
 #include "types.h"
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 #include "static_assert.h"
-#include "map_grid.h"
+#include "field/map_grid.h"
 
 /// One background layer of the field map: its scroll position, origin,
 /// parallax against the view, drift and wrap, and its first map cell.
@@ -50,7 +50,7 @@ struct MapGridScrollWork {
   struct MapGridLayerScroll layers[3]; ///< BG3, BG2 and BG1, in that order
 };
 
-#include "perspective.h"
+#include "field/perspective.h"
 
 STATIC_ASSERT(sizeof(struct MapGridLayerScroll) == 0x30);
 STATIC_ASSERT(offsetof(struct MapGridLayerScroll, cells) == 0x2c);

@@ -56,12 +56,12 @@
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "vram_cache.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
+#include "system/vram_cache.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -103,11 +103,11 @@ extern s32 gVenusLighthouseAerie_BesideParticleScript[];
 #include "system/system.h"
 #include "macros.h"
 
-#include "actor.h"
+#include "field/actor.h"
 /// The Lighthouse Aerie's actors; its entrances and exits are in
 /// scene_exits.h.
 
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 #include "types.h"
 
 /// The aerie's actors, in the order of its actor placements;
@@ -147,25 +147,25 @@ enum {
   ACTOR_BEAM_TOP = 28
 };
 
-#include "field_effect.h"
-#include "sound_driver_symbols.h"
-#include "create_configured_actor.h"
-#include "battle.h"
+#include "field/field_effect.h"
+#include "sound/sound_driver_symbols.h"
+#include "field/create_configured_actor.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "iwram_call.h"
-#include "event_inline.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/iwram_call.h"
+#include "field/event_inline.h"
 #include "text/msg_ids.h"
-#include "heap_slots.h"
-#include "pushed_actor.h"
-#include "map_grid_scroll.h"
-#include "io_reg.h"
-#include "field_psynergy_work.h"
+#include "system/heap_slots.h"
+#include "field/pushed_actor.h"
+#include "field/map_grid_scroll.h"
+#include "system/io_reg.h"
+#include "field/field_psynergy_work.h"
 #include "flags.h"
 #include "item_ids.h"
 

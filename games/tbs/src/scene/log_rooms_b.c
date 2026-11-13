@@ -51,9 +51,9 @@
 /// A jar, two barrels and a wooden box keep the first visit's flags, so what
 /// the party took then stays taken. Two bookcases can be read.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern struct SceneEntrance gLogRoomsB_Entrances[];
 extern u32 gLogRoomsB_Exits[];
@@ -64,17 +64,17 @@ extern struct Trigger gLogRoomsB_Triggers[];
 #include "scene/vault_item_icon.h"
 #include "field/event_commands.h"
 #include "game/game.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "system_call.h"
-#include "inventory.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
+#include "system/system_call.h"
+#include "game/inventory.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

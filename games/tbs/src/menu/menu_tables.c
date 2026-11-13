@@ -3,8 +3,8 @@
 /// ids. None of these is const: the code that reads them declares them without
 /// it.
 
-#include "field.h"
-#include "item.h"
+#include "field/field.h"
+#include "game/item.h"
 #include "menu/menu.h"
 
 /// The hand cursor's bobbing offsets in pixels, which MenuCursor_Position

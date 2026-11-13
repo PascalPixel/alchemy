@@ -2,7 +2,7 @@
 /// The 16 summons and the order the menus list them in. Each name is the
 /// English release's.
 
-#include "game.h"
+#include "game/game.h"
 #include "ability_ids.h"
 
 const u8 gSummon_OrderList[16] = {0, 1, 2,  3,  4,  5,  6,  7,

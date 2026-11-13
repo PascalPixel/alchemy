@@ -7,7 +7,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 /// An animation's metadata: the sprite's size, scale and offsets, how its
 /// pictures are drawn and decoded, its pictures and its animation scripts.

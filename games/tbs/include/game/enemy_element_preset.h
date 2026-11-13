@@ -5,7 +5,7 @@
 /// EnemyElementPreset, a row of an enemy's element presets.
 
 #include "types.h"
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 
 /// An enemy's element preset in gEnemy_ElementPresetTable: the element it
 /// attacks with, its level in each element, and its base power and resistance

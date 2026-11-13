@@ -59,14 +59,14 @@
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "io_write_queue.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
+#include "system/io_write_queue.h"
 #include "scene_ids.h"
-#include "vram_cache.h"
+#include "system/vram_cache.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -106,26 +106,26 @@ extern s32 gColosso_LeaderFinishScript[];
 #include "window/screens.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "battle.h"
-#include "input.h"
+#include "battle/battle.h"
+#include "system/input.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
-#include "pushed_actor.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
+#include "field/pushed_actor.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "scene/colosso_gauge.h"
 #include "macros.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared.

@@ -27,11 +27,11 @@
 /// (SPLASH_ANIMATION_CHURN) and the river rises
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 
-#include "speaker.h"
+#include "field/speaker.h"
 #include "flags.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 struct Actor;
 
@@ -74,22 +74,22 @@ extern struct Trigger gKolimaForestFloodgateTriggers[];
 #include "scene/kolima_palette.h"
 #include "field/event_commands.h"
 #include "system/system.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "system_call.h"
-#include "dma.h"
-#include "map_grid.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event.h"
+#include "system/system_call.h"
+#include "system/dma.h"
+#include "field/map_grid.h"
 #include "text/msg_ids.h"
-#include "map_grid_scroll.h"
+#include "field/map_grid_scroll.h"
 #include "macros.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 #include "item_ids.h"
 
 /// The actors, numbering gKolimaForestFloodgateActorPlacements'

@@ -8,9 +8,9 @@
 #include "field/field_sequence.h"
 #include "types.h"
 #include "static_assert.h"
-#include "palette_buffers.h"
+#include "graphics/palette_buffers.h"
 #include "sounds.h"
-#include "heap.h"
+#include "system/heap.h"
 
 /// An actor's animated sprite (struct Sprite), as far as the
 /// pointer to its sprite id.

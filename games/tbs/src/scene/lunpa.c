@@ -47,9 +47,9 @@
 /// (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern struct SceneEntrance gLunpaEntrances[];
 extern struct SceneEntrance gGateEntrances[];
@@ -64,15 +64,15 @@ extern u32 gLunpaUnusedWord;
 
 #include "scene/actor_orbit.h"
 #include "scene/field_effect_spawn.h"
-#include "field_effect.h"
-#include "system_call.h"
-#include "scene.h"
+#include "field/field_effect.h"
+#include "system/system_call.h"
+#include "field/scene.h"
 #include "types.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "field_effect.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/field_effect.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "sounds.h"

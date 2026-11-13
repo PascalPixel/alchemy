@@ -3,28 +3,28 @@
 /// levels, give any item and show the game's icons and portraits.
 
 #include "debug/level.h"
-#include "battle.h"
-#include "input.h"
-#include "game.h"
-#include "system.h"
+#include "battle/battle.h"
+#include "system/input.h"
+#include "game/game.h"
+#include "system/system.h"
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
+#include "gamepak/far_call.h"
+#include "battle/playback_queue.h"
+#include "battle/battle_action_run.h"
 
-#include "window.h"
+#include "window/window.h"
 
-#include "field_work.h"
-#include "heap_slots.h"
+#include "field/field_work.h"
+#include "system/heap_slots.h"
 
 void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
 
-#include "event_inline.h"
-#include "dma.h"
+#include "field/event_inline.h"
+#include "system/dma.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "field_psynergy_work.h"
+#include "field/field_psynergy_work.h"
 
 // Edition-specific text and window layout values: outside Japanese the item
 // browser's details window is 28 tiles wide rather than 13, and its

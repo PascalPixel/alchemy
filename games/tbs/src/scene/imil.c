@@ -85,12 +85,12 @@
 ///   last comes from the oven with the stew, whose find always answers first,
 ///   so the stew's line is unused.
 
-#include "script_operands.h"
-#include "sprite.h"
-#include "main_routine_work.h"
-#include "input.h"
+#include "field/script_operands.h"
+#include "field/sprite.h"
+#include "system/main_routine_work.h"
+#include "system/input.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -132,24 +132,24 @@ extern u16 gImil_CellStepsB[];
 extern s32 gImil_ArcOrigin[];
 
 #include "scene/walk_into_leader.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/heap_slots.h"
 #include "text/msg_ids.h"
-#include "field_effect.h"
-#include "field_psynergy_work.h"
-#include "event_inline.h"
-#include "iwram_call.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/event_inline.h"
+#include "system/iwram_call.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "io_reg.h"
-#include "map_grid_scroll.h"
+#include "system/io_reg.h"
+#include "field/map_grid_scroll.h"
 #include "macros.h"
 #include "flags.h"
 

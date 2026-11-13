@@ -47,9 +47,9 @@
 /// (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so it is back whenever the party
 /// returns from another area.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 extern s32 gSuhallaGateWoundedNoCollision[];
 extern s32 gSuhallaGateWounded[];
@@ -69,21 +69,21 @@ extern struct Trigger gSuhallaGateDewTriggers[];
 extern struct Trigger gGatewayCaveTriggers[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
-#include "event.h"
+#include "field/event.h"
 
 #include "djinn_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "scene/walk_into_leader.h"

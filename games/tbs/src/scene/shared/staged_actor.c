@@ -1,8 +1,8 @@
-#include "system_call.h"
+#include "system/system_call.h"
 #include "scene/actor_step.h"
-#include "fixed_point_position.h"
-#include "iwram_call.h"
-#include "map_grid_scroll.h"
+#include "system/fixed_point_position.h"
+#include "system/iwram_call.h"
+#include "field/map_grid_scroll.h"
 
 // Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan

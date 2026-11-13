@@ -1,4 +1,4 @@
-#include "dma.h"
+#include "system/dma.h"
 
 // Kolima Forest, while Tret's curse lasts (FLAG_KOLIMA_CURSE_LIFTED clear):
 // the forest's colours turned redder and darker, and both sets of colours kept

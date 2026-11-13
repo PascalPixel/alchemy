@@ -5,10 +5,10 @@
 /// The Psynergy menu's state.
 
 #include "menu/menu.h"
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 #include "static_assert.h"
-#include "paged_list.h"
-#include "render_input.h"
+#include "menu/paged_list.h"
+#include "graphics/render_input.h"
 #include "text/msg_ids.h"
 
 struct Sprite;

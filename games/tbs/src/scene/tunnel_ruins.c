@@ -66,14 +66,14 @@
 /// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4.
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "heap_slots.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
+#include "system/heap_slots.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
-#include "field_coordinate.h"
-#include "scene.h"
+#include "field/scene_tables.h"
+#include "field/field_coordinate.h"
+#include "field/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -100,24 +100,24 @@ extern struct Trigger gTunnelRuinsTriggersOther[];
 #include "scene/field_effect_spawn.h"
 #include "field/event_commands.h"
 #include "system/system.h"
-#include "ground_mask.h"
+#include "field/ground_mask.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "text/msg_ids.h"
-#include "event_inline.h"
-#include "field_effect.h"
-#include "pushed_actor.h"
-#include "battle.h"
+#include "field/event_inline.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "ability_ids.h"
 #include "flags.h"
-#include "sound_driver_symbols.h"
+#include "sound/sound_driver_symbols.h"
 #include "item_ids.h"
 
 /// The actors of TunnelRuinsGreatStatue, in the order of its actor placements.

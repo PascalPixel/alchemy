@@ -8,7 +8,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "far_call.h"
+#include "gamepak/far_call.h"
 
 /// A unit's row of gBattleSprites: an enemy's battle sprite, size, attack
 /// effect, palette and defeat-sound kind.

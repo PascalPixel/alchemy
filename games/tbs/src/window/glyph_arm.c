@@ -9,11 +9,11 @@
 
 #include "window/glyph_arm.h"
 #include "types.h"
-#include "window.h"
-#include "glyph.h"
-#include "text_font.h"
+#include "window/window.h"
+#include "graphics/glyph.h"
+#include "window/text_font.h"
 #include "edition.h"
-#include "graphics.h"
+#include "graphics/graphics.h"
 #include "window/window.h"
 
 // ARM code copied to RAM, as the tree walker is: RamCode_Load takes IWRAM

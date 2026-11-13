@@ -8,10 +8,10 @@
 #include "window/screens.h"
 #include "menu/menu.h"
 #include "types.h"
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 #include "static_assert.h"
-#include "sprite.h"
-#include "window.h"
+#include "field/sprite.h"
+#include "window/window.h"
 
 struct Unit;
 

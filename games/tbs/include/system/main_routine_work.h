@@ -8,7 +8,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 
 /// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneType).
 enum SceneType {

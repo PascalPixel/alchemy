@@ -1,7 +1,7 @@
 /// @file
 /// The 324 items, by item id. Each name is the English release's.
 
-#include "game.h"
+#include "game/game.h"
 #include "item_ids.h"
 #include "ability_ids.h"
 

@@ -57,10 +57,10 @@
 /// Barrels hold a Vial and a Lucky Medal, and searching the ovens shows what
 /// is cooking.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *StuccoRoomsB_GetEntrances(void);
 const struct SceneExitRegion *StuccoRoomsB_GetRegions(void);
@@ -80,8 +80,8 @@ extern u16 gStuccoRoomsBDoorOpening[];
 extern struct MapGridCellAnimation gStuccoRoomsBDoors[];
 
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 #include "scene/colosso_story_flags.h"
 #include "flags.h"
 
@@ -199,7 +199,7 @@ enum StuccoRoomsBCellBehavior {
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
+#include "field/actor_script.h"
 #include "sounds.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the

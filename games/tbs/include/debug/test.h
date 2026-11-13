@@ -2,7 +2,7 @@
 #define ALCHEMY_DEBUG_TEST_H
 
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 u8 *MenuTest_GetEntrances(void);
 u8 *MenuTest_GetExits(void);

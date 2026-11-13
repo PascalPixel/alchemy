@@ -7,10 +7,10 @@
 #include "window/window.h"
 #include "window/screens.h"
 #include "types.h"
-#include "render_input.h"
-#include "cursor.h"
+#include "graphics/render_input.h"
+#include "window/cursor.h"
 #include "static_assert.h"
-#include "heap.h"
+#include "system/heap.h"
 
 /// The settings menu's work (heap block 20): the settings being edited and how
 /// many values each takes, the page, and the cursor, markers and icons.

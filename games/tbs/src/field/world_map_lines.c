@@ -4,11 +4,11 @@
 
 #include "field/world_map_lines.h"
 #include "types.h"
-#include "frame.h"
-#include "mul_q16.h"
-#include "projection.h"
+#include "system/frame.h"
+#include "system/mul_q16.h"
+#include "system/projection.h"
 #include "static_assert.h"
-#include "vector3.h"
+#include "system/vector3.h"
 #include "fixed_math.h"
 
 #define VISIBLE_SCANLINES 160

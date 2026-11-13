@@ -1,7 +1,7 @@
 /// @file
 /// World map graphics: a palette and five tilesets for each of its two looks.
 
-#include "field.h"
+#include "field/field.h"
 #include "resource_ids.h"
 #include "types.h"
 

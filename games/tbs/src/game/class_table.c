@@ -2,7 +2,7 @@
 /// The 203 classes, by class id. Each name is the English release's
 /// (MsgClassName plus the class id).
 
-#include "game.h"
+#include "game/game.h"
 #include "ability_ids.h"
 
 // clang-format off

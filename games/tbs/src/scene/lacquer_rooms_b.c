@@ -33,9 +33,9 @@
 ///
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -51,16 +51,16 @@ extern struct Trigger gLacquerRoomsB_Triggers[];
 extern struct Trigger gLacquerRoomsB_SchoolRoomTriggers[];
 
 #include "scene/field_effect_spawn.h"
-#include "event.h"
-#include "battle.h"
+#include "field/event.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_effect.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/field_effect.h"
 #include "text/msg_ids.h"
 #include "flags.h"
 #include "ability_ids.h"

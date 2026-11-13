@@ -4,8 +4,8 @@
 /// @file
 /// BattleEffectWork, the running battle effect's work, and its sprites.
 
-#include "particle.h"
-#include "battle_effect_params.h"
+#include "field/particle.h"
+#include "battle/battle_effect_params.h"
 #include "static_assert.h"
 #include "types.h"
 

@@ -1,4 +1,4 @@
-#include "dma.h"
+#include "system/dma.h"
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
 // in the room, actors in a row from the first the map passes, each

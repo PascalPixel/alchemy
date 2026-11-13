@@ -2,8 +2,8 @@
 /// The 380 enemy formations, by formation id, and the enemies whose level
 /// follows the party's.
 
-#include "formations.h"
-#include "battle.h"
+#include "battle/formations.h"
+#include "battle/battle.h"
 #include "enemy_ids.h"
 
 // clang-format off

@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_EVENT_COMMANDS_H
 
 #include "types.h"
-#include "field_particle.h"
+#include "field/field_particle.h"
 #include "field/field_sequence.h"
 
 struct Sprite;

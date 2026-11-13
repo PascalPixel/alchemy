@@ -14,9 +14,9 @@
 /// mechanism. A file with a local declaration defines `OWN_<name>` before
 /// including this header to keep that declaration in scope.
 
-#include "task.h"
-#include "field_particle.h"
-#include "irq.h"
+#include "system/task.h"
+#include "field/field_particle.h"
+#include "system/irq.h"
 #include "types.h"
 #include "edition.h"
 

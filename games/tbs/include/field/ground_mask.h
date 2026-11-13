@@ -6,9 +6,9 @@
 
 #include "types.h"
 #include "edition.h"
-#include "heap.h"
+#include "system/heap.h"
 
-#include "sprite.h"
+#include "field/sprite.h"
 
 struct Actor;
 

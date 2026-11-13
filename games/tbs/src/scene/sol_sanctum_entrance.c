@@ -50,10 +50,10 @@
 /// other door. And it makes the three CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells
 /// before it plain ground.
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene/import.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -80,18 +80,18 @@ extern struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[];
 extern s32 gSolSanctumPushSteps[];
 
 #include "field/event_commands.h"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "event_inline.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
 #include "types.h"
-#include "event.h"
-#include "scene_tables.h"
+#include "field/event.h"
+#include "field/scene_tables.h"
 #include "flags.h"
 
 /// In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet

@@ -3,9 +3,9 @@
 /// Fizz, Forge or Gust gives that Djinni.
 
 #include "debug/test_scenes.h"
-#include "battle.h"
-#include "system.h"
-#include "event.h"
+#include "battle/battle.h"
+#include "system/system.h"
+#include "field/event.h"
 #include "flags.h"
 #include "djinn_ids.h"
 

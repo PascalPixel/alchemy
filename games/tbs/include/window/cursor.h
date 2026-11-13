@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "render_input.h"
+#include "graphics/render_input.h"
 
 /// Cursor that approaches its target, shared by shops, name entry screen and
 /// settings menu.

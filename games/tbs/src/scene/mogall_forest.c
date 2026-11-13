@@ -60,12 +60,12 @@
 /// with its colours rotated (SPRITE_COLOR_BRG). The rocks Move settles are
 /// SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
 
-#include "script_operands.h"
-#include "main_routine_work.h"
-#include "system_call.h"
-#include "heap_slots.h"
+#include "field/script_operands.h"
+#include "system/main_routine_work.h"
+#include "system/system_call.h"
+#include "system/heap_slots.h"
 #include "types.h"
-#include "scene_tables.h"
+#include "field/scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
@@ -94,19 +94,19 @@ extern struct Trigger gMogallForestSidePaths_Triggers[];
 #include "scene/field_effect_spawn.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "actor.h"
-#include "event.h"
+#include "field/actor.h"
+#include "field/event.h"
 #include "djinn_ids.h"
-#include "field_effect.h"
-#include "pushed_actor.h"
-#include "battle.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"

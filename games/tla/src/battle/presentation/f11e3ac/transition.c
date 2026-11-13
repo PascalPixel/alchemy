@@ -91,7 +91,7 @@ void Graphics_BuildSequentialTileTable(s32 *dst) {
 }
 
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
-  Iwram_FillWords(destination, size, value);
+  Iwram_FillWordsEntry(destination, size, value);
 }
 
 /// Builds a flat tilemap: rows 0 to 3 0xffff, rows 4 and 5 tile 1023, rows 6
@@ -272,12 +272,12 @@ void Func_08125d74(s32 arg, s32 kind) {
        * its size; as Iwram_FillWords((void *)0x06005000, 32, 0x33333333), 2
        * of 490 instructions differ in tla-en. */
       __asm__("" : "=r"(v) : "0"(v));
-      Iwram_FillWords((void *)0x06005000, 32, v);
+      Iwram_FillWordsEntry((void *)0x06005000, 32, v);
     }
     // The clear fill in a once-only block loads its address ahead of its size
     // and value; as the plain call, 6 of 490 instructions differ in tla-en.
     do {
-      Iwram_FillWords((void *)0x06005100, 32, 0);
+      Iwram_FillWordsEntry((void *)0x06005100, 32, 0);
     } while (0);
     REG_BG1CNT = 0xc04;
     REG_BG0CNT |= 2;

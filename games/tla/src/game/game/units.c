@@ -1077,7 +1077,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
     struct BattleUnit *unit = Unit_Get(i);
 
     memcpy(name, &units[i], 15);
-    Iwram_CopyWords(unit, &units[i], sizeof(struct BattleUnit));
+    Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct BattleUnit));
     memcpy(unit, name, 15);
     if (keepSettings == 0)
       unit->enemyId = unit->classId;

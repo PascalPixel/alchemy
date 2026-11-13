@@ -355,7 +355,7 @@ s32 Func_02000988(void) {
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
-  Iwram_CopyWords(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
+  Iwram_CopyWordsEntry(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:

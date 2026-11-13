@@ -184,7 +184,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
       BattleMotion_ReleaseObjectSlotByValue(ids[i]);
     }
   }
-  Iwram_CopyWords(saved, BattleObject_Get(saved->unitId), 44);
+  Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId), 44);
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
   BattleObject_Get(saved->unitId)->scale = 0x13333;
   if (single)
@@ -284,7 +284,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
     wait(1);
   }
   ReleaseBattleObjectRecords(unitId);
-  Iwram_CopyWords(BattleObject_Get(saved->unitId), saved, 44);
+  Iwram_CopyWordsEntry(BattleObject_Get(saved->unitId), saved, 44);
   if (saved->reactivate) {
     BattleObject_MarkForRelease(unitId);
     BattleMotion_DestroyAllSlotObjects();

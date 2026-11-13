@@ -182,7 +182,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 22) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       Func_081180e8(144);
       work->shakeFrames = 8;
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,

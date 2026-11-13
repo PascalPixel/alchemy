@@ -147,7 +147,7 @@ void Palette_LoadBasicObjColors(void);
 #define LOAD_BG_PALETTE(resource)                                              \
   {                                                                            \
     void *palette = Resource_GetTableEntry((s32)&(resource));                  \
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;                  \
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;                  \
                                                                                \
     copy((void *)BG_PLTT, palette, 128);                                       \
   }
@@ -217,7 +217,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + 0x1000, 1, 0);
     {
-      s32 (*clear)(void *, s32) = Iwram_ClearWords;
+      s32 (*clear)(void *, s32) = Iwram_ClearWordsEntry;
 
       clear(work->sheet, 0x1000);
     }
@@ -279,7 +279,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cells, 1,
                                1);
-    Iwram_ClearWords(work->sheet, 0x4000);
+    Iwram_ClearWordsEntry(work->sheet, 0x4000);
     for (i = 0; i != 4; i++)
       for (k = 0; k != 120; k++)
         for (j = 0; j != 24; j++)
@@ -396,7 +396,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           b = 31;
         *pal = b << 10 | g << 5 | r;
       }
-      Iwram_FillWords(canvas, 0x4000, 0x01010101);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x01010101);
     }
 
     if (mode == 3) {
@@ -1050,7 +1050,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 8;
         Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
         Func_08118088(effect->actors[0], 4);
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       }
       if (frame > 27) {
         struct EffectStep *q;
@@ -1178,7 +1178,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 8) {
         Sound_PlayFar(212);
         work->shakeFrames = 8;
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         for (i = 0; i != effect->count; i++)
           Func_0814cd48(effect->actors[i], 7, 5, i, 7);
       }

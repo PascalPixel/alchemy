@@ -143,7 +143,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       HeapSlot_Release(HEAP_BLITTER);
     }
     if (frame == HIT_FRAME)
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
 
     // The shards, projected from the battle camera.
     Render_ResetTransformState();

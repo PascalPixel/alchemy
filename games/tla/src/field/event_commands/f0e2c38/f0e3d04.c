@@ -420,7 +420,7 @@ void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
     decoderLoaded = 0;
   }
 
-  Iwram_ClearWords(buffer, size);
+  Iwram_ClearWordsEntry(buffer, size);
   if (source->format == PICTURE_FORMAT_TYPE01) {
     Resource_DecodeType01(source->pictures[source->picture], buffer);
   } else if (source->format == PICTURE_FORMAT_COMPRESSED) {

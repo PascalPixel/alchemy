@@ -46,7 +46,7 @@ void BattlePalette_UpdateBlend(void) {
   } else {
     // The routine's entry in a local loads ahead of the size's shift; as a
     // direct call, 2 of 175 instructions differ in tla-en.
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy(work->current, work->target, sizeof(work->current));
     work->duration = 0;
@@ -508,7 +508,7 @@ void BattleEffect_LoadBufferPalette(const u16 *colours) {
     // The routine's entry in a local loads after the size; as a direct call,
     // 2 of 23 instructions differ in tla-en.
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     copy(buffers->palette, colours, 0x1c0);
     BattleEffect_BuildBuffer(0x10000, buffers, buffers->target, 1);

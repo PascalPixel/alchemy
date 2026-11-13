@@ -487,14 +487,3 @@ struct SpriteObject {
   u8 unk0a[6];
   u8 slot;
 };
-
-// The Broken Seal's typed inline from iwram_call.h, the layer every call goes
-// through there.
-#undef Iwram_CopyWords
-static inline s32 Iwram_CopyWords(volatile void *destination,
-                                  const volatile void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 219 of 1632 instructions of BattleEffect_RunNeptune
-   * differ in tla-en. */
-  return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
-}

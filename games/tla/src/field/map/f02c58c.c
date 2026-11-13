@@ -364,7 +364,7 @@ void Func_0802cc9c(const u16 *script) {
   u32 command;
 
   count = 0;
-  Iwram_ClearWords(state->anim, sizeof(state->anim));
+  Iwram_ClearWordsEntry(state->anim, sizeof(state->anim));
   command = *script++;
   while (command != 0xffff) {
     if ((command & 0xff00) == 0xfd00) {

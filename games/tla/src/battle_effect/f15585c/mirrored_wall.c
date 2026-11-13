@@ -160,7 +160,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_OrangePaletteB;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);

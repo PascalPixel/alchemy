@@ -39,7 +39,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   // fades the canvas by 4 each frame.
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
@@ -320,7 +320,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
   // Iwram_CopyWords call, 2 of 511 instructions differ in tla-en.
   {
     const void *source_ = Resource_GetTableEntry(palette);
-    __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
+    __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
     routine((void *)BG_PLTT, source_, 128);
   }
   if (mode == 3)

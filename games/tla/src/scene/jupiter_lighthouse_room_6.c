@@ -195,8 +195,8 @@ extern u16 gData_0200240c[];
 void Func_020003a4(s32 mode) {
   gData_020023c0 = 1;
   if (mode != 2) {
-    Iwram_CopyWords(gData_020023e8, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02002408, (void *)&BG_PLTT_COLOR(13, 0), 32);
+    Iwram_CopyWordsEntry(gData_020023e8, (void *)&BG_PLTT_COLOR(12, 0), 32);
+    Iwram_CopyWordsEntry(gData_02002408, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
     /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2

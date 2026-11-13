@@ -763,7 +763,7 @@ static inline void Iris_FillWords(void *d, s32 n, u32 v) {
   /* FAKEMATCH(wrapper): every FILL_WORDS forwarded through this inline; as
    * FILL_WORDS calling Iwram_FillWords directly, 42 of 4851 instructions of
    * BattleEffect_RunIris differ in tla-en. */
-  Iwram_FillWords(d, n, v);
+  Iwram_FillWordsEntry(d, n, v);
 }
 #define FILL_WORDS(dest, size, value)                                          \
   do {                                                                         \
@@ -1203,7 +1203,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
         frame = 446;
       } else {
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         work->transferPending = 1;
         wait(1);
         break;
@@ -1356,7 +1356,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       u8 *colors;
       struct ResourceTableEntry *table;
 
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
       wait(1);
       battle[0x867] = 1;
@@ -1771,7 +1771,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The fountain: the second backdrop, the motes and the light shafts.
     if (frame == 446) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       Render_ResetTransformState();
       BattleBackground_LoadFar(1, (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = 0x302;
@@ -3139,7 +3139,7 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   copy->pixels = (u32)Heap_Alloc(size + 8);
   pixels = source->pixels;
   misalign = pixels & 3;
-  Iwram_CopyWords((void *)copy->pixels, (void *)(pixels - misalign),
+  Iwram_CopyWordsEntry((void *)copy->pixels, (void *)(pixels - misalign),
                   (size + misalign + 3) & -4);
   copy->pixels += misalign;
   return 1;

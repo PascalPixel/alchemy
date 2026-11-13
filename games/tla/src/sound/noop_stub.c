@@ -161,7 +161,7 @@ extern u8 gData_02003a90[];
 s32 __divsi3(s32 numerator, s32 denominator);
 
 static __inline__ s32 Sound_ClearWords(void *destination, s32 size) {
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 /// Sets direct sound to a fixed 31536 Hz output with 528 samples a VBlank,

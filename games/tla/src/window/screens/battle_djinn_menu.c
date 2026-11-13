@@ -564,11 +564,11 @@ s32 Func_0804868c(s32 member) {
       }
     }
     if (gFrameCount & 4) {
-      Iwram_CopyWords((void *)0x06006500, gDjinnMenu_BlinkTile, 32);
-      Iwram_CopyWords((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
+      Iwram_CopyWordsEntry((void *)0x06006500, gDjinnMenu_BlinkTile, 32);
+      Iwram_CopyWordsEntry((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     } else {
-      Iwram_FillWords((void *)0x06006500, 32, 0x44444444);
-      Iwram_CopyWords((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
+      Iwram_FillWordsEntry((void *)0x06006500, 32, 0x44444444);
+      Iwram_CopyWordsEntry((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     }
     wait(1);
   }

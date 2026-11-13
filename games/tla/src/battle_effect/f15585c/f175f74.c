@@ -243,14 +243,14 @@ static __inline__ s32 CpuCopy(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): every copy goes through this inline; as direct calls
    * to Iwram_CopyWords, 196 of 4354 instructions of BattleEffect_RunCharon
    * differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 static __inline__ s32 CpuFill(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): every fill goes through this inline; as direct calls
    * to Iwram_FillWords, 204 of 4354 instructions of BattleEffect_RunCharon
    * differ in tla-en. */
-  return Iwram_FillWords(destination, size, value);
+  return Iwram_FillWordsEntry(destination, size, value);
 }
 
 void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {

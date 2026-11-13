@@ -123,7 +123,7 @@ s32 Func_02000134(void) {
         // in registers (differ 76).
         i = 3;
       clear:
-        Iwram_ClearWords((u8 *)gLinkPeerSignatures + offset, 20);
+        Iwram_ClearWordsEntry((u8 *)gLinkPeerSignatures + offset, 20);
         i--;
         offset += 24;
         if (i >= 0)
@@ -396,7 +396,7 @@ s32 Func_02000578(void) {
     {
       s32 tries = 0;
 
-      Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
+      Iwram_CopyWordsEntry(heap, Unit_Get(memberIds[i]), size);
       heap[0x12a] = 2;
       peerSlots[memberIds[i]] = i - 128;
       if ((transferResult = Func_0200192c(heap, size)) == -1) {
@@ -455,7 +455,7 @@ next:
    * the order around it; as the plain statement, 6 of 264 instructions differ
    * in tla-en. */
   do {
-    Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
+    Iwram_CopyWordsEntry(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
   {
     s32 timeout;

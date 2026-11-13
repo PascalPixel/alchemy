@@ -950,8 +950,8 @@ void Func_020056a8();
 void Func_020015a4(s32 mode) {
   gData_02007040 = 1;
   if (mode != 2) {
-    Iwram_CopyWords(gData_02007068, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02007088, (void *)&BG_PLTT_COLOR(13, 0), 32);
+    Iwram_CopyWordsEntry(gData_02007068, (void *)&BG_PLTT_COLOR(12, 0), 32);
+    Iwram_CopyWordsEntry(gData_02007088, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (GameFlag_Test(0xa00) || mode == 1) {
     /* FAKEMATCH(temporary): the zero held in a local, so it is built in r2 and
@@ -1894,7 +1894,7 @@ void Func_020025b0(void) {
   struct MarsLighthouseRoomFAnimation *animation;
 
   if (!Event_GetFlag(0x109))
-    Iwram_ClearWords(work, 116);
+    Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_02005480(object, 1);

@@ -805,7 +805,7 @@ void Func_0812561c(struct BattlePlan *plan) {
     s32 i;
 
     before = Heap_AllocEwram(sizeof(struct BattleUnit));
-    Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
+    Iwram_CopyWordsEntry(before, unit, sizeof(struct BattleUnit));
     for (i = 0; i <= 3; i++) {
       if (counts[i] > 4)
         counts[i] = 4;

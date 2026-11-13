@@ -1179,7 +1179,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         if (statusKind == 0 && unit->hp == 0)
           statusKind = 16;
         savedUnit = Heap_Alloc(sizeof(*savedUnit));
-        Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
+        Iwram_CopyWordsEntry(savedUnit, unit, sizeof(*savedUnit));
         attackDelta = unit->atk;
         defenseDelta = unit->def;
         helpValue = 0;
@@ -1191,7 +1191,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         attackDelta -= unit->atk;
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;
-        Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
+        Iwram_CopyWordsEntry(unit, savedUnit, sizeof(*savedUnit));
         Heap_Release(savedUnit);
         switch (statusKind) {
         case 8:

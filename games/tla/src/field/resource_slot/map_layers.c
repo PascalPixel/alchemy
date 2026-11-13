@@ -842,7 +842,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
     Resource_DecodeByteLzInRam((u8 *)tileOffsets + tileOffsets[tile],
                                decodedTile);
   else
-    Iwram_ClearWords(decodedTile, 0x400);
+    Iwram_ClearWordsEntry(decodedTile, 0x400);
 
   sourceTiles = decodedTile;
   // The block table at its fixed address: as the symbol gMapBlocks, its

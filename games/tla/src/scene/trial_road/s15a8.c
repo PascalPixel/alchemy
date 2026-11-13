@@ -449,7 +449,7 @@ void Func_02001f08(void);
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Words_Copy(void *destination, const void *source,
                                   s32 size) {
-  Iwram_CopyWords(destination, source, size);
+  Iwram_CopyWordsEntry(destination, source, size);
 }
 
 void Func_02001fc4(s32 mode) {
@@ -760,7 +760,7 @@ s32 Func_0200242c(void) {
     if ((u32)(entrance - 31) <= 1) {
       if (!GameFlag_Test(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
-        Iwram_ClearWords(state, 32);
+        Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
@@ -780,7 +780,7 @@ s32 Func_0200242c(void) {
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Test(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
-        Iwram_ClearWords(state, 32);
+        Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
@@ -812,7 +812,7 @@ s32 Func_0200242c(void) {
       Func_02005988((s32)&SceneId_Ov697Room1, n);
     } else if (entrance == 50) {
       unit = Unit_Get(gMainRoutineWork.currentOwner);
-      Iwram_ClearWords(state, 32);
+      Iwram_ClearWordsEntry(state, 32);
       value = 0;
       for (n = 0; n <= 13; n++)
         value += unit[n];
@@ -1775,7 +1775,7 @@ void Func_02005770(const void *source, void *destination);
 static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
 static __inline__ void Words_Clear(void *destination, s32 size) {
-  Iwram_ClearWords(destination, size);
+  Iwram_ClearWordsEntry(destination, size);
 }
 
 void Func_02004188(s32 a, s32 b) {

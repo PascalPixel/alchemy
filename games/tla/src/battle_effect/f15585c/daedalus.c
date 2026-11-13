@@ -98,7 +98,7 @@ static inline s32 ClearWords__f17e698(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the sheet's clear through this inline; as a direct
    * call to Iwram_ClearWords, 2 of 386 instructions of Func_0817e698 differ
    * in tla-en. */
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 /* VIEW(f17e698): static CopyWords as CopyWords__f17e698; f15585c has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; not tried: CopyWords's definition holds a FAKEMATCH tag. */
@@ -106,7 +106,7 @@ static inline s32 CopyWords__f17e698(void *destination, const void *source, s32 
   /* FAKEMATCH(wrapper): the palette copies through this inline; as direct
    * calls to Iwram_CopyWords, 4 of 386 instructions of Func_0817e698 differ
    * in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 // A symmetrical burst over the target. Three half-pictures of the earth
@@ -355,14 +355,14 @@ struct SystemWork__f17e698 {
 
 #define SYSTEM ((struct SystemWork__f17e698 *)Ram_HeapSlots)
 static inline void Iwram_Copy(void *d, const void *s, s32 n) {
-  Iwram_CopyWords(d, s, n);
+  Iwram_CopyWordsEntry(d, s, n);
 }
 /// Iwram_CopyWords reached from IwramIrqMain rather than at its fixed address,
 /// as the trade's snapshot copies reach it: its address is then a pool load,
 /// made after the arguments and after the call before it.
 #define IWRAM_COPY_WORDS_LINKED                                                \
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
-#define Iwram_Clear Iwram_ClearWords
+#define Iwram_Clear Iwram_ClearWordsEntry
 
 #define VRAM_SLOTS gResourceTableEntries
 #define DECODE_BUFFER Ram_MapCellBuffer
@@ -1645,7 +1645,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       discY = 0x500000;
       work->transferMode = 2;
       work->transferValue = 50;
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                       128);
     }
@@ -1679,7 +1679,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           life += sizeof(struct EffectStep) / sizeof(s32);
         }
         work->shakeFrames = 8;
-        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       }
       sparks = gData_02014000__f17e698;
       if ((u32)(frame - 80) <= 7) {

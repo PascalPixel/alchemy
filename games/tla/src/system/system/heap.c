@@ -98,9 +98,9 @@ void Heap_FillFreeWords(u32 value) {
   u32 address;
 
   address = state[1];
-  Iwram_FillWords((void *)address, (u32)Ram_IwramHeapEnd - address, value);
+  Iwram_FillWordsEntry((void *)address, (u32)Ram_IwramHeapEnd - address, value);
   address = state[0];
-  Iwram_FillWords((void *)address, (u32)EWRAM_END - address, value);
+  Iwram_FillWordsEntry((void *)address, (u32)EWRAM_END - address, value);
 }
 
 void *Heap_Alloc(s32 size) {

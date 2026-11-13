@@ -78,7 +78,7 @@ static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_ClearWords, 2 of 491 instructions of BattleEffect_RunCrystal differ
    * in tla-en. */
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 /// Abilities: Crystal.
@@ -121,7 +121,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   Func_0815585c(effect, ((effect->side ^ 1) << 4) | 32, center, other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
   REG_BLDALPHA = 0x100e;
   if (effect->side == 1) {

@@ -81,7 +81,7 @@ s32 Math_Cosine(s32 angle);
 
 void Func_02000138(u8 *grid, s32 count, s32 scale) {
   // Through a local pointer: the routine's address loads before the arguments.
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
   s32 i = 0;
   // The corner the rings are centred on; each holds 63 for its whole life.
   s32 cornerColumn = 63;
@@ -192,7 +192,7 @@ void Func_0200020c(s32 stage) {
   Func_080d46a4(gData_02003d5c[stage], 1);
   map->yaw = 0x1000;
   map->unk11c = 0xd000;
-  Iwram_ClearWords((void *)0x050001c0, 32);
+  Iwram_ClearWordsEntry((void *)0x050001c0, 32);
   wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
@@ -234,7 +234,7 @@ void Func_0200020c(s32 stage) {
     IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
                         0x80000010);
     {
-      void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWords;
+      void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
       s32 size = 0x2000;
       void *tilesAt = (void *)0x06001000;
 
@@ -995,9 +995,9 @@ void Func_02001be0(s32 progress) {
   if (kind + level == gData_02003fc4)
     return;
   gData_02003fc4 = kind + level;
-  Call2((void (*)())Iwram_ClearWords, (s32)(gData_02003fd8), (s32)(0x100));
+  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(gData_02003fd8), (s32)(0x100));
   {
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     if (kind == 0) {
       copy(gData_02003fd8, gData_020040d8[8], 0x80);
@@ -1011,24 +1011,24 @@ void Func_02001be0(s32 progress) {
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWords(gData_02003fd8, gData_020040d8, 32);
+    Iwram_CopyWordsEntry(gData_02003fd8, gData_020040d8, 32);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWords(gData_02003fd8[1], gData_020040d8[1], 32);
+    Iwram_CopyWordsEntry(gData_02003fd8[1], gData_020040d8[1], 32);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWords(gData_02003fd8[2], gData_020040d8[2], 32);
+    Iwram_CopyWordsEntry(gData_02003fd8[2], gData_020040d8[2], 32);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWords(gData_02003fd8[3], gData_020040d8[3], 32);
+    Iwram_CopyWordsEntry(gData_02003fd8[3], gData_020040d8[3], 32);
     base = 0;
     count = 0;
   }

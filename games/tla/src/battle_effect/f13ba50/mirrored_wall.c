@@ -385,7 +385,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 
   // The shots leave the caster at the mode's height, each aimed at its
   // target with a little spread in depth.

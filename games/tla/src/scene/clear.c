@@ -296,7 +296,7 @@ void Party_AddActiveOwner(s32 id);
 
 /// Swaps the map cell buffer out around a password or link screen.
 #define COPY_CELLS(to, from)                                                   \
-  Value3((s32 (*)())Iwram_CopyWords, (s32)(to), (s32)(from), 0x3000)
+  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)(to), (s32)(from), 0x3000)
 #define SAVE_CELLS()                                                           \
   u8 *cells = gData_02000000;                                                  \
                                                                                \
@@ -675,14 +675,6 @@ void Func_02000a70(s32 cell, u16 *text) {
     text[0] = '=';
 }
 #endif
-
-// The copies go through an inline wrapper, as the Broken Seal's iwram_call.h
-// writes it.
-#undef Iwram_CopyWords
-static inline s32 Iwram_CopyWords(void *destination, const void *source,
-                                  s32 size) {
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
 
 extern volatile u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];
@@ -1100,7 +1092,7 @@ s32 Func_02000e44(void) {
       x = col * 12 + 18;
     work->cells[i] = Func_02002330(grid, work->glyphs[i], x, y);
     work->shown[i] = 99;
-    Iwram_ClearWords(work->cells[i], 128);
+    Iwram_ClearWordsEntry(work->cells[i], 128);
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
@@ -1382,7 +1374,7 @@ s32 Func_02000e44(void) {
       if (code != work->shown[i]) {
         work->shown[i] = raw;
         if (code == 99) {
-          Iwram_ClearWords(work->cells[i], 128);
+          Iwram_ClearWordsEntry(work->cells[i], 128);
         } else {
           Func_02000a70(entered[index], glyph);
           Func_02002328(glyph[0], work->cells[i]);
@@ -1392,7 +1384,7 @@ s32 Func_02000e44(void) {
     for (; i != 50; i++) {
       if (work->shown[i] != 99) {
         work->shown[i] = 99;
-        Iwram_ClearWords(work->cells[i], 128);
+        Iwram_ClearWordsEntry(work->cells[i], 128);
       }
     }
     System_Wait(1);

@@ -70,7 +70,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     }
     Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet,
                                work->sheet + 0x3e80, 1, 1);
-    Iwram_CopyWords((void *)0x05000000,
+    Iwram_CopyWordsEntry((void *)0x05000000,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
     work->transferValue = 75;
@@ -232,5 +232,5 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 // its arguments.
 static inline s32 (*Iwram_GetCopyWords(void))(void *destination,
                                               const void *source, s32 size) {
-  return Iwram_CopyWords;
+  return Iwram_CopyWordsEntry;
 }

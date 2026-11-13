@@ -1525,7 +1525,7 @@ void Func_02002120(void) {
   struct SceneState *state = &gSceneState;
 
   if (Event_GetFlag(0x109) == 0)
-    Iwram_ClearWords(state, 12);
+    Iwram_ClearWordsEntry(state, 12);
 }
 
 // volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
@@ -1727,7 +1727,7 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
     s32 x;
     s32 i;
 
-    Iwram_ClearWords(work, 0x150);
+    Iwram_ClearWordsEntry(work, 0x150);
     x = *points++;
     i = 0;
     while (x > 0) {

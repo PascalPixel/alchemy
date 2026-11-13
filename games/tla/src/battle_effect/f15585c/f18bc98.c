@@ -160,12 +160,12 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   if (mode == BREATH_PIKE) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet);
-    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copyWords((void *)BG_PLTT, palette, 128);
   } else {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copyWords((void *)BG_PLTT, palette, 128);
   }
@@ -547,7 +547,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
         }
         work->shakeFrames = 8;
         Func_081180e8(144);
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       }
       BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
@@ -569,17 +569,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, Func_0818c7b8, 0)
 
 /// Abilities: Echo Cut (kind 390).
 DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, Func_0818c7b8, 1)
-
-// The fill goes through an inline wrapper, as the Broken Seal's iwram_call.h
-// writes it: called straight through the fixed entry, the build loads 0x4000
-// before the routine's address.
-#undef Iwram_FillWords
-static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the fills through this inline; as direct calls to
-   * Iwram_FillWordsEntry, 4 of 303 instructions of Func_0818c7b8 differ in
-   * tla-en. */
-  return Iwram_FillWordsEntry(destination, size, value);
-}
 
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.
@@ -642,7 +631,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
   if (mode == 0) {
-    Iwram_CopyWords((void *)0x05000000,
+    Iwram_CopyWordsEntry((void *)0x05000000,
                     Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
                     128);
     REG_BLDALPHA = 0x810;

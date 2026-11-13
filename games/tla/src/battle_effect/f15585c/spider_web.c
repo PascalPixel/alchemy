@@ -85,7 +85,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale) {
   s32 last = size - 1;
   s32 radius;
 
-  Iwram_ClearWords(map, half * size);
+  Iwram_ClearWordsEntry(map, half * size);
   for (radius = 0; radius != last; radius++) {
     s32 x = radius;
     s32 d = radius;
@@ -123,7 +123,7 @@ void Func_0815b510(u8 *map, s32 size, s32 scale) {
   s32 last = size - 1;
   s32 radius;
 
-  Iwram_ClearWords(map, size * size * 2);
+  Iwram_ClearWordsEntry(map, size * size * 2);
   for (radius = 0; radius != last; radius++) {
     s32 x = radius;
     s32 d = radius;
@@ -307,7 +307,7 @@ void Transform_Pop(void);
 
 
 static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
-  return Iwram_FillWords(destination, size, value);
+  return Iwram_FillWordsEntry(destination, size, value);
 }
 
 extern char ResourceId_Data0B1;
@@ -498,7 +498,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BG1CNT = 0x1f80;
       work->transferMode = 2;
       work->transferValue = 75;
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
                       128);
       for (i = 0; i != 9; i++) {
@@ -614,7 +614,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BG2PD = 0x100;
       REG_BG2CNT = 0x784;
       REG_BLDALPHA = 0x1010;
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
     }
     if (frame == 133) {
@@ -1081,7 +1081,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
                              Ram_MapCellBuffer, 1, 0);
   if (mode == 0) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
     copy((void *)0x05000000, palette, 128);
   }
   work->transferMode = 2;

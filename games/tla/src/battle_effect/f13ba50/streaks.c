@@ -131,7 +131,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_CyanPalette;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;   // each transfer halves the old picture,
   work->transferValue = 50; // leaving a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -296,7 +296,7 @@ static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_ClearWords, 16 of 477 instructions of Func_0813cb34 differ in
    * tla-en. */
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 // Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
@@ -352,7 +352,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_EarthWallSheet;
   else
     resource = (s32)&ResourceId_GreenPalette;
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);

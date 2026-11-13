@@ -413,7 +413,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
         Func_0815f0a0((s32)&ResourceId_BlastSheet);
     } else if (mode == 1) {
       if (frame == 61) {
-        Iwram_CopyWords(
+        Iwram_CopyWordsEntry(
             (void *)0x05000000,
             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
         Func_0815b634();
@@ -631,10 +631,10 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
 
     if (frame == 9) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
-      Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
+      Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
     }
     if (frame == 60)
-      Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
+      Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
 
     BattleCamera_Shake(16, 16);
     BattleEffect_CountDownBattlerTints();
@@ -735,14 +735,14 @@ void Graphics_LoadGreyRamp(void);
 /* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has static __inline__ void FILL(void *dst, s32 size, s32 value) { Iwram_FillWords(dst, size, value); }; tried with the definition the rest of the object has, BattleEffect_RunJudgment moves: 18 of 2634 instructions in tla-ja. */
 static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   do {
-    Iwram_FillWords(dst, size, value);
+    Iwram_FillWordsEntry(dst, size, value);
   } while (0);
 }
 static inline void FillWords(void *dst, s32 size, s32 value) {
   /* FAKEMATCH(wrapper): the closing fill of the gathering calls through this
    * inline with no block; as a direct call to Iwram_FillWords there, 14 of
    * 2680 instructions differ in tla-en. */
-  Iwram_FillWords(dst, size, value);
+  Iwram_FillWordsEntry(dst, size, value);
 }
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
   BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
@@ -789,7 +789,7 @@ static inline s32 CopyWords__actor_move_random(void *destination, const void *so
   /* FAKEMATCH(wrapper): the first palette copy calls through this inline; as a
    * direct call to Iwram_CopyWords there, 103 of 2680 instructions differ in
    * tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 static inline u8 *PassBuffer(u8 *buffer) {

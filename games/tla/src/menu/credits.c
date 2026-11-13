@@ -623,7 +623,7 @@ extern const u8 gDisplayScroll_GlyphWidths[];
 extern const u8 gDisplayScroll_Font[];
 static __inline__ void DisplayScroll_CopyWords(void *destination, void *source,
                                                s32 size) {
-  Iwram_CopyWords(destination, source, size);
+  Iwram_CopyWordsEntry(destination, source, size);
 }
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
@@ -650,14 +650,14 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   if (text == NULL)
     return -1;
   if (!GameFlag_Test(0x200)) {
-    Iwram_FillWords(buf, 0x900, 0);
+    Iwram_FillWordsEntry(buf, 0x900, 0);
     GameFlag_SetBit(0x200);
   } else {
     /* FAKEMATCH(wrapper): the copy forwarded through DisplayScroll_CopyWords,
      * which keeps its own constants; as Iwram_CopyWords called directly, 71
      * of 279 instructions differ in tla-en. */
     DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
-    Iwram_FillWords(buf + 0x100, 0x800, 0);
+    Iwram_FillWordsEntry(buf + 0x100, 0x800, 0);
   }
 
   p = text;

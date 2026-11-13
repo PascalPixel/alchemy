@@ -86,7 +86,7 @@ void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
 
 static __inline__ s32 BattleStaging_FillWords(void *destination, s32 size,
                                               u32 value) {
-  return Iwram_FillWords(destination, size, value);
+  return Iwram_FillWordsEntry(destination, size, value);
 }
 
 /// Sends the 256x128 8bpp canvas to VRAM 0x06003500 on the frames its transfer
@@ -1190,7 +1190,7 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Iwram_ClearWords((void *)0x06002d00, 0x300);
+  Iwram_ClearWordsEntry((void *)0x06002d00, 0x300);
   j = 0;
   for (k = 0; k != 20; k++) {
     for (i = 0; i != 32; i++, j += 2) {

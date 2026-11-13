@@ -208,8 +208,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02000338(s32 mode) {
   gData_02002a88 = 1;
   if (mode != 2) {
-    Iwram_CopyWords(gData_02002ab0, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02002ad0, (void *)&BG_PLTT_COLOR(13, 0), 32);
+    Iwram_CopyWordsEntry(gData_02002ab0, (void *)&BG_PLTT_COLOR(12, 0), 32);
+    Iwram_CopyWordsEntry(gData_02002ad0, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
     /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2

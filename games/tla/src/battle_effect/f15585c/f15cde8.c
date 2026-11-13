@@ -216,7 +216,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
 
     for (i = 0; i < 120; i++) {
       for (n = 0; n < 0x800; n += 64) {
-        Iwram_CopyWords(
+        Iwram_CopyWordsEntry(
             cells, (void *)(0x06008000 + ((i / 8 * 256 + (i & 7)) * 8 + n)), 8);
         cells += 8;
       }
@@ -241,7 +241,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   for (i = 0; i != 16; i++) {
     obj = Func_0815b3b0__f15cde8(32, 32, 0x80002000, 0);
     work->objects[i + 12] = obj;
-    Iwram_CopyWords(obj, work->objects[5 + (i & 3)], 24);
+    Iwram_CopyWordsEntry(obj, work->objects[5 + (i & 3)], 24);
     ((struct AzulObject *)work->objects[i])->priority = 1;
   }
   mapCells = gMapCellBuffer;
@@ -249,7 +249,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   stripEnd = 0x3a08;
   for (frame = 0; frame != 228; frame++) {
     if ((gInput.repeat & 3) && frame > 15 && frame <= 185) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
       wait(1);
       frame = 186;
@@ -807,7 +807,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if (frame == 186) {
       BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != effect->count; i++) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 16);

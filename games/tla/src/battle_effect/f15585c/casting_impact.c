@@ -243,10 +243,10 @@ void Render_DrawModelList(struct Model *);
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
 static __inline__ void CLEAR(void *dst, s32 size) {
-  Iwram_ClearWords(dst, size);
+  Iwram_ClearWordsEntry(dst, size);
 }
 static __inline__ void FILL(void *dst, s32 size, s32 value) {
-  Iwram_FillWords(dst, size, value);
+  Iwram_FillWordsEntry(dst, size, value);
 }
 // The second release in a once-only block, whose loop note sets kinds 68 and
 // 84's scheduling; the other sites spell the releases out.

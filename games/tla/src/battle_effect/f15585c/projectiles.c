@@ -6,12 +6,12 @@
 #include "../f15585c_internal.h"
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 // The packed preparer word: kind | side << 4 | anchor << 5.
@@ -651,7 +651,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                  work->sheet + 0x1000, 1, 1);
     if (mode == 5) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }
@@ -659,7 +659,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                work->sheet + 0x2000, 1, 0);
     if (mode == 5) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }
@@ -674,13 +674,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     if (mode == 15) {
       REG_BLDCNT = 0;
     } else if (mode == 16) {
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_LimePalette),
                       128);
       Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                                  work->sheet + 0x22, 1, 0);
     } else {
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
                       128);
       Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
@@ -693,7 +693,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     work->transferMode = 1;
     work->transferValue = 0;
   } else if (mode == 2) {
-    Iwram_CopyWords((void *)BG_PLTT,
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);

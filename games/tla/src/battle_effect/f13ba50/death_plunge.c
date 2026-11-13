@@ -72,7 +72,7 @@ static inline s32 ClearWords__f13eb70(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_ClearWords, 14 of 1102 instructions of Func_0813eb70 differ in
    * tla-en. */
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 /* VIEW(f13eb70): static FillWords as FillWords__f13eb70; f13ba50 has static inline s32 FillWords(void *destination, s32 size, u32 value) { return Iwram_FillWords(destination, size, value); }; not tried: FillWords's definition holds a FAKEMATCH tag. */
@@ -80,7 +80,7 @@ static inline s32 FillWords__f13eb70(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_FillWords, 4 of 1102 instructions of Func_0813eb70 differ in
    * tla-en. */
-  return Iwram_FillWords(destination, size, value);
+  return Iwram_FillWordsEntry(destination, size, value);
 }
 
 /* VIEW(f13eb70): static CopyWords as CopyWords__f13eb70; f13ba50 has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; not tried: CopyWords's definition holds a FAKEMATCH tag. */
@@ -88,7 +88,7 @@ static inline s32 CopyWords__f13eb70(void *destination, const void *source, s32 
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_CopyWords, 47 of 1102 instructions of Func_0813eb70 differ in
    * tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 // The target's picture shatters, for the scenes.
@@ -838,7 +838,7 @@ void Func_0813fa88(s32 kind) {
     id = (s32)&ResourceId_DustPuffSheet;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(id), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(id), 128);
 
   // Fade the background over 24 frames, and draw and halve the streaks
   // every frame.
@@ -849,17 +849,6 @@ void Func_0813fa88(s32 kind) {
   Task_Add(BattleEffect_TransferHalvedCanvas, 0xc80);
   work->frame = 0;
   Task_Add(Func_0813f8d4, 0x480);
-}
-
-// The clear goes through an inline, as the Broken Seal's iwram_call.h writes
-// it: called straight through the fixed entry, the build sets the size before
-// it loads the routine's address.
-#undef Iwram_ClearWords
-static inline s32 Iwram_ClearWords(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the clear through this inline; as a direct call to
-   * Iwram_ClearWordsEntry, 2 of 18 instructions of
-   * BattleEffect_EndElementStreaks differ in tla-en. */
-  return Iwram_ClearWordsEntry(destination, size);
 }
 
 /// Ends the light-streak backdrop: removes its three callbacks, clears the
@@ -1008,11 +997,11 @@ void Func_08164b2c(s32 r, s32 g, s32 b);
 
 // Forwarded so that a constant size reaches the call's register at each call.
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
-  Iwram_FillWords(destination, size, value);
+  Iwram_FillWordsEntry(destination, size, value);
 }
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  Iwram_CopyWords(destination, source, size);
+  Iwram_CopyWordsEntry(destination, source, size);
 }
 
 // Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky

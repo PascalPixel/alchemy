@@ -171,7 +171,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                                work->sheet + 0x4000, 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT,
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
     REG_BG2PA = 0x80;
@@ -210,7 +210,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
           spark->variant = (Random16() & 15) + 16;
         }
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         work->shakeFrames = 8;
         if (frame == 28) {
           if (effect->variant == 0) {
@@ -575,7 +575,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
     }
     if (frame == FIGURE_SWING_FRAME) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       work->shakeFrames = 3;
       Sound_PlayFar(212);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);

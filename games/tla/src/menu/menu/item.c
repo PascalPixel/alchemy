@@ -46,13 +46,13 @@ static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants; as direct calls, 92 of 162 instructions differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants; as a direct call, 47 of 162 instructions differ in tla-en. */
-  return Iwram_FillWords(destination, size, value);
+  return Iwram_FillWordsEntry(destination, size, value);
 }
 
 /// The field menu's Item screen: choose a party member, one of their items and
@@ -570,8 +570,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       wait(1);
       if (aborted == 1) {
-        Iwram_CopyWords(source, sourceCopy, size);
-        Iwram_CopyWords(target, targetCopy, size);
+        Iwram_CopyWordsEntry(source, sourceCopy, size);
+        Iwram_CopyWordsEntry(target, targetCopy, size);
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, ITEM_CANNOT_TRADE_X,
                                        14);
@@ -1488,7 +1488,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       unit = Unit_Get(target);
       size = 332;
       buffer = Heap_Alloc(size);
-      Iwram_CopyWords(buffer, unit, size);
+      Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         entry &= ~0x200;
@@ -1502,7 +1502,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       } else {
         Func_080f8170(menu->statusWindow, target, slot, style);
       }
-      Iwram_CopyWords(unit, buffer, size);
+      Iwram_CopyWordsEntry(unit, buffer, size);
       Heap_Release(buffer);
     }
     break;
@@ -1523,7 +1523,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       unit = Unit_Get(target);
       size = 332;
       buffer = Heap_Alloc(size);
-      Iwram_CopyWords(buffer, unit, size);
+      Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         entry &= ~0x200;
@@ -1537,7 +1537,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       } else {
         Func_080f8170(menu->statusWindow, target, slot, style);
       }
-      Iwram_CopyWords(unit, buffer, size);
+      Iwram_CopyWordsEntry(unit, buffer, size);
       Heap_Release(buffer);
     }
     break;
@@ -1551,7 +1551,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       unit = Unit_Get(target);
       size = 332;
       buffer = Heap_Alloc(size);
-      Iwram_CopyWords(buffer, unit, size);
+      Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         previewSlot = Inventory_AddItemFar(target, entry);
@@ -1564,7 +1564,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       } else {
         Func_080f8170(menu->statusWindow, target, slot, style);
       }
-      Iwram_CopyWords(unit, buffer, size);
+      Iwram_CopyWordsEntry(unit, buffer, size);
       Heap_Release(buffer);
     }
     break;
@@ -2771,7 +2771,7 @@ s32 Func_080fc2e0(s32 unused) {
    * both copies; as 332 at each, 6 of 179 instructions differ in tla-en. */
   size = 332;
   saved = Heap_Alloc(size);
-  Iwram_CopyWords(saved, unit, size);
+  Iwram_CopyWordsEntry(saved, unit, size);
   window = menu->messageWindow;
   if ((u32)(Inventory_EquipFar(menu->paneOwner[1], menu->selectedSlots[1]) +
             2) <= 1) {
@@ -2817,7 +2817,7 @@ s32 Func_080fc2e0(s32 unused) {
   if (GameFlag_Test(336))
     selection = 1;
   if (selection == 1)
-    Iwram_CopyWords(unit, saved, size);
+    Iwram_CopyWordsEntry(unit, saved, size);
   Heap_Release(saved);
   Unit_RefreshPsynergyFar(menu->paneOwner[1]);
   Unit_CalculateFar(menu->paneOwner[1]);

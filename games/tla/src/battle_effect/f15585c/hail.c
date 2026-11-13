@@ -473,7 +473,7 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_CopyWords, 2 of 1676 instructions of BattleEffect_RunThor differ in
    * tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 static inline s32 RatioMulQ14(s32 divisor, s32 value) {

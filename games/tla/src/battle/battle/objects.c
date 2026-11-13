@@ -246,7 +246,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       spriteId = battleObject->resource;
       object->recordStorageKind = 2;
       object->records = records;
-      Iwram_ClearWords(records, 16);
+      Iwram_ClearWordsEntry(records, 16);
       record = (struct TlaSpriteRecord *)ResourceObject_CreateFar(spriteId);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);

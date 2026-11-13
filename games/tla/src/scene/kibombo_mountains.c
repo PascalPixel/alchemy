@@ -165,7 +165,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->z = 0;
         Event_SetFlag(0x200);
       } else {
-        Call3((void (*)())Iwram_CopyWords, (s32)&saved, (s32)other, 128);
+        Call3((void (*)())Iwram_CopyWordsEntry, (s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
         FieldActor_Jump(9, 4, 0);
         FieldEvent_Wait(30);
@@ -174,7 +174,7 @@ void Func_020001a0(s32 unused, s32 id) {
         FieldEvent_Wait(60);
         Actor_SetAnimationAndWait(9, 4);
         FieldEvent_Wait(20);
-        { void *from = &saved; Iwram_CopyWords(other, from, 128); }
+        { void *from = &saved; Iwram_CopyWordsEntry(other, from, 128); }
         MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
         Event_SetFlag(0x224);
       }

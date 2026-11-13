@@ -54,7 +54,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   // Set up: the rune palette, the dot sheet, the caster's casting pose, one
   // max blitter and the transfer.
   BattleEffect_StartCanvasLayer(1);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Actor_SetMode(caster, 2);
@@ -239,7 +239,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
 
   // Set up: the rune palette, the dot sheet, one max blitter and the transfer.
   BattleEffect_StartCanvasLayer(1);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   BattleEffect_LoadBlitter(

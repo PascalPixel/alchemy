@@ -704,7 +704,7 @@ void Func_02001420(void) {
   s32 i;
 
   if (Event_GetFlag(0x109) == 0)
-    Iwram_ClearWords(work, 240);
+    Iwram_ClearWordsEntry(work, 240);
   i = 31;
 fill:
   *pixel++ = 0x11111111;

@@ -906,7 +906,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   action = BattleAction_Get(abilityId);
   actor = Unit_Get__f11f66c(aid);
   target = Unit_Get__f11f66c(tid);
-  Iwram_CopyWords(bak, target, size);
+  Iwram_CopyWordsEntry(bak, target, size);
   switch (target->enemyId) {
   case 221:
     if (plan->command == 1 && (u32)(aid ^ tid) >> 7 != 0) {

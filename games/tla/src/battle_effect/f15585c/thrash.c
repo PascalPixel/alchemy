@@ -63,10 +63,6 @@ void BattleEffect_RunBoostHack(s32 a0) { Func_0816a2d8(a0, 4); }
 /// Abilities: Twin Shear (kind 425).
 void BattleEffect_RunTwinShear(s32 a0) { Func_0816a2d8(a0, 5); }
 
-// Code after this part calls Iwram_CopyWords through iwram_call.h's macro
-// again.
-#undef Iwram_CopyWords
-#define Iwram_CopyWords Iwram_CopyWordsEntry
 
 #undef RESULTS_FRAME
 
@@ -239,7 +235,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
     // The flood: four frames of the canvas filled with colour 0x3f.
     if ((u32)(frame - FLOOD_FRAME) <= 3)
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     if (frame == RESULTS_FRAME)
       Func_081180e8(PHASE_RESULTS);
     if (frame == HIT_FRAME) {

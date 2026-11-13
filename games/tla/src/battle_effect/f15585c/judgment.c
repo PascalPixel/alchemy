@@ -62,7 +62,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     obj->priority = 2;
     work->objects[i] = obj;
-    Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+    Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
   }
   gCameraSceneParameters[4] = 240;
   wait(1);
@@ -82,7 +82,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
-  Iwram_CopyWords((void *)BG_PLTT, pal, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, pal, 128);
   work->transferMode = 2;
   work->transferValue = 50;
   REG_BG2CNT = 0x784;
@@ -100,13 +100,13 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         p->velocityY = Random16() & 0xffff;
       }
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-      Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
       pal += 512;
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         struct JudgmentObject *obj = work->objects[i];
 
-        Iwram_CopyWords((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
+        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
                         0x400);
       }
       depth = -0x400000;
@@ -187,7 +187,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 72) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightBTiles);
-      Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
       pal += 512;
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
@@ -197,7 +197,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     if (frame == 76) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
-      Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
       pal += 512;
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
@@ -383,7 +383,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   rings = 2;
   work->transferMode = 2;
   work->transferValue = 75;
-  Iwram_FillWords(work->sheet, 0x3840, 0);
+  Iwram_FillWordsEntry(work->sheet, 0x3840, 0);
 
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != 336; frame++) {

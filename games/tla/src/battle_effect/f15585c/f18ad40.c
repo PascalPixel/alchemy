@@ -452,7 +452,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(212);
         Func_081180e8(-1);
         work->shakeFrames = 4;
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         Func_0814cd48(effect->actors[0], 7, -1, 0, 16);
         for (i = 0; i != 64; i++) {
           s32 angle = Random16() & 0xffff;
@@ -522,7 +522,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
                   overflow + gData_0819750c[effect->side * 7 + 1],
                   gData_0819751a[1], 99, 69);
           if (frame >= 64 && frame <= 65)
-            Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
           if (frame >= 66 && frame <= 67)
             draw[0](canvas, work->sheet + 0x3081,
                     overflow + gData_0819750c[effect->side * 7 + 2],

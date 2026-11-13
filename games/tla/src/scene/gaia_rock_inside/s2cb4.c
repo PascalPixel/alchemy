@@ -1561,7 +1561,7 @@ void Func_02000a60(void);
 
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  Iwram_CopyWords(destination, source, size);
+  Iwram_CopyWordsEntry(destination, source, size);
 }
 
 s32 Func_02004280(void) {
@@ -1743,7 +1743,7 @@ void Func_020044f8(s32 seed) {
   gRandomState = seed;
 restart:
   grid = Heap_AllocEwram_(sizeof *grid);
-  Iwram_ClearWords(grid, sizeof *grid);
+  Iwram_ClearWordsEntry(grid, sizeof *grid);
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28
   // cells and the last row's marks land after the block.
   {

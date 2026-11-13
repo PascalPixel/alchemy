@@ -167,7 +167,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F2, work->sheet + 0x4000, 0,
                              0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
                   128);
   REG_BG2PA = 0x80;
@@ -186,7 +186,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       Func_0814cd48(effect->actor, 0, 0, 0, -1);
     }
     if (frame == 54) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       Sound_PlayFar(212);
       Func_081180e8(212);
       work->shakeFrames = 8;
@@ -351,7 +351,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                   128);
   work->transferMode = 2;

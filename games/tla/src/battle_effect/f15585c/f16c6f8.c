@@ -146,7 +146,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     // Take the battlefield's picture off BG2's tiles, row by row.
     for (i = 0; i <= 119; i++) {
       for (x = 0; x <= 2047; x += 64) {
-        Iwram_CopyWords(
+        Iwram_CopyWordsEntry(
             cell, (u8 *)0x06008000 + (((i / 8) << 8) + (i & 7)) * 8 + x, 8);
         cell += 8;
       }
@@ -156,7 +156,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
                              work->sheet + 0x65c0, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
                              0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
   Actor_SetAnimationSpeedFar(caster, 48);
@@ -205,7 +205,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingBlock2Transfer, 0xc8f);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
-      Iwram_ClearWords(canvas, 0x3c00);
+      Iwram_ClearWordsEntry(canvas, 0x3c00);
       gBgScroll[1].y = 78;
       gBgScroll[1].x = 64 - source.x;
       REG_BG1CNT &= 0xfffc;
@@ -342,7 +342,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     }
     if (frame == 48) {
       Sound_PlayFar(145);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 64) {
       Func_081180e8(134);
@@ -396,7 +396,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     }
     if (frame == 61) {
       transition[4] = 0;
-      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0);
+      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0);
     }
     if (frame == 62) {
       BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), -1);

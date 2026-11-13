@@ -23,7 +23,7 @@ void Text_ScrollCanvasUp(s32 step) {
     Dma_Set(column + CANVAS_KEPT_ROWS + shift, column + CANVAS_KEPT_ROWS,
             DMA_COPY_WORDS(CANVAS_COLUMN_WORDS - CANVAS_KEPT_ROWS - shift),
             REG_DMA3);
-    Iwram_FillWords(column + (CANVAS_COLUMN_WORDS - shift), shift * 4, 0);
+    Iwram_FillWordsEntry(column + (CANVAS_COLUMN_WORDS - shift), shift * 4, 0);
   }
 }
 

@@ -40,16 +40,31 @@
                 0x03000730, IwramCopyWords)
 
 /// This game calls the fixed entries directly.
-#define Iwram_ClearWords Iwram_ClearWordsEntry
-#define Iwram_FillWords Iwram_FillWordsEntry
 #define Iwram_RatioMulQ14 Iwram_RatioMulQ14Entry
 #define Iwram_Sqrt Iwram_SqrtEntry
 #define Iwram_TransformMatrix Iwram_TransformMatrixEntry
 #define Iwram_TransformVector Iwram_TransformVectorEntry
 #define Iwram_SignedDivide Iwram_SignedDivideEntry
 #define Iwram_UnsignedDivide Iwram_UnsignedDivideEntry
-#define Iwram_CopyWords Iwram_CopyWordsEntry
 #define Iwram_Decompress Iwram_DecompressEntry
+
+/// Clears size bytes, rounded down to whole words, from destination. Returns
+/// the address after the last word.
+static inline s32 Iwram_ClearWords(void *destination, s32 size) {
+  return Iwram_ClearWordsEntry(destination, size);
+}
+
+/// As Iwram_ClearWords, filling with value.
+static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
+  return Iwram_FillWordsEntry(destination, size, value);
+}
+
+/// Copies size bytes, rounded down to whole words, from source to
+/// destination.
+static inline s32 Iwram_CopyWords(void *destination, const void *source,
+                                  s32 size) {
+  return Iwram_CopyWordsEntry(destination, source, size);
+}
 
 /// Iwram_CopyWords's offset from IwramIrqMain, for the callers that reach it
 /// from the linked IWRAM code rather than at its fixed address.

@@ -249,7 +249,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void Func_02001014(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
-  Iwram_ClearWords(gData_02002760, 64);
+  Iwram_ClearWordsEntry(gData_02002760, 64);
   Func_02001d68(gField_CachedTilesA, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   VramCache_Load(gData_0200275c, 0xc00, buffer);
@@ -263,7 +263,7 @@ void Func_02001014(void) {
 void Func_02001094(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
-  Iwram_ClearWords(gData_02002760, 64);
+  Iwram_ClearWordsEntry(gData_02002760, 64);
   Func_02001d68(gField_CachedTilesB, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   Vram_Load(gData_0200275c, 0x800, buffer);
@@ -277,7 +277,7 @@ void Func_02001094(void) {
 void Func_02001114(void) {
   u8 *buffer = BumpAlloc(0x800);
 
-  Iwram_ClearWords(gData_02002760, 64);
+  Iwram_ClearWordsEntry(gData_02002760, 64);
   Func_02001d68(gField_CachedTilesC, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   Vram_Load(gData_0200275c, 0x800, buffer);

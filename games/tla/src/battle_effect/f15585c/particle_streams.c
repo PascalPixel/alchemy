@@ -722,7 +722,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 
 static __inline__ s32 CopyWords___actor_move_random(void *destination, const void *source,
                                  s32 size) {
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 

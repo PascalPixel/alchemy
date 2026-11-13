@@ -122,7 +122,7 @@ void Func_081263c4(void) {
   // tla-en.
   do {
   } while (0);
-  Iwram_FillWords(block, 0x2a0, 0);
+  Iwram_FillWordsEntry(block, 0x2a0, 0);
   work->mode = 0;
 }
 
@@ -183,7 +183,7 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
   }
   Graphics_BuildSequentialTileTable((void *)0x06003800);
   BattleTransition_BuildTilemap((void *)0x0600f800);
-  Iwram_ClearWords((void *)0x0600ffc0, 64);
+  Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
   if (view->mode == 0)
     Task_Add(BattleStaging_UpdateHBlankScroll, 0xcff);
   view->mode = mode;
@@ -932,9 +932,9 @@ s32 Func_08127068(s32 mode) {
   work->frames = 0;
   work->ready = 0;
   work->originPending = 0;
-  Iwram_ClearWords(Ram_HeapSlots->battleFxWork[1], 0x4000);
+  Iwram_ClearWordsEntry(Ram_HeapSlots->battleFxWork[1], 0x4000);
   data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
-  Iwram_CopyWords((void *)BG_PLTT, data, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
   data += 128;
   Resource_DecodeType01(data, work);
   switch (mode) {
@@ -979,7 +979,7 @@ s32 Func_08127068(s32 mode) {
 /// Func_08127308 once mode 0's field has played. Returns Task_Remove's
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   HeapSlot_Release(96);
@@ -1027,7 +1027,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
 
   wait(1);
   Func_0812628c(1, session->background, 0);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
   QueueIoWriteDelay2(0x04000000, 0x3741);
   QueueIoWriteDelay2(0x0400000c, 0x784);
   QueueIoWriteDelay2(0x04000050, 0x3f44);

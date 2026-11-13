@@ -85,7 +85,7 @@ extern char SceneId_Ov6b3;
 static __inline__ void CopyToPalette(void *from, void *to, s32 size) {
   /* FAKEMATCH(wrapper): the copy forwarded inline; as Call3, 4 of 1526
    * instructions differ in tla-en. */
-  Iwram_CopyWords(from, to, size);
+  Iwram_CopyWordsEntry(from, to, size);
 }
 
 s32 Func_02000564(void) {
@@ -138,7 +138,7 @@ s32 Func_02000564(void) {
     if (i != 10)
       goto L1;
     Actor_SetAnimationSpeedById(8, 0);
-    Call3((void (*)())Iwram_CopyWords, (s32)buffer, 0x5000008, 14);
+    Call3((void (*)())Iwram_CopyWordsEntry, (s32)buffer, 0x5000008, 14);
     j = 0;
   L2:
     out = (u16 *)0x500000e;
@@ -239,8 +239,8 @@ s32 Func_02000564(void) {
     }
     if (j == 51) {
       Event_PlaySound(107);
-      Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
-      Iwram_CopyWords(block + 0xf80, block + 0x1040, 96);
+      Iwram_CopyWordsEntry(buffer, (void *)0x5000000, 0x1c0);
+      Iwram_CopyWordsEntry(block + 0xf80, block + 0x1040, 96);
     }
     if (j >= 16 && j <= 28) {
       value = (j - 16) / 2 + 2;

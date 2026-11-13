@@ -211,7 +211,7 @@ void Func_080eb594(void) {
       register u8 *buffer asm("r0");
       s32 (*fill)(void *, s32, u32);
 
-      fill = Iwram_FillWords;
+      fill = Iwram_FillWordsEntry;
       buffer = canvas;
       fill(buffer, size << 5, 0);
     }
@@ -311,7 +311,7 @@ void Func_080eb824(void) {
   s32 x;
 
   do {
-    Iwram_FillWords(work, sizeof(*work), 0);
+    Iwram_FillWordsEntry(work, sizeof(*work), 0);
   } while (0);
   work->tile = windowWork->glyphTiles;
   work->mode = CANVAS_SPRITE_16_COLORS;
@@ -322,7 +322,7 @@ void Func_080eb824(void) {
   work->scaleY = 0x10000;
   work->priority = 1;
   work->depth = 250;
-  Iwram_FillWords(canvas, CANVAS_SIZE, 0);
+  Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
   Dma_Set(canvas, OBJ_TILES + work->tile * TILE_SIZE,
           0x84000000 | CANVAS_SIZE / 4, REG_DMA3);
 

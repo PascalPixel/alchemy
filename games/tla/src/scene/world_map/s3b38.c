@@ -497,9 +497,9 @@ void Func_02004744(s32 progress) {
   if (kind + level == gData_02006e0c)
     return;
   gData_02006e0c = kind + level;
-  Call2((void (*)())Iwram_ClearWords, (s32)(Data_02006e20), (s32)(0x100));
+  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(Data_02006e20), (s32)(0x100));
   {
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     if (kind == 0) {
       copy(Data_02006e20, gData_02006f20[8], 0x80);
@@ -513,24 +513,24 @@ void Func_02004744(s32 progress) {
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWords(Data_02006e20, gData_02006f20, 32);
+    Iwram_CopyWordsEntry(Data_02006e20, gData_02006f20, 32);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWords(Data_02006e20[1], gData_02006f20[1], 32);
+    Iwram_CopyWordsEntry(Data_02006e20[1], gData_02006f20[1], 32);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWords(Data_02006e20[2], gData_02006f20[2], 32);
+    Iwram_CopyWordsEntry(Data_02006e20[2], gData_02006f20[2], 32);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWords(Data_02006e20[3], gData_02006f20[3], 32);
+    Iwram_CopyWordsEntry(Data_02006e20[3], gData_02006f20[3], 32);
     base = 0;
     count = 0;
   }

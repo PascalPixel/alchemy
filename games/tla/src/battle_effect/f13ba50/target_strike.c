@@ -261,7 +261,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_OrangePaletteB;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + 0x3200, 1, 0);
@@ -674,7 +674,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       model->texture = &texture;
       model->corners = corners;
       if (frame == 8)
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       if (frame >= 8 && frame <= 17) {
         s32 scale = Trig_Sin(((frame - 8) << 11) + 0x3000) * 612 >> 8;
 
@@ -905,7 +905,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
     palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 
   // A fleck's x is its angle and z its radius, in 1/16 pixels; fleck i
   // waits i frames before it rises.
@@ -1026,14 +1026,14 @@ static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_FillWords, 2 of 376 instructions of Func_0813e7e0 differ in
    * tla-en. */
-  return Iwram_FillWords(destination, size, value);
+  return Iwram_FillWordsEntry(destination, size, value);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_CopyWords, 27 of 376 instructions of Func_0813e7e0 differ in
    * tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 // Shows the battle background fading in, until A (unused).

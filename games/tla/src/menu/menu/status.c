@@ -1171,7 +1171,7 @@ void Menu_BuildPatternTiles(void) {
       u32 *tile = (u32 *)0x06006000 + set * 0x60 + n * 0x10;
       s32 x;
 
-      Iwram_FillWords(tile, 64, 0x44444444);
+      Iwram_FillWordsEntry(tile, 64, 0x44444444);
       for (x = 1; x <= 7; x++) {
         s32 mi = n;
 

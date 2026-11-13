@@ -224,7 +224,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
     // A or B skips the vines to the drop.
     if ((gInput.repeat & 3) != 0 && frame > 190 && frame <= 285) {
-      Iwram_ClearWords(canvas, 0x4000);
+      Iwram_ClearWordsEntry(canvas, 0x4000);
       frame = 286;
     }
     if (frame == 224)
@@ -1149,7 +1149,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
   BattleEffect_LoadBlitter(
       104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
@@ -1306,7 +1306,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     palette = (s32)&ResourceId_BlastSheet;
   else
     palette = (s32)&ResourceId_VioletPaletteC;
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
 
   // The motes leave the middle of each target's body.
   for (i = 0; i != 8 * MOTES_PER_MEMBER; i++)
@@ -1486,7 +1486,7 @@ static __inline__ s32 CopyWords_(void *destination, const void *source,
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_CopyWords, 18 of 1243 instructions of BattleEffect_RunHealingMotes
    * differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
+  return Iwram_CopyWordsEntry(destination, source, size);
 }
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -2014,7 +2014,7 @@ static inline CopyWordsFn CopyWordsRoutine(void) {
   /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
    * calls to Iwram_CopyWords, 4 of 1146 instructions of Func_0814fab8 differ in
    * tla-en. */
-  return Iwram_CopyWords;
+  return Iwram_CopyWordsEntry;
 }
 
 // Lights gather around each target in turn, eight frames apart, turning as
@@ -2462,7 +2462,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
     palette = (s32)&ResourceId_GlowOrbSheet;
   else
     palette = (s32)&ResourceId_PinkBurstSheet;
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
                              work->sheet + RAMP_IMAGE, 0, 0);
 
@@ -3453,7 +3453,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     if (frame < 16) {
       // Wipe the canvas every five frames.
       if (frame % 5 == 2)
-        Iwram_FillWords(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
       for (bolt = 0; bolt != BOLT_COUNT; bolt++) {
         s32 angle;
         s32 x;
@@ -3591,7 +3591,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     }
     variant = 1;
   } else {
-    Iwram_CopyWords((void *)BG_PLTT,
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
                     128);
     variant = effect->variant;
@@ -3911,7 +3911,7 @@ static __inline__ s32 ClearWords_(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_ClearWords, 14 of 2239 instructions of
    * BattleEffect_RunProjectileVolleyB differ in tla-en. */
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
@@ -4202,7 +4202,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       if (palette != NULL) {
         // The entry held in a local loads before the arguments; as a plain
         // Iwram_CopyWords call, 2 of 2239 instructions differ in tla-en.
-        __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
+        __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
         routine((void *)BG_PLTT, palette, 128);
       }
     }
@@ -4787,7 +4787,7 @@ void Func_08153c30(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWordsEntry((void *)0x05000000, palette, 128);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
   rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP));
@@ -4996,14 +4996,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
     piece->priority = 1;
     work->objects[i] = piece;
-    Iwram_CopyWords(OBJ_VRAM + gResourceTableEntries[piece->slot].offset,
+    Iwram_CopyWordsEntry(OBJ_VRAM + gResourceTableEntries[piece->slot].offset,
                     tiles + i * 0x400, 0x400);
   }
 
   // The slashes, the sky and the giant's path.
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
   picture = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  Iwram_CopyWords((void *)BG_PLTT, picture, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, picture, 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
@@ -5922,7 +5922,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
     // The sky flashes as each bolt starts.
     for (i = 0; i != effect->count; i++) {
       if (frame == i * BOLT_INTERVAL)
-        Iwram_FillWords(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
     }
 
     for (i = 0; i != effect->count; i++) {

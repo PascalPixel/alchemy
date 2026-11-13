@@ -199,7 +199,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
                              0);
-  Iwram_CopyWords(
+  Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
       Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -253,7 +253,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       Func_081180e8(145);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
 
     // The target is pushed down 2 pixels a frame for the first 24 frames,
@@ -458,7 +458,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       /* FAKEMATCH(temporary): the copy routine's address in a local, named
        * once the palette is fetched; as Iwram_CopyWords called by name, 2 of
        * 902 instructions differ in tla-en. */
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }
@@ -1131,7 +1131,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           } else {
             Func_08118088(effect->actors[0], 4);
             Func_081180e8(144);
-            Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
           }
           Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
           top += 8;

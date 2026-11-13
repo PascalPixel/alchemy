@@ -103,7 +103,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 0);
 
     // Mirror the rune's 24x48 left half into a 48x48 crystal.
-    Iwram_ClearWords(work->sheet + CRYSTAL_OFFSET, 0x4000);
+    Iwram_ClearWordsEntry(work->sheet + CRYSTAL_OFFSET, 0x4000);
     for (row = 0; row != 48; row++) {
       for (column = 0; column != 24; column++) {
         work->sheet[CRYSTAL_ORIGIN + row * 64 + column] =

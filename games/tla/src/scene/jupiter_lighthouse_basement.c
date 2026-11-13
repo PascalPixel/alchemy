@@ -262,8 +262,8 @@ void Func_02001d34();
 void Func_020004dc(s32 mode) {
   gData_02002388 = 1;
   if (mode != 2) {
-    Iwram_CopyWords(gData_020023b0, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_020023d0, (void *)&BG_PLTT_COLOR(13, 0), 32);
+    Iwram_CopyWordsEntry(gData_020023b0, (void *)&BG_PLTT_COLOR(12, 0), 32);
+    Iwram_CopyWordsEntry(gData_020023d0, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
     /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2

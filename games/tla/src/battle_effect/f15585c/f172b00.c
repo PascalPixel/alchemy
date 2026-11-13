@@ -172,7 +172,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         const void *source =
             Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
         // A local for the routine: loads its address where the listing does.
-        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
         copy((void *)BG_PLTT, source, 128);
       }

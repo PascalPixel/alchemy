@@ -56,7 +56,7 @@ static inline s32 WrapClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the clear through this inline, so its arguments are set
    * before the entry's address is loaded; as a direct call, 4 of 77
    * instructions differ in tla-en. */
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;

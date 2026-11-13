@@ -260,7 +260,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
   numberText = Heap_Alloc(64 * sizeof(*numberText));
   savedUnit = Heap_Alloc(sizeof(*savedUnit));
   changedAbilities = Heap_AllocEwram(48 * sizeof(*changedAbilities));
-  Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
+  Iwram_CopyWordsEntry(savedUnit, unit, sizeof(*savedUnit));
 
   element = (encodedDjinn >> 8) & 15;
   djinnIndex = encodedDjinn & 255;
@@ -429,7 +429,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
     }
   }
 
-  Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
+  Iwram_CopyWordsEntry(unit, savedUnit, sizeof(*savedUnit));
   Heap_Release(changedAbilities);
   Heap_Release(savedUnit);
   Heap_Release(numberText);

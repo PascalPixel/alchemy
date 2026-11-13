@@ -16,7 +16,7 @@ static __inline__ void FillWords___f14cca8(void *destination, s32 size, u32 valu
   // The call in a once-only block, so the entry loads before the size; as
   // the plain call, 6 of 59 instructions of Func_0814cca8 differ in tla-en.
   do {
-    Iwram_FillWords(destination, size, value);
+    Iwram_FillWordsEntry(destination, size, value);
   } while (0);
 }
 

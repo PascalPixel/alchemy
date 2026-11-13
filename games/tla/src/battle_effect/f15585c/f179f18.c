@@ -179,7 +179,7 @@ static inline s32 ClearWords__f179f18(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the VRAM clear through this inline; as a direct call
    * to Iwram_ClearWords, 16 of 2583 instructions of BattleEffect_RunFlora
    * differ in tla-en. */
-  return Iwram_ClearWords(destination, size);
+  return Iwram_ClearWordsEntry(destination, size);
 }
 
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
@@ -259,7 +259,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Task_Add(Func_0813baec, 3200);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_CopyWords((void *)0x050003e0, e, 32);
+      Iwram_CopyWordsEntry((void *)0x050003e0, e, 32);
       e += 32;
       Resource_DecodeType01(e, source);
       cells = Ram_MapCellBuffer;
@@ -267,13 +267,13 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         struct FloraObject *obj = Func_0815b290__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
-        Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 128, 128);
+        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
         w->tiles[i] = ((struct FloraObject *)work->objects[12 + i])->tile;
       }
       for (i = 0; i != 17; i++) {
         struct FloraObject *obj = Func_0815b3b0__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[27 + i] = obj;
-        Iwram_CopyWords(obj, work->objects[12], 24);
+        Iwram_CopyWordsEntry(obj, work->objects[12], 24);
       }
       i = 0;
       phase = Data_0201401e;
@@ -290,7 +290,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         struct FloraObject *obj = Func_0815b290__f179f18(32, 32, 0x80002000, 0);
         obj->flags = 2;
         work->objects[i] = obj;
-        Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
       }
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet, 0, 0);
     }
@@ -345,11 +345,11 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
        frame++) {
     if (frame == 0) {
       ClearWords__f179f18((void *)0x06004000, 0x4000);
-      Iwram_ClearWords(canvas, 0x4000);
+      Iwram_ClearWordsEntry(canvas, 0x4000);
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;
       }
-      Iwram_CopyWords((void *)OBJ_PLTT, Data_02014260, 480);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
       REG_BG2PA = 0x100;
       Graphics_LoadGreyRamp();
       REG_BG2X = -0x3c00;
@@ -400,10 +400,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         }
         w->palette[i] = b << 10 | g << 5 | r;
       }
-      Iwram_CopyWords((void *)OBJ_PLTT, Data_02014260, 480);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
     }
     if (u <= 7) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f - u * 0x01010101 * 8);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f - u * 0x01010101 * 8);
     }
     req = Data_08196ec8;
     dy = 0;
@@ -876,7 +876,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
      * differ in tla-en. */
     register u32 c asm("r1");
 
-    Iwram_CopyWords((void *)BG_PLTT, e, 32);
+    Iwram_CopyWordsEntry((void *)BG_PLTT, e, 32);
     e += 32;
     Resource_DecodeType01(e, SheetOf(work));
     sheet = work->sheet + 0x1000;
@@ -1287,7 +1287,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
     // The strike: pink palette, the caster lands at 120 percent and the
     // target is pushed to 80, and the stars burst upward from it.
     if (frame == STAR_BURST_FRAME) {
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet),
                       128);
       casterObject->z = targetObject->z;

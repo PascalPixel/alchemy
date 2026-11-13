@@ -160,7 +160,7 @@ s32 Func_0812786c(s32 owner, s32 levels) {
   base = Heap_AllocEwram(sizeof(struct OwnerStats));
   state = Unit_Get__f11f66c(owner);
   stats = &state->stats;
-  Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
+  Iwram_CopyWordsEntry(base, stats, sizeof(struct OwnerStats));
 
   value = stats->maxHp;
   value += __divsi3(levels * 97, 10);
@@ -245,7 +245,7 @@ void Func_08127a0c(s32 unitId) {
   s32 value;
   s32 floor;
 
-  Iwram_CopyWords(saved, &unit->baseHp, 36);
+  Iwram_CopyWordsEntry(saved, &unit->baseHp, 36);
   value = unit->baseHp * 3 / 2;
   floor = saved->hp * 7 / 10;
   if (value < floor)
@@ -597,7 +597,7 @@ s32 Func_08127cd4(s32 recordId) {
   battle->firstDefeated = 6;
   battle->defeatState = 0;
   for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134; memberOrEnemyIndex++)
-    Iwram_ClearWords(Unit_Get__f11f66c(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
+    Iwram_ClearWordsEntry(Unit_Get__f11f66c(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
   if (enemyClasses[0] == 0)

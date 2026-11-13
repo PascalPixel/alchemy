@@ -2128,7 +2128,7 @@ void Func_02003278(void) {
   void *buffer;
   s32 priority;
 
-  Iwram_ClearWords(&gData_0200536c, 0x604);
+  Iwram_ClearWordsEntry(&gData_0200536c, 0x604);
   buffer = MemAlloc_(0xc80);
   Func_02003c7c(gData_0200414c, buffer);
   gData_0200536c.vramEntry = Resource_FindFreeEntry();
@@ -2318,7 +2318,7 @@ void Func_02003628(void) {
   void *buffer;
   s32 priority;
 
-  Iwram_ClearWords(&gData_02005970, 0x3a4);
+  Iwram_ClearWordsEntry(&gData_02005970, 0x3a4);
   buffer = MemAlloc_(0x400);
   Func_02003c7c(gData_02004351, buffer);
   gData_02005970.vramEntry = Resource_FindFreeEntry();

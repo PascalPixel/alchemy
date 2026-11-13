@@ -129,7 +129,7 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   u32 event, last;
   s32 cz, cx;
 
-  Iwram_ClearWords(table, 4);
+  Iwram_ClearWordsEntry(table, 4);
   table->kind = kind;
   table->firstFlag = flag;
   table->flagByte = flagByte;

@@ -1738,7 +1738,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   takeIndex = menu->pairIndex[addPairSlot];
   takeSet = menu->pairEntries[addPairSlot] & 0x8000;
   originalUnit = Heap_Alloc(sizeof(struct BattleUnit));
-  Iwram_CopyWords(originalUnit, unit, sizeof(struct BattleUnit));
+  Iwram_CopyWordsEntry(originalUnit, unit, sizeof(struct BattleUnit));
 
   if (page == 0) {
     if (previewMode == 3) {
@@ -1959,7 +1959,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   size = sizeof(struct BattleUnit);
   if (page == 0)
     SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
-  Iwram_CopyWords(unit, originalUnit, size);
+  Iwram_CopyWordsEntry(unit, originalUnit, size);
   Heap_Release(originalUnit);
   return 1;
 }

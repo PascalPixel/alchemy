@@ -115,7 +115,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -428,18 +428,6 @@ void BattleEffect_RunCanvasMode3WithAction(
 #include "io_write_queue.h"
 #include "bg_scroll.h"
 #include "battle_work.h"
-#undef Iwram_CopyWords
-static inline s32 Iwram_CopyWords(void *d, const void *s, s32 n) {
-  return Iwram_CopyWordsEntry(d, s, n);
-}
-#undef Iwram_FillWords
-static inline s32 Iwram_FillWords(void *d, s32 n, s32 v) {
-  return Iwram_FillWordsEntry(d, n, v);
-}
-#undef Iwram_ClearWords
-static inline s32 Iwram_ClearWords(void *d, s32 n) {
-  return Iwram_ClearWordsEntry(d, n);
-}
 
 // The ball is the last particle, never a local: the native rereads its address.
 #define ball (&work->particles[63])
@@ -776,11 +764,3 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   }
 }
 
-// Code after this part calls the three routines through iwram_call.h's
-// macros again.
-#undef Iwram_CopyWords
-#define Iwram_CopyWords Iwram_CopyWordsEntry
-#undef Iwram_FillWords
-#define Iwram_FillWords Iwram_FillWordsEntry
-#undef Iwram_ClearWords
-#define Iwram_ClearWords Iwram_ClearWordsEntry

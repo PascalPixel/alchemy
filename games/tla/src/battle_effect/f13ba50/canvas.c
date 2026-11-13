@@ -1019,11 +1019,11 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       work->transferMode = 2;
       work->transferValue = 50;
       if (kind == KIND_LEFT)
-        Iwram_CopyWords((void *)BG_PLTT,
+        Iwram_CopyWordsEntry((void *)BG_PLTT,
                         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                         128);
       else
-        Iwram_CopyWords(
+        Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_EffectPalette03), 128);
       if (frame == 0)
@@ -1063,7 +1063,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           }
         }
         work->shakeFrames = 8;
-        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       }
       flashes = gData_02014000__f14153c;
       if (frame >= 48 && frame <= 55) {

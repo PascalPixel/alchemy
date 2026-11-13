@@ -104,7 +104,7 @@ s32 Func_0802a6b8(s32 index) {
   Fade_FromBlack(0);
   sceneResources = &gData_0802f380__f02a6b8[index];
   work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
-  Iwram_ClearWords(work, sizeof(struct MapScrollWork));
+  Iwram_ClearWordsEntry(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map000);
   encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
@@ -210,19 +210,19 @@ s32 Func_0802a6b8(s32 index) {
                                  (u32)&ResourceId_Map000),
           graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
-      Iwram_CopyWords((void *)BG_PLTT, graphicsBuffer, 0x1c0);
+      Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
       Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[2] +
                                                   (u32)&ResourceId_Map000),
                            graphicsBuffer);
-      Iwram_CopyWords(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
       Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[3] +
                                                   (u32)&ResourceId_Map000),
                            graphicsBuffer);
-      Iwram_CopyWords(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
       Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[4] +
                                                   (u32)&ResourceId_Map000),
                            graphicsBuffer);
-      Iwram_CopyWords(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
       Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[5] +
                                                   (u32)&ResourceId_Map000),
                            gData_02028000);

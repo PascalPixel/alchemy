@@ -8,7 +8,7 @@ void Func_02002118(void) {
   struct MarsLighthouseRoomMAnimation *animation;
 
   if (!Event_GetFlag(0x109))
-    Iwram_ClearWords(work, 116);
+    Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_02003118(object, 1);

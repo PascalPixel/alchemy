@@ -102,7 +102,7 @@ extern struct Trigger gSuhallaDesertCavesTriggers[];
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "io_write.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// Storms doused in the first and second scenes, one flag per storm from the
 /// first.

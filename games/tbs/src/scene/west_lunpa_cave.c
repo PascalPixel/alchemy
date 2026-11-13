@@ -200,7 +200,7 @@ enum DepartureMessage {
 };
 
 #include "text/msg_ids.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.
 #define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00

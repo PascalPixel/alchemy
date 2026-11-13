@@ -60,7 +60,7 @@ extern u32 gLogRoomsB_Exits[];
 extern struct ActorPlacement gLogRoomsB_ActorPlacements[];
 extern struct Trigger gLogRoomsB_Triggers[];
 
-#include "log_rooms_a.h"
+#include "scene/log_rooms_a.h"
 #include "scene/vault_item_icon.h"
 #include "field/event_commands.h"
 #include "game/game.h"

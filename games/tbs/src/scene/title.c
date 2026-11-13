@@ -40,7 +40,7 @@ extern s16 gTitleVramBlock;
 #include "save.h"
 #include "event_inline.h"
 #include "resource_ids.h"
-#include "title.h"
+#include "scene/title.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
 #include "map_grid_scroll.h"

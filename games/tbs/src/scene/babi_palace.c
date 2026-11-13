@@ -105,7 +105,7 @@ extern struct Trigger gBabiPalace_OutsideTriggersAfterColosso[];
 #include "display_transition.h"
 #include "flags.h"
 #include "sound_driver_symbols.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// The palace's actors are placed by one of three tables, as the story goes on.
 ///

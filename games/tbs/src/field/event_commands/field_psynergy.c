@@ -3,7 +3,7 @@
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
-#include "../../scene/shared/actor_polar_target.h"
+#include "scene/actor_polar_target.h"
 
 // The dispatchers use the shared field effect.
 

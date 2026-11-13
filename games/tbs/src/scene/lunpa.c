@@ -194,7 +194,7 @@ enum { TREASURE_SPOT_PSYNERGY_STONE = 102 };
 extern struct MapGridCellAnimation gLunpaDoors[];
 
 #include "macros.h"
-#include "shared/catch_nut.h"
+#include "scene/catch_nut.h"
 
 static void Lunpa_WatchForUncloakedParty(void);
 

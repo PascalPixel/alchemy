@@ -143,7 +143,7 @@ extern struct Trigger gMercuryLighthouseTriggersOther[];
 #include "window/screens.h"
 #include "system/system.h"
 #include "heap_release.h"
-#include "shared/mercury_lighthouse.h"
+#include "scene/mercury_lighthouse.h"
 #include "field_effect.h"
 #include "ram_buffer.h"
 #include "ground_mask.h"
@@ -167,7 +167,7 @@ extern struct Trigger gMercuryLighthouseTriggersOther[];
 #include "io_write.h"
 #include "flags.h"
 #include "sound_driver_symbols.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 #if TBS_PATCH_1
 #define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_MoveToAndWait

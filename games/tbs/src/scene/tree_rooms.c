@@ -103,7 +103,7 @@ extern struct ActorPlacement gTreeRoomsActorPlacements[];
 extern struct Trigger gTreeRoomsTriggers[];
 extern s32 gTreeRooms_TintIndex;
 
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 #include "scene/field_effect_spawn.h"
 #include "macros.h"
 

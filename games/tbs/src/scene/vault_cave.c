@@ -120,7 +120,7 @@ extern s32 gVaultCave_SelectedDrop;
 #include "map_grid_scroll.h"
 #include "item_ids.h"
 #include "io_write_queue.h"
-#include "shared/actor_step.h"
+#include "scene/actor_step.h"
 #include "pushed_actor.h"
 
 static void VaultCave_ApplySouthernSwitchCells(void);

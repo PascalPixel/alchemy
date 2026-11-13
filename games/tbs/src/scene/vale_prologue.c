@@ -120,7 +120,7 @@ extern u16 gValePrologue_GrandparentsDoorCloses[];
 #include "sound_driver_symbols.h"
 #include "io_reg.h"
 #include "field_psynergy_work.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 static void ValePrologue_DoraSendsIsaacToThePlaza(void);
 static void ValePrologue_ApplyFirstRockCollision(void);

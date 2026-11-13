@@ -126,7 +126,7 @@ extern s32 gGlint_TwinkleScript[];
 
 #include "actor.h"
 #include "heap_release.h"
-#include "shared/mercury_lighthouse.h"
+#include "scene/mercury_lighthouse.h"
 #include "pushed_actor.h"
 #include "battle.h"
 #include "debug.h"

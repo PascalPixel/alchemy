@@ -163,9 +163,9 @@ extern s32 gVale_JennaWalksToTheHouse[];
 #include "field_effect.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
-#include "shared/walk_into_leader.h"
-#include "shared/catch_nut.h"
-#include "shared/actor_polar_target.h"
+#include "scene/walk_into_leader.h"
+#include "scene/catch_nut.h"
+#include "scene/actor_polar_target.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
 // (Vale_RoofMended): two pixels further south in the TBS_PATCH_2

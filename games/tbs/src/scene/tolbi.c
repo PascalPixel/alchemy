@@ -94,7 +94,7 @@ extern struct MapGridCellAnimation gTolbiDoors[];
 #include "scene.h"
 #include "heap.h"
 
-#include "shared/colosso_story_flags.h"
+#include "scene/colosso_story_flags.h"
 #include "flags.h"
 
 /// Growth has raised the sprout into a vine the leader can climb.

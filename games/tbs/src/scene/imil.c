@@ -131,7 +131,7 @@ extern u16 gImil_CellStepsB[];
 /// The position (x, y, z) the unused arc and sway effects move around.
 extern s32 gImil_ArcOrigin[];
 
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

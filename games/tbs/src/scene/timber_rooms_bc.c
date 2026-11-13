@@ -83,7 +83,7 @@ extern struct Trigger gTimberRoomsC_TriggersAfterLighthouse[];
 #include "item_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 static void TimberRoomsBC_TellFaranAboutJenna(void);
 
 /// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED.

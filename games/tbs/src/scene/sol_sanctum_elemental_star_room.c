@@ -90,7 +90,7 @@ extern s32 gSolSanctum_RingScaleSteps[];
 #include "flags.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);

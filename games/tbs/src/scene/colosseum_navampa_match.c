@@ -127,7 +127,7 @@ extern s32 gColossoParticleCount;
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "shared/colosso_gauge.h"
+#include "scene/colosso_gauge.h"
 #include "macros.h"
 #include "sound_driver_symbols.h"
 

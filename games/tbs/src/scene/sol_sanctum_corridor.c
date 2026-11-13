@@ -29,7 +29,7 @@ extern struct Trigger gSolSanctumCorridorTriggers[];
 #include "sound.h"
 #include "system.h"
 
-#include "shared/sol_sanctum_imports.h"
+#include "scene/sol_sanctum_imports.h"
 
 #include "event.h"
 

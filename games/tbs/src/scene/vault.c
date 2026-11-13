@@ -70,7 +70,7 @@ extern u16 gVault_JailDoorCells[];
 extern s32 gVault_DriftScriptA[];
 extern s32 gVault_DriftScriptB[];
 
-#include "vault.h"
+#include "scene/vault.h"
 #include "scene/vault_range.h"
 #include "scene/field_effect_spawn.h"
 #include "field/event_commands.h"
@@ -97,7 +97,7 @@ extern s32 gVault_DriftScriptB[];
 #include "actor_script.h"
 #include "flags.h"
 #include "djinn_ids.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 enum { VAULT_DRIFT_RATE = px(1) / 10 };
 

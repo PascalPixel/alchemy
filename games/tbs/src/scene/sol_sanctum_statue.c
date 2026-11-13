@@ -93,7 +93,7 @@ extern s32 gSolSanctumStatue_ScrollPhase;
 #include "flags.h"
 #include "sound_driver_symbols.h"
 #include "ability_ids.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// Both beams have opened the hole in the floor before the centre statue.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07

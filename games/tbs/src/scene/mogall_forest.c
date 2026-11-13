@@ -111,7 +111,7 @@ extern struct Trigger gMogallForestSidePaths_Triggers[];
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "shared/catch_nut.h"
+#include "scene/catch_nut.h"
 
 /// Actors of the first area (SceneId_MogallForestSign), numbered in the
 /// order of gMogallForestSign_ActorPlacements.

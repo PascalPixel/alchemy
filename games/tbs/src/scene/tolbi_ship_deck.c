@@ -137,7 +137,7 @@ extern const s32 gTolbiShipDeckRowerStrokes[];
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "map_grid_scroll.h"
-#include "tolbi_ship.h"
+#include "scene/tolbi_ship.h"
 #include "macros.h"
 
 static void TolbiShipDeck_ConfrontCrewman(void);

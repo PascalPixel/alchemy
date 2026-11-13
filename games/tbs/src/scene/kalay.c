@@ -185,12 +185,12 @@ extern s32 gKalay_TunnelParticleScript[];
 
 #include "ground_mask.h"
 
-#include "shared/orbit.h"
+#include "scene/orbit.h"
 
 #include "flags.h"
 #include "djinn_ids.h"
 #include "sound_driver_symbols.h"
-#include "shared/catch_nut.h"
+#include "scene/catch_nut.h"
 
 /// Kalay's actors (Kalay), numbering the rows of
 /// gKalay_TownActorPlacements from ACTOR_FIRST_PLACED, then the tour

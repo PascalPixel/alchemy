@@ -1,4 +1,4 @@
-#include "actor_step.h"
+#include "scene/actor_step.h"
 
 // Bilibin, its cave, Kalay and Sol Sanctum's entrance.
 

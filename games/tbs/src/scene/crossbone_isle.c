@@ -124,7 +124,7 @@ extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "shared/catch_nut.h"
+#include "scene/catch_nut.h"
 
 /// A chest searched while facing the given way.
 #define EXAMINE_CHEST_FACING(facing)                                           \

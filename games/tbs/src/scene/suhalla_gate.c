@@ -86,7 +86,7 @@ extern struct Trigger gGatewayCaveTriggers[];
 #include "actor_script.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// Gateway Cave's Psynergy Stone has been found.
 ///

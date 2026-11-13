@@ -59,7 +59,7 @@ extern u16 gFileScreen_PasswordStackItems[];
 #include "sound_driver_symbols.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
-#include "title.h"
+#include "scene/title.h"
 #include "item_ids.h"
 
 // Edition-specific text and window layout values.

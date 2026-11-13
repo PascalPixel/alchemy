@@ -133,7 +133,7 @@ extern s32 *gLogRoomsA_StepActions[];
 extern s32 *gLogRoomsA_IdleActions[];
 extern s32 *gLogRoomsA_ResponseScripts[];
 
-#include "log_rooms_a.h"
+#include "scene/log_rooms_a.h"
 #include "scene/vault_item_icon.h"
 #include "field/field_sequence.h"
 #include "system/main_routine.h"

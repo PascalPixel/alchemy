@@ -106,7 +106,7 @@ extern u32 gLunpaFortressCaveDoorCells[];
 extern u32 gLunpaFortressUpperFloorDoorCells[];
 extern u32 gLunpaFortressGroundFloorDoorCells[];
 
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

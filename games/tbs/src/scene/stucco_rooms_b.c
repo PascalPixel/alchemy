@@ -82,7 +82,7 @@ extern struct MapGridCellAnimation gStuccoRoomsBDoors[];
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "shared/colosso_story_flags.h"
+#include "scene/colosso_story_flags.h"
 #include "flags.h"
 
 /// The placed actors, numbering the rows of the actor placement

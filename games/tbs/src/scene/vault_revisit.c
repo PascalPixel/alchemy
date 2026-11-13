@@ -61,7 +61,7 @@ extern u16 gVaultRevisit_MayorsHouseDoorCells[];
 extern u16 gVaultRevisit_JailDoorCells[];
 extern struct Trigger gVaultRevisit_Triggers[];
 
-#include "vault.h"
+#include "scene/vault.h"
 #include "scene/vault_range.h"
 #include "scene/field_effect_spawn.h"
 #include "field/event_commands.h"

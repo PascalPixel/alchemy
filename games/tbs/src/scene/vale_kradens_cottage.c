@@ -122,7 +122,7 @@ extern u16 gValeKradensCottage_DoorOpens[];
 #include "actor_script.h"
 #include "flags.h"
 #include "sound_driver_symbols.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// The placed actors, numbered in the order of
 /// gValeKradensCottage_ActorPlacements. Garet and Jenna, placed between Kraden

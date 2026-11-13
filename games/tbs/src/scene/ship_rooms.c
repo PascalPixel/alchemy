@@ -178,8 +178,8 @@ extern struct Trigger gShipRooms_RowingDeckTriggersArrived[];
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "tolbi_ship.h"
-#include "shared/walk_into_leader.h"
+#include "scene/tolbi_ship.h"
+#include "scene/walk_into_leader.h"
 
 /// The visible anchor charm has been created this visit.
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00

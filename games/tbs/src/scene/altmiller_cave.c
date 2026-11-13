@@ -92,7 +92,7 @@ extern struct Trigger gAltmillerCave_SquallTriggers[];
 extern struct Trigger gAltmillerCave_CookieChestTriggers[];
 extern struct Trigger gAltmillerCave_DraughtTriggers[];
 
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 #include "system/main_routine.h"
 #include "io_write.h"
 #include "macros.h"

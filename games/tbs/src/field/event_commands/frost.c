@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-#include "../../scene/shared/frost_glint.h"
+#include "scene/frost_glint.h"
 
 /// Frost's glint on its target.
 DEFINE_FROST_GLINT(, Actor_SetSpriteColorModeFar)

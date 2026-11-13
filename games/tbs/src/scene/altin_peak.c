@@ -183,7 +183,7 @@ extern u16 gAltinPeak_FlickerTimer;
 #include "item_ids.h"
 #include "map_grid_scroll.h"
 #include "sound_driver_symbols.h"
-#include "shared/frost_glint.h"
+#include "scene/frost_glint.h"
 
 // The rooms' floor switches, each set once flipped from its first position;
 // they are area temp flags, kept until the party leaves the mine.

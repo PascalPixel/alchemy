@@ -175,7 +175,7 @@ extern s32 gIslandWakeScript[];
 #include "flags.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
 #define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_SCENE_TEMP_00

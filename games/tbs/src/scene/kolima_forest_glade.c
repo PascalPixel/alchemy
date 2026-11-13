@@ -52,7 +52,7 @@ extern struct Trigger gKolimaForestGlade_Triggers[];
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "macros.h"
-#include "shared/catch_nut.h"
+#include "scene/catch_nut.h"
 
 /// Kolima Forest's actors, numbering the rows of
 /// gKolimaForestGlade_ActorPlacements.

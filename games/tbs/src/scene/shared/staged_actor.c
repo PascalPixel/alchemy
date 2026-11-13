@@ -1,5 +1,5 @@
 #include "system_call.h"
-#include "actor_step.h"
+#include "scene/actor_step.h"
 #include "fixed_point_position.h"
 #include "iwram_call.h"
 #include "map_grid_scroll.h"

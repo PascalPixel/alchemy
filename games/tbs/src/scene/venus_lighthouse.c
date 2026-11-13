@@ -180,7 +180,7 @@ extern s32 **gVenusFourthFloorSocketPaths[];
 #include "system/system.h"
 #include "io_write.h"
 #include "ground_mask.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 #include "heap_slots.h"
 #include "field_effect.h"
@@ -201,7 +201,7 @@ extern s32 **gVenusFourthFloorSocketPaths[];
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
 #include "ability_ids.h"
-#include "shared/actor_step.h"
+#include "scene/actor_step.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for

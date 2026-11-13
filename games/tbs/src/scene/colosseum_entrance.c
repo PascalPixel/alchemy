@@ -102,7 +102,7 @@ extern struct Trigger gColosseumTriggers[];
 extern struct Trigger gColosseumEntranceTriggers[];
 extern struct Trigger gColosseumTriggersFromColosseumAzartMatchWest[];
 
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -122,7 +122,7 @@ extern s32 gColosso_LeaderFinishScript[];
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "shared/colosso_gauge.h"
+#include "scene/colosso_gauge.h"
 #include "macros.h"
 #include "flags.h"
 #include "sound_driver_symbols.h"

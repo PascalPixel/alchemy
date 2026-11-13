@@ -74,7 +74,7 @@ extern s32 gFallingEffectScript[];
 #include "system.h"
 #include "event.h"
 #include "system_call.h"
-#include "kolima.h"
+#include "scene/kolima.h"
 #include "pushed_actor.h"
 #include "text/msg_ids.h"
 #include "actor_script.h"

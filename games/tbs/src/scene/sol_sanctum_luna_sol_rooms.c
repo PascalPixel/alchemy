@@ -107,7 +107,7 @@ extern u16 gSolSanctumLunaSolRooms_Light4Timer;
 #include "flags.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
+#include "scene/walk_into_leader.h"
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.

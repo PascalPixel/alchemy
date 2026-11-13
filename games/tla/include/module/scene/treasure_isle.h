@@ -17,22 +17,22 @@ extern struct ActorPlacement gTreasureIsle_Room2Placements[];
 extern struct ActorPlacement gTreasureIsle_Room3Placements[];
 extern struct ActorPlacement gTreasureIsle_Room4Placements[];
 extern struct ActorPlacement gTreasureIsle_Room5Placements[];
-extern u32 gData_02001128[];
+extern u32 gTreasureIsle_RockDust[];
 
 // Import stubs: Event_Start and Event_End, and the pending
 // actions' resolution.
-void Func_02000fcc(void);
+void Event_Start(void);
 
-extern struct TreasureIsleCell gData_0200117c[];
-extern struct TreasureIsleCell gData_020011cc[];
+extern struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[];
+extern struct TreasureIsleCell gTreasureIsle_Room3SpikyRocks[];
 extern struct Trigger gTreasureIsle_Room2Triggers[];
 extern struct Trigger gTreasureIsle_Room3Triggers[];
 extern s32 gTreasureIsle_Room4Triggers[];
 extern struct Trigger gTreasureIsle_Room5Triggers[];
 
-void Func_020003fc(struct TreasureIsleCell *cells, s16 index);
+void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index);
 
-void Func_02000ba0(void);
+void TreasureIsle_CycleWaterColors(void);
 
 void Func_0200105c(void);
 
@@ -40,29 +40,29 @@ s32 Func_02001064(s32 a, s32 b, s32 c);
 
 s32 Field_TryJumpForward();
 
-void Func_02000864(void);
+void TreasureIsle_FightGale(void);
 
-void Func_02000870(void);
+void TreasureIsle_VenusDjinniJoins(void);
 
-void Func_02000914(void);
+void TreasureIsle_LiftFirstRock(void);
 
-void Func_020009a0(void);
+void TreasureIsle_LiftFourthRock(void);
 
-void Func_020009d0(void);
+void TreasureIsle_LiftFifthRock(void);
 
-void Func_020009fc(void);
-void Func_02000a2c(void);
+void TreasureIsle_LiftSixthRock(void);
+void TreasureIsle_LiftSeventhRock(void);
 
-void Func_02000a5c(void);
+void TreasureIsle_LiftEighthRock(void);
 
 void TreasureIsle_MeetWaterGuardian(void);
-extern u32 gData_02001074[];
-extern u32 gData_020010b0[];
-extern u32 gData_020010ec[];
-extern u32 gData_0200131c[];
-extern u32 gData_020014e0[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+extern u32 gTreasureIsle_PostStill[];
+extern u32 gTreasureIsle_LiftRockScale[];
 
-void Func_020005ac(void);
+void TreasureIsle_PressRoom2Button(void);
 
 void FieldCamera_WaitForArrival(void);
 

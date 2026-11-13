@@ -515,8 +515,7 @@ void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);
 /// Walks a list of three-halfword entries (object id, column, row) ended by
 /// 0xffff, clearing each object's collision bit and child flags before passing
 /// the entry to YampiDesertCave_SetStakeCell. A struct of three halfwords would
-/// be padded to 8 bytes, so the list is read as u16 triples. The twin of
-/// overlay 66a's Func_02001230.
+/// be padded to 8 bytes, so the list is read as u16 triples.
 void YampiDesertCave_PlaceStakes(const u16 *list) {
   const u16 *entry;
 
@@ -818,8 +817,8 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
    } *)(base))                                                                 \
        ->v)
 
-/// The guardian speaks, then the party leaves for overlay 664's fourth room.
-/// Overlay 6af's Func_02000a8c is the same scene for actor 8.
+/// Valukar, the guardian, speaks, and its battle begins; afterwards the party
+/// leaves for overlay 664's fourth room.
 void YampiDesertCave_MeetGuardianOfFire(void) {
   s32 leader;
 

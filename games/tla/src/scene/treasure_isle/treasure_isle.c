@@ -1,5 +1,8 @@
 /// @file
-/// Scene code of overlay 0x6af, in ROM order.
+/// Treasure Isle, the dungeon in the north-east of the world: buttons that
+/// raise spiky rocks Grind breaks, pillars Move pushes onto switches, rocks
+/// Lift raises, Gale the Jupiter Djinni, a Venus Djinni, and the guardian of
+/// water.
 
 #include "../shared/tables.h"
 #include "../shared/map_cells.h"
@@ -13,17 +16,15 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "module/scene/jupiter_lighthouse_room_4.h"
-#include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 #include "module/scene/treasure_isle.h"
 #include "scene_ids.h"
 #include "module/field/event_commands.h"
 #include "text/msg_ids.h"
 
-extern u16 Data_02001aa8[];
-extern volatile u16 Data_02001ae8[];
-extern u16 Data_02001b08[];
+extern u16 gTreasureIsle_SavedBgColors[];
+extern volatile u16 gTreasureIsle_SavedObjColors[];
+extern u16 gTreasureIsle_ObjColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -53,11 +54,12 @@ const u8 *Scene_GetPlacements(void) {
 
 extern struct MapCell gMapCellBuffer[];
 
-DEFINE_MAP_CELL_SWAP(Func_020003b4)
+DEFINE_MAP_CELL_SWAP(TreasureIsle_SwapCells)
 
 #include "event_inline.h"
 
-void Func_020003fc(struct TreasureIsleCell *cells, s16 index) {
+/// Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
+void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   MapGrid_CopyCellsLayered(0, 0x64, 3, 4, cells[index].x + 0x3f,
                            cells[index].z - 2);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, cells[index].x, cells[index].z);
@@ -66,13 +68,13 @@ void Func_020003fc(struct TreasureIsleCell *cells, s16 index) {
 
 #include "field_effect.h"
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-/// Called by Func_020005ac for each listed cell whose flag is still clear:
-/// points the camera at the cell, bursts three effects there, changes its
-/// cell pictures twice and hands over to Func_020003fc, which sets its flag.
-void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
+/// A spiky rock rises out of the ground at a listed cell: the camera goes to
+/// it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
+/// it standing.
+void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   struct TreasureIsleCell *cell;
   struct EffectOptions options;
 
@@ -89,112 +91,113 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   options.startScaleY = 0x18000;
   options.priority = 1;
   options.type = 0x115;
-  options.script = gData_02001128;
-  Func_0200015c((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0, 0,
-                0, 0x3a0000, &options);
+  options.script = gTreasureIsle_RockDust;
+  FieldEffect_Spawn((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0,
+                    0, 0, 0x3a0000, &options);
   options.startScaleX = 0x9999;
-  Func_0200015c((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0, 0,
-                0, 0x3a0000, &options);
-  Func_0200015c((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0, 0,
-                0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0,
+                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0,
+                    0, 0, 0x3a0000, &options);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(3, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
-  Func_020003fc(cells, index);
+  TreasureIsle_SetSpikyRock(cells, index);
 }
 
 #include "field_event.h"
 
-/// For each of cells 0 to 3 of gData_0200117c whose flag (0x303 to 0x306) is
-/// still clear, calls Func_0200043c and sets the flag; the event is
-/// begun before the first and ended after the last.
-void Func_020005ac(void) {
+/// For each of cells 0 to 3 of gTreasureIsle_Room2SpikyRocks whose flag (0x303
+/// to 0x306) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
+/// flag; the event is begun before the first and ended after the last.
+void TreasureIsle_PressRoom2Button(void) {
   s16 count = 0;
 
   if (!Event_GetFlag(0x303)) {
-    Func_02000fcc();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_0200117c, 0);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
     Event_SetFlag(0x303);
     count = 1;
   }
   if (!Event_GetFlag(0x304)) {
     if (count == 0)
-      Func_02000fcc();
+      Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_0200117c, 1);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 1);
     Event_SetFlag(0x304);
     count++;
   }
   if (!Event_GetFlag(0x305)) {
     if (count == 0)
-      Func_02000fcc();
+      Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_0200117c, 2);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 2);
     Event_SetFlag(0x305);
     count++;
   }
   if (!Event_GetFlag(0x306)) {
     if (count == 0)
-      Func_02000fcc();
+      Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_0200117c, 3);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 3);
     Event_SetFlag(0x306);
     count++;
   }
   if (count != 0)
-    Func_02000fd4();
+    Event_End();
 }
 
-/// For each of cells 0 to 2 of gData_020011cc whose flag (0x30a to 0x30c) is
-/// still clear, calls Func_0200043c and sets the flag; the event is
-/// begun before the first and ended after the last.
-void Func_02000684(void) {
+/// For each of cells 0 to 2 of gTreasureIsle_Room3SpikyRocks whose flag (0x30a
+/// to 0x30c) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
+/// flag; the event is begun before the first and ended after the last.
+void TreasureIsle_PressRoom3Button(void) {
   s16 count = 0;
 
   if (!Event_GetFlag(0x30a)) {
-    Func_02000fcc();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_020011cc, 0);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
     Event_SetFlag(0x30a);
     count = 1;
   }
   if (!Event_GetFlag(0x30b)) {
     if (count == 0)
-      Func_02000fcc();
+      Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_020011cc, 1);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 1);
     Event_SetFlag(0x30b);
     count++;
   }
   if (!Event_GetFlag(0x30c)) {
     if (count == 0)
-      Func_02000fcc();
+      Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_020011cc, 2);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
     Event_SetFlag(0x30c);
     count++;
   }
   if (count != 0)
-    Func_02000fd4();
+    Event_End();
 }
 
-void Func_02000728(void) {
+void TreasureIsle_RaiseLastSpikyRock(void) {
   if (!Event_GetFlag(0x307)) {
-    Func_02000fcc();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_0200043c(gData_0200117c, 4);
+    TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
     Event_SetFlag(0x307);
-    Func_02000fd4();
+    Event_End();
   }
 }
 
 /// Called through the scene table with an object id: in each of the first
 /// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
-/// a given x and z in the second room runs Func_02000728 instead.
-void Func_02000760(s32 unused, s32 id) {
+/// a given x and z in the second room runs TreasureIsle_RaiseLastSpikyRock
+/// instead.
+void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
@@ -209,7 +212,7 @@ void Func_02000760(s32 unused, s32 id) {
     if (id == 10 && object->x >> 19 == 33)
       Event_SetFlag(0x308);
     if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
-      Func_02000728();
+      TreasureIsle_RaiseLastSpikyRock();
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     if (id == 10 && object->x >> 19 == 83)
@@ -228,18 +231,22 @@ void Func_02000760(s32 unused, s32 id) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000864(void) { Field_RequestDjinnBattle(0x17, 0x4d); }
+/// Talking to Gale, the Jupiter Djinni, starts its battle.
+void TreasureIsle_FightGale(void) { Field_RequestDjinnBattle(0x17, 0x4d); }
 
-void Func_02000870(void) { Djinn_JoinParty(9, 0, 0x13); }
+/// The Venus Djinni waiting here joins the party without a fight.
+void TreasureIsle_VenusDjinniJoins(void) { Djinn_JoinParty(9, 0, 0x13); }
 
-void Func_02000880(s32 unused, s32 frame, s32 id) {
+/// Grind on a spiky rock: it crumbles over three steps and its cell opens
+/// again (its flag cleared), the frame passed by the Psynergy.
+void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
   struct TreasureIsleCell *cells;
 
   if (id < 50) {
-    cells = gData_0200117c;
+    cells = gTreasureIsle_Room2SpikyRocks;
     id -= 40;
   } else {
-    cells = gData_020011cc;
+    cells = gTreasureIsle_Room3SpikyRocks;
     id -= 50;
   }
   if (frame == 15) {
@@ -253,7 +260,8 @@ void Func_02000880(s32 unused, s32 frame, s32 id) {
   }
 }
 
-#define DEFINE_FUNC_02000914(name, n1, n2)                                     \
+/// Lift raises one of Room4's rocks out of the way for good (flag n2).
+#define DEFINE_LIFT_ROCK(name, n1, n2)                                         \
   void name(void) {                                                            \
     s32 t0;                                                                    \
                                                                                \
@@ -264,21 +272,21 @@ void Func_02000880(s32 unused, s32 frame, s32 id) {
     Event_SetFlag(n2);                                                         \
   }
 
-DEFINE_FUNC_02000914(Func_02000914, 9, 0x200)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, 9, 0x200)
 
-DEFINE_FUNC_02000914(Func_02000940, 10, 0x201)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, 10, 0x201)
 
-DEFINE_FUNC_02000914(Func_02000970, 11, 0x202)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, 11, 0x202)
 
-DEFINE_FUNC_02000914(Func_020009a0, 12, 0x203)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, 12, 0x203)
 
-DEFINE_FUNC_02000914(Func_020009d0, 13, 0x204)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, 13, 0x204)
 
-DEFINE_FUNC_02000914(Func_020009fc, 14, 0x205)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, 14, 0x205)
 
-DEFINE_FUNC_02000914(Func_02000a2c, 15, 0x206)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 15, 0x206)
 
-DEFINE_FUNC_02000914(Func_02000a5c, 16, 0x207)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 16, 0x207)
 
 #include "call.h"
 
@@ -288,7 +296,7 @@ DEFINE_FUNC_02000914(Func_02000a5c, 16, 0x207)
 void TreasureIsle_MeetWaterGuardian(void) {
   s32 t12;
 
-  Func_02000fcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_StartRepeatedMotion(8, 2);
   FieldEvent_Wait(20);
@@ -310,14 +318,7 @@ void TreasureIsle_MeetWaterGuardian(void) {
   Call2(Field_RequestBattleFromEncounterTable, 0x67, 0);
 }
 
-/* VIEW(scene_tables): variable gData_020016e4 as extern const u8
- * gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1,
- * 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3,
- * CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16
- * gData_020016e4[], it does not compile in tla-ja:
- * games/tla/src/scene/treasure_isle.c:713: conflicting types for
- * `gData_020016e4'. */
-extern const u8 gData_020016e4__scene_tables[] __asm__("gData_020016e4");
+extern struct Trigger gTreasureIsle_Room1Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -330,21 +331,20 @@ const u8 *Scene_GetEvents(void) {
     return gTreasureIsle_Room4Triggers;
   if (scene == (s32)&SceneId_Ov6afRoom5)
     return gTreasureIsle_Room5Triggers;
-  return gData_020016e4__scene_tables;
+  return (const u8 *)gTreasureIsle_Room1Triggers;
 }
 
 #include "iwram_call.h"
 #include "io_write_queue.h"
 
-/* VIEW(scene_tables): variable gData_02001aa4 as extern s32 gData_02001aa4; the
- * definition has s32 gData_02001aa4[] = { - 1, }; tried as the definition's
- * extern s32 gData_02001aa4[], it does not compile in tla-ja:
- * games/tla/src/scene/treasure_isle.c:421: `gData_02001aa4' has an incomplete
- * type. */
-extern s32 gData_02001aa4__scene_tables __asm__("gData_02001aa4");
-extern volatile u16 gData_02001ac8[];
+/// The water colours' cycle frame, -1 until the first frame saves the
+/// palettes.
+extern s32 gTreasureIsle_ColorCycleFrame[];
+extern volatile u16 gTreasureIsle_BgColors[];
 
-void Func_02000ba0(void) {
+/// A task: cycles four colours of a background and an object palette every
+/// eight frames, saving both palettes the first time.
+void TreasureIsle_CycleWaterColors(void) {
   struct TreasureIsleEventWork *work = Ram_HeapSlots->eventWork;
   s32 phase;
   s32 i;
@@ -355,25 +355,30 @@ void Func_02000ba0(void) {
   busy = (s8)work->unkca4;
   if (busy != 0)
     return;
-  if (gData_02001aa4__scene_tables == -1) {
-    Call3((void (*)())Iwram_CopyWordsEntry, Data_02001aa8, (void *)0x05000060,
-          32);
-    Iwram_CopyWordsEntry((void *)gData_02001ac8, Data_02001aa8, 32);
-    Iwram_CopyWordsEntry((void *)Data_02001ae8, (void *)0x05000140, 32);
-    Iwram_CopyWordsEntry(Data_02001b08, (void *)Data_02001ae8, 32);
-    gData_02001aa4__scene_tables = 0;
+  if (gTreasureIsle_ColorCycleFrame[0] == -1) {
+    Call3((void (*)())Iwram_CopyWordsEntry, gTreasureIsle_SavedBgColors,
+          (void *)0x05000060, 32);
+    Iwram_CopyWordsEntry((void *)gTreasureIsle_BgColors,
+                         gTreasureIsle_SavedBgColors, 32);
+    Iwram_CopyWordsEntry((void *)gTreasureIsle_SavedObjColors,
+                         (void *)0x05000140, 32);
+    Iwram_CopyWordsEntry(gTreasureIsle_ObjColors,
+                         (void *)gTreasureIsle_SavedObjColors, 32);
+    gTreasureIsle_ColorCycleFrame[0] = 0;
   }
   /* FAKEMATCH(volatile): two of the colour arrays read and written as volatile,
    * which keeps the second read after the first store; as plain u16, 6 of 152
    * instructions differ in tla-en. */
-  phase = gData_02001aa4__scene_tables / 8 % 4;
+  phase = gTreasureIsle_ColorCycleFrame[0] / 8 % 4;
   for (i = 0; i <= 3; i++) {
-    gData_02001ac8[(phase + i) % 4 + 2] = Data_02001aa8[i + 2];
-    Data_02001b08[(phase + i) % 4 + 2] = Data_02001ae8[i + 2];
+    gTreasureIsle_BgColors[(phase + i) % 4 + 2] =
+        gTreasureIsle_SavedBgColors[i + 2];
+    gTreasureIsle_ObjColors[(phase + i) % 4 + 2] =
+        gTreasureIsle_SavedObjColors[i + 2];
   }
-  IO_WRITE_QUEUE_PUSH(0x05000060, (u32)gData_02001ac8, 0x84000008);
-  IO_WRITE_QUEUE_PUSH(0x05000140, (u32)Data_02001b08, 0x84000008);
-  gData_02001aa4__scene_tables++;
+  IO_WRITE_QUEUE_PUSH(0x05000060, (u32)gTreasureIsle_BgColors, 0x84000008);
+  IO_WRITE_QUEUE_PUSH(0x05000140, (u32)gTreasureIsle_ObjColors, 0x84000008);
+  gTreasureIsle_ColorCycleFrame[0]++;
 }
 #undef FIELD_AT
 
@@ -393,9 +398,9 @@ struct TreasureIsleEventWork__s0cf4 {
 };
 
 /// Treasure Isle's setup for each of its four rooms: places the objects whose
-/// flags are set, schedules Func_02000ba0 in rooms 2 and 3 and opens again
-/// the cells already opened there (Func_020003fc), and in room 4 raises the
-/// part priority of objects 9 to 16.
+/// flags are set, schedules TreasureIsle_CycleWaterColors in rooms 2 and 3 and
+/// opens again the cells already opened there (TreasureIsle_SetSpikyRock), and
+/// in room 4 raises the part priority of objects 9 to 16.
 s32 Scene_Initialize(void) {
   s32 i;
 
@@ -414,32 +419,32 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(10, PIXELS(440), PIXELS(344));
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
-    Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
+    Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Event_GetFlag(0x308))
       Actor_SetPosition(10, PIXELS(264), PIXELS(184));
     if (Event_GetFlag(0x303))
-      Func_020003fc(gData_0200117c, 0);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
     if (Event_GetFlag(0x304))
-      Func_020003fc(gData_0200117c, 1);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 1);
     if (Event_GetFlag(0x305))
-      Func_020003fc(gData_0200117c, 2);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 2);
     if (Event_GetFlag(0x306))
-      Func_020003fc(gData_0200117c, 3);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 3);
     if (Event_GetFlag(0x307))
-      Func_020003fc(gData_0200117c, 4);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
-    Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
+    Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Event_GetFlag(0x309))
       Actor_SetPosition(10, PIXELS(664), PIXELS(248));
     if (Event_GetFlag(0x30a))
-      Func_020003fc(gData_020011cc, 0);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
     if (Event_GetFlag(0x30b))
-      Func_020003fc(gData_020011cc, 1);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 1);
     if (Event_GetFlag(0x30c))
-      Func_020003fc(gData_020011cc, 2);
+      TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(0x30d))
@@ -469,7 +474,7 @@ s32 Scene_PrepareMap(void) { return 0; }
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000f4c(void) { Field_TryJumpForward(); }
+void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "text/msg_ids.h"
 #include "edition.h"
@@ -481,43 +486,43 @@ void Func_02000f4c(void) { Field_TryJumpForward(); }
 #define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword2)
 #endif
 
-void Func_02000684(void);
-void Func_02000728(void);
-void Func_02000940(void);
-void Func_02000970(void);
+void TreasureIsle_PressRoom3Button(void);
+void TreasureIsle_RaiseLastSpikyRock(void);
+void TreasureIsle_LiftSecondRock(void);
+void TreasureIsle_LiftThirdRock(void);
 
 // clang-format off
-u32 gData_02001074[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020010b0[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020010ec[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02001128[] = {
+u32 gTreasureIsle_RockDust[] = {
     39, 2, 0x80010000, 0, 1, 13,
     44, 0xc0010000, 0, 1, 2, 0,
     0, 0, 0, 1, 38, 17,
 };
 
-s32 gData_02001170[] = {
-    (s32)gData_02001074,
-    (s32)gData_020010b0,
-    (s32)gData_020010ec,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
-struct TreasureIsleCell gData_0200117c[] = {
+struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[] = {
     {7, 21, 12, 0x303},
     {7, 17, 13, 0x304},
     {12, 15, 14, 0x305},
@@ -525,7 +530,7 @@ struct TreasureIsleCell gData_0200117c[] = {
     {46, 38, 16, 0x307},
 };
 
-struct TreasureIsleCell gData_020011cc[] = {
+struct TreasureIsleCell gTreasureIsle_Room3SpikyRocks[] = {
     {41, 23, 11, 0x30a},
     {47, 23, 12, 0x30b},
     {53, 23, 13, 0x30c},
@@ -572,16 +577,16 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gData_0200131c[] = {
+u32 gTreasureIsle_PostStill[] = {
     39, 1, 0, 1, 17,
 };
 
 DEFINE_G_DATA_02001330(gTreasureIsle_Placements, 272, 280, 440, 344, 440, 0, 424, 344)
 
 struct ActorPlacement gTreasureIsle_Room2Placements[] = {
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(600), 0, PIXELS(616),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(600), 0, PIXELS(616),
      FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(680), 0, PIXELS(616),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(680), 0, PIXELS(616),
      FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(664), 0, PIXELS(664), FACING_SOUTH, 2, 0},
@@ -594,48 +599,48 @@ struct ActorPlacement gTreasureIsle_Room2Placements[] = {
 };
 
 struct ActorPlacement gTreasureIsle_Room3Placements[] = {
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(824), 0, PIXELS(232),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(824), 0, PIXELS(232),
      FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(824), 0, PIXELS(360),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(824), 0, PIXELS(360),
      FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(696), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gData_020014e0[] = {
+u32 gTreasureIsle_LiftRockScale[] = {
     22, 9, 0xcccc, 22, 10, 0xcccc,
     0, 1, 17,
 };
 
 struct ActorPlacement gTreasureIsle_Room4Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(600), FACING_SOUTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(328), 0, PIXELS(328),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(328), 0, PIXELS(328),
      FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(216), 0, PIXELS(312),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(216), 0, PIXELS(312),
      FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(104), 0, PIXELS(328),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(104), 0, PIXELS(328),
      FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(312), 0, PIXELS(216),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(312), 0, PIXELS(216),
      FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(216), 0, PIXELS(200),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(216), 0, PIXELS(200),
      FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(120), 0, PIXELS(216),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(120), 0, PIXELS(216),
      FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(744), 0, PIXELS(728),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(744), 0, PIXELS(728),
      FACING_NORTH, 2, 0},
-    {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(424), 0, PIXELS(680),
+    {329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, PIXELS(424), 0, PIXELS(680),
      FACING_NORTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(360), 0, PIXELS(216),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(360), 0, PIXELS(216),
      FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(360), 0, PIXELS(296),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(360), 0, PIXELS(296),
      FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(152), 0, PIXELS(216),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(152), 0, PIXELS(216),
      FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(152), 0, PIXELS(296),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(152), 0, PIXELS(296),
      FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(72), 0, PIXELS(216),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(72), 0, PIXELS(216),
      FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(72), 0, PIXELS(296),
+    {407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, PIXELS(72), 0, PIXELS(296),
      FACING_SOUTH, 2, 0},
     {246, 0x7d, 1, PIXELS(88), 0, PIXELS(328), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
@@ -648,7 +653,7 @@ struct ActorPlacement gTreasureIsle_Room5Placements[] = {
 };
 // clang-format on
 
-struct Trigger gData_020016e4[] = {
+struct Trigger gTreasureIsle_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -657,10 +662,13 @@ struct Trigger gData_020016e4[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x300, EVENT(Func_02000760)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x301, EVENT(Func_02000760)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x302, EVENT(Func_02000760)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TreasureIsle_SettleMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x300,
+     EVENT(TreasureIsle_SettleMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x301,
+     EVENT(TreasureIsle_SettleMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x302,
+     EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -670,18 +678,20 @@ struct Trigger gTreasureIsle_Room2Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_020005ac)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {0x602, 35, CONDITION_ALWAYS, EVENT(Func_02000f4c)},
-    {0x50009805, 40, 0x1303, EVENT(Func_02000880)},
-    {0x50009805, 41, 0x1304, EVENT(Func_02000880)},
-    {0x50009805, 42, 0x1305, EVENT(Func_02000880)},
-    {0x50009805, 43, 0x1306, EVENT(Func_02000880)},
-    {0x50009805, 44, 0x1307, EVENT(Func_02000880)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x308, EVENT(Func_02000760)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TreasureIsle_PressRoom2Button)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS,
+     EVENT(TreasureIsle_RaiseLastSpikyRock)},
+    {0x602, 35, CONDITION_ALWAYS, EVENT(TreasureIsle_JumpForward)},
+    {0x50009805, 40, 0x1303, EVENT(TreasureIsle_GrindSpikyRock)},
+    {0x50009805, 41, 0x1304, EVENT(TreasureIsle_GrindSpikyRock)},
+    {0x50009805, 42, 0x1305, EVENT(TreasureIsle_GrindSpikyRock)},
+    {0x50009805, 43, 0x1306, EVENT(TreasureIsle_GrindSpikyRock)},
+    {0x50009805, 44, 0x1307, EVENT(TreasureIsle_GrindSpikyRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x308,
+     EVENT(TreasureIsle_SettleMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS,
-     EVENT(Func_02000760)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
+     EVENT(TreasureIsle_SettleMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -691,14 +701,15 @@ struct Trigger gTreasureIsle_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {49, 5, CONDITION_ALWAYS, 5},
-    {0xc602, 35, CONDITION_ALWAYS, EVENT(Func_02000f4c)},
-    {0x602, 35, CONDITION_ALWAYS, EVENT(Func_02000f4c)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000684)},
-    {0x50009805, 50, 0x130a, EVENT(Func_02000880)},
-    {0x50009805, 51, 0x130b, EVENT(Func_02000880)},
-    {0x50009805, 52, 0x130c, EVENT(Func_02000880)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x309, EVENT(Func_02000760)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
+    {0xc602, 35, CONDITION_ALWAYS, EVENT(TreasureIsle_JumpForward)},
+    {0x602, 35, CONDITION_ALWAYS, EVENT(TreasureIsle_JumpForward)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TreasureIsle_PressRoom3Button)},
+    {0x50009805, 50, 0x130a, EVENT(TreasureIsle_GrindSpikyRock)},
+    {0x50009805, 51, 0x130b, EVENT(TreasureIsle_GrindSpikyRock)},
+    {0x50009805, 52, 0x130c, EVENT(TreasureIsle_GrindSpikyRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x309,
+     EVENT(TreasureIsle_SettleMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -723,73 +734,73 @@ s32 gTreasureIsle_Room4Triggers[] = {
     6,
     0x8602,
     0x200001f,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x602,
     0x2000020,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x8602,
     0x2010021,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x602,
     0x2010022,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x8602,
     0x2020023,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x602,
     0x2020024,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x8602,
     0x2030025,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x602,
     0x2030026,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x8602,
     0x2040027,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x602,
     0x2040028,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x8602,
     0x2050029,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     0x602,
     0x205002a,
-    (s32)Func_02000f4c,
+    (s32)TreasureIsle_JumpForward,
     RUSTY_SWORD_MESSAGE,
     (s32)0xffff0017,
-    (s32)Func_02000864,
+    (s32)TreasureIsle_FightGale,
     0x8c15,
     0x30d0008,
-    (s32)Func_02000760,
+    (s32)TreasureIsle_SettleMovedPillar,
     9,
     -0x10000,
-    (s32)Func_02000760,
+    (s32)TreasureIsle_SettleMovedPillar,
     0x8f15,
     0x2000009,
-    (s32)Func_02000914,
+    (s32)TreasureIsle_LiftFirstRock,
     0x8f15,
     0x201000a,
-    (s32)Func_02000940,
+    (s32)TreasureIsle_LiftSecondRock,
     0x8f15,
     0x202000b,
-    (s32)Func_02000970,
+    (s32)TreasureIsle_LiftThirdRock,
     0x8f15,
     0x203000c,
-    (s32)Func_020009a0,
+    (s32)TreasureIsle_LiftFourthRock,
     0x8f15,
     0x204000d,
-    (s32)Func_020009d0,
+    (s32)TreasureIsle_LiftFifthRock,
     0x8f15,
     0x205000e,
-    (s32)Func_020009fc,
+    (s32)TreasureIsle_LiftSixthRock,
     0x8f15,
     0x206000f,
-    (s32)Func_02000a2c,
+    (s32)TreasureIsle_LiftSeventhRock,
     0x8f15,
     0x2070010,
-    (s32)Func_02000a5c,
+    (s32)TreasureIsle_LiftEighthRock,
     -1,
     0,
     0,
@@ -800,11 +811,11 @@ struct Trigger gTreasureIsle_Room5Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 42, 0x9bb, EVENT(TreasureIsle_MeetWaterGuardian)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000870)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TreasureIsle_VenusDjinniJoins)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02001aa4[] = {
+s32 gTreasureIsle_ColorCycleFrame[] = {
     -1,
 };
 #undef FIELD_AT

@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x6af, in ROM order.
+/// Treasure Isle's first object: the shared actor helpers it links first.
 
 #include "shared/actors.h"
 #include "../field/object/set_sprite_priority.c"
@@ -10,4 +10,4 @@
 #include "actor.h"
 #include "event_inline.h"
 
-DEFINE_SCENE_CREATE_ACTOR(Func_020000d0)
+DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)

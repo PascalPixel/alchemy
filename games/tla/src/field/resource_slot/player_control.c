@@ -36,7 +36,9 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
-s32 Func_080267bc(struct Actor *object) {
+/// Script command 0x24 (control mode 11): the player control at one pace,
+/// a pixel a frame whatever the keys. Unused: no code sets control mode 11.
+s32 Actor_UpdateWalkingControl(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;

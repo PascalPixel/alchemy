@@ -474,7 +474,7 @@ void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
 /// Starts an actor on the script that approaches its watched actor
 /// (SC_APPROACH_WATCHED), watching watched.
 void Actor_StartApproachWatched(struct Actor *actor, struct Actor *watched) {
-  Actor_StartScript(actor, gData_0802f1e8);
+  Actor_StartScript(actor, gActor_ApproachWatchedScript);
   actor->watchedObject = watched;
 }
 
@@ -486,47 +486,47 @@ void Actor_StartRenderModeScript(struct Actor *object) {
 
   switch (party->renderMode) {
   case 0:
-    script = gData_0802f140;
+    script = gActor_PlayerScript;
     break;
   case 1:
-    script = gData_0802f158;
+    script = gActor_WorldMapScript;
     break;
   case 2:
-    script = gData_0802f0b0;
-    break;
-  case 3:
-    script = gData_0802f0c8;
-    break;
-  case 4:
-    script = gData_0802f0e0;
-    break;
-  case 5:
-    script = gData_0802f0f8;
-    break;
-  case 6:
-    script = gActor_KeyCheckScript;
-    break;
-  case 7:
     script = gActor_KeysScript;
     break;
+  case 3:
+    script = gActor_RopeScript;
+    break;
+  case 4:
+    script = gActor_TightropeScript;
+    break;
+  case 5:
+    script = gActor_SandScript;
+    break;
+  case 6:
+    script = gActor_SailOnMapScript;
+    break;
+  case 7:
+    script = gActor_SailScript;
+    break;
   case 8:
-    script = gActor_PlayerScript;
+    script = gActor_FlyScript;
     break;
   case 9:
     wait(1);
-    script = gActor_WorldMapScript;
+    script = gActor_SandOnWorldMapScript;
     break;
   case 10:
-    script = gData_0802f110;
+    script = gActor_HoverScript;
     break;
   case 11:
-    script = gData_0802f128;
+    script = gActor_WalkingScript;
     break;
   case 12:
     script = gActorScript_EndScript;
     break;
   default:
-    script = gData_0802f098;
+    script = gActor_KeyCheckScript;
     break;
   }
   Actor_StartScript(object, script);
@@ -649,7 +649,9 @@ void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
   sprite->oam.palette = 0;
 }
 
-s32 Func_080237c8(u8 *object) {
+/// The sprite id an actor is drawn with (the first halfword of its sprite's
+/// definition), or 0 for none.
+s32 Actor_GetSpriteId(u8 *object) {
   u8 *track = *(u8 **)(object + 0x50);
 
   if (object != NULL && track != NULL && track != (u8 *)-0x28)
@@ -657,7 +659,8 @@ s32 Func_080237c8(u8 *object) {
   return 0;
 }
 
-void Func_080237e8(u8 *object) {
+/// Animation_WaitForTrackEnd on an actor's sprite.
+void Actor_WaitForTrackEnd(u8 *object) {
   if (object != NULL)
     Animation_WaitForTrackEnd(*(void **)(object + 0x50));
 }

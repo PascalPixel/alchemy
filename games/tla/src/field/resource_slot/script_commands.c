@@ -1688,7 +1688,9 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *object,
                                 struct FieldPosition *position);
 void *Unit_Get(s32 owner);
 
-s32 Func_0802632c(struct Actor *object) {
+/// Script command 0x23 (control mode 10): the leader hovering (the Hover
+/// Psynergy), moved by the direction pad over what lies below.
+s32 Actor_UpdateHoverControl(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;

@@ -230,9 +230,9 @@ Resource_FarCall006:
 	export Func_080c8700, Func_080ea8d4
 	export Func_080c8708, Func_080eaa14
 	export Func_080c8710, Actor_GetCellIndex
-	export Func_080c8718, Func_080eabd0
-	export Func_080c8720, Func_080eace8
-	export Func_080c8728, Func_080eadfc
+	export Func_080c8718, Actor_PlaceBlocks
+	export Func_080c8720, Actor_LiftTargetBlock
+	export Func_080c8728, Actor_PlaceMovedBlock
 	export Func_080c8730, MapCollision_FindOrAddTag
 	export Func_080c8738, Actor_FindAtCell
 	export Func_080c8740, Leader_CanPushObjectAhead

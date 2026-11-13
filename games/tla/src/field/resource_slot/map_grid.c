@@ -43,7 +43,9 @@ extern void Func_08029810__f0298c0(void) __asm__("Func_08029810");
  * *actor); the definition has s32 Func_08029838(s32 arg). */
 extern s32 Func_08029838__f0298c0(struct Actor *actor) __asm__("Func_08029838");
 
-s32 Func_080298c0(struct Actor *actor) {
+/// Script command 0x1e (control mode 5): the leader turned to sand by the Sand
+/// Psynergy, moved by the direction pad on a field map.
+s32 Actor_MoveAsSand(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   s16 angleOffsets[10];
@@ -431,12 +433,13 @@ done:
 
 s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 
-/// Script command 0x22: moves the object on the world map by the direction pad
+/// Script command 0x22 (control mode 9): the leader as sand on the world map
+/// (the Sand Psynergy). Moves the object on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
 /// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
 /// the event work and leaves an object of kind 0x164 behind it every fifth
 /// step.
-s32 Func_0802a124(struct Actor *object) {
+s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
   struct FieldPosition rightPosition;

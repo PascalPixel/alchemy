@@ -46,7 +46,7 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
     ResourceId_YellowFlameBurst, ResourceId_BlueFlameBurst,
     ResourceId_DustPuffA;
 
-s32 Func_08020330(struct Actor *object);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
 struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -93,7 +93,7 @@ void FieldPsynergy_Blaze(void) {
   caster = scene->mainObject;
   look = 0;
   object = scene->child;
-  if (Func_08020330(object) == 418) {
+  if (Actor_GetSpriteIdFar(object) == 418) {
     kind = ((u8 *)OBJECT_DEFINITION(object))[5];
     if (kind == 4)
       look = 1;

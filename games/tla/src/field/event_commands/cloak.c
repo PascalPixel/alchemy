@@ -148,7 +148,7 @@ void FieldPsynergy_Douse(void) {
   to->z = work->z;
   if ((s8)work->variant != 0)
     to->y = y + (80 << 16);
-  if (Func_08020330(anchor) == 380) {
+  if (Actor_GetSpriteIdFar(anchor) == 380) {
     to->y += 32 << 16;
     raised = 1;
   }

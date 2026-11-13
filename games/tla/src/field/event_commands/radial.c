@@ -299,7 +299,7 @@ void FieldPsynergy_Whirlwind(void) {
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
     Sound_PlayFar(SE_ORB_FADES);
-    Func_08020340(orb);
+    Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_ORBITING) {
     // Sixteen motes, one every six frames, 4 pixels above the orb and 0.8
@@ -331,7 +331,7 @@ void FieldPsynergy_Whirlwind(void) {
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
     Sound_PlayFar(SE_ORB_FADES);
-    Func_08020340(orb);
+    Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_WANDER || kind == ORB_HANDOFF) {
     wait(5);
@@ -364,7 +364,7 @@ void FieldPsynergy_Whirlwind(void) {
     ((struct OrbitEffect__f0dfd00 *)orb)->timer = 0;
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty__f0dfd00;
     HangingVine_Swing(scene->secondObjectId);
-    Func_08020340(orb);
+    Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   }
   FieldPsynergy_FadeFromCastColor();

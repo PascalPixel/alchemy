@@ -71,7 +71,7 @@ extern struct PendingEvent__f0e92b4 *
 Func_080ce458__f0e92b4(u32 kind, s32 entry,
                        s32 arg) __asm__("Scene_FindPsynergyTrigger");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Func_08020330(struct Actor *object);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
@@ -136,7 +136,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     Vector_AddPolarOffset(0x200000, scene->facing, &scene->x);
   }
   isWaterObject = 0;
-  if (Func_08020330(child) == 424) {
+  if (Actor_GetSpriteIdFar(child) == 424) {
     isWaterObject = 1;
     mode = 1;
   }

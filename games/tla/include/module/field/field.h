@@ -1195,20 +1195,20 @@ void Func_080246b8(void);
 
 void ActorSystem_PlaceSprites(void);
 
-extern const s32 gData_0802f098[];
-extern const s32 gData_0802f0b0[];
-extern const s32 gData_0802f0c8[];
-extern const s32 gData_0802f0e0[];
-extern const s32 gData_0802f0f8[];
-extern const s32 gData_0802f110[];
-extern const s32 gData_0802f128[];
-extern const s32 gData_0802f140[];
-extern const s32 gData_0802f158[];
 extern const s32 gActor_KeyCheckScript[];
 extern const s32 gActor_KeysScript[];
+extern const s32 gActor_RopeScript[];
+extern const s32 gActor_TightropeScript[];
+extern const s32 gActor_SandScript[];
+extern const s32 gActor_HoverScript[];
+extern const s32 gActor_WalkingScript[];
 extern const s32 gActor_PlayerScript[];
 extern const s32 gActor_WorldMapScript[];
-extern const s32 gData_0802f1e8[];
+extern const s32 gActor_SailOnMapScript[];
+extern const s32 gActor_SailScript[];
+extern const s32 gActor_FlyScript[];
+extern const s32 gActor_SandOnWorldMapScript[];
+extern const s32 gActor_ApproachWatchedScript[];
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z);
 

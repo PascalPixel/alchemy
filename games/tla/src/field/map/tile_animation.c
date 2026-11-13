@@ -903,18 +903,21 @@ s32 MapGrid_GetHighestTerrainHeightAround(s32 layer, s32 x, s32 z, s32 reach) {
   return best;
 }
 
-void Func_0802d600(s32 x, s32 z, s32 layer, s32 value) {
+/// Gives the cell at (x, z) of layer the ground height `height`, in 8-pixel
+/// steps, by tagging its shape with terrain kind 0 at that height.
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *shape;
 
   shape = gMapShapeGrid +
           (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (x >> 20) + ((z >> 20) << 7);
-  *shape = Func_080c8730(layer, 0, value);
+  *shape = Func_080c8730(layer, 0, height);
 }
 
-s32 Func_0802d644(s32 a, s32 b, s32 c) {
-  return MapGrid_GetTerrainHeight(c, a, b) >> 19;
+/// The ground height at (x, z) of layer, in 8-pixel steps.
+s32 MapGrid_GetCellHeight(s32 x, s32 z, s32 layer) {
+  return MapGrid_GetTerrainHeight(layer, x, z) >> 19;
 }
 
 /// As MapGrid_GetCellAttributeLowNibble, a second copy.
@@ -1121,9 +1124,12 @@ s32 MapGrid_IsWallAt(s32 *position) {
  * something not a structure or union. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 
-/// Reads byte 2 of the world map block under position: blocks are 32 pixels
-/// square on a 32 by 32 grid, positions are Q16 pixels.
-s32 Func_0802da88(struct WorldPosition *position) {
+/// Byte 2 of the world map block under position (blocks 32 pixels square on a
+/// 32 by 32 grid): the place the world map's searches look for among the
+/// scene's events of kind 2, and 255 where the ship may not go.
+// XXX: what the byte numbers besides 255; the world map scene's events of
+// kind 2 against the blocks in gMapBlocks would settle it.
+s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;
 
@@ -1175,15 +1181,16 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
 }
 
 s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
-  if (Func_0802da88(position) != 255) {
+  if (WorldMap_GetBlockPlace(position) != 255) {
     if ((u32)(WorldMap_GetCollision(position) - 5) <= 7)
       return 0;
   }
   return -1;
 }
 
-s32 Func_0802db88(void *object, struct WorldPosition *position) {
-  if (Func_0802da88(position) != 255) {
+/// Returns 0 where the ship can sail (collision 1 to 4, or 6), else -1.
+s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
+  if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
     u8 *work = Ram_HeapSlots->eventWork;
     s32 mode;
@@ -1203,8 +1210,11 @@ s32 Func_0802db88(void *object, struct WorldPosition *position) {
   return -1;
 }
 
-s32 Func_0802dbd0(struct WorldMover *mover, struct WorldPosition *position) {
-  if (Func_0802da88(position) != 255) {
+/// Returns 0 where the winged ship can go, else -1: low down, where it can
+/// sail; higher, more of the ground by the kind it last flew over.
+s32 WorldMap_IsFlyable(struct WorldMover *mover,
+                       struct WorldPosition *position) {
+  if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
     u8 *work = Ram_HeapSlots->eventWork;
 

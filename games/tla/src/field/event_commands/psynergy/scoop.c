@@ -278,7 +278,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_080dba5c(void);
 void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
-s32 Func_08020330(struct Actor *object);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
@@ -366,7 +366,7 @@ void FieldPsynergy_Scoop(void) {
   for (i = 0; i < 80; i++) {
     target = event->work.objects[i];
     if (target != NULL && target->script != NULL &&
-        (Func_08020330(target) == 406 || (target->collisionFlags & 1)) &&
+        (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
         target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
         FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x,
                                    target->radius - 2) >= 0) {

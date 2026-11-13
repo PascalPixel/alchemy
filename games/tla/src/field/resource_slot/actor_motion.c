@@ -24,7 +24,11 @@ s32 Actor_IsTargetUnset(struct Actor *object) {
   return 1;
 }
 
-s32 Func_08023f94(struct Actor *object) { return Actor_IsTargetUnset(object); }
+/// Actor_IsTargetUnset, for the scenes: 1 once the actor has reached its
+/// destination. Airs Rock waits on it while the lift carries the leader up.
+s32 Actor_HasArrived(struct Actor *object) {
+  return Actor_IsTargetUnset(object);
+}
 
 /// An object as the motion update reads it (struct Actor's layout).
 struct MotionObject {

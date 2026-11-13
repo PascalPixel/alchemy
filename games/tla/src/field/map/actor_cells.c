@@ -46,7 +46,12 @@ extern u8 gMapShapeGrid[];
 struct Actor *Actor_GetById(u32 objectId);
 #include "field.h"
 
-void Func_080eabd0(u16 *actors) {
+/// Makes each listed actor (ids, ended by 0xffff) a block in the map: its
+/// cell's shape is tagged 32 pixels above the ground, so the party can stand
+/// on it, its cell is marked raised (the old mark kept in the actor) and layer
+/// 2 blocks it. A leader below the new ground is lifted onto it. Scenes call it
+/// as they start, for the blocks Move pushes.
+void Actor_PlaceBlocks(u16 *actors) {
   struct RestoreMap__f0eabd0 *map =
       (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
   struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
@@ -98,7 +103,11 @@ struct ShapeCell {
 
 struct Actor *Leader_FindActorAhead(void);
 
-void Func_080eace8(u16 *actors) {
+/// Takes the block about to move out of the map: the field effect's target
+/// while one runs, else the actor ahead of the leader, if it is one of the
+/// listed actors. Its cell goes back to the ground and its old mark, and the
+/// event work remembers it for Actor_PlaceMovedBlock.
+void Actor_LiftTargetBlock(u16 *actors) {
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *effect = Ram_HeapSlots->effectWork;
   struct Actor *target;
@@ -140,10 +149,12 @@ void Func_080eace8(u16 *actors) {
 
 #include "stddef.h"
 
-// Only for the compiler: see the FAKEMATCH tag in Func_080eadfc.
+// Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
 static inline s32 ActorX(struct Actor *actor) { return actor->x; }
 
-void Func_080eadfc(void) {
+/// Puts the block Actor_LiftTargetBlock remembered back into the map at the
+/// cell it has moved to, as Actor_PlaceBlocks places each.
+void Actor_PlaceMovedBlock(void) {
   struct Actor *target =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
 

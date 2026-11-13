@@ -900,7 +900,7 @@ extern struct Actor *Actor_Spawn__f0dd820(s32 kind, s32 x, s32 y,
 
 #define BURST_FALL_OBJECT 281 ///< the object that falls round the target
 
-// The two kinds of target that do not sink into the ground.
+// The two sprites of target that do not sink into the ground.
 #define TARGET_KIND_SCATTERS 372 ///< scatters five falling pieces instead
 #define TARGET_KIND_STAYS 394
 
@@ -916,9 +916,9 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     return;
 
   FieldEffect_SpawnBurstParticleField();
-  if (Func_08020330(target) == TARGET_KIND_SCATTERS)
+  if (Actor_GetSpriteIdFar(target) == TARGET_KIND_SCATTERS)
     kind = 1;
-  if (Func_08020330(target) == TARGET_KIND_STAYS)
+  if (Actor_GetSpriteIdFar(target) == TARGET_KIND_STAYS)
     kind = 2;
 
   if (kind == 0) {

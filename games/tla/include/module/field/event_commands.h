@@ -205,8 +205,7 @@ void FieldPsynergy_WatchLeaderDistance(void);
 
 void FieldEffect_SpawnBurstParticleField(void);
 
-// Far call to the target classifier Func_080237c8.
-s32 Func_08020330(struct Actor *object);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
 
 extern const s32 gFieldEffect_SourceHoldScript[];
 

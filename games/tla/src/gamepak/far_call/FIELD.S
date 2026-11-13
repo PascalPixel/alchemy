@@ -98,21 +98,21 @@ Resource_FarCall003:
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
 	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
 	export MapGrid_GetTerrainKindFar, MapGrid_GetTerrainKind
-	export Func_080202f8, Func_08023f94
+	export Func_080202f8, Actor_HasArrived
 	export Actor_SetItemIconFar, Actor_SetItemIcon
 	export MapGrid_CheckCollisionAtFar, MapGrid_CheckCollisionAt
 	export MapGrid_GetTerrainHeightAboveFar, MapGrid_GetTerrainHeightAbove
 	export WorldMap_IsWalkableFar, WorldMap_IsWalkable
-	export Func_08020320, Func_0802db88
+	export WorldMap_IsSailableFar, WorldMap_IsSailable
 	export Map_GetHeaderSizeFar, Map_GetHeaderSize
-	export Func_08020330, Func_080237c8
+	export Actor_GetSpriteIdFar, Actor_GetSpriteId
 	export Animation_WaitForTrackEndFar, Animation_WaitForTrackEnd
-	export Func_08020340, Func_080237e8
+	export Actor_WaitForTrackEndFar, Actor_WaitForTrackEnd
 	export Field_CheckSpheresOverlapFar, Field_CheckSpheresOverlap
-	export Func_08020350, Func_0802da88
+	export Func_08020350, WorldMap_GetBlockPlace
 	export WorldMap_GetCollisionFar, WorldMap_GetCollision
-	export Func_08020360, Func_0802d600
-	export Func_08020368, Func_0802d644
+	export Func_08020360, MapGrid_SetCellHeight
+	export Func_08020368, MapGrid_GetCellHeight
 	export Func_08020370, Func_080219cc
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export VramBlock_Reset93Far, VramBlock_Reset93

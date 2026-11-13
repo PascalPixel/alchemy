@@ -29,14 +29,14 @@ extern struct CellTarget gTeleporters;
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);
 
-void Func_0200007c(void);
+void JupiterLighthouse_StopHovering(void);
 
 void Whirlwind_CarryLeader(void);
 
 extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];
 
-extern s32 gData_02002618;
+extern s32 gWhirlwindRiding;
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];

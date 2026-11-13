@@ -38,19 +38,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 s32 Teleporters_Step();
 struct Actor *Whirlwind_SpawnUpper();
 
-void Func_02000054(void) {
+void JupiterLighthouse_StartHovering(void) {
   if (gMainRoutineWork.renderMode == 10)
     FieldMapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
 }
 
-void Func_0200007c(void) {
+void JupiterLighthouse_StopHovering(void) {
   MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 6);
 }
 
-void Func_02000090(s32 id) {
+void JupiterLighthouse_RaiseWhirlwind(s32 id) {
   struct Actor *object;
 
-  if (gData_02002618 == 0) {
+  if (gWhirlwindRiding == 0) {
     object = Actor_Get(8);
     if (id == 30) {
       Actor_SetPosition(8, PIXELS(296), PIXELS(600));
@@ -62,15 +62,16 @@ void Func_02000090(s32 id) {
       object->facing = 0;
     }
     Whirlwind_SpawnUpper(object);
-    gData_02002618 = 1;
+    gWhirlwindRiding = 1;
   }
 }
 
-void Func_020000e8(s32 id) {
+void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct Actor *object;
   struct Actor *motion;
 
-  if (gData_02002618 == 0 && Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
+  if (gWhirlwindRiding == 0 &&
+      Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_Get(8);
     if (id == 50) {
       Actor_SetPosition(8, PIXELS(488), PIXELS(280));
@@ -92,17 +93,17 @@ void Func_020000e8(s32 id) {
     motion = Whirlwind_SpawnUpper(object);
     if (motion != NULL)
       motion->speedLimit = 0x10000;
-    gData_02002618 = 1;
+    gWhirlwindRiding = 1;
   }
 }
 
-void Func_0200018c(s32 arg) {
+void JupiterLighthouse_StepOnLowerTeleporter(s32 arg) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
       Teleporters_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
 
-void Func_020001bc(s32 arg) {
+void JupiterLighthouse_StepOnUpperTeleporter(s32 arg) {
   struct Actor *leader;
   s32 x;
   s32 z;
@@ -120,28 +121,28 @@ void Func_020001bc(s32 arg) {
   }
 }
 
-void Func_02000228(s32 arg) {
+void JupiterLighthouse_StepOnTeleporterOrWhirlwind(s32 arg) {
   struct Actor *leader;
   s32 x;
   s32 z;
 
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader->y <= 0) {
-    Func_0200018c(arg);
+    JupiterLighthouse_StepOnLowerTeleporter(arg);
   } else {
     x = leader->x >> 20;
     z = leader->z >> 20;
     if (x == 25) {
       if (z == 17)
-        Func_020000e8(50);
+        JupiterLighthouse_RaiseUpperWhirlwind(50);
       if (z == 11)
-        Func_020000e8(51);
+        JupiterLighthouse_RaiseUpperWhirlwind(51);
     }
     if (x == 43) {
       if (z == 17)
-        Func_020000e8(52);
+        JupiterLighthouse_RaiseUpperWhirlwind(52);
       if (z == 11)
-        Func_020000e8(53);
+        JupiterLighthouse_RaiseUpperWhirlwind(53);
     }
   }
 }
@@ -158,7 +159,7 @@ s32 Scene_Initialize(void) {
 
   work->screenEffect = 0x204;
   FieldActor_SetSpritePriority(64, 3);
-  gData_02002618 = 0;
+  gWhirlwindRiding = 0;
   Actor_Get(8)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     Teleporters_Find(33, 0x280, 0x380, 48, 1);
@@ -224,4 +225,4 @@ s32 Func_02001c88(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001c88, Position_FlatDistance,
-                        gWhirlwindEndScript, gData_02002618)
+                        gWhirlwindEndScript, gWhirlwindRiding)

@@ -33,12 +33,12 @@ DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
-void Func_02000090(void);
-void Func_020000e8(void);
-void Func_0200018c(void);
-void Func_020001bc(void);
-void Func_02000228(void);
+void JupiterLighthouse_StartHovering(void);
+void JupiterLighthouse_RaiseWhirlwind(void);
+void JupiterLighthouse_RaiseUpperWhirlwind(void);
+void JupiterLighthouse_StepOnLowerTeleporter(void);
+void JupiterLighthouse_StepOnUpperTeleporter(void);
+void JupiterLighthouse_StepOnTeleporterOrWhirlwind(void);
 
 extern u32 gFieldEffect_LongLifeScript[];
 
@@ -111,21 +111,21 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000090)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_02000090)},
-    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(Func_020000e8)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseWhirlwind)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseWhirlwind)},
+    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
+    {TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
+    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
+    {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000228)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(Func_020001bc)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(Func_020001bc)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_020001bc)},
-    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(Func_0200007c)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporterOrWhirlwind)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
+    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartHovering)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StopHovering)},
     {TRIGGER_TABLE_END},
 };
 

@@ -84,7 +84,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 20, 0xa01, EVENT(Scene_RunOnce)},
     {TRIGGER_STEP, 21, 0xa01, EVENT(Scene_RunIfFlagCleared)},
-    {0x50008905, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa01, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };

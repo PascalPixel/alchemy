@@ -27,15 +27,15 @@ void Leader_CenterInCell(void);
 
 extern struct CellTarget gTeleporters;
 
-void Func_02000074(void);
+void JupiterLighthouse_CycloneSecondPatch(void);
 
-void Func_020000b4(void);
+void JupiterLighthouse_CycloneFourthPatch(void);
 
-void Func_020000d4(void);
+void JupiterLighthouse_CycloneFifthPatch(void);
 
-void Func_020000f4(void);
+void JupiterLighthouse_CycloneUncoversTheSpot(void);
 
-void Func_02000184(void);
+void JupiterLighthouse_LeaveByCyclone(void);
 
 extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];

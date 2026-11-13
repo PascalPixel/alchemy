@@ -42,19 +42,29 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "event_inline.h"
 s32 Func_02001b1c();
 
-void Func_02000054(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1); }
+void JupiterLighthouse_CycloneFirstPatch(void) {
+  Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1);
+}
 
-void Func_02000074(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x45, 0x16, 1); }
+void JupiterLighthouse_CycloneSecondPatch(void) {
+  Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x45, 0x16, 1);
+}
 
-void Func_02000094(void) { Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1); }
+void JupiterLighthouse_CycloneThirdPatch(void) {
+  Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
+}
 
-void Func_020000b4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x55, 0x1a, 1); }
+void JupiterLighthouse_CycloneFourthPatch(void) {
+  Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x55, 0x1a, 1);
+}
 
-void Func_020000d4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1); }
+void JupiterLighthouse_CycloneFifthPatch(void) {
+  Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1);
+}
 
 #include "main_routine_work.h"
 
-void Func_020000f4(void) {
+void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   s32 t0;
   s32 t2;
 
@@ -81,7 +91,7 @@ void Func_020000f4(void) {
 #include "scene_ids.h"
 #include "debug.h"
 
-void Func_02000184(void) { Import_EventSetExitRequest(4); }
+void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(4); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -108,7 +118,9 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 
-void Func_0200022c(s32 a0) { gPaletteCyclePausesInEvents = a0; }
+void PaletteCycle_SetPausesInEvents(s32 a0) {
+  gPaletteCyclePausesInEvents = a0;
+}
 
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"

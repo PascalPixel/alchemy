@@ -42,7 +42,7 @@ void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
                              Whirlwind_UpdateLower, FieldEffect_Spawn)
 
-s32 Func_0200087c(struct SceneEffectSource *object) {
+s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
   struct SceneEffectParams params;
   s32 phase, x, y, speed;
 

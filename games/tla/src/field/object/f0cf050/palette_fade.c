@@ -482,10 +482,6 @@ void Func_080d1760(void) {
                 ((current[2] >> 10) & 0x1f);
     current += 3;
   }
-  /* FAKEMATCH(dead): two updates of work that cancel, after the loop, keep it
-   * live apart from packed; without them, 7 of 34 instructions differ in
-   * tla-en. */
-  work++;
   work--;
 }
 

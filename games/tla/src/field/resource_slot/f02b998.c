@@ -232,10 +232,6 @@ void Func_0802bdd0(s32 x, s32 y, s32 px, s32 py) {
   s32 tile;
 
   window = (struct MapTileWindow_08010d48 *)Ram_HeapSlots->mapWork;
-  /* FAKEMATCH(dead): the view's origin read as Map_SetWindowCellTile reads
-   * it and never used, which emits nothing but steers register allocation;
-   * without it, 57 of 59 instructions differ in tla-en. */
-  position = window->position;
   if (position != 0) {
     originX = *position++;
     originY = position[1];

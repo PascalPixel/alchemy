@@ -23,6 +23,7 @@ void Func_02000280(void) {
 }
 
 #include "types.h"
+#include "flags.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -153,7 +154,7 @@ const void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
-    if (Flag_IsSet(0x91b))
+    if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gData_02005874;
     return gData_020056f4;
   }
@@ -407,7 +408,7 @@ void Func_02000960(void) {
 }
 
 void Func_020009a4(void) {
-  if (!Flag_IsSet(0x91b)) {
+  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     if (!Flag_IsSet(0x91e))
       Func_02002694();
   } else {
@@ -421,7 +422,7 @@ const void *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
-    if (Flag_IsSet(0x91b))
+    if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gData_02005f78;
     return gData_02005e34;
   }
@@ -437,7 +438,7 @@ const void *Scene_GetEvents(void) {
 }
 
 void Func_02000a68(void) {
-  if (!Flag_IsSet(0x91b) && Flag_IsSet(0x310)) {
+  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
     gData_0200632c++;
     if ((gData_0200632c & 0x3ff) == 0)
       Event_PlaySound(0x20d);
@@ -493,8 +494,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02000be4(void) {
   FieldTask_AddFrame(Func_02000a68, 0x480);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
-  if (Event_GetFlag(0x91b) == 0 || Event_GetFlag(0x310) != 0) {
-    Event_SetFlag(0x310);
+  if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
+      Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
+    Event_SetFlag(FLAG_GAROH_NIGHT);
     PaletteFade_ApplyTarget(0x10007, 1);
     if (Event_GetFlag(0x311))
       PaletteFade_ApplyTarget(0x10003, 2);
@@ -541,7 +543,7 @@ void Func_02000d30(void) {
   Task_AddFrame(Func_02000a68, 0x480);
   Func_0200535c();
   Func_02005364(0, 10, 11);
-  t4 = Event_GetFlag(0x310);
+  t4 = Event_GetFlag(FLAG_GAROH_NIGHT);
   if (t4 == 0)
     goto L_02008da6;
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 12)
@@ -572,7 +574,7 @@ extern u8 gData_02005450[];
 
 void Func_02000e00(void) {
   FieldTask_AddFrame(Func_02000a68, 1152);
-  if (Flag_IsSet(0x310)) {
+  if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(0x318))
       PaletteFade_ApplyTarget(0x10003, 1);
     else
@@ -696,10 +698,10 @@ void Func_0200105c(void) {
   BlendRect(22, 10, 1, 1, 22, 11);
 }
 
-s32 Func_0200108c(void) { return Flag_IsSet(0x310); }
+s32 Func_0200108c(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
 void Func_02001098(void) {
-  if (Flag_IsSet(0x310)) {
+  if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(0x318))
       PaletteFade_ApplyTarget(0x10003, 1);
     else
@@ -722,15 +724,15 @@ void Func_02001104(void) {
 void Func_02001144(void) {
   struct GarohEventWork *work;
 
-  if (!Flag_IsSet(0x91b)) {
+  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(0x210);
     if (gMainRoutineWork.entrance == 1) {
       PaletteFade_ApplyTarget(0x10003, 1);
-      Flag_Set(0x310);
+      Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(0x318);
     } else {
       PaletteFade_ApplyTarget(0x10000, 1);
-      Flag_Clear(0x310);
+      Flag_Clear(FLAG_GAROH_NIGHT);
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;
@@ -742,15 +744,15 @@ void Func_02001144(void) {
 void Func_020011c8(void) {
   struct GarohEventWork *work;
 
-  if (!Flag_IsSet(0x91b)) {
+  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(0x211);
     if (gMainRoutineWork.entrance == 2) {
       PaletteFade_ApplyTarget(0x10003, 1);
-      Flag_Set(0x310);
+      Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(0x318);
     } else {
       PaletteFade_ApplyTarget(0x10007, 1);
-      Flag_Set(0x310);
+      Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;

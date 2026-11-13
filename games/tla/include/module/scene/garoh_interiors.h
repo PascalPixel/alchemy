@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-void Func_02000710(void);
+void GarohInteriors_WakeAtInn(void);
 
 void Map_SetShownLayers(s32 value);
 

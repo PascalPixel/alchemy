@@ -5,6 +5,7 @@
 
 #include "../shared/tables.h"
 #include "types.h"
+#include "flags.h"
 #include "field_effect.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -72,7 +73,7 @@ void Func_0200132c(void) {
 }
 
 s32 Func_02001344(void) {
-  if (!Flag_IsSet(0x91b))
+  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
     return Flag_IsSet(0x91e);
 }
 

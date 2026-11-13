@@ -4,13 +4,6 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
-extern s32 gPushedActor_DirectionSteps[];
-extern u32 gPushedActor_FootprintKinds[];
-extern s32 gPushedActor_FootprintBounds[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern struct SceneEntrance gGondowanCaveEntrancesOther[];
 extern struct SceneEntrance gGondowanPassageEntrances[];
 extern struct SceneEntrance gGondowanCaveRiverEntrances[];

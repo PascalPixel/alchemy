@@ -4,10 +4,6 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gVault_WomanWantingTheRoofFixedRoute[];
 extern s32 gVault_BoyRoundTheWellRoute[];
 extern s32 gVault_GirlRoundTheWellRoute[];

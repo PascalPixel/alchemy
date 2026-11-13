@@ -4,10 +4,6 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern struct SceneEntrance gLunpaEntrances[];
 extern struct SceneEntrance gGateEntrances[];
 extern u32 gLunpaExits[];

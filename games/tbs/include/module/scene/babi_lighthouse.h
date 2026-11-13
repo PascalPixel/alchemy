@@ -7,13 +7,6 @@
 
 const u32 *BabiLighthouse_GetExits(void);
 s32 BabiLighthouse_SetupMap(void);
-extern s32 gPushedActor_DirectionSteps[];
-extern u32 gPushedActor_FootprintKinds[];
-extern s32 gPushedActor_FootprintBounds[];
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gBabiLighthouse_TrembleScript[];
 extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];
 extern struct SceneEntrance gBabiLighthouse_LuffEntrances[];

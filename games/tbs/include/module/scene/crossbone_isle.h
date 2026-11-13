@@ -4,14 +4,7 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern s32 gPushedActor_DirectionSteps[];
-extern u32 gPushedActor_FootprintKinds[];
-extern s32 gPushedActor_FootprintBounds[];
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
 extern u16 gCrossboneIsle_EntranceCells[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern struct SceneEntrance gCrossboneIsle_IsleEntrances[];
 extern struct SceneEntrance gCrossboneIsle_CaveEntranceEntrances[];
 extern struct SceneEntrance gCrossboneIsle_FloatingLogsEntrances[];

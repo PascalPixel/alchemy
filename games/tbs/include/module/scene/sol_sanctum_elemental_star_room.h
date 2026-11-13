@@ -11,10 +11,6 @@ const struct ActorPlacement *
 SolSanctumElementalStarRoom_GetActorPlacements(void);
 const struct Trigger *SolSanctumElementalStarRoom_GetTriggers(void);
 s32 SolSanctumElementalStarRoom_Initialize(void);
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gItemIcon_GrowScript[];
 extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];

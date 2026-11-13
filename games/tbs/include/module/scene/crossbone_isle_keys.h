@@ -4,9 +4,6 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern s32 gPushedActor_DirectionSteps[];
-extern u32 gPushedActor_FootprintKinds[];
-extern s32 gPushedActor_FootprintBounds[];
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
 extern s32 gCrossboneIsleKeys_BaneWalkTargets[];
 extern struct SceneEntrance gCrossboneIsleKeysEntrancesOther[];

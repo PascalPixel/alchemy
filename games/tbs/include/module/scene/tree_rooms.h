@@ -6,11 +6,7 @@
 #include "scene.h"
 
 s32 TreeRooms_EnterRoom(void);
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
 extern s16 gTreeRooms_MapPatches[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gTreeRooms_LeaderGathersActions[];
 extern s32 gTreeRooms_GaretGathersActions[];
 extern s32 gTreeRooms_IvanGathersActions[];

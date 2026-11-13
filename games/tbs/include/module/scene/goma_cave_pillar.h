@@ -6,9 +6,6 @@
 #include "field_effect.h"
 
 extern s32 gGomaCavePillar_WitnessFrames;
-extern s32 gPushedActor_DirectionSteps[];
-extern u32 gPushedActor_FootprintKinds[];
-extern s32 gPushedActor_FootprintBounds[];
 extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;
 extern s32 gGomaCavePillar_FragmentScriptShort[];
 extern s32 gGomaCavePillar_FragmentScriptMedium[];

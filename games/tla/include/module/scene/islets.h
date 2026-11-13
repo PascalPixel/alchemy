@@ -13,12 +13,10 @@ void Func_020000d8(void);
 void Func_02000210(void);
 void Func_020002ac(void);
 void Func_02000380(void);
-void Func_0200040c(void);
 void Func_02000440(void);
 
 void Func_02000568(void);
 
-void Func_02000e38(void);
 void Func_020014e0(void);
 void Func_02001a68(void);
 
@@ -29,7 +27,6 @@ void Func_0200208c(void);
 void Func_020020b4(void);
 void Func_020020d0(void);
 void Func_02002144(void);
-void Func_02002430(void);
 void Func_020024c8(void);
 void Func_020024f0(void);
 

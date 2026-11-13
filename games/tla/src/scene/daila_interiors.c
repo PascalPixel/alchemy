@@ -22,7 +22,6 @@
 #include "text/msg_ids.h"
 #include "types.h"
 
-void Import_EventShowMessageAndWait(s32 actor, s32 flags);
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_02000d94(s32 actor, s32 jump, s32 frames);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
@@ -471,8 +470,6 @@ void Func_02000730(void) {
 }
 
 struct ItemDefinition *Import_ItemGet(s32 item);
-void FieldMessage_Show(s32 msg, s32 mode);
-void *Unit_Get(s32 owner);
 
 s32 Func_02000878(s32 item, s32 unused) {
   struct DailaEventWork *work;
@@ -713,8 +710,6 @@ s32 gData_02000ecc[] = {
     13, 0xffff, (s32)0xc0010000, 17,
 };
 // clang-format on
-
-void Func_0200066c(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

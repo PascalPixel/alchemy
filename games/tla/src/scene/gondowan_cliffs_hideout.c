@@ -27,8 +27,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "actor.h"
 #include "event_inline.h"
 
-void FieldCamera_WaitForArrival(void);
-
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(2219))
     return gPlacementsWithoutWarriors;

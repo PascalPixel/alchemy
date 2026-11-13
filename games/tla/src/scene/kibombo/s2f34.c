@@ -785,8 +785,6 @@ void Func_02003c84(void) {
   Import_EventSetExitRequest(10);
 }
 
-void Func_020032b0(void);
-
 void Func_02003dec(void) {
   struct KibomboObject *leader;
 
@@ -984,8 +982,6 @@ void Func_02004294(void) {
   Import_EventSetExitRequest(11);
 }
 
-void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
-
 void Func_02004424(void) {
   struct KibomboEventWork *work;
   s32 effect;
@@ -1044,8 +1040,6 @@ void Func_02004524(void) {
 }
 
 extern s32 gData_020061a8[];
-
-void Actor_Stop(s32 actor);
 
 void Func_020045d0(void) {
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
@@ -1574,7 +1568,6 @@ void Func_0200516c(void) {
 // object the overlay links and the overlay's data.
 
 void Func_02002de0(void);
-void Func_0200324c(void);
 
 void Func_0200538c(void) {
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
@@ -1641,15 +1634,6 @@ void Func_020054e0(void) {
     Actor_SetModeById(14, 4);
   }
 }
-
-void Func_020040cc(void);
-void Func_02004294(void);
-void Func_02004424(void);
-void Func_020047e4(void);
-void Func_0200489c(void);
-void Func_02004978(void);
-void Func_02004a28(void);
-void Func_02003dec(void);
 
 void Func_02005594(void) {
   u32 i;
@@ -1743,9 +1727,6 @@ void Func_02005594(void) {
   }
 }
 
-void Func_02003c14(void);
-void Func_02003c84(void);
-
 #define PALETTE_WORD(index) (*(u16 *)(0x05000000 + (index) * 2))
 
 void Func_020057e0(void) {
@@ -1774,8 +1755,6 @@ void Func_020057e0(void) {
 #include "version.h"
 #include "fixed_math.h"
 
-void Func_02003288(void);
-void Func_02004cf4(void);
 void Func_02005c74(s32 actor, s32 angle);
 
 void Func_02005898(void) {
@@ -1852,12 +1831,6 @@ void Func_02001218(void);
 void Func_02002050(void);
 void Func_02002ad8(void);
 void Func_02002af8(void);
-void Func_02003930(void);
-void Func_02003948(void);
-void Func_02003ac8(void);
-void Func_02003b20(void);
-void Func_02003b88(void);
-void Func_02003bf0(void);
 
 // clang-format off
 u32 gData_02005ca4[] = {

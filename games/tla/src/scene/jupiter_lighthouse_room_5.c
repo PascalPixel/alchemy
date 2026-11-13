@@ -529,8 +529,6 @@ s32 Scene_PrepareMap(void) {
 #include "dma.h"
 #include "io_reg.h"
 
-extern s32 gData_020033dc;
-
 void Func_02000cb8(s32 value) { gData_020033dc = value; }
 
 extern s32 gPaletteCycleFrame;

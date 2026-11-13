@@ -37,7 +37,6 @@ extern s32 gData_0200149c[];
 extern s32 gData_020014d8[];
 extern s32 gData_020014fc[];
 
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02000454(const s16 *data);
 void Func_02000d10(void);
 void Func_02000ea0(void);

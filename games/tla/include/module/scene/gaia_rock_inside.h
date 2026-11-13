@@ -140,7 +140,6 @@ extern s32 gData_02005610[];
 void Func_02000f00(void);
 void Func_02000fac(void);
 
-void FieldCamera_WaitForArrival(void);
 void Import_ActorDestroy(struct Actor *object);
 
 extern char SceneId_Ov681Room1;

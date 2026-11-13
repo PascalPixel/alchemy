@@ -215,11 +215,9 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-struct Actor *Actor_GetById(u32 objectId);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02002180(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                     s32 width, s32 height);
 void Func_02001804(void);
@@ -238,19 +236,13 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
 extern void
 Func_02003d40__s2698(struct Actor *object,
                      s32 mode) __asm__("BattleEffect_RunActorRiseAndDescent");
-s32 PartyInventory_GiveItem(s32 item, s32 unused);
 
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_Jump(s32 id, s32 a, s32 b);
-void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32
  * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
  * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
  * declares, Func_02002bcc moves: 1 of 24 instructions in tla-ja. */
 extern void Task_Add__events_i(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
-void Task_RemoveFar(void (*func)(void));
 
 void Func_02002bcc(void) {
   BattleEffect_LoadActionEffectResources(134, 1);
@@ -273,7 +265,6 @@ void Func_02002bcc(void) {
 #include "field.h"
 
 void Func_020006ec(struct Actor *object, struct Actor *other);
-void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_MoveToObject(s32 id, s32 target);
 
 extern struct Actor *gData_02004420;
@@ -370,26 +361,6 @@ void Func_02002dd4(void) {
   Event_Wait(20);
   Event_End();
 }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02002180(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -505,17 +476,11 @@ void Func_020030e4(void) {
 }
 
 // ---- games/tla/src/scene/dehkan_plateau/s3164.c ----
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fc0[];
 
-struct Actor *Actor_GetById(u32 objectId);
-void Func_02000038(const void *data);
 void Func_02000584(const void *data);
 void Func_020018a8(void);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                     s32 width, s32 height);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 
@@ -575,8 +540,6 @@ void Func_02003164(void) {
 #include "task.h"
 #include "field_effect.h"
 
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003fc4[];
 extern const u8 gData_02003fc8[];
 extern s32 gData_02005678;
 
@@ -727,8 +690,6 @@ DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_0200353c, 3, 8, 67, 3, 66, 69)
 
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_020035ec, 13, 5, 77, 0, 65, 65)
 
-void Func_02001804(void);
-
 void Func_0200369c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -757,10 +718,6 @@ void Func_0200369c(void) {
     }
   }
 }
-
-void Func_020006ec(struct Actor *object, struct Actor *other);
-void Actor_StartScript(struct Actor *object, const void *script);
-void Actor_MoveToObject(s32 id, s32 target);
 
 void Func_02003764(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -831,14 +788,6 @@ loop:
 }
 
 // ---- games/tla/src/scene/dehkan_plateau/s390c.c ----
-extern const u8 gData_02003fb0[];
-extern struct Actor *gData_02004420;
-extern s32 gData_02005678;
-
-void Func_02000038(const void *data);
-void Func_02001804(void);
-void Func_02001ee8(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -897,8 +846,6 @@ void Func_0200390c(void) {
 // Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next
 // object the overlay links.
 
-extern struct Actor *gData_02004420;
-
 void Func_02003a30(void) {
   struct Actor **slot = &gData_02004420;
   s32 zero = 0;
@@ -921,11 +868,6 @@ void Func_02003a30(void) {
     HeapSlot_Release(68);
   }
 }
-
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003fb8[];
-
-void Func_02000038(const void *data);
 
 void Func_02003aa0(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;

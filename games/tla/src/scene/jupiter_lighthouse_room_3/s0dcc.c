@@ -49,7 +49,6 @@ DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000dcc, PushTarget_FindAhead,
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gData_0200249c,
                               gPushFootprints)
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Func_02001300(void);
 
 DEFINE_PUSH_TARGET_PUSH_FILL(Func_02001050, gPushFootprints, Func_02001300,

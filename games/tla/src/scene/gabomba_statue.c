@@ -355,16 +355,7 @@ struct Orbiter__find_near {
   struct Orbiter__find_near *link;
 };
 
-extern s32 gData_02005af0;
 extern const s8 gData_02006b38[];
-extern const u8 gData_02006b20[];
-extern const u8 gData_02005fd4[];
-extern const u8 gData_02006004[];
-extern const u8 gData_02006244[];
-extern const u8 gData_020064cc[];
-extern const u8 gData_020067e4[];
-extern const u8 gData_02006898[];
-extern const u8 gData_02006a90[];
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
@@ -1404,8 +1395,6 @@ void Func_02002074(void) {
   blend = ((16 - level) << 8) + level;
   REG_BLDALPHA->value = blend;
 }
-
-extern const s8 gData_02005940[];
 
 void Func_020020b0(s32 id, s32 direction, s32 value) {
   struct Actor *object = Actor_Get(id);

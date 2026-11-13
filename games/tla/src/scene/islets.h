@@ -20,12 +20,8 @@ struct IsletsEventWork {
   s32 field1ac;
 };
 
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-
 void Func_02003de4(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Event_End(void);
 void Func_020034ec(void);
 
 void Func_02001cac(void);
@@ -103,6 +99,5 @@ void Actor_EmitSmoke(struct Actor *object);
 void Func_020034d8(void);
 void Actor_MoveToObject(s32 actor, s32 target);
 void Func_02003fb4(void);
-void Event_StartScreenTransition(void);
 
 #endif

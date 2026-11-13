@@ -99,7 +99,6 @@ void Import_EventSetExitRequest(s32 countdown);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 s32 Import_BattleEffectSetupObjectPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
-void EventObject_Initialize(void);
 
 void Func_02005bcc(void);
 void Func_02005c04(s32 a);

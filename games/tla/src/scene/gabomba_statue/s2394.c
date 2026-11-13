@@ -1293,9 +1293,6 @@ nextColumn:
 
 // ---- games/tla/src/scene/gabomba_statue/puzzle_turn.c ----
 
-extern struct SceneState gSceneState;
-extern const u8 gData_02005ad4[];
-extern const u8 gData_02006ea8[];
 u8 Func_02004380(s32 x, s32 z, s32 direction) {
   s32 i;
 

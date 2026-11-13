@@ -15,12 +15,8 @@
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-extern u32 gSceneExits[];
-
 void Event_End(void);
 void Func_02000668(struct Actor *object, s32 a);
-
-extern u8 MsgKandoreanTemple11[];
 
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_SelectAnimation(struct Actor *object, s32 a);
@@ -29,11 +25,7 @@ void Animation_ApplyChildArgument(void *sprite, s32 a);
 void Func_020006b0(struct Actor *object);
 void Func_02000778(struct Actor *object, s32 dz);
 void Func_020052c0(s32 id);
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 a, s32 b);
-void BattleEffect_StopMainActor(void);
 void BattleEffect_CleanupSceneObjects(void);
-void Field_DispatchTypeHandler(s32 type);
 void Func_0200098c(s32 *position, s32 value);
 void Func_02000adc(void);
 extern s32 gData_02006298;
@@ -49,7 +41,6 @@ s32 Func_020053b0(void);
 void Func_020053c0(const void *data);
 void Func_020053c8(void);
 void Func_020053d0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void FieldCamera_WaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02005338(s32 a);
 void Func_0200290c(void);
@@ -61,9 +52,6 @@ void Func_02003a5c(void);
 void Func_02003a8c(void);
 void Func_02003b2c(void);
 void Func_02003c8c(void);
-extern u8 MsgKandoreanTemple12[];
-extern u8 MsgKandoreanTemple06[];
-extern u8 MsgKandoreanTemple05[];
 extern char SceneId_Ov653Room1;
 extern char SceneId_Ov653Room2;
 extern char SceneId_Ov653Room3;
@@ -78,7 +66,6 @@ void Scene_QueueMusic(s32 a);
 void Func_02005390(void);
 void Func_020053a8(s32 a, s32 b, s32 c, s32 d);
 void Actor_MoveToObject(s32 id, s32 target);
-void Event_StartScreenTransition(void);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 extern struct Actor *gData_020062ac;
 extern s32 gData_02005548[];
@@ -93,11 +80,6 @@ void Func_02001d40(void);
 void Func_02001db4(void);
 void Func_02001f3c(void);
 void Func_02003524(void);
-extern u8 MsgKandoreanTemple01[];
-extern u8 MsgKandoreanTemple02[];
-extern u8 MsgKandoreanTemple03[];
-extern u8 MsgKandoreanTemple09[];
-extern u8 MsgKandoreanTemple10[];
 extern u32 gData_02005514[];
 extern s16 gData_020054dc[];
 extern s16 gData_020054e0[];

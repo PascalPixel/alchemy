@@ -58,7 +58,6 @@ Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
 #include "event_work.h"
 #include "version.h"
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
 void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -2245,7 +2244,6 @@ struct SparkleWork__s3e54 {
 
 void Func_02004244(struct SparkleSprite__s3e54 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Func_02003cd8.
@@ -2287,13 +2285,6 @@ struct ContigoObject__s3e54 {
 };
 
 void Func_02003f54(struct ContigoObject__s3e54 *object) { object->unk62 = 1; }
-
-void Func_020005f8(void);
-void Func_0200096c(void);
-void Func_02000cf4(void);
-void Func_02000e50(void);
-void Func_02001250(void);
-void Func_0200156c(void);
 
 // clang-format off
 s32 gData_020042bc[] = {

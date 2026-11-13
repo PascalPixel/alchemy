@@ -72,7 +72,11 @@ void Func_020034ec(void) {
   return;
 }
 
-/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410; palette_snapshots.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/islets/s3410.c:82: structure has no member named `count'. */
+/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
+ * palette_snapshots.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/islets/s3410.c:82: structure has no member named `count'.
+ */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
@@ -112,8 +116,6 @@ void Func_020034fc(void) {
     }
   }
 }
-
-void Event_Start();
 
 void Func_02003620(void) {
   s32 v5;
@@ -354,4 +356,4 @@ void Func_02003d0c(void);
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
-    Func_02003d0c, Func_02003de4, gPushLeaderSteps)
+                        Func_02003d0c, Func_02003de4, gPushLeaderSteps)

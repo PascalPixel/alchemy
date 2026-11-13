@@ -838,8 +838,6 @@ settle:
 
 #include "call.h"
 
-void Map_SetLayerEntryFlag(s32 a);
-
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
@@ -1404,8 +1402,6 @@ void Func_02002834(s32 id) {
   if (id != 0 && object != 0)
     *slot = (s32)&object->x;
 }
-
-s32 Func_02000384(struct Actor *object);
 
 // clang-format off
 u32 gData_02002a78[] = {

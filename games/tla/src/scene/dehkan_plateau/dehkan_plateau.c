@@ -692,28 +692,8 @@ void Func_020021b4(void) {
 // Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
 // next object the overlay links.
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02002180(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                     s32 width, s32 height);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
@@ -726,17 +706,12 @@ extern const struct CellRecord gData_02004066[];
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_Jump(s32 id, s32 a, s32 b);
-void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32
  * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
  * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
  * declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
 extern void Task_Add__events_g(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
-void Task_RemoveFar(void (*func)(void));
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

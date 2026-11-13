@@ -246,7 +246,6 @@ void Save_CopyFile(void);
 u32 BuildStamp_GetTime(void);
 void InventorySnapshot_Restore(void);
 void StatusScreen_Run(void);
-s32 Party_AddMember(s32 value);
 
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
@@ -645,8 +644,6 @@ void Func_02000a70(s32 cell, u16 *text) {
 #define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
 #define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
 
-void WindowSprite_PrepareForRedraw(struct Window *work);
-
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define REQUEST_EDITION 'C'
 #elif (LANGUAGE == LANGUAGE_GERMAN)
@@ -850,7 +847,6 @@ extern u8 MsgFieldPasswordKana[];
 
 void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
                              u32 offsetX, u32 offsetY);
-s32 Party_RemoveMember(s32 value);
 u16 Func_0200217c(u32 length, u8 *p);
 void Resource_CopyFixedBlockB(void);
 void Resource_CopyFixedBlockA(void);

@@ -296,7 +296,6 @@ s32 Func_020009bc(struct Actor *object) {
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
-void FieldCamera_MoveToActorById(s32 actor, s32 a);
 
 #define TALK()                                                                 \
   FieldMessage_ShowCentered((s16)((union EventLine *)work)->line++, 0, -3)

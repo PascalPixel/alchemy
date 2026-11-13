@@ -19,7 +19,6 @@
 #include "module/scene/airs_rock_inside.h"
 #include "module/scene/scene.h"
 
-void Sound_Play(s32 cue);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Math_Sine(s32 angle);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -86,9 +85,6 @@ void Func_0200505c(void) {
 #include "scene_tables.h"
 #include "system/io_reg.h"
 
-extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
-    SceneId_Ov664Room4, SceneId_Ov664Room5, SceneId_Ov664Room6,
-    SceneId_Ov664Room7, SceneId_Ov664Room8, SceneId_Ov664Room9;
 extern s16 gData_02006050[], gData_02006054[], gData_0200605a[],
     gData_02006064[], gData_02006068[], gData_02006072[], gData_0200607e[],
     gData_0200621c[];
@@ -96,9 +92,8 @@ void Func_02001690(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02001084(struct Actor *object, s32 a, s32 b);
 void Func_02001420(struct Actor *object, s32 a, s32 b);
-void Map_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
-                   s32 destZ);
+void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height,
+                               s32 destX, s32 destZ);
 s32 Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 
 s32 Scene_Initialize(void) {
@@ -131,7 +126,8 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance > 13) {
       if (GameFlag_Test(0xa8e))
-        Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(824), PIXELS(328));
+        Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(824),
+              PIXELS(328));
       Func_02005f6c(gData_02006050);
     }
     Actor_GetById(10)->motionFlags = 0;
@@ -164,9 +160,11 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = 0x3f10;
     Func_02002770();
     if (GameFlag_Test(0x897))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(328), PIXELS(392));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(328),
+            PIXELS(392));
     if (GameFlag_Test(0x898))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(104), PIXELS(392));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(104),
+            PIXELS(392));
     Func_02005f6c(gData_02006054);
     if (!GameFlag_Test(0x899)) {
       Actor_SetPartAttribute(Actor_GetById(8), 6);
@@ -185,11 +183,14 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
     if (GameFlag_Test(0x89b))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(264), PIXELS(632));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(264),
+            PIXELS(632));
     if (GameFlag_Test(0x89c))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(616), PIXELS(568));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(616),
+            PIXELS(568));
     if (GameFlag_Test(0x89d))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(472), PIXELS(520));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(472),
+            PIXELS(520));
     Func_02005f6c(gData_0200605a);
     if (!GameFlag_Test(0x899)) {
       Actor_SetPartAttribute(Actor_GetById(9), 6);
@@ -232,7 +233,8 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 18, 33, 2, 1, 23, 25);
     }
     if (GameFlag_Test(0x89e))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(648), PIXELS(296));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(648),
+            PIXELS(296));
     Func_02005f6c(gData_02006064);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5) {
     GameFlag_SetBit(324);
@@ -270,9 +272,11 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 50, 82, 1, 1, 34, 82);
     }
     if (GameFlag_Test(771))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(520), PIXELS(296));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(520),
+            PIXELS(296));
     if (GameFlag_Test(0x89f)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(312), PIXELS(296));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(312),
+            PIXELS(296));
       Actor_SetSpritePriority(8, 2);
       Actor_GetById(8)->motionFlags = 2;
       Actor_GetById(8)->terrainHeight = 0xffe00000;
@@ -293,7 +297,8 @@ s32 Scene_Initialize(void) {
     }
     Func_02000908(gData_0200621c);
     if (GameFlag_Test(0x8d0))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(344), PIXELS(696));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(344),
+            PIXELS(696));
     Func_02005f6c(gData_02006068);
     if (GameFlag_Test(772)) {
       Call6(Map_CopyCellPictureIndicesRect, 39, 82, 38, 82, one, 3);
@@ -311,11 +316,14 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
     if (GameFlag_Test(0x8d1))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(280), PIXELS(472));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(280),
+            PIXELS(472));
     if (GameFlag_Test(0x8d2))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360), PIXELS(840));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360),
+            PIXELS(840));
     if (GameFlag_Test(0xa8f)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(184), PIXELS(616));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(184),
+            PIXELS(616));
       GameFlag_SetBit(0x200);
     }
     Actor_SetSpritePriority(9, 2);
@@ -330,7 +338,8 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
     Func_02002770();
     if (GameFlag_Test(0x8d3))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360), PIXELS(264));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360),
+            PIXELS(264));
     Func_02005f6c(gData_0200607e);
     Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
     Actor_GetById(10)->actionFlags = 0;
@@ -872,7 +881,7 @@ s32 gData_02006aec[] = {
 };
 
 DEFINE_G_DATA_02003C88(gData_02006bac, 0xffff0145, gData_020061f8, 1, 0x2024000,
-    1, 2, 0xffff0179, 3, 0x2020000)
+                       1, 2, 0xffff0179, 3, 0x2020000)
 
 s32 gData_02006c0c = -1;
 

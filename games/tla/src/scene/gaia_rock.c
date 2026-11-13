@@ -273,7 +273,6 @@ struct OrbitEffect {
 };
 
 s32 Math_Cosine(s32 angle);
-void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000474(struct OrbitEffect *effect) {
   s32 radius;
@@ -406,7 +405,6 @@ void Func_02000670(void) {
 #endif
 
 s32 Func_02000f14();
-void FieldCamera_MoveToActorById();
 
 s32 Scene_Initialize(void) {
   struct Actor *actor;
@@ -548,8 +546,6 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
   object->priorityFlags |= 2;
   Actor_SetSingleChildFlags(object, 0);
 }
-
-void FieldCamera_WaitForArrival(void);
 
 void Func_02000bc0(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);

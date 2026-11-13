@@ -528,15 +528,13 @@ void Func_02000e60(void) {
   Event_End();
 }
 
-void Func_02000ef0(struct Actor *object) {
-  object->x = Actor_GetById(8)->x;
-}
+void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
 #undef EVENT_WORK
 #undef OBJECT
 
 // ---- games/tla/src/scene/gabomba_statue_chamber/s0f00.c ----
-// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next object the overlay links.
-
+// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next
+// object the overlay links.
 
 /// 2 copies: gabomba_statue_chamber, gabomba_statue_chamber.
 #define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, n1)                      \
@@ -963,8 +961,6 @@ void Func_02001b14(void) {
 
 #include "../../include/system/io_reg.h"
 
-void DisplayBlend_EnableRunScript(void);
-
 void Func_02001ba8(void) {
   if (GameFlag_Test(265)) {
     if (GameFlag_Test(519)) {
@@ -1027,13 +1023,13 @@ void Func_02001c44(void) {
        * tla-en. */
       scene = &SceneId_Ov671Room7;
       gMainRoutineWork.retreatScene = (s32)scene;
-        gMainRoutineWork.retreatEntrance = 1;
+      gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Test(0xa28)) {
       /* FAKEMATCH(temporary): the scene id through a local, as in the first
        * branch; as plain stores, 4 of 71 instructions differ in tla-en. */
       scene = &SceneId_Ov672Room1;
       gMainRoutineWork.retreatScene = (s32)scene;
-        gMainRoutineWork.retreatEntrance = 3;
+      gMainRoutineWork.retreatEntrance = 3;
     }
   }
 #endif

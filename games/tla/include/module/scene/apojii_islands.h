@@ -11,7 +11,6 @@ extern u32 gData_02002218[];
 extern s32 gData_02002320[];
 extern u32 gData_02002458[];
 extern s32 gData_020024cc[];
-void Func_02001ba0(s32 a);
 
 extern s32 gData_020024b8[];
 extern s32 gData_020024d0[];

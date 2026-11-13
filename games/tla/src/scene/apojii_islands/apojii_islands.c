@@ -827,12 +827,6 @@ void Func_02001ba0(s32 id) {
 #define UNK_02002044_VALUE MSGNO(MsgFieldOff)
 #endif
 
-void Func_0200033c(void);
-void Func_02000694(void);
-void Func_02000a48(void);
-void Func_02000a68(void);
-void Func_02000af8(void);
-
 // clang-format off
 u32 gData_02001e34[] = {
     0, 1, 13, 22, 0, 0,

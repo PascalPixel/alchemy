@@ -13,13 +13,10 @@
 #include "event_inline.h"
 #include "frame.h"
 
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
-void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Resource_FindFreeEntry(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -113,11 +110,9 @@ struct FieldSpriteFlags {
 };
 
 s32 Math_Cosine(s32 angle);
-void Heap_Release(void *block);
 void Resource_DecodeType01(const void *source, void *destination);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
-void Map_CenterOnFollowedPoint(void);
 void Func_02003d54(void);
 void MessageArgument_Push(s32 item, s32 mode);
 void Event_End(void);
@@ -158,10 +153,6 @@ extern u32 gWaterDropScript[];
 extern const u8 gData_0200414c[];
 extern const u8 gData_02004351[];
 extern const u8 gData_020044c8[];
-
-extern u8 MsgCheckedTheColumn[];
-extern u8 MsgCheckedThePsynergy[];
-extern u8 MsgCheckedTheTabletIt[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

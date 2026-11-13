@@ -47,7 +47,6 @@ void Func_02005d5c(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const u8 *data);
 void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Event_ResolvePendingActions(s32 value);
 void BattleParty_ApplyDrain(s32 a, s32 b);
 void Sound_Play(s32 value);
 

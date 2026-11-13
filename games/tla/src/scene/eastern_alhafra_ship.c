@@ -82,9 +82,6 @@ void Func_02000128(s32 arg0) {
   return;
 }
 
-void Event_Start();
-void Event_End();
-
 void Func_0200013c(s32 id) {
   struct Actor *object = Actor_GetById(12);
   u8 *flags;
@@ -233,8 +230,6 @@ extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation,
 DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, Func_020003e8__s0438)
 
 extern u32 gData_020033c8[];
-void Event_Start();
-void Event_End();
 
 #include "map.h"
 #include "scene_ids.h"
@@ -1483,9 +1478,6 @@ L_0200b0b8:
   Event_End();
   return;
 }
-
-void Func_02000054(void);
-void Func_0200013c(s32 actor);
 
 // clang-format off
 u32 gData_020032b0[] = {

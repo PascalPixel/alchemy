@@ -132,11 +132,6 @@ struct GaiaRockInsideSceneWork {
   s32 screenEffect;
 };
 
-extern char SceneId_Ov681Room1;
-extern char SceneId_Ov681Room2;
-extern char SceneId_Ov681Room3;
-extern char SceneId_Ov681Room4;
-extern char SceneId_Ov681Room5;
 extern char MsgFieldYouYouCannotFightThe[];
 extern char MsgFieldAtLastTheSerpentHas[];
 extern char MsgFieldLikeISaidTheSerpent[];
@@ -157,15 +152,10 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void Import_ActorDestroy();
 void DisplayBlend_DisableRunScript(void);
 void DisplayBlend_EnableRunScript(void);
 void Actor_SetSpritePriorityDirect();
-void Event_Start(void);
 void Event_End(void);
-void FieldCamera_WaitForArrival(void);
-void FieldCamera_MoveToActorById();
-void Event_SetDestination();
 void Func_02004fc4();
 void Func_02004fec();
 void Func_02005004();

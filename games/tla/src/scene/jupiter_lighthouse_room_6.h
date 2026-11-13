@@ -62,10 +62,7 @@ struct JupiterLighthouseRoom6EventWork {
 };
 
 void Func_02001ab4(struct JupiterLighthouseRoom6Object *object, s32 mode);
-void Field_DispatchTypeHandler(s32 type);
 
 // ---- this overlay
-
-void JupiterLighthouse_OpenDoor(s32 mode);
 
 #endif

@@ -74,9 +74,6 @@ struct LandingEventWork {
   s32 field1ac;
 };
 
-s32 Math_Cosine(s32 angle);
-void Map_CenterOnFollowedPoint(void);
-
 void Func_02000418(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;

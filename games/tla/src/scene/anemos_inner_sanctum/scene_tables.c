@@ -103,8 +103,6 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Actor_StartScript(struct Actor *object, const void *script);
-
 void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
   s32 i;
 

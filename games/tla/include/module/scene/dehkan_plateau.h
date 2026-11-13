@@ -115,24 +115,6 @@ void Func_02002140(void);
 
 void Func_02002bcc(void);
 
-void Func_020000a4(const void *data, s32 mode, s32 timer);
-
-void Func_02001474(s32 show);
-
-void Actor_DropAndWait(struct Actor *object);
-
-void Import_ActorDestroy(struct Actor *object);
-
-void Func_02002f08(void);
-
-void Func_0200056c(s32 id);
-
-void Func_02000974(s32 spread);
-
-void Func_02000aa8(void);
-
-void Func_02000c4c(s32 a, s32 b);
-
 void Func_02002698();
 void Func_020030e4(void);
 

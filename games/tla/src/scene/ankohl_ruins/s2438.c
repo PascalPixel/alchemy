@@ -25,7 +25,6 @@ void Func_020010f4(void);
 void Func_020023d0(void);
 void Func_02002ed4();
 void Func_02000418(void);
-void Event_Start(void);
 void Event_StartScreenTransition(void);
 void Func_02001420(s32 a0);
 void Map_CenterOnFollowedPoint(void);

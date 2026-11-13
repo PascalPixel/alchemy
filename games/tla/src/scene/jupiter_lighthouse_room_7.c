@@ -321,8 +321,6 @@ void Func_02000778(s32 unused, s32 id) {
 // and sound calls go through the call layer, each as the native has it.
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void FieldCamera_WaitForArrival(void);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
 
 void Func_020007a4(s32 unused, s32 id) {

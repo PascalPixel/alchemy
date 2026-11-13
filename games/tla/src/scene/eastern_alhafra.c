@@ -125,8 +125,6 @@ void Func_020044c4(struct DoorPlan);
  */
 extern s32 Func_02004a0c__eastern_alhafra() __asm__("Actor_SelectAnimation");
 s32 Party_FindOwnerWithAction();
-void Event_Start();
-void Event_End();
 /* VIEW(eastern_alhafra): routine Field_FindNearbyTalkTarget as s32
  * Field_FindNearbyTalkTarget(); module/scene/airs_rock_inside.h has void
  * Field_FindNearbyTalkTarget(void); tried as the definition's void
@@ -252,18 +250,12 @@ void Func_0200042c(s32 mode, s32 id) {
 
 #include "field/field.h"
 
-void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
  * Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried
  * as the definition's void Func_020044c4(struct PushTarget target), it does not
  * compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:245: conflicting
  * types for `Func_020044c4'. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
-void Statue_Sink(void *, s32, s32);
-s32 Func_02004a7c();
-s32 Party_FindOwnerWithAction();
-void Event_Start();
-void Event_End();
 
 void Func_02000514(void) {
   struct Actor *actor15;
@@ -316,9 +308,6 @@ void Func_02000514(void) {
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
     Func_080dbdd4(actor16->x, actor16->z, 2, 0);
 }
-
-void Func_02000394(s32, s32);
-void Func_0200042c(s32, s32);
 
 void Func_020006ec(s32 mode) {
   s32 tile;
@@ -1170,10 +1159,6 @@ void Func_02001bf4(s32 id) {
 }
 
 #include "scene_ids.h"
-
-void Event_Start();
-void Event_End();
-void Event_SetDestination();
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
   Func_080d47b4(actor, a, b);

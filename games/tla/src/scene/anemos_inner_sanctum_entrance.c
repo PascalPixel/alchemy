@@ -158,8 +158,6 @@ void Func_02000534(s32 a) {
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.c ----
 #include "version.h"
 
-void Func_02000388(void);
-
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 shift = 0x1300000;
@@ -245,8 +243,6 @@ const u8 *Scene_GetEvents(void) {
     return gData_02001c28;
   return gData_02001c1c;
 }
-
-void Func_02000408(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

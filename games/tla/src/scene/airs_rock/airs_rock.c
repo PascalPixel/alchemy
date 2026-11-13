@@ -176,8 +176,6 @@ void Func_020006d4(void) {
   Event_End();
 }
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
-
 /// The leader jumps up 12 pixels (cue 390, mode 6 then 1), climbs 28 pixels
 /// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
 /// pixels on and plays cue 390 again.
@@ -1246,8 +1244,6 @@ fade2:
   Event_SetFlag(0x87b);
   Event_End();
 }
-
-extern s16 gData_020046a0[];
 
 void Func_020024b0(void) {
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);

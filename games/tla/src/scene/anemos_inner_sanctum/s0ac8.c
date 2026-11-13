@@ -363,7 +363,6 @@ void Func_02001160(void) {
 extern const s32 gData_02003574[];
 
 void Actor_SelectAnimation(struct Actor *, s32);
-void Actor_StartScript(struct Actor *object, const s32 *script);
 
 /// An event handler from the sanctum's event table (in s2f48.c):
 /// changes the cells at the leader's place, spawns an effect of type 0x15d

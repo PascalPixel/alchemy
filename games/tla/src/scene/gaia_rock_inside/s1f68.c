@@ -60,7 +60,6 @@ void Func_02001fd8(void) {
 
 #include "system.h"
 #include "text/msg_ids.h"
-void Event_End(void);
 void Actor_MoveToObject(s32 id, s32 target);
 
 void Func_02002020(void) {
@@ -560,7 +559,6 @@ void Func_02002b04(u32 id, s8 mode) {
  * compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:569: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
 void Func_02002b58(s32 a0, s32 a1, s32 a2) {
   s32 t0;

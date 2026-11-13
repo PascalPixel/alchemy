@@ -14,25 +14,17 @@
 #include "frame.h"
 #include "text/msg_ids.h"
 
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
 s32 Resource_FindFreeEntry(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Import_TaskSuspendAll(void *callback);
 void Import_TaskResumeAll(void *callback);
 void Irq_SetHandler(s32 a, s32 b, void *callback);
 void Import_ResourceDecodeByteLzInRam(const void *source, void *destination);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
-void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void FieldCamera_WaitForArrival(void);
 void Func_02001d9c(void);
-void ObjectTable_Snapshot(void);
-void Scene_QueueMusic(s32 a);
-void Event_NoOp(void);
 void Func_02001dfc(void);
 void Func_02001e04(s32 a, s32 b, s32 c, s32 d);
 void Func_02001e0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -84,7 +76,6 @@ struct CellMarkers {
 extern struct CellMarkers gData_02002aa0;
 extern u32 gData_02001ee8[];
 extern u32 gWaterDropScript[];
-extern const u8 gField_Tiles679[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

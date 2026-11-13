@@ -1000,9 +1000,6 @@ column:
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200124c();
-void Event_Start();
-void Event_End();
 void Actor_MoveToObject();
 
 void Func_02001a1c(void) {
@@ -1378,7 +1375,6 @@ s32 Scene_Initialize(void) {
     } while (0);                                                               \
   }
 
-void Func_02000b84(void);
 void Func_02003edc();
 
 /// Aqua Rock's map preparation: for each room and entrance it sets the water

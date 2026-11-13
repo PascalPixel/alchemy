@@ -19,7 +19,6 @@
 #include "text/msg_ids.h"
 #include "module/field/field_effect.h"
 
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
@@ -393,7 +392,6 @@ void Func_02000fac(void) {
 
 #include "text/msg_ids.h"
 
-extern s32 gData_0200559c[];
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
  * has extern struct Actor gData_0200646c; tried as the definition's extern
  * struct ActorPlacement gData_0200646c[], it does not compile in tla-ja:

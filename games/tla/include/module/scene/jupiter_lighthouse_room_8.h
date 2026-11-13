@@ -49,6 +49,4 @@ extern struct CellTarget gTeleporters;
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);
 
-extern u16 gPushKinds[];
-
 #endif

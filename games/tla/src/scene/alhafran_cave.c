@@ -405,7 +405,6 @@ void Func_02000814(void) {}
 
 extern u8 MsgYouHereTo[];
 
-void FieldCamera_WaitForArrival(void);
 void Func_02001228(void);
 
 void Func_02000818(void) {

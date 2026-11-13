@@ -229,8 +229,6 @@ void Func_02002cc0(struct Actor *object) {
 #include "system/io_reg.h"
 #include "frame.h"
 
-void Sound_Play(s32 cue);
-void Actor_StartScript(struct Actor *object, const u8 *script);
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 s32 BattleEffect_StartBufferInterpolation(s32 frames);
@@ -239,7 +237,6 @@ void Camera_SetSpeedParameters(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Map_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a,
                                     s32 b);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_ConfigureSpriteColor(s32 actor, s32 a);
 void Func_02001084(struct Actor *object, s32 a, s32 b);
 
@@ -880,8 +877,6 @@ s32 Func_02003ed4(struct Orbiter *orbiter) {
   orbiter->radius -= 0x40000;
   return 1;
 }
-
-s32 Math_Sine(s32 angle);
 
 // Moves around in a circle.
 s32 Func_02003f94(struct Orbit *object) {

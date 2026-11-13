@@ -48,15 +48,12 @@ struct AlhafraInteriorsEventWork {
   u16 field1c4;
 };
 
-void Event_Start(void);
 void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldCamera_WaitForArrival(void);
 
 void Event_StartScreenTransition(void);
 
@@ -84,8 +81,6 @@ u8 *Scene_GetPlacements(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-void FieldCamera_MoveToActorById(s32 a, s32 b);
 
 void Func_02000084(void) {
   Event_SetFlag(0x8b2);

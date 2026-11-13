@@ -1,7 +1,12 @@
 /// @file
-/// The scene code of overlay 0x68a, in ROM order.
+/// Ancient Lemuria, the shore before the hidden city, where the Lemurians meet
+/// the party that defeated Poseidon (AncientLemuria_MeetTheLemurians). Cyclone
+/// on the first bush brings out Rime, the Mercury Djinni, which hides in the
+/// blue statue until Tremor shakes it out (AncientLemuria_CycloneRevealsRime,
+/// AncientLemuria_TremorShakesOutRime).
 
 #include "types.h"
+#include "map.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "field_event.h"
@@ -9,8 +14,8 @@
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-void Func_02000080(s32 id);
-void Func_02000838(void);
+void AncientLemuria_StillTheStatue(s32 id);
+void AncientLemuria_MeetTheLemurians(void);
 void Field_TryJumpForward(void);
 void Func_02001a24(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 layer);
@@ -30,6 +35,7 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "map.h"
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -37,12 +43,13 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
-#include "module/scene/ancient_lemuria.h"
+/// The twelve colours, a frame in four, the water's shimmer takes in turn.
+extern s16 gAncientLemuria_ShimmerColors[];
 #include "module/scene/scene.h"
 
-void Func_02000038(void) { Djinn_JoinParty(12, 1, 13); }
+void AncientLemuria_RimeJoins(void) { Djinn_JoinParty(12, 1, 13); }
 
-void Func_02000048(struct Actor *object) {
+void AncientLemuria_ShakeTheStatue(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
   s16 time = object->timer++;
 
@@ -51,7 +58,7 @@ void Func_02000048(struct Actor *object) {
     Sound_Play(155);
 }
 
-void Func_02000080(s32 id) {
+void AncientLemuria_StillTheStatue(s32 id) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
 
@@ -70,13 +77,17 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_020000b0(void) { WORD_AT(Ram_HeapSlots->mapWork, 240) = 0x02ee0000; }
+void AncientLemuria_KeepCameraSouth(void) {
+  Ram_HeapSlots->mapWork->minZ = PIXELS(750);
+}
 
-void Func_020000c4(void) { WORD_AT(Ram_HeapSlots->mapWork, 240) = 0x01600000; }
+void AncientLemuria_LetCameraNorth(void) {
+  Ram_HeapSlots->mapWork->minZ = PIXELS(352);
+}
 
-void Func_020000d4(void) {}
+void AncientLemuria_StartMovingStatue(void) {}
 
-void Func_020000d8(s32 unused, s32 id) {
+void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
@@ -84,7 +95,7 @@ void Func_020000d8(s32 unused, s32 id) {
   if (x == 8 && z == 36)
     GameFlag_SetBit(0x961);
   if (GameFlag_Test(0x961))
-    Func_02000838();
+    AncientLemuria_MeetTheLemurians();
 }
 
 /// One hop of object 12 by (dx, dz).
@@ -96,8 +107,8 @@ static inline void Hop(s32 dx, s32 dz) {
 
 /// Once (flag 0x96c): object 12 spins for 30 frames while it grows from half
 /// scale, then hops thirteen times while the leader follows, and object 13
-/// takes Func_02000048 as its update.
-void Func_02000110(void) {
+/// takes AncientLemuria_ShakeTheStatue as its update.
+void AncientLemuria_CycloneRevealsRime(void) {
   struct Actor *object;
   s32 i;
 
@@ -160,27 +171,29 @@ void Func_02000110(void) {
   Hop(16, 0);
   Hop(16, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  Actor_GetById(13)->update = Func_02000048;
+  Actor_GetById(13)->update = AncientLemuria_ShakeTheStatue;
   Actor_GetById(13)->timer = 0;
 }
 
-void Func_020003bc(void) { MapCopy(9, 9, 2, 3, 8, 9, 0); }
+void AncientLemuria_CycloneSecondBush(void) { MapCopy(9, 9, 2, 3, 8, 9, 0); }
 
-void Func_020003dc(void) { MapCopy(38, 0, 5, 2, 12, 7, 0); }
+void AncientLemuria_CycloneThirdBush(void) { MapCopy(38, 0, 5, 2, 12, 7, 0); }
 
-void Func_020003fc(void) { MapCopy(39, 2, 4, 3, 14, 11, 0); }
+void AncientLemuria_CycloneFourthBush(void) { MapCopy(39, 2, 4, 3, 14, 11, 0); }
 
-void Func_0200041c(void) { MapCopy(39, 2, 3, 3, 21, 9, 0); }
+void AncientLemuria_CycloneFifthBush(void) { MapCopy(39, 2, 3, 3, 21, 9, 0); }
 
-void Func_0200043c(void) { MapCopy(39, 0, 4, 3, 25, 8, 0); }
+void AncientLemuria_CycloneSixthBush(void) { MapCopy(39, 0, 4, 3, 25, 8, 0); }
 
-void Func_0200045c(void) { Func_02000080(13); }
+void AncientLemuria_StartTremorOnTheStatue(void) {
+  AncientLemuria_StillTheStatue(13);
+}
 
 /// Once flag 0x96c is set and 0x96d is not: sets 0x96d, clears 0x96e, launches
 /// object 12 from 22 pixels up at half size and turns it an eighth of a turn a
 /// frame for 24 frames while it grows back to full size, then leaves it facing
 /// 0x3000.
-void Func_02000468(void) {
+void AncientLemuria_TremorShakesOutRime(void) {
   struct Actor *object;
   s32 i;
   struct Actor *p;
@@ -192,7 +205,7 @@ void Func_02000468(void) {
   object = Actor_GetById(12);
   GameFlag_SetBit(0x96d);
   GameFlag_ClearBit(0x96e);
-  Func_02000080(13);
+  AncientLemuria_StillTheStatue(13);
   Actor_SetPosition(12, 270 << 16, 184 << 16);
   object->y = 22 << 16;
   Actor_Jump(12, 11, 0);
@@ -221,7 +234,7 @@ void Func_02000468(void) {
   Actor_WaitForMoveById(12);
 }
 
-void Func_02000534(void) {
+void AncientLemuria_HeadForTheDock(void) {
   struct Actor *object;
 
   if (!GameFlag_Test(0x961) || GameFlag_Test(0x96a)) {
@@ -258,7 +271,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 /// Rotates colours 2-14 of palettes 7 and 8 by one entry every four frames,
 /// and selects colour 0x7f from the table.
-s32 Func_02000630(void) {
+s32 AncientLemuria_CycleWaterColors(void) {
   if ((*Ram_FrameCount & 3) == 0) {
     volatile u16 *palette;
     s16 saved;
@@ -284,7 +297,7 @@ s32 Func_02000630(void) {
     *(volatile u16 *)0x05000102 = saved;
   }
   {
-    s16 color = gData_02001c30[(*Ram_FrameCount >> 2) % 12];
+    s16 color = gAncientLemuria_ShimmerColors[(*Ram_FrameCount >> 2) % 12];
 
     *(volatile u16 *)0x050000fe = color;
     return color;
@@ -293,7 +306,7 @@ s32 Func_02000630(void) {
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
-  Task_Add(Func_02000630, 0xc80);
+  Task_Add(AncientLemuria_CycleWaterColors, 0xc80);
   if (gMainRoutineWork.entrance != 1)
     GameFlag_ClearBit(0x12f);
   else
@@ -307,7 +320,8 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(12, 312 << 16, 184 << 16);
   if (gMainRoutineWork.entrance == 1 && !GameFlag_Test(0x96d) &&
       GameFlag_Test(0x96c)) {
-    *(void (**)(void))(((u8 *)Actor_GetById(13)) + 108) = Func_02000048;
+    *(void (**)(void))(((u8 *)Actor_GetById(13)) + 108) =
+        AncientLemuria_ShakeTheStatue;
     *(u16 *)(((u8 *)Actor_GetById(13)) + 100) = 0;
   }
   Actor_SetSpriteFlags(Actor_GetById(13), 0);
@@ -335,11 +349,11 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_02000830(void) { Field_TryJumpForward(); }
+void AncientLemuria_JumpForward(void) { Field_TryJumpForward(); }
 
 void Actor_MoveToObject();
 
-void Func_02000838(void) {
+void AncientLemuria_MeetTheLemurians(void) {
   struct Actor *leader;
   s32 result;
 
@@ -830,31 +844,38 @@ struct ActorPlacement gActorPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(AncientLemuria_HeadForTheDock)},
     {33, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_020000b0)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020000c4)},
-    {0x602, 22, CONDITION_ALWAYS, EVENT(Func_02000830)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AncientLemuria_KeepCameraSouth)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AncientLemuria_LetCameraNorth)},
+    {0x602, 22, CONDITION_ALWAYS, EVENT(AncientLemuria_JumpForward)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(AncientLemuria_RimeJoins)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     0x961, (u32)(Func_020000d4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x961, EVENT(Func_020000d8)},
-    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000110)},
-    {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_020003bc)},
-    {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020003dc)},
-    {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_020003fc)},
-    {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_0200041c)},
-    {0x50008905, 35, CONDITION_ALWAYS, EVENT(Func_0200043c)},
+     0x961, (u32)(AncientLemuria_StartMovingStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x961,
+     EVENT(AncientLemuria_FinishMovingStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneRevealsRime)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSecondBush)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32,
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneThirdBush)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFourthBush)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34,
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFifthBush)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 35,
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSixthBush)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     0x196e, EVENT(Func_0200045c)},
+     IF_FLAG_SET(0x96e), EVENT(AncientLemuria_StartTremorOnTheStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 13, IF_FLAG_SET(0x96e),
-     EVENT(Func_02000468)},
+     EVENT(AncientLemuria_TremorShakesOutRime)},
     {TRIGGER_TABLE_END},
 };
 
 // clang-format off
-s16 gData_02001c30[] = {
+s16 gAncientLemuria_ShimmerColors[] = {
     0x5f0c, 0x62c8, 0x6684, 0x6a40, 0x6a00, 0x69c0,
     0x6980, 0x69c0, 0x6a00, 0x6a40, 0x6684, 0x62c8,
 };

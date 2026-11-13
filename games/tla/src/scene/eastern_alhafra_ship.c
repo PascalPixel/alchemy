@@ -1,5 +1,10 @@
 /// @file
-/// The scene code of overlay 0x669, in ROM order.
+/// The ship at Alhafra's eastern harbour. The party boards as the mayor of
+/// Madra arrives (EasternAlhafraShip_MayorArrives), and Briggs is caught after
+/// the battle (EasternAlhafraShip_BriggsIsCaught). Later the baby Eoleo lifts
+/// things with Psynergy (EasternAlhafraShip_EoleoLifts), Tremor shakes Large
+/// Bread down from a crate (EasternAlhafraShip_ShakeDownTheBread) and Move
+/// pushes a crate across the deck.
 
 // ---- games/tla/src/scene/eastern_alhafra_ship.c ----
 
@@ -21,7 +26,15 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
-#include "module/scene/eastern_alhafra_ship.h"
+
+extern s16 gEasternAlhafraShip_ActorPlacements[];
+void EasternAlhafraShip_BriggsIsCaught(void);
+extern u32 gEasternAlhafraShip_FirstPirateRunsScript[];
+extern s32 gEasternAlhafraShip_SecondPirateRunsScript[];
+
+void EasternAlhafraShip_ShakeDownTheBread(void);
+
+void Func_02003148();
 #include "module/scene/scene.h"
 #include "module/field/event_commands.h"
 
@@ -31,13 +44,15 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-s32 Scene_GetPlacements(void) { return (s32)gData_0200345c; }
+s32 Scene_GetPlacements(void) {
+  return (s32)gEasternAlhafraShip_ActorPlacements;
+}
 
-void Func_02000054(void) {}
+void EasternAlhafraShip_StartMovingCrate(void) {}
 
 #include "event_inline.h"
 
-void Func_02000058(s32 unused, s32 id) {
+void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
@@ -48,7 +63,7 @@ void Func_02000058(s32 unused, s32 id) {
     GameFlag_ClearBit(0x900);
 }
 
-void Func_0200008c(void) {
+void EasternAlhafraShip_ShakeDownTheBread(void) {
   s32 v5;
   struct Actor *object0;
   s32 v6;
@@ -78,12 +93,12 @@ void Func_0200008c(void) {
   return;
 }
 
-void Func_02000128(s32 arg0) {
+void EasternAlhafraShip_TakeTheBread(s32 arg0) {
   Func_02003148(arg0, 0x1c9, 0x902);
   return;
 }
 
-void Func_0200013c(s32 id) {
+void EasternAlhafraShip_EoleoLifts(s32 id) {
   struct Actor *object = Actor_GetById(12);
   u8 *flags;
   s32 i;
@@ -141,7 +156,7 @@ s32 Scene_Initialize(void) {
     GameFlag_SetBit(FLAG_BRIGGS_CAUGHT);
     gMainRoutineWork.secondary = 3;
     gMainRoutineWork.entrance = 3;
-    Func_02000c5c();
+    EasternAlhafraShip_BriggsIsCaught();
   }
   if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
@@ -183,19 +198,12 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8
- * gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as
- * the definition's extern u32 gData_02003720[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra_ship.c:199:
- * `gData_02003720__eastern_alhafra_ship' undeclared (first use in this
- * function). */
-extern const u8
-    gData_02003720__eastern_alhafra_ship[] __asm__("gData_02003720");
+extern u32 gEasternAlhafraShip_NoteScript[];
 
 void Actor_SelectAnimation(struct Actor020003e8 *object, s32 mode);
 void Actor_StartScript(struct Actor020003e8 *object, const void *script);
 
-void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
+void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
   struct Actor020003e8 *object;
   struct Sprite020003e8 *sprite;
 
@@ -203,7 +211,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
   if (object != 0) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gData_02003720__eastern_alhafra_ship);
+    Actor_StartScript(object, gEasternAlhafraShip_NoteScript);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm, so the fifth argument is read from the
      * stack before the zero for nextFrame, as the native does; as no asm, 2 of
@@ -219,23 +227,25 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 // Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next
 // object the overlay links, and the overlay's data.
 
-/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z,
- * s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y,
- * s32 z, s16 value, s32 fifth); tried as the definition's void
- * Func_020003e8(u16 *ids), it does not compile in tla-ja:
+/* VIEW(s0438): routine EasternAlhafraShip_SpawnNote as s32
+ * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s32 rotation, s32 timer);
+ * the definition has void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16
+ * value, s32 fifth); tried as the definition's void
+ * EasternAlhafraShip_SpawnNote(u16 *ids), it does not compile in tla-ja:
  * games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for
- * `Func_020003e8'. */
-extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation,
-                                s32 timer) __asm__("Func_020003e8");
+ * `EasternAlhafraShip_SpawnNote'. */
+extern s32 EasternAlhafraShip_SpawnNote__s0438(
+    s32 x, s32 y, s32 z, s32 rotation,
+    s32 timer) __asm__("EasternAlhafraShip_SpawnNote");
 
-DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, Func_020003e8__s0438)
+DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, EasternAlhafraShip_SpawnNote__s0438)
 
-extern u32 gData_020033c8[];
+extern u32 gEasternAlhafraShip_LeaveTheDeckScript[];
 
 #include "map.h"
 #include "scene_ids.h"
 
-void Func_020004f4(void) {
+void EasternAlhafraShip_MayorArrives(void) {
   struct MapWork *map;
   s32 result;
 
@@ -355,9 +365,9 @@ void Func_020004f4(void) {
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_SetSpeed(8, 0x18000, 0xc000);
   Actor_SetSpeed(9, 0x18000, 0xc000);
-  Actor_SetMovementTypeById(9, (s32)gData_0200333c);
+  Actor_SetMovementTypeById(9, (s32)gEasternAlhafraShip_SecondPirateRunsScript);
   Event_Wait(5);
-  Actor_SetMovementTypeById(8, (s32)gData_020032b0);
+  Actor_SetMovementTypeById(8, (s32)gEasternAlhafraShip_FirstPirateRunsScript);
   Actor_RefreshSelectorById(8);
   Actor_FaceDirection(25, FACING_SOUTH, 0);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
@@ -444,7 +454,7 @@ void Func_020004f4(void) {
   Event_End();
 }
 
-void Func_02000c5c(void) {
+void EasternAlhafraShip_BriggsIsCaught(void) {
   struct Actor *object0;
   struct Actor *object1;
   struct Actor *object2;
@@ -1164,17 +1174,17 @@ L_0200903c:
   Event_ShowMessageThenWait(20, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(20);
-  Actor_SetMovementTypeById(21, gData_020033c8);
+  Actor_SetMovementTypeById(21, gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(8, gData_020033c8);
+  Actor_SetMovementTypeById(8, gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(9, gData_020033c8);
+  Actor_SetMovementTypeById(9, gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(22, gData_020033c8);
+  Actor_SetMovementTypeById(22, gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(23, gData_020033c8);
+  Actor_SetMovementTypeById(23, gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(24, gData_020033c8);
+  Actor_SetMovementTypeById(24, gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(75);
   Actor_WalkByAndWaitById(20, 16, 0);
   Actor_WalkByAndWait(20, 0, -32);
@@ -1481,7 +1491,7 @@ L_0200b0b8:
 }
 
 // clang-format off
-u32 gData_020032b0[] = {
+u32 gEasternAlhafraShip_FirstPirateRunsScript[] = {
     39, 2, 5, 0x200000, 0, 0,
     1, 5, 0, 0, 0x1c0000, 1,
     5, 0x300000, 0, 0, 1, 5,
@@ -1490,7 +1500,7 @@ u32 gData_020032b0[] = {
     3, 0xc000, 0, 1, 17,
 };
 
-s32 gData_0200333c[] = {
+s32 gEasternAlhafraShip_SecondPirateRunsScript[] = {
     39, 2, 5, 0x200000, 0, 0,
     1, 5, 0xc0000, 0, -0xc0000, 1,
     5, 0x340000, 0, 0, 1, 5,
@@ -1499,7 +1509,7 @@ s32 gData_0200333c[] = {
     3, 0xb000, 0, 1, 17,
 };
 
-u32 gData_020033c8[] = {
+u32 gEasternAlhafraShip_LeaveTheDeckScript[] = {
     39, 2, 4, 0x1d80000, 0, 0x1080000,
     1, 4, 0x1b80000, 0, 0x1080000, 1,
     38,
@@ -1512,7 +1522,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 DEFINE_G_SCENE_EXITS(99, 98, 2, 99, 3, 99, 2, 5, 99, 4)
 
-s16 gData_0200345c[] = {
+s16 gEasternAlhafraShip_ActorPlacements[] = {
     16, -1, 1, 0, 0, 360, 0, 0,
     0, 396, 0x4000, 1, 39, -1, 1, 0,
     0, 360, 0, 0, 0, 440, 0xc000, 1,
@@ -1554,24 +1564,26 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 20, 0x8aa, EVENT(Func_020004f4)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200013c)},
+    {TRIGGER_STEP, 20, 0x8aa, EVENT(EasternAlhafraShip_MayorArrives)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(EasternAlhafraShip_EoleoLifts)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgIMGonna)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgIfEoleoGets)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000128)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     EVENT(EasternAlhafraShip_TakeTheBread)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     CONDITION_ALWAYS, EVENT(Func_02000054)},
+     CONDITION_ALWAYS, EVENT(EasternAlhafraShip_StartMovingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS,
-     EVENT(Func_02000058)},
-    {8, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {9, 30, CONDITION_ALWAYS, EVENT(Func_02000058)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, 0x901, EVENT(Func_0200008c)},
+     EVENT(EasternAlhafraShip_FinishMovingCrate)},
+    {8, 30, CONDITION_ALWAYS, EVENT(EasternAlhafraShip_StartMovingCrate)},
+    {9, 30, CONDITION_ALWAYS, EVENT(EasternAlhafraShip_FinishMovingCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, 0x901,
+     EVENT(EasternAlhafraShip_ShakeDownTheBread)},
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_02003720[] = {
+u32 gEasternAlhafraShip_NoteScript[] = {
     38,
 };

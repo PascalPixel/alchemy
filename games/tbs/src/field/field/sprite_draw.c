@@ -85,8 +85,6 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     if (layer->script == 0) {
       continue;
     }
-    // The command loop is written with goto: as while ((s16)layer->timer <= 0),
-    // 33 of 544 instructions differ in tbs-en.
   read_command:
     if ((s16)layer->timer <= 0) {
       picture = layer->script[layer->scriptOffset++];

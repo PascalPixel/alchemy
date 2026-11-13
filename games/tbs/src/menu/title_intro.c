@@ -506,8 +506,7 @@ s32 Title_ShowIntro(s32 prompt) {
         sprite++;
       }
 #endif
-      // The prompt pulses once a second: its blend weight over the picture
-      // (written out: as BLEND_ALPHA(level, 16 - level) the bytes differ).
+      // The prompt pulses once a second: its blend weight over the picture.
       level = gTitle_PromptBlendLevels[i % 60];
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                    BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
@@ -1109,9 +1108,7 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
   return value;
 }
 
-// The response curves of TitlePaletteFade_BuildColors's filters. Like the
-// declarations in palette_buffers.h they are not const: as const the code
-// differs.
+// The response curves of TitlePaletteFade_BuildColors's filters.
 
 /// Maps a channel (0..31) to a component (0..31 << 10). The same curves as
 /// gColorBuffer_ChannelCurve and its Light and Contrast curves, which sit in

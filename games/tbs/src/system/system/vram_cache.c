@@ -35,8 +35,6 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
       ret = pos;
       end = blocks + ret;
       while (pos < end) {
-        // Leaves the scan with goto: as a break and a test of how far the scan
-        // got, tbs-en does not match.
         if (gVramCacheBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE) {
           goto occupied;
         }

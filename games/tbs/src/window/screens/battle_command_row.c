@@ -418,9 +418,6 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   count = BattleUnit_ListIdsFar(1, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
-  // The loop over ids is written with goto: as
-  // for (i = 0; i < 4 && ids[i] != BATTLE_UNIT_LIST_END; i++), or as a do-while
-  // loop inside this test, 49 of 74 instructions differ in tbs-en.
   if (ids[0] != BATTLE_UNIT_LIST_END) {
   next_id:
     for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {

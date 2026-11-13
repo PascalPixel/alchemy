@@ -293,8 +293,6 @@ static void MenuTest_RaisePartyLevels(void) {
 /// 183 the Potion, 186 the Psy Crystal, 192 the Cookie and 236 the Sacred
 /// Feather (MsgItemName + the number).
 static void MenuTest_GiveConsumableTestStock(void) {
-  // A repeated-grant loop shrinks this native function from 1574 to 300;
-  // retain the individual calls and their original insertion order.
   FieldMessage_Show(MsgDebugGotItem, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -588,9 +586,8 @@ static void MenuTest_GivePartyDjinn(void) {
 /// 1 too, but the closing Unit_Calculate clears the curse bits again unless he
 /// wears cursed equipment (game/game/units.c).
 static void MenuTest_DamageAndAfflictParty(void) {
-  // Named Unit stores change address setup and store ordering in the
-  // native build; retain the byte cursor for poison (0x131), haunt (0x140) and
-  // curse (0x130).
+  // The statuses are set through the unit's bytes: poison (0x131), haunt
+  // (0x140) and curse (0x130).
   u8 *record;
 
   FieldMessage_Show(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);

@@ -12,8 +12,6 @@
 /// Detaches a note through the jump table entry installed by the driver
 /// (RealClearChain). Called by MPlayMain and ply_note.
 void ClearChain(struct SoundChannel *note) {
-  // Taking the entry address folds its slot into a literal address. Direct
-  // indexing adds an address-adjustment instruction with the library compiler.
   MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
                   *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]))(note);
 }
@@ -527,8 +525,6 @@ static __inline__ s32 CgbPan(struct CgbChannel *note) {
 /// one side; sustainLevel is peak * sustain / 16, rounded up. Called by
 /// CgbSound when a note starts and at each envelope step.
 void CgbModVol(struct CgbChannel *note) {
-  // The peak is calculated in each branch, the form the bytes show: with one
-  // shared calculation tbs-en is four bytes shorter.
   if (!CgbPan(note)) {
     note->panBits = 0xFF;
     note->peak = (u32)(note->outRight + note->outLeft) >> 4;

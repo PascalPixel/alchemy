@@ -35,11 +35,6 @@
 /// (WorldMap_StartStillPicture) suspends it. Moves each tileset animation's
 /// cursor and timer in the map work.
 void TilesetAnim_Update(void) {
-  // Each tileset animation is written (gridState->animations + channelIndex):
-  // as gridState->animations[channelIndex], 78 of 119 instructions differ in
-  // tbs-en, and a pointer to it swaps ip and lr. The retries stay gotos: as
-  // an inner for (;;) loop with continue and break, loop.c reshapes the outer
-  // loop.
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   u32 channelIndex;
 
@@ -198,8 +193,6 @@ void TilesetAnim_ResumeAll(void) {
 /// REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in the map work's
 /// blendControl.
 void BlendScript_Run(void) {
-  // The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
-  // blendControl's address and 118 bytes of tbs-en's code change.
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct BlendScriptState *blend;
   u16 *commands;

@@ -142,10 +142,6 @@ s32 DjinnMenu_Run(void) {
   return 1;
 }
 
-// A statement macro in the do-while shape both its uses match with; as a
-// plain { } block, 4 of 559 instructions of DjinnMenu_RunScreen differ in
-// tbs-en.
-
 /// Finds the moved Djinni in the list and selects its new position.
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
   do {                                                                         \

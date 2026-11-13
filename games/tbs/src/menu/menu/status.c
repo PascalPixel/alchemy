@@ -410,8 +410,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   menu->cursor->motion = ICON_SHOWN;
   menu->secondCursor->motion = ICON_SHOWN;
   Sound_PlayFar(SE_MENU_CANCEL);
-  // Returns no value: the bytes have the s32 epilogue (pop {r1}; bx r1) after
-  // this void call.
+  // UB: returns no value.
 #ifdef UBFIX
   return 0;
 #endif
@@ -1125,8 +1124,6 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 void Menu_BusyWait(void) {
   s32 count = 255;
 
-  // Written with goto: as a do-while loop, the loop optimizer
-  // deletes the empty loop and leaves 1 of the 7 instructions.
 spin:
   count--;
   if (count >= 0)

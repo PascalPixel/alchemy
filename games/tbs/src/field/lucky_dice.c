@@ -444,8 +444,7 @@ void LuckyDice_Run(void) {
                              sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
   sprites->helpWindow = window;
-  // MsgLuckyDiceThrow and MsgLuckyDiceQuit, by their offset from the coins
-  // label: written by name, they would share literals the native keeps apart.
+  // MsgLuckyDiceThrow and MsgLuckyDiceQuit, the two after the coins label.
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 10, window, 0, 0);
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 11, sprites->helpWindow, 0, 8);
 

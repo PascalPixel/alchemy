@@ -210,17 +210,13 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       Sound_PlayFar(SE_CLICK);
   }
   // Debug: holding L spins through four empty loops (511, 96, 64 and 64
-  // passes), a short stall each frame. They are written with goto:
-  // as while loops, the loop optimizer deletes them.
+  // passes), a short stall each frame.
   if (gDebugMode != 0) {
     s32 delayKeyMask = KEY_L;
     if (gKeysHeld & delayKeyMask) {
       s32 delayIterations;
 
       delayIterations = delayKeyMask;
-      // Four empty delay loops, each written with goto: as do { } while, none
-      // matches in tbs-en (menu/status.c's spin records why: the loop optimizer
-      // deletes an empty loop).
     wait_a:
       --delayIterations;
       if (delayIterations != 0)

@@ -22,9 +22,6 @@ void Window_UpdateZooms(void) {
   struct Window *window = state->windows;
   s32 index = 0;
 
-  // The loop is written with goto: as a do-while loop, loop.c
-  // keeps the 1 stored on closing in a saved register, and 59 of 99
-  // instructions differ in tbs-en.
 loop:
   // Flags 0 with a duration left means closing (Window_Close clears the
   // flags first).

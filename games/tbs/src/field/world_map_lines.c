@@ -134,9 +134,6 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       affinePc = MulQ16(widthScale, sinYaw) / 256;
       line->v = affinePc;
       affine->pc = affinePc;
-      // Read through its own address, the native builds one literal for the
-      // centre; as gProjection.centerX it loads gProjection and reads at
-      // offset 12 (1 of 157 instructions differ in tbs-en).
       centerX = *&gProjection.centerX;
       // UB: affine coefficients can be negative, and shifting a negative
       // value left is undefined; UBFIX multiplies by 256.

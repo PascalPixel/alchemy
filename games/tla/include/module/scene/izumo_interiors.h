@@ -7,16 +7,17 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern struct ActorPlacement gData_02002b40[];
-extern struct ActorPlacement gData_02002cf0[];
-extern struct ActorPlacement gData_02002d80[];
-extern struct Trigger gData_02002f78[];
-extern struct Trigger gData_02003164[];
-extern struct Trigger gData_0200323c[];
+extern struct ActorPlacement gIzumoInteriors_ActorPlacements[];
+extern struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[];
+extern struct ActorPlacement
+    gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain[];
+extern struct Trigger gIzumoInteriors_Triggers[];
+extern struct Trigger gIzumoInteriors_SusasHouseTriggers[];
+extern struct Trigger gIzumoInteriors_TriggersOnceTheSerpentIsSlain[];
 
 void Inn_CheckIn(s32 slot, s32 actor);
 
-void Func_0200061c(s32 mode);
+void IzumoInteriors_RecognizeTheHeroes(s32 mode);
 
 void Func_02001d8c(void);
 extern s32 gData_02002324[];

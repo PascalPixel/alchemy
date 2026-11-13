@@ -5,6 +5,7 @@
 
 #include "../shared/actors.h"
 #include "types.h"
+#include "flags.h"
 #include "main_routine_work.h"
 #include "actor_view.h"
 #include "event_work.h"
@@ -233,7 +234,7 @@ void Func_0200225c(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    if (!GameFlag_Test(0x927)) {
+    if (!GameFlag_Test(FLAG_SERPENT_SLAIN)) {
       GameFlag_SetBit(0x308);
       Event_Wait(30);
       ObjectTable_Snapshot();
@@ -321,7 +322,7 @@ void Func_020024b8(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    if (!GameFlag_Test(0x927)) {
+    if (!GameFlag_Test(FLAG_SERPENT_SLAIN)) {
       GameFlag_SetBit(0x309);
       Event_Wait(30);
       ObjectTable_Snapshot();
@@ -409,7 +410,7 @@ void Func_02002718(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-    if (!GameFlag_Test(0x927)) {
+    if (!GameFlag_Test(FLAG_SERPENT_SLAIN)) {
       GameFlag_SetBit(0x307);
       Event_Wait(30);
       ObjectTable_Snapshot();

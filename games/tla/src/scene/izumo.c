@@ -4,6 +4,7 @@
 #include "shared/tables.h"
 #include "event_work.h"
 #include "types.h"
+#include "flags.h"
 #include "task.h"
 #include "ram_buffer.h"
 #include "field_event.h"
@@ -476,7 +477,7 @@ s32 Scene_Initialize(void) {
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
   Task_Add(Func_0200060c, TASK_PASS_FRAME);
   Func_02000de0(gData_02000e10);
-  if (GameFlag_Test(0x927)) {
+  if (GameFlag_Test(FLAG_SERPENT_SLAIN)) {
     BYTE_AT(Actor_GetById(15), 90) = 2;
     Actor_SetModeById(25, 5);
     Actor_SetModeById(26, 5);
@@ -485,7 +486,8 @@ s32 Scene_Initialize(void) {
     Actor_SetModeById(29, 6);
     Actor_SetModeById(30, 6);
     Actor_SetModeById(31, 5);
-    if (gMainRoutineWork.entrance == 8 && GameFlag_Test(0x928) &&
+    if (gMainRoutineWork.entrance == 8 &&
+        GameFlag_Test(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
         !GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
       Event_StartScreenTransition();
       Func_020006a4();

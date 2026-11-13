@@ -5,6 +5,7 @@
 
 #include "../shared/effects.h"
 #include "types.h"
+#include "flags.h"
 #include "system.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -193,7 +194,7 @@ void Func_02000af8(s32 unused, u32 id) {
 
 /// Unless MapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36, 23) to
 /// (38, 25), moves a leader standing on that cell aside, and sets flag 0x30a,
-/// or 0x9bf once flag 0x927 is set.
+/// or 0x9bf once FLAG_SERPENT_SLAIN is set.
 void Func_02000b6c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
@@ -208,7 +209,7 @@ void Func_02000b6c(void) {
       leader->velocityY = PIXELS(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
     }
-    if (!Event_GetFlag(0x927)) {
+    if (!Event_GetFlag(FLAG_SERPENT_SLAIN)) {
       Event_SetFlag(0x30a);
       FieldEvent_Wait(30);
       ObjectTable_Snapshot();

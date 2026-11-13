@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x681, in ROM order.
 
 #include "types.h"
+#include "flags.h"
 #include "system.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -235,7 +236,7 @@ s32 Scene_Initialize(void) {
     }
     if ((u16)(gMainRoutineWork.entrance - 9) <= 1) {
       C1(GameFlag_SetBit, 0x144);
-      if (Test(0x927)) {
+      if (Test(FLAG_SERPENT_SLAIN)) {
         C2(Actor_SetModeById, 8, 4);
         C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
@@ -250,7 +251,7 @@ s32 Scene_Initialize(void) {
       s32 none;
       s32 found;
 
-      if (Test(0x927))
+      if (Test(FLAG_SERPENT_SLAIN))
         goto end;
       C1(Sound_Play, 53);
       found = FieldPartyInventory_FindMember(451);
@@ -451,12 +452,12 @@ s32 Scene_Initialize(void) {
       s32 i;
 
       C1(Sound_Play, 7);
-      flag = Test(0x927);
+      flag = Test(FLAG_SERPENT_SLAIN);
       if (flag != 0)
         goto end;
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C1(GameFlag_SetBit, 0x927);
+      C1(GameFlag_SetBit, FLAG_SERPENT_SLAIN);
       C1(Event_SetMessageId, (s32)MsgFieldItLooksLikeTheDragon);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       Actor_SetModeById(8, 3);
@@ -947,7 +948,7 @@ s32 Scene_Initialize(void) {
     }
     if ((u16)(gMainRoutineWork.entrance - 9) <= 1) {
       C1(GameFlag_SetBit, 0x144);
-      if (Test(0x927)) {
+      if (Test(FLAG_SERPENT_SLAIN)) {
         C2(Actor_SetModeById, 8, 4);
         C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
@@ -962,7 +963,7 @@ s32 Scene_Initialize(void) {
       s32 none;
       s32 found;
 
-      if (Test(0x927))
+      if (Test(FLAG_SERPENT_SLAIN))
         goto end;
       C1(Sound_Play, 53);
       found = FieldPartyInventory_FindMember(451);
@@ -1163,12 +1164,12 @@ s32 Scene_Initialize(void) {
       s32 i;
 
       C1(Sound_Play, 7);
-      flag = Test(0x927);
+      flag = Test(FLAG_SERPENT_SLAIN);
       if (flag != 0)
         goto end;
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C1(GameFlag_SetBit, 0x927);
+      C1(GameFlag_SetBit, FLAG_SERPENT_SLAIN);
       C1(Event_SetMessageId, (s32)MsgFieldItLooksLikeTheDragon);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       Actor_SetModeById(8, 3);

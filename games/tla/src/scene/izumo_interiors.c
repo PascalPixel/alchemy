@@ -3,6 +3,7 @@
 
 #include "shared/tables.h"
 #include "types.h"
+#include "flags.h"
 #include "actor.h"
 #include "event_inline.h"
 #include "battle.h"
@@ -62,22 +63,22 @@ static inline void LeaderAnimate(s32 animation, s32 frames) {
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(0x927))
-    return gData_02002d80;
+  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+    return gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain;
   if (gMainRoutineWork.entrance == 7)
-    return gData_02002cf0;
-  return gData_02002b40;
+    return gIzumoInteriors_SusasHouseActorPlacements;
+  return gIzumoInteriors_ActorPlacements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (GameFlag_Test(0x927))
-    return gData_0200323c;
+  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+    return gIzumoInteriors_TriggersOnceTheSerpentIsSlain;
   if (gMainRoutineWork.entrance == 7)
-    return gData_02003164;
-  return gData_02002f78;
+    return gIzumoInteriors_SusasHouseTriggers;
+  return gIzumoInteriors_Triggers;
 }
 
-void Func_0200012c(s32 actor) {
+void IzumoInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -85,7 +86,7 @@ void Func_0200012c(s32 actor) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x927)) {
+    if (GameFlag_Test(FLAG_SERPENT_SLAIN)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
       Event_ShowMessageAndWait(12, 0);
     } else {
@@ -96,7 +97,7 @@ void Func_0200012c(s32 actor) {
   }
 }
 
-void Func_020001a8(s32 actor) {
+void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -104,7 +105,7 @@ void Func_020001a8(s32 actor) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x927))
+    if (GameFlag_Test(FLAG_SERPENT_SLAIN))
       Event_SetMessageId((s32)MsgBriggsFromChampa);
     else
       Event_SetMessageId((s32)MsgOfCourseI);
@@ -113,7 +114,7 @@ void Func_020001a8(s32 actor) {
   }
 }
 
-void Func_02000220(s32 actor) {
+void IzumoInteriors_TalkToMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -121,7 +122,7 @@ void Func_02000220(s32 actor) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x927))
+    if (GameFlag_Test(FLAG_SERPENT_SLAIN))
       Event_SetMessageId((s32)MsgYouMustSee);
     else
       Event_SetMessageId((s32)MsgIzumoSLeaders);
@@ -130,7 +131,7 @@ void Func_02000220(s32 actor) {
   }
 }
 
-void Func_02000298(void) {
+void IzumoInteriors_AskAfterSusa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x922)) {
@@ -158,19 +159,19 @@ void Func_02000298(void) {
   Event_End();
 }
 
-void Func_02000358(void) {
+void IzumoInteriors_ReadPrayerForSusa(void) {
   GameFlag_SetBit(0x923);
   Event_SetMessageId((s32)MsgIPrayThat);
   Event_ShowMessageAndWait(8, 0);
 }
 
-void Func_02000378(void) {
+void IzumoInteriors_TalkToUzume(void) {
   void *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
-  if (GameFlag_Test(0x92c)) {
+  if (GameFlag_Test(FLAG_UZUME_HAS_THE_DOLL)) {
     Event_SetMessageId((s32)MsgWithThisDancing);
     Event_ShowMessageAndWait(15, 0);
   } else {
@@ -183,7 +184,7 @@ void Func_02000378(void) {
   Event_End();
 }
 
-void Func_02000400(void) {
+void IzumoInteriors_AskAboutMtMikage(void) {
   s32 msg;
 
   Event_Start();
@@ -202,7 +203,7 @@ void Func_02000400(void) {
   Event_End();
 }
 
-void Func_02000458(void) {
+void IzumoInteriors_ReadUzumesMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
@@ -227,7 +228,7 @@ void Func_02000458(void) {
   Event_End();
 }
 
-s32 Func_0200051c(void) {
+s32 IzumoInteriors_KushinadaPleads(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x925)) {
@@ -259,16 +260,21 @@ s32 Func_0200051c(void) {
   return 0;
 }
 
-void Func_02000604(void) { Func_0200061c(0); }
+void IzumoInteriors_HeroesComeFromTheEast(void) {
+  IzumoInteriors_RecognizeTheHeroes(0);
+}
 
-void Func_02000610(void) { Func_0200061c(1); }
+void IzumoInteriors_HeroesComeFromTheWest(void) {
+  IzumoInteriors_RecognizeTheHeroes(1);
+}
 
 /// The scene that opens with MsgWarriorsAppearedFrom: the warriors confront
 /// the party in front of persons 20, 21 and 22 through three yes-or-no
-/// answers, then persons 5, 6, 7 and 23 join the leader and flags 0x928 and
-/// 0x350 are set. Mode 0 and mode 1 (Func_02000604 and Func_02000610) start
-/// the party at different spots.
-void Func_0200061c(s32 mode) {
+/// answers, then persons 5, 6, 7 and 23 join the leader and flags
+/// FLAG_IZUMO_RECOGNIZED_THE_HEROES and 0x350 are set. Mode 0 and mode 1
+/// (IzumoInteriors_HeroesComeFromTheEast and
+/// IzumoInteriors_HeroesComeFromTheWest) start the party at different spots.
+void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   struct Actor *person, *leader;
   s32 party, owner, answer, message;
 
@@ -968,7 +974,7 @@ void Func_0200061c(s32 mode) {
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(23);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
-  GameFlag_SetBit(0x928);
+  GameFlag_SetBit(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
   GameFlag_SetBit(0x350);
   Event_End();
 }
@@ -987,7 +993,7 @@ void Func_02001d8c(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-void Func_02001dd0(void) {
+void IzumoInteriors_GiveUzumeTheDoll(void) {
   s32 t9, t21, t31;
 
   Event_Start();
@@ -1061,7 +1067,7 @@ L_02009e48:
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
-  GameFlag_SetBit(0x92c);
+  GameFlag_SetBit(FLAG_UZUME_HAS_THE_DOLL);
   PartyInventory_Remove(0x1c3);
   Event_End();
 }
@@ -1070,7 +1076,8 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(0x350);
-  if (GameFlag_Test(0x927) && !GameFlag_Test(0x928) &&
+  if (GameFlag_Test(FLAG_SERPENT_SLAIN) &&
+      !GameFlag_Test(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
     Event_PlaySound(7);
     Actor_SetPosition(22, 0x900000, 0x2380000);
@@ -1080,7 +1087,8 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(18, 0, 0);
     Actor_SetPosition(19, 0, 0);
   }
-  if (GameFlag_Test(0x927) && GameFlag_Test(0x928) &&
+  if (GameFlag_Test(FLAG_SERPENT_SLAIN) &&
+      GameFlag_Test(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7 && GameFlag_Test(0x350)) {
     Event_PlaySound(7);
     Actor_SetPosition(16, 0, 0);
@@ -1088,11 +1096,11 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(18, 0, 0);
     Actor_SetPosition(19, 0, 0);
   }
-  if (gMainRoutineWork.entrance == 5 && !GameFlag_Test(0x927)) {
+  if (gMainRoutineWork.entrance == 5 && !GameFlag_Test(FLAG_SERPENT_SLAIN)) {
     Actor_SetAnimation(17, 5);
     Actor_SetAttachedEffect(17, 0x101);
   }
-  if (gMainRoutineWork.entrance == 7 && !GameFlag_Test(0x927)) {
+  if (gMainRoutineWork.entrance == 7 && !GameFlag_Test(FLAG_SERPENT_SLAIN)) {
     struct Actor *object;
 
     Actor_SetAnimation(9, 5);
@@ -1215,7 +1223,7 @@ u32 gSceneExits[] = {
 };
 
 // clang-format off
-struct ActorPlacement gData_02002b40[] = {
+struct ActorPlacement gIzumoInteriors_ActorPlacements[] = {
     {120, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(120), FACING_SOUTHEAST, 1, 0},
     {120, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(152), FACING_NORTHWEST, 1, 0},
     {120, CONDITION_ALWAYS, 2, PIXELS(88), 0, PIXELS(88), FACING_EAST, 1, 0},
@@ -1238,7 +1246,7 @@ struct ActorPlacement gData_02002b40[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02002cf0[] = {
+struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[] = {
     {30, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(520), FACING_SOUTH, 1, 0},
     {120, CONDITION_ALWAYS, (s32)gData_02002324, PIXELS(136), 0, PIXELS(624), FACING_EAST, 1, 0},
     {120, CONDITION_ALWAYS, (s32)gData_020024f0, PIXELS(152), 0, PIXELS(624), FACING_WEST, 1, 0},
@@ -1249,7 +1257,7 @@ struct ActorPlacement gData_02002cf0[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02002d80[] = {
+struct ActorPlacement gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain[] = {
     {121, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(362), FACING_SOUTH, 1, 0},
     {118, CONDITION_ALWAYS, 1, PIXELS(108), 0, PIXELS(320), FACING_SOUTHEAST, 1, 0},
     {119, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 1, 0},
@@ -1274,7 +1282,7 @@ struct ActorPlacement gData_02002d80[] = {
 };
 // clang-format on
 
-struct Trigger gData_02002f78[] = {
+struct Trigger gIzumoInteriors_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1282,7 +1290,7 @@ struct Trigger gData_02002f78[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_0200051c)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(IzumoInteriors_KushinadaPleads)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOkuniKushinadaAnd)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgIfLadyUzume)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIMSoRelieved)},
@@ -1292,11 +1300,11 @@ struct Trigger gData_02002f78[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgICanTFind)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIAmOld)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTheSerpentCan)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000220)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(IzumoInteriors_TalkToMerchant)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgOneDayKushinada)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_020001a8)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(IzumoInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgIfIWere)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_0200012c)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(IzumoInteriors_TalkToHealer)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgSniffHowCould)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgWhenIGet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
@@ -1334,7 +1342,7 @@ struct Trigger gData_02002f78[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02003164[] = {
+struct Trigger gIzumoInteriors_SusasHouseTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1342,13 +1350,13 @@ struct Trigger gData_02003164[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000298)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(IzumoInteriors_AskAfterSusa)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgThereSNoPoint)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAttacked)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAte)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTheSerpentLives)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     EVENT(Func_02000358)},
+     EVENT(IzumoInteriors_ReadPrayerForSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgOkuniSSuch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
@@ -1360,7 +1368,7 @@ struct Trigger gData_02003164[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200323c[] = {
+struct Trigger gIzumoInteriors_TriggersOnceTheSerpentIsSlain[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1368,17 +1376,20 @@ struct Trigger gData_0200323c[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_STEP, 22, 0x928, EVENT(Func_02000604)},
-    {TRIGGER_STEP, 23, 0x928, EVENT(Func_02000610)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000220)},
+    {TRIGGER_STEP, 22, FLAG_IZUMO_RECOGNIZED_THE_HEROES,
+     EVENT(IzumoInteriors_HeroesComeFromTheEast)},
+    {TRIGGER_STEP, 23, FLAG_IZUMO_RECOGNIZED_THE_HEROES,
+     EVENT(IzumoInteriors_HeroesComeFromTheWest)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(IzumoInteriors_TalkToMerchant)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMyGoodsAre)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020001a8)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(IzumoInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAsLadyUzume)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_0200012c)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(IzumoInteriors_TalkToHealer)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNowThatTheSerpent)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouReA)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000378)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000400)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IzumoInteriors_TalkToUzume)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+     EVENT(IzumoInteriors_AskAboutMtMikage)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgSupposedlyTheDoll)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeHas)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeSNew)},
@@ -1399,7 +1410,7 @@ struct Trigger gData_0200323c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgThatDragonWanted)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1039, CONDITION_ALWAYS,
-     EVENT(Func_02000458)},
+     EVENT(IzumoInteriors_ReadUzumesMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgWhyDoesLadyUzume)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
@@ -1412,6 +1423,7 @@ struct Trigger gData_0200323c[] = {
      MSGNO(MsgIfSDescendants)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgIMNo)},
-    {0x1c314, 15, 0x92c, EVENT(Func_02001dd0)},
+    {0x1c314, 15, FLAG_UZUME_HAS_THE_DOLL,
+     EVENT(IzumoInteriors_GiveUzumeTheDoll)},
     {TRIGGERS_END},
 };

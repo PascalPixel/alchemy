@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x681, in ROM order.
 
 #include "types.h"
+#include "flags.h"
 #include "system.h"
 #include "actor.h"
 #include "system/io_reg.h"
@@ -383,16 +384,16 @@ void Func_02001d14(void) {
   Func_02004e64__s15d0();
 }
 
-// Leaving Gaia Rock: after flag 0x927 a message; otherwise sets the next
-// destinations (scene 0xb1, entrance 10, and 11 or 12 by the item 0x1c3 and
-// the four flags 0x9bc to 0x9bf) and leaves. The destination setters take s32:
-// as u16 the scene symbol loads through ldrh and the pools break up.
+// Leaving Gaia Rock: after FLAG_SERPENT_SLAIN a message; otherwise sets the
+// next destinations (scene 0xb1, entrance 10, and 11 or 12 by the item 0x1c3
+// and the four flags 0x9bc to 0x9bf) and leaves. The destination setters take
+// s32: as u16 the scene symbol loads through ldrh and the pools break up.
 #include "text/msg_ids.h"
 
 void Func_02001ebc(void) {
   s32 count;
 
-  if (Event_GetFlag(0x927)) {
+  if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
     Message_ShowCentered((s32)MsgGaiaRockInside08, 1);
   } else {
     s32 a = Event_GetFlag(0x9bc);

@@ -11,6 +11,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
@@ -213,7 +214,7 @@ void Func_02000314(void) {
 }
 
 void Func_02000378(void) {
-  if (Event_GetFlag(0x927)) {
+  if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId(MsgYouReGoing);
@@ -450,7 +451,7 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
       }
     }
-    if (GameFlag_Test(0x927) && !GameFlag_Test(0x9ab)) {
+    if (GameFlag_Test(FLAG_SERPENT_SLAIN) && !GameFlag_Test(0x9ab)) {
       Actor_SetPosition(20, 0x31e0000, 0x3200000);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);

@@ -68,4 +68,20 @@
 /// (MsgAlhafraInteriors120)
 #define FLAG_ISAAC_CLEARED_CROSSBONE_ISLE 0x823
 
+/// Set as the Great Serpent of Mikage is slain in Gaia Rock; Izumo then
+/// celebrates and takes its tables for after.
+/// ★ Named from the game: "After the serpent's roar, these warriors appeared."
+/// (MsgWarriorsAppearedFrom)
+#define FLAG_SERPENT_SLAIN 0x927
+/// Set once Izumo has recognized the party as the warriors who slew the
+/// serpent (IzumoInteriors_RecognizeTheHeroes).
+/// ★ Named from the game: "So, it wasn't Susa who defeated the serpent, but
+/// those heroes..." (MsgWarriorsAppearedFrom)
+#define FLAG_IZUMO_RECOGNIZED_THE_HEROES 0x928
+/// Set once the party has given Lady Uzume the dancing doll of Mt. Mikage
+/// (IzumoInteriors_GiveUzumeTheDoll).
+/// ★ Named from the game: "With this dancing doll, I can explore Mt. Mikage
+/// on my own." (MsgWithThisDancing)
+#define FLAG_UZUME_HAS_THE_DOLL 0x92c
+
 #endif

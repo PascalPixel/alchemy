@@ -278,8 +278,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       *slot = VramCache_FindFreeEntry();
     left = win->x;
     attr->x = (left + (column + *(u16 *)&win->width)) * 8 + 4;
+    // UB: row is written twice without a sequence point.
 #ifdef UBFIX
-    // As above, the original writes row twice without a sequence point.
     row = (u8)win->height + 254;
     row = (u8)win->y + row;
 #else

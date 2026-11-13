@@ -21,8 +21,7 @@ void Weather_UpdateRain(void) {
 
     if (--particle->timer == 0xffff)
       continue;
-    // BUG: freezing a timer of 16 indexes past the 16-frame table. Which
-    // frame should be held is not established, so keep the original timing.
+    // BUG: freezing a timer of 16 indexes past the 16-frame table.
     if (GameFlag_GetFar(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[5 * particle->timer];

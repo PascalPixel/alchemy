@@ -292,7 +292,6 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     sprite->firstEntry->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
-  // Preserve the original partial-pair behavior until recovery is established.
   actors[0]->update = FieldEffect_UpdateDescendingParticleNegativeArc;
   ((struct DescendingArcSprite *)actors[0]->sprite)->attr.byte.priority = 0;
   actors[1]->update = FieldEffect_UpdateDescendingParticlePositiveArc;

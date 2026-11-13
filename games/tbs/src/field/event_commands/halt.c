@@ -9,8 +9,6 @@
 /// round 8 pixels above the Psynergy's position on screen, and is freed on
 /// arrival.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
-  // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
-  // transition on arrival.
   struct FieldEffectWork *effectWork;
   struct Vector3 pos;
   s8 *statePointer;

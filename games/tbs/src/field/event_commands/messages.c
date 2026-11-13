@@ -458,7 +458,8 @@ void Message_SetVoiceFromActor(s32 actorId) {
   u8 rate;
   s32 voice;
 
-  // Keep the original signed stores; the corresponding u16 alias is legal.
+  /* FAKEMATCH(type): the u16 fields stored through s16 pointers; as plain
+   * stores, 5 of 37 instructions differ in tbs-en. */
   if (actorId == 0x80000000) {
     *(s16 *)&state->voiceSound = (rate = 0);
     *(s16 *)&state->voiceCountdown = rate;

@@ -118,7 +118,6 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
   }
   // Arc B in front of everything, arc A at the caster's priority.
   // BUG: allocation failures above leave a missing arc or sprite here.
-  // The original does not define a partial-pair recovery path.
   arcs[0]->update = FieldEffect_UpdateScaledArcActorB;
   arcs[0]->sprite->image.priority = 0;
   arcs[1]->update = FieldEffect_UpdateScaledArcActorA;

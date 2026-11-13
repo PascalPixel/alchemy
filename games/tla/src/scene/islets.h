@@ -6,6 +6,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "scene_tables.h"
 #include "input.h"
 #include "text/msg_ids.h"
 #include "frame.h"
@@ -28,12 +29,12 @@ void Func_02001cac(void);
 void Func_02001cfc(void);
 
 extern const u8 gSmokeScript[];
-extern const u8 gData_02004b14[];
-extern const u8 gData_02004b20[];
-extern const u8 gData_02004bb0[];
-extern const u8 gData_02004ca0[];
-extern const u8 gData_02004d84[];
-extern const u8 gData_02004e5c[];
+extern struct Trigger gData_02004b14[];
+extern struct Trigger gData_02004b20[];
+extern struct Trigger gData_02004bb0[];
+extern struct Trigger gData_02004ca0[];
+extern struct Trigger gData_02004d84[];
+extern struct Trigger gData_02004e5c[];
 extern u16 gSceneState[];
 extern char SceneId_Ov674Room1;
 extern char SceneId_Ov674Room2;
@@ -70,12 +71,12 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-extern u8 gData_02004754[];
-extern u8 gData_0200476c[];
-extern u8 gData_020047e4[];
-extern u8 gData_0200494c[];
-extern u8 gData_020049c4[];
-extern u8 gData_02004a84[];
+extern struct ActorPlacement gData_02004754[];
+extern struct ActorPlacement gData_0200476c[];
+extern struct ActorPlacement gData_020047e4[];
+extern struct ActorPlacement gData_0200494c[];
+extern struct ActorPlacement gData_020049c4[];
+extern struct ActorPlacement gData_02004a84[];
 extern s32 gData_02005190;
 extern s32 gData_02005194;
 extern s32 gData_02005198;

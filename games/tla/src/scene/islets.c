@@ -26,7 +26,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "event_inline.h"
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
@@ -39,7 +39,7 @@ u8 *Scene_GetPlacements(void) {
     return gData_020049c4;
   if (scene == (s32)&SceneId_Ov674Room5) {
     if (Event_GetFlag(0xaa5))
-      gData_02004a84[46] = 1;
+      gData_02004a84[1].talkFacing = 1;
     return gData_02004a84;
   }
   return gData_02004754;
@@ -70,7 +70,7 @@ void Func_020000d8(void) {
   }
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)

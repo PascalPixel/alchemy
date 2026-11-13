@@ -15,16 +15,15 @@
 void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
                             s32 segments, s32 finishX, s32 finishZ,
                             s32 finishItemActorIdA, s32 finishItemActorIdB) {
-
   struct ColossoRaceWork *work;
   struct Actor *player;
   struct Actor *opponent;
-  s32 handle;
-  s32 pal;
+  void *graphics;
+  s32 vramSlot;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
                              sizeof(struct ColossoRaceWork));
-  handle = (s32)Heap_AllocEwram(512);
+  graphics = Heap_AllocEwram(512);
 
   work->gauge.playerActorId = playerActorId;
   work->gauge.opponentActorId = opponentActorId;
@@ -34,8 +33,8 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
   work->gauge.finishX = finishX;
   work->gauge.finishZ = finishZ;
 
-  player = Actor_GetById(playerActorId);
-  opponent = Actor_GetById(opponentActorId);
+  player = Actor_Get(playerActorId);
+  opponent = Actor_Get(opponentActorId);
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     opponent->x.fixed = (finishX << 1) - player->x.fixed;
@@ -45,22 +44,21 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
   work->gauge.level = 0;
   work->gauge.hold = 0;
 
-  FieldDecompress_TaggedLz(gColosso_GaugeGraphics, (void *)handle);
+  FieldDecompress_TaggedLz(gColosso_GaugeGraphics, graphics);
+  vramSlot = VramCache_FindFreeEntry();
+  work->gauge.vramBlock = vramSlot;
+  VramCache_Load((s16)vramSlot, 512, graphics);
 
-  pal = VramCache_FindFreeEntry();
-  work->gauge.vramBlock = pal;
-  VramCache_Load((s16)pal, 512, (const void *)handle);
-
-  // The native object stores this local Thumb symbol with an even value and
-  // adds the state bit here. Modern GCC already includes that bit in a
-  // function pointer; adding one would turn it into an ARM-state address.
+  // UB: the Thumb bit is added to the routine's address by hand; where the
+  // address already carries it, as a current compiler gives it, this makes an
+  // ARM address.
 #ifdef UBFIX
   Task_AddFrame(Colosso_DrawGauge, TASK_PASS_FRAME - 10);
 #else
   Task_AddFrame((TaskFunc)((s32)Colosso_DrawGauge + 1), TASK_PASS_FRAME - 10);
 #endif
 
-  Heap_Release((void *)handle);
+  Heap_Release(graphics);
 }
 
 /// Decodes the opponent's recorded path (resource) after the gauge's work and,

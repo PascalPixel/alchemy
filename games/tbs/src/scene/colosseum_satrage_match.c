@@ -1099,9 +1099,9 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   // The race, the friends' turns, the tour, and the battle's result.
   switch (gMainRoutineWork.entrance) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
-    Scene_BuildDescriptorAndInstallTask(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 5,
-                                        px(104), px(256), ACTOR_PRIZE_A,
-                                        ACTOR_PRIZE_B);
+    ColosseumSatrageMatch_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 5,
+                                         px(104), px(256), ACTOR_PRIZE_A,
+                                         ACTOR_PRIZE_B);
     MapGrid_CopyCellsLayered(127, 0, 1, 2, 79, 6);
     Actor_ReleaseById(ACTOR_GUIDE);
     Actor_ReleaseById(ACTOR_MINI_MAZE_ATTENDANT);
@@ -1552,11 +1552,12 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
 
 #include "shared/colosso_path_opponent.h"
 
-/// Allocates the race work, records both warriors and installs the gauge
-/// task.
-void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
-                                         s32 segments, s32 finishX, s32 finishZ,
-                                         s32 firstItem, s32 secondItem) {
+/// Colosseum Final 2's own copy of Colosso_StartRaceGauge
+/// (shared/colosso_setup.h), which passes the gauge routine's address as it is.
+void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
+                                          s32 segments, s32 finishX,
+                                          s32 finishZ, s32 firstItem,
+                                          s32 secondItem) {
   struct ColossoRaceWork *work;
   struct Actor *leader;
   struct Actor *opponent;
@@ -1578,8 +1579,8 @@ void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
   leader = Actor_Get(leaderId);
   opponent = Actor_Get(opponentId);
 
-  // Mirror the recorded opponent start when this is a fresh arrival at the
-  // race.
+  // Unless the party returns to where it stood, the opponent starts level
+  // with the leader, as far on the other side of the finish.
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     opponent->x.fixed = (finishX << 1) - leader->x.fixed;
     opponent->z.fixed = leader->z.fixed;
@@ -1588,8 +1589,6 @@ void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
   work->gauge.level = 0;
   work->gauge.hold = 0;
 
-  // Upload the gauge graphics and keep only its VRAM slot after freeing
-  // scratch.
   FieldDecompress_TaggedLz(gColosso_GaugeGraphics, graphics);
 
   vramSlot = VramCache_FindFreeEntry();

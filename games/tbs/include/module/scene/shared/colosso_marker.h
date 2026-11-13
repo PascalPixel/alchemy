@@ -3,7 +3,8 @@
 
 #include "types.h"
 
-// Native calls precede these definitions.
+// UB: the scenes call these before their definitions with no prototype, as
+// functions returning int.
 #ifdef UBFIX
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z);
 void Colosso_ShowPointer(u32 x, u32 y, u32 style);

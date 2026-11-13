@@ -1062,6 +1062,17 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
 /// The north one is two cells above the south one.
 enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 
+/// The door switch pipe's stops along its row, in cells: at the first two it
+/// opens the north or the south stone door, at the third it shuts them all,
+/// and anywhere else, as at the last, it opens the west one.
+#define DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN 47
+#define DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN 48
+#define DOOR_SWITCH_PIPE_SHUT_COLUMN 53
+#define DOOR_SWITCH_PIPE_WEST_DOOR_COLUMN 54
+/// The door room pipe's row once it has been pushed
+/// (FLAG_DOOR_ROOM_PIPE_PUSHED).
+#define DOOR_ROOM_PIPE_PUSHED_ROW 38
+
 /// Chooses the random speed component used by stone-door particles.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
   // Sharing a centered-velocity helper with other sprays shrinks the fountain
@@ -1259,7 +1270,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
     switch (probe.actorSlot) {
     case ACTOR_DOOR_ROOM_PIPE:
       Actor_MoveAndRedraw(probe);
-      if (probe.position.z >> 20 == 38)
+      if (probe.position.z >> 20 == DOOR_ROOM_PIPE_PUSHED_ROW)
         GameFlag_Set(FLAG_DOOR_ROOM_PIPE_PUSHED);
       else
         GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
@@ -1269,18 +1280,18 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
       startColumn = Actor_Get(ACTOR_DOOR_SWITCH_PIPE)->x.fixed >> 20;
       Actor_MoveAndRedraw(probe);
       destinationColumn = probe.position.x >> 20;
-      if (destinationColumn == 47) {
+      if (destinationColumn == DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN) {
         GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
-        if (startColumn == 54)
+        if (startColumn == DOOR_SWITCH_PIPE_WEST_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
-        else if (startColumn == 48)
+        else if (startColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         Event_Wait(60);
-      } else if (destinationColumn == 48) {
+      } else if (destinationColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN) {
         GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
@@ -1321,7 +1332,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
           Event_Wait(60);
         }
-      } else if (destinationColumn == 53) {
+      } else if (destinationColumn == DOOR_SWITCH_PIPE_SHUT_COLUMN) {
         GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
@@ -1333,9 +1344,9 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
-        if (startColumn == 47)
+        if (startColumn == DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
-        else if (startColumn == 48)
+        else if (startColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
         Event_Wait(60);

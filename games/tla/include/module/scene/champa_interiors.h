@@ -5,12 +5,13 @@
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
 #include "types.h"
+#include "scene_tables.h"
 
-extern u32 gData_02000228[];
-extern u32 gData_020003a8[];
-extern s32 gData_020003d8[];
-extern s32 gData_020005ac[];
-extern s32 gData_02000780[];
+extern struct ActorPlacement gData_02000228[];
+extern struct ActorPlacement gData_020003a8[];
+extern struct Trigger gData_020003d8[];
+extern struct Trigger gData_020005ac[];
+extern struct Trigger gData_02000780[];
 
 void Scene_FadeInAndClearFlag(void);
 

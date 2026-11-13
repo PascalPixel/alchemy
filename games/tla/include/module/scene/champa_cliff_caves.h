@@ -5,18 +5,19 @@
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
 #include "types.h"
+#include "scene_tables.h"
 
-extern u32 gData_0200375c[];
-extern u32 gData_020037a4[];
-extern u32 gData_020038ac[];
-extern u32 gData_0200390c[];
-extern u32 gData_02003984[];
-extern u32 gData_02003aec[];
-extern u32 gData_02003b94[];
-extern u32 gData_02003c0c[];
-extern s32 gData_02003e7c[];
-extern s32 gData_02003ffc[];
-extern s32 gData_02004104[];
+extern struct ActorPlacement gData_0200375c[];
+extern struct ActorPlacement gData_020037a4[];
+extern struct ActorPlacement gData_020038ac[];
+extern struct ActorPlacement gData_0200390c[];
+extern struct ActorPlacement gData_02003984[];
+extern struct ActorPlacement gData_02003aec[];
+extern struct ActorPlacement gData_02003b94[];
+extern struct ActorPlacement gData_02003c0c[];
+extern struct Trigger gData_02003e7c[];
+extern struct Trigger gData_02003ffc[];
+extern struct Trigger gData_02004104[];
 
 void Func_02001774(void);
 void Func_02001868(void);

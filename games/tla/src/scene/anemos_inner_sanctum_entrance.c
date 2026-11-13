@@ -35,10 +35,10 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
 
-extern const u8 gData_020019dc[];
-extern const u8 gData_020019f4[];
+extern struct ActorPlacement gData_020019dc[];
+extern struct ActorPlacement gData_020019f4[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
     return gData_020019f4;
   return gData_020019dc;
@@ -235,10 +235,10 @@ land:
 
 void Func_02000710(void) {}
 
-extern const u8 gData_02001c1c[];
-extern const u8 gData_02001c28[];
+extern struct Trigger gData_02001c1c[];
+extern struct Trigger gData_02001c28[];
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
     return gData_02001c28;
   return gData_02001c1c;

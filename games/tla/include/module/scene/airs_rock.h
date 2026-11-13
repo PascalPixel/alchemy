@@ -5,6 +5,7 @@
 /// What The Lost Age's code declares for the files that use it, written once.
 
 #include "types.h"
+#include "scene_tables.h"
 
 struct Unk_02000468 {
   u8 unk00[8];
@@ -30,12 +31,12 @@ s32 Func_02000348(u32 layer, s32 x, s32 y);
 
 extern s16 gData_02003e84[];
 extern s16 gData_02003ec4[];
-extern s32 gData_020040ec[];
-extern u32 gData_02004194[];
-extern u32 gData_02004314[];
-extern s32 gData_020043d4[];
-extern s32 gData_020044d0[];
-extern s32 gData_0200459c[];
+extern struct ActorPlacement gData_020040ec[];
+extern struct ActorPlacement gData_02004194[];
+extern struct ActorPlacement gData_02004314[];
+extern struct Trigger gData_020043d4[];
+extern struct Trigger gData_020044d0[];
+extern struct Trigger gData_0200459c[];
 
 void Func_020024b0(void);
 void Func_0200257c(void);

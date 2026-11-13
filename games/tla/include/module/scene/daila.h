@@ -10,10 +10,10 @@
 extern struct SceneEntrance gDailaEntrances[];
 extern s32 gData_02001018[];
 extern s32 gData_02001068[];
-extern s32 gData_020010d0[];
-extern s32 gData_02001238[];
-extern s32 gData_02001490[];
-extern s32 gData_02001664[];
+extern struct ActorPlacement gData_020010d0[];
+extern struct ActorPlacement gData_02001238[];
+extern struct Trigger gData_02001490[];
+extern struct Trigger gData_02001664[];
 extern s16 gData_02000d80[];
 
 void Func_02000d18(void);

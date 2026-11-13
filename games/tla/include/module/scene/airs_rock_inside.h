@@ -5,6 +5,7 @@
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 
 struct Actor;
@@ -39,11 +40,11 @@ union SparkView {
   struct SparkBytes bytes;
 };
 
-extern u32 gData_0200654c[];
-extern u32 gData_02006564[];
-extern u32 gData_0200663c[];
-extern u32 gData_020066b4[];
-extern u32 gData_020068ac[];
+extern struct ActorPlacement gData_0200654c[];
+extern struct ActorPlacement gData_02006564[];
+extern struct ActorPlacement gData_0200663c[];
+extern struct ActorPlacement gData_020066b4[];
+extern struct ActorPlacement gData_020068ac[];
 
 void Func_020026c0(void);
 
@@ -75,16 +76,16 @@ void Func_02004534(void);
 s32 Func_02005ea4();
 s32 Func_02005eac();
 
-extern s32 gData_02006c10[];
-extern s32 gData_02006d6c[];
-extern s32 gData_02006e2c[];
-extern s32 gData_02006eec[];
-extern s32 gData_02006fa0[];
-extern s32 gData_0200706c[];
-extern s32 gData_020070fc[];
-extern s32 gData_02007228[];
-extern s32 gData_02007318[];
-extern s32 gData_020073a8[];
+extern struct Trigger gData_02006c10[];
+extern struct Trigger gData_02006d6c[];
+extern struct Trigger gData_02006e2c[];
+extern struct Trigger gData_02006eec[];
+extern struct Trigger gData_02006fa0[];
+extern struct Trigger gData_0200706c[];
+extern struct Trigger gData_020070fc[];
+extern struct Trigger gData_02007228[];
+extern struct Trigger gData_02007318[];
+extern struct Trigger gData_020073a8[];
 
 void Func_02005ec4(u32 id, s32 mode);
 void Func_02005dd4(void);

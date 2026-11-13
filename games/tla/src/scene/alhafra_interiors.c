@@ -59,20 +59,20 @@ void Event_StartScreenTransition(void);
 
 // ---- this overlay
 
-extern u8 gData_02000cbc[];
+extern struct ActorPlacement gActorPlacements[];
 extern u8 gData_02000f14[];
 extern u8 gData_0200116c[];
-extern u8 gData_020013dc[];
-extern u8 gData_02001730[];
-extern u8 gData_020019dc[];
+extern struct Trigger gData_020013dc[];
+extern struct Trigger gData_02001730[];
+extern struct Trigger gData_020019dc[];
 #include "event_inline.h"
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (Event_GetFlag(0x8a7))
     return gData_0200116c;
   if (Event_GetFlag(0x8ab))
     return gData_02000f14;
-  return gData_02000cbc;
+  return gActorPlacements;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -241,7 +241,7 @@ void Func_020004f4(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8a7))
     return gData_020019dc;
   if (Event_GetFlag(0x8ab))

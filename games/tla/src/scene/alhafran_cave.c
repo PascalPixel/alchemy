@@ -89,9 +89,9 @@ void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer);
 extern s16 gData_02001608[];
 extern const u16 gData_020016e4[];
 extern u8 gData_02001778[];
-extern u8 gData_02001868[];
-extern u8 gData_02001a18[];
-extern u8 gData_02001a90[];
+extern struct ActorPlacement gActorPlacements[];
+extern struct Trigger gData_02001a18[];
+extern struct Trigger gData_02001a90[];
 extern u8 gData_02001be0[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -115,13 +115,13 @@ static __inline__ void Func_02001408_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 #include "version.h"
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)
     return gData_02001778;
   if (scene == (s32)&SceneId_Ov66aRoom2)
-    return gData_02001868;
+    return gActorPlacements;
   return gData_02001778;
 }
 
@@ -175,7 +175,7 @@ void Func_020001d4(void) {
   work->valueD4a = 2;
 }
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)

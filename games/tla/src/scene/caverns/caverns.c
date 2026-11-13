@@ -30,7 +30,7 @@ const s16 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const u32 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room1)
@@ -349,7 +349,7 @@ void Func_0200087c(void) {
   Func_020003f0(0, object->x >> 20, object->z >> 20, value | 128);
 }
 
-const s32 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room1)
@@ -638,146 +638,71 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gData_02001328[] = {
-    0xffff01e9, 7, 0, 0, 0, 0x2c000,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gData_02001328[] = {
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
 };
 
-u32 gData_02001358[] = {
-    0xffff0197, 1, 0x1480000, 0, 0xa80000, 0x2c000,
-    0xffff0197, 1, 0x1180000, 0, 0xa80000, 0x2c000,
-    0xffff0110, 1, 0xd80000, 0, 0xa80000, 0x2c000,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gData_02001358[] = {
+    {407, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(168), FACING_NORTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(168), FACING_NORTH, 2, 0},
+    {272, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(168), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
 };
 
-u32 gData_020013b8[] = {
-    0xffff013b, 1, 0x2180000, 0, 0x2280000, 0x2c000,
-    0xffff013b, 1, 0x2580000, 0, 0x2180000, 0x2c000,
-    0xffff0182, 1, 0x1e80000, 0, 0x2000000, 0x2c000,
-    0xffff0182, 1, 0x2080000, 0, 0x2000000, 0x2c000,
-    0xffff, 0, 0, 0, 0, 0,
-};
-// clang-format on
-
-s32 gData_02001430[] = {
-    1,
-    (s32)0xffff0001,
-    1,
-    0x4602,
-    (s32)0xffff0002,
-    (s32)Func_02000e6c,
-    0x8602,
-    (s32)0xffff0002,
-    (s32)Func_02000e44,
-    0x602,
-    (s32)0xffff0002,
-    (s32)Func_02000e20,
-    0x4602,
-    (s32)0xffff0003,
-    (s32)Func_02000e6c,
-    0x8602,
-    (s32)0xffff0003,
-    (s32)Func_02000e44,
-    0x602,
-    (s32)0xffff0003,
-    (s32)Func_02000e20,
-    0x50008805,
-    0x9af000a,
-    (s32)Func_02000e88,
-    -1,
-    0,
-    0,
+struct ActorPlacement gData_020013b8[] = {
+    {315, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(552), FACING_NORTH, 2, 0},
+    {315, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(536), FACING_NORTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(512), FACING_NORTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(512), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
 };
 
-s32 gData_0200149c[] = {
-    1,
-    (s32)0xffff0001,
-    1,
-    0x602,
-    (s32)0xffff000a,
-    (s32)Func_02000cdc,
-    0x8515,
-    0x2000008,
-    0,
-    0x8c15,
-    (s32)0xffff000a,
-    (s32)Func_02000bf8,
-    -1,
-    0,
-    0,
+struct Trigger gData_02001430[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x4602, 2, CONDITION_ALWAYS, EVENT(Func_02000e6c)},
+    {0x8602, 2, CONDITION_ALWAYS, EVENT(Func_02000e44)},
+    {0x602, 2, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {0x4602, 3, CONDITION_ALWAYS, EVENT(Func_02000e6c)},
+    {0x8602, 3, CONDITION_ALWAYS, EVENT(Func_02000e44)},
+    {0x602, 3, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {0x50008805, 10, 0x9af, EVENT(Func_02000e88)},
+    {TRIGGERS_END},
 };
 
-s32 gData_020014d8[] = {
-    1,
-    (s32)0xffff0005,
-    5,
-    0x50008a05,
-    (s32)0xffff003c,
-    (s32)Func_02000ef4,
-    -1,
-    0,
-    0,
+struct Trigger gData_0200149c[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x602, 10, CONDITION_ALWAYS, EVENT(Func_02000cdc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02000bf8)},
+    {TRIGGERS_END},
 };
 
-s32 gData_020014fc[] = {
-    1,
-    (s32)0xffff0001,
-    1,
-    49,
-    (s32)0xffff0002,
-    2,
-    33,
-    (s32)0xffff0003,
-    3,
-    49,
-    (s32)0xffff0004,
-    4,
-    33,
-    (s32)0xffff0005,
-    5,
-    49,
-    (s32)0xffff0006,
-    6,
-    33,
-    (s32)0xffff0007,
-    7,
-    0xc602,
-    (s32)0xffff0008,
-    (s32)Func_02000fe4,
-    1,
-    (s32)0xffff0009,
-    9,
-    8,
-    0x2120000,
-    (s32)Func_020006a8,
-    9,
-    0x2120000,
-    (s32)Func_0200087c,
-    0x10008c15,
-    0x2120008,
-    (s32)Func_020006a8,
-    0x8c15,
-    0x2120008,
-    (s32)Func_0200087c,
-    0x10008c15,
-    0x2120009,
-    (s32)Func_020006a8,
-    0x8c15,
-    0x2120009,
-    (s32)Func_0200087c,
-    0x10009315,
-    0x2120008,
-    (s32)Func_020006a8,
-    0x9315,
-    0x2120008,
-    (s32)Func_0200087c,
-    0x10009315,
-    0x2120009,
-    (s32)Func_020006a8,
-    0x9315,
-    0x2120009,
-    (s32)Func_0200087c,
-    -1,
-    0,
-    0,
+struct Trigger gData_020014d8[] = {
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {0x50008a05, 60, CONDITION_ALWAYS, EVENT(Func_02000ef4)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_020014fc[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x31, 2, CONDITION_ALWAYS, 2},
+    {0x21, 3, CONDITION_ALWAYS, 3},
+    {0x31, 4, CONDITION_ALWAYS, 4},
+    {0x21, 5, CONDITION_ALWAYS, 5},
+    {0x31, 6, CONDITION_ALWAYS, 6},
+    {0x21, 7, CONDITION_ALWAYS, 7},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02000fe4)},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {0x8, 0, 0x212, EVENT(Func_020006a8)},
+    {0x9, 0, 0x212, EVENT(Func_0200087c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x212, EVENT(Func_020006a8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x212, EVENT(Func_0200087c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 9, 0x212, EVENT(Func_020006a8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x212, EVENT(Func_0200087c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 8, 0x212, EVENT(Func_020006a8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 8, 0x212, EVENT(Func_0200087c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 9, 0x212, EVENT(Func_020006a8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 9, 0x212, EVENT(Func_0200087c)},
+    {TRIGGERS_END},
 };

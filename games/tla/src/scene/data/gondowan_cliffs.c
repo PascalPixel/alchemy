@@ -34,9 +34,9 @@ s16 gData_02001698[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-s32 gData_02001728[] = {
-    -0x10000, 168, 0x40000118, -0x10000, -1, 0xffff,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gData_02001728[] = {
+    {0, CONDITION_ALWAYS, 168, 0x40000118, PIXELS(-1), -0x1, 0xffff, 0, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {

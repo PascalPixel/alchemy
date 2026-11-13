@@ -5,17 +5,18 @@
 /// What The Lost Age's code declares for the files that use it, written once.
 
 #include "types.h"
+#include "scene_tables.h"
 
 extern s32 gData_0200474c[];
-extern s32 gData_02004c88[];
-extern s32 gData_02004d90[];
-extern u32 gData_02005018[];
+extern struct ActorPlacement gData_02004c88[];
+extern struct ActorPlacement gData_02004d90[];
+extern struct ActorPlacement gData_02005018[];
 extern s16 gData_02005228[];
-extern s32 gData_02005318[];
-extern u32 gData_02005390[];
-extern s32 gData_020054ec[];
-extern s32 gData_02005a44[];
-extern s32 gData_02005e70[];
+extern struct ActorPlacement gData_02005318[];
+extern struct ActorPlacement gData_02005390[];
+extern struct Trigger gData_020054ec[];
+extern struct Trigger gData_02005a44[];
+extern struct Trigger gData_02005e70[];
 
 void Contigo_StartSlowPaletteCycle(void);
 

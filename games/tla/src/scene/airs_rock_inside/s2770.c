@@ -1356,7 +1356,7 @@ void Func_02004bb4(void) {
 }
 
 /// The placement table for the current room.
-s32 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov664Room1)

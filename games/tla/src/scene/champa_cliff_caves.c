@@ -90,12 +90,12 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "scene_ids.h"
 
-extern u32 gData_0200381c[];
-extern u32 gData_02003864[];
+extern struct ActorPlacement gData_0200381c[];
+extern struct ActorPlacement gData_02003864[];
 extern u32 gData_020039cc[];
 extern u32 gData_02003c84[];
 
-u32 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene;
 
   if (GameFlag_Test(0x97e)) {
@@ -255,11 +255,11 @@ void Func_020003ec(void) {
                                            PIXELS(664), PIXELS(280));
 }
 
-extern s32 gData_02003d20[];
+extern struct Trigger gData_02003d20[];
 
 void Func_02000464(s32 a) { Func_02003474(a, 326, 0x978); }
 
-s32 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov685Room1)

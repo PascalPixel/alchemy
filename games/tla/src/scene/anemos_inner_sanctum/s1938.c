@@ -147,14 +147,14 @@ void Func_02001b88(void) {
   Event_End();
 }
 
-extern const u8 gData_02003dc0[];
-extern const u8 gData_02003dcc[];
-extern const u8 gData_02003e38[];
-extern const u8 gData_02003fac[];
-extern const u8 gData_02004150[];
-extern const u8 gData_020042c4[];
+extern struct Trigger gData_02003dc0[];
+extern struct Trigger gData_02003dcc[];
+extern struct Trigger gData_02003e38[];
+extern struct Trigger gData_02003fac[];
+extern struct Trigger gData_02004150[];
+extern struct Trigger gData_020042c4[];
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
     return gData_02003dcc;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
@@ -184,7 +184,11 @@ void Func_02001c60(void) {
 
 #include "scene_ids.h"
 
-/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read value as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s1938.c:184: structure has no member named `returnEntrance'. */
+/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, its members read value as returnEntrance, it does not
+ * compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s1938.c:184:
+ * structure has no member named `returnEntrance'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
   s16 value;

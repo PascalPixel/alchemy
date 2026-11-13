@@ -9,10 +9,10 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-extern u32 gData_0200675c[];
-extern u32 gData_020068f4[];
-extern u32 gData_020069e4[];
-extern u32 gData_02006aec[];
+extern struct ActorPlacement gData_0200675c[];
+extern struct ActorPlacement gData_020068f4[];
+extern struct ActorPlacement gData_020069e4[];
+extern struct ActorPlacement gData_02006aec[];
 extern u32 gData_02006bac[];
 
 void Map_EnableUpdateCallback(void);
@@ -1211,7 +1211,7 @@ shrink:
   Event_End();
 }
 
-extern const u8 gData_02006238[];
+extern struct ActorPlacement gData_02006238[];
 extern const u8 gData_02006268[];
 
 const u8 *Scene_GetEntrances(void) {
@@ -1233,7 +1233,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u32 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
     return gData_02006564;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2)

@@ -2,6 +2,7 @@
 #define TLA_CAVERNS_H
 
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "main_routine_work.h"
@@ -29,13 +30,13 @@ extern char SceneId_Ov6a9Room4;
 extern u8 gMapCellBuffer[];
 extern s16 gData_02001220[];
 extern s16 gData_02001264[];
-extern u32 gData_02001328[];
-extern u32 gData_02001358[];
-extern u32 gData_020013b8[];
-extern s32 gData_02001430[];
-extern s32 gData_0200149c[];
-extern s32 gData_020014d8[];
-extern s32 gData_020014fc[];
+extern struct ActorPlacement gData_02001328[];
+extern struct ActorPlacement gData_02001358[];
+extern struct ActorPlacement gData_020013b8[];
+extern struct Trigger gData_02001430[];
+extern struct Trigger gData_0200149c[];
+extern struct Trigger gData_020014d8[];
+extern struct Trigger gData_020014fc[];
 
 void Func_02000454(const s16 *data);
 void Func_02000d10(void);

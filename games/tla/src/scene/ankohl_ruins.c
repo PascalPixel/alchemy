@@ -140,16 +140,16 @@ s32 Func_020005c0(struct Actor *object) {
   return 0;
 }
 
-extern const u8 gData_020032a0[];
-extern const u8 gData_020032b8[];
-extern const u8 gData_020034f8[];
-extern const u8 gData_02003570[];
-extern const u8 gData_020035d0[];
-extern const u8 gData_02003708[];
-extern const u8 gData_02003750[];
-extern const u8 gData_02003768[];
+extern struct ActorPlacement gData_020032a0[];
+extern struct ActorPlacement gData_020032b8[];
+extern struct ActorPlacement gData_020034f8[];
+extern struct ActorPlacement gData_02003570[];
+extern struct ActorPlacement gData_020035d0[];
+extern struct ActorPlacement gData_02003708[];
+extern struct ActorPlacement gData_02003750[];
+extern struct ActorPlacement gData_02003768[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
     return gData_020032b8;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
@@ -1094,14 +1094,14 @@ void Func_020021d4(void) {
   }
 }
 
-extern const u8 gData_02003790[];
-extern const u8 gData_020037b4[];
-extern const u8 gData_02003a78[];
-extern const u8 gData_02003b98[];
-extern const u8 gData_02003c94[];
-extern const u8 gData_02003e38[];
-extern const u8 gData_02003f4c[];
-extern const u8 gData_02004018[];
+extern struct Trigger gData_02003790[];
+extern struct Trigger gData_020037b4[];
+extern struct Trigger gData_02003a78[];
+extern struct Trigger gData_02003b98[];
+extern struct Trigger gData_02003c94[];
+extern struct Trigger gData_02003e38[];
+extern struct Trigger gData_02003f4c[];
+extern struct Trigger gData_02004018[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1145,7 +1145,7 @@ void Func_02002318(void) { GameFlag_SetBit(0x205); }
 
 void Func_02002328(void) { GameFlag_ClearBit(0x205); }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
     return gData_020037b4;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)

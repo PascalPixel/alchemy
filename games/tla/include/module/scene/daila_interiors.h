@@ -5,14 +5,15 @@
 /// What The Lost Age's code declares for the files that use it, written once.
 
 #include "types.h"
+#include "scene_tables.h"
 
 extern s32 gData_020011b8[];
-extern s32 gData_02001204[];
-extern u32 gData_020013fc[];
-extern s32 gData_020014a4[];
-extern s32 gData_02001924[];
-extern s32 gData_02001990[];
-extern s32 gData_02001c18[];
+extern struct ActorPlacement gData_02001204[];
+extern struct ActorPlacement gData_020013fc[];
+extern struct ActorPlacement gData_020014a4[];
+extern struct Trigger gData_02001924[];
+extern struct Trigger gData_02001990[];
+extern struct Trigger gData_02001c18[];
 
 void Sanctum_Run(s32 actor);
 

@@ -31,13 +31,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern const u8 gData_02001e48[];
 extern const u8 gData_02002100[];
 extern const u8 gData_02002358[];
-extern const u8 gData_020025b0[];
+extern struct ActorPlacement gActorPlacements[];
 extern struct DoorStep gData_0200277c[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x8a7)) {
     if (GameFlag_Test(0x90f) == 0)
-      return gData_020025b0;
+      return gActorPlacements;
     return gData_02002358;
   }
   if (GameFlag_Test(0x8ab))
@@ -416,12 +416,12 @@ void Func_02000760(void) {
 void Func_02000774(void) { TreasureSpot_SetPosition(0x40, -1, -1); }
 #undef FIELD_AT
 
-extern const u8 gData_020027f4[];
-extern const u8 gData_02002ad0[];
-extern const u8 gData_02002e48[];
-extern const u8 gData_02003154[];
+extern struct Trigger gData_020027f4[];
+extern struct Trigger gData_02002ad0[];
+extern struct Trigger gData_02002e48[];
+extern struct Trigger gData_02003154[];
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (GameFlag_Test(0x8a7)) {
     if (GameFlag_Test(0x90f) == 0)
       return gData_02003154;

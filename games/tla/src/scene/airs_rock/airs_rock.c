@@ -75,7 +75,7 @@ s16 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
@@ -210,7 +210,7 @@ void Func_02000700(void) {
   Event_NoOp();
 }
 
-s32 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)

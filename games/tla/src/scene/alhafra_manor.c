@@ -23,13 +23,13 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02001708[];
+extern struct ActorPlacement gActorPlacements[];
 extern const u8 gData_02001840[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x8a7))
     return gData_02001840;
-  return gData_02001708;
+  return gActorPlacements;
 }
 
 #include "ram_buffer.h"
@@ -253,8 +253,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#define EVENT_WORD(offset)                                                     \
-  (*(s32 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))
+#define EVENT_WORD(offset) (*(s32 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))
 
 void Func_020015f0(void);
 
@@ -262,14 +261,14 @@ void Func_020015f0(void);
 #define WALK_TO_LEADER(id)                                                     \
   {                                                                            \
     struct Actor *leader_;                                                     \
-    Actor_SetSpeed((id), 0x13333, 0x9999);                    \
+    Actor_SetSpeed((id), 0x13333, 0x9999);                                     \
     Actor_SetModeById((id), 2);                                                \
     leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
     if (leader_ != 0)                                                          \
       Actor_ResetAndSetPosition((id), ((s16 *)&leader_->x)[1],                 \
                                 ((s16 *)&leader_->z)[1]);                      \
     Actor_WaitForMoveById((id));                                               \
-    Actor_SetHorizontalPositionWithTerrain((id), 0, 0);                                                 \
+    Actor_SetHorizontalPositionWithTerrain((id), 0, 0);                        \
   }
 
 /// A long scene in Alhafra's manor (message MsgAlhafraManor29 on): actors 4

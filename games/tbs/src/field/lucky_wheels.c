@@ -67,33 +67,34 @@ s32 LuckyWheels_Start(void) {
 /// Writes count RGB555 colours from src to dst scaled by scale (16.16, Q16_ONE
 /// keeps them). Returns 0.
 s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
-  s32 n;
-  u32 col;
-  u32 r;
-  u32 g;
-  u32 b;
+  s32 remaining;
+  u32 color;
+  u32 red;
+  u32 green;
+  u32 blue;
 
   if (count > 0) {
-    u32 redMask = 0x1f;
-    u32 greenMask = 0x3e0;
-    u32 blueMask = 0x7c00;
-    n = count;
+    u32 redMask = RGB(31, 0, 0);
+    u32 greenMask = RGB(0, 31, 0);
+    u32 blueMask = RGB(0, 0, 31);
+
+    // Each channel is scaled where it stands, and keeps the top 16 bits.
+    remaining = count;
     do {
-      // Scale each channel where it stands and keep the top 16 bits.
-      col = *src;
-      r = col & redMask;
-      g = col & greenMask;
-      b = blueMask & col;
-      r *= scale;
-      g *= scale;
-      b *= scale;
-      col = ((r >> 16) & redMask) | ((g >> 16) & greenMask);
-      col |= (b >> 16) & blueMask;
-      *dst = col;
+      color = *src;
+      red = color & redMask;
+      green = color & greenMask;
+      blue = blueMask & color;
+      red *= scale;
+      green *= scale;
+      blue *= scale;
+      color = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
+      color |= (blue >> 16) & blueMask;
+      *dst = color;
       src++;
       dst++;
-      n--;
-    } while (n != 0);
+      remaining--;
+    } while (remaining != 0);
   }
   return 0;
 }
@@ -210,6 +211,12 @@ void Palette_StepTowardResource(s32 resource) {
   Dma_Set(dst + 1, (void *)&BG_PLTT[1], DMA_COPY_HALFWORDS(63), REG_DMA3);
 }
 
+/// The byte of the canvas's pixel (x, y): its tiles run 32 to a row, 64 bytes
+/// each.
+static __inline__ u32 LuckyWheels_CanvasOffset(u32 x, u32 y) {
+  return ((y / 8 * 32 + x / 8) * 8 + y % 8) * 8 + x % 8;
+}
+
 /// Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32
 /// tiles across), writing only over lower colour numbers.
 void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
@@ -244,8 +251,7 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
     step = (ABS(x1 - x0) << 8) / ABS(y1 - y0);
     x = x0;
     for (i = y0; i != y1; i++) {
-      offset = (((((u32)i >> 3) << 5) + ((u32)x >> 3)) << 3) + (i & 7);
-      offset = (offset << 3) + (x & 7);
+      offset = LuckyWheels_CanvasOffset(x, i);
       if (canvas[offset] < color)
         canvas[offset] = color;
       frac += step;
@@ -277,8 +283,7 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
     step = (ABS(y1 - y0) << 8) / ABS(x1 - x0);
     y = y0;
     for (i = x0; i != x1; i++) {
-      offset = (((((u32)y >> 3) << 5) + ((u32)i >> 3)) << 3) + (y & 7);
-      offset = (offset << 3) + (i & 7);
+      offset = LuckyWheels_CanvasOffset(i, y);
       if (canvas[offset] < color)
         canvas[offset] = color;
       frac += step;
@@ -827,13 +832,13 @@ void LuckyWheels_Update(void) {
 #if (LANGUAGE == LANGUAGE_SPANISH)
       if (i == 0)
         work->oam[sprite].attr01 =
-            (((*(s16 *)((u8 *)&p->x + 2) + 0x1f0) & 0x1ff) << 16) | objMode |
-            ((*(s16 *)((u8 *)&p->y + 2) + 0x108) & 255) | OBJ_SIZE_32X32 |
-            OBJ_HFLIP | OBJ_VFLIP;
+            ((((s16)(p->x >> 16) + 0x1f0) & 0x1ff) << 16) | objMode |
+            (((s16)(p->y >> 16) + 0x108) & 255) | OBJ_SIZE_32X32 | OBJ_HFLIP |
+            OBJ_VFLIP;
       else
 #endif
-        work->oam[sprite].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
-                                   ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) |
+        work->oam[sprite].attr01 = ((s16)(p->x >> 16) << 16) | objMode |
+                                   (((s16)(p->y >> 16) + 256) & 255) |
                                    OBJ_SIZE_32X32;
       work->oam[sprite].attr2 =
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + LUCKY_WHEELS_TITLE_TILES) |

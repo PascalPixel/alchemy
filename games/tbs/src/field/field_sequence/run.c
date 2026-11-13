@@ -404,20 +404,19 @@ done:
 /// work->tile, for Field_ExamineCell), and by FieldMenu_Run's search
 /// entry through Actor_GetTriggerCellAheadOfCurrentFar. Changes nothing.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
-  u8 *workBytes;
-  u8 *gridBytes;
+  struct FieldWork *work;
+  struct MapGridScrollWork *grid;
   struct Actor *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
-  u8 *cells;
   s32 behavior;
   s32 groundHeight;
   s32 result;
 
   result = 0;
   leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  workBytes = *(u8 **)Ram_FieldWork;
-  gridBytes = *(u8 **)Ram_MapGridWork;
+  work = gFieldWork;
+  grid = gMapGridWork[0];
   if (leader != 0) {
     probePosition.vector.x = leader->x.fixed;
     probePosition.vector.y = leader->y.fixed;
@@ -425,18 +424,17 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     Vector_AddPolarOffset(px(16), leader->facing, probePosition.coordinates);
     // World Map cell pictures are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
-    if (((struct FieldWork *)workBytes)->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       cell =
           Ram_CellPictures + ((((probePosition.vector.x / px(32)) & 31) +
                                (((probePosition.vector.z / px(32)) & 31) << 5))
                               << 2);
     } else {
-      // MAPGRID_LAYER_GROUND's cells, MapGridScrollAnimView's layers[0].cells
-      // at 0x130.
-      cells = *(u8 **)(gridBytes + 0x130);
-      cell = cells + (((probePosition.vector.x / px(16)) +
-                       ((probePosition.vector.z / px(16)) << 7))
-                      << 2);
+      // The ground layer's cells.
+      cell = (u8 *)grid->layers[MAPGRID_LAYER_GROUND].cells +
+             (((probePosition.vector.x / px(16)) +
+               ((probePosition.vector.z / px(16)) << 7))
+              << 2);
     }
     behavior = cell[2];
     if (behavior >= CELL_BEHAVIOR_JAR && behavior <= CELL_BEHAVIOR_WELL) {

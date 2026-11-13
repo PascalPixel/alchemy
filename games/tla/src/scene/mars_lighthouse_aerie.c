@@ -58,9 +58,7 @@ void Func_020000e4(struct Actor *object) {
   counter = &object->unk5c[6];
   {
     s32 radius = object->speedLimit + *counter;
-    /* FAKEMATCH(pin): the anchor copied into r1 for its x; as anchor->x read
-     * straight, 2 of 48 instructions differ in tla-en. */
-    register struct Actor *a asm("r1");
+    struct Actor *a;
 
     a = anchor;
     along = a->x + cosine * (radius + 6);

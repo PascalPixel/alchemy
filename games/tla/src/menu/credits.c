@@ -738,10 +738,7 @@ void Func_081a1294(const u8 *source, u8 *destination, s32 position) {
   start = (Data_02007518 >> 19) << 6;
   gScrollTarget = gData_02007520 = position;
   {
-    /* FAKEMATCH(pin): the word's address in r2, where the native loads it;
-     * as a plain pointer with the barrier, 6 of 76 instructions differ in
-     * tla-en. */
-    register volatile s32 *word asm("r2") = &gData_0200751c;
+    volatile s32 *word = &gData_0200751c;
 
     *word = position << 16;
   }

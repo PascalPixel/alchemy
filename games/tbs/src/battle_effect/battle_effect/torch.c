@@ -17,12 +17,8 @@
 /// throughout as BG2's x reference is fed line by line
 /// (BattleEffect_ArmBg2AffineHBlankDma), and fades out over the last 7.
 ///
-/// Opens the canvas layer for the entrance and closes it at the end. Writes
-/// background colours 1 to 63 and keeps their working copy in the first 128
-/// bytes of Ram_MapGridCellBuffer; adds and removes the HBlank DMA
-/// task.
+/// Opens the canvas layer for the entrance and closes it at the end.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
-  void **slots;
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenY;
@@ -46,11 +42,10 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 angle;
   s32 *line;
 
-  slots = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);
-  // The Mars Djinni's long entrance, 84 frames, over the user.
   BattleEffect_RunDjinniEntrance(args, ELEMENT_MARS + DJINNI_ENTRANCE_LONG,
                                  work->args->side, DJINNI_ANCHOR_OVER_USER,
                                  &screenX, &screenY);

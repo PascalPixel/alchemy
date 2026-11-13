@@ -7,9 +7,7 @@
 /// names (Event_Start, Actor_Jump, Event_SetMessageId and the rest), whose
 /// declarations it includes.
 ///
-/// It is a habit of the whole game written once, as declarations and macros,
-/// not a compiler-steering device. event_inline.h's inlines are written over
-/// it. An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
+/// An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
 /// Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0); Event_End();`.
 
 #include "module/field/field_sequence.h"
@@ -25,14 +23,13 @@
 #include "fixed_math.h"
 #include "edition.h"
 #include "types.h"
+#include "heap.h"
 
 #include "static_assert.h"
 
 #include "main_routine_work.h"
 
 // A scene stores into its own const tables: an overlay's data is in RAM.
-// The games' compiler takes the store as written; a current GCC refuses it,
-// so the modern build names the place without its const.
 #ifdef MODERN
 /// The comma expression removes qualifiers without promoting narrow integers.
 #define STORE_CONST(place) (*(__typeof__(((void)0, (place))) *)&(place))
@@ -47,11 +44,9 @@
 extern u8 gSceneLocalState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
-/// Colosso's code reads it under either name, each site as it matched; the
-/// slot's literal is gHeapSlots+236, the same address through another
-/// relocation, so no byte differs. Where only the gauge is read, a struct
-/// ColossoGaugeWork pointer (its first member) compiles as ->gauge does.
-extern u8 *gColossoWork;
+/// Where only the gauge is read, a struct ColossoGaugeWork pointer (its first
+/// member) does as well.
+#define gColossoWork (*(u8 **)&gHeapSlots[HEAP_SLOT_COLOSSO_RACE])
 
 #include "frame.h"
 
@@ -59,10 +54,10 @@ extern u8 *gColossoWork;
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's
 // speaker, as FieldMessage_ShowAtActor reads them.
-#define SPEAKER_PORTRAIT_LEFT 0x1000  ///< the portrait left of the speaker
-#define SPEAKER_PORTRAIT_RIGHT 0x2000 ///< the portrait right of the speaker
-#define SPEAKER_WINDOW_ABOVE 0x4000   ///< the message window above the speaker
-#define SPEAKER_WINDOW_BELOW 0x8000   ///< the message window never above it
+#define SPEAKER_PORTRAIT_LEFT 0x1000
+#define SPEAKER_PORTRAIT_RIGHT 0x2000
+#define SPEAKER_WINDOW_ABOVE 0x4000 ///< the message window above the speaker
+#define SPEAKER_WINDOW_BELOW 0x8000 ///< the message window never above it
 
 /// One step of a cell animation: copy the width by height cells at sourceX,
 /// sourceY over the destination, then wait frames.
@@ -81,13 +76,10 @@ struct MapGridCellAnimation {
   u16 y; ///< destination cell row
 };
 
-// The imports below keep a name of their own, prefixed Import_: the scenes'
-// calls of these routines were compiled against declarations that differ from
-// the routines' own, as the bytes measure. Import_EventSetExitRequest,
-// Import_ActorSetPosition, Import_ActorSetAnimation and
-// Import_RandomNext are called with differing argument counts, so they keep
-// old-style declarations; Event_SetExitRequest also takes a u16 and
-// Random16 returns a u32, where the scenes pass and read an int. Imil's and Sol
+// Import_EventSetExitRequest, Import_ActorSetPosition, Import_ActorSetAnimation
+// and Import_RandomNext are called with differing argument counts, so they keep
+// old-style declarations; Event_SetExitRequest also takes a u16 and Random16
+// returns a u32, where the scenes pass and read an int. Imil's and Sol
 // Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
 // flag, compile only as calls of a void routine (Import_GameFlagSet), where
 // every other scene's match through GameFlag_Set itself, and the scenes pass
@@ -119,8 +111,6 @@ s32 Math_DivideUnsigned(s32 value, s32 divisor);
 /// The remainder of an unsigned division, from the ARM routine in IWRAM that
 /// also serves as __umodsi3 (IwramUnsignedRemainder).
 u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);
-/// Signed division, the compiler's helper for `/`, imported from the ARM
-/// routine in IWRAM (IwramSignedDivide).
 s32 __divsi3(s32 dividend, s32 divisor);
 /// Frees heap slot's block, and with it every later block of the same pool.
 void HeapSlot_Release(s32 slot);
@@ -354,8 +344,9 @@ static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 
 /// A random number from 0 to 65535 for an event.
 static inline s32 Random_Next(void) { return Import_RandomNext(); }
+/// A random whole number from 0 to n - 1, as an event rolls one.
+#define Random_Below(n) ((u32)Random_Next() * (n) >> 16)
 
-/// Signed division written as a call; the `/` compiles to __divsi3.
 static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }

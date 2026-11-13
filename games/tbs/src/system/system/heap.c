@@ -10,8 +10,7 @@
 
 /// Empties the heap: clears the 64 words of gHeapSlots (both pool pointers and
 /// every heap slot) and sets the pools' next addresses to gIwramHeap and
-/// gEwramHeap. Called by System_Initialize, by MainRoutine_Run and by
-/// the debug modes that start over, so every earlier block is forgotten.
+/// gEwramHeap.
 void Heap_Initialize(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 
@@ -169,7 +168,5 @@ void *Heap_AllocEwram(s32 size) {
   return (void *)allocationAddress;
 }
 
-// XXX (no evidence): what it was for; nothing in either game calls it, and The
-// Lost Age's heap code has no empty routine in its place.
-/// Unused: reserved empty memory export; nothing calls it.
+/// Unused: reserved empty memory export.
 UNUSED void Heap_ReservedNoOp(void) {}

@@ -3,15 +3,11 @@
 /// environments.
 
 #include "module/field/map_grid_data.h"
-#include "module/field/field.h"
 #include "field.h"
-#include "types.h"
-#include "fixed_math.h"
 
 /// Ground height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the
-/// arguments it needs. Read by MapGrid_GetTerrainHeight and
-/// MapGrid_CheckCollision (terrain.c).
+/// arguments it needs.
 const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_FLAT] = Terrain_GetFlatHeight,
     [TERRAIN_SLOPE_X] = Terrain_GetSlopeXHeight,
@@ -34,9 +30,8 @@ const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 };
 
 /// World map battle environments (enum BattleEnvironment), indexed by the
-/// collision value plus 16 when the block word's top bit is set, or plus
-/// 32 (whatever that bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. Read only
-/// by WorldMap_GetBattleEnvironment.
+/// collision value plus 16 when the block word's top bit is set, or plus 32
+/// (whatever that bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 // clang-format off
 const u8 gWorldMap_BattleEnvironments[48] = {
     0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,

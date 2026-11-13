@@ -119,11 +119,8 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_DEMON_FIRE,
         .element = ELEMENT_NONE,
     },
-    // ?
     [ITEM_012] = {0},
-    // ?
     [ITEM_013] = {0},
-    // ?
     [ITEM_014] = {0},
     [ITEM_MACHETE] = {
         .price = 30,
@@ -253,11 +250,8 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_RAPID_SMASH,
         .element = ELEMENT_NONE,
     },
-    // ?
     [ITEM_028] = {0},
-    // ?
     [ITEM_029] = {0},
-    // ?
     [ITEM_030] = {0},
     [ITEM_BATTLE_AXE] = {
         .price = 280,
@@ -338,13 +332,9 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_POISON_CLOUD,
         .element = ELEMENT_NONE,
     },
-    // ?
     [ITEM_039] = {0},
-    // ?
     [ITEM_040] = {0},
-    // ?
     [ITEM_041] = {0},
-    // ?
     [ITEM_042] = {0},
     [ITEM_MACE] = {
         .price = 80,
@@ -423,13 +413,9 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashAbility = ABILITY_DEADLY_POISON,
         .element = ELEMENT_NONE,
     },
-    // ?
     [ITEM_051] = {0},
-    // ?
     [ITEM_052] = {0},
-    // ?
     [ITEM_053] = {0},
-    // ?
     [ITEM_054] = {0},
     [ITEM_WOODEN_STICK] = {
         .price = 40,
@@ -546,23 +532,14 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .primaryBonus = 10,
         .element = ELEMENT_NONE,
     },
-    // ?
     [ITEM_066] = {0},
-    // ?
     [ITEM_067] = {0},
-    // ?
     [ITEM_068] = {0},
-    // ?
     [ITEM_069] = {0},
-    // ?
     [ITEM_070] = {0},
-    // ?
     [ITEM_071] = {0},
-    // ?
     [ITEM_072] = {0},
-    // ?
     [ITEM_073] = {0},
-    // ?
     [ITEM_074] = {0},
     [ITEM_LEATHER_ARMOR] = {
         .price = 240,
@@ -673,11 +650,8 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 6}},
     },
-    // ?
     [ITEM_086] = {0},
-    // ?
     [ITEM_087] = {0},
-    // ?
     [ITEM_088] = {0},
     [ITEM_COTTON_SHIRT] = {
         .price = 20,
@@ -784,13 +758,9 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
             {.kind = EQUIP_EFFECT_ADD_JUPITER_RESIST, .amount = 10},
         },
     },
-    // ?
     [ITEM_099] = {0},
-    // ?
     [ITEM_100] = {0},
-    // ?
     [ITEM_101] = {0},
-    // ?
     [ITEM_102] = {0},
     [ITEM_ONE_PIECE_DRESS] = {
         .price = 25,
@@ -901,13 +871,9 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
             {.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 10},
         },
     },
-    // ?
     [ITEM_114] = {0},
-    // ?
     [ITEM_115] = {0},
-    // ?
     [ITEM_116] = {0},
-    // ?
     [ITEM_117] = {0},
     [ITEM_WOODEN_SHIELD] = {
         .price = 40,
@@ -974,9 +940,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .effects = {{.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 20}},
         .abilityId = ABILITY_CURE_WELL,
     },
-    // ?
     [ITEM_125] = {0},
-    // ?
     [ITEM_126] = {0},
     [ITEM_PADDED_GLOVES] = {
         .price = 10,
@@ -1058,7 +1022,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_WARD,
     },
-    // ?
     [ITEM_135] = {0},
     [ITEM_LEATHER_ARMLET] = {
         .price = 180,
@@ -1133,9 +1096,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_GUARD,
     },
-    // ?
     [ITEM_143] = {0},
-    // ?
     [ITEM_144] = {0},
     [ITEM_OPEN_HELM] = {
         .price = 180,
@@ -1208,11 +1169,8 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_SCALE_PP, .amount = 12}},
     },
-    // ?
     [ITEM_153] = {0},
-    // ?
     [ITEM_154] = {0},
-    // ?
     [ITEM_155] = {0},
     [ITEM_LEATHER_CAP] = {
         .price = 30,
@@ -1302,7 +1260,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_LURE}},
     },
-    // ?
     [ITEM_165] = {0},
     [ITEM_CIRCLET] = {
         .price = 120,
@@ -1357,21 +1314,13 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_DELUDE,
     },
-    // ?
     [ITEM_172] = {0},
-    // ?
     [ITEM_173] = {0},
-    // ?
     [ITEM_174] = {0},
-    // ?
     [ITEM_175] = {0},
-    // ?
     [ITEM_176] = {0},
-    // ?
     [ITEM_177] = {0},
-    // ?
     [ITEM_178] = {0},
-    // ?
     [ITEM_179] = {0},
     [ITEM_HERB] = {
         .price = 10,
@@ -1451,7 +1400,6 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_WATER_OF_LIFE,
     },
-    // ?
     [ITEM_190] = {0},
     [ITEM_POWER_BREAD] = {
         .price = 500,
@@ -1501,11 +1449,8 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_LUCKY_PEPPER,
     },
-    // ?
     [ITEM_197] = {0},
-    // ?
     [ITEM_198] = {0},
-    // ?
     [ITEM_199] = {0},
     [ITEM_ORB_OF_FORCE] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1579,29 +1524,17 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_CATCH,
     },
-    // ?
     [ITEM_208] = {0},
-    // ?
     [ITEM_209] = {0},
-    // ?
     [ITEM_210] = {0},
-    // ?
     [ITEM_211] = {0},
-    // ?
     [ITEM_212] = {0},
-    // ?
     [ITEM_213] = {0},
-    // ?
     [ITEM_214] = {0},
-    // ?
     [ITEM_215] = {0},
-    // ?
     [ITEM_216] = {0},
-    // ?
     [ITEM_217] = {0},
-    // ?
     [ITEM_218] = {0},
-    // ?
     [ITEM_219] = {0},
     [ITEM_VENUS_STAR] = {
         .flags = ITEM_INDISPENSABLE,
@@ -1754,15 +1687,10 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 191,
         .element = ELEMENT_NONE,
     },
-    // ?
     [ITEM_245] = {0},
-    // ?
     [ITEM_246] = {0},
-    // ?
     [ITEM_247] = {0},
-    // ?
     [ITEM_248] = {0},
-    // ?
     [ITEM_249] = {0},
     [ITEM_MYTHRIL_SHIRT] = {
         .price = 2900,
@@ -1794,11 +1722,8 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 15}},
     },
-    // ?
     [ITEM_253] = {0},
-    // ?
     [ITEM_254] = {0},
-    // ?
     [ITEM_255] = {0},
     [ITEM_HYPER_BOOTS] = {
         .price = 2400,
@@ -1840,9 +1765,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_SCALE_AGILITY, .amount = 5}},
     },
-    // ?
     [ITEM_260] = {0},
-    // ?
     [ITEM_261] = {0},
     [ITEM_ADEPT_RING] = {
         .price = 3100,

@@ -92,11 +92,9 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 /// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
 /// The target's part runs only when a trigger named the target
-/// (FieldPsynergy_Dispatch clears enabled) and no event set
-/// childMode: it flashes, takes animation 2 with SE_SHIMMER unless childOption
-/// is set, keeps glinting (FieldEffect_UpdateFrostGlint) and runs
-/// the scene's Frost event. Called by FieldPsynergy_Run and
-/// FieldPsynergy_FrostOnTarget.
+/// (FieldPsynergy_Dispatch clears enabled) and no event set childMode: it
+/// flashes, takes animation 2 with SE_SHIMMER unless childOption is set, keeps
+/// glinting (FieldEffect_UpdateFrostGlint) and runs the scene's Frost event.
 void FieldPsynergy_Frost(void) {
   s32 eventTarget;
   struct Vector3 pos;

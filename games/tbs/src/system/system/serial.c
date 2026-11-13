@@ -22,12 +22,10 @@ enum {
   SERIAL_TIMER_RELOAD = 0xc963
 };
 
-/// Resets the serial port into multiplayer mode, installs the serial and
-/// timer 3 interrupt handlers, clears gSerialWork and points its packet
-/// buffers into its storage, clears the bulk transfer state and sets
-/// gSerialExchangeActive, which starts the per-frame exchange. Called by the
-/// Battle Arena, the file list's link transfer and the link test, and through
-/// the far-call table.
+/// Resets the serial port into multiplayer mode, installs the serial and timer
+/// 3 interrupt handlers, clears gSerialWork and points its packet buffers into
+/// its storage, clears the bulk transfer state and sets gSerialExchangeActive,
+/// which starts the per-frame exchange.
 void Serial_Initialize(void) {
   u32 interruptEnable;
   volatile u16 *ime;
@@ -114,8 +112,7 @@ void Serial_DisableTransfer(void) {
 /// Serial_ExchangePayloads). When SIOCNT shows the parent's id with
 /// SIO_MULTI_SD set and SIO_MULTI_SI and SIO_START clear, and no packet is
 /// being sent, this console arms timer 3 to clock the transfers and so acts as
-/// the parent. Called by the Tret tree branch event for its own exchange.
-/// Returns the link status (see Serial_ExchangePayloads).
+/// the parent. Returns the link status (see Serial_ExchangePayloads).
 s32 Serial_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -255,11 +252,10 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
   return result;
 }
 
-/// Builds the packet to send in sendBuffer[0]: [0] the packet number, [1]
-/// the consoles not yet heard from, [2] the checksum and [4] the 24-byte
-/// payload. The checksum is the complement of the sum of the first 28 bytes
-/// as halfwords. Then restarts the send position and the timer. Called by
-/// both exchanges.
+/// Builds the packet to send in sendBuffer[0]: [0] the packet number, [1] the
+/// consoles not yet heard from, [2] the checksum and [4] the 24-byte payload.
+/// The checksum is the complement of the sum of the first 28 bytes as
+/// halfwords. Then restarts the send position and the timer.
 void Serial_PrepareSendPacket(void *payload) {
   struct SerialWork *sr;
   u32 i;
@@ -305,11 +301,10 @@ void Serial_PrepareSendPacket(void *payload) {
     REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
 }
 
-/// Swaps in the packets the interrupt handler finished, then copies the
-/// payload of each one whose checksum is good to `payload` (24 bytes per
-/// console), and records the consoles heard from in currentMask and
-/// receivedMask. Called by both exchanges. Returns the mask of consoles heard
-/// from this frame.
+/// Swaps in the packets the interrupt handler finished, then copies the payload
+/// of each one whose checksum is good to `payload` (24 bytes per console), and
+/// records the consoles heard from in currentMask and receivedMask. Returns the
+/// mask of consoles heard from this frame.
 u8 Serial_CollectReceivedPayloads(void *payload) {
   u8 flags[8];
   s32 i;
@@ -397,7 +392,6 @@ void Serial_HandleTransferInterrupt(void) {
     gSerialWork.sendIndex++;
 
   channel = 0;
-  // Written with goto: as do { } while, tbs-en does not match.
 receive_loop:
   // Hand complete packets to the frame code without overwriting its buffers.
   {
@@ -447,8 +441,7 @@ void Serial_RemoveIrqHandlers(void) {
 }
 
 /// Waits a frame at a time until every status bit in `mask` is set in
-/// gLinkStatus, then returns this console's multiplayer id. Called by the
-/// link test and through the far-call table.
+/// gLinkStatus, then returns this console's multiplayer id.
 u32 Serial_WaitForStatusMask(s32 mask) {
   if ((mask & gLinkStatus) != mask) {
     do {
@@ -459,10 +452,8 @@ u32 Serial_WaitForStatusMask(s32 mask) {
 }
 
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
-/// sets the send source, size and block number that
-/// Serial_StepBlockTransfer works from. Called by the link battle,
-/// the Battle Arena and the file list's transfer. Returns -1 when a send is
-/// already running, 0 otherwise.
+/// sets the send source, size and block number that Serial_StepBlockTransfer
+/// works from. Returns -1 when a send is already running, 0 otherwise.
 ///
 /// `size` must be a multiple of 20: it falls by 20 a block, and the send ends
 /// only when it reaches exactly 0. `source` is read a block each VBlank, and
@@ -485,11 +476,10 @@ s32 Serial_StartSend(void *source, s32 size) {
 }
 
 /// Starts receiving the partner's blocks into `destination`: sets the receive
-/// destination and clears the received size. Called by the same code as
-/// Serial_StartSend. Returns -1 when a receive is already running, 0
-/// otherwise. Each block is stored whole, so `destination` needs room for
-/// the partner's whole send; the receive ends at the partner's last block,
-/// whatever the room.
+/// destination and clears the received size. Returns -1 when a receive is
+/// already running, 0 otherwise. Each block is stored whole, so `destination`
+/// needs room for the partner's whole send; the receive ends at the partner's
+/// last block, whatever the room.
 s32 Serial_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;

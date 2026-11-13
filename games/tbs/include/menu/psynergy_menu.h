@@ -27,7 +27,7 @@ struct PsynergyMenuWork {
   s8 tabCounts[2]; ///< party members each side chooses from
   struct Window *psynergyWindow;
   struct Window *statusWindow;
-  struct Window *shortcutWindow; ///< the L and R shortcuts
+  struct Window *shortcutWindow;
   struct Window *infoWindow;
   struct Window *equipWindow; ///< ItemMenuWork's; not named here
   struct Window *listWindow;

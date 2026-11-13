@@ -24,8 +24,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "edition.h"
-#include "types.h"
 #include "event.h"
 #include "event_inline.h"
 #include "io_reg.h"
@@ -51,53 +49,34 @@
 
 /// The attendant has asked the player to take part. Every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.
-/// ★ Named from the game: "Would you like to apply?" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_SCENE_TEMP_00
 /// The linked partner has asked for a battle. Its signature matches and it
 /// stands asked or in the circle.
-/// ★ Named from the game: "Your opponent has asked for a battle. Do you
-/// accept?" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_PARTNER_ASKED FLAG_SCENE_TEMP_01
 /// The player has agreed to a battle.
-/// ★ Named from the game: "When you finish your preparations, please step into
-/// the circle!" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_PLAYER_AGREED FLAG_SCENE_TEMP_02
 /// The party is on its way into the battle.
-/// ★ Named from the game: "Good luck!" (MsgLobbyGoodLuck)
 #define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_SCENE_TEMP_03
 /// ACTOR_PARTY_ORDER_VISITOR has given the linked finals' limit of three
 /// allies, so the next talk explains how to change the party's order.
-/// ★ Named from the game: "You can change the order of your party in the status
-/// screen." (MsgLobbyChangeOrderParty)
 #define FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT FLAG_SCENE_TEMP_04
 /// The link was lost and the attendant has yet to say so.
-/// ★ Named from the game: "The link was disconnected."
-/// (MsgLobbyLinkDisconnected)
 #define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
 /// character is in the battle party (BattleArena_Initialize).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
 /// The attendant has explained the Battle Arena once. Talking to her again
 /// offers to apply.
-/// ★ Named from the game: "Please speak to me when you want to fight in a
-/// battle." (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED FLAG_AREA_TEMP_00
 /// This console is the link's child (multiplayer id 1), which receives the
 /// parties first.
-/// ★ Named from the game: "Test your skills in Linked Battles and Monster
-/// Battles!" (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_AREA_TEMP_02
 /// The link is up. Both consoles were heard (LOBBY_LINK_READY_MASK).
-/// ★ Named from the game: "Your opponent has arrived!"
-/// (MsgLobbyOpponentArrived)
 #define FLAG_BATTLE_ARENA_LINK_UP FLAG_AREA_TEMP_03
 /// A linked battle has ended since the leader last walked south of z 224, so
 /// the party and the visitors speak of it.
-/// ★ Named from the game: "Battle results were saved."
-/// (MsgLobbyBattleResultsSaved)
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED FLAG_AREA_TEMP_04
 /// The last linked battle was won.
-/// ★ Named from the game: "Yeah! We won!" (MsgLobbyWonToldCountOn)
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_AREA_TEMP_05
 
 // Link transfers use three unit records followed by one recovery-table record.
@@ -145,61 +124,28 @@
 enum BattleArenaActorId {
   /// The attendant, who arranges every battle. ACTOR_GREETER calls her the girl
   /// at the counter.
-  /// ★ Named from the game: "Please speak to me when you want to fight in a
-  /// battle." (MsgLobbyPleaseSpeakWhen)
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED,
   /// Reports the linked battles won, and answers for ACTOR_DEBUG_HELPER.
-  /// ★ Named from the game: "I will tell you your total wins when you finish
-  /// the linked finals." (MsgLobbyTellTotalWins)
   ACTOR_LINKED_WINS_TELLER,
   /// Opens a Sanctum's services (BattleArena_OpenSanctum). The sprite is
   /// SPRITE_MAN_IN_TALL_HAT, the healer of every Sanctum in sanctum.c.
-  /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
-  /// ★ Named from the game: "Welcome to Battle Arena, where people craving
-  /// battle meet!" (MsgFieldWelcomeToBattleArenaWherePeople)
   ACTOR_GREETER,
-  /// ★ Named from the game: "I am a traveling warrior. I came here to become
-  /// stronger..." (MsgLobbyTravelingWarrior)
   ACTOR_TRAVELING_WARRIOR,
-  /// ★ Named from the game: "Up to three allies can fight in Linked Battle
-  /// finals." (MsgLobbyThreeAlliesFight)
   ACTOR_FINALS_VISITOR,
-  /// ★ Named from the game: "Is this the Battle Arena the old man spoke of?"
-  /// (MsgLobbyBattleArenaOld)
   ACTOR_OLD_MANS_ARENA_VISITOR,
   /// Loads a debug parameter set (BattleArena_ChooseDebugParameterSet).
-  /// ★ Named from the game: "Choose your parameters here."
-  /// (MsgLobbyChooseParameters)
   ACTOR_DEBUG_HELPER,
   /// Explains the linked finals' limit of three allies, then the party order.
-  /// ★ Named from the game: "You can change the order of your party in the
-  /// status screen." (MsgLobbyChangeOrderParty)
   ACTOR_PARTY_ORDER_VISITOR,
-  /// ★ Named from the game: "In the linked finals, you can't delay after your
-  /// opponent selects a move." (MsgFieldInTheLinkedFinalsYouCant)
   ACTOR_COMMAND_TIME_VISITOR,
-  /// ★ Named from the game: "To use Summon quickly, Djinn must be on standby."
-  /// (MsgFieldToUseSummonQuicklyDjinnMust)
   ACTOR_SUMMON_VISITOR,
-  /// ★ Named from the game: "Do you put Djinn on standby before a battle, or
-  /// do you set them?" (MsgFieldDoYouPutDjinnOnStandby)
   ACTOR_SET_DJINN_VISITOR,
-  /// ★ Named from the game: "Remove Djinn you rarely use so you can summon
-  /// quickly." (MsgFieldRemoveDjinnYouRarelyUseSo)
   ACTOR_STANDBY_DJINN_VISITOR,
-  /// ★ Named from the game: "Monster Battle rules say you all must fight as a
-  /// team against a monster." (MsgFieldMonsterBattleRulesSayYouAll)
   ACTOR_MONSTER_RULES_VISITOR,
   /// Reports the most Monster Battles won in a row.
-  /// ★ Named from the game: "I'll be counting your victories!"
-  /// (MsgLobbyCantWaitSee)
   ACTOR_MONSTER_WINS_TELLER,
-  /// ★ Named from the game: "All the warriors are impressive, so I get edgy
-  /// before battles begin." (MsgFieldAllTheWarriorsAreImpressiveSo)
   ACTOR_EDGY_VISITOR,
-  /// ★ Named from the game: "I could enter, but I'd just get hurt if I did..."
-  /// (MsgFieldICouldEnterButIdJust)
   ACTOR_WARY_VISITOR
 };
 
@@ -322,9 +268,6 @@ s32 Scene_GetExitRegions(void) { return 0; }
 /// it.
 static s32 BattleArena_InitializeSerial(void) {
   u32 savedIrqState;
-
-  // Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) and no
-  // result.
 
   IRQ_LOCK(savedIrqState);
   Serial_RemoveIrqHandlers();
@@ -555,25 +498,28 @@ static s32 BattleArena_ReportDisconnection(void) {
 static s32 BattleArena_ReceivePartyRecords(void) {
   u16 namePrefix[24];
   u32 size;
-  void *heap;
+  void *buffer;
   s32 result;
   s32 slot;
   s32 timeout;
   s32 tries;
-  u8 *record;
-  s32 transferResult;
+  struct Unit *unit;
+  s32 started;
   s32 prefixLength;
-  s32 nameIndex;
+  s32 i;
 
   size = LOBBY_UNIT_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
+  buffer = Heap_AllocEwram(size);
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   slot = 0;
-  // Three records, each started at next and waited for at testRecord, then
-  // the recovery table at second.
-  goto next;
-waitRecord:
+  // Three records, each started at recordNext and waited for at recordTest,
+  // then the recovery table at recovery. Each receive waits a frame at a time;
+  // more than size bytes is an overrun and fewer once it ends a short record,
+  // and once the timeout has run out, or while the link is not ready, every
+  // frame is a try, failing past LOBBY_TRANSFER_RETRY_LIMIT.
+  goto recordNext;
+recordWait:
   if (gSerialReceivedSize > size) {
     result = -1;
     goto done;
@@ -586,62 +532,62 @@ waitRecord:
       goto done;
     }
   }
-testRecord:
+recordTest:
   if (Serial_GetActiveTransfers() != 0) {
-    goto waitRecord;
+    goto recordWait;
   }
   if (gSerialReceivedSize != size) {
     result = -1;
     goto done;
   }
-  // Unit's side (0x12a): the sender marks a party member 2 and a padding
-  // record 0.
-  if (record[0x12a] != 0) {
+  // The sender marks a party member BATTLE_SIDE_PARTY and a padding record
+  // BATTLE_SIDE_NONE.
+  if (unit->side != BATTLE_SIDE_NONE) {
     result++;
   }
   wait(2);
   // Put the prefix before the name, shifting it right and cutting it to the
   // 14 letters and terminator a Unit name holds.
   FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
-  nameIndex = 0;
-  if (namePrefix[nameIndex] != 0) {
+  i = 0;
+  if (namePrefix[i] != 0) {
     do {
-      nameIndex++;
-      if (nameIndex > LOBBY_PREFIX_LIMIT) {
+      i++;
+      if (i > LOBBY_PREFIX_LIMIT) {
         break;
       }
-    } while (namePrefix[nameIndex] != 0);
+    } while (namePrefix[i] != 0);
   }
   // German, Spanish, French and Italian put a space after the prefix.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  namePrefix[nameIndex] = ' ';
-  prefixLength = nameIndex + 1;
+  namePrefix[i] = ' ';
+  prefixLength = i + 1;
 #else
-  prefixLength = nameIndex;
+  prefixLength = i;
 #endif
-  for (nameIndex = 14; nameIndex >= prefixLength; nameIndex--) {
-    record[nameIndex] = record[nameIndex - prefixLength];
+  for (i = 14; i >= prefixLength; i--) {
+    unit->name[i] = unit->name[i - prefixLength];
   }
-  for (nameIndex = 0; nameIndex < prefixLength; nameIndex++) {
-    record[nameIndex] = namePrefix[nameIndex];
+  for (i = 0; i < prefixLength; i++) {
+    unit->name[i] = namePrefix[i];
   }
-  record[14] = 0;
+  unit->name[14] = 0;
   slot++;
-next:
-  if (slot > 2) {
-    goto second;
+recordNext:
+  if (slot >= LOBBY_UNIT_RECORD_COUNT) {
+    goto recovery;
   }
   // The partner's party members become this battle's enemies 128 to 130.
-  record = (u8 *)Unit_Get(slot + 128);
+  unit = Unit_Get(slot + 128);
   tries = 0;
-  if ((transferResult = Serial_StartReceive(record)) == -1) {
+  if ((started = Serial_StartReceive(unit)) == -1) {
     goto failed;
   }
-  goto testRecord;
-waitRecovery:
-  transferResult = gSerialReceivedSize;
-  if (transferResult > LOBBY_RECOVERY_RECORD_BYTES) {
+  goto recordTest;
+recoveryWait:
+  started = gSerialReceivedSize;
+  if (started > LOBBY_RECOVERY_RECORD_BYTES) {
     result = -1;
     goto done;
   }
@@ -653,9 +599,9 @@ waitRecovery:
       goto done;
     }
   }
-testRecovery:
+recoveryTest:
   if (Serial_GetActiveTransfers() != 0) {
-    goto waitRecovery;
+    goto recoveryWait;
   }
   if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
     result = -1;
@@ -663,19 +609,19 @@ testRecovery:
     wait(2);
   }
   goto done;
-second:
+recovery:
   // Then the recovery table, into the enemy side's (unit 131's record).
-  Heap_Release(heap);
+  Heap_Release(buffer);
   size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
+  buffer = Heap_AllocEwram(size);
   tries = 0;
-  if ((transferResult = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
-    goto testRecovery;
+  if ((started = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
+    goto recoveryTest;
   }
 failed:
-  result = transferResult;
+  result = started;
 done:
-  Heap_Release(heap);
+  Heap_Release(buffer);
   return result;
 }
 
@@ -732,8 +678,8 @@ static s32 BattleArena_SendPartyRecords(void) {
   u8 *slotMap;
   u16 memberIds[8];
   u8 peerSlots[8];
-  s32 transferResult;
-  u8 *heap;
+  s32 started;
+  u8 *buffer;
   s32 memberCount;
   s32 timeout;
   s32 tries;
@@ -744,7 +690,7 @@ static s32 BattleArena_SendPartyRecords(void) {
   struct DjinnRecoveryList *list;
 
   size = LOBBY_UNIT_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
+  buffer = Heap_AllocEwram(size);
   result = 0;
   timeout = LOBBY_SEND_TIMEOUT_FRAMES;
   memberCount = BattleArena_CopyPartyOwnerIds(memberIds);
@@ -752,16 +698,19 @@ static s32 BattleArena_SendPartyRecords(void) {
   for (i = 7; i >= 0; i--) {
     slotMap[i] = 0;
   }
+  // Each send waits a frame at a time to finish. Once the timeout has run out,
+  // or while the link is not ready, every frame is a try, and past
+  // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails.
   for (i = 0; i < memberCount; i++) {
-    Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
-    ((struct Unit *)heap)->side = BATTLE_SIDE_PARTY;
+    Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), size);
+    ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
     // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
     // side.
     slotMap[memberIds[i]] = i - 128;
-    transferResult = Serial_StartSend(heap, size);
+    started = Serial_StartSend(buffer, size);
     tries = 0;
-    if (transferResult == -1) {
-      result = transferResult;
+    if (started == -1) {
+      result = started;
       goto done;
     }
     while (Serial_GetActiveTransfers() != 0) {
@@ -776,8 +725,10 @@ static s32 BattleArena_SendPartyRecords(void) {
     }
     wait(2);
   }
-  goto next;
-wait:
+  // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE):
+  // each pad is started at padNext and waited for at padTest.
+  goto padNext;
+padWait:
   wait(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
@@ -786,36 +737,36 @@ wait:
       goto done;
     }
   }
-test:
+padTest:
   if (Serial_GetActiveTransfers() != 0) {
-    goto wait;
+    goto padWait;
   }
   wait(2);
   i++;
-next:
-  // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE).
-  if (i <= 2) {
-    ((struct Unit *)heap)->side = tries = 0;
-    if ((transferResult = Serial_StartSend(heap, size)) != -1) {
-      goto test;
+padNext:
+  if (i < LOBBY_UNIT_RECORD_COUNT) {
+    ((struct Unit *)buffer)->side = tries = 0;
+    if ((started = Serial_StartSend(buffer, size)) != -1) {
+      goto padTest;
     }
-    result = transferResult;
+    result = started;
     goto done;
   }
-  Heap_Release(heap);
+  Heap_Release(buffer);
+
+  // Then the recovery table.
   size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the recovery table's copy in a once-only block gives the
-   * copy's argument order and keeps the list base's copy first after the call;
-   * as a plain call, 6 of 254 instructions differ in tbs-en. */
+  buffer = Heap_AllocEwram(size);
+  /* FAKEMATCH(dead): the recovery table's copy in a once-only block; as a plain
+   * call, 6 of 254 instructions differ in tbs-en. */
   do {
-    Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
+    Iwram_CopyWords(buffer, Djinn_GetRecoveryTable(0), size);
   } while (0);
   {
     s32 timeout;
     s32 tries;
 
-    list = &((struct DjinnRecoveryTable *)heap)->list;
+    list = &((struct DjinnRecoveryTable *)buffer)->list;
     tries = 0;
     timeout = LOBBY_SEND_TIMEOUT_FRAMES;
     // Give each Djinni on the list its party member's number on the partner's
@@ -830,33 +781,28 @@ next:
         j--;
       }
     }
-    if ((transferResult = Serial_StartSend(heap, size)) == -1) {
-      result = transferResult;
+    if ((started = Serial_StartSend(buffer, size)) == -1) {
+      result = started;
       goto done;
     }
-    goto testOffer;
-  waitOffer:
-    wait(1);
-    if (--timeout < 0 ||
-        (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-      if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-        result = -1;
-        goto done;
+    while (Serial_GetActiveTransfers() != 0) {
+      wait(1);
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+          result = -1;
+          goto done;
+        }
       }
-    }
-  testOffer:
-    if (Serial_GetActiveTransfers() != 0) {
-      goto waitOffer;
     }
     wait(1);
     wait(2);
   }
-  /* FAKEMATCH(dead): the shared exit in a once-only block, so loop.c finds no
-   * barrier at done to move the record loop's two failures to; as a plain
-   * label, 62 of 254 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the shared exit in a once-only block; as a plain label, 62
+   * of 254 instructions differ in tbs-en. */
   do {
   done:
-    Heap_Release(heap);
+    Heap_Release(buffer);
     return result;
   } while (0);
 }
@@ -873,8 +819,8 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   s32 receiveFirst;
 
   result = 0;
-  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it into
-   * r6 ahead of the call; without it, 4 of 62 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it
+   * ahead of the call; without it, 4 of 62 instructions differ in tbs-en. */
   do {
   } while (0);
   receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);
@@ -900,6 +846,7 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   FieldGameFlag_SetByte(FLAG_LINK_PARTY_COUNT, receivedMemberCount);
   result = receivedMemberCount;
 check:
+  // Any failure resets the link; the count received is never negative here.
   if (receivedMemberCount < 0) {
   fail:
     Serial_ResetTransferState();
@@ -1210,9 +1157,7 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
 
   Event_Start();
   Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
-  // FACING_IS_NORTH's test, written out: strictly between northwest and
-  // northeast.
-  if ((facing - 0xa001) <= 0x3ffe) {
+  if (FACING_IS_NORTH(facing)) {
     messageBase = MsgLobbyLooksLikeFirst;
     tally = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*tally != 0) {

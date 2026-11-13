@@ -10,10 +10,8 @@
 #include "../../include/system/io_reg.h"
 
 /// Detaches a note through the jump table entry installed by the driver
-/// (RealClearChain). Called by MPlayMain and ply_note.
+/// (RealClearChain).
 void ClearChain(struct SoundChannel *note) {
-  // Taking the entry address folds its slot into a literal address. Direct
-  // indexing adds an address-adjustment instruction with the library compiler.
   MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
                   *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]))(note);
 }
@@ -158,7 +156,7 @@ void m4aSoundMode(u32 mode) {
 }
 
 /// Unused: silences every PCM and CGB channel with the sound work's ident
-/// raised. Nothing in the game calls it.
+/// raised.
 UNUSED void SoundClear(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   s32 channelCounter;
@@ -214,7 +212,7 @@ void m4aSoundVSyncOff(void) {
 }
 
 /// Restarts both FIFO transfers and takes the 10 m4aSoundVSyncOff added off
-/// the work's ident. Called by SampleFreqSet.
+/// the work's ident.
 void m4aSoundVSyncOn(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 ident = work->ident;
@@ -346,8 +344,7 @@ void m4aMPlayStop(struct MusicPlayerInfo *player) {
 }
 
 /// Advances a due fade step, updating active track volumes, or at the end of a
-/// fade out stops (or pauses) the music player. Called by MPlayMain each tick
-/// through the jump table.
+/// fade out stops (or pauses) the music player.
 void FadeOutBody(struct MusicPlayerInfo *player) {
   s32 tracksRemaining;
   struct MusicPlayerTrack *track;
@@ -398,7 +395,7 @@ void FadeOutBody(struct MusicPlayerInfo *player) {
 }
 
 /// Recalculates dirty stereo volumes and pitch from track settings and
-/// modulation. Called by MPlayMain through the jump table.
+/// modulation.
 void TrkVolPitSet(struct MusicPlayerInfo *player,
                   struct MusicPlayerTrack *track) {
   u32 volume;
@@ -482,7 +479,6 @@ s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
 }
 
 /// Disables one CGB channel using its envelope or wave-control register.
-/// Called by CgbSound, and installed as the work's cgbMute callback.
 void CgbOscOff(u8 channel) {
   switch (channel) {
   case CGB_CHANNEL_SQUARE_1:
@@ -524,11 +520,8 @@ static __inline__ s32 CgbPan(struct CgbChannel *note) {
 
 /// Chooses stereo routing and derives peak and sustain levels for a CGB note,
 /// writing them into `note`: peak is the two levels' sum / 16, at most 15 on
-/// one side; sustainLevel is peak * sustain / 16, rounded up. Called by
-/// CgbSound when a note starts and at each envelope step.
+/// one side; sustainLevel is peak * sustain / 16, rounded up.
 void CgbModVol(struct CgbChannel *note) {
-  // The peak is calculated in each branch, the form the bytes show: with one
-  // shared calculation tbs-en is four bytes shorter.
   if (!CgbPan(note)) {
     note->panBits = 0xFF;
     note->peak = (u32)(note->outRight + note->outLeft) >> 4;
@@ -793,9 +786,6 @@ void CgbSound(void) {
         *triggerRegister = note->trigger | 0x80;
         // CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is
         // set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
-        // XXX (no evidence): why; GBATEK's channel 1 page says nothing of a
-        // second restart, and neither the ROM nor a render shows how the
-        // hardware starts a rising sweep.
         if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }
@@ -806,10 +796,8 @@ void CgbSound(void) {
   }
 }
 
-/// Sets the tempo multiplier (256 the song's own tempo) and updates the
-/// number of ticks advanced per VBlank. Called by the music layer's tempo and
-/// pitch ramp and Sound_SetBgmTempo (sound.c); does nothing while the music
-/// player's ident is raised.
+/// Sets the tempo multiplier (256 the song's own tempo) and updates the number
+/// of ticks advanced per VBlank.
 void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale) {
   if (player->ident == ID_NUMBER) {
     player->ident++;
@@ -820,9 +808,8 @@ void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale) {
 }
 
 /// Sets the volume scale of active tracks selected by the bit mask and marks
-/// their output for recalculation. `volume` runs 0 to 256 (full) and is
-/// kept as volumeScale, a quarter of it. Called by the music layer's volume
-/// ramps and commands (sound.c).
+/// their output for recalculation. `volume` runs 0 to 256 (full) and is kept as
+/// volumeScale, a quarter of it.
 void m4aMPlayVolumeControl(struct MusicPlayerInfo *player, u16 mask,
                            u16 volume) {
   s32 tracksRemaining;
@@ -849,10 +836,9 @@ void m4aMPlayVolumeControl(struct MusicPlayerInfo *player, u16 mask,
   player->ident = ID_NUMBER;
 }
 
-/// Sets the semitone and fractional pitch offsets of selected active tracks
-/// and marks their pitch for recalculation. `pitch` is in 1/256 semitone: its
-/// high byte becomes keyOffsetB and its low byte fine. Called by the music
-/// layer's pitch ramps and commands (sound.c).
+/// Sets the semitone and fractional pitch offsets of selected active tracks and
+/// marks their pitch for recalculation. `pitch` is in 1/256 semitone: its high
+/// byte becomes keyOffsetB and its low byte fine.
 void m4aMPlayPitchControl(struct MusicPlayerInfo *player, u16 mask, s16 pitch) {
   s32 tracksRemaining;
   struct MusicPlayerTrack *track;
@@ -879,8 +865,7 @@ void m4aMPlayPitchControl(struct MusicPlayerInfo *player, u16 mask, s16 pitch) {
   player->ident = ID_NUMBER;
 }
 
-/// Unused: sets the stereo pan offset of selected active tracks. Nothing in the
-/// game calls it.
+/// Unused: sets the stereo pan offset of selected active tracks.
 UNUSED void m4aMPlayPanpotControl(struct MusicPlayerInfo *player, u16 mask,
                                   s8 pan) {
   s32 tracksRemaining;

@@ -152,9 +152,9 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMessage(0, MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 and 1
-       * the ROM's registers; as if (chosen == -1) setting done and useResult,
-       * 12 of 316 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test; as if (chosen
+       * == -1) setting done and useResult, 12 of 316 instructions differ in
+       * tbs-en. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {
@@ -531,7 +531,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       selection = (selection + count) % count;
       Unit_GetFar(menu->memberTable[selection]);
       // The marker over the party member, three tiles a party member. Nothing
-      // in TBS stores sideIcon[1], so it is still NULL from
+      // stores sideIcon[1], so it is still NULL from
       // Window_InitializeWork: these writes go to the BIOS area at address 0,
       // which ignores them, and no marker is drawn.
       marker = menu->sideIcon[1];
@@ -820,23 +820,21 @@ void PsynergyMenu_CloseWindows(void) {
 /// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
 /// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
-  s32 remaining;
+  s32 i;
   struct WindowSprite **icons;
   u16 *p;
   s32 psynergyId;
 
   icons = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
   p = psynergies;
-  remaining = 31;
-  do {
+  for (i = 0; i < 32; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
                                      (u8)(*icons)->index, 0);
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   Menu_HideEmptyEntryIcons(psynergies);
 }
 

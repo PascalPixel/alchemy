@@ -49,17 +49,15 @@ void Actor_SetMovementTypeById(u32 actorId, s32 action) {
 /// (Actor_Stop), about 22 of them.
 void Actor_Stop(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
-  u8 enabled = 1;
 
   if (actor != NULL) {
-    actor->steeringFlags = enabled | actor->steeringFlags;
+    actor->steeringFlags |= 1;
     Actor_StartIdleFar(actor);
   }
 }
 
 /// Makes an actor follow another (the watched actor script): writes its
-/// watchedActor. Called by the Colosso log's event, and by Altmiller
-/// Cave's.
+/// watchedActor.
 void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -232,10 +230,9 @@ void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset) {
   }
 }
 
-/// Places an actor on the leader and sends it walking (xOffset, zOffset)
-/// pixels away at speed 0.6 and acceleration 0.3, through the launch script;
-/// the actor then takes movement type action. Called by the Lemurian ship, Babi
-/// Lighthouse and Lalivero events.
+/// Places an actor on the leader and sends it walking (xOffset, zOffset) pixels
+/// away at speed 0.6 and acceleration 0.3, through the launch script; the actor
+/// then takes movement type action.
 void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -366,8 +363,7 @@ void Actor_SetAnimationById(u32 actorId, s32 animation) {
 }
 
 /// Sets the animation timer steps of each of an actor's sprites
-/// (Sprite_SetAnimationSpeed). Called by the Tolbi ship and
-/// Lamakan Desert events.
+/// (Sprite_SetAnimationSpeed).
 void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -375,10 +371,8 @@ void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
     Actor_SetAnimationSpeedFar(actor, steps);
 }
 
-/// Waits, at most 90 frames, for an actor's animation to change. Only an
-/// actor drawn as a sprite (ACTOR_SPRITE_ONE) is waited for.
-/// Called by Actor_SetAnimationAndWait, a few events and the debug
-/// level screen.
+/// Waits, at most 90 frames, for an actor's animation to change. Only an actor
+/// drawn as a sprite (ACTOR_SPRITE_ONE) is waited for.
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -410,7 +404,7 @@ void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
 }
 
 /// An empty function, reached only through an unnamed veneer in the object
-/// bank's far-call table; nothing in the game names it.
+/// bank's far-call table.
 void Actor_NoOp(void) {}
 
 /// The event command "actor jump": throws the actor upward at
@@ -421,16 +415,16 @@ void Actor_NoOp(void) {}
 /// four element parts) call it too.
 void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   struct Actor *actor;
-  u8 *objectFlags;
+  u8 *flagsByte;
   s32 updatedFlags;
   s32 verticalVelocity;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    objectFlags = &actor->motionFlags;
-    updatedFlags = *objectFlags | ACTOR_FALLS;
+    flagsByte = &actor->motionFlags;
+    updatedFlags = *flagsByte | ACTOR_FALLS;
     verticalVelocity = px(speed);
-    *objectFlags = updatedFlags;
+    *flagsByte = updatedFlags;
     actor->velocityY = verticalVelocity;
     if (speed > 5) {
       Sound_PlayFar(SE_HIGH_JUMP);
@@ -557,7 +551,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
   struct Actor *actor;
-  u8 *objectFlags;
+  u8 *flagsByte;
 
   actor = Actor_GetById(actorId);
   startZ = actor->z.fixed;
@@ -567,12 +561,12 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     wait(10);
 
     // Hop up and forward 12 pixels.
-    objectFlags = &actor->motionFlags;
+    flagsByte = &actor->motionFlags;
     Actor_SelectAnimationFar(actor, ANIM_STAND);
     {
       u8 flags = 2;
-      flags |= *objectFlags;
-      *objectFlags = flags;
+      flags |= *flagsByte;
+      *flagsByte = flags;
     }
     actor->velocityY = px(4);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
@@ -585,7 +579,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     // From here pose counts frames.
     pose = 0;
     Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
-    *objectFlags = 0;
+    *flagsByte = 0;
     do {
       nextY = actor->y.fixed - px(2);
       actor->y.fixed = nextY;
@@ -599,7 +593,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
     // the ground and falling again.
-    *objectFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    *flagsByte = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->velocityY = px(3);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + px(16));
@@ -693,14 +687,14 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
 /// empties its slot, writing NULL to its place in the field work's actor
 /// table. Events reach it (about 14 of them).
 void Actor_ReleaseById(s32 index) {
-  void *object = Actor_Lookup(index);
+  void *released = Actor_Lookup(index);
   struct FieldWork *table = gFieldWork;
 #ifdef UBFIX
   struct Actor *empty = NULL;
 #endif
 
-  if (object != 0) {
-    Actor_ReleaseFar(object);
+  if (released != 0) {
+    Actor_ReleaseFar(released);
 #ifdef UBFIX
     // The getter accepts slots through 191, including non-actor storage.
     // Copy the pointer representation without extending the actor array.
@@ -791,13 +785,11 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
   }
 }
 
-/// Makes an actor watch the actor in the low 8 bits of targetId and
-/// starts script on it. Unless ACTOR_WATCH_KEEP_MOTION is set it takes a
-/// follow distance of 40 pixels (timer 40, read by
-/// Actor_MoveTowardTarget), the target's top speed with twice its
-/// acceleration, to keep up with it, and no collision flags, so it cannot block
-/// the target. Called by Vale's, Bilibin's, Imil's, Kolima's and McCoy's palace
-/// events, among others.
+/// Makes an actor watch the actor in the low 8 bits of targetId and starts
+/// script on it. Unless ACTOR_WATCH_KEEP_MOTION is set it takes a follow
+/// distance of 40 pixels (timer 40, read by Actor_MoveTowardTarget), the
+/// target's top speed with twice its acceleration, to keep up with it, and no
+/// collision flags, so it cannot block the target.
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   struct Actor *follower = Actor_Lookup(actorId);
   struct Actor *target = Actor_Lookup(targetId & 0xff);
@@ -838,9 +830,8 @@ s32 Actor_StepAngle(struct Actor *actor) {
 }
 
 /// Clears an actor's destination, puts it under script control and
-/// stands it still. Reached only through an unnamed veneer in the field
-/// sequence bank's far-call table; nothing in the game names it.
-void Actor_ResetTargetAndSetMode1(u32 actorId) {
+/// stands it still.
+void Actor_ClearDestinationAndStand(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -883,9 +874,8 @@ void Actor_SetSpritePriority(s32 actorId, s32 priority) {
   }
 }
 
-/// Makes the target actor's sprite show the source actor's
-/// graphics (its VRAM block and tile). Neither actor is checked for
-/// NULL. Called by the Tolbi ship deck's event.
+/// Makes the target actor's sprite show the source actor's graphics (its VRAM
+/// block and tile). Neither actor is checked for NULL.
 void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -938,8 +928,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
 }
 
 /// Returns the first of the scene's actors (ACTOR_FIRST_PLACED to
-/// ACTOR_LAST_ID) showing sprite, or -1. Reached only through an unnamed veneer
-/// in the field sequence bank's far-call table; nothing in the game names it.
+/// ACTOR_LAST_ID) showing sprite, or -1.
 s32 Actor_FindBySprite(s32 sprite) {
   struct FieldWork *state = gFieldWork;
   s32 result = -1;

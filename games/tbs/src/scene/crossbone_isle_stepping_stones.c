@@ -80,7 +80,6 @@
 #include "system.h"
 #include "heap_slots.h"
 #include "dma.h"
-#include "edition.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "irq.h"
@@ -106,71 +105,44 @@ enum CrossboneIsleSteppingStonesActorId {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
   /// SPRITE_SPIRAL_PILLAR), the only actors those rooms place.
-  /// ★ Named from what the player sees: tan stone pillars over the pit,
-  /// pillars of ice on the spikes, and grey carved pillars stacked two high
-  /// (its render)
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   /// The logs, SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST as Kolima
   /// Forest's. There are eight in CrossboneIsleFloodgate, where the seven
   /// after the first float on the raised water, and two in
   /// CrossboneIsleDragonStatue.
-  /// ★ Named from what the player sees: logs lying on the cave floor (its
-  /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// CrossboneIsleDragonStatue's boulder for Move, SPRITE_TURNING_ROCK, which
   /// sinks into place at column 16.
-  /// ★ Named from what the player sees: a round grey boulder below the logs
-  /// (its render)
   ACTOR_SINKING_BOULDER = ACTOR_FIRST_LOG + 2,
   /// CrossboneIsleDragonStatue's three puddles, SPRITE_PUDDLE, which Frost
   /// freezes into pillars of ice.
-  /// ★ Named from what the player sees: a small blue puddle on the west ledge
-  /// (its render)
   ACTOR_FIRST_PUDDLE,
-  /// ★ Named from what the player sees: a small blue puddle on the middle
-  /// ledge (its render)
   ACTOR_SECOND_PUDDLE,
-  /// ★ Named from what the player sees: the puddle by the dragon statue,
-  /// drawn frozen around its pillar (its render)
   ACTOR_THIRD_PUDDLE,
   /// The pillar in CrossboneIsleDragonStatue's third puddle,
   /// SPRITE_WHITE_PLATFORM, which rises 32 pixels as Frost freezes the puddle.
-  /// ★ Named from what the player sees: a narrow dark pillar standing in the
-  /// third puddle (its render)
   ACTOR_RISING_PILLAR,
   /// CrossboneIsleFloodgate's water, SPRITE_SPLASH, raised behind the closed
   /// floodgate.
-  /// ★ Named from what the player sees: the stream's green water, which the
-  /// closed floodgate backs up (its render)
   ACTOR_WATER = ACTOR_FIRST_LOG + 8
 };
 
 /// CrossboneIsleFloodgate: the water has been raised.
-/// ★ Named from what the player sees: the stream's water risen behind the
-/// closed floodgate, floating the logs higher (its render)
 #define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_SCENE_TEMP_00
 /// CrossboneIsleStackedPillars: the first pillar has another pushed on top of
 /// it, so Move and Carry leave it be. The four pillars' flags follow from this
 /// one.
-/// ★ Named from what the player sees: two stacks of two grey stone pillars
-/// among the ladders and cliffs (its render)
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER         \
   FLAG_SCENE_TEMP_00
 /// CrossboneIsleDragonStatue: the first puddle is frozen. The second's and
 /// third's flags follow from this one.
-/// ★ Named from what the player sees: three small blue puddles on the cave
-/// floor (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// CrossboneIsleDragonStatue: the leader stood on the third puddle when Frost
 /// began, so it stays unfrozen.
-/// ★ Named from what the player sees: the third puddle, by the dragon statue,
-/// with a narrow dark pillar standing in it (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE               \
   FLAG_SCENE_TEMP_03
 /// CrossboneIsleDragonStatue: the boulder Move pushes has sunk into place at
 /// column 16.
-/// ★ Named from what the player sees: a round grey boulder below the two logs
-/// (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK FLAG_SCENE_TEMP_04
 
 /// A copied map cell, also read in the two flag pairs the pillar redraw keeps.
@@ -408,17 +380,6 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
   if (grid != 0) {
-    // UB: the bitfield view aliases MapGridCell storage; UBFIX writes the
-    // bytes.
-#ifdef UBFIX
-    u8 *cell = (u8 *)grid->layers[layer].cells;
-
-    cell += sizeof(struct MapGridCell) * (x + (y << 7));
-    cell[1] = (source->bits.lowFlags << 4) | (cell[1] & ~0x30);
-    cell[1] = (source->bits.highFlags << 6) | (cell[1] & ~0xc0);
-    cell[2] = source->cell.behavior;
-    cell[3] = source->cell.shape;
-#else
     struct CrossboneIslePillarCellBits *cell =
         (struct CrossboneIslePillarCellBits *)grid->layers[layer].cells;
 
@@ -427,7 +388,6 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
     cell->highFlags = source->bits.highFlags;
     cell->behavior = source->bits.behavior;
     cell->shape = source->bits.shape;
-#endif
   }
 }
 
@@ -476,8 +436,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
       }
       temporaryActor = Actor_PrepareFixed(x, y, z, kind);
       height = actor->z.fixed - z + y;
-      /* FAKEMATCH(dead): an empty once-only loop after the height arithmetic,
-       * which keeps found's constant after it; as no loop, 2 of 117
+      /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 117
        * instructions differ in tbs-en. */
       do {
       } while (0);
@@ -748,7 +707,7 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
   volatile u32 *reg = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 46) {
-    if ((u32)(Import_RandomNext() * 100) >> 16 < sShakeChance) {
+    if (Random_Below(100) < sShakeChance) {
       src = ((u32 *)sShakenScroll);
     }
   }
@@ -1085,9 +1044,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     if (*flags & 1) {
       if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) == 50) {
         Sound_Play(SE_STONE_GRIND);
-        // Both u8 accesses are alias set 0, and the view is no struct reference
-        // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated (100 of
-        // 265 instructions differ in tbs-en).
+        /* FAKEMATCH(temporary): the priority flags changed as a plain byte; as
+         * the field, 100 of 265 instructions differ in tbs-en. */
         *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_LowerActorToLedge(id, 1);
         *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -1117,11 +1075,11 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       CrossboneIsleSteppingStones_SetCellAttributes(
           0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
-      // x and z read by their offsets: through Actor's single/group
-      // union, as actor->x.fixed, a load moves.
+      /* FAKEMATCH(temporary): x and z read as plain words outside their unions;
+       * as actor->x.fixed and z.fixed, a load moves. */
       CrossboneIsleSteppingStones_SetCellAttributes(
-          2, *(s32 *)((u8 *)actor + offsetof(struct Actor, x)) >> 20,
-          *(s32 *)((u8 *)actor + offsetof(struct Actor, z)) >> 20, &cell);
+          2, FIELD_CELL(*(s32 *)&actor->x), FIELD_CELL(*(s32 *)&actor->z),
+          &cell);
     }
     sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
     sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);
@@ -1340,10 +1298,10 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
 
-  x = actor->x.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
-  y = actor->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
-  z = actor->z.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
-  scale = Math_Divide(px(((u32)Import_RandomNext() * 5) >> 16) + px(3), 10);
+  x = actor->x.fixed + (((Random_Below(17)) - 8) << 16);
+  y = actor->y.fixed + ((Random_Below(17)) << 16);
+  z = actor->z.fixed + (((Random_Below(17)) - 8) << 16);
+  scale = Math_Divide(px(Random_Below(5)) + px(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
@@ -1600,17 +1558,12 @@ s32 Scene_Initialize(void) {
                                                          2);
     CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR +
                                                          3);
-    {
-      s32 *entry = (s32 *)sPillarSlots;
-
-      for (i = 0; i < 4; i++) {
-        entry[0] = 0;
-        entry[1] = 0;
-        entry[2] = 0;
-        entry[4] =
-            i + FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER;
-        entry += 5;
-      }
+    for (i = 0; i < 4; i++) {
+      sPillarSlots[i].x = 0;
+      sPillarSlots[i].y = 0;
+      sPillarSlots[i].z = 0;
+      sPillarSlots[i].flag =
+          i + FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER;
     }
     CrossboneIsleSteppingStones_MovePillar();
     Event_Wait(1);
@@ -1647,8 +1600,7 @@ s32 Scene_Initialize(void) {
     CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_FIRST_PUDDLE);
     CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_SECOND_PUDDLE);
     CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_THIRD_PUDDLE);
-    actor = Actor_Get(ACTOR_THIRD_PUDDLE);
-    actor->update = 0;
+    Actor_Get(ACTOR_THIRD_PUDDLE)->update = 0;
     CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_RISING_PILLAR);
     Actor_Get(ACTOR_RISING_PILLAR)->collisionFlags |= ACTOR_NOT_TARGETED;
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +

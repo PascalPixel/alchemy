@@ -133,8 +133,6 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
         u8 *vram;
 
         column = 0;
-        // The increment is written in both arms, which keeps it after the
-        // compare; written once ahead of the test it is scheduled before it.
         if (bits == 0)
           nextRow = row + 1;
         else {

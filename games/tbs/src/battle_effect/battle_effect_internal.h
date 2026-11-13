@@ -95,13 +95,6 @@
 /// Outside the battle view: BG0 and blending only.
 #define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
-/// A heap slot read through a pointer to the effect's own slot,
-/// gHeapSlots[HEAP_SLOT_BATTLE_EFFECT].
-#define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
-/// A heap slot read through a pointer to the canvas slot,
-/// gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], just after the effect's own.
-#define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
-
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 
@@ -117,18 +110,6 @@ static inline void Dma_Stop(volatile u16 *channel) {
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   (void)channel[DMA_CONTROL_HALF];
 }
-
-/// The work block and canvas occupy adjacent slots, starting at
-/// HEAP_SLOT_BATTLE_EFFECT. A cursor reads them in that order.
-#define EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas)                       \
-  ((work) = *(cursor)++, (canvas) = *(cursor))
-
-/// Lets EFFECT_SLOT(slots, s) reach any slot: an earlier one such as
-/// HEAP_SLOT_CAMERA, before HEAP_SLOT_BATTLE_EFFECT, sits at a negative index
-/// that is still inside gHeapSlots.
-#define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
-  ((slots) = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT], (cursor) = (slots),         \
-   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
 
 /// Marks particles[0] to particles[count - 1] free: a particle whose variant
 /// is -1 is not drawn or moved until an effect gives it a life.
@@ -150,10 +131,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
                             POSE_DAMAGE, i, frames),                           \
    BattleMotion_ApplyKnockbackFar((effect)->targets[i], motion))
 
-// The canvas life cycle, shared by every canvas effect. The statement macros
-// are comma expressions, not do { } while (0) blocks: agscc compiles a
-// do-while (0) in an effect's frame loop differently at some sites, and the
-// comma form matches at all of them.
+// The canvas life cycle, shared by every canvas effect.
 
 /// Lets the battle show the damage: resumes its paused playback, which plays
 /// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
@@ -176,6 +154,9 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// these.
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
   BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
+
+/// The blitter built in heap slot `slot`.
+#define EFFECT_BLITTER(slot) ((DrawRectangle)gHeapSlots[slot])
 
 /// Sets how the canvas transfer treats what is left in the canvas after each
 /// copy: `mode` with `value` (see enum CanvasTransferMode).
@@ -291,7 +272,6 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// notes give the sizes the draws use. In Condemn's render a hooded skeleton
 /// swings its scythe in a white flash:
 /// https://alchemy.pascalpixel.com/abilities/condemn.gif
-/// ★ Named from what the player sees: the Grim Reaper's swing (its render)
 enum ReaperSheetPicture {
   /// 57x98
   REAPER_SHEET_RAISED = 0,
@@ -354,9 +334,9 @@ enum DjinniEntranceLength {
 enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
   DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0
-  DJINNI_ANCHOR_OVER_USER,   ///< over the user
-  DJINNI_ANCHOR_USER_X,      ///< at the user's x, at depth 0; no caller
-  DJINNI_ANCHOR_CENTRE       ///< in the centre of the field
+  DJINNI_ANCHOR_OVER_USER,
+  DJINNI_ANCHOR_USER_X, ///< at the user's x, at depth 0; no caller
+  DJINNI_ANCHOR_CENTRE  ///< in the centre of the field
 };
 
 /// Where BattleEffect_RunSparkGroups' bursts go off.
@@ -381,15 +361,11 @@ enum CanvasWipeFill {
 /// The summons' sprite formations (BattleEffect_PlaceFormationObjects and
 /// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
-  /// ★ Named from the game: "Thor" (MsgDjinnName)
-  SUMMON_FORMATION_THOR, ///< nine in a 3x3 grid at 32-pixel spacing
-  /// ★ Named from the game: "Nereid" (MsgDjinnName)
+  SUMMON_FORMATION_THOR,   ///< nine in a 3x3 grid at 32-pixel spacing
   SUMMON_FORMATION_NEREID, ///< twelve in rows of 1, 3, 4 and 4, from 16 left
                            ///< and 32 up
-  /// ★ Named from the game: "Cybele" (MsgDjinnName)
   SUMMON_FORMATION_CYBELE, ///< eight in rows of 3, 2 and 3, from 16 right
-  /// ★ Named from the game: "Tiamat" (MsgDjinnName)
-  SUMMON_FORMATION_TIAMAT ///< eight drawn at 1.25 times their size
+  SUMMON_FORMATION_TIAMAT  ///< eight drawn at 1.25 times their size
 };
 
 /// The axis a swirling spark, mote or star turns about, which its index & 3

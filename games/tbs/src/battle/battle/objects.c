@@ -279,8 +279,6 @@ UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 /// move) or down, else standing; then its sprites' animation speed, a timer
 /// step of 14 to 17 by the unit id's low two bits (16 is normal speed), so
 /// units side by side, even two of one kind, sway out of step.
-/// Called by BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
-/// BattlePlayback_Run and Battle_ProcessTurnEnd.
 UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
   struct Unit *unit;
   s32 pose;
@@ -289,13 +287,12 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
   pose = POSE_STANDING;
   if (unit->hp != 0) {
     if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
-      pose = (unit->side != BATTLE_SIDE_ENEMY) * POSE_PARTY_HELD;
+      pose =
+          unit->side == BATTLE_SIDE_ENEMY ? POSE_ENEMY_HELD : POSE_PARTY_HELD;
+  } else if (unit->side == BATTLE_SIDE_ENEMY) {
+    pose = POSE_ENEMY_DOWN;
   } else {
-    // 4 for a party member, 5 for an enemy: pose is POSE_STANDING (1, the
-    // enemy side's value) here, so the xor is 0 only for an enemy.
-    s32 notEnemy = unit->side ^ pose;
-    pose = (u32)(-notEnemy | notEnemy) >> 31;
-    pose = POSE_ENEMY_DOWN - pose;
+    pose = POSE_PARTY_HELD;
   }
 
   Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, pose);
@@ -303,10 +300,8 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
                              (unitId & 3) + 14);
 }
 
-/// Releases every sprite unitId's actor holds and leaves it with none,
-/// clearing the battle object's animationEntry and shadowEntry. Called by
-/// BattleObject_SpawnObjectsForList; BATTLE.S also gives it an unnamed
-/// overlay veneer, which nothing in the source calls.
+/// Releases every sprite unitId's actor holds and leaves it with none, clearing
+/// the battle object's animationEntry and shadowEntry.
 void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObject *battleObject;
   struct Actor *actor;
@@ -330,15 +325,12 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   }
 }
 
-/// Readies the sprites of the units in list: releases those of every place
-/// list lacks, then creates each listed unit's sprites (body, weapon, status
-/// icon and shadow; or the two parts of a two-part enemy) unless it has
-/// them, building its status icons and setting its pose. With refreshPoses,
-/// sets every listed unit's pose again afterwards. Called by BattleObject_Put
-/// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
-/// entry transition code, and through its far stub by
-/// BattleEffect_SelectLivingTargets. Writes the actors' sprites, their storage
-/// kind and height, and the battle objects' icon and shadow entries.
+/// Readies the sprites of the units in list: releases those of every place list
+/// lacks, then creates each listed unit's sprites (body, weapon, status icon
+/// and shadow; or the two parts of a two-part enemy) unless it has them,
+/// building its status icons and setting its pose. With refreshPoses, sets
+/// every listed unit's pose again afterwards. Writes the actors' sprites, their
+/// storage kind and height, and the battle objects' icon and shadow entries.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
@@ -475,22 +467,19 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 /// unit with no place. Called throughout the battle parts.
 struct BattleObject *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
-  struct BattleObject *battleObjects = battle->objects;
-  s32 placementIndex;
+  struct BattleObject *objects = battle->objects;
+  s32 place = unitId;
+
   // Enemy unit ids from FIRST_ENEMY_UNIT index the places from
   // PARTY_UNIT_COUNT.
-  if (unitId > ALLY_MAX) {
-    unitId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-  }
-  placementIndex = unitId;
-  if (battle->objectIndex[placementIndex] == BATTLE_OBJECT_NONE) {
+  if (unitId > ALLY_MAX)
+    place -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+  if (battle->objectIndex[place] == BATTLE_OBJECT_NONE)
     return NULL;
-  }
-  return &battleObjects[battle->objectIndex[placementIndex]];
+  return &objects[battle->objectIndex[place]];
 }
 
-/// Detaches the scripts from the four sprite entries of one sprite. Called
-/// only by ResetBattleObjectRecordGroups.
+/// Detaches the scripts from the four sprite entries of one sprite.
 void ResetMotionRecordGroup(void *recordGroup) {
   struct Sprite *record = recordGroup;
   s32 entryIndex;
@@ -506,29 +495,22 @@ void ResetMotionRecordGroup(void *recordGroup) {
 /// Detaches the scripts from every sprite of a unit's actor. Nothing in the
 /// source calls it.
 void ResetBattleObjectRecordGroups(struct Actor *actor) {
-  s32 storageKind;
-  s32 remaining;
-  void **recordGroups;
-  void *recordGroup;
+  void **groups;
+  s32 i;
 
-  if (actor != NULL) {
-    storageKind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
-    switch (storageKind) {
-    case ACTOR_SPRITE_ONE:
-      ResetMotionRecordGroup(actor->sprite);
-      return;
-    case ACTOR_SPRITE_GROUP:
-      recordGroups = (void **)actor->sprite;
-      remaining = ACTOR_SPRITE_GROUP_SIZE - 1;
-      do {
-        recordGroup = *recordGroups++;
-        if (recordGroup != NULL) {
-          ResetMotionRecordGroup(recordGroup);
-        }
-        remaining -= 1;
-      } while (remaining >= 0);
-      break;
+  if (actor == NULL)
+    return;
+  switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  case ACTOR_SPRITE_ONE:
+    ResetMotionRecordGroup(actor->sprite);
+    break;
+  case ACTOR_SPRITE_GROUP:
+    groups = (void **)actor->sprite;
+    for (i = 0; i < ACTOR_SPRITE_GROUP_SIZE; i++) {
+      if (groups[i] != NULL)
+        ResetMotionRecordGroup(groups[i]);
     }
+    break;
   }
 }
 
@@ -547,31 +529,28 @@ s32 BattleObject_MarkForRelease(s32 unitId) {
 }
 
 /// Releases the actor of every unit marked by BattleObject_MarkForRelease,
-/// leaving its battle object with no actor. Called by Battle_Run
-/// at the end of each turn and by BattleStaging_DispatchAction.
+/// leaving its battle object with no actor.
 #ifdef UBFIX
 void BattleObject_DestroyAll(void) {
 #else
 void *BattleObject_DestroyAll(void) {
 #endif
-  s32 unitId;
-  s32 placementIndex;
-  struct BattleObject *battleObject;
+  s32 place;
 
-  placementIndex = 0;
-  do {
-    unitId = placementIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-    if (placementIndex <= ALLY_MAX) {
-      unitId = placementIndex;
-    }
+  for (place = 0; place < UNIT_MAX; place++) {
+    s32 unitId = place + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+    struct BattleObject *battleObject;
+
+    if (place <= ALLY_MAX)
+      unitId = place;
     battleObject = BattleObject_Get(unitId);
-    if ((battleObject != NULL) && (battleObject->active != 0)) {
+
+    if (battleObject != NULL && battleObject->active != 0) {
       Actor_ReleaseFar(battleObject->actor);
       battleObject->actor = NULL;
       battleObject->active = 0;
     }
-    placementIndex += 1;
-  } while (placementIndex < UNIT_MAX);
+  }
 }
 
 /// Writes the battlefield spot of place (its anchor, on the ground) to
@@ -586,9 +565,7 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
 
 /// Sets up the camera's view for projecting points; under
 /// FLAG_CHOOSING_COMMANDS, through the extra transform
-/// gBattleCamera_CommandMatrix first. Called by the three projections,
-/// BattleMotion_ProjectPosition, BattleMotion_ProjectScaledPosition and
-/// BattleMotion_ProjectConditionalPosition. Replaces the transform state.
+/// gBattleCamera_CommandMatrix first. Replaces the transform state.
 UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   struct BattleCamera *camera = gBattleCamera;
   Transform_Reset();
@@ -633,9 +610,8 @@ void *GetMotionRecord(struct Actor *actor, s32 recordIndex) {
 }
 
 /// Puts the battle camera at its default view of the battlefield's centre.
-/// Called by Battle_Run as the battle is set up and by
-/// Battle_GatherActions. Writes the camera's yaw, pitch,
-/// distance, position and eye, and the transform state.
+/// Writes the camera's yaw, pitch, distance, position and eye, and the
+/// transform state.
 void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;

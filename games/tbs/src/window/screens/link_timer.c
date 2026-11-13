@@ -76,7 +76,7 @@ void UpdateLinkSessionCountdown(void) {
     if (state->linkTimer == 0)
       return;
 
-    runtime = gBattleWork;
+    runtime = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
     if (runtime->linkPaused == 0)
       goto load_timer;
     state->timer = 0;
@@ -110,7 +110,7 @@ void UpdateLinkSessionCountdown(void) {
     // The window opens the first frame the Status screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
-      state->timerWindow = (s32)Link_CreateCountdownLabelWindow();
+      state->timerWindow = Link_CreateCountdownLabelWindow();
       timer = state->timer;
     }
 
@@ -128,8 +128,7 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlayFar(SE_TRIPLE_TONE_LOW);
 
     if (state->timerWindow != 0)
-      Text_DrawNumberInWindow(seconds, 2, (struct Window *)state->timerWindow,
-                              16, 8);
+      Text_DrawNumberInWindow(seconds, 2, state->timerWindow, 16, 8);
   }
 }
 
@@ -147,7 +146,7 @@ s32 Battle_RefuseFlee(void) {
   struct BattleWork *battle;
   s32 mode;
 
-  battle = gBattleWork;
+  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   mode = gMainRoutineWork.battleType;
   if (gMainRoutineWork.battleType == 2 || mode <= 2 || (result = 1, mode > 4)) {
     result = 0;

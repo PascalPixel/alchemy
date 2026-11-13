@@ -84,9 +84,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   // order. So the affordable ones come in reverse menu order
   // (gSummon_OrderList), the rest after them in menu order.
   count = Summon_ListLearnedFar(learnedSummons);
-  /* FAKEMATCH(dead): the first scan in a once-only block leaves the outer
-   * loop's select block in place; as a plain block, 224 of 946 instructions
-   * differ in tbs-en. */
+  /* FAKEMATCH(dead): the first scan in a once-only block; as a plain block, 224
+   * of 946 instructions differ in tbs-en. */
   do {
     s32 i;
 
@@ -168,9 +167,6 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
           s32 element, col, y;
 
           index = 0;
-          // The rows are a loop written with goto: as a
-          // do-while loop inside this test, 523 of 946 instructions differ in
-          // tbs-en.
           if ((id = orderedSummons[firstEntry + index]) != SUMMON_END) {
           next:
             summon = SummonDefinition_Get(id);

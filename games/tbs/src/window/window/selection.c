@@ -31,12 +31,10 @@ void SelectionMenu_Create(void) {
   screen->locked = 999;
   // The records: 0 and 1 the end arrows, 2 to 8 the row's icons, 9 to 13 the
   // chosen icons, 14 the pointing hand and 15 the large icon.
-  i = 0;
-  do {
+  for (i = 0; i != 5; i++) {
     screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
     screen->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
-    i++;
-  } while (i != 5);
+  }
   // The row has two icons more than the chosen ones; i is 5.
   screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
   screen->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
@@ -610,8 +608,7 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
 
 /// Runs the selection row until the player chooses (the chosen entry's index)
 /// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
-/// moving or choosing; any mode but 0 allows cancelling. Reached only through
-/// a bare entry of the window far-call table.
+/// moving or choosing; any mode but 0 allows cancelling.
 s32 SelectionMenu_Run(s32 mode) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
 
@@ -637,7 +634,6 @@ s32 SelectionMenu_Run(s32 mode) {
   }
 }
 
-/// As SelectionMenu_Run, with the menu sounds.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
   u32 result;

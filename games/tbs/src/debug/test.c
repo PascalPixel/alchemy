@@ -2,43 +2,16 @@
 /// The debug room Menu test, whose actors each run a test of the menus, the
 /// shops or the bags when talked to.
 
-#include "main_routine_work.h"
-#include "module/import.h"
 #include "module/debug/test.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
 #include "module/window/screens.h"
-#include "module/menu/menu.h"
-#include "module/shop/shop.h"
 #include "battle.h"
-#include "input.h"
-#include "debug.h"
-#include "field.h"
 #include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
-#include "edition.h"
 #include "menu_test.h"
 #include "system_call.h"
-#include "types.h"
-#include "io_reg.h"
-#include "inventory.h"
 #include "dma.h"
-#include "render_input.h"
-#include "item.h"
 #include "item_ids.h"
-#include "tbs_edition.h"
-#include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
-#include "sounds.h"
 #include "module/sound/sound.h"
 #include "djinn_ids.h"
 
@@ -64,44 +37,32 @@ enum MenuTestActorId {
   /// Kraden's sprite, 30 (ACTOR_KRADEN in
   /// sol_sanctum_elemental_star_room.c);
   /// opens the picker a full party drops an item with.
-  /// ★ Named from the game: "Kraden" (MsgDebugGlyphName)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   /// Dora's sprite, 31 (vale_eruption.c). `You got a Djinni!`
-  /// ★ Named from the game: "Dora" (MsgDebugGlyphName)
   ACTOR_DORA,
   /// Saturos's sprite, 32 (sol_sanctum_elemental_star_room.c).
   /// `The body is being torn apart.`
-  /// ★ Named from the game: "Saturos" (MsgDebugGlyphName)
   ACTOR_SATUROS,
   /// Menardi's sprite, 33 (sol_sanctum_elemental_star_room.c).
   /// `You got treasure!`
-  /// ★ Named from the game: "Menardi" (MsgDebugGlyphName)
   ACTOR_MENARDI,
   /// The sprite of Vale's armor merchant, 125 (cottage_rooms_a.c);
   /// opens
   /// the debug shop.
-  /// ★ Named from the game: "Ask me anything about armor."
-  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
   /// Dora's sprite again: the sanctum's service menu, in French a Nut, and in
   /// Spanish and Italian `That IS dangerous!`
-  /// ★ Named from the game: "Dora" (MsgDebugGlyphName)
   ACTOR_SECOND_DORA,
   /// Saturos's sprite again. "Kyle... Will they be able to stop the Boulder?"
-  /// ★ Named from the game: "Saturos" (MsgDebugGlyphName)
   ACTOR_SECOND_SATUROS,
   /// The ivy's sprite, 248 ("trapped in the ivy", goma_cave_entrance.c);
   /// opens the icon browser, and takes Whirlwind, Force and Catch.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY,
   /// Felix's sprite, 35 (sol_sanctum_elemental_star_room.c); a shop message
   /// browser, or in Japanese the character selector.
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
   /// Felix's sprite again: a shop message browser, or in Japanese the item
   /// browser.
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_SECOND_FELIX
 };
 
@@ -293,8 +254,6 @@ static void MenuTest_RaisePartyLevels(void) {
 /// 183 the Potion, 186 the Psy Crystal, 192 the Cookie and 236 the Sacred
 /// Feather (MsgItemName + the number).
 static void MenuTest_GiveConsumableTestStock(void) {
-  // A repeated-grant loop shrinks this native function from 1574 to 300;
-  // retain the individual calls and their original insertion order.
   FieldMessage_Show(MsgDebugGotItem, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -508,8 +467,6 @@ static void MenuTest_GivePartyDjinn(void) {
   s32 pass;
   s32 characterIndex;
 
-  // XXX (no evidence): what this loop was for; whatever it once fed is gone
-  // from every edition.
   for (pass = 0; pass < 16; pass++) {
     for (characterIndex = 0; characterIndex < 256; characterIndex++) {
       fillBuffer[characterIndex] = 0;
@@ -588,9 +545,8 @@ static void MenuTest_GivePartyDjinn(void) {
 /// 1 too, but the closing Unit_Calculate clears the curse bits again unless he
 /// wears cursed equipment (game/game/units.c).
 static void MenuTest_DamageAndAfflictParty(void) {
-  // Named Unit stores change address setup and store ordering in the
-  // native build; retain the byte cursor for poison (0x131), haunt (0x140) and
-  // curse (0x130).
+  // The statuses are set through the unit's bytes: poison (0x131), haunt
+  // (0x140) and curse (0x130).
   u8 *record;
 
   FieldMessage_Show(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);
@@ -676,10 +632,10 @@ static void MenuTest_SelectItem(void) {
   // HIGHLIGHT_PALETTE, and WINDOW_BACKGROUND_COLOR over its
   // TEXT_BACKGROUND_COLOR, as the Increase item and level scene's browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   wait(1);
   while (1) {
     if (redraw) {

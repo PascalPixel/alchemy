@@ -7,10 +7,8 @@
 /// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
 /// colours) one pixel is cleared, in gSpriteDissolve_PixelOrder's order; each
 /// tile runs one step ahead of the last, and only tiles whose step is 64-127
-/// clear a pixel. obj is the sprite (struct Sprite), pos the step
-/// (0-127). Writes the sprite's tiles in OBJ VRAM. Called by the two
-/// functions below and, as SpriteDissolve_StepFar, by the battle's
-/// playback (battle/battle/playback.c).
+/// clear a pixel. obj is the sprite (struct Sprite), pos the step (0-127).
+/// Writes the sprite's tiles in OBJ VRAM.
 void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
@@ -19,7 +17,6 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
 
   struct Sprite *sprite = (struct Sprite *)obj;
 
-  // The sprite's tiles in OBJ VRAM.
   tile = (u16 *)(OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset);
   tileCount = (sprite->width * sprite->height) / 64;
   i = 0;
@@ -60,8 +57,6 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
 }
 
 /// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
-/// Called through SpriteDissolve_RunFar by the auto
-/// battle (battle/battle/auto_battle.c).
 void SpriteDissolve_Run(u8 *sprite) {
   u32 step;
 
@@ -78,8 +73,6 @@ void SpriteDissolve_Run(u8 *sprite) {
 }
 
 /// Dissolves count sprites together, pixel by pixel, over 32 frames.
-/// Called through SpriteDissolve_RunManyFar by the battle's staging
-/// (battle/battle/staging.c), after the unit is taken off its lists.
 void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
   u8 **firstSprite;
   u8 **spriteCursor;
@@ -121,23 +114,17 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
                                       s32 *screenPosition) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-#ifndef UBFIX
-  s32 *viewCoordinates = &grid->viewX;
-#endif
   s32 viewX;
   s32 viewZ;
   s32 x;
   s32 y;
 
-  // UB: viewY is a separate member, not a second element of viewX.
-  // Direct member loads change the EN save set and load order (96 bytes each).
-#ifdef UBFIX
-  viewX = grid->viewX & 0xffff0000;
-  viewZ = grid->viewY & 0xffff0000;
-#else
-  viewX = viewCoordinates[0] & 0xffff0000;
-  viewZ = viewCoordinates[1] & 0xffff0000;
-#endif
+  {
+    s32 *view = grid->view;
+
+    viewX = view[0] & FIELD_PIXEL_MASK;
+    viewZ = view[1] & FIELD_PIXEL_MASK;
+  }
   x = actor->x.fixed - viewX;
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
@@ -162,21 +149,17 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// their memory too; Heap_Initialize clears the slots at the next
 /// scene change.
 ///
-/// Called through ActorSystem_InitializeFar by the field sequence
-/// (field/field_sequence/run.c) and the battle's encounter, and
-/// directly by the sprite viewer, each with its enum ActorSystemMode. Allocates
-/// HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and HEAP_SLOT_ACTORS
-/// for the actors, and sets the sprite outline colours.
+/// Allocates HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and
+/// HEAP_SLOT_ACTORS for the actors, and sets the sprite outline colours.
 void ActorSystem_Initialize(s32 controlMode) {
   struct ActorSystemWork *system;
-  struct Actor *objectPool;
+  struct Actor *pool;
   volatile u32 fill;
 
   system = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*system));
-  objectPool =
-      HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, ACTOR_COUNT * sizeof(*objectPool));
+  pool = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, ACTOR_COUNT * sizeof(*pool));
   ActorSystem_Configure(controlMode);
-  Dma_Fill32Cell(fill, 0, objectPool, ACTOR_COUNT * sizeof(*objectPool));
+  Dma_Fill32Cell(fill, 0, pool, ACTOR_COUNT * sizeof(*pool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
   // The task runner runs higher priorities first: the actors move before
   // the camera follows them.
@@ -189,8 +172,6 @@ void ActorSystem_Initialize(s32 controlMode) {
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_FRAME);
   } else {
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_FRAME);
-    // XXX (no evidence): what the scrolling camera resets here; nothing in
-    // the game reads these two IWRAM words, by name or by address.
     gCamera_UnreadWord2 = 0;
     gCamera_UnreadWord1 = 0;
   }
@@ -203,18 +184,17 @@ UNUSED void ActorSystem_ReservedNoOpA(void) {}
 UNUSED void ActorSystem_ReservedNoOpB(void) {}
 
 /// Returns the first of the 64 actors not in use (with no script), or 0.
-/// Called by Actor_Create.
 void *Actor_FindFree(void) {
   struct Actor *actor = gActors;
   void *freeActor = 0;
-  s32 objectIndex = 0;
+  s32 actorIndex = 0;
 
-  while (objectIndex <= ACTOR_COUNT - 1) {
+  while (actorIndex <= ACTOR_COUNT - 1) {
     if (actor->script == 0) {
       freeActor = actor;
       break;
     }
-    objectIndex++;
+    actorIndex++;
     actor++;
   }
   return freeActor;
@@ -259,31 +239,27 @@ void Actor_Release(struct Actor *actor) {
 /// position and the default motion values; a group's sprite list is taken from
 /// the ActorSystemWork's group tables.
 struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
-  struct Actor *object;
   struct Actor *actor;
-  struct Actor *motion;
-  struct Actor *scripted;
   struct Sprite *sprite;
   s32 spriteStorageKind;
   void **spriteSlots;
 
-  // The ROM searches twice and drops the first result.
+  // DEAD: a first search whose result is dropped; the ROM keeps its call.
   Actor_FindFree();
   spriteStorageKind = encodedSprite / 4096;
   encodedSprite &= ACTOR_CREATE_SPRITE_MASK;
-  object = Actor_FindFree();
-  if (object != NULL) {
-    actor = object;
+  actor = Actor_FindFree();
+  if (actor != NULL) {
     actor->radius = 16;
     switch (spriteStorageKind) {
     case ACTOR_CREATE_ONE_SPRITE:
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        object->spriteStorageKind = ACTOR_SPRITE_ONE;
-        object->sprite = sprite;
+        actor->spriteStorageKind = ACTOR_SPRITE_ONE;
+        actor->sprite = sprite;
         actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
       } else {
-        object->spriteStorageKind = ACTOR_SPRITE_NONE;
+        actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       }
       break;
     case ACTOR_CREATE_GROUP:
@@ -292,13 +268,11 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       // list would overlap the first and its zeroing clear count. No caller
       // passes ACTOR_CREATE_GROUP: every id is a sprite below 4096, an
       // actor placement's (0 to 504), or a kind with no sprite.
-      // XXX (no evidence): whether the lists were meant four words apart;
-      // nothing in the game creates a group to show it.
       spriteSlots =
           (void **)((u32 *)gActorSystemWork + gActorSystemWork->count++ + 2);
-      object->spriteStorageKind = spriteStorageKind;
+      actor->spriteStorageKind = spriteStorageKind;
       // Through the sprite union this store moves before the next.
-      *(struct Sprite **)&object->sprite = (struct Sprite *)spriteSlots;
+      *(struct Sprite **)&actor->sprite = (struct Sprite *)spriteSlots;
       Dma_Fill32(0, spriteSlots, 16);
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
@@ -311,39 +285,34 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       break;
     }
   }
-  if (object != NULL) {
-    motion = object;
-    scripted = object;
-    Actor_SetPositionAndResetMotion(object, x, y, z);
+  if (actor != NULL) {
+    Actor_SetPositionAndResetMotion(actor, x, y, z);
     // Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
     // ground and falling; turning to face its motion; keeping a quarter of its
     // speed when it bounces; facing down the screen (FACING_SOUTH, the
     // heading gWorldMap_KeyHeadings gives Down).
-    object->script = (s32 *)gActor_DefaultScript;
-    object->speedLimit = px(2);
-    object->scriptCursor = 0;
+    actor->script = (s32 *)gActor_DefaultScript;
+    actor->speedLimit = px(2);
+    actor->scriptCursor = 0;
     actor->scaleX = Q16_ONE;
     actor->scaleY = Q16_ONE;
-    object->acceleration = Q16_ONE;
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    motion->gravity = Q16_ONE;
-    motion->bounce = Q16_ONE / 4;
-    object->collisionFlags = 0;
-    object->steeringFlags = ACTOR_FACES_MOTION;
+    actor->acceleration = Q16_ONE;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->gravity = Q16_ONE;
+    actor->bounce = Q16_ONE / 4;
+    actor->collisionFlags = 0;
+    actor->steeringFlags = ACTOR_FACES_MOTION;
     actor->riseBaseY = 0;
-    object->facing = FACING_SOUTH;
+    actor->facing = FACING_SOUTH;
     // Its home position, in pixels.
-    scripted->homeX = x / 65536;
-    scripted->homeZ = z / 65536;
+    actor->homeX = x / px(1);
+    actor->homeZ = z / px(1);
   }
-  return object;
+  return actor;
 }
 
-/// Gives an actor a script and starts it from the top.
-/// Sets the script and clears the cursor, the pause, the loop count and the
-/// last flag test. Called by the Start functions below and the player
-/// control, and as Actor_StartScriptFar by the battle's placement,
-/// field Psynergy and events.
+/// Gives an actor a script and starts it from the top. Sets the script and
+/// clears the cursor, the pause, the loop count and the last flag test.
 void Actor_StartScript(struct Actor *actor, const s32 *script) {
   if (actor != 0) {
     actor->scriptCursor = 0;
@@ -354,30 +323,28 @@ void Actor_StartScript(struct Actor *actor, const s32 *script) {
   }
 }
 
-/// Defines name(object, value), which calls apply(sprite, value) on an
+/// Defines name(actor, value), which calls apply(sprite, value) on an
 /// actor's one sprite, or on each sprite of its group.
-#define ACTOR_DEFINE_APPLY(name, object_type, apply)                           \
-  void name(object_type rawObject, s32 value) {                                \
-    struct Actor *object;                                                      \
+#define ACTOR_DEFINE_APPLY(name, actor_type, apply)                            \
+  void name(actor_type rawActor, s32 value) {                                  \
+    struct Actor *actor;                                                       \
     void **sprites;                                                            \
-    s32 spritesRemaining;                                                      \
+    s32 part;                                                                  \
     void *sprite;                                                              \
                                                                                \
-    object = rawObject;                                                        \
-    if (object != 0) {                                                         \
-      switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {            \
+    actor = rawActor;                                                          \
+    if (actor != 0) {                                                          \
+      switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {             \
       case ACTOR_SPRITE_ONE:                                                   \
-        apply(object->sprite, value);                                          \
+        apply(actor->sprite, value);                                           \
         break;                                                                 \
       case ACTOR_SPRITE_GROUP:                                                 \
-        sprites = (void **)object->sprite;                                     \
-        spritesRemaining = 3;                                                  \
-        do {                                                                   \
+        sprites = (void **)actor->sprite;                                      \
+        for (part = 0; part < 4; part++) {                                     \
           sprite = *sprites++;                                                 \
           if (sprite != 0)                                                     \
             apply(sprite, value);                                              \
-          spritesRemaining--;                                                  \
-        } while (spritesRemaining >= 0);                                       \
+        }                                                                      \
         break;                                                                 \
       }                                                                        \
     }                                                                          \
@@ -395,7 +362,7 @@ ACTOR_DEFINE_APPLY(Actor_SetAnimationSpeed, struct Actor *,
 void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
   void **sprites;
   void *sprite;
-  s32 spritesRemaining;
+  s32 part;
 
   if (actor != 0) {
     switch (actor->spriteStorageKind & 15) {
@@ -405,7 +372,7 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
       break;
     case ACTOR_SPRITE_GROUP:
       sprites = (void **)actor->sprite;
-      for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
+      for (part = 0; part < 4; part++) {
         sprite = *sprites++;
         if (sprite != 0) {
           Sprite_StartAnimation(sprite, animation);
@@ -490,11 +457,8 @@ void Actor_StartIdle(struct Actor *actor) {
   Actor_StartScript(actor, gActor_IdleScript);
 }
 
-/// Starts an actor on the camera script (SC_CAMERA). With a leader to
-/// follow, it also gets a speed limit of 4 pixels a frame and an
-/// acceleration of 0.5. Called through
-/// Actor_StartCameraFar by the field sequence's actor code, the Psynergy
-/// camera and the Colosso and Kolima Forest scenes.
+/// Starts an actor on the camera script (SC_CAMERA). With a leader to follow,
+/// it also gets a speed limit of 4 pixels a frame and an acceleration of 0.5.
 void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
@@ -505,12 +469,9 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   }
 }
 
-/// Waits until the actor's script reaches SC_END, at most 300 frames
-/// (five seconds); it returns as soon as the script idles, and after the
-/// limit whether or not it has.
-/// Called through Actor_WaitForScriptEndFar by the Psynergy actor
-/// commands and by events that wait for a scripted move (Colosso, Venus
-/// Lighthouse, Vale).
+/// Waits until the actor's script reaches SC_END, at most 300 frames (five
+/// seconds); it returns as soon as the script idles, and after the limit
+/// whether or not it has.
 void Actor_WaitForScriptEnd(void *rawActor) {
   struct Actor *interpreter = rawActor;
   s32 waitedFrames;
@@ -560,12 +521,10 @@ void Actor_SetSpriteColorMode(struct Actor *actor, u32 param) {
     Sprite_SetAnimationColorModes(actor->sprite, param);
 }
 
-/// Suspends the actor camera updates, starts the palette back to normal and,
-/// a frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
-/// Called through
-/// ActorSystem_SuspendProjectionAndShowSpritesFar by events (Colosso, the
-/// Tolbi ship, Vale, Venus Lighthouse). The events except Colosso's pair it
-/// with ActorSystem_ResumeProjectionAndHideLayers.
+/// Suspends the actor camera updates, starts the palette back to normal and, a
+/// frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
+/// The events except Colosso's pair it with
+/// ActorSystem_ResumeProjectionAndHideLayers.
 void ActorSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ActorSystem_ProjectSprites);
@@ -578,8 +537,6 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 }
 
 /// Resumes the actor camera updates and hides BG1-3 and the sprites.
-/// Called through ActorSystem_ResumeProjectionAndHideLayersFar by the same
-/// events except Colosso's.
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
   Task_ResumeAll(ActorSystem_PlaceSprites);
   Task_ResumeAll(ActorSystem_ProjectSprites);
@@ -587,7 +544,7 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }
 
-/// Unused: returns 1; nothing calls it.
+/// Unused: returns 1.
 UNUSED s32 Actor_ReturnTrue(void) { return 1; }
 
 #undef ACTOR_DEFINE_APPLY

@@ -97,39 +97,24 @@
 // outside, which then refills.
 
 /// The party refused Nyunpa's test, so talking to him offers it again.
-/// ★ Named from the game: "Then I cannot tell you. Give up and go back from
-/// whence you came." (MsgXianThenCannotTellGiveUp)
 #define FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED FLAG_AREA_TEMP_00
 /// Feh's students saw the training tree fall, but not to Chi from the line.
-/// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
 #define FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL FLAG_AREA_TEMP_01
 
 /// The placed actors outside Fuchin Temple (FuchinTempleGrounds),
 /// numbered in the order of gFuchinTempleGroundsActorPlacements.
 enum FuchinTempleOutsideActorId {
   /// A young man from Kolima.
-  /// ★ Named from the game: "How did you get here? Is the bridge open again?"
-  /// (MsgXianHowDidGetHereBridge)
   ACTOR_YOUNG_MAN_FROM_KOLIMA = ACTOR_FIRST_PLACED,
   /// The monk beneath the falls, at the waterfall grotto.
-  /// ★ Named from what the player sees: a bald monk in an orange robe standing
-  /// on a stump beneath the waterfall (its render)
   ACTOR_FALLS_MONK,
   /// A boy monk who reads omens.
-  /// ★ Named from the game: "Gems from the sky, blue lights in the north... All
-  /// omens of disaster!" (MsgFuchinTempleGemsFromTheSkyBlueLights)
   ACTOR_BOY_MONK_READING_OMENS,
   /// A boy monk who fears for Nyunpa.
-  /// ★ Named from the game: "Nyunpa has not eaten in days... He is going to
-  /// waste away to nothing." (MsgFuchinTempleNyunpaHasNotEatenInDays)
   ACTOR_WORRIED_BOY_MONK,
   /// A boy monk who admires Nyunpa.
-  /// ★ Named from the game: "Isn't it noble of him to try to save the world by
-  /// becoming enlightened?" (MsgXianIsntNobleHimTrySave)
   ACTOR_ADMIRING_BOY_MONK,
   /// The traveling healer, a man in a tall hat and a long robe.
-  /// ★ Named from the game: "I'm traveling around the world to spread good
-  /// will." (MsgXianImTravelingAroundWorldSpread)
   ACTOR_HEALER
 };
 
@@ -139,54 +124,27 @@ enum FuchinTempleOutsideActorId {
 ///
 /// They are Nyunpa, Feh's students, Feizhi and Feh, and the training tree.
 enum FuchinTempleInsideActorId {
-  /// ★ Named from the game: "I have already heard of your test from Master
-  /// Nyunpa." (MsgXianAlreadyHeardTest)
   ACTOR_NYUNPA = ACTOR_FIRST_PLACED,
   /// A young man, by the school's door.
-  /// ★ Named from the game: "This is Master Feh's school... You came to watch?"
-  /// (MsgXianMasterFehsSchoolCameWatch)
   ACTOR_WELCOMING_STUDENT,
   /// A student who practices kicks.
-  /// ★ Named from the game: "Strong kicks are very important. Kick, kick,
-  /// kick!" (MsgFuchinTempleStrongKicksAreVeryImportantKick)
   ACTOR_KICKING_STUDENT,
   /// A student who practices punches.
-  /// ★ Named from the game: "I want to learn, so I train. Quick punches are
-  /// very good." (MsgFuchinTempleIWantToLearnSoI)
   ACTOR_PUNCHING_STUDENT,
-  /// ★ Named from the game: "Flexibility and jumping are very important in
-  /// kung fu." (MsgXianFlexibilityJumpingVeryImportantIn)
   ACTOR_JUMPING_STUDENT,
   /// A student proud of Feh's school.
-  /// ★ Named from the game: "Everyone in Xian can do martial arts. But the Feh
-  /// School of martial arts is the most elite."
-  /// (MsgFuchinTempleEveryoneInXianCanDoMartial)
   ACTOR_PROUD_STUDENT,
   /// A little girl, a student who learns by watching.
-  /// ★ Named from the game: "Just listening does not make one strong. I learn
-  /// by watching." (MsgFuchinTempleJustListeningDoesNotMakeOne)
   ACTOR_WATCHING_STUDENT,
   /// By the training tree, which he sets up again after it falls.
-  /// ★ Named from the game: "Master Feh is very busy. Do you still wish to see
-  /// him?" (MsgXianMasterFehVeryBusyDo)
   ACTOR_TREE_STUDENT,
   /// Keeps the party from Feh, and goes to Feh's door when the tree first falls
   /// from the line.
-  /// ★ Named from the game: "Master Feh is very busy. He is speaking with his
-  /// daughter, Feizhi. You cannot enter now."
-  /// (MsgFuchinTempleMasterFehIsVeryBusyHe)
   ACTOR_MESSENGER_STUDENT,
-  /// ★ Named from the game: "He is speaking with his daughter, Feizhi."
-  /// (MsgFuchinTempleMasterFehIsVeryBusyHe)
   ACTOR_FEIZHI,
-  /// ★ Named from the game: "Master Feh is talking with Feizhi"
-  /// (MsgFuchinTempleMasterFehIsTalkingWithFeizhi)
   ACTOR_FEH,
-  /// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
   ACTOR_TRAINING_TREE,
   /// Where Force strikes the tree.
-  /// ★ Named from the game: "You cannot push it with your hands. Attack it with
-  /// Chi." (MsgXianCannotPushHands)
   ACTOR_TRAINING_TREE_TARGET
 };
 
@@ -196,30 +154,25 @@ enum FuchinTempleInsideActorId {
 ///
 /// Garet, Ivan and Mia, placed first, keep their own slots.
 enum HamasRoomActorId {
-  /// ★ Named from the game: "Master Hama is meditating."
-  /// (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
   /// A boy monk in Hama's room.
-  /// ★ Named from the game: "Master Hama is meditating. Please be extremely
-  /// quiet." (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_HAMAS_BOY_MONK,
   /// Bursts in to say that Hsu is in danger.
-  /// ★ Named from the game: "Feizhi... Why are you here?"
-  /// (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_FEIZHI_IN_LAMA_TEMPLE
 };
 
 /// Animations of these scenes' own sprites beyond enum ActorAnimation.
 enum {
-  /// Seated cross-legged with his eyes shut (spr_051.png's frame 33).
+  /// Seated cross-legged with his eyes shut (nyunpa.png's frame 33).
   ANIM_NYUNPA_MEDITATE = 5,
   /// Seated as he meditated, shrunken and darkened, once he has died
-  /// enlightened (spr_051.png's frame 34).
+  /// enlightened (nyunpa.png's frame 34).
   ANIM_NYUNPA_WITHERED = 6,
   /// A drill of kicks, a knee raised, a kick and a leaping kick, from a
-  /// fighting stance (spr_130.tsv).
+  /// fighting stance (youth_with_headband.tsv).
   ANIM_STUDENT_KICKS = 5,
-  /// A drill of quick punches with one kick among them (spr_131.tsv).
+  /// A drill of quick punches with one kick among them
+  /// (youth_with_tied_hair.tsv).
   ANIM_STUDENT_PUNCHES = 5
 };
 
@@ -231,13 +184,11 @@ static void FuchinTemple_FinishMindReadDemonstration(void);
 static void FuchinTemple_SpawnNyunpasParticles(void);
 static void FuchinTemple_AnimateRevealLesson(void);
 
-// Shared source, included in link order.
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 
 /// The Psynergy Stone outside the temple has been taken. It refills once the
 /// party enters another area.
-/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 /// Clears the scripted actor's sprite flags and completes the script
@@ -1084,8 +1035,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_MESSENGER_STUDENT, 1.5);
-  actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
-  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_MESSENGER_STUDENT)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 308, 272);
   Event_Wait(1);
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
@@ -1267,12 +1217,9 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
   Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
   // Restore the tree before leaving the group ready for another demonstration.
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->y.fixed = px(12);
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->targetY = ACTOR_NO_TARGET;
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->scaleX = 4 * Q16_ONE / 5;
+  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = px(12);
+  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = actor->sprite;
@@ -1373,16 +1320,11 @@ static void FuchinTemple_FehSeesChi(void) {
 
   // Stop the temporary facing update routines while the group reacts to the
   // tree.
-  actor = Actor_Get(ACTOR_FEH);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_PROUD_STUDENT);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_WATCHING_STUDENT);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_TREE_STUDENT);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
-  actor->update = 0;
+  Actor_Get(ACTOR_FEH)->update = 0;
+  Actor_Get(ACTOR_PROUD_STUDENT)->update = 0;
+  Actor_Get(ACTOR_WATCHING_STUDENT)->update = 0;
+  Actor_Get(ACTOR_TREE_STUDENT)->update = 0;
+  Actor_Get(ACTOR_MESSENGER_STUDENT)->update = 0;
   Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
   FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(232, CAMERA_KEEP, 200, 1);
@@ -1581,10 +1523,8 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->y.fixed = px(12);
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = px(12);
+  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = actor->sprite;
@@ -1705,14 +1645,14 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   options.palette = SPRITE_COLOR_WHITE;
-  paletteDraw = (u32)(Import_RandomNext() * 7) >> 16;
+  paletteDraw = Random_Below(7);
   if ((paletteDraw & 7) == 0)
     options.palette = SPRITE_COLOR_BRG;
 
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 4 * Q16_ONE / 5;
 
-  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * 13107;
+  fallSpeed = (Random_Below(8)) * 13107;
 
   FieldEffect_Spawn(leader->x.fixed + px(8 - (gFrameCount & 15)),
                     leader->y.fixed + (192 << 13), leader->z.fixed, 0,
@@ -2750,10 +2690,10 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 /// Hama's and Ivan's update routine during the Reveal lesson: they glow, drawn
 /// red and blue in turn every two frames.
 static void FuchinTemple_AlternateLessonChildEffect(struct Actor *updated) {
-  if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    Actor_SetSpriteColor((struct Actor *)updated, SPRITE_COLOR_RED_TINT);
+  if ((gFrameCount >> 1) & 1) {
+    Actor_SetSpriteColor(updated, SPRITE_COLOR_RED_TINT);
   } else {
-    Actor_SetSpriteColor((struct Actor *)updated, SPRITE_COLOR_BLUE_TINT);
+    Actor_SetSpriteColor(updated, SPRITE_COLOR_BLUE_TINT);
   }
 }
 
@@ -2788,9 +2728,8 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     }
     particleX = hama->x.fixed +
                 ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) - px(12);
-    particleY = hama->y.fixed +
-                ((((u32)Import_RandomNext() << 5) >> 16) << 16) - px(16);
-    riseSpeed = ((((u32)Import_RandomNext() << 2) >> 16) << 15) + (128 << 8);
+    particleY = hama->y.fixed + ((Random_Below(32)) << 16) - px(16);
+    riseSpeed = ((Random_Below(4)) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);

@@ -7,91 +7,43 @@
 /// parts, and each part includes it too, so that a part read on its own still
 /// resolves.
 
-#include "render_placement.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/field/field_sequence.h"
 #include "module/window/glyph_arm.h"
-#include "module/system/system.h"
-#include "types.h"
-#include "edition.h"
-#include "window.h"
 #include "battle.h"
-#include "input.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_release.h"
-#include "task.h"
-#include "dma.h"
-#include "tbs_edition.h"
 #include "iwram_call.h"
-#include "io_reg.h"
-#include "heap_slots.h"
-#include "menu_list.h"
-#include "render_input.h"
-#include "battle_sprite_id.h"
-#include "glyph.h"
-#include "main_routine_work.h"
 #include "battle_work.h"
-#include "heap.h"
 #include "text_font.h"
-#include "fixed_math.h"
 #include "resource_ids.h"
 #include "ram_code.h"
-#include "affine.h"
 #include "battle_side.h"
-#include "message_reader.h"
-#include "battle_unit.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
-#include "item.h"
 #include "vram_cache.h"
 #include "select.h"
-#include "node_chain.h"
-#include "text/msg_ids.h"
-#include "sounds.h"
 #include "flags.h"
-#include "static_assert.h"
 #include "io_write.h"
 #include "event.h"
-#include "battle_action_run.h"
-#include "settings_menu.h"
 #include "ram_buffer.h"
-#include "main_routine_work.h"
 #include "save.h"
-#include "irq.h"
-#include "status_screen.h"
-#include "sprite.h"
-#include "djinn_figures.h"
+#include "item_menu.h"
 #include "io_write_queue.h"
 #include "map_grid_scroll.h"
 #include "djinn_preview.h"
 #include "battle_status.h"
-#include "battle_actor.h"
-#include "particle.h"
 #include "icon_menu.h"
-#include "battle_sprites.h"
 #include "serial.h"
-#include "battle_effect_work.h"
 #include "shop.h"
 #include "display_transition.h"
-#include "frame.h"
-#include "module/field/event_commands.h"
 #include "module/window/scales.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
 #include "enemy_ids.h"
 
 #ifdef MODERN
-// The menu object calls these window functions with no prototype in scope, as
-// its bytes need (module/window/window.h says why for each); a current GCC gets
-// them here.
+// The menu object calls these window functions with no prototype in scope, so
+// their arguments take the old promotions (module/window/window.h says why for
+// each); a current GCC, which refuses implicit declarations, gets them here.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node);
 struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
@@ -198,7 +150,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// `position` takes the hand's spot, `margin` pixels left of the window and
 /// 20 below the row's top, and `sprite` becomes a plain 16x16 sprite, its
 /// position still to come. The Djinn, item, summon and Psynergy battle menus
-/// each place their cursor so; the name is ours.
+/// each place their cursor so.
 #define MENU_PLACE_CURSOR(position, window, row, margin, sprite)               \
   do {                                                                         \
     (position).x = (window)->x * 8 - (margin);                                 \
@@ -220,25 +172,25 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 // and, outside the Japanese edition, the explanation window under it.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define RESOURCE_MODE0_WINDOW_X 7
-#define RESOURCE_MODE0_WINDOW_WIDTH 17
+#define PASSWORD_LEVEL_WINDOW_X 7
+#define PASSWORD_LEVEL_WINDOW_WIDTH 17
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define RESOURCE_MODE0_WINDOW_X 5
-#define RESOURCE_MODE0_WINDOW_WIDTH 21
+#define PASSWORD_LEVEL_WINDOW_X 5
+#define PASSWORD_LEVEL_WINDOW_WIDTH 21
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-#define RESOURCE_MODE0_WINDOW_X 5
-#define RESOURCE_MODE0_WINDOW_WIDTH 22
+#define PASSWORD_LEVEL_WINDOW_X 5
+#define PASSWORD_LEVEL_WINDOW_WIDTH 22
 #else
-#define RESOURCE_MODE0_WINDOW_X 9
-#define RESOURCE_MODE0_WINDOW_WIDTH 13
+#define PASSWORD_LEVEL_WINDOW_X 9
+#define PASSWORD_LEVEL_WINDOW_WIDTH 13
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
-#define RESOURCE_MODE1_WINDOW_X 1
-#define RESOURCE_MODE1_WINDOW_WIDTH 28
+#define PASSWORD_HELP_WINDOW_X 1
+#define PASSWORD_HELP_WINDOW_WIDTH 28
 #else
-#define RESOURCE_MODE1_WINDOW_X 3
-#define RESOURCE_MODE1_WINDOW_WIDTH 25
+#define PASSWORD_HELP_WINDOW_X 3
+#define PASSWORD_HELP_WINDOW_WIDTH 25
 #endif
 
 // The transfer method menu (IconMenu_ChooseSendOption,
@@ -276,25 +228,21 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_HELP_WINDOW_WIDTH 21
 #endif
 
-// The width inside the border of the name window of the shop's commands
-// (icons 17 to 20) and of the Sanctum's services (icons 25 to 28).
+// The width inside the border of the name window under the shop's commands
+// and the Sanctum's services.
 #if (LANGUAGE == LANGUAGE_GERMAN)
-#define ENTRY11_COMMAND_LABEL_WIDTH 8
+#define SHOP_COMMAND_LABEL_WIDTH 8
 #elif LANGUAGE != LANGUAGE_JAPANESE
-#define ENTRY11_COMMAND_LABEL_WIDTH 7
+#define SHOP_COMMAND_LABEL_WIDTH 7
 #else
-#define ENTRY11_COMMAND_LABEL_WIDTH 6
+#define SHOP_COMMAND_LABEL_WIDTH 6
 #endif
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define ENTRY19_COMMAND_LABEL_WIDTH 10
+#define SANCTUM_SERVICE_LABEL_WIDTH 10
 #else
-#define ENTRY19_COMMAND_LABEL_WIDTH 8
+#define SANCTUM_SERVICE_LABEL_WIDTH 8
 #endif
-
-// The palette of the two portrait slots of the UI work
-// (WindowWork.portraitPictures and portraitSprites).
-#define PORTRAIT_PALETTE 14 ///< sprite palette of slot 0; slot 1 uses 15
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them: the Japanese edition decodes the message (Message_DecodeRaw), the

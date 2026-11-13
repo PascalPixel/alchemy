@@ -16,13 +16,13 @@ enum FieldPsynergyHandler {
       0, ///< casts it with no target (FieldPsynergy_Run)
   /// Casts it on its target, secondActorId (FieldPsynergy_Dispatch).
   FIELD_PSYNERGY_HANDLER_ON_TARGET = 1,
-  FIELD_PSYNERGY_HANDLER_FINISH = 2, ///< finishes it
-  FIELD_PSYNERGY_HANDLER_EXTRA = 3   ///< runs its kind's extra handler
+  FIELD_PSYNERGY_HANDLER_FINISH = 2,
+  FIELD_PSYNERGY_HANDLER_EXTRA = 3 ///< runs its kind's extra handler
 };
 
 /// A field Psynergy, as the field kind: the type column of
-/// games/tbs/src/game/abilities.tsv, named for the abilities that have it. The
-/// field effect keeps it as its animation.
+/// games/tbs/src/game/ability_table.c, named for the abilities that have it.
+/// The field effect keeps it as its animation.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,
@@ -134,7 +134,7 @@ void Actor_UpdateBlink(struct Actor *actor);
 void Actor_SetSpriteColor(struct Actor *actor, s32 param);
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script);
 s32 Actor_StepAngle(struct Actor *actor);
-void Actor_ResetTargetAndSetMode1(u32 actorId);
+void Actor_ClearDestinationAndStand(u32 actorId);
 void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames);
 void Actor_SetSpritePriority(s32 actorId, s32 priority);
 void Actor_CopyGraphics(u32 targetId, u32 sourceId);
@@ -182,7 +182,7 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 #define EMOTE_IN_FRONT 0x100
 
 /// The bubbles Actor_ShowEmoteById can show, by the animation they pick
-/// in the bubble's sprite sheet (SPR_021).
+/// in the bubble's sprite sheet (EMOTE).
 enum Emote {
   EMOTE_EXCLAMATION = 0, ///< "!"
   EMOTE_QUESTION = 1,    ///< "?"
@@ -248,9 +248,8 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor);
 void Djinn_RunBattleStartHop(s32 djinniId);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void Djinn_RestoreActorAfterBattle(void);
-// Declared without a prototype, as FieldSequence_Run (field_sequence.c) calls
-// it with one argument and with two. field_sequence.c comes before this unit in
-// ROM order, so in one file the calls would still come before the definition.
+// Declared without a prototype: FieldSequence_Run calls it with one argument
+// and with two.
 void Djinn_ResolvePending();
 void FieldEffect_UpdateAllSlots(void);
 void FieldEffect_InitializeSlots(void);

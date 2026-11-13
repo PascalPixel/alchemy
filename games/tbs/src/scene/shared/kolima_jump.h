@@ -28,7 +28,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    *flags &= 0x7e;
+    *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER,
                             ((union FieldCoordinate *)&request->x)->part.pixel,
@@ -65,9 +65,7 @@ static void KolimaForest_HopEast(void) {
   target.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   target.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
 #else
-  // gMainRoutineWork.leaderActorId
-  s32 off = 500;
-  struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gMainRoutineWork + off));
+  struct Actor *p = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 base = p->x.fixed & FIELD_CELL_MASK;
 
   target.x = base + px(8);

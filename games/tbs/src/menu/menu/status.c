@@ -135,9 +135,8 @@ s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
   s32 result = 0;
 
-  /* FAKEMATCH(dead): the slot's clearing in both arms of a test, which ends
-   * the scheduling block before the slot's offset is built until jump2 merges
-   * the arms; as a plain statement, 4 of 22 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the slot's clearing in both arms of a test; as a plain
+   * statement, 4 of 22 instructions differ in tbs-en. */
   if ((s32)work < 0)
     work->selectedSlots[0] = result;
   else
@@ -183,15 +182,15 @@ s32 StatusScreen_Run(void) {
   // takes HIGHLIGHT_PALETTE's WINDOW_BACKGROUND_COLOR as its
   // TEXT_BACKGROUND_COLOR, palette 1 WINDOW_PALETTE's
   // (PsynergyMenu_DrawRangePage).
-  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
-          REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
 #if TBS_PATCH_1
   Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
   Iwram_FillWords(BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES, PIXELS_4BPP(3));
@@ -410,8 +409,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   menu->cursor->motion = ICON_SHOWN;
   menu->secondCursor->motion = ICON_SHOWN;
   Sound_PlayFar(SE_MENU_CANCEL);
-  // Returns no value: the bytes have the s32 epilogue (pop {r1}; bx r1) after
-  // this void call.
+  // UB: returns no value.
 #ifdef UBFIX
   return 0;
 #endif
@@ -460,15 +458,15 @@ s32 PartyMemberChooser_RunRearrange(void) {
   // The highlight palette, and the first sprite palette into background
   // palettes 0 and 1, as StatusScreen_Run sets them.
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
-          REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -1125,8 +1123,6 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 void Menu_BusyWait(void) {
   s32 count = 255;
 
-  // Written with goto: as a do-while loop, the loop optimizer
-  // deletes the empty loop and leaves 1 of the 7 instructions.
 spin:
   count--;
   if (count >= 0)
@@ -1532,7 +1528,7 @@ s32 PsynergyMenu_SelectAction(void) {
     s32 priority = 245;
     struct WindowSprite **icons = menu->entryIcons;
 
-    for (iconIndex = 31; iconIndex >= 0; iconIndex--) {
+    for (iconIndex = 0; iconIndex < 32; iconIndex++) {
       struct WindowSprite *icon = *icons++;
 
       if (icon != 0)
@@ -1736,8 +1732,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
 
 /// Draws one page of the Status menu's equipment page into window: up to
 /// PAGE_ROWS item names with their icons and the page numbers, or "no items",
-/// and the party member's name with their Attack and Defense. Returns 1. Called
-/// by ItemMenu_SelectItem for each page.
+/// and the party member's name with their Attack and Defense. Returns 1.
 s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
                           struct PagedList *state) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -1917,7 +1912,7 @@ s32 ItemMenu_SelectItem(void) {
 }
 
 /// Moves through the status grid's irregular rows and returns row * 9 + column.
-/// Nothing in TBS calls it.
+/// Nothing calls it.
 s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
   s32 row;
   s32 column;
@@ -1990,11 +1985,10 @@ s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
 /// Nothing calls it.
 s32 Menu_ReservedStatusOne(void) { return 1; }
 
-/// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one
-/// a 16-pixel row) and the names of the items worn in them into window; mode 0
+/// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one a
+/// 16-pixel row) and the names of the items worn in them into window; mode 0
 /// also shows their icons at the right. Reads the work's items list, which the
-/// caller fills (ItemMenu_CollectItems). Used by the item screen's R view and
-/// the Status menu's equipment page.
+/// caller fills (ItemMenu_CollectItems).
 void ItemMenu_DrawCategory(struct Window *window, s32 memberId, s32 mode) {
   struct ItemMenuWork *menu = gMenuWork;
   u16 *items;
@@ -2054,15 +2048,13 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
   struct WindowSprite **icons;
 
-  entryIndex = 0;
-  icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
-  do {
+  for (entryIndex = 0, icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
+       entryIndex <= 31; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
       Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
     }
-    entryIndex += 1;
-  } while (entryIndex <= 31);
+  }
 }
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
@@ -2179,10 +2171,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
-  index = 0;
-  slot = menu->categoryIcons;
-  shown = 0;
-  do {
+  for (index = 0, slot = menu->categoryIcons, shown = 0; index <= 4; index++) {
     entry = *slot++;
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;
@@ -2191,8 +2180,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
       Icon_PrepareActor(entry);
       shown++;
     }
-    index++;
-  } while (index <= 4);
+  }
 }
 
 /// Moves the five status icons (the first category sprites) off screen,

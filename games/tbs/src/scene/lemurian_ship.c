@@ -1,4 +1,5 @@
-/// @file The wharf at the edge of Lalivero where Babi's ship lies sunk.
+/// @file
+/// The wharf at the edge of Lalivero where Babi's ship lies sunk.
 ///
 /// This is the game's last scene: SceneId_LemurianShip, with the area name
 /// Lemurian ship. The party enters it from Faran's house (timber_rooms_bc.c)
@@ -52,7 +53,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "event.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -89,11 +89,7 @@ static void Curtain_Start(void);
 
 enum {
   /// The gangway, in two pieces (SPRITE_GANGWAY): its northern half.
-  /// ★ Named from what the player sees: the northern half of the gangway
-  /// between the wharf and the ship (its render)
   ACTOR_GANGWAY_NORTH = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the southern half of the gangway
-  /// between the wharf and the ship (its render)
   ACTOR_GANGWAY_SOUTH
 };
 
@@ -101,18 +97,11 @@ enum {
 /// The swell (Ship_UpdateSwell) moves only those who have.
 #define SHIP_NOT_ON_DECK (-px(1))
 
-/// The sprite of a gangway piece or a party actor.
-// UB: the s32 read aliases the pointer field. UBFIX reads the field itself.
-#ifdef UBFIX
-#define ACTOR_SPRITE(actor) ((actor)->sprite)
-#else
-#define ACTOR_SPRITE(actor) ((struct Sprite *)*(s32 *)&(actor)->sprite)
-#endif
 /// The sprite priority of an actor's picture and of its shadow.
 #define SET_IMAGE_PRIORITY(actor, level)                                       \
-  ((void)(ACTOR_SPRITE(actor)->image.priority = (level)))
+  ((void)(actor->sprite->image.priority = (level)))
 #define SET_SHADOW_PRIORITY(actor, level)                                      \
-  ((void)(ACTOR_SPRITE(actor)->shadow.priority = (level)))
+  ((void)(actor->sprite->shadow.priority = (level)))
 
 const struct SceneEntrance *LemurianShip_GetEntrances(void) {
   return gLemurianShipEntrances;
@@ -177,10 +166,8 @@ static void ShipGlow_CyclePalette(void) {
     *frame = 0;
 }
 
-/// The water drop's burst into a ring of spray (spr_503.png), beyond enum
+/// The water drop's burst into a ring of spray (water_drop.png), beyond enum
 /// ActorAnimation.
-/// ★ Named from what the player sees: drops bursting into rings of spray as
-/// the ship rises (LemurianShip_RaiseTheShip's render)
 enum { ANIM_DROP_BURST = 1 };
 
 /// A drop of spray rises and wobbles for its timer, then bursts into a ring
@@ -233,8 +220,8 @@ static void OrbGlow_Fade(void) {
 /// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
 /// set.
 static void Ship_UpdateSwell(void) {
-  /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again for the
-   * register write; as a plain u16, 5 of 225 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): the blend passes through a halfword on the stack;
+   * as a plain u16, 5 of 225 instructions differ in tbs-en. */
   volatile u16 blend;
   struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
@@ -280,8 +267,8 @@ static void Ship_UpdateSwell(void) {
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
-    x = grid->viewX & -0x10000;
-    z = grid->viewY & -0x10000;
+    x = grid->view[0] & -0x10000;
+    z = grid->view[1] & -0x10000;
     x += Random_Next() * 240;
     sprayPosition.x = x;
     sprayPosition.y = 0;
@@ -309,45 +296,25 @@ static void Ship_UpdateSwell(void) {
 /// Called by gLeaderBoardsShip as he steps on deck. The other party members'
 /// boarding scripts call their own copies below.
 static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-  struct Actor *actor;
-
-  deckY = &gLeaderDeckY;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  *deckY = actor->y.fixed;
+  gLeaderDeckY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   return 0;
 }
 
 /// Remembers Garet's boarding height for the swell task.
 static s32 LemurianShip_GaretStepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-  struct Actor *actor;
-
-  deckY = &gGaretDeckY;
-  actor = Actor_Get(ACTOR_GARET);
-  *deckY = actor->y.fixed;
+  gGaretDeckY = Actor_Get(ACTOR_GARET)->y.fixed;
   return 0;
 }
 
 /// Remembers Mia's boarding height for the swell task.
 static s32 LemurianShip_MiaStepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-  struct Actor *actor;
-
-  deckY = &gMiaDeckY;
-  actor = Actor_Get(ACTOR_MIA);
-  *deckY = actor->y.fixed;
+  gMiaDeckY = Actor_Get(ACTOR_MIA)->y.fixed;
   return 0;
 }
 
 /// Remembers Ivan's boarding height for the swell task.
-static s32 Ivan_StepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-  struct Actor *actor;
-
-  deckY = &gIvanDeckY;
-  actor = Actor_Get(ACTOR_IVAN);
-  *deckY = actor->y.fixed;
+static s32 LemurianShip_IvanStepOnDeck(struct Actor *interpreter) {
+  gIvanDeckY = Actor_Get(ACTOR_IVAN)->y.fixed;
   return 0;
 }
 
@@ -610,7 +577,7 @@ static void LemurianShip_SetSail(void) {
   FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
   // Fade out to the clear screen.
-  work = gMapGridWork[19];
+  work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
@@ -662,8 +629,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  /* FAKEMATCH(volatile): each BGxCNT value stored at sp+6 on its way to the
-   * register; as a plain u16, 6 of 231 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
+   * as a plain u16, 6 of 231 instructions differ in tbs-en. */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -679,11 +646,7 @@ static void LemurianShip_RaiseTheShip(void) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Event_Wait(10);
   }
-  {
-    u16 color = RGB(0, 16, 31);
-
-    PLTT_BACKDROP = color;
-  }
+  Io_Write16(RGB(0, 16, 31), &PLTT_BACKDROP);
   {
     u16 bright = BLEND_ALPHA(16, 16);
 
@@ -760,15 +723,15 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  /* FAKEMATCH(volatile): each step stored at sp+2; as a plain u16, 2 of 165
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
+   * as a plain u16, 2 of 165 instructions differ in tbs-en. */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  ((struct FieldWork *)gMapGridWork[19])->transition =
+  FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID)->transition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_GANGWAY_NORTH)->collisionFlags = 0;
   Actor_Get(ACTOR_GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -897,7 +860,6 @@ void LineScroll_BuildPage(void) {
 #include "shared/scroll_initialize_hblank_dma.h"
 
 /// Takes the ripple's tasks off and stops DMA 0.
-/// Called by Ripple_StopForReveal.
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 
@@ -911,59 +873,58 @@ static void Ripple_Stop(void) {
 
 /// The curtains: three columns of eight 32 by 8 sprites that close in from
 /// the sides as the ship sails.
-static struct AnimationSpritePart sCurtainSprites[24];
+static struct MenuSprite sCurtainSprites[24];
 static s16 sCurtainGap;
 static s16 sCurtainVramSlot;
 
 /// Moves the curtains a step closer and queues their 24 sprites.
 /// Run each frame from Curtain_Start to the end of the game.
+// Each part is three words: the queue link, attributes 0 and 1, and
+// attribute 2.
+#ifdef UBFIX
+#define CURTAIN_PART(attributes, tile)                                         \
+  (part->next = NULL, part->oam.word.attr01 = (attributes),                    \
+   part->oam.word.attr23 = (tile), part++)
+#else
+// UB: the parts are written through a word cursor, the link among them.
+#define CURTAIN_PART(attributes, tile)                                         \
+  (*word++ = 0, *word++ = (attributes), *word++ = (tile))
+#endif
+
 static void Curtain_Close(void) {
 #ifdef UBFIX
-  u32 words[24 * sizeof(struct AnimationSpritePart) / sizeof(u32)];
+  struct MenuSprite *part;
+#else
+  u32 *word;
 #endif
-  u32 *entry;
   u32 tile;
-  s32 step;
-  s32 x;
+  s32 gap;
+  s32 edge;
   u32 i;
 
   tile = gVramCacheEntries[sCurtainVramSlot].offset >> 5;
-  // Each part is written whole as three words: the queue link, attributes 0
-  // and 1, and attribute 2.
-  // UB: the word cursor crosses the parts' members. UBFIX builds the
-  // same words in a word array and copies them.
 #ifdef UBFIX
-  entry = words;
+  part = sCurtainSprites;
 #else
-  entry = (u32 *)sCurtainSprites;
+  word = (u32 *)sCurtainSprites;
 #endif
   if (sCurtainGap != 0)
     sCurtainGap--;
+  // Three columns of eight.
   for (i = 0; i < 8; i++) {
-    s32 left;
+    s32 leftEdge;
 
-    step = sCurtainGap;
-    left = -step / 2;
-    *entry++ = 0;
-    *entry++ = (left & 0xff) | (i << 21) | OBJ_SIZE_32X16;
-    *entry++ = tile;
+    gap = sCurtainGap;
+    leftEdge = -gap / 2;
+    CURTAIN_PART((leftEdge & 0xff) | (i << 21) | OBJ_SIZE_32X16, tile);
   }
-  x = (step / 2 + 136) & 0xff;
-  for (i = 0; i < 8; i++) {
-    *entry++ = 0;
-    *entry++ = (i << 21) | x | OBJ_SIZE_32X16;
-    *entry++ = tile;
-  }
+  edge = (gap / 2 + 136) & 0xff;
+  for (i = 0; i < 8; i++)
+    CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
   i = 0;
-  x = (sCurtainGap / 2 + 152) & 0xff;
-  for (; i < 8; i++) {
-    *entry++ = 0;
-    *entry++ = (i << 21) | x | OBJ_SIZE_32X16;
-    *entry++ = tile;
-  }
-#ifdef UBFIX
-  memcpy(sCurtainSprites, words, sizeof(words));
-#endif
+  edge = (sCurtainGap / 2 + 152) & 0xff;
+  for (; i < 8; i++)
+    CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
   for (i = 0; i < 24; i++)
     Oam_AddSpriteAtDepth(&sCurtainSprites[i], 255);
 }
@@ -1174,7 +1135,7 @@ s32 gIvanBoardsShip[] = {
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
-    SC_CALL(Ivan_StepOnDeck),
+    SC_CALL(LemurianShip_IvanStepOnDeck),
     SC_END,
 };
 

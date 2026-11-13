@@ -4,10 +4,7 @@
 
 #include "module/field/actor_script.h"
 #include "module/field/field.h"
-#include "actor_builtin_scripts.h"
-#include "field.h"
 #include "actor_script.h"
-#include "types.h"
 
 /// The script Actor_Create gives every new actor: it does nothing and
 /// returns to the idle script.
@@ -23,35 +20,30 @@ const s32 gActor_KeyCheckScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by Actor_StartMoveByKeys.
 const s32 gActor_KeysScript[] = {
     SC_KEYS,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by Actor_StartPlayerControl.
 const s32 gActor_PlayerScript[] = {
     SC_PLAYER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by Actor_StartWorldMapControl.
 const s32 gActor_WorldMapScript[] = {
     SC_WORLD,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by Actor_StartCamera.
 const s32 gActor_CameraScript[] = {
     SC_CAMERA,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by Actor_StartApproachWatched.
 const s32 gActor_ApproachWatchedScript[] = {
     SC_APPROACH_WATCHED,
     SC_WAIT(1),

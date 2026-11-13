@@ -4,15 +4,6 @@
 
 #include "../field_sequence_internal.h"
 
-#ifndef UBFIX
-/// The map grid work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
-/// position: the high halves are the view's x and z in whole pixels.
-struct MapGridScrollCameraView {
-  u8 beforeView[228]; ///< the map grid work up to its view position
-  s16 camera[4];
-};
-#endif
-
 /// Each frame of the fade overlay: on each of the two cells beside the
 /// actor (left and right of it), where the ground one or two cells south rises
 /// above the actor's floor, draws a semi-transparent 16-pixel-wide
@@ -21,21 +12,10 @@ struct MapGridScrollCameraView {
 /// HEAP_SLOT_FADE_OVERLAY and queues the marks with Oam_AddSpriteAtDepth.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
-#ifdef UBFIX
   struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 cameraX = grid->viewX >> 16;
-  s32 cameraZ = grid->viewY >> 16;
-#else
-  // UB: the legacy halfword overlay aliases the map's s32 coordinates.
-  // Named-member high halves keep 474 bytes but change load scheduling
-  // from .text+0x6cce in English; the actor's named fields match
-  // plainly.
-  s16 *camera =
-      ((struct MapGridScrollCameraView *)HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID))
-          ->camera;
-  s32 cameraX = camera[1];
-  s32 cameraZ = camera[3];
-#endif
+  s32 *view = grid->view;
+  s32 cameraX = (s16)(view[0] >> 16);
+  s32 cameraZ = (s16)(view[1] >> 16);
   struct AnimationSpritePart *mark = work->marks;
   struct Actor *actor = work->actor;
   s32 x;
@@ -111,11 +91,8 @@ void FadeOverlay_DrawMarks(void) {
 /// solid tiles, sets the blending and draws it each frame. Allocates
 /// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
 /// tiles (512 bytes of colour 1, VRAM_CACHE_ENTRY_FADE_OVERLAY) and registers
-/// FadeOverlay_DrawMarks. Called by seven scene overlays (Venus and Mercury
-/// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
-/// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
-/// work's actor. Nothing in the game stops it (FadeOverlay_Suspend has no
-/// named caller): the work and the task last until the next scene change
+/// FadeOverlay_DrawMarks. Nothing in the game stops it (FadeOverlay_Suspend has
+/// no named caller): the work and the task last until the next scene change
 /// resets the heap and the task table (MainRoutine_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
@@ -141,10 +118,8 @@ void FieldEffect_StartFadeOverlay(void *object) {
   work->actor = object;
 }
 
-/// Stops drawing the fade overlay, keeping its work. Reached only through a
-/// bare far-call veneer; nothing in the game names it.
+/// Stops drawing the fade overlay, keeping its work.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
-/// Draws the fade overlay again after FadeOverlay_Suspend. Reached only
-/// through a bare far-call veneer.
+/// Draws the fade overlay again after FadeOverlay_Suspend.
 void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }

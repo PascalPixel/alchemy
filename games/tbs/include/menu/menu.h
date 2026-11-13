@@ -7,6 +7,7 @@
 #include "types.h"
 #include "edition.h"
 #include "far_call.h"
+#include "heap.h"
 
 /// The Status screen highlight's width in tiles on each status row: Down,
 /// Poison, Venom, Curse and Haunt.
@@ -57,14 +58,16 @@ extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
 /// Heap slot 6: the actor system's work (struct ActorSystemWork).
-extern struct ActorSystemWork *gActorSystemWork;
+#define gActorSystemWork                                                       \
+  (*(struct ActorSystemWork **)&gHeapSlots[HEAP_SLOT_ACTOR_SYSTEM])
 /// The number text buffer: String_FormatHex writes eight digits and
 /// String_FormatDecimal eleven characters, right-aligned, each with a
 /// terminator. The debug text routines and the Djinn preview's numbers
 /// (String_FormatNumberToHalfwords) read it.
 extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
-extern struct SelectionMenuWork *gSelectionMenuWork;
+#define gSelectionMenuWork                                                     \
+  (*(struct SelectionMenuWork **)&gHeapSlots[HEAP_SLOT_SELECTION_MENU])
 /// Read as a halfword: nonzero offers Battle on the File Screen, when a file
 /// has any of game flags 48 to 127 set.
 extern u8 gTitleBattleOptionEnabled[];

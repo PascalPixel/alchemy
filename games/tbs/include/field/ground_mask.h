@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include "edition.h"
+#include "heap.h"
 
 #include "sprite.h"
 
@@ -23,7 +24,8 @@ STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
 
 /// HEAP_SLOT_FADE_OVERLAY: the fade overlay's work from
 /// FieldEffect_StartFadeOverlay until the next scene change.
-extern struct FadeOverlayWork *gFadeOverlayWork;
+#define gFadeOverlayWork                                                       \
+  (*(struct FadeOverlayWork **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
 
 #define WEATHER_PARTICLE_COUNT 32 ///< WeatherWork.particles
 
@@ -71,6 +73,6 @@ struct WeatherWork {
 STATIC_ASSERT(sizeof(struct WeatherWork) == 0x410);
 
 /// HEAP_SLOT_WEATHER: the running ground particles, motes or sparkles.
-extern struct WeatherWork *gWeatherWork;
+#define gWeatherWork (*(struct WeatherWork **)&gHeapSlots[HEAP_SLOT_WEATHER])
 
 #endif

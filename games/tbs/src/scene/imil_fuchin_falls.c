@@ -125,7 +125,6 @@
 #include "sound.h"
 #include "system.h"
 #include "imil_fuchin_falls.h"
-#include "types.h"
 #include "glyph.h"
 #include "event.h"
 #include "scene_tables.h"
@@ -156,21 +155,14 @@
 /// the one sprite the dragon statue's room places.
 enum ImilFuchinFallsActorId {
   /// A Mars Djinni, in Imil Falls Cave.
-  /// ★ Named from the game: "Fever" (MsgDjinnName)
   ACTOR_FEVER = ACTOR_FIRST_PLACED,
   /// The floating logs: three in the first, second and fourth rooms, four in
   /// the third.
-  /// ★ Named from what the player sees: yellow logs floating on the cave's
-  /// water (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_SECOND_LOG,
-  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_THIRD_LOG,
-  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_FOURTH_LOG,
   /// Zephyr, a Jupiter Djinni, after the second room's three logs.
-  /// ★ Named from the game: "Zephyr" (MsgDjinnName)
   ACTOR_ZEPHYR = ACTOR_FIRST_PLACED + 3,
   /// A crate (SPRITE_CRATE) in the dragon statue's room, which the player never
   /// sees. It is the sprite of the third room's two foreground pieces
@@ -292,16 +284,10 @@ const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
 #include "shared/actor_pair_move.h"
 
 /// The first room's first log lies at the east end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST FLAG_AREA_TEMP_01
 /// The first room's second log lies at the north end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH FLAG_AREA_TEMP_02
 /// The first room's third log lies at the north end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH FLAG_AREA_TEMP_03
 /// The second room's first log lies at the east end of its track.
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END FLAG_AREA_TEMP_04
@@ -309,39 +295,25 @@ const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
 /// of where it starts, unless it has since been pushed to the east end.
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END FLAG_AREA_TEMP_05
 /// The second room's second log lies at the south end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH FLAG_AREA_TEMP_06
 /// The second room's third log lies at the north end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH FLAG_AREA_TEMP_07
 /// The third room's first log lies at the west end of its track.
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END FLAG_AREA_TEMP_08
 /// The third room's first log lies at its middle stop, where the third or
 /// fourth log blocked it.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE FLAG_AREA_TEMP_09
 /// The third room's second log lies at the west end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST FLAG_AREA_TEMP_0A
 /// The third room's third log lies at the north end of its track.
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END FLAG_AREA_TEMP_0B
 /// The third room's third log lies at its upper stop, a cell south of the north
 /// end.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP                \
   FLAG_AREA_TEMP_0C
 /// The third room's third log lies at its middle stop.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE FLAG_AREA_TEMP_0D
 /// The third room's third log lies at its lower stop. No move sets it.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP                \
   FLAG_AREA_TEMP_0E
 /// The third room's fourth log lies at the north end of its track.
@@ -349,30 +321,18 @@ const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
   FLAG_AREA_TEMP_0F
 /// The third room's fourth log lies at its upper stop, a cell south of the
 /// north end.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP               \
   FLAG_AREA_TEMP_10
 /// The third room's fourth log lies at its middle stop.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE FLAG_AREA_TEMP_11
 /// The third room's fourth log lies at its lower stop. No move sets it.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP               \
   FLAG_AREA_TEMP_12
 /// The fourth room's first log lies at the south end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH FLAG_AREA_TEMP_13
 /// The fourth room's second log lies at the west end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST FLAG_AREA_TEMP_14
 /// The fourth room's third log lies at the east end of its track.
-/// ★ Named from what the player sees: golden logs floating on the cave's pool,
-/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST FLAG_AREA_TEMP_15
 
 /// Lets the log settle before rebuilding its room's cell behaviors.
@@ -1173,58 +1133,30 @@ static void FuchinFallsCave_PlaceLogAtCell(s32 id, s32 column, s32 row) {
 /// (SceneId_FuchinFallsCaveEntrance) at the cells their flags name, and
 /// rewrites the cells of their tracks to match.
 static void FuchinFallsCave_RebuildEntranceLogs(void) {
-  {
-    s32 column = 8;
-    s32 row = 29;
-    MapGrid_CopyCellAttributes(8, 42, 15, 5, column, row);
-  }
+  MapGrid_CopyCellAttributes(8, 42, 15, 5, 8, 29);
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 22, 31);
-    {
-      s32 column = 8;
-      s32 row = 30;
-      MapGrid_CopyCellAttributes(9, 30, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(9, 30, 1, 3, 8, 30);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 8, 31);
-    {
-      s32 column = 22;
-      s32 row = 30;
-      MapGrid_CopyCellAttributes(9, 30, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(9, 30, 1, 3, 22, 30);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 12, 29);
-    {
-      s32 column = 11;
-      s32 row = 33;
-      MapGrid_CopyCellAttributes(14, 33, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 33, 3, 1, 11, 33);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 12, 33);
-    {
-      s32 column = 11;
-      s32 row = 29;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 11, 29);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 18, 29);
-    {
-      s32 column = 17;
-      s32 row = 33;
-      MapGrid_CopyCellAttributes(14, 33, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 33, 3, 1, 17, 33);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 18, 33);
-    {
-      s32 column = 17;
-      s32 row = 29;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 17, 29);
   }
 }
 
@@ -1236,85 +1168,41 @@ static void FuchinFallsCave_RebuildEntranceLogs(void) {
 /// They run from (20, 19) for a log lying north to south, from (14, 18) for one
 /// lying west to east.
 static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
-  {
-    s32 column = 12;
-    s32 row = 8;
-    MapGrid_CopyCellAttributes(0, 28, 10, 18, column, row);
-  }
+  MapGrid_CopyCellAttributes(0, 28, 10, 18, 12, 8);
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 21, 20);
-    {
-      s32 column = 13;
-      s32 row = 19;
-      MapGrid_CopyCellAttributes(20, 19, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(20, 19, 1, 3, 13, 19);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 13, 20);
-    {
-      s32 column = 21;
-      s32 row = 19;
-      MapGrid_CopyCellAttributes(20, 19, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(20, 19, 1, 3, 21, 19);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 12, 20);
-    {
-      s32 column = 12;
-      s32 row = 19;
-      MapGrid_CopyCellAttributes(5, 19, 1, 3, column, row);
-    }
-    {
-      s32 column = 13;
-      s32 row = 19;
-      MapGrid_CopyCellAttributes(20, 19, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(5, 19, 1, 3, 12, 19);
+    MapGrid_CopyCellAttributes(20, 19, 1, 3, 13, 19);
     if (GameFlag_Get(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END) != 0) {
       FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 21, 20);
-      {
-        s32 column = 13;
-        s32 row = 19;
-        MapGrid_CopyCellAttributes(20, 19, 1, 3, column, row);
-      }
-      {
-        s32 column = 12;
-        s32 row = 19;
-        MapGrid_CopyCellAttributes(20, 19, 1, 3, column, row);
-      }
+      MapGrid_CopyCellAttributes(20, 19, 1, 3, 13, 19);
+      MapGrid_CopyCellAttributes(20, 19, 1, 3, 12, 19);
     }
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 15, 21);
-    {
-      s32 column = 14;
-      s32 row = 17;
-      MapGrid_CopyCellAttributes(14, 18, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 18, 3, 1, 14, 17);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 15, 17);
-    {
-      s32 column = 14;
-      s32 row = 21;
-      MapGrid_CopyCellAttributes(14, 18, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 18, 3, 1, 14, 21);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 19, 8);
-    {
-      s32 column = 18;
-      s32 row = 25;
-      MapGrid_CopyCellAttributes(14, 18, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 18, 3, 1, 18, 25);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 19, 25);
-    {
-      s32 column = 18;
-      s32 row = 8;
-      MapGrid_CopyCellAttributes(14, 18, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(14, 18, 3, 1, 18, 8);
   }
 }
 
@@ -1327,81 +1215,56 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
 /// it when stepped on. A stop it is not at takes three walls in a row, from
 /// (14, 29) for a log lying west to east.
 static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
-  {
-    MapGrid_CopyCellAttributes(12, 3, 9, 16, 12, 21);
-  }
+  MapGrid_CopyCellAttributes(12, 3, 9, 16, 12, 21);
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) !=
       0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 14, 25);
-    {
-      MapGrid_CopyCellAttributes(16, 24, 1, 3, 20, 24);
-    }
+    MapGrid_CopyCellAttributes(16, 24, 1, 3, 20, 24);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 17, 25);
-    {
-      s32 row = 24;
-      MapGrid_CopyCellAttributes(18, 24, 1, 3, 20, row);
-      MapGrid_CopyCellAttributes(18, 24, 1, 3, 14, row);
-      MapGrid_CopyCellAttributes(8, 41, 1, 3, 17, row);
-    }
+    MapGrid_CopyCellAttributes(18, 24, 1, 3, 20, 24);
+    MapGrid_CopyCellAttributes(18, 24, 1, 3, 14, 24);
+    MapGrid_CopyCellAttributes(8, 41, 1, 3, 17, 24);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 20, 25);
-    {
-      MapGrid_CopyCellAttributes(16, 24, 1, 3, 14, 24);
-    }
+    MapGrid_CopyCellAttributes(16, 24, 1, 3, 14, 24);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 13, 35);
-    {
-      MapGrid_CopyCellAttributes(14, 34, 1, 3, 15, 34);
-    }
+    MapGrid_CopyCellAttributes(14, 34, 1, 3, 15, 34);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 15, 35);
-    {
-      MapGrid_CopyCellAttributes(14, 34, 1, 3, 13, 34);
-    }
+    MapGrid_CopyCellAttributes(14, 34, 1, 3, 13, 34);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END) !=
       0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 15, 22);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 30);
-      MapGrid_CopyCellAttributes(5, 41, 3, 1, column, 22);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 30);
+    MapGrid_CopyCellAttributes(5, 41, 3, 1, 14, 22);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP) !=
              0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 15, 23);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(5, 42, 3, 1, column, 23);
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 30);
-      MapGrid_CopyCellAttributes(10, 44, 3, 1, column, 21);
-    }
+    MapGrid_CopyCellAttributes(5, 42, 3, 1, 14, 23);
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 30);
+    MapGrid_CopyCellAttributes(10, 44, 3, 1, 14, 21);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 15, 26);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 22);
-      MapGrid_CopyCellAttributes(5, 43, 3, 1, column, 26);
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 30);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 22);
+    MapGrid_CopyCellAttributes(5, 43, 3, 1, 14, 26);
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 30);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP) !=
              0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 15, 27);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 22);
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 30);
-      MapGrid_CopyCellAttributes(5, 44, 3, 1, column, 27);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 22);
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 30);
+    MapGrid_CopyCellAttributes(5, 44, 3, 1, 14, 27);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 15, 30);
   }
@@ -1409,28 +1272,19 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END) !=
       0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FOURTH_LOG, 15, 23);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 31);
-      MapGrid_CopyCellAttributes(10, 40, 3, 1, column, 23);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 31);
+    MapGrid_CopyCellAttributes(10, 40, 3, 1, 14, 23);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP) !=
              0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FOURTH_LOG, 15, 24);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 31);
-      MapGrid_CopyCellAttributes(10, 41, 3, 1, column, 24);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 31);
+    MapGrid_CopyCellAttributes(10, 41, 3, 1, 14, 24);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FOURTH_LOG, 15, 27);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 31);
-      MapGrid_CopyCellAttributes(10, 42, 3, 1, column, 27);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 31);
+    MapGrid_CopyCellAttributes(10, 42, 3, 1, 14, 27);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP) !=
              0) {
@@ -1438,11 +1292,8 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
     // FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP, so the log
     // never lies here and the room never gets step trigger 24.
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FOURTH_LOG, 15, 28);
-    {
-      s32 column = 14;
-      MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 31);
-      MapGrid_CopyCellAttributes(10, 43, 3, 1, column, 28);
-    }
+    MapGrid_CopyCellAttributes(14, 29, 3, 1, 14, 31);
+    MapGrid_CopyCellAttributes(10, 43, 3, 1, 14, 28);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FOURTH_LOG, 15, 31);
   }
@@ -1453,65 +1304,33 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
 /// their flags name.
 static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
   if (((u32)((u16)gMainRoutineWork.entrance - 1) << 16) <= 1 << 16) {
-    {
-      s32 column = 14;
-      s32 row = 10;
-      MapGrid_CopyCellAttributes(22, 20, 9, 8, column, row);
-    }
+    MapGrid_CopyCellAttributes(22, 20, 9, 8, 14, 10);
   } else {
-    {
-      s32 column = 7;
-      s32 row = 45;
-      MapGrid_CopyCellAttributes(20, 45, 11, 4, column, row);
-    }
+    MapGrid_CopyCellAttributes(20, 45, 11, 4, 7, 45);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 20, 17);
-    {
-      s32 column = 19;
-      s32 row = 10;
-      MapGrid_CopyCellAttributes(19, 11, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(19, 11, 3, 1, 19, 10);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_FIRST_LOG, 20, 10);
-    {
-      s32 column = 19;
-      s32 row = 17;
-      MapGrid_CopyCellAttributes(19, 11, 3, 1, column, row);
-    }
+    MapGrid_CopyCellAttributes(19, 11, 3, 1, 19, 17);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 14, 16);
-    {
-      s32 column = 22;
-      s32 row = 15;
-      MapGrid_CopyCellAttributes(16, 15, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(16, 15, 1, 3, 22, 15);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_SECOND_LOG, 22, 16);
-    {
-      s32 column = 14;
-      s32 row = 15;
-      MapGrid_CopyCellAttributes(16, 15, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(16, 15, 1, 3, 14, 15);
   }
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST) != 0) {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 17, 46);
-    {
-      s32 column = 7;
-      s32 row = 45;
-      MapGrid_CopyCellAttributes(15, 15, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(15, 15, 1, 3, 7, 45);
   } else {
     FuchinFallsCave_PlaceLogAtCell(ACTOR_THIRD_LOG, 7, 46);
-    {
-      s32 column = 17;
-      s32 row = 45;
-      MapGrid_CopyCellAttributes(15, 15, 1, 3, column, row);
-    }
+    MapGrid_CopyCellAttributes(15, 15, 1, 3, 17, 45);
   }
 }
 
@@ -1553,11 +1372,9 @@ s32 ImilFuchinFalls_Initialize(void) {
 
 /// Shows Fever, in Imil Falls Cave, and walks the leader toward it.
 static void Imil_WalkTowardFever(void) {
-  struct Actor *actor;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_FEVER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FEVER), 0);
   Event_StartScreenTransition();
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 0.1);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 264, 196);
@@ -1765,9 +1582,6 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   struct FieldEffect *effect;
   struct Sprite *sprite;
   const s32 *script;
-  // A local array: it compiles to an anonymous read-only constant copied into
-  // the frame, which lands where the object's old .data table was; a struct
-  // copy of a named table compiles to the same code.
   const s32 *scripts[3] = {
       gImilFuchinFalls_ShortDustScript,
       gImilFuchinFalls_MediumDustScript,
@@ -1831,8 +1645,8 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   options.targetScaleY = 9 * Q16_ONE / 5;
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
-  velocityX = -px(1) - ((((u32)Import_RandomNext() << 1) >> 16) << 16);
-  velocityY = -((((u32)Import_RandomNext() * 3) >> 16) * (px(1) / 5));
+  velocityX = -px(1) - ((Random_Below(2)) << 16);
+  velocityY = -((Random_Below(3)) * (px(1) / 5));
   ImilFuchinFalls_SpawnDust(
       px(308), px(64), px(222), velocityX, velocityY, framePhase,
       1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,

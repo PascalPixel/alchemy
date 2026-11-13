@@ -24,7 +24,7 @@ Field_Map146:
 	.incbin "games/tla/src/map/map_146/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map146_ANIMATION:
-	.incbin "games/tla/src/map/map_131/animation.script.lz"
+	.incbin "games/tla/src/map/yallam_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_Map146_BLEND:
 	.incbin "games/tla/src/map/map_010/blend.script.lz"

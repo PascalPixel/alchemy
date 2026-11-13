@@ -86,11 +86,11 @@ struct SpritePictureCache {
 /// The actor system's work: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.
 struct ActorSystemWork {
-  u16 used;      ///< sprite pixel bytes composed since the camera reset it
-  u8 unused[2];  ///< no code names it
-  s16 suspended; ///< nonzero while a menu has suspended sprite projection
-  u8 edge;       ///< outline edge colour; 15 when the field sets up
-  u8 fill;       ///< outline fill colour; 0 when the field sets up
+  u16 used; ///< sprite pixel bytes composed since the camera reset it
+  u8 unused[2];
+  s16 suspended;       ///< nonzero while a menu has suspended sprite projection
+  u8 edge;             ///< outline edge colour; 15 when the field sets up
+  u8 fill;             ///< outline fill colour; 0 when the field sets up
   u8 spriteGroups[16]; ///< the sprite group tables, taken in turn by count
   s32 count;           ///< sprite group tables taken from spriteGroups
   struct SpritePictureCache
@@ -123,7 +123,7 @@ struct AnimationSpritePart {
   u16 priority : 2;    ///< 2 when created
   u16 palette : 4;     ///< 16-colour palette; unused at 256 colours
   ///@}
-  u8 attr3[2]; ///< OAM attribute 3; zero when created, not named by TBS code
+  u8 attr3[2]; ///< OAM attribute 3; zero when created, not named
 };
 
 /// An animated sprite: its image and shadow, scale, rotation, size and up to
@@ -174,7 +174,7 @@ enum ActorAnimation {
   ANIM_NOD = 3,
   ANIM_SHAKE_HEAD = 4,
   /// Running, leaning forward, four frames a step to the walk's six. This and
-  /// the leader's other poses below are as Isaac's sprite (spr_000.png) draws
+  /// the leader's other poses below are as Isaac's sprite (isaac.png) draws
   /// them.
   ANIM_LEADER_RUN = 5,
   ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
@@ -199,12 +199,12 @@ enum ActorAnimation {
   /// from a river.
   ANIM_LEADER_STRIDE = 16,
   /// Holding out a glowing hand, as the party's sprites cast Psynergy
-  /// (spr_000.png, spr_001.png).
+  /// (isaac.png, garet.png).
   ANIM_CAST_PSYNERGY = 17,
   /// Sitting waist-deep in water and splashing, as in a Lamakan Desert oasis.
   ANIM_LEADER_BATHE = 18,
   /// Lying collapsed on the ground; every party member's sheet maps this
-  /// number to such a pose (spr_000.png to spr_003.png).
+  /// number to such a pose (isaac.png to mia.png).
   ANIM_COLLAPSE = 19,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits (enum ExitStyle), each
@@ -233,7 +233,7 @@ enum ActorAnimation {
   /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost
   /// match.
   ANIM_LEADER_CROUCH = 35,
-  /// Staggering, reeling back, then lying flat (spr_000.png), as he collapses
+  /// Staggering, reeling back, then lying flat (isaac.png), as he collapses
   /// at the end of a Colosso match.
   ANIM_LEADER_FALL = 36
 };

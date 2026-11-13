@@ -47,7 +47,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "system_call.h"
 #include "heap_release.h"
@@ -68,22 +67,15 @@
 /// rows from ACTOR_FIRST_PLACED.
 enum {
   /// A short log that slides between x 72 and x 104.
-  /// ★ Named from what the player sees: a log lying north to south (its
-  /// render)
   ACTOR_SHORT_LOG = ACTOR_FIRST_PLACED,
   /// The water at the floodgate, which bursts as it opens and churns as it
   /// closes.
-  /// ★ Named from what the player sees: white and pale blue spray,
-  /// SPRITE_SPLASH (its render)
   ACTOR_FLOODGATE_SPRAY,
-  /// ★ Named from the game: "Do not touch Floodgate Switch!"
-  /// (MsgKolimaDoNotTouchFloodgate)
   ACTOR_SIGN
 };
 
 /// The cell behavior of the Floodgate Switch's cell, which a search flips.
 enum KolimaForestFloodgateCellBehavior {
-  /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
   CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH = 9
 };
 
@@ -136,7 +128,7 @@ static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 /// Gives the short log's column of cells its cell behavior: column 4 at the
 /// west place, column 6 at the east.
 static void KolimaForestFloodgate_MarkShortLogCells(void) {
-  if (*(s16 *)gKolimaForestFloodgateReturned == 1) {
+  if ((s16)*gKolimaForestFloodgateReturned == 1) {
     MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
   } else {
     MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
@@ -210,14 +202,11 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
 /// HBlank callback: selects the captured shake scroll above the split line.
 static void KolimaForestFloodgate_ShakeLines(void) {
   u16 line = REG_VCOUNT;
-  u32 *source;
-  volatile u32 *destination;
-  source = (u32 *)((u8 *)gBgScroll + 4);
-  destination = (volatile u32 *)&REG_BG1HOFS;
+  u32 *source = (u32 *)&gBgScroll[1];
+  volatile u32 *destination = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 52) {
-    if ((((u32)Import_RandomNext() * 100) >> 16) <
-        gKolimaForestFloodgate_ShakeChance) {
+    if ((Random_Below(100)) < gKolimaForestFloodgate_ShakeChance) {
       source = gKolimaForestFloodgate_ShakeScroll;
     }
   }
@@ -230,19 +219,18 @@ static void KolimaForestFloodgate_ShakeLines(void) {
 
 /// Captures three background scroll pairs and adds the vertical shake offset.
 static void KolimaForestFloodgate_CaptureShakeScroll(void) {
-  u32 *destination;
-  const u32 *source;
-  u16 *scroll;
+  const u32 *source = (const u32 *)&gBgScroll[1];
+  u32 *destination = gKolimaForestFloodgate_ShakeScroll;
+  struct BgScroll *shaken;
 
-  source = (const u32 *)((u8 *)gBgScroll + 4);
-  destination = gKolimaForestFloodgate_ShakeScroll;
+  // BG1 to BG3's offsets, each pair one word.
   *destination++ = *source++;
   *destination++ = *source++;
   *destination = *source;
-  scroll = (u16 *)gKolimaForestFloodgate_ShakeScroll;
-  scroll[1] += 176;
-  scroll[3] += 176;
-  scroll[5] += 176;
+  shaken = (struct BgScroll *)gKolimaForestFloodgate_ShakeScroll;
+  shaken[0].y += 176;
+  shaken[1].y += 176;
+  shaken[2].y += 176;
 }
 
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
@@ -342,7 +330,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   Irq_SetHandler(IRQ_HBLANK, 0, 0);
   wait(1);
   Task_Remove(KolimaForestFloodgate_CaptureShakeScroll);
-  *(u16 *)gKolimaForestFloodgateMap ^= 1;
+  *gKolimaForestFloodgateMap ^= 1;
   KolimaForestFloodgate_DrawWaterLevel();
   MapGrid_CenterOnFollowedPoint();
   Event_End();
@@ -466,8 +454,8 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     actor->radius = 32;
     height = px(
         MapGrid_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel));
-    // Through an s32 view of y, not y.fixed, the step to the next entry is
-    // scheduled before this store (1 of 82 instructions differ in tbs-en).
+    /* FAKEMATCH(temporary): the height added as a plain word, outside its
+     * union; as actor->y.fixed, 1 of 82 instructions differ in tbs-en. */
     *(s32 *)&actor->y += height;
     actor->groundHeight = height;
   }
@@ -476,20 +464,20 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
 /// Writes a cell behavior into the four cells of each log.
 void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
                                          s32 value) {
-
   const struct FloodgateLog *record = records;
+  s32 column;
+  s32 row;
+  s32 i;
+
   if (record->sprite == -1)
     return;
   do {
-    s32 column = record->x;
-    s32 row = record->z;
-    s32 along = record->vertical;
-    s32 i;
-    for (i = 3; i >= 0; i--) {
-      u8 *cell;
-      cell = ((u8 *)gMapGridCellBuffer) + ((column + (row << 7)) << 2);
-      cell[2] = value;
-      if (along == 0)
+    column = record->x;
+    row = record->z;
+    for (i = 0; i < 4; i++) {
+      ((struct MapGridCell *)gMapGridCellBuffer)[column + (row << 7)].behavior =
+          value;
+      if (record->vertical == 0)
         column++;
       else
         row++;
@@ -529,7 +517,7 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
         &((struct MapGridCell *)gMapGridCellBuffer)[x + (z << 7)];
 
     if (cell->behavior == CELL_BEHAVIOR_WALL ||
-        *(u8 *)((cell->shape << 2) + (s32)gMapGridShapes) != 0) {
+        *(cell->shape * 4 + gMapGridShapes) != 0) {
       return -1;
     }
     if (mode == 0) {

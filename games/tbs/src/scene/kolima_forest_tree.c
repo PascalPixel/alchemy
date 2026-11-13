@@ -76,7 +76,6 @@
 #include "actor.h"
 #include "field_effect.h"
 #include "battle_unit.h"
-#include "types.h"
 #include "event.h"
 #include "system_call.h"
 #include "scene_ids.h"
@@ -99,35 +98,23 @@
 enum {
   /// Tret's face, drawn in SPRITE_TRET_RAISED. Its animations are his face's
   /// gestures (KolimaForestTree_PlayGesture).
-  /// ★ Named from the game: "The Water of Hermes seeped into Tret."
-  /// (MsgKolimaWaterHermesSeepedIntoTret)
   ACTOR_TRET = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Oh! Laurel, you were given powers, too?"
-  /// (MsgKolimaWasIndeedAngryPeopleHad)
   ACTOR_LAUREL,
   // XXX (no evidence): why these exist; likely left from a version where
   // they were drawn, but the ROM keeps no such version.
   /// Blank actors 28 pixels up at Tret's and Laurel's spots, never targeted.
   /// Nothing addresses them but KolimaForestTree_PlayGesture, which takes one
   /// to say whose face to move.
-  /// ★ Named from the game: "Tret" (MsgEnemyName)
   ACTOR_INVISIBLE_TRET,
-  /// ★ Named from the game: "Laurel" (MsgDebugGlyphName)
   ACTOR_INVISIBLE_LAUREL,
   /// An invisible actor on Tret's spot that answers for him. Talking to it,
   /// Mind Read on it and Hermes' Water used on it reach Tret.
-  /// ★ Named from the game: "The Water of Hermes seeped into Tret."
-  /// (MsgKolimaWaterHermesSeepedIntoTret)
   ACTOR_TRET_STAND_IN,
   /// The invisible actor on Laurel's spot that answers for her when she is
   /// talked to or her mind is read.
-  /// ★ Named from the game: "I am sorry to have worried you so, Laurel."
-  /// (MsgKolimaFeelGreatPowerSpreadingThrough)
   ACTOR_LAUREL_STAND_IN,
   /// Tret's wrathful side, which speaks with a portrait, drawn in SPRITE_TRET
   /// with child value 15 over his face.
-  /// ★ Named from the game: "His wrathful side turned the people of Kolima
-  /// into trees." (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_TRETS_WRATHFUL_SIDE
 };
 
@@ -404,11 +391,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   wait(40);
-  {
-    s32 facing = FACING_NORTH;
-
-    leader->facing = facing;
-  }
+  leader->facing = FACING_NORTH;
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);

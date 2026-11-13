@@ -10,14 +10,14 @@
 #include "edition.h"
 #include "far_call.h"
 
-/// A 16-byte rectangle. In TBS it only reserves stack space in
-/// tbs-ja's glyph renderer; no TBS code reads its fields.
+/// A 16-byte rectangle. Only the Japanese glyph renderer declares one, and no
+/// code reads its fields.
 struct GlyphRect {
-  u8 unused[8]; ///< no code names it
-  u16 width;    ///< not named by TBS code
-  u16 height;   ///< not named by TBS code
-  u16 x;        ///< not named by TBS code
-  u16 y;        ///< not named by TBS code
+  u8 unused[8];
+  u16 width;
+  u16 height;
+  u16 x;
+  u16 y;
 };
 
 STATIC_ASSERT(sizeof(struct GlyphRect) == 0x10);
@@ -58,7 +58,7 @@ struct OamData {
   /// number.
   u16 priority : 2;
   u16 palette : 4; ///< 16-colour palette
-  u16 high;        ///< not named by TBS code
+  u16 high;
 };
 
 /// WindowSprite.kind: what a window sprite owns besides itself, which
@@ -77,9 +77,9 @@ struct WindowSprite {
   s8 motion;                 ///< its WINDOW_SPRITE_MOTION_ motion; 0 while free
   u16 x;                     ///< screen pixels
   u16 y;                     ///< screen pixels
-  u16 unused;                ///< no code names it
-  u16 animationStep;         ///< step of its motion's animation
-  s8 index; ///< VRAM cache slot, or a glyph's tile after glyphTiles
+  u16 unused;
+  u16 animationStep; ///< step of its motion's animation
+  s8 index;          ///< VRAM cache slot, or a glyph's tile after glyphTiles
   /// The depth slot it is drawn at (Oam_AddSpriteAtDepth): a higher slot is
   /// drawn in front. The windows' glyphs take 254.
   u8 sentinel;

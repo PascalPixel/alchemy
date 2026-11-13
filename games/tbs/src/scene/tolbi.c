@@ -111,13 +111,11 @@ static void Tolbi_JoinEmber(void) {
 static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
                                   s32 range, s32 force) {
   s32 stopped = 0;
-  const u8 *targetPos = (const u8 *)target + offsetof(struct Actor, x);
-  const u8 *kidPos = (const u8 *)kid + offsetof(struct Actor, x);
 
-  if (FixedPoint_Distance(targetPos, kidPos) < range || force != 0) {
+  if (Actor_Distance(target, kid) < range || force != 0) {
     // The heading to the target, and the eight-way directions around it.
     u32 heading = (u16)ArcTan2(target->z.fixed - kid->z.fixed,
-                               *(const s32 *)targetPos - *(const s32 *)kidPos);
+                               target->x.fixed - kid->x.fixed);
     u32 farLeft = (heading - 2 * FACING_STEP) & 0xf000;
     u32 farRight = (heading + 2 * FACING_STEP) & 0xf000;
     u32 left = (heading - FACING_STEP) & 0xf000;
@@ -148,17 +146,14 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 // the party talks to someone or Mind Read shows thoughts (the range widens to
 // 26 pixels), the child being talked to stops whatever the direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
-  u8 **workAreas = gWindowWork;
-  struct WindowWork *ui = (struct WindowWork *)workAreas[0];
-  struct FieldWork *work =
-      (struct FieldWork *)workAreas[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
-  u16 *kidFlags = (u16 *)&updated->timer;
+  struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
+  struct FieldWork *field = FIELD_WORK_FROM(gWindowWork, HEAP_SLOT_WINDOW);
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;
   struct Actor *leader;
 
-  if ((*kidFlags & KID_CHASES_YOUNGER) != 0) {
+  if ((updated->timer & KID_CHASES_YOUNGER) != 0) {
     other = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   } else {
     other = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
@@ -169,9 +164,9 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((s16)work->talk != 0 || ui->mindRead != 0) {
+  if ((s16)field->talk != 0 || window->mindRead != 0) {
     range = 26;
-    if ((*kidFlags & KID_TALKING) != 0) {
+    if ((updated->timer & KID_TALKING) != 0) {
       force = 1;
     }
   }
@@ -198,7 +193,7 @@ static void Tolbi_GrowSprout(void) {
   struct Actor *sprout;
 
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
-  if ((s32)sprout != 0) {
+  if (sprout != 0) {
     sprout->collisionFlags = 0;
   }
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
@@ -483,7 +478,6 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
-  s32 clearFlags = 0;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
@@ -497,7 +491,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   Actor_SetPosition(ACTOR_TOLBI_YOUNGER_SISTER, 368, 320);
   Actor_SetScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
   actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
-  actor->timer = clearFlags;
+  actor->timer = 0;
   actor->update = kidUpdate;
   actor = Actor_Get(ACTOR_TOLBI_OLD_MAN);
   actor->update = Tolbi_CopyLeaderPriority;
@@ -506,11 +500,9 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   if (GameFlag_Get(FLAG_TOLBI_SPRING_OPENED) != 0) {
     Actor_SetPosition(ACTOR_TOLBI_SPRING_VISITOR, 316, 328);
   }
-  // The puddle is frozen.
   if (GameFlag_Get(FLAG_TOLBI_PUDDLE_FROZEN) != 0) {
     Tolbi_FreezePuddle();
   }
-  // The sprout has grown.
   if (GameFlag_Get(FLAG_TOLBI_SPROUT_GROWN) != 0) {
     Tolbi_GrowSprout();
     Actor_SetAnimation(ACTOR_TOLBI_SPROUT, 4);
@@ -575,9 +567,7 @@ static void Tolbi_EnterSpring(void) {
 
 /// Leaves by the exit numbered as the cell behavior the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
-  s16 *trigger = &gFieldWork->stepTrigger;
-
-  Import_EventSetExitRequest(*trigger);
+  Import_EventSetExitRequest(gFieldWork->stepTrigger);
 }
 
 /// Two soldiers searching for the missing Babi stop the party and show his
@@ -709,9 +699,7 @@ static void Tolbi_FreezePuddle(void) {
     puddle->motionFlags = 0;
   }
   Actor_SetAnimation(ACTOR_TOLBI_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-  {
-    MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
-  }
+  MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   GameFlag_Set(FLAG_TOLBI_PUDDLE_FROZEN);
 }
 
@@ -726,51 +714,31 @@ s32 gTolbiMirroredActor[] = {
 /// The older brother runs a loop of eight points, 32 pixels across, south-east
 /// of the fountain.
 s32 gTolbiOlderBrotherRun[] = {
-    SC_ANIMATION(2),
-    SC_SPEED(0.8),
-    SC_ACCELERATION(0.2),
-    SC_LABEL(1),
-    SC_MOVE(352, 0, 352),
-    SC_SYNC,
-    SC_MOVE(368, 0, 352),
-    SC_SYNC,
-    SC_MOVE(376, 0, 344),
-    SC_SYNC,
-    SC_MOVE(376, 0, 328),
-    SC_SYNC,
-    SC_MOVE(368, 0, 320),
-    SC_SYNC,
-    SC_MOVE(352, 0, 320),
-    SC_SYNC,
-    SC_MOVE(344, 0, 328),
-    SC_SYNC,
-    SC_MOVE(344, 0, 344),
-    SC_SYNC,
+    SC_ANIMATION(ANIM_WALK),       SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),          SC_LABEL(1),
+    SC_MOVE(352, 0, 352),          SC_SYNC,
+    SC_MOVE(368, 0, 352),          SC_SYNC,
+    SC_MOVE(376, 0, 344),          SC_SYNC,
+    SC_MOVE(376, 0, 328),          SC_SYNC,
+    SC_MOVE(368, 0, 320),          SC_SYNC,
+    SC_MOVE(352, 0, 320),          SC_SYNC,
+    SC_MOVE(344, 0, 328),          SC_SYNC,
+    SC_MOVE(344, 0, 344),          SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
 /// The younger sister runs the same loop half a lap ahead.
 s32 gTolbiYoungerSisterRun[] = {
-    SC_ANIMATION(2),
-    SC_SPEED(0.8),
-    SC_ACCELERATION(0.2),
-    SC_LABEL(1),
-    SC_MOVE(368, 0, 320),
-    SC_SYNC,
-    SC_MOVE(352, 0, 320),
-    SC_SYNC,
-    SC_MOVE(344, 0, 328),
-    SC_SYNC,
-    SC_MOVE(344, 0, 344),
-    SC_SYNC,
-    SC_MOVE(352, 0, 352),
-    SC_SYNC,
-    SC_MOVE(368, 0, 352),
-    SC_SYNC,
-    SC_MOVE(376, 0, 344),
-    SC_SYNC,
-    SC_MOVE(376, 0, 328),
-    SC_SYNC,
+    SC_ANIMATION(ANIM_WALK),       SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),          SC_LABEL(1),
+    SC_MOVE(368, 0, 320),          SC_SYNC,
+    SC_MOVE(352, 0, 320),          SC_SYNC,
+    SC_MOVE(344, 0, 328),          SC_SYNC,
+    SC_MOVE(344, 0, 344),          SC_SYNC,
+    SC_MOVE(352, 0, 352),          SC_SYNC,
+    SC_MOVE(368, 0, 352),          SC_SYNC,
+    SC_MOVE(376, 0, 344),          SC_SYNC,
+    SC_MOVE(376, 0, 328),          SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
@@ -960,7 +928,6 @@ struct Trigger gTolbiTriggersFestival[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// On finals day.
 struct Trigger gTolbiTriggersFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT(Tolbi_GrowSprout) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },

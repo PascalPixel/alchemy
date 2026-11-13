@@ -34,9 +34,9 @@ editor shows it as the game does.
 
 ## Sprites and their animations
 
-A figure is one file, such as `sprite/spr_000.png`: a strip one
+A figure is one file, such as `sprite/isaac.png`: a strip one
 [picture](../../glossary.md#picture) wide, with 215 pictures of 32 by 32
-stacked top to bottom. Beside it, `spr_000.tsv` is its
+stacked top to bottom. Beside it, `isaac.tsv` is its
 [animations](../../glossary.md#sprite-animation), one a line, each a list
 of which picture to show and for how many frames:
 
@@ -49,6 +49,10 @@ from five directions, and the animation names only the first. The field
 picks the one that matches the way the figure faces, and mirrors it for
 the directions nobody drew. So an animation is written once and works
 facing any way.
+
+A party member's sprite is named for the character whose number it
+shares; another takes the name The Broken Seal gives the same picture.
+One with neither keeps its row's number, as `spr_009.png` does.
 
 Every figure the field or a battle can draw has a row in the sprite table,
 `sprite/sprites.tsv`: its size, a scale it is drawn at, its sheet and its

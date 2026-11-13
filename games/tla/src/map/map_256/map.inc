@@ -31,7 +31,7 @@ Field_Map256:
 	.incbin "games/tla/src/map/map_256/animation.script.lz"
 	.balign 4, 0
 .LField_Map256_BLEND:
-	.incbin "games/tla/src/map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_Map256_SCENE:
 	.ifeq EDITION_INTERNATIONAL

@@ -96,7 +96,6 @@ enum StatBoostSheet {
 ///       Venus for Granite, Jupiter for Ward and Zephyr, Mars otherwise;
 ///       its sheet lends the palette in every mode but Zephyr.
 void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -112,8 +111,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   s32 originX;
   s32 originY;
 
-  cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
@@ -238,10 +237,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+      draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + STAT_BOOST_DJINNI, x, y, 40, 40);
@@ -274,10 +273,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       // 1/64 turn a frame.
       if (frame > member * 8) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
-        draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+        draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags,
                             COMPOSITE_ADDITIVE);
-        draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
         if (mode == STAT_BOOST_IMPACT) {
           Transform_ApplyPitch(-frame << 10);
         } else if (mode == STAT_BOOST_GUARD) {
@@ -325,7 +324,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         s32 picture = (frame - member * 8 - 52) / 4 % 6;
 
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
-        draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+        draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
         draw[0](canvas, work->sheet + picture * (40 * 40) + STAT_BOOST_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -338,7 +337,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           s32 picture = (frame - member * 8 - 80) / 4 % 7;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
-          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+          draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
           draw[0](canvas,
                   work->sheet + picture * (24 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
@@ -350,7 +349,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           s32 picture = (frame - member * 8 - 80) / 4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
-          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+          draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
           draw[0](canvas,
                   work->sheet + picture * (32 * 64) + STAT_BOOST_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
@@ -362,10 +361,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           s32 picture = (frame - member * 8 - 80) / 2 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
-          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+          draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
-          draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+          draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
           draw[0](canvas,
                   work->sheet + picture * (64 * 32) + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y - 24, 64, 32);
@@ -381,7 +380,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
                               COMPOSITE_ADDITIVE);
-          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+          draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
           draw[0](canvas,
                   work->sheet + picture * (40 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
@@ -445,7 +444,6 @@ BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args) {
 /// args: the targets.
 /// mode: the picture and its palette (enum StatReductionMode).
 void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -458,8 +456,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 paletteId;
 
-  cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   if (mode == STAT_REDUCTION_DULL)

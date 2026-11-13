@@ -6,10 +6,8 @@
 /// its fixed address, and one typed inline per routine that every call goes
 /// through.
 ///
-/// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device. Code writes `Iwram_Sqrt(value)` or
-/// `Iwram_SignedDivide(dividend, divisor)`, and the inline calls the routine at
-/// its fixed address.
+/// Code writes `Iwram_Sqrt(value)` or `Iwram_SignedDivide(dividend, divisor)`,
+/// and the inline calls the routine at its fixed address.
 
 #include "types.h"
 

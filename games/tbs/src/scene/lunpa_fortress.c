@@ -96,6 +96,7 @@
 #include "event.h"
 #include "module/import.h"
 #include "module/scene/lunpa_fortress.h"
+#include "shared/walk_into_leader.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -111,13 +112,15 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "edition.h"
-#include "lunpa_fortress_staging.h"
+#include "heap.h"
+#include "io_write.h"
+#include "lunpa_fortress.h"
+#include "pushed_actor.h"
+#include "actor.h"
 #include "scene_ids.h"
 #include "tbs_edition.h"
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
-#include "types.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
 #include "item_ids.h"
@@ -136,138 +139,70 @@
 /// Dodonpa's men, here and upstairs, wear the sprite of a man with a mop of
 /// orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
 enum {
-  /// ★ Named from what the player sees: one of Dodonpa's men standing watch
-  /// by the way in from the Lunpa Fortress Gates, who throws out a party he
-  /// sees (its render)
   ACTOR_GROUND_FLOOR_ENTRANCE_GUARD = ACTOR_FIRST_PLACED + 4,
-  /// ★ Named from what the player sees: the first of the two of Dodonpa's men
-  /// who stand watch together, the one who speaks when they throw the party
-  /// out (its render)
   ACTOR_GROUND_FLOOR_FIRST_SENTRY,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), wondering where
   /// Dodonpa has gone.
-  /// ★ Named from the game: "Where could Dodonpa be?" (MsgLunpaWhereIsDodonpa)
   ACTOR_GROUND_FLOOR_WOMAN_SEEKING_DODONPA,
   /// One of Dodonpa's men (the guards' sprite), feasting on Kalay's ransom.
-  /// ★ Named from the game: "Thanks to Hammet we can enjoy food and drink all
-  /// day long!" (MsgLunpaHammetBuysDrink)
   ACTOR_GROUND_FLOOR_FEASTING_MAN,
   /// One of Dodonpa's men, drinking and boasting of Hammet.
-  /// ★ Named from the game: "He's a money tree for us, hic!"
-  /// (MsgLunpaHammetMoneyTree)
   ACTOR_GROUND_FLOOR_BOASTING_MAN,
-  /// ★ Named from what the player sees: one of Dodonpa's men standing watch
-  /// deeper in the floor, who throws out a party he sees (its render)
   ACTOR_GROUND_FLOOR_UPPER_HALL_GUARD,
-  /// ★ Named from what the player sees: one of Dodonpa's men walking his
-  /// rounds (gGroundFloorPatrolRoute), who throws out a party he sees (its
-  /// render)
   ACTOR_GROUND_FLOOR_PATROL_GUARD,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), talking of
   /// Donpa's poor health.
-  /// ★ Named from the game: "Donpa is supposed to be old. I wonder what he's
-  /// fighting with" (MsgLunpaDonpaResting)
   ACTOR_GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), startled when the
   /// party first speaks to him (LunpaFortress_TalkToStartledOldMan).
-  /// ★ Named from the game: "Who goes there!" (MsgLunpaWhWhWho)
   ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN,
   /// The other man standing watch with ACTOR_GROUND_FLOOR_FIRST_SENTRY.
-  /// ★ Named from the game: "I was told to stand guard"
-  /// (MsgLunpaToldStandGuard)
   ACTOR_GROUND_FLOOR_SECOND_SENTRY
 };
 
 /// LunpaFortressUpperFloor's people and the Cell Key, numbered in the order of
 /// gLunpaFortressUpperFloorActorPlacements from ACTOR_FIRST_PLACED.
 enum {
-  /// ★ Named from what the player sees: a golden key (SPRITE_KEY) in the
-  /// south of the floor, which the party takes as the Cell Key (its render)
   ACTOR_UPPER_FLOOR_CELL_KEY = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the first of the pair of Dodonpa's
-  /// men who walk east and west together in the west passage, carrying a
-  /// circle of light (gFirstPatrolRoute) (its render)
   ACTOR_UPPER_FLOOR_FIRST_PATROL,
-  /// ★ Named from what the player sees: the second of the pair, a row of
-  /// cells below the first (gSecondPatrolRoute) (its render)
   ACTOR_UPPER_FLOOR_SECOND_PATROL,
-  /// ★ Named from what the player sees: one of Dodonpa's men standing in the
-  /// hall, who challenges the party to a battle as it comes up to him
-  /// (LunpaFortress_FightHallGuard) (its render)
   ACTOR_UPPER_FLOOR_HALL_GUARD,
   /// The three guards who fight together, by where they stand once beaten
   /// (LunpaFortress_PlaceThreeBeatenGuards): west, middle and east in a row.
-  /// ★ Named from the game: "You guys are tougher than we thought"
-  /// (MsgLunpaGuysTougherThought)
   ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST,
-  /// ★ Named from the game: "All right, all right. We give up!"
-  /// (MsgLunpaRightRightGive)
   ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE,
-  /// ★ Named from the game: "Don't hurt me again, you thieving scoundrel!"
-  /// (MsgLunpaOwwwDontHurt)
   ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST,
-  /// ★ Named from what the player sees: one of Dodonpa's men standing in the
-  /// west, who challenges the party to a battle as it comes up to him
-  /// (LunpaFortress_FightWestGuard) (its render)
   ACTOR_UPPER_FLOOR_WEST_GUARD,
-  /// ★ Named from what the player sees: one of Dodonpa's men standing in the
-  /// east, who challenges the party to a battle as it comes up to him
-  /// (LunpaFortress_FightEastGuard) (its render)
   ACTOR_UPPER_FLOOR_EAST_GUARD,
-  /// ★ Named from what the player sees: one of Dodonpa's men walking his
-  /// rounds of the east hall, carrying a circle of light (gHallPatrolRoute)
-  /// (its render)
   ACTOR_UPPER_FLOOR_HALL_PATROL,
   /// Dodonpa's wife, a woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS),
   /// the "Mama" of his children, looking for him.
-  /// ★ Named from the game: "Dodonpa's wife was looking for him"
-  /// (MsgLunpaWifeSeeksDodonpa)
   ACTOR_UPPER_FLOOR_DODONPAS_WIFE,
   /// Donpappa, a small boy (SPRITE_BOY_WITH_FAIR_HAIR), Dodonpa's son, as he
   /// names himself to Mind Read.
-  /// ★ Named from the game: "When my Papa's gone, I, Donpappa, shall protect
-  /// Lunpa myself." (MsgLunpaDonpappaProtectsFortress)
   ACTOR_UPPER_FLOOR_DONPAPPA,
   /// Dodonpa's daughter, a little girl (SPRITE_GIRL_WITH_PIGTAILS).
-  /// ★ Named from the game: "I'm not going to marry anyone like my Papa when I
-  /// grow up!" (MsgLunpaDaughterWillNotMarryPapa)
   ACTOR_UPPER_FLOOR_DODONPAS_DAUGHTER,
   /// An old woman (SPRITE_OLD_WOMAN) who pities Donpappa.
-  /// ★ Named from the game: "Dodonpa's child is so well behaved, I can't
-  /// believe he's his father's son!" (MsgLunpaChildTooResponsible)
   ACTOR_UPPER_FLOOR_OLD_WOMAN_PRAISING_DONPAPPA,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who fears for Donpa.
-  /// ★ Named from the game: "Poor, poor Donpa." (MsgLunpaDonpaExhausted)
   ACTOR_UPPER_FLOOR_WOMAN_FEARING_FOR_DONPA,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), one of the women
   /// Dodonpa has brought to the fortress.
-  /// ★ Named from the game: "Nearly all of these women were brought here
-  /// against their will, like me." (MsgLunpaWomenWantHome)
   ACTOR_UPPER_FLOOR_CAPTIVE_WOMAN,
   /// Donpa, asleep (SPRITE_DONPA).
-  /// ★ Named from the game: "Shhh! Please don't wake Donpa!"
-  /// (MsgLunpaShhhPleaseDont)
   ACTOR_UPPER_FLOOR_DONPA,
   /// Donpa's attendant, a woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from what the player sees: a woman standing by the sleeping
-  /// Donpa, who hushes the party (LunpaFortress_TalkToAttendant) (its render)
   ACTOR_UPPER_FLOOR_ATTENDANT,
   /// Tonic, a Mercury Djinni, Donpa's reward.
-  /// ★ Named from the game: "Tonic" (MsgDjinnName)
   ACTOR_UPPER_FLOOR_TONIC
 };
 
 /// LunpaFortressCave's ivy and crates, numbered in the order of
 /// gLunpaFortressCaveActorPlacements from ACTOR_FIRST_PLACED.
 enum {
-  /// ★ Named from what the player sees: ivy (SPRITE_IVY) on the wall that
-  /// hides the first switch until Whirlwind blows it away (its render)
   ACTOR_CAVE_FIRST_SWITCH_IVY = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: ivy (SPRITE_IVY) that hides a passage
-  /// until Whirlwind blows it away (its render)
   ACTOR_CAVE_PASSAGE_IVY,
-  /// ★ Named from what the player sees: ivy (SPRITE_IVY) on the wall that
-  /// hides the second switch until Whirlwind blows it away (its render)
   ACTOR_CAVE_SECOND_SWITCH_IVY,
   /// An invisible solid actor (SPRITE_BLANK, ACTOR_SOLID) at (504, 168).
   /// It makes the jar the layout draws there, in the cell behind the cave's
@@ -278,8 +213,6 @@ enum {
   ACTOR_INVISIBLE_CAVE_JAR,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
-  /// ★ Named from what the player sees: a stack of two wooden crates
-  /// (SPRITE_CRATES) in the north of the cave (its render)
   ACTOR_CAVE_CRATES
 };
 
@@ -300,17 +233,10 @@ enum {
   ACTOR_INVISIBLE_TOADONPA_CHEST,
   ACTOR_INVISIBLE_TOADONPA_EAST_JAR,
   /// The monster Dodonpa frees on the party (LunpaFortress_FindHammet).
-  /// ★ Named from the game: "Toadonpa" (MsgEnemyName)
   ACTOR_TOADONPA_BOSS,
-  /// ★ Named from the game: "Sorry to interrupt your teary little reunion,
-  /// Hammet!" (MsgLunpaTimeEat)
   ACTOR_TOADONPA_HAMMET,
   /// Dodonpa (SPRITE_DODONPA).
-  /// ★ Named from the game: "Dodonpa pulled a lever."
-  /// (MsgLunpaDodonpaPulledLever)
   ACTOR_TOADONPA_DODONPA,
-  /// ★ Named from the game: "Thank you, Donpa, but you do not need to
-  /// apologize." (MsgLunpaDad)
   ACTOR_TOADONPA_DONPA,
   /// A blank sprite (SPRITE_BLANK_LARGE) laid underfoot with Toadonpa and
   /// moving with it, drawn 4/5 as wide.
@@ -319,8 +245,6 @@ enum {
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), placed by Dodonpa's cell after
   /// Donpa's judgment. Read with Mind Read: "Actually, Dodonpa's in here, but
   /// only a few people know that."
-  /// ★ Named from the game: "The merchant from Kalay is in here somewhere."
-  /// (MsgLunpaHammetStillInside)
   ACTOR_TOADONPA_CELL_GUARD,
   /// An invisible actor that stands before Dodonpa's cell after Donpa's
   /// judgment. Talking to it or reading its mind reaches Dodonpa.
@@ -330,15 +254,16 @@ enum {
 /// Animations of the fortress's sprites beyond enum ActorAnimation, as their
 /// animation tables and frames under graphics/sprite draw them.
 enum LunpaFortressAnimation {
-  /// One of Dodonpa's men lying beaten on the floor (spr_133.png), as the three
+  /// One of Dodonpa's men lying beaten on the floor (man_with_orange_hair.png),
+  /// as the three
   /// guards lie after their fight.
   ANIM_GUARD_BEATEN = 5,
-  /// Donpa lying in bed, only his head on the pillow showing (spr_044.png).
+  /// Donpa lying in bed, only his head on the pillow showing (donpa.png).
   ANIM_DONPA_IN_BED = 5,
-  ANIM_TOADONPA_FALLEN = 3,  ///< sprawled on its side (spr_187.png)
-  ANIM_TOADONPA_REAR_UP = 4, ///< reared up, its mouth open (spr_187.png)
+  ANIM_TOADONPA_FALLEN = 3,  ///< sprawled on its side (toadonpa.png)
+  ANIM_TOADONPA_REAR_UP = 4, ///< reared up, its mouth open (toadonpa.png)
   /// Dodonpa lying on his front, propped on his hands, his head raised
-  /// (spr_050.png).
+  /// (dodonpa.png).
   ANIM_DODONPA_PRONE = 7,
   /// ANIM_DODONPA_PRONE with his head sinking to the floor and lifting again,
   /// over and over.
@@ -351,8 +276,6 @@ enum LunpaFortressAnimation {
 /// The cell doors count from CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR in each
 /// scene.
 enum LunpaFortressCellBehavior {
-  /// ★ Named from the game: "The door is tightly locked."
-  /// (MsgFieldDoorTightlyLocked)
   CELL_BEHAVIOR_LUNPA_FORTRESS_LOCKED_DOOR = 99,
   CELL_BEHAVIOR_LUNPA_FORTRESS_SEALED_DOOR = 98,
   CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR = 40
@@ -420,47 +343,27 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 #include "shared/staged_actor.h"
 
 /// Donpa has judged Dodonpa, so Hammet's cell no longer starts the trap.
-/// ★ Named from the game: "Huh? Donpa, didn't you just say you're going to lock
-/// up Dodonpa?" (MsgLunpaDad)
 #define FLAG_LUNPA_FORTRESS_DODONPA_JUDGED FLAG_AREA_TEMP_01
 /// Donpa's attendant has told the party of Donpa and his spoiled son.
-/// ★ Named from the game: "Donpa knows that he coddled Dodonpa too much as a
-/// child." (MsgLunpaDonpaKnowsCoddled)
 #define FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA FLAG_AREA_TEMP_13
 /// Donpa's attendant has shown the party his reward, Tonic, and stands beside
 /// it.
-/// ★ Named from the game: "I have a little something for you, for your teaching
-/// Dodonpa his lesson." (MsgLunpaThankHelpDodonpa)
 #define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_AREA_TEMP_14
 /// A guard has spotted the party.
-/// ★ Named from the game: "How did you get in here?" (MsgLunpaWho2)
 #define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_SCENE_TEMP_14
 /// LunpaFortressCave's first switch is still hidden by its ivy.
-/// ★ Named from what the player sees: a leafy green plant against the cave
-/// wall, which Whirlwind blows away (its render)
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_SCENE_TEMP_17
 /// LunpaFortressCave's second switch is still hidden by its ivy.
-/// ★ Named from what the player sees: a leafy green plant against the cave
-/// wall, which Whirlwind blows away (its render)
 #define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY FLAG_SCENE_TEMP_18
 /// The entrance guard has thrown the party out.
-/// ★ Named from the game: "No matter! You're on your way out now!"
-/// (MsgLunpaWho2)
 #define FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY FLAG_SCENE_TEMP_24
 /// The sentries have spotted the party and thrown it out.
-/// ★ Named from the game: "No matter! You're on your way out now!"
-/// (MsgLunpaWho2)
 #define FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY FLAG_SCENE_TEMP_25
 /// The startled old man has promised to keep quiet.
-/// ★ Named from the game: "I won't tell anyone, but you should leave before the
-/// guards find you." (MsgLunpaWontTellAnyone)
 #define FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE FLAG_SCENE_TEMP_26
 /// The startled old man has been startled once.
-/// ★ Named from the game: "Who goes there!" (MsgLunpaWhWhWho)
 #define FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED FLAG_SCENE_TEMP_27
 /// LunpaFortress_FindHammet is under way.
-/// ★ Named from the game: "I am a little late, but I have come to save you."
-/// (MsgLunpaTimeEat)
 #define FLAG_LUNPA_FORTRESS_FINDING_HAMMET FLAG_SCENE_TEMP_70
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -741,8 +644,6 @@ static void LunpaFortress_SearchSealedDoor(void) {
 // a chest's sprite, at the map's origin) are the only rows nothing else uses.
 /// The four chests from ACTOR_FIRST_SWORD_CHEST that the unused sword pickups
 /// open, in a scene they do not name.
-/// ★ Named from what the player sees: four chests (SPRITE_CHEST) at the
-/// origin of LunpaFortressGroundFloor (its render)
 enum { ACTOR_FIRST_SWORD_CHEST = ACTOR_FIRST_PLACED };
 
 /// Unused: nothing calls this pickup or the three after it.
@@ -854,18 +755,6 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
   return 0;
 }
 
-// UB: these patrols formerly reached gFieldWork through gMapGridWork[19] and
-// treated its request members as a halfword array.
-#ifdef UBFIX
-#define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
-#define PATROL_ITEM_REQUEST(work) ((work)->item)
-#define PATROL_RAISED_TRIGGER(work) ((work)->raisedTrigger)
-#else
-#define PATROL_PSYNERGY_REQUEST(work) ((work)[191])
-#define PATROL_ITEM_REQUEST(work) ((work)[192])
-#define PATROL_RAISED_TRIGGER(work) ((work)[193])
-#endif
-
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
 /// corridor.
 ///
@@ -881,11 +770,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-#ifdef UBFIX
-  struct FieldWork *work = gFieldWork;
-#else
-  s16 *work = *(s16 **)&gMapGridWork[19];
-#endif
+  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -894,8 +779,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
-      PATROL_ITEM_REQUEST(work) != 0) {
+  if (GameFlag_Get(FLAG_MENU_OPEN) || work->psynergy != 0 || work->item != 0) {
     firstGuard->paused = 1;
     secondGuard->paused = 1;
   } else if (!Event_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
@@ -909,12 +793,12 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       if (gMainRoutineWork.cloaked != 0) {
         if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_FIRST_PATROL) &&
             gMainRoutineWork.cloaked != 0) {
-          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+          work->psynergy = CLOAK_NEAR_GUARD;
           return;
         }
         if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_SECOND_PATROL) &&
             gMainRoutineWork.cloaked != 0) {
-          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+          work->psynergy = CLOAK_NEAR_GUARD;
           return;
         }
       }
@@ -929,8 +813,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          RAISED_PATROL_PAIR_SPOTTED);
+        work->raisedTrigger = RAISED_PATROL_PAIR_SPOTTED;
       }
     }
   }
@@ -994,11 +877,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-#ifdef UBFIX
-  struct FieldWork *work = gFieldWork;
-#else
-  s16 *work = *(s16 **)&gMapGridWork[19];
-#endif
+  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
 
   FieldCamera_GetActor();
   if (gFrameCount & 1) {
@@ -1008,8 +887,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
-      PATROL_ITEM_REQUEST(work) != 0) {
+  if (GameFlag_Get(FLAG_MENU_OPEN) || work->psynergy != 0 || work->item != 0) {
     guard->paused = 1;
   } else if (!Event_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
     guard->paused = 0;
@@ -1022,7 +900,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       LunpaFortress_IsGuardNearViewCenter(ACTOR_UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_HALL_PATROL) &&
           gMainRoutineWork.cloaked != 0) {
-        SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+        work->psynergy = CLOAK_NEAR_GUARD;
         return;
       }
       if (gMainRoutineWork.cloaked == 0) {
@@ -1032,8 +910,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          RAISED_HALL_PATROL_SPOTTED);
+        work->raisedTrigger = RAISED_HALL_PATROL_SPOTTED;
       }
     }
   }
@@ -1074,11 +951,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-#ifdef UBFIX
-  struct FieldWork *work = gFieldWork;
-#else
-  s16 *work = *(s16 **)&gMapGridWork[19];
-#endif
+  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -1087,8 +960,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
-      PATROL_ITEM_REQUEST(work) != 0) {
+  if (GameFlag_Get(FLAG_MENU_OPEN) || work->psynergy != 0 || work->item != 0) {
     guard->paused = 1;
   } else if (!Event_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
     guard->paused = 0;
@@ -1100,7 +972,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_GROUND_FLOOR_PATROL_GUARD) &&
           gMainRoutineWork.cloaked != 0) {
-        SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+        work->psynergy = CLOAK_NEAR_GUARD;
         return;
       }
       if (gMainRoutineWork.cloaked == 0) {
@@ -1110,8 +982,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          RAISED_GROUND_FLOOR_PATROL_SPOTTED);
+        work->raisedTrigger = RAISED_GROUND_FLOOR_PATROL_SPOTTED;
       }
     }
   }
@@ -1180,11 +1051,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 
     Task_Remove(LunpaFortress_CheckEntranceGuard);
     raisedTrigger = &work->raisedTrigger;
-    {
-      s32 caughtTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
-
-      *raisedTrigger = caughtTrigger;
-    }
+    Io_Write16(RAISED_ENTRANCE_GUARD_SPOTTED, raisedTrigger);
   }
 }
 
@@ -1747,13 +1614,11 @@ static void LunpaFortress_SentriesThrowPartyOut(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
 }
 
-/// The first switch's passage opens.
 static void LunpaFortress_OpenFirstSwitchPassage(void) {
   MapGrid_CopyCells(2, 82, 1, 2, 21, 81);
   MapGrid_CopyCellAttributes(21, 32, 1, 1, 21, 34);
 }
 
-/// The second switch's passage opens.
 static void LunpaFortress_OpenSecondSwitchPassage(void) {
   MapGrid_CopyCells(2, 84, 1, 2, 6, 55);
   MapGrid_CopyCellAttributes(5, 9, 1, 1, 6, 10);
@@ -1853,20 +1718,9 @@ static void UNUSED LunpaFortress_DoNothingE(void) {}
 
 /// Garet, Ivan and Mia step out of the leader and gather around Hammet.
 static void LunpaFortress_GatherPartyAroundHammet(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_IVAN);
+  Scene_PlaceAtLeader(ACTOR_MIA);
+  Scene_PlaceAtLeader(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_SetSpeed(ACTOR_IVAN, 0.7);
   Actor_WalkTo(ACTOR_IVAN, 456, 192);
@@ -3428,7 +3282,7 @@ static void LunpaFortress_ReadJailedDodonpasThoughts(void) {
 s32 Scene_Initialize(void) {
   struct Actor *mapActor;
 
-  gLunpaFortressRandomPick = (u32)Import_RandomNext() * 7 >> 16;
+  gLunpaFortressRandomPick = Random_Below(7);
   if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGroundFloor) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();

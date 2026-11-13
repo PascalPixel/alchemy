@@ -13,28 +13,23 @@ typedef s32 (*TaskIntFunc)(void);
 
 /// Empties the task table: every slot gets no routine, priority
 /// TASK_PRIORITY_EMPTY and no flags. Clears gTasksInitialized while it works
-/// and sets it at the end, so neither pass runs a half-cleared table. Called by
-/// System_Initialize and by the battle, Lucky Dice and other modes that start
-/// from a clean table.
+/// and sets it at the end, so neither pass runs a half-cleared table.
 void Task_ResetAll(void) {
   struct Task *task = gTasks;
-  s32 remaining;
+  s32 i;
 
   gTasksInitialized = 0;
   gTasksRunning = 0;
-  remaining = TASK_COUNT - 1;
-  do {
+  for (i = 0; i < TASK_COUNT; i++) {
     task->func = 0;
     task->priority = TASK_PRIORITY_EMPTY;
     task->flags = 0;
     task++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   gTasksInitialized = 1;
 }
 
-/// Unused: copies `byteCount` bytes a word at a time. Nothing in the game calls
-/// it.
+/// Unused: copies `byteCount` bytes a word at a time.
 UNUSED void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
   u32 index;
   byteCount >>= 2;
@@ -44,8 +39,7 @@ UNUSED void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
 
 /// Bubble-sorts the task table by priority, highest first, so each pass runs
 /// its tasks from the highest priority down; removed tasks
-/// (TASK_PRIORITY_REMOVED) rise to the front. Called by Task_Add with
-/// interrupts disabled.
+/// (TASK_PRIORITY_REMOVED) rise to the front.
 void Task_Sort(void) {
   struct Task saved;
   // Default: the table's start, which every pass sets again.
@@ -73,7 +67,6 @@ void Task_Sort(void) {
 }
 
 /// Unused: returns the table index of the task running `func`, or -1.
-/// Nothing in the game calls it.
 UNUSED s32 Task_Find(TaskFunc func) {
   s32 result;
   struct Task *task;
@@ -109,10 +102,7 @@ s32 Task_Add(TaskFunc func, s32 order) {
   s32 i;
 
   // Adding re-sorts the table, which would shift the tasks after the new one
-  // if it came during a pass; it never does. In a call graph of the English
-  // build, main image and overlays, no task reaches Task_Add, and neither does
-  // any function whose address is taken except main-thread entries (far-call
-  // entries, a scene's entry table and events, start-up).
+  // if it came during a pass; no task adds one.
   index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; the ROM keeps the load, as The
@@ -144,10 +134,10 @@ s32 Task_Add(TaskFunc func, s32 order) {
   return index;
 }
 
-/// Unused: an empty routine; nothing in the game calls it.
+/// Unused: an empty routine.
 UNUSED void Task_Idle(void) {}
 
-/// Unused: an empty routine; nothing in the game calls it.
+/// Unused: an empty routine.
 UNUSED void Task_Empty(void) {}
 
 /// Removes the task running `func`: clears its routine and gives it
@@ -175,11 +165,9 @@ s32 Task_Remove(TaskFunc func) {
   return result;
 }
 
-/// Suspends the task running `func`, or every task when `func` is
-/// null, by setting bit 0 of its priority's high byte, which then matches
-/// neither pass. Returns the last index changed, or -1. Called by the map
-/// animation and battle code, through the far-call table, to pause tasks
-/// Task_ResumeAll restarts later.
+/// Suspends the task running `func`, or every task when `func` is null, by
+/// setting bit 0 of its priority's high byte, which then matches neither pass.
+/// Returns the last index changed, or -1.
 s32 Task_SuspendAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -202,9 +190,8 @@ s32 Task_SuspendAll(TaskFunc func) {
 }
 
 /// Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
-/// unless its flag bit 0 asks to keep it running, as Task_SuspendAll
-/// does. Called by the menus' shared code while a menu is open, and by the
-/// world map's visibility transition. Returns the last index changed, or -1.
+/// unless its flag bit 0 asks to keep it running, as Task_SuspendAll does.
+/// Returns the last index changed, or -1.
 s32 Task_SuspendOverlayTasks(void) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -227,9 +214,7 @@ s32 Task_SuspendOverlayTasks(void) {
 }
 
 /// Stores `mask` as the flags of the task running `func`; bit 0 keeps it
-/// running while the overlay tasks are suspended. Called by the Battle Arena
-/// and Colosso scenes for the tasks that must keep running under a menu.
-/// Returns its index, or -1.
+/// running while the overlay tasks are suspended. Returns its index, or -1.
 s32 Task_SetFlags(TaskFunc func, u32 mask) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -250,9 +235,9 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
   return result;
 }
 
-/// Resumes the task running `func`, or every task when `func` is
-/// null, by clearing bit 0 of its priority's high byte. Called by the map
-/// animation and actor code. Returns the last index changed, or -1.
+/// Resumes the task running `func`, or every task when `func` is null, by
+/// clearing bit 0 of its priority's high byte. Returns the last index changed,
+/// or -1.
 s32 Task_ResumeAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -272,9 +257,8 @@ s32 Task_ResumeAll(TaskFunc func) {
   return result;
 }
 
-/// Resumes every task whose routine is in an overlay, flagged or not. Called
-/// by the menus' shared code when a menu closes, and by the world map's
-/// visibility transition. Returns the last index changed, or -1.
+/// Resumes every task whose routine is in an overlay, flagged or not. Returns
+/// the last index changed, or -1.
 s32 Task_ResumeOverlayTasks(void) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -301,17 +285,17 @@ s32 Task_ResumeOverlayTasks(void) {
 /// gTasksInitialized.
 void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
-  s32 remaining;
+  s32 i;
 
   // A pass matches the high byte only; the low byte has already ranked the
   // tasks through the sort, and a suspended task's odd high byte matches no
   // pass
   pass >>= 8;
   if (gTasksInitialized == 1) {
-    remaining = TASK_COUNT + 1;
+    i = TASK_COUNT + 1;
     task--;
     for (;;) {
-      if (--remaining == 0)
+      if (--i == 0)
         return;
       task++;
       if (TASK_STATE_HIGH(task) == pass) {

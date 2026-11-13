@@ -4,8 +4,6 @@
 /// @file
 /// Small statement macros both games use for positions, velocities and
 /// bounds.
-// The multi-part ones are comma expressions or a plain block, not
-// do { } while (0): a do-while (0) compiles differently at some of their sites.
 
 /// Sets the x, y and z of a three-part vector: a position about to be
 /// projected, a per-frame step, a camera point or a scale.
@@ -31,5 +29,10 @@
 
 /// The magnitude of v. v is read twice.
 #define ABS(v) ((v) < 0 ? -(v) : (v))
+
+/// 1 when `v` is not zero and 0 when it is, without a branch: the sign bit of
+/// `v | -v`. The flag readers, the save checks and the Psynergy tests return
+/// their truth values so; the name is ours. `v` is read twice.
+#define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
 
 #endif

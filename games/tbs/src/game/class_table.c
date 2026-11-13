@@ -160,13 +160,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Guard
     {
@@ -305,15 +301,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Wind Seer
     {
@@ -460,15 +451,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Water Seer
     {
@@ -610,15 +596,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_BREAK, .level = 30},
         },
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Swordsman
     {
@@ -759,15 +740,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Swordsman
     {
@@ -913,15 +889,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Dragoon
     {
@@ -1013,19 +984,12 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Apprentice
     {
@@ -1177,15 +1141,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Page
     {
@@ -1337,15 +1296,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Ninja
     {
@@ -1437,19 +1391,12 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Seer
     {
@@ -1601,15 +1548,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_SLEEP},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Seer
     {
@@ -1756,15 +1698,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_SLEEP},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Medium
     {
@@ -1853,19 +1790,12 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_STUN},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Pilgrim
     {
@@ -2012,15 +1942,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DELUSION},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Pilgrim
     {
@@ -2162,15 +2087,10 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DELUSION},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Ranger
     {
@@ -2259,19 +2179,12 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DELUSION},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Brute
     {
@@ -2453,13 +2366,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Samurai
     {
@@ -2521,21 +2430,13 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // Hermit
     {
@@ -2711,13 +2612,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         },
         .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
     // White Mage
     {
@@ -2777,23 +2674,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESIST, .level = 31},
         },
     },
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {0},
-    // ?
     {
         .series = 11,
         .required = {5},
@@ -2804,7 +2692,6 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .agi = 11,
         .luck = 10,
     },
-    // ?
     {
         .series = 11,
         .required = {0, 0, 5},

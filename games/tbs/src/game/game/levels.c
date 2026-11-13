@@ -4,6 +4,14 @@
 
 #include "../game_internal.h"
 
+// Slots are four-byte entries, read as halfwords; UBFIX reads each entry
+// through its own type.
+#ifdef UBFIX
+#define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
+#else
+#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
+#endif
+
 /// Returns the definition of ability `abilityId` (its low 14 bits); an id
 /// past the table gives the first. Reached through GAME.S as
 /// Ability_Get, which every bank uses to read an ability.
@@ -23,9 +31,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
   return (struct AbilityDefinition *)&gAbilityDefinitions[entryIndex];
 }
 
-/// Returns 1 when `abilityId` is in the unit's Psynergy list. Called by the
-/// events that check whether a party member knows a Psynergy
-/// (Party_CheckShortcut).
+/// Returns 1 when `abilityId` is in the unit's Psynergy list.
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   struct Unit *unit = Unit_Get(unitId);
   struct PsynergyEntry *entry;
@@ -49,14 +55,6 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
 /// Marks on an action list entry: learned from the class, or granted by an
 /// equipped item. Plain entries were taught for good.
 enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
-
-// Slots are four-byte entries, not a flat halfword array. UBFIX accesses each
-// entry through its actual declared type.
-#ifdef UBFIX
-#define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
-#else
-#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
-#endif
 
 /// Rebuilds a character's Psynergy list: drops the actions its class and items
 /// gave, closes up the list, adds every class action learned by its level and
@@ -94,11 +92,10 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
   // Pack permanent actions at the end to leave room for class abilities.
   for (slot = PSYNERGY_SLOTS - 1, sourceIndex = PSYNERGY_SLOTS - 1;
        slot >= 0;) {
-    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+    if (abilities[slot].encodedAction == 0) {
       slot--;
     } else {
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
-          PSYNERGY_ACTION_AT(abilities, slot);
+      abilities[sourceIndex].encodedAction = abilities[slot].encodedAction;
       slot--;
       sourceIndex--;
     }
@@ -160,11 +157,10 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
 
   // Restore a dense display list with empty slots at the end.
   for (slot = 0, sourceIndex = 0; slot < PSYNERGY_SLOTS;) {
-    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+    if (abilities[slot].encodedAction == 0) {
       slot++;
     } else {
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
-          PSYNERGY_ACTION_AT(abilities, slot);
+      abilities[sourceIndex].encodedAction = abilities[slot].encodedAction;
       slot++;
       sourceIndex++;
     }
@@ -185,9 +181,7 @@ struct LevelUpWork {
 
 /// Teaches a character action `value` for good (or makes a class action
 /// permanent by clearing its marks), then rebuilds its list. Returns the
-/// action's place in the list, or -1 when the list is full. Called by the
-/// events that teach Psynergy, the prologue's end, the debug parameter sets and
-/// the debug shortcut menu.
+/// action's place in the list, or -1 when the list is full.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct Unit *state = Unit_Get(stateIndex);
   s32 key = value & PSYNERGY_ABILITY_MASK;
@@ -247,8 +241,7 @@ struct CharacterDefinition *Character_GetDefinition(s32 index) {
 
 /// Sets up all eight characters for a new game: names from the message table,
 /// starting equipment equipped, class and elements worked out, and levels
-/// raised to their starting level. Called by
-/// MainRoutineWork_InitializeDefaults.
+/// raised to their starting level.
 void Party_InitializeCharacters(void) {
   struct Unit *unit;
   struct CharacterDefinition *character;
@@ -310,8 +303,7 @@ void Party_InitializeCharacters(void) {
 UNUSED void Unit_LevelNoOp(void) {}
 
 /// Returns the experience a character needs for `level` (0 for level 0 and
-/// below); -1 for an enemy or a level above 99. Called by the levelling code
-/// and by the two status screens to show the experience to the next level.
+/// below); -1 for an enemy or a level above 99.
 u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
   struct Unit *unit = Unit_Get(unitId);
 
@@ -439,8 +431,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
 }
 
 /// Levels character `unitId` up one level at a time until `targetLevel`, then
-/// recomputes its stats. Called by Party_InitializeCharacters for the starting
-/// levels, and by the debug menus and parameter sets.
+/// recomputes its stats.
 void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;

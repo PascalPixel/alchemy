@@ -13,8 +13,8 @@ static s32 Scene_LookAboutRandomly(struct Actor *actor) {
   s32 amount;
 
   if (loaded == 0) {
-    actor->facing += (u32)(Import_RandomNext() << 15) >> 16;
-    amount = (u32)(Import_RandomNext() * 80) >> 16;
+    actor->facing += Random_Below(32768);
+    amount = Random_Below(80);
     actor->userValue = amount;
     if (amount == 0) {
       goto done;

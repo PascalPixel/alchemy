@@ -58,7 +58,6 @@
 #include "edition.h"
 #include "far_call.h"
 #include "sound.h"
-#include "edition.h"
 #include "playback_queue.h"
 #include "battle_action_run.h"
 #include "battle_unit.h"
@@ -82,37 +81,22 @@
 /// number from ACTOR_FIRST_PLACED.
 enum GomaCaveEntranceActorId {
   /// The stump caught in ivy that blocks the way on.
-  /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
-  /// free that stump." (MsgGomaNoUsePsynergy)
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_WEST_PILLAR,
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_EAST_PILLAR,
   /// A second stump, always sunk until only its top shows, that the party
   /// walks over.
-  /// ★ Named from what the player sees: a stump sunk to its cut top, the last
-  /// frame of STUMP_ANIMATION_SINK in spr_212.png (its render)
   ACTOR_SUNKEN_STUMP,
   /// Unused: two Move hands and a third stump, placed at the map's origin
   /// outside the camera's bounds.
   ///
   /// Nothing in the overlay addresses them, and Move spawns its own hand
   /// (FieldEffect_SpawnMoveHand), so the player never sees them.
-  /// ★ Named from what the player sees: a large open hand, spr_215.png (its
-  /// render)
   ACTOR_UNUSED_FIRST_MOVE_HAND,
-  /// ★ Named from what the player sees: a large open hand, spr_215.png (its
-  /// render)
   ACTOR_UNUSED_SECOND_MOVE_HAND,
-  /// ★ Named from what the player sees: a tree stump, spr_212.png (its render)
   ACTOR_UNUSED_STUMP,
   /// The ivy holding the stump, until Ivan blows it away.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_STUMP_IVY,
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY
 };
 
@@ -121,7 +105,6 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
-// Shared effects stay at their native positions in the overlay.
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 
@@ -556,7 +539,6 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
   state->rotation = v;
 }
 
-// Shared height-wait code stays at its native position in the overlay.
 #include "shared/actor_wait_below_height.h"
 
 /// The stump leaps out of the way and sinks in the pool.
@@ -574,8 +556,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   stump->motionFlags = 0;
   for (i = 0; i <= 17; i++) {
     wait(1);
-    // The corresponding signed halfword view retains the negative literal.
-    *(s16 *)&stump->sprite->rotation += -256;
+    stump->sprite->rotation -= TRIG_TURN / 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
     stump->targetX = ACTOR_NO_TARGET;
   }
@@ -602,11 +583,11 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, px(32));
-  // UB: the integer store aliases the update pointer.
+  // UB: the update routine is cleared as a word.
 #ifdef UBFIX
   stump->update = NULL;
 #else
-  *(s32 *)&stump->update = 0;
+  *(u32 *)&stump->update = 0;
 #endif
   stump->sprite->rotation = TRIG_TURN / 16;
   params.type = SPRITE_SPLASH;
@@ -623,7 +604,6 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   MapGrid_WaitForShakeToSettle();
 }
 
-// Shared inventory equipment code stays at its native overlay position.
 #include "shared/item_equip.h"
 
 /// Gives Ivan the Shaman's Rod and equips it.

@@ -25,22 +25,22 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
     col = destinationX;
     if (col < destinationX + width)
       do {
-        u16 tile = 0xfff & *cell++;
-        u16 offset = tile * 8;
+        // A cell picture is four tile map entries, two rows of two, 8 bytes.
+        u16 tile = *cell++ & 0xfff;
+        u16 picture = tile * 8;
         s32 index = (plane * 16 + (row & 15)) * 32 + (col & 15);
-        u32 *src;
-        u32 *dst;
+        u32 *from;
+        u32 *to;
 
-        dst = (u32 *)BG_SCREEN_BLOCK(5) + index;
-        src = (u32 *)(Ram_CellPictures + offset);
-        *dst = *src;
-        src = (u32 *)(Ram_CellPictures + 4 + offset);
-        dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
-        *dst = *src;
-
-        /* FAKEMATCH(temporary): end takes the bound where the loop tests it,
-         * apart from the guard's destinationX + width; as ++col < destinationX
-         * + width, 12 of 80 instructions differ in tbs-en. */
+        to = (u32 *)BG_SCREEN_BLOCK(5) + index;
+        from = (u32 *)(Ram_CellPictures + picture);
+        *to = *from;
+        from = (u32 *)(Ram_CellPictures + 4 + picture);
+        to = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
+        *to = *from;
+        /* FAKEMATCH(temporary): end takes the row's bound where the loop
+         * tests it, apart from the guard's; as ++col < destinationX + width,
+         * 12 of 80 instructions differ in tbs-en. */
       } while (end = destinationX + width, ++col < end);
     cell += 128 - width;
   }

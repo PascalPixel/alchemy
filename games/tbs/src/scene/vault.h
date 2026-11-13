@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MAP_VAULT_H
-#define ALCHEMY_MAP_VAULT_H
+#ifndef ALCHEMY_VAULT_H
+#define ALCHEMY_VAULT_H
 
 /// @file
 /// The cell behaviors of Vault's layout, which SceneId_Vault (vault.c) and
@@ -11,13 +11,9 @@ enum VaultCellBehavior {
   /// Either end of the rope bridge in the town's south-east, where stepping
   /// on raises the path that runs under the bridge to the bridge's deck
   /// (Vault_RaisePathToBridge).
-  /// ★ Named from what the player sees: the rope bridge the leader walks
-  /// across (render probe vault-bridge)
   CELL_BEHAVIOR_VAULT_BRIDGE_END = 1,
   /// The three cells west of the bridge's west end, where stepping off
   /// lowers the path back under the bridge (Vault_LowerPathUnderBridge).
-  /// ★ Named from what the player sees: the rope bridge the leader walks
-  /// across (render probe vault-bridge)
   CELL_BEHAVIOR_VAULT_WEST_OF_BRIDGE = 2,
   /// The door of the house where a man keeps a sparkling rock the volcano
   /// threw.
@@ -42,7 +38,6 @@ enum VaultCellBehavior {
   /// The cave mouth in the town's northeast cliff
   /// (VAULT_REVISIT_TO_VAULT_CAVE_MOUTH).
   CELL_BEHAVIOR_VAULT_CLIFF_CAVE_MOUTH = 41,
-  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
   CELL_BEHAVIOR_VAULT_WELL = 90,
   CELL_BEHAVIOR_VAULT_WOODEN_BOX = 101
 };

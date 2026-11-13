@@ -73,7 +73,8 @@ enum JupiterLighthouseLeftTowerActorId {
   ACTOR_PILLAR = ACTOR_FIRST_PLACED + 2,
   /// The first of five blue logs, two standing and three lying, that the
   /// leader pushes.
-  /// ★ Named from what the player sees: blue logs (spr_331.png, spr_332.png)
+  /// ★ Named from what the player sees: blue logs
+  /// (fallen_column_north_south.png, fallen_column_west_east.png)
   ACTOR_FIRST_LOG
 };
 

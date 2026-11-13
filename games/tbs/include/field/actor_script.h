@@ -52,10 +52,10 @@
 #define SC_SPEED(speed) SC_SET(SW_SPEED, Q16(speed))
 /// Set the acceleration, in pixels a frame per frame.
 #define SC_ACCELERATION(acceleration) SC_SET(SW_ACCELERATION, Q16(acceleration))
-#define SC_PLAYER 24  ///< Player input control
-#define SC_KEYS 25    ///< Move 8 pixels at a time by the direction pad
-#define SC_WORLD 26   ///< World map control
-#define SC_RELEASE 27 ///< Release
+#define SC_PLAYER 24 ///< Player input control
+#define SC_KEYS 25   ///< Move 8 pixels at a time by the direction pad
+#define SC_WORLD 26  ///< World map control
+#define SC_RELEASE 27
 #define SC_ANIMATION(v) 28, (v) ///< Switch the sprites to animation v.
 #define SC_NOP(v) 29, (v)       ///< Skip its operand.
 #define SC_SE(n) 30, (n)        ///< Play sound n

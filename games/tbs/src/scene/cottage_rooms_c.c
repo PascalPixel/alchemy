@@ -27,7 +27,6 @@
 /// leaves Bilibin). From then on he sends the party to the waitress
 /// (CottageRoomsC_TalkToBusyChef).
 ///
-/// gCottageRoomsCTriggers keeps both times in one table, in the ROM's order.
 /// Every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
 /// for afterwards, so the first row that matches picks the time.
 ///
@@ -44,9 +43,9 @@
 ///
 /// He stands at the north edge of the restaurant's table, on cell (7, 49).
 /// That cell alone of the diners' cells gives an actor standing on it priority
-/// 3 (map_032's map.txt). Taken from that cell, his priority would put him
-/// behind the middle layer (`BG2`, priority 2 in this map). The fixed priority
-/// 2 draws him in front of it, as the other diners are.
+/// 3 (cottage_rooms_c's map.txt). Taken from that cell, his priority would put
+/// him behind the middle layer (`BG2`, priority 2 in this map). The fixed
+/// priority 2 draws him in front of it, as the other diners are.
 
 #include "module/scene/cottage_rooms_c.h"
 #include "flags.h"
@@ -64,7 +63,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -73,8 +71,6 @@
 
 /// The head chef has shouted his string of orders once, so from then on he
 /// sends the party to the waitress.
-/// ★ Named from the game: "Two specials! One dinner! One sandwich! One dessert!
-/// Hurry up!" (MsgBilibinTwoSpecialsOneDinnerOne)
 #define FLAG_BILIBIN_CHEF_CALLED_ORDERS FLAG_AREA_TEMP_00
 
 /// Bilibin's shops, as Shop_Run numbers the shops.
@@ -95,92 +91,47 @@ enum { BILIBIN_INN = 2 };
 /// inn's inner door.
 enum CottageRoomsCActorId {
   /// A young man with brown hair, in the house east.
-  /// ★ Named from the game: "That tree at the entrance is really a man cursed"
-  /// (MsgBilibinThatTreeAtTheEntranceIs)
   ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN = ACTOR_FIRST_PLACED,
   /// A woman with fair hair.
-  /// ★ Named from the game: "McCoy had the trees cut down so he could build"
-  /// (MsgBilibinMccoyHadTheTreesCutDown)
   ACTOR_BILIBIN_VILLAGER_PALACE,
   /// A burly grey-haired man in the house west, who wants to see Mia again.
-  /// ★ Named from the game: "When spring comes, I want to go see that angelic"
-  /// (MsgBilibinWhenSpringComesWantGo)
   ACTOR_BILIBIN_MIA_ADMIRER,
   /// A small boy with fair hair.
-  /// ★ Named from the game: "We rarely see any snow around Bilibin."
-  /// (MsgBilibinWeRarelySeeAnySnowAround)
   ACTOR_BILIBIN_BOY_SNOW,
   /// A woman in a green dress, in the house north.
-  /// ★ Named from the game: "How are people doing in Kolima?"
-  /// (MsgBilibinHowArePeopleDoingInKolima)
   ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA,
   /// A little girl with pigtails, who later asks whether the party knows what
   /// silk is.
-  /// ★ Named from the game: "I know that guy who turned into the tree..."
-  /// (MsgBilibinIKnowThatGuyWhoTurned)
   ACTOR_BILIBIN_GIRL_SILK,
   /// An old man with a cane, in the item shop.
-  /// ★ Named from the game: "Long ago, the lighthouse near Imil held the"
-  /// (MsgBilibinLongAgoTheLighthouseNearImil)
   ACTOR_BILIBIN_OLD_MAN_WATER_OF_HERMES,
   /// An old woman.
-  /// ★ Named from the game: "But even the legendary Water of Hermes cannot"
-  /// (MsgBilibinButEvenTheLegendaryWaterOf)
   ACTOR_BILIBIN_OLD_WOMAN_LOST_YOUTH,
-  /// ★ Named from the game: "There was an able healer in a village called
-  /// Vale," (MsgBilibinThereWasAbleHealerIn)
   ACTOR_BILIBIN_WEAPON_MERCHANT,
-  /// ★ Named from the game: "Have you ever heard of the 'ocean'?"
-  /// (MsgBilibinHaveEverHeardOcean)
   ACTOR_BILIBIN_ARMOR_MERCHANT,
-  /// ★ Named from the game: "You must be used to all types of danger,"
-  /// (MsgBilibinMustUsedTypesDangerBeing)
   ACTOR_BILIBIN_ITEM_MERCHANT,
-  /// ★ Named from the game: "A curse on Kolima? What a scary development!"
-  /// (MsgBilibinCurseOnKolimaScaryDevelopment)
   ACTOR_BILIBIN_INNKEEPER,
   /// Beside the innkeeper.
-  /// ★ Named from the game: "You can't reach Kolima, no matter how you try."
-  /// (MsgBilibinYouCantReachKolimaNoMatter)
   ACTOR_BILIBIN_INN_WORKER,
   /// The restaurant's head chef, born in Kolima.
-  /// ★ Named from the game: "Hey, Mister Head Chef!"
-  /// (MsgBilibinHeyMisterHeadChefAreYou)
   ACTOR_BILIBIN_CHEF,
   /// A second cook in a tall chef's hat.
-  /// ★ Named from the game: "I really think the head chef has changed."
-  /// (MsgBilibinReallyThinkHeadChefHas)
   ACTOR_BILIBIN_KITCHEN_WORKER,
   /// A young woman with long brown hair.
-  /// ★ Named from the game: "Let's see, serve them water...then get the
-  /// silverware." (MsgBilibinLetsSeeServeThemWater)
   ACTOR_BILIBIN_WAITRESS,
   /// A man with a pack, waiting for his dinner.
-  /// ★ Named from the game: "Grrr..." (MsgBilibinGrrr)
   ACTOR_BILIBIN_HUNGRY_DINER,
   /// A diner with a pack.
-  /// ★ Named from the game: "I came to Bilibin hoping to sell furniture."
-  /// (MsgBilibinICameToBilibinHopingTo)
   ACTOR_BILIBIN_FURNITURE_SELLER,
   /// A strongman at the table.
-  /// ★ Named from the game: "I think that big tree deep in the forest"
-  /// (MsgBilibinIThinkThatBigTreeDeep)
   ACTOR_BILIBIN_DINER_BIG_TREE,
   /// A diner with a pickaxe, drawn at a fixed sprite priority.
-  /// ★ Named from the game: "Do you believe a tree spirit can curse a man?"
-  /// (MsgBilibinDoBelieveTreeSpiritCan)
   ACTOR_BILIBIN_DINER,
   /// An old man at the table.
-  /// ★ Named from the game: "I can't wait to see today's special!"
-  /// (MsgBilibinICantWaitToSeeTodays)
   ACTOR_BILIBIN_DINER_TODAYS_SPECIAL,
   /// A man in a red bandana, in the room behind the inn's inner door.
-  /// ★ Named from the game: "I went to Lord McCoy looking for work..."
-  /// (MsgBilibinIWentToLordMccoyLooking)
   ACTOR_BILIBIN_JOB_SEEKER,
   /// A man with a lute.
-  /// ★ Named from the game: "I've heard songs that tell of ancient trees"
-  /// (MsgBilibinIveHeardSongsThatTellOf)
   ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES
 };
 
@@ -400,9 +351,6 @@ static void CottageRoomsC_TalkToInnkeeper(void) {
 /// orders once, then sends the party to the waitress.
 static void CottageRoomsC_TalkToBusyChef(void) {
   Event_Start();
-  // The test is event.h's inline and the set below a direct call,
-  // each as it matches: an inline call's argument is a pseudo of its own,
-  // where a direct call keeps the flag number in a callee-saved register.
   if (Event_GetFlag(FLAG_BILIBIN_CHEF_CALLED_ORDERS) == 0) {
     // The first time (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
     // leaves Bilibin), the chef shouts orders and the kitchen worker answers.

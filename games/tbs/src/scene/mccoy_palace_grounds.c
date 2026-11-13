@@ -32,7 +32,7 @@
 ///
 /// From TBS_PATCH_3 on, a patch of ivy (SPRITE_IVY) stands at (132, 388), over
 /// a dark opening at the foot of the cliff on the grounds' south edge. The
-/// earlier editions show the opening bare (renders of tbs-en and tbs-fr). No
+/// earlier editions leave the opening bare. No
 /// exit or trigger answers that opening, so the ivy only hides a way in that
 /// leads nowhere.
 
@@ -79,30 +79,20 @@
 enum McCoyPalaceGroundsActorId {
   /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
   /// ordered from Kolima disappeared..."
-  /// ★ Named from the game: "We'd still be working if we hadn't tried building
-  /// using the holy tree." (MsgBilibinWedStillBeWorkingIfWe)
   ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
   /// The worker with a pickaxe who wanders by the new palace. "Have you seen
   /// the barricade we built on..."
-  /// ★ Named from the game: "Have you seen the barricade we built on the road
-  /// to Kolima?" (MsgBilibinHaveYouSeenBarricadeWe)
   ACTOR_NORTH_WORKER,
   /// A woman with curly purple hair in a pink dress. "Hmph! My palace is not
   /// finished!"
-  /// ★ Named from the game: "Lady McCoy" (MsgDebugGlyphName)
   ACTOR_LADY_MCCOY,
   /// The soldier in a spiked helmet at the gate who goes in ahead of the party.
   /// "Lord McCoy is so upset about this curse that he can't even eat."
-  /// ★ Named from what the player sees: the western of the two soldiers with
-  /// spears at the palace door (its render)
   ACTOR_WEST_GUARD,
   /// "The lord will only meet with brave..."
-  /// ★ Named from what the player sees: the eastern of the two soldiers with
-  /// spears at the palace door (its render)
   ACTOR_EAST_GUARD,
   /// The Nut over the grounds, gone once Catch has taken it
   /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_FLOATING_NUT
 };
 
@@ -110,17 +100,13 @@ enum McCoyPalaceGroundsActorId {
 enum {
   /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the scene
   /// is left.
-  /// ★ Named from its area name: McCoy's Palace
   FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
   /// The east guard has scolded the party for keeping McCoy waiting.
-  /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)
   FLAG_GUARD_SCOLDED = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
   /// has not yet entered the palace.
   /// The grounds are in another area than Bilibin, so entering them clears it
   /// before the guard can read it.
-  /// ★ Named from the game: "The master can be quite cranky. Hurry along,
-  /// now!" (MsgBilibinMasterQuiteCranky)
   FLAG_KEEPING_MCCOY_WAITING = FLAG_AREA_TEMP_04
 };
 
@@ -298,9 +284,8 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       McCoyPalaceGrounds_OpenGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
-      /* FAKEMATCH(dead): an empty once-only loop keeps r0 last among the call
-       * above's arguments; without it, 2 of 233 instructions differ in
-       * tbs-en. */
+      /* FAKEMATCH(dead): an empty once-only loop; without it, 1 of 233
+       * instructions differ in tbs-en. */
       do {
       } while (0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
@@ -391,7 +376,6 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
 /// stop the party, ask whether they broke the curse of the holy tree until
 /// they answer yes, and march them into the palace to McCoy.
 static void McCoyPalaceGrounds_GuardsArrestParty(void) {
-
   // Bring the leader into view before the guards interrupt.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -459,11 +443,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
     Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
     Event_Wait(1);
-    {
-      struct Actor *guard = Actor_Get(ACTOR_EAST_GUARD);
-
-      guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
-    }
+    Actor_Get(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0.8);
   // Escort Isaac through the opened gate before changing to the palace.

@@ -65,7 +65,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -78,8 +77,6 @@
 
 /// The party has heard in Lunpa that Hammet is held there, or has freed him, so
 /// Layana waits elsewhere in her room.
-/// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
-/// (MsgKalayIsaacSneakedIntoLunpaThats)
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 /// The palace's actors, numbered in the order of
@@ -87,20 +84,12 @@
 ///
 /// Its rows for Garet, Ivan and Mia keep the party's own slots.
 enum HammetPalaceActorId {
-  /// ★ Named from the game: "Lady Layana was crying again last night."
-  /// (MsgHammetPalaceLadyLayanaWasCryingAgainLast)
   ACTOR_LAYANA = ACTOR_FIRST_PLACED,
   /// Beside Layana, and kept out of sight until he is free.
-  /// ★ Named from the game: "I'm so happy Hammet made it back safely"
-  /// (MsgHammetPalaceImSoHappyHammetMadeIt)
   ACTOR_HAMMET,
   /// The soldiers of Kalay in Ivan's report (SPRITE_SOLDIER_IN_TURBAN, as the
   /// guards at the palace door in kalay.c), out of sight at other times.
-  /// ★ Named from what the player sees: a soldier of Kalay in a white turban
-  /// with a spear (its render)
   ACTOR_FIRST_SOLDIER,
-  /// ★ Named from what the player sees: the second soldier of Kalay (its
-  /// render)
   ACTOR_SECOND_SOLDIER,
   // The people of the palace, each with one line before Hammet is free and
   // another after.
@@ -110,16 +99,12 @@ enum HammetPalaceActorId {
   /// "The townsfolk don't know about Lord Hammet yet, do they?"
   ///
   /// After: "I hear Hammet was saved by you people..."
-  /// ★ Named from the game: "The townsfolk don't know about Lord Hammet yet"
-  /// (MsgHammetPalaceTheTownsfolkDontKnowAboutLord)
   ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK,
   /// A woman with fair hair who asks whether Hammet will be freed.
   ///
   /// "Lord Hammet will be released soon. Right?"
   ///
   /// After: "They say Hammet's return is supposed to be a secret for now."
-  /// ★ Named from the game: "Lord Hammet will be released soon. Right?"
-  /// (MsgKalayLordHammetWillReleasedSoon)
   ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED,
   /// A grey-haired man in a black suit who tells of Layana's grief, and later
   /// of the door Layana had opened for the party.
@@ -128,8 +113,6 @@ enum HammetPalaceActorId {
   ///
   /// After: "I left the door to the underground passage open, so go have a
   /// look."
-  /// ★ Named from the game: "I left the door to the underground passage open"
-  /// (MsgHammetPalaceILeftTheDoorToThe)
   ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN,
   /// A bald man in red who fears Dodonpa's men.
   ///
@@ -137,8 +120,6 @@ enum HammetPalaceActorId {
   ///
   /// After: "I wonder if any of Dodonpa's thugs have come here after
   /// Hammet..."
-  /// ★ Named from the game: "I wonder if any of Dodonpa's thugs have come here"
-  /// (MsgHammetPalaceIWonderIfAnyOfDodonpas)
   ACTOR_AFRAID_OF_DODONPAS_THUGS,
   /// A young man with brown hair in green who asks whether Hammet's silk trade
   /// has ended.
@@ -147,8 +128,6 @@ enum HammetPalaceActorId {
   ///
   /// After: "The secret passage is locked because Hammet's treasure is in
   /// there."
-  /// ★ Named from the game: "Has the legacy of Lord Hammet's silk trading come
-  /// to an end?" (MsgKalayHasLegacyLordHammetsSilk)
   ACTOR_ASKING_ABOUT_THE_SILK_TRADE
 };
 
@@ -347,9 +326,7 @@ static void HammetPalace_SetUpEntrance(void) {
   case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
     if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
       MapGrid_CopyCellsTo(58, 70, 54, 70, 4, 3);
-      {
-        MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
-      }
+      MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
       MapGrid_CenterOnFollowedPoint();
       wait(1);
     }

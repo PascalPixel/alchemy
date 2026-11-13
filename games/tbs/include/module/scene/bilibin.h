@@ -33,8 +33,10 @@ extern u16 gBilibin_InnDoorSteps[];
 extern u16 gBilibin_HouseWestDoorSteps[];
 extern u16 gBilibin_HouseNorthDoorSteps[];
 extern u16 *gBilibin_DoorSteps[];
-extern u32 gBilibin_DoorCells[];
-extern u32 gBilibin_CratesLaneCells[];
+/// Each door's cell, as column and row.
+extern s16 gBilibin_DoorCells[][2];
+/// The crates' lane, as column and row pairs.
+extern u8 gBilibin_CratesLaneCells[];
 extern s32 gPushedActor_DirectionSteps[];
 extern s32 gBilibin_RippleScript[];
 

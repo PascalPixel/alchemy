@@ -126,9 +126,8 @@ s32 Battle_Run(s32 enemyGroup) {
     Battle_SetType(BATTLE_TYPE_LINK);
   }
   if (battle->isLink != 0) {
-    /* FAKEMATCH(dead): the seed's store in a once-only block keeps it ahead of
-     * the wait loop's setup; as the plain store, 4 of 645 instructions differ
-     * in tbs-en. */
+    /* FAKEMATCH(dead): the seed's store in a once-only block; as the plain
+     * store, 4 of 645 instructions differ in tbs-en. */
     do {
       gBattleRandomSeed = 0;
     } while (0);
@@ -271,7 +270,6 @@ s32 Battle_Run(s32 enemyGroup) {
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         goto party_lost;
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
-        // Unit ids 0 to 7 are party members.
         if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1)
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         goto won;
@@ -417,30 +415,22 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
 
 /// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
 /// how many there are (0 when unitIds is null). A link battle looks only at
-/// the opponent's three places. Called by BattleIntro_AnnounceEncounter,
-/// BattleUnit_Collect and BattleAbility_ApplyToTarget.
+/// the opponent's three places.
 s32 BattleEnemy_List(s16 *unitIds) {
-  s16 *output;
-  s32 count;
-  s32 id;
-  s32 lastId;
-  s32 listed;
+  s16 *output = unitIds;
+  s32 listed = 0;
+  s32 enemyCapacity = ENEMY_BATTLE_SIZE;
+  s32 count = 0;
+  s32 unitId;
 
-  output = unitIds;
-  listed = 0;
-  lastId = ENEMY_BATTLE_SIZE;
-  count = 0;
   if (output != NULL) {
-    if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
-      lastId = LINK_PARTY_SIZE;
-    }
-    id = FIRST_ENEMY_UNIT;
-    lastId += FIRST_ENEMY_UNIT;
-    for (; id < lastId; id += 1) {
-      if (Unit_GetFar(id)->side != BATTLE_SIDE_NONE) {
-        *output = id;
-        listed += 1;
-        output += 1;
+    if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0)
+      enemyCapacity = LINK_PARTY_SIZE;
+    for (unitId = FIRST_ENEMY_UNIT; unitId < FIRST_ENEMY_UNIT + enemyCapacity;
+         unitId++) {
+      if (Unit_GetFar(unitId)->side != BATTLE_SIDE_NONE) {
+        *output++ = unitId;
+        listed++;
       }
     }
     *output = BATTLE_UNIT_LIST_END;

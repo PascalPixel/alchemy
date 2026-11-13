@@ -35,7 +35,7 @@ struct FieldEffect {
   /// Added to scaleX each frame by the update routines, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
-  s32 scaleRateY; ///< as scaleRateX, for scaleY
+  s32 scaleRateY;
   /// Actor's targetX to targetZ; not named by this view.
   ///@{
   s32 targetX;
@@ -87,9 +87,8 @@ STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
 STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
-/// An actor read as an actor and as a field effect at once: a view kept for
-/// the one store that matches only through it (BabiLighthouse_SetupMap), as
-/// an access through a union conflicts with every store to either struct.
+/// An actor read as an actor and as a field effect at once, as
+/// BabiLighthouse_SetupMap writes one.
 union ActorOrEffect {
   struct Actor actor;
   struct FieldEffect effect;

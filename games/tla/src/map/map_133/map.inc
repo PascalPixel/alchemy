@@ -27,7 +27,7 @@ Field_Map133:
 	.incbin "games/tla/src/map/map_133/animation.script.lz"
 	.balign 4, 0
 .LField_Map133_BLEND:
-	.incbin "games/tla/src/map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_Map133_SCENE:
 	.incbin "games/tla/src/map/map_133/scene.scene.lz"
@@ -39,7 +39,7 @@ Tileset_Set64Palette:
 	.global Tileset_Set64TilesA
 Tileset_Set64TilesA:
 	.incbin "games/tla/src/graphics/tileset/set_64/tiles_a.4bpp.mtf"
-	.byte 0x00, 0x1b, 0x22	@ PACKER: left in the buffer by Field_Map131+0x2091
+	.byte 0x00, 0x1b, 0x22	@ PACKER: left in the buffer by Field_YallamInteriors+0x2091
 	.global Tileset_Set64TilesB
 Tileset_Set64TilesB:
 	.incbin "games/tla/src/graphics/tileset/set_64/tiles_b.4bpp.mtf"

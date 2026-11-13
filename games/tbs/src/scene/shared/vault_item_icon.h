@@ -14,8 +14,8 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   struct Actor *actor;
   struct Sprite *sprite;
   u8 *icon;
-  /* FAKEMATCH(temporary): zero holds the three stores' 0, born before the
-   * call; as 0 in each store, 10 of 48 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): one local holds the 0 of three stores, set before
+   * the call; as 0 in each store, 10 of 48 instructions differ in tbs-en. */
   s32 zero = 0;
 
   actor = Actor_Create(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);

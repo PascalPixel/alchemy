@@ -1980,7 +1980,6 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .itemChance = 7,
         .experience = 362,
     },
-    // ?
     {
         .name = "              ",
         .hp = 18,
@@ -2088,15 +2087,12 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
     },
-    // ?
     {
         .name = "",
     },
-    // ?
     {
         .name = "",
     },
-    // ?
     {
         .name = "",
     },
@@ -2512,7 +2508,6 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .itemChance = 1,
         .experience = 1732,
     },
-    // ?
     {
         .name = "              ",
         .hp = 18,

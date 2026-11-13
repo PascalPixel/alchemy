@@ -7,13 +7,10 @@
 #include "../battle_internal.h"
 
 /// Clears every status and stat change of a unit that goes down, recalculates
-/// its stats and rebuilds its status icons.
-/// Reached through the PLAYBACK_DEFEAT event, from
-/// BattlePlayback_RunAll and BattlePlayback_Run. Clears the unit's
-/// element levels, poison, stat stages and their turns, every status, its
-/// equipment bonuses, ready, immobile and challenge; Unit_CalculateFar then
-/// recomputes its stats, and BattleUnit_BuildStatusFlags its battle object's
-/// status flags.
+/// its stats and rebuilds its status icons. Clears the unit's element levels,
+/// poison, stat stages and their turns, every status, its equipment bonuses,
+/// ready, immobile and challenge; Unit_CalculateFar then recomputes its stats,
+/// and BattleUnit_BuildStatusFlags its battle object's status flags.
 UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
   struct Unit *unit;
   s32 element;
@@ -115,12 +112,9 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
 }
 
 /// Shows the cursor bobbing at (x, y), in screen pixels, and waits for one of
-/// KEY_ADVANCE. Called by Battle_Run under the Djinn tutorial's
-/// standby message, and by BattleCommandRow_Run through
-/// BattleMessage_WaitForAdvanceAtFar. Waits for the message window
-/// first; takes a 128-byte VRAM cache entry for the cursor's tiles and frees
-/// it, and each frame queues the WINOUT writes, sets REG_BLDALPHA and pushes
-/// the cursor sprite.
+/// KEY_ADVANCE. Waits for the message window first; takes a 128-byte VRAM cache
+/// entry for the cursor's tiles and frees it, and each frame queues the WINOUT
+/// writes, sets REG_BLDALPHA and pushes the cursor sprite.
 UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct MenuPoint position;
   s32 pointerTiles;
@@ -158,7 +152,6 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 
 /// Sets gBattleMessageWork->marked, which the next message reads, as
 /// PLAYBACK_MARK does.
-/// Called by BattleActionRun_Build between a weapon's two unleash messages.
 void BattlePlayback_MarkMessage(void) { gBattleMessageWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than

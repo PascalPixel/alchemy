@@ -76,9 +76,7 @@
 // party enters another area, and other areas use the numbers for
 // their own.
 /// The stranded passengers' argument has played.
-/// ★ Named from the game: "He won't sail the ship"
-/// (MsgTolbiHeWontSailShipEven)
-#define FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN 0x300
+#define FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN FLAG_AREA_TEMP_00
 
 // From TBS_PATCH_1 on, the camera stops 8 pixels further in the inn's
 // corridor (INN) and its guest rooms, the southern pair lying east on the map

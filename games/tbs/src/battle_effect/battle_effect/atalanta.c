@@ -65,8 +65,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   struct SpritePlacement position;
   struct ScreenPoint target;
   BlitterPair draw;
-  void **slots;
   struct BattleBackgroundWork *view;
+  void **slots;
   void *canvas;
   struct BattleEffectWork *work;
   s8 *path;
@@ -84,9 +84,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   // and the sheet come before it.
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
-  canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_BACKGROUND];
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
+  canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_BACKGROUND,
+                          HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_BACKGROUND,
+                        HEAP_SLOT_BATTLE_EFFECT);
+  sheet = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_BACKGROUND,
+                         HEAP_SLOT_BATTLE_SHEET);
   scrollX = gBgScroll[1].x;
   work->args = args;
   // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from

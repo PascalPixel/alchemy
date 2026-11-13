@@ -4,12 +4,9 @@
 
 #include "../battle_internal.h"
 
-/// Returns an item's rank among the spoils, higher for a better item and 0
-/// for none: an indispensable item first, then a rare item, then the higher
-/// item id.
-/// The rank's bits: 10 ITEM_INDISPENSABLE | 9 ITEM_RARE | 8..0 the item id.
-/// Called by BattleEnemy_RecordDefeat, to keep the best four drops, and by
-/// Battle_AwardSpoils, to hand them out best first.
+/// Returns an item's rank among the spoils, higher for a better item and 0 for
+/// none: an indispensable item first, then a rare item, then the higher item
+/// id. The rank's bits: 10 ITEM_INDISPENSABLE | 9 ITEM_RARE | 8..0 the item id.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
   u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
@@ -30,8 +27,7 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 }
 
 /// Empties the battle's spoils (BattleWork.spoils) and
-/// gMainRoutineWork.pendingItem. Called once by Battle_Run as the battle
-/// opens.
+/// gMainRoutineWork.pendingItem.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
   struct BattleSpoils *spoils = &battle->spoils;
@@ -49,7 +45,6 @@ void BattleSpoils_Clear(void) {
 
 /// Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided
 /// die for every ten levels and one more, at least 30 percent of its own.
-/// Used by BattleEnemy_RecordDefeat.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
                                                       u16 *reward) {
   s32 rollIndex;
@@ -68,7 +63,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
 
 /// Returns an enemy's experience with the Djinn bonus: its own, plus a
 /// four-sided die for every ten levels and one more, at least 30 percent of
-/// its own. Used by BattleEnemy_RecordDefeat.
+/// its own.
 static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
                                                             u16 *reward) {
   s32 rollIndex;
@@ -101,7 +96,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct EnemyDefinition *enemy;
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
-  s32 itemOrClassIndex;
+  s32 i;
   s32 dropShift;
   s32 classSlot;
   s32 lowestItemPriority;
@@ -116,15 +111,15 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   if (unit->classId != CLASS_NONE)
     return -2;
   classSlot = 0;
-  itemOrClassIndex = 0;
+  i = 0;
   if (battle->enemyKinds[0] != unit->id) {
     do {
-      if (++itemOrClassIndex > ENEMY_BATTLE_SIZE - 1)
+      if (++i > ENEMY_BATTLE_SIZE - 1)
         break;
-    } while (battle->enemyKinds[itemOrClassIndex] != unit->id);
+    } while (battle->enemyKinds[i] != unit->id);
   }
-  if (itemOrClassIndex != ENEMY_BATTLE_SIZE)
-    classSlot = itemOrClassIndex;
+  if (i != ENEMY_BATTLE_SIZE)
+    classSlot = i;
   // The earliest listed class to fall names the victory message, and a
   // second defeat makes it DEFEAT_SEVERAL.
   // No defeat state is 2, so this test never fails.
@@ -154,14 +149,15 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   if (enemy->item == 0 || enemy->itemChance == 0)
     return 0;
-  itemOrClassIndex = 0;
+  // An item already kept drops no second time.
+  i = 0;
   if (spoils->items[0] != enemy->item) {
     do {
-      if (++itemOrClassIndex > 3)
+      if (++i > 3)
         break;
-    } while (spoils->items[itemOrClassIndex] != enemy->item);
+    } while (spoils->items[i] != enemy->item);
   }
-  if (itemOrClassIndex != 4)
+  if (i != 4)
     return 0;
   dropShift = enemy->itemChance;
   if (djinnBonus != 0)
@@ -172,11 +168,11 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   if ((Q16_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
-    for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
-      itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
+    for (i = 0; i <= 3; i++) {
+      itemPriority = BattleSpoils_RankItem(spoils->items[i]);
       if (itemPriority < lowestItemPriority) {
         lowestItemPriority = itemPriority;
-        lowestSlot = itemOrClassIndex;
+        lowestSlot = i;
       }
     }
     if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
@@ -186,13 +182,11 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 }
 
 /// Hands out the spoils after a victory: the experience to each party member
-/// still standing, with every level gained and what it brings, then the
-/// coins, then the items best first.
-/// Each level up shows its message, every Psynergy newly learned and each
-/// stat that rose. An item the inventory cannot take goes to gOverflowItem
-/// and ends the handing out. Called by Battle_Run once the battle is
-/// won. Changes the party members' experience, levels and stats, the party's
-/// coins and inventory.
+/// still standing, with every level gained and what it brings, then the coins,
+/// then the items best first. Each level up shows its message, every Psynergy
+/// newly learned and each stat that rose. An item the inventory cannot take
+/// goes to gOverflowItem and ends the handing out. Changes the party members'
+/// experience, levels and stats, the party's coins and inventory.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;
@@ -220,6 +214,8 @@ void Battle_AwardSpoils(void) {
   }
   // Experience and level ups: each party member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
+  /* FAKEMATCH(temporary): unitIds stands in for units' own address; as
+   * units used directly, 9 of 302 instructions differ in tbs-en. */
   unitIds = units;
   count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   beforeLevelUp = Heap_AllocEwram(sizeof(struct Unit));

@@ -88,9 +88,9 @@ enum AbilityFormula {
 
 /// AbilityDefinition.effect: what an ability does besides its damage or
 /// healing, applied by BattleAbility_ApplyToTarget unless noted. Each is named
-/// for the abilities that have it (abilities.tsv, with their English names and
-/// descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are
-/// read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
+/// for the abilities that have it (ability_table.c, with their English names
+/// and descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE
+/// are read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
 /// ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_2` moves its
 /// stat two stages, one without moves it one.
 enum AbilityEffect {
@@ -116,20 +116,20 @@ enum AbilityEffect {
   ABILITY_EFFECT_VENOM = 19,             ///< Poison
   ABILITY_EFFECT_DELUSION = 20,          ///< Delude
   ABILITY_EFFECT_CONFUSION = 21,         ///< Confuse
-  ABILITY_EFFECT_CHARM = 22,             ///< Charm
-  ABILITY_EFFECT_STUN = 23,              ///< Paralyze
-  ABILITY_EFFECT_SLEEP = 24,             ///< Sleep
-  ABILITY_EFFECT_SEAL = 25,              ///< Bind: Psynergy sealed
-  ABILITY_EFFECT_HAUNT = 26,             ///< Haunt
-  ABILITY_EFFECT_INSTANT_DEATH = 27,     ///< Condemn
-  ABILITY_EFFECT_CURSE = 28,             ///< Curse: the Grim Reaper's countdown
-  ABILITY_EFFECT_REGENERATE = 29,        ///< Regenerate
-  ABILITY_EFFECT_REFLECT = 30,           ///< Reflect
-  ABILITY_EFFECT_DRAIN_HP = 31,          ///< Drain
-  ABILITY_EFFECT_DRAIN_PP = 32,          ///< Psy Drain
-  ABILITY_EFFECT_BREAK = 33,             ///< Break: raised stats undone
-  ABILITY_EFFECT_LEAVE_ONE_HP = 34,      ///< Severe Blow, Thrash
-  ABILITY_EFFECT_HALVE_DEFENSE = 35,     ///< Torch
+  ABILITY_EFFECT_CHARM = 22,
+  ABILITY_EFFECT_STUN = 23, ///< Paralyze
+  ABILITY_EFFECT_SLEEP = 24,
+  ABILITY_EFFECT_SEAL = 25, ///< Bind: Psynergy sealed
+  ABILITY_EFFECT_HAUNT = 26,
+  ABILITY_EFFECT_INSTANT_DEATH = 27, ///< Condemn
+  ABILITY_EFFECT_CURSE = 28,         ///< Curse: the Grim Reaper's countdown
+  ABILITY_EFFECT_REGENERATE = 29,
+  ABILITY_EFFECT_REFLECT = 30,
+  ABILITY_EFFECT_DRAIN_HP = 31,
+  ABILITY_EFFECT_DRAIN_PP = 32,      ///< Psy Drain
+  ABILITY_EFFECT_BREAK = 33,         ///< Break: raised stats undone
+  ABILITY_EFFECT_LEAVE_ONE_HP = 34,  ///< Severe Blow, Thrash
+  ABILITY_EFFECT_HALVE_DEFENSE = 35, ///< Torch
   /// A 1 in 64 to 1 in 4 chance of an ability's critical hit, rolled by
   /// BattleActionRun_Build. Only an attack (ABILITY_FORMULA_ATTACK or
   /// ABILITY_FORMULA_ATTACK_MULTIPLIED) applies it, and no ability has one.
@@ -146,11 +146,11 @@ enum AbilityEffect {
   ABILITY_EFFECT_THREATEN = 45,           ///< Contain, Threaten, Tremble
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite
   ABILITY_EFFECT_TOTAL_DEFENSE = 47,      ///< Total Defense, Flash
-  ABILITY_EFFECT_SIDESTEP = 48,           ///< Sidestep
-  ABILITY_EFFECT_FLEE = 49,           ///< Flee: an enemy's becomes COMMAND_FLEE
-  ABILITY_EFFECT_CALL_ALLY = 50,      ///< Ally Search, Speed Surge
-  ABILITY_EFFECT_CALL_HELP = 51,      ///< Search for Help
-  ABILITY_EFFECT_CRAZY_VOICE = 52,    ///< Crazy Voice
+  ABILITY_EFFECT_SIDESTEP = 48,
+  ABILITY_EFFECT_FLEE = 49,      ///< Flee: an enemy's becomes COMMAND_FLEE
+  ABILITY_EFFECT_CALL_ALLY = 50, ///< Ally Search, Speed Surge
+  ABILITY_EFFECT_CALL_HELP = 51, ///< Search for Help
+  ABILITY_EFFECT_CRAZY_VOICE = 52,
   ABILITY_EFFECT_GROUND = 53,         ///< Ground, War Cry, Wicked Howl
   ABILITY_EFFECT_CHALLENGE = 54,      ///< no ability has it
   ABILITY_EFFECT_SELF_DESTRUCT = 55,  ///< Dynamite, Mortal Blow
@@ -167,13 +167,13 @@ enum AbilityEffect {
   ABILITY_EFFECT_ACT_TWICE = 66,      ///< Kite
   ABILITY_EFFECT_SEAL_2_TURNS = 67,   ///< Luff
   ABILITY_EFFECT_TRIPLE_BLOW_60 = 68, ///< Sonic Smash
-  ABILITY_EFFECT_PSY_LEECH = 69       ///< Psy Leech
+  ABILITY_EFFECT_PSY_LEECH = 69
 };
 
 /// AbilityDefinition.targetMode: whom an ability may target, from its user's
 /// view. The party's cursor (BattleTarget_RunSelection) shows the enemies for
 /// every mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of
-/// abilities.tsv has a mode between ABILITY_TARGET_ALLIES and
+/// ability_table.c has a mode between ABILITY_TARGET_ALLIES and
 /// ABILITY_TARGET_SELF or above it; BattleActionRun_SetTargets would walk such
 /// a mode's range as it does ABILITY_TARGET_FOES'.
 enum AbilityTarget {
@@ -391,7 +391,7 @@ struct Unit {
   /// cost the unit its actions.
   ///@{
   u8 delusion;
-  s8 confusion;
+  u8 confusion;
   u8 charm;
   u8 stun;
   u8 sleep;
@@ -464,9 +464,6 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 }
 
 /// Recalculates HP and PP gauges, keeping at least one when any points remain.
-// A statement macro, written do { } while (0): every site matches through that
-// shape. Written out at each site, or as an inline function, the gauge loads
-// are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
     (unit)->hpGauge =                                                          \

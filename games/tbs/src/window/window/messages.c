@@ -395,7 +395,9 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
 /// Decodes message and empties the argument table; returns where its
 /// decoded text starts. The Djinn and party join messages
 /// (screens/joined.c) use it.
-s32 Message_DecodeMode1(s32 message) { return Message_Decode(message, 1); }
+s32 Message_DecodeAndClearArguments(s32 message) {
+  return Message_Decode(message, 1);
+}
 
 /// Points reader at the start of message (its compressed bits and first
 /// context), running the ARM lookup routine from a RAM copy, which it frees

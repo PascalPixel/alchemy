@@ -4,16 +4,6 @@
 
 #include "../event_commands_internal.h"
 
-#ifndef UBFIX
-/// The heap slots from the window work's onward, seen as the window work and,
-/// twelve slots on, the field work in HEAP_SLOT_FIELD.
-struct HeapSlotsFromWindowView {
-  u8 *window;
-  u8 *slotsBetween[11]; ///< the eleven heap slots after the window work's
-  struct FieldWork *event;
-};
-#endif
-
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait
 /// beside it when it has one, and moves on to the next message. The low 12
@@ -50,14 +40,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 #endif
 
   win = (struct WindowWork *)gWindowWork[0];
-  // UB: the fabricated HeapSlotsFromWindowView aggregate reaches from the
-  // window slot into HEAP_SLOT_FIELD.
-#ifdef UBFIX
   work = gFieldWork;
-#else
-  work = (struct FieldWork *)((struct HeapSlotsFromWindowView *)gWindowWork)
-             ->event;
-#endif
   handle = 0;
   portrait = 0;
   sprite = Actor_GetSpriteById(actorId);

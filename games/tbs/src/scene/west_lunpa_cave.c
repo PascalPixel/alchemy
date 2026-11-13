@@ -64,26 +64,16 @@
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
 #include "fixed_math.h"
+#include "shared/walk_into_leader.h"
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.
-/// ★ Named from what the player sees: a small blue puddle beneath the green
-/// metal gate across the cave (its render)
 #define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// The lowering switch has lowered the gate.
-/// ★ Named from the game: "The gate in the cave can only be opened from the
-/// inside." (MsgLunpaEastGuardTrustsCaveGate)
 #define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_SCENE_TEMP_01
-/// The gate is raised.
-/// ★ Named from the game: "The gate in the cave can only be opened from the
-/// inside." (MsgLunpaEastGuardTrustsCaveGate)
 #define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_SCENE_TEMP_02
 /// The north puddle is frozen into a pillar.
-/// ★ Named from what the player sees: a small blue puddle in the cave's
-/// northern passage, past the gate (its render)
 #define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 /// The south puddle is frozen into a pillar that can be climbed.
-/// ★ Named from what the player sees: a small blue puddle at the foot of the
-/// cave's southern passage (its render)
 #define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
 static void Reunion_Converse(void);
@@ -289,7 +279,6 @@ static void WestLunpaCave_FlipRaisingSwitch(void) {
 ///
 /// It sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void WestLunpaCave_HammetFindsBunza(void) {
-  struct Actor *leader;
   s32 sighting;
   s32 recognition;
 
@@ -307,34 +296,22 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Event_Wait(30);
     FieldCamera_SetSpeed(0.5);
     FieldCamera_MoveTo(192, CAMERA_KEEP, 432, 1);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_HAMMET);
     Actor_SetSpeed(ACTOR_HAMMET, 1.3);
     Actor_WalkTo(ACTOR_HAMMET, 168, 464);
     Actor_WaitForMoveById(ACTOR_HAMMET);
     Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH, 0);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_IVAN);
     Actor_SetSpeed(ACTOR_IVAN, 1.3);
     Actor_WalkTo(ACTOR_IVAN, 152, 488);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_MIA);
     Actor_SetSpeed(ACTOR_MIA, 1.3);
     Actor_WalkTo(ACTOR_MIA, 168, 488);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_GARET);
     Actor_SetSpeed(ACTOR_GARET, 1.3);
     Actor_WalkTo(ACTOR_GARET, 184, 488);
     Actor_WaitForMoveById(ACTOR_GARET);
@@ -863,7 +840,6 @@ static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
 
 /// Sends Hammet and Bunza ahead, then returns the companions to the leader.
 static void Party_StaysBehind(void) {
-  struct Actor *leader;
   s32 farewell;
 
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -941,29 +917,9 @@ static void Party_StaysBehind(void) {
 
   // Merge the companions back into the leader and restore player camera
   // control.
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(30);
   FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
@@ -973,7 +929,6 @@ static void Party_StaysBehind(void) {
 
 /// Leads everyone down the passage and requests the wagon departure exit.
 static void Party_RidesWagon(void) {
-  struct Actor *leader;
   s32 departure;
 
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
@@ -1031,29 +986,9 @@ static void Party_RidesWagon(void) {
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
 
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(30);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -16, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);

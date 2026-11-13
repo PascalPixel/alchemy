@@ -70,7 +70,7 @@ again:
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *flags &= 0x7e;
+    *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(
         gMainRoutineWork.leaderActorId,
@@ -121,10 +121,7 @@ again:
 /// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
 /// when there is nothing to climb or the way is blocked by a wall cell.
 ///
-/// Called by Field_RunPushCell for a climbing spot (CELL_BEHAVIOR_CLIMB) with
-/// Down held, and imported by the scenes with ladders and climbable walls
-/// (Babi's Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
-/// gMainRoutineWork.movementMode: 1 while the leader is on the wall, 0 off
+/// Sets gMainRoutineWork.movementMode: 1 while the leader is on the wall, 0 off
 /// it.
 s32 Field_ClimbDown(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -200,10 +197,7 @@ failure:
 /// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
 /// to climb or the way is blocked by a wall cell.
 ///
-/// Called by Field_RunPushCell for a climbing spot (CELL_BEHAVIOR_CLIMB) with
-/// Up held, and imported by the scenes with ladders and climbable walls (Babi's
-/// Lighthouse, Colosso, Crossbone Isle and others). Sets
-/// gMainRoutineWork.movementMode as Field_ClimbDown does.
+/// Sets gMainRoutineWork.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s16 spriteFlags = 1;

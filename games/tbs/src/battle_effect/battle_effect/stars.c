@@ -72,7 +72,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
@@ -257,7 +257,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   // Trails keep half of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_HALF;
-  draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;

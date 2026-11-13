@@ -25,13 +25,12 @@ enum GrowingColumnsMode {
 };
 
 /// One growing column, laid over a struct Particle in work->particles.
-struct ParticleGrowthColumnView {
+struct GrowingColumn {
   s32 x; ///< the root, in canvas pixels
   s32 y; ///< the root's row: 108 to 115, lower for later columns
-  s32 z; ///< the Particle's z and velocityX, unused here
-  s32 velocityX;
-  s32 height;    ///< the full length, 55 to 118 capped by its shape
-  s32 velocityZ; ///< the Particle's, unused here
+  s32 unused[2];
+  s32 height; ///< the full length, 55 to 118 capped by its shape
+  s32 unused2;
   /// The frame it starts to grow; set, but the frame loop computes its own.
   s32 start;
 };
@@ -63,10 +62,8 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 /// end; the effect fades out over 16 frames, and nothing grows in its
 /// last 4.
 ///
-/// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji.
-/// work->particles holds the 16 columns (struct ParticleGrowthColumnView) and
-/// PARTICLES the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side
-/// 1, REG_BG2X; sets work->shakeFrames as each column appears.
+/// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji. work->particles
+/// holds the 16 columns (struct GrowingColumn) and PARTICLES the dust.
 ///
 /// args: the targets; variant picks the number of columns
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
@@ -89,13 +86,13 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
   u8 *variantCursor;
 
-  struct ParticleGrowthColumnView *setup;
+  struct GrowingColumn *setup;
   s32 x;
   s32 height;
   s32 limit;
 
   s32 puffPictures;
-  struct ParticleGrowthColumnView *column;
+  struct GrowingColumn *column;
   s32 length;
   s32 reach;
   s8 pillarHeight;
@@ -108,7 +105,10 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   s32 puffAge;
   s32 image;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
+  work = *cursor++;
+  canvas = *cursor;
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
@@ -152,7 +152,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   // of its gGrowth_ColumnX, each length random and capped by its shape. All
   // 16 are placed, whatever the variant's count.
   i = 0;
-  setup = (struct ParticleGrowthColumnView *)work->particles;
+  setup = (struct GrowingColumn *)work->particles;
   do {
     x = (gGrowth_ColumnX[i] + (7 & Random16())) - 4;
     setup->y = i / 2 + 108;
@@ -192,9 +192,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
         i = 0;
         if (gGrowth_ColumnCounts[work->args->variant] != 0) {
           do {
-            column = (struct ParticleGrowthColumnView
-                          *)((u8 *)work->particles +
-                             i * sizeof(struct ParticleGrowthColumnView));
+            column = (struct GrowingColumn *)((u8 *)work->particles +
+                                              i * sizeof(struct GrowingColumn));
             start = i * 4 + 8;
             if (frame == i * 4 + 9) {
               work->shakeFrames = 2;
@@ -331,10 +330,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 /// 32 the targets react together, with a sound.
 ///
 /// A Djinni appears first (BattleEffect_RunDjinniEntrance). work->particles
-/// holds the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
-/// work->shakeFrames.
+/// holds the 16 vines' x.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
-  u32 *slots, *cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -343,10 +340,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   s32 i, frame, picture, height, offset, middle;
   struct Particle *column;
 
-  slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_EFFECT);
-  cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
-  canvas = (void *)*cursor;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_RunDjinniEntrance(args, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
                                  args->side, DJINNI_ANCHOR_CENTRE, &originX,
@@ -368,21 +363,18 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   REG_BG2X = (64 - first.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   column = work->particles;
-  i = 0;
-  do {
+  for (i = 0; i != VINE_COLUMNS; i++) {
     column[i].x = gGrowth_ColumnOffsets[i] + 64;
-    i++;
-  } while (i != VINE_COLUMNS);
+  }
   // Each transfer clears the canvas: the vines are redrawn every frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  frame = 0;
-  do {
+  for (frame = 0; frame != VINE_FRAMES; frame++) {
     // No EFFECT_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
       Sound_PlayFar(SE_CRACK);
@@ -418,8 +410,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
     } while (i != VINE_COLUMNS);
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != VINE_FRAMES);
+  }
   EFFECT_FINISH_CANVAS();
 }
 
@@ -438,27 +429,21 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 ///         effect runs 8 frames a thorn and 56 more. gGrowth_Kinds gives
 ///         each thorn's size and direction.
 ///
-/// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
-/// REG_BLDALPHA and, on EFFECT_SIDE_PARTY, REG_BG2X; sets work->shakeFrames as
-/// each thorn appears.
+/// PARTICLES holds the dust, 64 puffs.
 void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
   DrawRectangle draw;
   s32 frameCount;
-  u32 *slots;
-  u32 *cursor;
   struct BattleEffectWork *work;
   s32 i;
   s32 j;
   s32 age;
   s32 start;
 
-  slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_EFFECT);
-  cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
-  canvas = (void *)*cursor;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
@@ -470,14 +455,13 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw = ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_EFFECT];
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  drawFlip =
-      ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_EFFECT];
+  drawFlip = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   frameCount = gGrowth_Counts[work->args->variant] * 8 + 56;
 

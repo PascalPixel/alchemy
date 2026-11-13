@@ -32,11 +32,10 @@ void BattleEffect_RunDew(struct BattleEffectParams *args) {
 /// and from 72 frames after its turn starts a column of light falls on it
 /// and narrows away; the battle shows the result on frame 80.
 ///
-/// Called by BattleEffect_RunRevive and BattleEffect_RunDew. Runs
-/// BattleEffect_RunDjinniEntrance first when args->prelude is 1. Loads three
-/// palettes over the first 64 background colours in turn, so the Djinni's
-/// is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X, and
-/// builds and frees its blitters every frame.
+/// Runs BattleEffect_RunDjinniEntrance first when args->prelude is 1. Loads
+/// three palettes over the first 64 background colours in turn, so the
+/// Djinni's is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X,
+/// and builds and frees its blitters every frame.
 ///
 /// element: the Djinni's, Venus or Mercury.
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
@@ -47,7 +46,6 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 djinnX;
   s32 djinnY;
   BlitterPair draw;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -56,8 +54,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 i;
   s32 k;
 
-  cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   // Setup. The entrance (over the first target) mirrors the Djinni when the
@@ -145,11 +143,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
     // Motes: one every 8 frames, swaying up to 16 pixels either way (odd
     // motes mirrored) as they sink a pixel a frame; they go out 8 pixels

@@ -31,21 +31,6 @@
 #define WORLD_MAP_CURSOR_MAX_Y 141
 ///@}
 
-/// The renderer's linked sprite entry and the three words that initialize it.
-union WorldPictureMarkerPart {
-  struct AnimationSpritePart sprite;
-  u32 words[3];
-};
-
-#ifdef UBFIX
-#define WORLD_MAP_MARKER_VIEW(marker) ((marker)->sprite)
-#else
-#define WORLD_MAP_MARKER_VIEW(marker) (*(marker))
-#endif
-
-STATIC_ASSERT(sizeof(union WorldPictureMarkerPart) ==
-              sizeof(struct AnimationSpritePart));
-
 // BUG: the original reserves 32 bytes but writes and uploads 128. The bump
 // allocator takes bytes, not words; reserve the whole tile buffer with BUGFIX.
 #ifdef BUGFIX
@@ -67,13 +52,9 @@ struct WorldPictureWork {
   u8 padding14[4];           ///< not read by this screen
   s32 cursorSpeed;           ///< 16.16 screen pixels per frame
   struct Window *nameWindow; ///< owned until this screen closes
-  // Packed visible areas, then a nearest-section frame; the last is the
-  // cursor.
-#ifdef UBFIX
-  union WorldPictureMarkerPart markers[WORLD_MAP_MARKER_CAPACITY + 1];
-#else
+  /// The visible areas' markers packed from the start, then the frame round
+  /// the nearest; the last entry is the cursor.
   struct AnimationSpritePart markers[WORLD_MAP_MARKER_CAPACITY + 1];
-#endif
 };
 
 STATIC_ASSERT(offsetof(struct WorldPictureWork, markers) == 0x20);
@@ -86,11 +67,7 @@ STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
 /// cursor where the leader is on the map (or mid-screen when the area is
 /// not on it), and the name window.
 void WorldPicture_Initialize(void) {
-#ifdef UBFIX
-  union WorldPictureMarkerPart *marker;
-#else
-  u32 *oam;
-#endif
+  u32 *entryWords; // the markers' sprite entries, a word at a time
   u32 *markerTiles;
   struct WorldPictureWork *work;
   struct Actor *actor;
@@ -101,12 +78,7 @@ void WorldPicture_Initialize(void) {
 
   markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   work = (struct WorldPictureWork *)gMapGridCellBuffer;
-#ifdef UBFIX
-  marker = work->markers;
-#else
-  // UB: the flat word view runs across sprite entries.
-  oam = (u32 *)work->markers;
-#endif
+  entryWords = (u32 *)work->markers;
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   work->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
@@ -141,23 +113,16 @@ void WorldPicture_Initialize(void) {
   markerTiles[28] = 0x1100;
   tileAttributes = VramCache_Load(work->markerVramBlock,
                                   WORLD_MAP_MARKER_TILE_BYTES, markerTiles) |
-                   0x400;
+                   OBJ_PRIORITY(1);
   for (i = 0; i < WORLD_MAP_MARKER_CAPACITY; i++) {
-#ifdef UBFIX
-    marker->words[0] = 0;
-    marker->words[1] = 0;
-    marker->words[2] = tileAttributes;
-    marker++;
-#else
-    *oam++ = 0;
-    *oam++ = 0;
-    *oam++ = tileAttributes;
-#endif
+    *entryWords++ = 0;
+    *entryWords++ = 0;
+    *entryWords++ = tileAttributes;
   }
   Heap_Release(markerTiles);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT)) {
-    work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
-    work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
+    work->cursorX.fixed = px(WORLD_MAP_SCREEN_WIDTH) / 2;
+    work->cursorY.fixed = px(WORLD_MAP_SCREEN_HEIGHT) / 2;
   } else {
     work->cursorX.fixed = px(((actor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
                              WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
@@ -169,20 +134,11 @@ void WorldPicture_Initialize(void) {
   work->nameWindow = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
   work->namedMarker = -1;
   work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
-#ifdef UBFIX
-  marker->words[0] = 0;
-  marker->words[1] = OBJ_SIZE_16X16;
-#else
-  *oam++ = 0;
-  *oam++ = OBJ_SIZE_16X16;
-#endif
-  cursorAttributes = 0x400;
+  *entryWords++ = 0;
+  *entryWords++ = OBJ_SIZE_16X16;
+  cursorAttributes = OBJ_PRIORITY(1);
   cursorAttributes |= tile >> 5;
-#ifdef UBFIX
-  marker->words[2] = cursorAttributes;
-#else
-  *oam = cursorAttributes;
-#endif
+  *entryWords = cursorAttributes;
 }
 
 #if TBS_PATCH_2
@@ -233,11 +189,7 @@ void WorldPicture_UpdateMarkers(void) {
   s32 mode;
   s32 flag;
   s32 markerIndex;
-#ifdef UBFIX
-  union WorldPictureMarkerPart *marker;
-#else
   struct AnimationSpritePart *marker;
-#endif
   s32 x;
   s32 y;
   s32 angle;
@@ -345,10 +297,10 @@ void WorldPicture_UpdateMarkers(void) {
         WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
     y = areaActor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
         WORLD_MAP_WORLD_SIZE;
-    WORLD_MAP_MARKER_VIEW(marker).objectMode = mode;
-    WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + tile;
-    WORLD_MAP_MARKER_VIEW(marker).x = x - 1;
-    WORLD_MAP_MARKER_VIEW(marker).y = y - 1;
+    marker->objectMode = mode;
+    marker->tile = tileBase + tile;
+    marker->x = x - 1;
+    marker->y = y - 1;
     width = x - cursorX;
     height = y - cursorY;
     if (width * width + height * height < nearestDistanceSquared) {
@@ -365,7 +317,7 @@ void WorldPicture_UpdateMarkers(void) {
     }
     // Blink the current area for eight frames out of sixteen.
     if (markerIndex != 0 || (gFrameCount & 15) <= 7)
-      Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker++), y);
+      Oam_AddSpriteAtDepth(marker++, y);
   }
 #if WORLD_PICTURE_CURSOR_SNAPS
   // With the d-pad released, the cursor moves onto the nearest marker.
@@ -398,19 +350,18 @@ void WorldPicture_UpdateMarkers(void) {
 
   // The blinking frame round the nearest marker.
   if (nearestMarker != -1 && (gFrameCount & 15) <= 7) {
-    WORLD_MAP_MARKER_VIEW(marker).objectMode = OBJ_MODE_NORMAL;
-    WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + 3;
-    WORLD_MAP_MARKER_VIEW(marker).x = nearestX - 2;
-    WORLD_MAP_MARKER_VIEW(marker).y = nearestY - 2;
-    Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker), nearestY);
+    marker->objectMode = OBJ_MODE_NORMAL;
+    marker->tile = tileBase + 3;
+    marker->x = nearestX - 2;
+    marker->y = nearestY - 2;
+    Oam_AddSpriteAtDepth(marker, nearestY);
   }
 
-  // The cursor.
   marker = &work->markers[WORLD_MAP_CURSOR_PART];
-  WORLD_MAP_MARKER_VIEW(marker).affineIndex = 0;
-  WORLD_MAP_MARKER_VIEW(marker).x = cursorX - 17;
-  WORLD_MAP_MARKER_VIEW(marker).y = cursorY + 1;
-  Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker), 246);
+  marker->affineIndex = 0;
+  marker->x = cursorX - 17;
+  marker->y = cursorY + 1;
+  Oam_AddSpriteAtDepth(marker, 246);
 
   // Redraw only when the selected marker changes, including to no marker.
   if (work->namedMarker != nearestMarker) {
@@ -452,7 +403,7 @@ void WorldPicture_UpdateMarkers(void) {
 /// other's scratch storage. The picture argument is unused; the resource is
 /// fixed.
 void WorldPicture_Show(s32 picture) {
-  struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);
@@ -462,12 +413,12 @@ void WorldPicture_Show(s32 picture) {
                 sizeof(gridState->animations[0])];
   s32 i;
   u8 *graphics;
-  s32 savedStatus;
+  s32 savedTransitionFrames;
 
   if (work->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   work->camera->paused = 1;
-  savedStatus = work->transitionFrames;
+  savedTransitionFrames = work->transitionFrames;
   work->transitionFrames = 6;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -486,14 +437,13 @@ void WorldPicture_Show(s32 picture) {
     // 256 colours, a byte each, decoded into the borrowed buffer and copied
     // to BG1's tiles.
     graphics = Resource_GetTableEntry(resource);
-    Dma_Set(graphics, (void *)BG_PLTT,
-            (u32)(DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4), REG_DMA3);
+    Dma_Set(graphics, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
     BG_PLTT[0] = 0;
     Decompress_TaggedLz(graphics + 448, gMapGridCellBuffer);
-    Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
-            (u32)(DMA_ENABLE | DMA_32BIT) << 16 |
-                (WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),
-            REG_DMA3);
+    Dma_Set(
+        gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
+        DMA_COPY_WORDS(WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),
+        REG_DMA3);
     Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2, &REG_BG1CNT);
     Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                    DISPCNT_OBJ_1D_MAP,
@@ -518,7 +468,7 @@ void WorldPicture_Show(s32 picture) {
     menu->suspended = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    work->transitionFrames = savedStatus;
+    work->transitionFrames = savedTransitionFrames;
     work->camera->paused = 0;
   }
 }
@@ -602,7 +552,6 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 #undef WORLD_MAP_CURSOR_MIN_X
 #undef WORLD_MAP_CURSOR_MAX_X
 #undef WORLD_MAP_CURSOR_MAX_Y
-#undef WORLD_MAP_MARKER_VIEW
 #undef WORLD_MAP_MARKER_ALLOCATION_SIZE
 #undef WORLD_PICTURE_CURSOR_SNAPS
 #undef WORLD_PICTURE_NAME_RANGE

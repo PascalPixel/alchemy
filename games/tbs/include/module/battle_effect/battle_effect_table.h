@@ -8,7 +8,6 @@
 // The two kinds of target strike (gTargetStrike_Styles).
 #define STRIKE_KIND_SLASH 0 ///< sideways slashes
 /// Rows of fangs above and below the target that close on it.
-/// ★ Named from the game: "Poisonous Bite" (MsgAbilityName)
 #define STRIKE_KIND_BITE 1
 
 // A target strike style's extras.
@@ -402,9 +401,9 @@ enum FlurryArcs {
 /// Whose palette a flurry takes, its FLURRY_PALETTE.
 enum FlurryPalette {
   FLURRY_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
-  FLURRY_PALETTE_LIME,        ///< LimePalette
-  FLURRY_PALETTE_BLUE_ARC,    ///< blue arc B's
-  FLURRY_PALETTE_EMBER        ///< the ember streak sheet's
+  FLURRY_PALETTE_LIME,
+  FLURRY_PALETTE_BLUE_ARC,
+  FLURRY_PALETTE_EMBER ///< the ember streak sheet's
 };
 extern u8 gFlurry_Styles[][7];
 extern u16 gGaia_RowPictures[];

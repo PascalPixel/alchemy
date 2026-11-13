@@ -60,10 +60,7 @@ top:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// Pauses the target (effectWork->child) and runs
-/// FieldPsynergy_Halt. Called by FieldPsynergy_Run and
-/// FieldPsynergy_Dispatch for Halt on a target; sets the target's
-/// paused field.
+/// Pauses the target (effectWork->child) and runs FieldPsynergy_Halt.
 void FieldPsynergy_HaltOnTarget(s32 unused) {
   struct Actor *target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
 
@@ -171,13 +168,11 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 }
 
 /// Pauses actor id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gMainRoutineWork. Called by FieldPsynergy_Run
-/// and FieldPsynergy_Dispatch for Halt, which then record the id in
-/// gMainRoutineWork.haltedActor, and by the Colosso scenes to stop their
-/// operators. Sets gMainRoutineWork.pausedUpdate and pausedPose, the actor's
-/// update and paused fields, and stops its animation. gMainRoutineWork keeps
-/// one actor's state, so Halt resumes the one it stopped before it stops
-/// another; the paused actor flickers through random sprite params meanwhile.
+/// first animation's param in gMainRoutineWork. Sets
+/// gMainRoutineWork.pausedUpdate and pausedPose, the actor's update and paused
+/// fields, and stops its animation. gMainRoutineWork keeps one actor's state,
+/// so Halt resumes the one it stopped before it stops another; the paused actor
+/// flickers through random sprite params meanwhile.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
   struct SpriteAnimation *entry;

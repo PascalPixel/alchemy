@@ -56,7 +56,8 @@ STATIC_ASSERT(offsetof(struct BattleMessageWork, marked) == 8);
 
 /// The battle message window's work, in HEAP_SLOT_BATTLE_MESSAGE, which
 /// Battle_Run takes and zeroes for the battle.
-extern struct BattleMessageWork *gBattleMessageWork;
+#define gBattleMessageWork                                                     \
+  (*(struct BattleMessageWork **)&gHeapSlots[HEAP_SLOT_BATTLE_MESSAGE])
 
 /// The playback queue and the state of its playback: the phase, the entry
 /// playing and the advance arrow.
@@ -168,6 +169,6 @@ STATIC_ASSERT(offsetof(struct BattlePlaybackWork, phase) == 0x148);
 STATIC_ASSERT(offsetof(struct BattlePlaybackWork, flags) == 0x16c);
 
 /// The battle's work: gHeapSlots[HEAP_SLOT_BATTLE] under its own name.
-extern struct BattleWork *gBattleWork;
+#define gBattleWork (*(struct BattleWork **)&gHeapSlots[HEAP_SLOT_BATTLE])
 
 #endif

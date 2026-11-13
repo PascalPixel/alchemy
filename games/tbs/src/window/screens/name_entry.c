@@ -320,7 +320,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   // The key under the cursor flashes between WINDOW_PALETTE and
   // HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey.
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
-  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY32(8),
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
           REG_DMA3);
   palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   end = (u8 *)(originalLength + (s32)editedName);
@@ -454,9 +454,8 @@ s32 NameEntry_EditMemberName(s32 member) {
           u8 *dstSave = dst;
           u8 *srcSave = src;
 
-          /* FAKEMATCH(dead): no-op saves and restores keep destination,
-           * source and index in r2, r1 and r0; without them, 9 of 506
-           * instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): no-op saves; without them, 9 of 506 instructions
+           * differ in tbs-en. */
           if (originalName)
             src = NULL;
           if (originalName)
@@ -594,7 +593,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   // The key under the cursor flashes between WINDOW_PALETTE and
   // HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey.
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
-  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY32(8),
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
           REG_DMA3);
   palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   while (1) {
@@ -765,9 +764,8 @@ s32 NameEntry_EditMemberName(s32 member) {
           dst = originalName;
           src = editedName;
           i = 0;
-          /* FAKEMATCH(dead): no-op saves and restores keep destination,
-           * source and index in r1, r2 and r0; without them, 11 of 663
-           * instructions differ in tbs-ja. */
+          /* FAKEMATCH(dead): no-op saves; without them, 11 of 663 instructions
+           * differ in tbs-ja. */
           dstSave = dst;
           srcSave = src;
           if (keyboardWindow->height)

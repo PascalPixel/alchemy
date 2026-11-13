@@ -20,9 +20,8 @@ void Item_UseNoOpCallback(void) {}
 /// its plain power (Ability_ApplyToTargets with fixedScale 1). When the action
 /// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
 /// from its stack and the menu's list is rebuilt, and Hermes' Water
-/// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or
-/// -1 when nothing changed; the result message is left in the work's
-/// messageOffset. Called by ItemMenu_Use.
+/// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or -1 when nothing
+/// changed; the result message is left in the work's messageOffset.
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;
@@ -90,9 +89,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   else
     target = Unit_GetFar(ISAAC);
 
-  /* FAKEMATCH(dead): a test that is never true (partyResultShown is still
-   * 0), which emits nothing but loads effect->range ahead of the loop's count
-   * guard; without it, 21 of 485 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a test that is never true (partyResultShown is still 0);
+   * without it, 21 of 485 instructions differ in tbs-en. */
   if (effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
     messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 
@@ -230,7 +228,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     }
 
     // Then the ability's effect (enum AbilityEffect). The first two cases are
-    // an HP and a PP restore no ability has (abilities.tsv).
+    // an HP and a PP restore no ability has (ability_table.c).
     switch (effect->effect) {
     case ABILITY_EFFECT_RESTORE_HP:
       if (target->hp <= 0 || target->hp == target->hpMax) {
@@ -332,8 +330,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-/// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
-/// ItemMenu_Use after a use that changed something.
+/// Plays the use sound of item's action (Ability_PlayUseAnimation).
 void Item_PlayUseAnimation(u32 item) {
   Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId &
                            PSYNERGY_ABILITY_MASK);
@@ -377,7 +374,7 @@ void Ability_PlayUseAnimation(s32 action) {
     default:
       Sound_PlayReturnOne(MUS_JINGLE_SMALL);
 
-    // The HP and PP restores no ability has (abilities.tsv).
+    // The HP and PP restores no ability has (ability_table.c).
     case ABILITY_EFFECT_RESTORE_HP:
     case ABILITY_EFFECT_RESTORE_PP:
     case ABILITY_EFFECT_DRAIN_HP:

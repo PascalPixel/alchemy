@@ -23,22 +23,15 @@
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
-// Declared here without const, as Camelot's code read it: with const,
-// alchemy-gcc compiles DebugParameterSet_Load differently.
-// debug_parameter_sets.c defines it, const, in ROM.
-extern struct DebugParameterSetRow gDebug_ParameterSets[];
-
 /// The last row of gDebug_ParameterSets; the scan reports a missing parameter
 /// set past it.
 #define DEBUG_PARAMETER_SET_LAST_ROW 332
 
 /// Debug: replaces the party with the party members of parameter set number
 /// set. Each party member is raised to the row's level, given the row's Djinn
-/// (Set, in order of their numbers across the party), the row's abilities,
-/// and an emptied inventory holding the row's items, each equipped. Called by
-/// DebugBattle_RunMenu and, through its far stub, by the Battle Arena's
-/// BattleArena_ChooseDebugParameterSet. Changes the active party and each
-/// party member's level, Djinn, abilities and inventory.
+/// (Set, in order of their numbers across the party), the row's abilities, and
+/// an emptied inventory holding the row's items, each equipped. Changes the
+/// active party and each party member's level, Djinn, abilities and inventory.
 /// Returns 1 when the table ends before that parameter set, 0 otherwise.
 s32 DebugParameterSet_Load(s32 set) {
   // The next Djinni number of each element to hand out.
@@ -85,17 +78,15 @@ s32 DebugParameterSet_Load(s32 set) {
     Unit_LevelUpToFar(unitId, gDebug_ParameterSets[row].level);
 
     // Start from no Djinn and no abilities.
-    member = (struct Unit *)Unit_GetFar(unitId);
+    member = Unit_GetFar(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       member->djinnHeldCounts[i] = 0;
       member->djinnSetCounts[i] = 0;
       member->djinnHeld[i] = 0;
       member->djinnSet[i] = 0;
     }
-    // The slot's first halfword, its encodedAction, stored through a cast:
-    // the zero comes from the literal pool, as in the ROM.
     for (i = 0; i < 32; i++)
-      *(u16 *)&member->psynergy[i] = 0;
+      *&member->psynergy[i].encodedAction = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].abilities[i] != 0)
         Unit_LearnPsynergyFar(unitId, gDebug_ParameterSets[row].abilities[i]);
@@ -132,17 +123,16 @@ s32 DebugParameterSet_Load(s32 set) {
   (MsgLaliveroHowDidSearchForSheba -                                           \
    MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely + 5)
 
-/// Debug: a message viewer that never returns. Names the first party member
-/// "Ha hi fu he ho" (MsgDebugSampleName), fills the message arguments with
-/// sample values and shows one message at a time, counted from the Babi
-/// Lighthouse dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or,
-/// in the second range, from DEBUG_SECOND_FORM. Right steps the index on by
-/// one and Left back by two, R and L step it by ten, Up and Down pick the
-/// range, and B alternates between the ranges, moving on one message each
-/// time it leaves the first. A closes the window and shows the message again.
-/// Called by DebugBattle_RunMenu when Start is pressed. Renames party member
-/// 0, sets REG_DISPCNT and gMainRoutineWork.messageSpeed, and clears the
-/// window work's message busy byte after each window.
+/// Debug: a message viewer that never returns. Names the first party member "Ha
+/// hi fu he ho" (MsgDebugSampleName), fills the message arguments with sample
+/// values and shows one message at a time, counted from the Babi Lighthouse
+/// dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or, in the
+/// second range, from DEBUG_SECOND_FORM. Right steps the index on by one and
+/// Left back by two, R and L step it by ten, Up and Down pick the range, and B
+/// alternates between the ranges, moving on one message each time it leaves the
+/// first. A closes the window and shows the message again. Renames party member
+/// 0, sets REG_DISPCNT and gMainRoutineWork.messageSpeed, and clears the window
+/// work's message busy byte after each window.
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;

@@ -21,13 +21,10 @@
 /// Djinni is not felled as an enemy is: the battle gives the downed pose, greys
 /// out and releases only BATTLE_SIDE_ENEMY units (BattleMotion_ShowDowned,
 /// BattlePlayback_Run, BattleObject_DestroyTemporaryObject), so the Djinni
-/// takes a party member's held pose instead,
-/// a knock-out says `<unit> goes down!` as for a party member, and the
-/// formation's suffix letters pass it by. Returns 0 for an id out of range, 1
-/// otherwise; enemy ids 173 to 250, past the table's 165 rows but within the
-/// check, are filled from row 0. Called by the battle set-up (Battle_Run,
-/// BattleFormation_BuildEnemyList) and by BattleAbility_ApplyToTarget when an
-/// enemy calls for help.
+/// takes a party member's held pose instead, a knock-out says `<unit> goes
+/// down!` as for a party member, and the formation's suffix letters pass it by.
+/// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
+/// the table's 165 rows but within the check, are filled from row 0.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
@@ -90,11 +87,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->aiActionIndex = enemy->aiActionIndex;
   unit->classId = 0;
   unit->id = enemyId;
-#ifdef UBFIX
   Unit_CalculateBaseElements(unitId, unit->baseElement);
-#else
-  Unit_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
-#endif
   Unit_Calculate(unitId);
   unit->side = BATTLE_SIDE_ENEMY;
   switch (unit->id) {
@@ -127,30 +120,24 @@ s32 Party_CountMembers(void) {
   s32 count;
 
   count = 0;
-  unitId = 0;
-  do {
+  for (unitId = 0; unitId <= PIERS; unitId++) {
     if (GameFlag_Get(FLAG_IN_PARTY(unitId)) != 0)
       count++;
-    unitId++;
-  } while (unitId <= PIERS);
+  }
   return count;
 }
 
 /// Adds character `unitId` to the end of the party: sets its game flag and
-/// appends it to gMainRoutineWork.party unless it is already listed.
-/// Returns the party size. Called by the events where a character joins, by
-/// the party member chooser and the File Screen, and by the debug parameter
-/// sets.
+/// appends it to gMainRoutineWork.party unless it is already listed. Returns
+/// the party size.
 s32 Party_AddMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 partyIndex;
 
   GameFlag_Set(FLAG_IN_PARTY(unitId));
-  partyIndex = 0;
-  while (partyIndex < partySize) {
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     if (gMainRoutineWork.party[partyIndex] == unitId)
       return partySize;
-    partyIndex++;
   }
   gMainRoutineWork.party[partyIndex] = unitId;
   return partySize + 1;
@@ -158,8 +145,6 @@ s32 Party_AddMember(s32 unitId) {
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
 /// the gap it leaves in gMainRoutineWork.party. Returns the party size.
-/// Called by the events where a character leaves, by the party member chooser
-/// and the File Screen, and by the debug parameter sets.
 s32 Party_RemoveMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 removedIndex;
@@ -185,12 +170,8 @@ s32 Party_ListMembers(s16 *unitIds) {
     s32 index;
 
     count = Party_CountMembers();
-    index = 0;
-    if (count != 0) {
-      do {
-        *unitIds++ = gMainRoutineWork.party[index];
-        index++;
-      } while (index != count);
+    for (index = 0; index != count; index++) {
+      *unitIds++ = gMainRoutineWork.party[index];
     }
     *unitIds = BATTLE_UNIT_LIST_END;
   }
@@ -198,8 +179,7 @@ s32 Party_ListMembers(s16 *unitIds) {
 }
 
 /// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
-/// the new total. Called by the shops, the inn and the sanctum to charge,
-/// by the battle spoils to pay, and by the Lucky Dice game.
+/// the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
   struct MainRoutineWork *work;
@@ -216,14 +196,6 @@ s32 Party_AdjustCoins(s32 amount) {
   work->coins = value;
   return value;
 }
-
-/// The party's Djinn recovery table as the summon list reads it: a mask of
-/// summons, bit n for summon n.
-struct TradeFlags {
-  /// Bit n set: the party's Djinn meet summon n's requirement, as
-  /// BattleSummon_UpdateAvailability last worked it out.
-  u32 flags;
-};
 
 /// Each adds `amount` to a counter in the main routine's work, kept between
 /// 0 and `max`, and returns the new value. The shops call the two: each
@@ -249,23 +221,23 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
 /// Writes the summons whose bit is set in the first word of the party's Djinn
 /// table to `output`, in menu order, ending with SUMMON_END. Returns how many.
-/// Called by BattleSummonMenu_Run to list the battle's Summon command.
 /// The bits are those BattleSummon_UpdateAvailability sets at the battle's
-/// start and each turn. `output` needs room for 17 bytes: up to 16 summons
-/// and SUMMON_END.
+/// start and each turn. `output` needs room for 17 bytes: up to 16 summons and
+/// SUMMON_END.
 s32 Summon_ListLearned(u8 *output) {
-  u8 *source = (u8 *)gSummon_OrderList;
-  u8 *end = (u8 *)gSummon_OrderList + 15;
+  const u8 *summon = gSummon_OrderList;
+  const u8 *last = &gSummon_OrderList[15];
   s32 count = 0;
 
   do {
-    u8 value = *source++;
-    if ((((struct TradeFlags *)Djinn_GetRecoveryTable(0))->flags &
-         (1 << value)) != 0) {
-      *output++ = value;
+    u8 summonId = *summon++;
+
+    if (Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask &
+        (1 << summonId)) {
+      *output++ = summonId;
       count++;
     }
-  } while (source <= end);
+  } while (summon <= last);
   *output = SUMMON_END;
   return count;
 }

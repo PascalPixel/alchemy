@@ -43,7 +43,7 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 #define BATTLE_CAMERA_DISTANCE px(510)
 
 /// The HEAP_SLOT_CAMERA heap slot during a battle: the battle camera.
-extern struct BattleCamera *gBattleCamera;
+#define gBattleCamera (*(struct BattleCamera **)&gHeapSlots[HEAP_SLOT_CAMERA])
 
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
 /// toward and the frames left to ease it, and how the battle background is

@@ -13,4 +13,7 @@
 /// after gGameFlagBytes.
 #define GAME_FLAG_BYTE(flag) (((u32)(flag) << 20) >> 23)
 
+/// The bit of its byte that holds `flag`: the low three bits of its number.
+#define GAME_FLAG_BIT(flag) (1 << ((flag) & 7))
+
 #endif

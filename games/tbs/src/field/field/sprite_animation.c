@@ -11,18 +11,15 @@ enum {
   ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
 };
 
-/// Loads the pictures of animation id number into picture cache slot's
-/// buffer: the resource listed for it in gSpritePictureCache_Sources, decoded,
-/// its picture offsets turned into pointers, and for variant 1-5 its pixel
-/// colours (those up to 223, the basic sprite palettes 0 to 13) remapped
-/// through that variant's conversion table; a variant above 5 uses variant 1's.
-/// The caller owns buffer, which must hold the decoded resource. Returns the
-/// image's size in pixels (width * height), or 0 when the slot or id is not
-/// known. Sets the slot's tag to (slot << 12) | number and its buffer; with
-/// a null buffer and number 0 it does only that, which is how the battle frees
-/// a picture cache. Called by the sprite viewer
-/// and, as SpritePictureCache_LoadFar, by the battle for its enemy sprites
-/// (variant is the class's palette).
+/// Loads the pictures of animation id number into picture cache slot's buffer:
+/// the resource listed for it in gSpritePictureCache_Sources, decoded, its
+/// picture offsets turned into pointers, and for variant 1-5 its pixel colours
+/// (those up to 223, the basic sprite palettes 0 to 13) remapped through that
+/// variant's conversion table; a variant above 5 uses variant 1's. The caller
+/// owns buffer, which must hold the decoded resource. Returns the image's size
+/// in pixels (width * height), or 0 when the slot or id is not known. Sets the
+/// slot's tag to (slot << 12) | number and its buffer; with a null buffer and
+/// number 0 it does only that, which is how the battle frees a picture cache.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ActorSystemWork *system;
@@ -108,7 +105,7 @@ s32 SpritePictureCache_FindByTag(s32 tag) {
 /// Resets each sprite animation of a sprite from its animation's metadata: its
 /// facing kind, pictures, scripts and codec, with no picture shown and no
 /// script running. The first sprite animation also sets the sprite's size,
-/// scale and offsets. Returns 0. Called by Actor_SetFirstSpriteAnimation.
+/// scale and offsets. Returns 0.
 s32 Sprite_ResetAnimations(struct Sprite *sprite) {
   s32 i;
 
@@ -152,8 +149,7 @@ s32 Sprite_ResetAnimations(struct Sprite *sprite) {
 }
 
 /// Resets one sprite animation from its animation's metadata, as
-/// Sprite_ResetAnimations does for each sprite animation. Called by the sprite
-/// viewer.
+/// Sprite_ResetAnimations does for each sprite animation.
 void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
   void **pictures;
   struct AnimationMetadata *metadata;
@@ -181,10 +177,6 @@ void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
 /// four slots that is free. The first sprite animation also sets the sprite's
 /// size, scale and offsets. Returns the sprite animation, 0 when no sprite
 /// animation is free, or -1 when the sprite has four sprite animations already.
-/// Called by Sprite_Create for a sprite's first sprite animation, by
-/// Actor_RegisterSpriteMetadata and the sprite viewer, and as
-/// Sprite_AddAnimationFar by the battle, field Psynergy and the field
-/// sequence's actor code.
 s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
   s32 layerHandle = (s32)sprite->entries[0];
   s32 freeIndex = 0;
@@ -224,8 +216,7 @@ s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
 }
 
 /// Removes the sprite animation handle from a sprite and clears it, trimming
-/// the sprite's animation count when no later sprite animation remains. Called
-/// through Sprite_RemoveAnimationFar by the battle's objects.
+/// the sprite's animation count when no later sprite animation remains.
 void Sprite_RemoveAnimation(struct Sprite *sprite, s32 layer) {
   s32 laterLayers;
   u32 index;
@@ -321,9 +312,6 @@ s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
   keepPlace = animation & SPRITE_ANIMATION_KEEP_PLACE;
   animation &= SPRITE_ANIMATION_INDEX_MASK;
 
-  // The loop is written with goto, which keeps an 8-byte stack frame: as for (i
-  // = 0; i < sprite->count; i++), loop.c strength-reduces entries[i] into a
-  // spilled cursor and 16 of 76 instructions differ in tbs-en.
   if (sprite->lastNo != animation) {
     i = 0;
     goto test_entry;
@@ -402,13 +390,12 @@ void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
 }
 
 /// Allocates and zeroes the 64 sprites and 64 sprite animations
-/// (HEAP_SLOT_SPRITES and HEAP_SLOT_SPRITE_ANIMATIONS, from EWRAM
-/// first in ACTOR_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
-/// sprite palettes, loads the shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW
-/// and puts the sprite tile uploader in RAM. Called by ActorSystem_Initialize.
-/// Battle_Run (ACTOR_SYSTEM_BATTLE) takes both slots from EWRAM, at
-/// the same sizes, before it starts the actor system, so in battle this gets
-/// those blocks back.
+/// (HEAP_SLOT_SPRITES and HEAP_SLOT_SPRITE_ANIMATIONS, from EWRAM first in
+/// ACTOR_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic sprite
+/// palettes, loads the shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW and
+/// puts the sprite tile uploader in RAM. Battle_Run (ACTOR_SYSTEM_BATTLE)
+/// takes both slots from EWRAM, at the same sizes, before it starts the actor
+/// system, so in battle this gets those blocks back.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
@@ -443,8 +430,8 @@ void ActorSystem_Configure(s32 mode) {
 }
 
 /// Takes a free sprite animation and starts it on animation id's first
-/// animation. Returns the sprite animation, or NULL when none is free or the id
-/// has no image. Called by Sprite_AddAnimation.
+/// animation. Returns the sprite animation, or NULL when none is free or the
+/// id has no image.
 struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct SpriteAnimation *candidate;
@@ -495,9 +482,7 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
 }
 
 /// Zeroes one sprite animation (struct SpriteAnimation); does nothing for NULL.
-/// Zeroing kind frees the sprite animation for SpriteAnimation_Alloc. Called by
-/// the sprite animation release functions here and, as
-/// SpriteAnimation_ClearFar, by field Psynergy and events.
+/// Zeroing kind frees the sprite animation for SpriteAnimation_Alloc.
 void SpriteAnimation_Clear(struct SpriteAnimation *record) {
   if (record != 0) {
     Dma_Fill32(0, record, sizeof(*record));
@@ -507,12 +492,10 @@ void SpriteAnimation_Clear(struct SpriteAnimation *record) {
 // Creating and releasing animated sprites, and measuring animation lengths.
 
 /// Creates a sprite for animation id, taking one of the 64 free sprites and a
-/// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
-/// no room or the id has no image. The caller owns it until
-/// Sprite_Destroy. When no sprite animation is free the sprite is still
-/// returned, with no sprite animation and a width of 0, so it also counts as
-/// free. Called by Actor_Create and the sprite viewer, and as Sprite_CreateFar
-/// by the battle, the battle effects, field Psynergy and the menus.
+/// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is no
+/// room or the id has no image. The caller owns it until Sprite_Destroy. When
+/// no sprite animation is free the sprite is still returned, with no sprite
+/// animation and a width of 0, so it also counts as free.
 struct Sprite *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct Sprite *sprite;
@@ -619,18 +602,15 @@ struct Sprite *Sprite_Create(s32 id) {
   // DEAD: a test of the call's result for -1 that does nothing either way; the
   // ROM keeps the -1 it builds after the call.
   if (Sprite_AddAnimation(sprite, id) == -1) {
-    /* FAKEMATCH(dead): a store of the byte it reloads keeps the test until its
-     * -1 is built; with the call alone, 32 of 152 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(dead): a store of the byte it reloads; with the call alone, 32
+     * of 152 instructions differ in tbs-en. */
     freeSprite->dirty = freeSprite->dirty;
   }
   return freeSprite;
 }
 
 /// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
-/// its four sprite animations, and then zeroes its 56 bytes. Called by
-/// Actor_Release and, as Sprite_DestroyFar, by the battle
-/// and its animations, field Psynergy and the menus.
+/// its four sprite animations, and then zeroes its 56 bytes.
 void Sprite_Destroy(struct Sprite *sprite) {
   s32 remaining;
   struct SpriteAnimation **layer;
@@ -651,10 +631,8 @@ void Sprite_Destroy(struct Sprite *sprite) {
 
 /// Returns how long, in frames, the first timedCount timed commands of
 /// animation number animation of id last: the sum of the arguments of its
-/// picture, wait and blank commands,
-/// up to timedCount of them or the first play, hold, jump or end command.
-/// Called through SpriteAnimation_SumCommandLengthsFar by the battle's
-/// staging.
+/// picture, wait and blank commands, up to timedCount of them or the first
+/// play, hold, jump or end command.
 s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
   struct AnimationMetadata *metadata;
   u8 *script;

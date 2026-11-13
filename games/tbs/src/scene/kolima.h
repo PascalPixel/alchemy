@@ -23,4 +23,13 @@ extern s32 gKolima_MiaInParty;
 /// Nonzero while the curse's sparkles fall: each new one plays SE_SPARKLE_FALL.
 extern s32 gKolima_EffectActive;
 
+// The same state in Kolima Forest's entrance (kolima_forest_entrance.c),
+// declared after the falling effect's as its bss is laid out.
+/// Set by a Psynergy field's hit, cleared once answered.
+extern s32 gKolimaForestEntrance_PsynergyFieldHit;
+/// Whether Mia was in the party as the curse struck.
+extern s32 gKolimaForestEntrance_MiaInParty;
+/// Nonzero while the curse's sparkles fall with their sound.
+extern s32 gKolimaForestEntrance_SparkleSoundOn;
+
 #endif

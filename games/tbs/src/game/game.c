@@ -9,20 +9,15 @@
 /// it has in the ROM. Camelot's own files are not recoverable: the ROM shows
 /// one object, and these parts are ours, cut where one family ends and the
 /// next begins. Its tables are the other .c files in this folder, each its own
-/// object; README.md gives the words and prefixes. Where to start:
-///
-///   Units           units.c: Unit_Get, Unit_Calculate,
-///   MainRoutineWork_InitializeDefaults Items           inventory.c:
-///   Inventory_AddItem, Inventory_Equip,
-///                   PartyInventory_Add
-///   Levels          levels.c: Unit_RefreshPsynergy, Unit_LevelUp
-///   Flags           flags.c: GameFlag_Get, GameFlag_Set
-///   Enemies, party  party.c: BattleUnit_Set, Party_AddMember,
-///                   Party_AdjustCoins
-///   Classes         classes.c: Class_Determine, Unit_UpdateClass
-///   Battle maths    battle_arithmetic.c: Battle_GetElementMultiplier,
-///                   Battle_Random
-///   Djinn           djinn.c: Djinn_Give, Djinn_Set
+/// object; README.md gives the words and prefixes. Where to start: units.c
+/// (Unit_Get, Unit_Calculate, MainRoutineWork_InitializeDefaults) for units;
+/// inventory.c (Inventory_AddItem, Inventory_Equip, PartyInventory_Add) for
+/// items; levels.c (Unit_RefreshPsynergy, Unit_LevelUp) for levels; flags.c
+/// (GameFlag_Get, GameFlag_Set) for flags; party.c (BattleUnit_Set,
+/// Party_AddMember, Party_AdjustCoins) for enemies and the party; classes.c
+/// (Class_Determine, Unit_UpdateClass) for classes; battle_arithmetic.c
+/// (Battle_GetElementMultiplier, Battle_Random) for battle maths; djinn.c
+/// (Djinn_Give, Djinn_Set) for the Djinn.
 
 #include "game_internal.h"
 

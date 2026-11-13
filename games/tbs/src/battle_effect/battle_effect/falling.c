@@ -50,8 +50,6 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); Ice Horn
 /// leaves longer trails and Ice Missile draws additively.
 void BattleEffect_RunIce(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -63,8 +61,9 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sparkles = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sparkles = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   // Setup: the narrow canvas, the shard sheet and the sparkle dots in the
   // sheet slot, then the display; window 1 hides BG2.
@@ -113,7 +112,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
 
   // Window 0's edges, one per scanline: a 128-pixel band slanting one pixel
@@ -273,8 +272,6 @@ struct BoltSparkBuffer {
 /// pixels apart, over 80 frames; it also picks how the canvas fades (see
 /// below).
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -286,7 +283,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   // Setup: the bolt pictures go after the spark pictures, which the particle
   // sheet decodes at the start of work->sheet; window 1 hides BG2.
@@ -301,9 +299,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, BLITTER_CLIP_Y, COMPOSITE_LIGHTEN);
-  drawBolt = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  drawBolt = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y, COMPOSITE_ADDITIVE);
-  drawSpark = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  drawSpark = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
 
   EFFECT_FREE_PARTICLES(i, FALLING_BOLT_SPARKS->sparks,
                         FALLING_BOLT_SPARK_COUNT);

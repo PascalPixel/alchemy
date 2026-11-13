@@ -10,88 +10,29 @@
 #include "module/field/battle_music.h"
 #include "module/field/world_map_encounter_rules.h"
 #include "vram_cache.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "types.h"
-#include "battle_action_run.h"
-#include "main_routine_work.h"
-#include "scene.h"
-#include "playback_queue.h"
-#include "edition.h"
-#include "far_call.h"
 #include "battle.h"
-#include "battle_unit.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
-#include "heap_release.h"
 #include "dma.h"
-#include "scene_ids.h"
-#include "io_reg.h"
 #include "io_write.h"
-#include "irq.h"
-#include "task.h"
 #include "flags.h"
 #include "iwram_call.h"
-#include "field_work.h"
 #include "resource_ids.h"
-#include "speaker.h"
-#include "battle_sprite_id.h"
-#include "scene_tables.h"
-#include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"
-#include "heap_slots.h"
-#include "actor.h"
-#include "sprite.h"
-#include "actor.h"
-#include "actor_builtin_scripts.h"
 #include "event.h"
-#include "heap.h"
-#include "input.h"
-#include "main_routine_work.h"
-#include "sounds.h"
-#include "sound_driver_symbols.h"
-#include "fixed_math.h"
-#include "range_falloff.h"
 #include "display_transition.h"
 #include "text/msg_ids.h"
 #include "ground_mask.h"
-#include "item.h"
-#include "battle_actor.h"
-#include "static_assert.h"
-#include "frame.h"
 #include "io_write_queue.h"
-#include "palette_buffers.h"
-#include "item_ids.h"
-#include "inventory.h"
 #include "battle_status.h"
-#include "window.h"
-#include "battle_side.h"
-#include "edition.h"
-#include "actor_arm_view.h"
-#include "tbs_edition.h"
-#include "sprite_metadata.h"
-#include "field_coordinate.h"
-#include "line_scroll.h"
-#include "field_blend.h"
 #include "field_psynergy_work.h"
-#include "field_particle.h"
-#include "field_effect_scripts.h"
-#include "menu_list.h"
-#include "field_effect.h"
-#include "fixed_point_position.h"
 #include "macros.h"
 #include "ability_ids.h"
-#include "sprite_ids.h"
 #include "field/encounter_zone.h"
 
 /// The speakers' definitions (field_sequence_tables.c), read by
@@ -117,8 +58,8 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 // as work->psynergy and work->item hold it. bits: 13..10 the user (13 is
 // ACT_PACKED) | 9..0 the Psynergy or item. Since ACT_PACKED is the user's top
 // bit, a packed use names user 8 or above.
-#define ABILITY_ID(c) ((c) & 0x3ff)    ///< the Psynergy
-#define ACT_ITEM_ID(c) ((c) & 0x3ff)   ///< the item
+#define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
+#define ACT_ITEM_ID(c) ((c) & 0x3ff)
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
 #define ACT_PACKED 0x2000              ///< use it without paying PP
 /// No user named: Field_UsePsynergy takes ISAAC, and Field_UseItem
@@ -202,5 +143,13 @@ extern struct TransitionShape gScreenTransition_Shapes[];
 /// The party leader's actor placement table (scripts.s), which
 /// Actor_ResetForLeader copies into the field work.
 extern const struct ActorPlacement gField_DefaultActorPlacements[2];
+
+/// Curves mapping a 5-bit colour channel to the colour buffer's channel,
+/// shifted up 10 bits: plain, lightened and with more contrast.
+///@{
+extern u16 gColorBuffer_ChannelCurve[];
+extern u16 gColorBuffer_ChannelCurveLight[];
+extern u16 gColorBuffer_ChannelCurveContrast[];
+///@}
 
 #endif

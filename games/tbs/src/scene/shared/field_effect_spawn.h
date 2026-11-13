@@ -40,15 +40,15 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
                                                 struct Actor *leader,
                                                 s32 velocityX, s32 velocityY,
                                                 s32 velocityZ) {
+  struct Sprite **leaderSprite;
+
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  // The sprite slot is read by its offset, the plain-C form of leader->sprite
-  // this site matches with (scene/README.md): as the field, the pointer's
-  // reload moves after the velocity.z store.
-  sprite->image.priority =
-      (*(struct Sprite **)((u8 *)leader + offsetof(struct Actor, sprite)))
-          ->image.priority;
+  /* FAKEMATCH(temporary): the leader's sprite read through a pointer to its
+   * slot; as leader->sprite, 2 of 241 instructions differ in tbs-en. */
+  leaderSprite = &leader->sprite;
+  sprite->image.priority = (*leaderSprite)->image.priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;

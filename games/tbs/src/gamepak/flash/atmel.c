@@ -132,13 +132,9 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
     REG_IME = 0;
     FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
 
-    remaining = gFlash_ChipAtmelLayout.type.sector.size;
-    if (remaining != 0) {
-      do {
-        *destination++ = *input++;
-        remaining--;
-      } while (remaining != 0);
-    }
+    for (remaining = gFlash_ChipAtmelLayout.type.sector.size; remaining != 0;
+         remaining--)
+      *destination++ = *input++;
 
     destination--;
     input--;

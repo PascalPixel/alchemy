@@ -4,7 +4,6 @@
 
 #include "../battle_internal.h"
 
-// Native-only view retained for the measured target-picker form below.
 #ifndef UBFIX
 /// BattleWork's unit lists, read as one array of halfwords.
 struct BattleWorkUnitListView {
@@ -12,15 +11,10 @@ struct BattleWorkUnitListView {
 };
 #endif
 
-/// Picks a random place: with requireLivingUnit, a party member still
-/// standing; otherwise any enemy place in use. Returns its place code, or 0
-/// when there is none.
-/// Called by BattleAI_ChooseAction when BattleAI_ChooseTarget
-/// finds no one listed on the side (TARGET_PICK_SIDE_EMPTY), with
-/// requireLivingUnit set for a party unit. Takes one Random16 roll when any
-/// position qualifies.
+/// Picks a random place: with requireLivingUnit, a party member still standing;
+/// otherwise any enemy place in use. Returns its place code, or 0 when there is
+/// none. Takes one Random16 roll when any position qualifies.
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
-
   u16 positions[6];
   s32 count;
 
@@ -64,9 +58,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     if (order->items[slot] != BATTLE_UNIT_LIST_END) {
       entry = order->items;
       // The walk leaves by a break, so its loop's end note lies just before
-      // the else branch. As a do-while loop the else branch follows a bare
-      // barrier, CSE follows the requireLivingUnit test into it knowing count
-      // is 0, and 33 of 89 instructions differ in tbs-en.
+      // the else branch.
       for (;;) {
         value = entry[slot];
         if (value != BATTLE_UNIT_REMOVED) {
@@ -312,13 +304,11 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 
 /// Picks the target of an enemy's ability (or a confused unit's), as a place
 /// code: among the units of the side it may target, those it would affect
-/// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with
-/// a strategy favours the strongest, the first of the sorted targets 6 times
-/// in 11, 15 or 18, the next 5 times, and so on. Returns
-/// TARGET_PICK_SIDE_EMPTY when the side has no one, TARGET_PICK_NONE when the
-/// ability would affect no one.
-/// Called by BattleAI_ChooseAction for an ability aimed at allies,
-/// the user or foes. Takes Random16 rolls to choose among eligible targets.
+/// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with a
+/// strategy favours the strongest, the first of the sorted targets 6 times in
+/// 11, 15 or 18, the next 5 times, and so on. Returns TARGET_PICK_SIDE_EMPTY
+/// when the side has no one, TARGET_PICK_NONE when the ability would affect no
+/// one. Takes Random16 rolls to choose among eligible targets.
 s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u16 orderPositions[6];
   s32 unitIds[6];

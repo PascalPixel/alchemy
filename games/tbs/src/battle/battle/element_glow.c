@@ -201,16 +201,15 @@ u32 ElementGlow_UploadStarField(void) {
 #endif
 
 /// Starts a star field of the element mode (0 to 3, enum Element order):
-/// sixteen sparks on random rings and three rings 120 degrees apart.
-/// Allocates the field's work (HEAP_SLOT_BATTLE_EFFECT) and a cleared
-/// 128 by 128 canvas (HEAP_SLOT_BATTLE_CANVAS), decodes the blue ring sheet
-/// into the work, loads the element's 64 colours over the first of BG palette
-/// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
+/// sixteen sparks on random rings and three rings 120 degrees apart. Allocates
+/// the field's work (HEAP_SLOT_BATTLE_EFFECT) and a cleared 128 by 128 canvas
+/// (HEAP_SLOT_BATTLE_CANVAS), decodes the blue ring sheet into the work, loads
+/// the element's 64 colours over the first of BG palette RAM, sets BG2's affine
+/// parameters to no zoom, loads both blitters and adds
 /// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
-/// BattleBackgroundWork.mode to BATTLE_BACKGROUND_FIXED. Called by
-/// ElementGlow_Play; ElementGlow_End
-/// undoes it. Returns the upload task's task index (-1 when the task table
-/// is full), which the caller does not read.
+/// BattleBackgroundWork.mode to BATTLE_BACKGROUND_FIXED. Returns the upload
+/// task's task index (-1 when the task table is full), which the caller does
+/// not read.
 s32 ElementGlow_InitializeStarField(s32 element) {
   struct SparkWork *work;
   struct Spark *spark;
@@ -226,8 +225,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   gBattleBackgroundWork->mode = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 128 * 128);
-  /* FAKEMATCH(dead): an empty once-only loop keeps the multiply routine's
-   * address ahead of the spark cursor; without it, 2 of 246 instructions
+  /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 246 instructions
    * differ in tbs-en. */
   do {
   } while (0);
@@ -302,10 +300,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 }
 
 /// Ends a star field: clears BG2's tiles in character block 1, frees its
-/// blitters, canvas and work, turns BG2 off and removes both tasks.
-/// Called by ElementGlow_Play once the field has played.
-/// Returns Task_Remove's result, which the caller does not
-/// read.
+/// blitters, canvas and work, turns BG2 off and removes both tasks. Returns
+/// Task_Remove's result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
@@ -326,34 +322,29 @@ s32 ElementGlow_End(s32 unused) {
 /// battle effects' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
-  s32 remaining;
-  u32 pixel;
-  u32 red;
-  u32 green;
-  u32 blue;
+  s32 i;
 
   if (scale > Q16_ONE)
     scale = Q16_ONE;
-  if (count > 0) {
+  // Each channel scaled in place: a 16.16 scale of at most 1 keeps it inside
+  // its own five bits.
+  for (i = 0; i < count; i++) {
     u32 redMask = 0x1f;
     u32 greenMask = 0x3e0;
     u32 blueMask = 0x7c00;
-    remaining = count;
-    do {
-      pixel = *source;
-      red = pixel & redMask;
-      green = pixel & greenMask;
-      blue = blueMask & pixel;
-      red *= scale;
-      green *= scale;
-      blue *= scale;
-      pixel = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
-      pixel |= (blue >> 16) & blueMask;
-      *destination = pixel;
-      source++;
-      destination++;
-      remaining--;
-    } while (remaining != 0);
+    u32 color = *source;
+    u32 red = color & redMask;
+    u32 green = color & greenMask;
+    u32 blue = blueMask & color;
+
+    red *= scale;
+    green *= scale;
+    blue *= scale;
+    color = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
+    color |= (blue >> 16) & blueMask;
+    *destination = color;
+    source++;
+    destination++;
   }
   return 0;
 }
@@ -382,7 +373,8 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   // from the effect's (EFFECT_SLOT).
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   volatile u16 *ime;
-  struct BattleWork *battle = slots[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+  struct BattleWork *battle =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;
@@ -472,10 +464,8 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   }
 }
 
-/// Copies the background's saved palette back undarkened, as the star field
-/// of ElementGlow_Play leaves it dark.
-/// Called by BattleStaging_HideField and
-/// BattleStaging_RunPsynergyCast once the effect has played.
+/// Copies the background's saved palette back undarkened, as the star field of
+/// ElementGlow_Play leaves it dark.
 void BattleBackground_RestorePalette(void) {
   BattleBackground_SetPaletteLevel(0, 0);
 }

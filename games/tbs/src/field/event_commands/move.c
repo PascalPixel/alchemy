@@ -304,9 +304,8 @@ void FieldPsynergy_Move(void) {
   effectWork = gFieldEffectWork;
   caster = effectWork->mainActor;
 
-  /* FAKEMATCH(dead): an empty once-only loop before the call keeps the
-   * mainActor load below the stack frame's sub sp; without it, 2 of 24
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop before the call; without it, 2 of
+   * 24 instructions differ in tbs-en. */
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();
@@ -352,7 +351,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
-  for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
+  for (fragmentIndex = 0; fragmentIndex < 8; fragmentIndex++) {
     child = Actor_Spawn(SPRITE_SPARKLE, caster->x.fixed,
                         caster->y.fixed + px(16), caster->z.fixed);
     if (child != 0) {
@@ -376,8 +375,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 
 /// Sets an actor's scale at once to full size (its first step of 1/16 past
 /// Q16_ONE - 1: exactly Q16_ONE from a multiple of 1/16) when it is smaller,
-/// then waits, at most 600 frames, for it to arrive at its target. Called by
-/// both Move casts on the hand.
+/// then waits, at most 600 frames, for it to arrive at its target.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   s32 next;
   s32 scale;
@@ -396,10 +394,9 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   }
 }
 
-/// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks
-/// by 1/32 of full size a frame, then bursts into 8 particles and is
-/// released. Not a per-frame update: it waits the frames itself. Called by
-/// the Move casts and Lift.
+/// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks by
+/// 1/32 of full size a frame, then bursts into 8 particles and is released. Not
+/// a per-frame update: it waits the frames itself.
 void UpdateRisingParticleBurst(struct Actor *hand) {
   struct Actor *child;
   s32 i;
@@ -407,14 +404,14 @@ void UpdateRisingParticleBurst(struct Actor *hand) {
   u32 spread;
 
   Sound_PlayFar(SE_CAST);
-  for (i = 30; i >= 0; i--) {
+  for (i = 0; i < 31; i++) {
     hand->y.fixed += px(1);
     hand->facing += TRIG_TURN / 8;
     hand->scaleX += -Q16_ONE / 32;
     hand->scaleY += -Q16_ONE / 32;
     wait(1);
   }
-  for (i = 7; i >= 0; i--) {
+  for (i = 0; i < 8; i++) {
     child = Actor_Spawn(SPRITE_SPARKLE, hand->x.fixed, hand->y.fixed,
                         hand->z.fixed);
     if (child != 0) {

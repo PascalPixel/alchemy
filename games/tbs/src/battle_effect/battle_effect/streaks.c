@@ -80,18 +80,14 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 /// A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
 /// streak that leaves a fading trail.
 ///
-/// Called by the five streak handlers above and the unused
-/// BattleEffect_RunLimeStreaks. Loads the style's colours over the first 64 of
-/// the background palette, writes work->bg2xLines and, over the last 16
-/// frames, BLDALPHA; sets work->shakeFrames on a recoiling hit, and moves a
-/// trembling target's x.
+/// Loads the style's colours over the first 64 of the background palette,
+/// writes work->bg2xLines and, over the last 16 frames, BLDALPHA; sets
+/// work->shakeFrames on a recoiling hit, and moves a trembling target's x.
 ///
 /// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
 ///        cyan) and the row of gStreaks_Styles that says how a hit looks.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 k;
@@ -106,8 +102,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 streaks = STREAKS_MAX;
   s32 lift = px(20); // 20 pixels, 16.16
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
 
@@ -117,18 +114,18 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_LIGHTEN);
-    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    drawUpper = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+    drawLower = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         COMPOSITE_LIGHTEN);
-    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    drawUpper = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+    drawLower = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
   }
 
   // The streak images, and the style's colour as the first 128 bytes of the
@@ -313,9 +310,8 @@ void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
 /// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
 /// target in turn reacts from frame 48, 8 frames apart.
 ///
-/// Called by BattleEffect_RunSleepStar and BattleEffect_RunSoothingStar. Fills
-/// PARTICLES 0 to 255 and loads the mode's colours over the first 64 of the
-/// background palette; the healing mode opens the canvas layer with BG
+/// Fills PARTICLES 0 to 255 and loads the mode's colours over the first 64 of
+/// the background palette; the healing mode opens the canvas layer with BG
 /// control 0 and the drifting mode with 1.
 ///
 /// mode: MOTE_FOUNTAIN_FOUNTAIN_HEALING throws orange motes that stay close to
@@ -348,10 +344,10 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     resource = (s32)&ResourceId_OrangePaletteA;

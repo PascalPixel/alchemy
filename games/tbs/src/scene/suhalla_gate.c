@@ -76,12 +76,12 @@
 #include "sounds.h"
 #include "item_ids.h"
 #include "fixed_math.h"
+#include "shared/walk_into_leader.h"
 
 /// Gateway Cave's Psynergy Stone has been found.
 ///
 /// It is an area flag, so the stone is back once the party returns from
 /// another area.
-/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 #if TBS_PATCH_3
@@ -97,21 +97,14 @@
 enum SuhallaGateCheckpointActorId {
   /// The two of Babi's soldiers who keep the passage north, standing before
   /// Babi's audience and lying wounded after it.
-  /// ★ Named from the game: "Only those with travel papers may pass through."
-  /// (MsgSuhallaTravelPapersRequired)
   ACTOR_WEST_GUARD = ACTOR_FIRST_PLACED,
   /// Asks whether the party wants to go to Babi Lighthouse.
-  /// ★ Named from the game: "Only those with travel papers may pass through."
-  /// (MsgSuhallaTravelPapersRequired)
   ACTOR_EAST_GUARD,
   /// After Babi's audience, the soldier east of the gate who tells of the
   /// attack on Venus Lighthouse and vanishes.
-  /// ★ Named from what the player sees: a wounded soldier lying east of the
-  /// gate, who flickers and vanishes (its render)
   ACTOR_VANISHING_SOLDIER,
   /// After Babi's audience, out of sight until SuhallaGate_IodemQuestionsGuards
   /// brings him out of the party.
-  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM
 };
 
@@ -120,16 +113,13 @@ enum SuhallaGateCheckpointActorId {
 enum SuhallaGateDewActorId {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
-  /// ★ Named from what the player sees: small green sprouts on the grassy
-  /// ledges (its render)
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
   /// A Mercury Djinni.
-  /// ★ Named from the game: "Dew" (MsgDjinnName)
   ACTOR_DEW = ACTOR_FIRST_SPROUT + 5
 };
 
 /// SPRITE_SPROUT's animations as the sprouts here stand, half grown or fully
-/// grown (spr_238's frames 3 and 6).
+/// grown (sprout's frames 3 and 6).
 enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
 /// In Suhalla Gate's second scene (SceneId_SuhallaGateDew), talking to Dew, a
@@ -269,14 +259,13 @@ s32 Scene_Initialize(void) {
 /// The door opens in two frames and the leader steps into Gate to Suhalla.
 static void SuhallaGate_EnterHouse(void) {
   s32 exitTrigger;
-  s32 cellSize = 2;
 
   exitTrigger = gFieldWork->stepTrigger;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
+  MapGrid_CopyCellsTo(66, 36, 71, 8, 2, 2);
   wait(4);
-  MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
+  MapGrid_CopyCellsTo(68, 36, 71, 8, 2, 2);
   wait(4);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   Import_EventSetExitRequest(exitTrigger);
@@ -445,14 +434,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
   // "We're going after them, right, Isaac!"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
-  Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IODEM);
-  Actor_SetPosition(ACTOR_IODEM, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_IODEM);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -483,12 +465,7 @@ static void SuhallaGate_TalkToEastGuard(void) {
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgSuhallaWantGoBabi);
-    {
-      s32 mode = 0;
-      s32 no = ACTOR_EAST_GUARD;
-
-      Event_OpenMessage(no, mode);
-    }
+    Event_OpenMessage(ACTOR_EAST_GUARD, 0);
 
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);

@@ -62,7 +62,6 @@
 #include "module/system/system.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "types.h"
 #include "event.h"
@@ -99,67 +98,38 @@
 /// hears of Hsu.
 enum XianActorId {
   /// A young man in a blue jacket.
-  /// ★ Named from the game: "This is Xian. Travelers are welcome here!"
-  /// (MsgXianThisIsXianTravelersAreWelcome)
   ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS = ACTOR_FIRST_PLACED,
   /// A young woman (Xian_AskAboutYoungWarriors).
-  /// ★ Named from the game: "Young warriors, very gallant! You came through
-  /// Mogall Forest?" (MsgXianYoungWarriorsVeryGallantCame)
   ACTOR_WOMAN_ON_YOUNG_WARRIORS,
   /// A man with a topknot.
-  /// ★ Named from the game: "Xian is the village of kinu. Kinu means silk."
-  /// (MsgXianXianIsTheVillageOfKinu)
   ACTOR_MAN_ON_KINU,
   /// An old man.
-  /// ★ Named from the game: "Martial arts are very popular in Xian."
-  /// (MsgXianMartialArtsAreVeryPopularIn)
   ACTOR_OLD_MAN_ON_MARTIAL_ARTS,
   /// An old woman with a cane.
-  /// ★ Named from the game: "You warriors should visit Master Feh's school. You
-  /// will be surprised!" (MsgXianYouWarriorsShouldVisitMasterFehs)
   ACTOR_OLD_WOMAN_ON_FEHS_SCHOOL,
   /// A small boy.
-  /// ★ Named from the game: "My clothes are not silk. Silk is very expensive."
-  /// (MsgXianMyClothesAreNotSilkSilk)
   ACTOR_BOY_ON_SILK_CLOTHES,
   /// A little girl who strikes the tree before her with a shout.
-  /// ★ Named from the game: "Hoo-whaaa... Hachaaa!" (MsgXianHooWhaaaHachaaa)
   ACTOR_KUNG_FU_STUDENT,
   /// A bare-chested, muscular man.
-  /// ★ Named from the game: "Disasters from the sky... Many, many thieves..."
-  /// (MsgXianDisastersFromTheSkyManyMany)
   ACTOR_MUSCULAR_MAN_ON_DISASTERS,
   /// A young woman.
-  /// ★ Named from the game: "This is the mulberry orchard."
-  /// (MsgXianThisIsTheMulberryOrchardWhen)
   ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD,
   /// Feizhi, as at Alpine Crossing: looking for someone to take her west.
-  /// ★ Named from the game: "You must be glad, Feizhi." (MsgMountainHsuOkay)
   ACTOR_FEIZHI,
   /// A young woman who carries water along the street. "You made me spill my
   /// water!"
-  /// ★ Named from the game: "I must carry water every day."
-  /// (MsgXianIMustCarryWaterEveryDay)
   ACTOR_WOMAN_CARRYING_WATER,
   /// The tree the student strikes; it jumps when hit.
-  /// ★ Named from the game: "The tree jumped on its own!"
-  /// (MsgXianWhaWhaHappened)
   ACTOR_TRAINING_TREE,
   /// The spilled water, which Frost freezes.
-  /// ★ Named from the game: "You made me spill my water!"
-  /// (MsgXianDoingMadeMeSpillMy)
   ACTOR_SPILLED_WATER,
   /// Force's mark on the training tree.
-  /// ★ Named from what the player sees: nothing of its own, a blank
-  /// actor on the bare trunk the student strikes (its render)
   ACTOR_FORCE_TARGET,
   /// Mist, a Mercury Djinni.
-  /// ★ Named from the game: "Mist" (MsgDjinnName)
   ACTOR_MIST,
   /// The first of three crates placed with SPRITE_CRATE, which Xian_Initialize
   /// hides (SPRITE_COLOR_HIDDEN): the player never sees them.
-  /// ★ Named from the game: "Strange... I don't remember all these crates being
-  /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_FIRST_CRATE
 };
 
@@ -194,43 +164,37 @@ static void Xian_RotateTrainingTree(void) {
 
 /// Emits particles beside the student every fourth frame.
 static void Xian_SpawnTrainingParticles(void) {
-  // The byte view keeps the Z load ahead of the options-script store.
-  u8 *studentActor = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
+  /* FAKEMATCH(temporary): the student read through a byte pointer; as the
+   * actor's fields, 1 of 37 instructions differ in tbs-en. */
+  u8 *student = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {
-    struct EffectOptions config;
-    config.priority = 1;
-    config.palette = 9;
-    config.type = SPRITE_GIRL_IN_PINK;
-    config.script = gXian_TrainingParticleScript;
-    FieldEffect_Spawn(*(s32 *)(studentActor + offsetof(struct Actor, x)),
-                      *(s32 *)(studentActor + offsetof(struct Actor, y)),
-                      *(s32 *)(studentActor + offsetof(struct Actor, z)) -
-                          px(1),
-                      0, -px(1), -px(1),
+    struct EffectOptions options;
+
+    options.priority = 1;
+    options.palette = 9;
+    options.type = SPRITE_GIRL_IN_PINK;
+    options.script = gXian_TrainingParticleScript;
+    FieldEffect_Spawn(*(s32 *)(student + offsetof(struct Actor, x)),
+                      *(s32 *)(student + offsetof(struct Actor, y)),
+                      *(s32 *)(student + offsetof(struct Actor, z)) - px(1), 0,
+                      -px(1), -px(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
-                      &config);
+                      &options);
   }
 }
 
 #include "shared/actor_distance.h"
 
 /// The water carrier has spilled her water.
-/// ★ Named from the game: "You made me spill my water!"
-/// (MsgXianDoingMadeMeSpillMy)
 #define FLAG_XIAN_WATER_SPILLED FLAG_SCENE_TEMP_00
 /// Frost has frozen the spilled water into ice that can be stood on.
-/// ★ Named from the game: "You made me spill my water!"
-/// (MsgXianDoingMadeMeSpillMy)
 #define FLAG_XIAN_SPILLED_WATER_FROZEN FLAG_SCENE_TEMP_01
 /// The kung fu student has shown her strike on the tree.
-/// ★ Named from the game: "Hoo-whaaa... Hachaaa!" (MsgXianHooWhaaaHachaaa)
 #define FLAG_XIAN_STRIKE_SHOWN FLAG_SCENE_TEMP_02
 /// Force has made the kung fu student's tree jump once, which picks her second
 /// line.
-/// ★ Named from the game: "What happened? The tree jumped on its own!"
-/// (MsgXianWhaWhaHappened)
 #define FLAG_XIAN_TREE_JUMPED FLAG_SCENE_TEMP_03
 
 /// Tracks a nearby target only within the actor's current facing sector.
@@ -244,10 +208,7 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
     return 1;
   }
 
-  if (FixedPoint_Distance((const u8 *)target + offsetof(struct Actor, x),
-                          (const u8 *)actor + offsetof(struct Actor, x)) <
-          distanceLimit ||
-      forceTracking != 0) {
+  if (Actor_Distance(target, actor) < distanceLimit || forceTracking != 0) {
     u16 angle = ArcTan2(target->z.fixed - actor->z.fixed,
                         target->x.fixed - actor->x.fixed);
     s32 previousHeading = (angle - FACING_STEP) & 0xf000;
@@ -498,12 +459,11 @@ static void Xian_UpdatePuddlePriority(void) {
 /// leader can stand on, and there is nothing left to jump over.
 static void Xian_FreezeSpilledWater(void) {
   struct Actor *puddle;
-  s32 stationaryMotionFlags = 0;
   s32 puddleX;
 
   Event_Start();
   Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_SPILLED_WATER)->motionFlags = stationaryMotionFlags;
+  Actor_Get(ACTOR_SPILLED_WATER)->motionFlags = 0;
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
   puddleX = puddle->x.fixed;
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
@@ -525,7 +485,6 @@ static void Xian_FreezeSpilledWater(void) {
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   struct Actor *leader;
-  TaskFunc particleFunc;
   s32 reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
@@ -565,8 +524,7 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldEffect_Spawn(px(192), 0, px(312), px(1) / 5, px(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Sound_Play(SE_WATER);
-    particleFunc = Xian_SpawnTrainingParticles;
-    Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+    Task_AddFrame(Xian_SpawnTrainingParticles, TASK_PASS_FRAME);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->velocityY = px(6);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = px(1);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
@@ -586,7 +544,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
-    Task_Remove((void (*)(void))particleFunc);
+    Task_Remove(Xian_SpawnTrainingParticles);
     FieldEffect_Spawn(px(144), 0, px(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(px(144), 0, px(312), -px(1) / 5, px(1) / 10, 0,
@@ -741,12 +699,12 @@ static void Xian_OpenDoorAndLeave(void) {
 /// The first time she says "Wha-Wha-What happened? The tree jumped on its
 /// own!", and the next time "...It jumped again... I am too tired...".
 static void Xian_StrikeTrainingTreeWithForce(void) {
-  TaskFunc rotationFunc;
+  TaskFunc rotate;
 
   Event_Start();
   Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
-  rotationFunc = Xian_RotateTrainingTree;
-  Task_AddFrame(rotationFunc, TASK_PASS_FRAME);
+  rotate = Xian_RotateTrainingTree;
+  Task_AddFrame(rotate, TASK_PASS_FRAME);
   Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
   Sound_Play(SE_CHEST_OPEN);
   FieldEffect_Spawn(px(168), px(8), px(312), 0, 0, 0,
@@ -755,7 +713,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   FieldEffect_Spawn(px(168), px(8), px(312), -px(1) / 5, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  Task_Remove(rotationFunc);
+  Task_Remove(rotate);
   Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
   Actor_SetPosition(ACTOR_FORCE_TARGET, 168, 312);
   Event_Wait(20);
@@ -910,11 +868,11 @@ s32 gXian_WaterCarrierRoute[] = {
     SC_ACCELERATION(0.1),
     SC_WAIT(60),
     SC_LABEL(1),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(60),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(180),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(424, 0, 232),
     SC_SYNC,
     SC_MOVE(424, 0, 216),
@@ -922,11 +880,11 @@ s32 gXian_WaterCarrierRoute[] = {
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_EAST_SOUTHEAST),
     SC_WAIT(10),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(60),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(120),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(424, 0, 232),
     SC_SYNC,
     SC_MOVE(280, 0, 232),

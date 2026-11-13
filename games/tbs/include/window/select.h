@@ -56,10 +56,10 @@ struct SelectionNode {
 
 /// The entries of SelectionMenuWork.records.
 enum SelectionRecord {
-  SELECTION_RECORD_ROW = 2,         ///< the first of the row's seven icons
-  SELECTION_RECORD_CHOSEN = 9,      ///< the first of the five icons chosen
-  SELECTION_RECORD_HAND = 14,       ///< the pointing hand
-  SELECTION_RECORD_LARGE_ICON = 15, ///< the large icon
+  SELECTION_RECORD_ROW = 2,    ///< the first of the row's seven icons
+  SELECTION_RECORD_CHOSEN = 9, ///< the first of the five icons chosen
+  SELECTION_RECORD_HAND = 14,  ///< the pointing hand
+  SELECTION_RECORD_LARGE_ICON = 15,
   SELECTION_RECORD_COUNT = 16
 };
 
@@ -89,20 +89,16 @@ struct SelectionMenuWork {
   /// list to start again from its first entry.
   u16 cursorIndex;
   u16 verticalScroll; ///< pixels added to the icons' y; 32 at setup
-  // XXX (no evidence): what the count was for; nothing reads status, so the
-  // game never shows it.
   /// NODE_STATUS_SCROLLING while the cursor steps, NODE_STATUS_SHOWN after
   /// (selection.c); each frame drawn adds 1.
   u16 status;
   u16 pathTop[5];    ///< top, kept for each icon chosen on the path
   u16 pathCursor[5]; ///< cursorIndex, kept for each icon chosen on the path
-  // XXX (no evidence): what was to set locked to 0; nothing in the game writes
-  // 0 to it, so the top placement never shows.
   /// 999 from setup and once a yes or no window opens, 1 from
   /// Menu_RunSelectionForValue. While 0, an ICON_KIND_YES_NO row and its window
   /// sit at the top of the screen instead of the bottom.
   u16 locked;
-  u8 unused[42]; ///< no code names it
+  u8 unused[42];
 };
 
 /// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on

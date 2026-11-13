@@ -72,8 +72,10 @@
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
+#include "io_write.h"
 #include "game.h"
 #include "graphics.h"
+#include "display_transition.h"
 #include "menu.h"
 #include "edition.h"
 #include "far_call.h"
@@ -126,31 +128,17 @@ enum LamakanDesertCellBehavior {
 
 enum {
   /// FLAG_SCENE_TEMP_00: a bath, a pit or the Manticore is under way.
-  /// ★ Named from its area name: Lamakan Desert
   FLAG_DESERT_EVENT_RUNNING = FLAG_SCENE_TEMP_00,
   /// FLAG_SCENE_TEMP_01: Reveal shows the pits.
-  /// ★ Named from the game: "Reveal" (MsgAbilityName)
   FLAG_SECRETS_REVEALED = FLAG_SCENE_TEMP_01,
   /// The heat gauge has passed a quarter, where the first complaints come.
-  /// ★ Named from the game: "This desert is much hotter than I ever imagined"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_QUARTER = FLAG_AREA_TEMP_00,
-  /// ★ Named from the game: "I can't keep my cool when it's this hot"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_HALF = FLAG_AREA_TEMP_01,
-  /// ★ Named from the game: "I can't stand another minute of this!"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_THREE_QUARTERS = FLAG_AREA_TEMP_02,
   /// Who has complained since the gauge last passed a mark: one per party
   /// member, in the order of their actors.
-  /// ★ Named from the game: "My feet are burning!"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_GARET_COMPLAINED = FLAG_AREA_TEMP_03,
-  /// ★ Named from the game: "Just walking around here saps every ounce of my
-  /// strength." (MsgMountainNorthAltinMineWestLama)
   FLAG_IVAN_COMPLAINED = FLAG_AREA_TEMP_04,
-  /// ★ Named from the game: "My clothes are drenched in sweat!"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_MIA_COMPLAINED = FLAG_AREA_TEMP_05
 };
 
@@ -161,26 +149,18 @@ enum {
 enum {
   /// The Manticore, until FLAG_LAMAKAN_MANTICORE_BEATEN. Talking to it starts
   /// its battle.
-  /// ★ Named from the game: "Manticore" (MsgEnemyName)
   ACTOR_MANTICORE = ACTOR_FIRST_PLACED,
   /// The first of the Ant Lions' pits Reveal shows, up to ACTOR_LAST_PIT.
-  /// ★ Named from what the player sees: a pit in the sand, shown under
-  /// Reveal, that pulls the leader down to an Ant Lion (its render)
   ACTOR_FIRST_PIT = ACTOR_MANTICORE + 1,
-  /// ★ Named from what the player sees: the last of the pits in the sand,
-  /// shown under Reveal (its render)
   ACTOR_LAST_PIT = ACTOR_FIRST_PIT + 3,
   /// Smog, a Jupiter Djinni.
-  /// ★ Named from the game: "Smog" (MsgDjinnName)
   ACTOR_SMOG = ACTOR_LAST_PIT + 1
 };
 
 /// The desert's two Psynergy Stones, area temp flags. Each is back once the
 /// party has left Lamakan Desert.
 enum {
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_AREA_TEMP_50,
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
@@ -236,7 +216,7 @@ static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
   }
   params.startScaleX = 4 * Q16_ONE / 5;
   params.startScaleY = 4 * Q16_ONE / 5;
-  params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+  params.spin = (Random_Below(4096)) + 0xf800;
   FieldEffect_Spawn(
       actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM, &params);
@@ -472,7 +452,6 @@ static void LamakanDesert_FightManticore(void) {
 static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 quarter;
-  s32 alreadySpoke;
   s32 random;
   s32 flag;
   s32 member;
@@ -482,8 +461,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
     random = Import_RandomNext();
     member = (u32)((random << 1) + random) >> 16; // 0 to 2
     flag = member + FLAG_GARET_COMPLAINED;
-    alreadySpoke = GameFlag_Get(flag);
-    if (alreadySpoke == 0) {
+    if (GameFlag_Get(flag) == 0) {
       GameFlag_Set(flag);
       break;
     }
@@ -542,22 +520,16 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   }
 }
 
-/// The distance in whole pixels between two x, z positions.
-static s32 LamakanDesert_DistanceInPixels(s32 *firstPosition,
-                                          s32 *secondPosition) {
-  s32 dx = (*secondPosition++ - *firstPosition++) >> 16;
-  s32 dz = (*secondPosition - firstPosition[1]) >> 16;
+/// The distance in whole pixels from a position (x, height, z) to an oasis
+/// (x, z), walking both a coordinate at a time.
+static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
+  s32 dx = (*oasis++ - *position++) >> 16;
+  s32 dz = (*oasis - position[1]) >> 16;
   s32 squaredDeltaZ = dz * dz;
   s32 squaredDeltaX = dx * dx;
 
   return Iwram_Sqrt(squaredDeltaX + squaredDeltaZ);
 }
-
-/// The middle of an oasis, where a leader stepping into it bathes.
-struct LamakanDesertOasis {
-  s32 x;
-  s32 z;
-};
 
 /// In Lamakan Desert, stepping into an oasis
 /// (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS), which only Reveal shows, the leader
@@ -565,62 +537,56 @@ struct LamakanDesertOasis {
 /// heart over his head while the gauge drains 5 steps a frame, for at least a
 /// second, then hops out.
 static void LamakanDesert_BatheInOasis(void) {
-  u8 *work;
+  struct FieldWork *work;
   s32 frames;
   s32 best;
   s32 count;
-  const s32 *points;
-  s32 left;
+  const s32 *oases;
+  s32 total;
   s32 offset;
-  const s32 *point;
+  const s32 *oasis;
   s32 nearest;
   s32 distance;
   struct Actor *leader;
-  struct EffectOptions options;
-  struct EffectOptions puff;
-  s16 *progress;
+  struct EffectOptions splashIn;
+  struct EffectOptions splashOut;
+  s16 *heat;
   u16 *revealFrames;
 
-  work = (u8 *)gFieldWork;
+  work = gFieldWork;
   frames = 60;
-  best = 0xf00000;
+  best = px(240);
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
     count = 3;
-    points = gLamakanDesertEast_Oases;
+    oases = gLamakanDesertEast_Oases;
   } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
     count = 5;
-    points = gLamakanDesertSmog_Oases;
+    oases = gLamakanDesertSmog_Oases;
   } else {
     count = 2;
-    points = gLamakanDesertOasesOther;
+    oases = gLamakanDesertOasesOther;
   }
-  left = count;
-  // The selected table has 2, 3 or 5 points. The square root fits in 16 bits,
-  // below best, so the first iteration always sets nearest; ties use the last.
-  point = points;
+  // Every oasis is nearer than 240 pixels, so the first always counts; a tie
+  // goes to the later.
+  total = count;
+  oasis = oases;
   if (count != 0) {
     offset = 0;
     do {
-      distance = LamakanDesert_DistanceInPixels(
-          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
+      distance = LamakanDesert_PixelsToOasis(
+          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, oasis);
       if (distance <= best) {
         best = distance;
-        nearest = left - count;
+        nearest = total - count;
       }
-      offset += 8;
-      point = (const s32 *)((const u8 *)points + offset);
+      offset += 2 * sizeof(s32);
+      oasis = (const s32 *)((const u8 *)oases + offset);
     } while (--count != 0);
-    // Global allocation ranks point (5 refs over 12 instructions), count (13
-    // over 56) and offset (7 over 34; local-alloc doubles the live length of
-    // a register whose first set CSE notes as a constant) and hands out r5,
-    // r6 and r7 in that order; the native needs offset between the other two.
     /* FAKEMATCH(dead): two self-tests of offset, each with updates that cancel
-     * out, keep their compare-and-branch through allocation and add the two
-     * references (9 over 38) that rank offset above count, so offset takes r6
-     * and count r7; one test (8 over 36) still ranks below count. Without
-     * them, 22 of 228 instructions differ in tbs-en. */
+     * out, rank it above count in allocation; without them, 22 of 228
+     * instructions differ in tbs-en. */
     if (offset) {
       offset++;
       offset--;
@@ -630,52 +596,50 @@ static void LamakanDesert_BatheInOasis(void) {
       offset--;
     }
   }
+  // The oasis's x, then its z.
   nearest <<= 1;
+
   // Hop the leader into the middle of the oasis before draining the heat gauge.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
-  {
-    struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-    const struct LamakanDesertOasis *spot =
-        (const struct LamakanDesertOasis *)&points[nearest];
-
-    FieldActor_SetMoveTargetFixed(actor, spot->x, 0, spot->z);
-  }
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  FieldActor_SetMoveTargetFixed(leader, oases[nearest], 0, oases[nearest + 1]);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
   Sound_Play(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
   Sound_Play(SE_WATER_MOVE);
   {
-    struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor *bather = Actor_Get(ACTOR_PARTY_LEADER);
 
-    options.type = SPRITE_SPLASH;
-    options.startScaleX = Q16_ONE / 2;
-    options.startScaleY = 4 * Q16_ONE / 5;
-    options.targetScaleX = Q16_ONE;
-    options.targetScaleY = 6 * Q16_ONE / 5;
-    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
-                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                          EFFECT_SCALE_TO_TARGET,
-                      &options);
+    splashIn.type = SPRITE_SPLASH;
+    splashIn.startScaleX = Q16_ONE / 2;
+    splashIn.startScaleY = 4 * Q16_ONE / 5;
+    splashIn.targetScaleX = Q16_ONE;
+    splashIn.targetScaleY = 6 * Q16_ONE / 5;
+    FieldEffect_Spawn(
+        bather->x.fixed, bather->y.fixed, bather->z.fixed, 0, 0, 0,
+        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
+        &splashIn);
   }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
-  revealFrames = (u16 *)&((struct FieldWork *)work)->revealFrames;
-  progress = &gMainRoutineWork.hazardSteps;
-  // A running Reveal's countdown stays full while the leader bathes,
-  // at least 60 frames and until the heat has drained.
+
+  // A running Reveal's countdown stays full while the leader bathes, at least
+  // 60 frames and until the heat has drained.
+  revealFrames = &work->revealFrames;
+  heat = &gMainRoutineWork.hazardSteps;
   {
+    /* FAKEMATCH(temporary): the drained gauge's 0 is held from before the
+     * loop; as 0 in its store, the constant is loaded from the pool. */
     s32 drained = 0;
 
     do {
-      s32 held = 600;
-
-      *revealFrames = held;
+      Io_Write16(600, revealFrames);
       frames--;
-      if (*progress != 0) {
-        *progress -= 5;
-        if (*progress <= 0) {
-          *progress = drained;
+      if (*heat != 0) {
+        *heat -= 5;
+        if (*heat <= 0) {
+          *heat = drained;
         } else if (frames == 0) {
           frames = 1;
         }
@@ -683,26 +647,28 @@ static void LamakanDesert_BatheInOasis(void) {
       wait(1);
     } while (frames != 0);
   }
-  {
-    struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
-    puff.type = SPRITE_SPLASH;
-    puff.startScaleX = Q16_ONE / 2;
-    puff.startScaleY = 4 * Q16_ONE / 5;
-    puff.targetScaleX = Q16_ONE / 2;
-    puff.targetScaleY = 6 * Q16_ONE / 5;
+  // frames is 0 from here: the splash out does not move, and a running
+  // Reveal ends as the leader gets up.
+  {
+    struct Actor *bather = Actor_Get(ACTOR_PARTY_LEADER);
+
+    splashOut.type = SPRITE_SPLASH;
+    splashOut.startScaleX = Q16_ONE / 2;
+    splashOut.startScaleY = 4 * Q16_ONE / 5;
+    splashOut.targetScaleX = Q16_ONE / 2;
+    splashOut.targetScaleY = 6 * Q16_ONE / 5;
     FieldEffect_Spawn(
-        actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
+        bather->x.fixed, bather->y.fixed, bather->z.fixed, 0, frames, frames,
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
-        &puff);
+        &splashOut);
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
-  // frames is 0 here, so a running Reveal ends as the leader gets up.
-  *(u16 *)&((struct FieldWork *)work)->revealFrames = frames;
+  work->revealFrames = frames;
   HeatGauge_SetHeld(0);
 }
 
@@ -731,7 +697,7 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = Q16_ONE / 2;
     params.startScaleY = Q16_ONE / 2;
     dx = 0;
-    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+    params.spin = (Random_Below(4096)) + 0xf800;
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
       dx = px(2) - px(((z >> 20) & 1) * 5);
@@ -751,12 +717,12 @@ static void HeatGauge_CountStep(void) {
     gFrameCount;
     params.startScaleX = 4 * Q16_ONE / 5;
     params.startScaleY = 4 * Q16_ONE / 5;
-    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    FieldEffect_Spawn(
-        actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
-        ((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10), phase,
-        EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
-        &params);
+    params.spin = (Random_Below(4096)) + 0xf800;
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
+                      (Random_Below(5)) * (px(1) / 10), phase,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
+                          EFFECT_SCRIPT_MEDIUM,
+                      &params);
   }
 }
 
@@ -764,39 +730,36 @@ static void HeatGauge_CountStep(void) {
 /// looks at the nearest pit and is pulled backwards into it, and a battle with
 /// an Ant Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
-  struct Actor *target;
-  struct Actor *actor;
-  struct Actor *record;
+  struct Actor *leader;
+  struct Actor *turned;
+  struct Actor *pit;
   s32 id;
   s32 best;
   s32 min;
   s32 dx;
   s32 dz;
+  s32 distance;
 
-  target = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   best = ACTOR_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
-  // Select the closest live pit using Manhattan distance in whole pixels.
+  // The nearest pit still there, by the distance along x plus along z.
   for (id = ACTOR_FIRST_PIT; id <= ACTOR_LAST_PIT; id++) {
-    struct Actor *other = Actor_Get(id);
-
-    if (other != 0) {
-      dx = (target->x.fixed - other->x.fixed) / px(1);
-      dz = (target->z.fixed - other->z.fixed) / px(1);
-      {
-        s32 ax = dx;
-
-        if (ax < 0) {
-          ax = -ax;
-        }
-        if (dz < 0) {
-          dz = -dz;
-        }
-        if (ax + dz < min) {
-          best = id;
-          min = ax + dz;
-        }
+    pit = Actor_Get(id);
+    if (pit != 0) {
+      dx = (leader->x.fixed - pit->x.fixed) / px(1);
+      dz = (leader->z.fixed - pit->z.fixed) / px(1);
+      distance = dx;
+      if (distance < 0) {
+        distance = -distance;
+      }
+      if (dz < 0) {
+        dz = -dz;
+      }
+      if (distance + dz < min) {
+        best = id;
+        min = distance + dz;
       }
     }
   }
@@ -811,18 +774,19 @@ static void LamakanDesert_FallIntoPit(void) {
   Event_Wait(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = (record->facing + TRIG_TURN / 2) & -0x1000;
+  // The leader turns his back on the pit.
+  turned = Actor_Get(ACTOR_PARTY_LEADER);
+  turned->facing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2) & -0x1000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  record->update = (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
-  record = Actor_Get(best);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
-                         record->z.part.pixel);
+  Actor_Get(ACTOR_PARTY_LEADER)->update =
+      (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
+  pit = Actor_Get(best);
+  if (pit != 0) {
+    Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part.pixel,
+                         pit->z.part.pixel);
   }
   Event_Wait(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
@@ -830,8 +794,7 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  record->update = NULL;
+  Actor_Get(ACTOR_PARTY_LEADER)->update = NULL;
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
@@ -864,12 +827,10 @@ static void LamakanDesert_SlideDownDune(void) {
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
-    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    x = actor->x.fixed + (((u32)(Import_RandomNext() * 12) >> 16) << 16) -
-        px(6);
+    params.spin = (Random_Below(4096)) + 0xf800;
+    x = actor->x.fixed + ((Random_Below(12)) << 16) - px(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                      ((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10) +
-                          5 * (px(1) / 10),
+                      (Random_Below(5)) * (px(1) / 10) + 5 * (px(1) / 10),
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
@@ -917,69 +878,58 @@ static void LamakanDesert_SlideDownDune(void) {
 /// stops and backs away as the Manticore rises out of the sand. This plays
 /// until the Manticore is beaten.
 static void LamakanDesert_MeetManticore(void) {
-  s32 paused;
-  struct Actor *record;
-  struct FieldPosition backwardOffset;
-  u16 *revealFrames;
-  u8 *eventBytes;
+  struct FieldWork *work = gFieldWork;
+  struct FieldPosition backward;
 
-  eventBytes = (u8 *)gFieldWork;
   HeatGauge_CountStep();
-  if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
-    paused = Event_GetFlag(FLAG_DESERT_EVENT_RUNNING);
-    if (paused == 0) {
-      GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
-      // Suspend heat accumulation while the leader notices the Manticore.
-      HeatGauge_SetHeld(1);
-      // A running Reveal's countdown is refilled to 600 frames as the
-      // Manticore rises and again once it has.
-      revealFrames = (u16 *)&((struct FieldWork *)eventBytes)->revealFrames;
-      {
-        s32 holdFrames = 600;
-
-        *revealFrames = holdFrames;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->velocityX = paused;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->velocityZ = paused;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->targetX = ACTOR_NO_TARGET;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->targetZ = ACTOR_NO_TARGET;
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
-        Event_Wait(40);
-        Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                        ATTACHED_EFFECT_ONCE);
-        Event_Wait(40);
-        Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        backwardOffset.x = paused;
-        // Step backward without turning away from the emerging Manticore.
-        backwardOffset.y = paused;
-        backwardOffset.z = paused;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        FieldVector_AddPolarOffset(-16, record->facing, &backwardOffset);
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / px(1),
-                                   backwardOffset.z / px(1));
-        Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-        Event_Wait(2);
-        Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-        Event_Wait(30);
-        Sound_Play(SE_BOSS_ROAR);
-        Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
-        Event_Wait(20);
-        Actor_SetSpeed(ACTOR_MANTICORE, 2.5);
-        Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
-        Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
-        Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
-        *revealFrames = holdFrames;
-        HeatGauge_SetHeld(0);
-      }
-    }
+  if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) != 0) {
+    return;
   }
+  if (Event_GetFlag(FLAG_DESERT_EVENT_RUNNING) != 0) {
+    return;
+  }
+  GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
+  // The heat stops rising while the leader faces the Manticore, and a running
+  // Reveal is kept full until it has risen.
+  HeatGauge_SetHeld(1);
+  work->revealFrames = 600;
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityX = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->targetX = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ = ACTOR_NO_TARGET;
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
+  Event_Wait(40);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_Wait(40);
+
+  // The leader backs away 16 pixels, still facing the Manticore.
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  backward.x = 0;
+  backward.y = 0;
+  backward.z = 0;
+  FieldVector_AddPolarOffset(-16, Actor_Get(ACTOR_PARTY_LEADER)->facing,
+                             &backward);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backward.x / px(1),
+                             backward.z / px(1));
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
+  Event_Wait(2);
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Event_Wait(30);
+
+  Sound_Play(SE_BOSS_ROAR);
+  Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
+  Event_Wait(20);
+  Actor_SetSpeed(ACTOR_MANTICORE, 2.5);
+  Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
+  Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
+  Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
+  work->revealFrames = 600;
+  HeatGauge_SetHeld(0);
 }
 
 /// Entering Lamakan Desert starts the heat gauge (600 steps) on all but
@@ -1046,13 +996,13 @@ static void HeatGauge_Draw(void) {
   s32 tile;
   s16 *colors;
   s16 *color;
-  u8 *display;
-  u32 *column;
+  struct ScreenTransitionState *transition;
+  u32 *pixels;
   u32 *word;
-  u8 *source;
-  u8 *destination;
+  u8 *frame;
+  u8 *bar;
   struct MenuSprite *sprite;
-  s32 counter;
+  s32 slide;
   u32 i;
   u32 *palette;
   u32 red;
@@ -1063,8 +1013,9 @@ static void HeatGauge_Draw(void) {
   s32 y;
   u32 offset;
 
-  tile = gVramCacheEntries[(*(s16 *)&gHeatGauge_VramSlot)].offset >> 5;
-  if ((*(s16 *)&gHeatGauge_Held) != 0) {
+  // The gauge's two halfwords are read signed.
+  tile = gVramCacheEntries[*(s16 *)&gHeatGauge_VramSlot].offset >> 5;
+  if (*(s16 *)&gHeatGauge_Held != 0) {
     gHeatGaugeSlide = 2;
   } else if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
     if (gHeatGaugeSlide > 0) {
@@ -1076,28 +1027,31 @@ static void HeatGauge_Draw(void) {
               (DMA_ENABLE | DMA_16BIT) << 16 | 16, REG_DMA3);
     }
   }
-  counter = gHeatGaugeSlide;
-  if (counter == 0) {
-    VramCache_ReleaseVram((*(s16 *)&gHeatGauge_VramSlot));
+  slide = gHeatGaugeSlide;
+  if (slide == 0) {
+    VramCache_ReleaseVram(*(s16 *)&gHeatGauge_VramSlot);
     return;
   }
-  display = *Ram_DisplayWork;
-  if (display != NULL) {
-    s16 *line = (s16 *)(display + display[1337] * 644);
-    s32 shift = (s16)(counter << 3);
 
-    line = (s16 *)((u8 *)line + 38);
+  // Window 1's left edge follows the gauge on lines 8 to 151.
+  transition = *Ram_DisplayWork;
+  if (transition != NULL) {
+    u16 *edge = transition->pages[transition->page];
+    s32 left = (s16)(slide << 3);
+
+    edge += 3 + 2 * 8;
     for (i = 0; i < 144; i++) {
-      *line = shift;
-      line += 2;
+      *edge = left;
+      edge += 2;
     }
   }
 
-  // Tint the six changing palette entries before composing the gauge tiles.
+  // Tint the six changing palette entries: redder and less blue as the heat
+  // grows, flickering greener past 60 of 120.
   buffer = Heap_Alloc(2304);
   Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
           REG_DMA3);
-  colors = (s16 *)(buffer + 12);
+  colors = (s16 *)buffer + 6;
   color = colors;
   for (i = 6; i < 12; i++) {
     u16 value = *color;
@@ -1109,7 +1063,7 @@ static void HeatGauge_Draw(void) {
     red += level / 3;
     blue = blue - level / 6 + 20;
     if (level > 60 && (gFrameCount & 1)) {
-      green = green + (level << 6) / 120 - 32;
+      green += level * 64 / 120 - 32;
     }
     if (red > 31) {
       red = 31;
@@ -1120,10 +1074,10 @@ static void HeatGauge_Draw(void) {
     if (blue > 31) {
       blue = 31;
     }
-    *color++ = (blue << 10) | (green << 5) | red;
+    *color++ = RGB(red, green, blue);
   }
-  palette = (u32 *)0x050003cc;
-  word = (u32 *)(buffer + 12);
+  palette = (u32 *)&OBJ_PLTT_COLOR(14, 6);
+  word = (u32 *)(buffer + 6 * sizeof(u16));
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
@@ -1141,38 +1095,40 @@ static void HeatGauge_Draw(void) {
     }
   }
 
-  // Fill the remaining bar and overlay its nontransparent frame pixels.
+  // The gauge's tiles, two 8-pixel columns of 4-bit pixels: fill the bar from
+  // its top down to the heat level, then close it with the top's first row.
   Dma_Set(gHeatGauge_TileBuffer, buffer, DMA_COPY_WORDS(576), REG_DMA3);
   if (gHeatGaugeFlash <= 118) {
-    column = (u32 *)(buffer + 80);
+    pixels = (u32 *)buffer + 20;
     {
       u32 fill = 0xeeeeeeee;
 
       for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
-        column[8] = fill;
-        *column++ = fill;
+        pixels[8] = fill;
+        *pixels++ = fill;
         if ((i & 7) == 7) {
-          column += 8;
+          pixels += 8;
         }
       }
     }
-    column[0] = ((u32 *)buffer)[0];
-    column[8] = ((u32 *)buffer)[8];
+    pixels[0] = ((u32 *)buffer)[0];
+    pixels[8] = ((u32 *)buffer)[8];
   }
-  destination = buffer;
-  source = buffer + 1152;
+  // Lay the frame's opaque pixels over the bar.
+  bar = buffer;
+  frame = buffer + 1152;
   for (i = 0; i < 1152; i++) {
-    u8 value = *source++;
+    u8 pixel = *frame++;
 
-    if (value != 0) {
-      *destination = value;
+    if (pixel != 0) {
+      *bar = pixel;
     }
-    destination++;
+    bar++;
   }
-  VramCache_Load((*(s16 *)&gHeatGauge_VramSlot), 1152, buffer);
+  VramCache_Load(*(s16 *)&gHeatGauge_VramSlot, 1152, buffer);
 
-  // Submit four 16x32 sprites down the screen's left edge and the 16x16 cap
-  // at the gauge's foot.
+  // Four 16x32 sprites down the screen's left edge and the 16x16 cap at the
+  // gauge's foot.
   attributes = OBJ_SIZE_16X32;
   sprite = gHeatGauge_Sprites;
   for (i = 0, offset = 0, y = 8; i < 5; i++) {
@@ -1187,7 +1143,7 @@ static void HeatGauge_Draw(void) {
     Oam_AddSpriteAtDepth(((u8 *)gHeatGauge_Sprites + offset), 255);
     sprite++;
     tile += 8;
-    offset += 12;
+    offset += sizeof(*sprite);
     y += 32;
   }
   Heap_Release(buffer);
@@ -1195,14 +1151,9 @@ static void HeatGauge_Draw(void) {
 
 /// Loads the gauge's tiles, claims VRAM for them and starts drawing it.
 void HeatGauge_Start(void) {
-  s32 slot;
-  u16 *slotAddress;
-
   FieldDecompress_TaggedLz(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
-  slotAddress = &gHeatGauge_VramSlot;
-  slot = VramCache_FindFreeEntry();
-  *slotAddress = slot;
-  VramCache_Load((s16)slot, 1152, 0);
+  gHeatGauge_VramSlot = VramCache_FindFreeEntry();
+  VramCache_Load((s16)gHeatGauge_VramSlot, 1152, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
   Task_AddFrame(HeatGauge_Draw, TASK_PASS_FRAME - 10);

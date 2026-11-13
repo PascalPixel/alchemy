@@ -755,7 +755,6 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .palette = 2,
         .defeatSound = 1,
     },
-    // ?
     [ENEMY_104] = {
         .animation = SPRITE_BATTLE_CHIMERA,
         .attackEffect = 2,
@@ -944,7 +943,6 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = 1,
         .effectHeight = 42,
     },
-    // ?
     [ENEMY_135] = {
         .animation = SPRITE_BATTLE_TOADONPA,
         .attackHop = 5,

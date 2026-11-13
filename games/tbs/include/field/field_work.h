@@ -8,6 +8,7 @@
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"
+#include "heap.h"
 
 struct ActorPlacement;
 struct Trigger;
@@ -23,7 +24,7 @@ struct MapGridCell;
 struct TreasureSpot {
   struct Actor *actor; ///< the actor placed for it
   u8 id;               ///< the subject of its trigger, 100 to 239
-  u8 unused;           ///< cleared with the slot; no code names it
+  u8 unused;           ///< cleared with the slot
   u8 column;           ///< its 16-pixel cell
   u8 row;              ///< its 16-pixel cell
 };
@@ -98,12 +99,12 @@ struct FieldWork {
   s32 walkingDistance;
   struct MapGridCell *currentCell;  ///< the cell the leader last stepped onto
   struct MapGridCell *previousCell; ///< the cell before it
-  s32 transition;       ///< SCENE_TRANSITION(style, variant); (1, 0) on entry
-  u16 unused;           ///< no code names it
+  s32 transition; ///< SCENE_TRANSITION(style, variant); (1, 0) on entry
+  u16 unused;
   u16 transitionActive; ///< set once the opening transition has started
   s32 transitionFrames; ///< frames; 16 on entry and at each event
   s32 fastForward;      ///< debug: skip timed event waits and actor messages
-  u8 unusedAfterFastForward[8]; ///< no code names it
+  u8 unusedAfterFastForward[8];
   s16 message; ///< the next message, advanced as each window opens
   /// Set to 0xffff by Event_Start at each event; nothing reads it.
   u16 unusedAfterMessage;
@@ -111,14 +112,17 @@ struct FieldWork {
   s16 unusedBeforeCamera[2];
   struct Actor
       *camera; ///< the actor the map view follows, which has no actor id
-  u8 unusedAfterCamera[16]; ///< no code names it
-  s32 speaker;              ///< the actor speaking; the leader at each event
-  s32 messageWindow;        ///< the open message window, 0 for none
-  s32 sideWindow;           ///< the speaker's portrait window
+  u8 unusedAfterCamera[16];
+  s32 speaker;       ///< the actor speaking; the leader at each event
+  s32 messageWindow; ///< the open message window, 0 for none
+  s32 sideWindow;    ///< the speaker's portrait window
   /// The leader's two-row actor placement table (its row and an end
   /// row), which Actor_ResetForLeader builds through its offset.
   u8 leaderPlacements[48];
-  u8 unusedAfterPlacements[2694]; ///< no code names it
+  u8 unusedAfterPlacements[6];
+  /// The palette a field Psynergy's tint fades back to, as a palette fade's
+  /// target (BG half, then sprite half), saved as the tint starts.
+  u16 savedFadeTarget[448 * 3];
   /// Set while a raised or step trigger runs; Event_Start then resets the
   /// effect counter.
   u16 busy;
@@ -170,6 +174,7 @@ STATIC_ASSERT(offsetof(struct FieldWork, unusedBeforeCamera) == 0x1dc);
 STATIC_ASSERT(offsetof(struct FieldWork, speaker) == 0x1f4);
 STATIC_ASSERT(offsetof(struct FieldWork, messageWindow) == 0x1f8);
 STATIC_ASSERT(offsetof(struct FieldWork, sideWindow) == 0x1fc);
+STATIC_ASSERT(offsetof(struct FieldWork, savedFadeTarget) == 0x236);
 STATIC_ASSERT(offsetof(struct FieldWork, busy) == 0xcb6);
 STATIC_ASSERT(offsetof(struct FieldWork, revealActive) == 0xcb8);
 STATIC_ASSERT(offsetof(struct FieldWork, revealFrames) == 0xcba);
@@ -184,6 +189,10 @@ STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 
 /// The running field scene's work, heap slot HEAP_SLOT_FIELD; FieldSequence_Run
 /// takes it and frees it.
-extern struct FieldWork *gFieldWork;
+#define gFieldWork (*(struct FieldWork **)&gHeapSlots[HEAP_SLOT_FIELD])
+/// The field work reached through `slots`, a view of gHeapSlots from slot
+/// `from`, where the code holds that slot's address already.
+#define FIELD_WORK_FROM(slots, from)                                           \
+  ((struct FieldWork *)HEAP_SLOT_FROM(slots, from, HEAP_SLOT_FIELD))
 
 #endif

@@ -86,75 +86,43 @@ enum McCoyPalaceActorId {
   /// A burly grey-haired man who points the way to McCoy. "If you want to see
   /// Lord McCoy, follow the red carpet." Later: "The people of Bilibin will
   /// never forget your bravery."
-  /// ★ Named from the game: "If you want to see Lord McCoy, follow the red
-  /// carpet." (MsgBilibinIfYouWantToSeeLord)
   ACTOR_VILLAGER_FOLLOW_RED_CARPET = ACTOR_FIRST_PLACED,
   /// A woman in a green dress who warns the party about McCoy. "Make sure you
   /// don't offend Lord McCoy!" Later: "I heard you received a spectacular
   /// reward."
-  /// ★ Named from the game: "Make sure you don't offend Lord McCoy!"
-  /// (MsgBilibinMakeSureYouDontOffendLord)
   ACTOR_VILLAGER_DO_NOT_OFFEND_MCCOY,
   /// A woman with fair hair.
-  /// ★ Named from the game: "Oh, are you willing to go to Kolima Forest?"
-  /// (MsgBilibinYouWillingGoKolimaForest)
   ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST,
   /// A young man with brown hair who speaks of the old tree in Kolima Forest.
   /// Later: "Things are looking grim south of Goma Range..."
-  /// ★ Named from the game: "I always believed that the old tree in Kolima
-  /// Forest should be protected!" (MsgBilibinIAlwaysBelievedThatTheOld)
   ACTOR_YOUNG_MAN_PROTECT_OLD_TREE,
   /// A woman with fair hair standing in Lady McCoy's room. "This is Lady
   /// McCoy's room, so don't touch anything." Later: "Milady was very upset when
   /// she left the room."
-  /// ★ Named from the game: "This is Lady McCoy's room, so don't touch
-  /// anything." (MsgBilibinThisIsLadyMccoysRoomSo)
   ACTOR_VILLAGER_LADY_MCCOYS_ROOM,
   /// A woman with fair hair who admires Lady McCoy. "Milady was renowned far
   /// and wide for her beauty!" Later: "For once, milord didn't let Lady McCoy
   /// push him around!"
-  /// ★ Named from the game: "Milady was renowned far and wide for her beauty!"
-  /// (MsgBilibinMiladyWasRenownedFarAndWide)
   ACTOR_VILLAGER_MILADYS_BEAUTY,
   /// A woman with fair hair who screams when spoken to ("AAAAH!!!"). Mind Read:
   /// "Oh, no! This nightgown has a hole... Milady will be furious!"
-  /// ★ Named from the game: "Oh, someday, I want to sleep in a silk nightgown
-  /// like this." (MsgBilibinOhSomedayIWantToSleep)
   ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
   /// An old man with a cane.
-  /// ★ Named from the game: "You are a fine warrior." (MsgBilibinFineWarrior)
   ACTOR_OLD_MAN_PRAISING_THE_WARRIORS,
   /// A soldier in a spiked helmet.
-  /// ★ Named from the game: "I was watching from here. After all that fuss,
-  /// you still went to Kolima?" (MsgBilibinWasWatchingFromHereAfter)
   ACTOR_SOLDIER_WATCHING_KOLIMA,
   /// A soldier in a spiked helmet who shows the treasure room's chests, as the
   /// captain asks.
-  /// ★ Named from the game: "Please show them their reward!"
-  /// (MsgBilibinLordMccoyOrdered)
   ACTOR_SOLDIER_SHOWING_THE_REWARD,
   /// McCoy, the chief of Bilibin, a stout man with red hair in a pink tunic.
-  /// ★ Named from the game: "Lord McCoy" (MsgDebugGlyphName)
   ACTOR_LORD_MCCOY,
   /// The captain of McCoy's soldiers, drawn as they are, in a spiked helmet.
-  /// ★ Named from the game: "I dinnae want tae talk about it anymore.
-  /// Captain?" (MsgBilibinWellSGoing)
   ACTOR_CAPTAIN,
   /// The key McCoy tosses to the party.
-  /// ★ Named from the game: "This key'll get yeh past the barricades tae the
-  /// east..." (MsgBilibinHmmmWellGrant)
   ACTOR_BARRICADE_KEY,
-  /// ★ Named from the game: "You may select a single item from among these
-  /// four chests." (MsgBilibinYouMaySelectASingleItem)
   ACTOR_VIAL_CHEST,
-  /// ★ Named from the game: "You may select a single item from among these
-  /// four chests." (MsgBilibinYouMaySelectASingleItem)
   ACTOR_POTION_CHEST,
-  /// ★ Named from the game: "You may select a single item from among these
-  /// four chests." (MsgBilibinYouMaySelectASingleItem)
   ACTOR_PSY_CRYSTAL_CHEST,
-  /// ★ Named from the game: "You may select a single item from among these
-  /// four chests." (MsgBilibinYouMaySelectASingleItem)
   ACTOR_WATER_OF_LIFE_CHEST
 };
 
@@ -163,40 +131,24 @@ enum McCoyPalaceActorId {
 /// area temp flags until it leaves McCoy's Palace.
 enum {
   /// The captain has opened McCoy's door, so walking through it is silent.
-  /// ★ Named from its area name: McCoy's Palace
   FLAG_MCCOYS_DOOR_OPEN = FLAG_SCENE_TEMP_00,
   /// The party is choosing its reward among the four chests.
-  /// ★ Named from the game: "You may select a single item from among these
-  /// four chests." (MsgBilibinYouMaySelectASingleItem)
   FLAG_CHOOSING_REWARD = FLAG_SCENE_TEMP_02,
   /// The chest the reward was taken from, which then searches as empty.
-  /// ★ Named from the game: "Vial" (MsgItemName)
   FLAG_TOOK_VIAL = FLAG_SCENE_TEMP_10,
-  /// ★ Named from the game: "Potion" (MsgItemName)
   FLAG_TOOK_POTION = FLAG_SCENE_TEMP_11,
-  /// ★ Named from the game: "Psy Crystal" (MsgItemName)
   FLAG_TOOK_PSY_CRYSTAL = FLAG_SCENE_TEMP_12,
-  /// ★ Named from the game: "Water of Life" (MsgItemName)
   FLAG_TOOK_WATER_OF_LIFE = FLAG_SCENE_TEMP_13,
   /// The old man has praised the party once. He then warns of the holy tree.
-  /// ★ Named from the game: "You are a fine warrior." (MsgBilibinFineWarrior)
   FLAG_OLD_MAN_HAS_PRAISED = FLAG_AREA_TEMP_02,
   /// Mind Read has heard the old man's first thought.
-  /// ★ Named from the game: "Sometimes, we need children to remind us of our
-  /// own responsibilities." (MsgBilibinSometimesWeNeedChildrenRemind)
   FLAG_OLD_MAN_THOUGHTS_READ = FLAG_AREA_TEMP_03,
   /// McCoy has had the captain see the party out after the first audience.
-  /// ★ Named from the game: "I dinnae want tae talk about it anymore.
-  /// Captain?" (MsgBilibinWellSGoing)
   FLAG_CAPTAIN_SEEING_PARTY_OUT = FLAG_AREA_TEMP_21,
   /// McCoy has had the captain take the party to the treasure room, until it
   /// takes a reward.
-  /// ★ Named from the game: "Please show them their reward!"
-  /// (MsgBilibinLordMccoyOrdered)
   FLAG_REWARD_OFFERED = FLAG_AREA_TEMP_22,
   /// The captain has seen the party off with its reward.
-  /// ★ Named from the game: "You are always welcome in the palace of Lord
-  /// McCoy." (MsgBilibinAlwaysWelcomeInPalaceLord)
   FLAG_PARTY_SEEN_OFF = FLAG_AREA_TEMP_33
 };
 
@@ -232,8 +184,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     Scene_AssignViewFlags(placements);
 
     if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-      // Through the global, not placements: the local splits each address into
-      // base+144 and member+22 (9 of 38 instructions differ in tbs-en).
       gMcCoyPalaceActorPlacements[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN -
                                   ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_KEEP;
@@ -242,7 +192,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
           .talkFacing = TALK_FACING_PARTY;
       gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_WATCHING_KOLIMA -
                                   ACTOR_FIRST_PLACED]
-          .talkFacing = 3;
+          .talkFacing = TALK_FACING_PARTY_THEN_WATCH;
       gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_SHOWING_THE_REWARD -
                                   ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -1614,14 +1564,14 @@ s32 gPalace_FacingActions[] = {
 };
 
 s32 gPalace_PacingActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(842, 0, 696),
     SC_SYNC,
     SC_MOVE(842, 0, 636),
     SC_SYNC,
     SC_MOVE(876, 0, 634),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(1),
     SC_END,

@@ -71,6 +71,7 @@
 #include "actor_script.h"
 #include "sounds.h"
 #include "flags.h"
+#include "shared/walk_into_leader.h"
 static void TimberRoomsBC_TellFaranAboutJenna(void);
 
 /// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED.
@@ -102,84 +103,56 @@ enum TimberRoomsBCActorId {
   /// TIMBER_ROOMS_B_FROM_LALIVERO_WEST.
   ///
   /// He says "Of course I have seen Sheba's power... It's incredible!"
-  /// ★ Named from the game: "Of course I have seen"
-  /// (MsgLaliveroInteriorsOfCourseIHaveSeenActor)
   ACTOR_VILLAGER_SAW_SHEBAS_POWER = ACTOR_FIRST_PLACED,
   /// A woman with fair hair, in the same house.
   ///
   /// She says "There are some who do not believe Sheba has any powers...
   /// Doubting Sheba? That is foolish!"
-  /// ★ Named from the game: "That is foolish!"
-  /// (MsgLaliveroInteriorsThereAreSomeWhoDoNot)
   ACTOR_WOMAN_DEFENDING_SHEBA,
   /// A man in a white turban, in the house at
   /// TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST.
   ///
   /// He says "Could Faran have tricked us all?"
-  /// ★ Named from the game: "Could Faran have tricked us all?"
-  /// (MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll)
   ACTOR_VILLAGER_DOUBTING_FARAN,
   /// A woman in a green dress, in the same house.
   ///
   /// She says "If Sheba can't use her powers in a time like this, they're
   /// useless!"
-  /// ★ Named from the game: "use her powers in a time like this, they're
-  /// useless!" (MsgLaliveroInteriorsIfActorCantUseHerPowers)
   ACTOR_WOMAN_DOUBTING_SHEBA,
   /// An old man with a cane, upstairs in the item shop at
   /// TIMBER_ROOMS_B_FROM_LALIVERO_NORTH.
   ///
   /// He says "Sheba came flying to the ruins like a shooting star."
-  /// ★ Named from the game: "came flying to the ruins like a shooting star."
-  /// (MsgLaliveroInteriorsActorCameFlyingToTheRuins)
   ACTOR_OLD_MAN_SHOOTING_STAR,
   /// An old woman, in the same room.
   ///
   /// She says "Even Sheba couldn't have escaped six of them..."
-  /// ★ Named from the game: "couldn't have escaped six of them..."
-  /// (MsgLaliveroInteriorsEvenActorCouldntHaveEscapedSix)
   ACTOR_OLD_WOMAN_SIX_OF_THEM,
   /// A bald, muscular man, in the house at
   /// TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST.
   ///
   /// He says "They say a man named Iodem is coming from Tolbi. I guess he
   /// plans to make us do even more work!"
-  /// ★ Named from the game: "I guess he plans to make us do even more work!"
-  /// (MsgLaliveroInteriorsTheySayAManNamedIodem)
   ACTOR_WORKER,
   /// A bald, muscular man lying asleep upstairs in that house.
   ///
   /// He says "No one's called me, so maybe I'll take a nap..." After Venus
   /// Lighthouse, Mind Read hears "I'm worried that we won't get paid now that
   /// the construction has ended."
-  /// ★ Named from the game: "No one's called me, so maybe I'll take a nap..."
-  /// (MsgLaliveroInteriorsNoOnesCalledMeSoMaybe)
   ACTOR_NAPPING_WORKER,
   /// A strongman, in the house at TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST.
   ///
   /// He says "Sheba said the cave at the ruins leads to the southeast."
-  /// ★ Named from the game: "said the cave at the ruins leads to the
-  /// southeast." (MsgLaliveroInteriorsActorSaidTheCaveAtThe)
   ACTOR_STRONGMAN_RUINS_CAVE,
   /// A strongman who walks about the room upstairs in that house.
   ///
   /// He says "The ruins that form the lighthouse foundation are riddled with
   /// caves."
-  /// ★ Named from the game: "The ruins that form the lighthouse foundation are
-  /// riddled with caves." (MsgLaliveroInteriorsTheRuinsThatFormTheLighthouse)
   ACTOR_STRONGMAN_RUINS_RIDDLE,
-  /// ★ Named from what the player sees: the man behind the counter of the
-  /// shop hung with swords and shields (its render)
   ACTOR_WEAPON_MERCHANT,
-  /// ★ Named from what the player sees: the second man behind the counter of
-  /// the shop hung with swords and shields (its render)
   ACTOR_ARMOR_MERCHANT,
-  /// ★ Named from what the player sees: the young woman with a ponytail behind
-  /// the counter of the shop stacked with barrels and jars (its render)
   ACTOR_ITEM_MERCHANT,
   /// The Sanctum's healer.
-  /// ★ Named from what the player sees: the bearded man behind the Sanctum's
-  /// counter (its render)
   ACTOR_HEALER,
 
   // Faran's house and the inn (TimberRoomsC).
@@ -187,50 +160,35 @@ enum TimberRoomsBCActorId {
   ///
   /// She says "We received Sheba from the sky and raised her lovingly... I
   /// know Faran will rescue that child."
-  /// ★ Named from the game: "His wife seems very calm, considering."
-  /// (MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering)
   ACTOR_FARANS_WIFE = ACTOR_FIRST_PLACED,
   /// Faran's son, a small boy with fair hair, younger than Sheba.
   ///
   /// He says "I just know that Father will save my elder sister, Sheba."
-  /// ★ Named from the game: "I just know that Father will save my elder sister"
-  /// (MsgLaliveroInteriorsIJustKnowThatFatherWill)
   ACTOR_FARANS_SON,
   /// A young woman with long brown hair, worried for Sheba.
   ///
   /// She says "His wife seems very calm, considering." Mind Read hears "When
   /// someone like Sheba is kidnapped, it worries us all!"
-  /// ★ Named from the game: "Deep down, she must be worried about"
-  /// (MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering)
   ACTOR_WORRIED_YOUNG_WOMAN,
   /// Placed off the map before Venus Lighthouse.
-  /// ★ Named from the game: "Faran followed"
-  /// (MsgLaliveroFaranFollowedActorImSureHell)
   ACTOR_FARAN,
   /// Placed off the map before Venus Lighthouse.
-  /// ★ Named from the game: "Iodem of Tolbi"
-  /// (MsgLaliveroIodemOfTolbiDoesntSeemToo)
   ACTOR_IODEM,
   /// A man with dark hair.
-  /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_INNKEEPER,
   /// A woman in a pink dress and a white apron who works about the inn, too
   /// worried about Sheba to keep her mind on it.
-  /// ★ Named from the game: "Working like this keeps my mind occupied."
-  /// (MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind)
   ACTOR_INN_WORKER,
   /// A young man with brown hair in a purple shirt who walks about the hall
   /// upstairs in the inn.
   ///
   /// After Venus Lighthouse he says "Fishing is so difficult nowadays because
   /// the ocean is so rough. We have little to cook when we can't fish."
-  /// ★ Named from the game: "We have little to cook when we can't fish."
-  /// (MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause)
   ACTOR_COOK
 };
 
 /// The napping worker's pose, from his sprite's animation table
-/// (graphics/sprite/spr_114.tsv).
+/// (graphics/sprite/bald_muscular_man.tsv).
 ///
 /// It is one frame held, lying asleep on his side.
 enum { ANIM_WORKER_LIE_ASLEEP = 6 };
@@ -239,11 +197,10 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 ///
 /// It is the area temp flag FLAG_AREA_TEMP_00, which lasts until the party
 /// enters another area.
-/// ★ Named from the game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
 enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_AREA_TEMP_00 };
 
 /// TimberRoomsC: the inn worker sighs between chores.
-static s32 InnWorker_Sigh(struct Actor *interpreter) {
+static s32 InnWorker_Sigh(struct Actor *actor) {
   Actor_SetAttachedEffect(ACTOR_INN_WORKER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -294,8 +251,8 @@ static inline u16 TimberRoomsBC_LeaderGetSide(void) {
 /// they tell of the rough sea.
 static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // TimberRoomsBC_LeaderGetSide's rounding, written with the mask 0xc000,
-  // which loads from the literal pool where the helper's builds the mask.
+  // The side of the counter the leader faces, as TimberRoomsBC_LeaderGetSide
+  // rounds it.
   u16 side = (leader->facing + TRIG_TURN / 8) & 0xc000;
 
   if (side == FACING_NORTH) {
@@ -431,7 +388,6 @@ static void TimberRoomsBC_TalkToInnWorker(void) {
 ///
 /// It plays at step trigger 51 in Faran's house after the report.
 static void TimberRoomsBC_IodemCallsOut(void) {
-
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_Start();
   Field_EndBusyAndReveal();
@@ -453,7 +409,6 @@ static void TimberRoomsBC_IodemCallsOut(void) {
 /// In Lalivero (TimberRoomsC), Iodem, talked to before he has given the
 /// Black Orb, repeats his request.
 static void TimberRoomsBC_TalkToIodem(void) {
-
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
   // "Please wait for me outside Faran's house. I wish to speak..."
@@ -487,8 +442,6 @@ const struct Trigger *TimberRoomsBC_GetTriggers(void) {
 /// - What an Adept is.
 /// - A farewell as the party sets out to search for Jenna.
 static void TimberRoomsBC_ReportToFaran(void) {
-  struct Actor *leader;
-
   Event_Start();
   Party_RestoreHpPp(1);
   // The party walks in to Faran and Iodem, and the others step out.
@@ -810,29 +763,9 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetSpeed(ACTOR_IVAN, 1.2);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_MIA);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
   Event_Wait(10);
   Event_End();
 }
@@ -980,31 +913,31 @@ s32 gTimberRoomsBC_InnWorkerChores[] = {
     SC_SPEED(2.4),
     SC_ACCELERATION(1.2),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(128, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(30),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(50),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(128, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(20),
     SC_CALL(InnWorker_Sigh),
     SC_WAIT(30),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(30),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };

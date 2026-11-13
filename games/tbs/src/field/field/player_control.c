@@ -50,9 +50,8 @@ enum PlayerStepBlock {
   PLAYER_STEP_NO_DIRECTION = 4 ///< the direction pad is not held
 };
 
-/// FIELD_SPRITE_FOOTPRINT's animations (spr_025.png), and the leader's
-/// userValue that asks for the pair next.
-/// ★ Named from what the player sees: prints in Imil's snow (its render)
+/// The footprints left in snow such as Imil's (FIELD_SPRITE_FOOTPRINT,
+/// footprints.png), and the leader's userValue that asks for the pair next.
 enum FootprintAnimation {
   FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
   /// Two prints side by side, fading: laid first after a stop.
@@ -75,10 +74,6 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM. Returns the request id, the
 /// assignment's low 14 bits, even when it raised an event instead; a shortcut
 /// with nothing assigned returns 0, as no key pressed does.
-///
-/// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the field sequence (field_sequence.c)
-/// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;
@@ -112,8 +107,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 /// when none is pressed, or with no field work. Every caller drops the result.
 /// Only the first configured key pressed this frame counts, in that order.
 ///
-/// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
-/// and SC_KEY_COUNT. Sets work->fieldMenu, aButton or pauseMenu.
+/// Sets work->fieldMenu, aButton or pauseMenu.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = gFieldWork;
   s32 result = 0;
@@ -137,10 +131,8 @@ s32 Field_CheckConfiguredKeys(void) {
   return result;
 }
 
-/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
-/// with radii radiusA and radiusB (pixels); -1 otherwise. Called by
-/// SC_PLAYER's push test, ActorScript_CheckOverlap and
-/// ActorScript_FindOverlappingEntry.
+/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
+/// radii radiusA and radiusB (pixels); -1 otherwise.
 s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
                               s32 *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
@@ -170,12 +162,8 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// the matching animation and leaving footprints. Also checks the configured
 /// keys. Returns 1.
 ///
-/// Run each frame by gActor_PlayerScript, which the field sequence
-/// (field_sequence.c) starts on the leader through
-/// Actor_StartPlayerControl when it hands control back on the field.
-/// Sets the leader's speed, target, velocity, angle and timer, moves the
-/// actors it pushes, counts gFieldWork->blockedSteps and creates the
-/// footprint actors.
+/// Sets the leader's speed, target, velocity, angle and timer, moves the actors
+/// it pushes, counts gFieldWork->blockedSteps and creates the footprint actors.
 s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 
   struct FieldPosition position;
@@ -210,17 +198,13 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       Sound_PlayFar(SE_CLICK);
   }
   // Debug: holding L spins through four empty loops (511, 96, 64 and 64
-  // passes), a short stall each frame. They are written with goto:
-  // as while loops, the loop optimizer deletes them.
+  // passes), a short stall each frame.
   if (gDebugMode != 0) {
     s32 delayKeyMask = KEY_L;
     if (gKeysHeld & delayKeyMask) {
       s32 delayIterations;
 
       delayIterations = delayKeyMask;
-      // Four empty delay loops, each written with goto: as do { } while, none
-      // matches in tbs-en (menu/status.c's spin records why: the loop optimizer
-      // deletes an empty loop).
     wait_a:
       --delayIterations;
       if (delayIterations != 0)
@@ -302,7 +286,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
               if (MapGrid_CheckCollision(actor, &testPosition) ==
                   COLLISION_NONE) {
                 heading = angle;
-                goto push_objects;
+                goto push_actors;
               }
             }
           }
@@ -354,7 +338,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
         Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE)
-          goto push_objects;
+          goto push_actors;
       }
       // Nothing passed: the step is the actor's own position.
       position.x = actor->x.fixed;
@@ -362,7 +346,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       position.z = actor->z.fixed;
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
-    push_objects:
+    push_actors:
       // Push the movable actors (ACTOR_PUSHABLE) just ahead 4 pixels
       // further, when they have room; any other solid actor there blocks the
       // step (bit 1 of collision). Pushing slows the player down.
@@ -555,11 +539,9 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 /// Shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER) leaves a ripple and a
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
-/// Run each frame by gActor_WorldMapScript, which the field sequence
-/// (field_sequence.c) starts on the leader through
-/// Actor_StartWorldMapControl on the world map. Sets the leader's
-/// speed, target, velocity, angle and timer, turns the perspective work's
-/// yaw, counts gFieldWork->blockedSteps and creates the ripple actors.
+/// Sets the leader's speed, target, velocity, angle and timer, turns the
+/// perspective work's yaw, counts gFieldWork->blockedSteps and creates the
+/// ripple actors.
 s32 Actor_MoveOnWorldMap(struct Actor *actor) {
 
   struct FieldPosition position;
@@ -651,7 +633,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                                     direction - TRIG_TURN / 8, &testPosition);
               if (WorldMap_IsWalkable(
                       (s32)actor, (struct WorldPosition *)&testPosition) == 0)
-                goto update_object;
+                goto update_actor;
             }
           }
         }
@@ -707,7 +689,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                                 (struct WorldPosition *)&testPosition) != 0)
           continue;
         angle = (s16)direction;
-        goto update_object;
+        goto update_actor;
       }
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
@@ -757,7 +739,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                    (s32)actor, (struct WorldPosition *)&rightPosition)) != 0)
             continue;
           angle = (s16)direction;
-          goto update_object;
+          goto update_actor;
         }
         collision |= PLAYER_STEP_BLOCKED_BY_MAP;
       }
@@ -765,7 +747,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
     }
   }
 
-update_object:
+update_actor:
   if (gFieldWork != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
       gFieldWork->blockedSteps++;
@@ -863,9 +845,7 @@ update_object:
 }
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
-/// Returns 1. Run each frame by gActor_KeyCheckScript, which the
-/// field sequence starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the
-/// pad does not move it.
+/// Returns 1.
 s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 
   Field_CheckConfiguredKeys();
@@ -878,9 +858,8 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 /// into an occupied cell, across a change of cell behavior, or onto ground
 /// too high (up) or too low (down). Returns 1.
 ///
-/// Run each frame by gActor_KeysScript, which the field sequence starts
-/// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
-/// angle, target or velocity, and counts gFieldWork->blockedSteps.
+/// Sets the leader's speed, angle, target or velocity, and counts
+/// gFieldWork->blockedSteps.
 s32 Actor_MoveByKeys(struct Actor *actor) {
 
   struct FieldPosition position;

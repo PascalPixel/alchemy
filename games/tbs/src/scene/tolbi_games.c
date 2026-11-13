@@ -77,13 +77,26 @@
 #include "fixed_math.h"
 #include "item_ids.h"
 #include "map_grid.h"
+#include "map_grid_scroll.h"
 #include "flags.h"
 #include "sounds.h"
 #include "shared/colosso_story_flags.h"
 
 /// The spring has risen and faded into view this visit.
-/// ★ Named from its area name: Tolbi Spring
 #define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00
+
+/// The party's coins as Lucky Dice starts, kept in gSceneLocalState so the
+/// attendant can tell the change when the party comes back.
+#define sLuckyDiceCoinsBefore (*(s32 *)gSceneLocalState)
+
+// UB: the coin prizes are read through a one-element view of their table;
+// UBFIX reads the table.
+#ifdef UBFIX
+#define TOLBI_SPRING_COIN_PRIZE(ring) gTolbiSpring_CoinPrizes[ring]
+#else
+#define TOLBI_SPRING_COIN_PRIZE(ring)                                          \
+  (((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)->coins[ring])
+#endif
 
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
@@ -100,54 +113,32 @@ enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 enum TolbiSpringGameRoomActorId {
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky
   /// Wheels (TolbiSpring_TalkToWheelsAttendant).
-  /// ★ Named from the game: "Step right up and try your hand at lucky wheels!"
-  /// (MsgTolbiStepRightTry)
   ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED,
   /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs
   /// Lucky Dice (TolbiSpring_OfferLuckyDice).
-  /// ★ Named from the game: "Hey, buddy, wanna try yer luck at the dice?"
-  /// (MsgTolbiBuddyWannaTry)
   ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
   /// Beside the Lucky Dice attendant, in his sprite.
   ///
   /// He is likely a second attendant, because the Colosso's attendants wear
   /// the same sprite.
-  /// ★ Named from the game: "Read the sign if ya don't know the rules."
-  /// (MsgTolbiSpringReadTheSignIfYaDont)
   ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT,
   /// A Lucky Dice player, a burly grey-haired man
   /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
-  /// ★ Named from the game: "Is this yer first time to play Lucky Dice?"
-  /// (MsgTolbiYerFirstTime)
   ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  /// ★ Named from the game: "Getting triple digits is real tough!"
-  /// (MsgTolbiSpringWhoaGettingTripleDigitsIsReal)
   ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from the game: "I don't want to stop playing Lucky Dice"
-  /// (MsgTolbiSpringIDontWantToStopPlaying)
   ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
   /// The Lucky Wheels prize sign the layout draws, read through an
   /// actor with a blank sprite (TolbiSpring_ReadLuckyWheelsPrizes).
-  /// ★ Named from the game: "Lucky Wheels Prizes"
-  /// (MsgTolbiLuckyWheelsPrizesPrizesDetermined)
   ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN,
   /// The Lucky Wheels rules sign, read the same way
   /// (TolbiSpring_ReadLuckyWheelsRules).
-  /// ★ Named from the game: "Lucky Wheels Rules"
-  /// (MsgTolbiLuckyWheelsRulesPullLever)
   ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN,
-  /// ★ Named from the game: "Throw the dice on the table"
-  /// (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
   ACTOR_TOLBI_SPRING_DICE_RULES_SIGN,
   /// A soldier, gone after Colosso, drawn with the long-haired fighter's
   /// sprite (SPRITE_PERSON_WITH_SWORD).
-  /// ★ Named from the game: "poor soldiers like us"
-  /// (MsgTolbiSpringTheresNoWayPoorSoldiersLike)
   ACTOR_TOLBI_SPRING_SOLDIER,
-  /// ★ Named from the game: "If two numbers match on either"
-  /// (MsgTolbiSpringLuckyDiceIfTwoNumbersMatch)
   ACTOR_TOLBI_SPRING_DICE_PAIRS_SIGN
 };
 
@@ -157,61 +148,38 @@ enum TolbiSpringGameRoomActorId {
 /// The toss draws the coin or the medal with its shadow and three trailing
 /// copies, which TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
 enum TolbiSpringActorId {
-  /// ★ Named from what the player sees: the tossed coin's shadow, drawn at
-  /// ground level below it as it flies (its render)
   ACTOR_TOLBI_SPRING_COIN_SHADOW = ACTOR_FIRST_PLACED + 3,
   /// The coin the party tosses (SPRITE_SPRING_COIN).
-  /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
-  /// it." (MsgTolbiFaceAwayTolbi)
   ACTOR_TOLBI_SPRING_COIN,
-  /// ★ Named from what the player sees: the tossed Lucky Medal's shadow,
-  /// drawn at ground level below it as it flies (its render)
   ACTOR_TOLBI_SPRING_MEDAL_SHADOW = ACTOR_TOLBI_SPRING_COIN + 4,
   /// The Lucky Medal the party tosses (SPRITE_SPRING_LUCKY_MEDAL).
-  /// ★ Named from the game: "If you toss a Lucky Medal"
-  /// (MsgTolbiTossLuckyMedal)
   ACTOR_TOLBI_SPRING_MEDAL,
   /// The four obstacles that move in the spring during a toss, in the order
   /// of sObstacles.
   ///
   /// They are two crabs (SPRITE_CRAB), then two turtles (SPRITE_TURTLE).
-  /// ★ Named from what the player sees: two crabs and two turtles moving in
-  /// the spring's water in the way of the toss (its render)
   ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
   /// A sign east of the spring (SPRITE_SIGNPOST).
-  /// ★ Named from the game: "If you toss a Lucky Medal"
-  /// (MsgTolbiTossLuckyMedal)
   ACTOR_TOLBI_SPRING_MEDAL_SIGN = ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 4,
   /// A sign west of the spring, in the same sprite.
-  /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
-  /// it." (MsgTolbiFaceAwayTolbi)
   ACTOR_TOLBI_SPRING_COIN_SIGN,
   /// The tufts of grass at the foot of each sign.
   ///
   /// They are the signs' sprite in its second frame, mirrored and drawn
   /// underfoot (TolbiSpring_Initialize).
-  /// ★ Named from what the player sees: a tuft of grass at the foot of each
-  /// sign (its render)
   ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS,
-  /// ★ Named from what the player sees: a tuft of grass at the foot of the
-  /// west sign (its render)
   ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS,
   /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
-  /// ★ Named from the game: "Tolbi Spring has mysterious powers."
-  /// (MsgTolbiSpringTolbiSpringHasMysteriousPowersStand)
   ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS,
   /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) who asks for a medal.
-  /// ★ Named from the game: "Do you have a Lucky Medal?" (MsgTolbiLuckyMedal)
   ACTOR_TOLBI_SPRING_MEDAL_SEEKER,
   /// A visitor, a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "Too bad I only have one Lucky Medal."
-  /// (MsgTolbiSpringTooBadIOnlyHaveOne)
   ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL
 };
 
 /// Animations of the spring's sprites, as their animation tables and frames
 /// under graphics/sprite draw them. The coin's and the Lucky Medal's sheets
-/// (spr_398.png, spr_399.png) are drawn alike.
+/// (spring_coin.png, spring_lucky_medal.png) are drawn alike.
 enum TolbiSpringAnimation {
   ANIM_TOKEN_TUMBLE = 0, ///< turning over once as it is tossed
   ANIM_TOKEN_FLOAT = 1,  ///< turning on the water as it drifts
@@ -219,11 +187,11 @@ enum TolbiSpringAnimation {
   ANIM_TOKEN_SHADOW = 3, ///< a grey spot on the ground below it
   /// A twinkle, as each of the three marks trailing a flying token.
   ANIM_TOKEN_GLINT = 4,
-  ANIM_CRAB_SCUTTLE = 1,     ///< stepping sideways (spr_396.png)
-  ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (spr_396.png)
-  ANIM_TURTLE_SWIM = 2,      ///< paddling (spr_397.png)
-  ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (spr_397.png)
-  /// The signpost sheet's second picture, a tuft of grass (spr_274.png).
+  ANIM_CRAB_SCUTTLE = 1,     ///< stepping sideways (crab.png)
+  ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (crab.png)
+  ANIM_TURTLE_SWIM = 2,      ///< paddling (turtle.png)
+  ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (turtle.png)
+  /// The signpost sheet's second picture, a tuft of grass (signpost.png).
   ANIM_SIGN_GRASS = 2
 };
 
@@ -452,7 +420,7 @@ s32 TolbiSpring_Initialize(void) {
       Event_Wait(10);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 112);
       Event_Wait(20);
-      coinChange = gMainRoutineWork.coins - *(s32 *)gSceneLocalState;
+      coinChange = gMainRoutineWork.coins - sLuckyDiceCoinsBefore;
       if (coinChange > 0) {
         if (coinChange > 19999) {
           Sound_Play(MUS_JINGLE_LARGE);
@@ -578,15 +546,15 @@ static void TolbiSpring_RevealPrize(s32 item) {
 
 /// Raises the spring's displayed layer and blends it into view.
 static void TolbiSpring_RiseAndFadeIn(void) {
-  u8 *springLayer = gMapGridWork[0];
+  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridLayerScroll *spring;
   const u16 *alphaSteps;
   s32 stepIndex;
 
   Sound_Play(SE_BURST);
-  // This value belongs to layer 1; its individual field remains unnamed.
-  springLayer += offsetof(struct MapGridScrollAnimView, layers[1]) + 4;
+  spring = &map->layers[MAPGRID_LAYER_OVERHEAD];
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
-    *(s32 *)(springLayer + 12) -= px(1);
+    spring->offsetY -= px(1);
     wait(4);
   }
   alphaSteps = gTolbiSpring_AlphaSteps;
@@ -687,7 +655,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     return;
   }
-  *(u32 *)gSceneLocalState = coins;
+  sLuckyDiceCoinsBefore = coins;
   Actor_Snapshot();
   Event_SetMessageId(MsgTolbiBuddyWannaTry);
   MessageArgument_Push(cost, MESSAGE_ARGUMENT_NUMBER);
@@ -715,7 +683,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
 static s32 TolbiSpring_RunSpringGame(void) {
   s32 choice = 0;
   s32 text;
-  s32 cancel = -1;
+  s32 cancel = -1; // what the menus answer when B is pressed
   s32 coins;
   s32 medals;
   struct Window *window;
@@ -724,27 +692,25 @@ static s32 TolbiSpring_RunSpringGame(void) {
   s32 prizeIndex;
   s32 prizeRoll;
   s32 message;
-  struct MainRoutineWork *state;
+  struct MainRoutineWork *routine;
 
   Event_Start();
   Field_EndBusyAndReveal();
   message = MsgTolbiThrow;
 #if TBS_PATCH_1
-  state = &gMainRoutineWork;
+  routine = &gMainRoutineWork;
 prompt:
-  coins = state->coins;
+  coins = routine->coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   Event_SetMessageId(message);
   // "What will you throw?"
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
-  {
-    text = MsgTolbiCoins;
-    Text_DrawMessageAsTiles(text, window, 0, 0);
-    Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
-    Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
-  }
+  text = MsgTolbiCoins;
+  Text_DrawMessageAsTiles(text, window, 0, 0);
+  Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+  Text_DrawMessageAsTiles(text + 1, window, 0, 8);
+  Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
   Message_CloseFinishedWindows();
@@ -779,11 +745,9 @@ prompt:
   }
   window = Window_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
                          TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
-  {
-    text = MsgTolbiToss;
-    Text_DrawMessageAsTiles(text, window, 0, 0);
-    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
-  }
+  text = MsgTolbiToss;
+  Text_DrawMessageAsTiles(text, window, 0, 0);
+  Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   wait(5);
   Sound_Play(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
@@ -803,8 +767,8 @@ prompt:
 #else
   for (;;) {
     text = MsgTolbiCoins;
-    state = &gMainRoutineWork;
-    coins = state->coins;
+    routine = &gMainRoutineWork;
+    coins = routine->coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Event_SetMessageId(message);
     // "What will you throw?"
@@ -885,24 +849,10 @@ prompt:
     result = TolbiSpring_RunToss(choice);
     if (choice == SPRING_TOSS_COIN) {
       if (result != 4) {
-#ifdef UBFIX
-        Party_AdjustCoins(gTolbiSpring_CoinPrizes[result]);
-#else
-        // UB: the original view indexes beyond its one-element array.
-        Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
-                              ->coins[result]);
-#endif
+        Party_AdjustCoins(TOLBI_SPRING_COIN_PRIZE(result));
         Sound_Play(MUS_JINGLE_SMALL);
-#ifdef UBFIX
-        MessageArgument_Push(gTolbiSpring_CoinPrizes[result],
+        MessageArgument_Push(TOLBI_SPRING_COIN_PRIZE(result),
                              MESSAGE_ARGUMENT_NUMBER);
-#else
-        // UB: retain the same native one-element view for this second read.
-        MessageArgument_Push(
-            ((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
-                ->coins[result],
-            MESSAGE_ARGUMENT_NUMBER);
-#endif
         Event_SetMessageId(MsgTolbiWonNumberCoin);
         // "You won ... coin!"
         Event_ShowMessage(-1, 0);
@@ -916,14 +866,20 @@ prompt:
       prizeIndex = 0;
       if (prizeIndex < result * 3 + 3) {
         do {
-          u8 prizeWeight = ((u8 *)state)[prizeIndex + 285];
-          totalWeight += (s8)prizeWeight;
+          /* FAKEMATCH(temporary): the weight read as a byte from the work's
+           * start; as routine->prizeWeights[prizeIndex], 6 of 280 instructions
+           * differ in tbs-en. */
+          u8 weight =
+              ((u8 *)routine)[prizeIndex +
+                              offsetof(struct MainRoutineWork, prizeWeights)];
+
+          totalWeight += (s8)weight;
           prizeIndex++;
         } while (prizeIndex < result * 3 + 3);
       }
-      prizeRoll = (u32)(Random_Next() * totalWeight) >> 16;
+      prizeRoll = Random_Below(totalWeight);
       for (prizeIndex = 0; prizeIndex < 15; prizeIndex++) {
-        prizeRoll -= state->prizeWeights[prizeIndex];
+        prizeRoll -= routine->prizeWeights[prizeIndex];
         if (prizeRoll < 0) {
           break;
         }
@@ -932,34 +888,23 @@ prompt:
         prizeIndex = 14;
       }
       // Reveal the selected item, then reduce its chance on later tosses.
-#ifdef UBFIX
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
-#else
-      // UB: the view reads past its one-element array; UBFIX reads the whole
-      // item array.
-      TolbiSpring_RevealPrize(
-          ((struct { s32 prize[1]; } *)gTolbiSpring_PrizeItems)
-              ->prize[prizeIndex]);
-#endif
-
-      /* FAKEMATCH(dead): the pointer pair, so the prize-weight base is computed
-       * again after the call; without it, 6 of 280 instructions differ in
-       * tbs-en. */
-      state++;
-      state--;
+      /* FAKEMATCH(dead): stepping routine away and back; without it, 6 of 280
+       * instructions differ in tbs-en. */
+      routine++;
+      routine--;
       {
-        s32 slot = prizeIndex + 284;
-        s8 *prizeWeight = (s8 *)state + 1;
+        s32 slot =
+            prizeIndex + offsetof(struct MainRoutineWork, prizeWeights) - 1;
+        s8 *weights = (s8 *)routine + 1;
 
-        if (prizeWeight[slot] > 1) {
-          /* FAKEMATCH(dead): the halving in both arms of a test of slot, which
-           * adds the reference that ranks slot above the base, so slot takes r1
-           * and the base r0; as one halving, 10 of 280 instructions differ in
-           * tbs-en. */
+        if (weights[slot] > 1) {
+          /* FAKEMATCH(dead): the halving in both arms of a test of slot; as one
+           * halving, 10 of 280 instructions differ in tbs-en. */
           if (slot)
-            prizeWeight[slot] /= 2;
+            weights[slot] /= 2;
           else
-            prizeWeight[slot] /= 2;
+            weights[slot] /= 2;
         }
       }
     }
@@ -981,28 +926,28 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   }
 
   if (category == 5) {
-    category = ((unsigned int)(Import_RandomNext() * 5) >> 16);
+    category = ((unsigned int)(Random_Next() * 5) >> 16);
   }
 
   previousVariant = gMainRoutineWork.wonPrizes[8 + category];
 
-  variant = (previousVariant +
-             (s32)((unsigned int)(Import_RandomNext() * 2) >> 16) + 4) %
-            3;
+  variant =
+      (previousVariant + (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4) %
+      3;
 
   gMainRoutineWork.wonPrizes[8 + category] = variant;
 
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }
 
-/// Copies three coordinates and sets the actor's facing, child value and
-/// colors.
+/// Places the actor at the three coordinates and sets its facing, animation
+/// speed and colours.
 static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
                                            s32 facing, s32 colorVariant,
                                            s32 childValue) {
   struct Actor *actor = Actor_Get(actorId);
   struct Sprite *sprite;
-  u32 entryCount;
+  u32 count;
 
   if (actor != 0) {
     actor->x.fixed = *coordinate++;
@@ -1013,29 +958,30 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
     actor->sprite->flags = 0;
     Actor_SetAnimationSpeed(actor, childValue);
   }
-  // BUG: the original still dereferences actor here when lookup returned
-  // NULL.
+  // BUG: actor is read even when Actor_Get found none.
   sprite = actor->sprite;
-  entryCount = sprite->count;
-  if (entryCount != 0) {
-    u32 invalidFrame = 255;
-    struct SpriteAnimation **entries = sprite->entries;
-    u32 entriesLeft = entryCount;
+  count = sprite->count;
+  if (count != 0) {
+    /* FAKEMATCH(temporary): none and picture hold the marker and the picture
+     * it is ored into; as entry->picture |= SPRITE_PICTURE_NONE, 1 of 53
+     * instructions differ in tbs-en. */
+    u32 none = SPRITE_PICTURE_NONE;
+    struct SpriteAnimation **animation = sprite->entries;
+    u32 left = count;
 
     do {
-      struct SpriteAnimation *entry = *entries++;
+      struct SpriteAnimation *entry = *animation++;
 
       if (entry->colorMode != colorVariant) {
-        entry->colorMode = colorVariant;
-        {
-          u32 frame = entry->picture;
+        u32 picture;
 
-          // Invalidate the cached frame so the new colors are applied.
-          frame |= invalidFrame;
-          entry->picture = frame;
-        }
+        entry->colorMode = colorVariant;
+        // No picture is cached in the new colours yet.
+        picture = entry->picture;
+        picture |= none;
+        entry->picture = picture;
       }
-    } while (--entriesLeft != 0);
+    } while (--left != 0);
   }
 }
 
@@ -1044,9 +990,7 @@ static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   struct Actor *actor = Actor_Get(actorId);
 
   if (actor != 0) {
-    u8 *spriteStorageKind = &actor->spriteStorageKind;
-
-    *spriteStorageKind = storageKind;
+    actor->spriteStorageKind = storageKind;
   }
 }
 
@@ -1541,13 +1485,7 @@ static void TolbiSpring_InitializeTossSimulation(void) {
                         ANIM_TURTLE_SWIM);
   Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
                         ANIM_TURTLE_SWIM);
-
-  {
-    s32 budget = 3203;
-    void (*task)(void) = TolbiSpring_UpdateTossSimulation;
-
-    Task_AddFrame(task, budget);
-  }
+  Task_AddFrame(TolbiSpring_UpdateTossSimulation, TASK_PASS_FRAME + 3);
 }
 
 /// Launches the chosen coin or medal and waits for its final prize ring.

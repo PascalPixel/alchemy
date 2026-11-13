@@ -3,23 +3,9 @@
 /// Fizz, Forge or Gust gives that Djinni.
 
 #include "module/debug/test_scenes.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
 #include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
-#include "battle_unit.h"
 #include "flags.h"
 #include "djinn_ids.h"
 
@@ -29,13 +15,9 @@
 /// gives, placed while its flag (FLAG_DJINN_FIRST + element *
 /// DJINN_PER_ELEMENT) is clear.
 enum TestActorId {
-  /// ★ Named from the game: "Flint" (MsgDjinnName)
   ACTOR_FLINT = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Fizz" (MsgDjinnName)
   ACTOR_FIZZ,
-  /// ★ Named from the game: "Forge" (MsgDjinnName)
   ACTOR_FORGE,
-  /// ★ Named from the game: "Gust" (MsgDjinnName)
   ACTOR_GUST
 };
 

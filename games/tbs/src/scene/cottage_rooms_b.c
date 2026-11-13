@@ -26,21 +26,15 @@
 ///   (COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH and
 ///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from
 ///   ValeKradensCottage).
-///   ★ Named from what the player sees: Kraden's study, its walls lined with
-///   bookcases around a great pot (its render)
 /// - Vale's inn: the innkeeper's counter on the ground floor
 ///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST, from ValePlaza's
 ///   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH) and the guest room upstairs
 ///   (COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR).
 /// - Vale's forge, where the young smith works beside his mother
 ///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
-///   ★ Named from what the player sees: a forge with its furnace and anvil
-///   (its render)
 /// - A second forge room, stocked with sacks and crates beneath weapons and a
 ///   shield on its wall. Its doorway in ValePlaza opens only once the party
 ///   is back from Kalay (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
-///   ★ Named from what the player sees: a forge room of sacks and crates with
-///   weapons and a shield on its wall (its render)
 /// - Babi's Palace, in Tolbi: the room of Babi's scholars
 ///   (COTTAGE_ROOMS_B_FROM_BABI_PALACE).
 ///
@@ -154,13 +148,10 @@ static void CottageRoomsB_ShowMythrilBag(void);
 static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
-// Shared facing code retains its position before the overlay entry points.
 #include "shared/actor_facing.h"
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
 /// she is well.
-/// ★ Named from the game: "Are you telling me you were surprised to see me in
-/// bed?" (MsgValeWhoToldIll)
 #define FLAG_VALE_DORA_OUT_OF_BED FLAG_SCENE_TEMP_03
 
 /// Vale's placed actors, numbered by the rows of
@@ -170,61 +161,42 @@ static void CottageRoomsB_DemonstrateCatch(void);
 /// inn's, and differ after them (CottageRoomsBAfterKalayActorId).
 enum CottageRoomsBActorId {
   /// Isaac's mother, a woman with fair hair tied up. "Isaac, wake up!"
-  /// ★ Named from the game: "your mother, Dora, has been crying"
-  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED,
   /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in
   /// vale_prologue.c). "Isaac, Dora, hurry! The Boulder could fall at any
   /// second!"
-  /// ★ Named from the game: "Kyle, watch out!"
-  /// (MsgValeKyleWatchOutTheBoulderThe)
   ACTOR_KYLE,
   /// SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke. It is
   /// placed outside the house only for CottageRoomsB_HurryToThePlaza. There it
   /// shakes, then flares up as its animation turns from flame to smoke, and
   /// rises 18 pixels as it shrinks away.
-  /// ★ Named from what the player sees: a small flame, then wisps of smoke,
-  /// spr_208.png (its render)
   ACTOR_FLAME_AND_SMOKE,
   /// A young man with brown hair who lost his father in the storm and means to
   /// be a smith. "My father also died in that storm three years ago." Once the
   /// party has left, "By then, I'll surely be a fine smith."
-  /// ★ Named from the game: "My father also died in that storm three years
-  /// ago." (MsgValeMyFatherAlsoDiedInThat)
   ACTOR_YOUNG_SMITH,
   /// ACTOR_YOUNG_SMITH's mother, a woman in a long blue dress. "My son is
   /// still young, so I don't make him work too long."
-  /// ★ Named from the game: "My son is still young"
-  /// (MsgValeMySonIsStillYoungSo)
   ACTOR_YOUNG_SMITHS_MOTHER,
   /// A woman with red-brown hair in a pink dress and a white apron.
-  /// ★ Named from the game: "Is it the innkeeper?" (MsgValeCoughCoughWho)
   ACTOR_INNKEEPER,
   /// A young man with brown hair who walks about the inn. "One of the men from
   /// that group staying here wore a mask over his face."
-  /// ★ Named from the game: "wore a mask over his face"
-  /// (MsgValeOneOfTheMenFromThat)
   ACTOR_YOUNG_MAN_SAW_MASK,
   /// A woman with fair hair at the inn. "Two of those three guests staying with
   /// us have gone out." Mind Read later hears "I found his wallet when I was
   /// cleaning the room..."
-  /// ★ Named from the game: "We're a small hotel, and we get few guests"
-  /// (MsgValeWereASmallHotelAndWe)
   ACTOR_INN_WORKER,
   /// Masked Felix (SPRITE_FELIX_MASKED, sol_sanctum_eruption.h), in a room of
   /// the inn before the party leaves Vale. "Hey... Boy... Do you have business
   /// with me?"
-  /// ★ Named from the game: "That masked man..." (MsgValeTheMaskedManWasFelix)
   ACTOR_MASKED_MAN,
   /// SPRITE_TUNIC, set beside Isaac's bed on the stormy night. Catch reaches it
   /// and Isaac puts it on (FLAG_ISAAC_WEARS_TUNIC). Dora says "Don't go out
   /// without your tunic!"
-  /// ★ Named from the game: "Don't go out without your tunic!"
-  /// (MsgValeComeOnHurry)
   ACTOR_TUNIC,
   /// Kraden's sprite (SPRITE_KRADEN, as in Sol Sanctum's events), seen only
   /// from COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG.
-  /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   ACTOR_KRADEN
 };
 
@@ -234,7 +206,6 @@ enum CottageRoomsBAfterKalayActorId {
   /// A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
   /// so much, I almost didn't recognize you!" Mind Read hears of Dora's
   /// illness.
-  /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   ACTOR_MAN_ISAAC_HAS_GROWN = ACTOR_FIRST_PLACED + 8,
   // XXX (no evidence): what the next was meant to do; nothing the player can
   // do shows a use.
@@ -252,42 +223,30 @@ enum CottageRoomsBBabiScholarActorId {
   /// An old scholar with a white beard in a blue cap, who tells of the ruins
   /// where Babi Lighthouse stands. "Originally, there were ancient ruins at the
   /// site of Babi Lighthouse."
-  /// ★ Named from the game: "Babi makes his scholars perform all sorts of
-  /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_SCHOLAR_ANCIENT_RUINS = ACTOR_FIRST_PLACED,
   /// A scholar with glasses in a blue cap, whose experiments fail. "No matter
   /// how many times I run the experiment, I never get the results I want!"
   /// After the finals he asks whether the party knows Kraden.
-  /// ★ Named from the game: "No matter how many times I run the experiment"
-  /// (MsgBabiNoMatterHowManyTimesI)
   ACTOR_SCHOLAR_EXPERIMENT,
   /// An old scholar with a white beard in a blue cap, who tells of Alchemy
   /// sealed away. "It is said that long ago, the power of Alchemy was sealed
   /// away."
-  /// ★ Named from the game: "the power of Alchemy was sealed away."
-  /// (MsgBabiItIsSaidThatLongAgo)
   ACTOR_SCHOLAR_SEALED_ALCHEMY,
   /// A scholar with glasses in a blue cap, who tells of the Venus Ruins.
   /// "Originally, the ancient Venus Ruins lay buried under Babi Lighthouse."
-  /// ★ Named from the game: "Originally, the ancient Venus Ruins lay buried"
-  /// (MsgBabiOriginallyTheAncientVenusRuinsLay)
   ACTOR_SCHOLAR_VENUS_RUINS,
   /// An old man with a cane who walks about the room. "Babi makes his scholars
   /// perform all sorts of research. I wonder where Babi's favorite scholar,
   /// Kraden, is now?"
-  /// ★ Named from the game: "Babi makes his scholars perform all sorts of
-  /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_OLD_MAN_ON_BABIS_RESEARCH
 };
 
 /// Vale's area flags this scene keeps while the party is in Vale.
 enum CottageRoomsBAreaFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
-  /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = FLAG_AREA_TEMP_00,
   /// Back from Kalay, ACTOR_MAN_ISAAC_HAS_GROWN remarked how much Isaac
   /// has grown.
-  /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   FLAG_VALE_MAN_SAW_ISAAC_GROWN = FLAG_AREA_TEMP_01
 };
 
@@ -559,11 +518,10 @@ static void CottageRoomsB_ExitToValePrologueEast(void) {
 /// CottageRoomsB_DoraWakesIsaac. Back from Kalay, Dora is put back in her
 /// sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
 s32 CottageRoomsB_Initialize(void) {
-  struct Actor *actor;
 
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-    ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+    gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -578,8 +536,7 @@ s32 CottageRoomsB_Initialize(void) {
     }
     Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      actor = Actor_Get(ACTOR_INVISIBLE_AFTER_KALAY);
-      Actor_SetSpriteFlags(actor, 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_AFTER_KALAY), 0);
       if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
           gMainRoutineWork.entrance ==
               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
@@ -589,8 +546,7 @@ s32 CottageRoomsB_Initialize(void) {
           }
         } else {
           TilesetAnim_Resume(11);
-          actor = Actor_Get(ACTOR_DORA);
-          Actor_SetSpriteFlags(actor, 0);
+          Actor_SetSpriteFlags(Actor_Get(ACTOR_DORA), 0);
           Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_IN_BED);
         }
       }
@@ -608,7 +564,7 @@ s32 CottageRoomsB_Initialize(void) {
               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG) {
             CottageRoomsB_ShowMythrilBag();
           } else {
-            ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+            gFieldWork->transition =
                 SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
@@ -649,11 +605,10 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   struct Actor *viewCenter;
-  struct FieldWork **eventSlot;
+  struct FieldWork **field = (struct FieldWork **)&gHeapSlots[HEAP_SLOT_FIELD];
   struct FieldWork *work;
 
-  eventSlot = (struct FieldWork **)Ram_FieldWork;
-  work = *eventSlot;
+  work = *field;
   grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
   viewCenter = work->camera;
   sprite = Actor_Get(ACTOR_TUNIC)->sprite;
@@ -695,11 +650,11 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   viewCenter->z.fixed = px(691);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  (*eventSlot)->transition =
+  (*field)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  (*eventSlot)->transitionFrames = 64;
+  (*field)->transitionFrames = 64;
   Weather_StartLightning();
-  (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
+  ((struct FieldBlendWork **)field)[HEAP_SLOT_FIELD_BLEND - HEAP_SLOT_FIELD]
       ->loud = 1;
   Weather_LastLightning();
   wait(30);
@@ -786,7 +741,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // sorry, but we don't have time..."
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    (*eventSlot)->message++;
+    (*field)->message++;
   }
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
@@ -796,8 +751,8 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
   Event_Wait(20);
-  (*eventSlot)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  (*eventSlot)->transitionFrames = 16;
+  (*field)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  (*field)->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -844,8 +799,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   actor->motionFlags = 0;
   sprite->image.priority = 1;
   Actor_SetScript(ACTOR_FLAME_AND_SMOKE, gCottageRoomsB_FlameShakesScript);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
   MapGrid_CopyCellsTo(90, 16, 90, 20, 5, 4);
   MapGrid_CopyCellsTo(77, 23, 82, 23, 5, 7);
@@ -906,8 +860,6 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   alpha = &REG_BLDALPHA;
 
   // The flame brightens over four frames, then fades away over sixteen.
-  // The brightening is written with goto: as do { } while (++i <= 3), tbs-en
-  // does not match.
   i = 0;
 ramp:
   *alpha = BLEND_ALPHA(14, 16) + i;
@@ -942,9 +894,8 @@ ramp:
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_RunToPlazaScript);
   Actor_RunScriptAndWait(ACTOR_PARTY_LEADER, gCottageRoomsB_RunToPlazaScript);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA);
@@ -1299,7 +1250,6 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
 
 #include "shared/color_mode_cycle.h"
 
-// Shared vertical-effect update routines precede their paired-effect creator.
 #include "shared/field_effect_vertical.h"
 
 /// Copies the parent's ground height into two oppositely moving vertical
@@ -1355,7 +1305,6 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-// Shared Psynergy setup precedes the scene's Psynergy wrappers.
 #include "shared/event_psynergy.h"
 
 /// Cycles Dora's palette and gives off pairs of effects.

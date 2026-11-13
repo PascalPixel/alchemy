@@ -10,7 +10,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "mercury_lighthouse.h"
 #include "iwram_call.h"
 #include "event.h"
@@ -126,12 +125,11 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   }
 
   // Alternate the light's draw parameter every two frames and redraw it.
-  // The sprite slot is read by its offset, the plain-C form of
-  // actor->sprite this site matches with (scene/README.md): through
-  // Actor's single/group union the movs r0, #1 and the sprite load swap.
   {
-    struct Sprite *sprite =
-        *(struct Sprite **)((u8 *)actor + offsetof(struct Actor, sprite));
+    /* FAKEMATCH(temporary): the sprite read through a pointer to its slot; as
+     * actor->sprite, 2 of 40 instructions differ in tbs-en. */
+    struct Sprite **slot = &actor->sprite;
+    struct Sprite *sprite = *slot;
     struct SpriteAnimation *entry = sprite->entries[0];
 
     entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
@@ -194,8 +192,7 @@ void MercuryLighthouse_ChargeLights(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  leader = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-               ->actors[gMainRoutineWork.leaderActorId];
+  leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
   if ((u32)state->levels > 2)
     return;
   Event_Start();
@@ -210,10 +207,9 @@ void MercuryLighthouse_ChargeLights(void) {
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
       actor->watchedActor = leader;
       actor->motionFlags = ACTOR_FLOATS;
-      // The height is written by its offset, the plain-C form of obj->y.fixed
-      // this site matches with (scene/README.md): as the field, the sprite's
-      // reload moves after the add and store.
-      *(s32 *)((u8 *)actor + offsetof(struct Actor, y)) += -px(1) / 2;
+      /* FAKEMATCH(temporary): the height lowered as a plain word, outside its
+       * union; as actor->y.fixed, 2 of 80 instructions differ in tbs-en. */
+      *(s32 *)&actor->y -= px(1) / 2;
       if (sprite != 0) {
         sprite->flags = 0;
         sprite->image.priority = 1;
@@ -359,7 +355,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   actor->speedLimit = px(3);
   actor->acceleration = px(2);
   actor->velocityY = px(4);
-  *flags &= 0x7e;
+  *flags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlags(actor, 0);
   Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part.pixel,
                           pos[2].part.pixel);
@@ -400,13 +396,12 @@ void MercuryLighthouse_RippleAroundLeader(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  point = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-              ->actors[gMainRoutineWork.leaderActorId];
+  point = gFieldWork->actors[gMainRoutineWork.leaderActorId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
   } else {
     MercuryLighthouse_SpawnRipple(point);
-    state->rippleTimer = ((u32)(Import_RandomNext() * 30) >> 16) + 10;
+    state->rippleTimer = (Random_Below(30)) + 10;
   }
 }
 

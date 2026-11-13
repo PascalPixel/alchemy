@@ -3,86 +3,15 @@
 /// It is the first code of bank 04, linked before the field sequence's object.
 
 #include "module/system/main_routine.h"
-#include "module/field/battle_music.h"
-#include "module/field/world_map_encounter_rules.h"
-#include "vram_cache.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "types.h"
-#include "battle_action_run.h"
-#include "main_routine_work.h"
 #include "scene.h"
-#include "playback_queue.h"
-#include "edition.h"
-#include "far_call.h"
 #include "battle.h"
-#include "battle_unit.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "sound.h"
 #include "system.h"
-#include "heap_release.h"
 #include "dma.h"
-#include "scene_ids.h"
-#include "io_reg.h"
-#include "io_write.h"
-#include "irq.h"
-#include "task.h"
 #include "flags.h"
 #include "iwram_call.h"
-#include "field_work.h"
-#include "resource_ids.h"
-#include "speaker.h"
-#include "battle_sprite_id.h"
-#include "scene_tables.h"
-#include "map_grid.h"
 #include "map_grid_scroll.h"
-#include "ram_buffer.h"
-#include "heap_slots.h"
-#include "actor.h"
-#include "sprite.h"
-#include "actor_builtin_scripts.h"
 #include "event.h"
-#include "heap.h"
-#include "input.h"
-#include "sounds.h"
-#include "sound_driver_symbols.h"
-#include "fixed_math.h"
-#include "range_falloff.h"
-#include "display_transition.h"
-#include "text/msg_ids.h"
-#include "ground_mask.h"
-#include "item.h"
-#include "battle_actor.h"
-#include "static_assert.h"
-#include "frame.h"
-#include "io_write_queue.h"
-#include "palette_buffers.h"
-#include "item_ids.h"
-#include "inventory.h"
-#include "battle_status.h"
-#include "window.h"
-#include "battle_side.h"
-#include "actor_arm_view.h"
-#include "tbs_edition.h"
-#include "sprite_metadata.h"
-#include "field_coordinate.h"
-#include "line_scroll.h"
-#include "field_blend.h"
 #include "field_psynergy_work.h"
-#include "field_particle.h"
-#include "field_effect_scripts.h"
-#include "menu_list.h"
-#include "field_effect.h"
-#include "fixed_point_position.h"
-#include "macros.h"
-#include "ability_ids.h"
-#include "sprite_ids.h"
-#include "field/encounter_zone.h"
 
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
@@ -96,15 +25,11 @@
 #define EXIT_TABLE_END 0x1ff
 #define EXIT_ID_ANY 0xff
 
-/// Chooses the scene and entrance to go to when the party leaves the
-/// current scene. exitId is the kind of exit FieldSequence_Run ended on; the
-/// scene's exit table gives the first exit of that kind (or of any kind) whose
-/// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
-/// exits falls back to the scene of its first exit, at entrance 0.
-/// Called by MainRoutine_Run with FieldSequence_Run's result; sets
-/// gMainRoutineWork.next and .entrance, and leaves them alone for
-/// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
-/// no header in the table.
+/// Chooses the scene and entrance to go to when the party leaves the current
+/// scene. exitId is the kind of exit FieldSequence_Run ended on; the scene's
+/// exit table gives the first exit of that kind (or of any kind) whose flag, if
+/// it has one, is not set. An exit of kind 0 or the end of the scene's exits
+/// falls back to the scene of its first exit, at entrance 0.
 void Scene_TakeExit(s32 exitId) {
   s16 currentMap;
   const u32 *exitTable;
@@ -168,19 +93,14 @@ void Scene_TakeExit(s32 exitId) {
 }
 
 /// Chooses where the game continues after a sequence other than the field
-/// sequence (see MainRoutine_Run). result is its result:
-/// -1 when the party was defeated, which revives the leader with 1 HP (and,
-/// with FLAG_CHILDHOOD, fully heals Isaac and Garet) and
-/// returns to the story battle's defeat point
-/// (Event_SetDefeatDestination) or, when none is set, to the restart
-/// point, usually the last Sanctum (Scene_SetRestartPoint). Any other
-/// result goes to the after-battle destination an event set, or to the return
-/// point (the scene the battle or minigame was started from) with the party
-/// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// MainRoutine_Run after each sequence other than the field sequence (the
-/// ids from SEQUENCE_NONE up); stores result in
-/// gMainRoutineWork.sequenceResult and sets gMainRoutineWork.next and
-/// .entrance.
+/// sequence (see MainRoutine_Run). result is its result: -1 when the party was
+/// defeated, which revives the leader with 1 HP (and, with FLAG_CHILDHOOD,
+/// fully heals Isaac and Garet) and returns to the story battle's defeat point
+/// (Event_SetDefeatDestination) or, when none is set, to the restart point,
+/// usually the last Sanctum (Scene_SetRestartPoint). Any other result goes to
+/// the after-battle destination an event set, or to the return point (the scene
+/// the battle or minigame was started from) with the party keeping its position
+/// (FLAG_KEEP_PARTY_POSITION).
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
@@ -239,9 +159,8 @@ void Scene_ReturnFromSequence(s32 result) {
   }
 }
 
-/// Returns the area sceneId belongs to. The scenes of one area
-/// share their music, area name and the flags kept while inside it. Called by
-/// Area_GetNameIndex.
+/// Returns the area sceneId belongs to. The scenes of one area share their
+/// music, area name and the flags kept while inside it.
 s32 Scene_GetArea(s32 sceneId) { return gScenes[sceneId].area; }
 
 /// The last two 16-colour background palettes, which the minigame runners save
@@ -261,12 +180,10 @@ enum {
     void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);                          \
     s32 result;                                                                \
                                                                                \
-    Dma_Set(palette, saved,                                                    \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+    Dma_Set(palette, saved, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4),        \
             REG_DMA3);                                                         \
     result = start(entrance);                                                  \
-    Dma_Set(saved, palette,                                                    \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+    Dma_Set(saved, palette, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4),        \
             REG_DMA3);                                                         \
     Heap_Release(saved);                                                       \
     return result;                                                             \
@@ -386,7 +303,6 @@ void MainRoutine_Run(s32 mode) {
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by MainRoutine_Run before FieldSequence_Run.
 void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
@@ -396,15 +312,12 @@ void Scene_LoadOverlay(s32 unused) {
 
 #define MAP_HEADER(id) (&gScenes[id])
 
-/// Updates the flags and state that last for one scene or one area, on
-/// entering the current scene. Unless keep is set (the party returns to where
-/// it was, as after a battle), the flags of the last scene are cleared, and on
-/// entering a new area so are the area's flags and step
-/// counters, the area name is shown and the entrance becomes the
-/// point Retreat returns to. Then the area's visited flag
-/// (FLAG_AREA_VISITED) is set. Called by MainRoutine_Run before each
-/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets
-/// gMainRoutineWork.area and .sceneType.
+/// Updates the flags and state that last for one scene or one area, on entering
+/// the current scene. Unless keep is set (the party returns to where it was, as
+/// after a battle), the flags of the last scene are cleared, and on entering a
+/// new area so are the area's flags and step counters, the area name is shown
+/// and the entrance becomes the point Retreat returns to. Then the area's
+/// visited flag (FLAG_AREA_VISITED) is set.
 void Scene_Arrive(s32 unused, s32 keep) {
   s32 area = MAP_HEADER(gMainRoutineWork.next)->area;
   s32 flag;
@@ -448,9 +361,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
   GameFlag_RefreshLureCapFar();
 }
 
-/// Starts the current scene's field music, chosen by
-/// Scene_ChooseMusic. Called by MainRoutine_Run, and by
-/// 34 scene overlays through Scene_PlayMusicFar.
+/// Starts the current scene's field music, chosen by Scene_ChooseMusic.
 void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 
 #undef EXIT_SCENE_MASK

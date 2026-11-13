@@ -83,8 +83,6 @@
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.
-/// ★ Named from the game: "Please...can we go now?"
-/// (MsgSolSanctumKradenCouldThatBeThe)
 #define FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING FLAG_SCENE_TEMP_46
 
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
@@ -122,18 +120,13 @@ enum SolSanctumEruptionCorner {
 };
 
 enum {
-  /// ★ Named from the game: "Could that be . . . the Wise One?!?"
-  /// (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_WISE_ONE = ACTOR_ALEX + 1,
   /// The sixteen crystals thrown out in a ring.
-  /// ★ Named from what the player sees: a blue crystal that bursts into
-  /// sparkles (its render)
   ACTOR_FIRST_CRYSTAL = ACTOR_WISE_ONE + 1,
   CRYSTAL_COUNT = 16
 };
 
 /// The star the Wise One has the leader take out, lifted above him.
-/// ★ Named from its area name: Elemental Star Room
 enum { ACTOR_ELEMENTAL_STAR = 22 };
 
 #define ELEMENTAL_ARC_SCALE_X_DECREASE 7372
@@ -189,23 +182,10 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING, plays
 /// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageEvent(void) {
-  void Actor_ShowEmote();
-  void PaletteFade_ApplyTarget();
-  void Sound_Play();
-
   struct Actor *actor;
   struct WeatherWork *sparkles;
-#ifndef UBFIX
-  struct WeatherWork **particleWorkSlot;
-  struct FieldWork **fieldWorkSlot;
-#endif
 
-#ifdef UBFIX
-  sparkles = gWeatherWork;
-#else
-  particleWorkSlot = &gWeatherWork;
-  sparkles = *particleWorkSlot;
-#endif
+  sparkles = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
   Event_Start();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
@@ -217,17 +197,9 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   SolSanctumEruption_PlaceHostageGroup();
   Actor_SetSpritePriority(ACTOR_WISE_ONE, 1);
-#ifndef UBFIX
-  // UB: these are separate work-pointer globals.
-  fieldWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);
-#endif
   FieldCamera_MoveTo(232, CAMERA_KEEP, 156, 0);
   MapGrid_CenterOnFollowedPoint();
-#ifdef UBFIX
   gFieldWork->transitionFrames = 8;
-#else
-  (*fieldWorkSlot)->transitionFrames = 8;
-#endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
@@ -508,7 +480,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 30);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(20);
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_MENARDI, 1);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 332);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);
@@ -717,16 +689,14 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
 
 /// Resets the sixteen ember slots and their emission timers.
 static void SolSanctumEruption_ResetEmberEmission(void) {
-  s32 *stateSlot;
   u32 emberIndex;
 
   gEmberMask = 63;
   gEmberTimer = 0;
   gEmberLevel = 0;
   gEmberLevelTimer = 120;
-  stateSlot = gEmberState;
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    *stateSlot++ = 0;
+    gEmberState[emberIndex] = 0;
   }
 }
 
@@ -739,7 +709,6 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
 static void SolSanctumEruption_StepEmbers(void) {
   struct WeatherWork *sparkles;
   s32 shakePixels;
-  s32 shakeTimer;
   u8 emberIndex;
   struct Actor *landedEmber;
   struct Actor *ember;
@@ -756,9 +725,8 @@ static void SolSanctumEruption_StepEmbers(void) {
     sparkles->stopped = 1;
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
-  shakeTimer = gEmberTimer;
-  if (shakeTimer != 0)
-    gEmberTimer = shakeTimer - 3;
+  if (gEmberTimer != 0)
+    gEmberTimer -= 3;
 
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
     if (gEmberState[emberIndex] != 0) {
@@ -789,7 +757,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   if (gEmberMask & gFrameCount)
     return;
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    angle = Math_RemainderUnsigned(Import_RandomNext(), 0xffff);
+    angle = Math_RemainderUnsigned(Random_Next(), 0xffff);
     ember = Actor_Get(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
@@ -802,21 +770,17 @@ static void SolSanctumEruption_StepEmbers(void) {
       ember->sprite->image.priority = 1;
       Actor_SelectAnimation(ember, 2);
       Actor_StartScript(ember, gEruption_EmberScript);
-      ember->x.fixed =
-          Iwram_MulQ16(Trig_Cos((u16)angle),
-                       (((u32)(Import_RandomNext() << 8) >> 16) << 16) +
-                           px(256)) +
-          px(325);
+      ember->x.fixed = Iwram_MulQ16(Trig_Cos((u16)angle),
+                                    ((Random_Below(256)) << 16) + px(256)) +
+                       px(325);
       ember->y.fixed = 0;
-      ember->z.fixed =
-          Iwram_MulQ16(Trig_Sin((u16)angle),
-                       (((u32)(Import_RandomNext() << 8) >> 16) << 16) +
-                           px(256)) +
-          px(302);
+      ember->z.fixed = Iwram_MulQ16(Trig_Sin((u16)angle),
+                                    ((Random_Below(256)) << 16) + px(256)) +
+                       px(302);
       x = Iwram_MulQ16(Trig_Cos((u16)angle),
-                       ((Import_RandomNext() & 63) << 16) + px(8));
+                       ((Random_Next() & 63) << 16) + px(8));
       z = Iwram_MulQ16(Trig_Sin((u16)angle),
-                       ((Import_RandomNext() & 63) << 16) + px(8));
+                       ((Random_Next() & 63) << 16) + px(8));
       FieldActor_SetMoveTargetFixed(ember, x + px(325), 0, z + px(286));
       Actor_SetSpriteColor(ember, SPRITE_COLOR_NORMAL);
       gEmberTimer = 30;
@@ -838,25 +802,25 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
   if (gEmberLevel != 0) {
     gEmberLevel--;
   } else {
-    gEmberLevel = (u32)(Import_RandomNext() << 2) >> 16;
+    gEmberLevel = Random_Below(4);
   }
   emissionLevel = gEmberLevel;
   switch (emissionLevel) {
   case 3:
     gEmberMask = emissionLevel;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 20) >> 16) + 40;
+    gEmberLevelTimer = (Random_Below(20)) + 40;
     break;
   case 2:
     gEmberMask = 15;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 40) >> 16) + 80;
+    gEmberLevelTimer = (Random_Below(40)) + 80;
     break;
   case 1:
     gEmberMask = 63;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 80) >> 16) + 160;
+    gEmberLevelTimer = (Random_Below(80)) + 160;
     break;
   default:
     gEmberMask = 127;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 160) >> 16) + 320;
+    gEmberLevelTimer = (Random_Below(160)) + 320;
     break;
   }
 }
@@ -875,10 +839,9 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
 /// warns them of Alchemy's threat and sends them out as the volcano erupts.
 /// Isaac keeps the Star.
 ///
-/// Called by SolSanctumEruption_PlayHostageEvent. Sets FLAG_SOL_SANCTUM_ERUPTED
-/// and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes
-/// SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of Sol and
-/// Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
+/// Sets FLAG_SOL_SANCTUM_ERUPTED and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and
+/// takes SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of
+/// Sol and Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct WeatherWork *sparkles;
   struct Actor *wiseOne;
@@ -994,7 +957,6 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_Jump(ACTOR_GARET, 2, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(40);
-  // Garet: "Jenna and Kraden are gone!"
   Event_SetMessageId(MsgSolSanctumFriendsGone);
   // "Jenna and Kraden are gone!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
@@ -1538,10 +1500,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Import_EventSetExitRequest(
       SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
-  // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
-  // table, script or function, and render probe flag-reads, watching every
-  // flag test and every byte and nibble read in the maps after the
-  // eruption, sees none.
+  // XXX (no evidence): what flag 0x100 records; nothing else sets it and
+  // nothing in the game reads it.
   GameFlag_Set(0x100);
 }
 
@@ -1597,7 +1557,7 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
 /// it.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
+    if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
       SolSanctumEruption_DrawFirstCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawFirstCollapseTiles(0);
@@ -1608,7 +1568,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
 /// Randomly alternates the second tile patch on even frames, as the first.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
+    if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
       SolSanctumEruption_DrawSecondCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawSecondCollapseTiles(0);
@@ -1729,7 +1689,6 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
 ///
 /// Run each frame as a task while SolSanctumEruption_RaiseElementalArcs runs.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
-
   u32 arcIndex;
   s32 age;
   struct Actor *actor;
@@ -1739,7 +1698,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
     if (age != 0) {
       actor = gArcEffects[arcIndex];
       if ((u32)age <= 8) {
-        actor->scaleX += -ELEMENTAL_ARC_SCALE_X_DECREASE;
+        actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
         actor->scaleY += Q16_ONE / 2;
         actor->y.fixed += px(3) / 10;
         actor->targetY += px(3) / 10;
@@ -1783,7 +1742,6 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
 
 /// Restores eight corner-cell cell behaviors from the chamber placements.
 static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
-
   MapGrid_CopyCellAttributes(14, 8, 1, 1, 10, 0);
   MapGrid_CopyCellAttributes(14, 28, 1, 1, 11, 0);
   MapGrid_CopyCellAttributes(44, 8, 1, 1, 12, 0);

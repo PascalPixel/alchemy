@@ -10,23 +10,13 @@ enum CollapseActorId {
   /// blank actor, whose sprite draws only its shadow, shrunk with
   /// the departing actor, whose own shadow is turned off
   /// (SolSanctumEruption_RaiseAndShrinkActor).
-  /// ★ Named from what the player sees: the shadow that shrinks on the
-  /// platform as each of them rises away (its render)
   ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
-  /// ★ Named from the game: "But, Saturos, there's still a chance they might
-  /// survive." (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_SATUROS,
-  /// ★ Named from the game: "Menardi!" (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_MENARDI,
   /// Felix in his mask, before the star room unmasks him.
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX_MASKED,
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
-  /// ★ Named from the game: "Alex ... Are you breaking our promise?"
-  /// (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_ALEX
 };
 

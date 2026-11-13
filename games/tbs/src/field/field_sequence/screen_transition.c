@@ -43,22 +43,13 @@ void FieldEffect_StartWindowHBlankDma(void) {
 ///
 /// A task (priority TASK_PASS_FRAME), added with
 /// FieldEffect_StartWindowHBlankDma; it removes both and stops DMA 0 when a
-/// transition with no next mode ends. Writes the hidden page of the
-/// transition state (HEAP_SLOT_SCREEN_TRANSITION) and then flips state->page.
+/// transition with no next mode ends.
 void ScreenTransition_UpdateScanlineTable(void) {
   struct ScreenTransitionState *state;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
   struct MapGridScrollWork *grid;
   u16 *scanlineData;
-#ifndef UBFIX
-  // UB: viewX is a scalar, so indexing its address cannot reach viewY. Modern
-  // code reads the actual members below.
-  s32 *viewInverse;
-  s32 *viewRipple;
-  s32 *viewLeader;
-  s32 *viewLeaderLow;
-#endif
   struct Actor *actor;
   u32 i;
   s32 k;
@@ -79,12 +70,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   s32 oppositeEdges;
 
   grid = gMapGridWork[0];
-#ifdef UBFIX
   state = gScreenTransitionWork;
-#else
-  // UB: this indexes past gMapGridWork into the separate transition-work cell.
-  state = gMapGridWork[23];
-#endif
 
   // Finish or advance the timed phase before generating the hidden page.
   if (state->duration != 0) {
@@ -298,14 +284,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_INVERSE: {
     s32 ax;
 
-#ifdef UBFIX
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewInverse = &grid->viewX;
-    ax = viewInverse[0] & FIELD_PIXEL_MASK;
-    cameraY = viewInverse[1] & FIELD_PIXEL_MASK;
-#endif
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     // Centred on the leader's place on screen, 16 pixels above its feet.
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
@@ -354,15 +338,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     break;
   }
-  case WINDOW_TRANSITION_RIPPLE:
-#ifdef UBFIX
-    cameraX = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY8 = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewRipple = &grid->viewX;
-    cameraX = viewRipple[0] & FIELD_PIXEL_MASK;
-    cameraY8 = viewRipple[1] & FIELD_PIXEL_MASK;
-#endif
+  case WINDOW_TRANSITION_RIPPLE: {
+    s32 *view = grid->view;
+
+    cameraX = view[0] & FIELD_PIXEL_MASK;
+    cameraY8 = view[1] & FIELD_PIXEL_MASK;
+  }
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
@@ -416,14 +397,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER: {
     s32 ax;
 
-#ifdef UBFIX
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewLeader = &grid->viewX;
-    ax = viewLeader[0] & FIELD_PIXEL_MASK;
-    cameraY = viewLeader[1] & FIELD_PIXEL_MASK;
-#endif
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
@@ -466,14 +445,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_LOW: {
     s32 ax;
 
-#ifdef UBFIX
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewLeaderLow = &grid->viewX;
-    ax = viewLeaderLow[0] & FIELD_PIXEL_MASK;
-    cameraY = viewLeaderLow[1] & FIELD_PIXEL_MASK;
-#endif
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in
@@ -525,12 +502,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
 /// Starts window transition mode at value 0, with no duration: the caller
 /// moves it.
 ///
-/// Called by Reveal (WINDOW_TRANSITION_RIPPLE) and, through
-/// ScreenTransition_InitializeBattleEffectStateFar, by three scenes (Altmiller
-/// Cave, Tret Tree's branch and Babi's palace). Allocates and clears the
-/// transition state in HEAP_SLOT_SCREEN_TRANSITION and adds both window
-/// tasks; its mask (WININ_WIN0_ALL | WININ_WIN1_ALL) shows every layer in both
-/// windows.
+/// Allocates and clears the transition state in HEAP_SLOT_SCREEN_TRANSITION and
+/// adds both window tasks; its mask (WININ_WIN0_ALL | WININ_WIN1_ALL) shows
+/// every layer in both windows.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
@@ -553,9 +527,6 @@ UNUSED void ScreenTransition_SuspendCallbacks(void) {
 
 /// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
 /// clears it.
-///
-/// Called by ScreenTransition_Start and ScreenTransition_Finish for every
-/// kind but the two fades.
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   struct ScreenTransitionState *state;
 
@@ -571,11 +542,9 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// It returns after one frame while the fade runs on: a caller that must wait
 /// for it, as FieldSequence_Run does, waits itself.
 ///
-/// Called by FieldSequence_Run to fade a scene in with work->transition and
-/// work->transitionFrames, and by Event_StartScreenTransition for
-/// events. Every style but the fades adds a task (and the centre
-/// line the HBlank handler, IRQ 1) that runs the transition; every kind
-/// ORs the map's display bits into DISPCNT through the I/O write queue.
+/// Every style but the fades adds a task (and the centre line the HBlank
+/// handler, IRQ 1) that runs the transition; every kind ORs the map's display
+/// bits into DISPCNT through the I/O write queue.
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct ScreenTransitionWin *display;
   s32 variant;
@@ -667,13 +636,9 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades
 /// it in.
 ///
-/// Called by FieldSequence_Run as a scene ends, by
-/// Field_StartEncounterTransition before a battle (the flickering centre line,
-/// and the WINDOW_TRANSITION_LEADER_INVERSE window), and by
-/// Event_FinishScreenTransition for events. The window and
-/// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
-/// ScreenTransition_Start it does not wait for the fade: FieldSequence_Run
-/// waits transitionFrames after it.
+/// The window and dissolve kinds run from value 32 to 64, the centre line from
+/// 0 to 80. Like ScreenTransition_Start it does not wait for the fade:
+/// FieldSequence_Run waits transitionFrames after it.
 void ScreenTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
@@ -746,8 +711,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 /// (DISPCNT_BG3_ON, DISPCNT_BG2_ON and DISPCNT_BG1_ON) for each argument that
 /// is set.
 ///
-/// Reached only through its unnamed far-call veneer. ScreenTransition_Start
-/// ORs these bits into DISPCNT.
+/// ScreenTransition_Start ORs these bits into DISPCNT.
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
   struct ScreenTransitionWin *state;
@@ -964,15 +928,12 @@ void ScreenTransition_UpdateDissolve(void) {
   }
 
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
-                      (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4);
+                      DMA_COPY_WORDS(TILE_SIZE_4BPP / 4));
 }
 
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
 /// color is -1, makes tile 0 solid color. The fill is 1,280 bytes: the block's
 /// first 20 rows of 32 entries, the screen's height.
-///
-/// Sets up the dissolve for ScreenTransition_Start (colour 15),
-/// ScreenTransition_Finish and ScreenTransition_InitializeState (colour 0).
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = gScreenTransitionWork;
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 1280);
@@ -986,14 +947,14 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       *tile++ = pattern;
     Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4, REG_DMA3);
+            DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
   }
 }
 
 /// Starts a dissolve of the given mode and waits 120 frames.
 ///
 /// It sets no duration, so the dissolve stays at value 0 until a caller moves
-/// it. Reached only through its unnamed far-call veneer.
+/// it.
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 

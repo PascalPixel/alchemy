@@ -17,8 +17,8 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 /// Entrance calls it too, for Ivan's Whirlwind on the stump's ivy. The caster
 /// is the leader, with no target until FieldPsynergy_SetupActorPair names one.
 void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
-  struct FieldWork *ev = *(gHeapSlots + HEAP_SLOT_FIELD);
-  struct MapGridScrollWork *grid = *(gHeapSlots + 8);
+  struct FieldWork *ev = gFieldWork;
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   struct FieldEffectWork *effectWork;
   s32 running;
 
@@ -27,7 +27,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     effectWork = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof *effectWork);
     Dma_Fill32(running, effectWork, sizeof *effectWork);
   } else {
-    effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+    effectWork = gFieldEffectWork;
   }
   effectWork->action = abilityId;
   effectWork->fieldPsynergy = Ability_Get(abilityId)->fieldPsynergy;
@@ -55,7 +55,6 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     ev->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
-  // TASK_PASS_FRAME: the slots update once a frame.
   Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
@@ -126,7 +125,7 @@ void FieldPsynergy_End(void) {
   struct FieldWork *runtime;
   struct MapGridScrollWork *grid;
   struct FieldParticle *effectSlot;
-  s32 remaining;
+  s32 i;
 
 #ifdef UBFIX
   effectWork = gFieldEffectWork;
@@ -139,8 +138,8 @@ void FieldPsynergy_End(void) {
   runtime = *(struct FieldWork **)((u8 *)effectWorkCell - 116);
   grid = *(struct MapGridScrollWork **)((u8 *)effectWorkCell - 192);
 #endif
-  for (remaining = 0; remaining < 24; remaining++) {
-    effectSlot = &effectWork->particles[remaining];
+  for (i = 0; i < 24; i++) {
+    effectSlot = &effectWork->particles[i];
     if (effectSlot->active != 0)
       FieldEffect_ClearOwnedSlot(effectSlot);
   }
@@ -159,15 +158,15 @@ void FieldPsynergy_End(void) {
       struct Actor *slot = SETUP_OBJECT_SLOTS;
 
       active = 0;
-      remaining = 0;
-      while (remaining <= 63) {
+      i = 0;
+      while (i <= 63) {
         void (*update)(struct Actor *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;
           break;
         }
-        remaining++;
+        i++;
         slot++;
       }
 
@@ -190,14 +189,12 @@ void FieldPsynergy_End(void) {
   }
 }
 
-/// Starts casting: the caster takes its casting pose (animation 20) and
-/// stops. Unless the Psynergy is silent the caster flashes with a sound; unless
-/// it is quiet, the ability's name is shown while every other actor stands
-/// still. With FLAG_PLAY_PSYNERGY_CAST the caster's colours keep cycling and it
-/// takes pose 21; otherwise the caster's update routine stops. Sets the field
-/// work's castStarted, which FieldPsynergy_End clears. Called by
-/// Field_UsePsynergy and Goma Cave Entrance once the Psynergy's caster and
-/// target are set up.
+/// Starts casting: the caster takes its casting pose (animation 20) and stops.
+/// Unless the Psynergy is silent the caster flashes with a sound; unless it is
+/// quiet, the ability's name is shown while every other actor stands still.
+/// With FLAG_PLAY_PSYNERGY_CAST the caster's colours keep cycling and it takes
+/// pose 21; otherwise the caster's update routine stops. Sets the field work's
+/// castStarted, which FieldPsynergy_End clears.
 void FieldPsynergy_StartCast(void) {
   s32 ability;
   struct Actor *caster;
@@ -244,24 +241,23 @@ void FieldPsynergy_StartCast(void) {
 /// forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames. Most field Psynergy
 /// opens with it, and FieldPsynergy_FadeFromCastColor fades back.
 void FieldPsynergy_FadeToCastColor(void) {
-  u8 *field;
+  struct FieldWork *field;
   struct PaletteFade *work;
   s32 no;
 
   // Save the colours the buffer moves toward into the field work, 224
-  // colours of three channels (336 words) a half: the OBJ half at 0x776
-  // and, unless Reveal is active, the BG half at 0x236. While Reveal lasts
+  // colours of three channels a half: the sprite half and, unless Reveal is
+  // active, the BG half. While Reveal lasts
   // the BG target is its grey (reveal.c), and the field's own colours saved
   // before it must stay. Then show the targets at once.
-  // Both blocks are read through gHeapSlots, the spelling this site matched
-  // with; gFieldWork and gPaletteFadeWork are not measured here.
-  field = *(gHeapSlots + HEAP_SLOT_FIELD);
-  work = *(gHeapSlots + HEAP_SLOT_PALETTE_FADE);
-  Dma_Set(&work->target[672], field + 0x776, DMA_COPY_WORDS(336), REG_DMA3);
-  if (((struct FieldWork *)field)->revealActive == 0)
-    Dma_Set(work->target, field + 0x236, DMA_COPY_WORDS(336), REG_DMA3);
-  Dma_Set(work->target, work->current,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof work->current / 4),
+  field = gFieldWork;
+  work = gPaletteFadeWork;
+  Dma_Set(&work->target[672], &field->savedFadeTarget[672], DMA_COPY_WORDS(336),
+          REG_DMA3);
+  if (field->revealActive == 0)
+    Dma_Set(work->target, field->savedFadeTarget, DMA_COPY_WORDS(336),
+            REG_DMA3);
+  Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
           REG_DMA3);
 
   // Of the forcing flags, the highest one set wins.
@@ -290,13 +286,11 @@ void FieldPsynergy_FadeToCastColor(void) {
 /// frames; while Reveal is active the BG half fades to Reveal's grey
 /// instead (PALETTE_TINT_GRAYSCALE).
 void FieldPsynergy_FadeFromCastColor(void) {
-  s32 savedPalettes;
-  u8 *field;
+  struct FieldWork *field = gFieldWork;
+  s32 savedPalettes = (s32)field->savedFadeTarget;
 
-  field = (u8 *)gFieldWork;
-  savedPalettes = (s32)(field + 0x236);
   PaletteFade_SetTarget(savedPalettes, 2);
-  if (((struct FieldWork *)field)->revealActive != 0) {
+  if (field->revealActive != 0) {
     PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   } else {
     PaletteFade_SetTarget(savedPalettes, 1);
@@ -331,8 +325,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     struct MapGridScrollWork *state =
         *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
 #endif
-    s32 x = state->viewX & FIELD_PIXEL_MASK;
-    s32 z = state->viewY & FIELD_PIXEL_MASK;
+    s32 x = state->view[0] & FIELD_PIXEL_MASK;
+    s32 z = state->view[1] & FIELD_PIXEL_MASK;
 
     // Relative to the view's whole-pixel corner; height lifts a point up
     // the screen.

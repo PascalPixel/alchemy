@@ -113,59 +113,32 @@
 /// patches of ivy for Whirlwind, two pillars that sink into the floor, and two
 /// hidden targets for Frost, both placed with the first sinking pillar.
 enum {
-  /// ★ Named from what the player sees: one of a pair of grey pillars with gold
-  /// tops, side by side (its render)
   ACTOR_FIRST_PILLAR_A = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the other pillar of the first pair (its
-  /// render)
   ACTOR_FIRST_PILLAR_B,
-  /// ★ Named from what the player sees: one of the second pair of grey pillars
-  /// with gold tops (its render)
   ACTOR_SECOND_PILLAR_A,
-  /// ★ Named from what the player sees: the other pillar of the second pair
-  /// (its render)
   ACTOR_SECOND_PILLAR_B,
   /// Three small stone pillars with white tops (SPRITE_SMALL_PILLAR, the size
   /// of the sinking pillars). The leader pushes them by walking into them
   /// (TunnelRuins_PushSmallPillars) or shifts them with Move. This one stands
   /// south of the ivy's ledge.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_SMALL_PILLAR_A,
   /// Beside ACTOR_SMALL_PILLAR_A.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_SMALL_PILLAR_B,
   /// Behind ivy A, out of sight until Whirlwind clears the ivy.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_SMALL_PILLAR_C,
   /// Ivy on the ledge above the small pillars. It is drawn with SPRITE_IVY, the
   /// sprite of the ivy that traps the stump at Goma Cave's entrance.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY_A,
   /// Ivy beside ACTOR_IVY_A.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY_B,
   /// Ivy in an arched niche to the east.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY_C,
-  /// ★ Named from what the player sees: a grey pillar on an orange base, its
-  /// white-rimmed top full of blue water, in the north-west of its room (its
-  /// render)
   ACTOR_NORTHWEST_SINKING_PILLAR,
-  /// ★ Named from what the player sees: a second grey pillar on an orange base,
-  /// a dark grating under its white rim until Douse fills it with water, in the
-  /// south-east of the room (its render)
   ACTOR_SOUTHEAST_SINKING_PILLAR,
   /// Frost's target on the north-west pillar. It is SPRITE_PUDDLE in
   /// SPRITE_COLOR_HIDDEN, which moves onto the pillar when it sinks.
-  /// ★ Named from what the player sees: nothing on the sunken pillar until
-  /// Frost raises a pillar of ice there (its render)
   ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
   /// The same hidden target for the south-east pillar.
-  /// ★ Named from what the player sees: nothing on the sunken pillar until
-  /// Frost raises a pillar of ice there (its render)
   ACTOR_SOUTHEAST_PILLAR_FROST_TARGET
 };
 
@@ -176,61 +149,29 @@ enum {
 /// vanish under Reveal, two pillars to push in the east, and five coloured
 /// statues of a woman to Move before the door.
 enum {
-  /// ★ Named from what the player sees: a grey pillar on an orange base, a
-  /// dark grating under its white rim (its render)
   ACTOR_DOUSE_PILLAR = ACTOR_FIRST_PLACED,
   /// Frost's target on the Douse pillar. It is SPRITE_PUDDLE in
   /// SPRITE_COLOR_HIDDEN, held 32 pixels below the soaked pillar.
-  /// ★ Named from what the player sees: nothing until Frost raises a pillar of
-  /// ice from it (its render)
   ACTOR_DOUSE_PILLAR_FROST_TARGET,
-  /// ★ Named from what the player sees: a white platform on a carved grey base,
-  /// the west of two below the carved stones (its render)
   ACTOR_BALANCE_WEST,
-  /// ★ Named from what the player sees: the east white platform on its carved
-  /// grey base (its render)
   ACTOR_BALANCE_EAST,
-  /// ★ Named from what the player sees: a grey stone carved with spirals, the
-  /// west of three in a row (its render)
   ACTOR_WEST_CARRY_STONE,
-  /// ★ Named from what the player sees: the middle grey stone carved with
-  /// spirals (its render)
   ACTOR_MIDDLE_CARRY_STONE,
-  /// ★ Named from what the player sees: the east grey stone carved with spirals
-  /// (its render)
   ACTOR_EAST_CARRY_STONE,
-  /// ★ Named from what the player sees: a white statue standing over a chest in
-  /// the west (its render)
   ACTOR_WEST_VANISHING_STATUE,
-  /// ★ Named from what the player sees: a white statue standing over a chest in
-  /// the east (its render)
   ACTOR_EAST_VANISHING_STATUE,
-  /// ★ Named from what the player sees: one of a pair of grey pillars with pale
-  /// caps in white rims, in the east (its render)
   ACTOR_EAST_PILLAR_A,
-  /// ★ Named from what the player sees: the other pillar of the east pair (its
-  /// render)
   ACTOR_EAST_PILLAR_B,
   /// The game's text calls it violet: "Violet shines southeast of me."
   /// (MsgTunnelRuinsVioletShinesSoutheastOfMe), the south-east statue's line.
-  /// ★ Named from what the player sees: a violet statue of a robed woman,
-  /// north-west of the five (its render)
   ACTOR_LADY_STATUE_NORTHWEST,
-  /// ★ Named from what the player sees: a green statue of a robed woman,
-  /// north-east of the five (its render)
   ACTOR_LADY_STATUE_NORTHEAST,
-  /// ★ Named from what the player sees: a blue statue of a robed woman,
-  /// south-west of the five (its render)
   ACTOR_LADY_STATUE_SOUTHWEST,
   /// The game's text calls it red: "Red shines northwest of me."
   /// (MsgTunnelRuinsRedShinesNorthwestOfMe), the north-west statue's line.
-  /// ★ Named from what the player sees: a pink statue of a robed woman,
-  /// south-east of the five (its render)
   ACTOR_LADY_STATUE_SOUTHEAST,
   /// The game's text calls it yellow: "Yellow shines northeast of me."
   /// (MsgTunnelRuinsYellowShinesNortheastOfMe), the north-east statue's line.
-  /// ★ Named from what the player sees: a gold statue of a robed woman, the
-  /// southmost of the five (its render)
   ACTOR_LADY_STATUE_SOUTH
 };
 
@@ -288,7 +229,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    actor->motionFlags &= 0x7e;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
 
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
@@ -387,8 +328,8 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   options.startScaleX = 3 * Q16_ONE / 10;
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
-  x = actor->x.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
-  z = actor->z.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
+  x = actor->x.fixed + (((Random_Below(7)) - 3) << 16);
+  z = actor->z.fixed + (((Random_Below(7)) - 3) << 16);
   FieldEffect_Spawn(x, actor->y.fixed + px(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
@@ -475,12 +416,11 @@ static void TunnelRuins_HopDownStep(void) {
     leader->targetY = leader->y.fixed;
     wait(1);
     if (i & 1) {
-      s32 horizontalRoll = (u32)Import_RandomNext() % 10 - 5;
+      s32 horizontalRoll = (u32)Random_Next() % 10 - 5;
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
-      velocityZ =
-          (u32)Import_RandomNext() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
+      velocityZ = (u32)Random_Next() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
@@ -510,13 +450,9 @@ static void TunnelRuins_HopDownStep(void) {
 
 /// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its Frost target
 /// follows it.
-/// ★ Named from what the player sees: a grey pillar on an orange base, a dark
-/// grating under its white rim, which Douse soaks (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED FLAG_SCENE_TEMP_03
 /// In TunnelRuinsLadyStatues, Frost has raised a pillar of ice from the soaked
 /// pillar's hidden target, 32 pixels below the pillar.
-/// ★ Named from what the player sees: a pillar of ice rising where Frost is
-/// cast (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN FLAG_SCENE_TEMP_04
 
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
@@ -652,19 +588,13 @@ static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
 ///
 /// Reached by Whirlwind on ivy A until FLAG_SCENE_TEMP_00 is set. Sets it.
 static void TunnelRuins_BlowAwayIvyA(void) {
-  u8 *flags;
-  u8 value;
-
   GameFlag_Set(FLAG_SCENE_TEMP_00);
   if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
-    value = 8;
-    value |= *flags;
-    *flags = value;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
 
@@ -672,19 +602,13 @@ static void TunnelRuins_BlowAwayIvyA(void) {
 ///
 /// Reached by Whirlwind on ivy B until FLAG_SCENE_TEMP_01 is set. Sets it.
 static void TunnelRuins_BlowAwayIvyB(void) {
-  u8 *flags;
-  u8 value;
-
   GameFlag_Set(FLAG_SCENE_TEMP_01);
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
-    value = 8;
-    value |= *flags;
-    *flags = value;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
 
@@ -761,7 +685,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= px(1);
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + px(736));
-      randomZ = Import_RandomNext();
+      randomZ = Random_Next();
       FieldEffect_Spawn(
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(128)), 0,
@@ -800,16 +724,14 @@ static void TunnelRuins_PushNorthwestSinkingPillar(void) {
 ///
 /// Reached by Frost on that target until FLAG_SCENE_TEMP_00 is set. Sets it.
 static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
-  u8 *flags;
-
   Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_FREEZE);
-  flags = &Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags;
-  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
@@ -844,9 +766,9 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       for (i = 0; i < 16; i++) {
         wait(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= px(1);
-        randomX = Import_RandomNext();
+        randomX = Random_Next();
         effectX = ((((u32)(randomX << 4) >> 16) << 16) + px(768));
-        randomZ = Import_RandomNext();
+        randomZ = Random_Next();
         effectZ =
             ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(224));
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
@@ -907,16 +829,14 @@ static void TunnelRuins_DouseSoutheastPillar(void) {
 ///
 /// Reached by Frost on that target until FLAG_SCENE_TEMP_01 is set. Sets it.
 static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
-  u8 *flags;
-
   Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_FREEZE);
-  flags = &Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags;
-  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
@@ -993,10 +913,8 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, PUDDLE_ANIMATION_FREEZE);
 
-  {
-    u8 *flag = &Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags;
-    *flag &= ~ACTOR_PRIORITY_UNDERFOOT;
-  }
+  Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
 
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN);
 
@@ -1016,8 +934,7 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose actor its timer holds.
 static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
-  s16 *supportingActorId = &supportedActor->timer;
-  struct Actor *supportingActor = Actor_Get(*supportingActorId);
+  struct Actor *supportingActor = Actor_Get(supportedActor->timer);
 
   supportedActor->y.fixed = supportingActor->y.fixed + px(16);
   RETURN_UNREAD(0);
@@ -1389,9 +1306,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
 /// Reached by walking into cell behavior 41 in TunnelRuinsLadyStatues.
 static void TunnelRuins_PushLadyStatue(void) {
   Event_Start();
-  {
-    MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-  }
+  MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   PushedActor_AdvancePair();
   TunnelRuins_MoveLadyStatue();
   Event_End();
@@ -1433,23 +1348,19 @@ const struct Trigger *TunnelRuins_GetTriggers(void) {
 /// TunnelRuins_PushFirstPillars.
 static void TunnelRuins_UpdateFirstPillarCells(void) {
   s32 row;
+  s32 columnA;
+  s32 columnB;
 
-  {
-    MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
-  }
+  MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   Actor_SwapPositionsByDepth(ACTOR_FIRST_PILLAR_B, ACTOR_FIRST_PILLAR_A);
 
-  {
-    s32 column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed);
-    row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->z.fixed);
-    MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
-  }
+  columnA = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed);
+  row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->z.fixed);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnA, row);
 
-  {
-    s32 column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed);
-    row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->z.fixed);
-    MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
-  }
+  columnB = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed);
+  row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->z.fixed);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
 /// After the second pillars move, does the same for their room.
@@ -1458,23 +1369,19 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
 /// TunnelRuins_PushSecondPillars.
 static void TunnelRuins_UpdateSecondPillarCells(void) {
   s32 row;
+  s32 columnA;
+  s32 columnB;
 
-  {
-    MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
-  }
+  MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   Actor_SwapPositionsByDepth(ACTOR_SECOND_PILLAR_B, ACTOR_SECOND_PILLAR_A);
 
-  {
-    s32 column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed);
-    row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->z.fixed);
-    MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
-  }
+  columnA = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed);
+  row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->z.fixed);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnA, row);
 
-  {
-    s32 column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed);
-    row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->z.fixed);
-    MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
-  }
+  columnB = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed);
+  row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->z.fixed);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
 /// After the small pillars move, redraws their room's cells and marks the cells
@@ -1883,9 +1790,12 @@ s32 gTunnelRuins_StretchScript[] = {
 
 /// Douse splashes on the pillar from frame 35 for 130 frames.
 s32 gTunnelRuins_DouseSplashScript[] = {
-    SC_WAIT(35),     SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
-    SC_WAIT(130),    SC_SET(SW_HOOK, 0),
-    SC_ANIMATION(2), SC_END,
+    SC_WAIT(35),
+    SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
+    SC_WAIT(130),
+    SC_SET(SW_HOOK, 0),
+    SC_ANIMATION(ANIM_WALK),
+    SC_END,
 };
 
 u16 gTunnelRuins_DoorOpenSteps[] = {

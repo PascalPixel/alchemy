@@ -85,28 +85,20 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct SelectionSprite *firstSprite;
   struct Unit *target;
 
-  battle = gBattleWork;
+  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   targetCount = 0;
   redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);
   /* FAKEMATCH(dead): a null derived from selection, with no constant
-   * equivalence, keeps conditionWindow in a register; as conditionWindow = 0,
-   * 492 of 1585 instructions differ in tbs-en. */
+   * equivalence; as conditionWindow = 0, 492 of 1585 instructions differ in
+   * tbs-en. */
   conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
-  // UB: slot 57 is outside the scalar gBattleWork pointer.
-#ifdef UBFIX
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     gBattleMenuWork->targetViewOffset = -2;
   else
     gBattleMenuWork->targetViewOffset = 16;
-#else
-  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
-    ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = -2;
-  else
-    ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = 16;
-#endif
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
@@ -199,8 +191,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   }
 #if !TBS_PATCH_4
   /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
-   * mode are dead, so conditionWindow takes r9, selection r10 and mode r8; as
-   * no asm, 96 of 1585 instructions differ in tbs-en. */
+   * mode are dead; as no asm, 96 of 1585 instructions differ in tbs-en. */
   __asm__("" : : : "r8", "r10");
 #endif
   window = Window_Create(0, 12, 30, 4,
@@ -212,10 +203,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     {
       s32 t = targetIndex * 2;
 
-      /* FAKEMATCH(dead): a test that cannot change t, which puts the
-       * offset's reload ahead of the ids' address and, with the dead stores
-       * below, sets the spill slots; as candidateIds[targetIndex], with the
-       * stores kept, 102 of 1585 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): a test that cannot change t; as
+       * candidateIds[targetIndex], with the stores kept, 102 of 1585
+       * instructions differ in tbs-en. */
       if (t == 0)
         t = 0;
       BattleMotion_ProjectConditionalPositionFar(
@@ -271,10 +261,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
 #if !TBS_PATCH_4
     /* FAKEMATCH(dead): eighteen dead stores restore the native stack frame's
-     * spill slots from sp+16 to sp+36, the eighteenth only for the test above,
-     * which stands in for a switch of two like arms that matched with
-     * seventeen (with seventeen, 102 differ too); without them, with the test
-     * kept, 102 of 1585 instructions differ in tbs-en. */
+     * spill slots from sp+16 to sp+36, the eighteenth only for the test above;
+     * without them, with the test kept, 102 of 1585 instructions differ in
+     * tbs-en. */
     effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;

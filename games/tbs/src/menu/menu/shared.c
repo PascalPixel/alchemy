@@ -344,8 +344,7 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 /// TEXT_COLOR_LOW_HP when it is below a quarter of maximum HP and in
 /// TEXT_COLOR_NO_HP at 0; then the colour goes back to TEXT_COLOR_NORMAL.
 void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
-  // Each figure in turn, as an s16. Read straight from unit, the figures
-  // compile differently.
+  // Each figure in turn, as an s16.
   s16 value;
 
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -528,7 +527,7 @@ struct Window *MenuCursor_Create(void *source) {
   sentinel = 254;
   cursor->sentinel = sentinel;
   sentinel -= 255;
-  // sideIcon[1] gets slot 255. Nothing in TBS stores sideIcon[1], so it is
+  // sideIcon[1] gets slot 255. Nothing stores sideIcon[1], so it is
   // still NULL from Window_InitializeWork and this byte goes to address 0xf,
   // in the BIOS, which ignores writes.
   menu->sideIcon[1]->sentinel = sentinel; // -1
@@ -1070,9 +1069,9 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   // Both transfers copy the same 32 bytes, first as 16 halfwords and then as
   // 8 words.
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+          DMA_COPY_WORDS(8), REG_DMA3);
   // BGR555: five bits a channel, 0 to 31, red lowest.
   blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
   green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
@@ -1190,16 +1189,15 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 /// until Palette_LightenHighlight(HIGHLIGHT_PALETTE) makes it again.
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
-/// Shows the icons of one page of a list, one row of 16 pixels each from
-/// (x, y): entries first to first + pageSize - 1, stopping early at an empty
-/// icon slot or the work's itemCount. Hides all the others. Used by the item
-/// and Psynergy lists and the Status screen's lists.
+/// Shows the icons of one page of a list, one row of 16 pixels each from (x,
+/// y): entries first to first + pageSize - 1, stopping early at an empty icon
+/// slot or the work's itemCount. Hides all the others.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -1257,8 +1255,7 @@ void Window_ReleaseTilemapUpload(void) {
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
 }
 
-/// Plays a sound and returns 1. Called by
-/// Ability_PlayUseAnimation, which ignores the value.
+/// Plays a sound and returns 1.
 s32 Sound_PlayReturnOne(s32 sound) {
   Sound_PlayFar(sound);
   return 1;
@@ -1269,8 +1266,6 @@ s32 Sound_PlayReturnOne(s32 sound) {
 void Menu_WatchStart(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlayFar(SE_MENU_CANCEL);
-    // XXX (no evidence): why this is a game flag rather than a variable;
-    // nothing outside the menu's own code sets or tests it.
     GameFlag_SetFar(FLAG_MENU_START_PRESSED);
     Task_Remove(Menu_WatchStart);
   }
@@ -1281,7 +1276,6 @@ void Menu_WatchStart(void) {
 /// call it before their command loops and Menu_StopWatchingStart after them.
 void Menu_StartWatchingStart(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
-  // TASK_PASS_FRAME: once a frame, in the frame pass.
   Task_Add(Menu_WatchStart, TASK_PASS_FRAME);
 }
 

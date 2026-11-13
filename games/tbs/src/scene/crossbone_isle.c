@@ -107,7 +107,6 @@
 #include "edition.h"
 #include "far_call.h"
 #include "sound.h"
-#include "edition.h"
 #include "event_inline.h"
 #include "scene_ids.h"
 #include "ability_ids.h"
@@ -128,19 +127,13 @@
 enum CrossboneIsleActorId {
   /// The Nut that circles over the island until Catch takes it
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
-  /// ★ Named from the game: "Nut" (MsgItemName), the item
-  /// CrossboneIsle_CatchNut gives
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
   /// The two logs a push rolls (CrossboneIsle_PushIsleLog).
-  /// ★ Named from what the player sees: two logs lying on the island's
-  /// grass (its render)
   ACTOR_FIRST_ISLE_LOG,
   /// The four plants Growth grows. Once grown, a plant can be crossed for the
   /// rest of the visit (four flags from FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN).
   /// The first is placed at the map's origin, off stage
   /// (CrossboneIsle_UnusedGrowFirstPlant).
-  /// ★ Named from what the player sees: small sprouts on the cliff ledges
-  /// (its render)
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_LOG + 2,
   /// The ivy Whirlwind blows away, one flag each from
   /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY.
@@ -149,15 +142,11 @@ enum CrossboneIsleActorId {
   /// stage (CrossboneIsle_UnusedBlowAwaySecondIvy). The fourth ivy's trigger
   /// and CrossboneIsle_RestoreIvy name ACTOR_FIRST_IVY + 3, which the table
   /// leaves unplaced.
-  /// ★ Named from what the player sees: leafy ivy growing against the cliffs
-  /// (its render)
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
 };
 
 /// Growth has grown Crossbone Isle's first plant, until the party leaves the
 /// island's map. Four scene temp flags run from this one, one a plant.
-/// ★ Named from what the player sees: small sprouts on the cliff ledges (its
-/// render)
 enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 
 /// The twelve floating logs of the ninth floor's side room
@@ -168,43 +157,28 @@ enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 /// shape. A log three cells wide slides north and south, and one three cells
 /// tall slides east and west.
 enum CrossboneIsleFloatingLogsActorId {
-  /// ★ Named from what the player sees: yellow logs floating on green water
-  /// (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED, ///< three cells wide
-  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
-  /// east-west in the west pool, at its south shore (its render)
+  /// Three cells wide.
   ACTOR_SECOND_LOG,
-  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
-  /// east-west in the east pool, south of its middle (its render)
+  /// Three cells wide.
   ACTOR_THIRD_LOG,
-  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
-  /// north-south in the east pool, by its east wall (its render)
+  /// Three cells tall.
   ACTOR_FOURTH_LOG,
-  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
-  /// north-south in the middle of the east pool (its render)
+  /// Three cells tall.
   ACTOR_FIFTH_LOG,
-  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
-  /// north-south in the east pool, at its north-east corner (its render)
+  /// Three cells tall.
   ACTOR_SIXTH_LOG,
-  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
-  /// north-south in the west pool, by its east wall (its render)
+  /// Three cells tall.
   ACTOR_SEVENTH_LOG,
-  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
-  /// north-south in the east pool, at its north-west corner (its render)
+  /// Three cells tall.
   ACTOR_EIGHTH_LOG,
-  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
-  /// north-south in the west pool, by its east wall, at its north end (its
-  /// render)
+  /// Three cells tall.
   ACTOR_NINTH_LOG,
-  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
-  /// east-west in the west pool, at its south-west corner (its render)
+  /// Three cells wide.
   ACTOR_TENTH_LOG,
-  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
-  /// east-west in the west pool, at its south shore (its render)
+  /// Three cells wide.
   ACTOR_ELEVENTH_LOG,
-  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
-  /// north-south in the west pool, by its east wall, at its south end (its
-  /// render)
+  /// Three cells tall.
   ACTOR_TWELFTH_LOG
 };
 
@@ -212,8 +186,6 @@ enum CrossboneIsleFloatingLogsActorId {
 /// (gCrossboneIsle_CorridorActorPlacements).
 enum CrossboneIsleCorridorActorId {
   /// The pillar between the doors that sinks into the floor at column 40.
-  /// ★ Named from what the player sees: a stone pillar between the two doors in
-  /// the north wall (its render)
   ACTOR_SINKING_PILLAR = ACTOR_FIRST_PLACED
 };
 
@@ -651,6 +623,19 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Event_End();
 }
 
+/// Growth on one of Crossbone Isle's plants: it stops blocking the way, shows
+/// grown and opens the cell at pixel (x, z) to climbing.
+static inline void CrossboneIsle_GrowPlant(s32 actorId, s32 plant, s32 x,
+                                           s32 z) {
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + plant);
+
+  if (actor != 0) {
+    actor->collisionFlags = 0;
+  }
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
+  MapGrid_SetCellBehaviorAt(0, px(x), px(z), CELL_BEHAVIOR_CLIMB);
+}
+
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
 /// party climb at (304, 368).
 ///
@@ -658,60 +643,29 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
 /// forest's corner. No cast can reach it there and the player never sees it
 /// (its render).
 static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
-  s32 fixedX = px(304);
-  s32 fixedZ = px(368);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT);
-
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 0, 304, 368);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN);
 }
 
 /// Growth on Crossbone Isle's second plant.
 static void CrossboneIsle_GrowSecondPlant(s32 actorId) {
-  s32 fixedX = px(80);
-  s32 fixedZ = px(368);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
-
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 1, 80, 368);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1);
 }
 
 /// Growth on Crossbone Isle's third plant.
 static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
-  s32 fixedX = px(96);
-  s32 fixedZ = px(336);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
-
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 2, 96, 336);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2);
 }
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
 static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
-  s32 fixedX = px(144);
-  s32 fixedZ = px(320);
-  s32 secondFixedX = px(752);
-  s32 secondFixedZ = px(320);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
+  s32 eastX = px(752);
+  s32 eastZ = px(320);
 
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
-  MapGrid_SetCellBehaviorAt(0, secondFixedX, secondFixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 3, 144, 320);
+  MapGrid_SetCellBehaviorAt(0, eastX, eastZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3);
 }
 
@@ -719,10 +673,7 @@ static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
 /// its cell opens.
 static void CrossboneIsle_BlowAwayFirstIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
-  {
-
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-  }
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
 }
 
 /// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
@@ -757,20 +708,17 @@ static void CrossboneIsle_RestoreIvy(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
     Actor_SetPosition(ACTOR_FIRST_IVY, 968, 968);
   } else {
-    actor = Actor_Get(ACTOR_FIRST_IVY);
-    actor->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY)->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 1, 968, 968);
   } else {
-    actor = Actor_Get(ACTOR_FIRST_IVY + 1);
-    actor->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY + 1)->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 2, 968, 968);
   } else {
-    actor = Actor_Get(ACTOR_FIRST_IVY + 2);
-    actor->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY + 2)->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 3, 968, 968);

@@ -8,7 +8,7 @@
 #include "ability_ids.h"
 
 // clang-format off
-const struct DebugParameterSetRow gDebug_ParameterSets[] = {
+struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = ISAAC,
         .level = 35,

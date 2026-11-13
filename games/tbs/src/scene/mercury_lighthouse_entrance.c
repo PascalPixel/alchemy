@@ -102,7 +102,6 @@
 #include "io_write.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "heap_release.h"
 #include "types.h"
@@ -139,27 +138,20 @@
 /// get past (his scripted battle fights him as "Lizard Man"). The Ply target is
 /// the invisible actor Ply is cast on.
 enum MercuryLighthouseEntranceActorId {
-  /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
   ACTOR_LIZARD_MAN = ACTOR_FIRST_PLACED,
   /// Six statues line the way to the doorway, three on its west side (x 88),
   /// then three on its east (x 184).
-  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_FIRST_STATUE,
   /// The east side's three statues, which the doorway's events draw mirrored.
-  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_FIRST_EAST_STATUE = ACTOR_FIRST_STATUE + 3,
-  /// ★ Named from the game: "used Ply." (MsgMercuryDidThat)
   ACTOR_PLY_TARGET = ACTOR_FIRST_PLACED + 8
 };
 
 /// Scene flags, kept while the party stays here.
 enum {
-  /// ★ Named from the game: "Mia" (MsgCharacterName)
   FLAG_MIA_GOES_IN_SEEN = FLAG_SCENE_TEMP_50,
-  /// ★ Named from its area name: Mercury Lighthouse
   FLAG_DROP_FROM_ABOVE_SEEN = FLAG_SCENE_TEMP_51,
   /// The Lizard Man has stepped into the leader's column.
-  /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
   FLAG_LIZARD_MAN_STEPPED_ASIDE = FLAG_SCENE_TEMP_05
 };
 
@@ -174,7 +166,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
-static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
+static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *actor) {
   Sound_Play(SE_FOOTSTEP);
   return 0;
 }
@@ -322,9 +314,9 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       options.type = SPRITE_GLINT;
       options.script = gGlint_TwinkleScript;
       Sound_Play(SE_GLITTER);
-      sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
-      sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
-      speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
+      sparkX = 208 - (Random_Below(16));
+      sparkZ = 560 - (Random_Below(16));
+      speedRoll = (Random_Below(4));
       velocityY = Math_Divide(px((speedRoll << 4) - speedRoll) + px(60), 100);
       FieldEffect_Spawn(px(sparkX), 0, px(sparkZ), 0, velocityY, 0,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
@@ -426,12 +418,11 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   u32 sparkIndex;
   s32 angle;
   s32 arrivalSeen;
+  s32 alpha;
 
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
-  {
-    s32 alpha = BLEND_ALPHA(16, 16);
-    REG_BLDALPHA = alpha;
-  }
+  alpha = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = alpha;
   // Restore persistent lighting and the Retreat destination first.
   MercuryLighthouse_RestoreLights(
       CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER,
@@ -781,11 +772,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(136, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -793,11 +784,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepWest[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(120, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -805,11 +796,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepEast[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(152, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

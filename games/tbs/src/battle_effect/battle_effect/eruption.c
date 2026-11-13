@@ -41,10 +41,8 @@ enum {
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.
 ///
-/// Called by BattleEffect_RunBlast and BattleEffect_RunSmokeBomb.
 /// A sound and a 6-frame screen shake start on frame 2, and the battle shows
-/// the damage 48 frames before the end. Writes the first 64 BG colours, sets
-/// work->shakeFrames.
+/// the damage 48 frames before the end.
 ///
 /// args: the targets.
 /// mode: fire or smoke (enum EruptionMode). The rows of gEruption_Counts
@@ -52,7 +50,6 @@ enum {
 ///       Blast, and Smoke Bomb and Sleep Bomb) and 128, 32 and 88 (Fiery
 ///       Blast).
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
@@ -67,8 +64,8 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
@@ -122,7 +119,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_FIELD_FRAMES];
@@ -227,11 +224,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
 /// Creates the effect's sprites in gBattleEffectWork's sprites.
 ///
-/// Called by the summon effects (Ramses, Nereid, Kirin, Atalanta, Cybele,
-/// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
-/// Fills work->sprites[0] to [entryCount - 1]: sprite n plays animation n,
-/// with its flags cleared and its sprite priority set. A slot whose sprite
-/// could not be created is left NULL.
+/// Fills work->sprites[0] to [entryCount - 1]: sprite n plays animation n, with
+/// its flags cleared and its sprite priority set. A slot whose sprite could not
+/// be created is left NULL.
 ///
 /// entryCount: how many sprites to create.
 /// source: the sprite every one of them is made from.

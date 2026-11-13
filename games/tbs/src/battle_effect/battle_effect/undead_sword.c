@@ -19,7 +19,7 @@
 /// age in frames.
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   void **slots;
-  void **cursor;
+  void **slot;
   struct BattleEffectWork *work;
   void *canvas;
   void *sprites;
@@ -38,9 +38,13 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   s32 picture;
   s32 size;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  slot = slots;
+  work = *slot++;
+  canvas = *slot;
   work->args = args;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
@@ -102,9 +106,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
           else
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-          draw[0] = ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE]);
-          ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE])(
-              canvas, work->sheet, x, 112 - height, 14, height);
+          draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(canvas, work->sheet, x,
+                                             112 - height, 14, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }

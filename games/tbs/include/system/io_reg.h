@@ -270,20 +270,20 @@ enum DisplayControl {
 
 // DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
 // shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
-#define DMA_DEST_INC 0x0000      ///< destination steps up
-#define DMA_DEST_DEC 0x0020      ///< destination steps down
-#define DMA_DEST_FIXED 0x0040    ///< destination stays, as for a register
-#define DMA_DEST_RELOAD 0x0060   ///< steps up, back to its start each repeat
-#define DMA_SRC_INC 0x0000       ///< source steps up
-#define DMA_SRC_DEC 0x0080       ///< source steps down
-#define DMA_SRC_FIXED 0x0100     ///< source stays, as for a fill
-#define DMA_REPEAT 0x0200        ///< runs again at each start condition
-#define DMA_16BIT 0x0000         ///< moves halfwords
-#define DMA_32BIT 0x0400         ///< moves words
-#define DMA_DREQ_ON 0x0800       ///< channel 3: the cartridge requests it
-#define DMA_START_NOW 0x0000     ///< as soon as it's enabled
-#define DMA_START_VBLANK 0x1000  ///< at each VBlank
-#define DMA_START_HBLANK 0x2000  ///< at each HBlank
+#define DMA_DEST_INC 0x0000    ///< destination steps up
+#define DMA_DEST_DEC 0x0020    ///< destination steps down
+#define DMA_DEST_FIXED 0x0040  ///< destination stays, as for a register
+#define DMA_DEST_RELOAD 0x0060 ///< steps up, back to its start each repeat
+#define DMA_SRC_INC 0x0000     ///< source steps up
+#define DMA_SRC_DEC 0x0080     ///< source steps down
+#define DMA_SRC_FIXED 0x0100   ///< source stays, as for a fill
+#define DMA_REPEAT 0x0200      ///< runs again at each start condition
+#define DMA_16BIT 0x0000       ///< moves halfwords
+#define DMA_32BIT 0x0400       ///< moves words
+#define DMA_DREQ_ON 0x0800     ///< channel 3: the cartridge requests it
+#define DMA_START_NOW 0x0000   ///< as soon as it's enabled
+#define DMA_START_VBLANK 0x1000
+#define DMA_START_HBLANK 0x2000
 #define DMA_START_SPECIAL 0x3000 ///< channels 1 and 2: a sound FIFO's request
 #define DMA_INTR_ENABLE 0x4000   ///< an interrupt when it ends
 #define DMA_ENABLE 0x8000        ///< arms the channel
@@ -295,8 +295,8 @@ enum DisplayControl {
 // DMA control words: copy n words or halfwords at once, or one halfword or
 // word each HBlank to a register reloaded every line (a scanline table that
 // drives a window edge, a scroll or an affine register).
-#define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n)) ///< n words
-#define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n)) ///< n halfwords
+#define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
+#define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
 /// A halfword each HBlank, as for a scroll or a window edge.
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \
   ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)

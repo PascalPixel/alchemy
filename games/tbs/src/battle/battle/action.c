@@ -6,9 +6,6 @@
 
 /// Returns 1 when the unit is in its side's list of units in the battle
 /// (BattleUnit_ListIds), 0 otherwise.
-/// Called by BattleActionRun_Build, for the units holding the standby Djinn a
-/// summon uses.
-/// @param unitId a party member's, up to ALLY_MAX, or an enemy's
 u32 BattleUnit_IsListed(u32 unitId) {
   u16 list[8];
   s32 side;
@@ -28,22 +25,17 @@ u32 BattleUnit_IsListed(u32 unitId) {
   return unitIndex != unitCount;
 }
 
-/// Counts the standby Djinn held by units on unitId's side, from that
-/// side's Djinn recovery list.
-/// Called by BattleActionRun_Build for a summon, and through
-/// BattleDjinn_CountStandbyFar by the command menu (BattleCommandRow_Run,
-/// Battle_CollectPartyCommands, PartyStatus_Draw). Returns the total.
-/// @param unitId a unit of the party's side, up to ALLY_MAX, or of the
-/// enemies'
-/// @param counts if not null, receives the count for each of the four
-/// elements
+/// Counts the standby Djinn held by units on unitId's side, from that side's
+/// Djinn recovery list. Returns the total. @param unitId a unit of the party's
+/// side, up to ALLY_MAX, or of the enemies' @param counts if not null, receives
+/// the count for each of the four elements
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   u16 unitIds[8];
   struct DjinnRecoveryList *list;
   s32 unitCount;
   s32 standbyCount;
   s32 recoveryIndex;
-  s32 unitOrElementIndex;
+  s32 i;
   s32 sideMask;
   s32 enemySide;
 
@@ -58,26 +50,19 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
               ->list;
   if (counts != 0)
-    for (unitOrElementIndex = ELEMENT_COUNT - 1; unitOrElementIndex >= 0;
-         unitOrElementIndex--)
-      counts[unitOrElementIndex] = 0;
-  recoveryIndex = 0;
-  if (list->count != 0) {
-    do {
-      if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-        for (unitOrElementIndex = 0; unitOrElementIndex < unitCount;
-             unitOrElementIndex++)
-          if (unitIds[unitOrElementIndex] ==
-              list->entries[recoveryIndex].unitId)
-            break;
-        if (unitOrElementIndex != unitCount) {
-          if (counts != 0)
-            counts[list->entries[recoveryIndex].element]++;
-          standbyCount++;
-        }
+    for (i = ELEMENT_COUNT - 1; i >= 0; i--)
+      counts[i] = 0;
+  for (recoveryIndex = 0; recoveryIndex != list->count; recoveryIndex++) {
+    if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+      for (i = 0; i < unitCount; i++)
+        if (unitIds[i] == list->entries[recoveryIndex].unitId)
+          break;
+      if (i != unitCount) {
+        if (counts != 0)
+          counts[list->entries[recoveryIndex].element]++;
+        standbyCount++;
       }
-      recoveryIndex++;
-    } while (recoveryIndex != list->count);
+    }
   }
   return standbyCount;
 }
@@ -88,14 +73,13 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 #define DJINN_INDEX(v) ((v) & 255)
 /// The most targets an action holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
-/// Announces the action and builds it for its targets: its targets and
-/// effect. Returns 0 to stage the action, ACTION_REPORTED when the action
-/// failed (its message shown), or ACTION_NOTHING_TO_SHOW. Called by
-/// BattleStaging_DispatchAction for each action of the turn. Fills plan (its
-/// acting unit, targets, hit and critical rolls, ability, element, staging,
-/// effect word and failure), resets the playback and shows the announcing
-/// message. The command's costs are paid here: a caster's PP, a Djinni set or
-/// put on standby (with its own effect), the standby Djinn a summon uses
+/// Announces the action and builds it for its targets: its targets and effect.
+/// Returns 0 to stage the action, ACTION_REPORTED when the action failed (its
+/// message shown), or ACTION_NOTHING_TO_SHOW. Fills plan (its acting unit,
+/// targets, hit and critical rolls, ability, element, staging, effect word and
+/// failure), resets the playback and shows the announcing message. The
+/// command's costs are paid here: a caster's PP, a Djinni set or put on standby
+/// (with its own effect), the standby Djinn a summon uses
 /// (DJINN_RECOVERY_SUMMONED). A unit that cannot act, or finds no target, may
 /// be set to Defend (defendLevel).
 ///
@@ -111,9 +95,8 @@ s32 BattleActionRun_Build(struct BattleAction *request,
 
   /// Fills the action's targets: the aimed unit, or for a range the places
   /// within range - 1 of the aimed place on its side, standing units only
-  /// unless the ability revives. With none, the unit defends ("defends")
-  /// and it returns ACTION_REPORTED.
-  /// Called by BattleActionRun_Build once the command gives its ability id.
+  /// unless the ability revives. With none, the unit defends ("defends") and it
+  /// returns ACTION_REPORTED.
   s32 BattleActionRun_SetTargets(s32 abilityId) {
     struct AbilityDefinition *ability = Ability_Get(abilityId);
     s32 mode = ability->targetMode;
@@ -640,12 +623,9 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     }
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgActorAttacks);
-    // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
-    // Attacks cannot miss a target that cannot move. In the Djinn tutorial
-    // the attack always misses.
-    // The rolls in a one-pass block left by break, which places them ahead of
-    // the five tests; as an if on the negated tests, 46 of 1393 instructions
-    // differ in tbs-en.
+    // Miss chance: 153/256 when deluded, plus a separate 1/32 roll. Attacks
+    // cannot miss a target that cannot move. In the Djinn tutorial the attack
+    // always misses.
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

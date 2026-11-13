@@ -14,10 +14,6 @@ enum {
 /// FLAG_CHILDHOOD gives Isaac and Garet SPRITE_ISAAC_CHILD and
 /// SPRITE_GARET_CHILD, and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite
 /// SPRITE_ISAAC_TUNIC.
-///
-/// Called by Event_SpawnActorPlacements for every actor
-/// placement, and by Menu_CreatePartyFigures (through
-/// Party_GetCharacterSpriteFar) for the party's figures.
 s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
@@ -41,9 +37,8 @@ s32 Party_GetCharacterSprite(s32 character) {
 /// Returns the sprite of character as Party_GetCharacterSprite would with
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
 ///
-/// Called by FileList_ShowPartySprites through
-/// Party_RemapCharacterIdIfEnabledFar. Save summaries omit the tunic flag,
-/// so this never gives sprite SPRITE_ISAAC_TUNIC.
+/// Save summaries omit the tunic flag, so this never gives sprite
+/// SPRITE_ISAAC_TUNIC.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
@@ -73,9 +68,7 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 /// kept by address, so it must last as long as the scene (the overlay's own
 /// tables do).
 ///
-/// Called by Actor_ResetForLeader (the leader, then the scene's table),
-/// Actor_Respawn and Event_AppendActorPlacements. Records
-/// the table in work->tables and each actor in work->actors.
+/// Records the table in work->tables and each actor in work->actors.
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -104,7 +97,6 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
        entry++, placementSprite = entry->sprite) {
     // Current actor placement tables use sprites 0 to 504, so every live
     // row sets actorIndex.
-    // XXX (no evidence): what the 9989 cutoff was for; no table reaches it.
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
     else if (entry->sprite <= 9989)
@@ -155,13 +147,10 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // from its first frame, unless it happens to be ANIM_STAND. The first
       // selection has just started it from that frame, so the idle looks the
       // same either way.
-      // XXX (no evidence): why the value is random when only whether it is 1
-      // matters; nothing else reads lastNo before the selection.
       if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
           (sprite = actor->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       actor->facing = entry->facing;
-      // Solid.
       actor->collisionFlags = ACTOR_SOLID;
       Actor_SetMovementType(actor, entry->movement);
       Actor_SelectAnimationFar(actor, ANIM_STAND);
@@ -200,8 +189,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
 }
 
 /// Releases the actor in slot actorIndex, if there is one, and
-/// empties the slot. No caller names it; its far-call veneer has no exported
-/// name.
+/// empties the slot.
 void Actor_ReleaseAtIndex(s32 actorIndex) {
   struct FieldWork *work = gFieldWork;
   void *object = Actor_Lookup(actorIndex);
@@ -231,11 +219,8 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 /// (CELL_BEHAVIOR_CLIMB) is raised by the ground height of the cell north of it
 /// less 32 pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
-/// Called by FieldSequence_Run on entering a scene, and by
-/// Event_RunActorUpdateAndWait.
-/// Empties every actor slot and table first, without releasing the
-/// actors in them; sets work->camera, the map's origin and
-/// gMainRoutineWork.movementMode.
+/// Empties every actor slot and table first, without releasing the actors in
+/// them; sets work->camera, the map's origin and gMainRoutineWork.movementMode.
 void Actor_ResetForLeader(struct ActorPlacement *table) {
   struct FieldWork *work;
   struct ActorPlacement *entry;
@@ -309,9 +294,6 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
 /// Returns the slot after the last placed actor (8 when there is none),
 /// or -1 when the last slot is occupied. Earlier holes are not reused by this
 /// append scan.
-///
-/// Called by Actor_Respawn and Event_AppendActorPlacements
-/// to choose where Event_SpawnActorPlacements starts.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = gFieldWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
@@ -350,10 +332,6 @@ UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
 
 /// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
-///
-/// Called by scene overlays through Scene_AssignViewFlagsFar. Writes the
-/// actor placements' condition, and clears FLAG_IN_VIEW and sets
-/// FLAG_OUT_OF_VIEW.
 void Scene_AssignViewFlags(struct ActorPlacement *entry) {
   struct MapGridScrollWork *view = gMapGridWork[0];
 
@@ -397,7 +375,7 @@ void Actor_ClearOutOfBounds(void) {
   s32 bottom;
   struct Actor **actorSlot;
   s32 releaseCacheMask;
-  s32 remainingSlots;
+  s32 i;
 
   camera = work->camera;
   centerX = camera->x.fixed;
@@ -409,7 +387,7 @@ void Actor_ClearOutOfBounds(void) {
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
   releaseCacheMask = ~1;
 
-  for (remainingSlots = PLACED_MAX - 1; remainingSlots >= 0; remainingSlots--) {
+  for (i = 0; i < PLACED_MAX; i++) {
     struct Actor *actor = *actorSlot;
 
     if (actor != NULL) {
@@ -474,20 +452,16 @@ void Actor_Respawn(void) {
 }
 
 /// Empties all the actor slots, without releasing the actors.
-///
-/// Called by Actor_ResetForLeader.
 void Actor_ClearAll(void) {
   struct FieldWork *work;
   struct Actor *emptyActor;
   s32 actorIndex;
 
   emptyActor = NULL;
-  actorIndex = ACTOR_ID_COUNT - 1;
   work = gFieldWork;
-  do {
+  for (actorIndex = ACTOR_ID_COUNT - 1; actorIndex >= 0; actorIndex--) {
     work->actors[actorIndex] = emptyActor;
-    actorIndex--;
-  } while (actorIndex >= 0);
+  }
 }
 
 /// Returns the actor in slot index (below ACTOR_ID_COUNT), or
@@ -519,10 +493,6 @@ void *Actor_Lookup(u32 actorIndex) {
 /// Saves up to 32 actors (only the party's 8 on the World Map) into
 /// gActorSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that Actor_Restore can put them back.
-///
-/// Called by FieldSequence_Run before a random battle, by saving the game
-/// through Save_CaptureActorsFar, and by two scenes (Tolbi's spring and the
-/// Venus Lighthouse aerie).
 void Actor_Snapshot(void) {
   struct FieldWork *work;
   struct Actor *snapshot = gActorSnapshot.actors;
@@ -548,8 +518,7 @@ void Actor_Snapshot(void) {
     if (actor == NULL)
       continue;
     *indices++ = actorIndex;
-    Dma_Set(actor, snapshot,
-            (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Actor) / 4),
+    Dma_Set(actor, snapshot, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
             REG_DMA3);
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       struct Sprite *sprite = actor->sprite;
@@ -577,10 +546,8 @@ void Actor_Snapshot(void) {
 /// Puts back the actors Actor_Snapshot saved, and moves the camera
 /// to the party leader's height.
 ///
-/// Called by FieldSequence_Run when the party keeps its position
-/// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie scene through
-/// Actor_RestoreFar. Only actors whose slots are filled again are
-/// restored; the leader is set idle.
+/// Only actors whose slots are filled again are restored; the leader is set
+/// idle.
 void Actor_Restore(void) {
   struct Actor *snapshot = gActorSnapshot.actors;
   u8 *indices = gActorSnapshot.slots;
@@ -610,8 +577,7 @@ void Actor_Restore(void) {
       // pointer; the priorities go to the sprite the actor has now,
       // which is then put back.
       sprite = actor->sprite;
-      Dma_Set(snapshot, actor,
-              (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Actor) / 4),
+      Dma_Set(snapshot, actor, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
               REG_DMA3);
       animation = *animations;
       if (animation != 0)

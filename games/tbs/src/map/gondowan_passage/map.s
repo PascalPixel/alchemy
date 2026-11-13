@@ -25,11 +25,11 @@ Field_GondowanPassage:
 	.incbin "games/tbs/src/map/gondowan_passage/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_GondowanPassage_BLEND:
-	.incbin "games/tbs/src/map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/goma_cave_entrance/blend.script.lz"
 	.balign 4, 0
 .LField_GondowanPassage_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette33
-Tileset_Palette33:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_33.gbapal.lz"
+	.global Tileset_PaletteGondowanPassage
+Tileset_PaletteGondowanPassage:
+	.incbin "games/tbs/src/graphics/tileset/palettes/gondowan_passage.gbapal.lz"

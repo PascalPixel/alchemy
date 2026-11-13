@@ -112,6 +112,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "sound_driver_symbols.h"
+#include "shared/walk_into_leader.h"
 
 /// The placed actors, numbered in the order of
 /// gValeKradensCottage_ActorPlacements. Garet and Jenna, placed between Kraden
@@ -128,36 +129,21 @@ enum ValeKradensCottageActorId {
   /// boulder stays where it is, and no message follows, since the row answers
   /// the cast (render probe kraden-lift, by day and after the party has left
   /// Vale).
-  /// ★ Named from the game: "did you lift the boulder?"
-  /// (MsgMountainIsaacDidLiftBoulder), said of the same sprite
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
   /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
-  /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_WEST_ROCK,
-  /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_EAST_ROCK,
   /// A young man with brown hair who lies by the broken fence on the stormy
   /// night. "Rockslide...destroyed fence... Monsters everywhere..."
-  /// ★ Named from the game: "Rockslide...destroyed fence..."
-  /// (MsgValeRockslideDestroyedFence)
   ACTOR_ROCKSLIDE_SURVIVOR,
   /// A small boy with fair hair, by day, younger than Isaac. "Do you hear those
   /// awful growls coming from the other side of this fence?"
-  /// ★ Named from the game: "I can't stop wondering what lies beyond this
-  /// fence." (MsgValeWonderBeyondFence)
   ACTOR_BOY_BY_THE_FENCE,
-  /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   ACTOR_KRADEN,
-  /// ★ Named from the game: "Saturos and Menardi were their names"
-  /// (MsgValeKradenOhIsaac)
   ACTOR_SATUROS,
-  /// ★ Named from the game: "Saturos and Menardi were their names"
-  /// (MsgValeKradenOhIsaac)
   ACTOR_MENARDI,
   /// A woman with fair hair, after Kalay. "You must have so many memories of
   /// this cottage, don't you?"
-  /// ★ Named from the game: "You must have so many memories of this cottage"
-  /// (MsgValeMemoriesOfThisCottage)
   ACTOR_COTTAGE_VISITOR
 };
 
@@ -165,8 +151,6 @@ enum ValeKradensCottageActorId {
 
 /// The front door of Kraden's cottage stands open since Kraden set off. So
 /// walking in (cell behavior 3, the exit into the cottage) skips its opening.
-/// ★ Named from what the player sees: the arched wooden door of Kraden's
-/// thatched cottage (its render)
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
 
 const struct SceneEntrance *ValeKradensCottage_GetEntrances(void) {
@@ -216,14 +200,8 @@ static __inline__ void ValeKradensCottage_FacePartySouth(void) {
 
 /// Starts a companion walking back to Isaac's current pixel position.
 static __inline__ void ValeKradensCottage_WalkTowardLeader(s32 companionId) {
-  struct Actor *leader;
-
   Actor_SetAnimation(companionId, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(companionId, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(companionId);
 }
 
 /// In Vale by Kraden's cottage, the child at the fence asks whether Isaac hears
@@ -554,16 +532,15 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
 /// so the door stays open. Removes Kraden, Garet, Jenna, Saturos and Menardi.
 static void ValeKradensCottage_KradenSetsOff(void) {
   struct Actor *actor;
-  s32 facing = FACING_NORTH;
 
   Event_Start();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_GARET, 216, 264);
   Actor_SetPosition(ACTOR_JENNA, 248, 264);
   actor = Actor_Get(ACTOR_GARET);
-  actor->facing = facing;
+  actor->facing = FACING_NORTH;
   actor = Actor_Get(ACTOR_JENNA);
-  actor->facing = facing;
+  actor->facing = FACING_NORTH;
   MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -842,7 +819,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   actor = Actor_Get(ACTOR_SATUROS);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_MENARDI);
-  actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
 
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_STILL);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_STILL);
@@ -948,22 +925,8 @@ static void ValeKradensCottage_OverhearKraden(void) {
     // The camera returns to Isaac, and Garet and Jenna walk back into him.
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
     FieldCamera_WaitForMove();
-    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, 0, 0);
-    Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_JENNA);
-    Actor_SetPosition(ACTOR_JENNA, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_GARET);
+    Scene_WalkIntoLeader(ACTOR_JENNA);
     GameFlag_Set(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
     Event_End();
   }
@@ -1008,20 +971,12 @@ s32 ValeKradensCottage_Initialize(void) {
     Actor_SetPosition(ACTOR_SATUROS, 0, 0);
     Actor_SetPosition(ACTOR_MENARDI, 0, 0);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
-    {
-      struct Actor *actor = Actor_Get(ACTOR_FENCE_BOULDER);
-
-      actor->collisionFlags = 8 | actor->collisionFlags;
-    }
+    Actor_Get(ACTOR_FENCE_BOULDER)->collisionFlags |= ACTOR_NOT_TARGETED;
     Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
     Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
     actor = Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR);
-    {
-      s32 collisionRadius = 12;
-
-      actor->radius = collisionRadius;
-    }
+    actor->radius = 12;
     Actor_SetScript(ACTOR_ROCKSLIDE_SURVIVOR,
                     gValeKradensCottage_RockslideSurvivorSquashes);
     if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
@@ -1169,14 +1124,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
       // Garet walks back into Isaac.
-      Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
-        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                             leader->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_GARET);
-      Actor_SetPosition(ACTOR_GARET, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_GARET);
       Event_End();
     }
   }
@@ -1242,8 +1190,14 @@ static void ValeKradensCottage_TalkToCottageVisitor(void) {
 
 /// Leads the party away from the broken fence, then leaves the scene.
 s32 gValeKradensCottage_RockslideSurvivorEscapeActions[] = {
-    SC_ANIMATION(2), SC_MOVE(72, 0, 294), SC_SYNC, SC_MOVE(77, 0, 329),
-    SC_SYNC,         SC_MOVE(70, 0, 415), SC_SYNC, SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(72, 0, 294),
+    SC_SYNC,
+    SC_MOVE(77, 0, 329),
+    SC_SYNC,
+    SC_MOVE(70, 0, 415),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
     SC_END,
 };
 

@@ -48,8 +48,6 @@ enum AnimationFacingKind {
   /// As ANIM_FACING_FRONT_BACK, with the front picture mirrored the other
   /// way.
   ANIM_FACING_FRONT_BACK_SWAPPED = 22,
-  // XXX (no evidence): what this kind was for; no sprite takes it, and with
-  // no facing table nothing shows what it drew.
   /// Unused: no sprite's metadata or animation takes this kind. Ringed as eight
   /// facings by the sprite viewer, but with no facing table:
   /// Sprite_ComposePicture draws it as ANIM_FACING_NONE.
@@ -78,7 +76,7 @@ enum SpriteFlag {
 /// pointer holds.
 enum ActorSpriteKind {
   ACTOR_SPRITE_NONE = 0, ///< nothing drawn
-  ACTOR_SPRITE_ONE = 1,  ///< one sprite
+  ACTOR_SPRITE_ONE = 1,
   ACTOR_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
 };
 
@@ -168,8 +166,8 @@ enum TerrainKind {
   TERRAIN_SAMPLE_TABLE = 12,
   /// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
   TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
-  TERRAIN_FLAT_B = 14, ///< as TERRAIN_FLAT
-  TERRAIN_FLAT_C = 15, ///< as TERRAIN_FLAT
+  TERRAIN_FLAT_B = 14,
+  TERRAIN_FLAT_C = 15,
   TERRAIN_KIND_COUNT = 16
 };
 

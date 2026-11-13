@@ -104,21 +104,23 @@ extern s8 gBattleHighlight_BlendRamp[];
 extern u16 gEncounterZones[];
 /// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its effect
 /// runs.
-extern struct MindReadWork *gMindReadWork;
+#define gMindReadWork                                                          \
+  (*(struct MindReadWork **)&gHeapSlots[HEAP_SLOT_MIND_READ])
 /// The heap slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
 /// the running battle effect's BattleEffectWork first.
-extern void *gBattleEffectWork[];
+#define gBattleEffectWork (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_BATTLE_EFFECT])
 /// The HEAP_SLOT_ENEMY_UNITS heap slot: the six enemy battle units,
 /// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
-extern u8 *gEnemyUnits;
+#define gEnemyUnits (*(u8 **)&gHeapSlots[HEAP_SLOT_ENEMY_UNITS])
 /// Random16's seed; Lucky Wheels seeds it with the play time, and a link
 /// battle's parent sends it as the turn's gBattleRandomSeed.
 extern u32 gRandomSeed;
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
 /// staging.c, auto_battle.c and turn.c set for each action, and the
 /// background's display mode.
-extern struct BattleBackgroundWork *gBattleBackgroundWork;
+#define gBattleBackgroundWork                                                  \
+  (*(struct BattleBackgroundWork **)&gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
 /// SC_FACE_WATCHED every frame, forever: the script of an actor told to
 /// keep facing its watched actor.
 extern const u8 gActor_FaceWatchedScript[];

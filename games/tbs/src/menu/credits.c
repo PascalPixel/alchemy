@@ -7,35 +7,17 @@
 #include "module/system/system.h"
 #include "flash.h"
 #include "flash_data.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "types.h"
 #include "battle.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
-#include "menu.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
-#include "heap_release.h"
-#include "battle_sprite_id.h"
 #include "ram_code.h"
-#include "task.h"
 #include "io_write_queue.h"
 #include "io_write.h"
 #include "map_grid_scroll.h"
-#include "heap.h"
 #include "resource_ids.h"
-#include "edition.h"
 #include "iwram_call.h"
-#include "static_assert.h"
-#include "battle_side.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
-#include "frame.h"
 #include "flags.h"
 
 // Credits text uses six 32-pixel sprites across each 192-pixel line. Its
@@ -125,11 +107,10 @@ const u32 gCredits_Backgrounds[] = {
 
 /// Loads a credits battle background into one of the two tile/palette halves. A
 /// zero resource clears that half; the second half offsets its palette indices.
-/// Called by Credits_Run for each picture. A battle background
-/// resource is its 128 colours (256 bytes) and then its packed tiles. The
-/// decoder runs from a copy in HEAP_SLOT_RAM_CODE_TEMP, released before
-/// returning; the colours reach palette RAM at the next VBlank, through the
-/// I/O write queue.
+/// A battle background resource is its 128 colours (256 bytes) and then its
+/// packed tiles. The decoder runs from a copy in HEAP_SLOT_RAM_CODE_TEMP,
+/// released before returning; the colours reach palette RAM at the next VBlank,
+/// through the I/O write queue.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -164,13 +145,13 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
                       DMA_COPY_WORDS(64));
 }
 
-/// Builds the 512 tilemap words surrounding a sliding credits picture:
-/// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
-/// Called by Credits_Run. In 32-tile rows: two rows of tile
-/// 511, the picture's tiles 0 to 479 in fifteen rows, three rows of tile 511
-/// (160 pixels in all, the screen), then twelve rows of zeros below it. Each
-/// map follows its picture's 30 KB of tiles in the same 32 KB, so tile 511 is
-/// the map's own last 64 bytes, which the zeros keep transparent.
+/// Builds the 512 tilemap words surrounding a sliding credits picture: blank
+/// margins, 240 consecutive tile pairs, then a zero-filled tail. In 32-tile
+/// rows: two rows of tile 511, the picture's tiles 0 to 479 in fifteen rows,
+/// three rows of tile 511 (160 pixels in all, the screen), then twelve rows of
+/// zeros below it. Each map follows its picture's 30 KB of tiles in the same
+/// 32 KB, so tile 511 is the map's own last 64 bytes, which the zeros keep
+/// transparent.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 remaining;
   u32 blankTiles = 0x01FF01FF;
@@ -300,9 +281,6 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // it reads them: IdentifyFlash, which Save_InitializeWork runs before
 // each use of the save, writes gFlash, gProgramFlashSector and
 // gWaitForFlashWrite, and each program routine sets gFlashNumRemainingBytes.
-// XXX (no evidence): why the credits borrow them rather than keep globals of
-// their own; only Camelot's link map or source could say whether the sharing
-// was meant.
 // UB: the casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
@@ -962,8 +940,6 @@ const void *gCredits_Lines[] = {
 
 /// A credits line has been drawn, so its scratch buffer holds the shadow row to
 /// carry.
-/// ★ Named from what the player sees: the credits text scrolling up the screen
-/// one line at a time (its render)
 #define FLAG_CREDITS_LINE_DRAWN FLAG_SCENE_TEMP_00
 
 /// A VBlank task added by Credits_InitTextSprites: maps the
@@ -1019,15 +995,10 @@ void Credits_DrawEnteringLine(void) {
   }
 }
 
-/// Allocates the credits sprites, builds the blank border and text rows,
-/// clears the tile ring and adds the scrolling and line-rendering tasks. Called
-/// by Credits_Run; the credits keep their state in four borrowed
-/// flash-library cells: the sprite buffer's pointer in gFlashNumRemainingBytes
-/// (SCROLL_OBJECTS), the scroll in gCreditsScrollPosition, the last line drawn
-/// in gFlash (CREDITS_LAST_LINE_POSITION) and the end-of-text latch in
-/// gProgramFlashSector (CREDITS_END_OF_TEXT). The 1 KB sprite buffer comes from
-/// the EWRAM bump pool and is never freed; each line buffer is taken from the
-/// pool after it and given back.
+/// Allocates the credits sprites, builds the blank border and text rows, clears
+/// the tile ring and adds the scrolling and line-rendering tasks. The 1 KB
+/// sprite buffer comes from the EWRAM bump pool and is never freed; each line
+/// buffer is taken from the pool after it and given back.
 void Credits_InitTextSprites(void) {
   volatile u32 dmaFill;
   u32 *oamWords;
@@ -1084,13 +1055,16 @@ void Credits_InitTextSprites(void) {
     Credits_DrawLine(gCredits_Lines[0], row * CREDITS_LINE_TILES, 1);
 }
 
+/// Row `row` (4 bytes, 8 pixels) of sprite tile `tile` in OBJ VRAM.
+#define OBJ_TILE_ROW(tile, row)                                                \
+  (*(u32 *)(OBJ_VRAM0 + (row) * 4 + (tile) * TILE_SIZE_4BPP))
+
 /// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
 /// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
-/// beginning at firstTile. Called by the line-rendering task and, for the blank
-/// rows, by Credits_InitTextSprites. Returns -1 at the null end
-/// marker, otherwise zero. alignment 1 centres, 2 right-aligns and any other
-/// value left-aligns; every caller passes 1. The glyphs are colour 15 with a
-/// colour 1 shadow a pixel down and right.
+/// beginning at firstTile. Returns -1 at the null end marker, otherwise zero.
+/// alignment 1 centres, 2 right-aligns and any other value left-aligns; every
+/// caller passes 1. The glyphs are colour 15 with a colour 1 shadow a pixel
+/// down and right.
 s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u8 *linePixels = Heap_AllocEwram(CREDITS_BUFFER_BYTES);
   s32 startX = 0;
@@ -1151,9 +1125,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     startX = (lineWidth - textAdvance) / 2;
 
   // Rasterize each glyph and its one-pixel shadow at the aligned start.
-  /* FAKEMATCH(dead): sourceBytes rewound to text, which the glyph loop
-   * overwrites before reading; as no store, 20 of 277 instructions differ in
-   * tbs-en. */
+  /* FAKEMATCH(dead): sourceBytes rewound to text; as no store, 20 of 277
+   * instructions differ in tbs-en. */
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *text++) != 0) {
@@ -1164,7 +1137,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
       for (row = 0; row < 8; row++) {
         glyphBits = *sourceBytes++;
         glyphMask = 0x80;
-        for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
+        for (columnIndex = 0; columnIndex < 8; columnIndex++) {
           if (glyphBits & glyphMask) {
             destination[257] = 1;
             destination[0] = 15;
@@ -1200,14 +1173,15 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     s32 tileIndex = firstTile + row;
     u32 *words = (u32 *)linePixels + row;
 
-    *(u32 *)(OBJ_VRAM0 + tileIndex * 32) = words[0];
-    *(u32 *)(OBJ_VRAM0 + 4 + tileIndex * 32) = words[64];
-    *(u32 *)(OBJ_VRAM0 + 8 + tileIndex * 32) = words[128];
-    *(u32 *)(OBJ_VRAM0 + 12 + tileIndex * 32) = words[192];
-    *(u32 *)(OBJ_VRAM0 + 16 + tileIndex * 32) = words[256];
-    *(u32 *)(OBJ_VRAM0 + 20 + tileIndex * 32) = words[320];
-    *(u32 *)(OBJ_VRAM0 + 24 + tileIndex * 32) = words[384];
-    *(u32 *)(OBJ_VRAM0 + 28 + tileIndex * 32) = words[448];
+    // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
+    OBJ_TILE_ROW(tileIndex, 0) = words[0];
+    OBJ_TILE_ROW(tileIndex, 1) = words[64];
+    OBJ_TILE_ROW(tileIndex, 2) = words[128];
+    OBJ_TILE_ROW(tileIndex, 3) = words[192];
+    OBJ_TILE_ROW(tileIndex, 4) = words[256];
+    OBJ_TILE_ROW(tileIndex, 5) = words[320];
+    OBJ_TILE_ROW(tileIndex, 6) = words[384];
+    OBJ_TILE_ROW(tileIndex, 7) = words[448];
   }
   Heap_Release(linePixels);
   return 0;

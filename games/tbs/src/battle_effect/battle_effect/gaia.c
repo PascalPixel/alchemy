@@ -32,8 +32,6 @@ enum EarthWallSheetPicture {
 ///         Gaia and Avalanche.
 void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -50,8 +48,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
@@ -141,10 +140,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

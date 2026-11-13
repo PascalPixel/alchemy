@@ -89,13 +89,11 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 /// flashes and the battle shows the damage; the shell bursts into 4 smoke
 /// puffs that drift up or 16 shards that fly up and fall.
 ///
-/// Called by the seven handlers above, from BattleEffect_RunMadSpatter to
-/// BattleEffect_RunRottenBlood. Loads three palettes over the first 64
-/// background colours in turn, the style's last; frees PARTICLES 0 to 1023,
-/// then gives the shells 16 a target from 0 and the bursts 32 a target from
-/// LOBBED_SHELLS_BURSTS. Runs 8 frames a target plus 72 for smoke or 56 for
-/// shards, and before it returns removes its transfer task, frees its
-/// blitters and closes the canvas layer.
+/// Loads three palettes over the first 64 background colours in turn, the
+/// style's last; frees PARTICLES 0 to 1023, then gives the shells 16 a target
+/// from 0 and the bursts 32 a target from LOBBED_SHELLS_BURSTS. Runs 8 frames a
+/// target plus 72 for smoke or 56 for shards, and before it returns removes its
+/// transfer task, frees its blitters and closes the canvas layer.
 ///
 /// mode: the style (enum LobbedShellsMode): its colours and its row of
 ///       gLobbedShells_Styles, which makes Rotten Blood's and Mad Spatter's
@@ -103,8 +101,6 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -116,10 +112,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 height;
 
-  slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -176,30 +171,30 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     }
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     }
   }
   // Trails keep 3/4 a frame. Smoke lingers 16 frames longer than shards.
@@ -231,10 +226,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           if (shot->variant >= 0) {
             s32 step;
 
-            /* FAKEMATCH(dead): an empty once-only loop ends CSE's block, so
-             * k * 8 is computed again; without it (the call's argument
-             * spelled out or as shot), 449 of 670 instructions differ in
-             * tbs-en. */
+            /* FAKEMATCH(dead): an empty once-only loop ends CSE's block;
+             * without it (the call's argument spelled out or as shot), 449 of
+             * 670 instructions differ in tbs-en. */
             do {
             } while (0);
             // The shell tumbles through ten images, three frames each; the

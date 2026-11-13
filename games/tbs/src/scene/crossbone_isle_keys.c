@@ -67,8 +67,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "edition.h"
 #include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"
@@ -95,7 +93,6 @@
 // the numbers for their own.
 /// CrossboneIsleBane's third stone pillar has come down to two cells high or
 /// less.
-/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED FLAG_AREA_TEMP_00
 
 #if TBS_PATCH_1
@@ -119,17 +116,11 @@ static void CrossboneIsleKeys_InitializeBane(void);
 /// They are the keys, drawn as their item icons (Colosso_ShowItemIcon) until
 /// Catch takes them.
 enum CrossboneIsleKeysActorId {
-  /// ★ Named from the game: "Blue Key" (MsgItemName), a key icon lying among
-  /// the room's stone posts
   ACTOR_FIRST_BLUE_KEY = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Blue Key" (MsgItemName), the second key icon
   ACTOR_SECOND_BLUE_KEY,
-  /// ★ Named from the game: "Blue Key" (MsgItemName), the third key icon
   ACTOR_THIRD_BLUE_KEY,
-  /// ★ Named from the game: "Blue Key" (MsgItemName), the fourth key icon
   ACTOR_FOURTH_BLUE_KEY,
   /// Shown only while Reveal lasts.
-  /// ★ Named from the game: "Red Key" (MsgItemName), which opens the red door
   ACTOR_RED_KEY
 };
 
@@ -139,20 +130,10 @@ enum CrossboneIsleKeysActorId {
 /// They are the five statues that pursue the leader, all of one sprite. Each
 /// waits at its home for the leader to cross its stretch of the room.
 enum CrossboneIsleStatuesActorId {
-  /// ★ Named from what the player sees: a pink statue of a robed woman, lit in
-  /// a circle by a brazier (its render)
   ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the second statue of a robed woman (its
-  /// render)
   ACTOR_SECOND_STATUE,
-  /// ★ Named from what the player sees: the third statue of a robed woman (its
-  /// render)
   ACTOR_THIRD_STATUE,
-  /// ★ Named from what the player sees: the fourth statue of a robed woman (its
-  /// render)
   ACTOR_FOURTH_STATUE,
-  /// ★ Named from what the player sees: the fifth statue of a robed woman (its
-  /// render)
   ACTOR_FIFTH_STATUE
 };
 
@@ -171,24 +152,12 @@ enum CrossboneIsleStatuesRaisedTrigger {
 enum CrossboneIsleBaneActorId {
   /// The five pillars, in Goma Cave's pillar sprite, pushed by walking into
   /// them or with Move.
-  /// ★ Named from what the player sees: a brown stone pillar in the north-west
-  /// of the room (its render)
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a brown stone pillar in the middle of
-  /// the room, a chest on its top (its render)
   ACTOR_SECOND_PILLAR,
-  /// ★ Named from what the player sees: a brown stone pillar in the west of the
-  /// room (its render)
   ACTOR_THIRD_PILLAR,
-  /// ★ Named from what the player sees: one of the two brown stone pillars
-  /// side by side in the south-east (its render)
   ACTOR_FOURTH_PILLAR,
-  /// ★ Named from what the player sees: the other of the two brown stone
-  /// pillars in the south-east (its render)
   ACTOR_FIFTH_PILLAR,
   /// Frozen by Frost into a pillar of ice.
-  /// ★ Named from what the player sees: a small blue puddle on the floor of the
-  /// south-west (its render)
   ACTOR_PUDDLE,
   /// The chest on top of the second pillar, holding the Demon Axe.
   ///
@@ -196,28 +165,18 @@ enum CrossboneIsleBaneActorId {
   /// pillar until the pillar reaches the ladder, where the chest's examine
   /// trigger 107 takes its place. It is drawn open once
   /// FLAG_CROSSBONE_ISLE_DEMON_AXE is set.
-  /// ★ Named from what the player sees: a red chest standing on the second
-  /// pillar (its render)
   ACTOR_SECOND_PILLAR_CHEST,
   /// Bane, a Venus Djinni, until it is caught.
-  /// ★ Named from the game: "Bane" (MsgDjinnName)
   ACTOR_BANE
 };
 
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
-/// CrossboneIsleBane: the puddle is frozen.
-/// ★ Named from what the player sees: a small blue puddle on the floor of the
-/// lowest hall (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
-/// ★ Named from what the player sees: a chest on top of a pillar between two
-/// rows of spikes, below a ladder (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_SCENE_TEMP_06
 /// CrossboneIsleBane: the leader last looked east from the ladder, which gives
 /// the ladder cell its other cell behaviors.
-/// ★ Named from what the player sees: the ladder up the ledge beside the second
-/// pillar, from which the leader can face east and jump across (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST FLAG_SCENE_TEMP_07
 // The Move events of CrossboneIsleBane's pillars also test FLAG_SCENE_TEMP_01
 // and 03 to 05, which nothing sets.
@@ -328,12 +287,10 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
 /// the room, and is left squashing and stretching.
 static void CrossboneIsleKeys_BaneSecondEscape(void) {
   struct Actor *spinningDjinni;
-  s32 escapeComplete;
   struct Actor *jumpingDjinni;
 
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-    escapeComplete = Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
-    if (escapeComplete == 0) {
+    if (Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) == 0) {
       GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
       Event_Start();
 

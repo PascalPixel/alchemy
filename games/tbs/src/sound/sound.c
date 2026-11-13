@@ -3,26 +3,14 @@
 /// every sound number, the music's volume and tempo ramps, the music's return
 /// after a jingle, and a sound test nothing in the game names.
 
-#include "module/sound/sound.h"
 #include "module/system/system.h"
 #include "battle.h"
-#include "input.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "sound_driver.h"
-#include "sound_driver_types.h"
-#include "sound_driver_symbols.h"
-#include "types.h"
 #include "io_reg.h"
-#include "sounds.h"
 
 enum {
   /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
@@ -190,8 +178,7 @@ void Sound_UpdateBgmRamps(void) {
 /// Up and Down choose a row, Right and Left change its sound by 1, R and L by
 /// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
 /// and Select both steps the reverb code (SOUND_REVERB_NORMAL at first) and
-/// fades MUSIC_PLAYER_ACTION_SE. Never returns. Reached only through the sound
-/// far-call table's veneer; nothing in the game names it.
+/// fades MUSIC_PLAYER_ACTION_SE. Never returns.
 void SoundTest_Run(void) {
   // One row each for music, jingles and sound effects.
   s32 cues[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
@@ -201,11 +188,8 @@ void SoundTest_Run(void) {
 
   row = 0;
   reverbCode = SOUND_REVERB_NORMAL;
-  // XXX (no evidence): why the sound test clears the first four digits of the
-  // build stamp copy; nothing in the game reads that copy.
-  /* FAKEMATCH(dead): the store in a once-only block, after reverbCode's setup
-   * and before clipTimer's; as the plain store, 8 of 140 instructions differ
-   * in tbs-en. */
+  /* FAKEMATCH(dead): a once-only block; as a plain store, 4 of 145 instructions
+   * differ in tbs-en. */
   do {
     gBuildStamp[0] = 0;
   } while (0);
@@ -255,12 +239,10 @@ void SoundTest_Run(void) {
   }
 }
 
-/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin)
-/// and clears every player's last sound. Called by System_Initialize through
-/// the sound far-call table.
+/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin) and
+/// clears every player's last sound.
 void Sound_Initialize(void) {
-  s16 *playerVolume;
-  s32 remaining;
+  s32 i;
 
   m4aSoundInit();
   // No music is sound 0xff, so the first music always plays.
@@ -274,17 +256,9 @@ void Sound_Initialize(void) {
   gBgmTempoPitchStep = BGM_DEFAULT_RAMP_STEP;
   gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
-  playerVolume = gMusicPlayerLastSound;
-  // XXX (no evidence): what gSound_UnreadByte holds; no code in either game
-  // reads it or its Lost Age twin (gData_02005804, also after
-  // gBgmRestoreDelay), and no literal in the ROM but this one points at it.
   gSound_UnreadByte = 0;
-  remaining = MUSIC_PLAYER_COUNT - 1;
-  do {
-    remaining--;
-    *playerVolume = 0;
-    playerVolume += 1;
-  } while (remaining >= 0);
+  for (i = 0; i < MUSIC_PLAYER_COUNT; i++)
+    gMusicPlayerLastSound[i] = 0;
 }
 
 /// Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
@@ -297,23 +271,20 @@ void Sound_SetBgmTempo(u16 tempoScale) {
 }
 
 /// Applies a pitch offset, in 1/256 semitone, to the music's active tracks 0
-/// to 7 (TRACKS_ALL). Reached only through the sound far-call table's
-/// veneer.
+/// to 7 (TRACKS_ALL).
 void Sound_SetBgmPitch(u16 pitch) {
   m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
 /// Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
-/// (BGM_UNITY_SCALE the music's own). Reached only through the sound far-call
-/// table's veneer.
+/// (BGM_UNITY_SCALE the music's own).
 void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
   gBgmTempoPitchTarget = targetScale;
   gBgmTempoPitchStep = step;
 }
 
 /// Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
-/// outstanding volume ramp. Reached only through the sound far-call table's
-/// veneer.
+/// outstanding volume ramp.
 void Sound_SetBgmVolume(s16 volume) {
   m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, volume);
   gBgmVolumeTarget = volume;
@@ -321,7 +292,6 @@ void Sound_SetBgmVolume(s16 volume) {
 }
 
 /// Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step.
-/// Reached only through the sound far-call table's veneer.
 void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
   gBgmVolumeTarget = targetVolume;
   gBgmVolumeStep = step;
@@ -336,16 +306,13 @@ void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
 s32 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
 /// Stops every sound player while preserving its state for a later resume.
-/// Reached only through the sound far-call table's veneer.
 void Sound_StopAllMusicPlayers(void) { m4aMPlayAllStop(); }
 
 /// Resumes every player, each from where m4aMPlayAllStop stopped it.
-/// Reached only through the sound far-call table's veneer.
 void Sound_ResumeAllMusicPlayers(void) { m4aMPlayAllContinue(); }
 
 /// Replaces the audio command mask, or toggles its requested bits when
-/// flagged. Reached only through the sound far-call table's veneer; nothing
-/// in the game reads gSoundCommandMask by name.
+/// flagged.
 void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & SOUND_COMMAND_MASK_TOGGLE;
 
@@ -363,9 +330,7 @@ void Sound_UpdateCommandMask(u32 command) {
 /// (MainRoutine_Run, system/main_routine.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
-/// Waits a frame at a time for jingle restoration, giving up after 300
-/// frames. Called only by Vale's sanctum, after the jingle (MUS_INN) for
-/// accepting the Great Healer's quest.
+/// Waits a frame at a time for jingle restoration, giving up after 300 frames.
 void Sound_WaitForBgmRestore(void) {
   s32 framesWaited = 0;
 
@@ -379,7 +344,7 @@ void Sound_WaitForBgmRestore(void) {
 
 /// Unused: returns the reverb code Sound_Play gives music `command`:
 /// SOUND_REVERB_LONG for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO,
-/// SOUND_REVERB_NORMAL for the rest. Nothing in the game calls it.
+/// SOUND_REVERB_NORMAL for the rest.
 UNUSED s32 Sound_GetReverbCode(s32 command) {
   if (command == MUS_TITLE || command == MUS_ENDING_LOGO ||
       command == MUS_ENDING)

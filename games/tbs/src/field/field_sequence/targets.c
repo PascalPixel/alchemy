@@ -6,8 +6,7 @@
 
 /// Returns how far, in pixels, a field Psynergy of the given kind reaches:
 /// gFieldEffect_TargetRangeByMode (field_sequence_tables.c) pairs kinds with
-/// ranges, ended by -1, and a kind not listed reaches 16 pixels. Called by
-/// Field_FindNearbyPsynergyTarget.
+/// ranges, ended by -1, and a kind not listed reaches 16 pixels.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
   const s16 *rangeEntry = gFieldEffect_TargetRangeByMode;
   s32 range = 16;
@@ -219,11 +218,9 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   return nearestActorId;
 }
 
-/// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4
-/// and, 12 frames later, shows itemId in front of actor with sparkles.
-/// Returns the picture's encoded actor pointer, or 0 when the target or
-/// picture is absent. Called by two scene overlays: McCoy's palace, when a
-/// reward chest opens, and Vault's rooms, when Ivan finds the Shaman's Rod.
+/// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4 and, 12
+/// frames later, shows itemId in front of actor with sparkles. Returns the
+/// picture's encoded actor pointer, or 0 when the target or picture is absent.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId) {
   void *targetActor;

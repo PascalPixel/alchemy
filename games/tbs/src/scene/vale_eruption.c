@@ -63,41 +63,30 @@ enum ValeEruptionActorId {
   /// The Great Healer is a man with a white beard, in a tall hat and a long
   /// purple and blue robe. He has the sprite of sanctum.c's healer, and leads
   /// the villagers into the sanctum. "Come into the sanctum, both of you."
-  /// ★ Named from the game: "Come into the sanctum" (MsgValeMtAlephWasInactive)
   ACTOR_GREAT_HEALER = ACTOR_FIRST_PLACED,
   /// Garet's grandfather is an old man with white hair and a cane. He is the
   /// mayor, whom the Great Healer calls Mayor in sanctum.c. "Oooh, my grandson!
   /// Will Garet be safe in this eruption?!?"
-  /// ★ Named from the game: "Oooh, my grandson!" (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
   /// Isaac's mother, who is Dora in sanctum.c. "Isaac and Garet went to Mr.
   /// Kraden's house."
-  /// ★ Named from the game: "your mother, Dora, has been crying"
-  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
   /// Garet's sister is a young woman with an orange ponytail, whom Garet calls
   /// Sis at the farewell (vale_plaza.c). She calls the mayor Grandpa, and
   /// ACTOR_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
   /// up there!"
-  /// ★ Named from the game: "we don't even know if he's up there"
-  /// (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
   /// Garet's brother is the small boy with orange hair of vale.c's
   /// ACTOR_GARETS_BROTHER. He says someone saw Garet climb, and is first to cry
   /// "Garet!"
-  /// ★ Named from the game: "But, Sis, someone saw him"
-  /// (MsgValeMtAlephWasInactive), to Garet's sister
   ACTOR_GARETS_BROTHER = ACTOR_FIRST_PLACED + 4,
   /// The guard is the man with long brown hair and a beard, in a long robe, who
   /// guards Mt. Aleph in vale.c (ACTOR_MAN_GUARDING_MT_ALEPH). "They were
   /// hanging around here while I was on guard duty."
-  /// ★ Named from the game: "on guard duty" (MsgValeMtAlephWasInactive)
   ACTOR_GUARD = ACTOR_FIRST_PLACED + 5,
   /// The first of the six villagers gathered behind them. They are a burly
   /// grey-haired man, a bald muscular man, a woman in a green dress, a little
   /// girl with pigtails, a young man with brown hair and a strongman.
-  /// ★ Named from what the player sees: men, a woman and children of Vale in
-  /// their sprites (its render)
   ACTOR_FIRST_VILLAGER = ACTOR_FIRST_PLACED + 6
 };
 
@@ -333,7 +322,6 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // "You're safe!"
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(40);
-  // The mayor: "Come over here, both of you!"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   // "Come over here, both of you!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
@@ -514,22 +502,41 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
 /// Isaac walks down from the path to the villagers before the sanctum.
 s32 gValeEruption_LeaderWalksDown[] = {
-    SC_ANIMATION(2), SC_MOVE(128, 0, 378), SC_SYNC, SC_MOVE(203, 0, 378),
-    SC_SYNC,         SC_MOVE(212, 0, 472), SC_SYNC, SC_MOVE(214, 0, 472),
-    SC_SYNC,         SC_ANIMATION(1),      SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(128, 0, 378),
+    SC_SYNC,
+    SC_MOVE(203, 0, 378),
+    SC_SYNC,
+    SC_MOVE(212, 0, 472),
+    SC_SYNC,
+    SC_MOVE(214, 0, 472),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Garet follows him, stopping a little above.
 s32 gValeEruption_GaretWalksDown[] = {
-    SC_ANIMATION(2), SC_MOVE(128, 0, 378), SC_SYNC, SC_MOVE(203, 0, 378),
-    SC_SYNC,         SC_MOVE(214, 0, 455), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(128, 0, 378),
+    SC_SYNC,
+    SC_MOVE(203, 0, 378),
+    SC_SYNC,
+    SC_MOVE(214, 0, 455),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// Isaac, then Garet, walk through the sanctum's door.
 s32 gValeEruption_EnterSanctum[] = {
-    SC_ANIMATION(2), SC_MOVE(255, 0, 452), SC_SYNC, SC_MOVE(255, 0, 390),
-    SC_SYNC,         SC_ANIMATION(1),      SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(255, 0, 452),
+    SC_SYNC,
+    SC_MOVE(255, 0, 390),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 struct SceneEntrance gValeEruption_Entrances[] = {

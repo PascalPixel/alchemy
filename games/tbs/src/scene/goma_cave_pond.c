@@ -34,7 +34,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 
 #include "heap_slots.h"
 #include "scene_tables.h"
@@ -48,15 +47,11 @@
 // the numbers for their own.
 
 /// The stump has been pushed over into the room below (goma_cave_pillar.c).
-/// ★ Named from what the player sees: a tree stump standing on a ledge in the
-/// room above (its render)
 #define FLAG_GOMA_CAVE_STUMP_FELL FLAG_AREA_TEMP_00
 
 /// The room's one placed actor.
 enum GomaCavePondActorId {
   /// The stump the party pushes over in the room above, lying in this room.
-  /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
-  /// free that stump." (MsgGomaNoUsePsynergy)
   ACTOR_FALLEN_STUMP = ACTOR_FIRST_PLACED
 };
 

@@ -110,6 +110,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   if (entryIndex < selectionUi->iconCount) {
     do {
       s32 x = (entryIndex - selectionUi->iconCount) * 24;
+
       selectionUi->entries[entryIndex].positionX = x + 155;
       if (mode != COMMAND_ROW_PARTY)
         selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
@@ -153,9 +154,6 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              // VRAM is hardware (its volatile is source, not a device): the
-              // store keeps its address adds; through a plain u16 pointer, 19
-              // of 1037 instructions differ in tbs-en.
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
 
@@ -181,8 +179,6 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              // VRAM, as in the party member's row; through a plain u16
-              // pointer, 20 of 1037 instructions differ in tbs-en.
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
 
@@ -328,8 +324,7 @@ s32 BattleCommandRow_Run(s32 mode) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
         /* FAKEMATCH(volatile): the window tilemap, in RAM, stored through a
-         * volatile pointer, which keeps the add of 0x44a apart from the store
-         * it addresses; as a plain store, 33 of 1037 instructions differ in
+         * volatile pointer; as a plain store, 33 of 1037 instructions differ in
          * tbs-en. */
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
@@ -409,7 +404,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 /// column, when shown, lies left of them). Returns 0.
 /// Battle_CollectPartyCommands calls it.
 s32 PartyStatus_HighlightMembers(u16 *ids) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 count;
   s32 i;
   s32 j;
@@ -417,9 +412,6 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   count = BattleUnit_ListIdsFar(1, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
-  // The loop over ids is written with goto: as
-  // for (i = 0; i < 4 && ids[i] != BATTLE_UNIT_LIST_END; i++), or as a do-while
-  // loop inside this test, 49 of 74 instructions differ in tbs-en.
   if (ids[0] != BATTLE_UNIT_LIST_END) {
   next_id:
     for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {

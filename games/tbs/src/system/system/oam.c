@@ -6,9 +6,8 @@
 
 extern u8 IwramClearWords[];
 
-/// Starts a new frame of sprites: frees the affine matrices and empties the
-/// 256 depth slots sprites are linked into. Called by wait() after each
-/// VBlank.
+/// Starts a new frame of sprites: frees the affine matrices and empties the 256
+/// depth slots sprites are linked into.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
   // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads.
@@ -28,10 +27,9 @@ enum {
 };
 
 /// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
-/// scale and rotation and fills it in. Called by the field sprites and the
-/// windows' scaled sprites. Returns the matrix number, 0 to 31. When all 32
-/// are taken it fills nothing and still returns 0, which a caller cannot tell
-/// from matrix 0: the sprite is drawn with whatever matrix 0 holds.
+/// scale and rotation and fills it in. Returns the matrix number, 0 to 31. When
+/// all 32 are taken it fills nothing and still returns 0, which a caller cannot
+/// tell from matrix 0: the sprite is drawn with whatever matrix 0 holds.
 s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   union OamMatrix *matrix;
   s16 *coefficient;
@@ -86,8 +84,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
 /// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
 /// frame. A higher slot is drawn in front: the OAM list is built from slot 255
 /// down, and the hardware draws an earlier entry over a later one. The entry's
-/// first word becomes its link to the next entry. Called by everything that
-/// draws a sprite, before wait() builds the OAM list.
+/// first word becomes its link to the next entry.
 void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;
@@ -103,8 +100,7 @@ void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
 }
 
 /// Builds this frame's OAM list in `work` from the sprites linked into the
-/// depth slots, with a RAM copy of the ARM builder. Called by wait() into
-/// the frame scratch heap slot.
+/// depth slots, with a RAM copy of the ARM builder.
 void Oam_BuildBuffer(void *work) {
   OamBuildRoutine routine;
 

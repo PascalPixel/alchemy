@@ -76,13 +76,13 @@ void WindowSystem_InitField(void) {
 #endif
 
   // Clear the work block before linking any of its embedded lists.
-  work = HeapSlot_AllocEwram(HEAP_SLOT_WINDOW, WINDOW_WORK_SIZE);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_WINDOW, sizeof(struct WindowWork));
 #if TBS_PATCH_1
   fill = 0;
-  Dma_Set((const void *)&fill, work, DMA_FILL32(WINDOW_WORK_SIZE / 4),
+  Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(struct WindowWork) / 4),
           REG_DMA3);
 #else
-  Iwram_ClearWords(work, WINDOW_WORK_SIZE);
+  Iwram_ClearWords(work, sizeof(struct WindowWork));
 #endif
   work->dirty = 1;
   work->glyphResource = NO_GLYPH_RESOURCE;
@@ -124,20 +124,20 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
     sourceTile &= TILE_NUMBER_MASK;
     destinationTile &= TILE_NUMBER_MASK;
     Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
-            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP, DMA_COPY16(8),
-            REG_DMA3);
+            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP,
+            DMA_COPY_HALFWORDS(8), REG_DMA3);
     return Iwram_ClearWords(
         BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
 
   work = (struct WindowWork *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
-                                                  WINDOW_WORK_SIZE);
+                                                  sizeof(struct WindowWork));
 #if TBS_PATCH_1
   fill = 0;
-  Dma_Set((const void *)&fill, work, DMA_FILL32(WINDOW_WORK_SIZE / 4),
+  Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(struct WindowWork) / 4),
           REG_DMA3);
 #else
-  Iwram_ClearWords(work, WINDOW_WORK_SIZE);
+  Iwram_ClearWords(work, sizeof(struct WindowWork));
 #endif
   work->dirty = 1;
   work->glyphResource = NO_GLYPH_RESOURCE;
@@ -190,7 +190,7 @@ void WindowSystem_UploadTilemap(void) {
       bands >>= 1;
       do {
         if (bands & 1)
-          Dma_Set(src, dst, DMA_COPY32(64), REG_DMA3);
+          Dma_Set(src, dst, DMA_COPY_WORDS(64), REG_DMA3);
         bands >>= 1;
         src += 256;
         dst += 256;
@@ -242,12 +242,8 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
         else
           tile = WINDOW_TILE_BLANK;
       }
-      column = 0;
-      if (column < width) {
-        do {
-          *cursor++ = tile;
-          column++;
-        } while (column < width);
+      for (column = 0; column < width; column++) {
+        *cursor++ = tile;
       }
       row++;
       cursor += 32 - width;
@@ -522,9 +518,8 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
     VramCache_FreeEntry((u8)entry->index);
     if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
-      u8 *work = gWindowWork[0];
-      s32 offset = entry->oam.palette * 2 + WINDOW_WORK_PALETTE_TABLE_OFFSET;
-      *(u16 *)(work + offset) = PORTRAIT_SLOT_EMPTY;
+      WINDOW_WORK->portraitPictures[entry->oam.palette - PORTRAIT_PALETTE] =
+          PORTRAIT_SLOT_EMPTY;
     }
   }
   entry->motion = 0;

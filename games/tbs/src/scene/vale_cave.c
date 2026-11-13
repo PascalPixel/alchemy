@@ -103,14 +103,8 @@
 /// Barricade in bilibin.c, then two logs, as in Kolima Forest. None of them
 /// moves.
 enum ValeCaveMouthActorId {
-  /// ★ Named from what the player sees: three wooden crates stacked by the
-  /// cave's mouth (its render)
   ACTOR_VALE_CAVE_MOUTH_FIRST_CRATES = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_VALE_CAVE_MOUTH_FIRST_LOG = ACTOR_FIRST_PLACED + 3,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
@@ -118,34 +112,19 @@ enum ValeCaveMouthActorId {
 /// from ACTOR_FIRST_PLACED.
 enum ValeCaveKiteActorId {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
-  /// ★ Named from the game: "Kite" (MsgDjinnName)
   ACTOR_KITE = ACTOR_FIRST_PLACED,
   /// The two stacks of crates in the riding log's part, which sink into the
   /// water. The western sinks under Move, the eastern under Move or a push.
-  /// ★ Named from what the player sees: a stack of wooden crates beside the
-  /// water (its render)
   ACTOR_WEST_CRATES,
-  /// ★ Named from what the player sees: a stack of wooden crates beside the
-  /// water (its render)
   ACTOR_EAST_CRATES,
   /// The log the leader rides along its part's passage, from one end to the
   /// other. It is drawn as the north-south log of Colosso's Lumber Water
   /// Crossing Area (colosseum_azart_match.c).
-  /// ★ Named from what the player sees: a yellow log floating in the water (its
-  /// render)
   ACTOR_RIDING_LOG,
   /// Two stacks of crates and two logs that stand in the first part.
-  /// ★ Named from what the player sees: two stacks of wooden crates by the
-  /// room's east door (its render)
   ACTOR_FIRST_STANDING_CRATES,
-  /// ★ Named from what the player sees: two stacks of wooden crates by the
-  /// room's east door (its render)
   ACTOR_SECOND_STANDING_CRATES,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_FIRST_STANDING_LOG,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_SECOND_STANDING_LOG
 };
 
@@ -156,15 +135,9 @@ enum ValeCaveKiteActorId {
 /// pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsActorId {
   /// Lying north to south, pushed off the ledge.
-  /// ★ Named from what the player sees: a log lying north to south west of the
-  /// water (its render)
   ACTOR_WEST_LOG = ACTOR_FIRST_PLACED + 1,
-  /// ★ Named from what the player sees: a log lying north to south east of the
-  /// water (its render)
   ACTOR_EAST_LOG, ///< lying north to south, pushed along the ledge until it
                   ///< falls
-  /// ★ Named from what the player sees: a log lying west to east south of the
-  /// water (its render)
   ACTOR_SOUTH_LOG ///< lying west to east, pushed north
 };
 
@@ -173,36 +146,26 @@ enum ValeCaveLogsActorId {
 enum ValeCaveCellBehavior { CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 
 /// The flag of Kite, set once it is caught.
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_KITE (FLAG_DJINNI(DJINNI_KITE))
 
 // The cave's scene flags: each room reuses them for its own puzzle, so the
 // second room's two have one name in the riding log's part and another in
 // Kite's.
 /// The riding log's part: the western crates have sunk into the water.
-/// ★ Named from what the player sees: stacks of wooden crates at the edge of
-/// the cave's water (its render)
 #define FLAG_VALE_CAVE_WEST_CRATES_SUNK FLAG_SCENE_TEMP_00
 /// The riding log's part: the eastern crates have sunk into the water.
-/// ★ Named from what the player sees: stacks of wooden crates at the edge of
-/// the cave's water (its render)
 #define FLAG_VALE_CAVE_EAST_CRATES_SUNK FLAG_SCENE_TEMP_01
 /// Kite's part: Kite has run off once (ValeCave_KiteRunsOff).
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_RAN_OFF FLAG_SCENE_TEMP_00
 /// Kite's part: Kite has run behind the ledge
 /// (ValeCave_KiteRunsBehindLedge).
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_SCENE_TEMP_01
 
 // The cave's area flags. The second and third rooms are one area,
 // so these last while the party goes between them; the first room is another.
 /// The riding log of the second room is at the eastern end of its passage.
-/// ★ Named from what the player sees: the log floating in the water of the
-/// second room, which carries the leader along its passage (its render)
 #define FLAG_VALE_CAVE_RIDING_LOG_EAST FLAG_AREA_TEMP_01
 /// Kite has run behind the ledge and keeps to its far side.
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE FLAG_AREA_TEMP_02
 
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
@@ -213,27 +176,15 @@ static void ValeCave_ApplyEntryState(void);
 #include "shared/staged_actor.h"
 
 /// In the third room, the western log has been pushed off the ledge.
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_SCENE_TEMP_02
 /// In the third room, the eastern log has been pushed along the ledge and over
 /// its edge.
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE FLAG_SCENE_TEMP_03
 /// In the third room, the southern log has been pushed north and stopped on the
 /// northern row.
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_SCENE_TEMP_04
 /// In the third room, the southern log has been pushed north and stopped on the
 /// southern row (row 20).
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_SCENE_TEMP_05
 
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it has
@@ -341,8 +292,8 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   u32 frame;
 
   for (frame = 0; frame < 68; frame++) {
-    s32 particleX = (((u32)(Import_RandomNext() * 17) >> 16) << 16) + baseX;
-    s32 particleZ = (((u32)(Import_RandomNext() * 14) >> 16) << 16) + baseZ;
+    s32 particleX = ((Random_Below(17)) << 16) + baseX;
+    s32 particleZ = ((Random_Below(14)) << 16) + baseZ;
 
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
@@ -459,15 +410,12 @@ static void ValeCave_PushEastCratesIntoWater(void) {
 /// Reached by walking south into cell behavior 21 in the second room. Returns 1
 /// when the leader hopped, 0 when the landing cell is blocked.
 static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
-
   union FieldCoordinate landingPosition[3];
   struct Actor *leader;
-  u8 *motionFlags;
   s32 savedMotionFlags;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  motionFlags = &leader->motionFlags;
-  savedMotionFlags = *motionFlags;
+  savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
   landingPosition[0].fixed = (leader->x.fixed & -0x100000) + px(8);
   landingPosition[1].fixed = leader->y.fixed;
@@ -488,13 +436,13 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *motionFlags &= 126;
+    leader->motionFlags &= 126;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
                         landingPosition[2].part.pixel);
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-    *motionFlags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
     return 1;
   }
@@ -509,7 +457,6 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
 /// Reached by stepping on cell behavior 40 in the second room until Kite is
 /// caught (FLAG_KITE). Runs once, setting FLAG_VALE_CAVE_KITE_RAN_OFF.
 static void ValeCave_KiteRunsOff(void) {
-
   struct Actor *djinni;
 
   if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_OFF) == 0) {
@@ -545,7 +492,6 @@ static void ValeCave_KiteRunsOff(void) {
 /// FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE,
 /// and gives Kite the update routine ValeCave_FaceActorTowardLeader.
 static void ValeCave_KiteRunsBehindLedge(void) {
-
   struct Actor *djinni;
 
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_RAN_OFF) != 0) {
@@ -577,32 +523,18 @@ static void ValeCave_KiteRunsBehindLedge(void) {
 /// is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. Each behavior sends
 /// Kite to its row of gValeCave_WalkTargets at the leader's speed.
 static void ValeCave_KiteKeepsAway(void) {
-  struct Actor *djinni;
-  struct Actor *leader;
-  s32 routeIndex;
-  const u8 *walkTargetBytes;
-  s32 targetZOffset;
-  struct FieldWork *work;
+  struct FieldWork *field = gFieldWork;
+  s32 route;
 
-  work = gFieldWork;
-  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
-    if (gMainRoutineWork.haltedActor != ACTOR_KITE) {
-      // Preserve the speed reads before resolving this route point.
-      routeIndex = work->stepTrigger;
-      djinni = Actor_Get(ACTOR_KITE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->speedLimit = leader->speedLimit;
-      djinni = Actor_Get(ACTOR_KITE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->acceleration = leader->acceleration;
-      routeIndex -= CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
-      // X/Z pairs occupy eight bytes.
-      walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
-      routeIndex <<= 3;
-      targetZOffset = routeIndex + sizeof(s32);
-      Actor_WalkTo(ACTOR_KITE, *(const s32 *)(walkTargetBytes + routeIndex),
-                   *(const s32 *)(walkTargetBytes + targetZOffset));
-    }
+  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0 &&
+      gMainRoutineWork.haltedActor != ACTOR_KITE) {
+    route = field->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
+    Actor_Get(ACTOR_KITE)->speedLimit =
+        Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
+    Actor_Get(ACTOR_KITE)->acceleration =
+        Actor_Get(ACTOR_PARTY_LEADER)->acceleration;
+    Actor_WalkTo(ACTOR_KITE, gValeCave_WalkTargets[route][0],
+                 gValeCave_WalkTargets[route][1]);
   }
 }
 
@@ -645,11 +577,9 @@ static void ValeCave_PushLogOverEdge(void) {
       Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
       Actor_SetAnimation(probe.actorSlot, 8);
-      {
-        struct Actor *movedLog = Actor_Get(probe.actorSlot);
+      movedLog = Actor_Get(probe.actorSlot);
 
-        movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      }
+      movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       // The cells it held on the ledge, and its landing, become open floor.
       PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
@@ -672,9 +602,7 @@ static void ValeCave_PushLogOverEdge(void) {
 /// Reached by walking east into cell behavior 21 in the third room. Sets
 /// FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE and clears the cells the log held.
 static void ValeCave_PushLogOffLedge(void) {
-
   struct Actor *pushedLog;
-  s32 stationaryMotion = 0;
 
   Event_Start();
   Event_Wait(10);
@@ -687,9 +615,9 @@ static void ValeCave_PushLogOffLedge(void) {
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_WEST_LOG, 2);
-  Actor_Get(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
+  Actor_Get(ACTOR_WEST_LOG)->motionFlags = 0;
   pushedLog = Actor_Get(ACTOR_WEST_LOG);
-  pushedLog->bounce = stationaryMotion;
+  pushedLog->bounce = 0;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -718,6 +646,7 @@ static void ValeCave_PushLogOffLedge(void) {
 /// FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW, and then opens the cells above it.
 static void ValeCave_PushLogNorth(void) {
   struct PushedActorProbe probe;
+  struct Actor *slidingLog;
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
@@ -729,25 +658,17 @@ static void ValeCave_PushLogNorth(void) {
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);
     Actor_SetAnimation(ACTOR_SOUTH_LOG, 8);
-    {
-      struct Actor *slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
-      s32 clearedRows = 2;
-      s32 emptyAttributes = 0;
+    slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
 
-      slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      PushedActor_FillGridAttributeRectangle(0, 13,
-                                             (FIELD_CELL(probe.position.z)) - 1,
-                                             4, clearedRows, emptyAttributes);
-    }
+    slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    PushedActor_FillGridAttributeRectangle(
+        0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, 0);
     if (FIELD_CELL(probe.position.z) == 20) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW);
-      {
-
-        MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
-        MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
-      }
+      MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+      MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
     }
   }
   Event_End();
@@ -778,12 +699,10 @@ const struct Trigger *ValeCave_GetTriggers(void) {
 /// FLAG_SHOW_AREA_NAME, so the area name is not shown again. The two rooms of
 /// Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
-  s32 *request = &gFieldWork->transition;
-
-  *request =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveMouth) {
-    *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     wait(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
@@ -828,7 +747,6 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 /// Reached by walking east into cell behavior 20 in the second room. Sets
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogEast(void) {
-
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 80, 0);
@@ -844,7 +762,6 @@ static void ValeCave_RideLogEast(void) {
 /// Reached by walking west into cell behavior 21 in the second room. Clears
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogWest(void) {
-
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -80, 0);
@@ -870,8 +787,6 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
 /// Restores, on entry, Kite behind its ledge and the crates and logs of the
 /// puzzles already solved.
 ///
-/// Called by ValeCave_Initialize.
-///
 /// Kite's case is in Kite's part of the second room
 /// (VALE_CAVE_KITE_EAST_FROM_WEST to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
 /// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. It then sets
@@ -889,7 +804,7 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
       Actor_SetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
       Actor_SetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
-      // A still actor of sprite 223 (spr_223.png, a wooden crate) that shows
+      // A still actor of sprite 223 (crate.png, a wooden crate) that shows
       // nothing. XXX (no evidence): what it and the chest below were meant to
       // show; the sprites alone hold neither, and neither actor is solid or a
       // target.
@@ -993,7 +908,7 @@ static void ValeCave_TouchRidingLog(void) {
 
 /// The twelve points round the far side of Kite's ledge, x then z in pixels,
 /// one for each cell behavior from CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE on.
-s32 gValeCave_WalkTargets[] = {
+s32 gValeCave_WalkTargets[][2] = {
     760, 296,
     760, 280,
     776, 280,

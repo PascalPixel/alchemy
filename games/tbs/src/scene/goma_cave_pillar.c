@@ -69,13 +69,11 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "sprite.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "pushed_actor.h"
-#include "edition.h"
 #include "tbs_edition.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -94,16 +92,10 @@
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
 // the numbers for their own.
 /// The stump has been pushed over into the room below.
-/// ★ Named from what the player sees: a tree stump standing on a ledge (its
-/// render)
 #define FLAG_GOMA_CAVE_STUMP_FELL FLAG_AREA_TEMP_00
 /// The east stone pillar has sunk into its place.
-/// ★ Named from what the player sees: a stone pillar on the room's east side
-/// (its render)
 #define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE FLAG_AREA_TEMP_01
 /// The west stone pillar stands one step east of its start.
-/// ★ Named from what the player sees: a stone pillar at the head of the room's
-/// west passage (its render)
 #define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED FLAG_AREA_TEMP_02
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
@@ -112,14 +104,10 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 /// gGomaCavePillar_ActorPlacements.
 enum GomaCavePillarActorId {
   /// Slides between two places.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED,
   /// Pushed over the edge into the room below.
-  /// ★ Named from the game: "You want to move the stump, right?"
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_STUMP,
   /// Sinks into the floor in its place.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_EAST_PILLAR,
   /// Hides the stump where it drops behind the floor in front of the ledge.
   ///
@@ -132,12 +120,9 @@ enum GomaCavePillarActorId {
   /// goes back there once the stump has fallen.
   ACTOR_MASK_FOR_STUMP,
   /// Forge, a Mars Djinni, until it joins the party.
-  /// ★ Named from the game: "Forge" (MsgDjinnName)
   ACTOR_FORGE,
   /// The man who fought Forge and lost it, a man with golden-brown hair in
   /// orange and red.
-  /// ★ Named from the game: "Did you see something strange over there? I
-  /// fought it, but it fled." (MsgVaultDidYouSeeSomethingStrangeOver)
   ACTOR_WITNESS
 };
 
@@ -151,7 +136,6 @@ enum { ENTRANCE_STUMP_FALL = 99 };
 /// (GomaCavePillar_FidgetWhileForgeFights).
 enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
-// Shared movement routines stay in their linked order.
 #include "shared/staged_actor.h"
 
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
@@ -202,8 +186,6 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
                                          s32 secondRate,
                                          s32 scriptAndChildValue,
                                          s32 planeAndPriority) {
-  // A struct copy of the named table, which sits in the middle of .data; a
-  // local array of the three scripts compiles to the same code.
   struct EffectDurationScripts table;
   struct Actor *leader;
   struct Actor *fragment;
@@ -259,11 +241,9 @@ static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
 /// Move on the west pillar in Goma Cave: it slides between its two places,
 /// and the map grid cells follow it.
 static void GomaCavePillar_MoveWestPillar(void) {
-  struct Actor *actor;
   s32 x;
 
-  actor = Actor_Get(ACTOR_WEST_PILLAR);
-  x = actor->x.fixed;
+  x = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed;
   if (x < 0)
     x += px(16) - 1;
   x >>= 20;
@@ -312,7 +292,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstFallingSpeed -= firstBandScaled;
     firstFallingSpeed <<= 3;
     firstFallingSpeed += firstSpeedBand;
-    firstStyle = (u32)(Import_RandomNext() << 1) >> 16;
+    firstStyle = Random_Below(2);
     firstFallingSpeed = -firstFallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                  firstFallingSpeed, firstStyle, framePhase);
@@ -337,7 +317,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondFallingSpeed -= secondBandScaled;
       secondFallingSpeed <<= 3;
       secondFallingSpeed += secondSpeedBand;
-      secondStyle = (u32)(Import_RandomNext() << 1) >> 16;
+      secondStyle = Random_Below(2);
       secondFallingSpeed = -secondFallingSpeed;
       GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                    secondFallingSpeed, secondStyle, framePhase);
@@ -420,7 +400,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     fallingSpeed -= bandScaled;
     fallingSpeed <<= 3;
     fallingSpeed += speedBand;
-    style = (u32)(Import_RandomNext() << 1) >> 16;
+    style = Random_Below(2);
     fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                  fallingSpeed, style, 0);
@@ -532,7 +512,7 @@ static void GomaCavePillar_JumpGapWest(void) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *motionFlags &= 0x7e;
+    *motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)destination->x >> 16),
                         (s16)((u32)destination->z >> 16));
@@ -611,7 +591,6 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
 /// ENTRANCE_STUMP_FALL plays the stump's fall. After a won battle with Forge,
 /// the man's reaction starts.
 s32 Scene_Initialize(void) {
-  struct Actor *actor;
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -638,8 +617,7 @@ s32 Scene_Initialize(void) {
         gMainRoutineWork.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       Actor_Get(ACTOR_EAST_PILLAR)->layer = 2;
-      actor = Actor_Get(ACTOR_EAST_PILLAR);
-      actor->y.fixed--;
+      Actor_Get(ACTOR_EAST_PILLAR)->y.fixed--;
       Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }

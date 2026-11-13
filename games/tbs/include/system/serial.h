@@ -35,7 +35,7 @@ STATIC_ASSERT(offsetof(struct SerialPacket, checksum) == 2);
 STATIC_ASSERT(offsetof(struct SerialPacket, payload) == 4);
 STATIC_ASSERT(offsetof(struct SerialPacket, reservedTail) == 28);
 
-/// The serial data registers read as two words or four halfwords; no TBS code
+/// The serial data registers read as two words or four halfwords; no code
 /// names this union.
 union SerialDataRegisters {
   u32 words[2];
@@ -88,17 +88,17 @@ struct SerialWork {
   /// LINK_STATUS_ERROR to the link status and refuses the packets heard
   /// meanwhile.
   u8 transferError;
-  u8 reserved0a; ///< not named by TBS code
+  u8 reserved0a;
   /// The packet number, counted up each frame once connected.
   u8 packetNumber;
-  u8 reserved0c[8]; ///< not named by TBS code
+  u8 reserved0c[8];
   /// The halfword of sendBuffer[1] sent next; -1 between packets, when
   /// serial.c's SERIAL_IDLE_HALFWORD is sent and the two send buffers swap.
   s32 sendIndex;
   /// Each console's next halfword in its incomingBuffer; -1 after an idle
   /// serial.c's SERIAL_IDLE_HALFWORD.
   s32 receiveIndex[2];
-  u8 reserved20[8]; ///< not named by TBS code
+  u8 reserved20[8];
   /// The packet being built ([0]) and the packet being sent ([1]).
   u16 *sendBuffer[2];
   /// Each console's packet being received; two are used.
@@ -209,14 +209,13 @@ static __inline__ void Serial_ResetTransferState(void) {
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
   /* FAKEMATCH(temporary): zero holds the stores' 0; as 0 in each store, 29 of
-   * 62 instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
+   * 62 instructions differ in tbs-en. */
   zero = 0;
   /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
-   * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
+   * instructions differ in tbs-en. */
   state = &gSerialTransfer;
-  /* FAKEMATCH(dead): an empty once-only loop ends CSE's block, so the stores
-   * take zero's register rather than the constant; without it, 29 of 62
-   * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
+  /* FAKEMATCH(dead): an empty once-only loop ends CSE's block; without it, 29
+   * of 62 instructions differ in tbs-en. */
   do {
   } while (0);
   state->status = SERIAL_STATUS_RUNNING;

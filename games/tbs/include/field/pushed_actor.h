@@ -29,7 +29,7 @@ struct PushedActorProbe {
 };
 
 /// A footprint's bounds, as gPushedActor_FootprintBounds holds four words
-/// a footprint; no TBS code names this struct.
+/// a footprint; no code names this struct.
 struct PushedActorFootprint {
   s32 x0; ///< left edge, pixels from the thing's position
   s32 z0; ///< top edge, pixels from the thing's position

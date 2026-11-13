@@ -38,15 +38,16 @@ struct MapGridScrollWork {
   u8 footprints; ///< nonzero: the leader leaves footprints
   struct TilesetAnim animations[16];
   struct BlendScriptState blend;
-  s32 viewX, viewY;           ///< the view's top left, 16.16 fixed-point pixels
+  s32 view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
   s32 minX, minY, maxX, maxY; ///< 16.16 fixed-point pixels
   /// Set while a BG1 animation runs; the tileset animations are then neither
   /// suspended nor resumed.
   s8 animationActive;
-  u8 unused[3]; ///< no code names it
+  u8 unused[3];
   /// Each layer's BG priority, written into its BGCNT; zero hides the layer.
   u8 enabled[3];
-  /// The last BLDCNT the blend script set (MapGridScrollAnimView.blendControl).
+  /// The last BLDCNT the blend script set; with mode 1 in bits 7..6 its values
+  /// go to BLDALPHA, else to BLDY.
   u8 blendControl;
   struct MapGridLayerScroll layers[3]; ///< BG3, BG2 and BG1, in that order
 };
@@ -58,7 +59,7 @@ STATIC_ASSERT(offsetof(struct MapGridLayerScroll, cells) == 0x2c);
 STATIC_ASSERT(sizeof(struct MapGridScrollWork) == 0x194);
 STATIC_ASSERT(offsetof(struct MapGridScrollWork, animations) == 0x18);
 STATIC_ASSERT(offsetof(struct MapGridScrollWork, blend) == 0xd8);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, viewX) == 0xe4);
+STATIC_ASSERT(offsetof(struct MapGridScrollWork, view) == 0xe4);
 STATIC_ASSERT(offsetof(struct MapGridScrollWork, animationActive) == 0xfc);
 STATIC_ASSERT(offsetof(struct MapGridScrollWork, layers) == 0x104);
 

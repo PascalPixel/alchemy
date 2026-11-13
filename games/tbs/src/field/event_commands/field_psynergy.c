@@ -26,9 +26,6 @@ void FieldPsynergy_RunHandler(s32 kind) {
 /// Casts the current field Psynergy with no target: runs the body of its
 /// kind (effectWork->fieldPsynergy).
 ///
-/// Called by Field_UsePsynergy when no trigger names a target
-/// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
-/// action, and by FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_UNTARGETED).
 /// Halt also moves gMainRoutineWork.haltedActor to the actor it stops.
 void FieldPsynergy_Run(void) {
   struct FieldEffectWork *effectWork;
@@ -37,8 +34,8 @@ void FieldPsynergy_Run(void) {
   s32 targetId;
   s32 nearestTargetId;
 
-  effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
-  runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
+  effectWork = gFieldEffectWork;
+  runtime = gFieldWork;
   kind = effectWork->fieldPsynergy;
   targetId = effectWork->secondActorId;
 
@@ -117,16 +114,13 @@ void FieldPsynergy_Run(void) {
 /// Casts the current field Psynergy on its target (secondActorId): runs the
 /// handler of its kind.
 ///
-/// Called by Field_UsePsynergy when a trigger names the target
-/// (FLAG_PSYNERGY_TARGET still set after the before event), and by
-/// FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET). Clears
-/// effectWork->enabled first: that is how the runners FieldPsynergy_Run shares
-/// (Force, Frost, Ply, Whirlwind, Catch) tell that a trigger decides what
-/// happens to the target. Halt also moves gMainRoutineWork.haltedActor to
+/// Clears effectWork->enabled first: that is how the runners FieldPsynergy_Run
+/// shares (Force, Frost, Ply, Whirlwind, Catch) tell that a trigger decides
+/// what happens to the target. Halt also moves gMainRoutineWork.haltedActor to
 /// the target.
 void FieldPsynergy_Dispatch(void) {
-  struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
-  struct FieldWork *runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldWork *runtime = gFieldWork;
   s32 kind = effectWork->fieldPsynergy;
   s32 targetId = effectWork->secondActorId;
 
@@ -196,10 +190,6 @@ void FieldPsynergy_Dispatch(void) {
 
 /// Finishes the current field Psynergy when it is Mind Read: ends it and lets
 /// its target move again, unless the target is the actor kept stopped.
-/// Called by Field_UsePsynergy after the after event, and by
-/// FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_FINISH): Mind Read is the
-/// one kind whose effect stays up through the after event, the conversation it
-/// reads.
 void FieldPsynergy_FinishMindRead(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
 
@@ -212,8 +202,6 @@ void FieldPsynergy_FinishMindRead(void) {
 }
 
 /// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
-/// Called by Field_RunPsynergyEndEvents, which ends a Psynergy that runs out by
-/// itself, and by FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_EXTRA).
 void FieldPsynergy_RunExtraHandler(void) {
   u32 kind;
 
@@ -235,21 +223,17 @@ void FieldPsynergy_RunExtraHandler(void) {
 /// TRIGGER_RESULT_MESSAGE_END is a message, shown at target; a larger one is a
 /// routine, called with param and target. Afterwards, with
 /// FLAG_NOTHING_HAPPENS set, says "But nothing happens.". Returns 0.
-///
-/// Called by Field_UsePsynergy and Field_RunPsynergyEndEvents for the before
-/// and after events, and by Force, Frost and Reveal for the events of their own
-/// phases.
 s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   s32 script;
 
   if (event != NULL) {
     // Every routine's address is above TRIGGER_RESULT_MESSAGE_END, so one word
     // holds either.
-    script = ((const struct TriggerView *)event)->result;
+    script = ((const struct Trigger *)event)->value;
     if (script != 0) {
       if (script < TRIGGER_RESULT_MESSAGE_END) {
         Event_Start();
-        Event_SetMessageId(((const struct TriggerView *)event)->result);
+        Event_SetMessageId(((const struct Trigger *)event)->value);
         Event_ShowMessageAndWait(target, 0);
         Event_End();
       } else {

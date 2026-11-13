@@ -11,7 +11,7 @@
 #include "vector3.h"
 #include "fixed_math.h"
 
-#define VISIBLE_SCANLINES 160 ///< visible scanlines
+#define VISIBLE_SCANLINES 160
 
 /// An eight-byte entry of the System bank's far-call table holds the ldr/bx
 /// instructions and a target word. Entries this routine does not call keep
@@ -35,9 +35,10 @@ struct FarCallTrigVeneer {
   s32 (*target)(s32 angle);
 };
 
-/// The System table's prefix through Trig_Cos, in its assembly order. This
-/// routine runs from a RAM copy and calls the target words, not the ROM stubs.
-struct FarCallRuntimeTrigView {
+/// The start of the System bank's far-call table, as far as Trig_Cos. This
+/// routine runs from a RAM copy, so it calls through the target words rather
+/// than the veneers.
+struct FarCallSystemTable {
   struct FarCallVeneer preceding[8];
   struct FarCallAtan2Veneer atan2;
   struct FarCallVeneer squareRoots[2];
@@ -48,11 +49,11 @@ struct FarCallRuntimeTrigView {
 STATIC_ASSERT(sizeof(struct FarCallVeneer) == 8);
 STATIC_ASSERT(sizeof(struct FarCallAtan2Veneer) == 8);
 STATIC_ASSERT(sizeof(struct FarCallTrigVeneer) == 8);
-STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, atan2) == 64);
-STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, sin) == 88);
-STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, cos) == 96);
+STATIC_ASSERT(offsetof(struct FarCallSystemTable, atan2) == 64);
+STATIC_ASSERT(offsetof(struct FarCallSystemTable, sin) == 88);
+STATIC_ASSERT(offsetof(struct FarCallSystemTable, cos) == 96);
 
-extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
+extern const struct FarCallSystemTable FarCall_RuntimeTable;
 
 /// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
 /// fills x (the line's width scale) and z (its depth); the rest caches the
@@ -116,7 +117,7 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     sinYaw = FarCall_RuntimeTable.sin.target(angle);
     cosYaw = FarCall_RuntimeTable.cos.target(angle);
     negativeSinYaw = -sinYaw;
-    for (scanline = VISIBLE_SCANLINES - 1; scanline >= 0; scanline--) {
+    for (scanline = 0; scanline < VISIBLE_SCANLINES; scanline++) {
       s32 widthScale = line->x;
       s32 centerX;
       s32 horizontalOffset;
@@ -134,9 +135,6 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       affinePc = MulQ16(widthScale, sinYaw) / 256;
       line->v = affinePc;
       affine->pc = affinePc;
-      // Read through its own address, the native builds one literal for the
-      // centre; as gProjection.centerX it loads gProjection and reads at
-      // offset 12 (1 of 157 instructions differ in tbs-en).
       centerX = *&gProjection.centerX;
       // UB: affine coefficients can be negative, and shifting a negative
       // value left is undefined; UBFIX multiplies by 256.
@@ -160,7 +158,7 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     }
   } else {
     // Same angle: the cached terms stand and only the position moves.
-    for (scanline = VISIBLE_SCANLINES - 1; scanline >= 0; scanline--) {
+    for (scanline = 0; scanline < VISIBLE_SCANLINES; scanline++) {
       if (gFrameCount & 1) {
         // On odd frames the sample point shifts by half a pixel step along
         // the line and a quarter step across it, so alternate frames sample

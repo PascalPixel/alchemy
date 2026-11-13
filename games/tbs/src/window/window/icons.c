@@ -191,14 +191,10 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 }
 
 // Those bytes are the table's eight label pointers, not a picture.
-// XXX (no evidence): what the cases were meant to load; the one caller,
-// WindowSprite_CreateFromTable, has no caller, so no use shows it.
 /// Loads 32 bytes, one sprite tile, from the start of gMenuTitlePictures into
 /// the VRAM cache entry slot. Every value loads the same bytes: all four cases
 /// name the table itself.
 s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
-  // Three more names of the one table: the ROM keeps a literal for each case,
-  // and with one name the switch folds into a single load.
   extern const u8 *gMenuTitlePicturesCase1[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCase2[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCase3[] __asm__("gMenuTitlePictures");
@@ -321,11 +317,11 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
     *slot = VramCache_FindFreeEntry();
   *tile = VramCache_Load(*slot, 4 * 4 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0), DMA_COPY16(16),
-          REG_DMA3);
+  Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
 }
 
-/// An empty function. Nothing in the tree names it but its prototype.
+/// An empty function.
 void Icon_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,

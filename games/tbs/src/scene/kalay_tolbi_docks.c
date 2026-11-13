@@ -98,12 +98,10 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "edition.h"
 #include "tbs_edition.h"
 #include "kalay_tolbi_docks.h"
 #include "text/msg_ids.h"
 #include "scene_ids.h"
-#include "types.h"
 #include "event.h"
 #include "event_inline.h"
 #include "ability_ids.h"
@@ -121,34 +119,21 @@
 enum KalayDocksActorId {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who walks
   /// over to tell Garet the Karagol is no real ocean.
-  /// ★ Named from the game: "Do you want to go to Tolbi?"
-  /// (MsgKalayWantGoToTolbi)
   ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI = ACTOR_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "We can't take Silk Road, so everyone's in a
-  /// pickle." (MsgKalayTolbiDocksWeCantTakeSilkRoadSo)
   ACTOR_WOMAN_IN_A_PICKLE,
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR), whose thoughts
   /// tell of a daughter who left Tolbi to meet him at the docks.
-  /// ★ Named from the game: "You can't take Silk Road much further than
-  /// this." (MsgKalayTolbiDocksYouCantTakeSilkRoadMuch)
   ACTOR_MAN_AT_SILK_ROADS_END,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS) whose daughter
   /// waits on the Tolbi Docks.
-  /// ★ Named from the game: "When you reach Tolbi, please pass a message to
-  /// my daughter." (MsgKalayPassMessageDaughter)
   ACTOR_WOMAN_WITH_A_MESSAGE,
   /// A man in a red bandana (SPRITE_MAN_IN_RED_BANDANA) who takes the tickets
   /// at the ship's plank. "Tickets, please."
-  /// ★ Named from the game: "Tickets, please. Please show your tickets."
-  /// (MsgKalayTicketsPlease)
   ACTOR_CHECKING_TICKETS,
   /// A man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA).
-  /// ★ Named from the game: "I'm glad I only work on the docks"
-  /// (MsgKalayTolbiDocksImGladIOnlyWorkOn)
   ACTOR_DOCK_WORKER,
   /// A Venus Djinni, placed until it joins.
-  /// ★ Named from the game: "Ground" (MsgDjinnName)
   ACTOR_GROUND
 };
 
@@ -158,39 +143,22 @@ enum TolbiDocksActorId {
   /// A man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA) who hears of the
   /// party's scary trip. After Colosso, "There are many here who want to return
   /// to Kalay since Colosso is over."
-  /// ★ Named from the game: "I hear you had a scary trip."
-  /// (MsgKalayHearScaryTrip)
   ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP = ACTOR_FIRST_PLACED,
   /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA). After Colosso,
   /// "Hanging around here like this and staring out at the sea is boring!"
-  /// ★ Named from the game: "I think we're done sailing for a while."
-  /// (MsgKalayTolbiDocksSighIThinkWereDoneSailing)
   ACTOR_MAN_DONE_SAILING,
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
-  /// ★ Named from the game: "The tourists look a little upset. Did they get
-  /// seasick?" (MsgKalayTouristsLookUpset)
   ACTOR_YOUNG_MAN_ASKING_IF_SEASICK,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who watches the sea
   /// for her parents.
-  /// ★ Named from the game: "Silk Road was blocked, so I thought my parents
-  /// might come by ship." (MsgKalaySilkRoadBlocked)
   ACTOR_WAITING_DAUGHTER,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from the game: "If you're going to Tolbi, keep heading west."
-  /// (MsgKalayTolbiDocksIfYoureGoingToTolbiKeep)
   ACTOR_WOMAN_POINTING_WEST,
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
-  /// ★ Named from the game: "It's been quite some time since the Colosso
-  /// Tour passengers left for Tolbi."
-  /// (MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince)
   ACTOR_MAN_ON_THE_TOUR_LONG_GONE,
   /// The two stacks of wooden crates Move pushes along the pier. They are
   /// SPRITE_CRATES, the crates of the Bilibin Barricade (bilibin.c).
-  /// ★ Named from what the player sees: a tall stack of wooden crates on the
-  /// pier (its render)
   ACTOR_FIRST_CRATES,
-  /// ★ Named from what the player sees: the second stack of wooden crates
-  /// (its render)
   ACTOR_SECOND_CRATES
 };
 
@@ -201,31 +169,19 @@ enum TolbiDocksActorId {
 enum TolbiDocksStrandedActorId {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), the
   /// passenger who charges the tour guide and is knocked flat.
-  /// ★ Named from the game: "To heck with you! I'm staying right here until
-  /// the ship leaves!" (MsgKalayTolbiDocksToHeckWithYouImStaying)
   ACTOR_ANGRY_YOUNG_MAN = ACTOR_FIRST_PLACED + 2,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "Sigh. I wonder when we'll be able to return to
-  /// Kalay." (MsgKalayTolbiDocksSighIWonderWhenWellBe)
   ACTOR_STRANDED_WOMAN,
   /// The other guide, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) as
   /// the tour guide is: "it's not our fault the ship won't sail, so we can't
   /// offer any refunds."
-  /// ★ Named from the game: "Tour groups should take care of you from start to
-  /// finish" (MsgKalayTolbiDocksTourGroupsShouldTakeCareOf)
   ACTOR_SECOND_TOUR_GUIDE,
   /// Refunded the angry young man's ticket.
-  /// ★ Named from the game: "I returned the cost of your ticket to you."
-  /// (MsgKalayReturnedTicketCost)
   ACTOR_TOUR_GUIDE,
   /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN) hired by the tour guides.
-  /// ★ Named from the game: "I might as well make some cash as a bodyguard."
-  /// (MsgKalayTolbiDocksAsLongAsWereStuckHere)
   ACTOR_BODYGUARD = ACTOR_FIRST_PLACED + 8,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE). "Sigh. If I knew it
   /// would turn out like this, we wouldn't have come."
-  /// ★ Named from the game: "Sigh. If I knew it would turn out like this"
-  /// (MsgKalayTolbiDocksSighIfIKnewItWould)
   ACTOR_SIGHING_PASSENGER
 };
 
@@ -236,32 +192,19 @@ enum TolbiDocksStrandedActorId {
 /// travellers stand off the map.
 enum KalayTolbiDocksRoomActorId {
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) in the Kalay room.
-  /// ★ Named from the game: "Are you looking for tickets for boarding?"
-  /// (MsgKalayLookingForTickets)
   ACTOR_SELLING_TICKETS = ACTOR_FIRST_PLACED,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  /// ★ Named from the game: "Isn't the replacement ship here yet?"
-  /// (MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement)
   ACTOR_OLD_MAN_AWAITING_THE_REPLACEMENT_SHIP,
   /// An old woman (SPRITE_OLD_WOMAN), who wonders whether her husband is
   /// giving up on Colosso.
-  /// ★ Named from the game: "Once we've crossed the Karagol, we'll reach
-  /// Tolbi. Ohh, I'm excited."
-  /// (MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell)
   ACTOR_OLD_WOMAN_EXCITED_FOR_TOLBI,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who sells no
   /// tickets in the Tolbi room. "I'm sorry, but we just can't sell any
   /// tickets right now."
-  /// ★ Named from the game: "we just can't sell any tickets right now."
-  /// (MsgKalayTolbiDocksImSorryButWeJustCant)
   ACTOR_SELLING_NO_TICKETS,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  /// ★ Named from the game: "We rented out our house for Colosso, and now
-  /// the ship's not launching!" (MsgKalayTolbiDocksWeRentedOutOurHouseFor)
   ACTOR_OLD_MAN_WHO_RENTED_OUT_HIS_HOUSE,
   /// An old woman (SPRITE_OLD_WOMAN).
-  /// ★ Named from the game: "If the ship won't sail, where will we sleep?"
-  /// (MsgKalayTolbiDocksWeRentedOutOurHouseIf)
   ACTOR_OLD_WOMAN_WITH_NOWHERE_TO_SLEEP
 };
 
@@ -271,12 +214,8 @@ enum KalayTolbiDocksRoomActorId {
 enum KalayTolbiDocksRoomStrandedActorId {
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR). "Some rich
   /// guy was here throwing money around, but they still said no."
-  /// ★ Named from the game: "Yeah...the ship's not going anywhere for now."
-  /// (MsgKalayTolbiDocksYeahTheShipsNotGoingAnywhere)
   ACTOR_MAN_ON_THE_SHIP_GOING_NOWHERE = ACTOR_FIRST_PLACED + 4,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from the game: "The Karagol Sea looks so calm from here."
-  /// (MsgKalayTolbiDocksTheKaragolSeaLooksSoCalm)
   ACTOR_WOMAN_SAYING_THE_SEA_LOOKS_CALM
 };
 
@@ -950,16 +889,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
   Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
   actor = Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
-  {
-    s32 pixelX = actor->x.fixed / px(1);
-
-    actor->timer = pixelX;
-  }
-  {
-    s32 pixelZ = actor->z.fixed / px(1);
-
-    actor->userValue = pixelZ;
-  }
+  actor->timer = actor->x.fixed / px(1);
+  actor->userValue = actor->z.fixed / px(1);
   Event_End();
 }
 

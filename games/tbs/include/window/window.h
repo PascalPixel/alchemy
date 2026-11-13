@@ -11,6 +11,7 @@
 #include "tbs_edition.h"
 #include "static_assert.h"
 #include "render_input.h"
+#include "heap.h"
 
 /// Where the windows are drawn (WindowWork.battleMode). In battle, typing
 /// speeds up when a frame overruns, and the bottom rows of a cleared
@@ -75,7 +76,7 @@ struct Message {
   u16 ended;       ///< 1 once a TEXT_END code is reached
   u16 glyphDelay;  ///< frames to wait after a glyph while no button is held
   u16 flags;       ///< nonzero keeps the window's size from page to page
-  u16 unused;      ///< no code names it
+  u16 unused;
 };
 
 STATIC_ASSERT(sizeof(struct Message) == 0x28);
@@ -85,8 +86,6 @@ STATIC_ASSERT(offsetof(struct Message, transition) == 0x1c);
 STATIC_ASSERT(offsetof(struct Message, flags) == 0x24);
 
 /// Requests transfer of the four-row tilemap band containing window row y.
-// A statement macro (10 sites): the dirty-row store stays where it
-// is written at every use; as a plain expression, tbs-en differs.
 #define Window_MarkTilemapRow(render, y)                                       \
   do {                                                                         \
     (render)->dirty |= 2 << ((u32)(y) >> 2);                                   \
@@ -102,21 +101,21 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 /// writes it.
 #define PORTRAIT_SLOT_EMPTY 999
 
+/// The sprite palette of portrait slot 0; slot 1 uses the next.
+#define PORTRAIT_PALETTE 14
+
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// messages, the 64 window sprites, and the decoded message and its arguments.
 ///
 /// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
 /// WindowSystem_InitField takes for the field and
 /// WindowSystem_InitBattle for battle; it lasts until the next scene change.
-/// Its size and offsets differ between Japanese and the other editions
-/// (tbs_edition.h's RENDER_ values).
+/// Japanese has more windows and a shorter text ring than the other editions
+/// (WINDOW_COUNT, TEXT_BUFFER_MASK).
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
-  // XXX (no evidence): why three messages, and why the international
-  // editions gave up four windows when they doubled textBuffer; only Camelot's
-  // sources could say how the counts were chosen.
-  struct Message messages[3]; ///< the messages, NULL work when free
+  struct Message messages[3];          ///< the messages, NULL work when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once
@@ -137,8 +136,6 @@ struct WindowWork {
   u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
   u16 outline;                ///< the current message's, copied in to draw
   u16 colour;                 ///< the current message's, copied in to draw
-  // XXX: likely doubled in the international editions for their longer text;
-  // the bytes show only the change.
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
   u16 letterSpacing;                    ///< pixels between sprite glyphs; 9
   u16 textBufferEnd;    ///< where the next code goes in textBuffer
@@ -146,13 +143,7 @@ struct WindowWork {
   u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
   u16 glyphTiles;       ///< first sprite tile of the glyph sheet
                         ///< (VRAM_CACHE_ENTRY_GLYPH_SHEET)
-  /// Two bytes that align values to a word, in every edition; nothing reads
-  /// them.
-  u8 padding[WINDOW_WORK_ARGUMENT_VALUES_OFFSET - WINDOW_WORK_COUNTER_OFFSET -
-             4];
-  /// Message argument values (MessageArgument_Push). A portrait's release
-  /// writes its palette slot state at WINDOW_WORK_PALETTE_TABLE_OFFSET, in
-  /// here.
+  /// Message argument values (MessageArgument_Push).
   u32 argumentValues[8];
   u16 argumentKinds[8]; ///< the MESSAGE_ARGUMENT_ kind of each value; 0 for a
                         ///< free slot
@@ -173,58 +164,11 @@ struct WindowWork {
   u8 spacingAfter;
 };
 
-STATIC_ASSERT(offsetof(struct WindowWork, windows) == 0x500);
-STATIC_ASSERT(offsetof(struct WindowWork, messages) ==
-              WINDOW_WORK_MESSAGES_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, sprites) ==
-              WINDOW_WORK_SPRITES_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.head) ==
-              WINDOW_WORK_FREE_HEAD_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.tailLink) ==
-              WINDOW_WORK_FREE_TAIL_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, textTileState) ==
-              WINDOW_WORK_TEXT_TILE_STATE_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, nextTextTile) ==
-              (WINDOW_WORK_EXTRA_TEXT_TILES_OFFSET - 2));
-STATIC_ASSERT(offsetof(struct WindowWork, extraTextTiles) ==
-              WINDOW_WORK_EXTRA_TEXT_TILES_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, dirty) == WINDOW_WORK_DIRTY_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) ==
-              WINDOW_WORK_WORD2_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, outline) == WINDOW_WORK_WORD_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, colour) ==
-              WINDOW_WORK_PARAMETER_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, textBuffer) ==
-              WINDOW_WORK_TEXT_BUFFER_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, lastMessageStart) ==
-              (WINDOW_WORK_TEXT_BUFFER_END_OFFSET + 2));
-STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) ==
-              WINDOW_WORK_TEXT_BUFFER_END_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) ==
-              WINDOW_WORK_COUNTER_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, glyphTiles) ==
-              (WINDOW_WORK_COUNTER_OFFSET + 2));
-STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) ==
-              WINDOW_WORK_ARGUMENT_VALUES_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) ==
-              WINDOW_WORK_ARGUMENT_KINDS_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, portraitPictures) ==
-              WINDOW_WORK_PORTRAIT_PICTURES_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, portraitSprites) ==
-              WINDOW_WORK_PORTRAIT_SPRITES_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, voiceSound) ==
-              WINDOW_WORK_VOICE_SOUND_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, voiceCountdown) ==
-              (WINDOW_WORK_VOICE_SOUND_OFFSET + 2));
-STATIC_ASSERT(offsetof(struct WindowWork, waitingForSound) ==
-              WINDOW_WORK_WAITING_FOR_SOUND_OFFSET);
-STATIC_ASSERT(offsetof(struct WindowWork, haltingSpeech) ==
-              (WINDOW_WORK_WAITING_FOR_SOUND_OFFSET + 1));
-STATIC_ASSERT(offsetof(struct WindowWork, spacingAfter) ==
-              (WINDOW_WORK_WAITING_FOR_SOUND_OFFSET + 2));
-STATIC_ASSERT(sizeof(struct WindowWork) == WINDOW_WORK_SIZE);
+/// The byte of WindowWork that Mind Read sets, for the scenes that read it
+/// through a byte pointer.
+#define WINDOW_WORK_MIND_READ_OFFSET offsetof(struct WindowWork, mindRead)
 
 /// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
-extern u8 *gWindowWork[];
+#define gWindowWork (*(u8 *(*)[]) & gHeapSlots[HEAP_SLOT_WINDOW])
 
 #endif

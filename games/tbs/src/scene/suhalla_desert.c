@@ -64,6 +64,7 @@
 #include "flags.h"
 #include "version.h"
 #include "main_routine_work.h"
+#include "map_grid_scroll.h"
 #include "system_call.h"
 #include "module/scene/suhalla_desert.h"
 #include "module/scene/shared/field_effect_spawn.h"
@@ -101,6 +102,7 @@
 #include "heap.h"
 #include "map_grid.h"
 #include "fixed_math.h"
+#include "shared/walk_into_leader.h"
 
 /// Storms doused in the first and second scenes, one flag per storm from the
 /// first.
@@ -108,16 +110,12 @@
 /// Each storm stays away once doused.
 enum {
   /// The first scene's storms, five from this one.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_01,
   /// The second scene's storms, five from this one.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_11,
   /// A storm has risen, so the sand haze stays faded in.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN = FLAG_AREA_TEMP_40,
   /// The Psynergy Stone has been found, an area flag.
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
@@ -127,25 +125,17 @@ enum {
 /// The third scene places none.
 enum {
   /// The storms, five in each scene.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_FIRST_SANDSTORM = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_FOURTH_SANDSTORM = ACTOR_FIRST_SANDSTORM + 3,
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_LAST_SANDSTORM = ACTOR_FIRST_SANDSTORM + 4,
   /// In the second scene the last storm gives chase.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_CHASING_SANDSTORM = ACTOR_LAST_SANDSTORM,
   /// Iodem, who steps out of the party to talk and then rejoins it.
-  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM,
   /// In the second scene, seen only while Reveal lasts, drawn as Goma Cave's
   /// stone pillars.
-  /// ★ Named from what the player sees: its sprite, SPRITE_STONE_PILLAR, a
-  /// stone pillar (its render)
   ACTOR_REVEALED_PILLAR,
   /// In the second scene, the Mars Djinni.
-  /// ★ Named from the game: "Flash" (MsgDjinnName)
   ACTOR_FLASH
 };
 
@@ -180,7 +170,8 @@ static void SuhallaDesert_SetUpSecondMapStorms(void);
 
 static u16 sSuhallaDesertSavedColor;
 
-#define SUHALLA_REVEAL_PALETTE_COLOR (*(volatile u16 *)0x0500019e)
+/// The colour Reveal pulses, the last of BG palette 12.
+#define SUHALLA_REVEAL_PALETTE_COLOR BG_PLTT_COLOR(12, 15)
 
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
@@ -188,50 +179,26 @@ static u16 sSuhallaDesertSavedColor;
 /// The first sandstorm (ACTOR_FIRST_SANDSTORM) has risen on this visit.
 ///
 /// The four flags after it are the next four sandstorms'.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN FLAG_SCENE_TEMP_06
 /// The second sandstorm has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_SECOND_SANDSTORM_RISEN FLAG_SCENE_TEMP_07
 /// The third sandstorm has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN FLAG_SCENE_TEMP_08
 /// The fourth sandstorm (ACTOR_FOURTH_SANDSTORM) has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FOURTH_SANDSTORM_RISEN FLAG_SCENE_TEMP_09
 /// The fifth sandstorm (ACTOR_LAST_SANDSTORM) has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN FLAG_SCENE_TEMP_0A
 /// In SuhallaDesertSouth, the sandstorm that gives chase has set off after the
 /// leader.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF FLAG_SCENE_TEMP_0E
 /// A sandstorm has caught the leader and lifts the party, and Douse can put it
 /// out.
-/// ★ Named from the game: "For some reason, anyone who gets caught in a
-/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM FLAG_SCENE_TEMP_0F
 /// A byte flag that holds the frames left before the sandstorm that caught
 /// the leader carries the party away.
-/// ★ Named from the game: "For some reason, anyone who gets caught in a
-/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT FLAG_SCENE_TEMP_10
 /// A byte flag that holds the actor id of the sandstorm that caught the
 /// leader.
-/// ★ Named from the game: "For some reason, anyone who gets caught in a
-/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM FLAG_SCENE_TEMP_18
 
 /// In SuhallaDesertSouth, talking to Flash, a Mars Djinni, starts its battle.
@@ -255,15 +222,15 @@ static s32 SuhallaDesert_ToggleActorActive(struct Actor *actor) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_SuhallaDesertNorth) {
+  if (scene == (s32)&SceneId_SuhallaDesertNorth) {
     return gSuhallaDesertNorthEntrances;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertSouth) {
+  if (scene == (s32)&SceneId_SuhallaDesertSouth) {
     return gSuhallaDesertSouthEntrances;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertCaves) {
+  if (scene == (s32)&SceneId_SuhallaDesertCaves) {
     return gSuhallaDesertCavesEntrances;
   }
   return gSuhallaDesertEntrancesOther;
@@ -276,15 +243,15 @@ const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
 /// The storms, Iodem, and in the second scene Flash and what Reveal shows.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_SuhallaDesertNorth) {
+  if (scene == (s32)&SceneId_SuhallaDesertNorth) {
     return gSuhallaDesertNorthActorPlacements;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertSouth) {
+  if (scene == (s32)&SceneId_SuhallaDesertSouth) {
     return gSuhallaDesertSouthActorPlacements;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertCaves) {
+  if (scene == (s32)&SceneId_SuhallaDesertCaves) {
     return gSuhallaDesertCavesActorPlacements;
   }
   return gSuhallaDesertActorPlacementsOther;
@@ -293,19 +260,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Each frame while caught, spins the leader and counts down to raising event
 /// 99, the storm carrying the party away.
 static void SuhallaDesert_UpdateCaptureTimer(void) {
-  struct Actor *selectedActor;
-  struct FieldWork *requests;
+  struct Actor *leader;
+  struct FieldWork *work;
   s32 remainingFrames;
 
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
-  requests = gFieldWork;
-  selectedActor->facing = (gFrameCount << 12);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  work = gFieldWork;
+  leader->facing = gFrameCount << 12;
 
   remainingFrames =
       FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT);
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
-      requests->raisedTrigger = RAISED_SANDSTORM_CARRIES_PARTY_AWAY;
+      work->raisedTrigger = RAISED_SANDSTORM_CARRIES_PARTY_AWAY;
     } else if (GameFlag_Get(FLAG_MENU_OPEN) == 0) {
       remainingFrames -= 1;
     }
@@ -319,43 +286,36 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
 /// Drawn to its centre and lifted, the party spins until Douse stops the
 /// storm or it carries them away.
 static void SuhallaDesert_CatchInStorm(s32 stormId) {
-  s32 stormIdCopy;
-  s32 captureActive;
-  struct Actor *selectedActor;
+  s32 leaderId;
+  struct Actor *leader;
   struct Actor *storm;
-  s32 leaderActorId;
 
-  // The event-selected actor is pulled toward the storm before being
-  // lifted.
-  leaderActorId = gMainRoutineWork.leaderActorId;
-  stormIdCopy = stormId;
-  selectedActor = Actor_Get(leaderActorId);
-  Actor_Get(stormIdCopy);
-  captureActive = Event_GetFlag(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
-  if (captureActive == 0) {
+  leaderId = gMainRoutineWork.leaderActorId;
+  leader = Actor_Get(leaderId);
+  // DEAD: the storm looked up and dropped; the ROM keeps its call.
+  Actor_Get(stormId);
+  if (Event_GetFlag(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM) == 0) {
     Event_Start();
-    Actor_SetAttachedEffect(leaderActorId,
+    // The leader is drawn to the storm's centre, then lifted.
+    Actor_SetAttachedEffect(leaderId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Actor_SetAnimation(leaderActorId, ANIM_LEADER_LOOK_AROUND);
-    storm = Actor_Get(stormIdCopy);
+    Actor_SetAnimation(leaderId, ANIM_LEADER_LOOK_AROUND);
+    storm = Actor_Get(stormId);
     if (storm != 0) {
-      Actor_SetDestination(leaderActorId, storm->x.part.pixel,
-                           storm->z.part.pixel);
+      Actor_SetDestination(leaderId, storm->x.part.pixel, storm->z.part.pixel);
     }
-    Actor_WaitForMoveById(leaderActorId);
-    // Start the capture countdown once the approach finishes.
+    Actor_WaitForMoveById(leaderId);
     Sound_Play(SE_SANDSTORM);
     Task_AddFrame(SuhallaDesert_UpdateCaptureTimer, TASK_PASS_FRAME);
-    selectedActor->motionFlags = captureActive;
-    FieldActor_SetMoveTargetFixed(selectedActor, selectedActor->x.fixed,
-                                  selectedActor->y.fixed + px(32),
-                                  selectedActor->z.fixed);
-    Actor_WaitForMoveById(leaderActorId);
-    selectedActor->velocityY = captureActive;
-    selectedActor->motionFlags = ACTOR_FLOATS;
+    leader->motionFlags = 0;
+    FieldActor_SetMoveTargetFixed(leader, leader->x.fixed,
+                                  leader->y.fixed + px(32), leader->z.fixed);
+    Actor_WaitForMoveById(leaderId);
+    leader->velocityY = 0;
+    leader->motionFlags = ACTOR_FLOATS;
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
-    FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM, stormIdCopy);
+    FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM, stormId);
     FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT,
                           SANDSTORM_CAPTURE_FRAMES);
     Event_End();
@@ -408,49 +368,44 @@ static void SuhallaDesert_CaughtByFifthStorm(void) {
 /// make it to Babi Lighthouse."
 static void SuhallaDesert_RaiseStorm(s32 stormId) {
   s32 frame;
-  s32 nextFrame;
-  s32 stormIdCopy;
+  s32 weight;
   s32 leaderX;
   s32 leaderZ;
   struct Actor *storm;
-  s32 appearanceRestored;
-  struct Actor *selectedActor;
+  s32 hazeShown;
   struct Actor *leader;
+  struct Actor *partyLeader;
 
-  stormIdCopy = stormId;
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
-  storm = Actor_Get(stormIdCopy);
-  appearanceRestored = GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
-  leaderX = selectedActor->x.part.pixel;
-  leaderZ = selectedActor->z.part.pixel;
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  storm = Actor_Get(stormId);
+  hazeShown = GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
+  leaderX = leader->x.part.pixel;
+  leaderZ = leader->z.part.pixel;
   Event_Start();
   Sound_Play(SE_SANDSTORM);
   // Grow over 16 frames and, the first time, fade the haze in with it.
-  frame = 0;
-  do {
-    storm->scaleX = ((frame << 11) + Q16_ONE / 32);
-    storm->scaleY = ((frame << 12) + Q16_ONE / 16);
-    if (appearanceRestored == 0) {
-      nextFrame = frame + 1;
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-                          BLEND_ALPHA(nextFrame, 16 - nextFrame), IO_WRITE_16);
-    } else {
-      nextFrame = frame + 1;
+  for (frame = 0; frame < 16; frame++) {
+    storm->scaleX = (frame << 11) + Q16_ONE / 32;
+    storm->scaleY = (frame << 12) + Q16_ONE / 16;
+    if (hazeShown == 0) {
+      weight = frame + 1;
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(weight, 16 - weight),
+                          IO_WRITE_16);
     }
     wait(1);
-    frame = nextFrame;
-  } while (frame <= 15);
-  GameFlag_Set((FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN -
-                ACTOR_FIRST_SANDSTORM + stormIdCopy));
+  }
+  GameFlag_Set(FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN -
+               ACTOR_FIRST_SANDSTORM + stormId);
   GameFlag_Set(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
       Event_GetFlag(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_IODEM_WARNED);
     Actor_SetSpeed(ACTOR_IODEM, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if ((s32)leader != 0) {
-      Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+    partyLeader = Actor_Get(ACTOR_PARTY_LEADER);
+    if (partyLeader != 0) {
+      Actor_SetPositionFixed(ACTOR_IODEM, partyLeader->x.fixed,
+                             partyLeader->z.fixed);
     }
 #ifdef BUGFIX
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
@@ -459,9 +414,9 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_FaceActor(ACTOR_IODEM, FACING_SOUTH, 0);
 #endif
     Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_WalkTo(ACTOR_IODEM, leaderX, (leaderZ - 16));
+    Actor_WalkTo(ACTOR_IODEM, leaderX, leaderZ - 16);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, (leaderX + 8), (leaderZ - 40));
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leaderX + 8, leaderZ - 40);
     Event_Wait(1);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
@@ -486,14 +441,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     // "We must step carefully if we hope to escape the desert."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, 1);
-    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if ((s32)leader != 0) {
-      Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_IODEM);
-    Actor_SetPosition(ACTOR_IODEM, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_IODEM);
   }
   Event_End();
 }
@@ -598,17 +546,13 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     // "Well, perhaps we should head there first, then."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_IODEM);
-    Actor_SetPosition(ACTOR_IODEM, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_IODEM);
     Event_End();
   }
 }
+
+/// How far apart two coordinates are.
+#define GAP(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 /// The chasing storm's script, which follows the leader.
 ///
@@ -616,12 +560,10 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
 /// within 8 pixels of (event 55).
 static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   struct EffectOptions options;
-  struct Actor *selectedActor;
-  s32 dx;
-  s32 dz;
+  struct Actor *leader;
   s32 sparkFrame;
 
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   actor->acceleration = px(1) / 4;
   actor->speedLimit = px(3) / 2;
   actor->motionFlags = 0;
@@ -632,26 +574,21 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
     actor->targetY = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
   } else {
-    actor->targetX = selectedActor->x.fixed;
-    actor->targetY = selectedActor->groundHeight;
-    actor->targetZ = selectedActor->z.fixed;
-    dx = actor->x.fixed - selectedActor->x.fixed;
-    if (dx < 0) {
-      dx = selectedActor->x.fixed - actor->x.fixed;
-    }
-    dz = actor->z.fixed - selectedActor->z.fixed;
-    if (dx + (dz >= 0 ? actor->z.fixed - selectedActor->z.fixed
-                      : selectedActor->z.fixed - actor->z.fixed) <
+    actor->targetX = leader->x.fixed;
+    actor->targetY = leader->groundHeight;
+    actor->targetZ = leader->z.fixed;
+    if (GAP(actor->x.fixed, leader->x.fixed) +
+            GAP(actor->z.fixed, leader->z.fixed) <
         px(8)) {
       struct FieldWork *work = gFieldWork;
 
-      if (selectedActor->motionFlags != 0) {
+      if (leader->motionFlags != 0) {
         work->raisedTrigger = RAISED_CHASING_SANDSTORM_CATCHES;
       }
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      actor->targetX = selectedActor->x.fixed;
-      actor->targetY = selectedActor->y.fixed;
-      actor->targetZ = selectedActor->z.fixed;
+      actor->targetX = leader->x.fixed;
+      actor->targetY = leader->y.fixed;
+      actor->targetZ = leader->z.fixed;
     }
   }
   // Sand every eight frames, with a random spin.
@@ -659,7 +596,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   if (sparkFrame == 0) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
-    options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+    options.spin = (Random_Below(4096)) + 0xf800;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                       sparkFrame, sparkFrame,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
@@ -687,8 +624,9 @@ static void SuhallaDesert_StormGivesChase(void) {
 /// rises to 80 pixels above the storm rather than 32 and rains on it from
 /// above (FieldPsynergy_Douse).
 static void SuhallaDesert_DouseCastAtStorm(void) {
-  u8 *state = gFieldEffectWork;
-  ((struct FieldEffectWork *)state)->childOption = 1;
+  struct FieldEffectWork *work = gFieldEffectWork;
+
+  work->childOption = 1;
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
@@ -697,8 +635,6 @@ static void SuhallaDesert_DouseCastAtStorm(void) {
 /// It is doused for good, and the monster in it attacks.
 /// SceneId_SuhallaDesertSouth's fourth and chasing storms hold other monsters.
 static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
-  struct MainRoutineWork *state;
-
   // The storm no longer carries the party away.
   if (gFieldWork->raisedTrigger == RAISED_SANDSTORM_CARRIES_PARTY_AWAY) {
     gFieldWork->raisedTrigger = 0;
@@ -716,8 +652,7 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
   FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  state = &gMainRoutineWork;
-  if (state->next == (s32)&SceneId_SuhallaDesertSouth) {
+  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
     if (stormId == ACTOR_FOURTH_SANDSTORM) {
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
     } else {
@@ -741,30 +676,30 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
 /// or where the second scene's fourth storm drops it.
 static void SuhallaDesert_StormCarriesPartyAway(void) {
   s32 stormId;
-  struct Actor *selectedActor;
+  struct Actor *leader;
   struct Actor *storm;
   s32 frame;
 
   stormId = FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM);
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   storm = Actor_Get(stormId);
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_GUSH);
   // BUG: this passes an actor id where the sprite helper needs a pointer.
 #ifdef BUGFIX
-  Actor_SetSpriteFlags(selectedActor, 0);
+  Actor_SetSpriteFlags(leader, 0);
 #else
   Actor_SetSpriteFlags((struct Actor *)gMainRoutineWork.leaderActorId, 0);
 #endif
   storm->motionFlags = 0;
-  selectedActor->motionFlags = 0;
-  selectedActor->velocityY = 0;
-  selectedActor->frozen = 1;
+  leader->motionFlags = 0;
+  leader->velocityY = 0;
+  leader->frozen = 1;
   storm->frozen = 1;
   // Both rise faster and faster for a second.
   for (frame = 0; frame < 60; frame++) {
-    selectedActor->velocityY += px(1) / 5;
+    leader->velocityY += px(1) / 5;
     storm->velocityY += px(1) / 5;
     wait(1);
   }
@@ -786,13 +721,13 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
 /// 64 frames.
 static void SuhallaDesert_PulseRevealPalette(void) {
   u16 brightnessFrame = gFrameCount & 63;
-  s32 color;
+  s32 grey;
 
   if (brightnessFrame > 31)
     brightnessFrame = 64 - brightnessFrame;
-  color = (brightnessFrame >> 1) + 7;
-  color |= (color << 10) | (color << 5);
-  SUHALLA_REVEAL_PALETTE_COLOR = ((u32)color << 16) >> 16;
+  grey = (brightnessFrame >> 1) + 7;
+  grey |= (grey << 10) | (grey << 5);
+  SUHALLA_REVEAL_PALETTE_COLOR = ((u32)grey << 16) >> 16;
 }
 
 #ifdef UBFIX
@@ -867,10 +802,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// A capture goes on spinning, Reveal's color is saved, and the first two
 /// scenes set up their storms.
 s32 Scene_Initialize(void) {
-  struct MapGridScrollAnimView *gridState;
+  struct MapGridScrollWork *grid;
 
-  gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
@@ -889,7 +824,7 @@ s32 Scene_Initialize(void) {
     Sound_Play(SE_STOP_ACTION_SE);
   }
   if (gMainRoutineWork.entrance == ENTRANCE_DEFAULT) {
-    gridState->flags &= ~DISPCNT_BG1_ON;
+    grid->flags &= ~DISPCNT_BG1_ON; // no haze on a fresh arrival
   }
   return 0;
 }
@@ -902,7 +837,7 @@ s32 Scene_Initialize(void) {
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
   struct Actor *actor;
   s32 stormId;
-  s32 stormAlpha = 0;
+  s32 hazeWeight = 0;
 
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN);
@@ -932,12 +867,11 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
-    stormAlpha = 16;
+    hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);
   }
-  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
-  // differently.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
+  // The haze at full weight once a storm has risen, else not at all.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_16);
 }
 
@@ -949,7 +883,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   s32 stormId;
-  s32 stormAlpha = 0;
+  s32 hazeWeight = 0;
 
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN);
@@ -989,12 +923,11 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
-    stormAlpha = 16;
+    hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);
   }
-  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
-  // differently.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
+  // The haze at full weight once a storm has risen, else not at all.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_16);
 }
 

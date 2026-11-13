@@ -125,7 +125,6 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           Text_SetColor(TEXT_COLOR_WHITE);
           work->textPalette = WINDOW_PALETTE;
 
-          // Element 4 is none: no element icon.
           if (action->element != ELEMENT_NONE) {
             Window_SetTilemapEntry(window,
                                    action->element + LIST_TILE_SUMMON_ELEMENT,

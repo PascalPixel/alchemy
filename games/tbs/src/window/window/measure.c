@@ -148,9 +148,6 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     // counted as the points the line can be stretched at. TEXT_STYLE_OUTLINED
     // draws a glyph a pixel wider. TEXT_STYLE_SPIN is counted a pixel wider
     // too, though Text_DrawGlyphPair widens only TEXT_STYLE_OUTLINED.
-    // XXX (no evidence): whether the spinning style's extra pixel is meant; no
-    // message in the six catalogs uses it ({text_effect:6}), so the game never
-    // shows it.
     if (code > 31) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
@@ -453,8 +450,6 @@ done:
   // French, Spanish and Italian alike, and patch 4 puts the widening back
   // here rather than keeping an older copy: this function has the patch 3
   // outline reset at a page break too.
-  // XXX (no evidence): why the widening comes back only here; a recording
-  // shows the window 2 pixels wider, not whether that was meant.
 #if !TBS_PATCH_2 || TBS_PATCH_4
   if (work->mindRead != 0)
     maxWidth += 2;

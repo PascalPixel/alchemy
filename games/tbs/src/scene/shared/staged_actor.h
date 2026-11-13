@@ -20,7 +20,6 @@
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "event.h"
-#include "types.h"
 #include "sounds.h"
 
 // Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
@@ -342,11 +341,11 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   s32 horizontalExtent;
   s32 verticalExtent;
 
-  // UB: reading the pointer slot through u32 aliases its declared type.
+  // UB: the heap slot is read as a word rather than as the pointer it holds.
 #ifdef UBFIX
   workspace = gMapGridWork[0];
 #else
-  workspace = (struct MapGridScrollWork *)*(u32 *)gMapGridWork;
+  workspace = (void *)((u32 *)gMapGridWork)[0];
 #endif
   direction = (Actor_GetById(ACTOR_PARTY_LEADER))->facing >> 12;
   actor = Actor_GetById(probe.actorSlot);

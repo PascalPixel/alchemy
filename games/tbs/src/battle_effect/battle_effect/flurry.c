@@ -71,12 +71,12 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunFlyingAttack, FLURRY_FLYING_ATTACK,
 enum FlurryColumn {
   FLURRY_ARC_SHEET, ///< the arcs (enum FlurryArcs)
   FLURRY_PALETTE,   ///< whose palette (enum FlurryPalette)
-  FLURRY_STRIKES,   ///< the strikes
-  FLURRY_MOTES,     ///< motes thrown by each strike, at most the 32 of
-                    ///< its run of PARTICLES
-  FLURRY_INTERVAL,  ///< frames between strikes
-  FLURRY_FRAMES,    ///< frames in the whole effect
-  FLURRY_FLASH      ///< 1 fills the canvas with level 47 on each hit
+  FLURRY_STRIKES,
+  FLURRY_MOTES,    ///< motes thrown by each strike, at most the 32 of
+                   ///< its run of PARTICLES
+  FLURRY_INTERVAL, ///< frames between strikes
+  FLURRY_FRAMES,   ///< frames in the whole effect
+  FLURRY_FLASH     ///< 1 fills the canvas with level 47 on each hit
 };
 
 /// The flash pictures, packed to half width after the arcs.
@@ -93,11 +93,10 @@ enum FlurryColumn {
 /// The motes wait above the target until their strike releases them, then
 /// bounce off the ground and die out.
 ///
-/// Called by the six wrappers above it, with the mode their ability needs.
-/// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter
-/// slots, rebuilt twice a frame; loads palette colours 0 to 63 from the
-/// row's palette resource. Sets work->shakeFrames on each hit, and ends with
-/// the transfer task removed and the canvas layer closed.
+/// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter slots,
+/// rebuilt twice a frame; loads palette colours 0 to 63 from the row's palette
+/// resource. Sets work->shakeFrames on each hit, and ends with the transfer
+/// task removed and the canvas layer closed.
 ///
 /// args: the user and the targets; prelude 1 first brings in a Jupiter
 ///         Djinni over the user, the 84-frame entrance
@@ -123,10 +122,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 j;
 
-  work = *(gHeapSlots + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gHeapSlots + HEAP_SLOT_BATTLE_CANVAS);
-  sprites = *(gHeapSlots + HEAP_SLOT_BATTLE_SHEET);
-  camera = *(gHeapSlots + HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -223,8 +222,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                           COMPOSITE_LIGHTEN);
     }
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     for (i = 0; i != bursts; i++) {
       s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
 
@@ -291,8 +290,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     for (i = 0; i != 512; i++) {
       struct Particle *mote = &PARTICLES[i];
 

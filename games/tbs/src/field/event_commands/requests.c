@@ -106,9 +106,7 @@ void Scene_QueueMusic(s32 soundId) {
   Sound_PlayFar(soundId);
 }
 
-/// Plays the sound Scene_QueueMusic remembered, if any. Called
-/// by scenes, by the event runner (field_sequence/triggers.c), by
-/// field_psynergy_work.c and by an actor's landing (actor_commands.c).
+/// Plays the sound Scene_QueueMusic remembered, if any.
 void Scene_PlayQueuedMusic(void) {
   s16 soundId = gFieldWork->queuedSound;
 

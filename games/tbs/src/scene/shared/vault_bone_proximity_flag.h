@@ -9,7 +9,6 @@
 
 /// The leader stands beside the Bone on the inn's floor, so the girl at the
 /// inn's talk row gives way and the A button searches the Bone.
-/// ★ Named from the game: "Bone" (MsgItemName)
 #define FLAG_VAULT_LEADER_BESIDE_BONE FLAG_SCENE_TEMP_50
 
 /// Keeps the girl at the inn from offering another Bone too soon. She doesn't

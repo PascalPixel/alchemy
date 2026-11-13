@@ -10,15 +10,10 @@
 /// Called only by BattleEffect_RunAnnihilation (annihilation.c), with 10000,
 /// before it releases the blitter it has just drawn with.
 void BattleEffect_CallDoNothing(s32 count) {
-  s32 callIndex;
+  s32 i;
 
-  callIndex = 0;
-  if (count != 0) {
-    do {
-      callIndex += 1;
-      BattleEffect_DoNothing();
-    } while (callIndex != count);
-  }
+  for (i = 0; i != count; i++)
+    BattleEffect_DoNothing();
 }
 
 // Two of the battle's three entry points, BattleEffect_RunSummon and
@@ -31,11 +26,6 @@ void BattleEffect_CallDoNothing(s32 count) {
 /// Runs one of the large battle effects, the ones whose effect word
 /// has bit 15 set: takes the effect's sheet, work and canvas, runs the
 /// effect chosen by its kind to the end, and frees them again.
-///
-/// Called through BattleEffect_RunSummonFar by
-/// BattleStaging_HideField (battle/staging.c), when the turn's
-/// effect word has EFFECT_SUMMON, and by
-/// AutoBattle_RunPsynergy (battle/auto_battle.c).
 ///
 /// Each effect is named for the summon whose gAbilityBattleEffects entry
 /// selects its kind, as the handlers of gBattleEffect_Handlers are;
@@ -101,17 +91,6 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
 /// Runs an ordinary battle effect: takes the effect's sheet, work and
 /// canvas, runs the entry of gBattleEffect_Handlers for its kind,
 /// and frees them again.
-///
-/// Called through BattleEffect_RunFromTableFar by
-/// BattleStaging_RunAttack, BattleStaging_RunItem,
-/// BattleStaging_RunPsynergyCast and BattleStaging_HideField
-/// (battle/staging.c, the last when the turn sets neither EFFECT_SUMMON nor
-/// EFFECT_BY_ID_RANGE), and by AutoBattle_RunAttackOrItem
-/// (battle/auto_battle.c).
-///
-/// Sets work->args before the handler runs, which every handler and
-/// task reads the effect through. BATTLE_EFFECT_NONE is no effect and
-/// only clears args->variant.
 void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   s32 kind;
   struct BattleEffectWork *work;
@@ -138,8 +117,7 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
 ///
 /// Runs each VBlank as a task in the VBlank pass, added by
 /// BattleEffect_RunNeptune (neptune.c) and BattleEffect_RunBoreas (boreas.c),
-/// which fill the edge offsets and remove the task again. Writes the WIN0H
-/// table and stops and re-arms DMA channel 0.
+/// which fill the edge offsets and remove the task again.
 ///
 /// Ram_MapGridCellBuffer + 0    : the base right edge (u16)
 /// Ram_MapGridCellBuffer + 2   : how far each of lines 8 to 135 pulls the edge
@@ -182,10 +160,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 /// the enemies (units 128 to 133) when the first target is one, otherwise
 /// the party (units 0 to 7).
 ///
-/// Called by the summon effects (Ramses, Nereid, Kirin, Atalanta, Cybele,
-/// Neptune, Tiamat, Procne, Judgment, Boreas, Thor) and the particle streams
-/// as they open. Spawns the
-/// actors through BattleObject_SpawnObjectsForListFar.
+/// Spawns the actors through BattleObject_SpawnObjectsForListFar.
 void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   s32 count;
@@ -214,15 +189,12 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
 /// BG2 to all of what lies below them and moves the projection centre down to
 /// line 120.
 ///
-/// Called by the summon effects (Ramses, Kirin, Atalanta, Neptune, Procne,
-/// Judgment, Boreas, Thor) and the particle streams as they close, to give
-/// the battle back its own background. Sets gBgScroll[1].y to 32, reloads
-/// BG1 with the battle's background darkened to level 24, waits one frame
-/// with every layer off, then writes REG_BLDALPHA, REG_BLDCNT and
-/// REG_DISPCNT and gProjection.centerY.
+/// Sets gBgScroll[1].y to 32, reloads BG1 with the battle's background darkened
+/// to level 24, waits one frame with every layer off, then writes REG_BLDALPHA,
+/// REG_BLDCNT and REG_DISPCNT and gProjection.centerY.
 void BattleEffect_SetupBlendedDisplay(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_BATTLE];
-  u8 *canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
+  u8 *canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE, HEAP_SLOT_BATTLE_CANVAS);
   struct BattleWork *battle = slots[0];
   volatile u32 fill;
 
@@ -257,9 +229,8 @@ void BattleEffect_SetupBlendedDisplay(void) {
 /// The parts and effects of a unit that is fading out stay as they are,
 /// but its timer is still set.
 ///
-/// Called throughout the effects, most often through
-/// EFFECT_STRIKE_TARGET when a hit lands. Writes work->actorTimers[timerSlot]
-/// and each part's param and frame (0xff restarts it).
+/// Called throughout the effects, most often through EFFECT_STRIKE_TARGET when
+/// a hit lands.
 void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
                               s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
@@ -272,35 +243,26 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
   groupIndex = 0;
 
   while ((group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL) {
-    // The timer's low byte, read through memory as the original does.
     if (timerSlot != TINT_KEEP) {
-      work->actorTimers[timerSlot] = ((u8 *)&timerFrames)[0];
+      work->actorTimers[timerSlot] = timerFrames;
     }
     if (slot->fading == 0) {
       if (palette != TINT_KEEP) {
         s32 partIndex;
 
-        partIndex = 0;
-        if (group->count != 0) {
-          struct SpriteAnimation **parts;
+        for (partIndex = 0; partIndex != group->count; partIndex++) {
+          // Every part but the unit's shadowEntry and animationEntry.
+          struct SpriteAnimation *part = group->entries[partIndex];
 
-          parts = group->entries;
-          do {
-            struct SpriteAnimation *part;
-
-            // Every part but the unit's shadowEntry and animationEntry.
-            part = *parts++;
-            if (part != NULL &&
-                part != (struct SpriteAnimation *)slot->shadowEntry &&
-                part != (struct SpriteAnimation *)slot->animationEntry) {
-              if (palette == SPRITE_COLOR_NORMAL)
-                part->colorMode = BattleObject_GetPaletteFar(unitId);
-              else
-                part->colorMode = palette;
-              part->picture = 0xff;
-            }
-            partIndex++;
-          } while (partIndex != group->count);
+          if (part != NULL &&
+              part != (struct SpriteAnimation *)slot->shadowEntry &&
+              part != (struct SpriteAnimation *)slot->animationEntry) {
+            if (palette == SPRITE_COLOR_NORMAL)
+              part->colorMode = BattleObject_GetPaletteFar(unitId);
+            else
+              part->colorMode = palette;
+            part->picture = 0xff;
+          }
         }
       }
       if (animation != TINT_KEEP)

@@ -12,7 +12,7 @@
 
 /// The burst shower's styles, its mode argument.
 enum BurstShowerMode {
-  BURST_SHOWER_MODE_FLASH,     ///< flash bursts
+  BURST_SHOWER_MODE_FLASH,
   BURST_SHOWER_MODE_ICE,       ///< in the ice block palette
   BURST_SHOWER_MODE_SPRAY,     ///< in the water spray palette
   BURST_SHOWER_MODE_PINK,      ///< pink, fired from 16 pixels higher
@@ -93,11 +93,8 @@ void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
 /// Each burst lives 24 frames. A sound plays on frame 4 and the battle shows
 /// the damage on frame 24 (frame 60 in the grey mode).
 ///
-/// Called by the seven wrappers above, six blessings and Deadly Gas. Each
-/// burst is one of work->particles, its variant counting the frames it has
-/// lived (-1 when free). Writes REG_BLDALPHA, the first 64 BG colours (all but
-/// the lightning and the faces), REG_BLDCNT in the grey mode and REG_BG2PA in
-/// the lightning mode; sets work->shakeFrames on each hit.
+/// Each burst is one of work->particles, its variant counting the frames it has
+/// lived (-1 when free).
 ///
 /// args: the user and the targets.
 /// mode: the burst and its palette (enum BurstShowerMode). The grey mode turns
@@ -106,7 +103,6 @@ void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
 ///       the targets, on a canvas shown at three times its width. No effect
 ///       kind in the effect table uses BURST_SHOWER_MODE_ICE.
 void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
-  u32 *slots;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
@@ -120,13 +116,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   s32 target;
   s32 level;
   s32 paletteId;
-  s32 width;
 
   // The slots are read from the canvas's, not the work block's.
-  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
-  sprites = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -136,11 +130,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   if (mode == BURST_SHOWER_MODE_FACES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   } else {
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   }
@@ -230,10 +224,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   }
 
   // Where each target stands.
-  i = 0;
-  while (i != work->args->targetCount) {
+  for (i = 0; i != work->args->targetCount; i++) {
     Projection_ScaledUnit(work->args->targets[i], &targetSpots[i]);
-    i += 1;
   }
 
   frame = 0;
@@ -291,9 +283,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     // 32x64 pictures (2048 bytes apart) every 4. The faces have one picture,
     // mirrored on EFFECT_SIDE_PARTY.
     i = 0;
-    /* FAKEMATCH(temporary): width set here; as declared with its 32, 20 of 623
-     * instructions differ in tbs-en. */
-    width = 32;
     do {
       struct Particle *spark = &work->particles[i];
       // A burst shows from its third frame, or its seventh for the faces
@@ -304,7 +293,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
             draw[work->args->side](canvas,
                                    (work->sheet + BURST_SHOWER_PICTURES),
                                    Q_16_16_TO_INT(spark->x) - 16,
-                                   Q_16_16_TO_INT(spark->y) - 32, width, 64);
+                                   Q_16_16_TO_INT(spark->y) - 32, 32, 64);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
@@ -312,7 +301,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
                     Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, width, 64);
+                    Q_16_16_TO_INT(spark->y) - 32, 32, 64);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (spark->variant > 1) {
@@ -320,7 +309,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
                     Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, width, 64);
+                    Q_16_16_TO_INT(spark->y) - 32, 32, 64);
           }
         }
         spark->x += spark->velocityX;
@@ -336,8 +325,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     // Hit each target every 8 frames, once its turn has come: target i on
     // frames whose low three bits are i.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
-      i = 0;
-      while (i != work->args->targetCount) {
+      for (i = 0; i != work->args->targetCount; i++) {
         // The bolt strikes target i from frame i * 4 + 2 and does not knock
         // it back.
         if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
@@ -345,11 +333,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 4);
         }
-        i += 1;
       }
     } else {
-      i = 0;
-      while (i != work->args->targetCount) {
+      for (i = 0; i != work->args->targetCount; i++) {
         // The bursts reach target i from frame i * 4 + 16.
         if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
           work->shakeFrames = 8;
@@ -363,7 +349,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                          KNOCKBACK_HURL);
         }
-        i += 1;
       }
     }
 

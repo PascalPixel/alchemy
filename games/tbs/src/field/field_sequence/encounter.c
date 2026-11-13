@@ -69,10 +69,7 @@ void Encounter_SelectMapZones(s32 useRules) {
 
 /// Returns the World Map encounter zone for the ground at pos (0 for none), and
 /// chooses the battle background for its battle environment
-/// (gMainRoutineWork.battleBackground). Called by Encounter_RollWorldMap on
-/// each step, and by Field_RequestBattleFromEncounterTable and
-/// Field_RequestDjinnBattle on the World Map, which use only the battle
-/// background.
+/// (gMainRoutineWork.battleBackground).
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 region;
   const struct WorldMapEncounterRule *rule = gWorldMap_EncounterRules;
@@ -95,17 +92,13 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the formation to fight
 /// (a row of formations.c), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
-/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and
-/// gMainRoutineWork.cloaked (Cloak) prevent battles.
-/// FLAG_NO_ENCOUNTERS_IN_AREA is set by Venus Lighthouse while its Reveal path
-/// is shown (the international editions), by Mercury Lighthouse while the
-/// leader carries the pillar's lights and by the World Map's debug entrance 99,
-/// and cleared by every entry that does not keep the party's position. Flag 351
-/// (0x15f), which no Broken Seal C code sets, skips the checks and the counting
-/// and draws a formation at once. Called by Encounter_RollMapStep and
-/// Encounter_RollWorldMap; adds to gMainRoutineWork.encounterSteps, sets or
-/// clears work->encounterBias, and on a battle sets
-/// gMainRoutineWork.battleMusic.
+/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and gMainRoutineWork.cloaked
+/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_AREA is set by Venus
+/// Lighthouse while its Reveal path is shown (the international editions), by
+/// Mercury Lighthouse while the leader carries the pillar's lights and by the
+/// World Map's debug entrance 99, and cleared by every entry that does not keep
+/// the party's position. Flag 351 (0x15f), which no Broken Seal C code sets,
+/// skips the checks and the counting and draws a formation at once.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -203,12 +196,9 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.
 /// terrain: the ground, an index into work->encounterZones: 0 for ordinary
-/// ground, 1 and 2 for CELL_BEHAVIOR_ENCOUNTER_GROUND_1 and _2 cells.
-/// steps: the step weight, passed on to Encounter_CountStepsAndSelectFormation.
+/// ground, 1 and 2 for CELL_BEHAVIOR_ENCOUNTER_GROUND_1 and _2 cells. steps:
+/// the step weight, passed on to Encounter_CountStepsAndSelectFormation.
 /// Returns the formation to fight, or 0 for no battle.
-/// Called by Field_UpdateWalking in a scene, which stores the result in
-/// work->encounter; steps is the leader's speed limit, doubled with
-/// FLAG_LURE_CAP.
 s32 Encounter_RollMapStep(u32 terrain, s32 steps) {
   u8 *zone;
 
@@ -217,24 +207,20 @@ s32 Encounter_RollMapStep(u32 terrain, s32 steps) {
 }
 
 /// Rolls a random battle on the World Map, taking the zone from the cell at
-/// pos. Returns the formation to fight, or 0 for no battle. Called by
-/// Field_UpdateWalking on the World Map.
+/// pos. Returns the formation to fight, or 0 for no battle.
 s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
   return Encounter_CountStepsAndSelectFormation(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
 /// Returns the formation in slot (0 to 7) of zone; 14 halfwords make a zone.
-/// Called by Field_RequestBattleFromEncounterTable,
-/// Encounter_GetDjinnFormation and the trigger runner (triggers.c,
-/// ENCOUNTER_ZONE_MIMIC).
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
   // A zone's halfwords are rate, level, then the eight formations.
   return gEncounterZones[zone * 14 + slot + 2];
 }
 
-/// Returns the formation of Djinni battle djinni, which the table gives as
-/// a zone and slot. Called by Field_RequestDjinnBattle.
+/// Returns the formation of Djinni battle djinni, which the table gives as a
+/// zone and slot.
 s16 Encounter_GetDjinnFormation(s32 djinni) {
   const struct DjinniBattle *battle = &gEncounter_DjinnBattles[djinni];
 
@@ -248,8 +234,7 @@ s16 Encounter_GetDjinnFormation(s32 djinni) {
 
 /// Chooses the current scene's field music (gMainRoutineWork.cue) from the
 /// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
-/// when none does. Called by MainRoutine_Run on entering each scene, before
-/// Scene_PlayMusic plays it.
+/// when none does.
 void Scene_ChooseMusic(void) {
   s16 music = SOUND_KEEP_BGM;
   s16 sceneId = gMainRoutineWork.next;
@@ -282,11 +267,8 @@ void Scene_ChooseMusic(void) {
 }
 
 /// Returns the area name of sceneId and entrance, from the first rule matching
-/// the scene or its area; 0, the Title's name, when none does. No
-/// reader treats 0 apart. Called by the save, debug and
-/// area name windows through Area_GetNameIndexFar, and by
-/// WorldPicture_UpdateMarkers; most add it to MsgDebugAreaName for the
-/// message. The save stores it as its area (save.h).
+/// the scene or its area; 0, the Title's name, when none does. No reader treats
+/// 0 apart. The save stores it as its area (save.h).
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
   const struct AreaNameRule *rule = gArea_NameRules;
   s32 name = 0;
@@ -314,11 +296,10 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 }
 
 /// Sets the scene the party returns to after a defeat
-/// (gMainRoutineWork.restartScene and restartEntrance), from the first rule
-/// of gScene_RestartRules that matches the current scene and entrance: {scene,
+/// (gMainRoutineWork.restartScene and restartEntrance), from the first rule of
+/// gScene_RestartRules that matches the current scene and entrance: {scene,
 /// entrance (-1 for any), return scene, return entrance}, ended by scene -1.
-/// Without a match the restart point stays as it was. Called by
-/// FieldSequence_Run on scene load.
+/// Without a match the restart point stays as it was.
 void Scene_SetRestartPoint(void) {
   s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
@@ -344,8 +325,7 @@ s16 BattleBackground_GetSelected(void) {
 /// Chooses the battle background for the current scene.
 /// gScene_BattleBackgroundRules lists each battle background (a word with bit
 /// 31 set) followed by the scenes that use it, ended by 0; a scene takes the
-/// one listed last before it, and a scene not listed takes the last one. Called
-/// by Encounter_SelectMapZones; sets gMainRoutineWork.battleBackground.
+/// one listed last before it, and a scene not listed takes the last one.
 void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.next;
   s32 *table = gScene_BattleBackgroundRules;
@@ -368,8 +348,7 @@ void BattleBackground_SelectForMap(void) {
 
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
-/// gMainRoutineWork.battleBackground. Called by
-/// Encounter_ResolveWorldMapZoneAndBackdrop.
+/// gMainRoutineWork.battleBackground.
 void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 backdrop;
 

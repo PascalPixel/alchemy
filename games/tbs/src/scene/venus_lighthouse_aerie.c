@@ -73,7 +73,6 @@
 #include "module/system/system.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "types.h"
 #include "sprite.h"
@@ -120,8 +119,7 @@
 
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle. A defeat gives it back.
-/// ★ Named from the game: "Shaman's Rod" (MsgItemName)
-#define FLAG_SHAMANS_ROD_HOLDER 0x345
+#define FLAG_SHAMANS_ROD_HOLDER FLAG_AREA_TEMP_45
 
 /// Area flags that choose the aerie's field music after each battle.
 ///
@@ -134,9 +132,7 @@
 /// area, keep their Psynergy Stones in the same two flags, which no one goes
 /// back down to see.
 enum {
-  /// ★ Named from its area name: Lighthouse Aerie
   FLAG_AERIE_FIRST_BATTLE_BEGUN = FLAG_AREA_TEMP_50,
-  /// ★ Named from its area name: Lighthouse Aerie
   FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_AREA_TEMP_51
 };
 
@@ -183,10 +179,10 @@ enum { CHILD_VALUE_BLINK = 0x100 };
 /// Animations the aerie plays by number beyond enum ActorAnimation.
 ///
 /// They come from each sprite's animation table
-/// (graphics/sprite/spr_<number>.tsv). The party's are reached through their
+/// (graphics/sprite/<name>.tsv). The party's are reached through their
 /// animation lists.
 enum {
-  /// Menardi standing, her hair blown back (spr_033.tsv).
+  /// Menardi standing, her hair blown back (menardi.tsv).
   MENARDI_ANIMATION_STAND_WINDSWEPT = 5,
   MENARDI_ANIMATION_LIE = 7, ///< lying on her side
   /// Menardi falling into the lighthouse, as SATUROS_ANIMATION_TIP to _SINK.
@@ -194,9 +190,9 @@ enum {
   MENARDI_ANIMATION_SLUMP = 9,
   MENARDI_ANIMATION_SINK = 10,
   /// Garet on his knees, Ivan and Mia lying down, as the party lies on the
-  /// broken aerie (spr_001.tsv to spr_003.tsv).
+  /// broken aerie (garet.tsv to mia.tsv).
   ANIM_PARTY_KNOCKED_DOWN = 18,
-  ANIM_LEADER_KNOCKED_DOWN = 19 ///< Isaac lying on his back (spr_000.tsv)
+  ANIM_LEADER_KNOCKED_DOWN = 19 ///< Isaac lying on his back (isaac.tsv)
 };
 
 // The aerie's scene flags: FLAG_VENUS_AERIE_FUSION_SLIDING: Saturos and Menardi
@@ -212,25 +208,23 @@ enum {
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
 static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
-  s16 *counter = &actor->timer;
-
-  switch (*counter) {
+  switch (actor->timer) {
   case 6:
-    actor->scaleX += -Q16_ONE / 8;
+    actor->scaleX -= Q16_ONE / 8;
     actor->scaleY += Q16_ONE / 16;
     break;
   case 4:
     actor->scaleX += Q16_ONE / 16;
-    actor->scaleY += -Q16_ONE / 32;
+    actor->scaleY -= Q16_ONE / 32;
     break;
   case 2:
     actor->scaleX += Q16_ONE / 32;
-    actor->scaleY += -Q16_ONE / 64;
+    actor->scaleY -= Q16_ONE / 64;
     break;
   case 0:
     actor->scaleX += Q16_ONE / 32;
-    actor->scaleY += -Q16_ONE / 64;
-    *counter = Math_RemainderUnsigned(Import_RandomNext(), 80) + 80;
+    actor->scaleY -= Q16_ONE / 64;
+    actor->timer = Math_RemainderUnsigned(Random_Next(), 80) + 80;
     break;
   }
   {
@@ -297,22 +291,14 @@ const struct ActorPlacement *VenusLighthouseAerie_GetActorPlacements(void) {
 #include "shared/actor_nearest.h"
 
 /// Saturos and Menardi slide together as they fuse.
-/// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_SCENE_TEMP_34
 /// Saturos and Menardi grow as they fuse.
-/// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define FLAG_VENUS_AERIE_FUSION_GROWING FLAG_SCENE_TEMP_35
 /// The beacon has erupted, and its particles rise higher.
-/// ★ Named from the game: "At long last, the time has come to light Venus
-/// Lighthouse's beacon." (MsgVenusLongLastTime)
 #define FLAG_VENUS_AERIE_BEACON_ERUPTED FLAG_SCENE_TEMP_36
 /// The beacon's light has lifted the party and flashed white.
-/// ★ Named from the game: "At long last, the time has come to light Venus
-/// Lighthouse's beacon." (MsgVenusLongLastTime)
 #define FLAG_VENUS_AERIE_PARTY_LIFTED FLAG_SCENE_TEMP_37
 /// The leader stands on one of the floating platforms.
-/// ★ Named from what the player sees: round pale blue platforms floating in the
-/// air between the lighthouse and the towers beside it (its render)
 #define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_SCENE_TEMP_50
 
 /// Walking off the edge of a platform makes the leader jump across, if the
@@ -343,7 +329,7 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
     actor->acceleration = px(2);
     Sound_Play(SE_JUMP);
     actor->velocityY = px(4);
-    actor->motionFlags &= 0x7e;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.coordinates[0] >> 16,
                         destination.coordinates[2] >> 16);
@@ -371,13 +357,13 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
     platform = Actor_Get(gVenusLighthouseAerie_LandedPlatform);
     platform->motionFlags = 0;
     leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
-    platform->y.fixed += -px(3);
-    leader->y.fixed += -px(3);
-    leader->groundHeight += -px(3);
+    platform->y.fixed -= px(3);
+    leader->y.fixed -= px(3);
+    leader->groundHeight -= px(3);
     wait(2);
-    platform->y.fixed += -px(2);
-    leader->y.fixed += -px(2);
-    leader->groundHeight += -px(2);
+    platform->y.fixed -= px(2);
+    leader->y.fixed -= px(2);
+    leader->groundHeight -= px(2);
     wait(10);
     reboundStep = px(2);
     platform->y.fixed += reboundStep;
@@ -402,16 +388,14 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
 /// bobbing, as they do until the leader lands on one
 /// (VenusLighthouseAerie_LandOnPlatform).
 static void VenusLighthouseAerie_FloatPlatforms(void) {
-  s32 flags = ACTOR_FLOATS;
-
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 3)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 4)->motionFlags = flags;
-  Actor_Get(ACTOR_LAST_PLATFORM)->motionFlags = flags;
+  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 3)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 4)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_LAST_PLATFORM)->motionFlags = ACTOR_FLOATS;
 }
 
 /// Returns the platform and confrontation step triggers.
@@ -429,7 +413,6 @@ const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
-  s32 clear = 0;
   s16 entrance;
   struct Actor *platform;
 
@@ -446,7 +429,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
   platformId = ACTOR_FIRST_PLATFORM;
   do {
     platform = Actor_Get(platformId);
-    Actor_SetSpriteFlags(Actor_Get(platformId), clear);
+    Actor_SetSpriteFlags(Actor_Get(platformId), 0);
     Actor_SetSpritePriority(platformId, 1);
     platform->motionFlags = ACTOR_FLOATS;
     platform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -499,7 +482,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
       }
     }
   }
-  return clear;
+  return 0;
 }
 
 static void VenusLighthouseAerie_ShowMessage(s32 speaker) {
@@ -567,10 +550,12 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   {
-    u16 shown = FACING_SOUTH;
+    /* FAKEMATCH(temporary): south holds the facing; as FACING_SOUTH at the
+     * store, 4 of 923 instructions differ in tbs-en. */
+    u16 south = FACING_SOUTH;
 
     leader->y.fixed = -px(32);
-    leader->facing = shown;
+    leader->facing = south;
   }
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
@@ -1242,12 +1227,12 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
 /// Flashes the actor white two frames in four, with Psynergy rings every 15
 /// frames.
 static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor) {
-  if (*(s32 *)&gFrameCount & 2) {
+  if (gFrameCount & 2) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
-  if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
+  if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
     Scene_SpawnPsynergyRings(actor);
   }
 }
@@ -1913,13 +1898,13 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   center = Actor_Get(ACTOR_BEAM_BOTTOM);
   if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
+                               (s32)(Random_Below(256) << 16) +
                                    center->y.fixed - px(28),
                                center->z.fixed);
   } else {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)(Random_Next() << 6) >> 16 << 16) +
-                                   center->y.fixed - px(28),
+                               (s32)(Random_Below(64) << 16) + center->y.fixed -
+                                   px(28),
                                center->z.fixed);
   }
   if (effect != 0) {
@@ -1956,7 +1941,7 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
   saturos = Actor_Get(ACTOR_SATUROS);
   menardi = Actor_Get(ACTOR_MENARDI);
   // BUG: Saturos's test is overwritten by Menardi's, so only Menardi needs to
-  // be parked; the ROM still loads and compares Saturos's targets.
+  // be parked.
 #ifdef BUGFIX
   pairParked = Actor_IsParked(saturos) && Actor_IsParked(menardi);
 #else
@@ -1976,7 +1961,7 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
         menardi->scaleY += Q16_ONE / 128;
       }
     } else {
-      if ((*(s32 *)&gFrameCount & 2) != 0) {
+      if ((gFrameCount & 2) != 0) {
         Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
         Actor_SetSpriteColorById(ACTOR_MENARDI, SPRITE_COLOR_NORMAL);
       } else {
@@ -1990,8 +1975,8 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
         menardi->x.fixed += px(1) / 16;
       }
       if (saturos->z.fixed > px(182)) {
-        saturos->z.fixed += -px(1) / 16;
-        menardi->z.fixed += -px(1) / 16;
+        saturos->z.fixed -= px(1) / 16;
+        menardi->z.fixed -= px(1) / 16;
       }
     }
   }
@@ -2344,6 +2329,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   struct Actor *middle;
   struct Actor *upper;
   struct Actor *actor;
+  u16 white;
 
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_STOP_ACTION_SE);
@@ -2537,11 +2523,9 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_Snapshot();
   Event_SetDestination((s32)&SceneId_WorldMap,
                        WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
-  {
-    u16 white = RGB(31, 31, 31);
+  white = RGB(31, 31, 31);
 
-    PLTT_BACKDROP = white;
-  }
+  PLTT_BACKDROP = white;
   gFieldWork->transitionFrames = 1;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -2956,9 +2940,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
   Event_Wait(80);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(80);
@@ -3072,9 +3055,9 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   }
   if (spawnParticles) {
-    randomHeight = ((u32)(Random_Next() * 80) >> 16) << 16;
+    randomHeight = (Random_Below(80)) << 16;
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               center->y.fixed - randomHeight + -px(8),
+                               center->y.fixed - randomHeight - px(8),
                                center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
@@ -3131,8 +3114,8 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 
   center = ((struct Actor *)Actor_Get(23));
   grid = gMapGridWork[0];
-  drift = (u32)(Random_Next() * 48) >> 16 << 16;
-  if ((s16)(grid->viewY >> 16) <= 129) {
+  drift = Random_Below(48) << 16;
+  if ((s16)(grid->view[1] >> 16) <= 129) {
     if (gFrameCount & 1) {
       Actor_SetPosition(ACTOR_BEACON_ORB, 304, 164);
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE;
@@ -3261,7 +3244,7 @@ s32 gVenusLighthouseAerie_BeamEndAction[] = {
 s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_ADD(SW_Y, px(1)),
     SC_WAIT(1),
@@ -3274,7 +3257,7 @@ s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
 s32 gVenusLighthouseAerie_RiseParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_ADD(SW_Y, -px(1)),
     SC_WAIT(1),
@@ -3438,7 +3421,7 @@ struct Trigger gVenusLighthouseAerieTriggers[] = {
 s32 gVenusLighthouseAerie_BesideParticleScript[] = {
     SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
     SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(30),
     SC_RELEASE,
 };

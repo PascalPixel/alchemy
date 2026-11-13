@@ -11,6 +11,7 @@
 #include "scene_tables.h"
 #include "menu_list.h"
 #include "far_call.h"
+#include "heap.h"
 
 struct Actor;
 
@@ -82,7 +83,7 @@ extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
 /// Heap slot 5: the 64 actors, 112 bytes each.
-extern struct Actor *gActors;
+#define gActors (*(struct Actor **)&gHeapSlots[HEAP_SLOT_ACTORS])
 /// The lighthouse transition's pictures, packed (tagged LZ), decoded 4 KB
 /// bytes after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedPictures[];

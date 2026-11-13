@@ -39,19 +39,19 @@ struct CharacterDefinition {
   /// Added to ten times the Djinn set in each element to give the
   /// character's element levels (Unit_GetElementLevels).
   u8 elementBonus[4];
-  u8 startingLevel;      ///< the level a new game raises the character to
-  u8 paddingBeforeItems; ///< padding
+  u8 startingLevel; ///< the level a new game raises the character to
+  u8 paddingBeforeItems;
   /// The starting items, each added and equipped at a new game; the low nine
   /// bits are the item.
   u16 items[13];
-  u8 paddingAfterItems[2]; ///< padding
+  u8 paddingAfterItems[2];
 };
 
 /// An ability a class teaches, and the level it is learned at.
 struct ClassAbility {
-  u8 ability;    ///< the action taught, 0 for none
-  u8 level;      ///< the level it is taught at
-  u8 padding[2]; ///< padding
+  u8 ability; ///< the action taught, 0 for none
+  u8 level;   ///< the level it is taught at
+  u8 padding[2];
 };
 
 /// ClassDefinition.series for the series a character's elements can choose
@@ -61,25 +61,15 @@ struct ClassAbility {
 /// children, and 202, "Flame User", to Jenna), and 12 class 0, "NPC", an
 /// enemy's (CLASS_NONE).
 enum ClassSeries {
-  /// ★ Named from the game: "Squire" (MsgClassName)
   CLASS_SERIES_SQUIRE = 1,
-  /// ★ Named from the game: "Guard" (MsgClassName)
   CLASS_SERIES_GUARD,
-  /// ★ Named from the game: "Swordsman" (MsgClassName)
   CLASS_SERIES_SWORDSMAN,
-  /// ★ Named from the game: "Brute" (MsgClassName)
   CLASS_SERIES_BRUTE,
-  /// ★ Named from the game: "Apprentice" (MsgClassName)
   CLASS_SERIES_APPRENTICE,
-  /// ★ Named from the game: "Water Seer" (MsgClassName)
   CLASS_SERIES_WATER_SEER,
-  /// ★ Named from the game: "Wind Seer" (MsgClassName)
   CLASS_SERIES_WIND_SEER,
-  /// ★ Named from the game: "Seer" (MsgClassName)
   CLASS_SERIES_SEER,
-  /// ★ Named from the game: "Pilgrim" (MsgClassName)
   CLASS_SERIES_PILGRIM,
-  /// ★ Named from the game: "Hermit" (MsgClassName)
   CLASS_SERIES_HERMIT
 };
 
@@ -95,13 +85,13 @@ struct ClassDefinition {
   /// The element levels the class needs, in tens: the last class of the
   /// series the character meets in all four is its class.
   u8 required[4];
-  u8 hp;         ///< tenths of the base stat
-  u8 pp;         ///< tenths of the base stat
-  u8 atk;        ///< tenths of the base stat
-  u8 def;        ///< tenths of the base stat
-  u8 agi;        ///< tenths of the base stat
-  u8 luck;       ///< tenths of the base stat
-  u8 padding[2]; ///< padding
+  u8 hp;   ///< tenths of the base stat
+  u8 pp;   ///< tenths of the base stat
+  u8 atk;  ///< tenths of the base stat
+  u8 def;  ///< tenths of the base stat
+  u8 agi;  ///< tenths of the base stat
+  u8 luck; ///< tenths of the base stat
+  u8 padding[2];
   struct ClassAbility
       abilities[CLASS_ABILITY_SLOTS]; ///< the Psynergy the class teaches
   /// [0] to [2]: the ability effects the class is weak to
@@ -123,7 +113,7 @@ struct DjinnDefinition {
   s8 agi;
   s8 luck;
   ///@}
-  u8 reservedAfterStats[2]; ///< reserved
+  u8 reservedAfterStats[2];
 };
 
 /// EnemyDefinition.targetStrategy: a single-target attacker favours the

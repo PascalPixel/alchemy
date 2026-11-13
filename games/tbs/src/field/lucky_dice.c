@@ -2,30 +2,16 @@
 /// Lucky Dice, the dice game in Tolbi, drawn with the battles' 3D camera.
 
 #include "module/field/lucky_dice.h"
-#include "module/system/system.h"
 #include "battle.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "version.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
 #include "io_reg.h"
 #include "battle_camera.h"
 #include "projection.h"
-#include "types.h"
 #include "iwram_call.h"
-#include "edition.h"
-#include "task.h"
 #include "system_call.h"
-#include "frame.h"
 #include "oam_words.h"
-#include "sounds.h"
 #include "macros.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
@@ -41,12 +27,10 @@ s32 LuckyDice_Start(void) {
 }
 
 /// Puts the 3D camera back at its starting view: at the origin, unturned,
-/// pitched to 152 and 510 units away, following nothing. Recomputes the eye
-/// and sets the projection's focal length (250), near plane and far plane.
-/// Called only by LuckyDice_Run, once the camera's heap block is allocated;
-/// writes gBattleCamera's fields and gProjection.
+/// pitched to 152 and 510 units away, following nothing. Recomputes the eye and
+/// sets the projection's focal length (250), near plane and far plane.
 void Camera_ResetViewDefaults(void) {
-  struct BattleCamera *camera = gBattleCamera;
+  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 offset[3];
   u32 nearPlane;
   u32 focalLength;
@@ -107,20 +91,14 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 
-#include "battle_sprite_id.h"
-#include "heap_release.h"
 #include "dma.h"
 #include "ram_buffer.h"
-#include "fixed_math.h"
-#include "battle_status.h"
 #include "main_routine_work.h"
 #include "map_grid_scroll.h"
 #include "battle_effect_work.h"
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
-#include "sounds.h"
-#include "heap.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings
@@ -184,7 +162,6 @@ struct LuckyDiceSprites {
   struct Window *helpWindow;     ///< the Throw and Quit buttons
 };
 
-#include "input.h"
 #include "../graphics/lucky_dice/tables.h"
 
 #define DICE_COUNT 2
@@ -217,7 +194,7 @@ enum LuckyDiceState {
 
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
-/// Returns 0. Called only by LuckyDice_Run, to fade both palettes in and out.
+/// Returns 0.
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
@@ -255,11 +232,10 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// throw. Each throw costs ten coins per level of the party's average. Two
 /// dice are thrown onto a board of six rows; each die's face and the row it
 /// stops in give four numbers. Four of a kind pays 5 times the bet (15 or 25
-/// times when it matches one of the two lucky numbers shown at the top),
-/// three of a kind 3 times, two pairs twice and one pair the bet back.
-/// Called by LuckyDice_Start. Takes the bet from and pays the
-/// winnings into gMainRoutineWork.coins, resets the task table, and
-/// frees the five heap slots it allocates before it returns.
+/// times when it matches one of the two lucky numbers shown at the top), three
+/// of a kind 3 times, two pairs twice and one pair the bet back. Takes the bet
+/// from and pays the winnings into gMainRoutineWork.coins, resets the task
+/// table, and frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows
@@ -444,8 +420,7 @@ void LuckyDice_Run(void) {
                              sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
   sprites->helpWindow = window;
-  // MsgLuckyDiceThrow and MsgLuckyDiceQuit, by their offset from the coins
-  // label: written by name, they would share literals the native keeps apart.
+  // MsgLuckyDiceThrow and MsgLuckyDiceQuit, the two after the coins label.
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 10, window, 0, 0);
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 11, sprites->helpWindow, 0, 8);
 

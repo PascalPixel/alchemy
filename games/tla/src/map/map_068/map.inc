@@ -15,7 +15,7 @@ Field_Map068:
 	.incbin "games/tla/src/map/map_068/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map068_SHAPES:
-	.incbin "games/tla/src/map/map_038/shapes.table.lz"
+	.incbin "games/tla/src/map/gondowan_cliffs_hideout/shapes.table.lz"
 	.balign 4, 0
 .LField_Map068_GRID:
 	.incbin "games/tla/src/map/map_068/map.grid.lz"

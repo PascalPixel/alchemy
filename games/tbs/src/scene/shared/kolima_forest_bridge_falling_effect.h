@@ -10,7 +10,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "event.h"
 #include "map_grid_scroll.h"
 #include "sounds.h"
@@ -61,8 +60,7 @@ void Kolima_UpdateCurseDust(void) {
     if ((gFrameCount & 63) == 0)
       Sound_Play(SE_GLITTER);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)
-      x = origin[0] +
-          (((u32)Import_RandomNext() * gFallingEffectWidth >> 16) << 8) +
+      x = origin[0] + ((Random_Below(gFallingEffectWidth)) << 8) +
           gFallingEffectOffset;
     else
       x = origin[0] + (Import_RandomNext() << 8) - px(128);

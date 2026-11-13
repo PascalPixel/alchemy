@@ -19,7 +19,6 @@
 #include "event_inline.h"
 #include "dma.h"
 #include "resource_ids.h"
-#include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 
@@ -50,8 +49,6 @@ enum ColossoLetteringCommand {
 enum ColossoLetteringPicture {
   COLOSSO_PICTURE_LEND_A_HAND = 0,
   COLOSSO_PICTURE_MATCH_1 = 1, ///< "The 1st Match", then the 2nd and 3rd
-  /// ★ Named from what the player sees: WIN in gold, or LOSE in blue, over
-  /// the arena after a match's battle (its render)
   COLOSSO_PICTURE_WIN_LOSE = 4,
   COLOSSO_PICTURE_COUNT_3_2 = 5, ///< the countdown's 3 and 2
   COLOSSO_PICTURE_COUNT_1 = 6,   ///< the countdown's 1
@@ -309,7 +306,6 @@ commands:
     break;
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
-  // BLEND_ALPHA(blend, 16 - blend), whose operand order compiles differently.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
                       IO_WRITE_16);
 }

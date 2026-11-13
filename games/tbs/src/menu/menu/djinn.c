@@ -142,10 +142,6 @@ s32 DjinnMenu_Run(void) {
   return 1;
 }
 
-// A statement macro in the do-while shape both its uses match with; as a
-// plain { } block, 4 of 559 instructions of DjinnMenu_RunScreen differ in
-// tbs-en.
-
 /// Finds the moved Djinni in the list and selects its new position.
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
   do {                                                                         \
@@ -426,8 +422,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   s32 paletteIndex;
 
   paletteNumber = WINDOW_PALETTE;
-  copyIndex = 0;
-  do {
+  for (copyIndex = 0; copyIndex <= 2; copyIndex++) {
     for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
       u32 color;
       s32 blue;
@@ -456,7 +451,6 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
       if (red < 0)
         red = 0;
       adjustedColor = RGB(red, green, blue);
-      // Into the palette before this one.
       ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
     }
     if (copyIndex == 0) {
@@ -465,8 +459,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
       paletteNumber = 7;
       brightnessDelta = -12;
     }
-    copyIndex++;
-  } while (copyIndex <= 2);
+  }
 }
 
 /// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
@@ -499,11 +492,11 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
   Dma_Set((const void *)Palette_GetBasicSpriteColors(),
           (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
-          (void *)&BG_PLTT_COLOR(7, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
+          (void *)&BG_PLTT_COLOR(7, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
   DjinnMenu_AdjustPalettes(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
@@ -516,10 +509,6 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
 
 /// Lists the actions after a preview, marking gains, then appends the losses.
 /// The two output counts distinguish gained and lost actions.
-///
-/// Writes every action of after (up to 32), with DJINN_PREVIEW_GAINED on
-/// those before lacks, then each action of before that after lacks, with
-/// DJINN_PREVIEW_LOST. Returns the number written, up to 64.
 s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
                       u16 *actionsOut, s32 *gainedCountOut, s32 *lostCountOut) {
   s32 actionIndex;
@@ -781,12 +770,9 @@ s32 DjinnMenu_ShowHelp(void) {
   helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
   statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
-  helpIndex = 0;
-  listMessage = MsgDjinnInfoTopic;
-  do {
+  for (helpIndex = 0, listMessage = MsgDjinnInfoTopic; helpIndex <= 6;
+       helpIndex++)
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, helpIndex * 8);
-    helpIndex++;
-  } while (helpIndex <= 6);
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);
@@ -1580,9 +1566,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairIndex[mode] = entry % 32;
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairMember[mode] = DJINN_MEMBER(entry);
-    /* FAKEMATCH(dead): updates of entry that cancel out, under a test of
-     * entry, keep it live after the member's mask, so the mask keeps its
-     * register; without them, 8 of 2105 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): updates of entry that cancel out, under a test of entry,
+     * keep it live after the member's mask; without them, 8 of 2105
+     * instructions differ in tbs-en. */
     if (entry) {
       entry++;
       entry--;
@@ -1595,10 +1581,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
 /// Lists owned Djinn by element and index, marking those that are set.
 /// For element -1, entries also encode their party member.
-///
-/// Writes one Djinn list entry (DJINN_ENTRY_) for each Djinni of element the
-/// unit holds, or of every element for -1, and returns how many. The Djinn
-/// menu passes a DjinnListTable row, which holds DJINN_LIST_ROWS (10).
 s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   struct Unit *unit = Unit_GetFar(memberId);
   s32 count = 0;

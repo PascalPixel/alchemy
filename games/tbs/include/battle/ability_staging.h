@@ -36,10 +36,10 @@ enum BattleStaging {
   STAGING_MESSAGES = 1, ///< no effect: each target's messages only
   STAGING_ATTACK = 2,   ///< the acting unit runs up and strikes
   STAGING_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
-  STAGING_ITEM = 4,     ///< an item
-  STAGING_SUMMON = 5,   ///< the larger summons, the acting unit hidden
-  STAGING_DJINNI = 6,   ///< a Djinni with no attack (Granite, Quartz...)
-  STAGING_FLEE = 7,     ///< a unit runs
+  STAGING_ITEM = 4,
+  STAGING_SUMMON = 5, ///< the larger summons, the acting unit hidden
+  STAGING_DJINNI = 6, ///< a Djinni with no attack (Granite, Quartz...)
+  STAGING_FLEE = 7,   ///< a unit runs
   /// The action plays as a cast, the caster showing its element's streaks in
   /// place of the gathering star field. Where gAbilityStaging gives no
   /// staging, it's how an enemy's ability plays when the ability isn't Psynergy

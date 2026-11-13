@@ -7,13 +7,11 @@
 #define MERCURY_PARTICLE_MAX 24  ///< droplets (one a field effect sprite)
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
-/// bounces twice and hops three times ever higher, then rises 120 pixels out
-/// of sight trailing eight afterimages. The leader turns to the camera and
-/// plays ANIM_LEADER_ARMS_RAISED while 24 droplets rain round it, one a frame
-/// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Called
-/// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
-/// actor slot; the Djinni's actor and its afterimages are released
-/// here. Uses all 24 field effect sprites (FieldEffect_InitializeSlots).
+/// bounces twice and hops three times ever higher, then rises 120 pixels out of
+/// sight trailing eight afterimages. The leader turns to the camera and plays
+/// ANIM_LEADER_ARMS_RAISED while 24 droplets rain round it, one a frame
+/// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Uses all
+/// 24 field effect sprites (FieldEffect_InitializeSlots).
 void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *copy;
@@ -25,7 +23,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct FieldParticle *effect;
   s8 *slotState;
   s32 kind;
-  s32 remaining;
+  s32 i;
   s32 resourceId;
   struct Actor *copies[MERCURY_AFTERIMAGE_MAX];
   struct Vector3 position;
@@ -63,7 +61,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   resource = NULL;
   previous = djinni;
   cursor = copies;
-  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
+  for (i = 0; i < MERCURY_AFTERIMAGE_MAX; i++) {
     copy = Actor_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
     *cursor++ = copy;
@@ -90,13 +88,13 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   resourceId = resource->slot;
   Sound_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
-  for (remaining = 14; remaining >= 0; remaining--) {
+  for (i = 0; i < 15; i++) {
     djinni->y.fixed += px(8);
     wait(1);
   }
   Actor_ReleaseFar(djinni);
   list = copies;
-  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
+  for (i = MERCURY_AFTERIMAGE_MAX - 1; i >= 0; i--)
     Actor_ReleaseFar((*list++));
   if (resourceId != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceId);
@@ -115,20 +113,20 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   effect = effectWork->particles;
-  remaining = MERCURY_PARTICLE_MAX - 1;
+  i = MERCURY_PARTICLE_MAX - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
-    remaining--;
+    i--;
     wait(1);
     effect++;
-  } while (remaining >= 0);
+  } while (i >= 0);
 
   // After 120 frames every droplet still in use takes its last fall.
   wait(120);
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, i, effectWork, particles,
                                    MERCURY_DROPLET_LAST_FALL);
 
   // Restore the colours.

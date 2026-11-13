@@ -1,7 +1,7 @@
 # Maps
 
 A map is the ground a place is drawn on and walked over. Each is a folder
-here, such as `map_008/` for Daila, and the heart of it is a text grid
+here, such as `alhafra/` for Alhafra, and the heart of it is a text grid
 you can open, `map.txt`, one cell per square.
 
 ## Cells
@@ -79,10 +79,12 @@ is drawn with, each a resource of its own
 ([Graphics](../graphics/README.md#tilesets)). Many scenes share a map, and
 many maps share tiles.
 
-One thing to know before you go looking: a folder is numbered by its place
-among the maps' resources, where each map is followed by the tile sheets
-it brings, so a folder's number rarely matches its row in `gMaps`. Daila is
-row 9 and folder `map_008/`.
+A folder is named for the one place that uses it, as its scene or the
+scene's code names it, when no other map shares that name. The rest, the
+rooms of a place with several maps and a map that several places share,
+keep their number among the maps' resources, where each map is followed
+by the tile sheets it brings, so that number rarely matches its row in
+`gMaps`. Daila is row 9 and folder `map_008/`.
 
 When the party arrives, the grid, the cell pictures, the shapes, the tile
 animation, the blend script and the scene's own part of the map are
@@ -91,7 +93,7 @@ and the tiles come too, unless they are already there.
 
 ## Where the files are
 
-Each `map_NNN/` folder holds `map.inc`, which puts the map together and
+Each folder holds `map.inc`, which puts the map together and
 which [`maps.s`](maps.s) includes in the Game Pak's order, and its grids
 and tables: `map.txt`, `cell_pictures.tsv`, `shape_grid.tsv`,
 `shapes.tsv`, `animation.tsv` and `blend.tsv` where it has them. The

@@ -27,7 +27,8 @@ const u32 *KolimaForestFloodgate_GetExits(void);
 const struct ActorPlacement *KolimaForestFloodgate_GetActorPlacements(void);
 const struct Trigger *KolimaForestFloodgate_GetTriggers(void);
 s32 KolimaForestFloodgate_Initialize(void);
-// Native calls precede this definition.
+// UB: the scene calls this before its definition with no prototype, so as a
+// function returning int.
 #ifdef UBFIX
 void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
                                          s32 value);

@@ -40,7 +40,6 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct SpriteScale scale;
-  void **slots;
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
@@ -50,10 +49,9 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = slots[0];
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -81,10 +79,10 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   // Keep the effect between lines 16 and 136.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;

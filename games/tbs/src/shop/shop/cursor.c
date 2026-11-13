@@ -20,31 +20,25 @@ static const u16 sSelectorTileOffsets[30] = {
 };
 // clang-format on
 
-/// Colours the first `itemCount` segments of the quantity bar in
-/// `tileBuffer`: each segment is two pixels wide on rows 1 to 6 of its tile,
-/// the left pixel colour 1 and the right one colour `paletteSelector` (a
-/// colour number, not a palette). Called by the shop's quantity choice and,
-/// through SHOP.S, by the item menu's quantity bar, which draws its bar in
-/// four colours this way.
+/// Colours the first `itemCount` segments of the quantity bar in `tileBuffer`:
+/// each segment is two pixels wide on rows 1 to 6 of its tile, the left pixel
+/// colour 1 and the right one colour `paletteSelector` (a colour number, not a
+/// palette).
 void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
-  const u16 *tileOffset;
+  s32 segment;
 
-  // One byte holds two 4-bit pixels, the left one in the low nibble
+  // One byte holds two 4-bit pixels, the left one in the low nibble.
   paletteSelector = (paletteSelector << 4) + 1;
+  for (segment = 0; segment < itemCount; segment++) {
+    // A tile row is 4 bytes; the segment's byte in rows 1 to 6.
+    u8 *column = tileBuffer + sSelectorTileOffsets[segment];
 
-  if (itemCount > 0) {
-    tileOffset = sSelectorTileOffsets;
-    do {
-      struct TileQuantityBarSegmentView *record =
-          (struct TileQuantityBarSegmentView *)(tileBuffer + *tileOffset++);
-      record->values[0] = paletteSelector;
-      record->values[4] = paletteSelector;
-      record->values[8] = paletteSelector;
-      record->values[12] = paletteSelector;
-      record->values[16] = paletteSelector;
-      record->values[20] = paletteSelector;
-      itemCount--;
-    } while (itemCount != 0);
+    column[4] = paletteSelector;
+    column[8] = paletteSelector;
+    column[12] = paletteSelector;
+    column[16] = paletteSelector;
+    column[20] = paletteSelector;
+    column[24] = paletteSelector;
   }
 }
 
@@ -55,8 +49,8 @@ static const u16 sPriceDigitTileOffsets[5] = {
 };
 // clang-format on
 
-/// Copies decimal glyph `digit` into its price-tile position, stopping at
-/// zero source bytes. Called by Shop_CreatePriceSprite.
+/// Copies decimal glyph `digit` into its price-tile position, stopping at zero
+/// source bytes.
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + (digit << 5);
   u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
@@ -82,9 +76,9 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
 /// Builds a price of up to five digits in scratch tiles
 /// (HEAP_SLOT_TILE_SCRATCH), loads them into a free VRAM cache slot and
 /// attaches them to `window` as one sprite at (x, y). Returns the sprite, or
-/// NULL with no free slot. Called by Shop_DrawStock for each item on sale. A
-/// price of 100000 or more shows its last five digits. The scratch block is
-/// released before returning; the cache entry is not freed here.
+/// NULL with no free slot. A price of 100000 or more shows its last five
+/// digits. The scratch block is released before returning; the cache entry is
+/// not freed here.
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
                                             s32 x, s32 y) {
   u8 *tileBuffer;
@@ -188,8 +182,7 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
 }
 
 /// Moves each cursor axis one quarter of the remaining distance, with a minimum
-/// one-pixel step. Called each frame by the settings menu and the name entry
-/// screen.
+/// one-pixel step.
 void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 delta;
@@ -236,8 +229,7 @@ void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
 }
 
 /// Starts a glide of the cursor from where it is to (targetX, targetY) over
-/// `kind` frames, for MenuCursor_Advance to run. Called by MenuCursor_Place
-/// and, through SHOP.S, by the name entry screen and the Colosso choice.
+/// `kind` frames, for MenuCursor_Advance to run.
 void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
                     s32 kind) {
   struct WindowSprite *anchor = cursor->anchor;
@@ -274,9 +266,8 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
   }
 }
 
-/// Starts the hand cursor's glide to (x, y) pixels inside `window` (the
-/// screen when it is NULL), over the frames shop->mode holds. Called by every
-/// counter's lists.
+/// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen
+/// when it is NULL), over the frames shop->mode holds.
 void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   s32 cursorX;
   s32 cursorY;

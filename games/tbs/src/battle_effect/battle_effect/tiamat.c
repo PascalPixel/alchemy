@@ -5,7 +5,6 @@
 #include "../battle_effect_internal.h"
 
 /// Who breathes the dragon's fire (BattleEffect_RunDragonFire).
-/// ★ Named from what the player sees: Tiamat's fire (its render)
 enum DragonFireMode {
   DRAGON_FIRE_TIAMAT,       ///< Tiamat lands beside the targets and breathes
                             ///< the fire, then bursts away
@@ -47,8 +46,6 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// frame 138, the screen flares white over frames 160 to 175 and fades out
 /// after, and the battle shows the damage on frame 178.
 ///
-/// Called by BattleEffect_RunTiamat and BattleEffect_RunDragonDriver.
-///
 /// Four kinds of particle, in canvas coordinates with y growing downwards,
 /// 16.16 except the fireballs, which are whole pixels:
 ///   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame
@@ -63,16 +60,9 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// goes out. A fireball is never idle: its variant starts at minus its wait (0
 /// to 31 frames) and counts up to 0, when it starts to fall.
 ///
-/// Sets REG_BLDALPHA and REG_BG2CNT (the canvas in front, priority 0), loads
-/// the breath's and later the flames' palette (or the lightning bolt's) into
-/// the first 64 background colours and brightens them over frames 160 to 175,
-/// sets work->shakeFrames, and tints and shakes the targets. Tiamat spawns her
-/// eight sprites and releases them after the impact burst.
-///
 /// mode: Tiamat's or Dragon Driver's (enum DragonFireMode).
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
-  void **cursor;
   void *canvas;
   struct BattleCamera *camera;
   struct BattleEffectWork *work;
@@ -84,11 +74,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   u8 *palette;
   s32 i;
 
-  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = cursor[0];
-  camera = cursor[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -96,10 +85,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                BGCNT_SCREEN_BASE(7);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   // The breath from FlashBurst, the fireballs' flames from EmberStreak (at
   // sheet + 12288).

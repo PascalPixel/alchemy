@@ -35,12 +35,7 @@
 /// (WorldMap_StartStillPicture) suspends it. Moves each tileset animation's
 /// cursor and timer in the map work.
 void TilesetAnim_Update(void) {
-  // Each tileset animation is written (gridState->animations + channelIndex):
-  // as gridState->animations[channelIndex], 78 of 119 instructions differ in
-  // tbs-en, and a pointer to it swaps ip and lr. The retries stay gotos: as
-  // an inner for (;;) loop with continue and break, loop.c reshapes the outer
-  // loop.
-  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
   u32 channelIndex;
 
   for (channelIndex = 0; channelIndex <= 15; channelIndex++) {
@@ -116,7 +111,7 @@ void TilesetAnim_Update(void) {
 /// Events and the Battle Arena (scene/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_ResumeFar.
 void TilesetAnim_Resume(u32 channelIndex) {
-  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 0;
@@ -126,7 +121,7 @@ void TilesetAnim_Resume(u32 channelIndex) {
 /// Events and the Battle Arena (scene/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_PauseFar.
 void TilesetAnim_Pause(u32 channelIndex) {
-  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 1;
@@ -135,11 +130,9 @@ void TilesetAnim_Pause(u32 channelIndex) {
 /// Starts the tileset animations a map's animation script lists: each
 /// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
 /// there (paused with TILESET_ANIM_MARKER_PAUSED). Clears all 16 first, and
-/// adds TilesetAnim_Update as a task when any starts. Called by MapGrid_LoadMap
-/// with the map's own script, and by WorldMap_InitializePerspective with the
-/// world map's default one.
+/// adds TilesetAnim_Update as a task when any starts.
 void TilesetAnim_StartAll(const u16 *script) {
-  struct MapGridScrollAnimView *gridState;
+  struct MapGridScrollWork *gridState;
   s32 channelsStarted;
   u32 marker;
 
@@ -198,9 +191,7 @@ void TilesetAnim_ResumeAll(void) {
 /// REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in the map work's
 /// blendControl.
 void BlendScript_Run(void) {
-  // The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
-  // blendControl's address and 118 bytes of tbs-en's code change.
-  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct BlendScriptState *blend;
   u16 *commands;
   u32 instruction;
@@ -261,7 +252,6 @@ again:
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
 /// three-word blend state first, then adds BlendScript_Run as a task.
-/// Called by MapGrid_LoadMap when the map's header has a blend script.
 void BlendScript_Start(u16 *script) {
   struct BlendScriptState *blend;
   s32 hasScript;
@@ -271,7 +261,7 @@ void BlendScript_Start(u16 *script) {
   // paused; a script that is only its end marker leaves the blend unset.
   hasScript = 0;
   zero = 0;
-  blend = &((struct MapGridScrollAnimView *)gMapGridWork[0])->blend;
+  blend = &((struct MapGridScrollWork *)gMapGridWork[0])->blend;
   Dma_Set((const void *)&zero, blend,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   if (*script != BLEND_SCRIPT_LOOP) {
@@ -293,7 +283,7 @@ void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
-/// its four entries cleared. Nothing calls it.
+/// its four entries cleared.
 UNUSED void PaletteCycle_Initialize(void) {
   struct PaletteCycleWork *paletteCycles;
   struct PaletteCycle *cycle;
@@ -345,14 +335,14 @@ UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
   cycle->count = colorCount16;
   cycle->source = paletteColors;
   cycle->delay = delay;
-  Dma_Set(paletteColors, cycle->colors, DMA_ENABLE << 16 | colorCount16,
+  Dma_Set(paletteColors, cycle->colors, DMA_COPY_HALFWORDS(colorCount16),
           REG_DMA3);
   paletteQueue->count++;
   return 0;
 }
 
 /// Unused: stops the palette cycles and frees their queue
-/// (HEAP_SLOT_PALETTE_CYCLES). Nothing calls it.
+/// (HEAP_SLOT_PALETTE_CYCLES).
 UNUSED void PaletteCycle_Stop(void) {
   Task_Remove(PaletteCycle_Step);
   HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);

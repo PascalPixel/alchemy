@@ -9,67 +9,43 @@
 /// WINDOW_PALETTE brightened by up to twelve steps, rising and falling with the
 /// frame count. Nothing in the source calls it. Writes BG palette RAM.
 void Palette_UpdatePulseBrightness(void) {
-  u16 *palette;
-  s32 remainingColors;
+  u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  s32 i;
   s32 channelMask = 31;
 
-  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
-  remainingColors = 15;
-  do {
-    u32 color;
-    s32 brightness;
-    u32 frameCount;
-    s32 angle;
-    s32 blue;
-    s32 green;
-    s32 red;
-
+  for (i = 0; i < 16; i++) {
     // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
     // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
-    frameCount = gFrameCount;
-    angle = (frameCount * 3U) << 10;
-    color = palette[16];
-    brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
+    u32 angle = (gFrameCount * 3U) << 10;
+    u32 color = palette[16];
+    s32 brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
+    s32 blue = (color >> 10) & channelMask;
+    s32 green = (color >> 5) & channelMask;
+    s32 red = color & channelMask;
 
-    blue = (color >> 10) & channelMask;
-    green = (color >> 5) & channelMask;
-    red = color & channelMask;
     blue += brightness;
     green += brightness;
     red += brightness;
-
     if (blue < 0 || blue > 31)
       blue = 31;
     if (green < 0 || green > 31)
       green = 31;
     if (red < 0 || red > 31)
       red = 31;
-
     *palette++ = RGB(red, green, blue);
-    remainingColors--;
-  } while (remainingColors >= 0);
+  }
 }
 
 /// Sets the camera up for the fixed view the battle shows while commands are
 /// chosen, raised by verticalOffset pixels, with its projection and the
-/// background's zoom to match. Called by
-/// Battle_GatherActions, and through its far stub by
-/// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
-/// camera, gBattleBackgroundWork's targetYaw and flag (left 1, so the camera
-/// task leaves the background alone), gProjection and the background's
-/// affine page.
+/// background's zoom to match. Writes the camera, gBattleBackgroundWork's
+/// targetYaw and flag (left 1, so the camera task leaves the background alone),
+/// gProjection and the background's affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
-  // UB: indexing past scalar gBattleCamera reaches another heap slot.
-#ifdef UBFIX
-  struct BattleCamera *camera = gBattleCamera;
-  struct BattleBackgroundWork *view =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#else
-  void **slots = (void **)&gBattleCamera;
+  void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
   struct BattleBackgroundWork *view =
-      slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
-#endif
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
   struct FixedPointPosition eyeOffset;
   u32 result;
 
@@ -111,8 +87,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
 }
 
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
-/// Called by Battle_GatherActions as each turn begins. Clears
-/// every unit's defendLevel.
+/// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 unitIds[UNIT_MAX];
   s32 count;
@@ -128,14 +103,12 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
-/// Rolls whether the party gets away. The chance, in hundredths of a
-/// percent, is 5000 plus 2000 for each attempt that failed, plus 500 times
-/// the party's average level, less 500 times the enemies' average level. A
-/// party that struck first always gets away; no one gets away from a battle
-/// that forbids it. Every attempt counts toward the next. Returns 1 when
-/// the party gets away. Called by Battle_GatherActions when the
-/// first action is COMMAND_FLEE. Each roll, even a successful one, raises
-/// gBattleWork->fleeFailures.
+/// Rolls whether the party gets away. The chance, in hundredths of a percent,
+/// is 5000 plus 2000 for each attempt that failed, plus 500 times the party's
+/// average level, less 500 times the enemies' average level. A party that
+/// struck first always gets away; no one gets away from a battle that forbids
+/// it. Every attempt counts toward the next. Returns 1 when the party gets
+/// away. Each roll, even a successful one, raises gBattleWork->fleeFailures.
 s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
   u8 *failedAttempts;
@@ -180,8 +153,8 @@ s32 BattleFlee_CheckSuccess(void) {
 /// The party's actions for the turn, from the command menu: a party member who
 /// is asleep, confused, charmed or stunned loses each of their actions
 /// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
-/// Returns how many actions there are, or -1 if the menu gave up. Called by
-/// Battle_GatherActions. Fills entries.
+/// Returns how many actions there are, or -1 if the menu gave up. Fills
+/// entries.
 s32 Battle_BuildPartyActions(struct BattleAction *entries) {
   // Two lists, freed before the return; the allocator rounds them up to 20
   // and 12 bytes: up to eight choosers and the up to four party members with
@@ -234,18 +207,17 @@ s32 Battle_BuildPartyActions(struct BattleAction *entries) {
 }
 
 /// The enemies' actions for the turn, in a shuffled order, each chosen by
-/// BattleAI_ChooseAction; a sleeping or stunned enemy loses its
-/// actions. An enemy acting more than once a turn acts later at half its
-/// Agility. None act when the party struck first; when the party is caught
-/// by surprise, only two to five enemies act, once each. Returns how many
-/// actions there are. Called by Battle_GatherActions outside a
-/// link battle. Fills entries.
+/// BattleAI_ChooseAction; a sleeping or stunned enemy loses its actions. An
+/// enemy acting more than once a turn acts later at half its Agility. None act
+/// when the party struck first; when the party is caught by surprise, only two
+/// to five enemies act, once each. Returns how many actions there are. Fills
+/// entries.
 s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
   struct BattleWork *battle = gBattleWork;
   s32 unitCount;
-  s32 shuffleOrUnitIndex;
+  s32 i;
 
   if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     return 0;
@@ -256,7 +228,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
     return 0;
   }
 
-  for (shuffleOrUnitIndex = 31; shuffleOrUnitIndex >= 0; shuffleOrUnitIndex--) {
+  for (i = 31; i >= 0; i--) {
     u32 first = (unitCount * Random16()) >> 16;
     u32 second = (unitCount * Random16()) >> 16;
     s32 swap = unitIds[first];
@@ -276,9 +248,8 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
     }
   }
 
-  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
-       shuffleOrUnitIndex++) {
-    s32 unitId = unitIds[shuffleOrUnitIndex];
+  for (i = 0; i < unitCount; i++) {
+    s32 unitId = unitIds[i];
     struct Unit *unit = Unit_GetFar(unitId);
     s32 copyIndex;
 
@@ -316,10 +287,9 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
 /// priority is raised by this, past any Agility (999 at most).
 #define DJINN_FIRST_PRIORITY 10000
 
-/// Sorts the turn's actions into action order, fastest first, after moving
-/// the guarding and grounding Djinn to the front. Called by
-/// Battle_GatherActions. Raises those Djinn actions' priority
-/// and reorders entries in place.
+/// Sorts the turn's actions into action order, fastest first, after moving the
+/// guarding and grounding Djinn to the front. Raises those Djinn actions'
+/// priority and reorders entries in place.
 void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
   s32 actionIndex;
   s32 sortIndex;
@@ -388,17 +358,16 @@ struct BattleLinkedActionState {
   ((u32)((count) * 16 + LINK_PACKET_BYTES - 1) / LINK_PACKET_BYTES *           \
    LINK_PACKET_BYTES)
 
-/// Link battle: exchanges the turn's actions with the other console and
-/// appends the opponent's after the count of this console's. Each console
-/// sees its own party as the party: the received actions' units take the
-/// ids they have here and their targets swap sides. The parent sends first
-/// and gives the turn its random seed; the child checks both consoles
-/// agree on the next random number. A party member's priority is made even
-/// on the parent and odd on the child, so equal speeds sort alike on both.
-/// Returns how many actions were received, or -1 when the exchange fails.
-/// Called by Battle_GatherActions in a link battle. Sets
-/// gBattleRandomSeed, writes each action's slot and priority, and on a
-/// failure resets the link transfer and removes its interrupt handlers.
+/// Link battle: exchanges the turn's actions with the other console and appends
+/// the opponent's after the count of this console's. Each console sees its own
+/// party as the party: the received actions' units take the ids they have here
+/// and their targets swap sides. The parent sends first and gives the turn its
+/// random seed; the child checks both consoles agree on the next random number.
+/// A party member's priority is made even on the parent and odd on the child,
+/// so equal speeds sort alike on both. Returns how many actions were received,
+/// or -1 when the exchange fails. Sets gBattleRandomSeed, writes each action's
+/// slot and priority, and on a failure resets the link transfer and removes its
+/// interrupt handlers.
 s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   struct BattleWork *battle = gBattleWork;
   s32 result = 0;
@@ -565,26 +534,20 @@ fail:
 /// @param offset added to each of the red, green and blue values (held in 0
 /// to 31)
 void Palette_CopyWithBrightnessOffset(s32 offset) {
-  s32 bankIndex;
-  s32 sourceBank;
-  s32 colorIndex;
-  s32 paletteIndex;
+  s32 bank;
+  s32 source = 15;
+  s32 i;
 
-  sourceBank = 15;
-  bankIndex = 0;
-  do {
-    for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
-      u32 color;
-      s32 blue;
-      s32 green;
-      s32 red;
-      s32 adjustedColor;
+  // Palettes 15 and 5, each into the palette before it, 14 and 4.
+  for (bank = 0; bank < 2; bank++) {
+    for (i = 0; i < 16; i++) {
+      s32 index = source * 16 + i;
+      u32 color = ((u16 *)BG_PLTT)[index];
+      s32 blue = (color >> 10) & 31;
+      s32 green = (color >> 5) & 31;
+      s32 red = color & 31;
+      s32 adjusted;
 
-      paletteIndex = sourceBank * 16 + colorIndex;
-      color = ((u16 *)BG_PLTT)[paletteIndex];
-      blue = (color >> 10) & 31;
-      green = (color >> 5) & 31;
-      red = color & 31;
       blue += offset;
       green += offset;
       red += offset;
@@ -600,34 +563,28 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
         green = 0;
       if (red < 0)
         red = 0;
-      adjustedColor = blue << 10;
-      adjustedColor |= green << 5;
-      adjustedColor |= red;
-      // Into the palette before the source, 14 and 4: paletteIndex counts
-      // from one palette's 16 colours before BG_PLTT.
-      ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
+      adjusted = blue << 10;
+      adjusted |= green << 5;
+      adjusted |= red;
+      ((u16 *)BG_PLTT)[index - 16] = adjusted;
     }
-    bankIndex++;
-    sourceBank = 5;
-  } while (bankIndex <= 1);
+    source = 5;
+  }
 }
 
 /// Builds the turn's actions and sorts them into action order: the party's
-/// commands, then the link opponent's or the enemies' actions.
-/// Returns how many actions there are; negative to abort (a link failure).
-/// Called by Battle_Run at the start of each turn outside auto
-/// battle. Clears gBattleWork->actions, sets every defender's defendLevel,
-/// may set firstStrike to FIRST_STRIKE_ENEMIES after a failed
-/// attempt to flee, and holds FLAG_CHOOSING_COMMANDS while the commands are
-/// chosen.
-/// @param actions the actions (20 at most)
+/// commands, then the link opponent's or the enemies' actions. Returns how many
+/// actions there are; negative to abort (a link failure). Clears
+/// gBattleWork->actions, sets every defender's defendLevel, may set firstStrike
+/// to FIRST_STRIKE_ENEMIES after a failed attempt to flee, and holds
+/// FLAG_CHOOSING_COMMANDS while the commands are chosen. @param actions the
+/// actions (20 at most)
 s32 Battle_GatherActions(struct BattleAction *actions) {
   struct Unit *unit;
   struct BattleWork *battle;
-  u8 *firstStrike;
   s32 count;
   s32 received;
-  s32 remainingActions;
+  s32 i;
 
   battle = gBattleWork;
   // Empty every action slot of the battle work.
@@ -647,19 +604,18 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
   BattleUnit_ResetGuardLevels();
   Palette_CopyWithBrightnessOffset(8);
   GameFlag_SetFar(FLAG_CHOOSING_COMMANDS);
-  firstStrike = &battle->firstStrike;
   BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
 
   // The party's commands (none when the enemies strike first).
-  if (*firstStrike != FIRST_STRIKE_ENEMIES) {
+  if (battle->firstStrike != FIRST_STRIKE_ENEMIES) {
     count = Battle_BuildPartyActions(actions);
     if (count < 0)
       goto finish;
     // A failed attempt to flee makes the turn one the enemies began.
     if (count != 0 && actions[0].command == COMMAND_FLEE &&
         BattleFlee_CheckSuccess() == 0)
-      *firstStrike = FIRST_STRIKE_ENEMIES;
+      battle->firstStrike = FIRST_STRIKE_ENEMIES;
   } else {
     count = 0;
   }
@@ -684,21 +640,16 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
   // Sort by priority, and raise the guards of Defend and Total Defense at
   // once, before anyone acts.
   BattleActionOrder_Sort(actions, count);
-  if (count > 0) {
-    struct BattleAction *action = actions;
+  for (i = 0; i < count; i++) {
+    struct BattleAction *action = &actions[i];
 
-    remainingActions = count;
-    do {
-      if (action->command == COMMAND_DEFEND ||
-          action->command == COMMAND_TOTAL_DEFENSE) {
-        unit = Unit_GetFar(action->unitId);
-        // Half the damage, or a tenth.
-        unit->defendLevel =
-            action->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
-      }
-      action++;
-      remainingActions--;
-    } while (remainingActions != 0);
+    if (action->command == COMMAND_DEFEND ||
+        action->command == COMMAND_TOTAL_DEFENSE) {
+      unit = Unit_GetFar(action->unitId);
+      // Half the damage, or a tenth.
+      unit->defendLevel =
+          action->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
+    }
   }
 
 finish:

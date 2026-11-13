@@ -26,8 +26,6 @@
 /// args: the user and the target; a nonzero variant gives the burst its
 /// second picture and a sound.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *particleSheet;
@@ -43,11 +41,10 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   s32 size;
   u8 *burstPixels;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapGridCellBuffer;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
@@ -62,8 +59,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   wait(1);
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
-  i = 0;
-  do {
+  for (i = 0; i != 64; i++) {
     // 64 shards start at the target, flying across towards the middle of
     // the field; each group of four lives two frames longer than the last.
     struct Particle *seed = &work->particles[i];
@@ -76,8 +72,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     if (seed->x > 0)
       seed->velocityX = -seed->velocityX;
     seed->variant = i / 4 * 2 + 16;
-    i++;
-  } while (i != 64);
+  }
 
   Projection_ScaledUnit(work->args->targets[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
@@ -100,7 +95,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
-      blitters[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+      blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       if (work->args->side == EFFECT_SIDE_ENEMIES)
         blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
                     position.x / 2 - 24, position.y - 24, 48, 72);
@@ -118,7 +113,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      blitters[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+      blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       if (step > 2)
         step = 2;
       // Each strip holds three 40x80 pictures.

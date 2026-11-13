@@ -38,8 +38,6 @@
 /// (the strongest variant) and sets work->shakeFrames at each strike.
 void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -52,19 +50,18 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   struct Particle *spark;
   struct Particle *sparks;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -225,12 +222,6 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 /// on frame 4.
 /// mode: where the bursts go off (enum SparkGroupsMode).
 ///
-/// Called by BattleEffect_RunNova and BattleEffect_RunDynamite, and with
-/// SPARK_GROUPS_RISING by BattleEffect_RunCastingImpact for Severe Blow and by
-/// BattleEffect_RunThrash and BattleEffect_RunUnusedSevereBlowLeap in thrash.c,
-/// which set args->variant first (SPARK_GROUPS_SEVERE_BLOW or
-/// SPARK_GROUPS_THRASH).
-///
 /// work->particles hold the ring flashes, 16 for each burst; PARTICLES the
 /// sparks, one run of gPlasma_Shapes' count for each burst. Sets
 /// REG_BLDALPHA, loads the flash burst palette into the first 64 background
@@ -240,8 +231,6 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -255,10 +244,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   struct Particle *spark;
   struct Particle *sparks;
 
-  slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   if (mode == SPARK_GROUPS_NOVA) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -277,10 +265,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
@@ -347,8 +335,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
                         SPARK_GROUPS_SPACING +
                     56;
        frame++) {
-    struct BattleCamera *camera =
-        *(struct BattleCamera **)(gHeapSlots + HEAP_SLOT_CAMERA);
+    struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 
     // The strongest variant turns the camera's yaw 1/256 turn a frame for 52
     // frames, about a fifth of a turn.
@@ -404,13 +391,13 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           s32 y;
 
           point = &work->particles[i * SPARK_GROUPS_FLASHES] + j;
-          y = Q_16_16_TO_INT(point->y) + originY;
+          y = Q_16_16_UPPER_HALF(point->y) + originY;
           if (work->args->side == EFFECT_SIDE_PARTY)
-            x = Q_16_16_TO_INT(point->x) + originX -
+            x = Q_16_16_UPPER_HALF(point->x) + originX -
                 gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] +
                 28;
           else
-            x = Q_16_16_TO_INT(point->x) + originX +
+            x = Q_16_16_UPPER_HALF(point->x) + originX +
                 gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] -
                 28;
           // A ring flash's variant counts down; its last 18 frames step
@@ -451,12 +438,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
             if (spark->y > px(108)) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              // A spark's position on the canvas in whole pixels: the tests
-              // above keep x in 0 to 126 and y in 0 to 108, so s16 holds them
-              // exactly. As s32, the reload register before the frame loop
-              // changes (3 of 776 instructions differ in tbs-en).
-              s16 y = spark->y >> 16;
-              s16 x = spark->x >> 16;
+              // On the canvas: the tests above keep x in 0 to 126 and y in 0 to
+              // 108.
+              s16 x = Q_16_16_TO_INT(spark->x);
+              s16 y = Q_16_16_TO_INT(spark->y);
               s32 size = spark->variant / 5 + 1;
 
               EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);

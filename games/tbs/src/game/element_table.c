@@ -17,7 +17,8 @@ const s32 gClass_SeriesByElements[] = {
 
 /// A character's base power and resistance in an element, by its whole element
 /// level 0 to 15; Unit_CalculateBaseElements adds the level's tenths to both.
-const struct ElementLevelBonus gElement_PowerResistByLevel[16] = {
+struct ElementLevelBonus gElement_PowerResistByLevel[16]
+    __attribute__((section(".rodata"))) = {
     {75, 85},   {80, 90},   {85, 95},   {90, 100},
     {95, 105},  {100, 110}, {105, 115}, {110, 120},
     {115, 125}, {120, 130}, {125, 135}, {130, 140},
@@ -31,484 +32,484 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
-        .values = {
-            PRESET_STATS(100, 100),
-            PRESET_STATS(100, 100),
-            PRESET_STATS(100, 100),
-            PRESET_STATS(100, 100),
+        .stats = {
+            {.power = 100, .resistance = 100},
+            {.power = 100, .resistance = 100},
+            {.power = 100, .resistance = 100},
+            {.power = 100, .resistance = 100},
         },
     },
     // Bandit, Thief and Brigand
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
-        .values = {
-            PRESET_STATS(80, 72),
-            PRESET_STATS(80, 72),
-            PRESET_STATS(80, 72),
-            PRESET_STATS(80, 72),
+        .stats = {
+            {.power = 80, .resistance = 72},
+            {.power = 80, .resistance = 72},
+            {.power = 80, .resistance = 72},
+            {.power = 80, .resistance = 72},
         },
     },
     // Azart, Satrage and Navampa
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
-        .values = {
-            PRESET_STATS(80, 90),
-            PRESET_STATS(80, 90),
-            PRESET_STATS(80, 90),
-            PRESET_STATS(80, 90),
+        .stats = {
+            {.power = 80, .resistance = 90},
+            {.power = 80, .resistance = 90},
+            {.power = 80, .resistance = 90},
+            {.power = 80, .resistance = 90},
         },
     },
     // Vermin, Mad Vermin, Rat, Armored Rat, Plated Rat, Troll, Cave Troll, Brutal Troll, Mauler, Ravager, Mole, Mad Mole, Mole Mage and Ape
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 0},
-        .values = {
-            PRESET_STATS(100, 48),
-            PRESET_STATS(80, 48),
-            PRESET_STATS(70, 25),
-            PRESET_STATS(80, 72),
+        .stats = {
+            {.power = 100, .resistance = 48},
+            {.power = 80, .resistance = 48},
+            {.power = 70, .resistance = 25},
+            {.power = 80, .resistance = 72},
         },
     },
     // Grisly, Killer Ape and Dirty Ape
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 0},
-        .values = {
-            PRESET_STATS(100, 72),
-            PRESET_STATS(80, 72),
-            PRESET_STATS(70, 25),
-            PRESET_STATS(80, 127),
+        .stats = {
+            {.power = 100, .resistance = 72},
+            {.power = 80, .resistance = 72},
+            {.power = 70, .resistance = 25},
+            {.power = 80, .resistance = 127},
         },
     },
     // Spider, Tarantula, Recluse, Grub, Worm and Acid Maggot
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 0},
-        .values = {
-            PRESET_STATS(95, 48),
-            PRESET_STATS(85, 48),
-            PRESET_STATS(90, 25),
-            PRESET_STATS(85, 48),
+        .stats = {
+            {.power = 95, .resistance = 48},
+            {.power = 85, .resistance = 48},
+            {.power = 90, .resistance = 25},
+            {.power = 85, .resistance = 48},
         },
     },
     // Unused: no enemy has it.
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 0},
-        .values = {
-            PRESET_STATS(95, 72),
-            PRESET_STATS(85, 72),
-            PRESET_STATS(90, 48),
-            PRESET_STATS(85, 100),
+        .stats = {
+            {.power = 95, .resistance = 72},
+            {.power = 85, .resistance = 72},
+            {.power = 90, .resistance = 48},
+            {.power = 85, .resistance = 100},
         },
     },
     // Wild Mushroom and Death Cap
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 1, 0, 0},
-        .values = {
-            PRESET_STATS(105, 48),
-            PRESET_STATS(100, 100),
-            PRESET_STATS(80, 7),
-            PRESET_STATS(70, 72),
+        .stats = {
+            {.power = 105, .resistance = 48},
+            {.power = 100, .resistance = 100},
+            {.power = 80, .resistance = 7},
+            {.power = 70, .resistance = 72},
         },
     },
     // Tret
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 1, 0, 0},
-        .values = {
-            PRESET_STATS(105, 72),
-            PRESET_STATS(100, 175),
-            PRESET_STATS(80, 25),
-            PRESET_STATS(70, 100),
+        .stats = {
+            {.power = 105, .resistance = 72},
+            {.power = 100, .resistance = 175},
+            {.power = 80, .resistance = 25},
+            {.power = 70, .resistance = 100},
         },
     },
     // Drone Bee, Fighter Bee and Warrior Bee
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 2},
-        .values = {
-            PRESET_STATS(90, 100),
-            PRESET_STATS(90, 48),
-            PRESET_STATS(95, 48),
-            PRESET_STATS(105, 7),
+        .stats = {
+            {.power = 90, .resistance = 100},
+            {.power = 90, .resistance = 48},
+            {.power = 95, .resistance = 48},
+            {.power = 105, .resistance = 7},
         },
     },
     // Unused: no enemy has it.
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 2},
-        .values = {
-            PRESET_STATS(90, 152),
-            PRESET_STATS(90, 72),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(105, 25),
+        .stats = {
+            {.power = 90, .resistance = 152},
+            {.power = 90, .resistance = 72},
+            {.power = 95, .resistance = 72},
+            {.power = 105, .resistance = 25},
         },
     },
     // Bat, Rabid Bat, Harpy, Virago, Dirge, Foul Dirge and Vile Dirge
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 2},
-        .values = {
-            PRESET_STATS(95, 127),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(95, 48),
-            PRESET_STATS(110, 7),
+        .stats = {
+            {.power = 95, .resistance = 127},
+            {.power = 95, .resistance = 72},
+            {.power = 95, .resistance = 48},
+            {.power = 110, .resistance = 7},
         },
     },
     // Harridan
     {
         .first = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 2},
-        .values = {
-            PRESET_STATS(95, 175),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(110, 25),
+        .stats = {
+            {.power = 95, .resistance = 175},
+            {.power = 95, .resistance = 100},
+            {.power = 95, .resistance = 72},
+            {.power = 110, .resistance = 25},
         },
     },
     // Zombie, Undead, Wight, Ghoul, Fiendish Ghoul and Cannibal Ghoul
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 1, 0, 0},
-        .values = {
-            PRESET_STATS(100, 25),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(80, 7),
-            PRESET_STATS(80, 48),
+        .stats = {
+            {.power = 100, .resistance = 25},
+            {.power = 95, .resistance = 72},
+            {.power = 80, .resistance = 7},
+            {.power = 80, .resistance = 48},
         },
     },
     // Skeleton, Bone Fighter, Skull Warrior, Will Head, Death Head and Willowisp
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 1, 0, 0},
-        .values = {
-            PRESET_STATS(100, 25),
-            PRESET_STATS(95, 127),
-            PRESET_STATS(80, 72),
-            PRESET_STATS(80, 48),
+        .stats = {
+            {.power = 100, .resistance = 25},
+            {.power = 95, .resistance = 127},
+            {.power = 80, .resistance = 72},
+            {.power = 80, .resistance = 48},
         },
     },
     // Ghost, Ghost Mage, Horned Ghost, Amaze, Creeper and Spirit
     {
         .first = ELEMENT_NONE,
         .elementLevels = {0, 1, 1, 2},
-        .values = {
-            PRESET_STATS(100, 48),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(95, 7),
+        .stats = {
+            {.power = 100, .resistance = 48},
+            {.power = 95, .resistance = 100},
+            {.power = 95, .resistance = 72},
+            {.power = 95, .resistance = 7},
         },
     },
     // Lich
     {
         .first = ELEMENT_NONE,
         .elementLevels = {0, 1, 1, 2},
-        .values = {
-            PRESET_STATS(100, 72),
-            PRESET_STATS(95, 152),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(95, 25),
+        .stats = {
+            {.power = 100, .resistance = 72},
+            {.power = 95, .resistance = 152},
+            {.power = 95, .resistance = 100},
+            {.power = 95, .resistance = 25},
         },
     },
     // Gargoyle, Clay Gargoyle and Ice Gargoyle
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 1, 1, 1},
-        .values = {
-            PRESET_STATS(100, 48),
-            PRESET_STATS(100, 100),
-            PRESET_STATS(100, 100),
-            PRESET_STATS(95, 127),
+        .stats = {
+            {.power = 100, .resistance = 48},
+            {.power = 100, .resistance = 100},
+            {.power = 100, .resistance = 100},
+            {.power = 95, .resistance = 127},
         },
     },
     // Unused: no enemy has it.
     {
         .first = ELEMENT_NONE,
         .elementLevels = {4, 2, 2, 0},
-        .values = {
-            PRESET_STATS(110, 152),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(90, 48),
+        .stats = {
+            {.power = 110, .resistance = 152},
+            {.power = 95, .resistance = 100},
+            {.power = 95, .resistance = 100},
+            {.power = 90, .resistance = 48},
         },
     },
     // Cerebus, Fenrir, Kraken, Toadonpa, Poison Toad and ? (ENEMY_135)
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 4, 0, 2},
-        .values = {
-            PRESET_STATS(95, 100),
-            PRESET_STATS(115, 175),
-            PRESET_STATS(85, 25),
-            PRESET_STATS(95, 100),
+        .stats = {
+            {.power = 95, .resistance = 100},
+            {.power = 115, .resistance = 175},
+            {.power = 85, .resistance = 25},
+            {.power = 95, .resistance = 100},
         },
     },
     // Manticore, Magicore, Manticore King, Dread Hound, Chimera, Chimera Mage, ? (ENEMY_104), Ant Lion, Roach and Doodle Bug
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 0, 4, 2},
-        .values = {
-            PRESET_STATS(95, 100),
-            PRESET_STATS(85, 25),
-            PRESET_STATS(115, 175),
-            PRESET_STATS(95, 100),
+        .stats = {
+            {.power = 95, .resistance = 100},
+            {.power = 85, .resistance = 25},
+            {.power = 115, .resistance = 175},
+            {.power = 95, .resistance = 100},
         },
     },
     // Tornado Lizard, Storm Lizard and Tempest Lizard
     {
         .first = ELEMENT_NONE,
         .elementLevels = {0, 2, 2, 4},
-        .values = {
-            PRESET_STATS(90, 48),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(110, 152),
+        .stats = {
+            {.power = 90, .resistance = 48},
+            {.power = 95, .resistance = 100},
+            {.power = 95, .resistance = 100},
+            {.power = 110, .resistance = 152},
         },
     },
     // Unused: no enemy has it.
     {
         .first = ELEMENT_VENUS,
         .elementLevels = {6, 2, 2, 0},
-        .values = {
-            PRESET_STATS(120, 100),
-            PRESET_STATS(95, 48),
-            PRESET_STATS(95, 48),
-            PRESET_STATS(80, 7),
+        .stats = {
+            {.power = 120, .resistance = 100},
+            {.power = 95, .resistance = 48},
+            {.power = 95, .resistance = 48},
+            {.power = 80, .resistance = 7},
         },
     },
     // Earth Lizard, Golem, Earth Golem, Grand Golem and Venus Djinni
     {
         .first = ELEMENT_VENUS,
         .elementLevels = {6, 2, 2, 0},
-        .values = {
-            PRESET_STATS(120, 193),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(80, 25),
+        .stats = {
+            {.power = 120, .resistance = 193},
+            {.power = 95, .resistance = 100},
+            {.power = 95, .resistance = 100},
+            {.power = 80, .resistance = 25},
         },
     },
     // Slime, Ooze, Slime Beast, Cuttle, Calamar and Man o' War
     {
         .first = ELEMENT_MERCURY,
         .elementLevels = {2, 6, 0, 2},
-        .values = {
-            PRESET_STATS(95, 48),
-            PRESET_STATS(125, 127),
-            PRESET_STATS(75, 7),
-            PRESET_STATS(95, 48),
+        .stats = {
+            {.power = 95, .resistance = 48},
+            {.power = 125, .resistance = 127},
+            {.power = 75, .resistance = 7},
+            {.power = 95, .resistance = 48},
         },
     },
     // Living Statue, Hydros Statue and Mercury Djinni
     {
         .first = ELEMENT_MERCURY,
         .elementLevels = {2, 6, 0, 2},
-        .values = {
-            PRESET_STATS(95, 100),
-            PRESET_STATS(125, 193),
-            PRESET_STATS(75, 25),
-            PRESET_STATS(95, 100),
+        .stats = {
+            {.power = 95, .resistance = 100},
+            {.power = 125, .resistance = 193},
+            {.power = 75, .resistance = 25},
+            {.power = 95, .resistance = 100},
         },
     },
     // Stone Soldier
     {
         .first = ELEMENT_MARS,
         .elementLevels = {2, 0, 6, 2},
-        .values = {
-            PRESET_STATS(95, 48),
-            PRESET_STATS(75, 7),
-            PRESET_STATS(125, 127),
-            PRESET_STATS(95, 48),
+        .stats = {
+            {.power = 95, .resistance = 48},
+            {.power = 75, .resistance = 7},
+            {.power = 125, .resistance = 127},
+            {.power = 95, .resistance = 48},
         },
     },
     // Salamander, Boulder Beast, Raging Rock and Mars Djinni
     {
         .first = ELEMENT_MARS,
         .elementLevels = {2, 0, 6, 2},
-        .values = {
-            PRESET_STATS(95, 100),
-            PRESET_STATS(75, 25),
-            PRESET_STATS(125, 193),
-            PRESET_STATS(95, 100),
+        .stats = {
+            {.power = 95, .resistance = 100},
+            {.power = 75, .resistance = 25},
+            {.power = 125, .resistance = 193},
+            {.power = 95, .resistance = 100},
         },
     },
     // Unused: no enemy has it.
     {
         .first = ELEMENT_JUPITER,
         .elementLevels = {0, 2, 2, 6},
-        .values = {
-            PRESET_STATS(80, 7),
-            PRESET_STATS(95, 48),
-            PRESET_STATS(95, 48),
-            PRESET_STATS(120, 127),
+        .stats = {
+            {.power = 80, .resistance = 7},
+            {.power = 95, .resistance = 48},
+            {.power = 95, .resistance = 48},
+            {.power = 120, .resistance = 127},
         },
     },
     // Thunder Lizard and Jupiter Djinni
     {
         .first = ELEMENT_JUPITER,
         .elementLevels = {0, 2, 2, 6},
-        .values = {
-            PRESET_STATS(80, 25),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(95, 100),
-            PRESET_STATS(120, 193),
+        .stats = {
+            {.power = 80, .resistance = 25},
+            {.power = 95, .resistance = 100},
+            {.power = 95, .resistance = 100},
+            {.power = 120, .resistance = 193},
         },
     },
     // Gnome Wizard, Orc, Orc Captain, Kobold and Goblin
     {
         .first = ELEMENT_NONE,
         .elementLevels = {3, 2, 2, 2},
-        .values = {
-            PRESET_STATS(100, 100),
-            PRESET_STATS(85, 72),
-            PRESET_STATS(85, 72),
-            PRESET_STATS(85, 48),
+        .stats = {
+            {.power = 100, .resistance = 100},
+            {.power = 85, .resistance = 72},
+            {.power = 85, .resistance = 72},
+            {.power = 85, .resistance = 48},
         },
     },
     // Orc Lord and Hobgoblin
     {
         .first = ELEMENT_NONE,
         .elementLevels = {3, 2, 2, 2},
-        .values = {
-            PRESET_STATS(100, 127),
-            PRESET_STATS(85, 100),
-            PRESET_STATS(85, 100),
-            PRESET_STATS(85, 72),
+        .stats = {
+            {.power = 100, .resistance = 127},
+            {.power = 85, .resistance = 100},
+            {.power = 85, .resistance = 100},
+            {.power = 85, .resistance = 72},
         },
     },
     // Rat Soldier, Rat Fighter and Rat Warrior
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 3, 2, 2},
-        .values = {
-            PRESET_STATS(85, 72),
-            PRESET_STATS(100, 100),
-            PRESET_STATS(85, 48),
-            PRESET_STATS(85, 72),
+        .stats = {
+            {.power = 85, .resistance = 72},
+            {.power = 100, .resistance = 100},
+            {.power = 85, .resistance = 48},
+            {.power = 85, .resistance = 72},
         },
     },
     // Siren, Succubus, Lizard Man, Lizard Fighter and Lizard King
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 3, 2, 2},
-        .values = {
-            PRESET_STATS(85, 100),
-            PRESET_STATS(100, 127),
-            PRESET_STATS(85, 72),
-            PRESET_STATS(85, 100),
+        .stats = {
+            {.power = 85, .resistance = 100},
+            {.power = 100, .resistance = 127},
+            {.power = 85, .resistance = 72},
+            {.power = 85, .resistance = 100},
         },
     },
     // Gnome
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 2, 3, 2},
-        .values = {
-            PRESET_STATS(85, 72),
-            PRESET_STATS(85, 48),
-            PRESET_STATS(100, 100),
-            PRESET_STATS(85, 72),
+        .stats = {
+            {.power = 85, .resistance = 72},
+            {.power = 85, .resistance = 48},
+            {.power = 100, .resistance = 100},
+            {.power = 85, .resistance = 72},
         },
     },
     // Unused: no enemy has it.
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 2, 3, 2},
-        .values = {
-            PRESET_STATS(85, 100),
-            PRESET_STATS(85, 72),
-            PRESET_STATS(100, 127),
-            PRESET_STATS(85, 100),
+        .stats = {
+            {.power = 85, .resistance = 100},
+            {.power = 85, .resistance = 72},
+            {.power = 100, .resistance = 127},
+            {.power = 85, .resistance = 100},
         },
     },
     // Gnome Mage
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 2, 2, 3},
-        .values = {
-            PRESET_STATS(85, 48),
-            PRESET_STATS(85, 72),
-            PRESET_STATS(85, 72),
-            PRESET_STATS(100, 100),
+        .stats = {
+            {.power = 85, .resistance = 48},
+            {.power = 85, .resistance = 72},
+            {.power = 85, .resistance = 72},
+            {.power = 100, .resistance = 100},
         },
     },
     // Nightmare
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 2, 2, 3},
-        .values = {
-            PRESET_STATS(85, 72),
-            PRESET_STATS(85, 100),
-            PRESET_STATS(85, 100),
-            PRESET_STATS(100, 127),
+        .stats = {
+            {.power = 85, .resistance = 72},
+            {.power = 85, .resistance = 100},
+            {.power = 85, .resistance = 100},
+            {.power = 100, .resistance = 127},
         },
     },
     // Mimic
     {
         .first = ELEMENT_NONE,
         .elementLevels = {3, 3, 0, 4},
-        .values = {
-            PRESET_STATS(95, 100),
-            PRESET_STATS(100, 127),
-            PRESET_STATS(75, 25),
-            PRESET_STATS(105, 152),
+        .stats = {
+            {.power = 95, .resistance = 100},
+            {.power = 100, .resistance = 127},
+            {.power = 75, .resistance = 25},
+            {.power = 105, .resistance = 152},
         },
     },
     // Mystery Man and Saturos
     {
         .first = ELEMENT_NONE,
         .elementLevels = {7, 5, 10, 7},
-        .values = {
-            PRESET_STATS(100, 100),
-            PRESET_STATS(90, 72),
-            PRESET_STATS(110, 175),
-            PRESET_STATS(100, 127),
+        .stats = {
+            {.power = 100, .resistance = 100},
+            {.power = 90, .resistance = 72},
+            {.power = 110, .resistance = 175},
+            {.power = 100, .resistance = 127},
         },
     },
     // Mystery Woman and Menardi
     {
         .first = ELEMENT_NONE,
         .elementLevels = {8, 6, 11, 8},
-        .values = {
-            PRESET_STATS(100, 127),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(105, 175),
-            PRESET_STATS(100, 100),
+        .stats = {
+            {.power = 100, .resistance = 127},
+            {.power = 95, .resistance = 72},
+            {.power = 105, .resistance = 175},
+            {.power = 100, .resistance = 100},
         },
     },
     // Fusion Dragon
     {
         .first = ELEMENT_MARS,
         .elementLevels = {9, 7, 14, 9},
-        .values = {
-            PRESET_STATS(100, 127),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(110, 175),
-            PRESET_STATS(100, 127),
+        .stats = {
+            {.power = 100, .resistance = 127},
+            {.power = 95, .resistance = 72},
+            {.power = 110, .resistance = 175},
+            {.power = 100, .resistance = 127},
         },
     },
     // Deadbeard
     {
         .first = ELEMENT_NONE,
         .elementLevels = {4, 8, 6, 5},
-        .values = {
-            PRESET_STATS(100, 72),
-            PRESET_STATS(130, 193),
-            PRESET_STATS(120, 127),
-            PRESET_STATS(110, 152),
+        .stats = {
+            {.power = 100, .resistance = 72},
+            {.power = 130, .resistance = 193},
+            {.power = 120, .resistance = 127},
+            {.power = 110, .resistance = 152},
         },
     },
     // Gryphon, Wild Gryphon and Wise Gryphon
     {
         .first = ELEMENT_NONE,
         .elementLevels = {0, 2, 1, 4},
-        .values = {
-            PRESET_STATS(90, 152),
-            PRESET_STATS(95, 110),
-            PRESET_STATS(95, 72),
-            PRESET_STATS(110, 48),
+        .stats = {
+            {.power = 90, .resistance = 152},
+            {.power = 95, .resistance = 110},
+            {.power = 95, .resistance = 72},
+            {.power = 110, .resistance = 48},
         },
     },
 };

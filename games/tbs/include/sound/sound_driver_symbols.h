@@ -77,11 +77,6 @@ enum SoundReverbCode {
 void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 struct MusicPlayerInfo;
-struct LzPackWork;
-/// A flash library cell the LZ packer borrows as its work pointer
-/// (lucky_wheels_lzpack.h); IdentifyFlash sets it again before the flash code
-/// reads it.
-extern struct LzPackWork *gWaitForFlashWrite;
 /// Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
 /// ends.
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
@@ -91,7 +86,7 @@ extern struct MusicPlayerInfo
     gMPlayInfo_ActionSE; ///< the music player SOUND_FADE_OUT_ACTION_SE fades
 /// The sound from SOUND_SE_FIRST up each player last started, by player, not
 /// a volume: sounds below it are not recorded, and SOUND_FADE_OUT_ACTION_SE
-/// clears entry 3. Nothing in TBS reads it.
+/// clears entry 3. Nothing reads it.
 extern u16 gMusicPlayerLastSound[8];
 /// VBlanks after a jingle starts before the music waits for its end; held
 /// at 1 until the jingle's player stops, then 0.
@@ -108,7 +103,7 @@ extern u16 gBgmTempoPitchStep;
 /// The music Sound_Play last chose: 0xff before any, MUS_SILENCE
 /// after a fade; asking for it again changes nothing.
 extern u8 gCurrentBgm;
-/// Set by Sound_UpdateCommandMask; nothing in TBS reads it.
+/// Set by Sound_UpdateCommandMask; nothing reads it.
 extern u8 gSoundCommandMask;
 
 #endif

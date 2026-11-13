@@ -27,7 +27,7 @@
 
 	.macro tileset set:req, sheets:req, map_ids:vararg
 	.irp m, \map_ids
-	resource , Field_Map\m
+	resource , Field_\m
 	.endr
 	resource , Tileset_\set\()Palette
 	.ifnc \sheets, -
@@ -39,7 +39,7 @@
 
 	.macro recolor palette:req, map_ids:vararg
 	.irp m, \map_ids
-	resource , Field_Map\m
+	resource , Field_\m
 	.endr
 	resource , Tileset_Palette\palette
 	.endm
@@ -60,10 +60,6 @@
 	.balign 4
 	.global Resource_DirectoryTable
 Resource_DirectoryTable:
-@ XXX (no evidence): why the first 19 rows point at pieces of the main image;
-@ only the build stamp's is read, the far-call rows go only to stubs that do
-@ nothing (Stub_NoOpHook, Stub_ReturnZero), and nothing in either game loads a
-@ bank through its row.
 	resource , Rom_Start
 	resource , Resource_DirectoryTable
 	group Resource, BuildStamp
@@ -170,142 +166,142 @@ Resource_DirectoryTable:
 	resource , Tileset_BlankTilesB
 	resource , Tileset_BlankTilesC
 	resource , Tileset_BlankTilesD
-	tileset Set00, ABCD, 000
-	tileset Set01, ABCD, 002
-	tileset Set02, ABCD, 003
-	tileset Set03, ABCD, 004
-	tileset Set04, ABCD, 005
-	tileset Set05, ABCD, 006
-	tileset Set06, ABCD, 007
-	tileset Set07, ABCD, 008
-	tileset Set08, ABCD, 009
-	tileset Set09, ABC, 010
-	tileset Set10, ABCD, 011
-	tileset Set11, ABCD, 012, 013
-	tileset Set12, ABCD, 014
-	tileset Set13, ABCD, 015
-	recolor 00, 016
-	tileset Set14, ABCD, 017
-	tileset Set15, ABCD, 018
-	tileset Set16, ABCD, 019
-	tileset Set17, ABCD, 020
-	tileset Set18, ABCD, 021
-	tileset Set19, ABCD, 022
-	tileset Set20, ABCD, 023, 024, 025
-	tileset Set21, ABCD, 026, 027, 028
-	tileset Set22, ABC, 029
-	tileset Set23, ABCD, 030, 031
-	tileset Set24, AB, 032
-	tileset Set25, A, 033
-	tileset Set26, ABC, 034
-	tileset Set27, ABCD, 035
-	tileset Set28, ABCD, 036
-	tileset Set29, ABCD, 037
-	tileset Set30, A, 038
-	tileset Set31, ABCD, 039
-	recolor 01, 040
-	tileset Set32, ABCD, 041
-	tileset Set33, A, 042
-	recolor 02, 043
-	tileset Set34, ABCD, 044
-	tileset Set35, ABCD, 045
-	tileset Set36, ABCD, 046
-	tileset Set37, ABCD, 047
-	tileset Set38, A, 048
-	tileset Set39, A, 049
-	tileset Set40, A, 050
-	tileset Set41, ABCD, 051
-	tileset Set42, ABCD, 052
-	tileset Set43, ABCD, 053, 054
-	tileset Set44, A, 055, 056, 057, 058, 059, 060
-	tileset Set45, ABCD, 061
-	recolor 03, 062
-	tileset Set46, ABCD, 063, 064, 065, 066, 067, 068
-	tileset Set47, ABCD, 069, 070, 071, 072, 073
-	recolor 04, 074
-	tileset Set48, ABCD, 075
-	tileset Set49, A, 076
-	recolor 05, 077
-	recolor 06, 078, 079, 080, 081, 082, 083, 084, 085, 086
-	recolor 07, 087, 088
-	tileset Set50, ABCD, 089, 090
-	tileset Set51, ABCD, 091, 092, 093
-	tileset Set52, ABCD, 094
-	recolor 08, 095, 096, 097
-	tileset Set53, AB, 098
-	recolor 09, 099
-	recolor 10, 100
-	tileset Set54, ABC, 101
-	tileset Set55, A, 102
-	tileset Set56, ABCD, 103
-	recolor 11, 104
-	tileset Set57, ABCD, 105
-	recolor 12, 106
-	recolor 13, 107
-	tileset Set58, ABCD, 108
-	recolor 14, 109
-	recolor 15, 110
-	recolor 16, 111
-	recolor 17, 112
+	tileset ValePrologue, ABCD, ValePrologue
+	tileset Set01, ABCD, Vale
+	tileset Set02, ABCD, ValePlaza
+	tileset ValeKradensCottage, ABCD, ValeKradensCottage
+	tileset Set04, ABCD, CottageRoomsA
+	tileset CottageRoomsB, ABCD, CottageRoomsB
+	tileset Sanctum, ABCD, Sanctum
+	tileset Set07, ABCD, SolEntrance
+	tileset Set08, ABCD, SolSanctumLunaSolRooms
+	tileset SolSanctumStatue, ABC, SolSanctumStatue
+	tileset SolSanctumPsynergyStone, ABCD, SolSanctumPsynergyStone
+	tileset SolSanctumCorridor, ABCD, SolSanctumMaze, SolSanctumCorridor
+	tileset SolSanctumElementalStarRoom, ABCD, SolSanctumElementalStarRoom
+	tileset SolSanctumEruption, ABCD, SolSanctumEruption
+	recolor SolSanctumReliefs, SolSanctumReliefs
+	tileset Vault, ABCD, Vault
+	tileset Set15, ABCD, VaultLogRooms
+	tileset StoneRooms, ABCD, StoneRooms
+	tileset Set17, ABCD, GomaCaveEntrance
+	tileset GomaCavePond, ABCD, GomaCavePond
+	tileset Set19, ABCD, GomaCavePillar
+	tileset Set20, ABCD, GomaCaveStream, GomaCaveBridge, VaultCavePassage
+	tileset Set21, ABCD, VaultCaveVambrace, VaultCaveMouth, ValeCaveMouth
+	tileset Set22, ABC, ValeCaveKite
+	tileset Set23, ABCD, ValeCaveLogs, Bilibin
+	tileset Set24, AB, CottageRoomsC
+	tileset Set25, A, BilibinTreasury
+	tileset BilibinBarricade, ABC, BilibinBarricade
+	tileset Set27, ABCD, McCoyPalaceGrounds
+	tileset Set28, ABCD, McCoyPalace
+	tileset Set29, ABCD, Kolima
+	tileset LogRoomsC, A, LogRoomsC
+	tileset Set31, ABCD, KolimaBridge
+	recolor KolimaTunnel, KolimaTunnel
+	tileset KolimaForest, ABCD, KolimaForestEntrance
+	tileset KolimaForestGlade, A, KolimaForestGlade
+	recolor KolimaForestCliff, KolimaForestCliff
+	tileset Set34, ABCD, KolimaForestFloodgate
+	tileset KolimaForestTree, ABCD, KolimaForestTree
+	tileset TreeRooms, ABCD, TreeRooms
+	tileset TretTreeBranch, ABCD, TretTreeBranch
+	tileset BilibinCaveEntrance, A, BilibinCaveEntrance
+	tileset Set39, A, BilibinCaveRapier
+	tileset BilibinCaveIce, A, BilibinCaveIce
+	tileset Imil, ABCD, Imil
+	tileset Set42, ABCD, IceRooms
+	tileset Set43, ABCD, ImilFallsCave, MercuryLighthouseEntrance
+	tileset Set44, A, MercuryLighthouseLower, MercuryLighthouseMiddle, MercuryLighthouseUpper, MercuryLighthouseExterior, MercuryLighthouseAerie, FuchinTempleGrounds
+	tileset LacquerRoomsA, ABCD, LacquerRoomsA
+	recolor FuchinFallsCave, FuchinFallsCaveEntrance
+	tileset MogallForest, ABCD, FuchinFallsCaveZephyr, FuchinFallsCaveDragonsEye, FuchinFallsCaveArcticBlade, FuchinFallsCaveOrbOfForce, FuchinFallsCaveDragonStatue, MogallForestSign
+	tileset LacquerRoomsB, ABCD, MogallForestQuartz, MogallForestKillerApe, MogallForestSidePaths, Xian, LacquerRoomsB
+	recolor AlpineCrossing, AlpineCrossing
+	tileset Altin, ABCD, Altin
+	tileset CottageRoomsD, A, CottageRoomsD
+	recolor AltinPeak, AltinPeakFirstWaterBeast
+	recolor AltinPeakHydrosStatue, AltinPeakRailTunnel, AltinPeakSecondWaterBeast, AltinPeakSouthEntrance, AltinPeakThirdWaterBeast, AltinPeakPool, AltinPeakSpritz, AltinPeakJunction, AltinPeakFallingRocks, AltinPeakHydrosStatue
+	recolor LamakanDesertCave, AltinPeakWestExit, LamakanDesertCave
+	tileset Set50, ABCD, LamaTemple, LamakanDesertEast
+	tileset Set51, ABCD, LamakanDesertSmog, LamakanDesertManticore, Kalay
+	tileset Set52, ABCD, StuccoRoomsA
+	recolor HammetPalace, KalaySanctum, HammetPalaceGrounds, HammetPalace
+	tileset Lunpa, AB, Lunpa
+	recolor RockRooms, RockRooms
+	recolor WestLunpaCave, WestLunpaCave
+	tileset Set54, ABC, KalayDocks
+	tileset CottageRoomsE, A, CottageRoomsE
+	tileset Set56, ABCD, TolbiShipDeck
+	recolor TolbiShipMast, TolbiShipMast
+	tileset ShipRooms, ABCD, ShipRooms
+	recolor TolbiDocks, TolbiDocks
+	recolor CrossboneIsle, CrossboneIsle
+	tileset Set58, ABCD, Map108
+	recolor CrossboneIsleIcePillars, CrossboneIsleIcePillars
+	recolor 15, Map110
+	recolor CrossboneIsleStatues, CrossboneIsleStatues
+	recolor CrossboneIsleFloodgate, CrossboneIsleFloodgate
 	resource , Tileset_Palette18
-	recolor 19, 113
-	recolor 20, 114
-	recolor 21, 115
-	recolor 22, 116
-	recolor 23, 117
-	recolor 24, 118
-	recolor 25, 119
-	recolor 26, 120
-	recolor 27, 121, 122
-	recolor 28, 123
-	tileset Set59, ABCD, 124
-	recolor 29, 125
-	recolor 30, 126
-	tileset Set60, ABCD, 127
-	tileset Set61, ABCD, 128
-	tileset Set62, ABCD, 129
-	recolor 31, 130
-	recolor 32, 131, 132, 133
-	resource , Field_Map134
-	resource , Field_Map135
+	recolor CrossboneIsleStackedPillars, CrossboneIsleStackedPillars
+	recolor CrossboneIsleDragonStatue, CrossboneIsleDragonStatue
+	recolor CrossboneIsleFloatingLogs, CrossboneIsleFloatingLogs
+	recolor CrossboneIslePier, CrossboneIslePier
+	recolor PirateShip, PirateShip
+	recolor CrossboneIsleCave, CrossboneIsleCave
+	recolor Tolbi, Tolbi
+	recolor StuccoRooms, StuccoRoomsB
+	recolor BabiPalaceEntrance, StuccoRoomsC, BabiPalaceEntrance
+	recolor BabiPalace, BabiPalace
+	tileset Set59, ABCD, ColosseumTunnel
+	recolor Colosseum, Colosseum
+	recolor ColosseumEntrance, ColosseumEntrance
+	tileset ColosseumAzartMatch, ABCD, ColosseumAzartMatch
+	tileset ColosseumSatrageMatch, ABCD, ColosseumSatrageMatch
+	tileset ColosseumNavampaMatch, ABCD, ColosseumNavampaMatch
+	recolor 31, AltmillerCaveEntrance
+	recolor 32, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall
+	resource , Field_AltmillerCaveCookieChest
+	resource , Field_AltmillerCaveDraught
 	resource , Field_GondowanPassage
-	resource , Tileset_Palette33
-	recolor 34, 136
-	recolor 35, 137, 138
-	recolor 36, 139
-	recolor 37, 140, 141, 142, 143
-	recolor 38, 144
-	tileset Set63, A, 145
-	recolor 39, 146, 147
-	recolor 40, 148, 149
-	tileset Set64, ABCD, 150
-	tileset Set65, ABCD, 151
-	recolor 41, 152
-	recolor 42, 153, 154
-	recolor 43, 155
-	recolor 44, 156, 157
+	resource , Tileset_PaletteGondowanPassage
+	recolor GondowanCave, GondowanCaveRiver
+	recolor LunpaFortressGates, GondowanCave, LunpaFortressGates
+	recolor LunpaFortress, LunpaFortressGroundFloor
+	recolor KalayTunnelEntrance, LunpaFortressUpperFloor, LunpaFortressCave, LunpaFortressToadonpa, KalayTunnelEntrance
+	recolor KalayTunnelCave, KalayTunnelCave
+	tileset KalayTunnel, A, KalayTunnelPassage
+	recolor SuhallaDesert, KalayTunnelTreasureRoom, SuhallaDesertNorth
+	recolor SuhallaDesertCaves, SuhallaDesertSouth, SuhallaDesertCaves
+	tileset Set64, ABCD, Suhalla
+	tileset TimberRooms, ABCD, TimberRoomsA
+	recolor SuhallaGate, SuhallaGateCheckpoint
+	recolor GatewayCave, SuhallaGateDew, GatewayCave
+	recolor TunnelRuins, TunnelRuinsGreatStatue
+	recolor 44, TunnelRuinsLadyStatues, BabiLighthouseEntry
 	resource , Tileset_Palette45
-	recolor 46, 158
-	recolor 47, 159
-	recolor 48, 160
-	resource , Field_Map161
-	resource , Field_Map162
+	recolor BabiLighthouseStoneDoor, BabiLighthouseStoneDoor
+	recolor Lalivero, Lalivero
+	recolor TimberRooms, TimberRoomsB
+	resource , Field_TimberRoomsC
+	resource , Field_RoadToBabiLighthouse
 	resource , Field_VenusEntrance
-	resource , Tileset_Palette49
-	recolor 50, 163
-	recolor 51, 164
-	recolor 52, 165, 166, 167, 168
-	tileset Set66, ABCD, 169
-	tileset Set67, ABCD, 170
-	recolor 53, 171
-	tileset Set68, ABCD, 172
-	tileset Set69, ABCD, 173
-	tileset Set70, ABCD, 174
-	tileset Set71, ABCD, 175
-	tileset Set72, ABCD, 176
-	tileset Set73, ABCD, 177
-	tileset Set74, ABCD, 178
-	tileset Set75, ABCD, 179
+	resource , Tileset_PaletteVenusEntrance
+	recolor VenusLighthouseGroundFloor, VenusLighthouseGroundFloor
+	recolor VenusLighthouse, VenusLighthouseFirstFloor
+	recolor VenusLighthouseAerie, VenusLighthouseSecondFloor, VenusLighthouseThirdFloor, VenusLighthouseFourthFloor, VenusLighthouseAerie
+	tileset LemurianShip, ABCD, LemurianShip
+	tileset TolbiSpring, ABCD, TolbiSpring
+	recolor BattleArena, BattleArena
+	tileset Test0, ABCD, Test0
+	tileset Test1, ABCD, Test1
+	tileset Test2, ABCD, Test2
+	tileset Test3, ABCD, Test3
+	tileset Test4, ABCD, Test4
+	tileset Test5, ABCD, Test5
+	tileset Test6, ABCD, Test6
+	tileset Test7, ABCD, Test7
 	overlays 36F, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 37A
 	overlays 37B, 37C, 37D, 37E, 37F, 380, 381, 382, 383, 384, 385, 386
 	overlays 387, 388, 389, 38A, 38B, 38C, 38D, 38E, 38F, 390, 391, 392
@@ -314,8 +310,6 @@ Resource_DirectoryTable:
 	overlays 3AB, 3AC, 3AD, 3AE, 3AF, 3B0, 3B1, 3B2, 3B3, 3B4, 3B5, 3B6
 	overlays 3B7, 3B8, 3B9, 3BA, 3BB, 3BC, 3BD, 3BE, 3BF, 3C0, 3C1, 3C2
 	overlays 3C3, 3C4, 3C5, 3C6, 3C7, 3C8, 3C9, 3CA, 3CB, 3CC, 3CD, 3CE
-@ XXX (no evidence): whether these rows were left for later resources; they
-@ are empty and nothing reads them.
 	unused 25
 
 @ Build timestamp: year, month, day, hour, minute and second, two digits each

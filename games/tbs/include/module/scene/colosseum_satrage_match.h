@@ -5,11 +5,13 @@
 #include "scene_tables.h"
 
 s32 ColosseumSatrageMatch_Initialize(void);
-// The native call precedes this definition.
+// UB: the scene calls this before its definition with no prototype, as a
+// function returning int.
 #ifdef UBFIX
-void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
-                                         s32 segments, s32 finishX, s32 finishZ,
-                                         s32 firstItem, s32 secondItem);
+void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
+                                          s32 segments, s32 finishX,
+                                          s32 finishZ, s32 firstItem,
+                                          s32 secondItem);
 #endif
 extern const u8 gColosseumSatrageMatch_RollLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];

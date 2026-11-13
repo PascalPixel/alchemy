@@ -6,7 +6,7 @@
 
 /// Returns the sanctum's fee, in coins, for `serviceKind` on party member
 /// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a
-/// level to remove a curse. Called by the party member choice and its fee line.
+/// level to remove a curse.
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
   u8 level = Unit_GetFar(unitId)->level;
   s32 donation = 0;
@@ -24,11 +24,10 @@ s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
 }
 
 /// Returns 1 when party member `unitId` needs `serviceKind`: down (HP 0) for a
-/// revive, poisoned for a cure, haunted for an exorcism, any curse bit set
-/// for removing a curse. Called by the party member choice, its count, its
-/// highlight and its fee line. Unit_Calculate sets the curse bits only for a
-/// cursed item worn, and nothing sets CURSE_KEEP_BOUND, so a party member
-/// accepted for removing a curse always has a cursed item to take off.
+/// revive, poisoned for a cure, haunted for an exorcism, any curse bit set for
+/// removing a curse. Unit_Calculate sets the curse bits only for a cursed item
+/// worn, and nothing sets CURSE_KEEP_BOUND, so a party member accepted for
+/// removing a curse always has a cursed item to take off.
 s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
   struct Unit *unit = Unit_GetFar(unitId);
   s32 eligible = 0;
@@ -89,26 +88,21 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   messageId = Sanctum_GetServiceMessage(messageId);
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0) {
-    wait(1U);
+    wait(1);
   }
-  wait(1U);
+  wait(1);
 }
 
 /// As Sanctum_ShowKeeperMessage, hiding the hand cursor while the line
 /// shows and putting back its motion after: the sanctum's
 /// Shop_ShowKeeperMessageHidingCursor.
 void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
-  struct ShopWork *shop;
-  struct WindowSprite **cursorSlot;
-  s32 portraitResource;
-  u8 savedCursorMode;
+  struct ShopWork *shop = gMenuWork;
+  u8 savedCursorMode = shop->cursor.anchor->motion;
+  s32 portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
 
-  shop = gMenuWork;
-  cursorSlot = &shop->cursor.anchor;
-  savedCursorMode = (*cursorSlot)->motion;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
   messageId = Sanctum_GetServiceMessage(messageId);
-  (*cursorSlot)->motion = 13;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
@@ -118,10 +112,9 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
 }
 
 /// Runs a sanctum: the keeper's welcome, then the service menu (revive, cure
-/// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is
-/// the keeper's actor, whose portrait the lines show. Holds the shop work
-/// block while it runs; returns 0. Called by the
-/// scenes' sanctum keepers and the Battle Arena, and by the debug test.
+/// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is the
+/// keeper's actor, whose portrait the lines show. Holds the shop work block
+/// while it runs; returns 0.
 s32 Sanctum_Run(s32 unitId) {
   s32 serviceSelection = 0;
   struct Window *listWindow = 0;
@@ -151,7 +144,7 @@ s32 Sanctum_Run(s32 unitId) {
 
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
                                         listWindow, 0, 0);
-  cursorAnchor->motion = 1;
+  cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
   cursorAnchor->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
@@ -236,12 +229,11 @@ s32 Sanctum_RunPartyService(void) {
       chooseAgain = 0;
       Sanctum_ShowKeeperMessage(MsgWhoToRevive);
       redraw = 1;
-      memberIndex = 0;
-      while (memberIndex < shop->partyMemberCount) {
+      for (memberIndex = 0; memberIndex < shop->partyMemberCount;
+           memberIndex++) {
         unitId = shop->partyMemberIds[memberIndex];
         if (Sanctum_NeedsService(unitId, serviceKind) != 0)
           break;
-        memberIndex++;
       }
     }
 
@@ -323,7 +315,7 @@ s32 Sanctum_RunPartyService(void) {
 /// a revive, poison or the haunting cleared, or every cursed item taken off
 /// (Unit_Calculate then rebuilds the curse bits from what is still equipped).
 /// With no cursed item equipped, removing a curse changes nothing, whatever
-/// curse bits Sanctum_NeedsService saw. Called by Sanctum_RunPartyService.
+/// curse bits Sanctum_NeedsService saw.
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   struct Unit *unit;
 
@@ -376,7 +368,7 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
 
 /// Draws in `target` the party member's fee for the current service (its cost
 /// line with the donation filled in), or the line that the party member needs
-/// no treatment. Called by Sanctum_RunPartyService each time the cursor moves.
+/// no treatment.
 void Sanctum_DrawFee(struct Window *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
@@ -468,13 +460,12 @@ static const s8 sSanctumServiceCues[4] = {
     [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_REMOVE_CURSE,
 };
 
-/// Plays the service's burst on party member `member` (an index into the
-/// party row): the service's tune, the field's colours tinted, 18 sparkles
-/// in random colour modes flying in from a ring around the party member's icon
-/// three frames apart, the icon cycling through colour modes, then, once the
-/// sound driver is done, the sparkles freed and the colours faded back. The
-/// hand cursor is hidden throughout. Called by Sanctum_RunPartyService once
-/// the party member is cured.
+/// Plays the service's burst on party member `member` (an index into the party
+/// row): the service's tune, the field's colours tinted, 18 sparkles in random
+/// colour modes flying in from a ring around the party member's icon three
+/// frames apart, the icon cycling through colour modes, then, once the sound
+/// driver is done, the sparkles freed and the colours faded back. The hand
+/// cursor is hidden throughout.
 void Sanctum_RunMemberIconBurst(s32 member) {
 
   struct ShopWork *shop;

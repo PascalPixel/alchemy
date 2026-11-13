@@ -10,7 +10,7 @@ const u32 *ValeCave_GetExits(void);
 const struct ActorPlacement *ValeCave_GetActorPlacements(void);
 const struct Trigger *ValeCave_GetTriggers(void);
 s32 ValeCave_Initialize(void);
-extern s32 gValeCave_WalkTargets[];
+extern s32 gValeCave_WalkTargets[][2];
 extern struct SceneEntrance gValeCave_EntrancesOther[];
 extern struct SceneEntrance gValeCave_MouthEntrances[];
 extern struct SceneEntrance gValeCave_KiteEntrances[];

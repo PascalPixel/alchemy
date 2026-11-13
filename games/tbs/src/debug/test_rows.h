@@ -3,8 +3,6 @@
 
 #include "types.h"
 
-// XXX (no evidence): what they hold; no code reads them, and overlay data is
-// reached only through the scene's entries, none of which returns them.
 /// Unused: eight rows of seven words, the same in both overlays. No other data
 /// in the ROM has their layout.
 u32 gTest_UnusedRows[] = {

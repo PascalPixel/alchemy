@@ -31,8 +31,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   s32 step[3];
   s32 point[3];
   struct ScreenPoint position;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -45,8 +43,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
@@ -89,8 +88,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
   }
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // Sparks spread out flat from the centre, 20 to 51 pixels up, at 4 to 12
@@ -146,7 +145,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       center[2] += step[2];
     }
     Transform_ApplyPosition(center);
-    // The user glows white from frame 0 to frame 24.
     if (frame == 0)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -308,8 +306,7 @@ void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
 /// Puts the user into its leap pose and fires the volley in this mode
 /// while its effect runs fast.
 ///
-/// Called by Cutting Edge, Heat Wave and Blizzard. Leaves the user in its
-/// action pose, its animation back at the usual speed.
+/// Leaves the user in its action pose, its animation back at the usual speed.
 static inline void
 BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
   struct Actor *user;
@@ -388,15 +385,9 @@ enum VolleyField {
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.
 ///
-/// Called by the eleven wrappers above, and by two unused casting impacts
-/// once their prelude ends: CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS fires
-/// Blizzard's volley, CASTING_IMPACT_IMPACT_UNUSED_COMETS
-/// PROJECTILE_VOLLEY_IMPACT_COMETS, which no wrapper uses. With more than 63
-/// shots in all it fires at the first target only, writing
-/// work->args->targetCount. Writes REG_BLDCNT for Shuriken and the first 128
-/// bytes of BG palette RAM for Crazy Voice and Cutting Edge; sets
-/// work->shakeFrames on each hit but for Sleet. The second blitter is built and
-/// freed for each picture that needs it.
+/// With more than 63 shots in all it fires at the first target only, writing
+/// work->args->targetCount. The second blitter is built and freed for each
+/// picture that needs it.
 ///
 /// args: the user and the targets. variant picks Slash's comet (Cutting
 ///         Edge always fires PROJECTILE_VOLLEY_COMET_C, the impact's comets
@@ -408,8 +399,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   struct ScreenPoint position;
   s32 screenX;
   s32 screenY;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -431,9 +420,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   s32 hit;
   s32 x;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   soundCooldown = 0;
   work->args = args;
   comet = args->variant;
@@ -466,7 +456,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
   // The shot pictures, and how long each mode's trails last: comets keep
   // three quarters of each level a frame, shurikens none, the rest half.
@@ -670,7 +660,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         else
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_ADDITIVE);
-        draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
         if (frame <= 3)
           draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                   20, 40);
@@ -725,8 +715,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               if (target->x.fixed < 0) {
                 hit = x < 0;
                 /* FAKEMATCH(dead): two updates that cancel, under a test that
-                 * emits nothing, make hit a 0 or 1 value before it is tested;
-                 * without them, 55 of 1605 instructions differ in tbs-en. */
+                 * emits nothing; without them, 55 of 1605 instructions differ
+                 * in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;
@@ -826,7 +816,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               else
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                     COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - 16,
                   position.y - gProjectileVolley_CometHeights[comet], 32,
@@ -840,7 +830,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                     COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - 16, position.y, 32,
                   gProjectileVolley_CometHeights[comet]);
@@ -894,7 +884,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             if (!(i & 1)) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x - gProjectileVolley_FlashWidths[step],
                   flash->y - gProjectileVolley_FlashRises[step],
@@ -904,7 +894,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x,
                   flash->y + gProjectileVolley_FlashSteps[step] -
@@ -915,7 +905,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             } else {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas,
                   work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
@@ -927,7 +917,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas,
                   work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
@@ -1011,10 +1001,6 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
 /// Moves a unit 80% of the way to another one over a number of frames,
 /// in its leap pose. The speed is that distance over the frames; the
 /// distance is taken in 1/256 pixels so its square fits in 32 bits.
-///
-/// Called by BattleEffect_RunRushingStrike. Sets the unit's acceleration,
-/// speed limit and gravity, turns it to face its motion, starts it moving on
-/// the ground towards that point and selects POSE_LEAP.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);

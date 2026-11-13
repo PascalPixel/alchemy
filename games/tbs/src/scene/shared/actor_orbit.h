@@ -7,19 +7,22 @@
 
 /// The Nut's callback, each frame: it sways up to two pixels either side of its
 /// spot and dips up to two pixels below it, at a random pace.
-static s32 Scene_UpdateFloatingNut(s32 *p) {
-  s16 *q = (s16 *)p[20];
-  s32 a, b;
-  s32 d = Trig_Sin(p[12]) * 2;
-  if (d > 0)
-    d = -d;
-  p[2] = p[14] + Trig_Cos(p[12]) * 2;
-  p[3] = p[15] + d;
-  q[15] = Trig_Cos(p[12] + TRIG_TURN / 2) / 8;
-  a = Import_RandomNext();
-  b = Import_RandomNext();
-  p[12] =
-      p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + TRIG_TURN / 64;
+static s32 Scene_UpdateFloatingNut(OrbitingMapActor *nut) {
+  struct Sprite *sprite = (struct Sprite *)nut->sprite;
+  s32 first, second;
+  s32 dip = Trig_Sin(nut->orbitAngle) * 2;
+
+  if (dip > 0)
+    dip = -dip;
+  nut->x = nut->orbitCenterX + Trig_Cos(nut->orbitAngle) * 2;
+  nut->y = nut->orbitCenterY + dip;
+  sprite->rotation = Trig_Cos(nut->orbitAngle + TRIG_TURN / 2) / 8;
+  // The pace: a sixty-fourth of a turn and two random steps under 1/128 each.
+  first = Import_RandomNext();
+  second = Import_RandomNext();
+  nut->orbitAngle = nut->orbitAngle +
+                    ((((u32)first << 9) >> 16) + (((u32)second << 9) >> 16)) +
+                    TRIG_TURN / 64;
   return 0;
 }
 

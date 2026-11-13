@@ -139,13 +139,10 @@
 
 // Vale's area flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a young man has welcomed Isaac home.
-/// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
-#define FLAG_VALE_WELCOMED_HOME 0x302
+#define FLAG_VALE_WELCOMED_HOME FLAG_AREA_TEMP_02
 /// Back from Kalay, the old man searching for the Psynergy Stone has told
 /// Isaac it is gone.
-/// ★ Named from the game: "Where'd that Psynergy Stone go? It's gone!"
-/// (MsgValeThePsynergyStoneIsGone)
-#define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD 0x306
+#define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD FLAG_AREA_TEMP_06
 
 /// Each actor placement table numbers its own rows from ACTOR_FIRST_PLACED,
 /// Garet keeping his own party slot. The same people stand in several tables
@@ -153,14 +150,8 @@
 enum ValePlazaActorId {
   /// Ivy, drawn half as tall again. It is the sprite of the ivy that holds the
   /// stump in goma_cave_entrance.c ("It looks like it's trapped in the ivy.").
-  /// ★ Named from what the player sees: a clump of green ivy against the cliff
-  /// (its render)
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a clump of green ivy against the cliff
-  /// (its render)
   ACTOR_SECOND_IVY,
-  /// ★ Named from what the player sees: a clump of green ivy against the cliff
-  /// (its render)
   ACTOR_THIRD_IVY
 };
 
@@ -171,63 +162,41 @@ enum ValePlazaDayActorId {
   /// night, after the party has left and back from Kalay, he has a question for
   /// Isaac instead (ValePlaza_AskAboutJourney). After the party has left it is
   /// "You saw the Wise One?"
-  /// ★ Named from the game: "The Valeans are a chosen people."
-  /// (MsgValeChosenPeople)
   ACTOR_CURIOUS_OLD_MAN = ACTOR_FIRST_PLACED + 3,
   /// In the old woman's sprite, who on the stormy night asks "You expect an old
   /// woman like me to use Psynergy?" By day: "Long ago, my grandfather was a
   /// powerful Adept... I'm so proud of him."
-  /// ★ Named from the game: "You expect an old woman like me to use
-  /// Psynergy?" (MsgValeOldWomanCannotUsePsynergy)
   ACTOR_OLD_WOMAN,
   /// A young man with brown hair: "Well, if it isn't Isaac. It's just another
   /// quiet day in Vale."
-  /// ★ Named from the game: "It's just another quiet day in Vale."
-  /// (MsgValeQuietDay)
   ACTOR_YOUNG_MAN_QUIET_DAY,
   /// A woman with fair hair: "Kraden had visitors when I dropped by his place
   /// this morning."
-  /// ★ Named from the game: "Kraden had visitors when I dropped by his place
-  /// this morning." (MsgValeKradenHadVisitors)
   ACTOR_WOMAN_ON_KRADENS_VISITORS,
   /// Two children, a small boy with fair hair and a little girl with orange
   /// pigtails. By day the boy asks "Did the travelers that stopped by today go
   /// to meet the mayor?" Back from Kalay he thinks "I wonder if we can play
   /// with Isaac and his pals again, like we used to."
-  /// ★ Named from what the player sees: a small boy with fair hair in a blue
-  /// shirt (its render)
   ACTOR_FIRST_CHILD,
   /// The little girl: "With Psynergy, the more you practice, the more you
   /// learn."
-  /// ★ Named from what the player sees: a little girl with orange pigtails in
-  /// a green dress (its render)
   ACTOR_SECOND_CHILD,
   /// A strongman who shakes the ground with his Psynergy
   /// (ValePlaza_DemonstratePsynergy). "Hey, Isaac, have I shown you my new
   /// ability?"
-  /// ★ Named from the game: "have I shown you my new ability?"
-  /// (MsgValeShownNewAbility)
   ACTOR_STRONGMAN_SHOWING_PSYNERGY,
   /// A second strongman: "If your Psynergy runs low, just walk around. You'll
   /// recover it slowly."
-  /// ★ Named from the game: "If your Psynergy runs low, just walk around."
-  /// (MsgValeWalkToRecoverPsynergy)
   ACTOR_STRONGMAN_WALK_TO_RECOVER,
   /// An invisible actor (as in gondowan_cave.c), out of sight until the party
   /// has left. Then it stands on the large Psynergy Stone that fell on the hut,
   /// for the hut's owner to turn to.
-  /// ★ Named from the game: "That large Psynergy Stone fell right on top of the
-  /// hut." (MsgValeTheStoneFellOnThe)
   ACTOR_FALLEN_STONE_SPOT = ACTOR_FIRST_PLACED + 13,
   /// A burly grey-haired man: "Isaac! Have you remembered to meditate on Mt.
   /// Aleph daily?"
-  /// ★ Named from the game: "Have you remembered to meditate on Mt. Aleph
-  /// daily?" (MsgValeMeditateOnMtAlephDaily)
   ACTOR_MAN_ASKING_ABOUT_MEDITATION = ACTOR_FIRST_PLACED + 15,
   /// A woman in a green dress: "You had a very difficult time three years ago,
   /// didn't you?"
-  /// ★ Named from the game: "You had a very difficult time three years ago"
-  /// (MsgValeADifficultTimeThreeYears)
   ACTOR_WOMAN_RECALLING_STORM,
   /// The hut's owner, an old man with a cane, who back from Kalay finds "a big
   /// hole in my roof". "Since food is stored in this hut, it isn't scary at
@@ -237,8 +206,6 @@ enum ValePlazaDayActorId {
   /// were the storm's ACTOR_STORM_JENNA (a BUG), so only a debug jump past the
   /// prologue shows him. The renders show him by the hut with no story flags
   /// set and gone once the party has left.
-  /// ★ Named from the game: "Since food is stored in this hut"
-  /// (MsgValeFoodStoredForWinter)
   ACTOR_HUT_OWNER = ACTOR_FIRST_PLACED + 18
 };
 
@@ -246,45 +213,29 @@ enum ValePlazaDayActorId {
 enum ValePlazaStormActorId {
   /// The same old man as ACTOR_CURIOUS_OLD_MAN: "Huh? Are you...asking me
   /// if I can use Psynergy, Isaac?"
-  /// ★ Named from the game: "Did you see anything interesting on your trip"
-  /// (MsgValeAnythingInterestingOnYourTrip)
   ACTOR_STORM_CURIOUS_OLD_MAN = ACTOR_FIRST_PLACED + 3,
   /// The old woman: "You expect an old woman like me to use Psynergy?"
-  /// ★ Named from the game: "You expect an old woman like me to use
-  /// Psynergy?" (MsgValeOldWomanCannotUsePsynergy)
   ACTOR_STORM_OLD_WOMAN,
   /// A young man with brown hair: "I'm exhausted. I used up all my Psynergy
   /// deflecting falling rocks..."
-  /// ★ Named from the game: "I used up all my Psynergy deflecting falling
-  /// rocks..." (MsgValeExhaustedFromFallingRocks)
   ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN,
   /// A woman with fair hair: "Oh! Little Felix has fallen into the river? That
   /// must be why Jenna looked so upset."
-  /// ★ Named from the game: "has fallen into the river?"
-  /// (MsgValeFelixFellInRiver)
   ACTOR_STORM_WOMAN_HEARING_OF_FELIX,
   /// A small boy with fair hair who lifts ACTOR_STORM_SMALL_ROCK
   /// (ValePlaza_BoyLiftsSmallRock). "I have some Psynergy left."
-  /// ★ Named from what the player sees: a small boy with fair hair holds a
-  /// small rock up in the air with his Psynergy, "See?" (its render)
   ACTOR_STORM_ROCK_LIFTING_BOY,
   /// A little girl with orange pigtails: "Jenna went off that way!"
-  /// ★ Named from the game: "went off that way!" (MsgValeWentOffWay)
   ACTOR_STORM_GIRL_WHO_SAW_JENNA,
   /// The two strongmen Garet's grandfather sends to aid the elders. "We can't
   /// let the Mt. Aleph Boulder destroy our village."
-  /// ★ Named from the game: "destroy our village" (MsgValeGoAidElders)
   ACTOR_STORM_FIRST_AIDE,
-  /// ★ Named from the game: "help the elders" (MsgValeGoAidElders)
   ACTOR_STORM_SECOND_AIDE, ///< "Let's go help the elders."
   /// Garet's grandfather, the mayor, an old man with white hair and a cane.
   /// Garet calls him "Grandpa!", and his sprite is cottage_rooms_a.c's. "Go
   /// aid the elders!"
-  /// ★ Named from the game: "aid the elders!" (MsgValeGoAidElders)
   ACTOR_STORM_GARETS_GRANDFATHER,
   /// The storm's rock sprite at three tenths of its size.
-  /// ★ Named from what the player sees: a small rock floating beside the
-  /// boy who lifts it (its render)
   ACTOR_STORM_SMALL_ROCK,
   /// The small rock's shadow. It is a blank actor on ACTOR_STORM_SMALL_ROCK's
   /// spot at three fifths of its size, whose sprite draws only its shadow,
@@ -293,25 +244,16 @@ enum ValePlazaStormActorId {
   /// It blocks nothing the rock does not already block, and nothing moves it,
   /// so the shadow stays on the ground as the boy lifts the rock (render probe
   /// vale-gate: the sprites with it and without it).
-  /// ★ Named from what the player sees: the shadow under the floating rock,
-  /// render probe vale-gate (its render)
   ACTOR_STORM_SMALL_ROCK_SHADOW,
   /// Rested at the Psynergy Stone, the strongman vale_prologue.c calls
   /// ACTOR_EXHAUSTED_STRONGMAN. "Great! I'm all charged up!"
-  /// ★ Named from the game: "all charged up" (MsgValeGoAidElders)
   ACTOR_STORM_CHARGED_UP_STRONGMAN,
   /// The two travelers who survived Sol Sanctum, Saturos and Menardi by their
   /// sprites (as in vale_kradens_cottage.c). "Only the two of us survived..."
-  /// ★ Named from the game: "Only the two of us survived"
-  /// (MsgValeOnlyTwoSurvived)
   ACTOR_FIRST_TRAVELER,
-  /// ★ Named from the game: "Only the two of us survived"
-  /// (MsgValeOnlyTwoSurvived)
   ACTOR_SECOND_TRAVELER,
   /// Garet as a child, who follows Isaac through the night. "Isaac! Wait!"
-  /// ★ Named from the game: "Garet (child)" (MsgDebugGlyphName)
   ACTOR_STORM_GARET,
-  /// ★ Named from the game: "Jenna" (MsgCharacterName)
   ACTOR_STORM_JENNA ///< "Garet, Isaac... You came to help me?"
 };
 
@@ -319,63 +261,43 @@ enum ValePlazaStormActorId {
 enum ValePlazaFarewellActorId {
   /// The small boy of ACTOR_FIRST_CHILD, at the top of the path. "What,
   /// didn't you hear? Isaac and Garet are leaving Vale on a journey."
-  /// ★ Named from the game: "are leaving Vale on a journey"
-  /// (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_FIRST_CHILD = ACTOR_FIRST_PLACED + 3,
   /// The little girl of ACTOR_SECOND_CHILD: "Why's everyone hanging around
   /// the town gate?"
-  /// ★ Named from the game: "Why's everyone hanging around the town gate?"
-  /// (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_SECOND_CHILD,
   /// The Great Healer, by his sprite (as in vale_eruption.c and sanctum.c). "We
   /// are counting on you, Isaac. Oh, and you, too, Garet."
-  /// ★ Named from the game: "What is it, Great Healer?"
-  /// (MsgSanctumWeHadIdeaTrueSanctum), said to the same sprite in the Sanctum
   ACTOR_FAREWELL_GREAT_HEALER,
   /// The man with long brown hair and a beard in a long robe of vale.c's
   /// ACTOR_MAN_GUARDING_MT_ALEPH: "Hmm... Dora is very late..."
-  /// ★ Named from the game: "Dora is very late" (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_MAN_AWAITING_DORA,
   /// Garet's grandfather, the old man with white hair and a cane. "They can't
   /// keep standing around here like this, or they'll never leave."
-  /// ★ Named from the game: "keep standing around here"
-  /// (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_GRANDFATHER,
   /// Garet's sister, the young woman with an orange ponytail, who gives the
   /// Herb. "I know not to drink stagnant water, Sis!", Garet answers her.
-  /// ★ Named from the game: "stagnant water" (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_SISTER,
   /// Garet's brother, the small boy with orange hair of vale.c's
   /// ACTOR_GARETS_BROTHER, who brings the Catch Beads: "Aunty Dora asked me to
   /// give this to you, Isaac." Of Garet: "He's a pig! He'll eat anything that's
   /// not tied down!"
-  /// ★ Named from the game: "Aunty Dora asked me" (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_BROTHER,
   /// A woman with orange hair under a green headscarf: "As Garet's mother, I
   /// know how Dora must be feeling."
-  /// ★ Named from the game: "I know how Dora must be feeling"
-  /// (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_MOTHER,
   /// Garet's father, a man with brown hair in a teal shirt, by his sprite
   /// (cottage_rooms_a.c's).
-  /// ★ Named from the game: "My own son" (MsgValeImProudOfYouGaretMy), what the
-  /// same sprite says in cottage_rooms_a.c
   ACTOR_FAREWELL_GARETS_FATHER,
   /// The rest of the crowd at the gate, ten who only nod and jump: an old man
   /// with a cane, an old woman, a young man with brown hair, a woman with fair
   /// hair, three strongmen, a burly grey-haired man, a woman in a green dress
   /// and a stout man.
-  /// ★ Named from what the player sees: men, women and a young man of Vale in
-  /// their sprites (its render)
   ACTOR_FAREWELL_FIRST_CROWD_VILLAGER,
   /// The sprite of the dog of vault.c ("Woof! Woof!"), which runs past the
   /// children and later after ACTOR_FAREWELL_CAT.
-  /// ★ Named from the game: "Woof! Woof!" (MsgValeRrruffRrrruff)
   ACTOR_FAREWELL_DOG = ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 10,
   /// A small cat set down where the dog stops, which runs off with the dog
   /// after it. No other scene places its sprite.
-  /// ★ Named from what the player sees: a small white and grey cat (its
-  /// render)
   ACTOR_FAREWELL_CAT
 };
 
@@ -383,53 +305,33 @@ enum ValePlazaFarewellActorId {
 enum ValePlazaAfterKalayActorId {
   /// A young man with brown hair: "Hey, if it isn't Isaac! You came back home,
   /// huh?"
-  /// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
   ACTOR_AFTER_KALAY_WELCOMING_YOUNG_MAN = ACTOR_FIRST_PLACED + 3,
   /// A woman with fair hair: "Oh, Isaac! You came back sooner than I thought!"
-  /// ★ Named from the game: "You came back sooner than I thought!"
-  /// (MsgValeCameBackSooner)
   ACTOR_AFTER_KALAY_WOMAN_BACK_SOONER,
   /// A burly grey-haired man: "It looks like you made some friends in your
   /// travels, Isaac."
-  /// ★ Named from the game: "made some friends in your travels"
-  /// (MsgValeMadeFriendsOnJourney)
   ACTOR_AFTER_KALAY_MAN_ON_NEW_FRIENDS,
   /// A woman in a green dress: "The river in town grew so hot after Mt. Aleph
   /// erupted."
-  /// ★ Named from the game: "The river in town grew so hot after Mt. Aleph
-  /// erupted." (MsgValeRiverHeatedAndCooled)
   ACTOR_AFTER_KALAY_WOMAN_ON_HOT_RIVER,
   /// The same old man as ACTOR_CURIOUS_OLD_MAN: "Did you see anything
   /// interesting on your trip, Isaac?"
-  /// ★ Named from the game: "Did you see anything interesting on your trip"
-  /// (MsgValeAnythingInterestingOnYourTrip)
   ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN,
-  /// ★ Named from the game: "How have you been!" (MsgValeReturnHowHaveYouBeen),
-  /// the woman of ACTOR_STORM_OLD_WOMAN
   ACTOR_AFTER_KALAY_OLD_WOMAN, ///< "Oh, my! Isaac! How have you been!"
   /// The small boy of ACTOR_FIRST_CHILD: "Welcome back, Isaac! It's good to
   /// have you home!"
-  /// ★ Named from the game: "It's good to have you home!" (MsgValeWelcomeHome)
   ACTOR_AFTER_KALAY_FIRST_CHILD,
   /// The little girl of ACTOR_SECOND_CHILD: "I see you made many friends on
   /// your journey."
-  /// ★ Named from the game: "I see you made many friends on your journey."
-  /// (MsgValeWantToMakeFriends)
   ACTOR_AFTER_KALAY_SECOND_CHILD,
   /// A strongman: "The eruption created a terrible mess on the other side of
   /// Mt. Aleph."
-  /// ★ Named from the game: "The eruption created a terrible mess"
-  /// (MsgValeEruptionMadeMess)
   ACTOR_AFTER_KALAY_STRONGMAN_ON_ERUPTION,
   /// A second strongman: "The eruption caused a crack to open on Mt. Aleph's
   /// northwest side."
-  /// ★ Named from the game: "The eruption caused a crack to open"
-  /// (MsgValeNorthwestCrack)
   ACTOR_AFTER_KALAY_STRONGMAN_ON_CRACK,
   /// The hut's owner, the old man with a cane of ACTOR_HUT_OWNER, searching the
   /// ground: "Hey! Where'd that Psynergy Stone go?"
-  /// ★ Named from the game: "Where'd that Psynergy Stone go"
-  /// (MsgValeThePsynergyStoneIsGone)
   ACTOR_AFTER_KALAY_HUT_OWNER
 };
 
@@ -1104,9 +1006,7 @@ s32 ValePlaza_Initialize(void) {
 /// boys being sent back. The return to the river (vale_prologue.c) waits for
 /// it.
 static void ValePlaza_SentToAidElders(void) {
-  struct Actor *leader;
   s32 skipReply = 0;
-  s32 speechFlags = SPEAKER_WINDOW_ABOVE;
 
   if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
@@ -1125,11 +1025,7 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_STORM_GARET, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 789);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_STORM_GARET, leader->x.fixed,
-                             leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_STORM_GARET);
     Actor_WalkToAndWait(ACTOR_STORM_GARET, 179, 804);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -1212,8 +1108,6 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_FaceDirection(ACTOR_STORM_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTHEAST, 10);
-    // Through event.h: called directly, the speeds' copies lengthen
-    // speechFlags' life and swap r5 and r6 below.
     FieldCamera_SetSpeed(1.2);
     FieldCamera_MoveTo(215, CAMERA_KEEP, 758, 1);
     FieldCamera_WaitForMove();
@@ -1236,13 +1130,15 @@ static void ValePlaza_SentToAidElders(void) {
     // and Garet to show the way past the fallen rocks; Jenna thanks Isaac.
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARETS_GRANDFATHER, FACING_SOUTH,
                                    30);
-    ValePlaza_SayThenWait(speechFlags + ACTOR_STORM_GARETS_GRANDFATHER, 10);
+    ValePlaza_SayThenWait(SPEAKER_WINDOW_ABOVE + ACTOR_STORM_GARETS_GRANDFATHER,
+                          10);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_NORTHEAST, 30);
     Actor_SetAnimationAndWait(ACTOR_STORM_JENNA, ANIM_NOD);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARETS_GRANDFATHER, FACING_WEST,
                                    30);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
-    ValePlaza_SayThenWait(speechFlags + ACTOR_STORM_GARETS_GRANDFATHER, 10);
+    ValePlaza_SayThenWait(SPEAKER_WINDOW_ABOVE + ACTOR_STORM_GARETS_GRANDFATHER,
+                          10);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_EAST, 20);
@@ -1344,10 +1240,9 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 /// fight. Win or lose, the party returns by VALE_PLAZA_AFTER_TRAVELERS_BATTLE.
 /// "You must forget everything you heard."
 ///
-/// Called by ValePlaza_MeetSurvivingTravelers. Starts the fifth slot of the
-/// encounter zone of the scripted battles of Vale, Vault and the World Map,
-/// with both outcomes leading back to VALE_PLAZA_AFTER_TRAVELERS_BATTLE, and
-/// sets FLAG_KEEP_MUSIC_ONCE.
+/// Starts the fifth slot of the encounter zone of the scripted battles of
+/// Vale, Vault and the World Map, with both outcomes leading back to
+/// VALE_PLAZA_AFTER_TRAVELERS_BATTLE, and sets FLAG_KEEP_MUSIC_ONCE.
 static void ValePlaza_FightTravelers(void) {
   struct Actor *actor;
 
@@ -1464,7 +1359,6 @@ static void ValePlaza_FightTravelers(void) {
 /// (scene/title.c).
 static void ValePlaza_TravelersLeaveAfterBattle(void) {
   struct Actor *actor;
-  s32 gravityQ8 = 128;
 
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
@@ -1512,13 +1406,13 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, 2.4);
   actor = Actor_Get(ACTOR_FIRST_TRAVELER);
   actor->bounce = Q16_ONE / 100;
-  actor->gravity = gravityQ8 << 8;
+  actor->gravity = px(1) / 2;
   Actor_SetScript(ACTOR_FIRST_TRAVELER, gValePlaza_FirstTravelerBounceActions);
   Event_Wait(24);
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 2.4);
   actor = Actor_Get(ACTOR_SECOND_TRAVELER);
   actor->bounce = Q16_ONE / 100;
-  actor->gravity = gravityQ8 << 8;
+  actor->gravity = px(1) / 2;
   Actor_RunScriptAndWait(ACTOR_SECOND_TRAVELER,
                          gValePlaza_SecondTravelerBounceActions);
   Event_Wait(40);
@@ -1702,13 +1596,10 @@ static void ValePlaza_DepartForQuest(void) {
                                  FACING_SOUTH_SOUTHWEST, 60);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
-  {
-    struct Actor *actor = Actor_GetById(ACTOR_FAREWELL_DOG);
+  actor = Actor_GetById(ACTOR_FAREWELL_DOG);
 
-    if (actor != NULL) {
-      Actor_SetPositionFixed(ACTOR_FAREWELL_CAT, actor->x.fixed,
-                             actor->z.fixed);
-    }
+  if (actor != NULL) {
+    Actor_SetPositionFixed(ACTOR_FAREWELL_CAT, actor->x.fixed, actor->z.fixed);
   }
   priorityFlags = (u8)~ACTOR_PRIORITY_AUTOMATIC;
   wait(2);
@@ -1917,10 +1808,10 @@ static void ValePlaza_DepartForQuest(void) {
   Event_Wait(80);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= priorityFlags;
   {
-    struct Actor *actor = Actor_GetById(ACTOR_GARET);
-    u8 value = (priorityFlags | actor->priorityFlags);
+    struct Actor *garet = Actor_GetById(ACTOR_GARET);
+    u8 flags = priorityFlags | garet->priorityFlags;
 
-    actor->priorityFlags = value;
+    garet->priorityFlags = flags;
   }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -2076,10 +1967,9 @@ static void ValePlaza_UpdateSmallRockPalette(void) {
 /// Arriving by VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_PLAZA_TO_BILIBIN.
 ///
-/// Called by ValePlaza_Initialize. Sets FLAG_NO_ENCOUNTERS and
-/// FLAG_DEBUG_BATTLE_KEYS. From the third patch it sets the whole story up to
-/// Kalay, and before that patch FLAG_TRET_DEFEATED and
-/// FLAG_KOLIMA_CURSE_LIFTED.
+/// Sets FLAG_NO_ENCOUNTERS and FLAG_DEBUG_BATTLE_KEYS. From the third patch it
+/// sets the whole story up to Kalay, and before that patch FLAG_TRET_DEFEATED
+/// and FLAG_KOLIMA_CURSE_LIFTED.
 static void ValePlaza_SetProgressFlagsAndExit(void) {
   GameFlag_Set(FLAG_NO_ENCOUNTERS);
   GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
@@ -2150,18 +2040,18 @@ u8 gValePlaza_UnusedPaletteSteps[] = {
 };
 
 s32 gValePlaza_ChargedUpStrongmanActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(214, 0, 721),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(40),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_MOTION, 3),
     SC_SET(SW_VELOCITY_Y, px(8)),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(214, 0, 763),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -2303,7 +2193,7 @@ s32 gValePlaza_FarewellChaseActions[] = {
 };
 
 s32 gValePlaza_FarewellFirstChildActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(137, 0, 639),
     SC_SYNC,
     SC_MOVE(122, 0, 692),
@@ -2314,12 +2204,12 @@ s32 gValePlaza_FarewellFirstChildActions[] = {
     SC_ACCELERATION(0.6),
     SC_MOVE(148, 0, 770),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_FarewellSecondChildActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(137, 0, 639),
     SC_SYNC,
     SC_MOVE(122, 0, 692),
@@ -2330,12 +2220,12 @@ s32 gValePlaza_FarewellSecondChildActions[] = {
     SC_ACCELERATION(0.6),
     SC_MOVE(164, 0, 758),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_PartyDepartureActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(216, 0, 854),
     SC_SYNC,
     SC_MOVE(215, 0, 921),
@@ -2349,51 +2239,51 @@ s32 gValePlaza_HutOwnerSearchActions[] = {
     SC_ACCELERATION(0.05),
     SC_SET(SW_COLLISION, 3),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
 };
 
 s32 gValePlaza_AideRunActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(148, 0, 758),
     SC_SYNC,
     SC_MOVE(128, 0, 709),
     SC_SYNC,
     SC_MOVE(129, 0, 647),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValePlaza_LeaderStepActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 774),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_StormGaretStepActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 790),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

@@ -1,9 +1,6 @@
 @ The System bank: frames and tasks, memory, resources and the other services
 @ every division calls.
 #include "table.inc"
-@ XXX (no evidence): why the other banks call the functions of this bank
-@ directly, when they reach every other bank through its table; only the
-@ original build could say how the System bank was linked.
 	.global FarCall_RuntimeTable
 FarCall_RuntimeTable:
 	export waitFar, wait

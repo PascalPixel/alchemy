@@ -22,9 +22,6 @@ void Window_UpdateZooms(void) {
   struct Window *window = state->windows;
   s32 index = 0;
 
-  // The loop is written with goto: as a do-while loop, loop.c
-  // keeps the 1 stored on closing in a saved register, and 59 of 99
-  // instructions differ in tbs-en.
 loop:
   // Flags 0 with a duration left means closing (Window_Close clears the
   // flags first).
@@ -46,6 +43,8 @@ loop:
                              (s16)window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
+      /* FAKEMATCH(temporary): the flag through a local; as a plain store, 4 of
+       * 101 instructions differ in tbs-en. */
       {
         u8 dirty = 1;
 
@@ -272,10 +271,9 @@ void Text_ResetStyle(void) {
   state->unusedAfterLineSpacing = 1;
 }
 
-/// Reserves the glyph sprites' tiles, resets the text style, starts the ring
-/// of decoded text from its beginning and starts the per-frame window update
-/// (WindowSystem_Update). Called by the field's setup,
-/// WindowSystem_InitField.
+/// Reserves the glyph sprites' tiles, resets the text style, starts the ring of
+/// decoded text from its beginning and starts the per-frame window update
+/// (WindowSystem_Update).
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
@@ -297,8 +295,7 @@ void WindowSystem_StartFieldUpdate(void) {
 
 /// Resets the text style and starts the per-frame window update
 /// (WindowSystem_Update), reserving the glyph sprites' tiles first when
-/// loadGlyphTiles is set. Called by the battle's setup,
-/// WindowSystem_InitBattle.
+/// loadGlyphTiles is set.
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
@@ -344,8 +341,7 @@ void BattleMessage_Open(s32 argument) {
   struct BattleMessageWork *control;
 
   state = WINDOW_WORK;
-  control = (struct BattleMessageWork *)
-      gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
+  control = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE);
   // message starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
   message = NULL;

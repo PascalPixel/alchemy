@@ -4,10 +4,9 @@
 
 #include "../shop_internal.h"
 
-/// Lets the player choose whose items to sell or repair, with the coins
-/// window and the party member's item grid, and runs Shop_SelectSell or
-/// Shop_SelectRepair for each party member chosen until B. Called by Shop_Run
-/// for Sell and Repair.
+/// Lets the player choose whose items to sell or repair, with the coins window
+/// and the party member's item grid, and runs Shop_SelectSell or
+/// Shop_SelectRepair for each party member chosen until B.
 s32 Shop_ChooseMember(void) {
   struct ShopWork *shop = gMenuWork;
   struct Window *listWindow;
@@ -20,7 +19,7 @@ s32 Shop_ChooseMember(void) {
   Shop_DrawMoney();
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-  shop->cursor.anchor->motion = 4;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = 12;
   Menu_CreatePartyFiguresFar(listWindow, 2, 0, 8, 0);
 
@@ -46,7 +45,7 @@ s32 Shop_ChooseMember(void) {
           Shop_SelectSell(unitId);
         else
           Shop_SelectRepair(unitId);
-        shop->cursor.anchor->motion = 4;
+        shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         shop->mode = 12;
         redraw = 1;
       }
@@ -79,8 +78,7 @@ s32 Shop_ChooseMember(void) {
 
 /// Lets the player choose items to sell from the party member's grid, one at a
 /// time, with each one's price and description, until B or the inventory is
-/// empty. Returns -1 when cancelled, 0 when the inventory ran out. Called by
-/// Shop_ChooseMember.
+/// empty. Returns -1 when cancelled, 0 when the inventory ran out.
 s32 Shop_SelectSell(s32 unitId) {
   struct Window *descriptionWindow;
   struct ShopWork *shop;
@@ -104,7 +102,7 @@ s32 Shop_SelectSell(s32 unitId) {
 
   for (;;) {
     descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
-    shop->cursor.anchor->motion = 18;
+    shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
     shop->mode = 12;
     redraw = 1;
 
@@ -189,8 +187,7 @@ s32 Shop_SelectSell(s32 unitId) {
 }
 
 /// Draws the party member's items as icons in rows of five, or a line saying it
-/// has none. Called by the sell, repair and drop screens each time the party
-/// member changes, and after a sale.
+/// has none.
 void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
   struct Unit *unit;
   s32 x;
@@ -207,8 +204,7 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
       Text_DrawMessageFar(MsgNoItems, window, SHOP_EMPTY_GRID_X,
                           SHOP_EMPTY_GRID_Y);
     } else {
-      slot = 0;
-      do {
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
         if (unit->inventory[slot] != 0) {
           icon = WindowSprite_CreateLoadedFar(unit->inventory[slot], 27, window,
                                               x, y);
@@ -223,15 +219,14 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
           x = 8;
           y += 16;
         }
-        slot++;
-      } while (slot < INVENTORY_SLOTS);
+      }
     }
   }
 }
 
 /// Asks how many to sell when the item is a stack of more than one, and
-/// returns the count (1 otherwise, -1 when cancelled), putting the cursor
-/// back after. Called by Shop_SelectSell.
+/// returns the count (1 otherwise, -1 when cancelled), putting the cursor back
+/// after.
 s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
@@ -253,7 +248,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessage(MsgHowManyToSell);
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
-    shop->cursor.anchor->motion = 4;
+    shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
     shop->mode = 12;
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, stackQuantity, unitSalePrice);
@@ -266,10 +261,9 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 
 /// Sells `count` of the item in `slot`: refuses an item the shop does not buy
 /// or one equipped and cursed on, asks with the offer that fits (an old item
-/// the player just replaced, a broken one, a stack, a rare one), then
-/// discards them, pays the coins and redraws. `count` -1 is the old
-/// equipment the equip prompt offers to sell (Shop_SellOld). Called by
-/// Shop_SelectSell and Shop_SellOld. Each item goes through
+/// the player just replaced, a broken one, a stack, a rare one), then discards
+/// them, pays the coins and redraws. `count` -1 is the old equipment the equip
+/// prompt offers to sell (Shop_SellOld). Each item goes through
 /// Inventory_Discard, so one with a stock counter (an artifact) goes back on
 /// it, and the shops of its type may sell it again.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {

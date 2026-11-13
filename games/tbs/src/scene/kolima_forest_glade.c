@@ -38,7 +38,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "pushed_actor.h"
 #include "io_reg.h"
@@ -51,11 +50,8 @@
 /// gKolimaForestGlade_ActorPlacements.
 enum KolimaForestGladeActorId {
   /// The three logs.
-  /// ★ Named from what the player sees: logs lying on the forest grass among
-  /// the stumps (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// The Nut that floats until Catch pulls it in.
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 

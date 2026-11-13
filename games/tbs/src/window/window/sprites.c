@@ -47,8 +47,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     s32 mark;
 
     font = NULL;
-    if (((struct BattleMessageWork *)
-             gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
+    if (((struct BattleMessageWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE))
             ->window == window) {
       font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
       width = 3;
@@ -59,8 +58,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     character &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
     width = 4;
 #else
-    if (((struct BattleMessageWork *)
-             gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
+    if (((struct BattleMessageWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE))
             ->window == window) {
       Resource_GetTableEntry((s32)&ResourceId_SmallFont);
       Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
@@ -149,7 +147,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       // in screen pixels. 0x4000 in attribute 1 is size 1, with the square
       // shape a 16x16 sprite.
       Dma_Set(tiles, (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * 32),
-              DMA_COPY32(32), REG_DMA3);
+              DMA_COPY_WORDS(32), REG_DMA3);
       ((u16 *)&windowSprite->oam)[0] =
           y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_Y_OFFSET;
       ((u16 *)&windowSprite->oam)[1] =
@@ -169,21 +167,15 @@ done:
   return width;
 }
 
-// The view is a struct of its own for matching: read through a cast of
-// WindowSprite.link instead, WindowSprite_UpdateAll does not match (578
-// instructions become 605), and through WindowSprite itself Window_PutGlyph's
-// position stores move.
-
-/// A view of struct WindowSprite with its sprite cell (from offset 0x10) as the
-/// member attr, for the code that moves and queues the sprite. Its fields are
-/// WindowSprite's.
+/// A window sprite as the code that moves and queues it sees it: its link and
+/// OAM entry are the one sprite cell it queues, attr.
 struct WindowSpriteCellView {
   struct WindowSpriteCellView *next;
   u8 kind;
   u8 active;         ///< its WINDOW_SPRITE_MOTION_ motion
   u16 x;             ///< screen pixels, where the motion is centred
   u16 y;             ///< screen pixels, where the motion is centred
-  u16 unused;        ///< WindowSprite's; no code names it
+  u16 unused;        ///< WindowSprite's
   u16 animationStep; ///< step of its motion's animation
   u8 index;
   u8 sentinel;              ///< depth slot it is drawn at
@@ -270,9 +262,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// The Japanese Window_PutGlyph, which also places the kana marks.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   u8 *work = gWindowWork[0];
-  /* FAKEMATCH(dead): two XORs with tile that cancel keep work and base apart,
-   * with the native ip to r8 copy; as base = work, 2 of 141 instructions
-   * differ in tbs-ja. */
+  /* FAKEMATCH(dead): two XORs with tile that cancel; as base = work, 2 of 141
+   * instructions differ in tbs-ja. */
   u8 *base = (u8 *)((unsigned long)work ^ tile);
   struct WindowSpriteCellView *out;
   s32 idx;

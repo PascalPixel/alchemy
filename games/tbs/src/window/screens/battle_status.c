@@ -172,11 +172,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   statusCount = 0;
   hasDjinn = Party_SumDjinnCountsFar(-1);
 
-  navigation = ((struct BattleMenuWork *)
-                    gWindowWork[HEAP_SLOT_BATTLE_MENU - HEAP_SLOT_WINDOW]);
+  navigation = gBattleMenuWork;
   navigation->timerHidden = 1;
   if (navigation->timerWindow != 0) {
-    Window_Close((struct Window *)navigation->timerWindow, 1);
+    Window_Close(navigation->timerWindow, 1);
     navigation->timerWindow = 0;
   }
   Sound_PlayFar(SE_MENU_CONFIRM);
@@ -372,9 +371,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       portraitSprite.oam.word.attr23 = 0;
 #if TBS_PATCH_4
-      /* FAKEMATCH(barrier): an empty asm, so the move into sl comes between
-       * the two stores and the face tile loads before 0xFC00, as native;
-       * without it, 4 of 1458 instructions differ in tbs-es. */
+      /* FAKEMATCH(barrier): an empty asm; without it, 4 of 1458 instructions
+       * differ in tbs-es. */
       __asm__("");
 #endif
       portraitSprite.oam.f.tile = face->oam.f.tile;
@@ -386,9 +384,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 =
         OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts gFrameCount's
-     * literal in the next pool, as native; without it, 22 of 1392
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm; without it, 22 of
+     * 1392 instructions differ in tbs-en. */
     __asm__("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
@@ -801,7 +798,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   {
     s32 *statusSlotCursor = statusSlots;
 
-    for (i = 10; i >= 0; i--) {
+    for (i = 0; i < 11; i++) {
       VramCache_FreeEntry(*statusSlotCursor++);
     }
   }
@@ -813,16 +810,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
-  PartyStatus_Draw(gBattleWork->partyStatus);
-  // UB: the indexed scalar pointer steps outside gBattleWork to
-  // HEAP_SLOT_BATTLE_MENU.
-#ifdef UBFIX
+  PartyStatus_Draw(
+      ((struct BattleWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE))->partyStatus);
   gBattleMenuWork->timerHidden = 0;
-#else
-  ((struct BattleMenuWork **)&gBattleWork)[HEAP_SLOT_BATTLE_MENU -
-                                           HEAP_SLOT_BATTLE]
-      ->timerHidden = 0;
-#endif
   wait(1);
   return 0;
 }

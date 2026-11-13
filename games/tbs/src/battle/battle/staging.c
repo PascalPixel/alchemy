@@ -120,61 +120,44 @@ finish:
   return fled;
 }
 
-/// Fills a battle effect command from an action run: its kind and strength,
-/// the acting unit and the targets still standing (or every target, for an
-/// battle effect that revives), at least the first. Called by each staging
-/// runner before its battle effect plays: RunUnitTransition, RunAttack,
-/// RunPlainAttack, RunItem and RunPsynergyCast. Writes args' prelude (0), kind,
+/// Fills a battle effect command from an action run: its kind and strength, the
+/// acting unit and the targets still standing (or every target, for an battle
+/// effect that revives), at least the first. Writes args' prelude (0), kind,
 /// variant, user, targets, firstTarget, targetCount and range (1); the caller
 /// sets its side.
 UNREAD_RESULT BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                             struct BattleEffectParams *args) {
-  s16 *outputTarget;
-  u32 flags;
-  s32 livingTargets;
-  s32 targetIndex;
-  u8 *inputTarget;
+  s32 count = 0;
+  s32 i;
 
-  livingTargets = 0;
   args->prelude = 0;
-  flags = plan->battleEffect;
-  args->kind = flags & EFFECT_ID_MASK;
-  args->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
+  args->kind = plan->battleEffect & EFFECT_ID_MASK;
+  args->variant =
+      (plan->battleEffect & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
   args->user = plan->unitId;
-  targetIndex = 0;
-  if (targetIndex < plan->targetCount) {
-    inputTarget = plan->targetIds;
-    outputTarget = args->targets;
-    do {
-      if (Unit_GetFar(*inputTarget)->hp != 0 ||
-          (plan->battleEffect & EFFECT_ON_DOWNED)) {
-        livingTargets++;
-        *outputTarget++ = *inputTarget;
-      }
-      targetIndex++;
-      inputTarget++;
-    } while (targetIndex < plan->targetCount);
+  for (i = 0; i < plan->targetCount; i++) {
+    if (Unit_GetFar(plan->targetIds[i])->hp != 0 ||
+        (plan->battleEffect & EFFECT_ON_DOWNED))
+      args->targets[count++] = plan->targetIds[i];
   }
-  if (livingTargets == 0) {
+  if (count == 0) {
     args->targets[0] = plan->targetIds[0];
-    livingTargets = 1;
+    count = 1;
   }
   args->firstTarget = plan->targetIds[0];
-  args->targetCount = livingTargets;
+  args->targetCount = count;
   args->range = 1;
 }
 
-/// Plays a unit's attempt to run. The flee roll was made as the turn's
-/// actions were gathered (BattleFlee_CheckSuccess); a failed one makes the
-/// turn the enemies' (FIRST_STRIKE_ENEMIES), and that is
-/// what this tests. So the party gets away unless the roll failed ("But
-/// there's no escape!"), each party member able to move running off in turn; an
-/// enemy gets away 7 times in 10 and leaves the battle. Returns 1 when the
-/// party got away.
-/// Called by BattleStaging_DispatchAction for STAGING_FLEE. Turns the
-/// camera to the party's view and holds gBattleBackgroundWork->busy while it
-/// runs; an enemy that gets away is taken out of the lists and its battle
-/// object marked for release.
+/// Plays a unit's attempt to run. The flee roll was made as the turn's actions
+/// were gathered (BattleFlee_CheckSuccess); a failed one makes the turn the
+/// enemies' (FIRST_STRIKE_ENEMIES), and that is what this tests. So the party
+/// gets away unless the roll failed ("But there's no escape!"), each party
+/// member able to move running off in turn; an enemy gets away 7 times in 10
+/// and leaves the battle. Returns 1 when the party got away. Turns the camera
+/// to the party's view and holds gBattleBackgroundWork->busy while it runs; an
+/// enemy that gets away is taken out of the lists and its battle object marked
+/// for release.
 s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -238,14 +221,12 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
 /// Plays a summon or a full-screen Psynergy. The camera turns to the target
 /// side (or to the acting unit's, for a staged battle effect), the unit glows
 /// in its element and the other side fades out; then, unless the cast failed
-/// ("blocked" or too little PP), the target side's units are readied alone
-/// and the battle effect plays during playback. Everyone fades back in.
-/// Called by BattleStaging_DispatchAction for STAGING_SUMMON (with
-/// STAGING_HIDE_ACTOR) and STAGING_FULL_SCREEN. Sets gBattleBackgroundWork's
-/// yaw (and its frames, for a battle effect), REG_BLDCNT and REG_BLDALPHA for
-/// the fades, and the units' colour modes; schedules BattlePlayback_Run around
-/// the battle effect.
-/// @param mode STAGING_HIDE_ACTOR hides the acting unit too (the summons)
+/// ("blocked" or too little PP), the target side's units are readied alone and
+/// the battle effect plays during playback. Everyone fades back in. Sets
+/// gBattleBackgroundWork's yaw (and its frames, for a battle effect),
+/// REG_BLDCNT and REG_BLDALPHA for the fades, and the units' colour modes;
+/// schedules BattlePlayback_Run around the battle effect. @param mode
+/// STAGING_HIDE_ACTOR hides the acting unit too (the summons)
 s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   u16 units[UNIT_MAX];
   struct BattleStagingWork work;
@@ -419,9 +400,6 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
 
 /// Clears the highlights, then applies the action to each target in turn and
 /// plays its events; with no target, only waits for the player.
-/// Called by BattleStaging_DispatchAction for STAGING_MESSAGES, an
-/// action with no battle effect: each target's BattleAbility_ApplyToTarget is
-/// played at once by BattlePlayback_RunAll.
 UNREAD_RESULT BattleStaging_RunActorEntries(struct BattleActionRun *plan,
                                             s32 unused) {
   s32 targetIndex;
@@ -439,11 +417,10 @@ UNREAD_RESULT BattleStaging_RunActorEntries(struct BattleActionRun *plan,
 }
 
 /// Plays an attack: the camera turns halfway to the attacker's view, the
-/// attacker runs up to its first target over its swing's frames, and the
-/// blow lands: a miss makes the target hop back; a hit plays its battle effect
-/// and its playback, and a critical hit zooms in on the pair with only those
-/// two shown. Both then return. A miss "nimbly dodges the blow". Called by
-/// BattleStaging_DispatchAction for STAGING_ATTACK; mode is unused. Sets
+/// attacker runs up to its first target over its swing's frames, and the blow
+/// lands: a miss makes the target hop back; a hit plays its battle effect and
+/// its playback, and a critical hit zooms in on the pair with only those two
+/// shown. Both then return. A miss "nimbly dodges the blow". Sets
 /// gBattleBackgroundWork's yaw (and its flag for a critical hit's zoom), the
 /// window registers (WIN0 and WIN1 to the battlefield, rows 16 to 136, both
 /// turned on), and schedules BattlePlayback_Run around the battle effect.
@@ -469,8 +446,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   {
     struct BattleActionRun *savedPlan = plan;
 
-    /* FAKEMATCH(dead): plan cleared and restored under tests that emit
-     * nothing, ending a CSE block so the first read of plan reloads it;
+    /* FAKEMATCH(dead): plan cleared and restored under tests that emit nothing;
      * without them, 17 of 289 instructions differ in tbs-en. */
     if (view)
       plan = NULL;
@@ -685,12 +661,11 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
 /// the item and, for an item with a battle effect, the screen dims while it
 /// plays with its playback. Then the item is spent as its use type says; when
 /// its slot empties, later item commands of the same party member this turn
-/// follow their items to their new slots (or lose theirs, -1). Called by
-/// BattleStaging_DispatchAction for STAGING_ITEM, with the action's entry as
-/// selection. Sets gBattleBackgroundWork's yaw and, while an battle effect
-/// plays, dims gBattleWork->brightness and BG palettes 6 to 13; changes the
-/// user's inventory (Inventory_RemoveFar, Inventory_BreakFar, or the Empty
-/// Bottle) and the parameters of gBattleWork->actions.
+/// follow their items to their new slots (or lose theirs, -1). Sets
+/// gBattleBackgroundWork's yaw and, while an battle effect plays, dims
+/// gBattleWork->brightness and BG palettes 6 to 13; changes the user's
+/// inventory (Inventory_RemoveFar, Inventory_BreakFar, or the Empty Bottle) and
+/// the parameters of gBattleWork->actions.
 s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingWork work;
@@ -817,9 +792,6 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
 /// Draws every sprite of an actor in a colour mode (enum SpriteColorMode):
 /// colorMode on each sprite's first layer, SPRITE_COLOR_NORMAL on the others,
 /// and every layer's frame set to 255 (none) so that it is drawn again.
-/// Called by BattleMotion_FlashHit and BattlePlayback_Run (a hit's flashes
-/// and a unit's redraw), with the flash's colour or the unit's own
-/// (BattleObject_GetPalette).
 UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   s32 recordIndex = 0;
   s32 childIndex;
@@ -846,14 +818,11 @@ UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   }
 }
 
-/// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
-/// the targets from the caster's side, the caster raises its hand and glows
-/// in its element (no glow for a Djinni); then the cast fails ("blocked" or
-/// too little PP) or its battle effect plays with its playback, and the targets
-/// return to their spots.
-/// Called by BattleStaging_DispatchAction for STAGING_CAST
-/// (CAST_PSYNERGY), STAGING_DJINNI (CAST_DJINNI) and STAGING_ENEMY_CAST
-/// (CAST_ENEMY). Sets gBattleBackgroundWork's yaw (and its frames for a fixed
+/// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward the
+/// targets from the caster's side, the caster raises its hand and glows in its
+/// element (no glow for a Djinni); then the cast fails ("blocked" or too little
+/// PP) or its battle effect plays with its playback, and the targets return to
+/// their spots. Sets gBattleBackgroundWork's yaw (and its frames for a fixed
 /// view), redraws the party status window without its PP row, and schedules
 /// BattlePlayback_Run around the battle effect.
 s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
@@ -968,31 +937,25 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
 /// redraws the party's status at the end.
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
-  u16 *selected;
-  s32 flashesRemaining;
+  s32 flash;
 
+  // DEAD: the unit, fetched and not used; the ROM keeps the call.
   Unit_GetFar(unitId);
   Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, POSE_DAMAGE);
-
-  selected = selection;
-  flashesRemaining = 1;
-  do {
-    s32 listTerminator = BATTLE_UNIT_LIST_END;
-    selected[1] = listTerminator;
-    selected[0] = unitId;
-    PartyStatus_HighlightMembersFar(selected);
+  for (flash = 0; flash < 2; flash++) {
+    selection[0] = unitId;
+    selection[1] = BATTLE_UNIT_LIST_END;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               SPRITE_COLOR_WHITE);
     wait(2);
 
-    selected[0] = unitId;
-    PartyStatus_HighlightMembersFar(selected);
+    selection[0] = unitId;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               BattleObject_GetPalette(unitId));
     wait(2);
-    flashesRemaining--;
-  } while (flashesRemaining >= 0);
-
+  }
   PartyStatus_DrawFar(gBattleWork->partyStatus);
 }
 
@@ -1009,7 +972,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
 void BattleObject_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;
   s32 partyIndex;
-  u32 enemyOrActionIndex;
+  u32 i;
   s32 listedUnit;
 
   // The party's list.
@@ -1025,19 +988,17 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  // The scan is a label loop, the form its branches match with.
-  /* FAKEMATCH(dead): a once-only block round the label loop keeps the party
-   * loop's first test from being peeled ahead of it; as the plain loop, 26 of
-   * 53 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a once-only block round the label loop; as the plain loop,
+   * 26 of 53 instructions differ in tbs-en. */
   do {
-    enemyOrActionIndex = 0;
+    i = 0;
   again:
-    listedUnit = battle->enemyIds[enemyOrActionIndex];
+    listedUnit = battle->enemyIds[i];
     if (listedUnit == unitId) {
-      battle->enemyIds[enemyOrActionIndex] = BATTLE_UNIT_REMOVED;
+      battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
-    enemyOrActionIndex++;
+    i++;
     if (listedUnit == BATTLE_UNIT_LIST_END)
       return;
     goto again;
@@ -1046,10 +1007,9 @@ void BattleObject_RemoveFromLists(s32 unitId) {
 removed:
   // Free the letter that told the enemy apart from others of its class.
   BattleEnemy_ReleaseNameLetter(unitId);
-  for (enemyOrActionIndex = 0; enemyOrActionIndex < BATTLE_ACTION_CAPACITY;
-       enemyOrActionIndex++) {
-    if (battle->actions[enemyOrActionIndex].unitId == unitId)
-      battle->actions[enemyOrActionIndex].unitId = BATTLE_UNIT_LIST_END;
+  for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
+    if (battle->actions[i].unitId == unitId)
+      battle->actions[i].unitId = BATTLE_UNIT_LIST_END;
   }
 }
 

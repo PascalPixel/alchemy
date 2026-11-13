@@ -77,7 +77,7 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     *entry = WINDOW_TILE(tile);
     *mirror = WINDOW_TILE(tile);
   }
-  Dma_Set(pixels, BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP, DMA_COPY32(8),
+  Dma_Set(pixels, BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP, DMA_COPY_WORDS(8),
           REG_DMA3);
 }
 
@@ -576,8 +576,7 @@ void Text_SetColor(s32 param) {
 }
 
 /// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to
-/// 5 a motion of glyph sprites. Reached only through a bare entry of the
-/// window far-call table.
+/// 5 a motion of glyph sprites.
 void Text_SetStyle(u16 value) {
   struct WindowWork *work = WINDOW_WORK;
 

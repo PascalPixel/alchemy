@@ -18,11 +18,7 @@ typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 /// mirrored.
 ///
 /// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
-/// and Render_PlaceProjectedSprite. Writes the sprite animations' script
-/// position, timer and picture, the sprite's dirty flag and tile, its tiles in
-/// OBJ VRAM, and the ActorSystemWork's count of bytes composed; takes heap slot
-/// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
-/// it again.
+/// and Render_PlaceProjectedSprite.
 s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   s32 mirrored;
   u32 size;
@@ -85,8 +81,6 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     if (layer->script == 0) {
       continue;
     }
-    // The command loop is written with goto: as while ((s16)layer->timer <= 0),
-    // 33 of 544 instructions differ in tbs-en.
   read_command:
     if ((s16)layer->timer <= 0) {
       picture = layer->script[layer->scriptOffset++];
@@ -219,9 +213,6 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         continue;
       }
       key = (key << 8) | i;
-      // The scan leaves by goto, which keeps it unrotated with its step at the
-      // top: as a for loop that shifts while drawOrder[k] > key, 156 of 544
-      // instructions differ in tbs-en, and with one break test 91.
       k = drawCount;
       if (k >= 0 && drawOrder[k] > key) {
         drawOrder[k + 1] = drawOrder[k];
@@ -333,8 +324,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
 /// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
 /// image centred on screenX and raised height above screenY, the shadow at
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
-/// parts use the double-size affine mode. It has a bare veneer in the field
-/// far-call table, and no caller names it.
+/// parts use the double-size affine mode.
 void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
                                 s32 screenY, s32 groundHeight, s32 *scale) {
   u32 halfWidth = sprite->width >> 1;
@@ -382,10 +372,6 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
 /// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
 /// has one) and then the image in a draw slot by depth; an actor 100 pixels
 /// or more below the ground takes slot 1 instead, its shadow slot 0.
-///
-/// Called by ActorSystem_PlaceSprites for each one-sprite actor on a
-/// layered map, by the sprite viewer, and as Actor_ApplyProjectedPlacementFar
-/// by the battle effects, field Psynergy and the menus.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -481,10 +467,6 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
 /// the ground below. depth 0 sorts it by distance; any other value is its draw
 /// slot. A sprite off screen gives up its VRAM cache entry unless
 /// retainCacheEntry holds it.
-///
-/// Called by ActorSystem_ProjectSprites for each actor on the world map
-/// and in the battle; while a menu suspends projection
-/// (ActorSystemWork.suspended) every sprite is treated as off screen.
 void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
                                  s32 facing, s32 depth) {
   s32 flip;
@@ -608,9 +590,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 /// Sets the colour mode (SpriteColorMode) of each of a sprite's animations to
 /// value, except sprite animations drawn hidden (SPRITE_COLOR_HIDDEN), and
 /// marks the sprite for redrawing. The sprite's first count sprite animations
-/// must all be present: it does not test them for null. Called by
-/// Actor_SetSpriteColorMode and, as Sprite_SetAnimationColorModesFar, by field
-/// Psynergy, the Sanctum and the Altmiller Cave scene.
+/// must all be present: it does not test them for null.
 void Sprite_SetAnimationColorModes(void *rawSprite, u32 value) {
   struct Sprite *sprite = rawSprite;
   if (sprite != 0) {

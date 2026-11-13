@@ -57,7 +57,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   // HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey.
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_COPY32(8), REG_DMA3);
+          DMA_COPY_WORDS(8), REG_DMA3);
   palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   while (1) {
     Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
@@ -109,69 +109,51 @@ s32 ColossoMenu_Choose(s32 unused) {
 /// closes the window at once (Window_Close with instant set), waits a
 /// frame and frees the portrait's VRAM slot.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
-  struct WindowWork *work = (struct WindowWork *)*gWindowWork;
-  s32 name;
+  struct WindowWork *work = WINDOW_WORK;
+  s32 speaker;
   struct Window *window;
-  s32 sprite[3];
+  s32 portrait[3];
   s32 *entry;
   s32 palette, handle;
-  s32 id;
-  s32 text;
-  s32 *p;
+  s32 *word;
+  u32 cleared;
 
   window = NULL;
-  {
-    u32 cleared = 0;
-
-    name = gDjinn_ElementSprites[element & 3];
-    entry = sprite;
-    window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
-
-    if (window != NULL) {
-      Window_DrawDividerLine(window, 4, 0, 4, 4);
-
-      work->dirty = 1;
-
-      id = Portrait_GetForSpeaker(name);
-      Icon_LoadWithPalette(id, cleared, &handle, &palette, PORTRAIT_PALETTE,
-                           cleared);
-
-      // The portrait as a bare OAM entry, pushed onto draw layer 250 each
-      // frame: a link word, attributes 0 and 1 and attribute 2.
-      p = entry;
-      *p++ = cleared;
-      *p++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
-      *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
-
-      // No voice blips while the message types.
-      work->voiceSound = cleared;
-      work->voiceCountdown = cleared;
-
-      // The message's arguments: the party member (MESSAGE_ARGUMENT_ACTOR) and
-      // the Djinni's name, its ability (ABILITY_DJINNI_FIRST,
-      // MESSAGE_ARGUMENT_ABILITY).
-      MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
-                               ABILITY_DJINNI_FIRST,
-                           MESSAGE_ARGUMENT_ABILITY);
-
-      text = Message_DecodeMode1(element + MsgVenusDjinnJoined);
-
-      JOINED_QUEUE_TEXT(window, text, 36, 2, cleared);
-
-      Sound_PlayFar(MUS_JOINED);
-
-      do {
-        Oam_AddSpriteAtDepth(entry, 250);
-        wait(1);
-      } while (Sound_GetBgmRestoreDelayFar() != 0 &&
-               (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
-
-      Window_Close(window, 2);
-      wait(1);
-      VramCache_FreeEntry(handle);
-    }
-  }
+  cleared = 0;
+  speaker = gDjinn_ElementSprites[element & 3];
+  entry = portrait;
+  window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+  if (window == NULL)
+    return;
+  Window_DrawDividerLine(window, 4, 0, 4, 4);
+  work->dirty = 1;
+  Icon_LoadWithPalette(Portrait_GetForSpeaker(speaker), cleared, &handle,
+                       &palette, PORTRAIT_PALETTE, cleared);
+  // The portrait as a bare OAM entry, pushed onto draw layer 250 each
+  // frame: a link word, attributes 0 and 1 and attribute 2.
+  word = entry;
+  *word++ = cleared;
+  *word++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
+  *word = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
+  // No voice blips while the message types.
+  work->voiceSound = cleared;
+  work->voiceCountdown = cleared;
+  MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
+                           ABILITY_DJINNI_FIRST,
+                       MESSAGE_ARGUMENT_ABILITY);
+  JOINED_QUEUE_TEXT(
+      window, Message_DecodeAndClearArguments(element + MsgVenusDjinnJoined),
+      36, 2, cleared);
+  Sound_PlayFar(MUS_JOINED);
+  do {
+    Oam_AddSpriteAtDepth(entry, 250);
+    wait(1);
+  } while (Sound_GetBgmRestoreDelayFar() != 0 &&
+           (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+  Window_Close(window, 2);
+  wait(1);
+  VramCache_FreeEntry(handle);
 }
 
 /// Returns the portrait character of party member `member` (0-8): from
@@ -192,7 +174,7 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
 /// `<member> joined your party.`, with the party member's portrait. The field's
 /// party events reach it by far call (field/event_commands/event.c).
 void Party_ShowJoinedMessage(s32 member) {
-  struct WindowWork *work = (struct WindowWork *)*gWindowWork;
+  struct WindowWork *work = WINDOW_WORK;
   struct Window *window = NULL;
   s32 sprite[3];
   s32 *entry = sprite;
@@ -215,7 +197,8 @@ void Party_ShowJoinedMessage(s32 member) {
     work->voiceSound = 0;
     work->voiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
-    JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgJoinedParty), 36, 2, 0);
+    JOINED_QUEUE_TEXT(window, Message_DecodeAndClearArguments(MsgJoinedParty),
+                      36, 2, 0);
     Sound_PlayFar(MUS_JOINED);
     do {
       Oam_AddSpriteAtDepth(entry, 250);
@@ -283,8 +266,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     MessageArgument_Push(first, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);
 
-    JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgPairJoinedParty), 68, 2,
-                      0);
+    JOINED_QUEUE_TEXT(
+        window, Message_DecodeAndClearArguments(MsgPairJoinedParty), 68, 2, 0);
 
     Sound_PlayFar(MUS_JOINED);
 

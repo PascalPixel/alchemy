@@ -46,8 +46,7 @@ void Actor_WaitForMove(void *actor) {
 
 /// Returns 1 when the actor has no movement target: none of its target
 /// coordinates set, or for an actor moved by the ground (any motion flag)
-/// neither its target x nor z. Called by Actor_WaitForMove and SC_SYNC
-/// (ActorScript_WaitForArrival).
+/// neither its target x nor z.
 s32 Actor_IsTargetUnset(struct Actor *actor) {
   s32 first;
   s32 second;
@@ -79,7 +78,7 @@ static __inline__ s32 Actor_Square(s32 value) { return value * value; }
 void Actor_UpdateAllThumb(void) {
   struct Actor *actor;
   const ActorScriptWords *script;
-  s32 objectsRemaining;
+  s32 actorsLeft;
   s32 x;
   s32 y;
   s32 z;
@@ -102,12 +101,9 @@ void Actor_UpdateAllThumb(void) {
   u32 phase;
 
   actor = gActors;
-  for (objectsRemaining = ACTOR_COUNT - 1; objectsRemaining >= 0;
-       objectsRemaining--, actor++) {
+  for (actorsLeft = ACTOR_COUNT - 1; actorsLeft >= 0; actorsLeft--, actor++) {
     arrivedAtTarget = 0;
 
-    // The script indexed as words, which compiles as the old word-array
-    // member did.
     script = (const ActorScriptWords *)actor->script;
     if (script == NULL)
       continue;
@@ -514,7 +510,7 @@ UNUSED void Actor_RunUpdateAllFromHeap(void) {
 /// in ACTOR_SYSTEM_BATTLE.
 void Actor_UpdateAllMotion(void) {
   struct Actor *actor;
-  s32 objectsRemaining;
+  s32 actorsLeft;
   s32 y;
   s32 arrivedAtTarget;
   s32 x;
@@ -529,8 +525,7 @@ void Actor_UpdateAllMotion(void) {
   // Fourteen actors, as many as the battle has units (UNIT_MAX in
   // battle/battle/objects.c).
   actor = gActors;
-  for (objectsRemaining = 13; objectsRemaining >= 0;
-       objectsRemaining--, actor++) {
+  for (actorsLeft = 13; actorsLeft >= 0; actorsLeft--, actor++) {
     if (actor->script == 0)
       continue;
     x = actor->x.fixed;

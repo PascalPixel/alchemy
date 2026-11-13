@@ -15,7 +15,7 @@
 /// items a page, picks one, chooses who gets it and how many, and pays. Checks
 /// room in the bag and coins first, and warns when the party member cannot
 /// equip it. An artifact bought takes its stock counter down, and the list is
-/// rebuilt. Repeats until B. Called by Shop_Run.
+/// rebuilt. Repeats until B.
 s32 Shop_SelectBuy(void) {
   struct ShopWork *shop = gMenuWork;
   struct Window *priceWindow = 0;
@@ -239,8 +239,7 @@ close:
 }
 
 /// Draws a page of seven stock items with their prices, the page arrows, and
-/// the chosen item lifted and pulsing. Called by Shop_SelectBuy each time the
-/// cursor moves.
+/// the chosen item lifted and pulsing.
 void Shop_DrawStock(struct Window *window, s32 selected) {
 
   struct ShopWork *shop;
@@ -322,9 +321,8 @@ void Shop_DrawMoney(void) {
 }
 
 /// Draws the item's name and below it its price. With a price of 0 it says
-/// instead that the shop does not buy it (SHOP_PRICE_KIND_SELL) or
-/// that it is not broken (SHOP_PRICE_KIND_REPAIR). Called by the buy, sell and
-/// repair lists.
+/// instead that the shop does not buy it (SHOP_PRICE_KIND_SELL) or that it is
+/// not broken (SHOP_PRICE_KIND_REPAIR).
 void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
                         s32 priceKind) {
   s32 labelMessage;
@@ -356,11 +354,10 @@ draw:
   default:
     goto show_price;
   }
-  return;
 }
 
-/// Shows `message`, an item's description, in the help window; a NULL window
-/// is ignored. Called by the counters' lists each time the cursor moves.
+/// Shows `message`, an item's description, in the help window; a NULL window is
+/// ignored.
 void Shop_DrawMessage(struct Window *window, s32 message) {
   if (window != 0) {
 #if TBS_PATCH_1
@@ -375,7 +372,7 @@ void Shop_DrawMessage(struct Window *window, s32 message) {
 
 /// Shows the chosen party member running in place and the others standing, and
 /// draws at four fifths of their size the party members who cannot equip
-/// `itemId`. Called by every counter's party member choice.
+/// `itemId`.
 void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
   struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
@@ -398,9 +395,8 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
 
 /// Shows how Attack, Defense and Agility would change if the party member wore
 /// the item: equips it in place of what it would replace, recomputes, puts the
-/// slot back and recomputes again, then draws both values with an arrow and
-/// the name of the item it would replace. Called by Shop_SelectBuy for
-/// weapons and armor.
+/// slot back and recomputes again, then draws both values with an arrow and the
+/// name of the item it would replace.
 void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);
@@ -475,7 +471,6 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
     Text_DrawMessageAsTilesFar(replacedItemId + MsgItemName, window, 0, 48);
 }
 /// Shows the quantity already carried and the party member's inventory icons.
-/// Called by Shop_SelectBuy for items that are not equipment.
 void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   // A typed WindowSprite icon store kept the English text extent but changed 76
   // text bytes; retain the existing byte view of the sprite.
@@ -534,10 +529,9 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   }
 }
 
-/// Asks how many to buy when the item stacks, limited by what the coins
-/// buy, the artifact's stock and a stack of 30 less what the party member
-/// carries. Returns the count (1 for other items), or -1 when cancelled. Called
-/// by Shop_SelectBuy.
+/// Asks how many to buy when the item stacks, limited by what the coins buy,
+/// the artifact's stock and a stack of 30 less what the party member carries.
+/// Returns the count (1 for other items), or -1 when cancelled.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopWork *shop;
   struct Unit *unit;
@@ -600,10 +594,9 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 #endif
 
 /// Chooses how many items to buy or sell, returning the quantity above
-/// `minimum` or -1 when cancelled. The bar's fixed prefix is `minimum`
-/// (items already carried when buying); `maximum` must exceed it so at least
-/// one can be chosen. Holds HEAP_SLOT_TILE_SCRATCH for the bar's tiles. Called
-/// by the buy and sell quantity pickers.
+/// `minimum` or -1 when cancelled. The bar's fixed prefix is `minimum` (items
+/// already carried when buying); `maximum` must exceed it so at least one can
+/// be chosen. Holds HEAP_SLOT_TILE_SCRATCH for the bar's tiles.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   void *tileBuffer;
   struct Window *window;
@@ -695,9 +688,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 
 /// Adds each item bought to the party member, charging its price and adding it
 /// to the shop credit one at a time, then offers to equip it and, if equipped,
-/// to sell what it replaced. Called by Shop_SelectBuy, which has already
-/// checked the room and the coins. The artifact counters are not touched
-/// here: Shop_SelectBuy takes them down after.
+/// to sell what it replaced. The artifact counters are not touched here:
+/// Shop_SelectBuy takes them down after.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
   s32 remainingQuantity;
@@ -729,7 +721,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// Offers to equip the item just bought, unless it is equipped already, the
 /// party member cannot equip it, or what it would replace is cursed on. Equips
 /// it on Yes, redraws the grid and warns of a curse. Returns 1 when it was
-/// equipped. Called by Shop_BuyDone.
+/// equipped.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);
@@ -776,9 +768,8 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   return 1;
 }
 
-/// Offers to sell the item the new one replaced, unless there is none or it
-/// is a Psynergy item or indispensable. Returns 1 when it offered. Called by
-/// Shop_BuyDone.
+/// Offers to sell the item the new one replaced, unless there is none or it is
+/// a Psynergy item or indispensable. Returns 1 when it offered.
 s32 Shop_SellOld(s32 unitId, s32 slot) {
   struct Unit *unit;
   s32 itemId;
@@ -818,6 +809,4 @@ s32 Shop_SalePrice(s32 inventoryEntry) {
 
 #undef SHOP_QUANTITY_NUMBER_X
 #undef SHOP_QUANTITY_COIN_LABEL_X
-#undef SHOP_INVENTORY_OFFSET
-#undef SHOP_ICON_DEPTH_OFFSET
 #undef SHOP_STACK_LIMIT

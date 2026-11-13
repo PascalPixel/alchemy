@@ -86,6 +86,7 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "module/scene/tree_rooms.h"
+#include "shared/walk_into_leader.h"
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
@@ -128,11 +129,8 @@
 /// Both speak Tret's lines. The face speaks as he attacks, the second after the
 /// battle.
 enum {
-  /// ★ Named from the game: "Tret was once a kindly forest king."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_TRET = ACTOR_FIRST_PLACED,
   /// Draws nothing the render shows beyond Tret's face.
-  /// ★ Named from the game: "We can't let Tret die like this!" (MsgTretMmmmm)
   ACTOR_SECOND_TRET
 };
 
@@ -188,112 +186,70 @@ static s16 *sLastCocoon;
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN FLAG_SCENE_TEMP_00
 /// Cocoon 22 has been torn by a first step, so the next step on it drops the
 /// leader to the room below. The layout draws it torn, and the setup sets this
 /// flag.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN FLAG_SCENE_TEMP_01
 /// Cocoon 23 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN FLAG_SCENE_TEMP_02
 /// Cocoon 24 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN FLAG_SCENE_TEMP_03
 /// Cocoon 25 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN FLAG_SCENE_TEMP_04
 /// Cocoon 26 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN FLAG_SCENE_TEMP_05
 /// Cocoon 27 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN FLAG_SCENE_TEMP_06
 /// Cocoon 28 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN FLAG_SCENE_TEMP_07
 /// Cocoon 29 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN FLAG_SCENE_TEMP_08
 /// Cocoon 31 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN FLAG_SCENE_TEMP_09
 /// Cocoon 32 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN FLAG_SCENE_TEMP_0A
 /// Cocoon 50, the way down to Tret, has been torn by a first step, so the next
 /// step on it drops the leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN FLAG_SCENE_TEMP_0B
 /// Cocoon 51 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN FLAG_SCENE_TEMP_0C
 /// Cocoon 52 has been torn by a first step, so the next step on it drops the
 /// leader to the room below. The layout draws it torn, and the setup sets this
 /// flag.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN FLAG_SCENE_TEMP_0D
 /// Cocoon 53 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN FLAG_SCENE_TEMP_0E
 /// Cocoon 54 has been torn by a first step, so the next step on it drops the
 /// leader to the room below. The layout draws it torn, and the setup sets this
 /// flag.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN FLAG_SCENE_TEMP_0F
 /// Cocoon 55 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN FLAG_SCENE_TEMP_10
 /// Cocoon 56 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN FLAG_SCENE_TEMP_11
 /// Cocoon 57 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN FLAG_SCENE_TEMP_12
 /// Cocoon 58 has been torn by a first step, so the next step on it drops the
 /// leader to the room below. The layout draws it torn, and the setup sets this
 /// flag.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN FLAG_SCENE_TEMP_13
 /// Cocoon 59 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-/// ★ Named from what the player sees: golden cocoons on a spider web stretched
-/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN FLAG_SCENE_TEMP_14
 
 /// Returns the scene's entrances, the cocoons' landing spots among them.
@@ -528,19 +484,10 @@ static void TreeRooms_FightTret(void) {
   Actor_SetSpritePriority(ACTOR_MIA, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_GARET);
+  Scene_PlaceAtLeader(ACTOR_IVAN);
   if (hasMia != 0) {
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_MIA);
     Actor_SetScript(ACTOR_MIA, gTreeRooms_MiaGathersActions);
   }
   Actor_SetScript(ACTOR_PARTY_LEADER, gTreeRooms_LeaderGathersActions);
@@ -825,19 +772,15 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
 
   wait(1);
   if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
-    s32 openingColumn = 10;
-    MapGrid_CopyCells(121, 34, 3, 1, 93, openingColumn);
+    MapGrid_CopyCells(121, 34, 3, 1, 93, 10);
     {
-      s32 passageColumn = 30;
-      MapGrid_CopyCells(46, 38, 1, 1, passageColumn, 43);
-      MapGrid_CopyCellAttributes(0, 0, 1, 2, passageColumn, 9);
+      MapGrid_CopyCells(46, 38, 1, 1, 30, 43);
+      MapGrid_CopyCellAttributes(0, 0, 1, 2, 30, 9);
     }
-    MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
-    MapGrid_CopyCells(26, 35, 1, 4, openingColumn, 40);
+    MapGrid_CopyCellAttributes(26, 3, 1, 2, 10, 8);
+    MapGrid_CopyCells(26, 35, 1, 4, 10, 40);
   } else {
-    s32 openingColumn = 10;
-    s32 passageColumn = 8;
-    MapGrid_CopyCellAttributes(11, 8, 1, 2, openingColumn, passageColumn);
+    MapGrid_CopyCellAttributes(11, 8, 1, 2, 10, 8);
   }
 }
 
@@ -856,6 +799,7 @@ s32 TreeRooms_EnterRoom(void) {
   struct FieldWork *work;
   s32 entrance;
   s32 leaderActorId;
+  struct Actor *secondTret;
 
   tret = Actor_Get(ACTOR_TRET);
   // Point the cocoon latch at the scene state and save the palette first.
@@ -863,12 +807,10 @@ s32 TreeRooms_EnterRoom(void) {
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -px(10);
-  {
-    struct Actor *tretSpeaker = Actor_Get(ACTOR_SECOND_TRET);
+  secondTret = Actor_Get(ACTOR_SECOND_TRET);
 
-    tretSpeaker->motionFlags = 0;
-    tretSpeaker->y.fixed = -px(10);
-  }
+  secondTret->motionFlags = 0;
+  secondTret->y.fixed = -px(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
@@ -879,7 +821,7 @@ s32 TreeRooms_EnterRoom(void) {
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TreeRooms_ApplyFlaggedMapPatches();
-  grid = HEAP_SLOT_BLOCK(8);
+  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
   layer->offsetX += Iwram_MulQ16(grid->minX + px(160), Q16_ONE / 10);
@@ -956,8 +898,6 @@ static void TretPalette_UpdateMapTint(void) {
   struct PaletteFade *paletteWork;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  // Through its heap slot rather than gPaletteFadeWork, the spelling this
-  // site matched with; the other is not measured.
   paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)
@@ -966,8 +906,8 @@ static void TretPalette_UpdateMapTint(void) {
     return;
   sourceColors += 16;
   destinationColors = (u16 *)&BG_PLTT_COLOR(1, 0);
-  colorIndex = 0;
-  for (; colorIndex < TRET_TINT_COLOR_COUNT; colorIndex++, sourceColors++) {
+  for (colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT;
+       colorIndex++, sourceColors++) {
     redStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex];
     greenStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 1];
     blueStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 2];
@@ -985,9 +925,9 @@ static void TretPalette_UpdateMapTint(void) {
       blueStep -= blueStep / 4 + blueStep / 5;
     }
     color = *sourceColors;
-    red = color & 31;
-    green = (color >> 5) & 31;
-    blue = (color >> 10) & 31;
+    red = RGB_RED(color);
+    green = RGB_GREEN(color);
+    blue = RGB_BLUE(color);
     red += redStep;
     green += greenStep;
     blue += blueStep;
@@ -1003,9 +943,9 @@ static void TretPalette_UpdateMapTint(void) {
       green = 0;
     if (blue < 0)
       blue = 0;
-    *destinationColors++ = (blue << 10) | (green << 5) | red;
+    *destinationColors++ = RGB(red, green, blue);
   }
-  gTreeRooms_TintIndex += (Import_RandomNext() & 7) * 3;
+  gTreeRooms_TintIndex += (Random_Next() & 7) * 3;
   if (gTreeRooms_TintSteps[gTreeRooms_TintIndex] == TRET_TINT_END)
     gTreeRooms_TintIndex = 0;
 }
@@ -1103,8 +1043,8 @@ static void TreeRooms_UpdateSwirlSpark(struct Actor *spark) {
     spark->y.fixed = position.y;
     spark->z.fixed = position.z;
     if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_FRAME) {
-      spark->scaleX += -Q16_ONE / 50;
-      spark->scaleY += -Q16_ONE / 50;
+      spark->scaleX -= Q16_ONE / 50;
+      spark->scaleY -= Q16_ONE / 50;
     }
     spark->timer++;
   } else {
@@ -1286,34 +1226,34 @@ const s32 *gFieldEffect_DurationScripts[] = {
 /// The party gathers in front of Tret before the battle (TreeRooms_FightTret),
 /// each walking to its own place.
 s32 gTreeRooms_LeaderGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_GaretGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(148, 0, 90),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_IvanGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(182, 0, 90),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_MiaGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 104),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -1336,7 +1276,7 @@ s32 gTreeRooms_FaceSinksActions[] = {
 
 /// Garet, Ivan and Mia walk back to the leader and are put away.
 s32 gTreeRooms_RejoinLeaderActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

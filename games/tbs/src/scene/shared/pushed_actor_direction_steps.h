@@ -1,9 +1,6 @@
 /// @file
 /// The cell ahead of a pushed thing for each of sixteen headings, one cell
 /// (16 pixels) along x or z, which every scene with pushed things holds.
-///
-/// An includer whose table the ROM keeps in .rodata defines
-/// PUSHED_ACTOR_TABLE_SECTION first.
 
 #include "types.h"
 #include "pushed_actor.h"

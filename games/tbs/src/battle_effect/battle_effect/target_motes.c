@@ -111,19 +111,13 @@ enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 /// before the end. The effect layer ripples, except for Taint's smokes and
 /// Paralyze.
 ///
-/// Called by the wrappers above, each with its enum TargetMotesMode.
-///
-/// Lasts 8 frames a target plus 64 (the wide styles) or 32. Overwrites
-/// PARTICLES 0 to 511, loads the mode's palette into the first 64 background
-/// colours, and in the rippling modes writes work->bg2xLines each frame for
-/// BattleEffect_ArmBg2AffineHBlankDma, which it adds as a task and removes. It
-/// builds both blitters afresh for each target every frame and releases them
-/// again, Paralyze a mirrored one for each glint too, so it ends with none
-/// held. Demon Fire sets work->shakeFrames.
+/// Lasts 8 frames a target plus 64 (the wide styles) or 32. It builds both
+/// blitters afresh for each target every frame and releases them again,
+/// Paralyze a mirrored one for each glint too, so it ends with none held. Demon
+/// Fire sets work->shakeFrames.
 ///
 /// mode: the style (enum TargetMotesMode).
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -138,8 +132,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 *row;
   s32 i;
 
-  cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   // Motes drawn for each target: 16, but 24 for Demon Fire and 32 for Drown.
   count = 16;
   work->args = args;
@@ -257,7 +251,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                               EFFECT_CLIP_BOUNDS |
                                   gTargetMotes_GlintFlips[Random16() & 3],
                               COMPOSITE_LIGHTEN);
-          ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   TARGET_MOTES_GLINT_PICTURES,
@@ -268,10 +262,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+      draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);
       Transform_ApplyPosition(point);
@@ -378,8 +372,6 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 /// 64 background colours and sets REG_BLDCNT and BG2's affine registers (the
 /// narrow canvas, moved over the party's side when side is EFFECT_SIDE_PARTY).
 void BattleEffect_RunSleep(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 anchor[3];
@@ -392,7 +384,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   s32 targetIndex;
 
   sheep = PARTICLES;
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   // Drawn solid.
@@ -400,10 +393,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  drawUpright = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  drawUpright = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       COMPOSITE_TRANSPARENT);
-  drawFlipped = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  drawFlipped = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall. Each starts 32
   // pixels above the canvas at a random x from 32 to 95, with a random
@@ -496,7 +489,6 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 /// (the narrow canvas, moved over the party's side when side is
 /// EFFECT_SIDE_PARTY).
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
-  void **slot;
   struct BattleEffectWork *work;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
@@ -514,9 +506,8 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   s32 y;
   struct ScreenPoint screenPosition;
 
-  slot = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = slot[0];
-  work = slot[-1];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Drawn solid.
@@ -533,14 +524,13 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // Redraw from blank each frame.
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Each flame starts at a random point of its effect.
   EFFECT_FOR_EACH_TARGET(i, work->args) {
     work->particles[i].variant = Random16() & 63;
   }
-  frame = 0;
-  while (frame != (work->args->targetCount << 5) + 32) {
+  for (frame = 0; frame != (work->args->targetCount << 5) + 32; frame++) {
     if (frame == 32) {
       EFFECT_SHOW_DAMAGE(0);
     }
@@ -574,7 +564,6 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
       } while (i != work->args->targetCount);
     }
     EFFECT_PRESENT_CANVAS(work);
-    frame += 1;
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

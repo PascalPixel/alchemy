@@ -113,15 +113,14 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// fall's flames (0 to 31) and landings (32 to 47), then the burst's screen
 /// motes (0 to 63), in whole pixels.
 ///
-/// Called by BattleEffect_RunMeteor and BattleEffect_RunOuterSpace.
 /// The fall shows Ram_MapGridCellBuffer on BG1 through
 /// BattleEffect_FlushPendingGraphicsTransfer, scrolls BG2 with
 /// BattleEffect_AdvanceBg2OnInterval and colours the backdrop with
 /// BattleEffect_ArmPaletteHBlankDma, and removes all three after; it sets the
 /// background view's active flag while it runs. The projection centre moves
 /// down to line 240 from the dissolve on, until the burst's
-/// BattleEffect_SetupBlendedDisplay puts it back at line 120; the burst's shake
-/// then keeps it within 4 pixels of (120, 120) until
+/// BattleEffect_SetupBlendedDisplay puts it back at line 120; the burst's
+/// shake then keeps it within 4 pixels of (120, 120) until
 /// BattleEffect_EndCanvasLayer puts it back there at the end. The burst sets
 /// BG2 back to the half-scale canvas and ends the canvas layer. Releases the
 /// falling sprites it spawned (Outer Space's on frame 48 of the burst).
@@ -199,7 +198,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     actor->gravity = px(57) / 100;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
-    direction = work->args->side == EFFECT_SIDE_PARTY ? mode : -1;
+    direction = work->args->side == EFFECT_SIDE_PARTY ? 1 : -1;
   } else {
     direction = -1;
   }
@@ -207,7 +206,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // The backdrop and colour 1 go black: the wipe below
   // sweeps the canvas to colour 1, top to bottom.
   PLTT_BACKDROP = 0;
-  *(u16 *)&BG_PLTT[1] = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
@@ -256,7 +255,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
 
-    ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = RGB(red, green, blue);
+    BG_PLTT_COLOR(8, i) = RGB(red, green, blue);
   }
   fill = 0;
   Dma_Set((void *)&fill, canvas, DMA_FILL_WORDS(CANVAS_BYTES / 4), REG_DMA3);
@@ -322,8 +321,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    // One pointer serves both slot reads: two separate reads of gHeapSlots
-    // make the function 3656 bytes long, where tbs-en's is 3640.
     void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
     struct BattleBackgroundWork *view = slots[0];
 
@@ -331,7 +328,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     gBgScroll[1].y = 32;
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
-    draw = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_BACKGROUND];
+    draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening effects write theirs).
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
@@ -341,7 +338,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     work->frame = 0;
     frame = 0;
     do {
-      s32 angle = frame << 8;
+      // The sprite's scale grows 1/256 a frame.
+      s32 growth = frame << 8;
       s32 count = work->frame;
       u8 *sheet = work->sheet;
       s32 dividend;
@@ -351,13 +349,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(temporary): the division written out on a copy of count,
-       * which it tests and biases; as glow = dividend / 4, 27 of 1532
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): the division written out on a copy of count; as
+       * glow = dividend / 4, 27 of 1532 instructions differ in tbs-en. */
       dividend = count;
-      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count,
-       * so the test reads the copy; without them, 4 of 1532 instructions
-       * differ in tbs-en. */
+      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count;
+       * without them, 4 of 1532 instructions differ in tbs-en. */
       if (sheet) {
         count++;
         count--;
@@ -366,9 +362,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         dividend += 3;
       glow = dividend >> 2;
       /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
-       * and r3, so count keeps r2 and sheet takes r0; as line = (u16 *)
-       * (work->sheet + PARTICLE_STREAMS_BACKDROP_LINES), 69 of 1532
-       * instructions differ in tbs-en. */
+       * and r3; as line = (u16 *) (work->sheet +
+       * PARTICLE_STREAMS_BACKDROP_LINES), 69 of 1532 instructions differ in
+       * tbs-en. */
       __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
       line = (u16 *)(sheet + PARTICLE_STREAMS_BACKDROP_LINES);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
@@ -382,8 +378,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 hold;
 
         /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
-         * call, so glow takes r4 and its sp+8 save; without hold, 354 of 1532
-         * instructions differ in tbs-en. */
+         * call; without hold, 354 of 1532 instructions differ in tbs-en. */
         __asm__("" : "=r"(hold));
         /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
          * without it, 354 of 1532 instructions differ in tbs-en. */
@@ -391,8 +386,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if (frame == 0)
           Sound_PlayFar(SE_RUMBLE);
         /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
-         * hold, keep it live across the call; without them, 354 of 1532
-         * instructions differ in tbs-en. */
+         * hold; without them, 354 of 1532 instructions differ in tbs-en. */
         if (hold) {
           hold++;
           hold--;
@@ -413,8 +407,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 blue;
 
         /* FAKEMATCH(dead): updates of quarter that cancel out, under a test of
-         * quarter, keep it live past level's sum, so level takes r2; as level =
-         * quarter + glow alone, 18 of 1532 instructions differ in tbs-en. */
+         * quarter, keep it live past level's sum; as level = quarter + glow
+         * alone, 18 of 1532 instructions differ in tbs-en. */
         if (quarter) {
           quarter++;
           quarter--;
@@ -439,7 +433,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       position.groundHeight = 0;
       position.height = px(255);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        size = angle + Q16_ONE * 5 / 8;
+        size = growth + Q16_ONE * 5 / 8;
         scale.x = size;
         scale.y = size;
         position.x = px(x) + px(80);
@@ -449,7 +443,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale,
                                          0);
       } else {
-        size = angle + Q16_ONE;
+        size = growth + Q16_ONE;
         scale.x = size;
         scale.y = size;
         position.x = px(x) + px(96);
@@ -495,7 +489,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
         draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
-             screenPosition->x - 4, screenPosition->y - 4, 8, 8);
+             spot.x - 4, spot.y - 4, 8, 8);
       }
       if (direction == 1)
         x = frame / 4 - 16;
@@ -558,7 +552,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw = gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Screen motes keep whole canvas pixels, not 16.16: x 0 to 127 and y 127
   // to 254, from the canvas's last row down, from where they rise.

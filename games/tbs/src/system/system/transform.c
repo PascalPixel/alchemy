@@ -13,9 +13,7 @@
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 /// Allocates the one-level save area (heap slot HEAP_SLOT_TRANSFORM_STACK),
-/// clears gTransformStackDepth and resets gTransform to identity. Called by
-/// the battle view setup and the field camera before an event's first
-/// transform.
+/// clears gTransformStackDepth and resets gTransform to identity.
 void Transform_Reset(void) {
   gTransformStackTop =
       HeapSlot_AllocEwram(HEAP_SLOT_TRANSFORM_STACK, sizeof(gTransform));
@@ -25,8 +23,7 @@ void Transform_Reset(void) {
 }
 
 /// Saves gTransform into the save area (one level deep; a second save is
-/// ignored). Called by the battle effects that draw a part with its own
-/// transform, with Transform_Pop after.
+/// ignored).
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
     Dma_Set(gTransform, gTransformStackTop, TRANSFORM_DMA, REG_DMA3);
@@ -35,13 +32,12 @@ void Transform_Push(void) {
   }
 }
 
-/// Copies gTransform to `dst`. Called by BattleEffect_RunAtalanta.
+/// Copies gTransform to `dst`.
 void Transform_Store(void *dst) {
   Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
 }
 
-/// Copies the matrix at `src` into gTransform. Called by
-/// BattleEffect_RunAtalanta.
+/// Copies the matrix at `src` into gTransform.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
 }
@@ -93,8 +89,7 @@ void Transform_ApplyRotation(s32 *angles) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates gTransform about the X axis by `angle`. Called by the battle and
-/// field cameras.
+/// Rotates gTransform about the X axis by `angle`.
 void Transform_ApplyPitch(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
@@ -109,8 +104,7 @@ void Transform_ApplyPitch(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates gTransform about the Y axis by `angle`. Called by the battle and
-/// field cameras.
+/// Rotates gTransform about the Y axis by `angle`.
 void Transform_ApplyYaw(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
@@ -125,8 +119,7 @@ void Transform_ApplyYaw(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates gTransform about the Z axis by `angle`. Called by battle effects
-/// that spin their picture.
+/// Rotates gTransform about the Z axis by `angle`.
 void Transform_ApplyRoll(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
@@ -141,8 +134,7 @@ void Transform_ApplyRoll(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Translates gTransform by `position` (x, y, z in 16.16). Called by the
-/// battle and field cameras and the battle effects.
+/// Translates gTransform by `position` (x, y, z in 16.16).
 void Transform_ApplyPosition(const s32 *position) {
   s32 matrix[12];
 
@@ -154,8 +146,7 @@ void Transform_ApplyPosition(const s32 *position) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Scales gTransform by `scale` (x, y, z factors in 16.16). Called by a few
-/// battle effects (Bind, Astral Blast, Thor).
+/// Scales gTransform by `scale` (x, y, z factors in 16.16).
 void Transform_ApplyScale(const s32 *scale) {
   s32 matrix[12];
 
@@ -238,8 +229,7 @@ void Transform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale) {
 }
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
-/// The camera's sideways axis is kept level (no Y component). Called by
-/// Transform_SetLookAt and Transform_ApplyLookAt.
+/// The camera's sideways axis is kept level (no Y component).
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   u32 code[7];
   s32 dx, dy, dz;
@@ -268,9 +258,8 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = Iwram_UnsignedDivide(num, t) >> 15;
   scale = -scale;
-  /* FAKEMATCH(dead): the normalization in a once-only block, so the axis is
-   * negated before the third product spills; as plain statements, 4 of 215
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the normalization in a once-only block; as plain
+   * statements, 4 of 215 instructions differ in tbs-en. */
   do {
     dx = Iwram_MulQ16(dx, scale);
     dy = Iwram_MulQ16(dy, scale);
@@ -316,13 +305,11 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 }
 
 /// Makes the camera at `eye` looking at `target` the whole of gTransform.
-/// Called by the battle cameras.
 void Transform_SetLookAt(s32 *eye, s32 *target) {
   Transform_BuildLookAt(eye, target, gTransform);
 }
 
-/// Multiplies the camera at `eye` looking at `target` into gTransform. Called
-/// by the battle and field cameras.
+/// Multiplies the camera at `eye` looking at `target` into gTransform.
 void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   s32 work[12];
 
@@ -349,8 +336,7 @@ void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
   gProjection.far = farDepth;
 }
 
-/// Sets gProjection's focal length and depth range directly. Called by the
-/// battle cameras and battle effects.
+/// Sets gProjection's focal length and depth range directly.
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   struct Projection *projection = &gProjection;
 

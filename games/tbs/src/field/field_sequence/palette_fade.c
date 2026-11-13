@@ -11,8 +11,7 @@
 
 /// Sets each of the 1344 colour channels of step to the amount to add each
 /// frame for source to reach target in frames frames; with frames 0 or less
-/// step is left as it was. Called by PaletteFade_StartInterpolation and by
-/// the weather effects (event_commands/weather.c).
+/// step is left as it was.
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
   s32 remainingChannels;
@@ -85,28 +84,19 @@ void PaletteFade_Update(void) {
     u16 *packed = work->packed[work->page];
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed,
-                        (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2));
+                        DMA_COPY_WORDS(COLOR_HALF / 2));
     IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + COLOR_HALF),
-                        (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2));
+                        DMA_COPY_WORDS(COLOR_HALF / 2));
   }
 }
 
-// Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
-// field_sequence_tables.c defines all three const, in ROM; the first two are
-// declared here without it, as PaletteFade_Build compiles differently with it.
-extern u16 gColorBuffer_ChannelCurve[];
-extern u16 gColorBuffer_ChannelCurveLight[];
-extern const u16 gColorBuffer_ChannelCurveContrast[];
-
 /// Builds colours for the palette fade from the palette src into dst, which
 /// holds each colour as B, G and R channels shifted up 10 bits. mode below
-/// 0x8000 is one colour for all; PALETTE_TINT_FROM_SOURCE the backdrop
-/// colour; the other PALETTE_TINT_* values tint each colour; any
-/// other value is the address of a ready buffer to copy. half is the palette
-/// selection: PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
-/// PALETTES_OBJECTS for the OBJ's 224. Called by the
-/// ApplyColorTo functions below, PaletteFade_Initialize and the
-/// weather effects (event_commands/weather.c).
+/// 0x8000 is one colour for all; PALETTE_TINT_FROM_SOURCE the backdrop colour;
+/// the other PALETTE_TINT_* values tint each colour; any other value is the
+/// address of a ready buffer to copy. half is the palette selection:
+/// PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
+/// PALETTES_OBJECTS for the OBJ's 224.
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
@@ -131,7 +121,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;
     *dst++ = (mode & 0x001f) << 10;
-    Dma_Set(dst - 3, dst, (((colorCount - 1) * 6) >> 1) | (DMA_ENABLE << 16),
+    Dma_Set(dst - 3, dst, DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1),
             REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
     switch (mode) {
@@ -363,37 +353,34 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     // colours of three halfwords in.
     if (half == 2)
       mode += COLOR_HALF * 3 * sizeof(u16);
-    Dma_Set((const void *)mode, dst,
-            ((colorCount * 6) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+    Dma_Set((const void *)mode, dst, DMA_COPY_WORDS((colorCount * 6) >> 2),
+            REG_DMA3);
   }
 }
 
-/// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes
-/// and starts updating the palettes from it each frame. Called by
-/// FieldSequence_Run on scene load.
+/// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes and
+/// starts updating the palettes from it each frame.
 void PaletteFade_Initialize(void) {
   struct PaletteFade *work;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
-  Dma_Set((void *)BG_PLTT, &work->palette[0],
-          (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
+  Dma_Set((void *)BG_PLTT, &work->palette[0], DMA_COPY_WORDS(COLOR_HALF / 2),
+          REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
-          (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
+          DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
   PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target, 0);
   Task_Add(PaletteFade_Update, TASK_PASS_FRAME + 15);
 }
 
-/// Stops the palette fade and frees it. Reached only through a bare far-call
-/// veneer; nothing calls it by name.
+/// Stops the palette fade and frees it.
 void PaletteFade_Release(void) {
   Task_Remove(&PaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Sets the colours the buffer moves toward (see PaletteFade_Build); does
-/// nothing without a palette fade. Called by field Psynergy,
-/// the scene transitions, the shop cursor, and scene overlays.
+/// nothing without a palette fade.
 void PaletteFade_SetTarget(s32 mode, s32 half) {
   struct PaletteFade *work = gPaletteFadeWork;
 
@@ -402,9 +389,7 @@ void PaletteFade_SetTarget(s32 mode, s32 half) {
   }
 }
 
-/// Sets the colours the buffer shows now (see PaletteFade_Build). Called by
-/// Reveal, the leader's walking update (walking.c), the transitions, and scene
-/// overlays.
+/// Sets the colours the buffer shows now (see PaletteFade_Build).
 void PaletteFade_SetSource(s32 mode, s32 half) {
   struct PaletteFade *work = gPaletteFadeWork;
 
@@ -413,8 +398,7 @@ void PaletteFade_SetSource(s32 mode, s32 half) {
   }
 }
 
-/// Sets the buffer's source backdrop colour (BG colour 0 of its palette
-/// copy). Called by the transitions (screen_transition.c).
+/// Sets the buffer's source backdrop colour (BG colour 0 of its palette copy).
 void PaletteFade_SetBackdrop(u32 color) {
   struct PaletteFade *work = gPaletteFadeWork;
 

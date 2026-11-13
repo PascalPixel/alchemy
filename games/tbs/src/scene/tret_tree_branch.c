@@ -13,12 +13,12 @@
 /// numbers.
 ///
 /// Vines hang from one branch to the one below. Step triggers on cell behaviors
-/// 10 to 15 lie in pairs at the top and bottom of the vines. In map_047's
-/// map.txt these are cells (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20)
-/// and (40, 26). Each trigger moves the leader and the camera five or six cells
-/// north or south in one step, up or down its vine, with no walk. Each vine has
-/// cell behaviors of its own, so 12 and 13 repeat 10's and 11's events for the
-/// second vine.
+/// 10 to 15 lie in pairs at the top and bottom of the vines. In
+/// tret_tree_branch's map.txt these are cells (7, 12) and (8, 17), (37, 11) and
+/// (36, 16), (41, 20) and (40, 26). Each trigger moves the leader and the
+/// camera five or six cells north or south in one step, up or down its vine,
+/// with no walk. Each vine has cell behaviors of its own, so 12 and 13 repeat
+/// 10's and 11's events for the second vine.
 ///
 /// Breeze, a Jupiter Djinni, stands here until it has joined the party. Its own
 /// flag (FLAG_DJINNI(DJINNI_BREEZE)) removes its actor placement. Talking to it
@@ -72,10 +72,7 @@
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), is the only placed actor. Its
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.
-enum {
-  /// ★ Named from the game: "Breeze" (MsgDjinnName)
-  ACTOR_BREEZE = ACTOR_FIRST_PLACED
-};
+enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED };
 
 /// Starts the scanline-dependent BG3 scroll tasks.
 static void TretTreeBranch_StartBg3Split(void);
@@ -108,15 +105,13 @@ const struct ActorPlacement *TretTreeBranch_GetActorPlacements(void) {
 /// at the ground height of its destination.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
-  struct FieldWork *state = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct Actor *actor;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
   s32 groundHeight;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  // Multiplication keeps negative cell offsets defined; every caller is within
-  // six cells, so the fixed-point result fits in s32.
   offsetX *= px(16);
   offsetZ *= px(16);
 
@@ -130,7 +125,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
     actor->groundHeight = groundHeight;
   }
 
-  actor = state->camera;
+  actor = work->camera;
   if (actor != 0) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;
@@ -183,12 +178,10 @@ static void TretTreeBranch_GoUpSoutheastVine(void) {
 /// The exits' cells have the exits' own numbers as their cell behaviors. Each
 /// leads into Tret Tree's other scene (SceneId_TreeRooms).
 static void TretTreeBranch_EnterTretTreeRooms(void) {
-  struct FieldWork *state = gFieldWork;
-  s16 *touchedExit;
+  struct FieldWork *work = gFieldWork;
 
   Sound_Play(SE_MAP_EXIT);
-  touchedExit = &state->stepTrigger;
-  Import_EventSetExitRequest(*touchedExit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 /// Selects the same mask and window parameters for Reveal and scene entry.

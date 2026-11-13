@@ -7,16 +7,13 @@
 /// Shows the message already set as the actor's thought: the
 /// actor stops and stands while the thought is shown.
 static void Vault_ShowThought(s32 actorId) {
-  u8 *paused = &Actor_GetById(actorId)->paused;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 10 of
-   * 28 instructions differ in tbs-en. */
-  s32 zero = 0;
+  struct Actor *actor = Actor_GetById(actorId);
 
-  *paused = 1;
+  actor->paused = 1;
   Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
   Event_Wait(2);
   Event_ShowMessageAndWait(actorId, 0);
   Event_End();
-  *paused = zero;
+  actor->paused = 0;
 }

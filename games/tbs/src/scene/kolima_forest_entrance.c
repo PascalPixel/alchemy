@@ -51,7 +51,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "tbs_edition.h"
 #include "event.h"
 #include "system_call.h"
@@ -70,40 +69,20 @@
 /// ACTOR_FIRST_PLACED.
 enum {
   /// The three logs. The last is the one that can reach the river.
-  /// ★ Named from what the player sees: a log lying north to south (its
-  /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a log lying north to south (its
-  /// render)
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2,
   /// Tret's wrathful side, unseen while the curse falls.
-  /// ★ Named from the game: "Tret was once a kindly forest king."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_TRET,
   /// Unseen while the curse falls.
-  /// ★ Named from the game: "We are not the only ones who will die, Laurel."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_LAUREL,
   /// The fields of Psynergy, one over each party member. Mia's only with Mia.
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_LEADER_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_IVAN_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_MIA_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_GARET_PSYNERGY_FIELD,
   /// The sparkles of Tret's glamour on the ground, gone once the curse is
   /// lifted.
-  /// ★ Named from the game: "I turned into a tree right when the sparkles
-  /// fell from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_FIRST_GROUND_SPARKLE,
-  /// ★ Named from the game: "I turned into a tree right when the sparkles fell
-  /// from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_LAST_GROUND_SPARKLE = ACTOR_FIRST_GROUND_SPARKLE + 4
 };
 
@@ -114,18 +93,10 @@ static void KolimaForestEntrance_FaceActorAndWait(s32 actorId, s32 facing,
 static void KolimaForestEntrance_SpawnCurseSparkle(void);
 static void KolimaForestEntrance_FlickerPsynergyFields(void);
 
-// Declared here, after the header's falling-effect globals: the order of
-// first declaration lays out the scene's bss as the ROM has it.
-extern s32 gKolimaForestEntrance_PsynergyFieldHit;
-extern s32 gKolimaForestEntrance_MiaInParty;
-extern s32 gKolimaForestEntrance_SparkleSoundOn;
-
 #include "shared/staged_actor.h"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
-/// ★ Named from what the player sees: a log lying north to south beside the
-/// river (its render)
 #define FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER FLAG_SCENE_TEMP_00
 
 /// The end of a field's growing: if a sparkle has burst on a field, the field
@@ -144,7 +115,7 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
 /// At 1200 the timer starts over.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
   s16 *counter = &actor->timer;
-  *counter = (*counter + (((u32)Import_RandomNext() * 100) >> 16));
+  *counter = (*counter + (Random_Below(100)));
   if (*counter > 1000)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
@@ -191,8 +162,6 @@ static void KolimaForestEntrance_PushLog(void) {
     Actor_MoveAndRedraw(res);
     if (res.actorSlot == ACTOR_RIVER_LOG &&
         (FIELD_CELL(res.position.x)) == 20) {
-      struct Actor *actor;
-
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Event_Wait(30);
@@ -203,8 +172,7 @@ static void KolimaForestEntrance_PushLog(void) {
       PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
                                              CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER);
-      actor = Actor_Get(ACTOR_RIVER_LOG);
-      Actor_SetSpriteFlags(actor, 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
     }
   }
 
@@ -265,7 +233,6 @@ s32 KolimaForestEntrance_Initialize(void) {
 ///
 /// Sets FLAG_KOLIMA_CURSE_WITNESSED.
 static void KolimaForestEntrance_WitnessForestCurse(void) {
-  struct Actor *record;
   s32 *party;
   const s32 *sparkleAction;
   const s32 *squashAction;
@@ -280,24 +247,15 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   FieldCamera_MoveTo(246, CAMERA_KEEP, 604, 0);
   party = &gKolimaForestEntrance_MiaInParty;
   *party = GameFlag_Get(FLAG_IN_PARTY(MIA));
-  record = Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_MIA_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_GARET_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_FIRST_GROUND_SPARKLE);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_FIRST_GROUND_SPARKLE + 1);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_FIRST_GROUND_SPARKLE + 2);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_FIRST_GROUND_SPARKLE + 3);
-  Actor_SetSpriteFlags(record, 0);
-  record = Actor_Get(ACTOR_LAST_GROUND_SPARKLE);
-  Actor_SetSpriteFlags(record, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA_PSYNERGY_FIELD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET_PSYNERGY_FIELD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_GROUND_SPARKLE), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_GROUND_SPARKLE + 1), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_GROUND_SPARKLE + 2), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_GROUND_SPARKLE + 3), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LAST_GROUND_SPARKLE), 0);
   sparkleAction = gKolimaForestEntrance_GroundSparkleAction;
   Actor_SetScript(ACTOR_FIRST_GROUND_SPARKLE, sparkleAction);
   Actor_SetScript(ACTOR_FIRST_GROUND_SPARKLE + 1, sparkleAction);
@@ -413,42 +371,34 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   }
   Event_Wait(20);
   if (gKolimaForestEntrance_MiaInParty != 0) {
-    record = Actor_Get(ACTOR_MIA);
-    record->velocityY = px(2);
+    Actor_Get(ACTOR_MIA)->velocityY = px(2);
     Event_Wait(10);
     Actor_SetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
-    record = Actor_Get(ACTOR_MIA);
-    Actor_SetSpriteFlags(record, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
     Event_Wait(10);
   }
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  record->velocityY = px(2);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
   restoreScaleAction = gKolima_PartyRestoreScaleActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleAction);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(record, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Event_Wait(20);
-  record = Actor_Get(ACTOR_GARET);
-  record->velocityY = px(2);
+  Actor_Get(ACTOR_GARET)->velocityY = px(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_GARET, 2, 2);
   Actor_SetScript(ACTOR_GARET, restoreScaleAction);
-  record = Actor_Get(ACTOR_GARET);
-  Actor_SetSpriteFlags(record, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Event_Wait(40);
-  record = Actor_Get(ACTOR_IVAN);
-  record->velocityY = px(2);
+  Actor_Get(ACTOR_IVAN)->velocityY = px(2);
   Event_Wait(10);
   Actor_SetScript(ACTOR_IVAN, restoreScaleAction);
-  record = Actor_Get(ACTOR_IVAN);
-  Actor_SetSpriteFlags(record, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
   gKolimaForestEntrance_SparkleSoundOn = 0;
   Event_Wait(160);
@@ -585,8 +535,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_Wait(40);
   Actor_SetSpritePriority(ACTOR_GARET, 2);
   Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  record = Actor_Get(ACTOR_GARET);
-  Actor_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_SetDestinationOffset(ACTOR_GARET, -3, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -616,8 +565,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Event_Wait(80);
     Actor_SetSpritePriority(ACTOR_MIA, 2);
     Actor_Get(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-    record = Actor_Get(ACTOR_MIA);
-    Actor_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), SPRITE_FLAG_SHADOW);
     Actor_Jump(ACTOR_MIA, 4, 0);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -641,8 +589,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_Wait(20);
   Actor_SetSpritePriority(ACTOR_IVAN, 2);
   Actor_Get(ACTOR_IVAN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  record = Actor_Get(ACTOR_IVAN);
-  Actor_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_IVAN, 4, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -650,8 +597,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_Wait(10);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   KolimaForestEntrance_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST,

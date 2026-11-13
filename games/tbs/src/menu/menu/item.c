@@ -95,8 +95,6 @@ s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
   s32 size = 8192;
 #endif
-  void **process;
-  void **cache;
 
   // Open the menu over the field, which stops moving. The international
   // editions keep 8 KB of the field's window tiles aside while the menu is up
@@ -105,8 +103,8 @@ s32 ItemMenu_Run(void) {
   backup = Heap_AllocEwram(size);
 #endif
   screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  cache = &((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_ACTOR_SYSTEM];
-  ((struct ActorSystemWork *)cache[0])->suspended = 1;
+  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
+      ->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
@@ -116,9 +114,6 @@ s32 ItemMenu_Run(void) {
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
-  // XXX (no evidence): why the Japanese edition leaves the field's tasks
-  // running behind this screen, as the first editions do behind the Psynergy
-  // screen; the patches only add the calls.
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.
   Menu_SuspendFieldTasks();
@@ -132,8 +127,7 @@ s32 ItemMenu_Run(void) {
   result = ItemMenu_RunCommands(&member, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct FieldWork *selection =
-        cache[HEAP_SLOT_FIELD - HEAP_SLOT_ACTOR_SYSTEM];
+    struct FieldWork *selection = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
 
     selection->item = (member << 10) | (item & INVENTORY_ITEM_ID_MASK);
     selection->itemSlot = screen->selectedSlots[0];
@@ -141,25 +135,25 @@ s32 ItemMenu_Run(void) {
 
   // Close the menu and give the screen back to the field.
   WindowSprite_ClearListFar(screen->statusWindow);
-  process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_ACTOR_SYSTEM];
-  ((struct WindowWork *)*process)->holdTilemapUpload = 1;
+  WINDOW_WORK->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   IconMenu_ReleaseArrows();
   HeapSlot_Release(HEAP_SLOT_MENU);
-  ((struct ActorSystemWork *)cache[0])->suspended = 0;
+  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
+      ->suspended = 0;
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backup, size);
-  ((struct WindowWork *)*process)->holdTilemapUpload = 0;
+  WINDOW_WORK->holdTilemapUpload = 0;
   Heap_Release(backup);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  ((struct WindowWork *)*process)->holdTilemapUpload = 0;
+  WINDOW_WORK->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
@@ -949,14 +943,13 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
 
 /// Hides all 32 item icons.
 void ItemMenu_HideAllIcons(void) {
-  s32 hiddenState = ICON_HIDDEN;
   struct WindowSprite **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   s32 slot;
 
-  for (slot = 31; slot >= 0; slot--) {
+  for (slot = 0; slot < 32; slot++) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
-      icon->motion = hiddenState;
+      icon->motion = ICON_HIDDEN;
     }
   }
 }
@@ -966,15 +959,14 @@ void ItemMenu_HideAllIcons(void) {
 void ItemMenu_HidePageIcons(void) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 slot = 0;
-  s32 hiddenState = ICON_HIDDEN;
+  s32 hidden = ICON_HIDDEN;
   struct WindowSprite **iconSlot = menu->entryIcons;
 
   do {
     struct WindowSprite *icon = *iconSlot++;
 
-    if (icon != 0 && slot % MENU_ITEM_GRID_COLUMNS == 0) {
-      icon->motion = hiddenState;
-    }
+    if (icon != NULL && slot % MENU_ITEM_GRID_COLUMNS == 0)
+      icon->motion = hidden;
     slot++;
   } while (slot <= 31);
 }
@@ -1199,7 +1191,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       window = menu->itemWindow;
       Unit_GetFar(menu->memberIds[memberIndex]);
       // The marker over the chosen party member, three tiles a party member.
-      // Nothing in TBS stores sideIcons[1], so it is still NULL from
+      // Nothing stores sideIcons[1], so it is still NULL from
       // Window_InitializeWork: these writes go to the BIOS area at address
       // 0, which ignores them, and no marker is drawn.
       targetMarker = menu->sideIcons[1];
@@ -1389,22 +1381,14 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
 /// Returns how many of party member memberId's 15 inventory slots hold an item.
 s32 ItemMenu_CountItems(s32 memberId) {
-  s32 maskedItemId;
-  s32 remainingSlots;
-  s32 count;
-  u16 *inventory;
+  s32 count = 0;
+  u16 *inventory = Unit_GetFar(memberId)->inventory;
+  s32 slot;
 
-  count = 0;
-  inventory = Unit_GetFar(memberId)->inventory;
-  remainingSlots = INVENTORY_SLOTS - 1;
-  do {
-    maskedItemId = INVENTORY_ITEM_ID_MASK & *inventory;
-    inventory += 1;
-    if (maskedItemId != 0) {
-      count += 1;
-    }
-    remainingSlots -= 1;
-  } while (remainingSlots >= 0);
+  for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
+    if ((*inventory++ & INVENTORY_ITEM_ID_MASK) != 0)
+      count++;
+  }
   return count;
 }
 
@@ -1463,15 +1447,14 @@ s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode) {
 /// 0 draws the list's icons (ICON_KIND_ITEM); any other iconStyle the
 /// equipment view's (ICON_KIND_EQUIPMENT_ITEM).
 void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
-  s32 remaining;
+  s32 i;
   u16 *entries;
   struct WindowSprite **icons;
   s32 itemId;
 
   icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   entries = inventoryEntries;
-  remaining = INVENTORY_SLOTS - 1;
-  do {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     itemId = *entries++;
     if (itemId != 0) {
       if (iconStyle == 0) {
@@ -1483,8 +1466,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
       }
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   Menu_HideEmptyEntryIcons(inventoryEntries);
 }
 
@@ -1517,9 +1499,8 @@ UNUSED void ItemMenu_NoOp(void) {}
 /// redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
   /* FAKEMATCH(temporary): member, an s32, takes the saved unit's address, and
-   * for Psynergy items buffer copies it twice, keeping member in r8 and
-   * panelStyle in r10; as a separate void *saved, 44 of 171 instructions
-   * differ in tbs-en. */
+   * for Psynergy items buffer copies it twice; as a separate void *saved, 44 of
+   * 171 instructions differ in tbs-en. */
   struct ItemMenuWork *menu = gMenuWork;
   s32 panelStyle = 0;
   struct Unit *unit = Unit_GetFar(member);
@@ -2127,10 +2108,9 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #if TBS_PATCH_1
     cursor->motion = ICON_SHOWN;
 #else
-    u8 one = 1;
 
-    cursor->motion = one;
-    menu->flags = one;
+    cursor->motion = 1;
+    menu->flags = 1;
 #endif
   }
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -2188,7 +2168,6 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
       row++;
     }
   }
-  // Each of its effects.
   for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
     if (def->effects[i].kind == EQUIP_EFFECT_NONE)
       continue;

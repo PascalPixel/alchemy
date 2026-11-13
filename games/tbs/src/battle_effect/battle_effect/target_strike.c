@@ -116,12 +116,11 @@ void BattleEffect_RunDrainFang(struct BattleEffectParams *args) {
 /// bite of closing fangs, with the extras its flags choose, and lets the
 /// battle show the damage on the hits.
 ///
-/// Called by the twelve wrappers above, from BattleEffect_RunNumbingSting to
-/// BattleEffect_RunDrainFang. Loads the style's colours over the first 64 of
-/// the background palette; uses work->particles 0 to 63 for smoke, PARTICLES 0
-/// to 127 for motes and TARGET_STRIKE_SPARKS for sparks; builds and frees its
-/// blitters in both slots every frame, sets work->shakeFrames on each hit and
-/// lights the user while an absorb runs. Leaves the canvas layer closed.
+/// Loads the style's colours over the first 64 of the background palette; uses
+/// work->particles 0 to 63 for smoke, PARTICLES 0 to 127 for motes and
+/// TARGET_STRIKE_SPARKS for sparks; builds and frees its blitters in both slots
+/// every frame, sets work->shakeFrames on each hit and lights the user while an
+/// absorb runs. Leaves the canvas layer closed.
 ///
 /// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Styles.
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
@@ -130,8 +129,6 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint alternate;
   struct ScreenPoint position;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -144,10 +141,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   DrawRectangle *lower;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  lower = (DrawRectangle *)&EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  lower = (DrawRectangle *)&HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+  particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
     BattleEffect_StartCanvasLayer(0);

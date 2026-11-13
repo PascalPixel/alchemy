@@ -8,8 +8,6 @@
 /// Returns 1 for an effect that still applies when the ability's damage has
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the user.
-/// Called by BattleAbility_ApplyToTarget before the added effect.
-/// @param effect the ability's effect (enum AbilityEffect)
 s32 Ability_EffectAppliesToDowned(s32 effect) {
   switch (effect) {
   case ABILITY_EFFECT_DRAIN_HP:
@@ -58,9 +56,6 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// Party unit ids run to ALLY_MAX; enemy units start at FIRST_ENEMY_UNIT.
 #define IS_PARTY_UNIT(unitId) ((unitId) >= 0 && (unitId) <= ALLY_MAX)
 
-// The helpers below are macros because the bytes need them so: written as
-// inline functions they compile to different code.
-
 /// Holds a stat stage within STAT_STAGE_MIN to STAT_STAGE_MAX.
 #define CLAMP_STAT_STAGE(stage)                                                \
   {                                                                            \
@@ -101,13 +96,8 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// Unit_RecalculateGaugesFar its HP and PP gauges after either changes.
 ///
 /// Called for each target in turn by BattlePlayback_Run (an action with an
-/// battle effect) and BattleStaging_RunActorEntries (one without). Changes the
-/// target's HP, PP, statuses, stat stages and turns, and its guard; the user's
-/// HP or PP for a drain, and plan->hauntDamage; adds an enemy to
-/// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag
-/// bit 1 when the party is challenged; queues the playback that shows it all.
-/// It takes Battle_RandomFar rolls, and borrows a heap block for the target's
-/// copy.
+/// battle effect) and BattleStaging_RunActorEntries (one without). It takes
+/// Battle_RandomFar rolls, and borrows a heap block for the target's copy.
 ///
 /// It runs in phases, each marked in the body:
 /// 1. Setup: a copy of the target as it was; the target's distance from the
@@ -215,8 +205,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       affinity = 1;
   }
 
-  // The user's power in the ability's element; items always use 100. (Here
-  // and below the element is read from plan again, as the bytes need.)
+  // The user's power in the ability's element; items always use 100.
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
       plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;
@@ -821,8 +810,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 #endif
 
       // UB: a pointer walks from hp down past it to hpMax, reading each stat
-      // twice, unsigned and signed, as the ROM does; the member reads behind
-      // UBFIX share one load each.
+      // twice, unsigned and signed; the member reads behind UBFIX share one
+      // load each.
 #ifdef UBFIX
       oldHp = (u16)target->hp;
       newHp = target->hp;
@@ -1321,14 +1310,11 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 
 /// Returns 1 for an ability that costs PP, and for Psy Drain, which costs
 /// none.
-/// Called by BattleActionRun_Build (a cast's staging) and
-/// BattleAI_ChooseAction (an enemy's PP and seal checks).
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 
   if (abilityId == ABILITY_PSY_DRAIN)
     return 1;
   pp = Ability_Get(abilityId)->ppCost;
-  // The sign bit of -pp | pp: 1 when pp is not 0, with no branch.
-  return (u32)((0 - pp) | pp) >> 31;
+  return pp != 0;
 }

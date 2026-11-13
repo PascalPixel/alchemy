@@ -222,9 +222,8 @@ u32 Save_BuildFileSummary(void) {
     // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
     n = 242;
     /* FAKEMATCH(dead): a never-taken null arm, whose updates cancel, and an
-     * else arm whose frame load is reloaded below, end CSE with the bound
-     * constant ahead of the frame load; with no arm, 2 of 174 instructions
-     * differ in tbs-en. */
+     * else arm whose frame load is reloaded below; with no arm, 2 of 174
+     * instructions differ in tbs-en. */
     if (!frame) {
       n++;
       n--;
@@ -675,7 +674,7 @@ void FileList_PlacePartySprites(void) {
 /// (x, y) inside `window`, and starts placing them every frame
 /// (FileList_PlaceDjinnSprites). Does nothing when `window` is NULL.
 void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
-  struct ItemMenuFiguresView *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 i;
 
   if (window != NULL) {
@@ -688,10 +687,10 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
         sprite->image.priority = 0;
       }
 
-      menu->animations[i] = sprite;
-      menu->positionsX[i] =
+      menu->figures[i] = sprite;
+      menu->figureX[i] =
           (window->x + x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
-      menu->positionsY[i] = (window->y + y) * 8 + 16;
+      menu->figureY[i] = (window->y + y) * 8 + 16;
     }
 
     Task_Add(FileList_PlaceDjinnSprites, FILE_LIST_SPRITE_PRIORITY);
@@ -700,14 +699,14 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
 
 /// Stops placing the Djinn sprites of the file list and releases them.
 void FileList_HideDjinnSprites(void) {
-  struct ItemMenuFiguresView *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 i;
 
   Task_Remove(FileList_PlaceDjinnSprites);
   for (i = 0; i < 4; i++) {
-    if (menu->animations[i] != NULL) {
-      Sprite_DestroyFar(menu->animations[i]);
-      menu->animations[i] = NULL;
+    if (menu->figures[i] != NULL) {
+      Sprite_DestroyFar(menu->figures[i]);
+      menu->figures[i] = NULL;
     }
   }
 }
@@ -715,14 +714,13 @@ void FileList_HideDjinnSprites(void) {
 /// A task: draws each Djinn sprite of the file list at its
 /// place, at scale 1.0, for this frame.
 void FileList_PlaceDjinnSprites(void) {
-  struct ItemMenuFiguresView *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 index;
 
-  index = 0;
-  do {
-    struct Sprite *sprite = menu->animations[index];
+  for (index = 0; index <= 3; index++) {
+    struct Sprite *sprite = menu->figures[index];
 
     if (sprite != NULL) {
       s32 one = Q16_ONE;
@@ -730,14 +728,13 @@ void FileList_PlaceDjinnSprites(void) {
 
       scale.x = one;
       scale.y = one;
-      position.x = px(menu->positionsX[index]);
+      position.x = px(menu->figureX[index]);
       position.height = height;
-      position.y = px(menu->positionsY[index]) + height;
+      position.y = px(menu->figureY[index]) + height;
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }
-    index++;
-  } while (index <= 3);
+  }
 }
 
 /// Draws the Djinn counts of save file `summary`, one for each element, two
@@ -877,12 +874,12 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
 #endif
 
   spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(*spriteWork));
-  save = *(gHeapSlots + HEAP_SLOT_SAVE);
+  save = gSaveWork;
   summaryWindow = NULL;
   partyWindow = NULL;
   djinnWindow = NULL;
   summaryDirty = 1;
-  work = *(gHeapSlots + HEAP_SLOT_WINDOW);
+  work = WINDOW_WORK;
   buildStamp = BuildStamp_GetTimeFar();
   // Start on the first file the mode allows.
   // BUG: when none is, the jump to done returns FILE_LIST_NO_FILE without

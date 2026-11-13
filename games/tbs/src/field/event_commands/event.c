@@ -65,10 +65,7 @@ void Event_Wait(s32 frames) {
 
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
-/// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// Event_Start, by FieldSequence_Run before it handles several requests,
-/// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
-/// the World Map's zoom (WorldMap_ZoomOutWhileLHeld).
+/// or the climbing pose (12) while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
@@ -110,8 +107,6 @@ void Event_Start(void) {
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
-  // XXX (no evidence): what flag 0x132 marks; it is cleared at every event,
-  // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
   runtime->speaker = gMainRoutineWork.leaderActorId;
   runtime->messageWindow = 0;
@@ -133,21 +128,15 @@ UNUSED void Event_NoOpUpdateA(void) {}
 void Event_NoOpUpdate(void) {}
 
 /// Respawns the scene's actors from an actor placement table and
-/// waits one frame for them to appear. Reached only through an unnamed veneer
-/// in the field sequence bank's far-call table; nothing in The Broken Seal
-/// names it.
+/// waits one frame for them to appear.
 void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
   wait(1);
-  // XXX (no evidence): why the leader's actor is fetched and dropped; no
-  // code calls this function, so no caller reads a result.
   Actor_Lookup(gMainRoutineWork.leaderActorId);
 }
 
-/// Spawns the actors of an actor placement table after the last
-/// actor in use. Called by the Kolima, Kalay and Tolbi ship events
-/// to bring actors in during an event.
+/// Spawns the actors of an actor placement table after the last actor in use.
 void Event_AppendActorPlacements(struct ActorPlacement *table) {
   Event_SpawnActorPlacements(table, Actor_FindLastActiveId());
 }
@@ -160,10 +149,8 @@ void Event_SetTriggers(const struct Trigger *triggers) {
   work->triggers = triggers;
 }
 
-/// Adds unit to the party. With announce nonzero it also shows
-/// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
-/// announce too). Called by six events as a character joins (Vale,
-/// the Vault, Goma Cave and Mercury Lighthouse among them).
+/// Adds unit to the party. With announce nonzero it also shows `<name> joined
+/// your party.` (Party_ShowJoinedMessage, which receives announce too).
 void Event_AddPartyMember(s32 unit, s32 announce) {
   Unit_GetFar(unit);
   Party_AddMemberFar(unit);
@@ -212,8 +199,7 @@ void Party_ClearUnusableShortcuts(void) {
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
 /// poison. If no party member left standing has HP, the leader is given 1 HP so
-/// the party is never left all down. Called by the events where a party member
-/// leaves: Vale in the storm, the Vault, and Sol Sanctum.
+/// the party is never left all down.
 void Party_RemoveMemberRestored(s32 unit) {
   struct Unit *vitals;
   s32 partyIndex;
@@ -324,10 +310,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       // one.
       {
         struct Unit *unit = Unit_GetFar(member);
-        /* FAKEMATCH(dead): unit and the picked item read through it, which
-         * nothing uses, load the slot before the member for the call below; as
-         * Unit_GetFar(member); with the call's result unused, 2 of 181
-         * instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): unit and the picked item read through it; with the
+         * call's result unused, 2 of 181 instructions differ in tbs-en. */
         UNUSED s32 pickedItem = unit->inventory[slot];
 
         discardQuantity = Shop_GetSelectionState(member, slot);
@@ -375,8 +359,6 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 }
 
 /// Gives item to one party member. Returns unit, or -1 if its bag is full.
-/// Reached only through an unnamed veneer in the field sequence bank's far-call
-/// table; nothing in The Broken Seal names it.
 s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
     return unit;
@@ -389,10 +371,9 @@ void Inventory_NoOpCallback(void) {}
 /// An empty function; nothing in The Broken Seal calls it.
 void Inventory_ReservedNoOp(void) {}
 
-/// Waits, at most 90 frames, for an actor's animation to stop being
-/// animation: the actor has finished a one-off animation such as a nod.
-/// Only actors drawn as a sprite (ACTOR_SPRITE_ONE) are
-/// waited for. Called by Event_AskYesNoWithActorAnimation.
+/// Waits, at most 90 frames, for an actor's animation to stop being animation:
+/// the actor has finished a one-off animation such as a nod. Only actors drawn
+/// as a sprite (ACTOR_SPRITE_ONE) are waited for.
 void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -466,9 +447,8 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   return answer;
 }
 
-/// Asks yes or no at the top of the screen, or at the bottom with atBottom
-/// set. Returns 0 for yes, 1 for no. Called by PartyInventory_GiveItem,
-/// Field_UseItem, Field_UsePsynergy and the cleared game's menu.
+/// Asks yes or no at the top of the screen, or at the bottom with atBottom set.
+/// Returns 0 for yes, 1 for no.
 s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
 /// Teaches unit the Psynergy ability and says so with its jingle, waiting for
@@ -508,11 +488,9 @@ void Event_FinishScreenTransition(void) {
 /// (work->transitionFrames). Events reach it.
 void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
-/// Makes the event leave for the given entrance of the given scene:
-/// raises the exit request EXIT_KEEP_DESTINATION and writes
-/// gMainRoutineWork.next and entrance. Called by the Title, the File
-/// Screen, the Battle Arena, the debug battle command and five events (the
-/// Lemurian ship and the World Map among them).
+/// Makes the event leave for the given entrance of the given scene: raises the
+/// exit request EXIT_KEEP_DESTINATION and writes gMainRoutineWork.next and
+/// entrance.
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
   gMainRoutineWork.next = sceneId;
@@ -520,8 +498,7 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 }
 
 /// Makes the event leave and records scene and entrance as the restart
-/// point. Reached only through an unnamed veneer in the field sequence bank's
-/// far-call table; nothing in The Broken Seal names it.
+/// point.
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
   state->exit = EXIT_KEEP_DESTINATION;

@@ -13,10 +13,6 @@
 /// Spawns a pair of rings of light on the actor, one rising and one falling
 /// (field_effect_vertical.h), sharing the field effect's cached tiles, with
 /// the sound the includer names as PSYNERGY_RINGS_SOUND.
-/// ★ Named from what the player sees: rings of light rise and fall around the
-/// elders holding the Boulder and around Sheba at the aerie
-/// (ValePrologue_WatchBoulderFall,
-/// VenusLighthouseAerie_ConfrontSaturosAndMenardi)
 static void Scene_SpawnPsynergyRings(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;

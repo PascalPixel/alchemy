@@ -17,6 +17,7 @@
 #include "input.h"
 #include "far_call.h"
 #include "frame.h"
+#include "heap.h"
 
 enum { BATTLE_LIST_ROWS = 5 };
 
@@ -66,8 +67,6 @@ struct CursorSprite {
 };
 
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
-// A statement macro (4 sites), the shape every use matches through; as plain
-// stores, 4 of 49 instructions differ in tbs-en (BattleCommandRow_LoadIcon).
 #define MenuSprite_Initialize(sprite, shape)                                   \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
@@ -115,10 +114,8 @@ struct BattleMenuWork {
   /// The command row's choice: [0] for the party's row (fight, flee,
   /// status), [1] for a party member's commands.
   s32 commandSelection[2];
-  /// The window that shows the link battle's seconds left, a struct Window
-  /// pointer kept as a word (as a pointer, two of the turn's first stores
-  /// swap), or 0.
-  s32 timerWindow;
+  /// The window that shows the link battle's seconds left, or NULL.
+  struct Window *timerWindow;
   /// Set while the status screen is open, so the timer opens no window.
   s32 timerHidden;
   /// Frames left to choose commands in a link battle; -1 outside link battles.
@@ -157,8 +154,6 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, commandActor) == 0xe0);
 STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
 
 /// Restores the previous selection: page, row and return row.
-// A statement macro (4 sites): the three cursor reads stay
-// together at every use; as a plain block, tbs-en differs.
 #define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
     (page_) = ((struct BattleMenuWork *)gWindowWork[42])->page;                \
@@ -167,8 +162,6 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
   } while (0)
 
 /// Saves the selection: page, row and return row.
-// A statement macro (7 sites), the shape every use matches through; as plain
-// stores, 46 of 770 instructions differ in tbs-en (BattleItemMenu_Run).
 #define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
     gBattleMenuWork->page = (page_);                                           \
@@ -176,7 +169,8 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
     gBattleMenuWork->preferredRow = (preferred_);                              \
   } while (0)
 
-extern struct BattleMenuWork *gBattleMenuWork;
+#define gBattleMenuWork                                                        \
+  (*(struct BattleMenuWork **)&gHeapSlots[HEAP_SLOT_BATTLE_MENU])
 extern const u8 gMenu_AnimatedCursorTiles[];
 
 #endif

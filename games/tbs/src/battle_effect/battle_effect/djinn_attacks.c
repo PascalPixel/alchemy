@@ -8,37 +8,13 @@
 
 /// Copies a w x h byte picture into an h x w one turned 90 degrees
 /// clockwise: the top row of src becomes the right column of dst.
-///
-/// Called twice by BattleEffect_RunMercury, to lay the blue flame sheet's two
-/// pictures on their side. Writes only dst.
 void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
-  s32 y;
   s32 x;
-  s32 column;
-  s32 offset;
-  u8 *to;
-  const u8 *from;
+  s32 y;
 
-  y = 0;
-  if (h != 0) {
-    offset = 0;
-    column = h;
-    do {
-      x = 0;
-      if (w != 0) {
-        to = (u8 *)(column + (u32)dst - 1);
-        from = (const u8 *)(offset + (u32)src);
-        do {
-          x++;
-          *to = *from;
-          from++;
-          to += h;
-        } while (x != w);
-      }
-      y++;
-      offset += w;
-      column--;
-    } while (y != h);
+  for (y = 0; y != h; y++) {
+    for (x = 0; x != w; x++)
+      dst[x * h + (h - 1 - y)] = src[y * w + x];
   }
 }
 
@@ -87,8 +63,6 @@ enum MercurySheetPicture {
 ///
 /// args: the targets.
 void BattleEffect_RunMercury(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -100,8 +74,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_FetchRectangleBlitters(0, blit);
@@ -122,8 +97,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_WAVE);
-  frame = 0;
-  do {
+  for (frame = 0; frame != MERCURY_FRAMES; frame++) {
     if (frame == 56)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
@@ -207,8 +181,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != MERCURY_FRAMES);
+  }
   EFFECT_FINISH_CANVAS();
 }
 
@@ -229,8 +202,6 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 ///
 /// args: the targets.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -243,8 +214,9 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   s32 j;
   s32 angle;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -324,7 +296,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 1;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+        EFFECT_DRAW_MOTE(blit[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
         Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
         mote->variant--;
@@ -339,9 +311,6 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 }
 
 /// Decompresses a resource whose first 128 bytes may be a palette.
-///
-/// Called by nearly every effect to load its pictures. Writes dst and, with
-/// copyPalette, the first 128 bytes of BG palette RAM.
 ///
 /// id: the resource.
 /// dst: receives the decompressed data.
@@ -381,8 +350,6 @@ enum VenusSheetPicture {
 ///
 /// args: the targets.
 void BattleEffect_RunVenus(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -394,8 +361,9 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   s32 j;
   s32 angle;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -403,8 +371,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
@@ -488,9 +456,9 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 }
 
 #define MARS_FRAMES 112
-#define MARS_FLAMES 9            ///< flames along the arc
-#define MARS_EMBERS_PER_FLAME 16 ///< embers in each flame
-#define MARS_GLOW_ORB (20 * 40)  ///< six 40x40 pictures, after the 20x40 Djinni
+#define MARS_FLAMES 9 ///< flames along the arc
+#define MARS_EMBERS_PER_FLAME 16
+#define MARS_GLOW_ORB (20 * 40) ///< six 40x40 pictures, after the 20x40 Djinni
 
 /// A fireball blooms high over the targets and burns out, the Mars Djinni
 /// appears where it was and dives onto them, nine flames erupt in a row along
@@ -514,8 +482,6 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 ///
 /// args: the targets.
 void BattleEffect_RunMars(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -527,8 +493,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   s32 i;
   s32 diveY;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_FetchRectangleBlitters(0, blitters);

@@ -17,14 +17,10 @@
 /// alternately mirrored; the battle shows the damage on frame 8. The chips live
 /// in PARTICLES, since work holds the waves' sheet.
 ///
-/// The Djinni entrance plays whatever the prelude. Writes REG_BLDALPHA and
-/// the first 128 bytes of BG palette RAM (the water spray's, then the ice
-/// chips' on frame 1), sets work->shakeFrames on frame 8.
+/// The Djinni entrance plays whatever the prelude.
 ///
 /// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   struct ScreenPoint origin;
@@ -36,10 +32,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   s32 frame;
   s32 rise;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  // A Mercury Djinni appears over the user.
   BattleEffect_RunDjinniEntrance(args, ELEMENT_MERCURY, work->args->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
@@ -174,10 +170,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// Abilities: Ground (BATTLE_EFFECT_GROUND).
 ///
 /// A portal's variant is 1 while it flies and 0 once it has struck; its
-/// crackles are particles 32 to 63, four for each portal, each with its
-/// picture in velocityX and its blitter flags in velocityY. The Djinni
-/// entrance plays whatever the prelude. Writes REG_BLDALPHA, sets
-/// work->shakeFrames on each strike.
+/// crackles are particles 32 to 63, four for each portal, each with its picture
+/// in velocityX and its blitter flags in velocityY. The Djinni entrance plays
+/// whatever the prelude.
 ///
 /// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
@@ -199,7 +194,6 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  // A Venus Djinni appears over the user.
   BattleEffect_RunDjinniEntrance(args, ELEMENT_VENUS, work->args->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -210,7 +204,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GROUND_DJINNI_PICTURE, 1, 1);
@@ -252,7 +246,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
-        ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
             canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
@@ -303,7 +297,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, crackle->velocityY,
                                 COMPOSITE_LIGHTEN);
-            draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+            draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
             if (crackle->velocityY & 4)
               crackleX = x - gHail_PortalWidths[crackle->velocityX] -
                          gHail_PortalX[crackle->velocityX] + 24;
@@ -357,9 +351,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 /// takes two random numbers each shaking frame, x first.
 ///
 /// Called once a frame by nearly every effect, before it presents the frame.
-/// Writes gBgScroll[1] and gProjection.centerX and centerY, and counts down
-/// work->shakeFrames. The x offset is centred on half of rangeY too, so with
-/// rangeX smaller (Hail's 4 and 8) the x offset is never positive.
+/// The x offset is centred on half of rangeY too, so with rangeX smaller
+/// (Hail's 4 and 8) the x offset is never positive.
 ///
 /// rangeX: the horizontal range, a power of two.
 /// rangeY: the vertical range, a power of two; both offsets are centred on

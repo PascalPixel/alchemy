@@ -41,8 +41,8 @@
 ///   (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA).
 ///
 ///   That table's two jars, an Apple and an Herb (examine triggers 100 and
-///   101), are in the village. Only Kolima's layout (map_037's
-///   treasure_spots.tsv) places them, at cells (23, 8) and (13, 23).
+///   101), are in the village. Only Kolima's layout (kolima's
+///   map.s) places them, at cells (23, 8) and (13, 23).
 ///
 /// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
@@ -88,7 +88,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"
@@ -117,79 +116,42 @@ static void Kolima_RestoreBridgeState(void);
 /// the curse is lifted.
 enum KolimaActorId {
   /// A young man with brown hair.
-  /// ★ Named from the game: "This is Kolima, village of lumberjacks!"
-  /// (MsgKolimaThisIsKolimaVillageOfLumberjacks)
   ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS = ACTOR_FIRST_PLACED,
   /// A woman with fair hair, whose mind Ivan reads in
   /// Kolima_WitnessForestCurse.
-  /// ★ Named from the game: "We rely on the forests so much, and yet we hurt
-  /// the sacred tree..." (MsgKolimaWeRelyOnTheForestsSo)
   ACTOR_VILLAGER_RELYING_ON_FORESTS,
   /// A burly grey-haired man.
-  /// ★ Named from the game: "You know, being a tree gives you a lot of time to
-  /// think." (MsgKolimaYouKnowBeingATreeGives)
   ACTOR_VILLAGER_TIME_TO_THINK,
   /// A woman in a green dress.
-  /// ★ Named from the game: "I turned into a tree right when the sparkles fell
-  /// from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_VILLAGER_SPARKLES_FELL,
   /// An old man with a cane.
-  /// ★ Named from the game: "Don't blame the villagers for being tempted by
-  /// McCoy's money..." (MsgKolimaDontBlameTheVillagersForBeing)
   ACTOR_OLD_MAN_MCCOYS_MONEY,
   /// An old woman.
-  /// ★ Named from the game: "Who would try to use the holy tree to build a
-  /// palace, anyway?" (MsgKolimaWhoWouldTryToUseThe)
   ACTOR_OLD_WOMAN_HOLY_TREE_PALACE,
   /// A small boy with fair hair.
-  /// ★ Named from the game: "I didn't mind being a tree... Water never tasted
-  /// so good!" (MsgKolimaIDidntMindBeingATree)
   ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE,
   /// A little girl with pigtails.
-  /// ★ Named from the game: "Yawn... Trees are so... sleepy..."
-  /// (MsgKolimaYawnTreesAreSoSleepy)
   ACTOR_GIRL_SLEEPY_TREES,
   /// A man with a white beard in a tall hat and a long robe. He opens the
   /// Sanctum's services across his counter (Sanctum_Run).
-  /// ★ Named from the game: "Maybe if I meditate harder, I'll turn back into a
-  /// man..." (MsgKolimaMaybeIfIMeditateHarderIll)
   ACTOR_HEALER,
   /// Tret's wrathful side, unseen while the curse falls.
-  /// ★ Named from the game: "Tret was once a kindly forest king."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_TRET,
   /// Unseen while the curse falls.
-  /// ★ Named from the game: "We are not the only ones who will die, Laurel."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_LAUREL,
   /// The fields of Psynergy that rise over the party while the curse falls
   /// ("You know what those fields were?"), each set where its character stands
   /// in Kolima_WitnessForestCurse. Mia's is set only with her in the party.
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_LEADER_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_IVAN_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_MIA_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_GARET_PSYNERGY_FIELD,
   /// The four sparkles on the ground while the curse lasts
   /// (gKolima_EntryActions).
-  /// ★ Named from the game: "I turned into a tree right when the sparkles
-  /// fell from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_FIRST_SPARKLE,
   /// Granite, a Venus Djinni, placed until it has joined.
-  /// ★ Named from the game: "Granite" (MsgDjinnName)
   ACTOR_GRANITE = ACTOR_FIRST_SPARKLE + 4,
-  /// ★ Named from the game: "I need to help evacuate the other villagers."
-  /// (MsgValeKyleAbleStop)
   ACTOR_FIRST_VILLAGER = ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS,
-  /// ★ Named from the game: "I need to help evacuate the other villagers."
-  /// (MsgValeKyleAbleStop)
   ACTOR_LAST_VILLAGER = ACTOR_HEALER
 };
 
@@ -198,12 +160,8 @@ enum KolimaActorId {
 /// villager as a man and as a tree, in the same place.
 enum KolimaBridgeActorId {
   /// A burly grey-haired man.
-  /// ★ Named from the game: "For a while, I thought no one would ever cross
-  /// this bridge again." (MsgKolimaForAWhileIThoughtNo)
   ACTOR_BRIDGE_VILLAGER = ACTOR_FIRST_PLACED,
   /// The same villager as a tree, while the curse lasts.
-  /// ★ Named from the game: "For a while, I thought no one would ever cross
-  /// this bridge again." (MsgKolimaForAWhileIThoughtNo)
   ACTOR_BRIDGE_VILLAGER_AS_TREE
 };
 
@@ -489,11 +447,7 @@ static void Kolima_LowerBridge(void) {
       debris->motionFlags = 0;
       Actor_SetSpriteFlags(debris, 0);
       debris->sprite->image.priority = 0;
-      {
-        u16 delay = (((u32)(Import_RandomNext() * 40)) >> 16) + 40;
-
-        debris->timer = delay;
-      }
+      debris->timer = (Random_Below(40)) + 40;
       debris->velocityX = (s32)((px(debrisIndex & 3) + px(1))) >> 1;
       debris->velocityZ = px(1);
       if (debrisIndex & 1) {
@@ -668,14 +622,10 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Start();
   partyLayout = &gKolima_MiaInParty;
   *partyLayout = GameFlag_Get(FLAG_IN_PARTY(MIA));
-  actor = Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_MIA_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_GARET_PSYNERGY_FIELD);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA_PSYNERGY_FIELD), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET_PSYNERGY_FIELD), 0);
   FieldCamera_MoveTo(104, CAMERA_KEEP, 256, 0);
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 23, 247);
@@ -878,44 +828,36 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(20);
   if (gKolima_MiaInParty != 0) {
     stagingValue = 128;
-    actor = Actor_Get(ACTOR_MIA);
-    actor->velocityY = (stagingValue << 10);
+    Actor_Get(ACTOR_MIA)->velocityY = (stagingValue << 10);
     Event_Wait(10);
     Actor_SetSpeedFixed(ACTOR_MIA, (stagingValue << 10), (stagingValue << 10));
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
-    actor = Actor_Get(ACTOR_MIA);
-    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
     Event_Wait(10);
   }
   stagingValue = 128;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->velocityY = (stagingValue << 10);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = (stagingValue << 10);
   Event_Wait(10);
   Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, (stagingValue << 10),
                       (stagingValue << 10));
   restoreScaleActions = gKolima_PartyRestoreScaleActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleActions);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Event_Wait(20);
-  actor = Actor_Get(ACTOR_GARET);
-  actor->velocityY = (stagingValue << 10);
+  Actor_Get(ACTOR_GARET)->velocityY = (stagingValue << 10);
   Event_Wait(10);
   Actor_SetSpeedFixed(ACTOR_GARET, (stagingValue << 10), (stagingValue << 10));
   Actor_SetScript(ACTOR_GARET, restoreScaleActions);
-  actor = Actor_Get(ACTOR_GARET);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Event_Wait(40);
-  actor = Actor_Get(ACTOR_IVAN);
-  actor->velocityY = (stagingValue << 10);
+  Actor_Get(ACTOR_IVAN)->velocityY = (stagingValue << 10);
   Event_Wait(10);
   Actor_SetScript(ACTOR_IVAN, restoreScaleActions);
-  actor = Actor_Get(ACTOR_IVAN);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
   gKolima_EffectActive = 0;
   Event_Wait(160);
@@ -1064,8 +1006,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(40);
   Actor_SetSpritePriority(ACTOR_GARET, 2);
   Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  actor = Actor_Get(ACTOR_GARET);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 60);
@@ -1094,8 +1035,7 @@ static void Kolima_WitnessForestCurse(void) {
     Event_Wait(80);
     Actor_SetSpritePriority(ACTOR_MIA, 2);
     Actor_Get(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-    actor = Actor_Get(ACTOR_MIA);
-    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), SPRITE_FLAG_SHADOW);
     Actor_Jump(ACTOR_MIA, 4, 0);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -1120,8 +1060,7 @@ static void Kolima_WitnessForestCurse(void) {
   stagingValue = 1;
   Actor_SetSpritePriority(ACTOR_IVAN, 2);
   Actor_Get(ACTOR_IVAN)->priorityFlags |= stagingValue;
-  actor = Actor_Get(ACTOR_IVAN);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_IVAN, 4, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -1129,8 +1068,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(10);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= stagingValue;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 60);
@@ -1666,21 +1604,15 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 static void Kolima_RestoreBridgeState(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Actor_SetPosition(ACTOR_BRIDGE_VILLAGER, 0, 0);
-    {
-      MapGrid_CopyCellAttributes(9, 17, 5, 1, 9, 18);
-    }
+    MapGrid_CopyCellAttributes(9, 17, 5, 1, 9, 18);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   } else {
     Actor_SetPosition(ACTOR_BRIDGE_VILLAGER_AS_TREE, 0, 0);
   }
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
-    {
-      MapGrid_CopyCellsTo(91, 19, 72, 9, 5, 7);
-    }
-    {
-      MapGrid_CopyCellAttributes(23, 11, 5, 7, 8, 11);
-    }
+    MapGrid_CopyCellsTo(91, 19, 72, 9, 5, 7);
+    MapGrid_CopyCellAttributes(23, 11, 5, 7, 8, 11);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }

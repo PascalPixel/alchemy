@@ -36,34 +36,23 @@ IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits16, IO_WRITE_CLEAR | IO_WRITE_16)
 IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits32, IO_WRITE_CLEAR | IO_WRITE_32)
 
 /// Runs the queued register writes and empties the queue, with a copy of the
-/// executor routine on the stack. Called by System_VBlankHandler once the
-/// frame loop has finished a frame.
+/// executor routine on the stack.
 void IoWriteQueue_FlushPending(void) {
   struct IoWriteQueue *queue;
   u32 count;
 
-  // XXX (no evidence): why the routine runs from the stack rather than a heap
-  // block; either works, and the bytes show only the choice.
   queue = &gIoWriteQueue;
   count = queue->count;
   if (count != 0) {
-    QueueFlushRoutine routine;
-    u32 size = (u32)TransferCommandExecutor_Size;
-    u32 wordCount = size >> 2;
-    // (DMA_ENABLE | DMA_32BIT) << 16: copy the routine a word at a time
-    u32 control = 0x84;
+    u32 wordCount = (u32)TransferCommandExecutor_Size / 4;
+    u8 routineBytes[wordCount * 4];
+    QueueFlushRoutine routine = (QueueFlushRoutine)routineBytes;
 
-    control <<= 24;
-    {
-      u8 routineBytes[wordCount << 2];
-
-      // The executor must finish before this stack buffer goes out of scope.
-      routine = (QueueFlushRoutine)routineBytes;
-      Dma_Set(Resource_ExecuteTransfer, (void *)routine, wordCount | control,
-              REG_DMA3);
-      routine(queue, count);
-      queue->count = 0;
-    }
+    // The routine runs from its copy on the stack, which lasts until it ends.
+    Dma_Set(Resource_ExecuteTransfer, routine, DMA_COPY_WORDS(wordCount),
+            REG_DMA3);
+    routine(queue, count);
+    queue->count = 0;
   }
 }
 

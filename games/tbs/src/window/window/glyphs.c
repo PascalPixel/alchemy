@@ -182,11 +182,9 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
       line = 0;
       do {
         tileLine = 0;
-        pixelsLeft = 7;
-        do {
+        for (pixelsLeft = 0; pixelsLeft < 8; pixelsLeft++) {
           tileLine = (tileLine << 4) + *pixel--;
-          pixelsLeft--;
-        } while (pixelsLeft >= 0);
+        }
         *out++ = tileLine;
         line++;
         pixel += 24;

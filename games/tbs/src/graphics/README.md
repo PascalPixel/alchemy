@@ -36,9 +36,9 @@ editor shows it as the game does.
 
 ## Sprites and their animations
 
-Isaac is one file, `sprite/spr_000.png`: a strip one
+Isaac is one file, `sprite/isaac.png`: a strip one
 [picture](../../glossary.md#picture) wide, with 210 pictures of 32 by 32
-stacked top to bottom. Beside it, `spr_000.tsv` is his
+stacked top to bottom. Beside it, `isaac.tsv` is his
 [animations](../../glossary.md#sprite-animation), one a line, each a list
 of which picture to show and for how many frames:
 

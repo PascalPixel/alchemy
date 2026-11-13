@@ -7,10 +7,10 @@
 #include "types.h"
 #include "battle_unit.h"
 
-/// One row of the debug parameter sets: a party member, the level to raise them
-/// to, the Djinn of each element to give them, the items to equip and up to two
-/// abilities to teach. A row whose party member is DEBUG_PARAMETER_SET_END ends
-/// a parameter set. Read only by DebugParameterSet_Load.
+/// One row of the debug parameter sets: a party member, the level to raise
+/// them to, the Djinn of each element to give them, the items to equip and up
+/// to two abilities to teach. A row whose party member is
+/// DEBUG_PARAMETER_SET_END ends a parameter set.
 struct DebugParameterSetRow {
   s8 unitId;                     ///< the party member, or the end of a set
   u8 level;                      ///< the level the party member is raised to
@@ -21,5 +21,8 @@ struct DebugParameterSetRow {
 };
 
 #define DEBUG_PARAMETER_SET_END -1
+
+/// The debug menu's parameter sets (debug_parameter_sets.c).
+extern struct DebugParameterSetRow gDebug_ParameterSets[];
 
 #endif

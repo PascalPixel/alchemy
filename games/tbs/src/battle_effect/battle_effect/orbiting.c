@@ -20,8 +20,6 @@
 ///
 /// Nothing calls it. Draws through the side's blitters mirrored (side ^ 1).
 UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 center[3];
@@ -31,7 +29,8 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   s32 i;
   s32 frame;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
@@ -148,7 +147,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   // The first transfer mode is overwritten at once.
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Put the canvas on the targets' side of the screen: at one texel a pixel
   // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
@@ -157,16 +156,15 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  /* FAKEMATCH(dead): the scroll's store in a once-only block, so the loop's
-   * i = 0 comes before the particles' address; as the plain store, 2 of 265
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the scroll's store in a once-only block; as the plain
+   * store, 2 of 265 instructions differ in tbs-en. */
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
   i = 0;
   // velocityX holds each skull's angle on its orbit; x, y and z are set but
   // never read.
-  for (; i != 64; i++) {
+  for (i = 0; i != 64; i++) {
     struct Particle *step = &work->particles[i];
 
     step->x = 0;
@@ -194,9 +192,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
         SET_VECTOR(rec, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         Projection_Point(rec, &center);
         center.x += xOffset;
-        /* FAKEMATCH(dead): an empty once-only loop keeps the store before the
-         * spark loop's i = 0; without it, 2 of 265 instructions differ in
-         * tbs-en. */
+        /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 265
+         * instructions differ in tbs-en. */
         do {
         } while (0);
         // Three skulls a third of a turn apart, each turning 1/128 of a turn
@@ -233,8 +230,6 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 /// Nothing calls it. Copies the pink burst palette over the first 128 bytes
 /// of BG palette RAM, uses work->particles six to a target.
 UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   void *palette;
@@ -246,7 +241,8 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 point[3];
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
@@ -256,10 +252,10 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  drawBurst = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  drawBurst = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  drawSmoke = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  drawSmoke = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
 
   // Six puffs for each target: five scatter at random, up to 2 pixels a
   // frame across and half a pixel vertically, and the sixth (the burst)

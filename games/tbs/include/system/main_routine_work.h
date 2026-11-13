@@ -70,7 +70,7 @@ struct MainRoutineWork {
   /// half goes into the file's summary.
   u32 buildStamp;
   u32 playTime; ///< frames, copied from gPlayTimeFrames when saving
-  u8 unused[4]; ///< no code names it
+  u8 unused[4];
   /// The summons the party can call, bit n for summon n: the first word of
   /// the party's struct DjinnRecoveryTable (BattleSummonState.availableMask),
   /// which Djinn_GetRecoveryTable returns from here, its next word running
@@ -78,17 +78,17 @@ struct MainRoutineWork {
   u32 summonMask;
   s32 coins; ///< 0 to 999999 (Party_AdjustCoins)
   /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
-  /// Djinn_GetRecoveryTable; not named by TBS code.
+  /// Djinn_GetRecoveryTable.
   u8 djinnRecovery[260];
-  s32 shopCredit; ///< spent on a Game Ticket; not written by name in TBS
+  s32 shopCredit; ///< spent on a Game Ticket
   s8 shopGifts;   ///< indexes the Game Ticket's credit cost
   /// Lucky Wheels' prize weights, three prizes to each of 4, 8, 16, 32
-  /// and 64 on a new game; not read by name in TBS.
+  /// and 64 on a new game.
   s8 prizeWeights[15];
   /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[16];
-  u8 unusedAfterPrizes[132]; ///< no code names it
+  u8 unusedAfterPrizes[132];
   /// What the main routine runs next: a scene (a SceneId_ row of gScenes),
   /// which means the field sequence running that scene, or a SEQUENCE_ value
   /// above the table's rows for another sequence. During a scene it is the
@@ -118,46 +118,45 @@ struct MainRoutineWork {
   /// The defeat destination, -1 for none: read by Scene_ReturnFromSequence
   /// after a defeat, before the restart point.
   s16 defeatScene;
-  s16 defeatEntrance;       ///< its entrance; -1 for none
-  s16 battleBackground;     ///< the battle background chosen for the scene or
-                            ///< battle environment
-  u8 unusedAfterSpecial[2]; ///< no code names it
+  s16 defeatEntrance;   ///< its entrance; -1 for none
+  s16 battleBackground; ///< the battle background chosen for the scene or
+                        ///< battle environment
+  u8 unusedAfterBackground[2];
   /// The scene's map (Scene.mapIndex); the World Map's is MAP_INDEX_WORLD.
   s16 mapId;
-  s32 x;                   ///< 16.16 fixed-point pixels
-  s32 y;                   ///< 16.16 fixed-point pixels
-  s32 z;                   ///< 16.16 fixed-point pixels
-  u32 heading;             ///< 1/65536 turns
-  u16 layer;               ///< the leader's layer, kept with its position
-  s16 battleMusic;         ///< the battle music chosen for the encounter
-  s16 sceneMusic;          ///< the current scene's field music
-  u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
-  u8 paddingAfterMovement; ///< up to the word leaderActorId starts on
-  s32 leaderActorId;       ///< the leader: its unit and its actor
-  u8 party[8];             ///< the party in order
-  u8 unusedAfterOwners[5]; ///< no code names it
-  u8 windowHue;            ///< the "Window color" setting, 0 to 23
-  u8 windowBrightness;     ///< the "Window brightness" setting, 0 to 14
-  u8 unusedAfterGlow[3];   ///< no code names it
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
+  u32 heading;       ///< 1/65536 turns
+  u16 layer;         ///< the leader's layer, kept with its position
+  s16 battleMusic;   ///< the battle music chosen for the encounter
+  s16 sceneMusic;    ///< the current scene's field music
+  u8 movementMode;   ///< 1 while the leader is climbing, 0 otherwise
+  s32 leaderActorId; ///< the leader: its unit and its actor
+  u8 party[8];       ///< the party in order
+  u8 unusedAfterParty[5];
+  u8 windowHue;        ///< the "Window color" setting, 0 to 23
+  u8 windowBrightness; ///< the "Window brightness" setting, 0 to 14
+  u8 unusedAfterBrightness[3];
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
   /// sound as their message types (Speaker_GetVoice).
   u8 speech;
-  u8 unusedAfterSpeech;          ///< 1 on a new game; nothing reads it
-  u8 messageSpeed;               ///< 0 to 2; 1 on a new game
-  u8 unusedAfterMessageSpeed[2]; ///< no code names it
+  u8 unusedAfterSpeech; ///< 1 on a new game; nothing reads it
+  u8 messageSpeed;      ///< 0 to 2; 1 on a new game
+  u8 unusedAfterMessageSpeed[2];
   /// Set on saving at the end of the game, marking the file cleared: its data
   /// can be sent. Copied to the file's summary as sendFlag.
   u8 sendFlag;
   /// The buttons for each field command, as KEY_ masks; read with gKeysPressed
   /// except dashKeys, held.
   ///@{
-  u16 aKeys;              ///< examine; KEY_A
-  u16 bKeys;              ///< KEY_B; not read by name in TBS
-  u16 selectKeys;         ///< the menu; KEY_SELECT
-  u16 startKeys;          ///< KEY_START
-  u16 firstShortcutKeys;  ///< firstShortcut; KEY_L
-  u16 secondShortcutKeys; ///< secondShortcut; KEY_R
-  u16 dashKeys;           ///< KEY_B
+  u16 aKeys; ///< examine; KEY_A
+  u16 bKeys;
+  u16 selectKeys; ///< the menu; KEY_SELECT
+  u16 startKeys;
+  u16 firstShortcutKeys;
+  u16 secondShortcutKeys;
+  u16 dashKeys;
   ///@}
   s16 returnMusic; ///< music playing when the field left; -1 for none
   /// The shortcuts' assignments. bits: 15..14 kind (0 Psynergy, 1 an item) |
@@ -166,10 +165,10 @@ struct MainRoutineWork {
   u16 firstShortcut;
   u16 secondShortcut;
   ///@}
-  u8 perspectiveMap; ///< set to 1 on the world map; not read by name in TBS
-  u8 unusedAfterPerspective[5]; ///< no code names it
-  u8 idleSleepEnabled;          ///< the option, saved from gIdleSleepEnabled
-  u8 battleType;                ///< an enum BattleType
+  u8 perspectiveMap; ///< set to 1 on the world map
+  u8 unusedAfterPerspective[5];
+  u8 idleSleepEnabled; ///< the option, saved from gIdleSleepEnabled
+  u8 battleType;       ///< an enum BattleType
   /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a scene, not a return from battle, resets them to 1 HP
@@ -191,24 +190,23 @@ struct MainRoutineWork {
   s16 sceneType;      ///< the current scene's variant from its row in gScenes
   s16 retreatScene;   ///< where Retreat goes; the area's first
                       ///< entrance
-  s16 retreatEntrance;     ///< where Retreat goes; the area's first
-                           ///< entrance
-  s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
-  s8 avoidByItem;          ///< Avoid came from an item (the Sacred Feather)
-  s8 pausedPose;           ///< Halt: the stopped actor's first animation param
-  s16 haltedActor;         ///< Halt: the stopped actor; -1 for none
-  s16 cloaked;             ///< 1 under Cloak, which prevents battles
-  u8 paddingAfterCloak[2]; ///< up to the word pausedUpdate starts on
-  u32 pausedUpdate; ///< Halt: the stopped actor's update; not read by name
-  u8 unusedAfterHalt[80]; ///< no code names it
+  s16 retreatEntrance; ///< where Retreat goes; the area's first
+                       ///< entrance
+  s32 avoidDistance;   ///< distance left of Avoid, 16.16 pixels; 0 when off
+  s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
+  s8 pausedPose;       ///< Halt: the stopped actor's first animation param
+  s16 haltedActor;     ///< Halt: the stopped actor; -1 for none
+  s16 cloaked;         ///< 1 under Cloak, which prevents battles
+  u32 pausedUpdate;    ///< Halt: the stopped actor's update; not read by name
+  u8 unusedAfterHalt[80];
   /// The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by
-  /// TBS code.
+  /// the game.
   u16 linkTallies[8];
-  u8 unusedAfterTallies[4];    ///< no code names it
-  u32 startStamp;              ///< BuildStamp_GetTime's value at a new game
-  u8 unusedAfterStartStamp[4]; ///< no code names it
-  struct Unit units[8];        ///< the characters
+  u8 unusedAfterTallies[4];
+  u32 startStamp; ///< BuildStamp_GetTime's value at a new game
+  u8 unusedAfterStartStamp[4];
+  struct Unit units[8]; ///< the characters
 };
 
 STATIC_ASSERT(offsetof(struct MainRoutineWork, buildStamp) == 0);
@@ -243,9 +241,6 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 0x2b8);
 /// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;
 
-/// Sets the battle type.
-// A statement macro (34 sites): written as one, its store stays in
-// place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
     gMainRoutineWork.battleType = (mode);                                      \

@@ -2,40 +2,21 @@
 /// The title intro, the Nintendo and Camelot logos, and the palette fade the
 /// intro uses.
 
-#include "speaker.h"
 #include "module/menu/title_intro.h"
 #include "module/system/system.h"
 #include "battle.h"
-#include "input.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
-#include "heap_release.h"
-#include "types.h"
-#include "task.h"
 #include "dma.h"
-#include "edition.h"
-#include "io_reg.h"
 #include "io_write_queue.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"
-#include "battle_sprite_id.h"
 #include "resource_ids.h"
-#include "palette_buffers.h"
 #include "iwram_call.h"
-#include "heap.h"
-#include "heap_slots.h"
-#include "frame.h"
 #include "oam_words.h"
 #include "macros.h"
-#include "sounds.h"
 
 /// A sprite of the "Press Start" prompt, linked into a render slot each frame:
 /// OAM attributes 0 to 2 with the position split out.
@@ -73,6 +54,11 @@ struct IntroWork {
     } prompt;
   } area;
 };
+
+/// The intro's two pictures share character block 0: the far one (BG1) in
+/// 16-colour tiles, the near one (BG2) in 256-colour tiles from tile 315.
+#define INTRO_BACK_TILE(n) (BG_CHAR_BLOCK(0) + (n) * TILE_SIZE_4BPP)
+#define INTRO_FRONT_TILE(n) (BG_CHAR_BLOCK(0) + (n) * 2 * TILE_SIZE_4BPP)
 
 /// The x of each of the six columns of intro sprites
 const u8 gTitle_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
@@ -193,7 +179,7 @@ void Title_UpdateIntroSprites(void) {
 /// Loads the title intro's two scrolling backgrounds and its sprite tiles,
 /// builds their tilemaps and sets the blending and windows. The pictures are
 /// decoded through Ram_MapGridCellBuffer, the map grid's cell buffer, which is
-/// free while no map is loaded. Called by Title_ShowIntro.
+/// free while no map is loaded.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;
   u8 *resourceData;
@@ -217,9 +203,9 @@ void Title_LoadIntroBackgrounds(void) {
   resourceData += 512;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer + 10560, BG_CHAR_BLOCK(0),
-          DMA_ENABLE << 16 | 10080, REG_DMA3);
-  Dma_Set(Ram_MapGridCellBuffer + 41280, (void *)0x06004ec0,
-          DMA_ENABLE << 16 | 20160, REG_DMA3);
+          DMA_COPY_HALFWORDS(10080), REG_DMA3);
+  Dma_Set(Ram_MapGridCellBuffer + 41280, INTRO_FRONT_TILE(315),
+          DMA_COPY_HALFWORDS(20160), REG_DMA3);
 
   {
     s32 blankTile = 511;
@@ -377,7 +363,7 @@ s32 Title_ShowIntro(s32 prompt) {
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
           Dma_Set(Ram_MapGridCellBuffer + 9600 - work->backRows * 960,
-                  (u8 *)0x06004b00 - work->backRows * 960,
+                  INTRO_BACK_TILE(600) - work->backRows * 960,
                   DMA_COPY_HALFWORDS(480), REG_DMA3);
           work->backRows++;
           frameCount = work->frameCount;
@@ -391,16 +377,17 @@ s32 Title_ShowIntro(s32 prompt) {
         if ((y & 7) == 0) {
           if (work->frontRows * 8 <= 24) {
             Dma_Set(Ram_MapGridCellBuffer + 39360 - work->frontRows * 1920,
-                    (u8 *)0x0600e4c0 - work->frontRows * 1920,
-                    DMA_ENABLE << 16 | 960, REG_DMA3);
+                    INTRO_FRONT_TILE(915) - work->frontRows * 1920,
+                    DMA_COPY_HALFWORDS(960), REG_DMA3);
           } else {
             // Once the finite picture is exhausted, clear incoming bands
             // so wrapped tile memory cannot expose earlier picture rows.
             clearValue = 0;
             Dma_Set(&clearValue,
-                    (u8 *)0x06004ec0 + (160 - work->frontRows * 8) % 160 * 240,
+                    INTRO_FRONT_TILE(315) +
+                        (160 - work->frontRows * 8) % 160 * 240,
                     (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 960, REG_DMA3);
-            tilemap = (u16 *)0x0600f6c0;
+            tilemap = (u16 *)BG_SCREEN_BLOCK(30) + 27 * 32;
             for (i = 0; i < 5; i++) {
               for (j = 0; j < 30; j++)
                 *tilemap++ = 315;
@@ -433,8 +420,8 @@ s32 Title_ShowIntro(s32 prompt) {
       BG_PLTT[0] = 0;
       resourceData += 512;
       Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
-      Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_ENABLE << 16 | 19200,
-              REG_DMA3);
+      Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
+              DMA_COPY_HALFWORDS(19200), REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
       tile = 256;
       i = 0;
@@ -506,8 +493,7 @@ s32 Title_ShowIntro(s32 prompt) {
         sprite++;
       }
 #endif
-      // The prompt pulses once a second: its blend weight over the picture
-      // (written out: as BLEND_ALPHA(level, 16 - level) the bytes differ).
+      // The prompt pulses once a second: its blend weight over the picture.
       level = gTitle_PromptBlendLevels[i % 60];
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                    BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
@@ -533,8 +519,8 @@ UNUSED void Title_NoOpPalette(void) {}
 
 /// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
 /// holds two seconds; otherwise it waits a second, fades in, holds three
-/// seconds and fades out, faster once skipped. Called by Title_Run. Returns -1
-/// when A or Start skipped it.
+/// seconds and fades out, faster once skipped. Returns -1 when A or Start
+/// skipped it.
 s32 Title_ShowNintendoLogo(s32 mode) {
   s32 result;
   u8 *resourceData;
@@ -630,55 +616,52 @@ s32 Title_ShowCamelotLogo(void) {
   u32 workIndex;
   u8 *resourceData;
   s32 resourceId;
+  s32 result;
 
   gOamCopyEnabled = 1;
-  {
-    s32 result = 0;
-
-    resourceId = (s32)&ResourceId_CamelotLogo;
-    Task_ResetAll();
-    ScreenFade_ToBlack(1);
-    DebugText_Clear();
-    wait(1);
-    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-                 BGCNT_SCREEN_BASE(6);
-    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-    gBgScroll[2].y = result;
-    resourceData = Resource_GetTableEntry(resourceId);
-    Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
-    // The decoded resource: 224 colours, the map, the still tiles, then four
-    // animation pictures of 1024 bytes each.
-    resourceData = Ram_MapGridCellBuffer;
-    Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
-    resourceData += 448;
-    Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4),
-            REG_DMA3);
-    resourceData += 2048;
-    Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
-            REG_DMA3);
-    resourceData += BG_CHAR_SIZE;
-    for (workIndex = 0; workIndex < 4; workIndex++) {
-      gBgScroll[workIndex].y = 0;
-      gBgScroll[workIndex].x = 0;
-    }
-    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-    Window_LoadGraphics();
-    DebugText_Clear();
-    ScreenFade_FromWhite(1);
-    ScreenFade_Wait();
-    REG_DISPCNT =
-        DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-    // Replace only the animated tiles; the rest of the decoded logo stays
-    // in VRAM while the four animation pictures cycle.
-    for (workIndex = 0; workIndex < 120; workIndex++) {
-      Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
-              BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
-      if (gKeysPressed & (KEY_A | KEY_START))
-        break;
-      wait(1);
-    }
-    return result;
+  result = 0;
+  resourceId = (s32)&ResourceId_CamelotLogo;
+  Task_ResetAll();
+  ScreenFade_ToBlack(1);
+  DebugText_Clear();
+  wait(1);
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(6);
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  gBgScroll[2].y = result;
+  resourceData = Resource_GetTableEntry(resourceId);
+  Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
+  // The decoded resource: 224 colours, the map, the still tiles, then four
+  // animation pictures of 1024 bytes each.
+  resourceData = Ram_MapGridCellBuffer;
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
+  resourceData += 448;
+  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4), REG_DMA3);
+  resourceData += 2048;
+  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
+          REG_DMA3);
+  resourceData += BG_CHAR_SIZE;
+  for (workIndex = 0; workIndex < 4; workIndex++) {
+    gBgScroll[workIndex].y = 0;
+    gBgScroll[workIndex].x = 0;
   }
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+  Window_LoadGraphics();
+  DebugText_Clear();
+  ScreenFade_FromWhite(1);
+  ScreenFade_Wait();
+  REG_DISPCNT =
+      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  // Replace only the animated tiles; the rest of the decoded logo stays
+  // in VRAM while the four animation pictures cycle.
+  for (workIndex = 0; workIndex < 120; workIndex++) {
+    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
+            BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
+    if (gKeysPressed & (KEY_A | KEY_START))
+      break;
+    wait(1);
+  }
+  return result;
 }
 
 /// Unused: color entry retained in the far-call table.
@@ -688,8 +671,7 @@ UNUSED void Title_NoOpColor(void) {}
 // colour components shown now, the target components and each one's step.
 
 /// Computes each of the 1536 colour components' change per frame from the
-/// current components to the target (nothing when `frames` is not
-/// positive). Called by TitlePaletteFade_Start.
+/// current components to the target (nothing when `frames` is not positive).
 void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
                                      s16 *targetComponents, s16 *componentSteps,
                                      s32 frames) {
@@ -762,15 +744,13 @@ void TitlePaletteFade_Update(void) {
   }
 }
 
-/// Tints 512 source colours into destination components (three
-/// per colour, each in the high bits of a halfword). `mode` picks the
-/// tint: a colour below PALETTE_TINT_FROM_SOURCE fills every colour
-/// with it; PALETTE_TINT_FROM_SOURCE takes that colour from source[0];
-/// PALETTE_TINT_NONE to PALETTE_TINT_WARM_DARK are the whole-palette
-/// filters; the TINT, BLEND and SPLIT flags carry
-/// a colour in their low bits; anything else is the address of components to
-/// copy. `selectedPalettes` is an enum PaletteSelection.
-/// Called by TitlePaletteFade_Initialize and the palette fade's setters.
+/// Tints 512 source colours into destination components (three per colour, each
+/// in the high bits of a halfword). `mode` picks the tint: a colour below
+/// PALETTE_TINT_FROM_SOURCE fills every colour with it;
+/// PALETTE_TINT_FROM_SOURCE takes that colour from source[0]; PALETTE_TINT_NONE
+/// to PALETTE_TINT_WARM_DARK are the whole-palette filters; the TINT, BLEND and
+/// SPLIT flags carry a colour in their low bits; anything else is the address
+/// of components to copy. `selectedPalettes` is an enum PaletteSelection.
 void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
                                   s32 selectedPalettes) {
   u32 colorIndex;
@@ -795,7 +775,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     *destination++ = (mode & 0x03e0) << 5;
     *destination++ = (mode & 0x001f) << 10;
     Dma_Set(destination - 3, destination,
-            DMA_ENABLE << 16 | (((colorCount - 1) * 6) >> 1), REG_DMA3);
+            DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
     switch (mode) {
     case PALETTE_TINT_GRAYSCALE:
@@ -818,18 +798,16 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
             red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31), 10);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
-        /* FAKEMATCH(dead): two XORs with red that cancel fold late, keeping
-         * blue's add first; as green = blue, 6 of 803 instructions differ in
-         * tbs-en. */
+        /* FAKEMATCH(dead): two XORs with red that cancel fold late; as green =
+         * blue, 6 of 803 instructions differ in tbs-en. */
         green = blue ^ red;
         green ^= red;
         if (red < 8)
           red = 8;
         if (blue < 8) {
           green = 8;
-          /* FAKEMATCH(dead): two XORs that cancel, green being 8, keep blue's
-           * separate lower test; as no pair, 46 of 803 instructions differ in
-           * tbs-en. */
+          /* FAKEMATCH(dead): two XORs that cancel, green being 8; as no pair,
+           * 46 of 803 instructions differ in tbs-en. */
           blue ^= green;
           blue ^= 8;
         }
@@ -1026,8 +1004,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 }
 
 /// Allocates the palette fade, saves both hardware palettes in it as the
-/// starting colours and adds the task TitlePaletteFade_Update. Called by
-/// Title_ShowIntro.
+/// starting colours and adds the task TitlePaletteFade_Update.
 void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
 
@@ -1041,15 +1018,14 @@ void TitlePaletteFade_Initialize(void) {
   Task_Add(TitlePaletteFade_Update, TASK_PASS_FRAME);
 }
 
-/// Unused: removes the palette fade's task and frees its buffers. Nothing
-/// calls it.
+/// Unused: removes the palette fade's task and frees its buffers.
 UNUSED void TitlePaletteFade_Release(void) {
   Task_Remove(&TitlePaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Unused: sets the fade target by tinting the saved background and/or
-/// sprite palettes with the requested tint. Nothing calls it.
+/// sprite palettes with the requested tint.
 UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1058,8 +1034,7 @@ UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
                                  selectedPalettes);
 }
 
-/// Sets the colours shown now by tinting the saved palettes. Called by
-/// Title_ShowIntro.
+/// Sets the colours shown now by tinting the saved palettes.
 void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1068,7 +1043,7 @@ void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
                                  selectedPalettes);
 }
 
-/// Unused: replaces the first saved colour, the backdrop. Nothing calls it.
+/// Unused: replaces the first saved colour, the backdrop.
 UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1093,8 +1068,7 @@ void TitlePaletteFade_Start(s32 frames) {
   }
 }
 
-/// Clamps a five-bit colour channel to 0..31. Called by
-/// TitlePaletteFade_BuildColors.
+/// Clamps a five-bit colour channel to 0..31.
 s32 TitlePaletteFade_ClampComponent(s32 value) {
   if (value > 31)
     return 31;
@@ -1104,24 +1078,16 @@ s32 TitlePaletteFade_ClampComponent(s32 value) {
 }
 
 /// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
-/// into the high bits reaches. There is no lower bound. Called by
-/// TitlePaletteFade_BuildColors.
+/// into the high bits reaches. There is no lower bound.
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
   if (value > 0x7c00)
     value = 0x7c00;
   return value;
 }
 
-// The response curves of TitlePaletteFade_BuildColors's filters. Like the
-// declarations in palette_buffers.h they are not const: as const the code
-// differs.
+// The response curves of TitlePaletteFade_BuildColors's filters.
 
-/// Maps a channel (0..31) to a component (0..31 << 10). The same curves as
-/// gColorBuffer_ChannelCurve and its Light and Contrast curves, which sit in
-/// the field sequence bank: the title bank keeps its own copy, as no code in
-/// the main image reads data placed in another bank (in the English build,
-/// every literal pool that points into another bank points at a far-call entry
-/// or table).
+/// Maps a channel (0..31) to a component (0..31 << 10).
 // clang-format off
 u16 gTitleIntro_ChannelCurve[32] = {
     0, 524, 1071, 1643, 2240, 2863, 3513, 4191,

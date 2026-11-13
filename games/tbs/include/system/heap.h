@@ -14,16 +14,19 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState. The
-/// work globals named in system/iwram.s (gBattleWork, gBattleCamera,
-/// gFieldWork and others) are single slots of this table.
+/// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState. Each
+/// part of the game names the slots it owns (gFieldWork, gWindowWork,
+/// gMapGridWork and the rest) as macros over this table, so the compiler sees
+/// one array and reaches neighbouring slots from whichever it loaded first.
 extern void *gHeapSlots[64];
 
 /// Slot n's block, or null before it is allocated.
-// Reached through the slot's own address, adjacent slots by offsets from it;
-// gHeapSlots[n] addresses from the table's start instead. Each site keeps the
-// form it matches with.
 #define HEAP_SLOT_BLOCK(n) (*(gHeapSlots + (n)))
+
+/// Heap slot `slot` read through `slots`, a pointer to slot `from` of
+/// gHeapSlots: code that holds one slot's address reaches its neighbours by
+/// their distance from it. The name is ours.
+#define HEAP_SLOT_FROM(slots, from, slot) ((slots)[(slot) - (from)])
 
 /// The heap's 64 slots, the first two holding the next free EWRAM and
 /// IWRAM addresses.
@@ -31,7 +34,7 @@ union HeapState {
   struct {
     void *nextEwram;  ///< the EWRAM pool's next free byte, up to EWRAM_END
     void *nextIwram;  ///< the IWRAM pool's next free byte, up to the heap's end
-    void *blocks[62]; ///< heap slots 2 to 63; not named by TBS code
+    void *blocks[62]; ///< heap slots 2 to 63
   } heap;
   /// Each slot's block once allocated, else null; slots 0 and 1 are the pool
   /// pointers. Allocating a slot that already has a block returns that block,

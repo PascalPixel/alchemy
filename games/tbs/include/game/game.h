@@ -28,7 +28,7 @@ struct AbilityDefinition;
 struct EnemyDefinition;
 struct EnemyElementPreset;
 
-/// The 519 abilities by ability id (abilities.tsv).
+/// The 519 abilities by ability id (ability_table.c).
 extern const struct AbilityDefinition gAbilityDefinitions[];
 /// Each character's lighthouse group: 0 for Isaac, Garet, Felix and Jenna,
 /// whose PP a lit Venus or Mars Lighthouse restores; 1 for the others, by
@@ -48,6 +48,9 @@ struct ElementLevelBonus {
   u16 power; ///< base power, before the tenths of a level
   u16 res;   ///< base resistance, likewise
 };
+/// The power and resistance by element level (element_table.c): a table
+/// nothing writes, defined writable in .rodata as gFont_MarkGlyphCodes is.
+extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 /// The class series by a character's strongest and second element, a 4 by 4
 /// table read as [strongest * 4 + second] (Class_GetSeries).
 extern const s32 gClass_SeriesByElements[];

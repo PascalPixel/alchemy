@@ -103,10 +103,6 @@ void FieldPsynergy_PlyOnTarget(s32 unused) {
 /// flies far away.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
-///
-/// Called by FieldPsynergy_Run and FieldPsynergy_PlyOnTarget; frees the
-/// particles' shared VRAM cache entry at the end and runs the effect
-/// event's finishCallback.
 void FieldPsynergy_Ply(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *target = effectWork->mainActor;
@@ -162,8 +158,7 @@ void FieldPsynergy_Ply(void) {
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH(dead): target set again to actor, which it already holds,
-       * keeping a second register copy of the figure; without it, 129 of 177
+      /* FAKEMATCH(dead): target set again to actor; without it, 129 of 177
        * instructions differ in tbs-en. */
       target = actor;
       if (i & 3)

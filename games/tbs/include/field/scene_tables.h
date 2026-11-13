@@ -67,7 +67,6 @@ enum {
 /// another trigger table and Healer line, and the Sol Sanctum approach moves
 /// its sentry, changes cell behaviors and stops sending its way down to
 /// SceneId_ValeEruption.
-/// ★ Named from its area name: Vale
 enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 
 /// A scene's entrance: where and facing which way the party arrives,
@@ -198,15 +197,10 @@ enum ActorTalkFacing {
 /// (character_ids.h) as its actor id.
 enum ActorId {
   ACTOR_PARTY_LEADER = 0,
-  /// ★ Named from the game: "Garet" (MsgCharacterName)
   ACTOR_GARET = 1,
-  /// ★ Named from the game: "Ivan" (MsgCharacterName)
   ACTOR_IVAN = 2,
-  /// ★ Named from the game: "Mia" (MsgCharacterName)
   ACTOR_MIA = 3,
-  /// ★ Named from the game: "Jenna" (MsgCharacterName)
   ACTOR_JENNA = 5,
-  /// ★ Named from the game: "Sheba" (MsgCharacterName)
   ACTOR_SHEBA = 6,
   ACTOR_FIRST_PLACED = 8,
   /// The last actor id, as scenes loop over every placed actor.
@@ -233,7 +227,7 @@ struct Trigger {
   /// A message below TRIGGER_RESULT_MESSAGE_END, else an event; for an exit,
   /// the exit kind its scene's exit table matches, and for an examine trigger,
   /// a FIND_ value.
-  u32 value;
+  s32 value;
 };
 
 STATIC_ASSERT(sizeof(struct Trigger) == 12);
@@ -259,7 +253,7 @@ enum TriggerKind {
   TRIGGER_TALK_HALTED = 7
 };
 
-// Isaac's sheet (spr_000.png) and a recording of a stairs exit show them:
+// Isaac's sheet (isaac.png) and a recording of a stairs exit show them:
 // leaving animations 25 and 26 take the leader, his back turned, into the
 // stair opening, darkening and smaller each picture until he is gone; arrivals
 // 23 and 24 bring him out of it facing the player.
@@ -313,12 +307,8 @@ enum PsynergyPhase {
   /// As Reveal's colours come back (FieldPsynergy_EndReveal): the scenes
   /// hide again what Reveal showed.
   PSYNERGY_PHASE_FADES = 4,
-  /// Run by the field Psynergy itself as it acts (force.c, frost.c and
-  /// reveal.c): as
-  /// Force strikes, Frost freezes or Reveal shows what is hidden. An event in
-  /// this phase also makes Field_UsePsynergy aim the field Psynergy at the
-  /// actor
-  /// ahead.
+  /// An event in this phase also makes Field_UsePsynergy aim the field Psynergy
+  /// at the actor ahead.
   PSYNERGY_PHASE_ACTS = 5,
   PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyTrigger matches every phase
 };
@@ -421,6 +411,6 @@ enum ExamineTarget {
 /// An event as a Trigger value; its address is above
 /// TRIGGER_RESULT_MESSAGE_END, so it is never taken for a message.
 #define EVENT(script) ((u32)(script))
-#define TRIGGER_TABLE_END 0xffffffff ///< ends a trigger table
+#define TRIGGER_TABLE_END 0xffffffff
 
 #endif

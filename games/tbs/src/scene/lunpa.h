@@ -40,12 +40,9 @@ enum LunpaCellBehavior {
   CELL_BEHAVIOR_LUNPA_EIGHTH_ROOM_DOOR,
   CELL_BEHAVIOR_LUNPA_HIDDEN_PASSAGE,
   CELL_BEHAVIOR_LUNPA_HIDDEN_SWITCH = 20,
-  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
   CELL_BEHAVIOR_LUNPA_WELL = 90,
   CELL_BEHAVIOR_LUNPA_GRAVE_SLEEP_BOMB = 100,
-  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   CELL_BEHAVIOR_LUNPA_BARREL_NUT,
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   CELL_BEHAVIOR_LUNPA_PSYNERGY_STONE
 };
 
@@ -56,7 +53,6 @@ enum LunpaFortressGatesCellBehavior {
   CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD,
   CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND = 10,
   CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH = 20,
-  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
   CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_WELL = 90
 };
 
@@ -74,70 +70,38 @@ enum {
 /// what they say before Donpa's judgment.
 enum LunpaActorId {
   /// The puddle Reveal shows and Frost freezes into a pillar.
-  /// ★ Named from what the player sees: its sprite, a small blue puddle (its
-  /// render)
   ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
-  /// ★ Named from the game: "Have you been in Lunpa long?"
-  /// (MsgLunpaVillagerAAsksHowLong)
   ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
   /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "We've had no freedom ever since the caravan
-  /// came to the village." (MsgLunpaVillageVillagerBSealed)
   ACTOR_WOMAN_WITH_NO_FREEDOM,
   /// A stout man with brown hair (SPRITE_STOUT_MAN).
-  /// ★ Named from the game: "Is it true that Dodonpa kidnapped Hammet"
-  /// (MsgLunpaVillagerCAsksAboutKidnapping)
   ACTOR_MAN_ON_HAMMETS_KIDNAPPING,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from the game: "Donpa is too old to lead"
-  /// (MsgLunpaVillageVillagerDSealed)
   ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who wanders.
-  /// ★ Named from the game: "The righteous thief, Lunpa, and his son, Donpa"
-  /// (MsgLunpaVillageVillagerESealed)
   ACTOR_OLD_MAN_ON_LUNPA_AND_DONPA,
   /// An old woman with white hair (SPRITE_OLD_WOMAN).
-  /// ★ Named from the game: "Donpa has no idea what Dodonpa is doing."
-  /// (MsgLunpaVillageVillagerFSealed)
   ACTOR_OLD_WOMAN_ON_DONPA,
   /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "You want to see Donpa?"
-  /// (MsgLunpaVillagerGAsksAboutDonpa)
   ACTOR_BOY_ASKING_TO_SEE_DONPA,
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), who
   /// wanders.
-  /// ★ Named from the game: "The chef from the inn has been delivering meals
-  /// to the fortress lately." (MsgLunpaVillageVillagerHSealed)
   ACTOR_GIRL_ON_THE_CHEFS_MEALS,
   /// The two soldiers in spiked helmets (SPRITE_SOLDIER_IN_SPIKED_HELMET);
   /// this one keeps the road in from the World Map.
-  /// ★ Named from what the player sees: a soldier with a spear guarding the
-  /// road (its render)
   ACTOR_WEST_GUARD,
-  /// ★ Named from what the player sees: a second soldier with a spear (its
-  /// render)
   ACTOR_EAST_GUARD, ///< wants Dodonpa's authorization
   /// The hidden switch's sparkle, shown by Reveal.
-  /// ★ Named from what the player sees: its sprite, a small white sparkle (its
-  /// render)
   ACTOR_SWITCH_SPARKLE,
   /// The Nut that floats over the town, for Catch.
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_FLOATING_NUT
 };
 
 /// The Lunpa Fortress Gates' placed actors, numbered in the order of
 /// gGateActorPlacements from ACTOR_FIRST_PLACED. Garet's row, the third,
 /// takes his own actor, GARET, as every row of a party member's sprite does.
-enum GateActorId {
-  /// ★ Named from the game: "We were on guard the whole time!"
-  /// (MsgLunpaRightGuardReopenedThoughts)
-  ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "We were on guard the whole time!"
-  /// (MsgLunpaRightGuardReopenedThoughts)
-  ACTOR_RIGHT_GUARD
-};
+enum GateActorId { ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED, ACTOR_RIGHT_GUARD };
 
 /// How the switch's sparkle is stretched while Reveal shows it.
 enum { SPARKLE_SCALE_X = 6 * Q16_ONE / 5, SPARKLE_SCALE_Y = 3 * Q16_ONE / 2 };

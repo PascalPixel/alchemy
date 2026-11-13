@@ -5,11 +5,7 @@
 #include "../battle_internal.h"
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left) and sets each one's display mode and motion afresh. Called by
-/// Battle_Run as the battle is set up, by
-/// BattleStaging_DispatchAction, BattleStaging_HideField,
-/// the auto battle and BattleAbility_ApplyToTarget after a call for help, and
-/// through the far stub BattleObject_PutFar by BattleEffect_RunParticleStreams.
+/// that left) and sets each one's display mode and motion afresh.
 void BattleObject_Put(void) {
   s16 unitIds[UNIT_MAX];
 
@@ -18,8 +14,7 @@ void BattleObject_Put(void) {
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left), keeping their modes and motions. Called by
-/// BattleStaging_RunAttack.
+/// that left), keeping their modes and motions.
 void BattleUnit_ListAllAndSubmit(void) {
   s16 unitIds[UNIT_MAX];
 
@@ -27,9 +22,7 @@ void BattleUnit_ListAllAndSubmit(void) {
   BattleObject_SpawnObjectsForList(unitIds, 0);
 }
 
-/// Returns the palette of unit id's battle object. Called by
-/// BattlePlayback_Run and BattleMotion_FlashHit, and through its far stub
-/// by the battle effect dispatcher (battle_effect/battle_effect/dispatch.c).
+/// Returns the palette of unit id's battle object.
 s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by
@@ -37,9 +30,8 @@ s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 #define ENEMY_SPRITE_SLOTS 6
 
 /// Returns 1 if an enemy of class classId would find room among the enemy
-/// sprite slots: one free slot for a small enemy, two free side by side for
-/// a large one. Called by BattleAbility_ApplyToTarget before an enemy calls for
-/// help.
+/// sprite slots: one free slot for a small enemy, two free side by side for a
+/// large one.
 s32 Enemy_HasSpriteRoom(s32 classId) {
   struct BattleWork *battle;
   s32 needsSingleSlot;
@@ -59,23 +51,22 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
   return spriteSlot != ENEMY_SPRITE_SLOTS;
 }
 
-/// Loads an enemy unit's battle sprite into the first free enemy sprite
-/// slots (one for a small enemy, two side by side for a large one) and
-/// marks them as the unit's. Two sprites, the Kraken's and the Fusion
-/// Dragon's, take a second part, loaded the same way into further slots.
-/// The slots stay the unit's until BattleObject_ReleaseSpriteSlots
-/// frees them as it leaves the battle. Returns the first slot and the
-/// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
-/// a load fails. Called by BattleObject_Make. Writes gBattleWork->spriteSlots
-/// and the slots' 16 KB sprite buffers at Ram_EnemySpriteSlots.
+/// Loads an enemy unit's battle sprite into the first free enemy sprite slots
+/// (one for a small enemy, two side by side for a large one) and marks them as
+/// the unit's. Two sprites, the Kraken's and the Fusion Dragon's, take a
+/// second part, loaded the same way into further slots. The slots stay the
+/// unit's until BattleObject_ReleaseSpriteSlots frees them as it leaves the
+/// battle. Returns the first slot and the sprite as (slot << 12) | sprite, or
+/// 0 for a party member's unit or when a load fails. Writes
+/// gBattleWork->spriteSlots and the slots' 16 KB sprite buffers at
+/// Ram_EnemySpriteSlots.
 s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 needsSingleSlot = BattleSprite_IsSmall(unit->id);
-  /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
-   * spritePart a copy of its register (mov r4, r10); as an s32 set to 0, 2 of
-   * 114 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): result cleared a halfword at a time; as an s32 set to
+   * 0, 2 of 114 instructions differ in tbs-en. */
   union {
     s32 value;
     u16 halves[2];
@@ -111,7 +102,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
     {
       s32 palette = BattleSprite_GetPalette(unit->id);
       // Each slot owns 16 KB of sprite buffer.
-      s32 spriteBuffer = (slot << 14) + (s32)Ram_EnemySpriteSlots;
+      u8 *spriteBuffer = Ram_EnemySpriteSlots + slot * 0x4000;
 
       if (SpritePictureCache_LoadFar(slot, (u32 *)spriteBuffer,
                                      sprite + spritePart, palette) == 0)
@@ -138,8 +129,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
-/// Called by BattleObject_MarkForRelease. Clears those
-/// gBattleWork->spriteSlots.
+/// Clears those gBattleWork->spriteSlots.
 UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 spriteSlot;
@@ -172,8 +162,7 @@ enum BattleWeaponKind {
 };
 
 /// Returns the kind (enum BattleWeaponKind) of the weapon whose item id is
-/// itemId, which picks a party member's weapon sprite. Called by
-/// BattleUnit_GetWeaponSprite.
+/// itemId, which picks a party member's weapon sprite.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
   s32 assignmentIndex;
   u32 assignment;
@@ -196,9 +185,7 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 
 /// Returns the weapon sprite a party member's attack shows for the kind of
 /// weapon they have equipped (gBattleUnit_WeaponAnimations tables), or 0 for no
-/// weapon, for Felix, or for a unit that is no party member. Called by
-/// BattleObject_Make, which keeps it in BattleObject.overlay for
-/// BattleObject_SpawnObjectsForList to add as a layer of the body sprite.
+/// weapon, for Felix, or for a unit that is no party member.
 s32 BattleUnit_GetWeaponSprite(s32 unitId) {
   struct Unit *unit;
   s32 slot;

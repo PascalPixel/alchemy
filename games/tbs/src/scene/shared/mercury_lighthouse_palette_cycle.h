@@ -9,7 +9,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "frame.h"
 #include "io_reg.h"
 
@@ -22,28 +21,28 @@
 /// 15 dimmed by four tenths), so the shimmer runs up the ramp; green and blue
 /// stay those of gPaletteCycleGreen and gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
-  /* FAKEMATCH(volatile): cur kept at sp+2, stored and loaded again for v; as
-   * a plain u16, 22 of 65 instructions differ in tbs-en. */
-  volatile u16 cur;
+  /* FAKEMATCH(volatile): the red level below passes through a halfword on
+   * the stack; as a plain local, 22 of 65 instructions differ in tbs-en. */
+  volatile u16 below;
   u32 i;
-  s32 v;
-  s32 bits;
-  u16 *dst;
+  s32 red;
+  s32 greenAndBlue;
+  volatile u16 *color;
 
-  cur = 0;
+  below = 0;
   if (gFrameCount % 5 != 0)
     return;
   gPaletteCycleRed = (gPaletteCycleRed + 4) & 31;
   for (i = 0; i < 6; i++) {
-    cur = BG_PLTT_COLOR(6, 14 - i) & 31;
-    v = cur;
+    below = BG_PLTT_COLOR(6, 14 - i) & 31;
+    red = below;
     if (i <= 2)
-      v -= v * 4 / 10;
-    dst = (u16 *)&BG_PLTT_COLOR(6, 15 - i);
-    bits = (gPaletteCycleBlue << 10) | (gPaletteCycleGreen << 5);
-    *dst = v | bits;
+      red -= red * 4 / 10;
+    color = &BG_PLTT_COLOR(6, 15 - i);
+    greenAndBlue = (gPaletteCycleBlue << 10) | (gPaletteCycleGreen << 5);
+    *color = red | greenAndBlue;
   }
-  BG_PLTT_COLOR(6, 9) = gPaletteCycleRed | bits;
+  BG_PLTT_COLOR(6, 9) = gPaletteCycleRed | greenAndBlue;
 }
 
 /// While the pool sleeps: colours 9 to 15 of background palette 6 are black.

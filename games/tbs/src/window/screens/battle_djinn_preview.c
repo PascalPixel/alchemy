@@ -14,13 +14,13 @@
 // last three. `out` needs room for 14 halfwords.
 UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *destination;
-  s32 remaining;
+  s32 i;
   u8 *source;
 
   destination = out;
   String_FormatDecimal(value);
   source = gNumberBuffer;
-  for (remaining = 0; remaining < NUMBER_TEXT_WIDE_LENGTH; remaining++) {
+  for (i = 0; i < NUMBER_TEXT_WIDE_LENGTH; i++) {
     *destination++ = *source++;
   }
 }
@@ -153,24 +153,17 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->sentinel = 240;
       sprite->x = 120;
       sprite->y = 120;
-      // UB: the two stores below write the attribute and tile words through
-      // pointer types, which keeps sched2's order of the stores around them;
-      // UBFIX writes the unions' words.
-#ifdef UBFIX
-      entry->attributes.word =
-          OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      entry->tile.value = 0;
-#else
+      /* FAKEMATCH(type): the two words stored through pointer types; through
+       * the unions, 1 of 87 instructions moves in tbs-en. */
       *(struct Window **)&entry->attributes =
           (struct Window *)(OBJ_SIZE_16X16 |
                             OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-      *(void **)&entry->tile = (void *)0;
-#endif
+      *(void **)&entry->tile = NULL;
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
-      /* FAKEMATCH(dead): advancing and restoring the captured pointer keeps
-       * the window chain in r9; without the pair, 8 of 80 instructions of
-       * the nested DjinnMenu_DrawStatArrow differ in tbs-en. */
+      /* FAKEMATCH(dead): advancing and restoring the captured pointer; without
+       * the pair, 8 of 80 instructions of the nested DjinnMenu_DrawStatArrow
+       * differ in tbs-en. */
       win++;
       win--;
       entry->tile.bits.index = VramCache_Reload(

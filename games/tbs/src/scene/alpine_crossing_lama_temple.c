@@ -90,7 +90,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
@@ -104,7 +103,6 @@
 
 /// The temple's Psynergy Stone. It is an area temp flag, so it refills once the
 /// party has been to another area.
-/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 #define MAP_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
@@ -114,72 +112,39 @@
 /// slots for Hama's farewell. The others count from ACTOR_FIRST_PLACED.
 enum LamaTempleActorId {
   /// Hama, back in her temple for her farewell.
-  /// ★ Named from the game: "No, Master Hama"
-  /// (MsgMountainAdeptsLetMeThankAgain)
   ACTOR_TEMPLE_HAMA = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "This is Lama Temple. Welcome, travelers."
-  /// (MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers)
   ACTOR_GREETING_MONK,
-  /// ★ Named from the game: "Young warriors, do you come from the east?"
-  /// (MsgMountainYoungWarriorsDoComeFrom)
   ACTOR_MONK_ASKING_ABOUT_THE_EAST,
-  /// ★ Named from the game: "Do you know what meditation is?"
-  /// (MsgMountainDoKnowMeditation)
   ACTOR_MEDITATING_MONK,
-  /// ★ Named from the game: "I sense great insecurity and anxiety within you."
-  /// (MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI)
   ACTOR_MONK_SENSING_ANXIETY,
-  /// ★ Named from the game: "Did you know that Master Hama is the greatest
-  /// master of Chi?" (MsgMountainDidKnowMasterHamaGreatest)
   ACTOR_CHI_MONK,
   /// The rock Reveal takes away to show the passage (LamaTemple_RevealPassage).
-  /// ★ Named from what the player sees: a round, moss-green rock on the grass
-  /// east of the waterfall (its render)
   ACTOR_PASSAGE_ROCK,
-  /// ★ Named from the game: "I am traveling around the world to spread good
-  /// will." (MsgMountainAmTravelingAroundWorldSpread)
   ACTOR_TRAVELING_HEALER
 };
 
 /// Alpine Crossing's actors.
 enum AlpineCrossingActorId {
-  /// ★ Named from the game: "Master Hama, I am okay." (MsgMountainHsuOkay)
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Hsu, are you okay?" (MsgMountainHsuOkay)
   ACTOR_HSU,
-  /// ★ Named from the game: "You must be glad, Feizhi." (MsgMountainHsuOkay)
   ACTOR_FEIZHI,
-  /// ★ Named from the game: "did you lift the boulder?"
-  /// (MsgMountainIsaacDidLiftBoulder)
   ACTOR_BOULDER,
   /// A young man in a white headband, one of the people of Xian who moved the
   /// rocks.
-  /// ★ Named from the game: "We moved the rocks. Now people can pass."
-  /// (MsgAlpineCrossingLamaTempleWeMovedTheRocksNowPeople)
   ACTOR_FIRST_WORKER,
   /// A young man with his hair tied back.
-  /// ★ Named from the game: "Many people from Xian helped move the rocks."
-  /// (MsgAlpineCrossingLamaTempleManyPeopleFromXianHelpedMove)
   ACTOR_SECOND_WORKER,
   /// The water Frost freezes into a pillar (AlpineCrossing_FreezePuddle).
-  /// ★ Named from what the player sees: a small patch of blue water on the
-  /// grass by the path (its render)
   ACTOR_WATER_FOR_FROST,
   /// The plant Growth grows into a vine (AlpineCrossing_GrowSprout).
-  /// ★ Named from what the player sees: a small green sprout at the foot of
-  /// the cliff (its render)
   ACTOR_PLANT
 };
 
 /// Alpine Crossing's Psynergy puzzles, kept while the party stays.
 enum {
   /// Frost has frozen the puddle into an ice pillar.
-  /// ★ Named from what the player sees: a small puddle of water on the path
-  /// below the cliffs (its render)
   FLAG_ALPINE_CROSSING_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
   /// Growth has grown the sprout into a vine the party can climb.
-  /// ★ Named from what the player sees: a small sprout at the foot of a cliff
-  /// (its render)
   FLAG_ALPINE_CROSSING_SPROUT_GROWN = FLAG_SCENE_TEMP_01
 };
 
@@ -189,9 +154,9 @@ enum {
   ANIM_HAMA_PULL = 5,
   ANIM_FEIZHI_PULL = 6,
   /// Drops into a crouch, then holds a half crouch with her head bowed
-  /// (spr_039.png's frames 33 and 36).
+  /// (feizhi.png's frames 33 and 36).
   ANIM_FEIZHI_CROUCH = 5,
-  /// SPRITE_TURNING_ROCK's mossy rock (spr_293.png's frame 1). Its first
+  /// SPRITE_TURNING_ROCK's mossy rock (turning_rock.png's frame 1). Its first
   /// animations show picture 0, a purple glow.
   TURNING_ROCK_ANIMATION_MOSSY = 2,
   ANIM_HSU_STRUGGLE = 5,
@@ -203,9 +168,7 @@ enum {
 enum LamaTempleCellBehavior {
   CELL_BEHAVIOR_LAMA_TEMPLE_DOOR = 2,
   CELL_BEHAVIOR_LAMA_TEMPLE_WALL_WRITING = 5,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_LAMA_TEMPLE_CHEST = 100,
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   CELL_BEHAVIOR_LAMA_TEMPLE_PSYNERGY_STONE = 110
 };
 
@@ -213,7 +176,6 @@ enum LamaTempleCellBehavior {
 enum AlpineCrossingCellBehavior {
   CELL_BEHAVIOR_ALPINE_CROSSING_SIGNPOST = 7,
   CELL_BEHAVIOR_ALPINE_CROSSING_FEIZHI_ARRIVAL = 10,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_ALPINE_CROSSING_CHEST = 100
 };
 
@@ -931,7 +893,7 @@ static void AlpineCrossing_HidePath(void) {
 
 // Update routine of the frozen pillar: it draws under the party leader while
 // the leader stands higher than its top, so the leader can climb onto it, and
-// over the leader otherwise. bx r1 to pop {r0};
+// over the leader otherwise.
 static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

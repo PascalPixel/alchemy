@@ -64,7 +64,7 @@ enum DailaActorId {
   /// (MsgDailaTaviRikiWorry)
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED + 13,
   /// ★ Named from what the player sees: a puddle of seawater that Frost turns
-  /// into a pillar of ice (spr_290.png)
+  /// into a pillar of ice (puddle.png)
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
   ACTOR_THIRD_PUDDLE,

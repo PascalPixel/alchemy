@@ -4,19 +4,22 @@
 /// as both scenes name them).
 #include "types.h"
 #include "actor.h"
+#include "heap.h"
+#include "field_work.h"
 
 // The update routine of the two children round the well. Their timer holds two
 // bits: bit 0 picks the partner (set for ACTOR_BOY_ROUND_THE_WELL, whose
 // partner is ACTOR_GIRL_ROUND_THE_WELL; clear for
 // ACTOR_GIRL_ROUND_THE_WELL) and bit 1 is set while the party talks to them.
 // A villager stops when close to and facing its partner, and otherwise when the
-// leader is within 18 pixels in front of it. While the window work's word at
-// 376 or the render mode is set the range is 26 pixels, and a villager being
-// talked to stops whichever way it faces.
+// leader is within 18 pixels in front of it. While a talk is pending
+// (FieldWork's talk) or Mind Read is on the range is 26 pixels, and a villager
+// being talked to stops whichever way it faces.
 static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
-  u8 **globals = gWindowWork;
-  u8 *windowWork = globals[0];
-  u8 *workspace = globals[12];
+  // The heap slots from the window renderer's on.
+  u8 **slots = gWindowWork;
+  u8 *windowWork = slots[0];
+  struct FieldWork *work = FIELD_WORK_FROM(slots, HEAP_SLOT_WINDOW);
   s16 *flags = &actor->timer;
   s32 force = 0;
   s32 range = 18;
@@ -34,8 +37,7 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
 
   player = Actor_GetById(ACTOR_PARTY_LEADER);
 
-  if (*(s16 *)(workspace + 376) != 0 ||
-      windowWork[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
+  if ((s16)work->talk != 0 || windowWork[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
     range = 26;
     if ((*flags & 2) != 0) {
       force = 1;

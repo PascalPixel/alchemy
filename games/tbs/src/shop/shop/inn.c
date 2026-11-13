@@ -24,8 +24,8 @@ static const s8 sInnPricesPerGuest[12] = {
 };
 // clang-format on
 
-/// Returns the night's price: the inn's price per guest times the party
-/// party members still standing. Called by Inn_CheckIn.
+/// Returns the night's price: the inn's price per guest times the party party
+/// members still standing.
 s32 Inn_RoomPrice(s32 innId) {
   struct ShopWork *shop = gMenuWork;
   s32 guestCount = 0;
@@ -41,8 +41,7 @@ s32 Inn_RoomPrice(s32 innId) {
 
 /// Runs an inn's counter: the innkeeper names the price, and on Yes, with the
 /// coins, the party sleeps (Inn_PlaySleep) and the innkeeper speaks again.
-/// Holds the shop's work block while it runs; returns 0. Called by the town
-/// scenes' innkeepers through SHOP.S. `innId` is the row of
+/// Holds the shop's work block while it runs; returns 0. `innId` is the row of
 /// sInnPricesPerGuest, 0 to 11, which nothing checks; `objectId` is the
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 actorId) {
@@ -104,7 +103,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
 /// Charges `roomPrice`, restores the HP and PP of each party member still
 /// standing, and plays the night: a fade to black, the inn's music and a fade
 /// back. A downed party member stays down: the inn neither charges for it nor
-/// heals it. Called by Inn_CheckIn.
+/// heals it.
 void Inn_PlaySleep(s32 roomPrice) {
   s16 partyMemberIds[8];
   s32 memberCount;

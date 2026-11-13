@@ -10,82 +10,36 @@
 #include "module/window/scales.h"
 #include "module/window/articles.h"
 #include "module/window/message_speed.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
 #include "module/window/glyph_arm.h"
-#include "module/system/system.h"
-#include "types.h"
-#include "edition.h"
-#include "window.h"
 #include "battle.h"
-#include "input.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_release.h"
-#include "task.h"
-#include "dma.h"
-#include "tbs_edition.h"
 #include "iwram_call.h"
-#include "io_reg.h"
-#include "heap_slots.h"
-#include "menu_list.h"
-#include "render_input.h"
-#include "battle_sprite_id.h"
-#include "glyph.h"
-#include "main_routine_work.h"
 #include "battle_work.h"
-#include "heap.h"
 #include "text_font.h"
-#include "fixed_math.h"
 #include "resource_ids.h"
 #include "ram_code.h"
-#include "affine.h"
 #include "battle_side.h"
 #include "message_reader.h"
-#include "battle_unit.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
-#include "item.h"
 #include "vram_cache.h"
 #include "select.h"
 #include "text/msg_ids.h"
-#include "sounds.h"
-#include "static_assert.h"
 #include "event.h"
-#include "battle_action_run.h"
 #include "settings_menu.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
 #include "save.h"
-#include "irq.h"
-#include "status_screen.h"
-#include "sprite.h"
-#include "djinn_figures.h"
-#include "io_write_queue.h"
-#include "map_grid_scroll.h"
-#include "djinn_preview.h"
-#include "battle_status.h"
-#include "battle_actor.h"
-#include "particle.h"
-#include "icon_menu.h"
-#include "battle_sprites.h"
 #include "serial.h"
-#include "battle_effect_work.h"
-#include "shop.h"
-#include "display_transition.h"
-#include "frame.h"
 #include "macros.h"
 #include "flags.h"
 #include "ability_ids.h"
 #include "enemy_ids.h"
+
+/// Writes code at position in the ring of decoded text and steps position on,
+/// wrapping at the ring's end.
+#define TEXT_APPEND(entries, position, code)                                   \
+  ((entries)[position] = (code),                                               \
+   (position) = ((position) + 1) & TEXT_BUFFER_MASK)
 
 // Edition-specific text and window layout values. The possessives
 // (gLocalizedWord_ItemPossessives) are by number in Spanish, singular and
@@ -216,7 +170,7 @@ enum TextStyle {
 /// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
 /// gWindowWork and gPartyStatusWork): the glyph transfer work icons are built
 /// in. Each icon builder allocates the slot for its build and frees it after.
-extern GlyphTransfer *gGlyphWork;
+#define gGlyphWork (*(GlyphTransfer **)&gHeapSlots[HEAP_SLOT_GLYPH_TRANSFER])
 
 /// Each message context bank's Huffman models and their offsets, which the
 /// message catalog built from games/tbs/text defines.

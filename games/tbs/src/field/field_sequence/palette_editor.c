@@ -6,18 +6,17 @@
 
 // The palettes, as plain halfwords, and where the editor draws: from column
 // 13 of row 1 of screen block 4.
-#define EDITOR_PALETTE ((u16 *)0x05000000)
-#define EDITOR_MAP ((u16 *)0x0600205a)
+#define EDITOR_PALETTE ((u16 *)PLTT)
+#define EDITOR_MAP ((u16 *)BG_SCREEN_BLOCK(4) + 32 + 13)
 #define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in WINDOW_PALETTE
 
 /// The debug palette editor (L on the Pause menu in debug mode). Shows colours
 /// 1 to 15 of a palette with their red, green and blue values in hex. Left and
 /// right choose the colour, up and down the channel, L and R the palette (0 to
 /// 13); A raises the channel and B lowers it, Start makes the colour blink
-/// while held, and Select leaves. Called by FieldSequence_Run for the pause
-/// request when L is held in debug mode. Writes the edited colours straight to
-/// BG palette RAM and draws over screen block 4; on leaving it reloads the
-/// window graphics and clears the debug text.
+/// while held, and Select leaves. Writes the edited colours straight to BG
+/// palette RAM and draws over screen block 4; on leaving it reloads the window
+/// graphics and clears the debug text.
 void PaletteEditor_Run(void) {
   s32 palette = 0;
   s32 channel = 1;
@@ -34,7 +33,8 @@ void PaletteEditor_Run(void) {
 
   // The swatch tiles go to tile 208 of character block 0; colour n is drawn
   // with tile 208 + n.
-  Decompress_Halfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
+  Decompress_Halfwords(gDebug_PaletteSwatchTiles,
+                       BG_CHAR_BLOCK(0) + 208 * TILE_SIZE_4BPP);
 redraw:
   // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
   // colour's swatch, drawn in the palette being edited, and its three

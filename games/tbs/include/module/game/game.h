@@ -9,15 +9,17 @@ struct Unit;
 struct CharacterDefinition;
 struct ClassDefinition;
 struct DjinnDefinition;
+struct DjinnRecoveryTable;
+struct EnemyDefinition;
 struct ItemDefinition;
 struct LevelUpResult;
 struct SummonDefinition;
 
 void Game_RestartQuest(void);
-void *Djinn_GetRecoveryTable(s32 enemySide);
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide);
 u32 Party_GetAverageLevel(void);
 struct Unit *Unit_Get(u32 unitId);
-const u8 *Enemy_GetDefinition(s32 selector);
+const struct EnemyDefinition *Enemy_GetDefinition(s32 selector);
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                  s32 direction);
 void Unit_Calculate(s32 unitId);
@@ -104,12 +106,8 @@ s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 s32 Unit_GetElementLevel(s32 unitId, s32 element);
 s32 Enemy_GetAttackElement(struct Unit *unit);
-#ifdef UBFIX
-void Unit_CalculateBaseElements(s32 unitId,
-                                struct BattleElementStats *destination);
-#else
-u32 Unit_CalculateBaseElements(s32 unitId, s16 destination[4][2]);
-#endif
+UNREAD_RESULT
+Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination);
 s32 Class_Determine(s32 character, const u8 *djinn);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 void Unit_UpdateClass(s32 unitId);

@@ -397,9 +397,8 @@ next:
   }
 }
 
-/// Returns the next sprite id after spriteId, stepping by direction (1 or
-/// -1) and wrapping within 0-511, whose metadata has an image (a nonzero
-/// width). Called by SpriteViewer_Run.
+/// Returns the next sprite id after spriteId, stepping by direction (1 or -1)
+/// and wrapping within 0-511, whose metadata has an image (a nonzero width).
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
@@ -424,9 +423,8 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
-/// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
-/// and while Start moves the ring.
+/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite). B
+/// held turns the ring.
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
@@ -567,7 +565,6 @@ UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
 /// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
 /// each one a frame (16 timer units) behind the last, so the copies are
 /// staggered. Also sets each copy's offsetY and clears its rotation.
-/// Called by SpriteViewer_Run.
 void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
   struct Sprite *spriteGroup;
@@ -578,7 +575,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
     struct SpriteAnimation *entry =
         spriteGroup->entries[layerIndex & (ANIM_LAYER_COUNT - 1)];
     struct AnimationMetadata *metadata;
-    s32 initialFrame = 0;
+    s32 start = 0;
 
     if (entry->scripts != 0) {
       metadata = Resource_GetMetadataRecordFar(entry->animationId);
@@ -589,12 +586,12 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
         entry->script = entry->scripts[animationIndex];
         entry->timer = spriteIndex * SPRITE_ANIMATION_NORMAL_STEP;
         entry->step = SPRITE_ANIMATION_NORMAL_STEP;
-        entry->scriptOffset = initialFrame;
-        entry->pictureBase = initialFrame;
+        entry->scriptOffset = start;
+        entry->pictureBase = start;
         entry->picture = SPRITE_PICTURE_NONE;
       }
       spriteGroup->offsetY = metadata->adjustY;
-      spriteGroup->rotation = initialFrame;
+      spriteGroup->rotation = start;
     }
     spriteIndex++;
     spriteGroup++;

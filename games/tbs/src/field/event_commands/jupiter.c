@@ -6,11 +6,9 @@
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into 24 light particles that circle and close in on the
-/// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED. Called by
-/// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's
-/// actor slot; the Djinni's actor is released here. Uses all 24 field effect
-/// sprites (FieldEffect_InitializeSlots), tints the field palette and fades it
-/// back at the end.
+/// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED. Uses all
+/// 24 field effect sprites (FieldEffect_InitializeSlots), tints the field
+/// palette and fades it back at the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;

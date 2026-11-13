@@ -5,9 +5,7 @@
 #include "../battle_internal.h"
 
 /// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
-/// enemy's sound is SE_ENEMY_CRY plus it.
-/// Called by BattlePlayback_Run as an enemy falls. Reads any index
-/// unchecked.
+/// enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked.
 u32 BattleSprite_GetDefeatSound(s32 index) {
   u32 kind = gBattleSprites[index].defeatSound;
 
@@ -20,7 +18,6 @@ u32 BattleSprite_GetDefeatSound(s32 index) {
 #define ENEMY_CLASS_LAST 171
 
 /// Returns the class's battle sprite, row 0's for a class out of range.
-/// Called by BattleObject_Make and EnemySprite_LoadIntoSlots.
 s32 BattleSprite_GetSprite(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gBattleSprites[0].animation;
@@ -33,7 +30,6 @@ s32 BattleSprite_GetSprite(s32 index) {
 // same either way for every class in range.
 /// Returns the class's sprite palette. For a class out of range it returns row
 /// 0's sprite, not a palette.
-/// Called by BattleObject_Make and EnemySprite_LoadIntoSlots.
 s32 BattleSprite_GetPalette(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gBattleSprites[0].animation;
@@ -42,9 +38,6 @@ s32 BattleSprite_GetPalette(s32 index) {
 
 /// Returns 1 for a small class, which takes one enemy sprite slot instead of
 /// two and stands closer to its neighbours; 0 out of range.
-/// Called by the formation and placement code (BattleFormation_BuildEnemyList,
-/// BattlePlacement_LayoutEnemies), the sprite slots (Enemy_HasSpriteRoom,
-/// EnemySprite_LoadIntoSlots) and motion.c.
 s32 BattleSprite_IsSmall(s32 index) {
   s32 result;
 
@@ -58,8 +51,6 @@ s32 BattleSprite_IsSmall(s32 index) {
 
 /// Returns the battle effect a class's plain attack shows, 1 for none or out of
 /// range.
-/// Called by BattleActionRun_Build, which stages it by id range
-/// (EFFECT_BY_ID_RANGE).
 u32 BattleSprite_GetAttackEffect(u32 index) {
   u16 value;
 
@@ -69,10 +60,8 @@ u32 BattleSprite_GetAttackEffect(u32 index) {
   return value ? value : 1;
 }
 
-/// Returns how high a class hops as it runs up to attack, in pixels; 0 out
-/// of range.
-/// Called by BattleStaging_RunAttack, which passes it to
-/// BattleMotion_ApproachTarget, and reached through FarCall_BattleTable.
+/// Returns how high a class hops as it runs up to attack, in pixels; 0 out of
+/// range.
 u32 BattleSprite_GetAttackHop(u32 index) {
   u16 value;
 
@@ -86,7 +75,6 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 /// SE_IMPACT; 0 out of range. Only the Venus Lighthouse aerie bosses set it in
 /// battle_sprites.c: ENEMY_SATUROS_VENUS_LIGHTHOUSE, ENEMY_MENARDI and
 /// ENEMY_FUSION_DRAGON.
-/// Called by the beam effects (beams.c) through its far stub.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
@@ -95,8 +83,6 @@ s32 BattleSprite_HasHeavyImpact(s32 index) {
 
 /// Returns the height an animation is drawn at over a class, in pixels, or 0
 /// for its size's default; 0 out of range.
-/// Called by BattleUnit_GetEffectHeight, and reached through
-/// FarCall_BattleTable.
 s32 BattleSprite_GetEffectHeight(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;

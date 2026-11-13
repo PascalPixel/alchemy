@@ -27,7 +27,7 @@ Resource_Data60D:
 	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LResource_Data60D_BLEND:
-	.incbin "games/tla/src/map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LResource_Data60D_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"

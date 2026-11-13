@@ -92,6 +92,7 @@
 #include "input.h"
 #include "scene_ids.h"
 #include "module/scene/imil.h"
+#include "shared/walk_into_leader.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -108,7 +109,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "text/msg_ids.h"
 #include "event.h"
 #include "scene_tables.h"
@@ -135,19 +135,12 @@
 /// and gImil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED.
 enum ImilVillageActorId {
   /// A young man, shivering and sneezing.
-  /// ★ Named from the game: "Brrrrr... Ah-choo!!! I'm freezing!"
-  /// (MsgImilBrrrrrChooImFreezingMia)
   ACTOR_FREEZING_YOUNG_MAN = ACTOR_FIRST_PLACED,
   /// A small boy.
-  /// ★ Named from the game: "Hi! Are you new in Imil?" (MsgImilHiNewInImil)
   ACTOR_GREETING_BOY,
   /// A strongman counting his exercises in the snow. "One, two, three, four..."
-  /// ★ Named from the game: "You have to keep in shape if you don't want to
-  /// get sick!" (MsgImilPeopleGetSickBecauseTheyStay)
   ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
   /// Move pushes it.
-  /// ★ Named from what the player sees: a snowman with a red cap and a green
-  /// scarf by the frozen pond (its render)
   ACTOR_SNOWMAN
 };
 
@@ -157,59 +150,32 @@ enum ImilVillageActorId {
 /// The rows of Garet, Ivan and Mia take those characters' own slots.
 enum IceRoomsActorId {
   /// The old couple's house.
-  /// ★ Named from the game: "Have you visited the old couple who live near the
-  /// entrance of town?" (MsgImilHaveVisitedOldCoupleWho)
   ACTOR_OLD_WOMAN = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Have you visited the old couple who live near the
-  /// entrance of town?" (MsgImilHaveVisitedOldCoupleWho)
   ACTOR_OLD_MAN,
   /// An unseen actor on the old man's bed. Once Mia has healed him, talking
   /// or Mind Read here reaches him.
-  /// ★ Named from what the player sees: the bed in the old couple's house
-  /// (its render)
   ACTOR_OLD_MANS_BED,
   /// An old man who shivers while the epidemic lasts.
-  /// ★ Named from the game: "The epidemic has hit almost everyone in Imil.
-  /// I'm sick, too." (MsgImilCoughTheEpidemicHasHitAlmost)
   ACTOR_SICK_OLD_MAN,
   /// An old man.
-  /// ★ Named from the game: "Do you want weapons?" (MsgImilDoWantWeapons)
   ACTOR_WEAPON_MERCHANT,
   /// An old man.
-  /// ★ Named from the game: "Ask me anything about armor."
-  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
   /// A little girl who minds the shop while her mother is sick.
-  /// ★ Named from the game: "please talk to my daughter."
-  /// (MsgImilIfYouWantToBuyAnything)
-  /// ★ Named from the game: "Mom's sick, but I can get you whatever you
-  /// need..." (MsgMercuryMomsSickGetWhatever)
   ACTOR_ITEM_MERCHANTS_DAUGHTER,
   /// A woman.
-  /// ★ Named from the game: "If you want to buy anything, please talk to my
-  /// daughter." (MsgImilIfYouWantToBuyAnything)
   ACTOR_ITEM_MERCHANT,
-  /// ★ Named from what the player sees: the man behind the counter of the room
-  /// whose attendant says it is the inn (its render)
   ACTOR_INNKEEPER,
   /// A woman who waits on the inn's guests.
-  /// ★ Named from the game: "We'll wait on you hand and foot, so please stay a
-  /// while!" (MsgImilWereTheOnlyInnThatStays)
   ACTOR_INN_ATTENDANT,
   /// A young man who keeps the restaurant and offers its menu.
-  /// ★ Named from the game: "Do you want to see the restaurant menu?"
-  /// (MsgImilDoWantSeeRestaurantMenu)
   ACTOR_RESTAURANT_OWNER,
   /// Mia's apprentices, a small boy who keeps the Sanctum and a little girl
   /// ("I will be a kind girl", MsgImilIWillBeAKindGirl).
   ///
   /// Her farewell names them together without saying which is which, so each
   /// takes the English name of the boy's or the girl's gender.
-  /// ★ Named from the game: "OK, I'll leave the village in your hands, Megan,
-  /// Justin..." (MsgImilMia)
   ACTOR_JUSTIN,
-  /// ★ Named from the game: "OK, I'll leave the village in your hands, Megan,
-  /// Justin..." (MsgImilMia)
   ACTOR_MEGAN,
   /// Invisible in the old couple's house.
   ///
@@ -227,13 +193,9 @@ enum IceRoomsActorId {
 enum ImilTownFlag {
   /// Whether the leader leaves footprints in the snow, from where he stands
   /// (Imil_UpdateFootprints). The one set says which he last did.
-  /// ★ Named from its area name: Imil
   FLAG_IMIL_NO_FOOTPRINTS = FLAG_SCENE_TEMP_00,
-  /// ★ Named from its area name: Imil
   FLAG_IMIL_FOOTPRINTS = FLAG_SCENE_TEMP_01,
   /// Move has pushed the snowman to its place, for the rest of the visit.
-  /// ★ Named from what the player sees: a snowman in a red hat and green scarf
-  /// (its render)
   FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 
@@ -265,7 +227,7 @@ enum IceRoomsCellBehavior {
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
 /// The item merchant lying in bed, only her head above the covers
-/// (SPRITE_WOMAN_IN_GREEN_DRESS, spr_115.png).
+/// (SPRITE_WOMAN_IN_GREEN_DRESS, woman_in_green_dress.png).
 enum { IMIL_ANIMATION_LIE_IN_BED = 5 };
 
 static void Imil_MeetMiaAtOldCouplesHouse(void);
@@ -1003,7 +965,6 @@ s32 Imil_Initialize(void) {
 /// She heals him with Ply, the Mercury Lighthouse flashes, and Mia runs out.
 /// The party follows her.
 static void Imil_MeetMiaAtOldCouplesHouse(void) {
-  struct Actor *leader;
   const s32 *table;
   struct FieldWork *work;
 
@@ -1022,14 +983,8 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetSpeed(ACTOR_IVAN, 0.4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_GARET);
+  Scene_PlaceAtLeader(ACTOR_IVAN);
   Actor_WalkTo(ACTOR_GARET, 150, 234);
   Actor_WalkToAndWait(ACTOR_IVAN, 134, 234);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1434,8 +1389,6 @@ static void Imil_ArriveFromFallsCave(void) {
 /// Saturos is beaten: she says farewell to her two apprentices, Megan and
 /// Justin, before leaving with the party.
 static void Imil_MiaSaysFarewellToApprentices(void) {
-
-  struct Actor *leader;
   struct FieldWork *work;
 
   Event_Start();
@@ -1453,10 +1406,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_SetSpeed(ACTOR_MIA, 0.6);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_MIA);
   Actor_WalkToAndWait(ACTOR_MIA, 673, 183);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_StartRepeatedMotion(ACTOR_JUSTIN, 2);

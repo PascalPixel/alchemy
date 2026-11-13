@@ -5,8 +5,6 @@
 #include "../event_commands_internal.h"
 
 /// Runs Catch cast on a target, through FieldPsynergy_Catch.
-///
-/// Called by FieldPsynergy_Dispatch; the target is ignored.
 void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
 /// Carries the hand (sprite 215) from 16 pixels above the caster to the goal in
@@ -16,11 +14,11 @@ void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 ///
 /// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
-/// Sprite 215 is the hand of Move and Carry. The goal is 32 pixels in front
-/// of the caster with effectWork->enabled (no trigger named the target),
-/// otherwise the Psynergy's position, 32 pixels up in both cases. Called by
-/// FieldPsynergy_Run and FieldPsynergy_CatchOnTarget. Moves the Psynergy's
-/// child to (-9, -9) when there is one, and releases the hand at the end.
+/// Sprite 215 is the hand of Move and Carry. The goal is 32 pixels in front of
+/// the caster with effectWork->enabled (no trigger named the target),
+/// otherwise the Psynergy's position, 32 pixels up in both cases. Moves the
+/// Psynergy's child to (-9, -9) when there is one, and releases the hand at
+/// the end.
 void FieldPsynergy_Catch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;

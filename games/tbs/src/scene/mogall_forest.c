@@ -109,122 +109,64 @@
 enum MogallForestSignActorId {
   /// A log lying north to south at (488, 464), pushed as the river log is but
   /// with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_FIRST_AREA_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_FIRST_AREA_RIVER_LOG,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_NORTH_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_ATTACKING_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_EAST_APE,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_FIRST_AREA_NORTH_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_FIRST_AREA_ATTACKING_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_FIRST_AREA_EAST_APE_STUMP,
   /// A Nut floating over the river, caught with Catch.
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT
 };
 
 /// Actors of the second area (SceneId_MogallForestQuartz), numbered in
 /// the order of gMogallForestQuartz_ActorPlacements.
 enum MogallForestQuartzActorId {
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_SECOND_AREA_LOG = ACTOR_FIRST_PLACED,
   /// A log lying west to east at (592, 456), south of ACTOR_SECOND_AREA_LOG,
   /// pushed with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_SECOND_AREA_SOUTH_LOG,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_SECOND_AREA_RIVER_LOG,
   /// A rock moved with Move.
   ///
   /// It is drawn as the rocks of Altmiller Cave's color puzzle
   /// (MsgAltmillerRotatedRock), drawn plain as those are while Reveal is off.
-  /// ★ Named from what the player sees: a small grey rock in the grass (its
-  /// render)
   ACTOR_SECOND_AREA_ROCK,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_NORTH_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_EAST_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_SOUTH_APE,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_SECOND_AREA_NORTH_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_SECOND_AREA_EAST_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_SECOND_AREA_SOUTH_APE_STUMP,
   /// Quartz, a Venus Djinni, placed until the party has it.
-  /// ★ Named from the game: "Quartz" (MsgDjinnName)
   ACTOR_SECOND_AREA_QUARTZ
 };
 
 /// Actors of the third area (SceneId_MogallForestKillerApe), numbered in
 /// the order of gMogallForestKillerApe_ActorPlacements.
 enum MogallForestKillerApeActorId {
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
   /// A log lying north to south at (552, 480), west of the two river logs,
   /// pushed with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_WEST_LOG,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
   /// A log lying west to east at (544, 536), south of
   /// ACTOR_THIRD_AREA_WEST_LOG, pushed with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_SOUTHWEST_LOG,
   /// Two rocks moved with Move, as in the second area.
-  /// ★ Named from what the player sees: a small grey rock in the grass
-  /// (its render)
   ACTOR_THIRD_AREA_NORTH_ROCK,
-  /// ★ Named from what the player sees: a small grey rock in the grass
-  /// (its render)
   ACTOR_THIRD_AREA_SOUTH_ROCK,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_ATTACKING_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_MIDDLE_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_WEST_APE,
   /// Also the Killer Ape and its guide.
-  /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_EAST_APE,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_ATTACKING_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_MIDDLE_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_WEST_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_EAST_APE_STUMP
 };
 
@@ -242,55 +184,29 @@ enum MogallForestLogAnimation {
 /// There is one for each ape once it has come out (or, for two, moved on to a
 /// second hiding place) and one for each rolled log.
 enum {
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT = FLAG_AREA_TEMP_00,
   /// The ape that leaps at the leader instead of pointing the way.
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT,
   /// The ape that leaps at the leader instead of pointing the way.
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
-  /// ★ Named from what the player sees: a log pushed over the grass rolls into
-  /// the river and lies along the channel, a stepping place across (its render)
   FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED = FLAG_AREA_TEMP_10,
-  /// ★ Named from what the player sees: the second area's log rolled into the
-  /// river (its render)
   FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED,
-  /// ★ Named from what the player sees: the third area's north log rolled into
-  /// the river (its render)
   FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED,
-  /// ★ Named from what the player sees: the third area's south log rolled
-  /// into the river (its render)
   FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED,
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_MOGALL_FOREST_PSYNERGY_STONE = FLAG_AREA_TEMP_50
 };
 
 /// Scene flag, kept while the party stays in the area.
-enum {
-  /// ★ Named from what the player sees: the third area's south rock, beside
-  /// the north river log, moved with Move to the ring south of it, where it
-  /// sinks and stays (its render)
-  FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14
-};
+enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
 
 // The third area's east ape: in the first patch it is placed only until it
 // has come out, and from the first patch on the hiding place that shares its
@@ -324,14 +240,10 @@ static void MogallForest_StartDjinnBattle(void) {
 /// motion.
 static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  u8 *motionFlags = &leader->motionFlags;
-  s32 savedMotionFlags = *motionFlags;
-
+  s32 savedMotionFlags = leader->motionFlags;
   s32 collision = FieldActor_CheckMovementCollision(leader, position);
 
   if (collision == 0) {
-    s32 jumpMotionFlags;
-
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     wait(6);
@@ -340,15 +252,13 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    jumpMotionFlags = 0x7e;
-    jumpMotionFlags &= *motionFlags;
-    *motionFlags = jumpMotionFlags;
+    leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)position->x >> 16),
-                        (s16)((u32)position->z >> 16));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, position->x >> 16,
+                        position->z >> 16);
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-    *motionFlags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
     return 1;
   }
@@ -399,23 +309,20 @@ static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
   struct EffectOptions options;
   struct Actor *actor;
-  u32 directionIndex;
-  s32 x;
-  s32 z;
+  u32 direction;
 
   actor = Actor_Get(id);
   Sound_Play(SE_THUMP);
   options.priority = 1;
-  for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
-    velocity.x = Trig_Cos(directionIndex << 12);
+  // Seventeen puffs a sixteenth of a turn apart, the first and last together,
+  // spread a third wider east to west.
+  for (direction = 0; direction <= 16; direction++) {
+    velocity.x = Trig_Cos(direction << 12);
     velocity.y = 0;
-    z = Trig_Sin(directionIndex << 12);
-    x = velocity.x;
-    velocity.z = z;
-    x += x / 3;
-    velocity.x = x;
-    FieldEffect_Spawn(actor->x.fixed, px(16), actor->z.fixed, x,
-                      velocity.y + px(1) / 10, z, EFFECT_USE_PRIORITY,
+    velocity.z = Trig_Sin(direction << 12);
+    velocity.x += velocity.x / 3;
+    FieldEffect_Spawn(actor->x.fixed, px(16), actor->z.fixed, velocity.x,
+                      velocity.y + px(1) / 10, velocity.z, EFFECT_USE_PRIORITY,
                       &options);
   }
 }
@@ -426,10 +333,7 @@ static void MogallForest_SpawnPuffRing(s32 id) {
 /// and the ape shows itself in colour mode color. That is SPRITE_COLOR_GRB for
 /// a guide, SPRITE_COLOR_NORMAL for one that attacks.
 static void MogallForest_ApeComesOut(s32 actorId, s32 color) {
-  s32 cameraSpeed = px(2);
-  s32 cameraAcceleration = px(1) / 4;
-
-  FieldCamera_SetSpeedParameters(cameraSpeed, cameraAcceleration);
+  FieldCamera_SetSpeedParameters(px(2), px(1) / 4);
   FieldCamera_MoveToActorById(actorId, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
@@ -449,15 +353,15 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct SceneEntrance *MogallForest_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MogallForestSign) {
+  if (scene == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Entrances;
   }
-  if (selector == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_Entrances;
   }
-  if (selector == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_Entrances;
   }
   return gMogallForestSidePaths_Entrances;
@@ -469,15 +373,15 @@ const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
 const struct ActorPlacement *MogallForest_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MogallForestSign) {
+  if (scene == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_ActorPlacements;
   }
-  if (selector == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_ActorPlacements;
   }
-  if (selector == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_ActorPlacements;
   }
   return gMogallForestSidePaths_ActorPlacements;
@@ -495,7 +399,7 @@ static void MogallForest_FirstArea_PushLog(void) {
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     if (probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG &&
-        (FIELD_CELL(probe.position.z)) == 26) {
+        FIELD_CELL(probe.position.z) == 26) {
       GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
       Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
       Actor_SetSpeedAndAcceleration(ACTOR_FIRST_AREA_RIVER_LOG, 0.25, 0.5);
@@ -535,14 +439,13 @@ static void MogallForest_FirstArea_JumpNorth(void) {
 /// the leader onto the log, which bobs under the weight.
 static void MogallForest_FirstArea_JumpSouth(void) {
   struct FieldPosition position;
-  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-  u8 *motionFlags = &actor->motionFlags;
-  s32 savedMotionFlags = *motionFlags;
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+  s32 savedMotionFlags = leader->motionFlags;
 
 #if TBS_PATCH_1
-  position.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
-  position.y = actor->y.fixed;
-  position.z = (actor->z.fixed & FIELD_CELL_MASK) + px(40);
+  position.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  position.y = leader->y.fixed;
+  position.z = (leader->z.fixed & FIELD_CELL_MASK) + px(40);
 #else
   position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
   position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
@@ -550,21 +453,21 @@ static void MogallForest_FirstArea_JumpSouth(void) {
 #endif
   if (MogallForest_TryJumpLeaderTo(&position) != 0) {
     Event_Start();
-    *motionFlags = 0;
+    leader->motionFlags = 0;
     Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
                        MOGALL_FOREST_LOG_STEPPED_ON);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    leader->y.fixed -= px(1);
+    leader->groundHeight -= px(1);
     wait(2);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    leader->y.fixed -= px(1);
+    leader->groundHeight -= px(1);
     wait(10);
-    actor->y.fixed += px(1);
-    actor->groundHeight += px(1);
+    leader->y.fixed += px(1);
+    leader->groundHeight += px(1);
     wait(4);
-    actor->y.fixed += px(1);
-    actor->groundHeight += px(1);
-    *motionFlags = savedMotionFlags;
+    leader->y.fixed += px(1);
+    leader->groundHeight += px(1);
+    leader->motionFlags = savedMotionFlags;
     Event_End();
   }
 }
@@ -583,18 +486,17 @@ static void MogallForest_ReadBrokenSign(void) {
 ///
 /// The ape comes out, points the way and hops off south.
 static void MogallForest_FirstArea_NorthApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_FIRST_AREA_NORTH_APE);
+  ape = Actor_Get(ACTOR_FIRST_AREA_NORTH_APE);
 
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(24), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(24), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_NORTH_APE);
 
@@ -622,18 +524,17 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
 /// It comes out angry and leaps at the leader, and the battle with an Ape
 /// begins (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0).
 static void MogallForest_FirstArea_ApeAttacks(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_FIRST_AREA_ATTACKING_APE);
+  ape = Actor_Get(ACTOR_FIRST_AREA_ATTACKING_APE);
 
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE, 408, 456, 6);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(24), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(24), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   FieldCamera_FollowActor(ACTOR_FIRST_AREA_ATTACKING_APE, 1);
   Actor_TurnToFaceEachOther(ACTOR_FIRST_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
@@ -665,18 +566,17 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
 ///
 /// The ape comes out, points the way and hops off east.
 static void MogallForest_FirstArea_EastApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_FIRST_AREA_EAST_APE);
+  ape = Actor_Get(ACTOR_FIRST_AREA_EAST_APE);
 
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 536, 344, 7);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(16), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(16), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_EAST_APE);
 
@@ -717,7 +617,6 @@ static void MogallForest_SecondArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 destinationColumn;
   s32 destinationRow;
-  s32 rectangleHeight = 4;
 
   Event_Start();
 
@@ -748,7 +647,7 @@ static void MogallForest_SecondArea_PushLog(void) {
       destinationRow = 30;
       MapGrid_CopyCellAttributes(44, 30, 2, 4, destinationColumn,
                                  destinationRow);
-      PushedActor_FillGridAttributeRectangle(2, 35, 30, 1, rectangleHeight, 0);
+      PushedActor_FillGridAttributeRectangle(2, 35, 30, 1, 4, 0);
     }
   }
 
@@ -798,16 +697,15 @@ static void MogallForest_SecondArea_UpdateRock(void) {
 ///
 /// The ape points the way and hops off south.
 static void MogallForest_SecondArea_NorthApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_SECOND_AREA_NORTH_APE);
+  ape = Actor_Get(ACTOR_SECOND_AREA_NORTH_APE);
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_NORTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 392, 104, 7);
   Event_Wait(10);
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    (creature->z.fixed + px(4)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + px(4)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_NORTH_APE);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 120, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
@@ -831,9 +729,9 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
 ///
 /// The ape points the way and hops off east.
 static void MogallForest_SecondArea_EastApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_SECOND_AREA_EAST_APE);
+  ape = Actor_Get(ACTOR_SECOND_AREA_EAST_APE);
 
   Event_Start();
 
@@ -841,9 +739,8 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 456, 104, 7);
   Event_Wait(10);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_EAST_APE);
 
@@ -875,7 +772,7 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
 ///
 /// The ape bolts to another hiding place nearby.
 static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_GRB);
@@ -883,8 +780,8 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   Event_Wait(2);
   MogallForest_SpawnPuffRing(ACTOR_SECOND_AREA_SOUTH_APE);
   Actor_SetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
-  creature = Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE);
-  Actor_SetSpriteFlags(creature, 0);
+  ape = Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE);
+  Actor_SetSpriteFlags(ape, 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED);
   Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 424, 480);
@@ -895,9 +792,9 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
 ///
 /// It points the way and hops off west.
 static void MogallForest_SecondArea_SouthApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE);
+  ape = Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE);
 
   Event_Start();
 
@@ -905,9 +802,8 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 392, 504, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_SOUTH_APE);
 
@@ -993,13 +889,11 @@ static void MogallForest_ThirdArea_PushLog(void) {
 /// the leader onto the second river log, which bobs under the weight.
 static void MogallForest_ThirdArea_JumpWest(void) {
   struct Actor *leader;
-  u8 *motionFlags;
   u8 savedMotionFlags;
   struct FieldPosition position;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  motionFlags = &leader->motionFlags;
-  savedMotionFlags = *motionFlags;
+  savedMotionFlags = leader->motionFlags;
 
   position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - px(32);
   position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
@@ -1009,16 +903,16 @@ static void MogallForest_ThirdArea_JumpWest(void) {
 
     Event_Start();
 
-    *motionFlags = 0;
+    leader->motionFlags = 0;
     Actor_SetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
                        MOGALL_FOREST_LOG_STEPPED_ON);
 
-    leader->y.fixed += -px(1);
-    leader->groundHeight += -px(1);
+    leader->y.fixed -= px(1);
+    leader->groundHeight -= px(1);
     wait(2);
 
-    leader->y.fixed += -px(1);
-    leader->groundHeight += -px(1);
+    leader->y.fixed -= px(1);
+    leader->groundHeight -= px(1);
     wait(10);
 
     leader->y.fixed += px(1);
@@ -1028,7 +922,7 @@ static void MogallForest_ThirdArea_JumpWest(void) {
     leader->y.fixed += px(1);
     leader->groundHeight += px(1);
 
-    *motionFlags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
   }
 }
@@ -1060,7 +954,6 @@ static void MogallForest_ThirdArea_UpdateNorthRock(void) {
 /// Mogall Forest, the third area: Move on the south rock, which sinks into
 /// place on row 27 and stays.
 static void MogallForest_ThirdArea_UpdateSouthRock(void) {
-
   s32 column;
   s32 row;
   struct Actor *rock;
@@ -1089,20 +982,18 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
 ///
 /// The ape leaps at the leader and the battle with an Ape begins.
 static void MogallForest_ThirdArea_ApeAttacks(void) {
-
-  struct Actor *creature;
+  struct Actor *ape;
   struct Actor *leaderForX;
   s32 leaderX;
   struct Actor *leaderForZ;
 
-  creature = Actor_Get(ACTOR_THIRD_AREA_ATTACKING_APE);
+  ape = Actor_Get(ACTOR_THIRD_AREA_ATTACKING_APE);
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104, 8);
   Event_Wait(10);
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    (creature->z.fixed + px(8)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + px(8)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   FieldCamera_FollowActor(ACTOR_THIRD_AREA_ATTACKING_APE, 1);
   Actor_TurnToFaceEachOther(ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
                             0);
@@ -1129,9 +1020,9 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
 ///
 /// The ape points the way and hops off south.
 static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_THIRD_AREA_MIDDLE_APE);
+  ape = Actor_Get(ACTOR_THIRD_AREA_MIDDLE_APE);
 
   Event_Start();
 
@@ -1139,9 +1030,8 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 456, 152, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_MIDDLE_APE);
 
@@ -1170,9 +1060,9 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
 ///
 /// The ape points the way and hops off west.
 static void MogallForest_ThirdArea_WestApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_THIRD_AREA_WEST_APE);
+  ape = Actor_Get(ACTOR_THIRD_AREA_WEST_APE);
 
   Event_Start();
 
@@ -1180,9 +1070,8 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 392, 104, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_WEST_APE);
 
@@ -1212,7 +1101,7 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
 ///
 /// The ape bolts to another hiding place to the south.
 static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
@@ -1220,8 +1109,8 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, 9);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-  creature = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
-  Actor_SetSpriteFlags(creature, 0);
+  ape = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
+  Actor_SetSpriteFlags(ape, 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE_STUMP, 744, 504);
@@ -1232,9 +1121,9 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
 ///
 /// It points the way and hops off south.
 static void MogallForest_ThirdArea_EastApeShowsWay(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
+  ape = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
 
   Event_Start();
 
@@ -1242,9 +1131,8 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 536, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_EAST_APE);
 
@@ -1277,17 +1165,16 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
 /// The east ape appears again, turns to the party and leads it south to a
 /// hiding place. Sets FLAG_MOGALL_FOREST_LED_TO_KILLER_APE.
 static void MogallForest_ApeLeadsToKillerApe(void) {
-  struct Actor *creature;
+  struct Actor *ape;
 
-  creature = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
+  ape = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
   Event_Start();
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 136, 360);
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 408, 8);
   Event_Wait(10);
-  FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    (creature->z.fixed + px(4)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + px(4)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   Actor_FaceDirection(ACTOR_THIRD_AREA_EAST_APE, FACING_NORTH, 40);
   Actor_SetAttachedEffect(ACTOR_THIRD_AREA_EAST_APE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1326,7 +1213,7 @@ static void MogallForest_KillerApeAttacks(void) {
 
   actor = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
   Event_Start();
-  // Shake the hiding place twice before the creature appears.
+  // Shake the hiding place twice before the ape appears.
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 136, 360);
@@ -1371,7 +1258,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Sound_Play(SE_BOSS_ROAR);
   Actor_RunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
   Event_Wait(20);
-  // Jump toward the leader, then enter the final creature encounter.
+  // Jump toward the leader, then enter the final ape encounter.
   {
     s32 leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
 
@@ -1390,15 +1277,15 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct Trigger *MogallForest_GetTriggers(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MogallForestSign) {
+  if (scene == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Triggers;
   }
-  if (selector == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_Triggers;
   }
-  if (selector == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_Triggers;
   }
   return gMogallForestSidePaths_Triggers;
@@ -1533,7 +1420,6 @@ s32 MogallForest_Initialize(void) {
         Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_RIVER_LOG);
       } else {
 #if TBS_PATCH_1
-        s32 attr = 0;
 #endif
 
         wait(1);
@@ -1544,7 +1430,7 @@ s32 MogallForest_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(44, 30, 2, 4, 34, 30);
 #if TBS_PATCH_1
-        PushedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
+        PushedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, 0);
 #endif
       }
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_LOG);
@@ -1708,7 +1594,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 /// The script of each rock moved with Move, which draws it in greys.
 s32 gMogallForest_RockScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SET(SW_TIMER, SPRITE_COLOR_GREY),
     SC_CALL(MogallForest_CopyTimerToChild),
     SC_END,

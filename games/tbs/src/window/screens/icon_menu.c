@@ -46,21 +46,18 @@ struct WindowBuffer {
 /// icon on the lines it overhangs (below a row at the top, above one at the
 /// bottom, whose lines are 136 to 159).
 void IconMenu_DrawIcons(void) {
-  // UB: the pointers run from scalar link and span fields into the fields and
-  // records after them. UBFIX uses their real members.
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
   struct AffineTransform transform;
   s32 pulseScale;
   s32 affineIndex;
-  s32 packedSpan;
-
+  s32 span;
   s32 spriteY;
   u32 lastLine;
   u32 index;
-#ifndef UBFIX
-  u16 *spanCursor;
-#endif
+  // UB: edge steps from one line's window 1 edges to the next line's, past
+  // the member it points into.
+  u16 *edge;
   struct ScreenTransitionState *state;
 
   work = gIconMenuWork;
@@ -73,10 +70,8 @@ void IconMenu_DrawIcons(void) {
   affineIndex = OamMatrix_AllocFromTransform(&transform);
   // Pulse only the selection; the other icons keep their normal OAM shape.
   for (index = 0; index < work->count; index++, entry++) {
-#ifndef UBFIX
-    u32 *nativeAttributes;
-#endif
     s32 drawLayer;
+    u32 *word;
     s32 x;
 
     x = entry->x;
@@ -91,148 +86,79 @@ void IconMenu_DrawIcons(void) {
         spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
         spriteY = (pulseScale * 15 / 256 - 30) & 255;
-#ifdef UBFIX
-      entry->link = 0;
-      entry->attr01 = (affineIndex << 25) | spriteY | (left << 16) |
-                      OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
-                      OBJ_AFFINE;
-      entry->attr2 = gVramCacheEntries[entry->slot].offset >> 5;
-#else
-      nativeAttributes = &entry->link;
-      *nativeAttributes++ = 0;
-      *nativeAttributes++ = (affineIndex << 25) | spriteY | (left << 16) |
-                            OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
-                            OBJ_AFFINE;
-      *nativeAttributes = gVramCacheEntries[entry->slot].offset >> 5;
-#endif
+      word = entry->sprite;
+      *word++ = 0;
+      *word++ = (affineIndex << 25) | spriteY | (left << 16) | OBJ_SIZE_32X32 |
+                OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+      *word = gVramCacheEntries[entry->slot].offset >> 5;
       drawLayer = 246;
     } else {
-      u32 vramOffset;
-      u32 packedAttributes;
+      u32 attributes;
+      u32 tileOffset;
 
-#ifndef UBFIX
-      nativeAttributes = &entry->link;
-      // Read through the attribute pointer, y keeps the pointer copy before
-      // its load.
-      spriteY = ((s16 *)nativeAttributes)[7];
-      *nativeAttributes++ = 0;
-#else
-      spriteY = entry->y;
-      entry->link = 0;
-#endif
-      packedAttributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-      vramOffset = gVramCacheEntries[entry->slot].offset;
-#ifdef UBFIX
-      entry->attr01 = packedAttributes;
-      entry->attr2 = vramOffset >> 5;
-#else
-      *nativeAttributes++ = packedAttributes;
-      *nativeAttributes = vramOffset >> 5;
-#endif
+      word = entry->sprite;
+      /* FAKEMATCH(cast): y read as halfword 7 from the word pointer; as
+       * entry->y, 1 of 401 instructions moves in tbs-en. */
+      spriteY = ((s16 *)word)[7];
+      *word++ = 0;
+      attributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+      tileOffset = gVramCacheEntries[entry->slot].offset;
+      *word++ = attributes;
+      *word = tileOffset >> 5;
       drawLayer = 245;
     }
     Oam_AddSpriteAtDepth(entry, drawLayer);
   }
-  // The top and bottom rows reveal opposite sides of the selected icon.
+  // Window 1 widens around the selected icon on the lines it overhangs, below
+  // it on the top row and above it on the bottom one, then covers the row's
+  // 24 lines from the first icon, keeping each line's right edge.
   if (work->row == 0) {
     struct WindowBuffer *page;
-
     s32 halfWidth;
 
-    state = (struct ScreenTransitionState *)gScreenTransitionWork;
-    if (state == 0 || work->count == 0)
+    state = gScreenTransitionWork;
+    if (state == NULL || work->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
-    packedSpan = work->entries[work->selection].x;
+    span = work->entries[work->selection].x;
     halfWidth = (pulseScale * 12 - 2817) / 256;
-    packedSpan =
-        ((packedSpan - halfWidth) << 8) + (packedSpan + halfWidth) + 23;
+    span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
     lastLine = work->entries[work->selection].y + 24;
     lastLine += (pulseScale * 32 - 7937) / 512 + 1;
-#ifndef UBFIX
-    spanCursor = &page->lines[24].span;
-#endif
-    index = 24;
-    if (index < lastLine) {
-      do {
-#ifdef UBFIX
-        page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-        *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-        index++;
-#ifndef UBFIX
-        spanCursor += 2;
-#endif
-      } while (index < lastLine);
-    }
-    packedSpan = work->entries[0].x;
+    edge = &page->lines[24].span;
+    for (index = 24; index < lastLine; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
+    span = work->entries[0].x;
     if (work->selection == 0)
-      packedSpan -= (pulseScale * 12 - 2817) / 256;
-    packedSpan <<= 8;
-#ifndef UBFIX
-    spanCursor = &page->lines[0].span;
-#endif
-    for (index = 0; index <= 23; index++) {
-#ifdef UBFIX
-      page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-      *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-#ifndef UBFIX
-      spanCursor += 2;
-#endif
-    }
+      span -= (pulseScale * 12 - 2817) / 256;
+    span <<= 8;
+    edge = &page->lines[0].span;
+    for (index = 0; index <= 23; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
   } else {
     struct WindowBuffer *page;
     s32 firstLine;
-
     s32 halfWidth;
 
-    state = (struct ScreenTransitionState *)gScreenTransitionWork;
-    if (state == 0 || work->count == 0)
+    state = gScreenTransitionWork;
+    if (state == NULL || work->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
-    packedSpan = work->entries[work->selection].x;
+    span = work->entries[work->selection].x;
     halfWidth = (pulseScale * 12 - 2817) / 256;
-    packedSpan =
-        ((packedSpan - halfWidth) << 8) + (packedSpan + halfWidth) + 23;
+    span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
     firstLine = work->entries[work->selection].y;
     firstLine -= (pulseScale * 32 - 7937) / 512 + 1;
-#ifndef UBFIX
-    spanCursor = &page->lines[firstLine].span;
-#endif
-    index = firstLine;
-    if (index <= 135) {
-      do {
-#ifdef UBFIX
-        page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-        *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-        index++;
-#ifndef UBFIX
-        spanCursor += 2;
-#endif
-      } while (index <= 135);
-    }
-    packedSpan = work->entries[0].x;
+    edge = &page->lines[firstLine].span;
+    for (index = firstLine; index <= 135; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
+    span = work->entries[0].x;
     if (work->selection == 0)
-      packedSpan -= (pulseScale * 12 - 2817) / 256;
-    packedSpan <<= 8;
-#ifndef UBFIX
-    spanCursor = &page->lines[136].span;
-#endif
-    for (index = 136; index <= 159; index++) {
-#ifdef UBFIX
-      page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-      *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-#ifndef UBFIX
-      spanCursor += 2;
-#endif
-    }
+      span -= (pulseScale * 12 - 2817) / 256;
+    span <<= 8;
+    edge = &page->lines[136].span;
+    for (index = 136; index <= 159; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
   }
 }
 
@@ -279,9 +205,6 @@ s32 IconMenu_Run(s32 initial) {
   s32 resource;
 
   work->selection = initial;
-  // The redraw is a loop written with goto: as a for (;;) round
-  // the key loop, left with break after a move, the frame and registers change
-  // and only 52 of 134 instructions still line up in tbs-en.
 redraw:
   WindowSprite_PrepareForRedraw(work->window);
   if (work->labelBase != 0)
@@ -674,8 +597,6 @@ void Menu_DrawModeLabel(void) {
 // window sprites, so the empty window the others redraw has nothing to clear,
 // and with two methods and the menu opening on Password, every move to Cable
 // comes from Password.
-// XXX (no evidence): why French alone was rewritten; both forms draw the same
-// screens, so nothing the game shows tells them apart.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes. A
@@ -764,16 +685,15 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(RESOURCE_MODE0_WINDOW_X, 0,
-                           RESOURCE_MODE0_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
+    window = Window_Create(PASSWORD_LEVEL_WINDOW_X, 0,
+                           PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
     message = MsgPasswordSelection;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(message, window, 0, 4);
 #if LANGUAGE != LANGUAGE_JAPANESE
-    window =
-        Window_Create(RESOURCE_MODE1_WINDOW_X, 4, RESOURCE_MODE1_WINDOW_WIDTH,
-                      12, WINDOW_FLAG_INSTANT);
+    window = Window_Create(PASSWORD_HELP_WINDOW_X, 4,
+                           PASSWORD_HELP_WINDOW_WIDTH, 12, WINDOW_FLAG_INSTANT);
     work->lowerWindow = window;
     Text_DrawMessage(message + 1, window, 8, 0);
     Text_DrawMessage(message + 2, work->lowerWindow, 8, 11);
@@ -828,7 +748,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_SELL);
   IconMenu_AddIcon(COMMAND_ICON_ARTIFACTS);
   IconMenu_AddIcon(COMMAND_ICON_REPAIR);
-  IconMenu_Center(17, ENTRY11_COMMAND_LABEL_WIDTH, 0);
+  IconMenu_Center(17, SHOP_COMMAND_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;
@@ -845,7 +765,7 @@ s32 Menu_SelectSanctumService(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_CURE_POISON);
   IconMenu_AddIcon(COMMAND_ICON_REPEL_EVIL);
   IconMenu_AddIcon(COMMAND_ICON_REMOVE_CURSE);
-  IconMenu_Center(17, ENTRY19_COMMAND_LABEL_WIDTH, 0);
+  IconMenu_Center(17, SANCTUM_SERVICE_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;

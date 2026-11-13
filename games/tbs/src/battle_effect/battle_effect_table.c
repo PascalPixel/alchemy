@@ -13,10 +13,6 @@
 
 // Keep the definitions in link order.
 
-// The tables are plain arrays, not const, as the effect code reads them:
-// it reloads their addresses where const would let the compiler keep
-// them. Their .data is linked into the effect bank in ROM.
-
 struct BattleEffectParams;
 
 // Picture layouts that several effects read from the same sheet. The ROM
@@ -25,8 +21,8 @@ struct BattleEffectParams;
 
 /// The six pictures of an erupting flame puff: where each begins in the sheet.
 #define FLAME_PUFF_PICTURES {0, 552, 1480, 2590, 3913, 5185}
-#define FLAME_PUFF_PICTURE_WIDTHS {24, 29, 30, 27, 24, 16}  ///< widths
-#define FLAME_PUFF_PICTURE_HEIGHTS {23, 32, 37, 49, 53, 52} ///< heights
+#define FLAME_PUFF_PICTURE_WIDTHS {24, 29, 30, 27, 24, 16}
+#define FLAME_PUFF_PICTURE_HEIGHTS {23, 32, 37, 49, 53, 52}
 /// How far below its anchor each picture's top goes.
 #define FLAME_PUFF_PICTURE_BIAS_Y {41, 32, 26, 11, 4, 2}
 /// The sides of the seven square pictures of a blast, a puff or a flash.
@@ -35,11 +31,11 @@ struct BattleEffectParams;
 #define BLAST_PICTURES {0, 256, 1280, 3584, 5888, 8192, 10496}
 #define EARTH_WALL_PICTURE_WIDTHS                                              \
   {17, 19, 20} ///< the earth wall's three widths
-#define EARTH_WALL_PICTURE_HEIGHTS {49, 55, 64} ///< and heights
+#define EARTH_WALL_PICTURE_HEIGHTS {49, 55, 64}
 /// Where each earth wall picture begins.
 #define EARTH_WALL_PICTURES {2702, 3535, 4580}
 #define SLASH_PICTURE_WIDTHS {38, 54, 71, 74, 77, 65} ///< the six slash widths
-#define SLASH_PICTURE_HEIGHTS {7, 9, 11, 13, 13, 11}  ///< and heights
+#define SLASH_PICTURE_HEIGHTS {7, 9, 11, 13, 13, 11}
 /// Each slash picture's reach from the target.
 #define SLASH_PICTURE_REACH {58, 42, 25, 13, 5, 0}
 /// The flash picture for each three frames at the end of a flash's life.
@@ -67,8 +63,6 @@ u16 gBattleEffect_FlarePictures[] = {0,   4,   20,   56,   120,  220, 364,
                                      240, 440, 728,  1120, 1632, 2280};
 /// Nine square sparkle pictures (sparkle_dots_00 to _08), read by the falling,
 /// frost, healing, Djinni heal and Boreas parts.
-/// ★ Named from what the player sees: four-pointed sparkles rise after Frost's
-/// burst (its render)
 u16 gBattleEffect_SparklePictures[] = {0, 25, 74, 123, 172, 221, 246, 255, 256};
 /// Each sparkle picture's side.
 u8 gBattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
@@ -774,8 +768,6 @@ u16 gFire_FlarePictures[] = FLAME_PUFF_PICTURES;
 // frost.c: Frost's motes, ice mounds and chips.
 
 /// Where each ice mound stands: x, then the y of its foot.
-/// ★ Named from what the player sees: heaps of ice build at the targets' feet
-/// (its render)
 u8 gFrost_MoundSpots[][2] = {
     {53, 108}, {73, 110}, {29, 110}, {73, 108}, {33, 104}, {96, 106}, {8, 109},
     {62, 98},  {33, 100}, {87, 100}, {21, 95},  {53, 90},  {33, 90},  {72, 91},
@@ -921,8 +913,7 @@ u16 gHail_Pictures[] = {2308, 2372, 2436, 2500};
 u8 gHail_CrackleFlips[] = {3, 7, 11, 15};
 /// The portal (picture 0), its white core (1 and 2) and its crackles (3 to 8)
 /// in the portal sheet: size, where each begins in the sheet, and its offset
-/// from the portal's corner. ★ Named from what the player sees: glowing violet
-/// portals with white crackles close in on the target (its render)
+/// from the portal's corner.
 u8 gHail_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
 u8 gHail_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
 u16 gHail_PortalPictures[] = {0,    1152, 1243, 1341, 1533,

@@ -17,6 +17,7 @@
 #include "types.h"
 #include "edition.h"
 #include "far_call.h"
+#include "heap.h"
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;
@@ -130,10 +131,11 @@ extern const u8 PaletteFade_ScaleThreeQuartersKernel[];
 extern void *gOamDepthLists[];
 /// HEAP_SLOT_PARTY_STATUS: the party status window's layout (struct
 /// PartyStatusWindow), right after gWindowWork in IWRAM.
-extern u8 gPartyStatusWork[];
+#define gPartyStatusWork (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_PARTY_STATUS])
 /// HEAP_SLOT_SELECTION_WORKSPACE: struct SelectionWorkspace, which only two
 /// unused functions touch.
-extern u8 gSelectionWorkspace[];
+#define gSelectionWorkspace                                                    \
+  (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_SELECTION_WORKSPACE])
 extern const struct ArticleTable gArticle_Table;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
 /// tile's row.
@@ -160,13 +162,14 @@ extern const u8 FarCall_ResourceTable[];
 extern u8 gDecodeFillByte;
 /// HEAP_SLOT_PALETTE_CYCLES: the queue of palette cycles, which no code in
 /// the game ever starts.
-extern struct PaletteCycleWork *gPaletteCycleWork;
+#define gPaletteCycleWork                                                      \
+  (*(struct PaletteCycleWork **)&gHeapSlots[HEAP_SLOT_PALETTE_CYCLES])
 /// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
 /// colour 10, the second leaves every colour as it is.
 extern u16 gGraphics_ExpandNibbleTable[];
 /// HEAP_SLOT_SPRITES: the actor system's sprite pool, which the
 /// field animation and the sprite viewer walk.
-extern struct Sprite *gSprites;
+#define gSprites (*(struct Sprite **)&gHeapSlots[HEAP_SLOT_SPRITES])
 /// The right-pointing arrow cursor, an 8x16 sprite of 256 colours, beside
 /// its left-pointing twin.
 extern const u8 gMenu_CursorActorTiles[];

@@ -38,7 +38,7 @@ struct WorldMapAffinePair {
 struct WorldMapAffineWork {
   struct WorldMapScanline scanlines[160];
   struct WorldMapAffinePair pages[2][160];
-  u8 unused[4]; ///< no code names it
+  u8 unused[4];
 };
 
 STATIC_ASSERT(sizeof(struct WorldMapScanline) == 20);

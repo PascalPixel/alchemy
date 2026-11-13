@@ -150,9 +150,9 @@ void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 /// Without effectWork->enabled the target shrinks, and 16 particles appear
 /// round the orb, one every 6 frames, and circle it.
 ///
-/// Called by FieldPsynergy_Run and FieldPsynergy_WhirlwindOnTarget. Fades the
-/// palettes to a cast colour and back, and gives the target its shrinking
-/// update; the orb is released at the end, the particles finish on their own.
+/// Fades the palettes to a cast colour and back, and gives the target its
+/// shrinking update; the orb is released at the end, the particles finish on
+/// their own.
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *src = effectWork->mainActor;

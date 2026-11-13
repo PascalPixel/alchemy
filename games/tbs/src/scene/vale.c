@@ -132,6 +132,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "heap.h"
+#include "shared/walk_into_leader.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
 // (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
@@ -190,86 +191,52 @@ static void Vale_CycleActorPalette(struct Actor *actor);
 enum ValeActorId {
   /// An old woman. "Mt. Aleph looks beautiful today. It's so peaceful." After
   /// the party has left, "Vale is saved thanks to the Wise One!"
-  /// ★ Named from the game: "Mt. Aleph looks beautiful today."
-  /// (MsgValeMtAlephLooksBeautifulTodayIts)
   ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH = ACTOR_FIRST_PLACED,
   /// A woman in a green dress. "Vale stays pristine because of Mt. Aleph's
   /// purity."
-  /// ★ Named from the game: "Vale stays pristine because of Mt. Aleph's
-  /// purity." (MsgValeValeStaysPristineBecauseOfMt)
   ACTOR_WOMAN_ON_ALEPHS_PURITY,
   /// A little girl with orange pigtails. "I'm jealous of you, Garet, because
   /// your grandpa's the mayor." (Vale_TalkAboutTheMayorAndTremors)
-  /// ★ Named from the game: "I'm jealous of you,"
-  /// (MsgValeYourGrandpaIsTheMayor)
   ACTOR_GIRL_JEALOUS_OF_GARET,
   /// A young man with brown hair. "This place looks just like it did three
   /// years ago... after the storm..."
-  /// ★ Named from the game: "This place looks just like it did three years
-  /// ago... after the storm..." (MsgValeThisPlaceLooksJustLikeIt)
   ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM,
   /// A strongman by the river. "Isaac, watch out! Don't get too close to the
   /// river!"
-  /// ★ Named from the game: "Don't get too close to the river!"
-  /// (MsgValeIsaacWatchOutDontGetToo)
   ACTOR_STRONGMAN_BY_THE_RIVER,
   /// A burly grey-haired man. "Vale must remain hidden. Psynergy's secrets
   /// mustn't fall into the wrong hands."
-  /// ★ Named from the game: "Vale must remain hidden."
-  /// (MsgValeValeMustRemainHiddenPsynergysSecrets)
   ACTOR_MAN_KEEPING_VALE_HIDDEN,
   /// A woman with fair hair who stands by the way out to Kraden's cottage. "Do
   /// you need to go past here?", then "You mustn't go beyond Kraden's cottage."
   /// (Vale_WarnAboutGoingBeyondKradensCottage)
-  /// ★ Named from the game: "You mustn't go beyond Kraden's cottage."
-  /// (MsgValeDontGoBeyondKradensCottage)
   ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
   /// The three puppies, small white dogs, removed once the party has met
   /// Saturos and Menardi. "Rrruff! Rrrruff!"
-  /// ★ Named from what the player sees: small white dogs with brown ears (its
-  /// render)
   ACTOR_FIRST_PUPPY,
   /// A young woman with an orange ponytail. "Garet, you make me so mad
   /// sometimes!" (Vale_ArgueWithGaretsSister) Garet calls her "Sis" back from
   /// Kalay.
-  /// ★ Named from the game: "Your sister's really mad!"
-  /// (MsgValeYoureInTroubleNowGaretYour)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PUPPY + 3,
   /// "You're in trouble now, Garet... Your sister's really mad!" After the
   /// party has left, "Please take care of my brother, Isaac."
-  /// ★ Named from the game: "Please take care of my brother"
-  /// (MsgValePleaseTakeCareOfMyBrother), said by a small boy with orange hair
-  /// in a green shirt and shorts (its render)
   ACTOR_GARETS_BROTHER,
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars. It is pushed
   /// (Vale_PushPillar) or moved with Move. Its column is kept in
   /// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN
   /// (Vale_MovePillarBelowCliff).
-  /// ★ Named from what the player sees: a stone pillar of brown rock standing
-  /// below the cliff north of the village (its render)
   ACTOR_PILLAR,
-  /// ★ Named from the game: "your mother, Dora, has been crying"
-  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA, ///< Isaac's mother
   /// A man with long brown hair and a beard in a long robe. He jumps out to
   /// warn Isaac off the sacred peak, then keeps watching him
   /// (Vale_WarnAgainstSneakingUpMtAleph). "Mt. Aleph is a sacred peak. It is
   /// forbidden to climb it!"
-  /// ★ Named from the game: "Mt. Aleph is a sacred peak."
-  /// (MsgValeMtAlephIsASacredPeak)
   ACTOR_MAN_GUARDING_MT_ALEPH,
   /// The boards on the roof, SPRITE_ROOF_BOARDS, which Isaac moves into place
   /// with Psynergy at the roof's end (Vale_RoofMended).
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
   ACTOR_FIRST_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
   ACTOR_SECOND_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
   ACTOR_THIRD_BOARD,
-  /// ★ Named from the game: "Nut" (MsgItemName), the item Catch takes
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
 };
 
@@ -278,20 +245,15 @@ enum ValeActorId {
 enum ValeAfterKalayActorId {
   /// Garet's sister. "Ah! It's been a while... You're back?"
   /// (Vale_GaretMeetsHisSister)
-  /// ★ Named from the game: "Thanks, Sis." (MsgValeAh), Garet answering her
   ACTOR_GARETS_SISTER_AFTER_KALAY = ACTOR_FIRST_PLACED,
   /// "I will do my best to show everyone that I am strong enough to protect
   /// our family and Vale." (Vale_GaretAsksToProtectFamily)
-  /// ★ Named from the game: "Please take care of my brother"
-  /// (MsgValePleaseTakeCareOfMyBrother)
   ACTOR_GARETS_BROTHER_AFTER_KALAY,
   /// The young man of ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM. "Is Jenna back
   /// yet?" (Vale_AskWhetherJennaHasReturned)
-  /// ★ Named from the game: "Is back yet?" (MsgValeIsJennaBackYet)
   ACTOR_YOUNG_MAN_ASKING_FOR_JENNA,
   /// The strongman of ACTOR_STRONGMAN_BY_THE_RIVER. "I still remember when
   /// Felix and I used to play here...*Sniff*"
-  /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
   ACTOR_STRONGMAN_REMEMBERING_FELIX,
   /// Three sprites of water, CrossboneIsleFloodgate's water sprite
   /// SPRITE_SPLASH. Only Vale_UnusedWaterBurstsByTheRiver shows them. During a
@@ -301,34 +263,21 @@ enum ValeAfterKalayActorId {
   ///
   /// The row after them places the woman with fair hair of
   /// ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing names her.
-  /// ★ Named from what the player sees: a spout of white water spraying up,
-  /// spr_214.png (its render)
   ACTOR_FIRST_WATER,
   /// An old woman. "Mt. Aleph's eruption was so powerful, it caused the
   /// continent to crack!"
-  /// ★ Named from the game: "Mt. Aleph's eruption was so powerful"
-  /// (MsgValeMtAlephsEruptionWasSoPowerful)
   ACTOR_OLD_WOMAN_ON_THE_ERUPTION = ACTOR_FIRST_WATER + 4,
   /// A woman in a green dress. "Aghh! I felt another one!"
   /// (Vale_ReactToAnotherTremor)
-  /// ★ Named from the game: "Aghh! I felt another one!"
-  /// (MsgValeIFeltAnotherOne)
   ACTOR_WOMAN_FEELING_TREMORS,
   /// A little girl with orange pigtails. "They say the danger is gone, even
   /// though the earthquakes continue..."
-  /// ★ Named from the game: "They say the danger is gone, even though the
-  /// earthquakes continue..." (MsgValeTheySayTheDangerIsGone)
   ACTOR_GIRL_DOUBTING_SAFETY,
   /// A burly grey-haired man. "I wonder why we haven't seen any travelers since
   /// the eruption..." (Vale_AskAboutTheLackOfTravelers)
-  /// ★ Named from the game: "I wonder why we haven't seen any travelers
-  /// since the eruption..." (MsgValeNoTravelersSinceTheEruption)
   ACTOR_MAN_MISSING_TRAVELERS,
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT_AFTER_KALAY,
-  /// ★ Named from what the player sees: a stone pillar of brown rock standing
-  /// below the cliff north of the village (its render)
-  ACTOR_PILLAR_AFTER_KALAY ///< the pillar of ACTOR_PILLAR
+  ACTOR_PILLAR_AFTER_KALAY
 };
 
 /// The game's opening (Vale_MendingTheRoof), the placed actors of
@@ -336,30 +285,16 @@ enum ValeAfterKalayActorId {
 /// ids.
 enum ValeOpeningActorId {
   /// A woman in a green dress who meets Jenna on her way.
-  /// ★ Named from what the player sees: a woman with brown hair in a green
-  /// dress and a white apron (its render)
   ACTOR_OPENING_WOMAN = ACTOR_FIRST_PLACED,
   /// The pillar of ACTOR_PILLAR, which Garet trains his Psynergy on.
-  /// ★ Named from what the player sees: a stone pillar of brown rock standing
-  /// below the cliff north of the village (its render)
   ACTOR_OPENING_PILLAR,
-  /// ★ Named from the game: "your mother, Dora, has been crying"
-  /// (MsgValeDoraHasBeenCrying)
   ACTOR_OPENING_DORA, ///< calls up to Isaac on the roof
   /// The boards on the roof, as ACTOR_FIRST_BOARD.
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
   ACTOR_OPENING_FIRST_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
   ACTOR_OPENING_SECOND_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
   ACTOR_OPENING_THIRD_BOARD,
   /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c). It pushes the
   /// pillar for Garet, shedding sparkles.
-  /// ★ Named from what the player sees: a large open hand,
-  /// spr_215.png (its render)
   ACTOR_OPENING_MOVE_HAND
 };
 
@@ -371,7 +306,7 @@ enum { ANIM_HAMMER = 11 };
 /// table and frames under graphics/sprite draw them.
 enum ValeAnimation {
   /// Garet throwing up his arms, then crouching, as he jumps in fright
-  /// (spr_001.png).
+  /// (garet.png).
   ANIM_GARET_STARTLED = 13
 };
 
@@ -379,13 +314,9 @@ enum ValeAnimation {
 
 /// The roof of Isaac's house has just been mended. For the rest of the visit
 /// Dora frets about the hole Garet left.
-/// ★ Named from the game: "But what am I going to do about this hole?"
-/// (MsgValeIToldGaretItWas)
 #define FLAG_VALE_ROOF_JUST_MENDED FLAG_SCENE_TEMP_02
 /// The leader has climbed the ladder onto the roof of Isaac's house, whose
 /// cells are changed so it can be walked.
-/// ★ Named from the game: "Haven't you finished mending the roof yet?"
-/// (MsgValeRepairCaption)
 #define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
 /// The leader is on the rope bridge over the river.
 ///
@@ -393,43 +324,29 @@ enum ValeAnimation {
 /// behaviors. Its two middle rows are walkable at the deck's height, and its
 /// rails are walls. Stepping off puts back the river's, walled water between
 /// open banks.
-/// ★ Named from what the player sees: a wooden bridge with rope rails over the
-/// river, above the waterfall (its render)
 #define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 /// The man guarding Mt. Aleph is paused while a menu is open.
-/// ★ Named from the game: "Mt. Aleph is a sacred peak."
-/// (MsgValeMtAlephIsASacredPeak)
 #define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_SCENE_TEMP_41
 /// Back from Kalay, Garet has met his sister.
-/// ★ Named from the game: "Ah!" (MsgValeAh)
 #define FLAG_VALE_GARET_MET_SISTER FLAG_AREA_TEMP_03
 /// Back from Kalay, Garet has asked his brother to protect the family while he
 /// is gone.
-/// ★ Named from the game: "you must protect the family while I'm gone."
-/// (MsgValeEverProtectFamily)
 #define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_AREA_TEMP_04
 /// Unused: the water has burst up by the river and the strongman has remembered
 /// Felix (Vale_UnusedWaterBurstsByTheRiver, which nothing reaches).
-/// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
 #define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_AREA_TEMP_05
 /// Back from Kalay, the burly man has asked about the lack of travellers since
 /// the eruption.
-/// ★ Named from the game: "I wonder why we haven't seen any travelers since
-/// the eruption..." (MsgValeNoTravelersSinceTheEruption)
 #define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_AREA_TEMP_07
 /// Vale_RoofMended has played, in which Dora praises the roof and sends
 /// the three off to Mt. Aleph.
-/// ★ Named from the game: "Good job" (MsgValeGoodJob)
 #define FLAG_VALE_ROOF_MENDED_EVENT_PLAYED FLAG_AREA_TEMP_08
 /// The stone pillar below the cliff stands in its west column.
-/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_AREA_TEMP_14
 /// The stone pillar below the cliff stands in its middle column, where it
 /// starts.
-/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN FLAG_AREA_TEMP_15
 /// The stone pillar below the cliff stands in its east column.
-/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_AREA_TEMP_16
 
 const struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
@@ -441,8 +358,7 @@ const u32 *Vale_GetExits(void) { return gVale_Exits; }
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
 const struct ActorPlacement *Vale_GetActorPlacements(void) {
-  u8 *gameStateBytes = (u8 *)&gMainRoutineWork;
-  if (((struct MainRoutineWork *)gameStateBytes)->entrance == VALE_FROM_TITLE)
+  if (gMainRoutineWork.entrance == VALE_FROM_TITLE)
     return gVale_RepairActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ActorPlacementsAfterKalay;
@@ -497,14 +413,15 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
 ///
 /// After the party has left, she says Kraden has not come back.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
-  s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
+  s32 asked = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
+
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeKradenHasntComeBack);
     // "I guess Kraden still hasn't come back."
     Event_ShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
-  } else if (GameFlag_Get(flag) == 0) {
-    GameFlag_Set(flag);
+  } else if (GameFlag_Get(asked) == 0) {
+    GameFlag_Set(asked);
     Event_SetMessageId(MsgValeDoYouNeedToGo);
     Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
                         4);
@@ -707,9 +624,8 @@ static void Vale_EnterIsaacsHouse(void) {
       // "He promised not to return until he fulfills his mission. My..."
       Event_ShowMessage(ACTOR_DORA, 0);
     } else {
-      u16 *message = &gFieldWork->message;
 
-      *message = *message + 2;
+      gFieldWork->message += 2;
       Event_Wait(40);
       Event_ShowMessage(ACTOR_DORA, 0);
     }
@@ -742,7 +658,7 @@ static void Vale_EnterCottageRoomsAWest(void) {
 }
 
 /// Unused: its row answers cell behavior 11, which no cell of Vale's layout
-/// (map/map_000, the stormy night's too) carries, as
+/// (map/vale_prologue, the stormy night's too) carries, as
 /// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
 /// vale_prologue.c.
 ///
@@ -762,7 +678,6 @@ static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
 static void Vale_HaveJennaStopTheAlephDetour(void) {
   struct Actor *leader;
   struct Actor *jenna;
-  struct Actor *actor;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   jenna = Actor_Get(ACTOR_JENNA);
@@ -790,13 +705,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   }
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(2);
-  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Actor_SetDestination(ACTOR_JENNA, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_JENNA);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 110, 303);
   Event_End();
 }
@@ -1613,8 +1522,8 @@ s32 Vale_Initialize(void) {
   s32 set;
 
   if (gMainRoutineWork.entrance == VALE_FROM_TITLE) {
-    WindowColor_Apply(((u8 *)&gMainRoutineWork)[517],
-                      ((u8 *)&gMainRoutineWork)[518]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
     Vale_MendingTheRoof();
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
@@ -1710,10 +1619,9 @@ s32 Vale_Initialize(void) {
       }
       {
         s32 priority;
-        s32 actorId = ACTOR_DORA;
 
         priority = ((u32)(u8)set >> 8) + 2;
-        Actor_SetSpritePriority(actorId, priority);
+        Actor_SetSpritePriority(ACTOR_DORA, priority);
       }
 #endif
     }
@@ -1741,7 +1649,7 @@ s32 Vale_Initialize(void) {
 /// Sets area flag FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're
 /// back?" ("Sis...").
 static void Vale_GaretMeetsHisSister(void) {
-  struct Actor *record;
+  struct Actor *actor;
   s32 msg;
 
   Event_Start();
@@ -1760,9 +1668,9 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
                       0);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetPositionFixed(ACTOR_GARET, record->x.fixed, record->z.fixed);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -1824,14 +1732,7 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_GARET, record->x.part.pixel,
-                         record->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_VALE_GARET_MET_SISTER);
   Event_End();
 }
@@ -1842,15 +1743,15 @@ static void Vale_GaretMeetsHisSister(void) {
 /// Sets area flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
 /// you must protect the family while I'm gone."
 static void Vale_GaretAsksToProtectFamily(void) {
-  struct Actor *record;
+  struct Actor *actor;
 
   Event_Start();
   FieldCamera_MoveTo(357, CAMERA_KEEP, 738, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 367, 745);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetPositionFixed(ACTOR_GARET, record->x.fixed, record->z.fixed);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -1924,14 +1825,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_GARET, record->x.part.pixel,
-                         record->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY);
   Event_End();
 }
@@ -2050,26 +1944,26 @@ static void Vale_ClimbDownRoofLadder(s32 actorId, s32 approachAnimationId,
 /// Mode 0 sets count boards from first on the roof by the hole, still and
 /// without shadows. Any other mode puts them out of sight.
 static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
-  s32 selector = first;
+  s32 actorId = first;
   u32 i;
 
   if (mode == 0) {
     for (i = 0; i < count; i++) {
-      struct Actor *actor = Actor_Get(selector);
+      struct Actor *actor = Actor_Get(actorId);
 
       actor->motionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
       actor->x.fixed = px(390);
       actor->y.fixed = px(160);
       actor->z.fixed = px(842);
-      selector++;
+      actorId++;
     }
     return;
   }
 
   for (i = 0; i < count; i++) {
-    Actor_SetPosition(selector, 0, 0);
-    selector++;
+    Actor_SetPosition(actorId, 0, 0);
+    actorId++;
   }
 }
 
@@ -2414,12 +2308,6 @@ static void Vale_RoofMended(void) {
   struct Actor *actor;
   u32 i;
   struct Actor *turned;
-  TaskFunc funcA;
-  TaskFunc funcB;
-  TaskFunc funcC;
-  TaskFunc funcD;
-  TaskFunc funcE;
-  TaskFunc funcF;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
@@ -2460,7 +2348,7 @@ static void Vale_RoofMended(void) {
   actor->y.fixed = px(160);
   actor->z.fixed = px(848);
   Actor_SetSpriteFlags(actor, 0);
-  ((u8 *)FieldCamera_GetActor())[85] = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
   FieldCamera_MoveTo(383, 160, 877, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -2494,24 +2382,18 @@ static void Vale_RoofMended(void) {
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
 
-  funcA = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(funcA, TASK_PASS_FRAME);
-  funcB = Vale_CycleFirstBoardPalette;
-  Task_AddFrame(funcB, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_UpdateLeaderPaletteAndEffects, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_CycleFirstBoardPalette, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_FIRST_BOARD, 0.2);
   Actor_MoveToAndWait(ACTOR_FIRST_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_MoveToAndWait(ACTOR_FIRST_BOARD, 400, 826);
   Event_Wait(20);
-  {
-    struct Actor *record = Actor_Get(ACTOR_PARTY_LEADER);
-
-    record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(funcA);
-  Task_Remove(funcB);
+  Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
+  Task_Remove(Vale_CycleFirstBoardPalette);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
@@ -2537,24 +2419,18 @@ static void Vale_RoofMended(void) {
     wait(1);
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  funcC = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(funcC, TASK_PASS_FRAME);
-  funcD = Vale_CycleSecondBoardPalette;
-  Task_AddFrame(funcD, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_UpdateLeaderPaletteAndEffects, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_CycleSecondBoardPalette, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_SECOND_BOARD, 0.2);
   Actor_MoveToAndWait(ACTOR_SECOND_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_MoveToAndWait(ACTOR_SECOND_BOARD, 377, 828);
   Event_Wait(20);
-  {
-    struct Actor *record = Actor_Get(ACTOR_PARTY_LEADER);
-
-    record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(funcC);
-  Task_Remove(funcD);
+  Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
+  Task_Remove(Vale_CycleSecondBoardPalette);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
@@ -2581,24 +2457,18 @@ static void Vale_RoofMended(void) {
     wait(1);
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  funcE = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(funcE, TASK_PASS_FRAME);
-  funcF = Vale_CycleThirdBoardPalette;
-  Task_AddFrame(funcF, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_UpdateLeaderPaletteAndEffects, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_CycleThirdBoardPalette, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_THIRD_BOARD, 0.2);
   Actor_MoveToAndWait(ACTOR_THIRD_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_MoveToAndWait(ACTOR_THIRD_BOARD, 360, 837);
   Event_Wait(20);
-  {
-    struct Actor *record = Actor_Get(ACTOR_PARTY_LEADER);
-
-    record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(funcE);
-  Task_Remove(funcF);
+  Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
+  Task_Remove(Vale_CycleThirdBoardPalette);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_THIRD_BOARD, SPRITE_COLOR_NORMAL);
@@ -2727,11 +2597,7 @@ static void Vale_RoofMended(void) {
   Actor_Get(ACTOR_JENNA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JENNA, 408, 843);
   Event_Wait(1);
-  {
-    struct Actor *record = Actor_Get(ACTOR_JENNA);
-
-    record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
-  }
+  Actor_Get(ACTOR_JENNA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -2830,7 +2696,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
     actor->z.fixed += px(3) / 2;
-    actor->scaleY += -Q16_ONE / 10;
+    actor->scaleY -= Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -2990,9 +2856,9 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(60);
   actor = Actor_Get(ACTOR_GARET);
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_JENNA);
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
@@ -3016,11 +2882,7 @@ static void Vale_RoofMended(void) {
                            ANIM_LEADER_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  {
-    struct Actor *record = Actor_Get(ACTOR_DORA);
-
-    record->steeringFlags = 1 | record->steeringFlags;
-  }
+  Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   Vale_ClimbDownRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP,
                            DORA_ANIMATION_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
@@ -3082,15 +2944,12 @@ static void Vale_CycleThirdBoardPalette(void) {
 
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
-static s32 Vale_DistanceInPixels(s32 *first_position, s32 *second_position) {
-  s32 delta_x = (*first_position++ - *second_position++) >> 16;
-  s32 delta_y = (*first_position++ - *second_position++) >> 16;
-  s32 delta_z = (*first_position - *second_position) >> 16;
-  s32 delta_x_squared = delta_x * delta_x;
-  s32 delta_y_squared = delta_y * delta_y;
-  s32 delta_z_squared = delta_z * delta_z;
+static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
+  s32 dx = (*first++ - *second++) >> 16;
+  s32 dy = (*first++ - *second++) >> 16;
+  s32 dz = (*first - *second) >> 16;
 
-  return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
+  return Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
 }
 
 /// Whether the man guarding Mt. Aleph sees the target.
@@ -3162,11 +3021,9 @@ static void Vale_TrailSparkles(struct Actor *source) {
   s32 randomDistance;
   struct Actor *particle;
   SET_VECTOR(spawnPosition, source->x.fixed,
-             source->y.fixed - (Import_RandomNext() << 4) - px(8),
-             source->z.fixed);
-  randomDistance = Import_RandomNext();
-  Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
-                        Import_RandomNext(), spawnPosition);
+             source->y.fixed - (Random_Next() << 4) - px(8), source->z.fixed);
+  randomDistance = Random_Next();
+  Vector_AddPolarOffset(randomDistance * 48, Random_Next(), spawnPosition);
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
@@ -3176,13 +3033,7 @@ static void Vale_TrailSparkles(struct Actor *source) {
     Actor_SetSpriteFlags(particle, 0);
     Actor_SelectAnimation(particle, 0);
     Actor_StartScript(particle, gVale_SparkleScript);
-    {
-      struct Sprite *record = particle->sprite;
-      s32 priorityFlags = ~12;
-      priorityFlags &= ((u8 *)&record->image)[9];
-      priorityFlags |= ACTOR_PRIORITY_OVERHEAD;
-      ((u8 *)&record->image)[9] = priorityFlags;
-    }
+    particle->sprite->image.priority = 1;
   }
   Sound_Play(SE_ITEM_BREAK);
 }
@@ -3190,19 +3041,19 @@ static void Vale_TrailSparkles(struct Actor *source) {
 /// The Move hand rises, spins and shrinks for 31 frames, bursts into eight
 /// sparkles with SE_PSYNERGY_SPARKLE, and is put out of sight.
 static void Vale_VanishMoveHand(struct Actor *emitter) {
-  s32 frameCountdown;
+  s32 frame;
 
   Sound_Play(SE_CAST);
 
-  for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
+  for (frame = 0; frame < 31; frame++) {
     emitter->y.fixed += px(1);
     emitter->facing = (u16)(emitter->facing + TRIG_TURN / 8);
-    emitter->scaleX += -2048;
-    emitter->scaleY += -2048;
+    emitter->scaleX -= Q16_ONE / 32;
+    emitter->scaleY -= Q16_ONE / 32;
     wait(1);
   }
 
-  for (frameCountdown = 7; frameCountdown >= 0; frameCountdown--) {
+  for (frame = 0; frame < 8; frame++) {
     struct Actor *particle = FieldActor_Create(
         SPRITE_SPARKLE, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
 
@@ -3212,17 +3063,16 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
       Actor_SetSpriteFlags(particle, 0);
       Actor_StartScript(particle, (const void *)&gVale_SparkleScript[1]);
 
-      verticalSpeed = Import_RandomNext() + px(1);
+      verticalSpeed = Random_Next() + px(1);
       particle->acceleration = Q16_ONE;
       particle->speedLimit = verticalSpeed;
       particle->motionFlags = ACTOR_FALLS;
       particle->gravity = px(1) / 25;
 
-      particle->velocityY = Import_RandomNext() - Import_RandomNext();
+      particle->velocityY = Random_Next() - Random_Next();
 
       Actor_SetTargetPositionFromMagnitudeAngle(
-          particle, ((Import_RandomNext() * 3) << 3) + px(8),
-          Import_RandomNext());
+          particle, ((Random_Next() * 3) << 3) + px(8), Random_Next());
     }
   }
 
@@ -3290,7 +3140,7 @@ static void Vale_MovePillarBelowCliff(void) {
 /// The task that plays SE_PSYNERGY_SPARKLE every 16 frames while Isaac's
 /// Psynergy lifts a board at the roof's end.
 static void Vale_PlayStepSound(void) {
-  if ((*(u32 *)&gFrameCount & 15) == 0)
+  if ((gFrameCount & 15) == 0)
     Sound_Play(SE_PSYNERGY_SPARKLE);
 }
 
@@ -3341,7 +3191,6 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
 /// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE (7) for two
 /// frames in four, with the World Map's attached sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
-
   if ((gFrameCount & 2) != 0)
     Actor_SetColorMode(actor, 7);
   else
@@ -3382,13 +3231,13 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_ACCELERATION(0.25),
     SC_SET(SW_TIMER, 2),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(296, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 3),
     SC_MOVE(296, 0, 420),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
@@ -3402,34 +3251,34 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(296, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 2),
     SC_MOVE(256, 0, 456),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(15),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(60),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 1),
     SC_MOVE(212, 0, 388),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(40),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 429),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_WAIT(5),
@@ -3443,13 +3292,13 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(5),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 2),
     SC_MOVE(256, 0, 456),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(5),
@@ -3481,23 +3330,23 @@ s32 gVale_LeaderHammers[] = {
 // Garet and Jenna walk to the front of Isaac's house to watch him on the roof.
 
 s32 gVale_GaretWalksToTheHouse[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(300, 0, 880),
     SC_SYNC,
     SC_MOVE(300, 0, 904),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 s32 gVale_JennaWalksToTheHouse[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(300, 0, 904),
     SC_SYNC,
     SC_MOVE(321, 0, 904),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
@@ -3505,7 +3354,7 @@ s32 gVale_JennaWalksToTheHouse[] = {
 /// A spout of water grows from a tenth of its size north of the strongman by
 /// the river and vanishes (Vale_UnusedWaterBurstsByTheRiver).
 s32 gVale_UnusedWaterGrows[] = {
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION(266, 0, 1230),
     SC_SET(SW_SCALE_X, Q16_ONE / 10),
     SC_SET(SW_SCALE_Y, Q16_ONE / 10),
@@ -3526,7 +3375,7 @@ s32 gVale_SparkleScript[] = {
     SC_RELEASE,
     SC_SYNC,
     SC_SPEED(0.0625),
-    SC_ANIMATION(0),
+    SC_ANIMATION(ANIM_STILL),
     SC_WAIT(10),
     SC_RELEASE,
 };
@@ -3888,14 +3737,26 @@ u16 gVale_WestHouseDoorOpens[] = {
 // or from either of the guard's pauses (Vale_AskAboutSneakingToAleph).
 
 s32 gVale_FirstWarningLeaderPath[] = {
-    SC_ANIMATION(5), SC_MOVE(199, 0, 446), SC_SYNC, SC_MOVE(215, 0, 472),
-    SC_SYNC,         SC_MOVE(239, 0, 461), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_LEADER_RUN),
+    SC_MOVE(199, 0, 446),
+    SC_SYNC,
+    SC_MOVE(215, 0, 472),
+    SC_SYNC,
+    SC_MOVE(239, 0, 461),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gVale_FirstWarningGuardPath[] = {
-    SC_ANIMATION(2), SC_MOVE(199, 0, 446), SC_SYNC, SC_MOVE(215, 0, 472),
-    SC_SYNC,         SC_MOVE(239, 0, 461), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(199, 0, 446),
+    SC_SYNC,
+    SC_MOVE(215, 0, 472),
+    SC_SYNC,
+    SC_MOVE(239, 0, 461),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -3904,19 +3765,25 @@ s32 gVale_LeaderFromWestPath[] = {
     SC_ANIMATION(5), SC_MOVE(224, 0, 458),
     SC_SYNC,         SC_MOVE(256, 0, 458),
     SC_SYNC,         SC_MOVE(256, 0, 474),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_SYNC,         SC_ANIMATION(ANIM_STAND),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTH),
     SC_END,
 };
 
 s32 gVale_GuardFromFirstPausePath[] = {
-    SC_SPEED(1.5),   SC_ACCELERATION(1),
-    SC_ANIMATION(2), SC_MOVE(216, 0, 458),
-    SC_SYNC,         SC_MOVE(256, 0, 456),
-    SC_SYNC,         SC_ANIMATION(1),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTH),
+    SC_SPEED(1.5),
+    SC_ACCELERATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(216, 0, 458),
+    SC_SYNC,
+    SC_MOVE(256, 0, 456),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTH),
     SC_END,
 };
 
@@ -3924,17 +3791,22 @@ s32 gVale_LeaderPushedBackPath[] = {
     SC_SPEED(2),     SC_ACCELERATION(2),
     SC_ANIMATION(5), SC_MOVE(256, 0, 458),
     SC_SYNC,         SC_MOVE(256, 0, 474),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_SYNC,         SC_ANIMATION(ANIM_STAND),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTH),
     SC_END,
 };
 
 s32 gVale_GuardFromSecondPausePath[] = {
-    SC_SPEED(1.5),   SC_ACCELERATION(1),
-    SC_ANIMATION(2), SC_MOVE(256, 0, 456),
-    SC_SYNC,         SC_ANIMATION(1),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTH),
+    SC_SPEED(1.5),
+    SC_ACCELERATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(256, 0, 456),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTH),
     SC_END,
 };

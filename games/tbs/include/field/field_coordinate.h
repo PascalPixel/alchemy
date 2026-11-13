@@ -12,7 +12,7 @@ union FieldCoordinate {
   s32 fixed; ///< 16.16 fixed-point pixels
   struct {
     u16 fraction; ///< 1/65536 pixels
-    s16 pixel;    ///< pixels
+    s16 pixel;
   } part;
 };
 

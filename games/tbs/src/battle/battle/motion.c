@@ -45,9 +45,8 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   }
 }
 
-/// Sends unitId running off its side of the battlefield, three times
-/// as far out as its spot, with a hop, in POSE_STANDING. Called by
-/// BattleFlee_PlayRun and BattleStaging_RunFlee.
+/// Sends unitId running off its side of the battlefield, three times as far
+/// out as its spot, with a hop, in POSE_STANDING.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObject *battleObject;
   struct Actor *actor;
@@ -110,11 +109,9 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
                          battleObject->anchorZ);
 }
 
-/// Sends unitId hopping out to one and a half times its spot's
-/// distance from the centre. Called by BattleStaging_RunAttack and
-/// BattleStaging_RunPlainAttack.
+/// Sends unitId hopping out to one and a half times its spot's distance from
+/// the centre.
 void BattleMotion_HopBack(s32 unitId) {
-  u32 scaledX;
   struct BattleObject *battleObject;
   struct Actor *actor;
 
@@ -127,9 +124,7 @@ void BattleMotion_HopBack(s32 unitId) {
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
-  // anchorX * 3 / 2, rounded toward zero.
-  scaledX = battleObject->anchorX * 3;
-  Actor_SetMoveTargetFar(actor, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
+  Actor_SetMoveTargetFar(actor, battleObject->anchorX * 3 / 2, 0,
                          battleObject->anchorZ);
 }
 
@@ -183,12 +178,9 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   Actor_SelectAnimationFar(actor, POSE_DAMAGE);
 }
 
-/// Sends unit unitId three quarters of the way to unit targetId, arriving
-/// in travelDivisor frames at a steady speed, leaping up at initialVelocityY
+/// Sends unit unitId three quarters of the way to unit targetId, arriving in
+/// travelDivisor frames at a steady speed, leaping up at initialVelocityY
 /// (16.16 pixels a frame), in POSE_LEAP.
-/// Called by BattleStaging_RunAttack, BattleStaging_RunPlainAttack
-/// and AutoBattle_RunApproachAttack, and through its far stub by the
-/// Bind, flurry, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
   struct BattleObject *actorSlot = BattleObject_Get(unitId);
@@ -303,9 +295,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
 
 /// Projects the point above unit id where its battle effects play (its class's
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
-/// height is scaled by the sprite's projected scale. Returns 0. Called by
-/// ElementGlow_Play, and through its far stub by
-/// Projection_ScaledUnit and SelectionMenu_Draw.
+/// height is scaled by the sprite's projected scale. Returns 0.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
@@ -348,8 +338,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
 
 /// Returns the height above unit id where its battle effects play, 16.16: its
 /// class's own (BattleSprite_GetEffectHeight), else 24 for a small enemy and 48
-/// for others. Called by BattleMotion_ProjectScaledPosition, and through its
-/// far stub by the battle effects that play at a unit's body.
+/// for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;

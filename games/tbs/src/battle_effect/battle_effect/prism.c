@@ -26,7 +26,6 @@
 /// shatter.
 void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   BlitterPair draw;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -40,9 +39,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   s32 j;
 
   shards = PARTICLES;
-  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  work = *cursor++;
-  canvas = *cursor;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

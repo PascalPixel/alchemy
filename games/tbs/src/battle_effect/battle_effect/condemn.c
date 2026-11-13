@@ -49,7 +49,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 transferValue;
   s32 frame;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
+  work = *cursor++;
+  canvas = *cursor;
   /* FAKEMATCH(temporary): transferValue set here, after the slots; as declared
    * with its 0, 14 of 580 instructions differ in tbs-en. */
   transferValue = 0;
@@ -72,11 +75,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   Decompress_TaggedLz(sheet, cells);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
@@ -172,9 +175,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         pictureRow = 0;
       } else {
         pictureColumn = 1;
-        /* FAKEMATCH(dead): i is 160 here, so i >> 31 folds to 0 and only
-         * changes allocation; as pictureRow = 0, 452 of 580 instructions differ
-         * in tbs-en. */
+        /* FAKEMATCH(dead): i is 160 here; as pictureRow = 0, 452 of 580
+         * instructions differ in tbs-en. */
         pictureRow = i >> 31;
       }
       // The reaper with its scythe raised until frame 91, and swung from

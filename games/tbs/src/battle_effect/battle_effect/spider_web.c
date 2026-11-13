@@ -33,13 +33,12 @@ void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
 /// four frames each: the first four from the swirl sheet, the last two from the
 /// tail sheet. The swipe lands on frame 8.
 ///
-/// Called by BattleEffect_RunPoisonBeat and BattleEffect_RunSpinningBeat.
 /// Decodes the tail sheet into Ram_MapGridCellBuffer, moves BG2X so the swipe
-/// crosses the target, and sets work->shakeFrames on the hit; Poison Beat loads
-/// its lime colours over the first 64 of the background palette, and the battle
-/// shows its damage at once as the target recoils; in Spinning Beat the
-/// target flashes, its actor is thrown up on frame 13 and the battle shows
-/// the damage as it lands on frame 65.
+/// crosses the target, and sets work->shakeFrames on the hit; Poison Beat
+/// loads its lime colours over the first 64 of the background palette, and the
+/// battle shows its damage at once as the target recoils; in Spinning Beat the
+/// target flashes, its actor is thrown up on frame 13 and the battle shows the
+/// damage as it lands on frame 65.
 ///
 /// mode: the swipe (enum SwirlSwipeMode).
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
@@ -57,21 +56,20 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   s32 frames;
   s32 frame;
   s32 picture;
-  void **slots;
-  void **cursor;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   if (work->args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
                              1);
@@ -182,8 +180,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
-  frame = 0;
-  do {
+  for (frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {
     // Frame loop. The quarters meet near (64, 72): top left, top right
     // mirrored, bottom left flipped, bottom right both. The web's share of
     // the blend rises 2 sixteenths a frame to all of it by frame 8, and from
@@ -220,8 +217,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-    frame++;
-  } while (frame != SPIDER_WEB_FRAMES);
+  }
   // Finish: the blitter was freed each time it drew.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

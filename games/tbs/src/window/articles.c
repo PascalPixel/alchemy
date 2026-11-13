@@ -2,9 +2,6 @@
 /// Window text tables: each edition's articles and possessives, the kana
 /// marks and the sprite motion curves.
 
-#include "module/window/articles.h"
-#include "types.h"
-#include "edition.h"
 #include "text_font.h"
 
 // Articles and possessives, by edition. An item or name carries an article
@@ -161,9 +158,6 @@ const s8 *const gArticle_Table[8] = {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The glyph drawn over a kana for the mark in its code's top two bits: none,
 /// the voiced mark (dakuten) or the semi-voiced mark (handakuten).
-/// Not const, and placed in read-only data by its section: through a const
-/// extern, its load in Text_DrawGlyphPair is scheduled ahead of the spill of
-/// out (2 of 185 instructions differ in tbs-ja).
 // clang-format off
 u16 gFont_MarkGlyphCodes[] __attribute__((section(".rodata"))) = {
     TEXT_MARK_NONE,

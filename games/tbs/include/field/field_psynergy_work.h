@@ -35,7 +35,7 @@ struct FieldEffectWork {
   s8 visible; ///< set at the start: the caster flashes with a sound
   s8 active;  ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as Ply ends
-  u8 unusedAfterFinish[12];     ///< no code names it
+  u8 unusedAfterFinish[12];
   /// Set by some scenes before a field Psynergy; Carry, Frost, Force and Reveal
   /// treat the target differently with it.
   s8 childOption;
@@ -47,12 +47,13 @@ struct FieldEffectWork {
   void (*savedCallback)(struct Actor *actor);
   const s32 *savedScript;
   ///@}
-  u8 unusedAfterSavedScript[4]; ///< no code names it
+  u8 unusedAfterSavedScript[4];
   u8 savedPalette; ///< the target's first sprite's param, saved likewise
-  u8 lit;          ///< set in two Mercury Lighthouse scenes; not read by name
-  u16 tileSlot;    ///< resource entry holding the spark tiles
-  u16 unusedAfterTileSlot; ///< no code names it
-  u16 freeBlocks;          ///< 512 less the free resource blocks at the start
+  u8 lit; ///< set in two Mercury Lighthouse scenes: Douse lets particles sway
+          ///< down
+  u16 tileSlot; ///< resource entry holding the spark tiles
+  u16 unusedAfterTileSlot;
+  u16 freeBlocks; ///< 512 less the free resource blocks at the start
   /// The map's shake and its decay, restored when the field Psynergy ends.
   ///@{
   s32 savedShakeX;
@@ -60,10 +61,10 @@ struct FieldEffectWork {
   s32 savedShakeDecay;
   ///@}
   struct FieldParticle particles[24];
-  u8 unusedAfterSlots[2]; ///< no code names it
-  s16 arcTileSlot;        ///< resource entry of Avoid's falling arcs' tiles
-  s8 messageMode;         ///< the announcement's box mode: 1, an event adds 8
-  u8 paddingAtEnd[3];     ///< up to the struct's word-aligned size
+  u8 unusedAfterSlots[2];
+  s16 arcTileSlot;    ///< resource entry of Avoid's falling arcs' tiles
+  s8 messageMode;     ///< the announcement's box mode: 1, an event adds 8
+  u8 paddingAtEnd[3]; ///< up to the struct's word-aligned size
 };
 
 STATIC_ASSERT(sizeof(struct FieldEffectWork) == 0x720);

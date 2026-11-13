@@ -24,10 +24,10 @@ Field_Map173:
 	.incbin "games/tla/src/map/map_173/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map173_ANIMATION:
-	.incbin "games/tla/src/map/map_161/animation.script.lz"
+	.incbin "games/tla/src/map/izumo_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_Map173_BLEND:
-	.incbin "games/tla/src/map/map_161/blend.script.lz"
+	.incbin "games/tla/src/map/izumo_interiors/blend.script.lz"
 	.balign 4, 0
 .LField_Map173_SCENE:
 	.incbin "games/tla/src/map/map_173/scene.scene.lz"

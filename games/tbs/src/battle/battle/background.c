@@ -42,14 +42,13 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
   u32 ime;
-  /* FAKEMATCH(temporary): a pointer to ime, which keeps the save in a stack
-   * slot stored through r6; as ime directly, 24 of 43 instructions differ in
-   * tbs-en. */
+  /* FAKEMATCH(temporary): a pointer to ime; as ime directly, 24 of 43
+   * instructions differ in tbs-en. */
   u32 *savedInterruptEnable = &ime;
 
   /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge that the
-   * pointer is the stack slot's address, so the save stores through r6;
-   * without them, 2 of 43 instructions differ in tbs-en. */
+   * pointer is the stack slot's address; without them, 2 of 43 instructions
+   * differ in tbs-en. */
   if (palette) {
     savedInterruptEnable++;
     savedInterruptEnable--;
@@ -104,8 +103,8 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   // it takes WINDOW_BACKGROUND_COLOR.
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
-      *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE,
@@ -143,10 +142,9 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
 }
 
-/// Allocates the zoomed background's scanline work
-/// (HEAP_SLOT_BATTLE_SCANLINES) cleared, and sets the background's mode to
-/// BATTLE_BACKGROUND_NONE, so the next load adds its scanline task.
-/// Called once by Battle_Run before BattleBackground_Load.
+/// Allocates the zoomed background's scanline work (HEAP_SLOT_BATTLE_SCANLINES)
+/// cleared, and sets the background's mode to BATTLE_BACKGROUND_NONE, so the
+/// next load adds its scanline task.
 void BattleBackground_Init(void) {
   struct BattleAffineHdma *work;
   struct BattleBackgroundWork *state;
@@ -189,8 +187,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     void *vram;
 
     /* FAKEMATCH(dead): two updates that cancel, under a test that emits
-     * nothing, end a CSE block so the VRAM address loads before the data's
-     * add; without them, 4 of 103 instructions differ in tbs-en. */
+     * nothing, end a CSE block; without them, 4 of 103 instructions differ in
+     * tbs-en. */
     if (battle) {
       offset++;
       offset--;
@@ -209,8 +207,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
                                 BATTLE_BG_PALETTE_COLORS);
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
-      *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
   // Clears BG1's last row, 64 bytes from the end of its screen block, which
@@ -364,15 +362,11 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 }
 
 /// Points the battle camera at (x, depth, y) with a zoom in percent, and lines
-/// the zoomed background up with it.
-/// The camera's eye is set 510 pixels from the focus along its yaw and pitch;
-/// where the battlefield's origin then projects decides the plane's offset
-/// (BattleCamera_SetRange), and the projection's focal length and depth range
-/// are then scaled by the zoom. Called by the battle's staging
-/// (BattleTransition_Run, Battle_Run, staging.c,
-/// auto_battle.c), BattleCamera_SetViewAtPairMidpoint and several
-/// effects. Writes the camera's pos and eye, gProjection, and the plane's
-/// next page.
+/// the zoomed background up with it. The camera's eye is set 510 pixels from
+/// the focus along its yaw and pitch; where the battlefield's origin then
+/// projects decides the plane's offset (BattleCamera_SetRange), and the
+/// projection's focal length and depth range are then scaled by the zoom.
+/// Writes the camera's pos and eye, gProjection, and the plane's next page.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
@@ -422,10 +416,8 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Projection_Set(width, result, half * 4);
 }
 
-/// Points the battle camera, through BattleCamera_SetView,
-/// at the ground between two units' battle objects, with a zoom in percent.
-/// Called by the staging of a paired action (staging.c) and by the beam
-/// effects (beams.c).
+/// Points the battle camera, through BattleCamera_SetView, at the ground
+/// between two units' battle objects, with a zoom in percent.
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
   struct Actor *firstActor = BattleObject_Get(firstUnitId)->actor;
@@ -532,12 +524,9 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
   return selectedValue;
 }
 
-/// Sets the OBJ mode (enum BattleSpriteMode) of every sprite of a unit's
-/// battle object, the picture and its shadow.
-/// Does nothing for a unit with no battle object or actor. Called by
-/// BattleHighlight_SetModes and its helpers here, by the opening's
-/// storm (BattleTransition_Run), by the staging (staging.c)
-/// and by auto battle (auto_battle.c).
+/// Sets the OBJ mode (enum BattleSpriteMode) of every sprite of a unit's battle
+/// object, the picture and its shadow. Does nothing for a unit with no battle
+/// object or actor.
 void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(unitId);
   struct Actor *actor;
@@ -566,8 +555,7 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
         break;
       record->image.objectMode = mode;
       record->shadow.objectMode = mode;
-      recordIndex++;
-    } while (recordIndex <= ACTOR_SPRITE_GROUP_SIZE - 1);
+    } while (++recordIndex < ACTOR_SPRITE_GROUP_SIZE);
     break;
   }
   }

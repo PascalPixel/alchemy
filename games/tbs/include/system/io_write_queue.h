@@ -12,7 +12,7 @@
 /// frame; IoWriteQueue_FlushPending empties it.
 struct IoWriteQueue {
   u16 count; ///< Entries waiting, at most 32.
-  u16 pad;   ///< not named by TBS code
+  u16 pad;
   /// Each entry is the value, the address and the control word, in that order.
   /// A control word with a width (IO_WRITE_8 to IO_WRITE_32) is a register
   /// write; one without is a DMA, whose three words go to DMA3's source,
@@ -52,11 +52,6 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
 /// to a full queue is dropped.
 /// @param control a width (IO_WRITE_8 to IO_WRITE_32), with IO_WRITE_SET or
 /// IO_WRITE_CLEAR to change bits; or a DMA control word.
-// The body is braces alone: as do { } while (0), 8 linked sections of tbs-en
-// differ (the nine writers, six objects with inline pushes and the overlays).
-// The count is read and written as *&q->count, a pointer to the member: as
-// q->count, the struct store of the new count is scheduled before the first
-// entry word (2 of 27 instructions in IoWriteQueue_Store8 in tbs-en).
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \

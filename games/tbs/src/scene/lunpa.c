@@ -93,35 +93,20 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 #include "shared/field_effect_spawn.h"
 
 /// Frost has frozen the hidden puddle into an ice pillar to stand on.
-/// ★ Named from what the player sees: a small blue puddle that only Reveal
-/// shows (its render)
 #define FLAG_LUNPA_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// The town's secrets are hidden: Reveal is not shining.
-/// ★ Named from the game: "Reveal" (MsgAbilityName)
 #define FLAG_LUNPA_SECRETS_HIDDEN FLAG_SCENE_TEMP_01
 /// The hidden switch has opened the passage to the hidden room.
-/// ★ Named from the game: "At least those punks won't find the switch that
-/// opens the door. Heh heh! It's hidden too well in the wall!"
-/// (MsgLunpaHiddenDoorSwitch)
 #define FLAG_LUNPA_HIDDEN_PASSAGE_OPEN FLAG_SCENE_TEMP_02
 /// The guards have stepped in front of the fortress door.
-/// ★ Named from the game: "Don't come any closer to the fortress!"
-/// (MsgLunpaGuardsWarnPartyAway)
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR FLAG_SCENE_TEMP_40
 /// Cloak has been cast at the gates and has not yet faded.
-/// ★ Named from the game: "Cloak" (MsgAbilityName)
 #define FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST FLAG_SCENE_TEMP_41
 /// The leader is going through the fortress door.
-/// ★ Named from what the player sees: the golden door set in the cliff at the
-/// top of the steps, past the two guards (its render)
 #define FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS FLAG_SCENE_TEMP_42
 /// Garet's warning against going back up to the fortress is under way.
-/// ★ Named from the game: "Don't be stupid! We can't go in there, remember?"
-/// (MsgLunpaGaretRefusesToReturn)
 #define FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING FLAG_SCENE_TEMP_43
 /// The guards have caught the party and are marching it down the steps.
-/// ★ Named from the game: "That's strange. I've been on watch this whole time,
-/// so how did you get here?" (MsgLunpaGuardsCatchParty)
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
 #include "shared/field_effect_duration_scripts.h"
@@ -817,7 +802,7 @@ static void Lunpa_KickUpLeaderDust(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((gFrameCount & 15) == 0) {
-    dustAngle = (((u32)Import_RandomNext() * 52) >> 16) * 64 + 230;
+    dustAngle = (Random_Below(52)) * 64 + 230;
     SET_VECTOR(dustVelocity, Trig_Cos(dustAngle) / 4, 0,
                Trig_Sin(dustAngle) / 2);
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,

@@ -93,8 +93,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_release.h"
-#include "edition.h"
-#include "types.h"
 #include "task.h"
 #include "item_ids.h"
 #include "event.h"
@@ -133,79 +131,41 @@ enum LogRoomsARaisedTrigger {
 /// Garet's and Ivan's rows take their own slots.
 enum {
   /// A young man, to whose house a sparkling rock was blown from the volcano.
-  /// ★ Named from the game: "I kept worrying that they would take my gem."
-  /// (MsgVaultICanSleepWellNowThat)
   ACTOR_GEM_OWNER = 8,
   /// A woman with fair hair.
-  /// ★ Named from the game: "My husband says my cat ate the treasure"
-  /// (MsgVaultMyHusbandSaysMyCatAte)
   ACTOR_GEM_OWNERS_WIFE = 9,
   /// A burly grey-haired man who distrusts the man next door. "My neighbor
   /// creeps me out."
-  /// ★ Named from the game: "Maybe my neighbor is the thief..."
-  /// (MsgVaultHeyMaybeMyNeighborIsThe)
   ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR = 10,
   /// A small boy who asks about travel.
-  /// ★ Named from the game: "Hey, mister! Is it fun to see strange new places?"
-  /// (MsgVaultMisterFunSeeStrangeNew)
   ACTOR_BOY_ASKING_ABOUT_TRAVEL = 11,
   /// An old man with a cane who wonders what was stolen.
-  /// ★ Named from the game: "Is it just me, or am I missing something?"
-  /// (MsgVaultJustMeOrAmMissing)
   ACTOR_GRANDPA = 12,
   /// An old woman, who says Grandpa keeps wondering if anything was stolen.
-  /// ★ Named from the game: "You never bought me anything worth stealing!"
-  /// (MsgVaultYouNeverBoughtMeAnythingWorth)
   ACTOR_GRANDPAS_WIFE = 13,
   /// A small boy. "I could help Ivan if I were just a little older."
-  /// ★ Named from the game: "if I were just a little older."
-  /// (MsgVaultICouldHelpIvanIfI)
   ACTOR_BOY_WISHING_TO_BE_OLDER = 14,
   /// A little girl who tells the party Ivan's secret once it helps him.
-  /// ★ Named from the game: "I'll tell you a secret..."
-  /// (MsgVaultSinceYoureHelpingIvanIllTell)
   ACTOR_GIRL_TELLING_A_SECRET = 15,
   /// Ivan's host, an old man with white hair.
-  /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
-  /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYOR = 16,
   /// A woman in a green dress.
-  /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
-  /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYORS_WIFE = 17,
   /// The girl at the inn, as the Bone's description calls her, a young woman
   /// with fair hair. "I have a lot of leftover bones from dinner."
-  /// ★ Named from the game: "A bone from the girl at the inn"
-  /// (MsgItemPlainName)
   ACTOR_GIRL_AT_THE_INN = 18,
-  /// ★ Named from the game: "I'm sorry I've only got these cheap weapons to
-  /// sell right now." (MsgVaultAllOurBestWeaponsWereStolen)
   ACTOR_WEAPON_MERCHANT = 19,
-  /// ★ Named from the game: "I wonder if they left us alone because we don't
-  /// carry any valuable armor?" (MsgVaultIWonderIfTheyLeftUs)
   ACTOR_ARMOR_MERCHANT = 20,
-  /// ★ Named from what the player sees: the shopkeeper behind a counter of
-  /// jars and sacks (its render)
   ACTOR_ITEM_MERCHANT = 21,
   /// A burly grey-haired man who works at the inn.
-  /// ★ Named from the game: "The guests upstairs weren't in their room during
-  /// the eruption." (MsgVaultTheGuestsUpstairsWerentInTheir)
   ACTOR_INN_STAFF = 22,
   /// A woman in an apron behind the inn's counter.
-  /// ★ Named from the game: "Everyone thinks our guests are the thieves"
-  /// (MsgVaultEveryoneThinksOurGuestsThieves)
   ACTOR_INNKEEPER = 23,
   /// The two guests at the inn the town suspects: the thieves' leader and one
   /// of his men.
-  /// ★ Named from the game: "Everyone thinks our guests are the thieves"
-  /// (MsgVaultEveryoneThinksOurGuestsThieves)
   ACTOR_SUSPECTED_LEADER = 24,
-  /// ★ Named from the game: "You're a terrible person if you start accusing
-  /// people for no good reason." (MsgVaultWeHaventDoneAnythingYoureA)
   ACTOR_SUSPECTED_THIEF = 25,
   /// Pushed aside to open a passage.
-  /// ★ Named from what the player sees: a large wooden crate in the room below
-  /// the loft (its render)
   ACTOR_CRATE = 26
 };
 
@@ -214,7 +174,6 @@ enum {
 enum {
   /// Set while the two suspects run from the party, until the party steps
   /// aside to talk it over.
-  /// ★ Named from the game: "Don't let him near me!" (MsgVaultWant)
   FLAG_SUSPECTS_FLEEING = FLAG_AREA_TEMP_00
 };
 
@@ -223,7 +182,6 @@ enum {
 // something else in the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
-/// ★ Named from the game: "Uh-oh! I'm surrounded!" (MsgVaultImSurrounded)
 #define FLAG_VAULT_CORNERING_SUSPECTS FLAG_SCENE_TEMP_50
 
 /// The inn's loft (LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM and the two after the
@@ -232,59 +190,37 @@ enum {
 enum {
   /// vault.c's ACTOR_YOUNG_MAN_FIXING_THE_ROOF, tied up while fixing the
   /// roof.
-  /// ★ Named from the game: "When I came to, I was all tied up."
-  /// (MsgVaultVaultCutFree)
   ACTOR_TIED_UP_VILLAGER = 8,
-  /// ★ Named from the game: "Mayor... Isn't that your family's urn?"
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_LOFT_MAYOR = 9,
   /// Speaks first and bargains for all three ("See, we're not so bad. How
   /// about it? Will you let us go?").
-  /// ★ Named from the game: "Looks like we've been found out!"
-  /// (MsgVaultVaultCutFree)
   ACTOR_THIEF_LEADER = 10,
-  /// ★ Named from the game: "These are the thieves, Mayor..."
-  /// (MsgVaultSeeThatsHappened)
   ACTOR_FIRST_THIEF = 11,
-  /// ★ Named from the game: "These are the thieves, Mayor..."
-  /// (MsgVaultSeeThatsHappened)
   ACTOR_SECOND_THIEF = 12,
   /// A strongman who comes up with the mayor and helps tie the thieves up.
-  /// ★ Named from the game: "What should we do with them?"
-  /// (MsgVaultSeeThatsHappened)
   ACTOR_LOFT_ESCORT = 13,
   /// A strongman who comes up with the mayor and opens the chests.
-  /// ★ Named from the game: "Mayor, we found another chest over here"
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_STRONGMAN_OPENING_THE_CHESTS = 14,
-  /// ★ Named from the game: "but the chest was empty."
-  /// (MsgVaultButChestWasEmpty)
   ACTOR_FIRST_CHEST = 15,
-  /// ★ Named from the game: "but the chest was empty."
-  /// (MsgVaultButChestWasEmpty)
   ACTOR_SECOND_CHEST = 16,
-  /// ★ Named from the game: "but the chest was empty."
-  /// (MsgVaultButChestWasEmpty)
   ACTOR_THIRD_CHEST = 17,
   /// Rises from the first chest.
-  /// ★ Named from the game: "Found the mayor's precious urn."
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_FOUND_URN = 18,
   /// Rises from the second chest, stolen from the Sanctum.
-  /// ★ Named from the game: "Found a gold statue."
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_FOUND_STATUE = 19
 };
 
 /// Animations of the loft's sprites beyond enum ActorAnimation, as their
 /// animation tables and frames under graphics/sprite draw them.
 enum LogRoomsAAnimation {
-  /// Garet seen from behind, his arms spread wide (spr_001.png).
+  /// Garet seen from behind, his arms spread wide (garet.png).
   ANIM_GARET_ARMS_SPREAD = 12,
-  /// A thief standing bound, a rope wound round his arms (spr_063.png,
-  /// spr_064.png).
+  /// A thief standing bound, a rope wound round his arms
+  /// (man_with_long_dark_hair.png,
+  /// person_in_purple.png).
   ANIM_THIEF_TIED_UP = 5,
-  ANIM_THIEF_BEATEN = 9 ///< lying on the floor (spr_063.png, spr_064.png)
+  ANIM_THIEF_BEATEN = 9 ///< lying on the floor (man_with_long_dark_hair.png,
+                        ///< person_in_purple.png)
 };
 
 static void LogRoomsA_IvanJoinsRodSearch(void);
@@ -365,7 +301,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *flags &= 0x7e;
+    *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
                         ((union FieldCoordinate *)&position->x)->part.pixel,
@@ -725,9 +661,7 @@ static void LogRoomsA_WarnAboutThreeStrangers(void) {
 /// His timer holds his place on the six-step route, wrapping from 5 to 0.
 static void LogRoomsA_SuspectedLeaderDodges(void) {
   struct Actor *suspect;
-  s16 *routeState;
-  s32 routeIndex;
-  s32 nextRoute;
+  u32 facing;
 
   suspect = Actor_Get(ACTOR_SUSPECTED_LEADER);
   Event_Start();
@@ -736,41 +670,34 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   // "Ow! Stop it!"
   Event_ShowMessage(ACTOR_SUSPECTED_LEADER, 0);
   Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, 4);
-  if ((u32)((suspect->facing & 0xf000) - TRIG_TURN * 5 / 16) <=
-      TRIG_TURN * 3 / 8) {
-    routeState = (s16 *)&suspect->timer;
-    routeIndex = *routeState;
-    if (routeIndex <= 2) {
+  // Pushed from the north he runs on along his route, from the south back.
+  facing = suspect->facing & 0xf000;
+  if (facing >= TRIG_TURN * 5 / 16 && facing <= TRIG_TURN * 11 / 16) {
+    if (suspect->timer <= 2) {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
-                      gLogRoomsA_StepActions[routeIndex]);
-      *(u16 *)routeState = *(u16 *)routeState + 1;
+                      gLogRoomsA_StepActions[suspect->timer]);
+      suspect->timer++;
     } else {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
-                      gLogRoomsA_IdleActions[routeIndex]);
-      nextRoute = *(u16 *)routeState - 1;
-      *(u16 *)routeState = nextRoute;
+                      gLogRoomsA_IdleActions[suspect->timer]);
+      suspect->timer--;
     }
   } else {
-    routeState = (s16 *)&suspect->timer;
-    routeIndex = *routeState;
-    if (routeIndex > 2) {
+    if (suspect->timer > 2) {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
-                      gLogRoomsA_StepActions[routeIndex]);
-      *(u16 *)routeState = *(u16 *)routeState + 1;
+                      gLogRoomsA_StepActions[suspect->timer]);
+      suspect->timer++;
     } else {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
-                      gLogRoomsA_IdleActions[routeIndex]);
-      nextRoute = *(u16 *)routeState - 1;
-      *(u16 *)routeState = nextRoute;
+                      gLogRoomsA_IdleActions[suspect->timer]);
+      suspect->timer--;
     }
   }
-  if (*routeState > 5) {
-    nextRoute = 0;
-    *(u16 *)routeState = nextRoute;
+  if (suspect->timer > 5) {
+    suspect->timer = 0;
   }
-  if (*routeState < 0) {
-    nextRoute = 5;
-    *(u16 *)routeState = nextRoute;
+  if (suspect->timer < 0) {
+    suspect->timer = 5;
   }
   Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
   Event_End();
@@ -1772,8 +1699,6 @@ static void LogRoomsA_StartCorneringSuspects(void) {
 
 /// Has the suspects react to the party's return and resets their route states.
 /// "Hey, they're back!"
-///
-/// Called by LogRoomsA_StartActorStops.
 static void LogRoomsA_ResetSuspectRoutes(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
@@ -2332,7 +2257,6 @@ static void LogRoomsA_FaceSuspectsTowardLeader(void) {
 /// LOG_ROOMS_A_TO_SANCTUM to the Vault Sanctum (SceneId_Sanctum,
 /// SANCTUM_FROM_LOG_ROOMS_A).
 static void LogRoomsA_LoseToThieves(void) {
-  struct Actor *actor;
   s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
   // The party lies on the floor (animation 19) before the three thieves.
@@ -2354,12 +2278,9 @@ static void LogRoomsA_LoseToThieves(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags = priorityFlags;
   Actor_Get(ACTOR_GARET)->priorityFlags = priorityFlags;
   Actor_Get(ACTOR_IVAN)->priorityFlags = priorityFlags;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_IVAN);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_GARET);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH_NORTHWEST, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2463,25 +2384,20 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
 /// the battle's victory destination, unless the party is only coming back to
 /// where it was. Then LogRoomsA_ReturnStolenGoods follows.
 static void LogRoomsA_DefeatThieves(void) {
-  struct Actor *actor;
   struct FieldWork *work;
   const s32 *actions;
   struct Sprite *thirdThiefSprite;
 
-  actor = Actor_Get(ACTOR_SECOND_THIEF);
-  thirdThiefSprite = actor->sprite;
+  thirdThiefSprite = Actor_Get(ACTOR_SECOND_THIEF)->sprite;
   // The beaten thieves lie heaving (the action table's squash) before the
   // party.
   Event_Start();
   Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 416);
   Actor_SetPosition(ACTOR_FIRST_THIEF, 800, 400);
   Actor_SetPosition(ACTOR_SECOND_THIEF, 776, 392);
-  actor = Actor_Get(ACTOR_THIEF_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_THIEF);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_SECOND_THIEF);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_THIEF_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_THIEF), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_THIEF), 0);
   Actor_SetAnimation(ACTOR_THIEF_LEADER, ANIM_THIEF_BEATEN);
   Actor_SetAnimation(ACTOR_FIRST_THIEF, ANIM_THIEF_BEATEN);
   Actor_SetAnimation(ACTOR_SECOND_THIEF, ANIM_THIEF_BEATEN);
@@ -2733,12 +2649,9 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceActor(ACTOR_FIRST_THIEF, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_SECOND_THIEF, ACTOR_PARTY_LEADER, 0);
-  actor = Actor_Get(ACTOR_THIEF_LEADER);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor = Actor_Get(ACTOR_FIRST_THIEF);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor = Actor_Get(ACTOR_SECOND_THIEF);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_THIEF_LEADER), SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_THIEF), SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_THIEF), SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, 768, 408);
   Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 768, 424);
   Actor_MoveToAndWait(ACTOR_LOFT_MAYOR, 784, 424);
@@ -3264,9 +3177,8 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    /* FAKEMATCH(volatile): the used-stop test reads stopIndex through a
-     * volatile lvalue, so the assignment below loads it again; as a plain
-     * test, 9 of 49 instructions differ in tbs-en. */
+    /* FAKEMATCH(volatile): the stop is tested through a volatile read; as a
+     * plain test, 9 of 49 instructions differ in tbs-en. */
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
@@ -3375,6 +3287,9 @@ static void LogRoomsA_UpdateActorStops(void) {
   leader = Actor_Lookup(ACTOR_PARTY_LEADER);
   blocked = 0;
   work = gFieldWork;
+
+  // Ivan runs ahead of the leader when the leader pushes toward him from
+  // close by, and otherwise walks on the way he faces.
   actor = Actor_Lookup(ACTOR_IVAN);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
@@ -3387,9 +3302,9 @@ static void LogRoomsA_UpdateActorStops(void) {
     if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
         (facingDifference = (u16)facing - angle) > -FACING_STEP &&
         facingDifference < FACING_STEP) {
-      /* FAKEMATCH(dead): a dead store keeps this branch through jump
-       * optimization (bge to the else, then b past it); as an empty branch, 1
-       * of 269 instructions differ in tbs-en. */
+      // Pushed toward from close by, he takes the leader's way.
+      /* FAKEMATCH(dead): a dead store; as an empty branch, 1 of 269
+       * instructions differ in tbs-en. */
       facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {
@@ -3407,72 +3322,73 @@ static void LogRoomsA_UpdateActorStops(void) {
     }
   }
 
-  // Each suspect tries a random turn, then reverses when that route is
-  // occupied.
+  // Each suspect tries a random turn of three sixteenths, the leader to
+  // either side and the thief to either side or straight on, worked in 16.16
+  // turns. Where someone stands he turns back, and with both ways taken he
+  // shakes his head.
   actor = Actor_Lookup(ACTOR_SUSPECTED_LEADER);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
-    u32 turn = (u32)Import_RandomNext() * 2 >> 16;
+    u32 turn = Random_Below(2);
     s32 currentFacing;
 
-    turn *= 0x60000000;
+    turn *= TRIG_TURN * 6 / 16 << 16;
     currentFacing = actor->facing;
-    facing = ((turn - 0x30000000) >> 16) + currentFacing;
+    facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + TRIG_TURN / 2;
       destination = LogRoomsA_SnapToNearestStop(entry, &facing);
       if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
         Actor_SetAttachedEffect(ACTOR_SUSPECTED_LEADER, ATTACHED_EFFECT_ONCE);
-        goto move_first;
+        goto leaderMoves;
       }
       Actor_SelectAnimation(actor, ANIM_SHAKE_HEAD);
       blocked = 1;
     } else {
-    move_first:
+    leaderMoves:
       LogRoomsA_MoveActorToStop(actor, destination);
       Actor_SelectAnimation(actor, ANIM_WALK);
     }
   }
-
   actor = Actor_Lookup(ACTOR_SUSPECTED_THIEF);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
-    u32 turn = (u32)Import_RandomNext() * 3 >> 16;
+    u32 turn = Random_Below(3);
     s32 currentFacing;
 
-    turn *= 0x30000000;
+    turn *= TRIG_TURN * 3 / 16 << 16;
     currentFacing = actor->facing;
-    facing = ((turn - 0x30000000) >> 16) + currentFacing;
+    facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + TRIG_TURN / 2;
       destination = LogRoomsA_SnapToNearestStop(entry, &facing);
       if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
         Actor_SetAttachedEffect(ACTOR_SUSPECTED_THIEF, ATTACHED_EFFECT_ONCE);
-        goto move_second;
+        goto thiefMoves;
       }
       Actor_SelectAnimation(actor, ANIM_SHAKE_HEAD);
       blocked += 2;
     } else {
-    move_second:
+    thiefMoves:
       LogRoomsA_MoveActorToStop(actor, destination);
       Actor_SelectAnimation(actor, ANIM_WALK);
     }
   }
+
   // A failed route choice alone is not enough to end the chase.
   if (blocked != 0) {
-    if (++gLogRoomsA_StopTimer > LOG_ROOMS_A_CORNERED_FRAMES - 1)
-      work->raisedTrigger = blocked + LOG_ROOMS_A_CORNERED_EVENT_BASE;
+    if (++gLogRoomsA_StopTimer >= LOG_ROOMS_A_CORNERED_FRAMES)
+      work->raisedTrigger = LOG_ROOMS_A_CORNERED_EVENT_BASE + blocked;
   } else {
-    gLogRoomsA_StopTimer = blocked;
+    gLogRoomsA_StopTimer = 0;
   }
 }
 
 /// Arranges the chase, constrains its camera, and starts the route task.
 ///
-/// Called by LogRoomsA_StartCorneringSuspects. Starts
-/// LogRoomsA_UpdateActorStops and the chase music, MUS_DJINN_LESSON.
+/// Starts LogRoomsA_UpdateActorStops and the chase music, MUS_DJINN_LESSON.
 static void LogRoomsA_StartActorStops(void) {
   Event_Start();
   FieldCamera_MoveTo(168, CAMERA_KEEP, 656, 1);

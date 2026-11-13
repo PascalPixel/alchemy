@@ -183,7 +183,7 @@ extern char ResourceId_FlameColumnSheet;
 /// Shared by the blessings' showers, the casting impact, Death Plunge, Dragon
 /// Cloud, Planet Diver, Plasma, Ragnarok, Tiamat and Titan Blade.
 extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_ThornSheet; ///< Thorn.
+extern char ResourceId_ThornSheet;
 /// The comet of the impact's comets (PROJECTILE_VOLLEY_IMPACT_COMETS), and
 /// the colours of Crazy Voice's pellets.
 extern char ResourceId_CometSheetA;
@@ -209,7 +209,7 @@ extern char ResourceId_SmokeSheet;
 /// Colours for one style of the blessings' showers and of the monster
 /// strikes.
 extern char ResourceId_PinkPalette;
-extern char ResourceId_GreenVineSheet;     ///< Vine.
+extern char ResourceId_GreenVineSheet;
 extern char ResourceId_CounterRevealSheet; ///< Condemn and the casting impact.
 /// Condemn and the casting impact, beside CounterRevealSheet.
 extern char ResourceId_RedCrescentSheetA;

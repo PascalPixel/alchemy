@@ -11,7 +11,8 @@ enum PathRecorderMode {
   PATH_RECORDER_FINISHED = 9 ///< the opponent has reached the finish
 };
 
-// Native calls precede this definition.
+// UB: the scenes call this before its definition with no prototype, as a
+// function returning int.
 #ifdef UBFIX
 void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
                             s32 segments, s32 finishX, s32 finishZ,

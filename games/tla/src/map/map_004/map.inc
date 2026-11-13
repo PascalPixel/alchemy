@@ -27,7 +27,7 @@ Field_Map004:
 	.incbin "games/tla/src/map/map_004/animation.script.lz"
 	.balign 4, 0
 .LField_Map004_BLEND:
-	.incbin "games/tla/src/map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_Map004_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"
@@ -39,7 +39,7 @@ Tileset_Set03Palette:
 	.global Tileset_Set03TilesA
 Tileset_Set03TilesA:
 	.incbin "games/tla/src/graphics/tileset/set_03/tiles_a.4bpp.mtf"
-	.byte 0x68, 0x3d, 0x1a	@ PACKER: left in the buffer by Field_Map002+0x2de1
+	.byte 0x68, 0x3d, 0x1a	@ PACKER: left in the buffer by Field_VenusLighthouseEntrance+0x2de1
 	.global Tileset_Set03TilesB
 Tileset_Set03TilesB:
 	.incbin "games/tla/src/graphics/tileset/set_03/tiles_b.4bpp.mtf"

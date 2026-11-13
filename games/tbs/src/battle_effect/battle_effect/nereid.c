@@ -41,16 +41,14 @@
 /// closes the canvas layer last.
 void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BlitterPair draw;
-  void **cursor;
   void *canvas;
   struct BattleEffectWork *work;
   u8 *graphics;
   u8 *palette;
 
-  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = cursor[0];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  graphics = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

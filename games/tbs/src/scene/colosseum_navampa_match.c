@@ -98,7 +98,6 @@
 #include "battle_unit.h"
 #include "battle_sprite_id.h"
 #include "ability_ids.h"
-#include "edition.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "actor.h"
@@ -147,105 +146,51 @@ typedef void (*MapTaskEntry)(void);
 /// log-rolling area calls the ones there stones.
 enum {
   /// Navampa, racing Isaac to the arena.
-  /// ★ Named from the game: "I am Navampa of Gondowan"
-  /// (MsgColosseumAmNavampaGondowanSixthRanked)
   ACTOR_OPPONENT = 8,
   /// The puddle Frost freezes on the Scales of Justice's eastern ledge.
-  /// ★ Named from what the player sees: a small puddle of water
-  /// (SPRITE_PUDDLE) on the eastern ledge of the Scales of Justice (its
-  /// render)
   ACTOR_PUDDLE = 9,
   /// The Scales of Justice's two ledges.
-  /// ★ Named from the game: "There are two ledges that actually form a
-  /// scale." (MsgColossoStageCalledScales)
   ACTOR_SCALES_WEST_LEDGE = 10,
-  /// ★ Named from the game: "There are two ledges that actually form a
-  /// scale." (MsgColossoStageCalledScales)
   ACTOR_SCALES_EAST_LEDGE = 11,
-  /// ★ Named from what the player sees: a stone pillar west of the Scales of
-  /// Justice, which Move sets on the western ledge to hold it down (its
-  /// render)
   ACTOR_SCALES_WEIGHT = 12,
-  /// ★ Named from what the player sees: a stone pillar on the
-  /// Stepping-Stone Stage that Move shifts along its row (its render)
   ACTOR_STONE = 13,
   /// East of the Wall Wedge's pistons, by the operator. Move on it needs
   /// nothing more (ColosseumNavampaMatch_IgnoreMove).
-  /// ★ Named from what the player sees: a stone pillar east of the Wall
-  /// Wedge's pistons (its render)
   ACTOR_ROCK = 14,
   /// The log-rolling area's three stones. Each settles where Move drops it
   /// (ColosseumNavampaMatch_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and
   /// the two after it).
-  /// ★ Named from the game: "You can get through quickly by moving the logs
-  /// and stones." (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_AREA_STONE_A = 15,
-  /// ★ Named from the game: "You can get through quickly by moving the logs
-  /// and stones." (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_AREA_STONE_B = 16,
-  /// ★ Named from the game: "You can get through quickly by moving the logs
-  /// and stones." (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_AREA_STONE_C = 17,
   /// The Wall Wedge's five pistons, west to east. Each is drawn by two
   /// actors, ACTOR_FIRST_PISTON + n and ACTOR_FIRST_PISTON + PISTON_COUNT
   /// + n.
-  /// ★ Named from the game: "The pistons move back and forth."
-  /// (MsgColossoPlaceCalledWall)
   ACTOR_FIRST_PISTON = 18,
-  /// ★ Named from the game: "The pistons move back and forth."
-  /// (MsgColossoPlaceCalledWall)
   ACTOR_LAST_PISTON = 22,
   /// A young man with fair hair who works the Wall Wedge.
-  /// ★ Named from the game: "The operator of the walls will cheer for you on
-  /// this stage." (MsgColossoOperatorWallsCheer)
   ACTOR_WALL_OPERATOR = 28,
   /// The plant Growth grows into a shortcut.
-  /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) on the
-  /// ground past the Wall Wedge (its render)
   ACTOR_GROWTH_PLANT = 29,
   /// The log Force knocks off the Moving Sidewalk Stage's conveyor belt.
-  /// ★ Named from what the player sees: a log (spr_294.png) at the conveyor
-  /// belt of the Moving Sidewalk Stage (its render)
   ACTOR_SIDEWALK_LOG = 30,
   /// The log-rolling area's long log.
-  /// ★ Named from the game: "To get across the tank, you'll need to roll the
-  /// logs." (MsgColossoAnotherLogRollingArea)
   ACTOR_LONG_LOG = 31,
   /// A soldier who explains the third finals match.
-  /// ★ Named from the game: "This is the site of the third finals match."
-  /// (MsgColossoSiteThirdFinals)
   ACTOR_GUIDE = 32,
   /// The stages' attendants, young men with fair hair in white tunics.
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
   ACTOR_SCALES_ATTENDANT = 33,
-  /// ★ Named from the game: "You can reach the next stage by jumping from
-  /// stone to stone." (MsgColossoSteppingStoneStage)
   ACTOR_STEPPING_STONE_ATTENDANT = 34,
-  /// ★ Named from the game: "This place is called the Wall Wedge."
-  /// (MsgColossoPlaceCalledWall)
   ACTOR_WALL_WEDGE_ATTENDANT = 35,
-  /// ★ Named from the game: "This sheer wall has a bumpy surface."
-  /// (MsgColossoPlaceNormallyCalledFreeClimb)
   ACTOR_FREE_CLIMB_ATTENDANT = 36,
-  /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
-  /// (MsgColossoCalledMovingSidewalkStage)
   ACTOR_MOVING_SIDEWALK_ATTENDANT = 37,
-  /// ★ Named from the game: "This is another log-rolling area."
-  /// (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_ROLLING_ATTENDANT = 38,
   /// The arena's prizes, drawn as item icons at two blank actors
   /// (Colosso_ShowItemIcon).
-  /// ★ Named from what the player sees: the Claymore's icon at the arena's
-  /// finish, taken by whoever reaches it first (its render)
   ACTOR_PRIZE_A = 39,
-  /// ★ Named from what the player sees: the Hunter's Sword's icon at the
-  /// arena's finish, taken by whoever reaches it second (its render)
   ACTOR_PRIZE_B = 40,
   /// The first of the three particles that rise from the sleeping Isaac after
   /// the last match (ColosseumNavampaMatch_SpawnPeriodicParticle).
-  /// ★ Named from what the player sees: a "z" (spr_280.png) rising from Isaac
-  /// as he sleeps (its render)
   ACTOR_FIRST_SLEEP_PARTICLE = 41
 };
 
@@ -254,45 +199,26 @@ enum {
 ///
 /// ColosseumNavampaMatch_Initialize restores the stages from them.
 enum {
-  /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_PLANT_GROWN = FLAG_AREA_TEMP_60, ///< by Growth, into a shortcut
-  /// ★ Named from the game: "This place is called the Wall Wedge."
-  /// (MsgColossoPlaceCalledWall)
   FLAG_WALL_WEDGE_HALTED =
-      FLAG_AREA_TEMP_61, ///< by Halt on ACTOR_WALL_OPERATOR
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
+      FLAG_AREA_TEMP_61,                  ///< by Halt on ACTOR_WALL_OPERATOR
   FLAG_SCALES_FROZEN = FLAG_AREA_TEMP_62, ///< by Frost on ACTOR_PUDDLE
   /// By Force on ACTOR_SIDEWALK_LOG. The belt carries no one any more.
-  /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
-  /// (MsgColossoCalledMovingSidewalkStage)
   FLAG_SIDEWALK_LOG_KNOCKED_OFF = FLAG_AREA_TEMP_63,
   /// Someone stands on the western ledge, which has sunk
   /// (ColosseumNavampaMatch_StepOnScales).
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
   FLAG_ON_SCALES = FLAG_AREA_TEMP_67,
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
       FLAG_AREA_TEMP_68, ///< ACTOR_SCALES_WEIGHT is on the western ledge
-  /// ★ Named from the game: "To get across the tank, you'll need to roll the
-  /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
       FLAG_AREA_TEMP_69, ///< at the east end
                          ///< (ColosseumNavampaMatch_RollLongLog)
   /// The byte of flags that keeps ACTOR_STONE's column.
-  /// ★ Named from the game: "You can get through quickly by moving the logs and
-  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_STONE_COLUMN = FLAG_AREA_TEMP_70,
   /// Someone has reached the arena
   /// (Colosso_TakePrize).
-  /// ★ Named from the game: "You must get through several stages before you
-  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
   /// ACTOR_LOG_AREA_STONE_A has settled. The next two flags are B's and C's.
-  /// ★ Named from the game: "You can get through quickly by moving the logs and
-  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };
 
@@ -420,10 +346,7 @@ static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
 /// shortcut (FLAG_PLANT_GROWN).
 static void ColosseumNavampaMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
-  {
-
-    MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
-  }
+  MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
 }
 
 /// Moves a scale ledge vertically to a height in whole pixels, at the shared
@@ -447,11 +370,9 @@ static void ColosseumNavampaMatch_FreezeOnScales(void) {
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
 
-  actor = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(actor, 32);
+  ColosseumNavampaMatch_MoveOnScales(Actor_Get(ACTOR_SCALES_EAST_LEDGE), 32);
 
-  actor = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(actor, 4);
+  ColosseumNavampaMatch_MoveOnScales(Actor_Get(ACTOR_SCALES_WEST_LEDGE), 4);
 
   GameFlag_Set(FLAG_SCALES_FROZEN);
   MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
@@ -513,9 +434,7 @@ static void ColosseumNavampaMatch_StepOffScales(void) {
   ColosseumNavampaMatch_MoveOnScales(actor, 32);
 
   Actor_WaitForMoveById(ACTOR_SCALES_WEST_LEDGE);
-  {
-    MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
-  }
+  MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   wait(2);
   GameFlag_Clear(FLAG_ON_SCALES);
 }
@@ -567,11 +486,9 @@ static void ColosseumNavampaMatch_PushWeight(void) {
 /// Its column is kept in the byte of flags from FLAG_STONE_COLUMN, and its
 /// cell is rebuilt.
 static void ColosseumNavampaMatch_MoveStone(void) {
-  struct Actor *actor;
   s32 x;
 
-  actor = Actor_Get(ACTOR_STONE);
-  x = FIELD_CELL(actor->x.fixed);
+  x = FIELD_CELL(Actor_Get(ACTOR_STONE)->x.fixed);
   FieldGameFlag_SetByte(FLAG_STONE_COLUMN, x);
   MapGrid_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   MapGrid_CopyCellAttributes(17, 11, 1, 1, x, 11);
@@ -706,8 +623,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   x = log->x.fixed;
   z = log->z.fixed;
   // Only a nearby rider rolls the log; other interactions push the actor
-  // ahead. Written with goto: as an if block round the rolling that returns,
-  // or with the far case first as an early return, tbs-en does not match.
+  // ahead.
   if ((ahead[0] - x >= 0 ? ahead[0] - x : x - ahead[0]) > px(8) ||
       (ahead[2] - z >= 0 ? ahead[2] - z : z - ahead[2]) > px(32)) {
     goto far;
@@ -849,7 +765,8 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
 #ifdef UBFIX
   actorId = &gMainRoutineWork.leaderActorId;
 #else
-  // The original word-indexed address takes three more instructions here.
+  // UB: the leader's id is found by indexing the main routine's work as
+  // halfwords and reading a word there.
   gameWords = (s16 *)&gMainRoutineWork;
   actorId = (s32 *)&gameWords[offsetof(struct MainRoutineWork, leaderActorId) /
                               sizeof(s16)];
@@ -879,7 +796,8 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
 #ifdef UBFIX
   actorId = &gMainRoutineWork.leaderActorId;
 #else
-  // The original word-indexed address takes three more instructions here.
+  // UB: the leader's id is found by indexing the main routine's work as
+  // halfwords and reading a word there.
   gameWords = (s16 *)&gMainRoutineWork;
   actorId = (s32 *)&gameWords[offsetof(struct MainRoutineWork, leaderActorId) /
                               sizeof(s16)];
@@ -1323,7 +1241,6 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
 /// The entrance is COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON or _LOST. They call
 /// his name, but he falls asleep, exhausted, and they leave him to sleep.
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
-  struct Actor *actor;
   const s32 *leaderScaleScript;
   TaskFunc particleFunc;
 
@@ -1341,12 +1258,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   }
   Actor_SetScript(ACTOR_OPPONENT, gColosseumNavampaMatch_OpponentAfterBattle);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 1504, 192);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionA);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   Actor_SetSpeed(ACTOR_GARET, 1);
@@ -1355,24 +1267,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetPosition(ACTOR_GARET, 1464, 184);
   Actor_SetPosition(ACTOR_IVAN, 1464, 200);
   Actor_SetPosition(ACTOR_MIA, 1448, 192);
-  actor = Actor_Get(ACTOR_GARET);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
-  actor = Actor_Get(ACTOR_IVAN);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
-  actor = Actor_Get(ACTOR_MIA);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
+  Actor_Get(ACTOR_GARET)->facing = FACING_EAST;
+  Actor_Get(ACTOR_IVAN)->facing = FACING_EAST;
+  Actor_Get(ACTOR_MIA)->facing = FACING_EAST;
   wait(1);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1383,16 +1280,12 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_Wait(60);
   leaderScaleScript = gColosseumNavampaMatch_LeaderScaleScript;
   Actor_SetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->scaleX = Q16_ONE;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->scaleY = Q16_ONE;
+  Actor_Get(ACTOR_PARTY_LEADER)->scaleX = Q16_ONE;
+  Actor_Get(ACTOR_PARTY_LEADER)->scaleY = Q16_ONE;
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_LEADER_FALL);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->x.fixed += px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->x.fixed += px(3);
   Event_Wait(10);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_Wait(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionB);
   // Let each companion react before the leader settles back to sleep.
@@ -1558,8 +1451,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Actor_SetPositionFixed(ACTOR_IVAN, px(guideX) + px(16), px(guideZ) - px(40));
   Actor_SetPositionFixed(ACTOR_MIA, px(guideX), (px(guideZ) - px(32)));
   Actor_SetPositionFixed(guideId, px(guideX), (px(guideZ) - px(80)));
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2038,17 +1930,12 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
 #include "shared/colosso_occupant.h"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
-/// ★ Named from the game: "This is the battle arena. After getting here, the
-/// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
-/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_6A
 /// The chest holding a Nut has been opened.
-/// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED FLAG_AREA_TEMP_6B
 /// The chest holding a Sleep Bomb has been opened.
-/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED FLAG_AREA_TEMP_6C
 
 /// The Moving Sidewalk Stage's log where Force has knocked it off the belt,

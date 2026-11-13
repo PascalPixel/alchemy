@@ -58,8 +58,6 @@
 /// Growth has grown the sprout.
 ///
 /// A return that keeps the party's position draws it grown again.
-/// ★ Named from what the player sees: a small green sprout in the sand by the
-/// inn (its render)
 #define FLAG_SUHALLA_SPROUT_GROWN FLAG_SCENE_TEMP_01
 
 /// The sprout's animation once Growth has grown it.
@@ -77,63 +75,45 @@ enum SuhallaActorId {
   ///
   /// Later he says "Welcome to Suhalla. I bet the sandstorms were
   /// terrible..."
-  /// ★ Named from the game: "This is Suhalla."
-  /// (MsgSuhallaThisIsSuhallaDontTryCrossing)
   ACTOR_MAN_THIS_IS_SUHALLA = ACTOR_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), who asks whether
   /// the party is trying to get to Lalivero (Suhalla_AskIfGoingToLalivero).
   ///
   /// Later she says "The desert is enveloped in sandstorms! It's frightening!"
-  /// ★ Named from the game: "Are you trying to get to Lalivero?"
-  /// (MsgSuhallaTryingGetLalivero)
   ACTOR_WOMAN_ASKING_ABOUT_LALIVERO,
   /// A bearded man in a white turban (SPRITE_MAN_IN_WHITE_TURBAN), who
   /// distrusts Angara for taking Sheba as a hostage.
   ///
   /// Later he says "Soldiers from Tolbi were caught in the sandstorms, and
   /// nearly all perished!"
-  /// ★ Named from the game: "We Gondowans will never trust anyone from
-  /// Angara!" (MsgSuhallaWeGondowansWillNeverTrustAnyone)
   ACTOR_MAN_NEVER_TRUSTING_ANGARA,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS), placed off the
   /// map until Babi's audience.
   ///
   /// After it she is one of those the sandstorms have brought here.
-  /// ★ Named from the game: "We were brought here by the sandstorms."
-  /// (MsgSuhallaWeWereBroughtHereByThe)
   ACTOR_WOMAN_BROUGHT_BY_SANDSTORMS,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who speaks of the
   /// desert spirits.
   ///
   /// Later he says "This sandstorm is the fault of the Angarans!"
-  /// ★ Named from the game: "desert spirits only create sandstorms"
-  /// (MsgSuhallaItHasBeenSaidForAges)
   ACTOR_OLD_MAN_ON_DESERT_SPIRITS,
   /// An old woman with white hair (SPRITE_OLD_WOMAN), who doubts there is a
   /// way to southern Gondowan.
   ///
   /// Later she asks whether a sandstorm brought the party
   /// (Suhalla_AskIfBroughtBySandstorm).
-  /// ★ Named from the game: "You can't get to southern Gondowan from here"
-  /// (MsgSuhallaYouCantGetToSouthernGondowan)
   ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN,
   /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR), who would like to
   /// see Tolbi's festivals.
   ///
   /// Later he says "Why are the sandstorms attacking humans?"
-  /// ★ Named from the game: "The workers say there're huge festivals in
-  /// Tolbi." (MsgSuhallaTheWorkersSayTherereHugeFestivals)
   ACTOR_BOY_ON_TOLBI_FESTIVALS,
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), who
   /// worries about the storms.
   ///
   /// Later she says "Those soldiers kept mumbling about monsters..."
-  /// ★ Named from the game: "The sandstorms suddenly increased..."
-  /// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
   ACTOR_GIRL_SANDSTORMS_INCREASED,
   /// The sprout at 72, 144, which Growth grows (Suhalla_GrowSprout).
-  /// ★ Named from what the player sees: a small green sprout in the sand by the
-  /// inn (its render)
   ACTOR_SPROUT
 };
 

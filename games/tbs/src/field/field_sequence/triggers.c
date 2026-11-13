@@ -9,10 +9,6 @@
 /// actor placement tables, or NULL: for a party character (0 to 7) the row with
 /// its sprite, and for a placed actor (8 on) the row it was created
 /// from, counting the placed rows in order.
-///
-/// Called by Scene_TalkToActor for the talk facing, and by the field
-/// Psynergy and event commands that read an actor's placement (Mind Read,
-/// a Djinni's joining, the event messages and the view).
 struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
   struct ActorPlacement *placement;
   s32 tableIndex;
@@ -83,10 +79,9 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (FIND_MIMIC).
 ///
-/// Called by Scene_FindTrigger. Field_ExamineCell tests such an event's
-/// condition itself (a chest's flag is set once it is opened), so the event is
-/// found either way and the leader still checks the spot; a mimic is found only
-/// while its condition holds.
+/// Field_ExamineCell tests such an event's condition itself (a chest's flag is
+/// set once it is opened), so the event is found either way and the leader
+/// still checks the spot; a mimic is found only while its condition holds.
 u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
   u32 mimicDifference;
   s32 searchFlags;
@@ -110,23 +105,20 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
 /// pushed against it for more than 12 frames (2 with control bit 11);
 /// TRIGGER_FLAG_FACING needs the leader to face within an eighth of a turn of
 /// the direction in the top four bits.
-///
-/// Called by every lookup of a scene's triggers in this part and by
-/// Actor_GetTriggerCellAheadOfCurrent. Changes nothing.
-struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
+const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
-  struct TriggerView *trigger = (struct TriggerView *)work->triggers;
+  const struct Trigger *trigger = work->triggers;
   s32 flags;
   u32 facing =
       ((struct Actor *)Actor_Lookup(gMainRoutineWork.leaderActorId))->facing;
 
-  flags = trigger->flags;
+  flags = trigger->kind;
   // Preserve the full control word: direction and push-delay bits refine kind.
   while (flags != -1) {
-    if ((flags & TRIGGER_KIND_MASK) == kind && trigger->value == target &&
-        (Scene_ExamineTriggerIgnoresCondition(flags, trigger->result) != 0 ||
+    if ((flags & TRIGGER_KIND_MASK) == kind && (u8)trigger->subject == target &&
+        (Scene_ExamineTriggerIgnoresCondition(flags, trigger->value) != 0 ||
          (GameFlag_IsConditionActive(trigger->condition) != 0 &&
-          (flags = trigger->flags, 1)))) {
+          (flags = trigger->kind, 1)))) {
       s32 matches = 0;
       s32 minimumPushFrames = 12;
       s32 touchRequirements;
@@ -163,14 +155,14 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
       }
     }
     trigger++;
-    if (trigger->flags == -1)
+    if (trigger->kind == -1)
       break;
-    flags = trigger->flags;
+    flags = trigger->kind;
   }
   return 0;
 }
 
-/// Unused: runs the loaded overlay's initialize entry; nothing calls it.
+/// Unused: runs the loaded overlay's initialize entry.
 UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk trigger of actor id, or 0: for the actor
@@ -178,16 +170,12 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 /// (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED event if it has
 /// one, the event for talking to it while it is stopped (Crossbone Isle's Bane
 /// has one).
-///
-/// Called by FieldSequence_Run for the A button, to choose between talking and
-/// searching, and by the field Psynergy dispatch, which Halts only an
-/// actor with a talk trigger; both test the result only for non-zero.
 s32 Scene_FindActorTalkTrigger(s32 id) {
-  struct TriggerView *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
+  const struct Trigger *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
   s32 pausedActorId = gMainRoutineWork.haltedActor;
 
   if (pausedActorId == id) {
-    struct TriggerView *pausedTrigger =
+    const struct Trigger *pausedTrigger =
         Scene_FindTrigger(TRIGGER_TALK_HALTED, pausedActorId);
 
     if (pausedTrigger != 0) {
@@ -205,14 +193,13 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 /// pauses). Returns 0 when an event ran, -1 when there was none or such a line
 /// stood in for it; FieldSequence_Run ignores the result.
 ///
-/// Called by FieldSequence_Run for its talk request (work->talk). Resumes
-/// the stopped actor and sets gMainRoutineWork.haltedActor back to -1
+/// Resumes the stopped actor and sets gMainRoutineWork.haltedActor back to -1
 /// afterwards.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
   struct Actor *actor = Actor_GetById(id);
-  struct TriggerView *trigger;
+  const struct Trigger *trigger;
   s32 actorPaused = 0;
   u32 savedAngle;
   u32 talkFacing;
@@ -229,7 +216,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
       // A function talk trigger is not run for a stopped actor: it says
       // one of the two lines of its sprite's Halted pair, at random.
-      if (trigger->result >= TRIGGER_RESULT_MESSAGE_END) {
+      if (trigger->value >= TRIGGER_RESULT_MESSAGE_END) {
         s32 haltedLines = Speaker_GetHaltedLines(id);
         u32 random = Random16();
         s32 message = MsgPonderEllipsis + haltedLines * 2 + (random * 2 >> 16);
@@ -244,7 +231,7 @@ s32 Scene_TalkToActor(s32 id) {
     trigger = Scene_FindTrigger(TRIGGER_TALK, id);
   }
 
-  if (trigger != 0 && trigger->result != 0) {
+  if (trigger != 0 && trigger->value != 0) {
     if (!actorPaused) {
       // Stop the actor; with talk facing 0, 1 or 3, also stop the leader
       // and make each watch the other.
@@ -266,15 +253,15 @@ s32 Scene_TalkToActor(s32 id) {
     }
     // A result below TRIGGER_RESULT_MESSAGE_END is a message; above, a function
     // to call.
-    if (trigger->result < TRIGGER_RESULT_MESSAGE_END) {
+    if (trigger->value < TRIGGER_RESULT_MESSAGE_END) {
       Message_SetDecodeFlagsFar(usePausedDialogue);
       Event_Start();
-      Event_SetMessageId(trigger->result);
+      Event_SetMessageId(trigger->value);
       Event_ShowMessageAndWait(id, 0);
       Event_End();
     } else {
       Leader_StopMoving();
-      ((void (*)(s32))trigger->result)(id);
+      ((void (*)(s32))trigger->value)(id);
     }
     if (!actorPaused) {
       // An actor left idle (script command 16) goes back to what its
@@ -306,21 +293,19 @@ finish:
 
 /// Runs the scene's raised trigger (TRIGGER_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
-///
-/// Called by FieldSequence_Run for a positive event request (work->event).
 s32 Scene_RunRaisedTrigger(s32 value) {
   s32 result;
   s32 handled;
-  struct TriggerView *trigger;
+  const struct Trigger *trigger;
 
   trigger = Scene_FindTrigger(TRIGGER_RAISED, value);
   handled = -1;
   if (trigger != NULL) {
-    result = trigger->result;
+    result = trigger->value;
     if (result != 0) {
       if (result < TRIGGER_RESULT_MESSAGE_END) {
         Event_Start();
-        Event_SetMessageId(trigger->result);
+        Event_SetMessageId(trigger->value);
         Event_ShowMessageAndWait(-1, 0);
         handled = 0;
         Event_End();
@@ -338,13 +323,11 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
-/// Called by FieldSequence_Run for its step request (work->stepTrigger), which
-/// Field_UpdateWalking raises for CELL_BEHAVIOR_EVENT_FIRST to
-/// CELL_BEHAVIOR_EVENT_LAST. Sets work->exit for an exit, and clears
-/// work->blockedSteps after a step trigger that needs pushing.
+/// Sets work->exit for an exit, and clears work->blockedSteps after a step
+/// trigger that needs pushing.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
-  struct TriggerView *touch;
-  struct TriggerView *exit;
+  const struct Trigger *touch;
+  const struct Trigger *exit;
   s32 exitId;
   s32 handled;
   struct FieldWork *work;
@@ -352,18 +335,18 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
   touch = Scene_FindTrigger(TRIGGER_STEP, value);
   handled = -1;
   work = gFieldWork;
-  if ((touch != 0) && (touch->result != 0)) {
-    if (touch->flags & STEP_TRIGGER_FLAG_WALKING) {
+  if ((touch != 0) && (touch->value != 0)) {
+    if (touch->kind & STEP_TRIGGER_FLAG_WALKING) {
       work->blockedSteps = 0;
     }
-    if (touch->result < TRIGGER_RESULT_MESSAGE_END) {
+    if (touch->value < TRIGGER_RESULT_MESSAGE_END) {
       Event_Start();
-      Event_SetMessageId(touch->result);
+      Event_SetMessageId(touch->value);
       Event_ShowMessageAndWait(-1, 0);
       handled = 0;
       Event_End();
     } else {
-      ((void (*)(s32))touch->result)(value);
+      ((void (*)(s32))touch->value)(value);
       handled = 0;
     }
   } else {
@@ -371,7 +354,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
     if (exit != 0) {
       // An enum ExitStyle chooses how the leader leaves; the animated styles'
       // flags make the next scene play the matching arrival.
-      exitId = exit->flags & EXIT_STYLE_MASK;
+      exitId = exit->kind & EXIT_STYLE_MASK;
       switch (exitId) {
       case EXIT_STYLE_NORMAL:
         Sound_PlayFar(SE_MAP_EXIT);
@@ -385,7 +368,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         Exit_StartStairsDown();
         break;
       }
-      work->exit = exit->result;
+      work->exit = exit->value;
       handled = 0;
     }
   }
@@ -396,9 +379,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// CELL_BEHAVIOR_JUMP_FORWARD, and CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED), once
 /// it has pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by FieldSequence_Run for its push request (work->pushCell), which
-/// Field_UpdateWalking raises for CELL_BEHAVIOR_LEDGE to
-/// CELL_BEHAVIOR_JUMP_FORWARD. Clears work->blockedSteps when it acts.
+/// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
   s32 leader = gMainRoutineWork.leaderActorId;
@@ -437,8 +418,7 @@ s32 Field_RunPushCell(s32 behavior) {
 /// message, or a chest holding a Psynergy Stone, a mimic, coins or an item;
 /// with no event, "checked the ground" and "found nothing".
 ///
-/// Called by FieldSequence_Run for its search request (work->tile). Opening a
-/// chest sets its condition flag, and it may raise a mimic battle
+/// Opening a chest sets its condition flag, and it may raise a mimic battle
 /// (work->encounter), give coins or an item, or restore all PP.
 s32 Field_ExamineCell(s32 tile) {
   const struct Trigger *trigger;
@@ -460,7 +440,7 @@ s32 Field_ExamineCell(s32 tile) {
     FieldMessage_ShowFar(MsgTileChecked + tile, FIELD_MESSAGE_ZOOM);
     FieldMessage_ShowFar(MsgTileResult + tile, FIELD_MESSAGE_ZOOM);
   } else {
-    trigger = (const struct Trigger *)Scene_FindTrigger(TRIGGER_EXAMINE, tile);
+    trigger = Scene_FindTrigger(TRIGGER_EXAMINE, tile);
     if (trigger != NULL) {
       s32 flags = trigger->kind;
 
@@ -494,7 +474,6 @@ s32 Field_ExamineCell(s32 tile) {
             FieldMessage_ShowFar(MsgTileResult + messageOffset,
                                  FIELD_MESSAGE_ZOOM);
         } else {
-          // A message.
           if (GameFlag_IsConditionActive(condition) != 0)
             FieldMessage_ShowFar((u16)trigger->value, FIELD_MESSAGE_ZOOM);
           else

@@ -80,6 +80,7 @@
 #include "macros.h"
 #include "sounds.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -90,55 +91,23 @@
 ///
 /// They are the first relief room's west and east statues, then the row of six
 /// in the second relief room. Both clear means the start.
-/// ★ Named from what the player sees: the stone statues of the first relief
-/// room, two of which Move pushes a cell aside (its render)
-#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST 0x300
-/// ★ Named from what the player sees: the first relief room's east statue,
-/// pushed a cell west (its render)
-#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST 0x301
-/// ★ Named from what the player sees: the first relief room's west statue,
-/// pushed a cell east (its render)
-#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST 0x302
-/// ★ Named from what the player sees: the first relief room's west statue,
-/// pushed a cell west (its render)
-#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST 0x303
+#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST FLAG_AREA_TEMP_00
+#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST FLAG_AREA_TEMP_01
+#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST FLAG_AREA_TEMP_02
+#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST FLAG_AREA_TEMP_03
 /// The second relief room's row of six statues, each two flags as above.
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST 0x310
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST 0x311
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST 0x312
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST 0x313
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST 0x314
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST 0x315
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST 0x316
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST 0x317
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST 0x318
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST 0x319
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST 0x31a
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
+#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST FLAG_AREA_TEMP_10
+#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST FLAG_AREA_TEMP_11
+#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST FLAG_AREA_TEMP_12
+#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST FLAG_AREA_TEMP_13
+#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST FLAG_AREA_TEMP_14
+#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST FLAG_AREA_TEMP_15
+#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST FLAG_AREA_TEMP_16
+#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST FLAG_AREA_TEMP_17
+#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST FLAG_AREA_TEMP_18
+#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST FLAG_AREA_TEMP_19
+#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST FLAG_AREA_TEMP_1A
+#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST FLAG_AREA_TEMP_1B
 
 // Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief
@@ -157,22 +126,14 @@
 ///
 /// Behaviors 1 to 16 in both scenes are the exits, in the exit table's order.
 enum SolEntranceCellBehavior {
-  /// ★ Named from what the player sees: the door that slides open as the
-  /// leader walks into it (SolSanctumEntrance_OpenDoorAndEnter)
   CELL_BEHAVIOR_SOL_ENTRANCE_DOOR = 2,
-  /// ★ Named from the game: "The door is tightly locked."
-  /// (MsgFieldDoorTightlyLocked)
   CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR = 10
 };
 
 /// The cell behaviors of the cells the relief rooms' coord, bg and
 /// item triggers answer.
 enum SolSanctumReliefsCellBehavior {
-  /// ★ Named from the game: "It's a relief of a minotaur."
-  /// (MsgSolSanctumMinotaurReliefOneEye)
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_RELIEF = 20,
-  /// ★ Named from the game: "It's a relief of a minotaur."
-  /// (MsgSolSanctumMinotaurReliefOneEye)
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF = 21,
   /// The first relief room's statues, pushed from any side.
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE = 22,
@@ -182,7 +143,6 @@ enum SolSanctumReliefsCellBehavior {
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_ROW_STATUE = 24,
   /// The first relief room's statues, pushed west only.
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST = 25,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_CHEST = 100
 };
 
@@ -286,31 +246,25 @@ const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
 /// Takes SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, into Sol Sanctum at
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
 static void SolSanctumEntrance_OpenDoorAndEnter(void) {
-
   Event_Start();
   // The door opens over three frames.
-  {
-    s32 width = 3;
-    s32 height = 2;
-
-    Sound_Play(SE_BOOM);
-    MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
-    wait(10);
-    MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
-    wait(10);
-    MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
-    wait(10);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-    Event_Wait(10);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    Import_EventSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
-    Event_End();
-  }
+  Sound_Play(SE_BOOM);
+  MapGrid_CopyCellsTo(16, 28, 21, 3, 3, 2);
+  wait(10);
+  MapGrid_CopyCellsTo(16, 30, 21, 3, 3, 2);
+  wait(10);
+  MapGrid_CopyCellsTo(16, 32, 21, 3, 3, 2);
+  wait(10);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
+  Event_Wait(10);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
+  Event_End();
 }
 
 /// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
@@ -322,7 +276,6 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
 /// Once the first Small Jewel is found, and until it is set, the File Screen
 /// opens as the search ends, so that the jewel can be used.
 static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
-
   Event_Start();
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
@@ -330,9 +283,7 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
-      u16 *menuRequest = &gFieldWork->fieldMenu;
-      u16 open = 1;
-      *menuRequest = open;
+      gFieldWork->fieldMenu = 1;
     }
   }
 
@@ -380,20 +331,16 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       message = MsgSolSanctumSetSmallGem;
       FieldMessage_Show(message, 1);
       Event_Wait(20);
-      {
-        s32 reliefWidth = 3;
-
-        Sound_Play(SE_STONE_RUMBLE);
-        MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
-        MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, 1);
-        MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
-        MapGrid_CenterOnFollowedPoint();
-        SolSanctumEntrance_ReactToOpeningPassage();
-        FieldMessage_Show(message + 1, 1);
-        GameFlag_Set(FLAG_ITEM_USED_UP);
-        GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
-        Event_End();
-      }
+      Sound_Play(SE_STONE_RUMBLE);
+      MapGrid_CopyCellsTo(0, 29, 3, 1, 3, 2);
+      MapGrid_CopyCellAttributes(0, 29, 3, 2, 3, 1);
+      MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
+      MapGrid_CenterOnFollowedPoint();
+      SolSanctumEntrance_ReactToOpeningPassage();
+      FieldMessage_Show(message + 1, 1);
+      GameFlag_Set(FLAG_ITEM_USED_UP);
+      GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
+      Event_End();
     }
   }
 }
@@ -404,7 +351,6 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
 /// Once the second Small Jewel is found, and until it is set, it opens the File
 /// Screen.
 static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
-
   struct FieldWork *work;
 
   Event_Start();
@@ -414,12 +360,7 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0) {
     work = gFieldWork;
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
-    {
-
-      u16 *menuRequest = &work->fieldMenu;
-      s32 open = 1;
-      *menuRequest = open;
-    }
+    work->fieldMenu = 1;
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
   }
@@ -608,8 +549,6 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
 
 /// The party has entered the second relief room, which turns off Move on the
 /// first relief room's statues.
-/// ★ Named from the game: "It's a relief of a minotaur."
-/// (MsgSolSanctumMinotaurReliefOneEye)
 #define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_SCENE_TEMP_34
 
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell pushes it
@@ -848,18 +787,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(1224, CAMERA_KEEP, 136, 1);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_KRADEN);
+  Scene_PlaceAtLeader(ACTOR_JENNA);
+  Scene_PlaceAtLeader(ACTOR_GARET);
   Actor_SetSpeed(ACTOR_KRADEN, 0.6);
   Actor_SetSpeed(ACTOR_JENNA, 0.6);
   Actor_SetSpeed(ACTOR_GARET, 0.6);
@@ -893,23 +823,11 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_Wait(20);
   FieldCamera_MoveTo(1224, CAMERA_KEEP, 148, 1);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(ACTOR_JENNA);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(ACTOR_KRADEN);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
@@ -1023,7 +941,6 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  // Garet: "What's wrong, Kraden?"
   Event_SetMessageId(MsgSolSanctumWrongKraden);
   // "What's wrong, Kraden?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
@@ -1171,18 +1088,13 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 /// Called by SolSanctumEntrance_RestoreInteriorState there until
 /// FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is set, which it sets.
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
-  struct Actor *leader;
-
   Event_Start();
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_KRADEN);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);
@@ -1215,14 +1127,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
   // Kraden: "Perhaps Psynergy is the key..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
-  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_KRADEN);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_KRADEN);
   GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
   Event_End();
 }
@@ -1346,7 +1251,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
   } else {
-    randomValue = Import_RandomNext();
+    randomValue = Random_Next();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
       Sound_Play(SE_ITEM_BREAK);
       MapGrid_SetShake(1, 2, 1);

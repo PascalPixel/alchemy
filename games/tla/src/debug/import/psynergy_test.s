@@ -230,9 +230,9 @@ Actor_ArriveInRing:
 	.thumb_func
 Func_02000f14:
 	overlay_veneer FieldItem_JumpToLeaderFar
-	.global Func_02000f1c
+	.global Shop_Run
 	.thumb_func
-Func_02000f1c:
+Shop_Run:
 	overlay_veneer Shop_RunFar
 	.global Sanctum_Run
 	.thumb_func

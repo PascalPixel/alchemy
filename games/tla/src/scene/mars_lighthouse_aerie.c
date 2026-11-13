@@ -117,7 +117,7 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gMarsLighthouseAerie_Placements;
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Func_020057cc, 1,
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Teleport_PlaySparks, 1,
                            Func_02005010)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

@@ -14,7 +14,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-void Func_02003cc0(s32 id);
+void Actor_DisableById(s32 id);
 
 void Pillars_Place(const u16 *list) {
   const u16 *spec;
@@ -149,10 +149,10 @@ void CrumblingPillars_Place(const void *data) {
         s32 terrainHeight =
             Map_GetTerrainHeight(object->terrainId, object->x, object->z);
 
-        Func_02003cc0(id);
+        Actor_DisableById(id);
         cell->attributeB = 128;
         *shapeCell =
-            Func_02003dd0(object->terrainId, shape, (terrainHeight >> 19) + 4);
+            MapCollision_FindOrAddTag(object->terrainId, shape, (terrainHeight >> 19) + 4);
         if (GameFlag_Get(flag))
           Func_02003ba0(object, 0);
       }
@@ -172,13 +172,13 @@ void CrumblingPillars_Step(u16 *list) {
   struct Actor *target;
   s32 position[3];
 
-  if (Func_02003d20() != 0)
+  if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  target = Func_02003dd8(position, 0);
+  target = Actor_FindAtCell(position, 0);
   if (target != NULL) {
     goto test;
   next:
@@ -304,7 +304,7 @@ extern const struct CellRecord gData_02004066[];
 
 void CrumblingPillar_Prepare(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
-  Func_02003cc0(id);
+  Actor_DisableById(id);
 }
 
 void Actor_MoveToObject(s32 id, s32 target);
@@ -355,9 +355,9 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
       shape = MapGrid_GetTerrainKind(*terrain, actor->x, actor->z);
       ground = Map_GetTerrainHeight(*terrain, actor->x, actor->z);
 
-      Func_02003cc0(id);
+      Actor_DisableById(id);
       cell->attributeB = 128;
-      *slot = Func_02003dd0(actor->terrainId, shape, (ground >> 19) + 4);
+      *slot = MapCollision_FindOrAddTag(actor->terrainId, shape, (ground >> 19) + 4);
       if (GameFlag_Get(flag))
         Actor_CopyGraphics(id, 9);
     }
@@ -379,14 +379,14 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
   struct Actor *target;
   s32 position[3];
 
-  if (Func_02003d20() != 0)
+  if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   helper = Actor_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  target = Func_02003dd8(position, 0);
+  target = Actor_FindAtCell(position, 0);
   if (target != NULL) {
     goto test;
   next:

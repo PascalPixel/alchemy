@@ -32,7 +32,7 @@ void Func_020011e0(void) {
   s32 angle;
   u32 i;
 
-  Func_02003048();
+  Event_Start();
   Event_ResolvePendingActions(0);
   TundariaTower_CamBounds(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
@@ -94,7 +94,7 @@ void Func_0200137c(void) {
 
 extern const u8 gData_02003340[];
 extern const u8 gData_0200335a[];
-void Func_02003168(const s16 *data);
+void Actor_PlaceBlocks(const s16 *data);
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -180,7 +180,7 @@ s32 Scene_Initialize(void) {
         if (GameFlag_Get(0x946))
           Actor_SetPosition(12, PIXELS(200), PIXELS(136));
       }
-      Func_02003168(gData_02003264);
+      Actor_PlaceBlocks(gData_02003264);
       Actor_SetSpritePriority(12, 2);
       break;
     case 4:
@@ -225,7 +225,7 @@ s32 Scene_Initialize(void) {
     } else {
       Task_Add(Func_0200137c, 0x480);
     }
-    Func_02003168(gData_0200326e);
+    Actor_PlaceBlocks(gData_0200326e);
   }
   return 0;
 }

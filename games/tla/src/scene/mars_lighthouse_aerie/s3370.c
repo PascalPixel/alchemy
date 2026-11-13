@@ -20,7 +20,7 @@
 void BattleEffect_GetObjectPriority(void);
 void Func_02004ec0(void);
 void FieldCamera_WaitForArrival();
-void Func_020057c4(void);
+void Teleport_PlayWhirl(void);
 
 extern s32 gData_02005b54[];
 
@@ -235,7 +235,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldActor_SetMoveTarget(object, 0x2000000, 0x500000, 0xfc0000);
   FieldActor_WaitForMove(object);
   FieldEvent_Wait(20);
-  Func_0200557c(object);
+  Actor_Release(object);
 L_0200b8ac:
   FieldEvent_Wait(40);
   FieldActor_SetSpritePriority(23, 2);
@@ -1077,7 +1077,7 @@ void Func_020051e0(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02005030();
-  Func_020057c4();
+  Teleport_PlayWhirl();
   System_Wait(40);
   Func_02005010();
   PaletteFade_ApplyTarget(0x10000, 1);
@@ -1141,9 +1141,9 @@ void Func_02005268(struct Actor *object) {
           sprite->unk14 = sine;
           sprite->unk18 = sine;
           if (j == 0) {
-            sprite->unk1e = Func_020057bc(object) - 1;
+            sprite->unk1e = BattleEffect_GetObjectDepth(object) - 1;
           } else {
-            sprite->unk1e = Func_020057bc(object) + 1;
+            sprite->unk1e = BattleEffect_GetObjectDepth(object) + 1;
             sprite->unk10 -= 0x10000;
             sprite->unk18 = -sprite->unk18;
           }

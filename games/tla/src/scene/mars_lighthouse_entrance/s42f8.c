@@ -12,7 +12,7 @@
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 
-void Func_02004dc8(void);
+void Teleport_PlayWhirl(void);
 
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -136,7 +136,7 @@ void Func_020048e8(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004738();
-  Func_02004dc8();
+  Teleport_PlayWhirl();
   System_Wait(40);
   Func_02004718();
   PaletteFade_ApplyTarget(0x10000, 1);

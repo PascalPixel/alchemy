@@ -53,14 +53,14 @@ extern s16 gMagmaRockInside_PlatformPath7[];
 extern s16 gMagmaRockInside_PlatformPath8[];
 extern s16 gMagmaRockInside_PlatformPath9[];
 
-void Func_02004e60(s32 value);
+void FieldEffect_StartBlankOverlay(s32 value);
 
 void MagmaRockInside_RaiseActorCells(u16 *list);
 
-void Func_02004f08(s32 id, s32 value);
+void HangingVine_Place(s32 id, s32 value);
 s32 Func_02004ed0(struct Actor *object);
 s32 Field_TryJumpForward(void);
-struct Actor *Func_02004ef8(s32 *position, s32 mode);
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void MagmaRockInside_SpawnRubble(s32 spread);
 void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b);

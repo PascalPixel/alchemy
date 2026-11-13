@@ -28,15 +28,15 @@ void Actor_DisableById(s32 id);
 void FieldEffect_StartBlankOverlay(s32 a0);
 void Tightrope_Initialize(void);
 void Func_02005678(s32 a0, s32 a1, s32 a2);
-void Func_020056b0(s32 id);
-void Func_020056b8(s32 id);
+void Actor_DepartInRing(s32 id);
+void Actor_ArriveInRing(s32 id);
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
 extern u16 gData_02007088[];
 extern u16 gData_0200708c[];
 void MapGrid_SetCellHeight();
-void Func_020056a8();
+void MapGrid_SetAttributeBAt();
 extern s32 Data_02007064;
-s32 Func_020056a0(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -794,10 +794,10 @@ s32 Scene_Initialize(void) {
     if (!Flag_IsSet(0x109)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
           entrance == 8 || entrance == 10 || entrance == 11 || entrance == 13)
-        Func_020056b0(gMainRoutineWork.currentOwner);
+        Actor_DepartInRing(gMainRoutineWork.currentOwner);
       if (entrance == 3 || entrance == 5 || entrance == 9 || entrance == 12 ||
           entrance == 14)
-        Func_020056b8(gMainRoutineWork.currentOwner);
+        Actor_ArriveInRing(gMainRoutineWork.currentOwner);
       if (entrance == 16 && !Flag_IsSet(0x109))
         Func_02003d80();
     }
@@ -890,7 +890,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
 
 #include "event_inline.h"
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, Func_020056a8)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "actor.h"
 #include "main_routine_work.h"
@@ -989,7 +989,7 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_02007044[];
 
-DEFINE_WHIRLWIND_UPDATE(Func_02001894, Func_020056a0, Position_FlatDistance,
+DEFINE_WHIRLWIND_UPDATE(Func_02001894, MapGrid_GetCellBehavior, Position_FlatDistance,
                         gData_02007044, Data_02007064)
 
 #include "field_effect.h"

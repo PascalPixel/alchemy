@@ -40,7 +40,7 @@ extern u8 gInventorySnapshot[];
 #define SHARED_F02002148_ID2 Func_020024c0
 #define SHARED_F02002148_ID3 Func_02002614
 #define SHARED_F02002148_ID4 Func_02004bc0
-#define SHARED_F02002148_ID5 Func_02004c18
+#define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 MapGrid_CheckCollision
 #define SHARED_F02002148_ID7 Func_02004c78
 #include "../shared/func_02002148.c"
@@ -138,7 +138,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   leader->facing = 0x4000;
   Func_02004bc0(leader, 49);
   while (ride->car->stopped == 0) {
-    if (Func_02004c18(0, leader->x, leader->z) != 7) {
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
       leader->x += ride->car->stepX;
       leader->z += ride->car->stepZ;
     } else {
@@ -301,7 +301,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002c40, Work020023c4__s2860, Func_02004c18,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002c40, Work020023c4__s2860, MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_02002b4c, Func_020029c8)
 #undef WORK
 #undef ABS
@@ -409,7 +409,7 @@ extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b,
 #define SHARED_F02003070_ID3 Func_02003284
 #define SHARED_F02003070_ID4 gData_02005798
 #define SHARED_F02003070_ID5 Func_02004bc0
-#define SHARED_F02003070_ID6 Func_02004c70
+#define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Func_020031f8__s3564
 #define SHARED_F02003070_ID8 Func_02004c78__s3564
 #include "../shared/func_02003070.c"

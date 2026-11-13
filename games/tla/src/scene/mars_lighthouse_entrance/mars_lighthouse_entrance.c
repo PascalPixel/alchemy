@@ -18,14 +18,14 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
-void Func_02004c80();
-void Func_02004dc8(void);
-void Func_02004dd0(void);
+void MapGrid_SetCellHeight();
+void Teleport_PlayWhirl(void);
+void Teleport_PlaySparks(void);
 extern u16 gData_020068a2;
 extern u32 Data_020068a4[3];
 extern s16 gData_020068a0;
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
-s32 Func_02004d88();
+s32 FieldEffect_StartBlankOverlay();
 s32 Weather_StartRain();
 extern u8 Data_02006878[];
 
@@ -66,7 +66,7 @@ L_02008268:
 L_02008282:
   Func_02000168(0, v9, v10, v8);
   Func_02000168(2, v9, v10, v6);
-  Func_02004c80((v9 << 20), (v10 << 20), *v11, v7);
+  MapGrid_SetCellHeight((v9 << 20), (v10 << 20), *v11, v7);
 }
 
 #include "field_event.h"
@@ -245,13 +245,13 @@ void MarsLighthouseEntrance_Teleport(void) {
     Func_020046b4();
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_02004dd0();
+    Teleport_PlaySparks();
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
     FieldCamera_MoveTo(PIXELS(688), -1, PIXELS(360), 1);
     FieldCamera_WaitForArrival();
-    Func_02004dc8();
+    Teleport_PlayWhirl();
     FieldEvent_Wait(40);
     Func_02004718();
     FieldPsynergy_FadeFromCastColor();
@@ -260,7 +260,7 @@ void MarsLighthouseEntrance_Teleport(void) {
     Flag_Set(0xa36);
   } else {
     Func_020046b4();
-    Func_02004dd0();
+    Teleport_PlaySparks();
     {
       u8 *party = (u8 *)&gMainRoutineWork;
 
@@ -272,7 +272,7 @@ void MarsLighthouseEntrance_Teleport(void) {
   }
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000648, Func_020046b4, Func_02004dd0, 17,
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000648, Func_020046b4, Teleport_PlaySparks, 17,
                            Func_02004718)
 
 /// Burst on the cracked ice sheet, actor 18: a flash, the sheet gone, chips
@@ -373,7 +373,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
 
 void Func_02000930(void) { GameFlag_Set(0x144); }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_0200093c, Func_020046b4, Func_02004dd0, 14,
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_0200093c, Func_020046b4, Teleport_PlaySparks, 14,
                            Func_02004718)
 
 /// Sends object id from column 11 to x 152, then from column 10 to x 200,
@@ -456,7 +456,7 @@ void Func_02000a7c(void) {
   Event_End();
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000af4, Func_020046b4, Func_02004dd0, 14,
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000af4, Func_020046b4, Teleport_PlaySparks, 14,
                            Func_02004718)
 
 void Func_02000b24(void) {
@@ -480,10 +480,10 @@ void Func_02000c1c(void) {
 
 void Func_02000c68(void) { MapGrid_CopyCellAttributes(25, 9, 11, 3, 26, 9); }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000c84, Func_020046b4, Func_02004dd0, 12,
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000c84, Func_020046b4, Teleport_PlaySparks, 12,
                            Func_02004718)
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000cb4, Func_020046b4, Func_02004dd0, 13,
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000cb4, Func_020046b4, Teleport_PlaySparks, 13,
                            Func_02004718)
 
 void Func_02000ce4(s32 unused, s32 id) {
@@ -708,7 +708,7 @@ next:
 }
 
 void Func_0200112c(void) {
-  Func_02004d40();
+  Field_TryJumpForward();
   Func_02003884();
 }
 
@@ -895,7 +895,7 @@ s32 Scene_Initialize(void) {
 L_020093dc:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom2)
     goto L_0200944c;
-  Call1((void (*)())Func_02004d88, 0);
+  Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
 #if !TLA_PATCH_1
   FieldActor_SetSpritePriority(11, 3);
 #endif
@@ -919,7 +919,7 @@ L_0200944c:
     goto L_02009454;
   goto L_02009680;
 L_02009454:
-  Call1((void (*)())Func_02004d88, 0);
+  Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
   Call4((void (*)())Func_020022e4, (s32)gData_020053e6, (s32)gData_020053f8, 0,
         88);
   Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_020053fe);
@@ -1013,7 +1013,7 @@ L_0200963c:
 L_02009680:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom4)
     goto L_020096b0;
-  Call1((void (*)())Func_02004d88, 0);
+  Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
   if (v_r7 == 10)
     goto L_02009694;
   if (v_r7 != 1)
@@ -1028,7 +1028,7 @@ L_020096a8:
 L_020096b0:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom5)
     goto L_02009784;
-  Call1((void (*)())Func_02004d88, 0);
+  Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
   t72 = (s32)Actor_Get(12);
   FIELD_AT(t72, u8, 35) |= 2;
   t74 = Event_GetFlag(0xa4d);
@@ -1059,7 +1059,7 @@ L_02009784:
     goto L_0200978c;
   goto L_020098b2;
 L_0200978c:
-  Call1((void (*)())Func_02004d88, 0);
+  Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
   if (v_r7 == 2)
     goto L_020097a2;
   if (v_r7 == 4)
@@ -1129,7 +1129,7 @@ L_02009884:
 L_020098b2:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom7)
     goto L_020098be;
-  Call1((void (*)())Func_02004d88, 0);
+  Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
 L_020098be:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom6)
     goto L_020098d0;

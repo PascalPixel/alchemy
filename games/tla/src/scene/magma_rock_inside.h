@@ -35,7 +35,7 @@ void MagmaRockInside_TrackStepCell(void);
 void MagmaRockInside_SetActorCellShape(s32 a, s32 b, s32 owner);
 void Func_02004c98(struct Actor *object, s32 a);
 void Actor_StartScript(struct Actor *object, const void *data);
-void Func_02004df8(s32 id);
+void Actor_DisableById(s32 id);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

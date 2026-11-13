@@ -80,7 +80,7 @@ void NameEntry_EditMemberName(s32);
  * of the object declares it, MenuTest_BrowseMessageRange moves: 2 of 67
  * instructions in tla-ja. */
 extern void Func_02000df4__psynergy_test(s32, s32) __asm__("MessageArgument_Push");
-void Func_02000f1c(s32, s32);
+void Shop_Run(s32, s32);
 void TileCopies_CopyTouchedCells(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
 
@@ -166,13 +166,13 @@ void Func_0200018c(void) {
                               MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
-void Func_020001a4(s32 value) { Func_02000f1c(1, value); }
+void Func_020001a4(s32 value) { Shop_Run(1, value); }
 
-void Func_020001b0(s32 value) { Func_02000f1c(2, value); }
+void Func_020001b0(s32 value) { Shop_Run(2, value); }
 
-void Func_020001bc(s32 value) { Func_02000f1c(3, value); }
+void Func_020001bc(s32 value) { Shop_Run(3, value); }
 
-void Func_020001c8(s32 value) { Func_02000f1c(24, value); }
+void Func_020001c8(s32 value) { Shop_Run(24, value); }
 
 void Func_020001d4(s32 value) { Inn_CheckIn(0, value); }
 

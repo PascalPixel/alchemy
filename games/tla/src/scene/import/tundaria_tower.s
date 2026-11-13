@@ -114,13 +114,13 @@ Actor_WaitForMove:
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
 	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
-	.global Func_02002fc8
+	.global BlendScript_Resume
 	.thumb_func
-Func_02002fc8:
+BlendScript_Resume:
 	overlay_veneer BlendScript_ResumeFar
-	.global Func_02002fd0
+	.global BlendScript_Suspend
 	.thumb_func
-Func_02002fd0:
+BlendScript_Suspend:
 	overlay_veneer BlendScript_SuspendFar
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -154,9 +154,9 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 MapGrid_GetTerrainKind:
 	overlay_veneer MapGrid_GetTerrainKindFar
-	.global Func_02003018
+	.global Actor_HasArrived
 	.thumb_func
-Func_02003018:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Actor_SetItemIcon
 	.thumb_func
@@ -166,9 +166,9 @@ Actor_SetItemIcon:
 	.thumb_func
 Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
-	.global Func_02003030
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02003030:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -178,9 +178,9 @@ FieldMessage_Show:
 	.thumb_func
 Event_Wait:
 	overlay_veneer Event_WaitFar
-	.global Func_02003048
+	.global Event_Start
 	.thumb_func
-Func_02003048:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Func_02003050
 	.thumb_func
@@ -238,9 +238,9 @@ Actor_SetSpriteColor:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_020030c0
+	.global Actor_DisableById
 	.thumb_func
-Func_020030c0:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
@@ -322,25 +322,25 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Func_02003160:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02003168
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02003168:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02003170
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02003170:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02003178
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02003178:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_02003180
+	.global MapCollision_FindOrAddTag
 	.thumb_func
-Func_02003180:
+MapCollision_FindOrAddTag:
 	overlay_veneer MapCollision_FindOrAddTagFar
-	.global Func_02003188
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02003188:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global Func_02003190
 	.thumb_func

@@ -113,10 +113,10 @@ void MagmaRockInside_SpawnDustRing(void) {
 #include "map.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 DEFINE_ACTOR_SET_CELL_SHAPE(MagmaRockInside_SetActorCellShape,
-                            MapGrid_GetTerrainKind, Func_02004ef0)
+                            MapGrid_GetTerrainKind, MapCollision_FindOrAddTag)
 
 #include "../magma_rock_inside.h"
 

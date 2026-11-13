@@ -406,9 +406,9 @@ MapCollision_FindOrAddTag:
 	.thumb_func
 Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
-	.global Func_02005a30
+	.global Leader_CanPushObjectAhead
 	.thumb_func
-Func_02005a30:
+Leader_CanPushObjectAhead:
 	overlay_veneer Leader_CanPushObjectAheadFar
 	.global Func_02005a38
 	.thumb_func

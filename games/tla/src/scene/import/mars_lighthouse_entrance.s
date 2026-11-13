@@ -138,9 +138,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 MapGrid_GetCellBehaviorAt:
 	overlay_veneer MapGrid_GetCellBehaviorAtFar
-	.global Func_02004c18
+	.global MapGrid_GetCellAttributeLowNibbleOrBump
 	.thumb_func
-Func_02004c18:
+MapGrid_GetCellAttributeLowNibbleOrBump:
 	overlay_veneer MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	.global Map_CopyCellsRect
 	.thumb_func
@@ -182,17 +182,17 @@ Actor_SetSpriteColorMode:
 	.thumb_func
 Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
-	.global Func_02004c70
+	.global Actor_HasArrived
 	.thumb_func
-Func_02004c70:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Func_02004c78
 	.thumb_func
 Func_02004c78:
 	overlay_veneer Field_CheckSpheresOverlapFar
-	.global Func_02004c80
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02004c80:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global TileMap_ConvertBuffer
 	.thumb_func
@@ -286,9 +286,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_02004d40
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02004d40:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Leader_StopMoving
 	.thumb_func
@@ -322,9 +322,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
-	.global Func_02004d88
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02004d88:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_FadeFromCastColor
 	.thumb_func
@@ -354,13 +354,13 @@ Func_02004db8:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02004dc8
+	.global Teleport_PlayWhirl
 	.thumb_func
-Func_02004dc8:
+Teleport_PlayWhirl:
 	overlay_veneer Teleport_PlayWhirlFar
-	.global Func_02004dd0
+	.global Teleport_PlaySparks
 	.thumb_func
-Func_02004dd0:
+Teleport_PlaySparks:
 	overlay_veneer Teleport_PlaySparksFar
 	.global Weather_StartRain
 	.thumb_func

@@ -22,7 +22,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Actor_WaitForMove(struct Actor *actor);
-s32 Func_02003018(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void wait(s32 frames);
 
@@ -99,7 +99,7 @@ retry:
   Actor_SetMoveTarget(object, x, object->y, z);
   Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  for (i = 0; i <= 179 && Func_02003018(object) == 0; i++) {
+  for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
     if (gData_02003cd0 != 0)
       goto end;
     wait(1);
@@ -139,7 +139,7 @@ next:
   wait(1);
   i++;
 test:
-  if (i <= 179 && Func_02003018(object) == 0 && gData_02003cd0 == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0 == 0)
     goto next;
   if (gData_02003cd0 != 0)
     goto end;
@@ -195,7 +195,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Func_02003018(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void wait(s32 frames);
 
@@ -307,7 +307,7 @@ next:
   wait(1);
   i++;
 test:
-  if (i <= 179 && Func_02003018(object) == 0 && gData_02003cd0 == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0 == 0)
     goto next;
   if (gData_02003cd0 != 0)
     goto end;

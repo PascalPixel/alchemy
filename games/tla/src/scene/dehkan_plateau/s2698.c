@@ -25,7 +25,7 @@
 #include "module/tla.h"
 #include "scene_call.h"
 
-void Func_02003cc0(s32 id);
+void Actor_DisableById(s32 id);
 extern struct Actor *gData_02004420;
 
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -466,7 +466,7 @@ void Func_020030e4(void) {
   CrumblingPillars_Place(gData_02003f44);
   Actor_SetSpritePriority(8, 3);
   Pillars_Place(gData_02003f98);
-  Func_02003cc0(12);
+  Actor_DisableById(12);
   if (GameFlag_Get(0x301) != 0) {
     Map_CopyAttributes(54, 32, 2, 1, 56, 64);
     Actor_SetPositionAndResetMotion(Actor_GetById(12), 226 << 18, 128 << 15,
@@ -521,11 +521,11 @@ void Func_02003164(void) {
   Func_020012d8();
   Pillars_Place(gData_02003fa0);
   if (GameFlag_Get(0x840) != 0) {
-    Func_02003cc0(23);
+    Actor_DisableById(23);
     Map_CopyAttributes(50, 7, 1, 1, 52, 7);
     Actor_SetPosition__s3164(Actor_GetById(23), 210 << 18, 0, 240 << 15);
   } else {
-    Func_02003db8(gData_02003fc0);
+    Actor_PlaceBlocks(gData_02003fc0);
   }
   Func_020018a8();
   if (GameFlag_Get(0x86c) != 0) {
@@ -581,19 +581,19 @@ void Func_02003284(void) {
    * no block, 2 of 276 instructions differ in tla-en. */
   do {
   } while (0);
-  Func_02003d98();
+  Tightrope_Initialize();
   Func_02003da0(0, 8, 9);
   Func_02003da0(1, 10, 11);
   Actor_SetSpritePriority(12, 1);
   Actor_SetSpritePriority(13, 1);
   Func_02003d90();
   Func_02003da8(0, 520, 12, 13);
-  Func_02003db8(gData_02003fc4);
+  Actor_PlaceBlocks(gData_02003fc4);
   if (Actor_GetById(19)->y > (s32)0xfff80000)
     Actor_SetSpritePriority(19, 1);
   else
     Actor_SetSpritePriority(19, 2);
-  Func_02003cc0(20);
+  Actor_DisableById(20);
   Actor_GetById(20)->priorityFlags |= 32;
   Actor_SetSpritePriority(20, 2);
   if (GameFlag_Get(0x841) != 0)

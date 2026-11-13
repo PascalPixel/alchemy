@@ -366,21 +366,21 @@ Party_GetLeaderActor:
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_020056a0
+	.global MapGrid_GetCellBehavior
 	.thumb_func
-Func_020056a0:
+MapGrid_GetCellBehavior:
 	overlay_veneer MapGrid_GetCellBehaviorFar
-	.global Func_020056a8
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_020056a8:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
-	.global Func_020056b0
+	.global Actor_DepartInRing
 	.thumb_func
-Func_020056b0:
+Actor_DepartInRing:
 	overlay_veneer Actor_DepartInRingFar
-	.global Func_020056b8
+	.global Actor_ArriveInRing
 	.thumb_func
-Func_020056b8:
+Actor_ArriveInRing:
 	overlay_veneer Actor_ArriveInRingFar
 	.global Sound_Play
 	.thumb_func

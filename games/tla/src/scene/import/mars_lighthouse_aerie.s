@@ -74,9 +74,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Func_0200557c
+	.global Actor_Release
 	.thumb_func
-Func_0200557c:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -362,17 +362,17 @@ Func_020057ac:
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_020057bc
+	.global BattleEffect_GetObjectDepth
 	.thumb_func
-Func_020057bc:
+BattleEffect_GetObjectDepth:
 	overlay_veneer BattleEffect_GetObjectDepthFar
-	.global Func_020057c4
+	.global Teleport_PlayWhirl
 	.thumb_func
-Func_020057c4:
+Teleport_PlayWhirl:
 	overlay_veneer Teleport_PlayWhirlFar
-	.global Func_020057cc
+	.global Teleport_PlaySparks
 	.thumb_func
-Func_020057cc:
+Teleport_PlaySparks:
 	overlay_veneer Teleport_PlaySparksFar
 	.global Weather_StartRain
 	.thumb_func

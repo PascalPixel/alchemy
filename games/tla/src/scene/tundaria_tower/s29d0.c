@@ -16,7 +16,7 @@
 #include "module/tla.h"
 #include "particle.h"
 
-s32 Func_02003180(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
@@ -109,7 +109,7 @@ void Func_02002b04(void) {
 #include "system/ram_buffer.h"
 
 DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, MapGrid_GetTerrainKind,
-                            Func_02003180)
+                            MapCollision_FindOrAddTag)
 
 void Func_02002ca8(s32 a, s32 b) {
   Func_02002c1c(a, b, gMainRoutineWork.currentOwner);

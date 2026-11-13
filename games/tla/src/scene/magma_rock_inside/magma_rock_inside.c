@@ -22,10 +22,10 @@
 #include "scene.h"
 #include "text/msg_ids.h"
 
-void Func_02004ee0(s16 *cells);
-void Func_02004ee8(void);
+void Actor_LiftTargetBlock(s16 *cells);
+void Actor_PlaceMovedBlock(void);
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
-void Func_02004f28(struct Actor *object, s32 sound);
+void Event_PlayCueNearFocus(struct Actor *object, s32 sound);
 extern s32 gMagmaRockInside_StepCellWidth;
 extern s32 gMagmaRockInside_StepCellHeight;
 extern s32 gMagmaRockInside_StepCellX;
@@ -76,10 +76,10 @@ DEFINE_POSITION_FLAT_DISTANCE(MagmaRockInside_FlatDistance)
 #include "actor.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 DEFINE_MAP_CELL_SET_SHAPE(MagmaRockInside_SetCellShape, MapGrid_GetTerrainKind,
-                          Func_02004ef0)
+                          MapCollision_FindOrAddTag)
 
 void MagmaRockInside_WaitForLanding(struct Actor *object) {
   s32 count;
@@ -246,15 +246,15 @@ void MagmaRockInside_UnblockMovedPillar(void) {
   work = (u8 *)Ram_HeapSlots->eventWork;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov692Room2)
-    Func_02004ee0(gMagmaRockInside_Room2Pillars);
+    Actor_LiftTargetBlock(gMagmaRockInside_Room2Pillars);
   else if (scene == (s32)&SceneId_Ov692Room3)
-    Func_02004ee0(gMagmaRockInside_Room3Pillars);
+    Actor_LiftTargetBlock(gMagmaRockInside_Room3Pillars);
   else if (scene == (s32)&SceneId_Ov692Room4)
-    Func_02004ee0(gMagmaRockInside_Room4Pillars);
+    Actor_LiftTargetBlock(gMagmaRockInside_Room4Pillars);
   else if (scene == (s32)&SceneId_Ov692Room6)
-    Func_02004ee0(gMagmaRockInside_Room6Pillars);
+    Actor_LiftTargetBlock(gMagmaRockInside_Room6Pillars);
   else if (scene == (s32)&SceneId_Ov692Room7)
-    Func_02004ee0(gMagmaRockInside_Room7Pillars);
+    Actor_LiftTargetBlock(gMagmaRockInside_Room7Pillars);
   MagmaRockInside_ClearBlockCells(*(s32 *)(work + 0xcbc));
 }
 
@@ -272,7 +272,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_02004ee8();
+  Actor_PlaceMovedBlock();
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov692Room6) {
     MagmaRockInside_MarkBlockCells(gMagmaRockInside_Room6Pillars);
@@ -399,7 +399,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
   options.priority = 2;
   options.script = gMagmaRockInside_EmberScript;
   if ((frame & 15) == 0)
-    Func_02004f28(object, 136);
+    Event_PlayCueNearFocus(object, 136);
   dz = Random16() & 15;
   vz = ((Random16() & 31) - 16) << 12;
   /* FAKEMATCH(temporary): z read into its own local; as object->z in the

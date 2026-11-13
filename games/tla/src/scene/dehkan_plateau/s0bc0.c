@@ -20,7 +20,7 @@
 #include "module/tla.h"
 
 DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
-                            Func_02003dd0)
+                            MapCollision_FindOrAddTag)
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -53,12 +53,12 @@ void Actor_MoveToObject(s32 id, s32 target);
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
 DEFINE_PILLARS_RAISE(Pillars_Raise, MapGrid_GetTerrainKind, Func_02003db0,
-                     Func_02003dd0)
+                     MapCollision_FindOrAddTag)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
 void Func_02000d78(u16 *list) {
-  struct Actor *held = Func_02003df0();
+  struct Actor *held = Leader_FindActorAhead();
   void *work = Ram_HeapSlots->eventWork;
   u8 *shapeGrid = gMapShapeGrid;
 
@@ -81,7 +81,7 @@ void Func_02000d78(u16 *list) {
       s32 value;
 
       shapes += index;
-      value = Func_02003dd0(*layer, shape, (level >> 19) - 4);
+      value = MapCollision_FindOrAddTag(*layer, shape, (level >> 19) - 4);
       cells += index;
       /* FAKEMATCH(signature): the shape grid byte stored through a bit-field
          view (struct ShapeBits), whose alias set lets the cell's attribute be
@@ -103,6 +103,6 @@ void Func_02000d78(u16 *list) {
 // it past the cell read; a plain store keeps its order.
 
 DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
-                             Func_02003db0, Func_02003dd0)
+                             Func_02003db0, MapCollision_FindOrAddTag)
 
 #include "../../field/object/set_sprite_priority.c"

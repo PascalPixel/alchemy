@@ -254,9 +254,9 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02004df8
+	.global Actor_DisableById
 	.thumb_func
-Func_02004df8:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_CopyGraphics
 	.thumb_func
@@ -306,9 +306,9 @@ PaletteFade_StartInterpolation:
 	.thumb_func
 ItemDisplay_ShowItem:
 	overlay_veneer ItemDisplay_ShowItemFar
-	.global Func_02004e60
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02004e60:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
@@ -354,9 +354,9 @@ Actor_SetActionCallback:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02004ec0
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02004ec0:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
 	.global Func_02004ec8
 	.thumb_func
@@ -366,33 +366,33 @@ Func_02004ec8:
 	.thumb_func
 Func_02004ed0:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02004ed8
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02004ed8:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02004ee0
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02004ee0:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02004ee8
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02004ee8:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_02004ef0
+	.global MapCollision_FindOrAddTag
 	.thumb_func
-Func_02004ef0:
+MapCollision_FindOrAddTag:
 	overlay_veneer MapCollision_FindOrAddTagFar
-	.global Func_02004ef8
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02004ef8:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02004f08
+	.global HangingVine_Place
 	.thumb_func
-Func_02004f08:
+HangingVine_Place:
 	overlay_veneer HangingVine_PlaceFar
 	.global Func_02004f10
 	.thumb_func
@@ -406,9 +406,9 @@ EffectSprite_DrawAtWorldPosition:
 	.thumb_func
 BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
-	.global Func_02004f28
+	.global Event_PlayCueNearFocus
 	.thumb_func
-Func_02004f28:
+Event_PlayCueNearFocus:
 	overlay_veneer Event_PlayCueNearFocusFar
 	.global Sound_Play
 	.thumb_func

@@ -15,7 +15,7 @@
 #include "module/scene/tundaria_tower.h"
 #include "module/tla.h"
 
-s32 Func_02003180(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
@@ -235,9 +235,9 @@ next:
     slot = shapes + index;
     shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_020030c0(id);
+    Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
+    *slot = MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Get(flag))
       Import_ActorSelectAnimation(object, 0);
   }
@@ -267,7 +267,7 @@ void Func_02002354(const u16 *table) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  trap = Func_02003188(position, 0);
+  trap = Actor_FindAtCell(position, 0);
   if (trap != 0)
     goto test;
   return;
@@ -279,7 +279,7 @@ next:
   }
   {
     flag = table[1];
-    Func_02003048();
+    Event_Start();
     if (!GameFlag_Get(flag)) {
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(id), 7);
@@ -339,7 +339,7 @@ loop:
     goto test;
   }
   flag = row[1];
-  Func_02003048();
+  Event_Start();
   nextFlag = flag + 1;
   if (!GameFlag_Get(nextFlag)) {
     Sound_Play(185);
@@ -369,7 +369,7 @@ test:
 
 void Func_020025c8(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
-  Func_020030c0(id);
+  Actor_DisableById(id);
 }
 
 // Places the listed actors on their cells.
@@ -425,9 +425,9 @@ next:
     slot = shapes + index;
     shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_020030c0(id);
+    Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
+    *slot = MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Get(flag))
       Actor_CopyGraphics(id, 9);
   }
@@ -460,7 +460,7 @@ void Func_02002764(const u16 *table) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  trap = Func_02003188(position, 0);
+  trap = Actor_FindAtCell(position, 0);
   if (trap != 0) {
     goto test;
   next:
@@ -470,7 +470,7 @@ void Func_02002764(const u16 *table) {
       goto test;
     }
     flag = table[1];
-    Func_02003048();
+    Event_Start();
     if (!GameFlag_Get(flag)) {
       Import_ActorSelectAnimation(partner, 1);
       Func_02002748(partner, trap);

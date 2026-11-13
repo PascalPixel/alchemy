@@ -12,7 +12,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-void Func_02004ec0(void);
+void Tightrope_Initialize(void);
 
 extern const u8 gMagmaRockInside_PlatformPath1[];
 extern const u8 gMagmaRockInside_PlatformPath2[];
@@ -27,7 +27,7 @@ extern u16 gMagmaRockInside_Room4Statues[];
 extern const u8 gMagmaRockInside_Room6Pillars[];
 
 void MagmaRockInside_StartLavaPlatform(s32 id, const u8 *script, s32 flag);
-void Func_02004ed8(const u8 *table);
+void Actor_PlaceBlocks(const u8 *table);
 void Func_02004ec8(s32 a, s32 b, s32 c);
 s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
 void MagmaRockInside_LayerWithLeader(void);
@@ -65,7 +65,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2) {
     s32 j;
 
-    Func_02004e60(0);
+    FieldEffect_StartBlankOverlay(0);
     Actor_GetById(15)->update = MagmaRockInside_LayerWithLeader;
     j = 0;
     do {
@@ -78,7 +78,7 @@ s32 Scene_Initialize(void) {
     } while (++j != 6);
     if (Event_GetFlag(2544))
       Actor_GetById(15)->z = 132 << 17;
-    Func_02004ed8(gMagmaRockInside_Room2Pillars);
+    Actor_PlaceBlocks(gMagmaRockInside_Room2Pillars);
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     Raise(16);
@@ -87,11 +87,11 @@ s32 Scene_Initialize(void) {
     else
       CLOSED_BLEND();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room3) {
-    Func_02004e60(0);
+    FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(2545))
       Actor_GetById(11)->z = 166 << 18;
-    Func_02004ed8(gMagmaRockInside_Room3Pillars);
-    Func_02004ec0();
+    Actor_PlaceBlocks(gMagmaRockInside_Room3Pillars);
+    Tightrope_Initialize();
     Func_02004ec8(0, 13, 14);
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
@@ -103,7 +103,7 @@ s32 Scene_Initialize(void) {
     else
       CLOSED_BLEND();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
-    Func_02004e60(0);
+    FieldEffect_StartBlankOverlay(0);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Room4Statues);
     if (gMainRoutineWork.entrance <= 7) {
@@ -130,7 +130,7 @@ s32 Scene_Initialize(void) {
         Actor_GetById(24)->x = 172 << 17;
       if (Event_GetFlag(2548))
         Actor_GetById(25)->x = 172 << 17;
-      Func_02004ed8(gMagmaRockInside_Room4Pillars);
+      Actor_PlaceBlocks(gMagmaRockInside_Room4Pillars);
       Lower(26, 0);
       Actor_GetById(15)->unk5c[0] = 3;
       Actor_GetById(16)->unk5c[0] = 3;
@@ -162,10 +162,10 @@ s32 Scene_Initialize(void) {
         CLOSED_BLEND();
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room5) {
-    Func_02004e60(0);
+    FieldEffect_StartBlankOverlay(0);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
-    Func_02004f08(10, 1);
-    Func_02004f08(11, 1);
+    HangingVine_Place(10, 1);
+    HangingVine_Place(11, 1);
     Raise(8);
     Raise(9);
     if (Event_GetFlag(770)) {
@@ -176,7 +176,7 @@ s32 Scene_Initialize(void) {
       CLOSED_BLEND();
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room6) {
-    Func_02004e60(0);
+    FieldEffect_StartBlankOverlay(0);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     if (Event_GetFlag(2549)) {
       MapGrid_CopyCellAttributes(46, 74, 1, 1, 46, 73);
@@ -184,7 +184,7 @@ s32 Scene_Initialize(void) {
     }
     if (Event_GetFlag(2550))
       Actor_SetPosition(12, 230 << 18, 154 << 18);
-    Func_02004ed8(gMagmaRockInside_Room6Pillars);
+    Actor_PlaceBlocks(gMagmaRockInside_Room6Pillars);
     MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath10, 770);
     MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath11, 770);
     MagmaRockInside_StartLavaPlatform(11, gMagmaRockInside_PlatformPath12, 770);
@@ -216,8 +216,8 @@ s32 Scene_Initialize(void) {
       Actor_SetAnimation(23, 4);
       Actor_SetPosition(23, 174 << 18, 162 << 18);
     }
-    Func_02004ed8(gMagmaRockInside_Room7Pillars);
-    Func_02004e60(0);
+    Actor_PlaceBlocks(gMagmaRockInside_Room7Pillars);
+    FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(771))
       Actor_SetPosition(21, 0, 0);
     if (!Event_GetFlag(772))
@@ -289,18 +289,18 @@ s32 Scene_PrepareMap(void) {
 #include "event_inline.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Func_02004ef0(s32 unused, s32 key, s32 value);
+s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 /// On entering, sets each listed pillar from its two flags, then lifts the
 /// leader onto the ground under it.
 DEFINE_PILLARS_RESTORE_RAISED(MagmaRockInside_RestoreCrumblingPillars,
                               Func_02004ed0, MapGrid_GetTerrainKind,
-                              Func_02004df8, Func_02004ef0, Func_02004c98)
+                              Actor_DisableById, MapCollision_FindOrAddTag, Func_02004c98)
 
 #include "../shared/trial_road.h"
 
 DEFINE_TRAPS_CHECK(MagmaRockInside_CheckCrumblingStep, Field_TryJumpForward,
-                   Func_02004ef8, Func_02004c98, MagmaRockInside_SpawnRubble,
+                   Actor_FindAtCell, Func_02004c98, MagmaRockInside_SpawnRubble,
                    MagmaRockInside_SetLeaderCellShape,
                    MagmaRockInside_SpawnDustRing)
 
@@ -346,7 +346,7 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
 
 void MagmaRockInside_SetPillarMode3(s32 id) {
   Actor_Get(id)->unk5c[0] = 3;
-  Func_02004df8(id);
+  Actor_DisableById(id);
 }
 
 void Actor_MoveToObject(s32 id, s32 owner);
@@ -356,7 +356,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// it copy actor 9's visual attributes.
 DEFINE_PILLARS_RESTORE(MagmaRockInside_RestorePillars,
                        MagmaRockInside_SetPillarMode3, Func_02004ed0,
-                       MapGrid_GetTerrainKind, Func_02004df8, Func_02004ef0)
+                       MapGrid_GetTerrainKind, Actor_DisableById, MapCollision_FindOrAddTag)
 
 void MagmaRockInside_TakePlaceOf(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -379,7 +379,7 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  trap = Func_02004ef8(position, 0);
+  trap = Actor_FindAtCell(position, 0);
   if (trap != 0)
     goto test;
   return;

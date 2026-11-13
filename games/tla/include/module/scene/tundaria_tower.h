@@ -25,7 +25,7 @@ void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
 s32 Func_02003160(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Field_TryJumpForward(void);
-struct Actor *Func_02003188(s32 *position, s32 mode);
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void Func_020029d0(s32 spread);
 void Func_02002ca8(s32 a, s32 b);

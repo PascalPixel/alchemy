@@ -33,7 +33,7 @@
 #include "module/tla.h"
 #include "scene_call.h"
 
-void Func_02003cc0(s32 id);
+void Actor_DisableById(s32 id);
 
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
@@ -231,13 +231,13 @@ void Func_020015e0(void) {
   }
 }
 
-void Func_02001630(void) { Func_02003dc0(gData_02003fc0); }
+void Func_02001630(void) { Actor_LiftTargetBlock(gData_02003fc0); }
 
 void Func_02001640(void) {
   struct Actor *object = Actor_GetById(23);
   s32 x = object->x >> 20;
 
-  Func_02003dc8();
+  Actor_PlaceMovedBlock();
   if (x == 52) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -250,13 +250,13 @@ void Func_02001640(void) {
   }
 }
 
-void Func_020016a0(void) { Func_02003dc0(gData_02003fc4); }
+void Func_020016a0(void) { Actor_LiftTargetBlock(gData_02003fc4); }
 
 void Func_020016b0(void) {
   struct Actor *object = Actor_GetById(19);
   s32 x = object->x >> 20;
 
-  Func_02003dc8();
+  Actor_PlaceMovedBlock();
   if (x == 47) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -586,7 +586,7 @@ void Func_02001ee8(void) {
   }
 }
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Func_02003cc0)
+DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
 void Scene_RunUnlessFlag(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -641,7 +641,7 @@ void Func_0200200c(struct Actor *object) {
 void Func_02000d78(const void *data);
 extern const u8 gData_02003fc8[];
 
-DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_02003de0,
+DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
                          Field_FindNearbyTalkTarget, Func_02000d78,
                          gData_02003fc8, Func_02003de8, Func_0200200c)
 

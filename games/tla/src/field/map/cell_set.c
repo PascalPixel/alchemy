@@ -30,12 +30,12 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
 #include "../../scene/tundaria_tower/tundaria_tower.h"
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Func_02003030(s32 x, s32 z, s32 terrain, s32 height);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 
 /// Sets the cell under the object by the flag its action names: with the flag
 /// set, bit 7 of the layer 0 attribute and the high byte of the layer 2
 /// attribute are cleared and the sprite goes to priority 3; without it they are
-/// set and the sprite goes to priority 2. Func_02003030 then gets the cell, the
+/// set and the sprite goes to priority 2. MapGrid_SetCellHeight then gets the cell, the
 /// object's terrain and the terrain height in half cells, 4 lower or higher.
 void Func_02000338(struct Actor *object) {
   s32 x = object->x >> 20;
@@ -59,7 +59,7 @@ void Func_02000338(struct Actor *object) {
   }
   MapCell_SetAttributes(0, x, z, attr0);
   MapCell_SetAttributes(2, x, z, attr2);
-  Func_02003030(x << 20, z << 20, object->terrainId, height);
+  MapGrid_SetCellHeight(x << 20, z << 20, object->terrainId, height);
 }
 
 #include "field_event.h"
@@ -155,7 +155,7 @@ static inline void TundariaTower_02002fc0(s32 a0, s32 a1, s32 a2, s32 a3,
 }
 
 void Func_02000548(void) {
-  Func_02003048();
+  Event_Start();
   TundariaTower_02002fe8(19, 55, 7, 8, 24, 46);
   TundariaTower_02002fc0(24, 102, 24, 110, 7, 8);
   GameFlag_Set(2370);
@@ -163,7 +163,7 @@ void Func_02000548(void) {
 }
 
 void Func_0200058c(void) {
-  Func_02003048();
+  Event_Start();
   TundariaTower_02002fe8(37, 55, 7, 8, 32, 46);
   TundariaTower_02002fc0(32, 102, 32, 110, 7, 8);
   GameFlag_Set(2371);
@@ -191,7 +191,7 @@ void Func_020005d0(void) {
   s32 height;
   s32 cell;
 
-  Func_02003048();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   choice = (s16 *)(work + 340);
   if (*choice == 3)
@@ -322,7 +322,7 @@ void Func_02000840(struct Actor *object) {
 void Func_020008a8(void) {
   struct Actor *object = Actor_GetById(8);
 
-  Func_02003048();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(0x944);
   Call6((void (*)())Map_CopyCellAttributeRect, 11, 22, 3, 2, 20, 22);
@@ -336,7 +336,7 @@ void Func_020008a8(void) {
 }
 
 void Func_02000920(void) {
-  Func_02003048();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgThereSSomething, 1);
   if (GameFlag_Get(0x949)) {
@@ -358,7 +358,7 @@ void Func_02002f90(struct Actor *object, const void *script);
 void Func_02000964(void) {
   struct Actor *object = Actor_GetById(8);
 
-  Func_02003048();
+  Event_Start();
   Event_ResolvePendingActions(0);
   TundariaTower_FadeFrom(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
@@ -420,7 +420,7 @@ void Func_02000b34(s32 arg0, s32 arg1) { Func_02000a48(arg0, arg1); }
 void Func_02000b3c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Func_02003048();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -435,7 +435,7 @@ void Func_02000b3c(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 5);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 24);
   Event_Wait(40);
-  Func_02003030(0x1300000, 0x3900000, 0, -12);
+  MapGrid_SetCellHeight(0x1300000, 0x3900000, 0, -12);
   Actor_GetById(gMainRoutineWork.currentOwner)->bounce = 0;
   Import_EventSetExitRequest(11);
   Func_02003050();
@@ -448,11 +448,11 @@ void Func_02000bfc(void) {
   if (party->scene == (s32)&SceneId_Ov68fRoom6) {
     struct Actor *object;
 
-    Func_02003170(gData_02003264);
+    Actor_LiftTargetBlock(gData_02003264);
     object = *(struct Actor **)((u8 *)work + 0xcbc);
     object->timer = ((object->x >> 20) << 8) | ((object->z >> 20) & 0xff);
   } else if (party->scene == (s32)&SceneId_Ov68fRoom7) {
-    Func_02003170(gData_0200326e);
+    Actor_LiftTargetBlock(gData_0200326e);
   }
 }
 
@@ -469,7 +469,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
 
   actor = actorArg;
   object = *(struct Actor **)(work + 0xcbc);
-  Func_02003048();
+  Event_Start();
   Event_ResolvePendingActions(0);
   dx = (object->x >> 20) - (object->timer >> 8);
   dz = (object->z >> 20) - (object->timer & 0xff);
@@ -488,7 +488,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
   }
   object->x = ((object->x >> 19) | 1) << 19;
   object->z = ((object->z >> 19) | 1) << 19;
-  Func_02003178();
+  Actor_PlaceMovedBlock();
   Func_02003050();
 }
 
@@ -503,7 +503,7 @@ void Func_02000d2c(void) {
 
   object = *(struct Actor **)(event + 0xcbc);
 
-  Func_02003048();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
     object->terrainId = 2;
@@ -514,7 +514,7 @@ void Func_02000d2c(void) {
     object->motionFlags = 0;
     object->terrainId = 0;
   }
-  Func_02003178();
+  Actor_PlaceMovedBlock();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6) {
     /* FAKEMATCH(temporary): the copy makes each column test reload X; as
      * object->x, 10 of 76 instructions differ in tla-en. */
@@ -529,7 +529,7 @@ void Func_02000d2c(void) {
 }
 
 void Func_02000de4(void) {
-  Func_02002fc8();
+  BlendScript_Resume();
   GameFlag_Clear(0x212);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
@@ -547,7 +547,7 @@ void Func_02000de4(void) {
 }
 
 void Func_02000e78(void) {
-  Func_02002fd0();
+  BlendScript_Suspend();
   GameFlag_Set(0x212);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);

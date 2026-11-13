@@ -18,7 +18,7 @@ void Func_02004d50(s32 id);
 void Func_02004fac(void);
 void Func_02005010(void);
 void PaletteCycle_Fade(void);
-void Func_020057cc(void);
+void Teleport_PlaySparks(void);
 
 extern u8 MsgUhhhhnnnICan[];
 extern u8 MsgKoffKoffYou[];

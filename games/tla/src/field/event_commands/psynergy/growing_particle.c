@@ -13,8 +13,9 @@ void Camera_WorldToScreen(s32 *position);
 /// the particle's position and drawn, and the particle moves on; after that
 /// only its age counts on. Reached from FieldPsynergy_EndSand and
 /// FieldPsynergy_Sand.
-void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
-                   s32 unused, s32 tiles) {
+void GrowingParticle_Update(struct EffectSprite *sprite,
+                            struct EffectParticle *particle, s32 unused,
+                            s32 tiles) {
   s32 position[3];
   s32 scale;
   s32 picture;
@@ -212,7 +213,7 @@ void FieldPsynergy_EndSand(void) {
     particle = work + 0x1200;
     particleSprite = work + 0x800;
     for (; i < 30; i++) {
-      Func_080e46ac(particleSprite, particle, i, particleTiles);
+      GrowingParticle_Update(particleSprite, particle, i, particleTiles);
       particleSprite += 40;
       particle += 28;
     }

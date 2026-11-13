@@ -121,7 +121,7 @@ struct EventWork1cc {
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
-void Func_080d2d08(struct CueObject *object, s32 cue) {
+void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
   struct CueObject *focus =
       ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
 

@@ -46,12 +46,13 @@ extern void Func_080e4510__f0e4a34(void *sprite,
                                    s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
-/* VIEW(f0e4a34): routine Func_080e46ac as void Func_080e46ac(void *sprite, void
- * *particle, s32 index, s32 tiles); the definition has void
- * Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
- * s32 unused, s32 tiles). */
-extern void Func_080e46ac__f0e4a34(void *sprite, void *particle, s32 index,
-                                   s32 tiles) __asm__("Func_080e46ac");
+/* VIEW(f0e4a34): routine GrowingParticle_Update as void
+ * GrowingParticle_Update(void *sprite, void *particle, s32 index, s32 tiles);
+ * the definition has void GrowingParticle_Update(struct EffectSprite *sprite,
+ * struct EffectParticle *particle, s32 unused, s32 tiles). */
+extern void
+GrowingParticle_Update__f0e4a34(void *sprite, void *particle, s32 index,
+                                s32 tiles) __asm__("GrowingParticle_Update");
 /* VIEW(f0e4a34): routine Func_080e43a4 as void Func_080e43a4(void *source, void
  * *buffer, s32 size); the definition has void Func_080e43a4(struct
  * PictureSource *source, void *buffer, s32 size). */
@@ -139,7 +140,7 @@ void FieldPsynergy_Sand(void) {
     particle = work + 0x1200;
     sprite = work + 0x800;
     for (; i <= 32; i++) {
-      Func_080e46ac__f0e4a34(sprite, particle, i, particleTiles);
+      GrowingParticle_Update__f0e4a34(sprite, particle, i, particleTiles);
       sprite += 40;
       particle += 28;
     }

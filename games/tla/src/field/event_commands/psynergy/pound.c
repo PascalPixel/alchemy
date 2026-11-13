@@ -175,7 +175,7 @@ void FieldPsynergy_Pound(void) {
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
     Func_080dba5c();
 
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   canvas->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   canvas->depth = 1;

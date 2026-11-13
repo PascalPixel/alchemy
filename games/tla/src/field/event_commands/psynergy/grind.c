@@ -82,9 +82,9 @@ s32 VramCache_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 VramCache_FreeEntry(u32 slot);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-void Func_080e89e4(s32 direction);
-void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
-void Func_080e8c9c(void);
+void ViewMove_Start(s32 direction);
+void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude);
+void ViewMove_End(void);
 void wait(s32 frames);
 u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
@@ -184,7 +184,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     Func_080e43a4(animation->tiles, picture,
                   animation->width * animation->height);
   }
-  Func_080e89e4(2);
+  ViewMove_Start(2);
   wait(1);
   Sound_PlayFar(238);
   counter = 0;
@@ -251,7 +251,7 @@ void FieldPsynergy_GrindOnTarget(void) {
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           picture, animation->width, animation->height, dst);
     }
-    Func_080e8b44(2, counter++, amplitude);
+    ViewMove_Swing(2, counter++, amplitude);
     switch (phase) {
     case 0:
       if (timer == 40 && mode != 0)
@@ -299,7 +299,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     timer++;
   } while (phase != 999);
   Sound_PlayFar(390);
-  Func_080e8c9c();
+  ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
   VramCache_FreeEntry(entry);
 end:
@@ -330,7 +330,7 @@ void FieldPsynergy_Grind(void) {
   scene = Ram_HeapSlots->effectWork;
   FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
-  Func_080e89e4(VIEW_MOVE_Z);
+  ViewMove_Start(VIEW_MOVE_Z);
   wait(10);
 
   phase = 0;
@@ -338,7 +338,7 @@ void FieldPsynergy_Grind(void) {
   state = SWAY_GROW;
   frames = 0;
   do {
-    Func_080e8b44(VIEW_MOVE_Z, phase++, amplitude);
+    ViewMove_Swing(VIEW_MOVE_Z, phase++, amplitude);
     switch (state) {
     case SWAY_GROW:
       amplitude += SWAY_RAMP;
@@ -370,7 +370,7 @@ void FieldPsynergy_Grind(void) {
     frames++;
   } while (state != SWAY_DONE);
 
-  Func_080e8c9c();
+  ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }
@@ -379,12 +379,12 @@ void FieldPsynergy_Grind(void) {
 /// read a third of a turn apart for red, green and blue.
 extern const u8 gData_080f0fe0[];
 
-/// The colour of field Psynergy kind 24's glow (Func_080e9940) for a step of
+/// The colour of field Psynergy kind 24's glow (HoverGlow_Update) for a step of
 /// its 24-step cycle and a brightness level (7 is neutral): three channels of
 /// the wave, each raised or lowered by the level and held to 0..31, packed as
 /// RGB555.
 // ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
-s32 Func_080e989c(s32 counter, s32 level) {
+s32 HoverGlow_GetColor(s32 counter, s32 level) {
   s16 phase;
   s16 bias;
   s16 red;
@@ -456,10 +456,10 @@ void Camera_WorldToScreen(s32 *position);
 // Kind 24's frame callback: keeps the glow's strength full while the player
 // stands where Func_080dbcc0 allows, and runs it down otherwise (once it is
 // fading, the glow shrinks with it and the event takes its cue when it is
-// spent). It cycles OBJ palette 14 through Func_080e989c's colours, flickers
-// between two pictures every other frame, and draws the glow under the
+// spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
+// flickers between two pictures every other frame, and draws the glow under the
 // player, flattened to three quarters of its height.
-void Func_080e9940(void) {
+void HoverGlow_Update(void) {
   struct GlowWork__f0e92b4 *work = Ram_HeapSlots->battleFxWork[0];
   struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
@@ -497,8 +497,8 @@ void Func_080e9940(void) {
     // region there; as the plain store, 2 of 194 instructions differ in
     // tla-en.
     do {
-      *palette++ = Func_080e989c((((s16)work->phase >> 2) + i / 2) % 24,
-                                 i == 15 ? 14 : i);
+      *palette++ = HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
+                                      i == 15 ? 14 : i);
     } while (0);
   }
   work->phase++;

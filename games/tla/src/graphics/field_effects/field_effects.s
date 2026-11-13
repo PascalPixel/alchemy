@@ -10,7 +10,7 @@ gFieldEffect_ArcSparkTiles:
 	.section .rodata.a
 @ A 64x64 disc of 256 colours, shaded in colours 224 to 255: the 4,096
 @ bytes of the shared effect scene's sprite canvas (battle_fx_work[1]),
-@ which Func_080eb824 copies to OBJ video memory. FieldPsynergy_Burst, 080e5d5c,
+@ which BattleEffect_StartCanvasSprite copies to OBJ video memory. FieldPsynergy_Burst, 080e5d5c,
 @ 080e7844 and overlay 685 unpack it there. In FieldPsynergy_Burst the callback
 @ Func_080e4d9c writes 32 colours it computes from the sine table to OBJ
 @ palettes 14 and 15 each frame, from a counter the scene starts at 0; the
@@ -22,7 +22,7 @@ FieldEffect_GlowDisc:
 @ Four pictures of a 32x32 sprite of 256 colours, one under another: two of an
 @ orb of rings in colours 224 to 234, then two filled with colour 2.
 @ FieldPsynergy_Hover unpacks them into one block of OBJ video memory and makes a
-@ 32x32 sprite that shows the first two in turn. Its callback Func_080e9940
+@ 32x32 sprite that shows the first two in turn. Its callback HoverGlow_Update
 @ writes sixteen colours it computes from the table gData_080f0fe0 to OBJ
 @ palette 14 each frame, from a counter that starts at 0. The picture
 @ carries the shared OBJ palette, those colours of the first frame, and black

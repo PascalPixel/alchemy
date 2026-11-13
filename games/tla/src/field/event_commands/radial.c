@@ -1867,7 +1867,7 @@ void FieldPsynergy_Unnamed29(void) {
   motion->z = pos[2];
   HeapSlot_Release(96);
 
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   canvas->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   canvas->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 3;
@@ -1921,7 +1921,7 @@ void FieldPsynergy_Unnamed29(void) {
 /// kind-1 cell also stores its kind in the heap slot 0x5c work's byte 0x1b34,
 /// and the last kind-2 and kind-3 cells are kept in pixels, centred on their
 /// tile, at 0xd3c and 0xd40.
-void Func_080e2264(void) {
+void FieldPsynergy_GatherNearbyCells(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   struct PointWork *event = Ram_HeapSlots->eventWork;
   u8 *work = Ram_HeapSlots->battleFxWork[0];
@@ -1987,13 +1987,14 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 extern void Field_RunPsynergyEvent__f0e150c(
     s32 event, s32 argument0, s32 argument1) __asm__("Field_RunPsynergyEvent");
 
-// Only for the compiler: see the FAKEMATCH tag in Func_080e249c.
+// Only for the compiler: see the FAKEMATCH tag in
+// FieldPsynergy_RunTouchedEvents.
 static inline s32 Index(s32 i) { return i; }
 
 /// Resolves each cell in the event work's touched list to an event id at the
 /// owner's layer, sorts the distinct ids and runs each one's event for the
 /// effect's kind.
-void Func_080e249c(void) {
+void FieldPsynergy_RunTouchedEvents(void) {
   struct TouchWork *work = Ram_HeapSlots->effectWork;
   struct TouchCell *cells =
       (struct TouchCell *)((u8 *)Ram_HeapSlots->eventWork + 0xcc0);
@@ -2053,8 +2054,8 @@ extern struct TouchCopies gData_02001000;
 
 struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
-void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
-                   s16 originZ, s32 layerIndex) {
+void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
+                                 s32 originX, s16 originZ, s32 layerIndex) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
@@ -2111,7 +2112,7 @@ MapGrid_GetCellAt__f0e2718(s32 x, s32 z,
 /// For each entry of the event work's list at 0x174c, calls
 /// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
 /// code of the cell at its position.
-void Func_080e2718(void) {
+void TileCopies_Restore(void) {
   u8 *base = gData_02001000__f0e2718;
   s32 i;
 

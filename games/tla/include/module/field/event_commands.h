@@ -224,7 +224,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
 void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
                                          s32 height, s32 fromX, s32 fromZ);
 
-void Func_080e2c38(void);
+void ParticleBurst_Update(void);
 
 extern char ResourceId_Leaves;
 
@@ -283,7 +283,7 @@ void EventObject_Initialize(void);
 
 void Djinn_ResolvePending(s32 shown);
 
-void Func_080e2718(void);
+void TileCopies_Restore(void);
 
 void Djinn_RestoreActorAfterBattle(void);
 

@@ -5,7 +5,7 @@
 
 #include "../psynergy_internal.h"
 
-// Kind 24's work (battle_fx_work[0]), as Func_080e9940's draft has it.
+// Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
 /* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
@@ -50,7 +50,7 @@ extern char ResourceId_RingOrb;
 void wait(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void Func_080e9940(void);
+void HoverGlow_Update(void);
 
 void FieldPsynergy_Hover(void) {
   struct GlowWork__f0e9af4 *work = HeapSlot_Alloc(92, 0x1038);
@@ -88,7 +88,7 @@ void FieldPsynergy_Hover(void) {
   work->unk1030 = 0;
   work->phase = 0;
   work->fading = 0;
-  Task_Add(Func_080e9940, TASK_PASS_VBLANK);
+  Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
 
   found = 0;
   if (Func_080dbcc0(player->x, player->z, player->terrainId) == 0) {
@@ -125,7 +125,7 @@ void FieldPsynergy_Hover(void) {
       wait(1);
     }
     wait(5);
-    Task_Remove(Func_080e9940);
+    Task_Remove(HoverGlow_Update);
     VramCache_FreeEntry(work->resource);
     HeapSlot_Release(92);
   } else {
@@ -161,7 +161,7 @@ void FieldPsynergy_EndHover(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 
-  Task_Remove(Func_080e9940);
+  Task_Remove(HoverGlow_Update);
   Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
   gMainRoutineWork.renderMode = 0;

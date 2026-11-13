@@ -1,8 +1,8 @@
 /// @file
 /// Field effects that event commands start, in ROM order: the 96-particle
 /// burst, an actor carried from one point to another as it circles, a whirl of
-/// rings, an actor spinning away and back (Func_080e3698, Func_080e37e0) and a
-/// spray of drops and smoke puffs.
+/// rings, an actor spinning away and back (Actor_DepartInRing,
+/// Actor_ArriveInRing) and a spray of drops and smoke puffs.
 // Part of psynergy.c.
 
 #include "../psynergy_internal.h"
@@ -43,12 +43,12 @@ void Camera_WorldToScreen(s32 *position);
 #include "effect_sprite.h"
 
 /// The 96-particle burst's task (heap slot 0x5c work, started by
-/// Func_080e2acc). Each particle whose delay counter is between 0 and 63 shows
-/// the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along its
-/// heading, then turns by its spin, rises by its speed and spins eight units
-/// faster; every counter advances. The work's flash flag is set on frame 30
-/// only, and the burst stops being active on frame 112.
-void Func_080e2c38(void) {
+/// ParticleBurst_Start). Each particle whose delay counter is between 0 and 63
+/// shows the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along
+/// its heading, then turns by its spin, rises by its speed and spins eight
+/// units faster; every counter advances. The work's flash flag is set on frame
+/// 30 only, and the burst stops being active on frame 112.
+void ParticleBurst_Update(void) {
   struct BurstWork *work;
   struct BurstParticle *particle;
   struct BurstSprite *sprite;
@@ -91,7 +91,7 @@ void Func_080e2c38(void) {
 void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
-  Task_Remove((u32)Func_080e2c38);
+  Task_Remove((u32)ParticleBurst_Update);
   VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
 }
 
@@ -233,12 +233,12 @@ struct WhirlWork {
   s8 kind;
 };
 
-void Func_080e2264(void);
+void FieldPsynergy_GatherNearbyCells(void);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
-void Func_080e2acc(void);
-void Func_080e249c(void);
+void ParticleBurst_Start(void);
+void FieldPsynergy_RunTouchedEvents(void);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void FieldPsynergy_Cyclone(void) {
@@ -262,7 +262,7 @@ void FieldPsynergy_Cyclone(void) {
   s32 point;
 
   FieldPsynergy_FadeToCastColor();
-  Func_080e2264();
+  FieldPsynergy_GatherNearbyCells();
   BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
@@ -280,7 +280,7 @@ void FieldPsynergy_Cyclone(void) {
      * instructions differ in tla-en. */
     asm("");
   }
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   pos[0] = (*(struct Actor **)(effect + 16))->x;
   pos[1] = (*(struct Actor **)(effect + 16))->y;
@@ -343,7 +343,7 @@ void FieldPsynergy_Cyclone(void) {
 
   if (mode == 3) {
     if (work->kind)
-      Func_080e2acc();
+      ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
@@ -366,7 +366,7 @@ void FieldPsynergy_Cyclone(void) {
        * instructions differ in tla-en. */
       asm("");
       if (frame == 30)
-        Func_080e249c();
+        FieldPsynergy_RunTouchedEvents();
       wait(1);
       frame++;
     }
@@ -378,7 +378,7 @@ void FieldPsynergy_Cyclone(void) {
       BattleEffect_EndX();
   } else if (mode == 2) {
     if (work->kind)
-      Func_080e2acc();
+      ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
@@ -400,7 +400,7 @@ void FieldPsynergy_Cyclone(void) {
        * instructions differ in tla-en. */
       asm("");
       if (frame == 30)
-        Func_080e249c();
+        FieldPsynergy_RunTouchedEvents();
       wait(1);
       frame++;
     }
@@ -423,7 +423,7 @@ void FieldPsynergy_Cyclone(void) {
     Sound_PlayFar(136);
     Actor_SelectAnimationFar(ring, 6);
     if (work->kind)
-      Func_080e2acc();
+      ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
@@ -434,7 +434,7 @@ void FieldPsynergy_Cyclone(void) {
     frame = 0;
     while (work->count != 0) {
       if (frame == 30)
-        Func_080e249c();
+        FieldPsynergy_RunTouchedEvents();
       wait(1);
       frame++;
     }
@@ -464,7 +464,7 @@ void Event_ResolvePendingActions(s32 skip);
 void Event_StartScreenTransition(void);
 void Event_Wait(s32 frames);
 
-void Func_080e3698(s32 actor) {
+void Actor_DepartInRing(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
   s32 angle = object->facing;
   u8 motionFlags = object->motionFlags;
@@ -516,13 +516,13 @@ void Func_080e3698(s32 actor) {
 
 void Event_WaitTransitionFrames(void);
 
-/// An event command, the arrival counterpart of Func_080e3698. The actor
+/// An event command, the arrival counterpart of Actor_DepartInRing. The actor
 /// spins (BattleEffect_SpinObject) at zero width and its sprite is hidden while
 /// object 280 grows on it for 32 frames; object 280 then snaps to 1.5 by 1
 /// (cue 136, mode 6) while the actor widens back from half size over 16 frames
 /// and shows again. Object 280 is destroyed and the actor's update and facing
 /// are restored.
-void Func_080e37e0(s32 actor) {
+void Actor_ArriveInRing(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
   s32 angle = object->facing;
   struct Actor *ring;
@@ -624,7 +624,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 /// something solid; an odd drop that dies leaves one of sixteen puffs of smoke
 /// that rise for 32 frames. The angle then turns toward the scene's facing by
 /// at most 0x400 a frame.
-void Func_080e38c8(void) {
+void Blaze_UpdateSpray(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
   struct SprayEvent *event = Ram_HeapSlots->eventWork;

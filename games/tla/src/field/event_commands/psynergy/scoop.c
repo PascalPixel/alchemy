@@ -299,7 +299,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 s32 Func_080ce31c(s32 kind);
-void Func_080e716c(void);
+void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {
   struct RiseWork__f0e6400 *work = HeapSlot_Alloc(92, 0x193c);
@@ -529,7 +529,7 @@ void FieldPsynergy_Scoop(void) {
     frame = 0;
     while (work->phase != 999) {
       if (frame == 24)
-        Func_080e716c();
+        Scoop_DigUpItem();
       wait(1);
       frame++;
     }
@@ -616,7 +616,7 @@ extern const u16 gData_080f0fc0[];
 /// id from gData_080f0fc0's sixteen (0x8001 when PartyInventory_FindRoomFar
 /// finds no room) or, past 0xc000 of the roll, a 0x8000-flagged value scaled
 /// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
-void Func_080e716c(void) {
+void Scoop_DigUpItem(void) {
   struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *anchor;
   struct EventWork *event;
@@ -1359,7 +1359,7 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// Plots one pixel of the 128x64 canvas on a circle around its bottom middle
 /// (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
 /// upward.
-void Func_080e7f94(s32 unused, s32 radius, s32 angle, s32 color) {
+void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
   /* FAKEMATCH(pin): the angle pinned to r8, which leaves the multiply's entry
    * to r10; as angle itself, 12 of 39 instructions differ in tla-en. */
   register s32 turn asm("r8") = angle;
@@ -1374,7 +1374,7 @@ extern const u16 gData_080f39c4[];
 
 /// Copy a 16x16 image to the BG map, clipping cells outside the 30x20-tile
 /// screen.
-void Func_080e7fec(s32 x, s32 y) {
+void BgMap_DrawClipped16x16(s32 x, s32 y) {
   const u16 *tiles = gData_080f39c4;
   s32 row;
   s32 column;
@@ -1470,7 +1470,7 @@ void Func_080e807c(void) {
   gBgScroll[0].x = 64 - x;
   y = pos[2] >> 16;
   gBgScroll[0].y = 64 - y;
-  Func_080e7fec(x - 64, y - 64);
+  BgMap_DrawClipped16x16(x - 64, y - 64);
 
   if (work->unk2986 != 0) {
     i = 0;

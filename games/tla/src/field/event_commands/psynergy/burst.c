@@ -68,7 +68,7 @@ void FieldPsynergy_Burst(void) {
 
   scene->y += 0xa0000;
   FieldPsynergy_FadeToCastColor();
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   pos[0] = scene->x;
   pos[1] = scene->y;

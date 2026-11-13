@@ -239,7 +239,7 @@ Resource_FarCall006:
 	export Func_080c8748, Func_080cdd80
 	export Func_080c8750, Leader_FindActorAhead
 	export Actor_SpawnFar, Actor_Spawn
-	export Func_080c8760, Func_080e25e8
+	export Func_080c8760, TileCopies_CopyTouchedCells
 	export Func_080c8768, Func_080dbcd8
 	export Func_080c8770, Func_080dbd48
 	export Party_GetLeaderActorFar, Party_GetLeaderActor
@@ -247,7 +247,7 @@ Resource_FarCall006:
 	export HangingVine_HangFar, HangingVine_Hang
 	export HangingVine_SwingFar, HangingVine_Swing
 	export Func_080c8798, Func_080d5d70
-	export Func_080c87a0, Func_080eb960
+	export Func_080c87a0, Actor_VanishInSparks
 	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
 	export Func_080c87b0, Actor_FallOverById
 	export Func_080c87b8, Func_080d3a10
@@ -276,8 +276,8 @@ Resource_FarCall006:
 	export Func_080c8868, Tightrope_Release
 	export Func_080c8870, Tightrope_Settle
 	export Func_080c8878, Actor_TakeLeaderLayer
-	export Func_080c8880, Func_080e3698
-	export Func_080c8888, Func_080e37e0
+	export Func_080c8880, Actor_DepartInRing
+	export Func_080c8888, Actor_ArriveInRing
 	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
 	export Func_080c8898, Func_080d2cc4
 	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
@@ -296,7 +296,7 @@ Func_080c88b8:
 Func_080c88c8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080d2d08
+	.4byte Event_PlayCueNearFocus
 	export Func_080c88d0, Func_080e2774
 	.global Func_080c88d8
 	.thumb_func

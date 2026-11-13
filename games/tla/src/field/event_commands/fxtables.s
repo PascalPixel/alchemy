@@ -61,7 +61,7 @@ Data_080f0f34:
 Data_080f0f54:
 	.4byte 0xd000, 0x9000, 0x5000, 0x3000
 
-@ Read by Func_080e2264: 21 {x, y} cell offsets within two of a centre,
+@ Read by FieldPsynergy_GatherNearbyCells: 21 {x, y} cell offsets within two of a centre,
 @ the corners left out
 	.global Data_080f0f64
 Data_080f0f64:
@@ -83,13 +83,13 @@ Data_080f0f90:
 Data_080f0fa0:
 	.incbin "games/tla/src/field/event_commands/fxpal.gbapal"
 
-@ Item ids; Func_080e716c picks one of the 16 at random
+@ Item ids; Scoop_DigUpItem picks one of the 16 at random
 	.global gData_080f0fc0
 gData_080f0fc0:
 	.2byte 0xb4, 0xb4, 0xb4, 0xb4, 0xbb, 0xbb, 0xbb, 0xe2
 	.2byte 0xe2, 0xe3, 0xe3, 0xe4, 0xe4, 0xe4, 0xb5, 0xb5
 
-@ Read by Func_080e989c: 32 steps down from 31, 32 zeros and 32 steps up
+@ Read by HoverGlow_GetColor: 32 steps down from 31, 32 zeros and 32 steps up
 	.global gData_080f0fe0
 gData_080f0fe0:
 	.byte 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16

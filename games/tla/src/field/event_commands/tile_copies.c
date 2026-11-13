@@ -163,7 +163,7 @@ void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
 #include "system.h"
 #include "effect_sprite.h"
 
-void Func_080e2acc(void) {
+void ParticleBurst_Start(void) {
   struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *effect = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
@@ -205,5 +205,5 @@ void Func_080e2acc(void) {
     particle->delay = -i / 2;
   }
   Sound_PlayFar(220);
-  Task_Add(Func_080e2c38, TASK_PASS_VBLANK);
+  Task_Add(ParticleBurst_Update, TASK_PASS_VBLANK);
 }

@@ -63,7 +63,7 @@ s32 VramCache_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void FieldPsynergy_FadeFromCastColor(void);
-void Func_080e38c8(void);
+void Blaze_UpdateSpray(void);
 
 #define OBJECT_DEFINITION(object)                                              \
   (((struct ObjectAnimation *)(object)->sprite)->definition)
@@ -246,7 +246,7 @@ void FieldPsynergy_Blaze(void) {
   }
   wait(1);
   work->emitting = 1;
-  Task_Add(Func_080e38c8, 0x480);
+  Task_Add(Blaze_UpdateSpray, 0x480);
   for (k = 0; k < 80; k++) {
     wait(1);
     if (work->hit != 0) {
@@ -273,7 +273,7 @@ void FieldPsynergy_Blaze(void) {
       break;
     wait(1);
   }
-  Task_Remove(Func_080e38c8);
+  Task_Remove(Blaze_UpdateSpray);
   VramCache_FreeEntry(dropSlot);
   VramCache_FreeEntry(puffSlot);
 end:

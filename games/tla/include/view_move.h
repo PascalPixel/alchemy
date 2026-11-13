@@ -7,9 +7,9 @@
 struct Actor;
 
 // The view moves of the field Psynergy scenes (kinds 19 and 27). Their work
-// sits in heap slot 92 (battle_fx_work[0]): Func_080e89e4 opens the map's
-// view bounds and keeps the old ones, Func_080e8b44 swings the view centre
-// each frame, and Func_080e8c9c puts the bounds back.
+// sits in heap slot 92 (battle_fx_work[0]): ViewMove_Start opens the map's
+// view bounds and keeps the old ones, ViewMove_Swing swings the view centre
+// each frame, and ViewMove_End puts the bounds back.
 // ViewMove_SaveNearbySprites gathers the nearby objects whose sprites shake
 // with the view, and ViewMove_RestoreNearbySprites sets them back.
 
@@ -38,9 +38,9 @@ STATIC_ASSERT(offsetof(struct ViewMoveWork, edgeX) == 0x1c);
 STATIC_ASSERT(offsetof(struct ViewMoveWork, objects) == 0x20);
 STATIC_ASSERT(offsetof(struct ViewMoveWork, count) == 0x50);
 
-void Func_080e89e4(s32 direction);
-void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
-void Func_080e8c9c(void);
+void ViewMove_Start(s32 direction);
+void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude);
+void ViewMove_End(void);
 void ViewMove_SaveNearbySprites(void);
 void ViewMove_RestoreNearbySprites(void);
 

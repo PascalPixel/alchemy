@@ -95,7 +95,7 @@ s32 FieldSequence_Run(void) {
   if (!GameFlag_Test(265))
     gData_02001000[0x194c] = 0;
   else
-    Func_080e2718();
+    TileCopies_Restore();
   WindowSystem_InitFieldFar();
   ActorSystem_InitializeFar(mode);
   Field_ClearRequests();

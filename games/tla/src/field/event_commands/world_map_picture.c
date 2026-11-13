@@ -107,7 +107,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
 
 /// Moves every window sprite of a list by dx, dy: the output's position and its
 /// queued sprite's OAM x and y.
-void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy) {
+void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
   struct WindowSprite *output;
   struct QueuedSprite *sprite;
 
@@ -502,7 +502,7 @@ void WorldPicture_UpdateMarkers(void) {
        load may alias width's store to the stack and stays after it; as
        NAME_BOX_Y, 10 of 1044 instructions differ in tla-en. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
-    Func_080ec484(work->window, width, height);
+    WindowSpriteList_Move(work->window, width, height);
     NAME_BOX_X = cursorX;
     NAME_BOX_Y = cursorY;
   }
@@ -627,7 +627,7 @@ extern s16 Data_0202a640;
 /// scrolling: decodes the picture's row into the cell buffer, which holds 24
 /// rows and wraps, and copies its cells into the 32-column screen from tile
 /// 256, wrapping at column 32.
-void Func_080ecf74(u32 column, s32 row) {
+void WorldMapPicture_DrawRow(u32 column, s32 row) {
   s32 resource = (s32)&ResourceId_Data024;
   u32 *graphics;
   s32 unwrapped;
@@ -672,8 +672,8 @@ static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
 /// Draws one column of the world map picture on BG1, 21 rows down from a
 /// row, for scrolling: copies the column's cells from the decoded rows in the
 /// cell buffer, which wraps after 24 rows, into the 32-column screen from
-/// tile 256; the column twin of Func_080ecf74.
-void Func_080ed030(s32 column, s32 row) {
+/// tile 256; the column twin of WorldMapPicture_DrawRow.
+void WorldMapPicture_DrawColumn(s32 column, s32 row) {
   u32 i;
 
   for (i = 0; i <= 20; i++) {
@@ -708,9 +708,9 @@ s32 FixedSqrt(s32 value);
 /// cursor 120 by 80 pixels in (clamped to the map); unless the map is held the
 /// scroll moves a quarter of the way there each frame, at most 8 pixels, and
 /// stops when nearer than a quarter pixel. Each time the scroll crosses an
-/// 8-pixel column or row, the new column (Func_080ed030) or row
-/// (Func_080ecf74) of the picture is drawn; BG1 scrolls with it. All values
-/// are 16.16 pixels.
+/// 8-pixel column or row, the new column (WorldMapPicture_DrawColumn) or row
+/// (WorldMapPicture_DrawRow) of the picture is drawn; BG1 scrolls with it. All
+/// values are 16.16 pixels.
 void Func_080ed0a0(void) {
   s32 *cursor = Data_0202a62c;
   s32 x = *cursor++ - (120 << 16);
@@ -765,15 +765,15 @@ void Func_080ed0a0(void) {
     row = (u32)y >> 19;
     if ((SCROLL_X ^ x) & 0x80000) {
       if (SCROLL_X < x)
-        Func_080ed030(column + 30, row);
+        WorldMapPicture_DrawColumn(column + 30, row);
       else
-        Func_080ed030(column, row);
+        WorldMapPicture_DrawColumn(column, row);
     }
     if ((SCROLL_Y ^ y) & 0x80000) {
       if (SCROLL_Y < y)
-        Func_080ecf74(column, row + 20);
+        WorldMapPicture_DrawRow(column, row + 20);
       else
-        Func_080ecf74(column, row);
+        WorldMapPicture_DrawRow(column, row);
     }
     gBgScroll[1].x = x >> 16;
     gBgScroll[1].y = y >> 16;

@@ -74,14 +74,14 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 /// What The Lost Age's code declares for the files that use it, written once.
 
 extern s32 gData_0200474c[];
-extern struct ActorPlacement gData_02004c88[];
-extern struct ActorPlacement gData_02004d90[];
+extern struct ActorPlacement gContigo_Room1Placements[];
+extern struct ActorPlacement gContigo_Room4Placements[];
 extern struct ActorPlacement gData_02005018[];
 extern s16 gData_02005228[];
-extern struct ActorPlacement gData_02005318[];
-extern struct ActorPlacement gData_02005390[];
-extern struct Trigger gData_020054ec[];
-extern struct Trigger gData_02005a44[];
+extern struct ActorPlacement gContigo_Room2Placements[];
+extern struct ActorPlacement gContigo_Room3Placements[];
+extern struct Trigger gContigo_Room1Triggers[];
+extern struct Trigger gContigo_Room2Triggers[];
 extern struct Trigger gData_02005e70[];
 
 void Contigo_StartSlowPaletteCycle(void);
@@ -426,48 +426,48 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_02004c70[];
+extern struct ActorPlacement gContigo_Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_02004c88;
+    return gContigo_Room1Placements;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02004d90;
+    return gContigo_Room4Placements;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Get(0x9b2) != 0)
-        return gData_02005318;
+        return gContigo_Room2Placements;
       if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
         return gData_02005228;
     }
     return gData_02005018;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005390;
-  return gData_02004c70;
+    return gContigo_Room3Placements;
+  return gContigo_Placements;
 }
 
-extern struct Trigger gData_020054e0[];
-extern struct Trigger gData_02005870[];
-extern struct Trigger gData_02005ed0[];
+extern struct Trigger gContigo_Triggers[];
+extern struct Trigger gContigo_Room4Triggers[];
+extern struct Trigger gContigo_Room3Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_020054ec;
+    return gContigo_Room1Triggers;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02005870;
+    return gContigo_Room4Triggers;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4)
       return gData_02005e70;
-    return gData_02005a44;
+    return gContigo_Room2Triggers;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005ed0;
-  return gData_020054e0;
+    return gContigo_Room3Triggers;
+  return gContigo_Triggers;
 }
 
 void Func_020008ec(void) {
@@ -2723,11 +2723,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02004c70[] = {
+struct ActorPlacement gContigo_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004c88[] = {
+struct ActorPlacement gContigo_Room1Placements[] = {
     {115, CONDITION_ALWAYS, 3, PIXELS(340), 0, PIXELS(936), FACING_SOUTH, 0, 0},
     {116, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(942), FACING_NORTH, 0, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(808), FACING_EAST, 0, 0},
@@ -2741,7 +2741,7 @@ struct ActorPlacement gData_02004c88[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004d90[] = {
+struct ActorPlacement gContigo_Room4Placements[] = {
     {115, CONDITION_ALWAYS, 3, PIXELS(846), 0, PIXELS(660), FACING_SOUTH, 0, 0},
     {116, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(616), FACING_NORTH + FACING_STEP, 1, 0},
     {79, CONDITION_ALWAYS, 1, PIXELS(686), 0, PIXELS(756), FACING_SOUTH + FACING_STEP, 1, 0},
@@ -2814,7 +2814,7 @@ s16 gData_02005228[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-struct ActorPlacement gData_02005318[] = {
+struct ActorPlacement gContigo_Room2Placements[] = {
     {59, CONDITION_ALWAYS, 1, PIXELS(158), 0, PIXELS(352), FACING_SOUTH, 3, 0},
     {2, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {0, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -2822,7 +2822,7 @@ struct ActorPlacement gData_02005318[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005390[] = {
+struct ActorPlacement gContigo_Room3Placements[] = {
     {236, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, 0, 0},
     {236, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(840), FACING_SOUTH + FACING_STEP, 0, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(92), 0, PIXELS(902), FACING_NORTH + FACING_STEP, 1, 0},
@@ -2839,11 +2839,11 @@ struct ActorPlacement gData_02005390[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020054e0[] = {
+struct Trigger gContigo_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020054ec[] = {
+struct Trigger gContigo_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xce01, 2, CONDITION_ALWAYS, 2},
     {0xce01, 3, CONDITION_ALWAYS, 3},
@@ -2921,7 +2921,7 @@ struct Trigger gData_020054ec[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005870[] = {
+struct Trigger gContigo_Room4Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 21},
     {0xc602, 13, CONDITION_ALWAYS, EVENT(Func_02001d08)},
     {0xce01, 14, CONDITION_ALWAYS, 23},
@@ -2963,7 +2963,7 @@ struct Trigger gData_02005870[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005a44[] = {
+struct Trigger gContigo_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3066,7 +3066,7 @@ struct Trigger gData_02005e70[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005ed0[] = {
+struct Trigger gContigo_Room3Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},

@@ -54,7 +54,7 @@ struct RiseObject {
 /* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
  * the joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02003d10[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:212: `gData_02003d10' undeclared
+ * games/tla/src/scene/champa_cliff_caves.c:208: `gData_02003d10' undeclared
  * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
@@ -90,9 +90,9 @@ extern struct ActorPlacement gData_02003984[];
 extern struct ActorPlacement gData_02003aec[];
 extern struct ActorPlacement gData_02003b94[];
 extern struct ActorPlacement gData_02003c0c[];
-extern struct Trigger gData_02003e7c[];
-extern struct Trigger gData_02003ffc[];
-extern struct Trigger gData_02004104[];
+extern struct Trigger gChampaCliffCaves_Room2Triggers[];
+extern struct Trigger gChampaCliffCaves_Room3Triggers[];
+extern struct Trigger gChampaCliffCaves_Room4Triggers[];
 
 void Func_02001774(void);
 void Func_02001868(void);
@@ -219,7 +219,7 @@ void Func_020001f4(s32 door) {
 /* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
  * the joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02003d18[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:258: `gData_02003d18' undeclared
+ * games/tla/src/scene/champa_cliff_caves.c:254: `gData_02003d18' undeclared
  * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
@@ -320,7 +320,7 @@ void Func_020003ec(void) {
                                            PIXELS(664), PIXELS(280));
 }
 
-extern struct Trigger gData_02003d20[];
+extern struct Trigger gChampaCliffCaves_Room1Triggers[];
 
 void Func_02000464(s32 a) { Event_PickUpItem(a, 326, 0x978); }
 
@@ -328,14 +328,14 @@ const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov685Room1)
-    return gData_02003d20;
+    return gChampaCliffCaves_Room1Triggers;
   if (scene == (s32)&SceneId_Ov685Room2)
-    return gData_02003e7c;
+    return gChampaCliffCaves_Room2Triggers;
   if (scene == (s32)&SceneId_Ov685Room3)
-    return gData_02003ffc;
+    return gChampaCliffCaves_Room3Triggers;
   if (scene == (s32)&SceneId_Ov685Room4)
-    return gData_02004104;
-  return gData_02003d20;
+    return gChampaCliffCaves_Room4Triggers;
+  return gChampaCliffCaves_Room1Triggers;
 }
 
 s32 Scene_Initialize(void) {
@@ -539,7 +539,7 @@ void Func_02000978(s32 actor) {
 /* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations
  * gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, };
  * tried as the definition's extern u32 gData_02003634[], it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:599: incompatible types in
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:595: incompatible types in
  * assignment. */
 extern const struct ThrowAnimations
     gData_02003634__s0a34 __asm__("gData_02003634");
@@ -993,7 +993,7 @@ void Func_0200115c(void) {
 /* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34;
  * champa_cliff_caves.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:1012: structure has no member named
+ * games/tla/src/scene/champa_cliff_caves.c:1008: structure has no member named
  * `frames'. */
 struct EventTransition__s0a34 {
   u8 unk000[0x1ac];
@@ -1671,7 +1671,7 @@ next:
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1689: request for member
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1677: request for member
  * `value' in something not a structure or union. */
 struct ChampaCliffCavesWork__s2d34 {
   u8 tiles[0x1000];
@@ -1732,7 +1732,7 @@ next:
 /* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
  * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1766: structure has no
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1754: structure has no
  * member named `x'. */
 struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
@@ -1920,7 +1920,7 @@ void Func_02003078(void) {
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1928: invalid operands to
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1916: invalid operands to
  * binary +. */
 struct ChampaCliffCavesWork__s3164 {
   u8 tiles[0x1000];
@@ -2387,7 +2387,7 @@ LATE_DATA s32 gData_02003d18[] = {
     0x58000b,
 };
 
-LATE_DATA struct Trigger gData_02003d20[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2433,7 +2433,7 @@ LATE_DATA struct Trigger gData_02003d20[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02003e7c[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room2Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
@@ -2484,7 +2484,7 @@ LATE_DATA struct Trigger gData_02003e7c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02003ffc[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room3Triggers[] = {
     {0xc602, 15, IF_FLAG_SET(0x97e), EVENT(Func_020001f4)},
     {0x31, 14, CONDITION_ALWAYS, 14},
     {0xc602, 15, CONDITION_ALWAYS, EVENT(Func_02000208)},
@@ -2517,7 +2517,7 @@ LATE_DATA struct Trigger gData_02003ffc[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004104[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room4Triggers[] = {
     {0x31, 21, CONDITION_ALWAYS, 21},
     {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},

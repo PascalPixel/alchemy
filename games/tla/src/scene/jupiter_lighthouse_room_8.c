@@ -280,7 +280,7 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
  * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
  * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
  * struct EffectOptions *options), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_8.c:271:
+ * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_8.c:269:
  * `Whirlwind_Update' undeclared (first use in this function). */
 void FieldEffect_Spawn__first(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,

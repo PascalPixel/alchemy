@@ -108,13 +108,13 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern LATE_DATA struct ActorPlacement gData_020019dc[];
-extern struct ActorPlacement gData_020019f4[];
+extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
+extern struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
-    return gData_020019f4;
-  return gData_020019dc;
+    return gAnemosInnerSanctumEntrance_Room1Placements;
+  return gAnemosInnerSanctumEntrance_Placements;
 }
 
 void Func_02000388(void) {
@@ -307,13 +307,13 @@ land:
 
 void Func_02000710(void) {}
 
-extern struct Trigger gData_02001c1c[];
-extern struct Trigger gData_02001c28[];
+extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
+extern struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
-    return gData_02001c28;
-  return gData_02001c1c;
+    return gAnemosInnerSanctumEntrance_Room1Triggers;
+  return gAnemosInnerSanctumEntrance_Triggers;
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -573,55 +573,62 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
 
-    LATE_DATA struct ActorPlacement gData_020019dc[] = {
+    LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
         {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020019f4[] = {
-    {180, 0xa9f, 1, PIXELS(200), 0, PIXELS(104), FACING_EAST, 1, 0},
-    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_EAST, 1, 0},
-    {430, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(472), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(424), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(456), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(472), FACING_EAST, 1, 1},
-    {303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(168),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(216),
-     FACING_WEST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(168),
-     FACING_EAST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(216),
-     FACING_EAST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(696), 0, PIXELS(240),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(744), 0, PIXELS(240),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(232),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(288),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(232),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(288),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(712),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(768),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(712),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(768),
-     FACING_EAST, 1, 0},
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =
+    {
+        {180, 0xa9f, 1, PIXELS(200), 0, PIXELS(104), FACING_EAST, 1, 0},
+        {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_EAST, 1,
+         0},
+        {430, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(472), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(424), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(456), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(472), FACING_EAST, 1,
+         1},
+        {303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0,
+         PIXELS(168), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0,
+         PIXELS(216), FACING_WEST, 1, 1},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0,
+         PIXELS(168), FACING_EAST, 1, 1},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0,
+         PIXELS(216), FACING_EAST, 1, 1},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(696), 0,
+         PIXELS(240), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(744), 0,
+         PIXELS(240), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(232), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(288), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(232), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(288), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(712), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(768), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(712), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(768), FACING_EAST, 1, 0},
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02001c1c[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02001c28[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

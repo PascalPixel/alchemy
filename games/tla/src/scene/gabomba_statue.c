@@ -214,7 +214,7 @@ s32 Func_02000364(struct Actor *actor) {
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:231: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:219: structure has no member named
  * `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
@@ -235,7 +235,7 @@ struct Orbiter__gabomba_statue {
 /* VIEW(gabomba_statue): routine gData_02005af0 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA u32
  * gData_02005af0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:249: `gData_02005af0' undeclared (first
+ * games/tla/src/scene/gabomba_statue.c:237: `gData_02005af0' undeclared (first
  * use in this function). */
 extern s32 gData_02005af0__gabomba_statue __asm__("gData_02005af0");
 #define gData_02005af0 gData_02005af0__gabomba_statue
@@ -311,33 +311,33 @@ s32 Func_0200047c(struct Actor *object) {
   return 1;
 }
 
-extern struct ActorPlacement gData_02006b20[];
-extern struct ActorPlacement gData_02005fd4[];
-extern struct ActorPlacement gData_02006004[];
-extern s16 gData_02006244[];
-extern s16 gData_020064cc[];
-extern s16 gData_020067e4[];
-extern struct ActorPlacement gData_02006898[];
-extern s16 gData_02006a90[];
+extern struct ActorPlacement gGabombaStatue_Placements[];
+extern struct ActorPlacement gGabombaStatue_Room1Placements[];
+extern struct ActorPlacement gGabombaStatue_Room2Placements[];
+extern s16 gGabombaStatue_Room3Placements[];
+extern s16 gGabombaStatue_Room4Placements[];
+extern s16 gGabombaStatue_Room5Placements[];
+extern struct ActorPlacement gGabombaStatue_Room6Placements[];
+extern s16 gGabombaStatue_Room7Placements[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
-  const u8 *table = gData_02006b20;
+  const u8 *table = gGabombaStatue_Placements;
 
   if (scene == (s32)&SceneId_Ov671Room1)
-    table = gData_02005fd4;
+    table = gGabombaStatue_Room1Placements;
   else if (scene == (s32)&SceneId_Ov671Room2)
-    table = gData_02006004;
+    table = gGabombaStatue_Room2Placements;
   else if (scene == (s32)&SceneId_Ov671Room3)
-    table = gData_02006244;
+    table = gGabombaStatue_Room3Placements;
   else if (scene == (s32)&SceneId_Ov671Room4)
-    table = gData_020064cc;
+    table = gGabombaStatue_Room4Placements;
   else if (scene == (s32)&SceneId_Ov671Room5)
-    table = gData_020067e4;
+    table = gGabombaStatue_Room5Placements;
   else if (scene == (s32)&SceneId_Ov671Room6)
-    table = gData_02006898;
+    table = gGabombaStatue_Room6Placements;
   else if (scene == (s32)&SceneId_Ov671Room7)
-    table = gData_02006a90;
+    table = gGabombaStatue_Room7Placements;
   return table;
 }
 #undef REG_BLDALPHA
@@ -350,7 +350,7 @@ const u8 *Scene_GetPlacements(void) {
 /* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
  * gabomba_statue.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:395: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:362: structure has no member named
  * `phase'. */
 struct Orbiter__find_near {
   u8 unk00[6];
@@ -873,33 +873,33 @@ void Func_02000fc0(void) {
   }
 }
 
-extern struct Trigger gData_02006e9c[];
-extern struct Trigger gData_02006b54[];
-extern struct Trigger gData_02006b6c[];
-extern struct Trigger gData_02006bd8[];
-extern struct Trigger gData_02006c80[];
-extern struct Trigger gData_02006d1c[];
-extern struct Trigger gData_02006db8[];
-extern struct Trigger gData_02006e78[];
+extern struct Trigger gGabombaStatue_Triggers[];
+extern struct Trigger gGabombaStatue_Room1Triggers[];
+extern struct Trigger gGabombaStatue_Room2Triggers[];
+extern struct Trigger gGabombaStatue_Room3Triggers[];
+extern struct Trigger gGabombaStatue_Room4Triggers[];
+extern struct Trigger gGabombaStatue_Room5Triggers[];
+extern struct Trigger gGabombaStatue_Room6Triggers[];
+extern struct Trigger gGabombaStatue_Room7Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
-  const u8 *table = gData_02006e9c;
+  const u8 *table = gGabombaStatue_Triggers;
 
   if (scene == (s32)&SceneId_Ov671Room1)
-    table = gData_02006b54;
+    table = gGabombaStatue_Room1Triggers;
   else if (scene == (s32)&SceneId_Ov671Room2)
-    table = gData_02006b6c;
+    table = gGabombaStatue_Room2Triggers;
   else if (scene == (s32)&SceneId_Ov671Room3)
-    table = gData_02006bd8;
+    table = gGabombaStatue_Room3Triggers;
   else if (scene == (s32)&SceneId_Ov671Room4)
-    table = gData_02006c80;
+    table = gGabombaStatue_Room4Triggers;
   else if (scene == (s32)&SceneId_Ov671Room5)
-    table = gData_02006d1c;
+    table = gGabombaStatue_Room5Triggers;
   else if (scene == (s32)&SceneId_Ov671Room6)
-    table = gData_02006db8;
+    table = gGabombaStatue_Room6Triggers;
   else if (scene == (s32)&SceneId_Ov671Room7)
-    table = gData_02006e78;
+    table = gGabombaStatue_Room7Triggers;
   return table;
 }
 
@@ -1042,7 +1042,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
  * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, its members read exit
  * as returnEntrance, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:960: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:911: structure has no member named
  * `returnEntrance'. */
 struct EventWork154__gabomba_statue {
   u8 unk000[0x154];
@@ -2996,12 +2996,12 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02006f38[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3093: `gData_02006f38__puzzle_turn'
+ * games/tla/src/scene/gabomba_statue.c:3003: `gData_02006f38__puzzle_turn'
  * undeclared (first use in this function). */
 /* VIEW(puzzle_turn): routine gData_02006ec0 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA u32
  * gData_02006ec0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3215: `gData_02006ec0' undeclared (first
+ * games/tla/src/scene/gabomba_statue.c:3125: `gData_02006ec0' undeclared (first
  * use in this function). */
 extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
 extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
@@ -3192,7 +3192,7 @@ done:
  * it has another declaration; tried as the definition's void
  * Func_02004938(struct Actor *ball, s32 step), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3293: too many arguments to function
+ * games/tla/src/scene/gabomba_statue.c:3203: too many arguments to function
  * `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
@@ -3808,12 +3808,12 @@ LATE_DATA s32 gData_02005fc8[] = {
     SC_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02005fd4[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Room1Placements[] = {
     {337, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02006004[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Room2Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(88), FACING_EAST, 2, 0},
     {407, CONDITION_ALWAYS, (s32)gData_02005fc8, PIXELS(328), 0, PIXELS(88), FACING_EAST, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -3840,7 +3840,7 @@ LATE_DATA struct ActorPlacement gData_02006004[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gData_02006244[] = {
+LATE_DATA s16 gGabombaStatue_Room3Placements[] = {
     358, -1, 1, 0, 0, 56, 0, 0,
     0, 168, 0, 2, 358, -1, 1, 0,
     0, 152, 0, 0, 0, 152, 0x8000, 258,
@@ -3884,7 +3884,7 @@ LATE_DATA s16 gData_02006244[] = {
     0, 0, 0, 0,
 };
 
-LATE_DATA s16 gData_020064cc[] = {
+LATE_DATA s16 gGabombaStatue_Room4Placements[] = {
     358, -1, 1, 0, 0, 56, 0, 0,
     0, 152, 0, 2, 358, -1, 1, 0,
     0, 40, 0, 0, 0, 184, 0x8000, 258,
@@ -3937,7 +3937,7 @@ LATE_DATA s16 gData_020064cc[] = {
     0, 0, 0, 0,
 };
 
-LATE_DATA s16 gData_020067e4[] = {
+LATE_DATA s16 gGabombaStatue_Room5Placements[] = {
     407, -1, 1, 0, 0, 312, 0, 0,
     0, 232, 0, 2, 407, -1, 1, 0,
     0, 360, 0, 0, 0, 232, 0, 2,
@@ -3956,7 +3956,7 @@ LATE_DATA s32 gData_0200e88c[] = {
     SC_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02006898[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Room6Placements[] = {
     {376, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(232), FACING_SOUTH, 2, 0},
     {374, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(296), FACING_SOUTH, 2, 0},
     {374, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(296), FACING_SOUTH, 2, 0},
@@ -3980,7 +3980,7 @@ LATE_DATA struct ActorPlacement gData_02006898[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gData_02006a90[] = {
+LATE_DATA s16 gGabombaStatue_Room7Placements[] = {
     362, -1, 1, 0, 0, 616, 0, 0,
     0, 288, 0, 2, 362, -1, 1, 0,
     0, 616, 0, 0, 0, 336, 0, 258,
@@ -3992,7 +3992,7 @@ LATE_DATA s16 gData_02006a90[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-LATE_DATA struct ActorPlacement gData_02006b20[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Placements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -4003,12 +4003,12 @@ LATE_DATA s8 gData_02006b38[] = {
     0, 0, 0, 0,
 };
 
-LATE_DATA struct Trigger gData_02006b54[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room1Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001284)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006b6c[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room2Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_020012ec)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017dc)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_02001820)},
@@ -4020,7 +4020,7 @@ LATE_DATA struct Trigger gData_02006b6c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006bd8[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room3Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001364)},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_020013bc)},
     {0x202, 3, CONDITION_ALWAYS, EVENT(Func_02001430)},
@@ -4037,7 +4037,7 @@ LATE_DATA struct Trigger gData_02006bd8[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006c80[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room4Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001498)},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02001500)},
     {0x202, 3, CONDITION_ALWAYS, EVENT(Func_02001564)},
@@ -4053,7 +4053,7 @@ LATE_DATA struct Trigger gData_02006c80[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006d1c[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room5Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_020015b8)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02000740)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02000784)},
@@ -4069,7 +4069,7 @@ LATE_DATA struct Trigger gData_02006d1c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006db8[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room6Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001630)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_020045d8)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02004530)},
@@ -4088,13 +4088,13 @@ LATE_DATA struct Trigger gData_02006db8[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006e78[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room7Triggers[] = {
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02001728)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_0200176c)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006e9c[] = {
+LATE_DATA struct Trigger gGabombaStatue_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 

@@ -670,55 +670,55 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_020045e0[];
-extern s16 gData_020045f8[];
-extern struct ActorPlacement gData_020047d8[];
-extern struct ActorPlacement gData_02004ac0[];
-extern struct ActorPlacement gData_02004d78[];
-extern struct ActorPlacement gData_02004dd8[];
-extern struct ActorPlacement gData_02004e20[];
-extern struct Trigger gData_02004f10[];
-extern struct Trigger gData_02004f1c[];
-extern struct Trigger gData_02005078[];
-extern struct Trigger gData_020051bc[];
-extern struct Trigger gData_020053b4[];
-extern struct Trigger gData_02005450[];
-extern struct Trigger gData_020055b8[];
+extern struct ActorPlacement gDehkanPlateau_Placements[];
+extern s16 gDehkanPlateau_Room1Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room2Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room3Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room4Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room5Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room6Placements[];
+extern struct Trigger gDehkanPlateau_Triggers[];
+extern struct Trigger gDehkanPlateau_Room1Triggers[];
+extern struct Trigger gDehkanPlateau_Room2Triggers[];
+extern struct Trigger gDehkanPlateau_Room3Triggers[];
+extern struct Trigger gDehkanPlateau_Room4Triggers[];
+extern struct Trigger gDehkanPlateau_Room5Triggers[];
+extern struct Trigger gDehkanPlateau_Room6Triggers[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
-    return gData_020045f8;
+    return gDehkanPlateau_Room1Placements;
   if (scene == (s32)&SceneId_Ov655Room2)
-    return gData_020047d8;
+    return gDehkanPlateau_Room2Placements;
   if (scene == (s32)&SceneId_Ov655Room3)
-    return gData_02004ac0;
+    return gDehkanPlateau_Room3Placements;
   if (scene == (s32)&SceneId_Ov655Room4)
-    return gData_02004d78;
+    return gDehkanPlateau_Room4Placements;
   if (scene == (s32)&SceneId_Ov655Room5)
-    return gData_02004dd8;
+    return gDehkanPlateau_Room5Placements;
   if (scene == (s32)&SceneId_Ov655Room6)
-    return gData_02004e20;
-  return gData_020045e0;
+    return gDehkanPlateau_Room6Placements;
+  return gDehkanPlateau_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
-    return gData_02004f1c;
+    return gDehkanPlateau_Room1Triggers;
   if (scene == (s32)&SceneId_Ov655Room2)
-    return gData_02005078;
+    return gDehkanPlateau_Room2Triggers;
   if (scene == (s32)&SceneId_Ov655Room3)
-    return gData_020051bc;
+    return gDehkanPlateau_Room3Triggers;
   if (scene == (s32)&SceneId_Ov655Room4)
-    return gData_020053b4;
+    return gDehkanPlateau_Room4Triggers;
   if (scene == (s32)&SceneId_Ov655Room5)
-    return gData_02005450;
+    return gDehkanPlateau_Room5Triggers;
   if (scene == (s32)&SceneId_Ov655Room6)
-    return gData_020055b8;
-  return gData_02004f10;
+    return gDehkanPlateau_Room6Triggers;
+  return gDehkanPlateau_Triggers;
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1007,7 +1007,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 /* VIEW(dehkan_plateau): routine gData_02004420 as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gData_02004420[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1203: `gData_02004420' undeclared (first
+ * games/tla/src/scene/dehkan_plateau.c:1127: `gData_02004420' undeclared (first
  * use in this function). */
 extern struct Actor *gData_02004420__dehkan_plateau __asm__("gData_02004420");
 #define gData_02004420 gData_02004420__dehkan_plateau
@@ -1226,7 +1226,7 @@ DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Actor_Hide, 10, Scene_RunUnlessFlag)
  * DEFINE_ACTORS_FOR_RANGE(Func_02001f94, 13, Actor_Hide, 13,
  * Scene_RunUnlessFlag) DEFINE_ACTORS_FOR_RANGE(Func_02001fac, 12, Actor_Hide,
  * 25, S..., it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1291: too many arguments to function
+ * games/tla/src/scene/dehkan_plateau.c:1215: too many arguments to function
  * `HeldActor_RaiseCell'. */
 void HeldActor_RaiseCell__dehkan_plateau(struct Actor *object) __asm__(
     "HeldActor_RaiseCell");
@@ -1328,7 +1328,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
  * actorId, s32 x, s32 z, s32 angle); tried as the definition's void
  * Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
  * s16 angle), it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1394: conflicting types for
+ * games/tla/src/scene/dehkan_plateau.c:1315: conflicting types for
  * `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
@@ -1503,7 +1503,7 @@ void Func_02002604(void) {
 void Actor_DisableById(s32 id);
 /* VIEW(s2698): routine gData_02004420 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02004420[], it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:1864:
+ * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:1728:
  * `gData_02004420' undeclared (first use in this function). */
 extern struct Actor *gData_02004420__s2698 __asm__("gData_02004420");
 #define gData_02004420 gData_02004420__s2698
@@ -1907,7 +1907,7 @@ s32 Scene_Initialize(void) {
 
 /* VIEW(s2698): routine Func_020030c0 as this part defines it; a header the
  * joined file includes has another; tried as the rest of the object declares
- * it, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2012:
+ * it, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:1876:
  * conflicting types for `Func_020030c0'. */
 void Func_020030c0__s2698(void) __asm__("Func_020030c0");
 void Func_020030c0__s2698(void) {
@@ -1961,7 +1961,7 @@ static __inline__ void Actor_PlaceAndResetMotion(struct Actor *object, s32 x,
 }
 /* VIEW(s2698): routine Actor_PlaceFacing as this part has it; dehkan_plateau
  * has its own; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/dehkan_plateau.c:2065: redefinition of
+ * in tla-ja: games/tla/src/scene/dehkan_plateau.c:1928: redefinition of
  * `Actor_PlaceFacing'. */
 #define Actor_PlaceFacing Actor_PlaceFacing__s2698
 
@@ -2678,11 +2678,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020045e0[] = {
+struct ActorPlacement gDehkanPlateau_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_020045f8[] = {
+s16 gDehkanPlateau_Room1Placements[] = {
     409, -1, 1, 0, 0, 632, 0, 0,
     0, 232, FACING_SOUTH, 2, 409, -1, 1, 0,
     0, 616, 0, 0, 0, 280, FACING_SOUTH, 2,
@@ -2715,7 +2715,7 @@ s16 gData_020045f8[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-struct ActorPlacement gData_020047d8[] = {
+struct ActorPlacement gDehkanPlateau_Room2Placements[] = {
     {409, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
     {409, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
     {409, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
@@ -2749,7 +2749,7 @@ struct ActorPlacement gData_020047d8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004ac0[] = {
+struct ActorPlacement gDehkanPlateau_Room3Placements[] = {
     {407, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_SOUTH, 2, 3},
     {407, CONDITION_ALWAYS, 1, 0x3, 0, 0, FACING_SOUTH, 2, 3},
@@ -2781,20 +2781,20 @@ struct ActorPlacement gData_02004ac0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004d78[] = {
+struct ActorPlacement gDehkanPlateau_Room4Placements[] = {
     {337, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(232), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(216), FACING_SOUTH, 2, 1},
     {337, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(216), FACING_SOUTH, 2, 1},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004dd8[] = {
+struct ActorPlacement gDehkanPlateau_Room5Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(536), FACING_SOUTH, 2, 0},
     {245, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(120), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004e20[] = {
+struct ActorPlacement gDehkanPlateau_Room6Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(200), FACING_SOUTH, 2, 0},
     {409, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(200), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(264), FACING_SOUTH, 2, 0},
@@ -2807,11 +2807,11 @@ struct ActorPlacement gData_02004e20[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02004f10[] = {
+struct Trigger gDehkanPlateau_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004f1c[] = {
+struct Trigger gDehkanPlateau_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02002ff4)},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -2843,7 +2843,7 @@ struct Trigger gData_02004f1c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005078[] = {
+struct Trigger gDehkanPlateau_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02002ff4)},
@@ -2873,7 +2873,7 @@ struct Trigger gData_02005078[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020051bc[] = {
+struct Trigger gDehkanPlateau_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -2918,7 +2918,7 @@ struct Trigger gData_020051bc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020053b4[] = {
+struct Trigger gDehkanPlateau_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -2934,7 +2934,7 @@ struct Trigger gData_020053b4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005450[] = {
+struct Trigger gDehkanPlateau_Room5Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -2967,7 +2967,7 @@ struct Trigger gData_02005450[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020055b8[] = {
+struct Trigger gDehkanPlateau_Room6Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},

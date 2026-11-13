@@ -124,7 +124,7 @@ void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
 
 extern s16 gData_02004d0c[];
-extern s16 gData_02004dbc[];
+extern s16 gEasternAlhafra_Placements[];
 extern s16 gData_02004fe4[];
 
 s32 Actor_HasArrived();
@@ -138,7 +138,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void *Scene_GetPlacements(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gData_02004fe4;
-  return gData_02004dbc;
+  return gEasternAlhafra_Placements;
 }
 
 void Func_0200006c(s32 mode, s32 id) {
@@ -2272,7 +2272,7 @@ void Func_020040c0(void) {
 
 /* VIEW(s4004): routine gPushFootprints as this part declared it; the joined
  * file has another; tried as the definition's extern u32 gPushFootprints[], it
- * does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2299:
+ * does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2287:
  * `gPushFootprints' undeclared (first use in this function). */
 extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
 #define gPushFootprints gPushFootprints__s4004
@@ -2419,7 +2419,7 @@ struct PushTarget {
 /* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
  * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]; tried as the
  * definition's extern u32 gPushFootprints[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:2412: conflicting types for
+ * games/tla/src/scene/eastern_alhafra.c:2398: conflicting types for
  * `gPushFootprints__s4004'. */
 extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
 
@@ -2562,7 +2562,7 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 /* VIEW(data): routine Func_0200006c as this part declared it; the joined file
  * has another; tried as the definition's void Func_0200006c(s32 mode, s32 id),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:2544: conflicting types for
+ * games/tla/src/scene/eastern_alhafra.c:2530: conflicting types for
  * `gPushFootprints__s4004'. */
 void Func_0200006c__data(void) __asm__("Func_0200006c");
 #define Func_0200006c Func_0200006c__data
@@ -2603,7 +2603,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-s16 gData_02004dbc[] = {
+s16 gEasternAlhafra_Placements[] = {
     407, -1, 1, 0, 0, 280, 0, 0,
     0, 232, FACING_SOUTH, 2, 407, -1, 1, 0,
     0, 376, 0, 0, 0, 232, FACING_SOUTH, 258,

@@ -70,7 +70,7 @@ extern s16 gData_020031c4[];
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another; tried as the definition's extern s32
  * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:717:
+ * games/tla/src/scene/jupiter_lighthouse_room_7.c:715:
  * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
@@ -726,7 +726,7 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
  * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
  * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:726: `gPaletteCycleFrame'
+ * games/tla/src/scene/jupiter_lighthouse_room_7.c:724: `gPaletteCycleFrame'
  * undeclared (first use in this function). */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
@@ -890,7 +890,7 @@ extern u32 gLightSpriteActors[];
 /* VIEW(s16d4): variable gLightSpritePriority as s16 gLightSpritePriority;
  * scene/jupiter_lighthouse_room_7 has u16 gLightSpritePriority; tried as the 13
  * declarations' extern s16 gLightSpritePriority, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:882: conflicting types for
+ * games/tla/src/scene/jupiter_lighthouse_room_7.c:878: conflicting types for
  * `gLightSpritePriority'. */
 extern s16 gLightSpritePriority__s16d4 __asm__("gLightSpritePriority");
 

@@ -675,7 +675,7 @@ void Settlements_LashRope(void) {
 /* VIEW(first): routine gSettlements_WaterColorFrame as this part declared it;
  * the joined file has another; tried as the definition's extern s32
  * gSettlements_WaterColorFrame[], it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:739: `gSettlements_WaterColorFrame'
+ * games/tla/src/scene/settlements.c:684: `gSettlements_WaterColorFrame'
  * undeclared (first use in this function). */
 extern s32
     gSettlements_WaterColorFrame__first __asm__("gSettlements_WaterColorFrame");
@@ -1047,7 +1047,7 @@ void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
 
 /* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/settlements.c:1143: invalid operands
+ * compile in tla-ja: games/tla/src/scene/settlements.c:1061: invalid operands
  * to binary >>. */
 extern u32 gInput__s1620 __asm__("gInput");
 /* VIEW(settlements): variable gSettlements_SlideAngles as const s16
@@ -1055,7 +1055,7 @@ extern u32 gInput__s1620 __asm__("gInput");
  * DEFINE_G_DATA_02002276(gSettlements_SlideAngles) s16
  * gSettlements_SlideAnglesByKey[] = {; tried as the one declaration extern
  * const s16 gSettlements_SlideAngles[], it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:1141: `gSettlements_SlideAngles' undeclared
+ * games/tla/src/scene/settlements.c:1059: `gSettlements_SlideAngles' undeclared
  * (first use in this function). */
 extern const s16
     gSettlements_SlideAngles__settlements[] __asm__("gSettlements_SlideAngles");
@@ -1104,7 +1104,7 @@ void Settlements_StopLeader(void) {
  * Settlements_KeepSliding(struct Actor *object); tried as the definition's void
  * Settlements_KeepSliding(struct Actor *object), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:1241: `Settlements_KeepSliding__s173c'
+ * games/tla/src/scene/settlements.c:1159: `Settlements_KeepSliding__s173c'
  * undeclared (first use in this function). */
 extern void
 Settlements_KeepSliding__s173c(void) __asm__("Settlements_KeepSliding");
@@ -1248,7 +1248,7 @@ end:
  * gSettlements_SlideStopped; scene/settlements.h has u16
  * gSettlements_SlideStopped; tried as the 2 declarations' extern volatile s16
  * gSettlements_SlideStopped, it does not compile in tla-en:
- * games/tla/src/scene/settlements.c:1310: conflicting types for
+ * games/tla/src/scene/settlements.c:1228: conflicting types for
  * `gSettlements_SlideStopped'. */
 extern volatile s16
     gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
@@ -1583,7 +1583,7 @@ void Settlements_SetSlideStopped(s32 value) {
  * Settlements_KeepSliding(struct Actor *object) {; tried as the definition's
  * void Settlements_KeepSliding(struct Actor *object), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:1694: `Settlements_KeepSliding__s1d30'
+ * games/tla/src/scene/settlements.c:1612: `Settlements_KeepSliding__s1d30'
  * undeclared (first use in this function). */
 void Settlements_KeepSliding__s1d30(void) __asm__("Settlements_KeepSliding");
 

@@ -568,7 +568,7 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
  * Actor_SetSpriteFlags(struct Actor *object, u32 flags); tried as the
  * definition's void Actor_SetSpriteFlags(struct Actor *object, u32 value),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_2.c:561: `Whirlwind_UpdateLower'
+ * games/tla/src/scene/jupiter_lighthouse_room_2.c:559: `Whirlwind_UpdateLower'
  * undeclared (first use in this function). */
 void Actor_SetSpriteFlags__s0d94(struct FieldEffect *effect,
                                  s32 flags) __asm__("Actor_SetSpriteFlags");

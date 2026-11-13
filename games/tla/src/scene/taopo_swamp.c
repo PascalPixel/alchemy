@@ -57,21 +57,21 @@ void Actor_SetBlendMode(struct Actor *object, u32 value);
 /* VIEW(first): routine gTaopoSwamp_SteamPuffs as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gTaopoSwamp_SteamPuffs[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:761: `gTaopoSwamp_SteamPuffs' undeclared
+ * games/tla/src/scene/taopo_swamp.c:712: `gTaopoSwamp_SteamPuffs' undeclared
  * (first use in this function). */
 extern s32 gTaopoSwamp_SteamPuffs__first __asm__("gTaopoSwamp_SteamPuffs");
 #define gTaopoSwamp_SteamPuffs gTaopoSwamp_SteamPuffs__first
 /* VIEW(first): routine gTaopoSwamp_PassageRows as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gTaopoSwamp_PassageRows[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:775: `gTaopoSwamp_PassageRows' undeclared
+ * games/tla/src/scene/taopo_swamp.c:726: `gTaopoSwamp_PassageRows' undeclared
  * (first use in this function). */
 extern s32 gTaopoSwamp_PassageRows__first __asm__("gTaopoSwamp_PassageRows");
 #define gTaopoSwamp_PassageRows gTaopoSwamp_PassageRows__first
 /* VIEW(first): routine gTaopoSwamp_PoolFrames as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gTaopoSwamp_PoolFrames[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:785: `gTaopoSwamp_PoolFrames' undeclared
+ * games/tla/src/scene/taopo_swamp.c:736: `gTaopoSwamp_PoolFrames' undeclared
  * (first use in this function). */
 extern s32 gTaopoSwamp_PoolFrames__first __asm__("gTaopoSwamp_PoolFrames");
 #define gTaopoSwamp_PoolFrames gTaopoSwamp_PoolFrames__first
@@ -144,7 +144,7 @@ extern u32 gTaopoSwamp_PuffRises[];
 /* VIEW(first): routine gTaopoSwamp_SparkleFrame as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gTaopoSwamp_SparkleFrame[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1727: `gTaopoSwamp_SparkleFrame' undeclared
+ * games/tla/src/scene/taopo_swamp.c:1640: `gTaopoSwamp_SparkleFrame' undeclared
  * (first use in this function). */
 extern s32 gTaopoSwamp_SparkleFrame__first __asm__("gTaopoSwamp_SparkleFrame");
 #define gTaopoSwamp_SparkleFrame gTaopoSwamp_SparkleFrame__first
@@ -1756,7 +1756,7 @@ void TaopoSwamp_ResetMud(void) {
 // Seal.
 /* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct
  * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/taopo_swamp.c:1846: `gInput'
+ * compile in tla-ja: games/tla/src/scene/taopo_swamp.c:1759: `gInput'
  * undeclared (first use in this function). */
 extern volatile u32 gInput__taopo_swamp __asm__("gInput");
 

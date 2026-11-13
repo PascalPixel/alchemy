@@ -165,14 +165,14 @@ extern struct ActorPlacement gData_02003648[];
 extern struct ActorPlacement gData_02003660[];
 /* VIEW(first): routine gData_02003690 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02003690[],
- * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:191:
+ * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:179:
  * `gData_02003690' undeclared (first use in this function). */
 extern const u8 gData_02003690__first[] __asm__("gData_02003690");
 #define gData_02003690 gData_02003690__first
 /* VIEW(first): routine gData_02003708 as this part declared it; the joined file
  * has another; tried as the definition's extern struct ActorPlacement
  * gData_02003708[], it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:193: `gData_02003708' undeclared (first
+ * games/tla/src/scene/tundaria_tower.c:181: `gData_02003708' undeclared (first
  * use in this function). */
 extern const u8 gData_02003708__first[] __asm__("gData_02003708");
 #define gData_02003708 gData_02003708__first
@@ -995,7 +995,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/tundaria_tower.c:1022: invalid
+ * compile in tla-ja: games/tla/src/scene/tundaria_tower.c:1001: invalid
  * operands to binary >>. */
 extern u32 gInput__s11e0 __asm__("gInput");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -1042,7 +1042,7 @@ void Func_02001868(void) {
  * definition has void Func_020017dc(struct Actor *object); tried as the
  * definition's void Func_020017dc(struct Actor *object), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:1120: `Func_020017dc__events_e'
+ * games/tla/src/scene/tundaria_tower.c:1099: `Func_020017dc__events_e'
  * undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
 
@@ -1183,7 +1183,7 @@ end:
 /* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
  * scene/shared/tundaria_tower.h has u16 gData_02003cd0; tried as the 2
  * declarations' extern volatile s16 gData_02003cd0, it does not compile in
- * tla-en: games/tla/src/scene/tundaria_tower.c:1187: conflicting types for
+ * tla-en: games/tla/src/scene/tundaria_tower.c:1166: conflicting types for
  * `gData_02003cd0'. */
 extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
 extern s16 gData_020032b2[];
@@ -1527,7 +1527,7 @@ void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
  * games/tla/src/scene/tundaria_tower/s11e0 has void Func_020017dc(struct Actor
  * *object) {; tried as the definition's void Func_020017dc(struct Actor
  * *object), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:1582: `Func_020017dc__events_f'
+ * games/tla/src/scene/tundaria_tower.c:1561: `Func_020017dc__events_f'
  * undeclared (first use in this function). */
 void Func_020017dc__events_f(void) __asm__("Func_020017dc");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -2165,7 +2165,7 @@ next:
 // A falling rock's sprite.
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:2205:
+ * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:2184:
  * structure has no member named `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];

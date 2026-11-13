@@ -338,7 +338,7 @@ extern struct ActorPlacement gKandoreanTemple_Placements[];
 /* VIEW(kandorean_temple): routine gKandoreanTemple_LiftRoomPlacements as this
  * part declared it; the joined file has another; tried as the one declaration
  * extern u32 gKandoreanTemple_LiftRoomPlacements[], it does not compile in
- * tla-ja: games/tla/src/scene/kandorean_temple.c:3276: conflicting types for
+ * tla-ja: games/tla/src/scene/kandorean_temple.c:3260: conflicting types for
  * `gKandoreanTemple_LiftRoomPlacements'. */
 extern u32 gKandoreanTemple_LiftRoomPlacements__kandorean_temple[] __asm__(
     "gKandoreanTemple_LiftRoomPlacements");
@@ -348,7 +348,7 @@ extern u32 gKandoreanTemple_LiftRoomPlacements__kandorean_temple[] __asm__(
  * this part declared it; the joined file has another; tried as the definition's
  * extern DEFINE_G_DATA_020057C0(gKandoreanTemple_LiftRoomPlacements, 407, 1, 2,
  * 3, 4, 272, 5, 351) struct ActorPlacement gKandoreanTemple_Ches..., it does
- * not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:344:
+ * not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:343:
  * conflicting types for
  * `gKandoreanTemple_LiftRoomPlacements__kandorean_temple'. */
 extern u32
@@ -529,7 +529,7 @@ void KandoreanTemple_PushThroughTheSteam(void) {
  * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
  * with the definition the rest of the object has, its members read focus as
  * object, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:535: dereferencing pointer to
+ * games/tla/src/scene/kandorean_temple.c:522: dereferencing pointer to
  * incomplete type. */
 struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
@@ -1355,7 +1355,7 @@ void KandoreanTemple_WatchLifts(void) {
 /* VIEW(kandorean_temple): tag struct MapCell as struct
  * MapCell__kandorean_temple; map.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:1372: arithmetic on pointer to an
+ * games/tla/src/scene/kandorean_temple.c:1359: arithmetic on pointer to an
  * incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];

@@ -41,17 +41,17 @@ extern u32 gData_02000f8c[];
 
 void Func_02000bc0(s32 id, s32 flag);
 
-extern struct ActorPlacement gData_0200102c[];
-extern struct ActorPlacement gData_02001044[];
+extern struct ActorPlacement gGaiaRock_Placements[];
+extern struct ActorPlacement gGaiaRock_Room1Placements[];
 
-extern struct ActorPlacement gData_02001194[];
-extern s16 gData_020012cc[];
+extern struct ActorPlacement gGaiaRock_Room2Placements[];
+extern s16 gGaiaRock_Room3Placements[];
 
 void Scene_TalkToActor(s32 a);
 
-extern struct Trigger gData_020013c8[];
-extern struct Trigger gData_020014b8[];
-extern struct Trigger gData_02001554[];
+extern struct Trigger gGaiaRock_Room1Triggers[];
+extern struct Trigger gGaiaRock_Room2Triggers[];
+extern struct Trigger gGaiaRock_Triggers[];
 extern u32 gData_020015c0[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 a);
@@ -80,12 +80,12 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
-    return (const struct Trigger *)gData_02001044;
+    return (const struct Trigger *)gGaiaRock_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
-    return (const struct Trigger *)gData_02001194;
+    return (const struct Trigger *)gGaiaRock_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room3)
-    return (const struct Trigger *)gData_020012cc;
-  return (const struct Trigger *)gData_0200102c;
+    return (const struct Trigger *)gGaiaRock_Room3Placements;
+  return (const struct Trigger *)gGaiaRock_Placements;
 }
 
 void Func_020000d0(void) { Func_02000bc0(17, 0x300); }
@@ -283,10 +283,10 @@ void Func_020003fc(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
-    return gData_020013c8;
+    return gGaiaRock_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
-    return gData_020014b8;
-  return gData_02001554;
+    return gGaiaRock_Room2Triggers;
+  return gGaiaRock_Triggers;
 }
 
 struct OrbitEffect {
@@ -703,11 +703,11 @@ u32 gData_0200101c[] = {
     SC_END,
 };
 
-struct ActorPlacement gData_0200102c[] = {
+struct ActorPlacement gGaiaRock_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001044[] = {
+struct ActorPlacement gGaiaRock_Room1Placements[] = {
     {372, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(424), FACING_SOUTH, 2, 0},
     {372, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(440), FACING_SOUTH, 2, 0},
     {372, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(472), FACING_SOUTH, 2, 0},
@@ -724,7 +724,7 @@ struct ActorPlacement gData_02001044[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001194[] = {
+struct ActorPlacement gGaiaRock_Room2Placements[] = {
     {372, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(440), FACING_SOUTH, 2, 0},
     {372, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(344), FACING_SOUTH, 2, 0},
     {372, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(344), FACING_SOUTH, 2, 0},
@@ -740,7 +740,7 @@ struct ActorPlacement gData_02001194[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_020012cc[] = {
+s16 gGaiaRock_Room3Placements[] = {
     272, -1, 1, 0, 0, 216, 0, 0,
     0, 232, 0x4000, 2, 272, -1, 1, 0,
     0, 680, 0, 0, 0, 216, 0x4000, 258,
@@ -759,7 +759,7 @@ s16 gData_020012cc[] = {
     -1, -1, 0, 0, 0, 0,
 };
 
-struct Trigger gData_020013c8[] = {
+struct Trigger gGaiaRock_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
@@ -782,7 +782,7 @@ struct Trigger gData_020013c8[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020014b8[] = {
+struct Trigger gGaiaRock_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_STEP, 20, 0x300, EVENT(Func_020000d0)},
@@ -798,7 +798,7 @@ struct Trigger gData_020014b8[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001554[] = {
+struct Trigger gGaiaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000314)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000258)},

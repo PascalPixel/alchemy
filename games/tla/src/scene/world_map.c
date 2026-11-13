@@ -2177,7 +2177,7 @@ DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
  * has another; tried as the definition's extern LATE_DATA
  * DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0) LATE_DATA u32
  * gData_02006be4[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2182: `gData_02006be4' undeclared (first use
+ * games/tla/src/scene/world_map.c:2168: `gData_02006be4' undeclared (first use
  * in this function). */
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
@@ -2403,7 +2403,7 @@ DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Actor_Release)
  * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
  * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
  * AnimationGroup *state, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2430: `Func_020045e4' undeclared (first use
+ * games/tla/src/scene/world_map.c:2416: `Func_020045e4' undeclared (first use
  * in this function). */
 s32 Animation_ApplyChildArgument__s3b38(
     struct AnimationGroup *state,
@@ -2475,7 +2475,7 @@ extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 /* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
  * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2466: `gData_02006f20__s3b38' undeclared
+ * games/tla/src/scene/world_map.c:2452: `gData_02006f20__s3b38' undeclared
  * (first use in this function). */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 

@@ -257,31 +257,31 @@ s32 Func_020005c0(struct Actor *object) {
   return 0;
 }
 
-extern struct ActorPlacement gData_020032a0[];
-extern struct ActorPlacement gData_020032b8[];
-extern struct ActorPlacement gData_020034f8[];
-extern struct ActorPlacement gData_02003570[];
-extern struct ActorPlacement gData_020035d0[];
-extern struct ActorPlacement gData_02003708[];
-extern struct ActorPlacement gData_02003750[];
-extern struct ActorPlacement gData_02003768[];
+extern struct ActorPlacement gAnkohlRuins_Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room1Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room2Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room3Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room4Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room5Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room6Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
-    return gData_020032b8;
+    return gAnkohlRuins_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
-    return gData_020034f8;
+    return gAnkohlRuins_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
-    return gData_02003570;
+    return gAnkohlRuins_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
-    return gData_020035d0;
+    return gAnkohlRuins_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
-    return gData_02003708;
+    return gAnkohlRuins_Room5Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
-    return gData_02003750;
+    return gAnkohlRuins_Room6Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
-    return gData_02003768;
-  return gData_020032a0;
+    return gAnkohlRuins_Room8Placements;
+  return gAnkohlRuins_Placements;
 }
 
 void Func_02000698(void) {
@@ -1213,14 +1213,14 @@ void Func_020021d4(void) {
   }
 }
 
-extern struct Trigger gData_02003790[];
-extern struct Trigger gData_020037b4[];
-extern struct Trigger gData_02003a78[];
-extern struct Trigger gData_02003b98[];
-extern struct Trigger gData_02003c94[];
-extern struct Trigger gData_02003e38[];
-extern struct Trigger gData_02003f4c[];
-extern struct Trigger gData_02004018[];
+extern struct Trigger gAnkohlRuins_Triggers[];
+extern struct Trigger gAnkohlRuins_Room1Triggers[];
+extern struct Trigger gAnkohlRuins_Room2Triggers[];
+extern struct Trigger gAnkohlRuins_Room3Triggers[];
+extern struct Trigger gAnkohlRuins_Room4Triggers[];
+extern struct Trigger gAnkohlRuins_Room5Triggers[];
+extern struct Trigger gAnkohlRuins_Room6Triggers[];
+extern struct Trigger gAnkohlRuins_Room8Triggers[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1266,20 +1266,20 @@ void Func_02002328(void) { GameFlag_Clear(0x205); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
-    return gData_020037b4;
+    return gAnkohlRuins_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
-    return gData_02003a78;
+    return gAnkohlRuins_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
-    return gData_02003b98;
+    return gAnkohlRuins_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
-    return gData_02003c94;
+    return gAnkohlRuins_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
-    return gData_02003e38;
+    return gAnkohlRuins_Room5Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
-    return gData_02003f4c;
+    return gAnkohlRuins_Room6Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
-    return gData_02004018;
-  return gData_02003790;
+    return gAnkohlRuins_Room8Triggers;
+  return gAnkohlRuins_Triggers;
 }
 
 void Func_020023d0(struct Actor *object) {
@@ -2094,11 +2094,11 @@ u32 gData_02003290[] = {
     22, 30, 0, 17,
 };
 
-struct ActorPlacement gData_020032a0[] = {
+struct ActorPlacement gAnkohlRuins_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020032b8[] = {
+struct ActorPlacement gAnkohlRuins_Room1Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(88), FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {392, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(488), FACING_SOUTH, 2, 0},
@@ -2125,7 +2125,7 @@ struct ActorPlacement gData_020032b8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020034f8[] = {
+struct ActorPlacement gAnkohlRuins_Room2Placements[] = {
     {391, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(120), 0, PIXELS(88), FACING_SOUTH, 2, 0},
     {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(472), 0, PIXELS(776), FACING_SOUTH, 2, 0},
     {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(520), 0, PIXELS(776), FACING_SOUTH, 2, 0},
@@ -2133,14 +2133,14 @@ struct ActorPlacement gData_020034f8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003570[] = {
+struct ActorPlacement gAnkohlRuins_Room3Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 2, 0},
     {390, CONDITION_ALWAYS, (s32)gData_02003290, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
     {393, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(296), 0, PIXELS(392), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020035d0[] = {
+struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(776), FACING_SOUTH, 2, 0},
     {391, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(104), 0, PIXELS(760), FACING_SOUTH, 2, 0},
     {393, CONDITION_ALWAYS, (s32)gData_02003280, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -2156,17 +2156,17 @@ struct ActorPlacement gData_020035d0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003708[] = {
+struct ActorPlacement gAnkohlRuins_Room5Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(312), FACING_SOUTH, 2, 0},
     {393, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(440), 0, PIXELS(584), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003750[] = {
+struct ActorPlacement gAnkohlRuins_Room6Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003768[] = {
+struct ActorPlacement gAnkohlRuins_Room8Placements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -2190,13 +2190,13 @@ u32 gData_0200378c[] = {
     0,
 };
 
-struct Trigger gData_02003790[] = {
+struct Trigger gAnkohlRuins_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020037b4[] = {
+struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2258,7 +2258,7 @@ struct Trigger gData_020037b4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003a78[] = {
+struct Trigger gAnkohlRuins_Room2Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -2285,7 +2285,7 @@ struct Trigger gData_02003a78[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003b98[] = {
+struct Trigger gAnkohlRuins_Room3Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2309,7 +2309,7 @@ struct Trigger gData_02003b98[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003c94[] = {
+struct Trigger gAnkohlRuins_Room4Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2347,7 +2347,7 @@ struct Trigger gData_02003c94[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003e38[] = {
+struct Trigger gAnkohlRuins_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -2373,7 +2373,7 @@ struct Trigger gData_02003e38[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003f4c[] = {
+struct Trigger gAnkohlRuins_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2393,7 +2393,7 @@ struct Trigger gData_02003f4c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004018[] = {
+struct Trigger gAnkohlRuins_Room8Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 #undef EFFECT_SPAWN

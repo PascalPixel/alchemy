@@ -31,13 +31,13 @@ extern char SceneId_Ov6a9Room4;
 extern u8 gMapCellBuffer[];
 extern s16 gData_02001220[];
 extern s16 gData_02001264[];
-extern struct ActorPlacement gData_02001328[];
-extern struct ActorPlacement gData_02001358[];
-extern struct ActorPlacement gData_020013b8[];
-extern struct Trigger gData_02001430[];
-extern struct Trigger gData_0200149c[];
-extern struct Trigger gData_020014d8[];
-extern struct Trigger gData_020014fc[];
+extern struct ActorPlacement gCaverns_Placements[];
+extern struct ActorPlacement gCaverns_Room1Placements[];
+extern struct ActorPlacement gCaverns_Room4Placements[];
+extern struct Trigger gCaverns_Triggers[];
+extern struct Trigger gCaverns_Room1Triggers[];
+extern struct Trigger gCaverns_Room3Triggers[];
+extern struct Trigger gCaverns_Room4Triggers[];
 
 void Func_02000454(const s16 *data);
 void Func_02000d10(void);
@@ -121,10 +121,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room1)
-    return gData_02001358;
+    return gCaverns_Room1Placements;
   if (scene == (s32)&SceneId_Ov6a9Room4)
-    return gData_020013b8;
-  return gData_02001328;
+    return gCaverns_Room4Placements;
+  return gCaverns_Placements;
 }
 
 s32 Func_020003b4(u32 layer, s32 x, s32 y) {
@@ -431,12 +431,12 @@ const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room1)
-    return gData_0200149c;
+    return gCaverns_Room1Triggers;
   if (scene == (s32)&SceneId_Ov6a9Room3)
-    return gData_020014d8;
+    return gCaverns_Room3Triggers;
   if (scene == (s32)&SceneId_Ov6a9Room4)
-    return gData_020014fc;
-  return gData_02001430;
+    return gCaverns_Room4Triggers;
+  return gCaverns_Triggers;
 }
 
 s32 Scene_Initialize(void) {
@@ -716,19 +716,19 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02001328[] = {
+struct ActorPlacement gCaverns_Placements[] = {
     {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001358[] = {
+struct ActorPlacement gCaverns_Room1Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(168), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(168), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(168), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020013b8[] = {
+struct ActorPlacement gCaverns_Room4Placements[] = {
     {315, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(552), FACING_NORTH, 2, 0},
     {315, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(536), FACING_NORTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(512), FACING_NORTH, 2, 0},
@@ -736,7 +736,7 @@ struct ActorPlacement gData_020013b8[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001430[] = {
+struct Trigger gCaverns_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x4602, 2, CONDITION_ALWAYS, EVENT(Func_02000e6c)},
     {0x8602, 2, CONDITION_ALWAYS, EVENT(Func_02000e44)},
@@ -748,7 +748,7 @@ struct Trigger gData_02001430[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200149c[] = {
+struct Trigger gCaverns_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x602, 10, CONDITION_ALWAYS, EVENT(Func_02000cdc)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
@@ -756,13 +756,13 @@ struct Trigger gData_0200149c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020014d8[] = {
+struct Trigger gCaverns_Room3Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, CONDITION_ALWAYS, EVENT(Func_02000ef4)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020014fc[] = {
+struct Trigger gCaverns_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},

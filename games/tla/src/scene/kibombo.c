@@ -158,52 +158,52 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 // Scene code of overlay 0x670, in ROM order, from events_a's offset up to the
 // next object the overlay links.
 
-extern struct ActorPlacement gData_02006510[];
-extern struct ActorPlacement gData_020066d8[];
-extern struct ActorPlacement gData_020069a8[];
-extern struct ActorPlacement gData_02006a98[];
-extern struct ActorPlacement gData_02006cd8[];
-extern struct ActorPlacement gData_020064f8[];
-extern struct Trigger gData_02006ef4[];
-extern struct Trigger gData_020070d4[];
-extern struct Trigger gData_02007434[];
-extern struct Trigger gData_020074dc[];
-extern struct Trigger gData_02007698[];
-extern struct Trigger gData_02006ee8[];
+extern struct ActorPlacement gKibombo_Room1Placements[];
+extern struct ActorPlacement gKibombo_Room4Placements[];
+extern struct ActorPlacement gKibombo_Room2Placements[];
+extern struct ActorPlacement gKibombo_Room5Placements[];
+extern struct ActorPlacement gKibombo_Room3Placements[];
+extern struct ActorPlacement gKibombo_Placements[];
+extern struct Trigger gKibombo_Room1Triggers[];
+extern struct Trigger gKibombo_Room4Triggers[];
+extern struct Trigger gKibombo_Room2Triggers[];
+extern struct Trigger gKibombo_Room5Triggers[];
+extern struct Trigger gKibombo_Room3Triggers[];
+extern struct Trigger gKibombo_Triggers[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
-    return gData_02006510;
+    return gKibombo_Room1Placements;
   if (scene == (s32)&SceneId_Kibombo4)
-    return gData_020066d8;
+    return gKibombo_Room4Placements;
   if (scene == (s32)&SceneId_Kibombo2)
-    return gData_020069a8;
+    return gKibombo_Room2Placements;
   if (scene == (s32)&SceneId_Kibombo5)
-    return gData_02006a98;
+    return gKibombo_Room5Placements;
   if (scene == (s32)&SceneId_Kibombo3) {
     if (GameFlag_Get(0x8ee))
-      gData_02006cd8[0].talkFacing = 0;
-    return gData_02006cd8;
+      gKibombo_Room3Placements[0].talkFacing = 0;
+    return gKibombo_Room3Placements;
   }
-  return gData_020064f8;
+  return gKibombo_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
-    return gData_02006ef4;
+    return gKibombo_Room1Triggers;
   if (scene == (s32)&SceneId_Kibombo4)
-    return gData_020070d4;
+    return gKibombo_Room4Triggers;
   if (scene == (s32)&SceneId_Kibombo2)
-    return gData_02007434;
+    return gKibombo_Room2Triggers;
   if (scene == (s32)&SceneId_Kibombo5)
-    return gData_020074dc;
+    return gKibombo_Room5Triggers;
   if (scene == (s32)&SceneId_Kibombo3)
-    return gData_02007698;
-  return gData_02006ee8;
+    return gKibombo_Room3Triggers;
+  return gKibombo_Triggers;
 }
 
 void Func_02000228(void) {
@@ -782,7 +782,7 @@ void Func_02001218(void) {
  * objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried
  * as the definition's struct Actor *Actor_GetById(u32 objectId), which the
  * object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:43: conflicting types for `Actor_GetById'. */
+ * games/tla/include/field/event.h:60: conflicting types for `Actor_GetById'. */
 struct Actor;
 extern struct Actor *
 Actor_GetById__s1318(u32 objectId) __asm__("Actor_GetById");
@@ -791,7 +791,7 @@ Actor_GetById__s1318(u32 objectId) __asm__("Actor_GetById");
  * Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void
  * Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried
  * as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32
- * y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:67:
+ * y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:84:
  * conflicting types for `Actor_SetMoveTarget'. */
 struct Actor;
 extern void Actor_SetMoveTarget__s1318(struct Actor *actor, s32 x, s32 y,
@@ -801,7 +801,7 @@ extern void Actor_SetMoveTarget__s1318(struct Actor *actor, s32 x, s32 y,
  * *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct
  * KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as
  * the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/include/field/event.h:68: conflicting types for
+ * games/tla/include/field/event.h:85: conflicting types for
  * `Import_ActorCreate__kibombo'. */
 struct Actor;
 extern struct Actor *
@@ -812,7 +812,7 @@ Import_ActorCreate__s1318(s32 type, s32 x, s32 y,
  * Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void
  * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
  * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
- * in tla-ja: games/tla/include/field/event.h:113: conflicting types for
+ * in tla-ja: games/tla/include/field/event.h:130: conflicting types for
  * `Actor_SetSpritePriority'. */
 extern void
 Actor_SetSpritePriority__s1318(u32 actorId,
@@ -823,7 +823,7 @@ Actor_SetSpritePriority__s1318(u32 actorId,
  * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
  * *object, s32 x, s32 y, s32 z); tried as the definition's void
  * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
- * does not compile in tla-ja: games/tla/include/field/event.h:118: conflicting
+ * does not compile in tla-ja: games/tla/include/field/event.h:135: conflicting
  * types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
 extern void Actor_SetPositionAndResetMotion__s1318(
@@ -871,25 +871,25 @@ void Party_GivePiersDjinn(void);
 extern u32 gData_02005e88[];
 /* VIEW(s1318): routine gData_02005eec as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA u32 gData_02005eec[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:874:
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:844:
  * `gData_02005eec' undeclared (first use in this function). */
 extern const u8 gData_02005eec__s1318[] __asm__("gData_02005eec");
 #define gData_02005eec gData_02005eec__s1318
 /* VIEW(s1318): routine gData_02005f14 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02005f14[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:885:
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:855:
  * `gData_02005f14' undeclared (first use in this function). */
 extern const u8 gData_02005f14__s1318[] __asm__("gData_02005f14");
 #define gData_02005f14 gData_02005f14__s1318
 /* VIEW(s1318): routine gData_02005f58 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02005f58[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:886:
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:856:
  * `gData_02005f58' undeclared (first use in this function). */
 extern const u8 gData_02005f58__s1318[] __asm__("gData_02005f58");
 #define gData_02005f58 gData_02005f58__s1318
 /* VIEW(s1318): routine gData_02005f9c as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02005f9c[], it does
- * not compile in tla-ja: games/tla/src/scene/kibombo.c:887: `gData_02005f9c'
+ * not compile in tla-ja: games/tla/src/scene/kibombo.c:857: `gData_02005f9c'
  * undeclared (first use in this function). */
 extern const u8 gData_02005f9c__s1318[] __asm__("gData_02005f9c");
 #define gData_02005f9c gData_02005f9c__s1318
@@ -1213,19 +1213,19 @@ void Func_02001318(void) {
 
 /* VIEW(s1318): routine gData_02006014 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02006014[], it does
- * not compile in tla-ja: games/tla/src/scene/kibombo.c:1206: `gData_02006014'
+ * not compile in tla-ja: games/tla/src/scene/kibombo.c:1174: `gData_02006014'
  * undeclared (first use in this function). */
 extern const u8 gData_02006014__s1318[] __asm__("gData_02006014");
 #define gData_02006014 gData_02006014__s1318
 /* VIEW(s1318): routine gData_02006058 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02006058[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1207:
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1175:
  * `gData_02006058' undeclared (first use in this function). */
 extern const u8 gData_02006058__s1318[] __asm__("gData_02006058");
 #define gData_02006058 gData_02006058__s1318
 /* VIEW(s1318): routine gData_0200609c as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_0200609c[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1208:
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1176:
  * `gData_0200609c' undeclared (first use in this function). */
 extern const u8 gData_0200609c__s1318[] __asm__("gData_0200609c");
 #define gData_0200609c gData_0200609c__s1318
@@ -1233,7 +1233,7 @@ extern const u8 gData_0200609c__s1318[] __asm__("gData_0200609c");
  * has another; tried as the definition's extern
  * DEFINE_G_DATA_02003584(gData_020060b0, Func_02003ed4, 38, 17)
  * DEFINE_G_DATA_02004014(gData_020060c0, Orbit_Update, Actor_AimAtWatched...,
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1209:
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1177:
  * `gData_020060e0' undeclared (first use in this function). */
 extern const u8 gData_020060e0__s1318[] __asm__("gData_020060e0");
 #define gData_020060e0 gData_020060e0__s1318
@@ -3679,11 +3679,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020064f8[] = {
+struct ActorPlacement gKibombo_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006510[] = {
+struct ActorPlacement gKibombo_Room1Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(72), FACING_SOUTH, 2, 0},
     {387, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(200), FACING_SOUTH, 2, 0},
     {387, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_SOUTH, 2, 1},
@@ -3705,7 +3705,7 @@ struct ActorPlacement gData_02006510[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020066d8[] = {
+struct ActorPlacement gKibombo_Room4Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(72), FACING_SOUTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(200), FACING_SOUTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_SOUTH, 2, 1},
@@ -3738,7 +3738,7 @@ struct ActorPlacement gData_020066d8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020069a8[] = {
+struct ActorPlacement gKibombo_Room2Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(504), FACING_SOUTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(392), FACING_SOUTH, 2, 1},
@@ -3751,7 +3751,7 @@ struct ActorPlacement gData_020069a8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006a98[] = {
+struct ActorPlacement gKibombo_Room5Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(504), FACING_SOUTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(392), FACING_SOUTH, 2, 1},
@@ -3778,7 +3778,7 @@ struct ActorPlacement gData_02006a98[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006cd8[] = {
+struct ActorPlacement gKibombo_Room3Placements[] = {
     {27, CONDITION_ALWAYS, 1, PIXELS(366), 0, PIXELS(586), FACING_SOUTH + FACING_STEP, 2, 0},
     {28, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(586), FACING_SOUTHEAST + FACING_STEP, 0, 0},
     {56, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(634), FACING_NORTH + FACING_STEP, 2, 0},
@@ -3804,11 +3804,11 @@ struct ActorPlacement gData_02006cd8[] = {
 };
 // clang-format on
 
-struct Trigger gData_02006ee8[] = {
+struct Trigger gKibombo_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006ef4[] = {
+struct Trigger gKibombo_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02003948)},
@@ -3863,7 +3863,7 @@ struct Trigger gData_02006ef4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020070d4[] = {
+struct Trigger gKibombo_Room4Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {0xc602, 3, 0x209, EVENT(Func_02003948)},
@@ -3958,7 +3958,7 @@ struct Trigger gData_020070d4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02007434[] = {
+struct Trigger gKibombo_Room2Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Func_02003bf0)},
@@ -3980,7 +3980,7 @@ struct Trigger gData_02007434[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020074dc[] = {
+struct Trigger gKibombo_Room5Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Func_02003bf0)},
@@ -4034,7 +4034,7 @@ struct Trigger gData_020074dc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02007698[] = {
+struct Trigger gKibombo_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

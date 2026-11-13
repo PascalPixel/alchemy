@@ -159,16 +159,16 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
-extern struct ActorPlacement gData_02002200[];
-extern struct ActorPlacement gData_02002218[];
-extern struct ActorPlacement gData_02002320[];
-extern struct ActorPlacement gData_02002458[];
+extern struct ActorPlacement gApojiiIslands_Placements[];
+extern struct ActorPlacement gApojiiIslands_Room1Placements[];
+extern struct ActorPlacement gApojiiIslands_Room3Placements[];
+extern struct ActorPlacement gApojiiIslands_Room2Placements[];
 extern s32 gData_020024cc[];
 
-extern struct Trigger gData_020024b8[];
-extern struct Trigger gData_020024d0[];
-extern struct Trigger gData_02002698[];
-extern struct Trigger gData_0200280c[];
+extern struct Trigger gApojiiIslands_Triggers[];
+extern struct Trigger gApojiiIslands_Room1Triggers[];
+extern struct Trigger gApojiiIslands_Room3Triggers[];
+extern struct Trigger gApojiiIslands_Room2Triggers[];
 void Func_020003b0(void);
 void Func_020003cc(void);
 void Func_020006a8(void);
@@ -198,12 +198,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_02002218;
+    return gApojiiIslands_Room1Placements;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002320;
+    return gApojiiIslands_Room3Placements;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_02002458;
-  return gData_02002200;
+    return gApojiiIslands_Room2Placements;
+  return gApojiiIslands_Placements;
 }
 
 void Func_020003b0(void) {
@@ -548,12 +548,12 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_020024d0;
+    return gApojiiIslands_Room1Triggers;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002698;
+    return gApojiiIslands_Room3Triggers;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_0200280c;
-  return gData_020024b8;
+    return gApojiiIslands_Room2Triggers;
+  return gApojiiIslands_Triggers;
 }
 
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
@@ -1099,11 +1099,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02002200[] = {
+struct ActorPlacement gApojiiIslands_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002218[] = {
+struct ActorPlacement gApojiiIslands_Room1Placements[] = {
     {115, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(168), FACING_NORTHWEST, 1, 0},
     {116, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(88), FACING_NORTHEAST, 3, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(312), FACING_NORTHEAST, 1, 0},
@@ -1117,7 +1117,7 @@ struct ActorPlacement gData_02002218[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002320[] = {
+struct ActorPlacement gApojiiIslands_Room3Placements[] = {
     {116, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(152), FACING_EAST, 1, 0},
     {136, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(104), FACING_SOUTHEAST, 2, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(104), FACING_SOUTHEAST, 1, 0},
@@ -1133,14 +1133,14 @@ struct ActorPlacement gData_02002320[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002458[] = {
+struct ActorPlacement gApojiiIslands_Room2Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(280), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(280), FACING_NORTH, 2, 0},
     {246, 0x77, 1, PIXELS(376), 0, PIXELS(200), FACING_WEST, 0, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020024b8[] = {
+struct Trigger gApojiiIslands_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
@@ -1156,7 +1156,7 @@ s32 gData_020024cc[] = {
     -1,
 };
 
-struct Trigger gData_020024d0[] = {
+struct Trigger gApojiiIslands_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1197,7 +1197,7 @@ struct Trigger gData_020024d0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02002698[] = {
+struct Trigger gApojiiIslands_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1231,7 +1231,7 @@ struct Trigger gData_02002698[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200280c[] = {
+struct Trigger gApojiiIslands_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},

@@ -70,12 +70,12 @@ extern u32 gWaterDropScript[];
 extern const u8 gData_02002c74[];
 extern s16 gData_02002e30[];
 extern s16 gData_02002e60[];
-extern struct ActorPlacement gData_02002eec[];
-extern struct ActorPlacement gData_02002f04[];
-extern struct ActorPlacement gData_0200312c[];
-extern struct Trigger gData_02003214[];
-extern struct Trigger gData_02003220[];
-extern struct Trigger gData_020032d4[];
+extern struct ActorPlacement gAquaRock_Placements[];
+extern struct ActorPlacement gAquaRock_Room1Placements[];
+extern struct ActorPlacement gAquaRock_Room2Placements[];
+extern struct Trigger gAquaRock_Triggers[];
+extern struct Trigger gAquaRock_Room1Triggers[];
+extern struct Trigger gAquaRock_Room2Triggers[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -317,10 +317,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
-    return gData_02002f04;
+    return gAquaRock_Room1Placements;
   if (scene == (s32)&SceneId_Ov67bRoom2)
-    return gData_0200312c;
-  return gData_02002eec;
+    return gAquaRock_Room2Placements;
+  return gAquaRock_Placements;
 }
 
 void Func_020004e4(struct Actor *object) {
@@ -877,10 +877,10 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
-    return gData_02003220;
+    return gAquaRock_Room1Triggers;
   if (scene == (s32)&SceneId_Ov67bRoom2)
-    return gData_020032d4;
-  return gData_02003214;
+    return gAquaRock_Room2Triggers;
+  return gAquaRock_Triggers;
 }
 
 void Func_020013f8(void) {
@@ -1776,11 +1776,11 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02002eec[] = {
+LATE_DATA struct ActorPlacement gAquaRock_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02002f04[] = {
+LATE_DATA struct ActorPlacement gAquaRock_Room1Placements[] = {
     {380, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(615), FACING_SOUTH, 2, 0},
@@ -1806,7 +1806,7 @@ LATE_DATA struct ActorPlacement gData_02002f04[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_0200312c[] = {
+LATE_DATA struct ActorPlacement gAquaRock_Room2Placements[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(584), FACING_SOUTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(520), FACING_SOUTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(520), FACING_SOUTH, 2, 0},
@@ -1834,11 +1834,11 @@ LATE_DATA u32 gData_02003210[] = {
     0,
 };
 
-LATE_DATA struct Trigger gData_02003214[] = {
+LATE_DATA struct Trigger gAquaRock_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02003220[] = {
+LATE_DATA struct Trigger gAquaRock_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc402, 4, CONDITION_ALWAYS, EVENT(Func_020020bc)},
     {TRIGGER_STEP, 30, 0x320, EVENT(Func_02000f8c)},
@@ -1856,7 +1856,7 @@ LATE_DATA struct Trigger gData_02003220[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_020032d4[] = {
+LATE_DATA struct Trigger gAquaRock_Room2Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02001f90)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

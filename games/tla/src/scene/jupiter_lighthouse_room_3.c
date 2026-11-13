@@ -315,7 +315,7 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
  * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
  * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
  * struct EffectOptions *options), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_3.c:301:
+ * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_3.c:299:
  * `Whirlwind_UpdateLower' undeclared (first use in this function). */
 void FieldEffect_Spawn__first(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,

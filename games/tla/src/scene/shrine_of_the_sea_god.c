@@ -325,7 +325,7 @@ extern struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[];
 /* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room8Placements as
  * this part declared it; the joined file has another; tried as the one
  * declaration extern const u8 gShrineOfTheSeaGod_Room8Placements[], it does not
- * compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:2527:
+ * compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:2470:
  * conflicting types for `gShrineOfTheSeaGod_Room8Placements'. */
 extern const u8
     gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god[] __asm__(

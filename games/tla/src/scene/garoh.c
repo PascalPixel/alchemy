@@ -173,12 +173,12 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_020056dc[];
-extern struct ActorPlacement gData_020056f4[];
-extern struct ActorPlacement gData_020059dc[];
-extern struct ActorPlacement gData_02005a54[];
-extern struct ActorPlacement gData_02005b5c[];
-extern struct ActorPlacement gData_02005c1c[];
+extern struct ActorPlacement gGaroh_Placements[];
+extern struct ActorPlacement gGaroh_Room1Placements[];
+extern struct ActorPlacement gGaroh_Room3Placements[];
+extern struct ActorPlacement gGaroh_Room4Placements[];
+extern struct ActorPlacement gGaroh_Room2Placements[];
+extern struct ActorPlacement gGaroh_Room5Placements[];
 
 extern struct MapGridCellAnimation gData_02005de0[];
 
@@ -189,17 +189,17 @@ const void *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov65FRoom1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gData_02005874;
-    return gData_020056f4;
+    return gGaroh_Room1Placements;
   }
   if (scene == (s32)&SceneId_Ov65FRoom2)
-    return gData_02005b5c;
+    return gGaroh_Room2Placements;
   if (scene == (s32)&SceneId_Ov65FRoom3)
-    return gData_020059dc;
+    return gGaroh_Room3Placements;
   if (scene == (s32)&SceneId_Ov65FRoom4)
-    return gData_02005a54;
+    return gGaroh_Room4Placements;
   if (scene == (s32)&SceneId_Ov65FRoom5)
-    return gData_02005c1c;
-  return gData_020056dc;
+    return gGaroh_Room5Placements;
+  return gGaroh_Placements;
 }
 
 /// 6A6's Func_02000e54 for this overlay: clears the motion of every object
@@ -421,16 +421,16 @@ void Func_02000808(void) {
   }
 }
 
-extern struct Trigger gData_02005e10[];
-extern struct Trigger gData_02005e34[];
+extern struct Trigger gGaroh_Triggers[];
+extern struct Trigger gGaroh_Room1Triggers[];
 extern struct Trigger gData_02005f78[];
-extern struct Trigger gData_020060d4[];
-extern struct Trigger gData_020061d0[];
-extern struct Trigger gData_02006278[];
+extern struct Trigger gGaroh_Room2Triggers[];
+extern struct Trigger gGaroh_Room4Triggers[];
+extern struct Trigger gGaroh_Room5Triggers[];
 
 /* VIEW(first): routine gData_0200632c as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_0200632c[], it does
- * not compile in tla-ja: games/tla/src/scene/garoh.c:505: `gData_0200632c'
+ * not compile in tla-ja: games/tla/src/scene/garoh.c:474: `gData_0200632c'
  * undeclared (first use in this function). */
 extern s32 gData_0200632c__first __asm__("gData_0200632c");
 #define gData_0200632c gData_0200632c__first
@@ -462,17 +462,17 @@ const void *Scene_GetEvents(void) {
   if (scene == (s32)&SceneId_Ov65FRoom1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gData_02005f78;
-    return gData_02005e34;
+    return gGaroh_Room1Triggers;
   }
   if (scene == (s32)&SceneId_Ov65FRoom2)
-    return gData_020060d4;
+    return gGaroh_Room2Triggers;
   if (scene == (s32)&SceneId_Ov65FRoom3)
-    return gData_0200611c;
+    return gGaroh_Room3Triggers;
   if (scene == (s32)&SceneId_Ov65FRoom4)
-    return gData_020061d0;
+    return gGaroh_Room4Triggers;
   if (scene == (s32)&SceneId_Ov65FRoom5)
-    return gData_02006278;
-  return gData_02005e10;
+    return gGaroh_Room5Triggers;
+  return gGaroh_Triggers;
 }
 
 void Func_02000a68(void) {
@@ -843,7 +843,7 @@ burst:
 /* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the
  * definition has u32 gData_02006330[] = { 38, }; tried as the definition's
  * extern u32 gData_02006330[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:912: `gData_02006330__s12a8' undeclared (first
+ * games/tla/src/scene/garoh.c:863: `gData_02006330__s12a8' undeclared (first
  * use in this function). */
 extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 
@@ -3158,11 +3158,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020056dc[] = {
+struct ActorPlacement gGaroh_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020056f4[] = {
+struct ActorPlacement gGaroh_Room1Placements[] = {
     {131, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(400), FACING_EAST, 1, 0},
     {131, CONDITION_ALWAYS, 1, PIXELS(416), 0, PIXELS(424), FACING_SOUTH, 1, 0},
     {131, CONDITION_ALWAYS, 1, PIXELS(192), 0, PIXELS(304), FACING_EAST, 1, 0},
@@ -3207,7 +3207,7 @@ s16 gData_02005874[] = {
     0, 0, 0, 0,
 };
 
-struct ActorPlacement gData_020059dc[] = {
+struct ActorPlacement gGaroh_Room3Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(472), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(456), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(392), FACING_NORTH, 2, 0},
@@ -3215,7 +3215,7 @@ struct ActorPlacement gData_020059dc[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005a54[] = {
+struct ActorPlacement gGaroh_Room4Placements[] = {
     {306, CONDITION_ALWAYS, (s32)gData_0200552c, PIXELS(128), 0, PIXELS(168), FACING_NORTH, 2, 0},
     {306, CONDITION_ALWAYS, (s32)gData_0200552c, PIXELS(208), 0, PIXELS(56), FACING_NORTH, 2, 0},
     {306, CONDITION_ALWAYS, (s32)gData_0200552c, PIXELS(152), 0, PIXELS(328), FACING_NORTH, 2, 0},
@@ -3229,7 +3229,7 @@ struct ActorPlacement gData_02005a54[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005b5c[] = {
+struct ActorPlacement gGaroh_Room2Placements[] = {
     {22, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
     {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
@@ -3240,7 +3240,7 @@ struct ActorPlacement gData_02005b5c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005c1c[] = {
+struct ActorPlacement gGaroh_Room5Placements[] = {
     {22, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
     {42, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 1, 0},
@@ -3283,14 +3283,14 @@ struct MapGridCellAnimation gData_02005de0[] = {
     {gData_02005dc8, 78, 13},
 };
 
-struct Trigger gData_02005e10[] = {
+struct Trigger gGaroh_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_02005e34[] = {
+struct Trigger gGaroh_Room1Triggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_020004cc)},
     {0xc401, 2, CONDITION_ALWAYS, 2},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020004cc)},
@@ -3367,7 +3367,7 @@ struct Trigger gData_02005f78[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020060d4[] = {
+struct Trigger gGaroh_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3377,7 +3377,7 @@ struct Trigger gData_020060d4[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_0200611c[] = {
+s32 gGaroh_Room3Triggers[] = {
     1,          (s32)0xffff0001, 1,
     1,          (s32)0xffff0002, 2,
     2,          0x2100014,       (s32)Func_02001144,
@@ -3395,7 +3395,7 @@ s32 gData_0200611c[] = {
     0x40009085, -0x10000,        (s32)Func_02001098,
 };
 
-struct Trigger gData_020061d0[] = {
+struct Trigger gGaroh_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -3414,7 +3414,7 @@ struct Trigger gData_020061d0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006278[] = {
+struct Trigger gGaroh_Room5Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

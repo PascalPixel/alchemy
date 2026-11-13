@@ -161,19 +161,19 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
 /* VIEW(first): routine gData_02003d20 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA struct Trigger
  * gData_02003d20[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:212: `gData_02003d20' undeclared (first
+ * games/tla/src/scene/staff_credit.c:202: `gData_02003d20' undeclared (first
  * use in this function). */
 extern s16 gData_02003d20__first[][2] __asm__("gData_02003d20");
 #define gData_02003d20 gData_02003d20__first
 /* VIEW(first): routine gData_02003d34 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA u32 gData_02003d34[],
- * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:223:
+ * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:213:
  * `gData_02003d34' undeclared (first use in this function). */
 extern s16 gData_02003d34__first[][2] __asm__("gData_02003d34");
 #define gData_02003d34 gData_02003d34__first
 /* VIEW(first): routine gData_02003d48 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA u32 gData_02003d48[],
- * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:459:
+ * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:449:
  * `gData_02003d48' undeclared (first use in this function). */
 extern s16 gData_02003d48__first[][2] __asm__("gData_02003d48");
 #define gData_02003d48 gData_02003d48__first
@@ -185,7 +185,7 @@ extern u16 gData_02003d8e[];
 /* VIEW(first): routine gData_02003d9c as this part declared it; the joined file
  * has another; tried as the definition's extern struct Trigger
  * gData_02003d9c[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:296: `gData_02003d9c' undeclared (first
+ * games/tla/src/scene/staff_credit.c:286: `gData_02003d9c' undeclared (first
  * use in this function). */
 extern s8 gData_02003d9c__first[][2] __asm__("gData_02003d9c");
 #define gData_02003d9c gData_02003d9c__first
@@ -611,7 +611,7 @@ DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
  * has another; tried as the definition's extern LATE_DATA
  * DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0) LATE_DATA u32
  * gData_02003db8[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:606: `gData_02003db8' undeclared (first
+ * games/tla/src/scene/staff_credit.c:596: `gData_02003db8' undeclared (first
  * use in this function). */
 extern s32 gData_02003db8__first __asm__("gData_02003db8");
 #define gData_02003db8 gData_02003db8__first

@@ -175,11 +175,11 @@ extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
 extern char SceneId_Ov681Room4;
 
-extern struct ActorPlacement gData_02005970[];
+extern struct ActorPlacement gGaiaRockInside_Placements[];
 extern struct ActorPlacement gData_020059a0[];
-extern struct ActorPlacement gData_02005afc[];
-extern struct ActorPlacement gData_02005b8c[];
-extern struct ActorPlacement gData_02005c7c[];
+extern struct ActorPlacement gGaiaRockInside_Room3Placements[];
+extern struct ActorPlacement gGaiaRockInside_Room4Placements[];
+extern struct ActorPlacement gGaiaRockInside_Room5Placements[];
 extern s32 gData_02005d6c[];
 
 void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -609,7 +609,7 @@ void Func_02000900(struct Counted *object) {
   }
 }
 
-extern struct ActorPlacement gData_02005a54[];
+extern struct ActorPlacement gGaiaRockInside_Room2Placements[];
 
 /* VIEW(s07f4): variable gData_02005ee4 as s32 gData_02005ee4;
  * scene/gaia_rock_inside/s4d00 has u32 gData_02005ee4[] = {; tried as the
@@ -623,16 +623,16 @@ extern s32 gData_02005e28[];
 // Return the table for the current room.
 const void *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
-    return gData_02005a54;
+    return gGaiaRockInside_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
-    return gData_02005afc;
+    return gGaiaRockInside_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room4)
-    return gData_02005b8c;
+    return gGaiaRockInside_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
-    return gData_02005c7c;
+    return gGaiaRockInside_Room5Placements;
   if (gMainRoutineWork.entrance > 8)
     return gData_020059a0;
-  return gData_02005970;
+  return gGaiaRockInside_Placements;
 }
 
 void Func_02000a60(struct Actor *object) {
@@ -2019,29 +2019,29 @@ void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }
 void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
 
 extern char SceneId_Ov681Room5;
-extern struct Trigger gData_02005ee8[];
+extern struct Trigger gGaiaRockInside_Triggers[];
 extern struct Trigger gData_02005f30[];
 extern struct Trigger gData_02005fcc[];
-extern struct Trigger gData_02006038[];
-extern s32 gData_020060f8[];
-extern struct Trigger gData_02006164[];
-extern struct Trigger gData_020061a0[];
+extern struct Trigger gGaiaRockInside_Room2Triggers[];
+extern s32 gGaiaRockInside_Room3Triggers[];
+extern struct Trigger gGaiaRockInside_Room4Triggers[];
+extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
 // Returns the current room's table.
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
-    return gData_02006038;
+    return gGaiaRockInside_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
-    return gData_020060f8;
+    return gGaiaRockInside_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room4)
-    return gData_02006164;
+    return gGaiaRockInside_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
-    return gData_020061a0;
+    return gGaiaRockInside_Room5Triggers;
   if (gMainRoutineWork.entrance == 9)
     return gData_02005f30;
   if (gMainRoutineWork.entrance > 9)
     return gData_02005fcc;
-  return gData_02005ee8;
+  return gGaiaRockInside_Triggers;
 }
 #undef FIELD_AT
 
@@ -4678,7 +4678,7 @@ s32 gData_0200578c[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct ActorPlacement gData_02005970[] = {
+struct ActorPlacement gGaiaRockInside_Placements[] = {
     {394, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(104), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
@@ -4699,7 +4699,7 @@ u32 gData_02005a30[] = {
     SC_END,
 };
 
-struct ActorPlacement gData_02005a54[] = {
+struct ActorPlacement gGaiaRockInside_Room2Placements[] = {
     {388, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(688), FACING_SOUTH, 2, 0},
     {388, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(688), FACING_SOUTH, 2, 0},
     {273, CONDITION_ALWAYS, (s32)gData_02005a30, PIXELS(920), 0, PIXELS(360), FACING_SOUTH, 2, 0},
@@ -4709,7 +4709,7 @@ struct ActorPlacement gData_02005a54[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005afc[] = {
+struct ActorPlacement gGaiaRockInside_Room3Placements[] = {
     {388, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(352), FACING_SOUTH, 2, 0},
     {388, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(352), FACING_SOUTH, 2, 0},
     {385, CONDITION_ALWAYS, 1, PIXELS(528), 0, PIXELS(384), FACING_SOUTH, 2, 0},
@@ -4718,9 +4718,9 @@ struct ActorPlacement gData_02005afc[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020057C0(gData_02005b8c, 320, 0, 0, 0, 0, 320, 0, 320)
+DEFINE_G_DATA_020057C0(gGaiaRockInside_Room4Placements, 320, 0, 0, 0, 0, 320, 0, 320)
 
-struct ActorPlacement gData_02005c7c[] = {
+struct ActorPlacement gGaiaRockInside_Room5Placements[] = {
     {388, CONDITION_ALWAYS, 1, PIXELS(400), 0, PIXELS(368), FACING_SOUTH, 2, 0},
     {385, CONDITION_ALWAYS, 1, PIXELS(336), 0, PIXELS(408), FACING_SOUTH, 2, 0},
     {372, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(648), FACING_SOUTH, 2, 0},
@@ -4785,7 +4785,7 @@ u32 gData_02005ee4[] = {
     0,
 };
 
-struct Trigger gData_02005ee8[] = {
+struct Trigger gGaiaRockInside_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200485c)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_0200485c)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_0200485c)},
@@ -4822,7 +4822,7 @@ struct Trigger gData_02005fcc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006038[] = {
+struct Trigger gGaiaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4841,7 +4841,7 @@ struct Trigger gData_02006038[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_020060f8[] = {
+s32 gGaiaRockInside_Room3Triggers[] = {
     1,
     (s32)0xffff0001,
     1,
@@ -4871,7 +4871,7 @@ s32 gData_020060f8[] = {
     0,
 };
 
-struct Trigger gData_02006164[] = {
+struct Trigger gGaiaRockInside_Room4Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4879,7 +4879,7 @@ struct Trigger gData_02006164[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020061a0[] = {
+struct Trigger gGaiaRockInside_Room5Triggers[] = {
     {0xce01, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xce01, 3, CONDITION_ALWAYS, 3},

@@ -105,8 +105,8 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-extern struct Trigger gData_020022e8[];
-extern struct Trigger gData_0200236c[];
+extern struct Trigger gJupiterLighthouseBasement_Triggers[];
+extern struct Trigger gJupiterLighthouseBasement_Room2Triggers[];
 
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
@@ -143,8 +143,8 @@ void Func_02000124(void) { Import_EventSetExitRequest(6); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2)
-    return gData_0200236c;
-  return gData_020022e8;
+    return gJupiterLighthouseBasement_Room2Triggers;
+  return gJupiterLighthouseBasement_Triggers;
 }
 
 void Func_0200015c(struct Actor *object) {
@@ -272,7 +272,7 @@ s32 Scene_PrepareMap(void) {
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another; tried as the definition's extern s32
  * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_basement.c:278:
+ * games/tla/src/scene/jupiter_lighthouse_basement.c:274:
  * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
@@ -285,7 +285,7 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
  * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
  * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_basement.c:287: `gPaletteCycleFrame'
+ * games/tla/src/scene/jupiter_lighthouse_basement.c:283: `gPaletteCycleFrame'
  * undeclared (first use in this function). */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
@@ -653,7 +653,7 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020022e8[] = {
+struct Trigger gJupiterLighthouseBasement_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -667,7 +667,7 @@ struct Trigger gData_020022e8[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200236c[] = {
+struct Trigger gJupiterLighthouseBasement_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TABLE_END},
 };

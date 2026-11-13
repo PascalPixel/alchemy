@@ -153,11 +153,11 @@ union SparkView {
   struct SparkBytes bytes;
 };
 
-extern struct ActorPlacement gData_0200654c[];
-extern struct ActorPlacement gData_02006564[];
-extern struct ActorPlacement gData_0200663c[];
-extern struct ActorPlacement gData_020066b4[];
-extern struct ActorPlacement gData_020068ac[];
+extern struct ActorPlacement gAirsRockInside_Placements[];
+extern struct ActorPlacement gAirsRockInside_Room1Placements[];
+extern struct ActorPlacement gAirsRockInside_Room2Placements[];
+extern struct ActorPlacement gAirsRockInside_Room3Placements[];
+extern struct ActorPlacement gAirsRockInside_Room5Placements[];
 
 void Func_020026c0(void);
 
@@ -186,16 +186,16 @@ void Actor_PlaceMovedBlock(void);
 void Func_02002790(void);
 void Func_02004534(void);
 
-extern struct Trigger gData_02006c10[];
-extern struct Trigger gData_02006d6c[];
-extern struct Trigger gData_02006e2c[];
-extern struct Trigger gData_02006eec[];
-extern struct Trigger gData_02006fa0[];
-extern struct Trigger gData_0200706c[];
-extern struct Trigger gData_020070fc[];
-extern struct Trigger gData_02007228[];
-extern struct Trigger gData_02007318[];
-extern struct Trigger gData_020073a8[];
+extern struct Trigger gAirsRockInside_Room1Triggers[];
+extern struct Trigger gAirsRockInside_Room2Triggers[];
+extern struct Trigger gAirsRockInside_Room3Triggers[];
+extern struct Trigger gAirsRockInside_Room4Triggers[];
+extern struct Trigger gAirsRockInside_Room5Triggers[];
+extern struct Trigger gAirsRockInside_Room6Triggers[];
+extern struct Trigger gAirsRockInside_Room7Triggers[];
+extern struct Trigger gAirsRockInside_Room8Triggers[];
+extern struct Trigger gAirsRockInside_Room9Triggers[];
+extern struct Trigger gAirsRockInside_Room10Triggers[];
 
 void FieldEffect_SetAttached(u32 id, s32 mode);
 void MapGrid_WaitForShakeToSettle(void);
@@ -328,16 +328,17 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 
 // Scene code of overlay 0x664, in ROM order.
 
-extern struct ActorPlacement gData_0200675c[];
-extern struct ActorPlacement gData_020068f4[];
-extern struct ActorPlacement gData_020069e4[];
-extern struct ActorPlacement gData_02006aec[];
-/* VIEW(first): variable gData_02006bac as this part declared it; the joined
- * file has another; tried as the one declaration extern u32 gData_02006bac[],
- * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:1552:
- * `gData_02006bac' undeclared (first use in this function). */
-extern u32 gData_02006bac__first[] __asm__("gData_02006bac");
-#define gData_02006bac gData_02006bac__first
+extern struct ActorPlacement gAirsRockInside_Room4Placements[];
+extern struct ActorPlacement gAirsRockInside_Room6Placements[];
+extern struct ActorPlacement gAirsRockInside_Room7Placements[];
+extern struct ActorPlacement gAirsRockInside_Room8Placements[];
+/* VIEW(first): variable gAirsRockInside_Room9Placements as this part declared
+ * it; the joined file has another; tried as the one declaration extern u32
+ * gAirsRockInside_Room9Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/airs_rock_inside.c:1544:
+ * `gAirsRockInside_Room9Placements' undeclared (first use in this function). */
+extern u32 gData_02006bac__first[] __asm__("gAirsRockInside_Room9Placements");
+#define gAirsRockInside_Room9Placements gData_02006bac__first
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -1531,24 +1532,24 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
-    return gData_02006564;
+    return gAirsRockInside_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2)
-    return gData_0200663c;
+    return gAirsRockInside_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3)
-    return gData_020066b4;
+    return gAirsRockInside_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4)
-    return gData_0200675c;
+    return gAirsRockInside_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5)
-    return gData_020068ac;
+    return gAirsRockInside_Room5Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6)
-    return gData_020068f4;
+    return gAirsRockInside_Room6Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7)
-    return gData_020069e4;
+    return gAirsRockInside_Room7Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8)
-    return gData_02006aec;
+    return gAirsRockInside_Room8Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9)
-    return gData_02006bac;
-  return gData_0200654c;
+    return gAirsRockInside_Room9Placements;
+  return gAirsRockInside_Placements;
 }
 
 void Func_020026c0(void) {
@@ -2458,14 +2459,14 @@ extern u32 gData_020060e0[];
 extern u32 gData_02006094[];
 /* VIEW(s2cf0): routine gData_020060b0 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_020060b0[],
- * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2569:
+ * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2549:
  * `gData_020060b0' undeclared (first use in this function). */
 extern const u8 gData_020060b0__s2cf0[] __asm__("gData_020060b0");
 #define gData_020060b0 gData_020060b0__s2cf0
 extern u32 gData_02006104[];
 /* VIEW(s2cf0): routine gData_020060c0 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_020060c0[],
- * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2608:
+ * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2588:
  * `gData_020060c0' undeclared (first use in this function). */
 extern const u8 gData_020060c0__s2cf0[] __asm__("gData_020060c0");
 #define gData_020060c0 gData_020060c0__s2cf0
@@ -2760,7 +2761,7 @@ void Func_02004880(void) {}
  * scene/airs_rock_inside/airs_rock_inside has void Func_020007b4(s32 mode, s32
  * step) {; tried as the definition's void Func_020007b4(s32 mode, s32 step),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/airs_rock_inside.c:2781: too few arguments to function
+ * games/tla/src/scene/airs_rock_inside.c:2761: too few arguments to function
  * `Func_020007b4'. */
 void Func_020007b4__s2cf0(void) __asm__("Func_020007b4");
 
@@ -2925,26 +2926,26 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov664Room1)
-    return gData_02006c10;
+    return gAirsRockInside_Room1Triggers;
   if (scene == (s32)&SceneId_Ov664Room2)
-    return gData_02006d6c;
+    return gAirsRockInside_Room2Triggers;
   if (scene == (s32)&SceneId_Ov664Room3)
-    return gData_02006e2c;
+    return gAirsRockInside_Room3Triggers;
   if (scene == (s32)&SceneId_Ov664Room4)
-    return gData_02006eec;
+    return gAirsRockInside_Room4Triggers;
   if (scene == (s32)&SceneId_Ov664Room5)
-    return gData_02006fa0;
+    return gAirsRockInside_Room5Triggers;
   if (scene == (s32)&SceneId_Ov664Room6)
-    return gData_0200706c;
+    return gAirsRockInside_Room6Triggers;
   if (scene == (s32)&SceneId_Ov664Room7)
-    return gData_020070fc;
+    return gAirsRockInside_Room7Triggers;
   if (scene == (s32)&SceneId_Ov664Room8)
-    return gData_02007228;
+    return gAirsRockInside_Room8Triggers;
   if (scene == (s32)&SceneId_Ov664Room9)
-    return gData_02007318;
+    return gAirsRockInside_Room9Triggers;
   if (scene == (s32)&SceneId_Ov664Room10)
-    return gData_020073a8;
-  return gData_02006d6c;
+    return gAirsRockInside_Room10Triggers;
+  return gAirsRockInside_Room2Triggers;
 }
 
 void Func_02004cc8(void) {
@@ -3047,7 +3048,7 @@ void Func_02004eb0(void) {
 
 /* VIEW(s2cf0): routine gData_020073d8 as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gData_020073d8[], it does
- * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:3066:
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:3046:
  * `gData_020073d8' undeclared (first use in this function). */
 extern s32 gData_020073d8__s2cf0 __asm__("gData_020073d8");
 #define gData_020073d8 gData_020073d8__s2cf0
@@ -3107,7 +3108,7 @@ void Func_02004f3c(void) {
 #undef TARGET
 #undef PICK_UP
 #undef SHAKE
-#undef gData_02006bac
+#undef gAirsRockInside_Room9Placements
 #undef gData_020060b0
 #undef gData_020060c0
 #undef gData_020073d8
@@ -3652,11 +3653,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_0200654c[] = {
+struct ActorPlacement gAirsRockInside_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006564[] = {
+struct ActorPlacement gAirsRockInside_Room1Placements[] = {
     {377, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_EAST, 2, 2},
     {377, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_WEST, 2, 2},
     {377, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
@@ -3668,7 +3669,7 @@ struct ActorPlacement gData_02006564[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200663c[] = {
+struct ActorPlacement gAirsRockInside_Room2Placements[] = {
     {377, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_SOUTH, 2, 2},
     {382, CONDITION_ALWAYS, 1, 0x3, 0, 0, FACING_SOUTH, 2, 2},
@@ -3676,7 +3677,7 @@ struct ActorPlacement gData_0200663c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020066b4[] = {
+struct ActorPlacement gAirsRockInside_Room3Placements[] = {
     {272, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {377, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_EAST, 2, 2},
     {377, CONDITION_ALWAYS, 1, 0x3, 0, 0, FACING_WEST, 2, 2},
@@ -3686,7 +3687,7 @@ struct ActorPlacement gData_020066b4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200675c[] = {
+struct ActorPlacement gAirsRockInside_Room4Placements[] = {
     {325, CONDITION_ALWAYS, (s32)gData_020061f8, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_SOUTH, 2, 2},
     {325, CONDITION_ALWAYS, (s32)gData_020061f8, 0x3, 0, 0, FACING_SOUTH, 2, 2},
@@ -3703,13 +3704,13 @@ struct ActorPlacement gData_0200675c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020068ac[] = {
+struct ActorPlacement gAirsRockInside_Room5Placements[] = {
     {323, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {6, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_WEST, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020068f4[] = {
+struct ActorPlacement gAirsRockInside_Room6Placements[] = {
     {272, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {325, CONDITION_ALWAYS, (s32)gData_020061f8, 0x2, 0, 0, FACING_SOUTH, 2, 2},
     {325, CONDITION_ALWAYS, (s32)gData_020061f8, 0x3, 0, 0, FACING_SOUTH, 2, 2},
@@ -3722,7 +3723,7 @@ struct ActorPlacement gData_020068f4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020069e4[] = {
+struct ActorPlacement gAirsRockInside_Room7Placements[] = {
     {272, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 0x3, 0, 0, FACING_SOUTH, 2, 2},
@@ -3736,7 +3737,7 @@ struct ActorPlacement gData_020069e4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006aec[] = {
+struct ActorPlacement gAirsRockInside_Room8Placements[] = {
     {272, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_SOUTH, 2, 2},
     {325, CONDITION_ALWAYS, (s32)gData_020061f8, 0x3, 0, 0, FACING_SOUTH, 2, 2},
@@ -3747,12 +3748,12 @@ struct ActorPlacement gData_02006aec[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003C88(gData_02006bac, 0xffff0145, gData_020061f8, 1, 0x2024000,
+DEFINE_G_DATA_02003C88(gAirsRockInside_Room9Placements, 0xffff0145, gData_020061f8, 1, 0x2024000,
                        1, 2, 0xffff0179, 3, 0x2020000)
 
 s32 gData_02006c0c = -1;
 
-struct Trigger gData_02006c10[] = {
+struct Trigger gAirsRockInside_Room1Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3784,7 +3785,7 @@ struct Trigger gData_02006c10[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006d6c[] = {
+struct Trigger gAirsRockInside_Room2Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x4602, 20, CONDITION_ALWAYS, EVENT(Func_02003ac4)},
@@ -3803,7 +3804,7 @@ struct Trigger gData_02006d6c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006e2c[] = {
+struct Trigger gAirsRockInside_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02002790)},
@@ -3822,7 +3823,7 @@ struct Trigger gData_02006e2c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006eec[] = {
+struct Trigger gAirsRockInside_Room4Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -3840,7 +3841,7 @@ struct Trigger gData_02006eec[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006fa0[] = {
+struct Trigger gAirsRockInside_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02002790)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02002898)},
@@ -3860,7 +3861,7 @@ struct Trigger gData_02006fa0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200706c[] = {
+struct Trigger gAirsRockInside_Room6Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02002790)},
@@ -3875,7 +3876,7 @@ struct Trigger gData_0200706c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020070fc[] = {
+struct Trigger gAirsRockInside_Room7Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02002790)},
@@ -3903,7 +3904,7 @@ struct Trigger gData_020070fc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02007228[] = {
+struct Trigger gAirsRockInside_Room8Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(Func_02004ab8)},
@@ -3926,7 +3927,7 @@ struct Trigger gData_02007228[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02007318[] = {
+struct Trigger gAirsRockInside_Room9Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02002790)},
@@ -3941,7 +3942,7 @@ struct Trigger gData_02007318[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020073a8[] = {
+struct Trigger gAirsRockInside_Room10Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_02004bb4)},

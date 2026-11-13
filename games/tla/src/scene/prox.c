@@ -158,9 +158,9 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 extern s16 gData_02004b2c[];
 extern u32 gProx_Room2Placements[];
-extern s16 gData_02004d9c[];
+extern s16 gProx_Room3Placements[];
 extern s32 gData_02004f04[];
-extern u32 gData_02005444[];
+extern u32 gProx_Room5Placements[];
 extern u32 gData_020054a4[];
 extern u32 gProx_Room6Placements[];
 extern struct Trigger gProx_Triggers[];
@@ -383,7 +383,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov6a8Room3) {
     if (Event_GetFlag(0xa3d))
       return gData_02004f04;
-    return gData_02004d9c;
+    return gProx_Room3Placements;
   }
   if (scene == (s32)&SceneId_Ov6a8Room4) {
     if (Event_GetFlag(0xa3d)) {
@@ -396,7 +396,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov6a8Room5) {
     if (Event_GetFlag(0xa3d))
       return gData_020054a4;
-    return gData_02005444;
+    return gProx_Room5Placements;
   }
   if (scene == (s32)&SceneId_Ov6a8Room6)
     return gProx_Room6Placements;
@@ -417,7 +417,7 @@ void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
 /* VIEW(prox): variable gData_02005a20 as extern const u8 gData_02005a20[]; the
  * definition has struct Trigger gData_02005a20[] = { { 1, 1, CONDITION_ALWAYS,
  * 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4,
- * CON...; tried as the definition's extern u32 gData_02005a20[], it does not
+ * CON...; tried as the definition's extern s32 gData_02005a20[], it does not
  * compile in tla-ja: games/tla/src/scene/prox.c:2662: conflicting types for
  * `gData_02005a20'. */
 extern const u8 gData_02005a20__prox[] __asm__("gData_02005a20");
@@ -2461,7 +2461,7 @@ u32 gProx_Room2Placements[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-s16 gData_02004d9c[] = {
+s16 gProx_Room3Placements[] = {
     175, -1, 1, 0, 0, 540, 0, 0,
     0, 388, 0xb000, 3, 172, -1, 1, 0,
     0, 568, 0, 0, 0, 388, 0xb000, 1,
@@ -2564,7 +2564,7 @@ s16 gData_0200521c[] = {
     0, 0, 0, 0,
 };
 
-u32 gData_02005444[] = {
+u32 gProx_Room5Placements[] = {
     0xffff00ae, 1, 0x2740000, 0, 0xc80000, 0x15000,
     0xffff00ae, 1, 0x1740000, 0, 0x3280000, 0x3b000,
     0xffff00b0, 1, 0x1720000, 0, 0x2e40000, 0x15000,

@@ -512,7 +512,7 @@ u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 /* VIEW(rubble): routine gIzumoRuins_RubbleSprayScript as this part declared it;
  * the joined file has another; tried as the one declaration extern const s32
  * gIzumoRuins_RubbleSprayScript[], it does not compile in tla-ja:
- * games/tla/src/scene/izumo_ruins.c:535: `gIzumoRuins_RubbleSprayScript'
+ * games/tla/src/scene/izumo_ruins.c:534: `gIzumoRuins_RubbleSprayScript'
  * undeclared (first use in this function). */
 extern const s32 gIzumoRuins_RubbleSprayScript__rubble[] __asm__(
     "gIzumoRuins_RubbleSprayScript");
@@ -562,7 +562,7 @@ void Rubble_Spray(s32 spread) {
 /* VIEW(rubble): routine gIzumoRuins_RubbleBurstScript as this part declared it;
  * the joined file has another; tried as the one declaration extern const s32
  * gIzumoRuins_RubbleBurstScript[], it does not compile in tla-ja:
- * games/tla/src/scene/izumo_ruins.c:579: `gIzumoRuins_RubbleBurstScript'
+ * games/tla/src/scene/izumo_ruins.c:578: `gIzumoRuins_RubbleBurstScript'
  * undeclared (first use in this function). */
 extern const s32 gIzumoRuins_RubbleBurstScript__rubble[] __asm__(
     "gIzumoRuins_RubbleBurstScript");

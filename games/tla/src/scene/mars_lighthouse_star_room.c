@@ -147,7 +147,7 @@ extern s16 gData_020047fc[];
 /* VIEW(first): routine gMarsLighthouseStarRoom_ScatterIceChipsScript as this
  * part declared it; the joined file has another; tried as the one declaration
  * extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript[], it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2255:
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2222:
  * conflicting types for `gMarsLighthouseStarRoom_ScatterIceChipsScript'. */
 extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript__first[] __asm__(
     "gMarsLighthouseStarRoom_ScatterIceChipsScript");
@@ -1524,7 +1524,7 @@ void Func_02001de4(s16 value) {
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
  * MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1577: structure has
+ * tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1565: structure has
  * no member named `stopCount'. */
 struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];
@@ -1675,7 +1675,7 @@ struct MarsLighthouseEventWork {
  * owner); scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); tried
  * as the definition's void *Unit_Get(s32 owner), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1654: request for member `hp'
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1642: request for member `hp'
  * in something not a structure or union. */
 struct BattleUnit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride_handle
@@ -1939,7 +1939,7 @@ void Func_02002738(struct Actor *object) {
 /* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1927: structure has no member
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1911: structure has no member
  * named `unk6c'. */
 struct Work020023c4__s236c {
   u8 unk00[4];
@@ -2016,7 +2016,7 @@ void Func_02002d90(void) {
 /* VIEW(s2148): tag struct Position as struct Position__s2148;
  * scene/mars_lighthouse_star_room has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1991: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1975: redefinition of `struct
  * Position'. */
 #define Position Position__s2148
 /// A point on the map: 16.16 fixed-point pixels.
@@ -2083,7 +2083,7 @@ void Func_02003384(u16 value) { gData_02004cf0[0] = value; }
 /* VIEW(set_data): tag struct Position as struct Position__set_data;
  * scene/mars_lighthouse_star_room has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:2048: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_star_room.c:2030: redefinition of `struct
  * Position'. */
 #define Position Position__set_data
 /// A point on the map: 16.16 fixed-point pixels.
@@ -2240,9 +2240,8 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 // Scene code of overlay 0x6ab, in ROM order.
 
 /* VIEW(s3e04): routine Func_0200363c as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2534: conflicting
- * types for `gData_02004ce0__s363c'. */
+ * has another; tried as the rest of the object declares it, Func_02003930
+ * (gone) moves: 267 of 267 instructions in tla-ja. */
 void Func_0200363c__s3e04(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     struct EffectOptions *options) __asm__("Func_0200363c");
@@ -2262,7 +2261,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3e04): routine CrackedTile_FallEvent as this part declared it; the
  * joined file has another; tried as the one declaration void
  * CrackedTile_FallEvent(), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:2235: too many arguments to
+ * games/tla/src/scene/mars_lighthouse_star_room.c:2203: too many arguments to
  * function `CrackedTile_FallEvent'. */
 void CrackedTile_FallEvent__s3e04(
     struct CellTarget *work,

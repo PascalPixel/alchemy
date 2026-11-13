@@ -320,42 +320,42 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_02004688[];
-extern struct ActorPlacement gData_020046a0[];
-extern struct ActorPlacement gData_02004748[];
-extern struct ActorPlacement gData_020047a8[];
-extern struct ActorPlacement gData_02004808[];
-extern struct ActorPlacement gData_020048c8[];
-extern struct ActorPlacement gData_02004910[];
-extern struct ActorPlacement gData_020049e8[];
-extern struct ActorPlacement gData_02004a00[];
-extern struct ActorPlacement gData_02004a48[];
-extern struct ActorPlacement gData_02004b98[];
+extern struct ActorPlacement gAquaRockInside_Placements[];
+extern struct ActorPlacement gAquaRockInside_Room1Placements[];
+extern struct ActorPlacement gAquaRockInside_Room2Placements[];
+extern struct ActorPlacement gAquaRockInside_Room3Placements[];
+extern struct ActorPlacement gAquaRockInside_Room4Placements[];
+extern struct ActorPlacement gAquaRockInside_Room5Placements[];
+extern struct ActorPlacement gAquaRockInside_Room6Placements[];
+extern struct ActorPlacement gAquaRockInside_Room7Placements[];
+extern struct ActorPlacement gAquaRockInside_Room8Placements[];
+extern struct ActorPlacement gAquaRockInside_Room9Placements[];
+extern struct ActorPlacement gAquaRockInside_Room10Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
-    return gData_020046a0;
+    return gAquaRockInside_Room1Placements;
   if (scene == (s32)&SceneId_Ov67cRoom2)
-    return gData_02004748;
+    return gAquaRockInside_Room2Placements;
   if (scene == (s32)&SceneId_Ov67cRoom3)
-    return gData_020047a8;
+    return gAquaRockInside_Room3Placements;
   if (scene == (s32)&SceneId_Ov67cRoom4)
-    return gData_02004808;
+    return gAquaRockInside_Room4Placements;
   if (scene == (s32)&SceneId_Ov67cRoom5)
-    return gData_020048c8;
+    return gAquaRockInside_Room5Placements;
   if (scene == (s32)&SceneId_Ov67cRoom6)
-    return gData_02004910;
+    return gAquaRockInside_Room6Placements;
   if (scene == (s32)&SceneId_Ov67cRoom7)
-    return gData_020049e8;
+    return gAquaRockInside_Room7Placements;
   if (scene == (s32)&SceneId_Ov67cRoom8)
-    return gData_02004a00;
+    return gAquaRockInside_Room8Placements;
   if (scene == (s32)&SceneId_Ov67cRoom9)
-    return gData_02004a48;
+    return gAquaRockInside_Room9Placements;
   if (scene == (s32)&SceneId_Ov67cRoom10)
-    return gData_02004b98;
-  return gData_02004688;
+    return gAquaRockInside_Room10Placements;
+  return gAquaRockInside_Placements;
 }
 
 // When object 10 reaches row 12, or object 11 column 51, stops its motion,
@@ -549,7 +549,7 @@ void Func_020007a8(void) {
 /* VIEW(aqua_rock_inside): variable gData_02003fb8 as const u8 gData_02003fb8[];
  * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {; tried as the
  * definition's extern u32 gData_02003fb8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:608: `gData_02003fb8' undeclared
+ * games/tla/src/scene/aqua_rock_inside.c:586: `gData_02003fb8' undeclared
  * (first use in this function). */
 extern const u8 gData_02003fb8__aqua_rock_inside[] __asm__("gData_02003fb8");
 #define gData_02003fb8 gData_02003fb8__aqua_rock_inside
@@ -759,7 +759,7 @@ void Func_02000ca8(void) {
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:807: too many arguments to
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:785: too many arguments to
  * function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 
@@ -1132,7 +1132,7 @@ extern u32 gData_02003fe8[];
  * Orbiter_Spiral, 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
  * Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] = {; tried as
  * the definition's extern u32 gData_02004004[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1237: `gData_02004004' undeclared
+ * games/tla/src/scene/aqua_rock_inside.c:1215: `gData_02004004' undeclared
  * (first use in this function). */
 extern const u8 gData_02004004__s1620[] __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__s1620
@@ -1141,7 +1141,7 @@ extern u32 gData_02004058[];
  * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02004014(gData_02004014,
  * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] =
  * {; tried as the one declaration extern const u8 gData_02004014[], it does not
- * compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:1270:
+ * compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:1248:
  * `gData_02004014' undeclared (first use in this function). */
 extern const u8 gData_02004014__s1620[] __asm__("gData_02004014");
 #define gData_02004014 gData_02004014__s1620
@@ -1415,42 +1415,42 @@ DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001cd8, 280)
 
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001d40, 248)
 
-extern struct Trigger gData_02004c70[];
-extern struct Trigger gData_02004c7c[];
-extern struct Trigger gData_02004d88[];
-extern struct Trigger gData_02004e48[];
-extern struct Trigger gData_02004ed8[];
-extern struct Trigger gData_02004fb0[];
-extern struct Trigger gData_0200507c[];
-extern struct Trigger gData_020051b4[];
-extern s16 gData_020051fc[];
-extern struct Trigger gData_02005268[];
-extern struct Trigger gData_020052f8[];
+extern struct Trigger gAquaRockInside_Triggers[];
+extern struct Trigger gAquaRockInside_Room1Triggers[];
+extern struct Trigger gAquaRockInside_Room2Triggers[];
+extern struct Trigger gAquaRockInside_Room3Triggers[];
+extern struct Trigger gAquaRockInside_Room4Triggers[];
+extern struct Trigger gAquaRockInside_Room5Triggers[];
+extern struct Trigger gAquaRockInside_Room6Triggers[];
+extern struct Trigger gAquaRockInside_Room7Triggers[];
+extern s16 gAquaRockInside_Room8Triggers[];
+extern struct Trigger gAquaRockInside_Room9Triggers[];
+extern struct Trigger gAquaRockInside_Room10Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
-    return gData_02004c7c;
+    return gAquaRockInside_Room1Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom2)
-    return gData_02004d88;
+    return gAquaRockInside_Room2Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom3)
-    return gData_02004e48;
+    return gAquaRockInside_Room3Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom4)
-    return gData_02004ed8;
+    return gAquaRockInside_Room4Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom5)
-    return gData_02004fb0;
+    return gAquaRockInside_Room5Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom6)
-    return gData_0200507c;
+    return gAquaRockInside_Room6Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom7)
-    return gData_020051b4;
+    return gAquaRockInside_Room7Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom8)
-    return gData_020051fc;
+    return gAquaRockInside_Room8Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom9)
-    return gData_02005268;
+    return gAquaRockInside_Room9Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom10)
-    return gData_020052f8;
-  return gData_02004c70;
+    return gAquaRockInside_Room10Triggers;
+  return gAquaRockInside_Triggers;
 }
 
 void Func_02001e78(s32 id) {
@@ -2458,7 +2458,7 @@ DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
  * const u8 *b, void (*handler)(void)); tried as the definition's void
  * Func_02003ab0(const u16 *spots, const u16 *levels, void(*handler) (void)),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:2480: conflicting types for
+ * games/tla/src/scene/aqua_rock_inside.c:2434: conflicting types for
  * `Func_02003ab0'. */
 void Func_02003ab0__s3844(const u16 *spots, const u16 *levels,
                           void (*handler)(void)) __asm__("Func_02003ab0");
@@ -2781,11 +2781,11 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02004688[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020046a0[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room1Placements[] = {
     {380, CONDITION_ALWAYS, 1, PIXELS(808), 0, PIXELS(679), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(248), FACING_SOUTH, 2, 0},
@@ -2795,21 +2795,21 @@ LATE_DATA struct ActorPlacement gData_020046a0[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004748[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room2Placements[] = {
     {380, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(247), FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {244, 0x50, 1, PIXELS(776), 0, PIXELS(264), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020047a8[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room3Placements[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(264), FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(672), FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(672), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004808[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room4Placements[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(680), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(647), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(87), FACING_SOUTH, 2, 0},
@@ -2820,13 +2820,13 @@ LATE_DATA struct ActorPlacement gData_02004808[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020048c8[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room5Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(360), FACING_SOUTH, 2, 0},
     {383, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(552), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004910[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room6Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(648), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(631), FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(552), FACING_SOUTH, 2, 0},
@@ -2838,17 +2838,17 @@ LATE_DATA struct ActorPlacement gData_02004910[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020049e8[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room7Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004a00[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room8Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(328), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(328), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004a48[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room9Placements[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(264), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(231), FACING_SOUTH, 2, 0},
     {312, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(296), FACING_SOUTH, 2, 0},
@@ -2865,7 +2865,7 @@ LATE_DATA struct ActorPlacement gData_02004a48[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004b98[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room10Placements[] = {
     {312, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {312, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(248), FACING_SOUTH, 2, 1},
     {312, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(312), FACING_SOUTH, 2, 1},
@@ -2877,11 +2877,11 @@ LATE_DATA struct ActorPlacement gData_02004b98[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004c70[] = {
+LATE_DATA struct Trigger gAquaRockInside_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004c7c[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room1Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -2908,7 +2908,7 @@ LATE_DATA struct Trigger gData_02004c7c[] = {
 
 LATE_DATA s32 gData_02004d84 = 256;
 
-LATE_DATA struct Trigger gData_02004d88[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -2927,7 +2927,7 @@ LATE_DATA struct Trigger gData_02004d88[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004e48[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room3Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0xa02, 3, CONDITION_ALWAYS, EVENT(Func_02000958)},
@@ -2942,7 +2942,7 @@ LATE_DATA struct Trigger gData_02004e48[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004ed8[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -2963,7 +2963,7 @@ LATE_DATA struct Trigger gData_02004ed8[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004fb0[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room5Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -2983,7 +2983,7 @@ LATE_DATA struct Trigger gData_02004fb0[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_0200507c[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3012,7 +3012,7 @@ LATE_DATA struct Trigger gData_0200507c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_020051b4[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room7Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -3021,7 +3021,7 @@ LATE_DATA struct Trigger gData_020051b4[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s16 gData_020051fc[] = {
+LATE_DATA s16 gAquaRockInside_Room8Triggers[] = {
     49, 0, 1, -1, 1, 0, 49, 0,
     2, -1, 2, 0, 49, 0, 3, -1,
     3, 0, 33, 0, 4, -1, 4, 0,
@@ -3031,7 +3031,7 @@ LATE_DATA s16 gData_020051fc[] = {
     -1, -1, 0, 0, 0, 0,
 };
 
-LATE_DATA struct Trigger gData_02005268[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room9Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -3046,7 +3046,7 @@ LATE_DATA struct Trigger gData_02005268[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_020052f8[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room10Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc403, 30, CONDITION_ALWAYS, EVENT(Func_02001a1c)},
     {0x4403, 30, CONDITION_ALWAYS, EVENT(Func_02001c68)},

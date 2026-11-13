@@ -536,7 +536,7 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 /* VIEW(s0ff4): tag struct MagmaRockEventWork as struct
  * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock.c:559: redefinition of `struct
+ * tla-ja: games/tla/src/scene/magma_rock.c:536: redefinition of `struct
  * MagmaRockEventWork'. */
 #define MagmaRockEventWork MagmaRockEventWork__s0ff4
 struct MagmaRockEventWork {
@@ -839,7 +839,7 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 /* VIEW(s0ff4): tag union Position as union Position__s0ff4;
  * module/scene/scene.h has struct Position; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:855: `Position' defined as wrong kind of
+ * games/tla/src/scene/magma_rock.c:832: `Position' defined as wrong kind of
  * tag. */
 #define Position Position__s0ff4
 // A 16.16 position word, read whole or by halves.
@@ -876,7 +876,7 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 /* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
  * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock.c:887: redefinition of `struct
+ * tla-ja: games/tla/src/scene/magma_rock.c:864: redefinition of `struct
  * MagmaRockEffectConfig'. */
 #define MagmaRockEffectConfig MagmaRockEffectConfig__s0ff4
 struct MagmaRockEffectConfig {
@@ -913,7 +913,7 @@ struct MagmaRockEffectConfig {
  * blocks the cells ahead of and behind it on a /// cell with attribute bit 6.
  * void MagmaRock_SettleBlocks(u16 *ids) {; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1257: conflicting types for
+ * games/tla/src/scene/magma_rock.c:1233: conflicting types for
  * `MagmaRock_SetCellShape'. */
 void MagmaRock_SetCellShape__s0ff4(s32 layer, s32 x, s32 z, s32 height) __asm__(
     "MagmaRock_SetCellShape");
@@ -1486,7 +1486,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef MagmaRock_SetCellShape
 /* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined
  * file has another; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/magma_rock.c:1504:
+ * does not compile in tla-ja: games/tla/src/scene/magma_rock.c:1450:
  * redefinition of `struct MagmaRockEventWork'. */
 #define MagmaRockEventWork MagmaRockEventWork__s22ac
 // @file

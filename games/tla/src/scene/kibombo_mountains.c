@@ -85,18 +85,18 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 DEFINE_ACTOR_BOB(Actor_Bob)
 
-extern struct ActorPlacement gData_02001294[];
-extern struct ActorPlacement gData_020015f0[];
-extern struct ActorPlacement gData_020018c8[];
+extern struct ActorPlacement gKibomboMountains_Placements[];
+extern struct ActorPlacement gKibomboMountains_Room1Placements[];
+extern struct ActorPlacement gKibomboMountains_Room2Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
-    return gData_020015f0;
+    return gKibomboMountains_Room1Placements;
   if (scene == (s32)&SceneId_Ov66fRoom2)
-    return gData_020018c8;
-  return gData_02001294;
+    return gKibomboMountains_Room2Placements;
+  return gKibomboMountains_Placements;
 }
 
 DEFINE_PILLAR_SET_MOVED(Pillar_SetMoved, 11, 24, 32, 22, 0x221)
@@ -278,21 +278,21 @@ void Func_0200051c(s32 unused, s32 cell) {
   }
 }
 
-extern struct Trigger gData_02001ad8[];
-extern struct Trigger gData_02001ae4[];
-extern struct Trigger gData_02001c58[];
-extern s16 gData_02001db4[];
+extern struct Trigger gKibomboMountains_Triggers[];
+extern struct Trigger gKibomboMountains_Room1Triggers[];
+extern struct Trigger gKibomboMountains_Room2Triggers[];
+extern s16 gKibomboMountains_Room3Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
-    return gData_02001ae4;
+    return gKibomboMountains_Room1Triggers;
   if (scene == (s32)&SceneId_Ov66fRoom2)
-    return gData_02001c58;
+    return gKibomboMountains_Room2Triggers;
   if (scene == (s32)&SceneId_Ov66fRoom3)
-    return gData_02001db4;
-  return gData_02001ad8;
+    return gKibomboMountains_Room3Triggers;
+  return gKibomboMountains_Triggers;
 }
 
 void Func_02000af0(void);
@@ -673,7 +673,7 @@ u32 gData_02001284[] = {
     SC_END,
 };
 
-struct ActorPlacement gData_02001294[] = {
+struct ActorPlacement gKibomboMountains_Placements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -749,7 +749,7 @@ u32 gData_02001410[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct ActorPlacement gData_020015f0[] = {
+struct ActorPlacement gKibomboMountains_Room1Placements[] = {
     {83, 0x8ff, (s32)gData_020012ac, PIXELS(616), 0, PIXELS(328), FACING_NORTH, 2, 0},
     {83, 0x8ff, (s32)gData_02001334, PIXELS(824), 0, PIXELS(584), FACING_NORTH, 2, 0},
     {189, 0x8ff, (s32)gData_02001410, PIXELS(760), 0, PIXELS(488), FACING_SOUTH, 2, 0},
@@ -769,7 +769,7 @@ DEFINE_G_DATA_02001334(gData_02001728, 184, 296, 248)
 
 DEFINE_G_DATA_02001334(gData_020017f8, 248, 448, 264)
 
-struct ActorPlacement gData_020018c8[] = {
+struct ActorPlacement gKibomboMountains_Room2Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {83, 0x8ff, (s32)gData_02001728, PIXELS(200), 0, PIXELS(296), FACING_SOUTH, 2, 0},
@@ -794,11 +794,11 @@ struct ActorPlacement gData_020018c8[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001ad8[] = {
+struct Trigger gKibomboMountains_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001ae4[] = {
+struct Trigger gKibomboMountains_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -832,7 +832,7 @@ struct Trigger gData_02001ae4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001c58[] = {
+struct Trigger gKibomboMountains_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -864,7 +864,7 @@ struct Trigger gData_02001c58[] = {
     {TRIGGER_TABLE_END},
 };
 
-s16 gData_02001db4[] = {
+s16 gKibomboMountains_Room3Triggers[] = {
     1, 0, 1, -1, 1, 0, 1, 0,
     2, -1, 2, 0, 1, 0, 3, -1,
     3, 0, -1, -1, 0, 0, 0, 0,

@@ -151,12 +151,12 @@ void Func_02001cac(void);
 void Func_02001cfc(void);
 
 extern u32 gSmokeScript[];
-extern struct Trigger gData_02004b14[];
-extern struct Trigger gData_02004b20[];
-extern struct Trigger gData_02004bb0[];
-extern struct Trigger gData_02004ca0[];
-extern struct Trigger gData_02004d84[];
-extern struct Trigger gData_02004e5c[];
+extern struct Trigger gIslets_Triggers[];
+extern struct Trigger gIslets_Room1Triggers[];
+extern struct Trigger gIslets_Room2Triggers[];
+extern struct Trigger gIslets_Room3Triggers[];
+extern struct Trigger gIslets_Room4Triggers[];
+extern struct Trigger gIslets_Room5Triggers[];
 extern u16 gSceneState[];
 extern char SceneId_Ov674Room1;
 extern char SceneId_Ov674Room2;
@@ -193,25 +193,25 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-extern struct ActorPlacement gData_02004754[];
-extern struct ActorPlacement gData_0200476c[];
-extern struct ActorPlacement gData_020047e4[];
-extern struct ActorPlacement gData_0200494c[];
-extern struct ActorPlacement gData_020049c4[];
-extern struct ActorPlacement gData_02004a84[];
+extern struct ActorPlacement gIslets_Placements[];
+extern struct ActorPlacement gIslets_Room1Placements[];
+extern struct ActorPlacement gIslets_Room2Placements[];
+extern struct ActorPlacement gIslets_Room3Placements[];
+extern struct ActorPlacement gIslets_Room4Placements[];
+extern struct ActorPlacement gIslets_Room5Placements[];
 extern s32 gData_02005190;
 extern s32 gData_02005194;
 extern s32 gData_02005198;
 extern s32 gData_0200519c;
 /* VIEW(first): routine gData_02004028 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02004028[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1610:
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1604:
  * `gData_02004028' undeclared (first use in this function). */
 extern const u8 gData_02004028__first[] __asm__("gData_02004028");
 #define gData_02004028 gData_02004028__first
 /* VIEW(first): routine gData_020046bc as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_020046bc[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:1606: `gData_020046bc'
+ * not compile in tla-ja: games/tla/src/scene/islets.c:1600: `gData_020046bc'
  * undeclared (first use in this function). */
 extern const struct IsletsExit
     gData_020046bc__first[] __asm__("gData_020046bc");
@@ -240,19 +240,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
-    return gData_0200476c;
+    return gIslets_Room1Placements;
   if (scene == (s32)&SceneId_Ov674Room2)
-    return gData_020047e4;
+    return gIslets_Room2Placements;
   if (scene == (s32)&SceneId_Ov674Room3)
-    return gData_0200494c;
+    return gIslets_Room3Placements;
   if (scene == (s32)&SceneId_Ov674Room4)
-    return gData_020049c4;
+    return gIslets_Room4Placements;
   if (scene == (s32)&SceneId_Ov674Room5) {
     if (Event_GetFlag(0xaa5))
-      gData_02004a84[1].talkFacing = 1;
-    return gData_02004a84;
+      gIslets_Room5Placements[1].talkFacing = 1;
+    return gIslets_Room5Placements;
   }
-  return gData_02004754;
+  return gIslets_Placements;
 }
 
 void Func_020000d8(void) {
@@ -284,16 +284,16 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
-    return gData_02004b20;
+    return gIslets_Room1Triggers;
   if (scene == (s32)&SceneId_Ov674Room2)
-    return gData_02004bb0;
+    return gIslets_Room2Triggers;
   if (scene == (s32)&SceneId_Ov674Room3)
-    return gData_02004ca0;
+    return gIslets_Room3Triggers;
   if (scene == (s32)&SceneId_Ov674Room4)
-    return gData_02004d84;
+    return gIslets_Room4Triggers;
   if (scene == (s32)&SceneId_Ov674Room5)
-    return gData_02004e5c;
-  return gData_02004b14;
+    return gIslets_Room5Triggers;
+  return gIslets_Triggers;
 }
 
 #include "text/msg_ids.h"
@@ -878,7 +878,7 @@ void Func_02001278(struct Actor *object) {
 
 /* VIEW(first): routine gData_02004004 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02004004[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:883: `gData_02004004'
+ * not compile in tla-ja: games/tla/src/scene/islets.c:877: `gData_02004004'
  * undeclared (first use in this function). */
 extern struct ActionScript gData_02004004__first __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__first
@@ -1110,13 +1110,13 @@ void Func_020014e0(void) {
 
 /* VIEW(first): routine gData_020045a4 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_020045a4[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1150:
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1144:
  * `gData_020045a4' undeclared (first use in this function). */
 extern const u8 gData_020045a4__first[] __asm__("gData_020045a4");
 #define gData_020045a4 gData_020045a4__first
 /* VIEW(first): routine gData_020045f0 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_020045f0[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1153:
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1147:
  * `gData_020045f0' undeclared (first use in this function). */
 extern const u8 gData_020045f0__first[] __asm__("gData_020045f0");
 #define gData_020045f0 gData_020045f0__first
@@ -1211,7 +1211,7 @@ void Func_02001c4c(void) {
 /* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
  * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
  * extern s32 gData_02004f04[], it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:1207: `gData_02004f04__scene_tables' undeclared
+ * games/tla/src/scene/islets.c:1201: `gData_02004f04__scene_tables' undeclared
  * (first use in this function). */
 extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
 extern s16 gData_02004f10[2][160];
@@ -1716,13 +1716,13 @@ void Func_02002830(void) {
 
 /* VIEW(first): routine gData_02004508 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02004508[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1739:
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1733:
  * `gData_02004508' undeclared (first use in this function). */
 extern const u8 gData_02004508__first[] __asm__("gData_02004508");
 #define gData_02004508 gData_02004508__first
 /* VIEW(first): routine gData_02004554 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02004554[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1740:
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1734:
  * `gData_02004554' undeclared (first use in this function). */
 extern const u8 gData_02004554__first[] __asm__("gData_02004554");
 #define gData_02004554 gData_02004554__first
@@ -2290,7 +2290,7 @@ void Func_020034ec(void) {
 /* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
  * palette_snapshots.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:2277: structure has no member named `count'. */
+ * games/tla/src/scene/islets.c:2269: structure has no member named `count'. */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
@@ -2365,7 +2365,7 @@ void Func_0200367c(void) {
 
 /* VIEW(s3410): routine gPushFootprints as this part declared it; the joined
  * file has another; tried as the definition's extern u32 gPushFootprints[], it
- * does not compile in tla-ja: games/tla/src/scene/islets.c:2375:
+ * does not compile in tla-ja: games/tla/src/scene/islets.c:2367:
  * `gPushFootprints' undeclared (first use in this function). */
 extern s8 gPushFootprints__s3410[][4] __asm__("gPushFootprints");
 #define gPushFootprints gPushFootprints__s3410
@@ -2840,11 +2840,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02004754[] = {
+struct ActorPlacement gIslets_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200476c[] = {
+struct ActorPlacement gIslets_Room1Placements[] = {
     {73, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(744), FACING_WEST, 1, 0},
     {77, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(920), FACING_NORTHWEST, 2, 0},
     {77, CONDITION_ALWAYS, (s32)gData_02004640, PIXELS(88), 0, PIXELS(936), FACING_EAST, 1, 0},
@@ -2852,7 +2852,7 @@ struct ActorPlacement gData_0200476c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020047e4[] = {
+struct ActorPlacement gIslets_Room2Placements[] = {
     {71, CONDITION_ALWAYS, (s32)gData_020040d4, PIXELS(376), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {399, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {258, CONDITION_ALWAYS, 7, PIXELS(176), 0, PIXELS(140), FACING_SOUTH, 2, 0},
@@ -2870,7 +2870,7 @@ struct ActorPlacement gData_020047e4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200494c[] = {
+struct ActorPlacement gIslets_Room3Placements[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(248), FACING_SOUTH, 0, 0},
     {73, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(184), FACING_SOUTHEAST, 1, 0},
     {80, CONDITION_ALWAYS, 1, PIXELS(132), 0, PIXELS(176), FACING_WEST, 1, 0},
@@ -2878,7 +2878,7 @@ struct ActorPlacement gData_0200494c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020049c4[] = {
+struct ActorPlacement gIslets_Room4Placements[] = {
     {187, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(296), FACING_NORTH, 1, 0},
     {187, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(280), FACING_SOUTH, 1, 0},
     {405, CONDITION_ALWAYS, (s32)gData_02004198, PIXELS(360), 0, PIXELS(312), FACING_SOUTH, 1, 0},
@@ -2889,7 +2889,7 @@ struct ActorPlacement gData_020049c4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004a84[] = {
+struct ActorPlacement gIslets_Room5Placements[] = {
     {75, CONDITION_ALWAYS, 2, PIXELS(168), 0, PIXELS(296), FACING_SOUTH, 2, 0},
     {162, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(440), FACING_SOUTH, 0, 0},
     {163, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -2899,11 +2899,11 @@ struct ActorPlacement gData_02004a84[] = {
 };
 // clang-format on
 
-struct Trigger gData_02004b14[] = {
+struct Trigger gIslets_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004b20[] = {
+struct Trigger gIslets_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02002780)},
     {0x602, 16, CONDITION_ALWAYS, EVENT(Func_0200367c)},
@@ -2922,7 +2922,7 @@ struct Trigger gData_02004b20[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004bb0[] = {
+struct Trigger gIslets_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200267c)},
     {0x4602, 10, CONDITION_ALWAYS, EVENT(Func_0200208c)},
@@ -2951,7 +2951,7 @@ struct Trigger gData_02004bb0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004ca0[] = {
+struct Trigger gIslets_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2986,7 +2986,7 @@ struct Trigger gData_02004ca0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004d84[] = {
+struct Trigger gIslets_Room4Triggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {0xce01, 11, CONDITION_ALWAYS, 11},
     {0x4602, 21, 0x212, EVENT(Func_02002430)},
@@ -3012,7 +3012,7 @@ struct Trigger gData_02004d84[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004e5c[] = {
+struct Trigger gIslets_Room5Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200274c)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_0200274c)},
     {0x31, 5, CONDITION_ALWAYS, 5},

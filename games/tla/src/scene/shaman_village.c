@@ -396,7 +396,7 @@ extern struct ActorPlacement gShamanVillage_Room3Placements[];
  * scene/shaman_village/s1fec has struct ActorPlacement
  * gShamanVillage_Room2Placements[] = {; tried as the definition's extern struct
  * ActorPlacement gShamanVillage_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/shaman_village.c:396:
+ * tla-ja: games/tla/src/scene/shaman_village.c:393:
  * `gShamanVillage_Room2Placements' undeclared (first use in this function). */
 extern struct ShamanVillageSceneBlock
     gShamanVillage_Room2Placements__s00b8 __asm__(
@@ -524,7 +524,7 @@ void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
  * gFieldEffect_MediumScript[]; scene/shaman_village/s1fec has u32
  * gFieldEffect_MediumScript[] = {; tried as the definition's extern u32
  * gFieldEffect_MediumScript[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/shaman_village.c:579:
+ * compile in tla-ja: games/tla/src/scene/shaman_village.c:576:
  * `gFieldEffect_MediumScript' undeclared (first use in this function). */
 extern const s32
     gFieldEffect_MediumScript__s00b8[] __asm__("gFieldEffect_MediumScript");

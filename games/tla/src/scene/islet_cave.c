@@ -192,31 +192,31 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_02001548[];
-extern struct ActorPlacement gData_02001668[];
-extern struct ActorPlacement gData_02001740[];
-extern struct Trigger gData_02001788[];
-extern struct Trigger gData_02001914[];
-extern struct Trigger gData_020019b0[];
+extern struct ActorPlacement gIsletCave_Placements[];
+extern struct ActorPlacement gIsletCave_Room1Placements[];
+extern struct ActorPlacement gIsletCave_Room2Placements[];
+extern struct Trigger gIsletCave_Triggers[];
+extern struct Trigger gIsletCave_Room2Triggers[];
+extern struct Trigger gIsletCave_Room3Triggers[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room1)
-    return gData_02001668;
+    return gIsletCave_Room1Placements;
   if (scene == (s32)&SceneId_Ov675Room2)
-    return gData_02001740;
-  return gData_02001548;
+    return gIsletCave_Room2Placements;
+  return gIsletCave_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room2)
-    return gData_02001914;
+    return gIsletCave_Room2Triggers;
   if (scene == (s32)&SceneId_Ov675Room3)
-    return gData_020019b0;
-  return gData_02001788;
+    return gIsletCave_Room3Triggers;
+  return gIsletCave_Triggers;
 }
 
 void Func_020004ac(void) {
@@ -476,7 +476,7 @@ void Func_020009ec(void) {
 /* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
  * field_event.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:506: dereferencing pointer to incomplete
+ * games/tla/src/scene/islet_cave.c:489: dereferencing pointer to incomplete
  * type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];
@@ -809,7 +809,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02001548[] = {
+struct ActorPlacement gIsletCave_Placements[] = {
     {170, 0x9cf, (s32)gData_020013fc, PIXELS(184), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(152), 0, PIXELS(144), FACING_NORTH, 2, 0},
     {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(216), 0, PIXELS(144), FACING_NORTH, 2, 1},
@@ -824,7 +824,7 @@ struct ActorPlacement gData_02001548[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001668[] = {
+struct ActorPlacement gIsletCave_Room1Placements[] = {
     {298, CONDITION_ALWAYS, 7, PIXELS(168), 0, PIXELS(504), FACING_SOUTH, 2, 0},
     {298, CONDITION_ALWAYS, 7, PIXELS(344), 0, PIXELS(232), FACING_SOUTH, 2, 0},
     {298, CONDITION_ALWAYS, 7, PIXELS(776), 0, PIXELS(152), FACING_SOUTH, 2, 0},
@@ -836,13 +836,13 @@ struct ActorPlacement gData_02001668[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001740[] = {
+struct ActorPlacement gIsletCave_Room2Placements[] = {
     {252, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {244, 0x55, 1, PIXELS(336), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001788[] = {
+struct Trigger gIsletCave_Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -878,7 +878,7 @@ struct Trigger gData_02001788[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001914[] = {
+struct Trigger gIsletCave_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
@@ -894,7 +894,7 @@ struct Trigger gData_02001914[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020019b0[] = {
+struct Trigger gIsletCave_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 10, 0x9cf, EVENT(Func_020010ac)},
     {TRIGGER_TABLE_END},

@@ -78,17 +78,17 @@ struct GabombaCatacombsParty {
 
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gData_02001310[];
-extern struct ActorPlacement gData_02001378[];
-extern struct ActorPlacement gData_02001390[];
-extern struct ActorPlacement gData_020013a8[];
-extern struct ActorPlacement gData_020013d8[];
-extern struct ActorPlacement gData_02001498[];
-extern struct ActorPlacement gData_02001510[];
-extern struct Trigger gData_0200154c[];
-extern struct Trigger gData_02001594[];
-extern struct Trigger gData_020015c4[];
-extern struct Trigger gData_020016cc[];
-extern struct Trigger gData_02001714[];
+extern struct ActorPlacement gGabombaCatacombs_Placements[];
+extern struct ActorPlacement gGabombaCatacombs_Room1Placements[];
+extern struct ActorPlacement gGabombaCatacombs_Room2Placements[];
+extern struct ActorPlacement gGabombaCatacombs_Room3Placements[];
+extern struct ActorPlacement gGabombaCatacombs_Room4Placements[];
+extern struct ActorPlacement gGabombaCatacombs_Room5Placements[];
+extern struct Trigger gGabombaCatacombs_Room1Triggers[];
+extern struct Trigger gGabombaCatacombs_Room2Triggers[];
+extern struct Trigger gGabombaCatacombs_Room3Triggers[];
+extern struct Trigger gGabombaCatacombs_Room4Triggers[];
+extern struct Trigger gGabombaCatacombs_Room5Triggers[];
 
 void Actor_DepartInRing(s32 id);
 
@@ -436,34 +436,34 @@ const struct SceneRegion *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct Trigger gData_02001540[];
+extern struct Trigger gGabombaCatacombs_Triggers[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
-    return (const struct ActorPlacement *)gData_02001390;
+    return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
-    return (const struct ActorPlacement *)gData_020013a8;
+    return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3)
-    return (const struct ActorPlacement *)gData_020013d8;
+    return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4)
-    return (const struct ActorPlacement *)gData_02001498;
+    return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5)
-    return (const struct ActorPlacement *)gData_02001510;
-  return (const struct ActorPlacement *)gData_02001378;
+    return (const struct ActorPlacement *)gGabombaCatacombs_Room5Placements;
+  return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
-    return gData_0200154c;
+    return gGabombaCatacombs_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
-    return gData_02001594;
+    return gGabombaCatacombs_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3)
-    return gData_020015c4;
+    return gGabombaCatacombs_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4)
-    return gData_020016cc;
+    return gGabombaCatacombs_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5)
-    return gData_02001714;
-  return gData_02001540;
+    return gGabombaCatacombs_Room5Triggers;
+  return gGabombaCatacombs_Triggers;
 }
 
 #if !TLA_PATCH_1
@@ -565,22 +565,22 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02001378[] = {
+struct ActorPlacement gGabombaCatacombs_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001390[] = {
+struct ActorPlacement gGabombaCatacombs_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020013a8[] = {
+struct ActorPlacement gGabombaCatacombs_Room2Placements[] = {
     {243, 0x3a, 1, PIXELS(728), 0, PIXELS(312), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020013D8(gData_020013d8, 290, 0, 0, 0, 290, 0, 0, 0, 0)
+DEFINE_G_DATA_020013D8(gGabombaCatacombs_Room3Placements, 290, 0, 0, 0, 290, 0, 0, 0, 0)
 
-struct ActorPlacement gData_02001498[] = {
+struct ActorPlacement gGabombaCatacombs_Room4Placements[] = {
     {375, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {386, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(184), FACING_SOUTH, 2, 0},
@@ -588,17 +588,17 @@ struct ActorPlacement gData_02001498[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001510[] = {
+struct ActorPlacement gGabombaCatacombs_Room5Placements[] = {
     {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_02001540[] = {
+struct Trigger gGabombaCatacombs_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200154c[] = {
+struct Trigger gGabombaCatacombs_Room1Triggers[] = {
     {0x31, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
      CONDITION_ALWAYS, EVENT(Func_02000044)},
@@ -611,14 +611,14 @@ struct Trigger gData_0200154c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001594[] = {
+struct Trigger gGabombaCatacombs_Room2Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000038)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020015c4[] = {
+struct Trigger gGabombaCatacombs_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
@@ -655,7 +655,7 @@ struct Trigger gData_020015c4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020016cc[] = {
+struct Trigger gGabombaCatacombs_Room4Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 40, 0x9ce, EVENT(Func_020009d4)},
     {TRIGGER_TALK, 8, 0xf93, EVENT(Func_02000d90)},
@@ -666,7 +666,7 @@ struct Trigger gData_020016cc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001714[] = {
+struct Trigger gGabombaCatacombs_Room5Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,

@@ -436,31 +436,33 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_02003b38[];
-extern struct ActorPlacement gData_02003b50[];
-extern struct ActorPlacement gData_02003b68[];
-extern struct ActorPlacement gData_02003bc8[];
-/* VIEW(scene_tables): routine gData_02003c88 as this part declared it; the
- * joined file has another; tried as the one declaration extern const u8
- * gData_02003c88[], it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:454: `gData_02003c88' undeclared
- * (first use in this function). */
-extern const u8 gData_02003c88__scene_tables[] __asm__("gData_02003c88");
-#define gData_02003c88 gData_02003c88__scene_tables
-extern struct ActorPlacement gData_02003ce8[];
+extern struct ActorPlacement gAnemosInnerSanctum_Placements[];
+extern struct ActorPlacement gAnemosInnerSanctum_Room1Placements[];
+extern struct ActorPlacement gAnemosInnerSanctum_Room2Placements[];
+extern struct ActorPlacement gAnemosInnerSanctum_Room3Placements[];
+/* VIEW(scene_tables): routine gAnemosInnerSanctum_Room4Placements as this part
+ * declared it; the joined file has another; tried as the one declaration extern
+ * const u8 gAnemosInnerSanctum_Room4Placements[], it does not compile in
+ * tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:450:
+ * `gAnemosInnerSanctum_Room4Placements' undeclared (first use in this
+ * function). */
+extern const u8 gData_02003c88__scene_tables[] __asm__(
+    "gAnemosInnerSanctum_Room4Placements");
+#define gAnemosInnerSanctum_Room4Placements gData_02003c88__scene_tables
+extern struct ActorPlacement gAnemosInnerSanctum_Room5Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
-    return gData_02003b50;
+    return gAnemosInnerSanctum_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
-    return gData_02003b68;
+    return gAnemosInnerSanctum_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3)
-    return gData_02003bc8;
+    return gAnemosInnerSanctum_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
-    return gData_02003c88;
+    return gAnemosInnerSanctum_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room5)
-    return gData_02003ce8;
-  return gData_02003b38;
+    return gAnemosInnerSanctum_Room5Placements;
+  return gAnemosInnerSanctum_Placements;
 }
 
 struct Work {
@@ -562,7 +564,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
  * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:589: structure has no member named
+ * games/tla/src/scene/anemos_inner_sanctum.c:579: structure has no member named
  * `room'. */
 struct Work__s0ac8 {
   u8 pad[340];
@@ -596,7 +598,7 @@ extern u32 gData_020035cc[];
 extern s32 gData_02003620[];
 /* VIEW(s0ac8): routine gData_020036fc as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gData_020036fc[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:719:
+ * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:709:
  * `gData_020036fc' undeclared (first use in this function). */
 extern s32 gData_020036fc__s0ac8[][2] __asm__("gData_020036fc");
 #define gData_020036fc gData_020036fc__s0ac8
@@ -1287,25 +1289,25 @@ void Func_02001b88(void) {
   Event_End();
 }
 
-extern struct Trigger gData_02003dc0[];
-extern struct Trigger gData_02003dcc[];
-extern struct Trigger gData_02003e38[];
-extern struct Trigger gData_02003fac[];
-extern struct Trigger gData_02004150[];
-extern struct Trigger gData_020042c4[];
+extern struct Trigger gAnemosInnerSanctum_Triggers[];
+extern struct Trigger gAnemosInnerSanctum_Room1Triggers[];
+extern struct Trigger gAnemosInnerSanctum_Room2Triggers[];
+extern struct Trigger gAnemosInnerSanctum_Room3Triggers[];
+extern struct Trigger gAnemosInnerSanctum_Room4Triggers[];
+extern struct Trigger gAnemosInnerSanctum_Room5Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
-    return gData_02003dcc;
+    return gAnemosInnerSanctum_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
-    return gData_02003e38;
+    return gAnemosInnerSanctum_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3)
-    return gData_02003fac;
+    return gAnemosInnerSanctum_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
-    return gData_02004150;
+    return gAnemosInnerSanctum_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room5)
-    return gData_020042c4;
-  return gData_02003dc0;
+    return gAnemosInnerSanctum_Room5Triggers;
+  return gAnemosInnerSanctum_Triggers;
 }
 
 void Func_02001c60(void) {
@@ -1325,7 +1327,7 @@ void Func_02001c60(void) {
 /* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1358: structure has no member
+ * games/tla/src/scene/anemos_inner_sanctum.c:1333: structure has no member
  * named `value'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
@@ -1429,7 +1431,7 @@ extern s16 gData_0200385c[];
 extern s16 gData_02003888[];
 /* VIEW(s1938): routine gData_020038b4 as this part declared it; the joined file
  * has another; tried as the one declaration extern u8 gData_020038b4[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1450:
+ * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1419:
  * `gData_020038b4' undeclared (first use in this function). */
 extern u8 gData_020038b4__s1938[] __asm__("gData_020038b4");
 #define gData_020038b4 gData_020038b4__s1938
@@ -1950,7 +1952,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef gData_02003c88
+#undef gAnemosInnerSanctum_Room4Placements
 #undef Func_0200088c
 #undef Func_020009b8
 #undef Func_02000a78
@@ -2036,7 +2038,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
  * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
  * CrackedTile_Fall(struct PushEvent *event), which the object already declares,
  * it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:2052: too many arguments to
+ * games/tla/src/scene/anemos_inner_sanctum.c:2002: too many arguments to
  * function `CrackedTile_Fall'. */
 void CrackedTile_Fall__s2f48(
     struct CellTarget *work,
@@ -2279,22 +2281,22 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02003b38[] = {
+struct ActorPlacement gAnemosInnerSanctum_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003b50[] = {
+struct ActorPlacement gAnemosInnerSanctum_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003b68[] = {
+struct ActorPlacement gAnemosInnerSanctum_Room2Placements[] = {
     {272, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {432, CONDITION_ALWAYS, (s32)gData_020038fc, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {272, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003bc8[] = {
+struct ActorPlacement gAnemosInnerSanctum_Room3Placements[] = {
     {272, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {329, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {272, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
@@ -2305,10 +2307,10 @@ struct ActorPlacement gData_02003bc8[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003C88(gData_02003c88, 0xffff01b0, gData_020038fc, 3, 0x202c000,
+DEFINE_G_DATA_02003C88(gAnemosInnerSanctum_Room4Placements, 0xffff01b0, gData_020038fc, 3, 0x202c000,
     7, 4, 0xffff0110, 5, 0x202c000)
 
-struct ActorPlacement gData_02003ce8[] = {
+struct ActorPlacement gAnemosInnerSanctum_Room5Placements[] = {
     {431, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
@@ -2320,11 +2322,11 @@ struct ActorPlacement gData_02003ce8[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02003dc0[] = {
+struct Trigger gAnemosInnerSanctum_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003dcc[] = {
+struct Trigger gAnemosInnerSanctum_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(Func_02001090)},
@@ -2336,7 +2338,7 @@ struct Trigger gData_02003dcc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003e38[] = {
+struct Trigger gAnemosInnerSanctum_Room2Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2370,7 +2372,7 @@ struct Trigger gData_02003e38[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003fac[] = {
+struct Trigger gAnemosInnerSanctum_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2408,7 +2410,7 @@ struct Trigger gData_02003fac[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004150[] = {
+struct Trigger gAnemosInnerSanctum_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -2442,7 +2444,7 @@ struct Trigger gData_02004150[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020042c4[] = {
+struct Trigger gAnemosInnerSanctum_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

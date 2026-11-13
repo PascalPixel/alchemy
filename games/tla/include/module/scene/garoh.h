@@ -9,7 +9,7 @@
 struct SpawnObject;
 
 extern s16 gData_02005874[];
-extern s32 gData_0200611c[];
+extern s32 gGaroh_Room3Triggers[];
 void Func_02002694(void);
 void Func_02003878(void);
 

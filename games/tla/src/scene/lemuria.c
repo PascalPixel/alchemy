@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x68b, in ROM order.
+/// Lemuria, the hidden city beyond the Sea of Time: its doors and houses, the
+/// children, the spring, the vine Growth raises, the treasure Scoop finds, and
+/// the water's rippling scroll and cycling colours.
 
 #include "shared/tables.h"
 #include "shared/actors.h"
@@ -31,14 +33,14 @@
 #include "module/scene/lemuria.h"
 #include "module/system/system.h"
 
-DEFINE_POSITION_DISTANCE(Func_02000038)
+DEFINE_POSITION_DISTANCE(Lemuria_Distance)
 
-DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Func_02000038)
+DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Lemuria_Distance)
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
-s32 Func_020000e8(struct Actor *self) {
+s32 Lemuria_NoticeLeader(struct Actor *self) {
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *state;
   u32 mode;
@@ -57,7 +59,7 @@ s32 Func_020000e8(struct Actor *self) {
   if (self->timer == 1)
     goto near;
   other = Actor_Get(gMainRoutineWork.currentOwner);
-  if (Func_02000038(&self->x, &other->x) <= 11)
+  if (Lemuria_Distance(&self->x, &other->x) <= 11)
     goto far;
   if (Actor_IsFacingNear(self, self->watchedObject, 18) != 0)
     goto near;
@@ -84,13 +86,13 @@ void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001d44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 
-extern struct WarpTarget gData_020021bc;
-extern struct WarpTarget gData_020021c4;
-extern struct WarpTarget gData_020021cc;
-extern struct WarpTarget gData_020021d4;
-extern struct WarpTarget gData_020021dc;
-extern struct WarpTarget gData_020021e4;
-extern struct WarpTarget gData_020021ec;
+extern struct WarpTarget gLemuria_FirstDoor;
+extern struct WarpTarget gLemuria_SecondDoor;
+extern struct WarpTarget gLemuria_PalaceDoor;
+extern struct WarpTarget gLemuria_Door12;
+extern struct WarpTarget gLemuria_Door11;
+extern struct WarpTarget gLemuria_Door10;
+extern struct WarpTarget gLemuria_Door16;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -102,14 +104,15 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_020001bc(void) {
+void Lemuria_PoseActor12(void) {
   Actor_SetPosition(12, PIXELS(488), PIXELS(1256));
   Actor_SetFirstSpriteAnimation(Actor_Get(12), 157);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_WEST, 0);
 }
 
-void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
+void Lemuria_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
+                              s32 mode) {
   s32 id;
 
   Event_Start();
@@ -136,7 +139,7 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
 /// "The door is locked... It sounds as if there's a raucous caucus going on
 /// inside..."
 void Lemuria_EnterDoor(s32 door) {
-  const struct WarpTarget *warp = &gData_020021bc;
+  const struct WarpTarget *warp = &gLemuria_FirstDoor;
   s32 mode = 0;
 
   if (door == 3 && Event_GetFlag(0x96a)) {
@@ -145,34 +148,34 @@ void Lemuria_EnterDoor(s32 door) {
     return;
   }
   if (door == 1) {
-    warp = &gData_020021bc;
+    warp = &gLemuria_FirstDoor;
     mode = 0;
   }
   if (door == 2) {
-    warp = &gData_020021c4;
+    warp = &gLemuria_SecondDoor;
     mode = 0;
   }
   if (door == 3) {
-    warp = &gData_020021cc;
+    warp = &gLemuria_PalaceDoor;
     mode = 1;
   }
   if (door == 12) {
-    warp = &gData_020021d4;
+    warp = &gLemuria_Door12;
     mode = 0;
   }
   if (door == 11) {
-    warp = &gData_020021dc;
+    warp = &gLemuria_Door11;
     mode = 1;
   }
   if (door == 10) {
-    warp = &gData_020021e4;
+    warp = &gLemuria_Door10;
     mode = 1;
   }
   if (door == 16) {
-    warp = &gData_020021ec;
+    warp = &gLemuria_Door16;
     mode = 0;
   }
-  Func_020001f0(warp, door, mode);
+  Lemuria_OpenDoorAndEnter(warp, door, mode);
 }
 
 /// Actor 18's talk: one message, and Actor_TurnToFaceEachOther with the party
@@ -228,15 +231,15 @@ static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
   Func_02001d44(a, b, c, d, e, f, g);
 }
 
-void Func_02000428(void) { Func_02001d44_(37, 72, 2, 2, 39, 71, 2); }
+void Lemuria_DigFirstSpot(void) { Func_02001d44_(37, 72, 2, 2, 39, 71, 2); }
 
-void Func_02000448(void) { Func_02001d44_(59, 64, 4, 3, 49, 71, 2); }
+void Lemuria_DigSecondSpot(void) { Func_02001d44_(59, 64, 4, 3, 49, 71, 2); }
 
-void Func_02000468(void) { Func_02001d44_(52, 69, 1, 1, 53, 69, 2); }
+void Lemuria_DigThirdSpot(void) { Func_02001d44_(52, 69, 1, 1, 53, 69, 2); }
 
-void Func_02000488(void) { Func_02001d44_(53, 64, 1, 1, 52, 64, 2); }
+void Lemuria_DigFourthSpot(void) { Func_02001d44_(53, 64, 1, 1, 52, 64, 2); }
 
-void Func_020004a8(void) {
+void Lemuria_DigFifthSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
@@ -256,7 +259,7 @@ void Func_020004a8(void) {
 
 void Func_02001d74(void);
 
-void Func_02000538(void) {
+void Lemuria_LeaveForAncientLemuria(void) {
   struct MainRoutineWork *party;
 
   Func_02001d74();
@@ -266,7 +269,7 @@ void Func_02000538(void) {
   party->unk2c2 = 2;
 }
 
-void Func_02000560(void) {
+void Lemuria_GrowVine(void) {
   s32 x;
   s32 z;
   s32 flag;
@@ -291,27 +294,29 @@ void Func_02000560(void) {
   Func_02001d64(x, z, 0, Func_02001d5c(x, z, 0) | 64);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02001cf4_(s32 a, s32 b, s32 c) {
+/// Scoop digs up a buried treasure (Actor_ReturnHome): the helper, our name,
+/// Loho's, Taopo Swamp's and the Yampi Desert Cave's Scoop spots use too.
+static __inline__ void Lemuria_DigUpTreasure(s32 a, s32 b, s32 c) {
   Actor_ReturnHome(a, b, c);
 }
 
-void Func_020005ac(s32 a) { Func_02001cf4_(a, 64, 0x300); }
+void Lemuria_ScoopFirstTreasure(s32 a) { Lemuria_DigUpTreasure(a, 64, 0x300); }
 
-void Func_020005bc(s32 a) { Func_02001cf4_(a, 65, 0x301); }
+void Lemuria_ScoopSecondTreasure(s32 a) { Lemuria_DigUpTreasure(a, 65, 0x301); }
 
-void Func_020005cc(s32 a) { Func_02001cf4_(a, 66, 0x302); }
+void Lemuria_ScoopThirdTreasure(s32 a) { Lemuria_DigUpTreasure(a, 66, 0x302); }
 
-void Func_020005dc(s32 a) { Func_02001cf4_(a, 67, 0x303); }
+void Lemuria_ScoopFourthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 67, 0x303); }
 
-void Func_020005ec(s32 a) { Func_02001cf4_(a, 68, 0x304); }
+void Lemuria_ScoopFifthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 68, 0x304); }
 
-void Func_020005fc(s32 a) { Func_02001cf4_(a, 70, 0x306); }
+void Lemuria_ScoopSixthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 70, 0x306); }
 
-void Func_0200060c(s32 a) { Func_02001cf4_(a, 71, 0x307); }
+void Lemuria_ScoopSeventhTreasure(s32 a) {
+  Lemuria_DigUpTreasure(a, 71, 0x307);
+}
 
-void Func_0200061c(s32 a) { Func_02001cf4_(a, 72, 0x308); }
+void Lemuria_ScoopEighthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 72, 0x308); }
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -417,7 +422,7 @@ L_02008788:
   Actor_WalkByAndWait(12, 0, -32);
   Event_SetFlag(0x96f);
 L_020088cc:
-  Func_020001bc();
+  Lemuria_PoseActor12();
   Event_End();
 L_020088d4:
 }
@@ -478,13 +483,13 @@ void Lemuria_OfferSpringLuck(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern u8 gData_02002590;
-extern s16 gData_020025a0[2][160];
+extern u8 gLemuria_RippleBuffer;
+extern s16 gLemuria_RippleLines[2][160];
 
 /// Every fourth frame rotates colours 1-14 of background palettes 7 and 8 by
-/// one place. The loops are written with goto, as overlay 689's Func_020002f8:
+/// one place. The loops are written with goto:
 /// the bytes rebuild the palette address on every pass.
-void Func_02000a6c(void) {
+void Lemuria_CycleWaterColors(void) {
   if ((gFrameCount & 3) == 0) {
     volatile u16 *palette;
     volatile u16 *slot;
@@ -514,10 +519,9 @@ void Func_02000a6c(void) {
   }
 }
 
-/// Puts the per-line BG2 horizontal scroll on an HBlank DMA, as overlay 674's
-/// FieldEffect_SetAttached does for BG1.
-void Func_02000ad8(void) {
-  s16 *lines = gData_020025a0[gData_02002590];
+/// Puts the per-line BG2 horizontal scroll on an HBlank DMA.
+void Lemuria_StartRippleDma(void) {
+  s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer];
   s32 first = lines[0];
   volatile u16 *scroll;
   volatile u16 *dma;
@@ -538,9 +542,9 @@ void Func_02000ad8(void) {
           (volatile u32 *)dma);
 }
 
-void Func_02000b28(void) {
+void Lemuria_ComputeRipple(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
-  s16 *lines = gData_020025a0[gData_02002590 ^ 1];
+  s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
   s32 v[2];
   s32 *count = &v[1];
   s32 sine;
@@ -550,16 +554,16 @@ void Func_02000b28(void) {
     v[0] = sine;
     *lines++ = (layer->x >> 16) + (sine >> 15) + *count % 3 - 1;
   }
-  gData_02002590 ^= 1;
+  gLemuria_RippleBuffer ^= 1;
 }
 
-void Func_02000bbc(void) {
+void Lemuria_StartRipple(void) {
   s32 priority;
 
   priority = 0x480;
-  Task_AddFrame(Func_02000b28, priority);
+  Task_AddFrame(Lemuria_ComputeRipple, priority);
   priority = 0xc80;
-  Task_AddFrame(Func_02000ad8, priority);
+  Task_AddFrame(Lemuria_StartRippleDma, priority);
 }
 
 void Func_02001cfc();
@@ -571,7 +575,7 @@ s32 Scene_Initialize(void) {
       t34, t40, t42, t45, t47, t49, t51, t53, t55, v5, v6;
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
-  FieldTask_AddFrame((s32)Func_02000a6c, 0xc80);
+  FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, 0xc80);
   Func_02001cfc(0);
   t3 = Actor_Get(11);
   Actor_SetSpriteFlags(t3, 0);
@@ -581,19 +585,19 @@ s32 Scene_Initialize(void) {
   FIELD_AT(t7, s32, 108) = (s32)Func_02001b3c;
   Actor_SetAnimation(22, 3);
   Actor_SetPosition(18, PIXELS(40), PIXELS(952));
-  Actor_SetScript(18, (s32)&gData_02001d84);
+  Actor_SetScript(18, (s32)&gLemuria_FirstWalkerPaces);
   t11 = Actor_Get(18);
   v6 = t11;
   t12 = Actor_Get(19);
   FIELD_AT(v6, s32, 104) = t12;
-  FIELD_AT(v6, s32, 108) = (s32)Func_020000e8;
+  FIELD_AT(v6, s32, 108) = (s32)Lemuria_NoticeLeader;
   Actor_SetPosition(19, PIXELS(88), PIXELS(904));
-  Actor_SetScript(19, (s32)&gData_02001e04);
+  Actor_SetScript(19, (s32)&gLemuria_SecondWalkerPaces);
   t15 = Actor_Get(19);
   v6 = t15;
   t16 = Actor_Get(18);
   FIELD_AT(v6, s32, 104) = t16;
-  FIELD_AT(v6, s32, 108) = (s32)Func_020000e8;
+  FIELD_AT(v6, s32, 108) = (s32)Lemuria_NoticeLeader;
   t17 = Event_GetFlag(0x908);
   if (t17 == 0)
     goto L_02008c9c;
@@ -648,7 +652,7 @@ L_02008da6:
   if (t42 == 0)
     goto L_02008dcc;
   Func_02001d4c(10, 1);
-  Func_02000560();
+  Lemuria_GrowVine();
 L_02008dcc:
   t45 = Event_GetFlag(0x303);
   if (t45 != 0)
@@ -750,7 +754,7 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_Wait(10);
   Actor_Get(4)->priorityFlags |= 1;
   Actor_WalkToAndWait(4, 464, 776);
-  Func_020001bc();
+  Lemuria_PoseActor12();
   Event_End();
 }
 
@@ -777,7 +781,7 @@ void Lemuria_KeepLookingAround(void) {
   Actor_SetPosition(12, 0, 0);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(4, 0, -16);
-  Func_020001bc();
+  Lemuria_PoseActor12();
   Event_End();
 }
 
@@ -1062,7 +1066,7 @@ void Lemuria_MarvelAtCity(void) {
     Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
-  Func_020001bc();
+  Lemuria_PoseActor12();
   Event_End();
 }
 
@@ -1072,12 +1076,12 @@ void Func_02001b3c(void) { Func_02001d6c(); }
 
 #include "objcmd.h"
 
-extern s16 gData_020021b0[];
+extern s16 gLemuria_ThirdDoorOpening[];
 
 // clang-format off
-DEFINE_G_DATA_02001D84(gData_02001d84, 40, 952, 904, 88)
+DEFINE_G_DATA_02001D84(gLemuria_FirstWalkerPaces, 40, 952, 904, 88)
 
-DEFINE_G_DATA_02001D84(gData_02001e04, 88, 904, 952, 40)
+DEFINE_G_DATA_02001D84(gLemuria_SecondWalkerPaces, 88, 904, 952, 40)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 460, 0, 550, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1129,34 +1133,34 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_02002184[] = {
+s16 gLemuria_DoorOpening[] = {
     2, 1, 1, 1, 6, 2, 2, 1,
     1, 6, -1,
 };
 
-s16 gData_0200219a[] = {
+s16 gLemuria_WideDoorOpening[] = {
     0, 1, 2, 1, 6, 0, 2, 2,
     1, 6, -1,
 };
 
-s16 gData_020021b0[] = {
+s16 gLemuria_ThirdDoorOpening[] = {
     3, 1, 1, 1, 0, -1,
 };
 // clang-format on
 
-struct WarpTarget gData_020021bc = {(s32)gData_02002184, 22, 47};
+struct WarpTarget gLemuria_FirstDoor = {(s32)gLemuria_DoorOpening, 22, 47};
 
-struct WarpTarget gData_020021c4 = {(s32)gData_02002184, 35, 47};
+struct WarpTarget gLemuria_SecondDoor = {(s32)gLemuria_DoorOpening, 35, 47};
 
-struct WarpTarget gData_020021cc = {(s32)gData_0200219a, 9, 40};
+struct WarpTarget gLemuria_PalaceDoor = {(s32)gLemuria_WideDoorOpening, 9, 40};
 
-struct WarpTarget gData_020021d4 = {(s32)gData_020021b0, 54, 45};
+struct WarpTarget gLemuria_Door12 = {(s32)gLemuria_ThirdDoorOpening, 54, 45};
 
-struct WarpTarget gData_020021dc = {(s32)gData_0200219a, 28, 20};
+struct WarpTarget gLemuria_Door11 = {(s32)gLemuria_WideDoorOpening, 28, 20};
 
-struct WarpTarget gData_020021e4 = {(s32)gData_0200219a, 28, 13};
+struct WarpTarget gLemuria_Door10 = {(s32)gLemuria_WideDoorOpening, 28, 13};
 
-struct WarpTarget gData_020021ec = {(s32)gData_02002184, 54, 50};
+struct WarpTarget gLemuria_Door16 = {(s32)gLemuria_DoorOpening, 54, 50};
 
 struct Trigger gSceneEvents[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
@@ -1244,15 +1248,15 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Lemuria_KnockAtBrokenDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x962, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, 0x963, EVENT(Func_02000560)},
-    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000448)},
-    {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_02000468)},
-    {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_02000488)},
-    {0x50008905, 38, CONDITION_ALWAYS, EVENT(Func_020004a8)},
-    {0x50008805, 104, 0x303, EVENT(Func_020005dc)},
-    {0x50008805, 105, 0x304, EVENT(Func_020005ec)},
-    {0x50008805, 107, 0x306, EVENT(Func_020005fc)},
-    {0x50008805, 108, 0x307, EVENT(Func_0200060c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, 0x963, EVENT(Lemuria_GrowVine)},
+    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Lemuria_DigFirstSpot)},
+    {0x50008905, 31, CONDITION_ALWAYS, EVENT(Lemuria_DigSecondSpot)},
+    {0x50008905, 32, CONDITION_ALWAYS, EVENT(Lemuria_DigThirdSpot)},
+    {0x50008905, 33, CONDITION_ALWAYS, EVENT(Lemuria_DigFourthSpot)},
+    {0x50008905, 38, CONDITION_ALWAYS, EVENT(Lemuria_DigFifthSpot)},
+    {0x50008805, 104, 0x303, EVENT(Lemuria_ScoopFourthTreasure)},
+    {0x50008805, 105, 0x304, EVENT(Lemuria_ScoopFifthTreasure)},
+    {0x50008805, 107, 0x306, EVENT(Lemuria_ScoopSixthTreasure)},
+    {0x50008805, 108, 0x307, EVENT(Lemuria_ScoopSeventhTreasure)},
     {TRIGGER_TABLE_END},
 };

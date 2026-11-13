@@ -1823,7 +1823,6 @@ static void AltinPeak_SpawnDebris(void) {
   }
 }
 
-
 /// The frozen second puddle's glint.
 DEFINE_FROST_GLINT(static, Actor_SetSpriteColor)
 

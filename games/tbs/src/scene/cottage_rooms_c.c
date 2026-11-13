@@ -187,9 +187,7 @@ static void CottageRoomsC_TalkToItemMerchant(void) {
 }
 
 /// Returns both story stages' triggers.
-const struct Trigger *Scene_GetTriggers(void) {
-  return gCottageRoomsCTriggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gCottageRoomsCTriggers; }
 
 /// Bilibin's armor merchant opens the shop across the counter, or talks.
 static void CottageRoomsC_TalkToArmorMerchant(void) {

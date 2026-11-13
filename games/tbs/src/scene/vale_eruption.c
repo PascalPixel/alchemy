@@ -102,9 +102,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// The scene has no triggers of its own, since everything happens on arrival.
-const struct Trigger *Scene_GetTriggers(void) {
-  return gValeEruption_Triggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gValeEruption_Triggers; }
 
 /// Arriving in Vale during the eruption plays the return from the mountain,
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE.

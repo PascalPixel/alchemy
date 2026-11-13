@@ -129,7 +129,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLunpaActorPlacements;
 }
 
-
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
 static void Lunpa_CatchFloatingNut(void) {
   Scene_CatchNut(ACTOR_FLOATING_NUT, FLAG_LUNPA_NUT_CAUGHT);

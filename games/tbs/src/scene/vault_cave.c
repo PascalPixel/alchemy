@@ -100,7 +100,6 @@ static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct Actor *source);
 
-
 #define TILE(position) ((position) / px(16))
 
 /// The cell behaviors of the cells the events answer.
@@ -257,7 +256,6 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   }
   return NULL;
 }
-
 
 /// Pushes the faced pillar one cell unless another actor or terrain
 /// blocks it.

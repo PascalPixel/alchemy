@@ -354,7 +354,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gVale_ActorPlacements;
 }
 
-
 /// Catch on the Nut in Vale gives it to the party.
 static void Vale_CatchNut(void) {
   Scene_CatchNut(ACTOR_NUT, FLAG_VALE_NUT_CAUGHT);
@@ -3022,7 +3021,6 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
   emitter->targetZ = ACTOR_NO_TARGET;
   SET_VELOCITY(emitter, 0, 0, 0);
 }
-
 
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
                                                 FieldActor_SetMoveTargetFixed)

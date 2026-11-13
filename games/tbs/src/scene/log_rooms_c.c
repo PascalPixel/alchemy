@@ -220,9 +220,7 @@ static void LogRoomsC_TalkToInnkeeper(void) {
 
 /// The exits, the residents' words and thoughts, the shops, the bookcases, the
 /// jar and the barrel.
-const struct Trigger *Scene_GetTriggers(void) {
-  return gLogRoomsC_Triggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsC_Triggers; }
 
 /// Sets up the houses for the curse and the way they're entered.
 s32 Scene_Initialize(void) {

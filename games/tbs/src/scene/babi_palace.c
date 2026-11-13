@@ -233,7 +233,6 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_WELL = 90
 };
 
-
 static inline void BabiPalace_CloseDoors(void) {
   TilesetAnim_Pause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
   TilesetAnim_Pause(BABI_PALACE_OTHER_DOORS_ANIMATION);

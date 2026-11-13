@@ -380,7 +380,6 @@ static void Kalay_SearchWell(void) {
   Event_End();
 }
 
-
 /// Catch at the Kalay Tunnel Entrance pulls in the Nut floating there, until it
 /// is caught (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).
 static void Kalay_CatchTunnelEntranceNut(void) {

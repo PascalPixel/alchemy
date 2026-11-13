@@ -129,7 +129,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMcCoyPalaceGroundsNoActorPlacements;
 }
 
-
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
 /// it to the party.
 static void McCoyPalaceGrounds_CatchFloatingNut(void) {

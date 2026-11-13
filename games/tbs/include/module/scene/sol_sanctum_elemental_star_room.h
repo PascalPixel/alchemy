@@ -7,8 +7,7 @@
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorPlacement *
-Scene_GetActorPlacements(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];

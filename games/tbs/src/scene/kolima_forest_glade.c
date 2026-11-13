@@ -79,7 +79,6 @@ static void KolimaForestGlade_PushLog(void) {
   Event_End();
 }
 
-
 /// In Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut
 /// makes it vanish, and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {

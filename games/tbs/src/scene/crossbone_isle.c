@@ -323,7 +323,6 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gCrossboneIsle_CorridorTriggers;
 }
 
-
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void CrossboneIsle_CatchNut(void) {

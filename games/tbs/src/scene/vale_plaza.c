@@ -892,7 +892,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-
 /// The mayor sends help to the elders and the boys back to the river.
 static void ValePlaza_SentToAidElders(void) {
   s32 skipReply = 0;

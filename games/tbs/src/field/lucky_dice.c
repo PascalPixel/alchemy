@@ -95,7 +95,6 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 
-
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings
 // window at the bottom, and the result lettering's x in sprite coordinates.

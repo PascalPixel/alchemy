@@ -566,7 +566,6 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   Event_End();
 }
 
-
 /// Mogall Forest, the first area: Catch on the Nut floating over the river
 /// brings it to the party.
 static void MogallForest_CatchNut(void) {

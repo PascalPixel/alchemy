@@ -158,13 +158,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) {
-  return gSolSanctumLunaSolRoomsExits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumLunaSolRoomsExits; }
 
 /// Returns the eight statues, four in each room, Kraden, Jenna and Garet, all
 /// always placed.

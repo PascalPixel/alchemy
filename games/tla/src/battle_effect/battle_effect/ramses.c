@@ -130,10 +130,10 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
 
   // The formation's corner and the orb's start; the rocks wait above the
   // screen one after another; every puff and spark is idle.
-  base.x = 0xbc0000;
-  base.y = 0x5c0000;
-  orb.x = 0xa00000;
-  orb.y = 0x5c0000;
+  base.x = px(188);
+  base.y = px(92);
+  orb.x = px(160);
+  orb.y = px(92);
   for (i = 0; i != ROCK_COUNT; i++) {
     struct EffectStep *rock = &work->particles[i];
 
@@ -187,31 +187,31 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
 
       for (i = 0, start = FIRST_DROP; i != 3; start += 40, i++) {
         if (frame >= start && frame < start + 4)
-          orb.y += 0x80000;
+          orb.y += px(8);
         if (frame == start + 3) {
           for (k = 0; k != 4; k++) {
             struct EffectStep *puff = &work->particles[ROCK_COUNT + i * 8 + k];
 
-            puff->x = 0x400000;
-            puff->y = 0x600000;
+            puff->x = px(64);
+            puff->y = px(96);
             puff->velocityX = ((Random16() & 255) - 127) << 10;
             puff->velocityY = ((Random16() & 255) - 127) << 10;
             puff->variant = Random16() & 15;
           }
         }
         if (frame >= start + 20 && frame < start + 36)
-          orb.y -= 0x20000;
+          orb.y -= px(2);
       }
     }
 
     // The throw: back a pixel a frame, then left ever faster.
     if (frame >= WIND_UP_FRAME && frame < THROW_FRAME)
-      orb.x -= 0x10000;
+      orb.x -= px(1);
     if (frame >= THROW_FRAME && frame <= 275)
       orb.x -= (frame - 250) << 16;
     if (frame < HIT_FRAME) {
       position.x = orb.x;
-      position.height = -0x1000000;
+      position.height = -px(256);
       position.y = orb.y - 0x1000000;
       Render_ApplyProjectedPlacementFar(work->objects[ORB_LEFT], &position,
                                         &scale.x, 0);
@@ -293,8 +293,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
         speed = 0x3ff;
         speed &= Random16();
         angle = Random16() & 0xffff;
-        spark->x = 0x200000;
-        spark->y = 0x5c0000;
+        spark->x = px(32);
+        spark->y = px(92);
         spark->velocityX = Trig_Sin(angle) * (speed + 32) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * (speed + 32) << 1) >> 7;
         spark->variant = (Random16() & 15) + 32;

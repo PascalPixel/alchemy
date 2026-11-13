@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
@@ -83,9 +84,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
 
     speed = (Random16() & 0x3ff) + 256;
     angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-    spark->x = 0x4000;
-    spark->y = 0x7000;
-    spark->z = (Trig_Sin(angle) * speed) >> 16;
+    SET_POSITION(spark, px(1) / 4, px(7) / 16, (Trig_Sin(angle) * speed) >> 16);
     spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
     spark->variant = 0;
   }

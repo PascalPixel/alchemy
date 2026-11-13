@@ -628,7 +628,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         NAVIGATION->tutorialDelay--;
       }
     }
-    if (pressed & 1) {
+    if (pressed & KEY_A) {
       s32 id = candidateIds[targetIndex];
       s32 k;
 
@@ -650,7 +650,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
       targetIndex = result;
     } else if (spread != 255) {
-      if (repeated & 0x90) {
+      if (repeated & (KEY_RIGHT | KEY_DOWN)) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex++;
@@ -658,7 +658,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         } while (candidateIds[targetIndex] == 254);
         redraw |= 1;
       }
-      if (repeated & 0x60) {
+      if (repeated & (KEY_LEFT | KEY_UP)) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex = targetIndex + candidateCount - 1;
@@ -667,7 +667,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
     }
-    if (NAVIGATION->timer == 0 || (pressed & 2)) {
+    if (NAVIGATION->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;

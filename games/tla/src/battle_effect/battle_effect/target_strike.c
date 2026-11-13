@@ -10,6 +10,7 @@
 #include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 /// Abilities: Numbing Sting, Paralytail (kind 313).
 void BattleEffect_RunNumbingSting(void *object) {
@@ -251,9 +252,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       struct EffectStep *step = &work->particles[i];
 
-      step->x = (ground.x / 2) << 16;
-      step->y = 0x500000;
-      step->z = 0;
+      SET_POSITION(step, (ground.x / 2) << 16, px(80), 0);
       step->velocityX = ((Random16() & 255) - 128) << 9;
       step->velocityY = ((Random16() & 255) - 128) << 9;
       step->velocityZ = 0;
@@ -264,9 +263,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     for (i = 0; i != 128; i++) {
       struct EffectStep *step = &gMotes[k * 128 + i];
 
-      step->x = target->x;
-      step->y = 0x140000;
-      step->z = target->z;
+      SET_POSITION(step, target->x, px(20), target->z);
       step->velocityX = ((Random16() & 255) - 128) << 11;
       step->velocityY = ((Random16() & 255) - 128) << 11;
       step->velocityZ = ((Random16() & 255) - 128) << 11;
@@ -276,9 +273,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     // The sparks fly away from the hit: heavy hits throw them in a fan
     // away from the user, the others towards the middle of the field.
     for (i = 0; i != 256; i++) {
-      gSparks[i].x = target->x;
-      gSparks[i].y = 0x140000;
-      gSparks[i].z = target->z;
+      SET_POSITION(&gSparks[i], target->x, px(20), target->z);
       if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
         s32 angle = Random16();
         s32 speed = Random16() & 255;

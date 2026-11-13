@@ -216,7 +216,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
         for (i = 0, drop = drops; i != OCEAN_DROPS; i++, drop++) {
           if (drop->variant == -1) {
             drop->x = ((Random16() & 31) + target.x / 2 - 16) << 16;
-            drop->y = 0x6c0000;
+            drop->y = px(108);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;

@@ -97,9 +97,8 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  position.x = emitter->position.x;
-  position.y = emitter->position.y;
-  position.z = emitter->position.z;
+  SET_POSITION(&position, emitter->position.x, emitter->position.y,
+               emitter->position.z);
   randomAngle = Random16();
   Vector_AddPolarOffset(randomAngle << 4, Random16(), &position);
   object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
@@ -348,9 +347,8 @@ void Reveal_EmitSparkles(const struct ParticleSource *source) {
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  position.x = source->position.x;
-  position.y = source->position.y;
-  position.z = source->position.z;
+  SET_POSITION(&position, source->position.x, source->position.y,
+               source->position.z);
   random = Random16();
   Vector_AddPolarOffset(random << 4, Random16(), &position);
   object = Actor_Spawn(0x2a1, position.x, position.y, position.z);

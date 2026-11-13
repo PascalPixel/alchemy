@@ -339,7 +339,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
 
           for (i = 0; i != 4; i++, p++, q2++) {
             p->x = *q2 << 16;
-            p->y = 0x100000;
+            p->y = px(16);
             p->velocityX = 0;
             p->velocityY = 0;
             p->variant = 0;
@@ -358,8 +358,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         {
           struct EffectStep *p = &work->particles[63];
 
-          p->x = 0x3c0000;
-          p->y = 0x700000;
+          p->x = px(60);
+          p->y = px(112);
           p->variant = 0;
         }
         for (i = 0; i != 32; i++) {
@@ -818,7 +818,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               Render_DrawModelList(model);
             }
             BattleEffectKernels_IntegrateVector3(p, 62, 0);
-            p->x += 0x40000;
+            p->x += px(4);
           }
         }
         Heap_Release(model);

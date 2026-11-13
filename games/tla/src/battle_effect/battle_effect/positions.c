@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 void *GetMotionRecordFar(void *object, s32 index);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -264,9 +265,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 
-    spark->x = target->x;
-    spark->y = target->y + half;
-    spark->z = target->z;
+    SET_POSITION(spark, target->x, target->y + half, target->z);
     spark->velocityX = (Random16() & 255) << 10;
     spark->velocityY = ((Random16() & 255) - 32) << 10;
     spark->velocityZ = ((Random16() & 255) - 127) << 10;
@@ -481,9 +480,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     for (i = 0; i != SPARK_COUNT; i++) {
       struct EffectStep *mote = &work->particles[i];
 
-      mote->x = (Random16() & 63) + 16;
-      mote->y = 0;
-      mote->z = 0;
+      SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
       mote->velocityX = Random16() & 0xffff;
       mote->velocityY = Random16() & 0xffff;
       mote->velocityZ = Random16() & 0xffff;
@@ -574,9 +571,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 
-    spark->x = target->x;
-    spark->y = target->y + half;
-    spark->z = target->z;
+    SET_POSITION(spark, target->x, target->y + half, target->z);
     spark->velocityX = (Random16() & 255) << 10;
     spark->velocityY = (Random16() & 255) << 10;
     spark->velocityZ = ((Random16() & 255) - 127) << 10;

@@ -8,6 +8,7 @@
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 #define PILLAR_FRAMES 96
 
@@ -70,9 +71,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     s32 x;
 
     x = ((Random16() & 15) + 72) << 16;
-    base->x = x;
-    base->y = 0;
-    base->z = gVolcano_Depths[effect->variant][i] << 16;
+    SET_POSITION(base, x, 0, gVolcano_Depths[effect->variant][i] << 16);
     if (object->x < 0)
       base->x = -x;
   }
@@ -140,9 +139,8 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-              spark->x = screen.x << 8;
-              spark->y = (screen.y << 8) + 0x1000;
-              spark->z = (Trig_Sin(angle) * speed) >> 15;
+              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + 0x1000,
+                           (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
               spawned++;
               if (frame == gVolcano_StartFrames[pillar]) {

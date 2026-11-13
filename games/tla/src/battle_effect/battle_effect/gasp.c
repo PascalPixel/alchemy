@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -532,9 +533,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         struct EffectStep *fall = &work->particles[62];
 
         if (frame == 48) {
-          fall->x = 0;
-          fall->y = 0;
-          fall->z = 0;
+          SET_POSITION(fall, 0, 0, 0);
           fall->velocityX = (target[2] - ball->velocityX) / 32;
           fall->velocityY = -ball->velocityY / 32;
           fall->velocityZ = (target[4] - ball->velocityZ) / 32;
@@ -596,7 +595,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *p = &work->particles[i];
 
           p->x = i << 15;
-          p->y = 0x380000;
+          p->y = px(56);
           p->velocityX = (Random16() & 511) + 512;
           p->velocityY = -((Random16() & 127) + 612) << 7;
           p->variant = -i * 8;
@@ -945,9 +944,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           p->velocityX = Trig_Sin(a) * s >> 7;
           p->velocityY = Trig_Cos(a) * s >> 6;
           p->velocityZ = px(1) / 64;
-          p->x = pos.x / 2 << 16;
-          p->y = (pos.y - (Random16() & 31) + 16) << 16;
-          p->z = Random16();
+          SET_POSITION(p, pos.x / 2 << 16,
+                       (pos.y - (Random16() & 31) + 16) << 16, Random16());
         }
         Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 16;
@@ -997,9 +995,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           p->velocityX = Trig_Sin(a) * s >> 6;
           p->velocityY = Trig_Cos(a) * s >> 6;
           p->velocityZ = px(1) / 64;
-          p->x = pos.x / 2 << 16;
-          p->y = (pos.y - (Random16() & 31) - 16) << 16;
-          p->z = Random16();
+          SET_POSITION(p, pos.x / 2 << 16,
+                       (pos.y - (Random16() & 31) - 16) << 16, Random16());
         }
         Sound_PlayFar(SE_619);
       }
@@ -1084,7 +1081,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
                       HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
               BattleEffectKernels_IntegrateVector2(p, 63, 0x800);
               if (p->y > 0x680000) {
-                p->y = 0x680000;
+                p->y = px(104);
                 p->velocityY = -p->velocityY / 2;
               }
             }

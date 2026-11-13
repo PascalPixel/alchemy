@@ -591,7 +591,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         a = (Random16() & 0x7fff) + 0x4000;
 
         p->x = half;
-        p->y = 0x720000;
+        p->y = px(114);
         p->velocityX = (Trig_Sin(a) * r) >> 6;
         p->velocityY = (Trig_Cos(a) * r * 2) >> 6;
         p->variant = (Random16() & 7) + 24;

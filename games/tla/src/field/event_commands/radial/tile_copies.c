@@ -6,6 +6,7 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
@@ -178,9 +179,7 @@ void ParticleBurst_Start(void) {
     sprite->oam.priority = 0;
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    particle->x = owner->x;
-    particle->y = owner->y;
-    particle->z = owner->z;
+    SET_POSITION(particle, owner->x, owner->y, owner->z);
     Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
     particle->heading = heading;
     particle->speed = Random16() + 0x10000;

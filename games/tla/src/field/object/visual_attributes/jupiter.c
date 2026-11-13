@@ -10,6 +10,7 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "battle/object_effect_scripts.h"
+#include "macros.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -45,9 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   Actor_Jump(id, 12, 22);
 
   // 24 sparks from the object's place on screen, one a frame.
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  SET_POSITION(&position, object->x, object->y, object->z);
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(object);
   Sound_PlayFar(SE_SCATTER);
@@ -180,9 +179,8 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    position.x = owner->position.x;
-    position.y = owner->position.y + 0x140000;
-    position.z = owner->position.z;
+    SET_POSITION(&position, owner->position.x, owner->position.y + 0x140000,
+                 owner->position.z);
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(px(4), Random16(), &position);
     effect->targetX = position.x;

@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -227,9 +228,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
             struct EffectStep *q = &work->particles[i];
 
             if (effect->side == 1) {
-              q->x = 0xc80000;
+              q->x = px(200);
             } else {
-              q->x = -0xc80000;
+              q->x = -px(200);
             }
             q->y = ((Random16() & 127) - 64) << 16;
             q->z = ((Random16() & 127) - 64) << 16;
@@ -242,9 +243,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
             struct EffectStep *q = work->particles;
 
             for (i = 0; i != 63; i++, q++) {
-              q->x = point[0];
-              q->y = ((Random16() & 31) << 16) + 0x400000;
-              q->z = 0;
+              SET_POSITION(q, point[0], ((Random16() & 31) << 16) + 0x400000,
+                           0);
               q->velocityX = ((Random16() & 63) + 64) << 13;
               if (q->x > 0) {
                 q->velocityX = -q->velocityX;

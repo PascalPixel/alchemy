@@ -9,6 +9,7 @@
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 /// Builds the two usual routines that draw onto the 128x128 canvas, clipped,
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap
@@ -108,9 +109,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 
   // The motes start 80 pixels up, each at its own phase of the sway.
   for (i = 0; i != 512; i++) {
-    PARTICLES[i].x = 0;
-    PARTICLES[i].y = 80 << 16;
-    PARTICLES[i].z = (Random16() | -32) << 14;
+    SET_POSITION(&PARTICLES[i], 0, 80 << 16, (Random16() | -32) << 14);
     PARTICLES[i].variant = Random16() & 255;
   }
 
@@ -381,9 +380,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
       struct EffectStep *shot = &PARTICLES[k * 16 + i];
       s32 aimZ;
 
-      shot->x = source->x;
-      shot->y = height;
-      shot->z = source->z;
+      SET_POSITION(shot, source->x, height, source->z);
       aimZ = target->z + (((Random16() & 31) - 16) << 17);
       shot->velocityX = (target->x - source->x) >> 4;
       shot->velocityY = px(4);
@@ -460,9 +457,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
                 count = 16;
               for (n = 0; n != count; n++) {
                 piece = &BURSTS[(k * 4 + i) * 8 + n];
-                piece->x = shot->x;
-                piece->y = shot->y;
-                piece->z = shot->z;
+                SET_POSITION(piece, shot->x, shot->y, shot->z);
                 if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0) {
                   piece->velocityX = ((Random16() & 63) - 32) << 11;
                   piece->velocityY = 0;

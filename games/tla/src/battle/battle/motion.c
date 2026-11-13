@@ -7,6 +7,7 @@
 #include "fixed_math.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/field.h"
+#include "macros.h"
 
 #define Actor_StartIdleFar ((void (*)(struct MotionObject *))Actor_StartIdleFar)
 #define Actor_SetMoveTargetFar                                                 \
@@ -260,9 +261,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
     z2 = second->z;
   }
 
-  pos.x = (x1 + x2) / 2;
-  pos.y = 0;
-  pos.z = (z1 + z2) / 2;
+  SET_POSITION(&pos, (x1 + x2) / 2, 0, (z1 + z2) / 2);
 
   BattleMotion_MidpointNoOp(&pos, 0x1000);
 }

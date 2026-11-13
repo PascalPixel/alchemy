@@ -11,6 +11,7 @@
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
+#include "macros.h"
 
 struct Actor *Actor_GetById(u32 objectId);
 
@@ -78,9 +79,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   last = 6;
   tail = &slot->root;
   for (i = 0; i <= last && (link = HangingVine_AllocLink()) != 0; i++) {
-    link->x = x;
-    link->y = y + (15 << 16) - i * (14 << 16);
-    link->z = z;
+    SET_POSITION(link, x, y + (15 << 16) - i * (14 << 16), z);
     if (i == 0)
       link->kind = 1;
     else if (i == 1)
@@ -104,9 +103,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
         s32 drop = -(frame << 15);
 
         do {
-          link->x = x;
-          link->y = top - drop / 2;
-          link->z = z;
+          SET_POSITION(link, x, top - drop / 2, z);
           drop += frame << 16;
           i++;
           link = link->next;

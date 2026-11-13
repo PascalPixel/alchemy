@@ -10,6 +10,7 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 #include "system/transform.h"
+#include "macros.h"
 
 /* VIEW(f02b998): routine Transform_Reset as u32 Transform_Reset(void);
  * graphics.h has void Transform_Reset(void); not tried: Transform_Reset's bound
@@ -91,9 +92,7 @@ void WorldMap_InitializePerspective(void) {
   SceneTransform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
-  eyeOffset.x = 0;
-  eyeOffset.y = 0;
-  eyeOffset.z = farPlane;
+  SET_POSITION(&eyeOffset, 0, 0, farPlane);
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState__f02b998();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
@@ -118,9 +117,7 @@ void WorldMap_InitializePerspective(void) {
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
-    eyeOffset.x = 0;
-    eyeOffset.y = 0;
-    eyeOffset.z = view->distance + 0x10000;
+    SET_POSITION(&eyeOffset, 0, 0, view->distance + 0x10000);
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   REG_MOSAIC = 0;
@@ -510,9 +507,7 @@ void WorldMap_UpdateView(void) {
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
-    eyeOffset.x = 0;
-    eyeOffset.y = 0;
-    eyeOffset.z = height + 0x10000;
+    SET_POSITION(&eyeOffset, 0, 0, height + 0x10000);
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   Transform_Reset();

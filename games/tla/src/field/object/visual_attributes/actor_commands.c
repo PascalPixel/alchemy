@@ -168,14 +168,14 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
                                255);
   switch (angle) {
   case 0:
-    object->x += 0x80000;
-    object->z += 0x10000;
+    object->x += px(8);
+    object->z += px(1);
     ((s8 *)sprite->unk14)[2] -= 4;
     ((s8 *)sprite->unk14)[3] += 15;
     break;
   case 0x8000:
-    object->x -= 0x80000;
-    object->z += 0x10000;
+    object->x -= px(8);
+    object->z += px(1);
     ((s8 *)sprite->unk14)[2] += 3;
     ((s8 *)sprite->unk14)[3] += 16;
     break;
@@ -183,7 +183,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
     ((s8 *)sprite->unk14)[3] += 1;
     break;
   case 0x4000:
-    object->z += 0x80000;
+    object->z += px(8);
     ((s8 *)sprite->unk14)[3] += 13;
     break;
   }

@@ -15,6 +15,7 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "text/msg_ids.h"
+#include "macros.h"
 
 /* VIEW(presentation): routine BattleObject_Reset as void BattleObject_Reset();
  * the definition has another declaration; tried as the definition's void
@@ -213,7 +214,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   ids[0] = saved->unitId;
   ids[1] = 255;
   BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
-  object->y = 0x280000;
+  object->y = px(40);
   object->angle = plan->targetIds[0] <= 7 ? 0 : TRIG_TURN / 2;
   BattleHighlight_SetSpriteMode(saved->unitId, 1);
   for (i = 0; i <= 29; i++) {
@@ -296,9 +297,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
       BattleHighlight_SetSpriteMode(ids[i], 1);
   }
   BattleMotion_ReturnToSpot(unitId);
-  object->x = object->targetX;
-  object->y = object->targetY;
-  object->z = object->targetZ;
+  SET_POSITION(object, object->targetX, object->targetY, object->targetZ);
   for (i = 0; i <= 15; i++) {
     object->y = 0;
     *(volatile u16 *)0x04000052 = ((16 - i) << 8) | i;

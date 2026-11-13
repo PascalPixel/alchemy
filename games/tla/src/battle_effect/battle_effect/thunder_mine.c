@@ -483,10 +483,10 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       BattlePlayback_StartFar(134);
     }
     if (frame == 0) {
-      position.x = 0x200000;
-      position.y = 0x480000;
-      velocity.x = 0x90000;
-      velocity.y = -0x20000;
+      position.x = px(32);
+      position.y = px(72);
+      velocity.x = px(9);
+      velocity.y = -px(2);
       BattleEffect_SpawnObjects(2, 657, 2);
     }
     if (frame == 108) {
@@ -679,7 +679,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               s32 speed = Random16() & 255;
 
               spark->x = column << 16;
-              spark->y = 0x700000;
+              spark->y = px(112);
               spark->velocityY = (-Trig_Sin(angle) * speed) >> 5;
               spark->velocityX = (Trig_Cos(angle) * speed) >> 5;
               spark->variant = 0;

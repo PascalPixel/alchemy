@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // Nirvana's ring of sparks.
 
@@ -56,9 +57,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   object = BattleObject_GetFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   orb = work->particles;
-  orb->x = object->x;
-  orb->y = object->y + half;
-  orb->z = object->z;
+  SET_POSITION(orb, object->x, object->y + half, object->z);
   orb->velocityX = 0;
   orb->velocityY = 0;
   orb->velocityZ = 0;
@@ -418,9 +417,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
 
-          mote->x = target->x;
-          mote->y = 52 << 16;
-          mote->z = target->z;
+          SET_POSITION(mote, target->x, 52 << 16, target->z);
           mote->velocityY = ((Random16() & 0xff) - 128) << 9;
           mote->velocityX = (Trig_Sin(angle) * speed) >> 7;
           mote->velocityZ = (Trig_Cos(angle) * speed) >> 7;
@@ -852,9 +849,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             s32 speed = (Random16() & 1023) + 1024;
             s32 angle = Random16() & 0xffff;
 
-            p->x = target->x;
-            p->y = 0;
-            p->z = target->z;
+            SET_POSITION(p, target->x, 0, target->z);
             p->velocityX = (Trig_Sin(angle) * speed) >> 9;
             p->velocityY = 0;
             p->velocityZ = (Trig_Cos(angle) * speed) >> 9;
@@ -953,9 +948,10 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             s32 angle = (i & 7) << 13;
             s32 ring;
 
-            p->x = target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2);
-            p->y = ((Random16() & 0xffff) << 2) - ((ring * 5) << 17) + 0x400000;
-            p->z = target->z + ((Trig_Cos(angle) * ring) << 2);
+            SET_POSITION(
+                p, target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2),
+                ((Random16() & 0xffff) << 2) - ((ring * 5) << 17) + 0x400000,
+                target->z + ((Trig_Cos(angle) * ring) << 2));
             p->velocityX = ((Random16() & 0xffff) << 1) + 0x10000;
             p->velocityY = ((Random16() & 0xffff) - 12768) * 3;
             p->velocityZ = ((Random16() & 0xffff) - 0x8000) << 1;

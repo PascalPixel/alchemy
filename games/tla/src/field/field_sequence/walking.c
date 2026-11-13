@@ -12,6 +12,7 @@
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/game.h"
 #include "system/ram_buffer.h"
+#include "macros.h"
 
 /// Unused: returns 0.
 UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
@@ -99,9 +100,7 @@ s32 Field_GetCollisionUnderLeader(void) {
 
   if (object == NULL)
     return 0;
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  SET_POSITION(&position, object->x, object->y, object->z);
   if (block->mode == 3) {
     // The block table at its fixed address: as the linked gMapBlocks it loads
     cell =

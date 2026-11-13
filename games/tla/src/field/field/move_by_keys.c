@@ -8,6 +8,7 @@
 #include "gamepak/far_call/field_sequence.h"
 #include "module/field/field.h"
 #include "module/field/resource_slot.h"
+#include "macros.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
 
@@ -60,9 +61,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         animation = 10;
     }
     collisionFlags = 0;
-    position.x = 0;
-    position.y = 0;
-    position.z = 0;
+    SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(px(8), angle, &position);
     position.x += object->x;
     deltaZ = position.z;
@@ -153,9 +152,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     value = 0;
   } else {
     value = 16;
-    position.x = 0;
-    position.y = 0;
-    position.z = 0;
+    SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(px(8), angle, &position);
     position.x += object->x;
     position.y = object->y - position.z;
@@ -212,9 +209,7 @@ s32 Actor_CrossRope(struct Actor *object) {
       if (slot->amplitude > 0x20000)
         slot->amplitude = 0x20000;
       object->watchedObject = (struct Actor *)best;
-      position.x = best->x;
-      position.y = best->y;
-      position.z = best->z;
+      SET_POSITION(&position, best->x, best->y, best->z);
       sprite->angle = best->angle + turn;
     }
   }
@@ -280,13 +275,9 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   if (angle == 0xffff) {
     collisionFlags = 4;
     best = (struct TightropeNode *)object->watchedObject;
-    position.x = object->x;
-    position.y = best->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, best->y, object->z);
   } else {
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), angle, &position);
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->unk84[7];
     point = tightrope->nodes;
@@ -327,9 +318,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
         }
         /* FAKEMATCH(dead): position.x copied onto itself before the copies. */
         position.x = position.x;
-        position.x = best->x;
-        position.y = best->y;
-        position.z = best->z;
+        SET_POSITION(&position, best->x, best->y, best->z);
       }
     }
   }

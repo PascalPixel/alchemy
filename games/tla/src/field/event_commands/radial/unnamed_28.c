@@ -6,6 +6,7 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct RingMote {
   s32 x;
@@ -164,16 +165,14 @@ void FieldPsynergy_Unnamed28(void) {
         if (mote->timer == 0) {
           s32 heading = angle + ((i & 1) << 15);
 
-          mote->x = caster->x;
-          mote->y = caster->y + 0x100000;
-          mote->z = caster->z;
+          SET_POSITION(mote, caster->x, caster->y + 0x100000, caster->z);
           Vector_AddPolarOffset(px(55), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
         }
         if ((u32)mote->timer <= 15) {
           sprite->oam.index = tile + (mote->timer & 3) * 2;
           EffectSprite_DrawAtWorldPosition(sprite, mote);
-          mote->y += -0x10000;
+          mote->y += -px(1);
         }
         mote->timer++;
         if (repeat && mote->timer == 16)
@@ -352,9 +351,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   sprite = work->sprites;
   for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
-    mote->x = actor->x;
-    mote->y = actor->y + 0x100000;
-    mote->z = actor->z;
+    SET_POSITION(mote, actor->x, actor->y + 0x100000, actor->z);
     Vector_AddPolarOffset(Random16() * 4 + 0x340000, angle, &mote->x);
     mote->vx = 0;
     mote->vy = -0x40000;
@@ -470,9 +467,7 @@ void ViewMove_Start(s32 direction) {
   right = maxX * 8;
   top = minZ * 8;
   bottom = maxZ * 8;
-  work->x = center->x;
-  work->y = center->y;
-  work->z = center->z;
+  SET_POSITION(work, center->x, center->y, center->z);
 
   work->edgeX = 0;
   if (viewX < left + VIEW_EDGE_MARGIN)
@@ -551,9 +546,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
     z = work->z;
   }
 
-  center->x = x;
-  center->y = work->y;
-  center->z = z;
+  SET_POSITION(center, x, work->y, z);
 }
 
 /* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc;

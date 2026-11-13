@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -195,9 +196,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     for (m = 0; m != 2; m++) {
       struct ModelVertex *v = (struct ModelVertex *)(meshA + j * 8 + m * 4);
 
-      v->x = (Trig_Sin(m << 13) * r) >> 16;
-      v->y = y + 24;
-      v->z = (Trig_Cos(m << 13) * r) >> 16;
+      SET_POSITION(v, (Trig_Sin(m << 13) * r) >> 16, y + 24,
+                   (Trig_Cos(m << 13) * r) >> 16);
     }
   }
   casterValue = caster[18];
@@ -298,9 +298,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         if (i != 1) {
           r = ((Trig_Sin((frame + k * 4) << 12) * 2) >> 16) + 120;
         }
-        v->x = (Trig_Sin(k << 11) * r) >> 16;
-        v->y = (Trig_Cos(k << 11) * r) >> 16;
-        v->z = zero;
+        SET_POSITION(v, (Trig_Sin(k << 11) * r) >> 16,
+                     (Trig_Cos(k << 11) * r) >> 16, zero);
       }
     }
 
@@ -577,9 +576,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       if (frame == 143) {
         p = work->particles;
         for (i = 0; i != 64; i++, p++) {
-          p->x = Random16() & 127;
-          p->y = Random16() % 192 - 64;
-          p->z = Random16() & 127;
+          SET_POSITION(p, Random16() & 127, Random16() % 192 - 64,
+                       Random16() & 127);
         }
       }
       Transform_Reset();

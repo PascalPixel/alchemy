@@ -51,7 +51,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   for (k = 0; k != Data_081979b7[effect->variant * 3]; k++) {
     seed = &work->particles[k];
     x = Random16() & 31;
-    seed->y = -0x400000;
+    seed->y = -px(64);
     if (effect->side == 1) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;

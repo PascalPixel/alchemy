@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 // Break's ice shards (effect kind 43).
 
@@ -205,9 +206,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
       s32 speed;
 
-      mote->x = object->x;
-      mote->y = object->y + half;
-      mote->z = object->z;
+      SET_POSITION(mote, object->x, object->y + half, object->z);
       mote->velocityX = ((Random16() & 0xff) - 128) << 10;
       mote->velocityY = ((Random16() & 0xff) - 128) << 10;
       mote->velocityZ = (speed = (Random16() & 0xff) - 128) << 10;

@@ -7,6 +7,7 @@
 #include "module/battle/battle.h"
 #include "gamepak/far_call/field.h"
 #include "module/system/system.h"
+#include "macros.h"
 
 /// Builds a battle object's status icon flags from its unit: poison
 /// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
@@ -618,9 +619,7 @@ void Camera_InitializeDefaultTransform(void) {
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 
-  transfer.x = 0;
-  transfer.y = 0;
-  transfer.z = state->distance;
+  SET_POSITION(&transfer, 0, 0, state->distance);
   Iwram_TransformVector(&transfer, (s32 *)state);
 }
 

@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
 // dragon's head flies the path from frame 18, trailing fading copies of
@@ -78,9 +79,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   object = BattleObject_GetFar(effect->actors[0])->object;
   for (i = 0; i != 56; i++) {
     step = &work->particles[8 + i];
-    step->x = object->x;
-    step->y = 0;
-    step->z = object->z;
+    SET_POSITION(step, object->x, 0, object->z);
     if (i >= Data_08199d5c[effect->variant]) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 12;
@@ -101,9 +100,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     SPARKS[i].variant = -1;
   for (i = 0; i != 128; i++) {
     step = &SPARKS[i];
-    step->x = object->x;
-    step->y = 0;
-    step->z = object->z;
+    SET_POSITION(step, object->x, 0, object->z);
     step->velocityX = ((Random16() & 63) - 32) << 14;
     step->velocityY = (Random16() & 63) << 12;
     step->velocityZ = ((Random16() & 63) - 32) << 14;
@@ -176,8 +173,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 force;
 
           step = &SPARKS[128 + i];
-          step->x = 0x3c0000;
-          step->y = 0x6c0000;
+          step->x = px(60);
+          step->y = px(108);
           angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           force = (Random16() & 255) + 127;
           step->velocityX = (Trig_Sin(angle) * force) >> 7;

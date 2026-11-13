@@ -9,6 +9,7 @@
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
@@ -60,9 +61,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   y = source->y + BattleUnit_GetEffectHeightFar(effect->actor);
   for (i = 0; i != MOTE_COUNT; i++) {
     point = &work->particles[i];
-    point->x = source->x;
-    point->y = y;
-    point->z = source->z;
+    SET_POSITION(point, source->x, y, source->z);
     point->velocityX = ((s32)((Random16() & 255) - 127) << 16) >> 5;
     point->velocityY = ((s32)((Random16() & 127) - 16) << 16) >> 6;
     point->velocityZ = ((s32)((Random16() & 255) - 127) << 16) >> 5;
@@ -74,9 +73,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   for (i = 0; i != effect->count; i++) {
     seat = &work->particles[SEAT_FIRST + i];
     object = BattleObject_GetFar(effect->actors[i])->object;
-    seat->x = object->x;
-    seat->y = 0;
-    seat->z = object->z;
+    SET_POSITION(seat, object->x, 0, object->z);
   }
 
   work->cameraDelta = 0;

@@ -5,6 +5,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -101,9 +102,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
       // The shards start about the target, each with its own roll.
       for (i = 0, shard = &work->particles[32]; i != 16; i++, shard++) {
-        shard->x = (to.x + (Random16() & 127) - 64) << 16;
-        shard->y = to.y << 16;
-        shard->z = (Random16() & 0x1fff) + 0x7000;
+        SET_POSITION(shard, (to.x + (Random16() & 127) - 64) << 16, to.y << 16,
+                     (Random16() & 0x1fff) + 0x7000);
       }
     }
     if (frame == 0) {

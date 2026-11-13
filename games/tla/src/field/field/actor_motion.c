@@ -6,6 +6,7 @@
 #include "fixed_math.h"
 #include "module/field/resource_slot.h"
 #include "module/tla.h"
+#include "macros.h"
 
 s32 Actor_IsTargetUnset(struct Actor *object) {
   s32 first;
@@ -394,9 +395,7 @@ void Actor_UpdateAllThumb(void) {
     object->moved[0] = x - object->x;
     object->moved[1] = y - object->y;
     object->moved[2] = z - object->z;
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
 
     // Turn to face the direction of travel, at most a sixteenth of a turn a
     // frame.
@@ -494,9 +493,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
                          Iwram_MulQ16(dz, dz));
   }
   if (distance < 0x10000) {
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;

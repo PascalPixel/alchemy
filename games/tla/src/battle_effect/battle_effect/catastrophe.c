@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -795,9 +796,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 y;
 
           if (a != 0) {
-            p->x = Data_0819985c[n] << 3;
-            p->y = Data_08199880[n] << 3;
-            p->z = a << 8;
+            SET_POSITION(p, Data_0819985c[n] << 3, Data_08199880[n] << 3,
+                         a << 8);
           }
           /* FAKEMATCH(barrier): idx held through an empty asm. */
           __asm__("" : "=r"(idx) : "0"(idx));
@@ -927,9 +927,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       for (i = 0; i != n; i++) {
         struct EffectStep *p4 = &work->particles[i];
 
-        p4->x = (Random16() % spread - spread / 2) << 16;
-        p4->y = camZ + 0xc80000;
-        p4->z = ((base + i) % 3 << 12) + 0x2000;
+        SET_POSITION(p4, (Random16() % spread - spread / 2) << 16,
+                     camZ + 0xc80000, ((base + i) % 3 << 12) + 0x2000);
         texture.pixels = work->sheet + p4->z;
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x10000, p4->y, 0);
@@ -1404,9 +1403,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               s32 angle = i * 1365;
               s32 rr = (a & 31) + 32;
 
-              p->x = (Trig_Sin(angle) * rr >> 16) + 60;
-              p->y = (Trig_Cos(angle) * rr >> 16) + 60;
-              p->z = (Random16() & 3) + 5;
+              SET_POSITION(p, (Trig_Sin(angle) * rr >> 16) + 60,
+                           (Trig_Cos(angle) * rr >> 16) + 60,
+                           (Random16() & 3) + 5);
               p->variant = -(Random16() & 15);
             }
           }
@@ -1526,7 +1525,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             s32 speed;
 
             q->x = (pos.x / 2) << 16;
-            q->y = 0x500000;
+            q->y = px(80);
             angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
             speed = (Random16() & 127) + 128;
             q->velocityX = Trig_Sin(angle) * speed >> 5;
@@ -1594,9 +1593,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
           for (i = 0, x = 0, v = (struct MeshVertex *)(off + (s32)cellBuffer);
                i != 2; i++, x += 10, v++) {
-            v->x = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
-            v->y = y;
-            v->z = z;
+            SET_POSITION(
+                v, x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5,
+                y, z);
           }
           jitter = jitter + (Random16() & 7) - 4;
           y -= 6;
@@ -1696,7 +1695,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                   s32 speed;
 
                   q->x = p2->x << 16;
-                  q->y = 0x680000;
+                  q->y = px(104);
                   angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
                   speed = (Random16() & 127) + 128;
                   q->velocityX = Trig_Sin(angle) * speed >> 5;

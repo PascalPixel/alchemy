@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 #define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -159,9 +160,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &CHIPS[i];
 
-        chip->x = (Random16() & 127) << 16;
-        chip->y = ((Random16() & 15) + 80) << 16;
-        chip->z = ((Random16() & 63) - 32) << 12;
+        SET_POSITION(chip, (Random16() & 127) << 16,
+                     ((Random16() & 15) + 80) << 16,
+                     ((Random16() & 63) - 32) << 12);
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
       }

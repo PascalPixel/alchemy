@@ -897,7 +897,7 @@ s32 WorldPicture_Show(s32 mode) {
         *cursorZ = screenY << 16;
         gliding = 1;
       }
-      if (!(keys->held & 8) && gliding == 1) {
+      if (!(keys->held & KEY_START) && gliding == 1) {
         *cursorX = *wayX;
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
         // the reload.
@@ -905,7 +905,7 @@ s32 WorldPicture_Show(s32 mode) {
         *cursorZ = Data_0202a650;
         gliding = 0;
       }
-      if (keys->repeat & 0x100) {
+      if (keys->repeat & KEY_R) {
         WorldPicture_StepToPlace(&screenX, &screenY, 1);
         *cursorX = screenX << 16;
         // wayZ only ever holds &Data_0202a650, set where it is used.

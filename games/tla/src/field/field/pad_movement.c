@@ -8,6 +8,7 @@
 #include "flag_call.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
+#include "macros.h"
 
 /* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0;
  * resource_slot.c has another definition; tried with the definition the rest of
@@ -76,19 +77,13 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     collision |= 4;
   } else {
     collision = 0;
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction, &position);
     if (gDebugMode == 0 ||
         ((gInput.held & KEY_L) == 0 && GameFlag_Get(0x163) == 0)) {
-      leftPosition.x = object->x;
-      leftPosition.y = object->y;
-      leftPosition.z = object->z;
+      SET_POSITION(&leftPosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
-      rightPosition.x = object->x;
-      rightPosition.y = object->y;
-      rightPosition.z = object->z;
+      SET_POSITION(&rightPosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
@@ -101,17 +96,11 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
         angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
         for (angleIndex = 0; angleIndex < count; angleIndex++) {
           direction = angleOffsets[angleIndex];
-          position.x = object->x;
-          position.y = object->y;
-          position.z = object->z;
+          SET_POSITION(&position, object->x, object->y, object->z);
           Vector_AddPolarOffset(px(8), direction, &position);
-          leftPosition.x = object->x;
-          leftPosition.y = object->y;
-          leftPosition.z = object->z;
+          SET_POSITION(&leftPosition, object->x, object->y, object->z);
           Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
-          rightPosition.x = object->x;
-          rightPosition.y = object->y;
-          rightPosition.z = object->z;
+          SET_POSITION(&rightPosition, object->x, object->y, object->z);
           Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
@@ -292,9 +281,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     goto counted;
   }
   collision = 0;
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  SET_POSITION(&position, object->x, object->y, object->z);
   Vector_AddPolarOffset(px(19), (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
     onObject = 0;
@@ -331,25 +318,17 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     goto counted;
   }
   if (!MapGrid_CheckCollision(object, &position)) {
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(19), (u16)angle + TRIG_TURN / 16, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
-      testPosition.x = object->x;
-      testPosition.y = object->y;
-      testPosition.z = object->z;
+      SET_POSITION(&testPosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(19), (u16)angle - TRIG_TURN / 16, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(19), (u16)angle + TRIG_TURN / 8,
                               &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
-          testPosition.x = object->x;
-          testPosition.y = object->y;
-          testPosition.z = object->z;
+          SET_POSITION(&testPosition, object->x, object->y, object->z);
           Vector_AddPolarOffset(px(19), (u16)angle - TRIG_TURN / 8,
                                 &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
@@ -373,46 +352,32 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   } while (0);
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(19), (u16)heading, &position);
     if (MapGrid_CheckCollision(object, &position))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(19), (u16)heading + TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(19), (u16)heading - TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(19), (u16)heading + TRIG_TURN / 8, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(19), (u16)heading - TRIG_TURN / 8, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition))
       goto push_objects;
   }
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  SET_POSITION(&position, object->x, object->y, object->z);
   collision |= 1;
 
 push_objects:
-  contact.x = object->x;
-  contact.y = object->y;
-  contact.z = object->z;
+  SET_POSITION(&contact, object->x, object->y, object->z);
   Vector_AddPolarOffset(px(15), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->scriptObjects;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
@@ -430,27 +395,19 @@ push_objects:
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {
       direction = ArcTan2(other->z - object->z, other->x - object->x);
-      testPosition.x = other->x;
-      testPosition.y = other->y;
-      testPosition.z = other->z;
+      SET_POSITION(&testPosition, other->x, other->y, other->z);
       heading = direction;
       Vector_AddPolarOffset(px(1) / 4, direction, &testPosition);
       if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
-        testPosition.x = other->x;
-        testPosition.y = other->y;
-        testPosition.z = other->z;
+        SET_POSITION(&testPosition, other->x, other->y, other->z);
         Vector_AddPolarOffset(px(21), direction, &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
-          testPosition.x = other->x;
-          testPosition.y = other->y;
-          testPosition.z = other->z;
+          SET_POSITION(&testPosition, other->x, other->y, other->z);
           Vector_AddPolarOffset(px(21), direction + 0x1000, &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
-            testPosition.x = other->x;
-            testPosition.y = other->y;
-            testPosition.z = other->z;
+            SET_POSITION(&testPosition, other->x, other->y, other->z);
             Vector_AddPolarOffset(px(21), direction - 0x1000, &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
@@ -620,30 +577,20 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   if (direction == 0xffff) {
     collision |= 4;
   } else {
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
       if (WorldMap_IsSailable(object, &position) == 0) {
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) == 0) {
-          testPosition.x = object->x;
-          testPosition.y = object->y;
-          testPosition.z = object->z;
+          SET_POSITION(&testPosition, object->x, object->y, object->z);
           Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
           if (WorldMap_IsSailable(object, &testPosition) == 0) {
-            testPosition.x = object->x;
-            testPosition.y = object->y;
-            testPosition.z = object->z;
+            SET_POSITION(&testPosition, object->x, object->y, object->z);
             Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
             if (WorldMap_IsSailable(object, &testPosition) == 0) {
-              testPosition.x = object->x;
-              testPosition.y = object->y;
-              testPosition.z = object->z;
+              SET_POSITION(&testPosition, object->x, object->y, object->z);
               Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
               if (WorldMap_IsSailable(object, &testPosition) == 0)
                 goto update_object;
@@ -659,33 +606,23 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
       angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
-        position.x = object->x;
-        position.y = object->y;
-        position.z = object->z;
+        SET_POSITION(&position, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), direction, &position);
         if (WorldMap_IsSailable(object, &position) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
@@ -881,31 +818,21 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
     collision |= 4;
     goto update_object;
   }
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  SET_POSITION(&position, object->x, object->y, object->z);
   Vector_AddPolarOffset(px(8), direction, &position);
   if (gDebugMode != 0 && (gInput.held & KEY_L) != 0)
     goto update_object;
   if (WorldMap_IsFlyable(object, &position) == 0) {
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) == 0) {
-      testPosition.x = object->x;
-      testPosition.y = object->y;
-      testPosition.z = object->z;
+      SET_POSITION(&testPosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
       if (WorldMap_IsFlyable(object, &testPosition) == 0) {
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsFlyable(object, &testPosition) == 0) {
-          testPosition.x = object->x;
-          testPosition.y = object->y;
-          testPosition.z = object->z;
+          SET_POSITION(&testPosition, object->x, object->y, object->z);
           Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
           if (WorldMap_IsFlyable(object, &testPosition) == 0)
             goto check_objects;
@@ -921,33 +848,23 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
   for (angleIndex = 0; angleIndex < count; angleIndex++) {
     direction = angleOffsets[angleIndex];
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction, &position);
     if (WorldMap_IsFlyable(object, &position) != 0)
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    SET_POSITION(&testPosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
@@ -1058,16 +975,16 @@ update_object:
   flightWork = Ram_HeapSlots->eventWork;
   if (gInput.held & (gMainRoutineWork.keys230 | gMainRoutineWork.unk232)) {
     flightWork->climbing = 1;
-    object->y += 0x2000;
+    object->y += px(1) / 8;
   } else {
-    object->y -= 0x4000;
+    object->y -= px(1) / 4;
   }
   if (Party_GetPpRatioFar() == 0)
-    object->y -= 0x4000;
+    object->y -= px(1) / 4;
   if (object->y <= 0 && flightWork->climbing != 0)
     ((struct EventWork *)flightWork)->unk16a = 254;
   if (object->y >= 0xc0000)
-    object->y = 0xc0000;
+    object->y = px(12);
   if (object->y <= 0)
     object->y = 0;
   object->step++;

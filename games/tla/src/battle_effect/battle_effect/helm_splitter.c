@@ -149,10 +149,10 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
         spark = &sparks[i];
         if (effect->variant == 0)
-          spark->x = 0x400000;
+          spark->x = px(64);
         else
           spark->x = (position.x / 2) << 16;
-        spark->y = 0x500000;
+        spark->y = px(80);
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
         spark->variant = (Random16() & 15) + 16;

@@ -458,17 +458,17 @@ again:
          (platform = Actor_FindNearestFacingTarget(leader, 259)) != NULL) &&
         (platform->priorityFlags & 2)) {
       Actor_SelectAnimationFar(platform, 7);
-      leader->y -= 0x10000;
-      leader->terrainHeight -= 0x10000;
+      leader->y -= px(1);
+      leader->terrainHeight -= px(1);
       wait(2);
-      leader->y -= 0x10000;
-      leader->terrainHeight -= 0x10000;
+      leader->y -= px(1);
+      leader->terrainHeight -= px(1);
       wait(10);
-      leader->y += 0x10000;
-      leader->terrainHeight += 0x10000;
+      leader->y += px(1);
+      leader->terrainHeight += px(1);
       wait(4);
-      leader->y += 0x10000;
-      leader->terrainHeight += 0x10000;
+      leader->y += px(1);
+      leader->terrainHeight += px(1);
     } else {
       wait(6);
     }

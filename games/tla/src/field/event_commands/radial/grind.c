@@ -5,6 +5,7 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct SplashParticle {
   s32 x;
@@ -180,9 +181,7 @@ void FieldPsynergy_GrindOnTarget(void) {
           sprite->depth = BattleEffect_GetObjectDepth(child) - 15;
       }
       particle->timer = 0;
-      particle->x = scene->x;
-      particle->y = scene->y + 0x50000;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y + 0x50000, scene->z);
       if (radius > 0x50000)
         Vector_AddPolarOffset(radius + Random16() * 5, angle, &particle->x);
       else

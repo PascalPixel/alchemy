@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -438,7 +439,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 511) + 512;
 
           p->x = x;
-          p->y = 0x640000;
+          p->y = px(100);
           p->velocityX = (Trig_Sin(angle) * speed) >> 6;
           p->velocityY = (Trig_Cos(angle) * speed) >> 5;
           p->variant = (Random16() & 15) + 16;
@@ -615,9 +616,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
 
   for (frame = 0; frame != LEAP_FRAMES; frame++) {
     if (frame == 0) {
-      caster->x = homeX;
-      caster->y = 0;
-      caster->z = homeZ;
+      SET_POSITION(caster, homeX, 0, homeZ);
       landed = 0;
     }
     if (frame > 17 || frame == 0) {

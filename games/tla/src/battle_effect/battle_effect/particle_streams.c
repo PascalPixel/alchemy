@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
 /// unless the unit is one of four enemies, the actor leaps back to 130-193% of
@@ -178,7 +179,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
         if (focus.x < 120 << 16)
-          velocity.x += 0x8000;
+          velocity.x += px(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);
 
@@ -1129,7 +1130,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
           draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
                HI(mote->x) - 16, HI(mote->y) - 16, 32, 32);
           mote->x -= direction * 0x14000;
-          mote->y -= 0x50000;
+          mote->y -= px(5);
           mote->variant++;
           if (mote->variant == 6)
             mote->variant = -1;
@@ -1170,9 +1171,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   for (i = 0; i != 128; i++) {
     struct EffectStep *flash = &FLASHES[i];
 
-    flash->x = 0;
-    flash->y = 0;
-    flash->z = 0;
+    SET_POSITION(flash, 0, 0, 0);
     flash->velocityX = ((Random16() & 255) - 127) << 12;
     flash->velocityY = (Random16() & 255) << 11;
     flash->velocityZ = ((Random16() & 255) - 127) << 12;
@@ -1181,9 +1180,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   for (i = 0; i != 512; i++) {
     struct EffectStep *ember = &EMBERS[i];
 
-    ember->x = 0;
-    ember->y = 0;
-    ember->z = 0;
+    SET_POSITION(ember, 0, 0, 0);
     ember->velocityX = ((Random16() & 255) - 128) << 13;
     ember->velocityY = (Random16() & 255) << 11;
     ember->velocityZ = ((Random16() & 255) - 128) << 13;
@@ -1241,7 +1238,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         if (ember->y <= 0x140000) {
           ember->x = 0;
           ember->z = 0;
-          ember->y = 0x140000;
+          ember->y = px(20);
           ember->velocityX = ((Random16() & 63) - 32) << 15;
           ember->velocityY = (Random16() & 63) << 13;
           ember->velocityZ = ((Random16() & 63) - 32) << 15;
@@ -1281,7 +1278,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         }
         flash->variant++;
         if (flash->variant == 14) {
-          flash->y = 0x140000;
+          flash->y = px(20);
           flash->x = 0;
           flash->z = ((Random16() & 255) - 127) << 16;
           flash->velocityX = 0;

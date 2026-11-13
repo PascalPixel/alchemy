@@ -12,6 +12,7 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92      // battleFxWork[0]
@@ -451,7 +452,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   }
 
   for (i = 0; i != 128; i++) {
-    gSparkles[i].y = 0x800000;
+    gSparkles[i].y = px(128);
     gSparkles[i].x = Random16() & 0xffff;
     gSparkles[i].z = (Random16() & 0x1ff) + 0x400;
     gSparkles[i].variant = -i;
@@ -890,9 +891,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   }
   for (i = 0; i != 31; i++) {
     struct EffectStep *p = &work->particles[i + 32];
-    p->x = Random16() & 127;
-    p->y = (Random16() & 31) + 88;
-    p->z = (Random16() & 3) + 5;
+    SET_POSITION(p, Random16() & 127, (Random16() & 31) + 88,
+                 (Random16() & 3) + 5);
     p->variant = i * -2;
   }
   {
@@ -1160,12 +1160,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               r = 64;
             }
             if (frame == 160) {
-              q->x = 0x800000;
-              q->y = -0x200000;
+              q->x = px(128);
+              q->y = -px(32);
             }
             if (frame <= 171) {
-              q->x += -0x80000;
-              q->y += 0x100000;
+              q->x += -px(8);
+              q->y += px(16);
               BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
               Canvas_BlitAtFoot(work->sheet, HI(q->x), HI(q->y), r);
             }
@@ -1417,7 +1417,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           } else {
             p->variant++;
           }
-          p->x += 0x80000;
+          p->x += px(8);
           Transform_Reset();
           px = p->x + -0x400000;
           py = p->y + -0x400000;
@@ -1714,12 +1714,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             r = 64;
           }
           if (frame == 32) {
-            q->x = 0x800000;
-            q->y = -0x200000;
+            q->x = px(128);
+            q->y = -px(32);
           }
           if (frame <= 43) {
-            q->x += -0x80000;
-            q->y += 0x100000;
+            q->x += -px(8);
+            q->y += px(16);
             BattleEffect_DrawShadedCircles(work->sheet + 0x38c0, r, 0x10000);
             Canvas_BlitAtFoot(work->sheet + 0x38c0, HI(q->x), HI(q->y), r);
           }

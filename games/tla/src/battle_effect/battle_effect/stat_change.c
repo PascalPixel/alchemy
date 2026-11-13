@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); Kindle (kind 223); kind 46 is used by no ability.
@@ -214,9 +215,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   for (i = 0; i != 512; i++) {
     struct EffectStep *flare = &FLARES[i];
 
-    flare->x = (Random16() % 200 - 100) << 14;
-    flare->y = (Random16() % 200 - 100) << 15;
-    flare->z = (Random16() % 200 - 100) << 14;
+    SET_POSITION(flare, (Random16() % 200 - 100) << 14,
+                 (Random16() % 200 - 100) << 15,
+                 (Random16() % 200 - 100) << 14);
     flare->variant = 0;
   }
 

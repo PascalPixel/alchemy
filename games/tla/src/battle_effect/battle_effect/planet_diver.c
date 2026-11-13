@@ -9,6 +9,7 @@
 #include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 // The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -51,9 +52,9 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
   // Scatter every skull up to 64 pixels from its centre.
   for (i = 0; i != 512; i++) {
-    PARTICLES[i].x = ((Random16() & 255) - 127) << 15;
-    PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
-    PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
+    SET_POSITION(&PARTICLES[i], ((Random16() & 255) - 127) << 15,
+                 ((Random16() & 255) - 127) << 15,
+                 ((Random16() & 255) - 127) << 15);
   }
   Sound_PlayFar(SE_SWIRL);
 
@@ -320,9 +321,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     for (i = 0; i != MOTES_PER_TARGET; i++) {
       struct EffectStep *mote = &PARTICLES[k * 128 + i];
 
-      mote->x = source->x;
-      mote->y = height;
-      mote->z = source->z;
+      SET_POSITION(mote, source->x, height, source->z);
       mote->velocityX = ((Random16() & 255) - 128) << 10;
       mote->velocityY = ((Random16() & 255) - 128) << 10;
       mote->velocityZ = ((Random16() & 255) - 128) << 10;

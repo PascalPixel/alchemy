@@ -15,6 +15,7 @@
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "module/tla.h"
+#include "macros.h"
 
 extern u8 gMapCellBuffer[];
 
@@ -253,9 +254,7 @@ s32 FieldSequence_Run(void) {
     GameFlag_Set(260);
     leader = WorldMap_Unfreeze();
     Actor_StartIdleFar(leader);
-    party->x = leader->x;
-    party->y = 0;
-    party->z = leader->z;
+    SET_POSITION(party, leader->x, 0, leader->z);
     party->heading = leader->facing;
     *turn = leader->terrainId;
     while (Field_CountRequests() != 0) {
@@ -607,9 +606,8 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   }
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    gMainRoutineWork.x = entry->x << 16;
-    gMainRoutineWork.y = entry->y << 16;
-    gMainRoutineWork.z = entry->z << 16;
+    SET_POSITION(&gMainRoutineWork, entry->x << 16, entry->y << 16,
+                 entry->z << 16);
     gMainRoutineWork.heading = entry->facing;
     gMainRoutineWork.turn = 0;
   }
@@ -684,7 +682,7 @@ s32 Field_PlaceAtEntrance(void) {
         *angle = (flags & 15) << 12;
         *turn = 0;
         if (flags & 16)
-          gMainRoutineWork.y = 0x80000;
+          gMainRoutineWork.y = px(8);
       }
       if (flags & 32)
         return 1;

@@ -603,11 +603,11 @@ restart:
   Serial_StartReceive(gMapCellBuffer);
   held = &gInput.held;
   for (;;) {
-    if (*held & 1)
+    if (*held & KEY_A)
       Serial_StartSend((void *)Cart_Restart, 0x280);
-    if (*held & 2)
+    if (*held & KEY_B)
       Serial_StartSend((void *)(Cartridge_Restart + 0x1000), 0x280);
-    if (*held & 8) {
+    if (*held & KEY_START) {
       delay = 9999;
       do {
         delay--;

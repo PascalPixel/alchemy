@@ -133,7 +133,7 @@ void FieldPsynergy_Hover(void) {
     for (i = 0; i < 32; i++) {
       if (i == 10)
         Sound_PlayFar(SE_GLITTER);
-      player->y += 0x10000;
+      player->y += px(1);
       work->scale = i << 11;
       wait(1);
     }

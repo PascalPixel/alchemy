@@ -7,6 +7,7 @@
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
+#include "macros.h"
 
 #define BOLT_COUNT 3
 #define RING_POINTS 10
@@ -67,9 +68,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   source = ACTOR(effect->actor);
   target = ACTOR(effect->actors[0]);
   for (i = 0, point = work->particles; i != BOLT_COUNT; i++) {
-    point->x = source->x;
-    point->y = source->y + 0x280000;
-    point->z = source->z;
+    SET_POSITION(point, source->x, source->y + 0x280000, source->z);
     if (i == 0)
       point->velocityX = (target->x - point->x) / 12;
     else
@@ -249,9 +248,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 
-    point->x = source->x / 2;
-    point->y = source->y + 0x780000;
-    point->z = source->z;
+    SET_POSITION(point, source->x / 2, source->y + 0x780000, source->z);
     point->velocityX =
         (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
     point->velocityY = (target->y - point->y + 0x140000) / 12;

@@ -73,7 +73,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   rocks = gSpire_RockCounts[effect->variant];
   for (i = 0; i != rocks; i++) {
     rock = &work->particles[i];
-    rock->y = -0x400000;
+    rock->y = -px(64);
     rock->velocityY = 0;
   }
   for (i = 0; i != rocks; i++) {
@@ -128,7 +128,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += px(1);
         if (rock->y > 0x320000)
-          rock->y = 0x320000;
+          rock->y = px(50);
       }
       // Every target flashes for eight frames at each crash.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {

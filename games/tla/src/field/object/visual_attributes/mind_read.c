@@ -89,13 +89,13 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       }
       to.z = target->z;
       if (sprite->orientation == 0x8000) {
-        to.y -= 0x180000;
+        to.y -= px(24);
       } else if (sprite->orientation == 0x4000) {
-        to.x += 0x60000;
-        to.y -= 0xc0000;
+        to.x += px(6);
+        to.y -= px(12);
       } else if (sprite->orientation == 0xc000) {
-        to.x -= 0x60000;
-        to.y -= 0xc0000;
+        to.x -= px(6);
+        to.y -= px(12);
       }
       object = Actor_CreateFar(677, to.x, to.y, to.z);
       if (object != NULL) {
@@ -247,9 +247,7 @@ void FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src) {
 
   // Emit the particle with a y offset of 8-24 and a random direction
   // at radius 0-48 from the main object.
-  pos.x = src->x;
-  pos.y = src->y - (Random16() << 4) - 0x80000;
-  pos.z = src->z;
+  SET_POSITION(&pos, src->x, src->y - (Random16() << 4) - 0x80000, src->z);
   dist = Random16() * 3;
   dist <<= 4;
   Vector_AddPolarOffset(dist, Random16(), &pos);
@@ -343,9 +341,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
       Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
                                 Scene_SelectPsynergyTarget(scene->fieldKind));
   pusher->watchedObject = target;
-  position.x = target->x;
-  position.y = target->y + (16 << 16);
-  position.z = target->z;
+  SET_POSITION(&position, target->x, target->y + (16 << 16), target->z);
   Vector_AddPolarOffset(16 << 16, angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
@@ -374,9 +370,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
       if (direction == 0xffff)
         break;
     } else if (direction == 0xffff) {
-      position.x = target->x;
-      position.y = target->y + (16 << 16);
-      position.z = target->z;
+      SET_POSITION(&position, target->x, target->y + (16 << 16), target->z);
       Vector_AddPolarOffset(16 << 16, angle, &position);
       Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
       Actor_SelectAnimationFar(pusher, 1);
@@ -386,20 +380,14 @@ void FieldPsynergy_SteerPushedTarget(void) {
       continue;
     }
 
-    position.x = target->x;
-    position.y = target->y + (16 << 16);
-    position.z = target->z;
+    SET_POSITION(&position, target->x, target->y + (16 << 16), target->z);
     Vector_AddPolarOffset(16 << 16, angle, &position);
     Vector_AddPolarOffset(2 << 16, direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
     Actor_WaitForMoveFar(pusher);
-    position.x = target->x;
-    position.y = target->y;
-    position.z = target->z;
+    SET_POSITION(&position, target->x, target->y, target->z);
     Vector_AddPolarOffset(16 << 16, direction, &position);
-    beyond.x = target->x;
-    beyond.y = target->y;
-    beyond.z = target->z;
+    SET_POSITION(&beyond, target->x, target->y, target->z);
     Vector_AddPolarOffset(32 << 16, direction, &beyond);
     if (MapGrid_CheckCollisionFar(target, &position) > 0) {
       Actor_SelectAnimationFar(pusher, 4);
@@ -1030,7 +1018,7 @@ void FieldPsynergy_LiftOnTarget(void) {
     do {
       *(s32 *)((u8 *)anchors[0] + 0xc) += 0x4000;
       *(s32 *)((u8 *)anchors[1] + 0xc) += 0x4000;
-      ((struct EffectChild *)child)->y += 0x4000;
+      ((struct EffectChild *)child)->y += px(1) / 4;
       wait(1);
     } while (((struct EffectChild *)child)->y <= startY + 0x200000);
   }
@@ -1053,9 +1041,7 @@ void FieldPsynergy_Lift(void) {
 
   work = Ram_HeapSlots->effectWork;
   FieldPsynergy_FadeToCastColor();
-  pos.x = work->x;
-  pos.y = work->y + 0x100000;
-  pos.z = work->z;
+  SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
   pair[0] = FieldEffect_SpawnLiftHand(pos.x + 0x200000, pos.y, pos.z, 0x8000);
   pair[1] = FieldEffect_SpawnLiftHand(pos.x - 0x200000, pos.y, pos.z, 0);
 
@@ -1070,9 +1056,7 @@ void FieldPsynergy_Lift(void) {
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
-    pos.x = work->x;
-    pos.y = work->y + 0x100000;
-    pos.z = work->z;
+    SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
     obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
@@ -1173,9 +1157,7 @@ again:
   if (state == 2) {
     struct EffectTarget *target = work->target;
 
-    value.x = target->x;
-    value.y = target->y + 0x100000;
-    value.z = target->z;
+    SET_POSITION(&value, target->x, target->y + 0x100000, target->z);
     Vector_AddPolarOffset(px(8), work->angle, &value);
     Camera_WorldToScreen(&value);
     Vector_AddPolarOffset(px(4), Random16(), &value);
@@ -1200,9 +1182,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   s32 i;
 
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  pos.x = src->x;
-  pos.y = src->y;
-  pos.z = src->z;
+  SET_POSITION(&pos, src->x, src->y, src->z);
   obj = Actor_Spawn(671, pos.x, pos.y - (32 << 16), pos.z);
   if (obj != NULL) {
     obj->motionFlags = 0;
@@ -1266,9 +1246,7 @@ void FieldPsynergy_Force(void) {
 
   for (i = 0; i <= 11; i++) {
     source = scene->mainObject;
-    pos.x = source->x;
-    pos.y = source->y + 0x100000;
-    pos.z = source->z;
+    SET_POSITION(&pos, source->x, source->y + 0x100000, source->z);
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
@@ -1281,9 +1259,7 @@ void FieldPsynergy_Force(void) {
   }
 
   source = scene->mainObject;
-  pos.x = source->x;
-  pos.y = source->y + 0x100000;
-  pos.z = source->z;
+  SET_POSITION(&pos, source->x, source->y + 0x100000, source->z);
   Vector_AddPolarOffset(px(8), scene->angle, &pos);
   object = Actor_Spawn(278, pos.x, pos.y, pos.z);
   if (object == NULL) {
@@ -1329,14 +1305,10 @@ void FieldPsynergy_Force(void) {
 
   if (scene->enabled != 0) {
     source = scene->mainObject;
-    pos.x = source->x;
-    pos.y = source->y + 0x100000;
-    pos.z = source->z;
+    SET_POSITION(&pos, source->x, source->y + 0x100000, source->z);
     Vector_AddPolarOffset(px(56), scene->angle, &pos);
   } else {
-    pos.x = scene->x;
-    pos.y = scene->y + 0x100000;
-    pos.z = scene->z;
+    SET_POSITION(&pos, scene->x, scene->y + 0x100000, scene->z);
   }
   Actor_SetMoveTargetFar(object, pos.x, pos.y, pos.z);
   Actor_StartScriptFar(object, gData_080f0ef8);
@@ -1355,9 +1327,7 @@ void FieldPsynergy_Force(void) {
   if (target != NULL && scene->childMode == 0) {
     if (scene->childOption != 0)
       target->velocityY = px(8);
-    pos.x = target->x;
-    pos.y = target->y;
-    pos.z = target->z;
+    SET_POSITION(&pos, target->x, target->y, target->z);
     Vector_AddPolarOffset(px(16), scene->angle, &pos);
     if (MapGrid_CheckCollisionFar(target, &pos) == 0 &&
         ActorScript_CheckOverlapFar(target, &pos) == 0) {
@@ -1414,9 +1384,8 @@ void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
     particle->timer = count;
     life = count;
     if (life != 0) {
-      pos.x = particle->targetX;
-      pos.y = particle->targetY;
-      pos.z = particle->targetZ;
+      SET_POSITION(&pos, particle->targetX, particle->targetY,
+                   particle->targetZ);
       Vector_AddPolarOffset(life << 17, (s16)particle->unk66 + (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
@@ -1436,9 +1405,8 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
     particle->timer = count;
     life = count;
     if (life != 0) {
-      pos.x = particle->targetX;
-      pos.y = particle->targetY;
-      pos.z = particle->targetZ;
+      SET_POSITION(&pos, particle->targetX, particle->targetY,
+                   particle->targetZ);
       Vector_AddPolarOffset(life << 17, (s16)particle->unk66 - (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
@@ -1599,9 +1567,9 @@ void FieldEffect_RunSparkEmitter(struct SparkObject *obj) {
   if (*phase != -1) {
     s32 amplitude = 6 << 16;
 
-    obj->x = scene->x + Iwram_MulQ16(amplitude, Trig_Sin(*phase << 10));
-    obj->y = scene->y + (16 << 16);
-    obj->z = scene->z;
+    SET_POSITION(obj,
+                 scene->x + Iwram_MulQ16(amplitude, Trig_Sin(*phase << 10)),
+                 scene->y + (16 << 16), scene->z);
     (*phase)++;
     *phase = (*phase + 64) % 64;
   }

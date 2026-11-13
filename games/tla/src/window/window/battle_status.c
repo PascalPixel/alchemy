@@ -244,7 +244,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     if (statusCount != 0) {
       if ((u32)cursor.group <= 1) {
         groupPosition = cursor.groupPositions[cursor.group];
-        if (keys & 0x80) {
+        if (keys & KEY_DOWN) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition++;
@@ -255,7 +255,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               groupPosition = cursor.groupPositions[cursor.group];
             }
           }
-        } else if (keys & 0x40) {
+        } else if (keys & KEY_UP) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition--;
@@ -266,7 +266,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               groupPosition = cursor.groupPositions[cursor.group];
             }
           }
-        } else if (keys & 0x30) {
+        } else if (keys & KEYS_HORIZONTAL) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           cursor.group ^= 2;
@@ -283,7 +283,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (groupPosition < 0) {
           cursor.group = 0;
           groupPosition = cursor.groupPositions[0];
-        } else if (keys & 0x10) {
+        } else if (keys & KEY_RIGHT) {
           keys = 0;
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
@@ -291,7 +291,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             groupPosition = cursor.groupPositions[0];
           }
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        } else if (keys & 0x20) {
+        } else if (keys & KEY_LEFT) {
           keys = 0;
           groupPosition--;
           if (groupPosition < 0) {
@@ -299,7 +299,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             groupPosition = cursor.groupPositions[0];
           }
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        } else if (keys & 0xc0) {
+        } else if (keys & KEYS_VERTICAL) {
           keys = 0;
           cursor.group = 0;
           groupPosition = cursor.groupPositions[0];
@@ -309,21 +309,21 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       } else if (cursor.group == 3 || cursor.group == 5) {
         // Four rows a page: up and down step, left and right turn the page.
         groupPosition = cursor.groupPositions[cursor.group];
-        if (keys & 0x80) {
+        if (keys & KEY_DOWN) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition++;
           if (groupPosition >= cursor.groupSize)
             groupPosition = 0;
-        } else if (keys & 0x40) {
+        } else if (keys & KEY_UP) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition--;
           if (groupPosition < 0)
             groupPosition = cursor.groupSize - 1;
-        } else if (keys & 0x10) {
+        } else if (keys & KEY_RIGHT) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
@@ -334,7 +334,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             else
               groupPosition = cursor.groupSize - 1;
           }
-        } else if (keys & 0x20) {
+        } else if (keys & KEY_LEFT) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
@@ -351,28 +351,28 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         // Three Djinn a column.
         s32 djinnPosition = cursor.groupPositions[cursor.group];
 
-        if (keys & 0x80) {
+        if (keys & KEY_DOWN) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition++;
           if (djinnPosition >= cursor.groupSize)
             djinnPosition = 0;
-        } else if (keys & 0x40) {
+        } else if (keys & KEY_UP) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition--;
           if (djinnPosition < 0)
             djinnPosition = cursor.groupSize - 1;
-        } else if (keys & 0x10) {
+        } else if (keys & KEY_RIGHT) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition += 3;
           if (djinnPosition >= cursor.groupSize)
             djinnPosition = djinnPosition % 3;
-        } else if (keys & 0x20) {
+        } else if (keys & KEY_LEFT) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
@@ -1102,14 +1102,14 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     if (NAVIGATION->timer == 0 || (gInput.pressed & KEY_B))
       break;
     if (listCount != 0) {
-      if (keys & 0x100) {
+      if (keys & KEY_R) {
         memberIndex++;
         if (memberIndex >= listCount)
           memberIndex = 0;
         member = list[memberIndex];
         redraw = 1;
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      } else if (keys & 0x200) {
+      } else if (keys & KEY_L) {
         memberIndex--;
         if (memberIndex < 0)
           memberIndex = listCount - 1;

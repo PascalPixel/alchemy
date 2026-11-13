@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -518,9 +519,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   vertices[4].y = height;
 
   Transform_Reset();
-  position.x = (x << 16) - (63 << 16);
-  position.y = (63 - height) << 16;
-  position.z = 0;
+  SET_POSITION(&position, (x << 16) - (63 << 16), (63 - height) << 16, 0);
   SceneTransform_ApplyPosition(&position);
 
   model->kind = 4;
@@ -1202,8 +1201,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The opening: the circle and the streaks.
     if (frame == 0) {
-      scene->x = 0x3c0000;
-      scene->y = 0x800000;
+      scene->x = px(60);
+      scene->y = px(128);
       scene->radius = 0xc0000;
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = streaks[i];
@@ -1214,8 +1213,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s->speed = Data_0819a01a[i];
         s->unk10 = 0;
         for (j = 1; j != 10; j++) {
-          STREAK(i, j).x = 0x960000;
-          STREAK(i, j).y = 0x960000;
+          STREAK(i, j).x = px(150);
+          STREAK(i, j).y = px(150);
         }
       }
       work->transferMode = 2;
@@ -1252,7 +1251,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       if (frame <= 71) {
-        scene->y -= 0x10000;
+        scene->y -= px(1);
         scene->radius -= 0x1000;
         if (!(frame & 15)) {
           {
@@ -1906,12 +1905,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           s32 n = FindFreeParticle();
 
           if (n != -1) {
-            work->particles[n].x = 0x200000;
+            work->particles[n].x = px(32);
             if (frame <= 509)
               work->particles[n].x += (Random16() & 63) << 16;
             else
               work->particles[n].x += (Random16() & motesMask) << 16;
-            work->particles[n].y = 0x7f0000;
+            work->particles[n].y = px(127);
             work->particles[n].velocityX = (Random16() & 15) << 12;
             work->particles[n].velocityY =
                 -0x8000 - ((Random16() & 31) * 7 << 11);
@@ -2109,7 +2108,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (n != -1) {
           s32 spin = Random16() & 3;
 
-          work->particles[n].x = 0x600000;
+          work->particles[n].x = px(96);
           work->particles[n].y = ((Random16() & 7) << 16) + 0x240000;
           work->particles[n].z = frame;
           work->particles[n].velocityX =

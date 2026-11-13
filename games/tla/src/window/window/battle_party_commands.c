@@ -77,9 +77,9 @@ s32 BattleParty_ChooseReserve(s32 slot) {
         // Japanese also takes A on the first frame, before the first preview
         // has been drawn.
 #if TLA_PATCH_1
-        if ((INPUT->pressed & 1) && !redraw) {
+        if ((INPUT->pressed & KEY_A) && !redraw) {
 #else
-        if (INPUT->pressed & 1) {
+        if (INPUT->pressed & KEY_A) {
 #endif
           if (BattleUnit_ListIdsFar(1, 0) == 0) {
             Sound_PlayFar(SE_MENU_ERROR);
@@ -96,11 +96,11 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           }
           goto done;
         }
-        if (INPUT->repeat & 0x20) {
+        if (INPUT->repeat & KEY_LEFT) {
           sel = (sel + count - 1) % count;
           Sound_PlayFar(SE_MENU_CONFIRM);
           redraw = 1;
-        } else if (INPUT->repeat & 0x10) {
+        } else if (INPUT->repeat & KEY_RIGHT) {
           sel = (sel + 1) % count;
           Sound_PlayFar(SE_MENU_CONFIRM);
           redraw = 1;
@@ -131,7 +131,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
         wait(1);
       test:
         newId = battle->partyUnits[slot] = owners[sel];
-        if (INPUT->pressed & 2)
+        if (INPUT->pressed & KEY_B)
           break;
       }
       battle->partyUnits[slot] = current;

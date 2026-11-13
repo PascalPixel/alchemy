@@ -53,7 +53,7 @@ void FieldPsynergy_Burst(void) {
   struct EffectSprite *burstSprite;
   s32 i;
 
-  scene->y += 0xa0000;
+  scene->y += px(10);
   FieldPsynergy_FadeToCastColor();
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
@@ -232,7 +232,7 @@ void FieldPsynergy_UpdatePound(void) {
   }
   switch (work->state) {
   case 0:
-    work->object->y -= 0x38000;
+    work->object->y -= px(7) / 2;
     if (work->timer == 8) {
       blend->scaleX = Q16_ONE / 8;
       blend->scaleY = Q16_ONE / 8;
@@ -272,7 +272,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 4:
-    work->object->y += 0x18000;
+    work->object->y += px(3) / 2;
     if (work->timer == 13)
       work->state = 999;
     break;

@@ -11,6 +11,16 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "system/scene.h"
+#include "macros.h"
+
+enum {
+  SCRIPT_WANDER_TRIES = 7, ///< random points a wander tries a frame
+  /// The wander probes' distance past the point, for ground.
+  SCRIPT_WANDER_PROBE_DISTANCE = px(8),
+  SCRIPT_WANDER_DIAGONAL_ANGLE = TRIG_TURN / 8, ///< one eighth of a turn
+  SCRIPT_WANDER_SIDE_ANGLE = TRIG_TURN / 4,     ///< one quarter of a turn
+  SCRIPT_HALF_TURN = TRIG_TURN / 2
+};
 
 /* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c;
  * resource_slot.c has another definition; tried with the definition the rest of
@@ -171,9 +181,7 @@ void Actor_UpdateAllMotion(void) {
       object->targetZ = TARGET_UNSET;
       object->arrivalAxis = 0;
     }
-    object->x = x;
-    object->y = y;
-    object->z = z;
+    SET_POSITION(object, x, y, z);
     if (object->steeringFlags & 1) {
       x = object->velocityX;
       z = object->velocityZ;
@@ -591,9 +599,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       }
     }
     if (cameraObject->timer != 0) {
-      cameraObject->x = x;
-      cameraObject->y = y;
-      cameraObject->z = z;
+      SET_POSITION(cameraObject, x, y, z);
     } else {
       dx = (x - cameraObject->x) / Q16_ONE;
       /* FAKEMATCH(dead): this dy, overwritten below, as in The Broken Seal's
@@ -669,9 +675,7 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
     if (z > maxZ)
       z = maxZ;
     if (cameraObject->timer != 0) {
-      cameraObject->x = x;
-      cameraObject->y = y;
-      cameraObject->z = z;
+      SET_POSITION(cameraObject, x, y, z);
     } else {
       dx = (x - cameraObject->x) / Q16_ONE;
       /* FAKEMATCH(dead): dy computed and overwritten below. */
@@ -745,81 +749,75 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
 
 struct ScriptObjectEntry;
 
-/// SC_WANDER(base, range, limit), as The Broken Seal's: walks to a random
-/// point base to base + range away within 90 degrees of its heading, that
-/// nothing blocks, and within limit pixels of home.
+/// SC_WANDER(base, range, limit): walks to a random point base to base +
+/// range away, within 90 degrees either side of its heading (scriptValue),
+/// that no solid object or wall blocks, with clear ground 8 pixels further at
+/// 45 degrees either side, and within limit pixels of home. After seven
+/// failed tries it turns around (turnedBack) and waits for the next frame.
 s32 Actor_Wander(struct ActorScriptView *object) {
-  struct FieldPosition pos;
-  struct FieldPosition probe;
-  s32 base;
-  const s32 *args;
-  s32 range;
-  s32 limit;
-  s32 radius;
+  struct FieldPosition candidatePosition;
+  struct FieldPosition probePosition;
+  s32 minimumDistance;
+  const s32 *operands;
+  s32 distanceRange;
+  s32 homeRadiusSquared;
+  s32 travelDistance;
   s32 heading;
-  s32 tries;
+  s32 attempts;
   s32 dx;
   s32 dz;
 
-  args = &object->script[(s16)object->scriptCursor + 1];
-  base = *args++;
-  range = *args++;
-  limit = *args / Q16_ONE;
-  tries = 0;
-  limit = limit * limit;
+  operands = &object->script[(s16)object->scriptCursor + 1];
+  minimumDistance = *operands++;
+  distanceRange = *operands++;
+  homeRadiusSquared = *operands / Q16_ONE;
+  attempts = 0;
+  homeRadiusSquared = homeRadiusSquared * homeRadiusSquared;
 retry:
-  tries++;
-  if (tries <= 7) {
-    pos.x = object->x;
-    pos.y = object->y;
-    pos.z = object->z;
-    radius = base + Iwram_MulQ16(Random16(), range);
+  attempts++;
+  if (attempts <= SCRIPT_WANDER_TRIES) {
+    SET_POSITION(&candidatePosition, object->x, object->y, object->z);
+    travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
-    Vector_AddPolarOffset(radius, heading, &pos);
+    Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
-                                 (s32 *)&pos) != 0)
+                                 (s32 *)&candidatePosition) != 0 ||
+        MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
       goto retry;
-    if (MapGrid_CheckCollision((struct Actor *)object, &pos) != 0)
+    travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
+    SET_POSITION(&probePosition, object->x, object->y, object->z);
+    // BUG: the probe straight ahead is placed but never tested, so only the
+    // two at 45 degrees need clear ground; SC_WANDER_HOME tests all three.
+    Vector_AddPolarOffset(travelDistance, heading, &probePosition);
+    SET_POSITION(&probePosition, object->x, object->y, object->z);
+    Vector_AddPolarOffset(
+        travelDistance, heading + SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
+    if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
       goto retry;
-    radius += 0x80000;
-    probe.x = object->x;
-    probe.y = object->y;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading, &probe);
-    probe.x = object->x;
-    probe.y = object->y;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading + TRIG_TURN / 8, &probe);
-    if (MapGrid_CheckCollision((struct Actor *)object, &probe) != 0)
+    SET_POSITION(&probePosition, object->x, object->y, object->z);
+    Vector_AddPolarOffset(
+        travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
+    if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
       goto retry;
-    probe.x = object->x;
-    probe.y = object->y;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading - TRIG_TURN / 8, &probe);
-    if (MapGrid_CheckCollision((struct Actor *)object, &probe) != 0)
+    /* FAKEMATCH(dead): the offsets in both arms of a test of object. */
+    if (object != 0) {
+      dx = candidatePosition.x / Q16_ONE - object->homeX;
+      dz = candidatePosition.z / Q16_ONE - object->homeZ;
+    } else {
+      dx = candidatePosition.x / Q16_ONE - object->homeX;
+      dz = candidatePosition.z / Q16_ONE - object->homeZ;
+    }
+    if (dx * dx + dz * dz > homeRadiusSquared)
       goto retry;
-    /* FAKEMATCH(dead): the offsets in a once-only block keep the division on
-     * the loaded x. */
-    do {
-      dx = pos.x / Q16_ONE - object->homeX;
-      dz = pos.z / Q16_ONE - object->homeZ;
-    } while (0);
-    if (dx * dx + dz * dz > limit)
-      goto retry;
-    goto found;
+  } else {
+    // Out of tries: face the other way and stay on this command, to try
+    // again next frame.
+    object->scriptValue += SCRIPT_HALF_TURN;
+    object->turnedBack = 1;
+    return 0;
   }
-  object->scriptValue += 0x8000;
-  object->turnedBack = 1;
-  return 0;
-found:
-  {
-    /* FAKEMATCH(pin): the object moved to r0 before the target's words load. */
-    register struct Actor *moved asm("r0") = (struct Actor *)object;
-
-    /* FAKEMATCH(barrier): the empty asm. */
-    asm("");
-    Actor_SetMoveTarget(moved, pos.x, pos.y, pos.z);
-  }
+  Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
+                      candidatePosition.y, candidatePosition.z);
   object->scriptCursor += 4;
   return 1;
 }
@@ -864,56 +862,47 @@ s32 ActorScript_WanderNearHome(struct ActorScriptView *object) {
   if (dx * dx + dz * dz <= homeRadiusSquared) {
   roam:
     attempts++;
-    if (attempts <= 7) {
+    if (attempts <= SCRIPT_WANDER_TRIES) {
       travelDistance =
           minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
       heading = angle + (Random16() >> 2) - (Random16() >> 2);
-      candidatePosition.x = object->x;
-      candidatePosition.y = object->y;
-      candidatePosition.z = object->z;
-      Vector_AddPolarOffset(px(8), heading, &candidatePosition);
+      SET_POSITION(&candidatePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
+                            &candidatePosition);
       if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
                                    (s32 *)&candidatePosition) != 0)
         goto roam;
-      candidatePosition.x = object->x;
-      candidatePosition.y = object->y;
-      candidatePosition.z = object->z;
+      SET_POSITION(&candidatePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) !=
           0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
-      travelDistance += 0x80000;
+      travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading + TRIG_TURN / 8,
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance,
+                            heading + SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading - TRIG_TURN / 8,
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance,
+                            heading - SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading + TRIG_TURN / 4,
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance, heading + SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading - TRIG_TURN / 4,
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance, heading - SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
@@ -928,22 +917,19 @@ s32 ActorScript_WanderNearHome(struct ActorScriptView *object) {
     }
   }
   attempts = 0;
-  angle = (u16)ArcTan2(dz, dx) + TRIG_TURN / 2;
+  angle = (u16)ArcTan2(dz, dx) + SCRIPT_HALF_TURN;
 back:
   attempts++;
-  if (attempts <= 7) {
+  if (attempts <= SCRIPT_WANDER_TRIES) {
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = angle + (Random16() >> 2) - (Random16() >> 2);
-    candidatePosition.x = object->x;
-    candidatePosition.y = object->y;
-    candidatePosition.z = object->z;
-    Vector_AddPolarOffset(px(8), heading, &candidatePosition);
+    SET_POSITION(&candidatePosition, object->x, object->y, object->z);
+    Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
+                          &candidatePosition);
     if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
                                  (s32 *)&candidatePosition) != 0)
       goto back;
-    candidatePosition.x = object->x;
-    candidatePosition.y = object->y;
-    candidatePosition.z = object->z;
+    SET_POSITION(&candidatePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
       goto back;
@@ -1670,35 +1656,25 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
     collision |= 4;
   } else {
     collision = 0;
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
+    SET_POSITION(&position, object->x, object->y, object->z);
     Vector_AddPolarOffset(px(8), (u16)angle, &position);
     if (gDebugMode != 0 && (gInput.held & KEY_L)) {
       heading = angle;
     } else {
       if (MapGrid_CheckCollisionAbove(object, &position) == 0) {
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
-          testPosition.x = object->x;
-          testPosition.y = object->y;
-          testPosition.z = object->z;
+          SET_POSITION(&testPosition, object->x, object->y, object->z);
           Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16,
                                 &testPosition);
           if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
-            testPosition.x = object->x;
-            testPosition.y = object->y;
-            testPosition.z = object->z;
+            SET_POSITION(&testPosition, object->x, object->y, object->z);
             Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8,
                                   &testPosition);
             if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
-              testPosition.x = object->x;
-              testPosition.y = object->y;
-              testPosition.z = object->z;
+              SET_POSITION(&testPosition, object->x, object->y, object->z);
               Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8,
                                     &testPosition);
               if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
@@ -1719,50 +1695,36 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
       angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
       for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
         heading = angleOffsets[angleIndex];
-        position.x = object->x;
-        position.y = object->y;
-        position.z = object->z;
+        SET_POSITION(&position, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), (u16)heading, &position);
         if (MapGrid_CheckCollisionAbove(object, &position) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+        SET_POSITION(&testPosition, object->x, object->y, object->z);
         Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0)
           goto check_objects;
       }
-      position.x = object->x;
-      position.y = object->y;
-      position.z = object->z;
+      SET_POSITION(&position, object->x, object->y, object->z);
       collision |= 1;
 
     check_objects:
-      contact.x = object->x;
-      contact.y = object->y;
-      contact.z = object->z;
+      SET_POSITION(&contact, object->x, object->y, object->z);
       Vector_AddPolarOffset(px(4), (u16)heading, &contact);
       other = Ram_HeapSlots->scriptObjects;
       for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {

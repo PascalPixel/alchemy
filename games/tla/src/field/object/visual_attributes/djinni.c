@@ -12,6 +12,7 @@
 #include "module/field/object.h"
 #include "module/system/system.h"
 #include "scene_call.h"
+#include "macros.h"
 
 /// Per-frame update: spins an object 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
@@ -384,9 +385,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     }
   } else if (particle->state == 2) {
     particle->orbitAngle += 1;
-    position.x = owner->x;
-    position.y = owner->y + 20 * Q16_ONE;
-    position.z = owner->z;
+    SET_POSITION(&position, owner->x, owner->y + 20 * Q16_ONE, owner->z);
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;

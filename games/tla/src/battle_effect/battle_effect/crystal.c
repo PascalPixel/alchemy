@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct Model;
 
@@ -125,9 +126,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
           s32 angle = Random16();
           s32 radius = (Random16() & 63) + 80;
 
-          shard->x = target->x + ((Trig_Sin(angle) * radius) >> 1);
-          shard->y = 0x80000;
-          shard->z = (Trig_Cos(angle) * radius) >> 1;
+          SET_POSITION(shard, target->x + ((Trig_Sin(angle) * radius) >> 1),
+                       px(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
           shard->velocityY = (Random16() & 0xffff) + 0x40000;
           shard->velocityZ = (Random16() & 7) + 4;

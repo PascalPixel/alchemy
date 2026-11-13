@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -205,7 +206,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
         fall->x = Trig_Sin(angle) * radius;
         fall->z = Trig_Cos(angle) * radius;
-        fall->y = 0x6e0000;
+        fall->y = px(110);
         radius = (Random16() & 31) + 4;
         fall->velocityX = target->x + Trig_Sin(angle) * radius;
         z = target->z + Trig_Cos(angle) * radius;
@@ -316,9 +317,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         head[1] = bolt->y + bolt->velocityY * (bolt->variant - 12);
         head[2] = bolt->z + bolt->velocityZ * (bolt->variant - 12);
         if (bolt->variant == 16) {
-          glow->x = head[0];
-          glow->y = head[1];
-          glow->z = head[2];
+          SET_POSITION(glow, head[0], head[1], head[2]);
           glow->velocityX = (Random16() & 15) + 8;
           glow->variant = 0;
         }
@@ -342,9 +341,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         head[2] = bolt->z + bolt->velocityZ * 6;
       }
       if (bolt->variant == 6) {
-        flash->x = head[0];
-        flash->y = head[1];
-        flash->z = head[2];
+        SET_POSITION(flash, head[0], head[1], head[2]);
         flash->velocityX = (Random16() & 7) + 24;
         flash->variant = 0;
         work->shakeFrames = 4;

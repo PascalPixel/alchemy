@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct Model;
 
@@ -155,9 +156,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *star = &work->particles[i];
 
-        star->x = ((Random16() & 31) - 16) << 16;
-        star->y = ((Random16() & 63) - 16) << 16;
-        star->z = (Random16() & 127) + 128;
+        SET_POSITION(star, ((Random16() & 31) - 16) << 16,
+                     ((Random16() & 63) - 16) << 16, (Random16() & 127) + 128);
         star->velocityY = Random16();
         star->variant = -i * 2;
       }

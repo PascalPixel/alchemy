@@ -7,6 +7,7 @@
 
 #include "../radial_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct BurstSprite {
   u8 unk00[8];
@@ -134,9 +135,7 @@ void Cyclone_CarryLeader(void) {
                   (Trig_Sin(timer << 8) << 6);
     position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    owner->x = position[0];
-    owner->y = position[1];
-    owner->z = position[2];
+    SET_POSITION(owner, position[0], position[1], position[2]);
     if (timer > 127) {
       work->state++;
       work->timer = -1;
@@ -169,9 +168,7 @@ void Cyclone_LiftLeader(void) {
     position[1] = work->from[1] + (work->to[1] - work->from[1]) * timer / 128;
     position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    owner->x = position[0];
-    owner->y = position[1];
-    owner->z = position[2];
+    SET_POSITION(owner, position[0], position[1], position[2]);
     if (timer > 127) {
       work->state++;
       work->timer = -1;
@@ -486,13 +483,9 @@ void Actor_DepartInRing(s32 actor) {
     position[1] = y + Trig_Cos(i << 7) * 96;
     position[2] = z;
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
-    object->x = position[0];
-    object->y = position[1];
-    object->z = position[2];
+    SET_POSITION(object, position[0], position[1], position[2]);
     spin += 0x400;
-    ring->x = object->x;
-    ring->y = object->y - 0x60000;
-    ring->z = object->z;
+    SET_POSITION(ring, object->x, object->y - 0x60000, object->z);
     wait(1);
   }
   Actor_SetPositionAndResetMotionFar(object, x, y, z);
@@ -647,9 +640,8 @@ void Blaze_UpdateSpray(void) {
           work->lifetime = 25;
           work->gravity = px(1) / 8;
         }
-        particle->x = work->origin[0];
-        particle->y = work->origin[1];
-        particle->z = work->origin[2];
+        SET_POSITION(particle, work->origin[0], work->origin[1],
+                     work->origin[2]);
         particle->velocityX = 0;
         particle->velocityY = -0x13333;
         particle->velocityZ = 0;
@@ -704,9 +696,7 @@ void Blaze_UpdateSpray(void) {
       Vector_AddPolarOffset(px(10), work->angle + TRIG_TURN / 2, pos);
       Vector_AddPolarOffset(px(12), Random16(), pos);
       puff = &work->puffMotion[i];
-      puff->x = pos[0];
-      puff->y = pos[1];
-      puff->z = pos[2];
+      SET_POSITION(puff, pos[0], pos[1], pos[2]);
       puff->timer = 0;
     }
     if (work->hit != 0)

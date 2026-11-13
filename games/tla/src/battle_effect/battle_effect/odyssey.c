@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct Model;
 
@@ -843,9 +844,7 @@ void Iris_RestoreBattle(void) {
     struct MotionObject *object =
         BattleObject_GetFar(work->effect->actors[i])->object;
 
-    object->x = 0;
-    object->y = 120 << 16;
-    object->z = 0;
+    SET_POSITION(object, 0, 120 << 16, 0);
     object->verticalMotionStrength = 0xab85;
     BattleMotion_ApplyKnockbackFar(work->effect->actors[i], 1);
   }

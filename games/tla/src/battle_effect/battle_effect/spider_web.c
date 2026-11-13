@@ -443,8 +443,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B3, picture, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprites, 0, 0);
   loaded = 0;
-  ship.x = 0xc80000;
-  ship.z = 0x540000;
+  ship.x = px(200);
+  ship.z = px(84);
   transition[4] = 1;
   Iwram_ClearWords(canvas, 0x3c00);
   REG_DISPCNT = 0x7141;
@@ -893,8 +893,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
     if (frame == 288) {
       Task_Add(Ulysses_MoveLastParticle, 1152);
-      work->particles[63].x = 0xbc0000;
-      work->particles[63].y = 0x600000;
+      work->particles[63].x = px(188);
+      work->particles[63].y = px(96);
       work->particles[63].velocityX = 0;
       work->particles[63].velocityY = 0;
       work->frame = 0;

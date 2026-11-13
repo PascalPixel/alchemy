@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 #undef HIT_FRAME
 
@@ -74,9 +75,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   do {
     struct EffectStep *seed = &work->particles[i];
 
-    seed->x = target->x;
-    seed->y = target->y;
-    seed->z = target->z;
+    SET_POSITION(seed, target->x, target->y, target->z);
     seed->velocityX = (Random16() & 255) << 11;
     seed->velocityY = ((Random16() & 255) - 127) << 12;
     seed->velocityZ = ((Random16() & 255) - 127) << 12;

@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -476,9 +477,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
         for (j = 0; j != 10; j++) {
           struct EffectStep *ember = &work->particles[i * 10 + j];
 
-          ember->x = object->x;
-          ember->y = 20 << 16;
-          ember->z = object->z;
+          SET_POSITION(ember, object->x, 20 << 16, object->z);
           ember->velocityX = Trig_Sin(j * 0x3334) << 2;
           ember->velocityY = (Random16() & 0x7fff) + (1 << 16);
           ember->velocityZ = Trig_Cos(j * 0x3334) << 2;

@@ -605,7 +605,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
       scale = Data_08196ed0;
       pos.w = 0;
-      pos.y = 0xff0000;
+      pos.y = px(255);
       waveScroll += 0x8000;
       waveX = waveScroll + camera;
       if (waveX > 0x1fffff) {
@@ -639,7 +639,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           }
           ((struct SpriteAttributes *)obj)->tile = v & 0x3ff;
           if (pos.x > 0xffffff)
-            pos.x -= 0x1200000;
+            pos.x -= px(288);
           Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos,
                                             &scale, 0);
         }
@@ -722,7 +722,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         work->particles[21].vx = -0x10000;
         work->particles[21].vy = 0;
         work->particles[21].timer = 0;
-        work->particles[22].x = 0xa00000;
+        work->particles[22].x = px(160);
         work->particles[22].y = 0;
         work->particles[22].vx = 0;
         work->particles[22].vy = 0;
@@ -870,7 +870,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         swayY = -swayY;
       swayY -= shipY * 2;
       pos2.w = 0;
-      pos2.y = 0xff0000;
+      pos2.y = px(255);
       for (i = 0; i != 5; i++) {
         if (frame == Data_08199582[i]) {
           work->shake = 23;
@@ -980,7 +980,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         if (frame > 602)
           BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
         if (frame == 570) {
-          p->x = 0x980000;
+          p->x = px(152);
           p->y = ((92 - Data_081994f0[work->shake]) << 16) + swayY;
           p->timer = 1;
           p->vx = -0x40000;
@@ -1021,8 +1021,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             q->timer = 0;
             q->vx = ((Random16() & 31) + 16) << 12;
             q->vy = (-Random16() | ~15) << 14;
-            q->x = 0x580000;
-            q->y = 0x800000;
+            q->x = px(88);
+            q->y = px(128);
           }
           prevCamera = camera;
           {
@@ -1272,7 +1272,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
                   work->particles[row + (wavePhase + 64 + i) % 8].timer & 0x3ff;
             }
             if (pos2.x > 0xffffff)
-              pos2.x -= 0x1200000;
+              pos2.x -= px(288);
             Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos2,
                                               &scale2, 0);
           }
@@ -1399,7 +1399,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       scale3 = Data_08196ee0;
       pos3.w = 0;
-      pos3.y = 0xff0000;
+      pos3.y = px(255);
       for (i = 0; i != 16; i++) {
         Particle *p;
 

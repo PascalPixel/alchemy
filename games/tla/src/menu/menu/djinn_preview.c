@@ -395,7 +395,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       }
     }
 
-    if ((pressed & 1) != 0) {
+    if ((pressed & KEY_A) != 0) {
       if (confirmationChoice == 0) {
         result = 1;
         break;
@@ -404,21 +404,21 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       result = -1;
       break;
     }
-    if ((pressed & 8) != 0) {
+    if ((pressed & KEY_START) != 0) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -2;
       break;
-    } else if ((pressed & 2) != 0) {
+    } else if ((pressed & KEY_B) != 0) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
-    } else if ((pressed & 0x100) != 0) {
+    } else if ((pressed & KEY_R) != 0) {
       if (mode <= 1) {
         page = (page + 1) % 3;
         redraw = 2;
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
-    } else if ((repeat & 0x20) != 0) {
+    } else if ((repeat & KEY_LEFT) != 0) {
       if (page <= 1) {
         selectedPages[page]--;
         selectedPages[page] =
@@ -427,7 +427,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         Input_ResetKeyRepeat();
         redraw = 1;
       }
-    } else if ((repeat & 0x10) != 0) {
+    } else if ((repeat & KEY_RIGHT) != 0) {
       if (page <= 1) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();

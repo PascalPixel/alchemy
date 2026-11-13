@@ -32,7 +32,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
   if (work->done == 0) {
     struct Actor *object = work->object;
 
-    object->y += -0x28000;
+    object->y += -(px(5) / 2);
     object->scaleX += -0x400;
     object->scaleY += -0x400;
     if (work->timer == 8)

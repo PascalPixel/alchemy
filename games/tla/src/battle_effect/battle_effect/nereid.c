@@ -109,7 +109,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
         if (focus.x < 120 << 16)
-          velocity.x += 0x8000;
+          velocity.x += px(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);
 

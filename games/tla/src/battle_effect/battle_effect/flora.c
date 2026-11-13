@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // Flora, the blossom spirit's summon.
 
@@ -1031,9 +1032,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
 
       for (i = 0, zero = 0, y = 128 << 16, dagger = work->particles; i != 32;
            i++, dagger++) {
-        dagger->x = ((Random16() & 63) + 32) << 16;
-        dagger->y = y;
-        dagger->z = Random16();
+        SET_POSITION(dagger, ((Random16() & 63) + 32) << 16, y, Random16());
         dagger->velocityX = zero;
         dagger->velocityY = -((Random16() & 31) + 32) << 10;
         dagger->velocityZ = (Random16() & 0x3ff) + 0x400;

@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -106,9 +107,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         s32 height = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
         s32 velocity;
 
-        thrown->x = caster->x;
-        thrown->y = caster->y + height;
-        thrown->z = caster->z;
+        SET_POSITION(thrown, caster->x, caster->y + height, caster->z);
         velocity = ((Random16() & 255) - 128) << 8;
         // DEAD: both stores are overwritten by the 0 below; the ROM keeps them.
         thrown->velocityX = velocity;

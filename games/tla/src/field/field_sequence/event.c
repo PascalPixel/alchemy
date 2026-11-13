@@ -17,10 +17,10 @@ void Event_UpdateDebugSkip(void) {
   struct EventWaitWork *work = Ram_HeapSlots->eventWork;
 
   if (gDebugMode != 0) {
-    if (((struct InputState *)&gInput)->pressed & 0x200) {
+    if (((struct InputState *)&gInput)->pressed & KEY_L) {
       work->waitMode = 0;
     }
-    if (((volatile struct InputState *)&gInput)->pressed & 0x100) {
+    if (((volatile struct InputState *)&gInput)->pressed & KEY_R) {
       work->waitMode = -1;
     }
   }

@@ -5,6 +5,7 @@
 #include "../visual_attributes_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 /* VIEW(cloak): routine BattleEffect_GetCycledTableWord as s32
  * BattleEffect_GetCycledTableWord(), called with no declaration in scope; the
@@ -152,9 +153,7 @@ void FieldPsynergy_Douse(void) {
                           (struct EffectVector *)&work->x);
   }
   from = &start;
-  from->x = target->x;
-  from->y = target->y + (16 << 16);
-  from->z = target->z;
+  SET_POSITION(from, target->x, target->y + (16 << 16), target->z);
   to = &end;
   to->x = work->x;
   y = work->y;
@@ -200,15 +199,11 @@ void FieldPsynergy_Douse(void) {
     if ((s8)work->highArc == 0)
       count = 24;
     for (n = 0; n < count; n++) {
-      pos.x = orb->x;
-      pos.y = orb->y;
-      pos.z = orb->z;
+      SET_POSITION(&pos, orb->x, orb->y, orb->z);
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
       if (n == count - 1) {
         wait(20);
-        pos.x = orb->x;
-        pos.y = orb->y;
-        pos.z = orb->z;
+        SET_POSITION(&pos, orb->x, orb->y, orb->z);
       }
       mote = Actor_Spawn(301, pos.x, pos.y, pos.z);
       if (mote != 0) {
@@ -241,9 +236,7 @@ void FieldPsynergy_Douse(void) {
     else
       count = 30;
     for (n = 0; n < count; n++) {
-      pos.x = orb->x;
-      pos.y = orb->y;
-      pos.z = orb->z;
+      SET_POSITION(&pos, orb->x, orb->y, orb->z);
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
       mote = Actor_Spawn(672, pos.x, pos.y, pos.z);
       if (mote != 0) {
@@ -299,9 +292,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   u32 dist;
 
   src = ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->child;
-  pos.x = src->x;
-  pos.y = src->y - Random16() * 16 + (24 << 16);
-  pos.z = src->z;
+  SET_POSITION(&pos, src->x, src->y - Random16() * 16 + (24 << 16), src->z);
 
   dist = Random16() * 3;
   Vector_AddPolarOffset(dist * 16, Random16(), &pos);
@@ -348,9 +339,9 @@ static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
                                         struct FxPosition *position) {
   s32 hit;
 
-  object->ground += 0x100000;
+  object->ground += px(16);
   hit = MapGrid_CheckCollisionFar(object, position);
-  object->ground -= 0x100000;
+  object->ground -= px(16);
   return hit;
 }
 
@@ -380,9 +371,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering loop's
    * first part. */
   p = &position;
-  p->x = work->x;
-  p->y = work->y + 0x100000;
-  p->z = work->z;
+  SET_POSITION(p, work->x, work->y + 0x100000, work->z);
   object = FieldEffect_SpawnCarryHand(p->x + 0x200000, p->y, p->z, 0x8000);
   anchors[0] = object;
   right = FieldEffect_SpawnCarryHand(p->x - 0x200000, p->y, p->z, 0);
@@ -392,9 +381,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     return;
   }
   wait(15);
-  p->x = target->x;
-  p->y = target->y + 0x100000;
-  p->z = target->z;
+  SET_POSITION(p, target->x, target->y + 0x100000, target->z);
   Actor_SetMoveTargetFar(object, p->x + 0x100000, p->y, p->z);
   Actor_SetMoveTargetFar(right, p->x - 0x100000, p->y, p->z);
   Actor_WaitForMoveFar(object);
@@ -410,9 +397,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SetSpriteFlagsFar((struct Actor *)target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y - target->ground <= 0x180000) {
-      object->y += 0x6000;
-      right->y += 0x6000;
-      target->y += 0x6000;
+      object->y += px(3) / 8;
+      right->y += px(3) / 8;
+      target->y += px(3) / 8;
       wait(1);
     }
   }
@@ -430,9 +417,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       break;
     angle = (u16)BattleEffect_GetCycledTableWord(gInput.held);
     if (angle == 0xffff) {
-      position.x = target->x;
-      position.y = target->y + 0x100000;
-      position.z = target->z;
+      SET_POSITION(&position, target->x, target->y + 0x100000, target->z);
       Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
                              position.z);
       Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
@@ -441,9 +426,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[1], 1);
       continue;
     }
-    position.x = target->x;
-    position.y = target->y + 0x100000;
-    position.z = target->z;
+    SET_POSITION(&position, target->x, target->y + 0x100000, target->z);
     Vector_AddPolarOffset(px(2), angle, &position);
     Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
                            position.z);
@@ -451,9 +434,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
                            position.z);
     Actor_WaitForMoveFar(anchors[0]);
     Actor_WaitForMoveFar(anchors[1]);
-    position.x = target->x;
-    position.y = target->ground;
-    position.z = target->z;
+    SET_POSITION(&position, target->x, target->ground, target->z);
     Vector_AddPolarOffset(px(16), angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
@@ -505,9 +486,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   Sound_PlayFar(SE_CLICK);
   wait(15);
-  p->x = target->x;
-  p->y = target->y + 0x100000;
-  p->z = target->z;
+  SET_POSITION(p, target->x, target->y + 0x100000, target->z);
   {
     struct FxObject **walk = shards;
 

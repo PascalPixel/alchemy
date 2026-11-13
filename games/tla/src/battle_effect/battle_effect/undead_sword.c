@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 #define SPARK_COUNT 16
 #define SPARK_LIFE 28
@@ -78,8 +79,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   for (i = 0, spark = work->particles; i != SPARK_COUNT; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & 0xffff;
-    spark->x = 0x400000;
-    spark->y = 0x700000;
+    spark->x = px(64);
+    spark->y = px(112);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
     spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
     spark->variant = Random16() & 7;
@@ -473,9 +474,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
           (struct WaterVertex *)((s8 *)gMapCellBuffer + (a + q - v) * 4);
       s32 u = column * 8;
 
-      vertex->x = column * 11 - 82;
-      vertex->y = 60;
-      vertex->z = row * 24 - 84;
+      SET_POSITION(vertex, column * 11 - 82, 60, row * 24 - 84);
       if (row <= 6 && column <= 14) {
         struct WaterTriangle *quad =
             (struct WaterTriangle *)(mesh + (row * 15 + column) * 24);
@@ -665,7 +664,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
         bubble->variant = Random16() % 6;
         bubble->z = bubbleZ;
-        bubble->x = -0x3c0000;
+        bubble->x = -px(60);
         bubble->velocityX = 0;
         bubble->velocityY = 0;
         bubble->velocityZ = 0;
@@ -1129,7 +1128,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
             struct EffectStep *shard;
 
             shard = &work->particles[((t - 7) / 8 * 8 + k + 32) & 63];
-            shard->y = 0x600000;
+            shard->y = px(96);
             shard->x = centerX << 16;
             shard->velocityX = ((Random16() & 127) - 64) << 11;
             shard->velocityY = -((Random16() & 127) + 64) << 11;
@@ -1153,7 +1152,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
       for (k = 0, shard = work->particles; k != 32; k++, shard++) {
-        shard->y = 0x600000;
+        shard->y = px(96);
         shard->x = centerX << 16;
         shard->velocityX = ((Random16() & 127) - 64) << 12;
         shard->velocityY = -((Random16() & 127) + 64) << 12;

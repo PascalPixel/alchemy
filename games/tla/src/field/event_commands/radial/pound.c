@@ -4,6 +4,7 @@
 
 #include "../radial_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 /* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c;
  * f0e2c38.c has another definition; tried with the definition the rest of the
@@ -104,9 +105,7 @@ void FieldPsynergy_Pound(void) {
 
   lift = 0x200000;
   if (child == NULL) {
-    scene->x = caster->x;
-    scene->y = caster->y;
-    scene->z = caster->z;
+    SET_POSITION(scene, caster->x, caster->y, caster->z);
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
   } else if (child->motionFlags & 4) {
     /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
@@ -222,7 +221,7 @@ void FieldPsynergy_Pound(void) {
   wait(15);
   rise = 24;
   do {
-    shine->y += 0x8000;
+    shine->y += px(1) / 2;
     rise--;
     wait(1);
   } while (rise >= 0);

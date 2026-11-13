@@ -9,6 +9,7 @@
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 /// Abilities: Sonic Wave (kind 300).
 void BattleEffect_RunSonicWave(void *object) {
@@ -142,9 +143,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
       for (j = 0; j != streaks; j++) {
         struct EffectStep *streak = &work->particles[k * streaks + j];
 
-        streak->x = source->x;
-        streak->y = source->y + lift;
-        streak->z = source->z;
+        SET_POSITION(streak, source->x, source->y + lift, source->z);
         streak->velocityX = (target->x - streak->x) / 24;
         streak->velocityY = (target->y + lift - streak->y) / 24;
         streak->velocityZ = (target->z - streak->z) / 24;
@@ -218,9 +217,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
 
             struck->x += gStreaks_Tremble[(frame - k * 32 - 30) % 8] << 16;
             if (struck->x > 0)
-              struck->x += 0x8000;
+              struck->x += px(1) / 2;
             else
-              struck->x -= 0x8000;
+              struck->x -= px(1) / 2;
             BattleEffect_TintBattler(effect->actors[k], -1, 5, -1, 0);
           }
 

@@ -382,12 +382,12 @@ void LuckyDice_Run(void) {
   do {
     luckyNumbers[1] = Random16() % 6;
   } while (luckyNumbers[0] == luckyNumbers[1]);
-  diceWork->particles[0].x = 0x280000;
-  diceWork->particles[0].y = 0x600000;
-  diceWork->particles[0].z = -0xa00000;
-  diceWork->particles[1].x = -0x280000;
-  diceWork->particles[1].y = 0x600000;
-  diceWork->particles[1].z = -0xa00000;
+  diceWork->particles[0].x = px(40);
+  diceWork->particles[0].y = px(96);
+  diceWork->particles[0].z = -px(160);
+  diceWork->particles[1].x = -px(40);
+  diceWork->particles[1].y = px(96);
+  diceWork->particles[1].z = -px(160);
 
   WindowSystem_InitFieldFar();
   window =
@@ -531,24 +531,24 @@ void LuckyDice_Run(void) {
       (void)gInput.repeat;
       (void)gInput.repeat;
       if (*(volatile u32 *)&gInput.held & KEY_UP) {
-        diceWork->particles[0].y += 0x40000;
-        diceWork->particles[1].y += 0x40000;
+        diceWork->particles[0].y += px(4);
+        diceWork->particles[1].y += px(4);
       }
       if (gInput.held & KEY_DOWN) {
-        diceWork->particles[0].y += -0x40000;
-        diceWork->particles[1].y += -0x40000;
+        diceWork->particles[0].y += -px(4);
+        diceWork->particles[1].y += -px(4);
       }
       if (diceWork->particles[0].y < 0x200000) {
-        diceWork->particles[0].y = 0x200000;
+        diceWork->particles[0].y = px(32);
       }
       if (diceWork->particles[0].y > 0xa00000) {
-        diceWork->particles[0].y = 0xa00000;
+        diceWork->particles[0].y = px(160);
       }
       if (diceWork->particles[1].y < 0x200000) {
-        diceWork->particles[1].y = 0x200000;
+        diceWork->particles[1].y = px(32);
       }
       if (diceWork->particles[1].y > 0xa00000) {
-        diceWork->particles[1].y = 0xa00000;
+        diceWork->particles[1].y = px(160);
       }
       if ((u32)gMainRoutineWork.coins <
           (u32)(Party_GetAverageLevelFar() * 10)) {
@@ -574,8 +574,8 @@ void LuckyDice_Run(void) {
         for (index = 0; index != 2; index++) {
           rollingDie = &diceWork->particles[index];
           if (index > 1) {
-            rollingDie->z = -0xb40000;
-            rollingDie->y = 0x600000;
+            rollingDie->z = -px(180);
+            rollingDie->y = px(96);
           }
           rollingDie->velocityX = ((Random16() & 127) - 64) << 12;
           rollingDie->velocityY = ((Random16() & 15) + 48) << 13;
@@ -588,12 +588,12 @@ void LuckyDice_Run(void) {
     }
 
     if (resetDice == 1) {
-      diceWork->particles[0].x = 0x280000;
-      diceWork->particles[0].y = 0x600000;
-      diceWork->particles[0].z = -0xa00000;
-      diceWork->particles[1].x = -0x280000;
-      diceWork->particles[1].y = 0x600000;
-      diceWork->particles[1].z = -0xa00000;
+      diceWork->particles[0].x = px(40);
+      diceWork->particles[0].y = px(96);
+      diceWork->particles[0].z = -px(160);
+      diceWork->particles[1].x = -px(40);
+      diceWork->particles[1].y = px(96);
+      diceWork->particles[1].z = -px(160);
       luckyNumbers[0] = Random16() % 6;
       do {
         luckyNumbers[1] = Random16() % 6;
@@ -715,15 +715,15 @@ void LuckyDice_Run(void) {
           }
         }
         if (rollingDie->x < -0xc80000) {
-          rollingDie->x = -0xc80000;
+          rollingDie->x = -px(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
         if (rollingDie->x > 0xc80000) {
-          rollingDie->x = 0xc80000;
+          rollingDie->x = px(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
         if (rollingDie->z < -0x960000) {
-          rollingDie->z = -0x960000;
+          rollingDie->z = -px(150);
           rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
         }
         if (rollingDie->z > rollingDie->y + 0xb40000) {

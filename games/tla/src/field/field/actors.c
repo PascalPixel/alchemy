@@ -846,9 +846,9 @@ void ActorSystem_PlaceSprites(void) {
           point.groundHeight += 0xfec00000;
         }
         if (*priorityFlags & 4) {
-          point.height += 0x1400000;
-          point.y += 0x1400000;
-          point.groundHeight += 0x1400000;
+          point.height += px(320);
+          point.y += px(320);
+          point.groundHeight += px(320);
         }
         if (*priorityFlags & 8)
           Render_ApplyProjectedPlacementAtDepth(sprite, &point, scale.values,

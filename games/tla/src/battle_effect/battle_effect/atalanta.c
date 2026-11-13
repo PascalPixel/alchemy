@@ -140,7 +140,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         path += 2;
       }
       position.groundHeight = 0;
-      position.height = 0xff0000;
+      position.height = px(255);
       for (row = 0; row != 4; row++) {
         for (column = 0; column != 3; column++) {
           if (row != 3 || column != 2) {

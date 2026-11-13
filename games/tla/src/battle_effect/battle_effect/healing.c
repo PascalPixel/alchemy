@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 #include "debug.h"
 #include "field/field.h"
@@ -194,9 +195,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
 
-      spark->x = ((Random16() & 0xff) - 127) << 15;
-      spark->y = ((Random16() & 0x7f) + 64) << 15;
-      spark->z = ((Random16() & 0xff) - 127) << 15;
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0x7f) + 64) << 15,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     if (mode == 9)
@@ -223,9 +224,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
 
-      spark->x = ((Random16() & 0xff) - 127) << 15;
-      spark->y = ((Random16() & 0x7f) + 64) << 15;
-      spark->z = ((Random16() & 0xff) - 127) << 15;
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0x7f) + 64) << 15,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     total = effect->count * 8 + 58;
@@ -234,9 +235,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
 
-      spark->x = ((Random16() & 0xff) - 127) << 15;
-      spark->y = ((Random16() & 0xff) - 127) << 15;
-      spark->z = ((Random16() & 0xff) - 127) << 15;
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     total = effect->count * 8 + 58;
@@ -245,9 +246,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
 
-      spark->x = (Random16() % 200 - 100) << 15;
-      spark->y = (Random16() % 200 - 100) << 15;
-      spark->z = (Random16() % 200 - 100) << 15;
+      SET_POSITION(spark, (Random16() % 200 - 100) << 15,
+                   (Random16() % 200 - 100) << 15,
+                   (Random16() % 200 - 100) << 15);
       spark->variant = 0;
     }
     total = effect->count * 8 + 46;
@@ -258,9 +259,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       s32 heading = Random16() & 0xffff;
       s32 radius = (Random16() & 63) + 32;
 
-      spark->x = Trig_Sin(heading) * radius;
-      spark->y = -50 << 16;
-      spark->z = Trig_Cos(heading) * radius;
+      SET_POSITION(spark, Trig_Sin(heading) * radius, -50 << 16,
+                   Trig_Cos(heading) * radius);
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
     }
@@ -270,9 +270,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
 
-      spark->x = ((Random16() & 0xff) - 127) << 15;
-      spark->y = ((Random16() & 0xff) - 127) << 14;
-      spark->z = ((Random16() & 0xff) - 127) << 15;
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 14,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     total = effect->count * 8 + 58;
@@ -281,9 +281,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
 
-      spark->x = ((Random16() & 0xff) - 127) << 15;
-      spark->y = ((Random16() & 0xff) - 127) << 15;
-      spark->z = ((Random16() & 0xff) - 127) << 15;
+      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
     total = effect->count * 8 + 58;

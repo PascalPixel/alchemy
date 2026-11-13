@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "macros.h"
 
 /// The event command "camera move to", as The Broken Seal's
 /// FieldCamera_MoveWithinMapBounds: sends the camera to the requested axes,
@@ -63,9 +64,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
     positionZ = maximumZ;
   }
   if (shouldUseSetter == 0) {
-    object->x = positionX;
-    object->y = positionY;
-    object->z = positionZ;
+    SET_POSITION(object, positionX, positionY, positionZ);
     wait(1);
     if (runtimeBlock->controlMode != 3) {
       Map_CenterOnFollowedPointFar();

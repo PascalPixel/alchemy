@@ -8,6 +8,7 @@
 #include "module/battle/battle.h"
 #include "gamepak/far_call/window.h"
 #include "module/battle/presentation.h"
+#include "macros.h"
 
 void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
@@ -32,9 +33,7 @@ void BattleCamera_SetCommandView(s32 pos) {
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 
-  local.x = 0;
-  local.y = 0;
-  local.z = state->distance;
+  SET_POSITION(&local, 0, 0, state->distance);
   Iwram_TransformVector(&local, (s32 *)state);
   one = 1;
 

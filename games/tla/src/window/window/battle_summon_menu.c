@@ -309,22 +309,22 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         navigation->tutorialDelay--;
       }
     }
-    if (pressed & 1) {
+    if (pressed & KEY_A) {
       result = orderedSummons[firstEntry + selectedRow];
       break;
     }
-    if (NAVIGATION->timer == 0 || (pressed & 2)) {
+    if (NAVIGATION->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
-    if (repeated & 0x80) {
+    if (repeated & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow++;
       if (selectedRow == 4 || firstEntry + selectedRow == count)
         selectedRow = 0;
       preferredRow = selectedRow;
-    } else if (repeated & 0x40) {
+    } else if (repeated & KEY_UP) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow--;
       if (selectedRow < 0) {
@@ -334,7 +334,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
           selectedRow = 3;
       }
       preferredRow = selectedRow;
-    } else if (repeated & 0x10) {
+    } else if (repeated & KEY_RIGHT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry + 4 >= count) {
@@ -351,7 +351,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             selectedRow = preferredRow;
         }
       }
-    } else if (repeated & 0x20) {
+    } else if (repeated & KEY_LEFT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry != 0) {

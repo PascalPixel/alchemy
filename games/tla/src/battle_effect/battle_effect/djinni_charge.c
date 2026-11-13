@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -274,9 +275,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             if (p->variant != -1) {
               continue;
             }
-            p->x = target[2];
-            p->y = target[3] + 0x50000;
-            p->z = target[4];
+            SET_POSITION(p, target[2], target[3] + 0x50000, target[4]);
             p->velocityX = ((Random16() & 511) + 256) << 10;
             if (effect->side == 1) {
               p->velocityX = -p->velocityX;
@@ -308,9 +307,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             s32 speed;
 
             p = &work->particles[i];
-            p->x = target[2];
-            p->y = target[3] + 0xa0000;
-            p->z = target[4];
+            SET_POSITION(p, target[2], target[3] + 0xa0000, target[4]);
             angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
             // DEAD: both arms alike; the ROM keeps the test and both calls.
             if (i > 53) {

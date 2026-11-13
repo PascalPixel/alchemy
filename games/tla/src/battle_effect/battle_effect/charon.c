@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // A pair of 16.16 scales; the game keeps each start value in the rodata.
 struct ScalePair {
@@ -1451,7 +1452,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         BattleEffect_TintBattler(arg->actors[i], 0, 5, -1, -1);
         actor->x = -(i + 4) * 0x800000;
         actor->z = 0;
-        actor->y = 0x140000;
+        actor->y = px(20);
         actor->unk48 = 0;
       }
     }
@@ -1462,9 +1463,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       for (i = 0; i != arg->count; i++) {
         struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
-        actor->x = 0;
-        actor->y = 0x7c0000;
-        actor->z = 0;
+        SET_POSITION(actor, 0, px(124), 0);
         actor->unk48 = 0;
       }
     }
@@ -1503,9 +1502,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         for (i = 0; i != arg->count; i++) {
           struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
-          actor->x = 0;
-          actor->y = 0x200000;
-          actor->z = work->homes[i].z;
+          SET_POSITION(actor, 0, px(32), work->homes[i].z);
         }
         for (i = 0; i != arg->count; i++) {
           s32 spin = Random16();
@@ -1629,9 +1626,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
         if (actor->y < 0x640000) {
           if (member->timer == -1) {
-            actor->x += 0xa0000;
+            actor->x += px(10);
           } else {
-            actor->x += 0x20000;
+            actor->x += px(2);
           }
           if (member->timer == -1) {
             if (actor->x > 0x300000) {
@@ -1668,9 +1665,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           BattleEffect_TintBattler(arg->actors[i], 15, -1, i, 32);
         }
         if (member->timer == 8) {
-          actor->x = 0;
-          actor->y = 148 << 16;
-          actor->z = 0;
+          SET_POSITION(actor, 0, 148 << 16, 0);
         }
       }
       if (frame >= 0) {

@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // The canvas preparer's packed arguments.
 #define PREPARE(kind, side, anchor) ((kind) | (side) << 4 | (anchor) << 5)
@@ -229,9 +230,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
     for (i = 0; i != 8; i++) {
       struct EffectStep *rock = &work->particles[i];
 
-      rock->x = actor->x;
-      rock->y = 0x420000;
-      rock->z = actor->z;
+      SET_POSITION(rock, actor->x, px(66), actor->z);
       rock->velocityX = (i * 0x500000) >> 5;
       rock->velocityY = (s32)(((Random16() & 127) - 64) << 16) >> 6;
       rock->velocityZ = (s32)(((Random16() & 255) - 127) << 16) >> 5;

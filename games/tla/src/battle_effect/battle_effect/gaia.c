@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 #undef ROCK_COUNT
 
@@ -188,9 +189,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   for (i = 0; i != ROCK_COUNT; i++) {
     struct EffectStep *rock = &work->particles[FIRST_ROCK + i];
 
-    rock->x = (Random16() & 15) + 88;
-    rock->y = 128;
-    rock->z = (Random16() & 15) + 2;
+    SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
     rock->velocityX = i;
     rock->velocityY = 1;
     rock->velocityZ = px(1) / 2;
@@ -292,7 +291,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
                   HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
-            dust->y = 0x600000;
+            dust->y = px(96);
         } else {
           dust->variant--;
         }

@@ -12,6 +12,7 @@
 #include "gamepak/far_call/field.h"
 #include "system/ram_buffer.h"
 #include "module/tla.h"
+#include "macros.h"
 
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
@@ -132,7 +133,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       ((struct SpawnActor *)object)->homeZ = object->z / Q16_ONE;
       if (object->y != 0) {
         object->motionFlags = 4;
-        object->y += 0x8000;
+        object->y += px(1) / 2;
       }
       if (work->mode == 3) {
         object->motionFlags &= 0xfe;
@@ -210,9 +211,7 @@ void Actor_ResetForLeader(s32 table) {
   ObjectTable_Clear();
   entry->condition = -1;
   entry->sprite = leader;
-  entry->x = gMainRoutineWork.x;
-  entry->y = 0;
-  entry->z = gMainRoutineWork.z;
+  SET_POSITION(entry, gMainRoutineWork.x, 0, gMainRoutineWork.z);
   entry->facing = gMainRoutineWork.heading;
   Event_SpawnObjectTable(entry, leader);
   {
@@ -260,9 +259,7 @@ void Actor_ResetForLeader(s32 table) {
   if (gMainRoutineWork.ownerOverride != 0) {
     struct Actor *stand = work->objects[8];
 
-    stand->x = object->x;
-    stand->y = object->y;
-    stand->z = object->z;
+    SET_POSITION(stand, object->x, object->y, object->z);
     stand->terrainHeight = object->terrainHeight;
     stand->facing = object->facing;
     object->x = 0;

@@ -620,7 +620,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Actor_ArmCallback(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {
-    object->y -= 0x20000;
+    object->y -= px(2);
     object->targetY = object->y;
     wait(1);
     if (particle != -1 && (i & 1))

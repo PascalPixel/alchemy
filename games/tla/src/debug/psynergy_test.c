@@ -27,6 +27,7 @@
 #include "system/vector3.h"
 #include "inventory.h"
 #include "graphics/uiflow.h"
+#include "macros.h"
 
 struct Actor;
 struct SparkleSprite;
@@ -509,7 +510,7 @@ void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   if (arg0 != 2)
     goto L_02008a06;
   Actor_SetPosition(arg1, (arg2 << 16), (arg3 << 16));
-  object0->y = 0x200000;
+  object0->y = px(32);
   object0->motionFlags = 3;
   object0->gravity = 0x170a;
   System_Wait(50);
@@ -595,9 +596,8 @@ void Func_02000ad0(struct Actor *object) {
       if (work->unka0[i] <= 31) {
         struct Vector3 *p = &position;
 
-        p->x = object->x;
-        p->y = object->y + (work->unka0[i] << 16);
-        p->z = object->z;
+        SET_POSITION(p, object->x, object->y + (work->unka0[i] << 16),
+                     object->z);
         Camera_WorldToScreen(p);
         x = p->x;
         j = 0;

@@ -7,6 +7,7 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct Work080e6400 {
   u8 tiles[0x400];
@@ -291,9 +292,8 @@ void FieldPsynergy_Scoop(void) {
   s32 i;
 
   if (event->work.controlMode != 3) {
-    scene->x = (caster->x & 0xfff00000) + 0x80000;
-    scene->y = caster->y;
-    scene->z = (caster->z & 0xfff00000) + 0x80000;
+    SET_POSITION(scene, (caster->x & 0xfff00000) + 0x80000, caster->y,
+                 (caster->z & 0xfff00000) + 0x80000);
     Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
@@ -322,7 +322,7 @@ void FieldPsynergy_Scoop(void) {
   work->other = other;
   if (other == NULL)
     goto end;
-  other->z += 0x30000;
+  other->z += px(3);
   other->motionFlags = 0;
   other->priorityFlags = 1;
   other->scaleX = 0;
@@ -334,7 +334,7 @@ void FieldPsynergy_Scoop(void) {
   Actor_SelectAnimationFar(object, 1);
   wait(15);
   for (i = 9; i >= 0; i--) {
-    object->y += -0x28000;
+    object->y += -(px(5) / 2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, 2);
@@ -394,9 +394,7 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
       sprite->scaleY = sprite->scaleX = 0x3333;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
@@ -422,9 +420,7 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
@@ -447,9 +443,7 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
-      particle->x = scene->x;
-      particle->y = scene->y + 0x280000;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y + 0x280000, scene->z);
       Vector_AddPolarOffset(Random16() * 4 + 0x30000, Random16(), &particle->x);
       particle->timer = -i * 3 / 4;
       sprite++;
@@ -617,9 +611,7 @@ void Scoop_DigUpItem(void) {
   } else {
     item = (((Random16() * unit->level) * 2) >> 16) + 1 | 0x8000;
   }
-  object->x = anchor->x;
-  object->y = anchor->y;
-  object->z = anchor->z;
+  SET_POSITION(object, anchor->x, anchor->y, anchor->z);
   Actor_ShowItemIconById(id, item);
   ((struct DropEvent *)event)->item = item;
   BattleEffect_DropObjectAtAnchor(id);
@@ -705,9 +697,7 @@ void Teleport_PlayWhirl(void) {
         angle = Random16();
         spark = &work->sparks[next];
         spark->age = 0;
-        spark->x = object->x;
-        spark->y = object->y + Random16() * 20;
-        spark->z = object->z;
+        SET_POSITION(spark, object->x, object->y + Random16() * 20, object->z);
         Vector_AddPolarOffset(Random16() << 3, angle, &spark->x);
         next++;
         spark->angle = angle;
@@ -868,9 +858,7 @@ void Teleport_PlaySparks(void) {
       angle = Random16();
       particle = &work->particles[next];
       particle->age = zero;
-      particle->x = object->x;
-      particle->y = object->y + Random16() * 20;
-      particle->z = object->z;
+      SET_POSITION(particle, object->x, object->y + Random16() * 20, object->z);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;
@@ -1136,9 +1124,7 @@ loaded:
       sprite->scaleX = 0x3333;
       sprite->scaleY = 0x3333;
       particle = &work->particles[slot];
-      particle->x = pos[0];
-      particle->y = pos[1];
-      particle->z = pos[2];
+      SET_POSITION(particle, pos[0], pos[1], pos[2]);
       Vector_AddPolarOffset(Random16() * 12 + 0x90000, Random16(),
                             &particle->x);
       particle->sway = (Random16() << 5) >> 16;
@@ -1492,9 +1478,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
         pos[1] = timer;
         pos[0] = timer;
         Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
-        entry->x = pos[0];
-        entry->y = pos[1] + 0x100000;
-        entry->z = pos[2];
+        SET_POSITION(entry, pos[0], pos[1] + 0x100000, pos[2]);
         timer = entry->timer;
       }
       if (timer >= 0) {

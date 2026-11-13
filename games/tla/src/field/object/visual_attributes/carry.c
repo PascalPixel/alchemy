@@ -4,6 +4,7 @@
 
 #include "../visual_attributes_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 #include "types.h"
 #include "system/system.h"
@@ -28,9 +29,7 @@ void FieldPsynergy_Carry(void) {
 
   work = Ram_HeapSlots->effectWork;
   FieldPsynergy_FadeToCastColor();
-  pos.x = work->x;
-  pos.y = work->y + 0x100000;
-  pos.z = work->z;
+  SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
   pair[0] = FieldEffect_SpawnCarryHand(pos.x + 0x200000, pos.y, pos.z, 0x8000);
   pair[1] = FieldEffect_SpawnCarryHand(pos.x - 0x200000, pos.y, pos.z, 0);
 
@@ -45,9 +44,7 @@ void FieldPsynergy_Carry(void) {
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
-    pos.x = work->x;
-    pos.y = work->y + 0x100000;
-    pos.z = work->z;
+    SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
     obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);

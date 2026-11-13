@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // Vengeance: the avenger's blades.
 
@@ -194,13 +195,13 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
       for (i = 0; i != BLADES; i++) {
         blade = &work->particles[i];
         if (effect->side == 0) {
-          blade->x = 0xa00000;
+          blade->x = px(160);
           blade->velocityX = px(12);
         } else {
-          blade->x = 0x200000;
+          blade->x = px(32);
           blade->velocityX = -(px(12));
         }
-        blade->y = 0xc0000;
+        blade->y = px(12);
         strikes = Data_081995f3[effect->variant][i];
         if (strikes != 0) {
           strikes = 1;
@@ -438,7 +439,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       Sound_PlayFar(SE_CURSE_FALL);
       if (effect->side == 0) {
-        work->particles[0].x = 0x200000;
+        work->particles[0].x = px(32);
         work->particles[0].y = 0xffc00000;
         work->particles[0].z = 0xffffe3d0;
       } else {
@@ -1019,9 +1020,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
 
         speed &= Random16();
 
-        star->x = 0;
-        star->y = ((Random16() & 31) + 20) << 16;
-        star->z = 0;
+        SET_POSITION(star, 0, ((Random16() & 31) + 20) << 16, 0);
         speed += 128;
         star->velocityX = (Trig_Sin(angle) * speed) >> 5;
         star->velocityY = 0;
@@ -1745,7 +1744,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         {
           s32 x = ((Random16() & 15) + 52) << 16;
 
-          p->y = 0x640000;
+          p->y = px(100);
           p->x = x;
         }
         p->velocityX = ((Random16() & 31) - 16) << 12;
@@ -1824,9 +1823,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         p = EFFECT_STEPS;
         for (i = 0; i != 384; i++, p++) {
           p->variant = Random16() & 3;
-          p->x = (Random16() % 160 - 80) << 16;
-          p->y = (Random16() % 160 + 48) << 16;
-          p->z = (Random16() % 160 - 80) << 16;
+          SET_POSITION(p, (Random16() % 160 - 80) << 16,
+                       (Random16() % 160 + 48) << 16,
+                       (Random16() % 160 - 80) << 16);
           p->velocityX = zero;
           p->velocityY =
               (-((Random16() & 63) + 32) << 10) - (1 << (16 - p->variant));

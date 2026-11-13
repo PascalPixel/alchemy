@@ -10,6 +10,7 @@
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 // Battle effects: particle effect entry points.
 
@@ -110,13 +111,13 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
     struct EffectStep *mote = &PARTICLES[i];
 
     if (CONVERGES(mode)) {
-      mote->x = ((Random16() & 0xff) - 127) << 15;
-      mote->y = ((Random16() & 0xff) - 127) << 14;
-      mote->z = ((Random16() & 0xff) - 127) << 15;
+      SET_POSITION(mote, ((Random16() & 0xff) - 127) << 15,
+                   ((Random16() & 0xff) - 127) << 14,
+                   ((Random16() & 0xff) - 127) << 15);
     } else {
-      mote->x = ((Random16() & 0xff) - 127) << 13;
-      mote->y = ((Random16() & 0xff) - 255) << 13;
-      mote->z = ((Random16() & 0xff) - 127) << 13;
+      SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
+                   ((Random16() & 0xff) - 255) << 13,
+                   ((Random16() & 0xff) - 127) << 13);
     }
     mote->variant = 0;
   }
@@ -261,16 +262,16 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
               } else {
-                mote->y += 0x10000;
+                mote->y += px(1);
               }
               mote->variant++;
               if (mote->variant == 24) {
                 if (DECAYS(mode)) {
                   mote->variant = 0;
                 } else {
-                  mote->x = ((Random16() & 0xff) - 127) << 13;
-                  mote->y = ((Random16() & 0xff) - 255) << 12;
-                  mote->z = ((Random16() & 0xff) - 127) << 13;
+                  SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
+                               ((Random16() & 0xff) - 255) << 12,
+                               ((Random16() & 0xff) - 127) << 13);
                 }
               }
             }
@@ -350,7 +351,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   for (i = 0; i != 32; i++) {
     one = &sheep[i];
     one->x = ((Random16() & 63) + 32) << 16;
-    one->y = -0x200000;
+    one->y = -px(32);
     one->velocityY = Random16() & 0;
     one->z = Random16() & 3;
     one->variant = Random16() & 255;
@@ -559,9 +560,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     s32 heading = Random16() & 0xffff;
     s32 speed = (Random16() & 0xff) + 128;
 
-    spark->x = 0;
-    spark->y = ((Random16() & 31) + 20) << 16;
-    spark->z = 0;
+    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
     spark->velocityX = (Trig_Sin(heading) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(heading) * speed) >> 5;
@@ -669,9 +668,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   for (i = 0; i != 512; i++) {
     struct EffectStep *spark = &PARTICLES[i];
 
-    spark->x = ((Random16() & 0xff) - 127) << 15;
-    spark->y = ((Random16() & 0x7f) + 64) << 15;
-    spark->z = ((Random16() & 0xff) - 127) << 15;
+    SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
+                 ((Random16() & 0x7f) + 64) << 15,
+                 ((Random16() & 0xff) - 127) << 15);
     spark->variant = 0;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);

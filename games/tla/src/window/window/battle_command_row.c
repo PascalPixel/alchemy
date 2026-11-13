@@ -285,24 +285,24 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         navigation->tutorialDelay--;
       }
     }
-    if ((keys & 0x300) && mode != 0) {
+    if ((keys & KEYS_SHOULDERS) && mode != 0) {
       command = -2;
       break;
     }
-    if (keys & 1) {
+    if (keys & KEY_A) {
       command = selectionUi->commandKinds[selectionUi->selectedIndex];
       break;
     }
-    if (keys & 2) {
+    if (keys & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       command = -1;
       break;
     }
-    if (repeat & 0x90) {
+    if (repeat & (KEY_RIGHT | KEY_DOWN)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
-    } else if (repeat & 0x60) {
+    } else if (repeat & (KEY_LEFT | KEY_UP)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %

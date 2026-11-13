@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
+#include "macros.h"
 
 #define EMBERS ((struct EffectStep *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 // an ember's variant; 0 and up count its flare's frames
@@ -62,9 +63,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     ember->velocityX = (Trig_Sin(angle) * speed) >> 6;
     ember->velocityY = (s32)(((Random16() & 127) - 16) << 16) >> 6;
     ember->velocityZ = (Trig_Cos(angle) * speed) >> 6;
-    ember->x = user->x;
-    ember->y = top;
-    ember->z = user->z;
+    SET_POSITION(ember, user->x, top, user->z);
     ember->variant = IN_FLIGHT;
   }
 

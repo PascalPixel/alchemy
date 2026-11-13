@@ -755,7 +755,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             if (frame > 301) {
               p->variant = 0;
             } else if (frame > 245) {
-              p->y = 0x600000;
+              p->y = px(96);
             } else {
               p->y = 0xc00000 - p->x;
             }

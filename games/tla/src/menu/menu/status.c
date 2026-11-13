@@ -527,12 +527,12 @@ s32 PsynergyMenu_ChooseMember(void) {
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (((struct InputState *)&gInput)->pressed & 1) {
+    if (((struct InputState *)&gInput)->pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (((struct InputState *)&gInput)->pressed & 2) {
+    if (((struct InputState *)&gInput)->pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;

@@ -5,6 +5,7 @@
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
+#include "macros.h"
 
 /* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c;
  * effect_sprite.h has another definition; tried with the definition the rest of
@@ -134,9 +135,7 @@ void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite,
   } else {
     Vector_AddPolarOffset(px(4), Random16(), position);
   }
-  particle->x = position[0];
-  particle->y = position[1];
-  particle->z = position[2];
+  SET_POSITION(particle, position[0], position[1], position[2]);
   position[2] = 0;
   position[0] = 0;
   if (high)

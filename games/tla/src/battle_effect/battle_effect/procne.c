@@ -12,6 +12,7 @@
 #include "gamepak/far_call/field.h"
 #include "system/mul_q16.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 // Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's
 // BattleEffect_RunProcne, ported by trial 2 and rewritten here. The
@@ -88,8 +89,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     work->transferMode = 2;
     work->transferValue = 50;
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-    wave.x = 0x800000;
-    wave.y = 0x280000;
+    wave.x = px(128);
+    wave.y = px(40);
     drift.x = 0;
     drift.y = 0;
 
@@ -160,11 +161,11 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
             if (frame > index * 16 + 16)
               spin[index] += 48;
             if (radius[index] <= 31)
-              object->y += 0x60000;
+              object->y += px(6);
             else
-              object->y += 0x8000;
+              object->y += px(1) / 2;
             if (object->y > 0x7c0000)
-              object->y = 0x7c0000;
+              object->y = px(124);
           }
 
           if (frame <= 490) {
@@ -395,9 +396,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
                 spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
                 spark->velocityY = ((Random16() & 255) - 128) << 10;
-                spark->x = 0;
-                spark->y = 0;
-                spark->z = 0;
+                SET_POSITION(spark, 0, 0, 0);
                 spark->variant = (Random16() & 15) + 64;
                 index++;
               } while (index != 96);
@@ -458,8 +457,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 slot++;
               } while (slot != 28);
 
-              drift.x = 0x80000;
-              drift.y = -0x20000;
+              drift.x = px(8);
+              drift.y = -px(2);
               work->shakeFrames = 8;
             }
 

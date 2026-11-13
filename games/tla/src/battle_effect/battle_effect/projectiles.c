@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // The packed preparer word: kind | side << 4 | anchor << 5.
 #define PREPARE_KIND(packed) ((packed) & 7)
@@ -156,9 +157,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     s32 angle = Random16() & 0xffff;
     s32 speed = (Random16() & 255) + 128;
 
-    spark->x = 0;
-    spark->y = ((Random16() & 31) + 20) << 16;
-    spark->z = 0;
+    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(angle) * speed) >> 5;
@@ -822,9 +821,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       struct EffectStep *p = &PARTICLES[PTCL_STREAKS + i];
 
-      p->x = (origin.x / 2) << 16;
-      p->y = 80 << 16;
-      p->z = 0;
+      SET_POSITION(p, (origin.x / 2) << 16, 80 << 16, 0);
       p->velocityX = ((Random16() & 255) - 128) << 9;
       p->velocityY = ((Random16() & 255) - 128) << 9;
       p->velocityZ = 0;
@@ -973,9 +970,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 shot->velocityX = -shot->velocityX;
               }
               flash->variant = 1;
-              flash->x = pos->x;
-              flash->y = pos->y;
-              flash->z = 0;
+              SET_POSITION(flash, pos->x, pos->y, 0);
               if (mode != 7)
                 work->shakeFrames = 2;
               BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);

@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 // Steps the 64 background colours one shade toward the resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource) {
@@ -769,9 +770,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       i = 0;
       p = work->particle;
       for (; i != 32; i++, p++) {
-        p->x = object2->x;
-        p->y = half;
-        p->z = object2->z;
+        SET_POSITION(p, object2->x, half, object2->z);
         if (kind == 61) {
           p->vx = ((Random16() & 255) - 127) << 12;
           p->vy = ((Random16() & 255) - 64) << 10;
@@ -821,9 +820,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       for (i = 0; i != 64; i++) {
         struct Particle *q;
         q = &SPARKS[i];
-        q->x = object2->x;
-        q->y = 0x140000;
-        q->z = object2->z;
+        SET_POSITION(q, object2->x, px(20), object2->z);
         if (object2->x < 0)
           q->vx = -((Random16() & 255) + 128) << 11;
         else
@@ -840,9 +837,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         height = 0x140000;
       p = SPARKS;
       for (i = 0; i != 64; i++, p++) {
-        p->x = object2->x;
-        p->y = height;
-        p->z = object2->z;
+        SET_POSITION(p, object2->x, height, object2->z);
         if (kind == 5 || kind == 53) {
           p->vx = ((Random16() & 255) - 127) << 11;
           p->vy = (Random16() & 255) << 11;
@@ -1085,9 +1080,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Particle *p;
           p = SPARKS;
           for (i = 0; i != 64; i++, p++) {
-            p->x = object2->x;
-            p->y = 0x140000;
-            p->z = object2->z;
+            SET_POSITION(p, object2->x, px(20), object2->z);
             p->vx = ((Random16() & 255) - 128) << 10;
             p->vy = ((Random16() & 255) - 128) << 10;
             p->vz = ((Random16() & 255) - 128) << 10;
@@ -1276,9 +1269,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             for (; i != 64; i++, p++) {
               if (p->life == 0) {
                 count++;
-                p->x = object2->x;
-                p->y = 0x140000;
-                p->z = object2->z;
+                SET_POSITION(p, object2->x, px(20), object2->z);
                 p->vx = ((Random16() & 255) - 127) << 12;
                 p->vy = ((Random16() & 255) - 64) << 10;
                 p->vz = ((Random16() & 255) - 127) << 12;
@@ -1675,9 +1666,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           struct Particle *p;
           p = SPARKS;
           for (i = 0; i != 64; i++, p++) {
-            p->x = (Random16() & 127) + 32;
-            p->y = 0;
-            p->z = 0;
+            SET_POSITION(p, (Random16() & 127) + 32, 0, 0);
             p->vx = Random16() & 0xffff;
             p->vy = Random16() & 0xffff;
             p->vz = Random16() & 0xffff;
@@ -1828,9 +1817,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           REG_BG2PA = 0x100;
           p = work->particle;
           for (i = 0; i != 32; i++, p++) {
-            p->x = ((Random16() & 31) + 48) << 16;
-            p->y = ((Random16() & 31) + 64) << 16;
-            p->z = Random16();
+            SET_POSITION(p, ((Random16() & 31) + 48) << 16,
+                         ((Random16() & 31) + 64) << 16, Random16());
             p->vx = ((Random16() & 63) - 32) << 12;
             p->vy = -((Random16() & 127) + 16) << 12;
             p->vz = (Random16() & 15) + 16;
@@ -2414,9 +2402,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               BattleUnit_GetEffectHeightFar(action->actors[0]) / 2 + 0x1e0000;
           p = work->particle;
           for (i = 0; i != 64; i++, p++) {
-            p->x = object2->x;
-            p->y = half;
-            p->z = object2->z;
+            SET_POSITION(p, object2->x, half, object2->z);
             p->vx = ((Random16() & 255) - 127) << 11;
             p->vy = ((Random16() & 255) - 64) << 11;
             p->vz = ((Random16() & 255) - 127) << 11;

@@ -12,6 +12,7 @@
 #include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 struct Model;
 
@@ -523,12 +524,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         struct EffectStep *q = &work->particles[63];
 
         if (frame == 16) {
-          q->x = 0x800000;
-          q->y = -0x280000;
+          q->x = px(128);
+          q->y = -px(40);
         }
         if (frame <= 19) {
-          q->x += -0x200000;
-          q->y += 0x400000;
+          q->x += -px(32);
+          q->y += px(64);
         }
         if (frame <= 27) {
           cells = work->sheet + 0x38c0;
@@ -690,9 +691,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             k = 0;
             v = (struct EclipseVertex *)((u8 *)v + offset);
             for (; k != 16; k++) {
-              v->x = Trig_Sin(k << 12) * rr >> 16;
-              v->y = y;
-              v->z = Trig_Cos(k << 12) * rr >> 16;
+              SET_POSITION(v, Trig_Sin(k << 12) * rr >> 16, y,
+                           Trig_Cos(k << 12) * rr >> 16);
               v++;
             }
           }

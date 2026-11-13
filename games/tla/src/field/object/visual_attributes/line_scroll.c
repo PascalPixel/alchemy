@@ -107,7 +107,7 @@ s32 Entrance_PlayArrival(void) {
         GameFlag_Clear(flag);
         id = gMainRoutineWork.currentOwner;
         object = ObjectTable_Get(id);
-        object->y += 0x00a00000;
+        object->y += px(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (object->y + object->velocityY > object->terrainHeight) {
           wait(1);

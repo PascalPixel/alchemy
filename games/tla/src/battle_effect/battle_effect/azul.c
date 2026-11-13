@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -257,10 +258,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
                            0x10000 - fade * 1092, 128);
     }
     if (frame == 186) {
-      base.x = 0x300000;
+      base.x = px(48);
       base.y = 0x420003;
       vel.x = 0;
-      vel.y = -0x60000;
+      vel.y = -px(6);
     }
     if (frame == 0) {
       REG_BLDALPHA = 0x10;
@@ -269,10 +270,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0xc000;
       }
-      base.x = 0x780000;
-      base.y = -0x780000;
+      base.x = px(120);
+      base.y = -px(120);
       vel.x = 0;
-      vel.y = 0xc0000;
+      vel.y = px(12);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (n = 0; n != 31; n++) {
         for (i = 0; i != 4; i++) {
@@ -390,10 +391,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       base.y += vel.y;
     }
     if (frame == 168) {
-      base.x = 0x300000;
-      base.y = 0xa80000;
+      base.x = px(48);
+      base.y = px(168);
       vel.x = 0;
-      vel.y = -0x60000;
+      vel.y = -px(6);
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
       }
@@ -405,13 +406,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 186) {
-      vel.y = -0x100000;
+      vel.y = -px(16);
     }
     if ((frame < 54 || frame > 167) && frame < 214) {
       place[3] = 0;
       place[1] = 0xff0000;
       if (frame > 167) {
-        pos.y -= 0x60000;
+        pos.y -= px(6);
       }
       if (frame <= 53) {
         for (i = 0; i != 12; i++) {
@@ -475,13 +476,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         for (i = 0; i != 28; i++) {
           ((struct AzulObject *)work->objects[i])->shape = 0;
         }
-        base.x = 0x1000000;
-        base.y = 0x480000;
-        vel.x = -0x60000;
+        base.x = px(256);
+        base.y = px(72);
+        vel.x = -px(6);
         vel.y = 0;
       }
       if (frame == 138) {
-        vel.x = 0x80000;
+        vel.x = px(8);
       }
       place[3] = 0;
       place[1] = 0xff0000;
@@ -534,9 +535,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];
 
-        p->x = cx << 16;
-        p->y = cy << 16;
-        p->z = 0;
+        SET_POSITION(p, cx << 16, cy << 16, 0);
         p->velocityX = (cx - 60) << 12;
         p->velocityY = (cy - 60) << 10;
         p->velocityZ = ((Random16() & 127) << 2) + 512;
@@ -639,9 +638,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         j = 0;
         v = (struct AzulVertex *)(sphere + offset);
         for (; j != 16; j++) {
-          v->x = Trig_Sin(j << 12) * radius >> 16;
-          v->y = y;
-          v->z = Trig_Cos(j << 12) * radius >> 16;
+          SET_POSITION(v, Trig_Sin(j << 12) * radius >> 16, y,
+                       Trig_Cos(j << 12) * radius >> 16);
           v++;
         }
       }

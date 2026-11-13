@@ -13,6 +13,7 @@
 #include "module/field/object.h"
 #include "module/system/system.h"
 #include "scene_call.h"
+#include "macros.h"
 
 /* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740;
  * visual_attributes.c has another definition; tried with the definition the
@@ -112,7 +113,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   Sound_PlayFar(SE_HIGH_JUMP);
   djinni->mode = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
-    djinni->y += 0x80000;
+    djinni->y += px(8);
     wait(1);
   }
   Actor_ReleaseFar(djinni);
@@ -127,9 +128,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(20);
 
-  position.x = djinni->x;
-  position.y = djinni->y;
-  position.z = djinni->z;
+  SET_POSITION(&position, djinni->x, djinni->y, djinni->z);
   Camera_WorldToScreen(&position.x);
 
   slot = (u8 *)effectSlots + 80;
@@ -395,9 +394,9 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
       break;
     }
     bow = Iwram_MulQ16(Trig_Sin((i << 16) / count), TRIG_TURN);
-    node->x = x1 + i * dx / count + Iwram_MulQ16(bow, cos);
-    node->y = y1 + i * dy / count + Iwram_MulQ16(bow, sin);
-    node->z = z1 + i * dz / count;
+    SET_POSITION(node, x1 + i * dx / count + Iwram_MulQ16(bow, cos),
+                 y1 + i * dy / count + Iwram_MulQ16(bow, sin),
+                 z1 + i * dz / count);
     node->slot = index + 1;
     if (i == count)
       node->kind = 2;

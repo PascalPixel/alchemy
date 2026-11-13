@@ -391,7 +391,7 @@ extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
     for (index = 0; index != 4; index++) {                                     \
       die = &(dice)->particles[index];                                         \
       die->z = 0;                                                              \
-      die->y = 0x600000;                                                       \
+      die->y = px(96);                                                         \
       die->x = (index * 24 - 108) << 16;                                       \
       die->velocityX = ((Random16() & 127) - 64) << 12;                        \
       die->velocityY = ((Random16() & 15) + 48) << 13;                         \
@@ -579,12 +579,10 @@ void SuperLuckyDice_Run(void) {
 
     die = dice->particles;
     for (index = 0; index != 4; index++) {
-      die->x = ((Random16() & 127) - 64) << 16;
-      die->y = 0;
-      die->z = ((Random16() & 127) - 64) << 16;
-      die->x = Trig_Sin(index << 14) * 100;
-      die->y = 0;
-      die->z = Trig_Cos(index << 14) * 100;
+      SET_POSITION(die, ((Random16() & 127) - 64) << 16, 0,
+                   ((Random16() & 127) - 64) << 16);
+      SET_POSITION(die, Trig_Sin(index << 14) * 100, 0,
+                   Trig_Cos(index << 14) * 100);
       die->velocityX = ((Random16() & 127) - 64) << 14;
       die->velocityY = ((Random16() & 31) + 32) << 12;
       die->velocityZ = ((Random16() & 127) - 64) << 14;

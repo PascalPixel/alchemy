@@ -12,6 +12,7 @@
 #include "module/system/system.h"
 #include "battle/object_effect_scripts.h"
 #include "scene_call.h"
+#include "macros.h"
 
 struct Actor *Actor_GetById(u32 objectId);
 
@@ -209,9 +210,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   state = effect->state;
 
   if (state == 0) {
-    position.x = source->x;
-    position.y = source->y;
-    position.z = source->z;
+    SET_POSITION(&position, source->x, source->y, source->z);
 
     random = Random16() * 10 + 0xa0000;
     Vector_AddPolarOffset(random, Random16(), &position);

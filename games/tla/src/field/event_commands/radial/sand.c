@@ -5,6 +5,7 @@
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 #include "field/field_psynergy_work.h"
 #include "system/main_routine_work.h"
@@ -250,9 +251,7 @@ void FieldPsynergy_UpdateBurst(void) {
     for (i = 0; i < work->newBursts; i++) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(Random16() * 12 + 0x40000, Random16(),
                             &particle->x);
       work->nextBurst = ++work->nextBurst % 32;
@@ -373,9 +372,7 @@ void FieldPsynergy_UpdateBurst(void) {
     for (i = 0; i < work->newBursts; i++) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
-      particle->x = scene->x;
-      particle->y = scene->y;
-      particle->z = scene->z;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
       work->nextBurst = ++work->nextBurst % 32;
     }
     work->newBursts = 0;

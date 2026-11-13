@@ -5,6 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
@@ -521,9 +522,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       for (i = 0; i != 128; i++) {
         struct EffectStep *mote = &MOTES[i];
 
-        mote->x = object->x;
-        mote->y = object->y + half;
-        mote->z = object->z;
+        SET_POSITION(mote, object->x, object->y + half, object->z);
         mote->velocityX = ((Random16() & 0xff) - 128) << 10;
         mote->velocityY = ((Random16() & 0xff) - 128) << 10;
         mote->velocityZ = ((Random16() & 0xff) - 128) << 10;

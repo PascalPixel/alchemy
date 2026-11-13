@@ -1368,7 +1368,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
     }
     // R on a Djinni: put it on standby or set it at once.
-    if (mode == 0 && (pressed & 0x100)) {
+    if (mode == 0 && (pressed & KEY_R)) {
       if (selectedRow == -1) {
         Sound_PlayFar(SE_MENU_ERROR);
         continue;
@@ -1395,12 +1395,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       DjinnMenu_DrawPage(backdrop, memberColumn / 4 * 4);
       redraw = 1;
     }
-    if (mode == 0 && (pressed & 0x200)) {
+    if (mode == 0 && (pressed & KEY_L)) {
       result = 7;
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
+    if ((pressed & KEY_A) || (mode == 1 && (pressed & KEY_R))) {
       if (selectedRow != -1 && state == 2) {
         Sound_PlayFar(SE_MENU_ERROR);
         WindowSprite_ClearListFar(listWindow);
@@ -1432,19 +1432,19 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (pressed & 8) {
+    if (pressed & KEY_START) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -2;
       break;
     }
-    if (pressed & 2) {
+    if (pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     // Select: with R held, set every Djinni not recovering or, the next
     // time, put every one on standby; otherwise open the help.
-    if (mode == 0 && (pressed & 4)) {
+    if (mode == 0 && (pressed & KEY_SELECT)) {
       if (groupMode) {
         setAll ^= 1;
         if (setAll)
@@ -1486,7 +1486,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       }
     }
-    if (repeat & 0x40) {
+    if (repeat & KEY_UP) {
       if (columnFlags[memberColumn] & 4)
         continue;
       if (backdrop->counts[memberColumn] == 0)
@@ -1507,7 +1507,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       redraw = 2;
       continue;
     }
-    if (repeat & 0x80) {
+    if (repeat & KEY_DOWN) {
       if (columnFlags[memberColumn] & 4)
         continue;
       if (backdrop->counts[memberColumn] == 0)
@@ -1526,14 +1526,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       redraw = 2;
       continue;
     }
-    if (repeat & 0x30) {
+    if (repeat & KEYS_HORIZONTAL) {
       s32 oldColumn;
 
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       oldColumn = memberColumn;
       if (!(columnFlags[memberColumn] & 4))
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-      if (repeat & 0x20)
+      if (repeat & KEY_LEFT)
         memberColumn--;
       else
         memberColumn++;
@@ -1545,7 +1545,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         for (i = 0; i < menu->memberCount; i++) {
           if (columnFlags[memberColumn] != 4)
             break;
-          if (repeat & 0x20)
+          if (repeat & KEY_LEFT)
             memberColumn--;
           else
             memberColumn++;

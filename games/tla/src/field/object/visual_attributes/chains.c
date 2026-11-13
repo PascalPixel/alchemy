@@ -8,6 +8,7 @@
 #include "../visual_attributes_internal.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
+#include "macros.h"
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
  * ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y),
@@ -35,9 +36,9 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
     for (i = 0; i <= segments; i++) {
       s32 bow = Iwram_MulQ16(Trig_Sin((i << 15) / segments), height);
 
-      node->x = x + i * dx / segments + Iwram_MulQ16(bow, cos);
-      node->y = y + i * dy / segments + Iwram_MulQ16(bow, sin);
-      node->z = z + i * (toZ - z) / segments;
+      SET_POSITION(node, x + i * dx / segments + Iwram_MulQ16(bow, cos),
+                   y + i * dy / segments + Iwram_MulQ16(bow, sin),
+                   z + i * (toZ - z) / segments);
       node->kind = kind;
       node = node->next;
     }
@@ -99,9 +100,8 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       result = -1;
       break;
     }
-    node->x = x + Iwram_MulQ16(Trig_Cos(angle), radius);
-    node->y = y;
-    node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
+    SET_POSITION(node, x + Iwram_MulQ16(Trig_Cos(angle), radius), y,
+                 z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
     step = ArcTan2(0x60000, radius);
@@ -686,9 +686,8 @@ s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       break;
     }
     node->slot = index + 1;
-    node->x = x + i * dx / segments;
-    node->y = y + i * dy / segments;
-    node->z = z + i * dz / segments;
+    SET_POSITION(node, x + i * dx / segments, y + i * dy / segments,
+                 z + i * dz / segments);
     if (i == segments)
       node->kind = 2;
     else
@@ -733,9 +732,8 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   for (i = 0; i <= segments; i += one) {
     s32 bow = IwramMulQ16(Trig_Sin((i << 15) / segments), height);
 
-    node->x = x + i * dx / segments;
-    node->y = y + i * dy / segments + bow;
-    node->z = z + i * dz / segments;
+    SET_POSITION(node, x + i * dx / segments, y + i * dy / segments + bow,
+                 z + i * dz / segments);
     node->kind = one;
     node = node->next;
   }
@@ -785,9 +783,8 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
       result = -1;
       break;
     }
-    node->x = x + Iwram_MulQ16(Trig_Cos(angle), radius);
-    node->y = y;
-    node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
+    SET_POSITION(node, x + Iwram_MulQ16(Trig_Cos(angle), radius), y,
+                 z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
     step = ArcTan2(0x60000, radius);

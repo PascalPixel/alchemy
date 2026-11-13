@@ -435,8 +435,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                   s32 angle;
                   speed &= Random16();
                   angle = Random16() & 0xffff;
-                  spark->x = 0x100000;
-                  spark->y = 0x500000;
+                  spark->x = px(16);
+                  spark->y = px(80);
                   speed += 32;
                   spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                   spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;

@@ -6,6 +6,7 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
 
 struct FxPartyList;
 struct Model;
@@ -660,7 +661,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         struct EffectStep *glow = &work->particles[63];
 
         glow->x = (screen.x / 2) << 16;
-        glow->y = 0x700000;
+        glow->y = px(112);
         glow->variant = zero;
       }
     }
@@ -879,9 +880,9 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
         Random16();
         angle = Random16() & 0xffff;
         radius = (Random16() & 7) + i * 4;
-        flame->x = target->x + Trig_Sin(angle) * radius * 2;
-        flame->y = target->y + Trig_Cos(angle) * radius + (48 << 16);
-        flame->z = target->z;
+        SET_POSITION(flame, target->x + Trig_Sin(angle) * radius * 2,
+                     target->y + Trig_Cos(angle) * radius + (48 << 16),
+                     target->z);
         EffectPosition_ProjectPoint(&flame->x, &screen);
         flame->x = screen.x / 2;
         flame->y = screen.y;

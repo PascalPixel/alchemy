@@ -209,9 +209,9 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
           else
             quad->y += quad->velocityY;
           if (quad->velocityY < -0x20000)
-            quad->z += 0x10000;
+            quad->z += px(1);
           else
-            quad->z += 0xc000;
+            quad->z += px(3) / 4;
           across = Trig_Sin(quad->x) * ((s16 *)&quad->z)[1];
           deep = Trig_Cos(quad->x) * ((s16 *)&quad->z)[1];
           quad->x += 0x200;
@@ -378,8 +378,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       transition[4] = 1;
       position.x = 240 << 16;
-      position.y = 0x400000;
-      velocity.x = -0x140000;
+      position.y = px(64);
+      velocity.x = -px(20);
       velocity.y = 0;
       for (i = 0; i != ZAGAN_PARTS; i++) {
         Animation_ApplyChildArgumentFar(work->objects[i], i + 12);
@@ -436,17 +436,17 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 64) <= 35) {
-      velocity.x += 0x8000;
-      velocity.y += -0x1000;
+      velocity.x += px(1) / 2;
+      velocity.y += -(px(1) / 16);
     }
     if (frame > 177) {
-      velocity.x += -0x20000;
-      velocity.y += -0x10000;
+      velocity.x += -px(2);
+      velocity.y += -px(1);
     } else if (frame > 139) {
       velocity.x += -40000;
-      velocity.y += 0x2000;
+      velocity.y += px(1) / 8;
     } else if (frame > 99) {
-      velocity.x += -0x2000;
+      velocity.x += -(px(1) / 8);
       velocity.y += 0x800;
     }
     if (frame == 156) {

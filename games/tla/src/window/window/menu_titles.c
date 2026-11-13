@@ -7,6 +7,7 @@
 #include "module/tla.h"
 #include "module/window/screens.h"
 #include "resource_ids.h"
+#include "macros.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)

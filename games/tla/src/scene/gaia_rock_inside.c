@@ -1854,15 +1854,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   }
 }
 
-/* VIEW(s1f68): variable gData_0200530c as const s16 gData_0200530c[][2];
- * scene/gaia_rock_inside/s4d00 has u16 gData_0200530c[] = {; tried as the
- * definition's extern DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update,
- * Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:1895: `gData_0200530c' undeclared
- * (first use in this function). */
-extern const s16 gData_0200530c__s1f68[][2] __asm__("gData_0200530c");
-#define gData_0200530c gData_0200530c__s1f68
+extern s16 gData_0200530c[][2];
 
 // Records which of eleven listed cells persons 10 and 11 stand on, as the two
 // halves of the byte flag 0x210.
@@ -1923,7 +1915,6 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef FIELD_AT
 
 #undef FIELD_AT
-#undef gData_0200530c
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -2057,13 +2048,7 @@ step:
  * incompatible types in initialization. */
 extern u16 gSceneState__s2cb4[] __asm__("gSceneState");
 #define gSceneState gSceneState__s2cb4
-/* VIEW(s2cb4): variable gData_0200533c as const s16 gData_0200533c[][2];
- * scene/gaia_rock_inside/s4d00 has u32 gData_0200533c[] = {; tried as the
- * definition's extern u32 gData_0200533c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:2088: `gData_0200533c' undeclared
- * (first use in this function). */
-extern const s16 gData_0200533c__s2cb4[][2] __asm__("gData_0200533c");
-#define gData_0200533c gData_0200533c__s2cb4
+extern s16 gData_0200533c[][2];
 
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
@@ -2181,15 +2166,6 @@ struct GaiaRockInsideSceneWork {
   s32 screenEffect;
 };
 
-/* VIEW(s2cb4): variable gData_0200530c as s16 gData_0200530c[][2];
- * games/tla/src/scene/gaia_rock_inside/s1f68 has const s16 gData_0200530c[][2];
- * tried as the definition's extern DEFINE_G_DATA_02005244(gData_02005244,
- * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:4227: conflicting types for
- * `gData_0200530c__s2cb4'. */
-extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
-#define gData_0200530c gData_0200530c__s2cb4
 extern u32 gData_02005360[];
 extern u32 gData_0200539c[];
 extern u32 gData_020053d8[];
@@ -3956,13 +3932,7 @@ void Func_0200485c(s32 direction) {
   Event_PlaySound(123);
 }
 
-/* VIEW(s2cb4): variable gData_020053fc as s8 gData_020053fc[][2];
- * scene/gaia_rock_inside/s4d00 has u32 gData_020053fc[] = {; tried as the
- * definition's extern u32 gData_020053fc[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:3955: `gData_020053fc' undeclared
- * (first use in this function). */
-extern s8 gData_020053fc__s2cb4[][2] __asm__("gData_020053fc");
-#define gData_020053fc gData_020053fc__s2cb4
+extern s8 gData_020053fc[][2];
 
 // From the third state on, for each of the two map layers:
 // Map_CopyRawCellsRect with the state's origin plus the layer's cell, a 15 by
@@ -4163,11 +4133,8 @@ burst:
 }
 
 #undef gSceneState
-#undef gData_0200530c
 #undef Func_02000aac
 #undef Func_02000a60
-#undef gData_0200533c
-#undef gData_020053fc
 
 void Func_02004d00(void) {
   Task_AddFrame((s32)Func_020049e4, TASK_PASS_VBLANK);
@@ -4238,16 +4205,9 @@ DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
 
 DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3)
 
-u16 gData_0200530c[] = {
-    0, 0, 113, 47, 115, 47, 115, 45,
-    117, 45, 119, 45, 119, 47, 121, 47,
-    117, 49, 119, 49, 119, 51, 121, 51,
-};
+s16 gData_0200530c[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {117, 45}, {119, 45}, {119, 47}, {121, 47}, {117, 49}, {119, 49}, {119, 51}, {121, 51}};
 
-u32 gData_0200533c[] = {
-    0x33002d, 0x35001f, 0x39001f, 0x3b0027, 0x3b0029, 0x3f002b,
-    0x3f002d, 0x450023, 0x450025,
-};
+s16 gData_0200533c[][2] = {{45, 51}, {31, 53}, {31, 57}, {39, 59}, {41, 59}, {43, 63}, {45, 63}, {35, 69}, {37, 69}};
 
 u32 gData_02005360[] = {
     0, 1, 13, 44, 0, 0, 1, 2, 0, 0, 0, 0, 1, 38, 17,
@@ -4265,10 +4225,7 @@ u32 gData_020053e4[] = {
     0x10043f42, 0x1006001e, 0x1008001e, 0x1006001e, 0xfe00001e, 0xffff,
 };
 
-u32 gData_020053fc[] = {
-    0x1010000, 0x1210111, 0xc310131, 0x22311731, 0x2d212d31, 0x2d012d11,
-    0x17012201, 0xc01,
-};
+s8 gData_020053fc[][2] = {{0, 0}, {1, 1}, {17, 1}, {33, 1}, {49, 1}, {49, 12}, {49, 23}, {49, 34}, {49, 45}, {33, 45}, {17, 45}, {1, 45}, {1, 34}, {1, 23}, {1, 12}, {0, 0}};
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -4698,11 +4655,6 @@ DEFINE_G_DATA_020016CC(gData_020062d4)
 #undef GAIA_ROCK_INSIDE_PATH
 #undef gData_02005ee4
 #undef gData_020051d8
-#undef gData_0200530c
 #undef gSceneState
-#undef gData_0200533c
-#undef gData_0200530c
-#undef gData_0200530c
 #undef Func_02000aac
 #undef Func_02000a60
-#undef gData_020053fc

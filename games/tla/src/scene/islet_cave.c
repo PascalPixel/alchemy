@@ -334,15 +334,10 @@ loop:
   Event_End();
 }
 
-/* VIEW(first): variables gData_0200134c, gData_0200135c and gData_02001388 as
- * this part declared them; the joined file has others. */
-extern u16 gData_0200134c__first[] __asm__("gData_0200134c");
-extern u16 gData_0200135c__first[] __asm__("gData_0200135c");
-extern u16 gData_02001388__first[] __asm__("gData_02001388");
+extern u16 gData_0200134c[];
+extern u16 gData_0200135c[];
+extern u16 gData_02001388[];
 extern u16 gData_020013b4[];
-#define gData_0200134c gData_0200134c__first
-#define gData_0200135c gData_0200135c__first
-#define gData_02001388 gData_02001388__first
 extern s32 gData_02001454[];
 
 s32 Scene_Initialize(void) {
@@ -724,29 +719,16 @@ void Func_0200115c(void) {
 #undef DEFINE_ISLET_CAVE_ARRIVE_AT
 #undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
 #undef FIELD_AT
-#undef gData_0200134c
-#undef gData_0200135c
-#undef gData_02001388
 
 void Func_02000b4c(void);
 void Func_02000cf0(void);
 
 // clang-format off
-s16 gData_0200134c[] = {
-    9, 10, 11, 12, 13, 14, 15, -1,
-};
+u16 gData_0200134c[] = {9, 10, 11, 12, 13, 14, 15, 65535};
 
-s16 gData_0200135c[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
+u16 gData_0200135c[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 65535};
 
-s16 gData_02001388[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+u16 gData_02001388[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
 
 DEFINE_G_DATA_020013B4(gData_020013b4, 14, 9, 10, 11, 12, 13)
 

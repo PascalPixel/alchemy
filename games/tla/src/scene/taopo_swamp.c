@@ -1192,24 +1192,11 @@ DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInRoom7, 0x1800000, 0x1900000)
 
 DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInRoom8, 0x1a00000, 0x1600000)
 
-/* VIEW(first): variables gTaopoSwamp_Room5Vents, Room5VentPair, Room7Vents,
- * Room8Vents and RockRoomVents as this part declared them; the joined file has
- * others. */
-extern const u8
-    gTaopoSwamp_Room5Vents__first[] __asm__("gTaopoSwamp_Room5Vents");
-extern const u8
-    gTaopoSwamp_Room5VentPair__first[] __asm__("gTaopoSwamp_Room5VentPair");
-extern const u8
-    gTaopoSwamp_Room7Vents__first[] __asm__("gTaopoSwamp_Room7Vents");
-extern const u8
-    gTaopoSwamp_Room8Vents__first[] __asm__("gTaopoSwamp_Room8Vents");
-extern const u8
-    gTaopoSwamp_RockRoomVents__first[] __asm__("gTaopoSwamp_RockRoomVents");
-#define gTaopoSwamp_Room5Vents gTaopoSwamp_Room5Vents__first
-#define gTaopoSwamp_Room5VentPair gTaopoSwamp_Room5VentPair__first
-#define gTaopoSwamp_Room7Vents gTaopoSwamp_Room7Vents__first
-#define gTaopoSwamp_Room8Vents gTaopoSwamp_Room8Vents__first
-#define gTaopoSwamp_RockRoomVents gTaopoSwamp_RockRoomVents__first
+extern u8 gTaopoSwamp_Room5Vents[];
+extern u8 gTaopoSwamp_Room5VentPair[];
+extern u8 gTaopoSwamp_Room7Vents[];
+extern u8 gTaopoSwamp_Room8Vents[];
+extern u8 gTaopoSwamp_RockRoomVents[];
 void TaopoSwamp_ResetMud(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
@@ -1979,11 +1966,6 @@ DEFINE_VENTS_SET_ID(Vents_SetId)
 #undef VENT_BOUNCE
 #undef VENT_AT
 #undef gTaopoSwamp_DripFromCeilingScript
-#undef gTaopoSwamp_Room7Vents
-#undef gTaopoSwamp_RockRoomVents
-#undef gTaopoSwamp_Room5Vents
-#undef gTaopoSwamp_Room8Vents
-#undef gTaopoSwamp_Room5VentPair
 
 void TaopoSwamp_FightFlower(void);
 void TaopoSwamp_DigHole(void);
@@ -2033,28 +2015,15 @@ s32 gTaopoSwamp_DropFalls[] = {
     38,
 };
 
-u16 gTaopoSwamp_Room5Vents[] = {
-    200, 200, 4, 264, 200, 4, 232, 216,
-    4, 280, 216, 4, 568, 200, 4, 632,
-    200, 4, 536, 216, 4, 600, 216, 4,
-    408, 232, 4, 472, 232, 4, 0,
-};
+u8 gTaopoSwamp_Room5Vents[] = {200, 0, 200, 0, 4, 0, 8, 1, 200, 0, 4, 0, 232, 0, 216, 0, 4, 0, 24, 1, 216, 0, 4, 0, 56, 2, 200, 0, 4, 0, 120, 2, 200, 0, 4, 0, 24, 2, 216, 0, 4, 0, 88, 2, 216, 0, 4, 0, 152, 1, 232, 0, 4, 0, 216, 1, 232, 0, 4, 0, 0, 0};
 
-u16 gTaopoSwamp_Room5VentPair[] = {
-    9, 10, 0,
-};
+u8 gTaopoSwamp_Room5VentPair[] = {9, 0, 10, 0, 0, 0};
 
-u16 gTaopoSwamp_Room7Vents[] = {
-    424, 104, 4, 536, 136, 4, 0,
-};
+u8 gTaopoSwamp_Room7Vents[] = {168, 1, 104, 0, 4, 0, 24, 2, 136, 0, 4, 0, 0, 0};
 
-u16 gTaopoSwamp_Room8Vents[] = {
-    408, 408, 4, 472, 360, 4, 0,
-};
+u8 gTaopoSwamp_Room8Vents[] = {152, 1, 152, 1, 4, 0, 216, 1, 104, 1, 4, 0, 0, 0};
 
-u16 gTaopoSwamp_RockRoomVents[] = {
-    216, 184, 4, 312, 136, 4, 0, 0,
-};
+u8 gTaopoSwamp_RockRoomVents[] = {216, 0, 184, 0, 4, 0, 56, 1, 136, 0, 4, 0, 0, 0, 0, 0};
 
 u32 gTaopoSwamp_SplashFades[] = {
     0, 32, 38,

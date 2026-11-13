@@ -112,8 +112,8 @@ s32 Func_0804b8b8(s32 slot) {
 
           redraw = 0;
           newId = battle->partyUnits[slot] = owners[sel];
-          from = GetBattleObjectSlotFar(current);
-          to = GetBattleObjectSlotFar(newId);
+          from = BattleObject_GetFar(current);
+          to = BattleObject_GetFar(newId);
           to->anchorX = from->anchorX;
           place = (struct Actor *)from->object;
           object = (struct Actor *)to->object;
@@ -121,7 +121,7 @@ s32 Func_0804b8b8(s32 slot) {
           Actor_SetPositionAndResetMotionFar(object, place->x, place->y,
                                              place->z);
           PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
-          BattleActor_CommitPlacementFar();
+          BattleObject_PutFar();
           selected[0] = newId;
           selected[1] = 0xff;
           BattleHighlight_SetModesFar(selected, 2);
@@ -141,21 +141,21 @@ s32 Func_0804b8b8(s32 slot) {
       BattleHighlight_SetModesFar(selected, 0);
       PartyStatus_HighlightMembers(selected);
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
-      BattleActor_CommitPlacementFar();
+      BattleObject_PutFar();
       wait(1);
     } while (0);
     return result;
   }
 }
 
-s32 BattleUnit_ListLivingFar(s32 sideMask, u16 *unitIds);
+s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
 void *Unit_Get(s32 owner);
 
 s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
                   s32 *forcedCount) {
   u16 *unitIds = Heap_AllocEwram(9);
   struct BattleActionRecord *entries = *cursor;
-  s32 count = BattleUnit_ListLivingFar(1, unitIds);
+  s32 count = BattleParty_ListLivingUnitsFar(1, unitIds);
   s32 readyCount = 0;
   s32 forced = 0;
   s32 i;

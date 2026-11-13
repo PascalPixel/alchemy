@@ -928,7 +928,7 @@ s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
 
 void Func_080caa4c(s32 table);
 
-void Window_CloseMatchingIdFar(s32 sprite);
+void Portrait_CloseWindowFar(s32 sprite);
 
 extern const s32 gFieldEffect_HeavyImpactScript[];
 

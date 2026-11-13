@@ -207,7 +207,7 @@ void Func_080d3fb0(s32 object, s32 message) {
     if (Scene_FindActorPlacement(masked) == 0)
       id = masked;
   }
-  Window_CloseMatchingIdFar(id);
+  Portrait_CloseWindowFar(id);
 
   if (work->waitMode == 0) {
     while (Window_IsClosedFar((s32)window) == 0) {
@@ -327,7 +327,7 @@ void Actor_ClosePortrait(s32 id) {
 
   no = Actor_GetSpriteById(id);
   if (no != -1)
-    Window_CloseMatchingIdFar(no);
+    Portrait_CloseWindowFar(no);
 }
 
 /// The event command "show two messages and wait": two actors speak at once,
@@ -368,8 +368,8 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
     wait(1);
 
   wait(1);
-  Window_CloseMatchingIdFar(firstSprite);
-  Window_CloseMatchingIdFar(secondSprite);
+  Portrait_CloseWindowFar(firstSprite);
+  Portrait_CloseWindowFar(secondSprite);
   Message_CloseFinishedWindowsFar();
   wait(1);
 

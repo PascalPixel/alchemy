@@ -38,7 +38,7 @@ void FieldPsynergy_Carry(void) {
       Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
   }
 
-  Actor_CommitPosition(pair[0]);
+  Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(134);
   for (n = 0; n < 24; n++) {
     pos.x = work->x;
@@ -55,8 +55,8 @@ void FieldPsynergy_Carry(void) {
     }
   }
 
-  Actor_Destroy(pair[0]);
-  Actor_Destroy(pair[1]);
+  Actor_ReleaseFar(pair[0]);
+  Actor_ReleaseFar(pair[1]);
   FieldPsynergy_FadeFromCastColor();
 }
 
@@ -76,7 +76,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
     object->speedLimit = 0x30000;
     object->acceleration = 0x30000;
     object->actionFlags = 0;
-    Actor_SetMode(object, 1);
+    Actor_SelectAnimationFar(object, 1);
     scale = object->scaleX;
     if (scale < Q16_ONE) {
       do {

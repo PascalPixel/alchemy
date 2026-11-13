@@ -666,7 +666,7 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
     handle = state->handle;
   }
   if (created != 0) {
-    object = SideObject_CreateFar(resource, 0, 0, handle, 0, 0);
+    object = Portrait_CreateFar(resource, 0, 0, handle, 0, 0);
     state->object = object;
     if ((((Object0f *)object)->field0f = 0xF0, state->mode) == 3) {
       Menu_SpawnIconEntries(state, handle);

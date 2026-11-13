@@ -228,10 +228,10 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 
   // The rocks start at the caster, 66 high, flung out to the side away
   // from the caster with a random lift and drift.
-  actor = GetBattleObjectSlotFar(effect->actor)->object;
+  actor = BattleObject_GetFar(effect->actor)->object;
   {
     struct MotionObject *target =
-        GetBattleObjectSlotFar(effect->actors[0])->object;
+        BattleObject_GetFar(effect->actors[0])->object;
 
     for (i = 0; i != 8; i++) {
       struct EffectStep *rock = &work->particles[i];

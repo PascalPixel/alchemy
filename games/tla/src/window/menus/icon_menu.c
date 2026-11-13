@@ -359,7 +359,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           gMainRoutineWork__battle_party_commands[0x218 + k] = shortSwapped;
       }
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
-      BattleActor_CommitPlacementFar();
+      BattleObject_PutFar();
       state->swappedUnit = -1;
       BattleSummon_UpdateAvailabilityFar();
       NAVIGATION->commandSelection[0] = 1;

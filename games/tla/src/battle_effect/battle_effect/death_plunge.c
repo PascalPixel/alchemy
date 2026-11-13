@@ -743,14 +743,14 @@ struct Model;
 
 void Render_DrawModelList(struct Model *model);
 
-/* VIEW(f13eb70): routine GetBattleObjectSlotFar as void
- * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
- * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
- * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+/* VIEW(f13eb70): routine BattleObject_GetFar as void
+ * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
+ * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
+ * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
  * games/tla/src/battle_effect/battle_effect.c:3126: conflicting types for
- * `GetBattleObjectSlotFar'. */
+ * `BattleObject_GetFar'. */
 extern void **
-GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("BattleObject_GetFar");
 
 #define HI(v) (((s16 *)&(v))[1])
 

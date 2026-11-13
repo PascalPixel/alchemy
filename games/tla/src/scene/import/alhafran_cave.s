@@ -17,19 +17,19 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -41,7 +41,7 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetSpriteColorMode
 	.thumb_func
 Actor_SetSpriteColorMode:
@@ -53,7 +53,7 @@ Func_02001420:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:

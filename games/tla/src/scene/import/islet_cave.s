@@ -17,7 +17,7 @@ Task_RemoveFar:
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -25,23 +25,23 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global MapGrid_PlayMapEdit
 	.thumb_func
 MapGrid_PlayMapEdit:
@@ -53,7 +53,7 @@ Map_CopyCellAttributeRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
 FieldMessage_ShowCentered:
@@ -61,7 +61,7 @@ FieldMessage_ShowCentered:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -149,7 +149,7 @@ BattleEffect_ApplyColorToSourceBuffer:
 	.global PaletteFade_StartInterpolation
 	.thumb_func
 PaletteFade_StartInterpolation:
-	overlay_veneer BattleEffect_StartBufferInterpolationFar
+	overlay_veneer PaletteFade_StartInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

@@ -37,7 +37,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Serial_Initialize
 	.thumb_func
 Serial_Initialize:
@@ -57,7 +57,7 @@ Serial_StartSend:
 	.global Serial_StartReceive
 	.thumb_func
 Serial_StartReceive:
-	overlay_veneer Party_CheckFar
+	overlay_veneer Serial_StartReceiveFar
 	.global Serial_GetActiveTransfers
 	.thumb_func
 Serial_GetActiveTransfers:
@@ -77,11 +77,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -165,7 +165,7 @@ Party_RestoreHpPp:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:

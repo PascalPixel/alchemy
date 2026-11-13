@@ -37,11 +37,11 @@ ArcTan2:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global HeapSlot_AllocEwram
 	.thumb_func
 HeapSlot_AllocEwram:
@@ -53,7 +53,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Func_02005770
 	.thumb_func
 Func_02005770:
@@ -73,7 +73,7 @@ VramCache_FindFreeEntry:
 	.global Oam_AddSpriteAtDepth
 	.thumb_func
 Oam_AddSpriteAtDepth:
-	overlay_veneer Oam_AddSpriteAtDepthFar
+	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -89,11 +89,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -101,7 +101,7 @@ GameFlag_GetByte:
 	.global Func_020057c8
 	.thumb_func
 Func_020057c8:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -121,15 +121,15 @@ Map_CenterOnFollowedPoint:
 	.global Func_020057f0
 	.thumb_func
 Func_020057f0:
-	overlay_veneer Actor_ResetMotion
+	overlay_veneer Actor_StartIdleFar
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -153,7 +153,7 @@ Func_02005828:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func
 MapGrid_SetScreenShake:
@@ -189,7 +189,7 @@ Func_02005870:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:

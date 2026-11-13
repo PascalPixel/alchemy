@@ -42,7 +42,7 @@ void Actor_Stop(u32 objectId) {
   if (object != NULL) {
     enabled = 1;
     object->actionFlags = enabled | object->actionFlags;
-    Actor_ResetMotion(object);
+    Actor_StartIdleFar(object);
   }
 }
 
@@ -51,7 +51,7 @@ void Actor_ResetTargetsAndVelocity(u32 objectId) {
 
   if (object != NULL) {
     object->actionFlags = (u8)(object->actionFlags | 1);
-    Actor_ResetMotion(object);
+    Actor_StartIdleFar(object);
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;
     object->targetZ = 0x80000000;
@@ -73,7 +73,7 @@ void Actor_RefreshSelectorById(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    Actor_RefreshSelector(object);
+    Actor_WaitForCommandEndFar(object);
 }
 
 void Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action) {
@@ -84,7 +84,7 @@ void Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action) {
     value |= object->actionFlags;
     object->actionFlags = value;
     Actor_SetActionCallback(object, action);
-    Actor_RefreshSelector(object);
+    Actor_WaitForCommandEndFar(object);
   }
 }
 
@@ -93,8 +93,8 @@ void Actor_SetDestinationById(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    Actor_ResetMotion(object);
-    Actor_SetTargetPosition(object, x << 16, object->y, z << 16);
+    Actor_StartIdleFar(object);
+    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
 
@@ -103,9 +103,9 @@ void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    Actor_ResetMotion(object);
-    Actor_SetTargetPosition(object, x << 16, object->y, z << 16);
-    Actor_CommitPosition(object);
+    Actor_StartIdleFar(object);
+    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+    Actor_WaitForMoveFar(object);
   }
 }
 
@@ -114,9 +114,9 @@ void Actor_WalkToById(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    Actor_ResetMotion(object);
-    Actor_SetMode(object, 2);
-    Actor_SetTargetPosition(object, x << 16, object->y, z << 16);
+    Actor_StartIdleFar(object);
+    Actor_SelectAnimationFar(object, 2);
+    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
 
@@ -125,11 +125,11 @@ void Actor_WalkToAndWaitById(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    Actor_ResetMotion(object);
-    Actor_SetMode(object, 2);
-    Actor_SetTargetPosition(object, x << 16, object->y, z << 16);
-    Actor_CommitPosition(object);
-    Actor_SetMode(object, 1);
+    Actor_StartIdleFar(object);
+    Actor_SelectAnimationFar(object, 2);
+    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+    Actor_WaitForMoveFar(object);
+    Actor_SelectAnimationFar(object, 1);
   }
 }
 
@@ -152,15 +152,15 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
     snappedAngle *= 16;
     angleRemainder = currentAngle - snappedAngle;
     object->movementState = 0;
-    Actor_ResetMotion(object);
-    Actor_SetMode(object, 2);
+    Actor_StartIdleFar(object);
+    Actor_SelectAnimationFar(object, 2);
     x = object->x;
     eight = 8;
-    Actor_SetTargetPosition(object, x + ((eight - angleRemainder) << 16),
+    Actor_SetMoveTargetFar(object, x + ((eight - angleRemainder) << 16),
                             object->y, object->z);
-    Actor_CommitPosition(object);
+    Actor_WaitForMoveFar(object);
     Actor_SetSpritePriority(objectId, action);
-    Actor_SetTargetPosition(object, object->x, object->y,
+    Actor_SetMoveTargetFar(object, object->x, object->y,
                             object->z + (zOffset << 16));
   }
 }
@@ -170,8 +170,8 @@ void Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset) {
 
   if (object != NULL) {
     object->movementState = 0;
-    Actor_ResetMotion(object);
-    Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
+    Actor_StartIdleFar(object);
+    Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
 }
@@ -182,8 +182,8 @@ void Actor_WalkByById(u32 objectId, s32 xOffset, s32 zOffset) {
   if (object != NULL) {
     object->movementState = 0;
     Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
-    Actor_SetMode(object, 2);
-    Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
+    Actor_SelectAnimationFar(object, 2);
+    Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
 }
@@ -193,8 +193,8 @@ void Actor_WalkByAndWaitById(u32 objectId, s32 xOffset, s32 zOffset) {
 
   Actor_WalkByById(objectId, xOffset, zOffset);
   if (object != NULL) {
-    Actor_CommitPosition(object);
-    Actor_SetMode(object, 1);
+    Actor_WaitForMoveFar(object);
+    Actor_SelectAnimationFar(object, 1);
   }
 }
 
@@ -207,7 +207,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
     Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
                                        object->z - 0x10000);
     object->movementState = 0;
-    Actor_SetMode(object, 2);
+    Actor_SelectAnimationFar(object, 2);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
     Actor_StartScriptFar(object, gActor_LaunchScript);
     object->timer = action;
@@ -218,8 +218,8 @@ void Actor_WaitForMoveById(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    Actor_CommitPosition(object);
-    Actor_SetMode(object, 1);
+    Actor_WaitForMoveFar(object);
+    Actor_SelectAnimationFar(object, 1);
   }
 }
 
@@ -231,7 +231,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   s32 terrainHeight;
 
   if (object != NULL) {
-    Actor_ResetMotion(object);
+    Actor_StartIdleFar(object);
     Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
@@ -248,7 +248,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
   s32 terrainHeight;
 
   if (object != NULL) {
-    Actor_ResetMotion(object);
+    Actor_StartIdleFar(object);
     Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
     object->facing = angle;
     if (object->motionFlags & 1) {
@@ -265,7 +265,7 @@ void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   s32 terrainHeight;
 
   if (object != NULL) {
-    Actor_ResetMotion(object);
+    Actor_StartIdleFar(object);
     Actor_SetPositionAndResetMotionFar(object, x, y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
@@ -290,17 +290,17 @@ void Actor_SetModeById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    Actor_SetMode(object, action);
+    Actor_SelectAnimationFar(object, action);
 }
 
-#define Actor_SelectAnimationFar                                               \
-  ((void (*)(struct Actor *, s32))Actor_SelectAnimationFar)
+#define Actor_SetAnimationSpeedFar                                               \
+  ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 void Actor_SetActionById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    Actor_SelectAnimationFar(object, action);
+    Actor_SetAnimationSpeedFar(object, action);
 }
 
 /// ⚓️'s animation group: the number last applied and its entries.
@@ -422,11 +422,11 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     child = object->sprite;
     switch (Random16() & 1) {
     case 1:
-      Actor_SetMode(object, 2);
+      Actor_SelectAnimationFar(object, 2);
       Actor_StartScriptFar(object, Data_080f085c);
       break;
     default:
-      Actor_SetMode(object, 1);
+      Actor_SelectAnimationFar(object, 1);
       Actor_StartScriptFar(object, Data_080f0874);
       break;
     }
@@ -471,13 +471,13 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   if (object == NULL)
     return;
   frame = ((struct FieldSprite *)object->sprite)->nextFrame;
-  Actor_SetMode(object, mode);
+  Actor_SelectAnimationFar(object, mode);
   wait(10);
-  Actor_SetMode(object, 1);
-  Actor_SetSingleChildFlagsFar(object, 0);
+  Actor_SelectAnimationFar(object, 1);
+  Actor_SetSpriteFlagsFar(object, 0);
   object->motionFlags |= 2;
   object->velocityY = 0x40000;
-  Actor_SetTargetPosition(object, x, object->y, z + 0xc0000);
+  Actor_SetMoveTargetFar(object, x, object->y, z + 0xc0000);
   wait(6);
   Sound_PlayFar(217);
   Actor_ArmCallback(id, 0x5000, 0);
@@ -491,8 +491,8 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   }
   object->motionFlags = 3;
   object->velocityY = 0x30000;
-  Actor_SetTargetPosition(object, x, object->y, z + 0x100000);
-  Actor_CommitPosition(object);
+  Actor_SetMoveTargetFar(object, x, object->y, z + 0x100000);
+  Actor_WaitForMoveFar(object);
   if (particle & 0x1000) {
     wait(4);
     return;
@@ -505,7 +505,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
         break;
     } while (object->y > object->terrainHeight);
   }
-  Actor_SetSingleChildFlagsFar(object, frame);
+  Actor_SetSpriteFlagsFar(object, frame);
   wait(2);
   Event_NoOp();
 }
@@ -578,7 +578,7 @@ void ObjectTable_DestroyById(s32 id) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (object != NULL) {
-    Actor_Destroy(object);
+    Actor_ReleaseFar(object);
     work->objects[id] = NULL;
   }
 }

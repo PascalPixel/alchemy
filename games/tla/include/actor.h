@@ -97,11 +97,11 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *object);
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object);
 
 struct Actor *ObjectTable_Get(u32 objectId);
-void Actor_ResetMotion(struct Actor *);
-void Actor_SetTargetPosition(struct Actor *, s32, s32, s32);
-void Actor_CommitPosition(struct Actor *);
-void Actor_SetMode(struct Actor *, s32);
-void Actor_RefreshSelector(struct Actor *);
+void Actor_StartIdleFar(struct Actor *);
+void Actor_SetMoveTargetFar(struct Actor *, s32, s32, s32);
+void Actor_WaitForMoveFar(struct Actor *);
+void Actor_SelectAnimationFar(struct Actor *, s32);
+void Actor_WaitForCommandEndFar(struct Actor *);
 void Actor_SetActionCallback(struct Actor *, s32);
 void Actor_SetSpritePriority(u32, s32);
 void OverlayObject_WaitUntilIdle(struct Actor *object);

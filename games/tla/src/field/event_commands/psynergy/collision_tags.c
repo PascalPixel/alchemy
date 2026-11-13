@@ -41,7 +41,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
 
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlagsFar(object, 0);
+    Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
     Func_080ea8a8__f0ea8d4(object->x + 0x100000, object->z, object->terrainId,
                            object->terrainHeight);
@@ -52,10 +52,10 @@ void Func_080ea8d4(struct ActorFlag *list) {
     Func_080ea8a8__f0ea8d4(object->x, object->z - 0x100000, object->terrainId,
                            object->terrainHeight);
     if (GameFlag_Test(flag)) {
-      Actor_SetMode(object, 0);
+      Actor_SelectAnimationFar(object, 0);
       GameFlag_ClearBit(flag);
     } else {
-      Actor_SetMode(object, 1);
+      Actor_SelectAnimationFar(object, 1);
     }
   }
   Func_080eaa14(first);

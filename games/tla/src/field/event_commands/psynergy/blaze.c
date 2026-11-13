@@ -53,7 +53,7 @@ void Field_StartColorTransition(s32 frames, s32 color);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_Destroy(struct Actor *object);
+void Actor_ReleaseFar(struct Actor *object);
 void wait(s32 frames);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
@@ -167,10 +167,10 @@ void FieldPsynergy_Blaze(void) {
     ((u8 *)object)[85] = 0;
     object->scaleX = 0x14000;
     object->scaleY = 0x14000;
-    Actor_SetMode(object, 2);
+    Actor_SelectAnimationFar(object, 2);
     Sound_PlayFar(186);
     wait(50);
-    Actor_Destroy(object);
+    Actor_ReleaseFar(object);
     wait(10);
     goto end;
   }
@@ -182,10 +182,10 @@ void FieldPsynergy_Blaze(void) {
     if (object == NULL)
       goto end;
     ((u8 *)object)[85] = mode;
-    Actor_SetMode(object, 2);
+    Actor_SelectAnimationFar(object, 2);
     Sound_PlayFar(186);
     wait(45);
-    Actor_Destroy(object);
+    Actor_ReleaseFar(object);
     wait(10);
     goto end;
   }

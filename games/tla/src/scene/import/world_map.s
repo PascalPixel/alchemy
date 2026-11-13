@@ -29,7 +29,7 @@ Random16Far:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
 Vector_AddPolarOffsetFar:
@@ -41,7 +41,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -65,7 +65,7 @@ DebugText_Clear:
 	.global Func_02004ad0
 	.thumb_func
 Func_02004ad0:
-	overlay_veneer Oam_AddSpriteAtDepthFar
+	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Window_LoadGraphics
 	.thumb_func
 Window_LoadGraphics:
@@ -89,11 +89,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -101,7 +101,7 @@ Animation_ApplyChildArgument:
 	.global Func_02004b18
 	.thumb_func
 Func_02004b18:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -117,7 +117,7 @@ Import_ActorCreate:
 	.global Func_02004b38
 	.thumb_func
 Func_02004b38:
-	overlay_veneer Actor_Destroy
+	overlay_veneer Actor_ReleaseFar
 	.global WorldMap_UpdateCurrentTileBlock
 	.thumb_func
 WorldMap_UpdateCurrentTileBlock:
@@ -125,15 +125,15 @@ WorldMap_UpdateCurrentTileBlock:
 	.global Func_02004b48
 	.thumb_func
 Func_02004b48:
-	overlay_veneer Actor_ResetMotion
+	overlay_veneer Actor_StartIdleFar
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global WorldMap_SetWindowCellTile
 	.thumb_func
 WorldMap_SetWindowCellTile:
@@ -145,7 +145,7 @@ WorldMap_SetWindowCellTileAndDraw:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func
 MapGrid_SetScreenShake:
@@ -229,7 +229,7 @@ Func_02004c10:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -413,7 +413,7 @@ BattleEffect_ApplyColorToSourceBuffer:
 	.global PaletteFade_StartInterpolation
 	.thumb_func
 PaletteFade_StartInterpolation:
-	overlay_veneer BattleEffect_StartBufferInterpolationFar
+	overlay_veneer PaletteFade_StartInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -453,7 +453,7 @@ Djinn_JoinParty:
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
-	overlay_veneer Motion_LaunchFromFocusedObjectFar
+	overlay_veneer Actor_LaunchFromLeaderFar
 	.global Actor_WalkByById
 	.thumb_func
 Actor_WalkByById:
@@ -489,7 +489,7 @@ Actor_ShowItemIconById:
 	.global SceneEvent_FindActiveRecord
 	.thumb_func
 SceneEvent_FindActiveRecord:
-	overlay_veneer SceneEvent_FindActiveRecordFar
+	overlay_veneer Scene_FindTriggerFar
 	.global Func_02004e28
 	.thumb_func
 Func_02004e28:

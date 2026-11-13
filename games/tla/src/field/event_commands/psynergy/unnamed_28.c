@@ -518,7 +518,7 @@ void Func_080e89e4(s32 direction) {
   map->maxX = maxX << 19;
   map->minZ = minZ << 19;
   map->maxZ = maxZ << 19;
-  Actor_ResetMotion(center);
+  Actor_StartIdleFar(center);
 }
 
 /* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another

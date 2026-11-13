@@ -1723,7 +1723,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  /* FAKEMATCH(signature): Import_ActorResetMotion, Actor_ResetMotion's veneer,
+  /* FAKEMATCH(signature): Import_ActorResetMotion, Actor_StartIdleFar's veneer,
    * called without the actor it reads from r0; as
    * Import_ActorResetMotion(actor), 73 of 230 instructions differ in tla-en. */
   Import_ActorResetMotion();

@@ -37,7 +37,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -57,7 +57,7 @@ VramCache_FindFreeEntry:
 	.global Func_02000a10
 	.thumb_func
 Func_02000a10:
-	overlay_veneer Oam_AddSpriteAtDepthFar
+	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -69,11 +69,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -85,7 +85,7 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func
 MapGrid_SetScreenShake:
@@ -97,7 +97,7 @@ Actor_SetSpriteColorMode:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -189,7 +189,7 @@ BattleEffect_ApplyColorToTargetBuffer:
 	.global PaletteFade_StartInterpolation
 	.thumb_func
 PaletteFade_StartInterpolation:
-	overlay_veneer BattleEffect_StartBufferInterpolationFar
+	overlay_veneer PaletteFade_StartInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

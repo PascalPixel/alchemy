@@ -195,7 +195,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
                              0);

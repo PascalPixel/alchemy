@@ -111,7 +111,7 @@ void Func_080ea14c(s32 targetId) {
   }
   wait(1);
   Sound_PlayFar(139);
-  Actor_SetMode(target, 2);
+  Actor_SelectAnimationFar(target, 2);
   Event_Wait(60);
   target->timer = 0;
   target->update = Func_080e9e8c__f0ea14c;
@@ -134,7 +134,7 @@ void Func_080ea14c(s32 targetId) {
       if (timer == 40) {
         Sound_PlayFar(134);
         sparks = 25;
-        Actor_ResetMotion(target);
+        Actor_StartIdleFar(target);
         target->scaleX = 0;
       }
       if (timer == 80) {
@@ -184,7 +184,7 @@ void Func_080ea14c(s32 targetId) {
       break;
     case 3:
       if (timer == 0)
-        Actor_SetMode(owner, 28);
+        Actor_SelectAnimationFar(owner, 28);
       if (timer == 10) {
         state++;
         timer = -1;
@@ -265,7 +265,7 @@ void Func_080ea14c(s32 targetId) {
     wait(1);
     timer++;
   } while (state != 999);
-  Actor_ResetMotion(owner);
+  Actor_StartIdleFar(owner);
   owner->scaleX = Q16_ONE;
   owner->scaleY = Q16_ONE;
   Event_Wait(10);
@@ -303,13 +303,13 @@ void Func_080ea7c0(struct ActorFlag *actors) {
 
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlagsFar(object, 0);
+    Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
     if (GameFlag_Test(flag)) {
-      Actor_SetMode(object, 0);
+      Actor_SelectAnimationFar(object, 0);
       GameFlag_ClearBit(flag);
     } else {
-      Actor_SetMode(object, 1);
+      Actor_SelectAnimationFar(object, 1);
     }
   }
   Func_080eaa14(list);

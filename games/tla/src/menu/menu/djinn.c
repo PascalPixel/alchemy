@@ -113,7 +113,7 @@ s32 DjinnMenu_Run(void) {
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Heap_Release(menu->backdrop);
   HeapSlot_Release(220);
-  Event_ClearInvalidPackedValuesFar();
+  Party_ClearUnusableShortcutsFar();
   gMainRoutineWork.eventMode = savedEventMode;
   return 1;
 }
@@ -1976,7 +1976,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
 
   size = sizeof(struct BattleUnit);
   if (page == 0)
-    SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
+    Portrait_CreateFar(ownerId, 0, side, window, 0, 0);
   Iwram_CopyWordsEntry(unit, originalUnit, size);
   Heap_Release(originalUnit);
   return 1;

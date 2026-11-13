@@ -358,8 +358,8 @@ s32 Func_08124cc4(s32 side) {
           BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
           BattlePlayback_Push(11, id);
           if (BattleUnit_IsListed(id)) {
-            Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, 3);
-            Actor_SelectAnimationFar(
+            Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object, 3);
+            Actor_SetAnimationSpeedFar(
                 (struct Actor *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;
@@ -475,8 +475,8 @@ void Battle_ProcessTurnEnd(void) {
             BattlePlayback_Push(11, unitId);
             Sound_PlayFar(212);
             if (BattleUnit_IsListed(unitId)) {
-              Actor_SetMode(BattleObject_Get(unitId)->object, 3);
-              Actor_SelectAnimationFar(
+              Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
+              Actor_SetAnimationSpeedFar(
                   (struct Actor *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;
@@ -805,8 +805,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         Sound_PlayFar(212);
-        Actor_SetMode(BattleObject_Get(unitId)->object, 3);
-        Actor_SelectAnimationFar(
+        Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
+        Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(unitId)->object, 32);
         ElementGlow_Play(unitId, i, 2, -1);
         BattlePlayback_WaitForReady();

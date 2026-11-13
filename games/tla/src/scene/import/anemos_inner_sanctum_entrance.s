@@ -29,7 +29,7 @@ Heap_Alloc:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -45,7 +45,7 @@ VramCache_FindFreeEntry:
 	.global Import_OamAddSpriteAtDepth
 	.thumb_func
 Import_OamAddSpriteAtDepth:
-	overlay_veneer Oam_AddSpriteAtDepthFar
+	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -53,15 +53,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -73,11 +73,11 @@ Import_ActorCreate:
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -89,7 +89,7 @@ MapGrid_GetCellBehaviorAt:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func
 Actor_SetBlendMode:
@@ -101,7 +101,7 @@ FieldMessage_ShowCentered:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -165,7 +165,7 @@ BattleEffect_ApplyColorToSourceBuffer:
 	.global PaletteFade_StartInterpolation
 	.thumb_func
 PaletteFade_StartInterpolation:
-	overlay_veneer BattleEffect_StartBufferInterpolationFar
+	overlay_veneer PaletteFade_StartInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

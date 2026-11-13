@@ -76,7 +76,7 @@ STATIC_ASSERT(offsetof(struct SpriteEntry, priority) == 0x06);
 
 s32 BattleObject_MarkForRelease(s32 objectId);
 struct BattleObj *BattleObject_Get(s32 objectId);
-struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
+struct BattleObj *BattleObject_GetFar(s32 objectId);
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 #endif

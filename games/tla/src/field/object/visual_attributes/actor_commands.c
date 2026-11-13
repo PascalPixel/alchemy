@@ -16,8 +16,8 @@ void Actor_ResetTargetAndSetMode1(u32 objectId) {
     object->targetX = 0x80000000;
     object->targetY = 0x80000000;
     object->targetZ = 0x80000000;
-    Actor_ResetMotion(object);
-    Actor_SetMode(object, 1);
+    Actor_StartIdleFar(object);
+    Actor_SelectAnimationFar(object, 1);
   }
 }
 
@@ -74,7 +74,7 @@ void Func_080d390c(u32 id) {
 
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  Actor_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSpriteFlagsFar(object, 0);
 }
 
 void Actor_SetSpriteRotationById(u32 id, s32 rotation) {
@@ -98,7 +98,7 @@ void Func_080d3940(u32 id, u32 angle) {
   struct ObjectSprite *sprite = object->sprite;
 
   if (object != NULL && sprite != NULL) {
-    Actor_SetMode(object, 0);
+    Actor_SelectAnimationFar(object, 0);
     angle = (angle + 0x2000) & 0xc000;
     position[0] = object->x;
     position[2] = object->z;
@@ -138,7 +138,7 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   if (object == NULL || sprite == NULL)
     return;
   if (mode != -1)
-    Actor_SetMode(object, mode);
+    Actor_SelectAnimationFar(object, mode);
   position[0] = object->x;
   angle = (angle + 0x2000) & 0xc000;
   position[2] = object->z;

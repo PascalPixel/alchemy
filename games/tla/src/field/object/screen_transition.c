@@ -119,7 +119,7 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
 
     Actor_StartScriptFar((struct Actor *)object,
                          (u32)gBattleEffect_ParticleScript);
-    Actor_SetMode(object, 0);
+    Actor_SelectAnimationFar(object, 0);
     mask = 13;
     flags = object->child->flags;
     mask = -mask;
@@ -188,9 +188,9 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
       if (object->script != NULL) {
         if (object->update ==
             BattleEffect_SpawnRandomParticleAtPosition__emitter)
-          Actor_Destroy(object);
+          Actor_ReleaseFar(object);
         if (object->script == (s32 *)gBattleEffect_ParticleScript)
-          Actor_Destroy(object);
+          Actor_ReleaseFar(object);
       }
       i--;
       object++;
@@ -235,7 +235,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
           marker->script == (s32 *)gBattleEffect_MarkerParticleScript &&
           marker->x >> 20 == picture->x >> 20 &&
           marker->z >> 20 == picture->z >> 20) {
-        Actor_Destroy(marker);
+        Actor_ReleaseFar(marker);
         break;
       }
     }
@@ -245,7 +245,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
 
 void Actor_ReleaseIfPresent(struct Actor *object) {
   if (object != 0)
-    Actor_Destroy(object);
+    Actor_ReleaseFar(object);
 }
 
 /// Nothing in the image calls it.
@@ -273,10 +273,10 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
     actor->motionFlags = 0;
     owner = found;
   }
-  Actor_SetTargetPosition(actor, owner->x, owner->y + 0x240000, owner->z);
+  Actor_SetMoveTargetFar(actor, owner->x, owner->y + 0x240000, owner->z);
   Actor_SetSpritePriorityDirectFar(actor, 1);
   wait(3);
-  Actor_SetMode(owner, 28);
+  Actor_SelectAnimationFar(owner, 28);
   Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
   owner->facing = 0x4000;
 }
@@ -287,7 +287,7 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
   if (object != 0) {
     owner = ObjectTable_Get(Party_GetLeaderActor());
     if (flags & 1) {
-      Actor_SetSingleChildFlagsFar(object, 0);
+      Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
       object->velocityY = 0x20000;
       object->gravity = 0x4000;
@@ -299,7 +299,7 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
       ItemDisplay_RaiseAboveLeader(object);
     if (flags == 3)
       wait(80);
-    Actor_SetMode(owner, 1);
+    Actor_SelectAnimationFar(owner, 1);
   }
 }
 
@@ -357,8 +357,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
       ItemDisplay_RaiseAboveLeader(object);
 
     wait(80);
-    Actor_SetMode(owner, 1);
-    Actor_Destroy(object);
+    Actor_SelectAnimationFar(owner, 1);
+    Actor_ReleaseFar(object);
   }
 }
 
@@ -392,7 +392,7 @@ void Reveal_EmitSparkles(const struct ParticleSource *source) {
 
     Actor_StartScriptFar((struct Actor *)object,
                          (u32)gBattleEffect_ParticleScript);
-    Actor_SetMode(object, 0);
+    Actor_SelectAnimationFar(object, 0);
     mask = 13;
     flags = object->child->flags;
     mask = -mask;
@@ -481,8 +481,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
     if (object != NULL) {
       object->motionFlags = 0;
       Actor_StartScriptFar((struct Actor *)object, Data_080f01b8__rising);
-      Actor_SetSingleChildFlagsFar((struct Actor *)object, 0);
-      Actor_SetMode(object, 1);
+      Actor_SetSpriteFlagsFar((struct Actor *)object, 0);
+      Actor_SelectAnimationFar(object, 1);
       ((struct FieldSprite *)object->sprite)->priority = 1;
     }
   }

@@ -11,7 +11,7 @@
 #define RING_STEPS 16 // dots drawn between two ring points
 #define FAR_DEPTH 399999
 
-#define ACTOR(id) ((struct Actor *)GetBattleObjectSlotFar(id)->object)
+#define ACTOR(id) ((struct Actor *)BattleObject_GetFar(id)->object)
 
 // Three rings of light fly one after another from the caster to the target,
 // each growing as it spins, while the camera swings round; each ring that
@@ -51,8 +51,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Actor_SetMode(caster, 2);
-  Actor_SelectAnimationFar(caster, 48);
+  Actor_SelectAnimationFar(caster, 2);
+  Actor_SetAnimationSpeedFar(caster, 48);
   BattleEffect_LoadBlitter(
       HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;
@@ -164,11 +164,11 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           target->velocityY = 0x50000;
           target->gravity = 0xab85;
           target->actionFlags = 0;
-          Actor_ResetMotion(target);
+          Actor_StartIdleFar(target);
           if (target->x < 0)
-            Actor_SetTargetPosition(target, target->x - 0x280000, 0, target->z);
+            Actor_SetMoveTargetFar(target, target->x - 0x280000, 0, target->z);
           else
-            Actor_SetTargetPosition(target, target->x + 0x280000, 0, target->z);
+            Actor_SetMoveTargetFar(target, target->x + 0x280000, 0, target->z);
           if (i == 2) {
             BattlePlayback_StartFar(134);
           } else {
@@ -242,8 +242,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
 
   // Each star leaves from above the caster on its own course to the target,
   // the later ones after a longer delay (held in variant).
-  source = GetBattleObjectSlotFar(effect->actor)->object;
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  source = BattleObject_GetFar(effect->actor)->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 

@@ -151,8 +151,8 @@ void FieldPsynergy_Sand(void) {
       Actor_SetFirstSpriteAnimationFar(owner, 251);
       ((u8 *)owner->sprite)[5] &= 63;
       ((u8 *)owner->sprite)[7] = (((u8 *)owner->sprite)[7] & 63) | 64;
-      Actor_SetMode(owner, 1);
-      Actor_SetSingleChildFlagsFar(Actor_GetById(effect->firstObjectId), 0);
+      Actor_SelectAnimationFar(owner, 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 0);
       FieldCamera_FollowActor(effect->firstObjectId, 1);
       owner->y = savedY;
       *motionFlags = savedFlags;

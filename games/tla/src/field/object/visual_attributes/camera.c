@@ -40,7 +40,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   maximumX = map->maxX + 0xFF880000;
   maximumZ = map->maxZ + objectZOffset + 0xFFC00000;
   map->origin = &object->x;
-  Actor_ResetMotion(object);
+  Actor_StartIdleFar(object);
   if (positionX == -1) {
     positionX = object->x;
   }
@@ -71,7 +71,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
       Map_CenterOnFollowedPointFar();
     }
   } else {
-    Actor_SetTargetPosition(object, positionX, positionY, positionZ);
+    Actor_SetMoveTargetFar(object, positionX, positionY, positionZ);
   }
 }
 
@@ -94,7 +94,7 @@ void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
 
 /// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
-  Actor_CommitPosition(
+  Actor_WaitForMoveFar(
       ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter);
   Event_Wait(2);
 }

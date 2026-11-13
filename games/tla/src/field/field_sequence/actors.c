@@ -112,7 +112,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
     }
     if (object != NULL) {
       sprite = object->sprite;
-      Actor_SetMode(object, 1);
+      Actor_SelectAnimationFar(object, 1);
       if (object->animationKind == 1 && sprite != NULL) {
         for (i = 0; i < sprite->partCount; i++) {
           struct SpawnSpritePart *part = sprite->parts[i];
@@ -170,7 +170,7 @@ void Actor_ReleaseAtIndex(u32 actorIndex) {
   struct Actor *actor = ObjectTable_Get(actorIndex);
 
   if (actor != NULL) {
-    Actor_Destroy(actor);
+    Actor_ReleaseFar(actor);
     work->objects[actorIndex] = NULL;
   }
 }
@@ -244,8 +244,8 @@ void Func_080caa4c(s32 table) {
       object->y += height;
       object->terrainHeight = object->y;
       object->motionFlags = 0;
-      Actor_SetSingleChildFlagsFar(object, 0);
-      Actor_SetMode(object, 12);
+      Actor_SetSpriteFlagsFar(object, 0);
+      Actor_SelectAnimationFar(object, 12);
     }
   }
 
@@ -398,8 +398,8 @@ void Actor_Restore(void) {
       sprite = object->sprite;
       Dma_Set(copy, object, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
       object->sprite = sprite;
-      Actor_SetMode(object, *frames);
-      Actor_SetSingleChildFlagsFar(object, *nextFrames);
+      Actor_SelectAnimationFar(object, *frames);
+      Actor_SetSpriteFlagsFar(object, *nextFrames);
       priority = *priorities;
       sprite->priority = priority;
       sprite->partPriority = priority;
@@ -412,7 +412,7 @@ void Actor_Restore(void) {
         camera->y = y;
         camera->z = object->z;
         view[1] = y;
-        Actor_ResetMotion(object);
+        Actor_StartIdleFar(object);
       }
     }
     copy++;

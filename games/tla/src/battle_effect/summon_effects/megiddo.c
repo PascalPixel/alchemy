@@ -55,14 +55,14 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(summon_effects): routine GetBattleObjectSlotFar as void
- * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
- * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
- * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+/* VIEW(summon_effects): routine BattleObject_GetFar as void
+ * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
+ * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
+ * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
  * games/tla/include/battle/motobj.h:79: conflicting types for
- * `GetBattleObjectSlotFar'. */
+ * `BattleObject_GetFar'. */
 extern void **GetBattleObjectSlotFar__summon_effects(s32 objectId) __asm__(
-    "GetBattleObjectSlotFar");
+    "BattleObject_GetFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Sound_PlayFar(s32 cue);
@@ -118,7 +118,7 @@ extern char ResourceId_OrangePaletteB;
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
                                     s32 speed);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
-void BattleActor_CommitPlacementFar(void);
+void BattleObject_PutFar(void);
 void BattleEffect_BuildRepeatingTilemap(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
@@ -210,7 +210,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
   }
   casterValue = caster[18];
-  Actor_SelectAnimationFar(caster, 0);
+  Actor_SetAnimationSpeedFar(caster, 0);
   caster[9] = 0;
   caster[10] = 0;
   caster[11] = 0;
@@ -415,7 +415,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
         IME_RESTORE(ime, saved);
       }
-      Actor_SelectAnimationFar(caster, 128);
+      Actor_SetAnimationSpeedFar(caster, 128);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->transferMode = 3;
       work->transferValue = 0x06060606;
@@ -714,7 +714,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
   Sprite_DestroyFar(work->objects[0]);
   caster[18] = casterValue;
-  BattleActor_CommitPlacementFar();
+  BattleObject_PutFar();
   transition[4] = 0;
   // The background id is the low halfword of the word at 0x670.
   BattleBackground_LoadFar(

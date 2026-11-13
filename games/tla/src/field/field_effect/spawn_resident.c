@@ -42,7 +42,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
     return;
 
   sprite = (struct LayeredSprite *)effect->sprite;
-  Actor_SetMode((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimationFar((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScriptFar(
       (void *)effect, gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -79,7 +79,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SetMode((struct Actor *)effect, 1);
+    Actor_SelectAnimationFar((struct Actor *)effect, 1);
     Actor_StartScriptFar((void *)effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

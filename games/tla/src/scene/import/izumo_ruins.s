@@ -17,11 +17,11 @@ Random16Far:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -29,11 +29,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -65,7 +65,7 @@ Map_CopyCellAttributeRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func
 MapGrid_SetScreenShake:

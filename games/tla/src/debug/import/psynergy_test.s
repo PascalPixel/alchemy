@@ -13,7 +13,7 @@ wait:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global VramCache_FreeEntry
 	.thumb_func
 VramCache_FreeEntry:
@@ -37,11 +37,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -53,7 +53,7 @@ Map_CopyCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetSpriteColorMode
 	.thumb_func
 Actor_SetSpriteColorMode:
@@ -133,7 +133,7 @@ Item_AdjustCounter:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Func_02000e5c
 	.thumb_func
 Func_02000e5c:

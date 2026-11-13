@@ -668,7 +668,7 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
   BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
-  BattleEffect_StartBufferInterpolationFar(1);
+  PaletteFade_StartInterpolationFar(1);
   wait(1);
   dispcnt = REG_DISPCNT;
   REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;

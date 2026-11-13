@@ -282,8 +282,8 @@ void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
                              Trig_Sin(gData_080f393c) << 2);
       gData_080f393c += 0x1000;
       wait(6);
-      Actor_SetMode(from, 2);
-      Actor_SetMode(to, 2);
+      Actor_SelectAnimationFar(from, 2);
+      Actor_SelectAnimationFar(to, 2);
     }
   }
 }
@@ -529,8 +529,8 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
       node = node->next;
     } while (i != 0);
   }
-  Actor_SetMode(work->from, 3);
-  Actor_SetMode(work->to, 3);
+  Actor_SelectAnimationFar(work->from, 3);
+  Actor_SelectAnimationFar(work->to, 3);
   wait(4);
   for (frame = 0; frame <= segments; frame++) {
     angle = frame << 12;
@@ -873,8 +873,8 @@ void Func_080d9e98(s32 slotNo, s32 firstId, s32 secondId) {
     slot->second = secondId;
     Func_080d9f1c(slotNo, first->x, first->y + 0x80000, first->z, second->x,
                   second->y + 0x80000, second->z);
-    Actor_SetMode(first, 4);
-    Actor_SetMode(second, 4);
+    Actor_SelectAnimationFar(first, 4);
+    Actor_SelectAnimationFar(second, 4);
   }
 }
 
@@ -1037,8 +1037,8 @@ void Func_080da334(s32 arg, s32 firstId, s32 secondId) {
                            Trig_Sin(gData_080f3948) << 2);
     gData_080f3948 += 0x1000;
     wait(6);
-    Actor_SetMode(first, 2);
-    Actor_SetMode(second, 2);
+    Actor_SelectAnimationFar(first, 2);
+    Actor_SelectAnimationFar(second, 2);
   }
 }
 
@@ -1186,8 +1186,8 @@ s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
       node = node->next;
     } while (i != 0);
   }
-  Actor_SetMode(((void **)work)[0], 3);
-  Actor_SetMode(((void **)work)[1], 3);
+  Actor_SelectAnimationFar(((void **)work)[0], 3);
+  Actor_SelectAnimationFar(((void **)work)[1], 3);
   wait(4);
   for (frame = 0; frame <= count; frame++) {
     angle = frame << 12;

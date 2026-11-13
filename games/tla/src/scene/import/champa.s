@@ -17,15 +17,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -53,7 +53,7 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Message_OpenWindow
 	.thumb_func
 Message_OpenWindow:
@@ -69,11 +69,11 @@ Portrait_OpenWindow:
 	.global Window_CloseMatchingId
 	.thumb_func
 Window_CloseMatchingId:
-	overlay_veneer Window_CloseMatchingIdFar
+	overlay_veneer Portrait_CloseWindowFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -225,11 +225,11 @@ Event_ResolvePendingActions:
 	.global BattleEffect_GetResourceId
 	.thumb_func
 BattleEffect_GetResourceId:
-	overlay_veneer BattleEffect_GetResourceIdFar
+	overlay_veneer Speaker_GetVoiceFar
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
-	overlay_veneer Motion_LaunchFromFocusedObjectFar
+	overlay_veneer Actor_LaunchFromLeaderFar
 	.global Actor_WalkByById
 	.thumb_func
 Actor_WalkByById:

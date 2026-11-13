@@ -21,7 +21,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -41,7 +41,7 @@ VramCache_FindFreeEntry:
 	.global Func_02001268
 	.thumb_func
 Func_02001268:
-	overlay_veneer Oam_AddSpriteAtDepthFar
+	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -61,11 +61,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global MapGrid_PlayMapEdit
 	.thumb_func
 MapGrid_PlayMapEdit:
@@ -85,7 +85,7 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func
 MapGrid_SetScreenShake:
@@ -97,7 +97,7 @@ FieldMessage_Show:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:

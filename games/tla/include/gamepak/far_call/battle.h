@@ -16,7 +16,7 @@ s32 BattleMotion_ProjectConditionalPositionFar(s32 unit,
                                                struct TargetPoint *point);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void ReleaseBattleObjectRecordsFar(s32 actor);
-void BattleActor_CommitPlacementFar(void);
+void BattleObject_PutFar(void);
 void BattleMotion_ApplyKnockbackFar(
     s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 

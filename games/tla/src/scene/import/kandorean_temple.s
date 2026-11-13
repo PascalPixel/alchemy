@@ -29,11 +29,11 @@ Random16Far:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global HeapSlot_AllocFar
 	.thumb_func
 HeapSlot_AllocFar:
@@ -53,11 +53,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -65,7 +65,7 @@ Animation_ApplyChildArgument:
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -77,7 +77,7 @@ Import_ActorCreate:
 	.global Import_ActorDestroy
 	.thumb_func
 Import_ActorDestroy:
-	overlay_veneer Actor_Destroy
+	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
 Actor_SetPositionAndResetMotion:
@@ -89,11 +89,11 @@ Map_CenterOnFollowedPoint:
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
@@ -109,7 +109,7 @@ MapGrid_CheckCollision:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func
 Actor_SetBlendMode:
@@ -133,7 +133,7 @@ Icon_DrawItem:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -329,7 +329,7 @@ Func_02005338:
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
-	overlay_veneer Field_DispatchTypeHandlerFar
+	overlay_veneer FieldPsynergy_RunHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
@@ -337,7 +337,7 @@ BattleEffect_LoadActionEffectResources:
 	.global FieldPsynergy_SetupActorPair
 	.thumb_func
 FieldPsynergy_SetupActorPair:
-	overlay_veneer BattleEffect_SetupObjectPairFar
+	overlay_veneer FieldPsynergy_SetupActorPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func
 BattleEffect_StopMainActor:
@@ -357,7 +357,7 @@ Event_ResolvePendingActions:
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
-	overlay_veneer Motion_LaunchFromFocusedObjectFar
+	overlay_veneer Actor_LaunchFromLeaderFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:

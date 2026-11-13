@@ -118,7 +118,7 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
     if (object != 0) {
       Actor_StartScriptFar((struct Actor *)object,
                            (u32)gFieldEffect_WatchedActorScript);
-      Actor_SetMode(object, flags & 15);
+      Actor_SelectAnimationFar(object, flags & 15);
       object->value55 = 0;
       object->counter = 0;
       object->resourceId = resourceId;

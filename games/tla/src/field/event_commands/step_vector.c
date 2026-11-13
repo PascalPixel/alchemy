@@ -423,7 +423,7 @@ void Func_080eb960(s32 objectId) {
   }
   object->scaleX = 0;
   object->scaleY = 0x10000;
-  Actor_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSpriteFlagsFar(object, 0);
   spawning = 1;
   phase = 0;
   next = 0;
@@ -500,7 +500,7 @@ void Func_080eb960(s32 objectId) {
       }
       if (frame == 64) {
         object->facing = angle;
-        Actor_SetSingleChildFlagsFar(object, 1);
+        Actor_SetSpriteFlagsFar(object, 1);
       }
       if (frame == 10)
         spawning = 0;

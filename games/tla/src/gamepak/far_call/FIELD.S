@@ -21,14 +21,14 @@ Resource_FarCall003:
 	export SpriteAnimation_ResetFar, SpriteAnimation_Reset
 	export SpriteAnimation_StartFar, SpriteAnimation_Start
 	export ActorSystem_InitializeFar, ActorSystem_Initialize
-	export Actor_SetMode, Actor_SelectAnimation
-	export Actor_SelectAnimationFar, Actor_SetAnimationSpeed
+	export Actor_SelectAnimationFar, Actor_SelectAnimation
+	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
 	export Actor_StartScriptFar, Actor_StartScript
 	export Func_080200b0, Func_08023524
 	export Actor_FindFreeFar, Actor_FindFree
 	export Actor_CreateFar, Actor_Create
-	export Actor_Destroy, Actor_Release
+	export Actor_ReleaseFar, Actor_Release
 	export Actor_SetSpriteRotationFar, Actor_SetSpriteRotation
 	export Actor_StartCameraFar, Actor_StartCamera
 	export Actor_StartApproachWatchedFar, Actor_StartApproachWatched
@@ -42,10 +42,10 @@ Resource_FarCall003:
 	export Map_CenterOnFollowedPointFar, Map_CenterOnFollowedPoint
 	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
-	export Actor_ResetMotion, Actor_StartIdle
-	export Actor_RefreshSelector, Actor_WaitForCommandEnd
-	export Actor_SetTargetPosition, Actor_SetMoveTarget
-	export Actor_CommitPosition, Actor_WaitForMove
+	export Actor_StartIdleFar, Actor_StartIdle
+	export Actor_WaitForCommandEndFar, Actor_WaitForCommandEnd
+	export Actor_SetMoveTargetFar, Actor_SetMoveTarget
+	export Actor_WaitForMoveFar, Actor_WaitForMove
 	export MapGrid_GetScreenRelativePositionFar, MapGrid_GetScreenRelativePosition
 	export WorldMap_UpdateViewFar, WorldMap_UpdateView
 	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock
@@ -70,7 +70,7 @@ Resource_FarCall003:
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
 	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
-	export Actor_SetSingleChildFlagsFar, Actor_SetSpriteFlags
+	export Actor_SetSpriteFlagsFar, Actor_SetSpriteFlags
 	export Actor_SetBlendModeFar, Actor_SetBlendMode
 	export MapGrid_SetScreenShakeFar, MapGrid_SetScreenShake
 	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle

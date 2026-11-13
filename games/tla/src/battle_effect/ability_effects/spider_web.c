@@ -1090,7 +1090,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // BG2 is placed on the first target.
-  object = GetBattleObjectSlotFar(effect->actors[0])->object;
+  object = BattleObject_GetFar(effect->actors[0])->object;
   EffectPosition_ProjectScaledBattler(effect->actors[0], &position);
   if (effect->side == 0)
     REG_BG2X = (16 - position.x) << 8;

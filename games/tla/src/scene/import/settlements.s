@@ -25,11 +25,11 @@ ArcTan2:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
 Vector_AddPolarOffsetFar:
@@ -57,19 +57,19 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02001fe0
 	.thumb_func
 Func_02001fe0:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
 Actor_SetAnimationSpeed:
-	overlay_veneer Actor_SelectAnimationFar
+	overlay_veneer Actor_SetAnimationSpeedFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -81,15 +81,15 @@ Import_ActorCreate:
 	.global Actor_Release
 	.thumb_func
 Actor_Release:
-	overlay_veneer Actor_Destroy
+	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
@@ -109,7 +109,7 @@ Map_CopyCellAttributeRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func
 Actor_SetBlendMode:
@@ -129,7 +129,7 @@ Icon_DrawItem:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:

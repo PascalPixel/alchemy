@@ -465,7 +465,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       if ((target <= 7) != (unit <= 7))
         BattleHighlight_SetSpriteMode(unit, 1);
     } else {
-      Actor_SetMode((struct Actor *)object,
+      Actor_SelectAnimationFar((struct Actor *)object,
                     ((u8 *)Ram_HeapSlots->battleWork)[0x869]);
     }
   }

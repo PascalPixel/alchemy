@@ -58,11 +58,11 @@ void Actor_Jump(s32 id, s32 height, s32 frames);
 extern struct CaptureObject__f0d8740 *
 Func_080200c0__f0d8740(s32 kind, s32 x, s32 y,
                        s32 z) __asm__("Actor_CreateFar");
-/* VIEW(f0d8740): routine Actor_Destroy as void Actor_Destroy(struct
- * CaptureObject__f0d8740 *object); battle.h has void Actor_Destroy(struct Actor
+/* VIEW(f0d8740): routine Actor_ReleaseFar as void Actor_ReleaseFar(struct
+ * CaptureObject__f0d8740 *object); battle.h has void Actor_ReleaseFar(struct Actor
  * *object). */
 extern void Actor_Destroy__f0d8740(
-    struct CaptureObject__f0d8740 *object) __asm__("Actor_Destroy");
+    struct CaptureObject__f0d8740 *object) __asm__("Actor_ReleaseFar");
 /* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
  * *position); mars_join has void Camera_WorldToScreen(struct EffectVector
  * *position). */
@@ -144,8 +144,8 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
       copy->callback = (void *)Actor_MoveHalfwayTowardTargetCopy;
       copy->facing = djinni->facing;
       Actor_SetSpriteColorModeFar((struct Actor *)copy, 9);
-      Actor_SetMode(copy, 0);
-      Actor_SetSingleChildFlagsFar((struct Actor *)copy, 0);
+      Actor_SelectAnimationFar(copy, 0);
+      Actor_SetSpriteFlagsFar((struct Actor *)copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linked = previous;
       previous = copy;
@@ -168,7 +168,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById__f0d8740(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById__f0d8740(gMainRoutineWork.currentOwner), 28);
   wait(20);
 
   position.x = djinni->x;
@@ -408,8 +408,8 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
     Func_080d8e08(index, first->x, first->y + lift, first->z, second->x,
                   second->y + lift, second->z);
   }
-  Actor_SetMode(first, 2);
-  Actor_SetMode(second, 2);
+  Actor_SelectAnimationFar(first, 2);
+  Actor_SelectAnimationFar(second, 2);
 }
 
 s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {

@@ -149,7 +149,7 @@ void FieldPsynergy_EndSand(void) {
   if (*(s8 *)(event + 394) == 3)
     *(s32 *)((u8 *)owner->sprite + 12) = 0xc000;
   owner->facing = 0x4000;
-  Actor_SetMode(owner, 0);
+  Actor_SelectAnimationFar(owner, 0);
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
   wait(1);
   Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
@@ -190,9 +190,9 @@ void FieldPsynergy_EndSand(void) {
       Func_080e45a0(work + 0x1900);
     }
     if (frame == 66) {
-      Actor_SetMode(owner, 1);
+      Actor_SelectAnimationFar(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
-      Actor_SetSingleChildFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
+      Actor_SetSpriteFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
       FieldCamera_FollowActor(*(s16 *)(effect + 24), 1);
       Sound_PlayFar(539);
       if (*(s8 *)(event + 394) == 3) {

@@ -13,7 +13,7 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
@@ -25,7 +25,7 @@ Map_CopyCellAttributeRect:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -149,7 +149,7 @@ Event_ResolvePendingActions:
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
-	overlay_veneer Motion_LaunchFromFocusedObjectFar
+	overlay_veneer Actor_LaunchFromLeaderFar
 	.global Actor_WalkByAndWaitById
 	.thumb_func
 Actor_WalkByAndWaitById:

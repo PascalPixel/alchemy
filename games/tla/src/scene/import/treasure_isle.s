@@ -17,15 +17,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02000f7c
 	.thumb_func
 Func_02000f7c:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -45,7 +45,7 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func
 Actor_SetBlendMode:
@@ -61,7 +61,7 @@ FieldMessage_ShowCentered:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Func_02000fcc
 	.thumb_func
 Func_02000fcc:
@@ -125,7 +125,7 @@ BattleEffect_ApplyColorToSourceBuffer:
 	.global PaletteFade_StartInterpolation
 	.thumb_func
 PaletteFade_StartInterpolation:
-	overlay_veneer BattleEffect_StartBufferInterpolationFar
+	overlay_veneer PaletteFade_StartInterpolationFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

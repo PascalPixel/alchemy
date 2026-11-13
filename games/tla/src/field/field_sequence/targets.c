@@ -196,7 +196,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
   result = 0;
   if (object != 0) {
     Sound_PlayFar(0x7C);
-    Actor_SetMode(object, 4);
+    Actor_SelectAnimationFar(object, 4);
     wait(0xC);
     result = (s32)BattleEffect_StartRandomParticleEmitter(effect, mode);
   }
@@ -290,26 +290,26 @@ void Func_080cdd80(void) {
   result = MapGrid_CheckCollisionFar(target, position);
   target->terrainId = terrain;
   if (result <= 0) {
-    Actor_SetMode(owner, 8);
+    Actor_SelectAnimationFar(owner, 8);
     wait(15);
     Sound_PlayFar(185);
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
-    Actor_SetTargetPosition(target, position[0], position[1], position[2]);
+    Actor_SetMoveTargetFar(target, position[0], position[1], position[2]);
     wait(2);
     acceleration = owner->acceleration;
     owner->acceleration = 0x3333;
     speed = owner->speedLimit;
     owner->speedLimit = 0x3333;
-    Actor_SetTargetPosition(owner, position[0], position[1], position[2]);
-    Actor_CommitPosition(target);
+    Actor_SetMoveTargetFar(owner, position[0], position[1], position[2]);
+    Actor_WaitForMoveFar(target);
     wait(1);
     Event_NoOp();
     Actor_SetPositionAndResetMotionFar(target, position[0], position[1],
                                        position[2]);
     Actor_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16, owner->y,
                                        S16_AT(owner, 18) << 16);
-    Actor_SetMode(owner, 1);
+    Actor_SelectAnimationFar(owner, 1);
     owner->speedLimit = speed;
     owner->acceleration = acceleration;
   }

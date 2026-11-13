@@ -13,15 +13,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Window_Close
 	.thumb_func
 Window_Close:
@@ -49,7 +49,7 @@ Message_CloseFinishedWindows:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -113,7 +113,7 @@ Event_ResolvePendingActions:
 	.global BattleEffect_GetResourceId
 	.thumb_func
 BattleEffect_GetResourceId:
-	overlay_veneer BattleEffect_GetResourceIdFar
+	overlay_veneer Speaker_GetVoiceFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

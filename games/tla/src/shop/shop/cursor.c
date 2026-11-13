@@ -95,13 +95,13 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
   Dma_Set(saved, map + 0x222, DMA_COPY_WORDS(336), REG_DMA3);
   Dma_Set(saved, work + 0x380, DMA_COPY_WORDS(672), REG_DMA3);
   BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
-  BattleEffect_StartBufferInterpolationFar(16);
+  PaletteFade_StartInterpolationFar(16);
 }
 
 void Shop_RestoreFieldPalette(void) {
   BattleEffect_ApplyColorToTargetBufferFar(
       (s32)Ram_HeapSlots->eventWork + 0x222, 1);
-  BattleEffect_StartBufferInterpolationFar(16);
+  PaletteFade_StartInterpolationFar(16);
 }
 
 // MenuCursor_Advance moves the shop cursor one step of its glide toward the

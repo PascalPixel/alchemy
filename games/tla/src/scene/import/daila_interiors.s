@@ -13,15 +13,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Import_ActorResetMotion
 	.thumb_func
 Import_ActorResetMotion:
-	overlay_veneer Actor_ResetMotion
+	overlay_veneer Actor_StartIdleFar
 	.global Map_SetLayerEntryFlag
 	.thumb_func
 Map_SetLayerEntryFlag:
@@ -33,7 +33,7 @@ Map_CopyCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
@@ -85,7 +85,7 @@ PartyInventory_FindRoom:
 	.global FieldEvent_Wait
 	.thumb_func
 FieldEvent_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Import_EventStart
 	.thumb_func
 Import_EventStart:

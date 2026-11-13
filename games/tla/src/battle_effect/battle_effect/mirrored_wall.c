@@ -168,7 +168,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     // pixels, until it is 8 pixels from the ground.
     for (k = 0; k != effect->count; k++) {
       struct MotionObject *target =
-          GetBattleObjectSlotFar(effect->actors[k])->object;
+          BattleObject_GetFar(effect->actors[k])->object;
       s32 start = k * 16;
 
       Transform_Reset();
@@ -212,7 +212,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 
       if (frame >= start + 72) {
         struct MotionObject *target =
-            GetBattleObjectSlotFar(effect->actors[i])->object;
+            BattleObject_GetFar(effect->actors[i])->object;
 
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->pos);
@@ -369,7 +369,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   // target with a little spread in depth.
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
-  source = GetBattleObjectSlotFar(effect->actor)->object;
+  source = BattleObject_GetFar(effect->actor)->object;
   if (mode == 7)
     height = 0x280000;
   else if (mode == 8)
@@ -378,7 +378,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     height = 0x40000;
   for (k = 0; k != effect->count; k++) {
     struct MotionObject *target =
-        GetBattleObjectSlotFar(effect->actors[k % effect->count])->object;
+        BattleObject_GetFar(effect->actors[k % effect->count])->object;
 
     for (i = 0; i != 16; i++) {
       struct EffectStep *shot = &PARTICLES[k * 16 + i];

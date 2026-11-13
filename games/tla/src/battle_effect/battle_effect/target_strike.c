@@ -242,7 +242,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 
   for (k = 0; k != 1; k++) {
     // The wisps start at the target's feet, waiting (-1) until a hit.
-    target = GetBattleObjectSlotFar(effect->actors[k])->object;
+    target = BattleObject_GetFar(effect->actors[k])->object;
     EffectPosition_ProjectBattler(effect->actors[k], &ground);
     for (i = 0; i != 64; i++) {
       struct EffectStep *step = &work->particles[i];
@@ -538,7 +538,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                              BLITTER(BLIT_ADDITIVE, CLIP));
     draw[1] = gBlitterAlternate;
     for (k = 0; k != 1; k++) {
-      source = GetBattleObjectSlotFar(effect->actor)->object;
+      source = BattleObject_GetFar(effect->actor)->object;
 
       // Wisps of smoke rise and spread for 24 frames.
       if (RECORD(mode, RECORD_FLAGS) & FLAG_WISPS) {

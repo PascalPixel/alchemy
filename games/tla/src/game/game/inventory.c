@@ -361,7 +361,7 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
 
   if (removed_slot != -1) {
     Item_AdjustCounter(item, 1);
-    Event_ClearInvalidPackedValuesFar();
+    Party_ClearUnusableShortcutsFar();
   }
   return removed_slot;
 }

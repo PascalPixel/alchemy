@@ -17,7 +17,7 @@ Heap_Alloc:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -45,7 +45,7 @@ Resource_GetTableEntry:
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global WindowSystem_InitField
 	.thumb_func
 WindowSystem_InitField:
@@ -73,7 +73,7 @@ Text_GetMessageSize:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:
@@ -85,7 +85,7 @@ Import_EventSetDestination:
 	.global BattleEffect_GetResourceId
 	.thumb_func
 BattleEffect_GetResourceId:
-	overlay_veneer BattleEffect_GetResourceIdFar
+	overlay_veneer Speaker_GetVoiceFar
 	.global Func_02000834
 	.thumb_func
 Func_02000834:

@@ -127,8 +127,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->facing = djinni->facing;
       ((struct AnimationObject *)copy->sprite)->image.priority = 0;
       Actor_SetSpriteColorModeFar(copy, tint);
-      Actor_SetMode(copy, 0);
-      Actor_SetSingleChildFlagsFar(copy, 0);
+      Actor_SelectAnimationFar(copy, 0);
+      Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
       copy->watchedObject = prev;
       prev = copy;
@@ -153,7 +153,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetX = 0x80000000;
   djinni->targetZ = 0x80000000;
   djinni->targetY = 0x80000000;
-  Actor_SetMode(djinni, 0);
+  Actor_SelectAnimationFar(djinni, 0);
   ((struct AnimationObject *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1
   djinni->gravity = 0x10000;
@@ -249,7 +249,7 @@ void Djinn_RestoreActorAfterBattle(void) {
           Actor_SetPositionAndResetMotionFar(obj, selection->x, selection->y,
                                              selection->z - (32 << 16));
         }
-        Actor_SetMode(obj, 1);
+        Actor_SelectAnimationFar(obj, 1);
       }
     }
   }

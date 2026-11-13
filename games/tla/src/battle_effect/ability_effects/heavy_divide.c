@@ -108,7 +108,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
   work->transferValue = 0;
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  caster = GetBattleObjectSlotFar(effect->actor)->object;
+  caster = BattleObject_GetFar(effect->actor)->object;
   if (mode == 0) {
     frames = 80;
     Resource_LoadAndDecompress((s32)&ResourceId_GreatSwordSheet, work->sheet, 1,
@@ -163,7 +163,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else if (frame == 0) {
       BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
-      Actor_SelectAnimationFar(caster, 32);
+      Actor_SetAnimationSpeedFar(caster, 32);
     }
 
     vertices = Heap_AllocEwram(32);
@@ -308,7 +308,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     work->transferPending = 1;
     wait(1);
   }
-  Actor_SelectAnimationFar(caster, 16);
+  Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
@@ -585,7 +585,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   width = 32;
   palette = (u16 *)BG_PLTT + 1;
-  caster = GetBattleObjectSlotFar(effect->actor)->object;
+  caster = BattleObject_GetFar(effect->actor)->object;
   Iwram_ClearWordsEntry((void *)BG_PLTT, 128);
   for (i = 0; i != 63; i++) {
     *palette++ = i / 3 + 8;
@@ -794,7 +794,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Actor_SelectAnimationFar(caster, 16);
+  Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
@@ -866,7 +866,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
   offset = 0;
   savedYaw = (s16)camera->yaw;
   size = 2;
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
 
   // The discs, smallest first, one after another in the map cell buffer.
   cells = (s32)Ram_MapCellBuffer;

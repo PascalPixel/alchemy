@@ -183,7 +183,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
   // The motes wait 25 pixels above the target, aimed away from the
   // caster; none is out yet.
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
   for (i = 0; i != MOTE_COUNT; i++) {
     struct EffectStep *mote = &MOTES[i];
 

@@ -39,7 +39,7 @@ void Exit_PrepareAnimation(s32 animation) {
   object->velocityZ = zero;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
-  Actor_SetMode(object, mode);
+  Actor_SelectAnimationFar(object, mode);
   wait(18);
 }
 
@@ -64,7 +64,7 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   eff->param = 15;
   obj->x = (obj->x & 0xfff00000) + 0x80000;
   obj->z &= 0xfff00000;
-  Actor_SetMode(obj, mode);
+  Actor_SelectAnimationFar(obj, mode);
   wait(30);
   ctx->count = 1;
   SpriteAnimation_ClearFar(ctx->entries[1]);
@@ -79,8 +79,8 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   }
   obj->acceleration = 0x10000;
   obj->speedLimit = 0x10000;
-  Actor_SetTargetPosition(obj, obj->x, obj->y, obj->z + 0x80000);
-  Actor_CommitPosition(obj);
+  Actor_SetMoveTargetFar(obj, obj->x, obj->y, obj->z + 0x80000);
+  Actor_WaitForMoveFar(obj);
 }
 
 void FieldCamera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -115,7 +115,7 @@ s32 Entrance_PlayArrival(void) {
         }
         Sound_PlayFar(159);
         object->y = object->terrainHeight;
-        Actor_SetMode(object, 22);
+        Actor_SelectAnimationFar(object, 22);
         Event_Wait(15);
         FieldCamera_FollowActor(id, 1);
         result = 3;

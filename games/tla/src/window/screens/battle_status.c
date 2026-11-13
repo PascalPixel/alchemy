@@ -57,11 +57,11 @@ extern const u8 gOwnerStatus_PvString[];
 extern void BattleActor_SpawnObjectsForListFar__screens(
     u16 *list, s32 count) __asm__("BattleActor_SpawnObjectsForListFar");
 void BattleObject_SpawnObjectsForListFar(u16 *list, s32 count, s32 mode);
-/* VIEW(screens): routine GetBattleObjectSlotFar as void
- * **GetBattleObjectSlotFar(s32 member); motobj.h has struct BattleObj
- * *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(screens): routine BattleObject_GetFar as void
+ * **BattleObject_GetFar(s32 member); motobj.h has struct BattleObj
+ * *BattleObject_GetFar(s32 objectId). */
 extern void **
-GetBattleObjectSlotFar__screens(s32 member) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__screens(s32 member) __asm__("BattleObject_GetFar");
 #ifdef MODERN
 // Called with no prototype in scope, as its bytes need; a current GCC gets
 // it here.
@@ -1172,7 +1172,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   PartyStatus_Draw(((u8 *)Ram_HeapSlots->battleWork)[0x41]);
   NAVIGATION->timerHidden = 0;
   ReleaseBattleObjectRecordsFar(shownMember);
-  BattleActor_CommitPlacementFar();
+  BattleObject_PutFar();
   wait(1);
   Heap_Release(djinnList);
   return 0;

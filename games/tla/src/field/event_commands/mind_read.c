@@ -140,7 +140,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
             (void (*)(void))BattleEffect_SetCallbackWhenTargetUnset;
         sprite->palette = 0;
         sprite->mode = 1;
-        Actor_SetTargetPosition(object, from.x, from.y, from.z);
+        Actor_SetMoveTargetFar(object, from.x, from.y, from.z);
       }
     }
   }
@@ -307,7 +307,7 @@ void FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src) {
   if (obj != 0) {
     obj->mode55 = 2;
     obj->field48 = 0x1999;
-    Actor_SetMode(obj, 0);
+    Actor_SelectAnimationFar(obj, 0);
     obj->field5e = 12;
     Actor_StartScriptFar((struct Actor *)obj,
                          gBattleEffect_SharedParticleScript);
@@ -397,7 +397,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   position.y = target->y + (16 << 16);
   position.z = target->z;
   Vector_AddPolarOffset__f0dcb44(16 << 16, angle, &position);
-  Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
+  Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
   pusher->speedLimit = 4 << 16;
   pusher->acceleration = Q16_ONE / 2;
@@ -429,8 +429,8 @@ void FieldPsynergy_SteerPushedTarget(void) {
       position.y = target->y + (16 << 16);
       position.z = target->z;
       Vector_AddPolarOffset__f0dcb44(16 << 16, angle, &position);
-      Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
-      Actor_SetMode(pusher, 1);
+      Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
+      Actor_SelectAnimationFar(pusher, 1);
       pusher->velocityX = 0;
       pusher->velocityY = 0;
       pusher->velocityZ = 0;
@@ -442,8 +442,8 @@ void FieldPsynergy_SteerPushedTarget(void) {
     position.z = target->z;
     Vector_AddPolarOffset__f0dcb44(16 << 16, angle, &position);
     Vector_AddPolarOffset__f0dcb44(2 << 16, direction, &position);
-    Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
-    Actor_CommitPosition(pusher);
+    Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
+    Actor_WaitForMoveFar(pusher);
     position.x = target->x;
     position.y = target->y;
     position.z = target->z;
@@ -453,7 +453,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     beyond.z = target->z;
     Vector_AddPolarOffset__f0dcb44(32 << 16, direction, &beyond);
     if (MapGrid_CheckCollisionFar(target, &position) > 0) {
-      Actor_SetMode(pusher, 4);
+      Actor_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(114);
       continue;
@@ -461,7 +461,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     hit = ActorScript_FindOverlappingEntryFar(target, &position);
     if (hit != NULL) {
       if (hit != user) {
-        Actor_SetMode(pusher, 4);
+        Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(114);
         continue;
@@ -470,7 +470,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
       cellZ = user->z & MOVE_CELL_MASK;
       if (cellX == (position.x & MOVE_CELL_MASK) &&
           cellZ == (position.z & MOVE_CELL_MASK)) {
-        Actor_SetMode(pusher, 4);
+        Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(114);
         continue;
@@ -479,7 +479,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
         if (MapGrid_GetTerrainKindFar(user->terrainId, beyond.x, beyond.z) !=
             0) {
-          Actor_SetMode(pusher, 4);
+          Actor_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(114);
           continue;
@@ -493,25 +493,25 @@ void FieldPsynergy_SteerPushedTarget(void) {
     x = position.x;
     z = position.z;
     modes = gUnused_BattleEffectBytes;
-    Actor_SetMode(pusher, modes[(u16)(angle - direction) >> 14]);
+    Actor_SelectAnimationFar(pusher, modes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->movementState = 0;
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
-    Actor_SetTargetPosition(target, position.x, position.y, position.z);
+    Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
     pusher->motionFlags = 0;
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
     Vector_AddPolarOffset__f0dcb44(16 << 16, direction, &position);
-    Actor_SetTargetPosition(pusher, position.x, position.y + (16 << 16),
+    Actor_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
                             position.z);
     if (moved == 1) {
       Actor_GetById(scene->firstObjectId)->actionFlags &= 0xfe;
       user->speedLimit = 0x3333;
       user->acceleration = 0x3333;
-      Actor_SetTargetPosition(user, beyond.x, beyond.y, beyond.z);
+      Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
-    Actor_CommitPosition(target);
+    Actor_WaitForMoveFar(target);
     if (event == NULL) {
       target->x = x;
       target->z = z;
@@ -528,7 +528,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   target->update = (void (*)(void))scene->savedCallback;
   if (pushed) {
     pusher->update = NULL;
-    Actor_SetMode(pusher, 4);
+    Actor_SelectAnimationFar(pusher, 4);
     Actor_SetPositionAndResetMotionFar(pusher, pusher->x, pusher->y, pusher->z);
     Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
   }
@@ -607,7 +607,7 @@ void FieldPsynergy_Move(void) {
   object = FieldEffect_SpawnMoveHand(object);
   FieldEffect_SnapScaleToFull(object);
   if (object != 0) {
-    Actor_SetMode(object, 4);
+    Actor_SelectAnimationFar(object, 4);
     wait(30);
   }
   FieldPsynergy_FadeFromCastColor();
@@ -654,7 +654,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
-  Actor_SetMode(parent, 3);
+  Actor_SelectAnimationFar(parent, 3);
   Actor_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
@@ -695,7 +695,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *object) {
       object->scaleX = next;
       object->scaleY = next;
     }
-    Actor_CommitPosition(object);
+    Actor_WaitForMoveFar(object);
   }
 }
 
@@ -739,7 +739,7 @@ void UpdateRisingParticleBurst(void *object) {
     }
   }
   Sound_PlayFar(131);
-  Actor_Destroy(src);
+  Actor_ReleaseFar(src);
 }
 
 /// Burns 63 loop iterations and returns; callers pass an argument it ignores.
@@ -923,8 +923,8 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     kind = 2;
 
   if (kind == 0) {
-    Actor_SetMode(target, 2);
-    Actor_SetSingleChildFlagsFar(target, 0);
+    Actor_SelectAnimationFar(target, 2);
+    Actor_SetSpriteFlagsFar(target, 0);
     target->collisionFlags = 0;
     target->priorityFlags |= 2;
     wait(10);
@@ -1042,10 +1042,10 @@ void FieldEffect_SpawnBurstParticleField(void) {
       obj->speedLimit = 0x18000;
       obj->motionFlags = 0;
       Actor_SetSpriteColorModeFar(obj, 11);
-      Actor_SetMode(obj, 7);
+      Actor_SelectAnimationFar(obj, 7);
       Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript + 1);
 
-      Actor_SetSingleChildFlagsFar(obj, 1);
+      Actor_SetSpriteFlagsFar(obj, 1);
 
       p[0] = work->x;
       p[1] = work->y;
@@ -1054,7 +1054,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
         Vector_AddPolarOffset__f0dd820(0xe0000, *(u16 *)&work->angle, p);
       dist = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset__f0dd820(dist, Random16(), p);
-      Actor_SetTargetPosition(obj, p[0], p[1], p[2]);
+      Actor_SetMoveTargetFar(obj, p[0], p[1], p[2]);
     }
     Sound_PlayFar(131);
     wait(2);
@@ -1104,7 +1104,7 @@ void FieldPsynergy_LiftOnTarget(void) {
                                                 *(u16 *)((u8 *)anchor + 6));
   }
 
-  Actor_CommitPosition(anchors[0]);
+  Actor_WaitForMoveFar(anchors[0]);
   ((struct EffectChild *)child)->callback = Actor_ApplyRandomChildValues;
   Sound_PlayFar(130);
   ((struct EffectChild *)child)->flag = 4;
@@ -1151,7 +1151,7 @@ void FieldPsynergy_Lift(void) {
       Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
   }
 
-  Actor_CommitPosition(pair[0]);
+  Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(134);
   for (n = 0; n < 24; n++) {
     pos.x = work->x;
@@ -1168,8 +1168,8 @@ void FieldPsynergy_Lift(void) {
     }
   }
 
-  Actor_Destroy(pair[0]);
-  Actor_Destroy(pair[1]);
+  Actor_ReleaseFar(pair[0]);
+  Actor_ReleaseFar(pair[1]);
   FieldPsynergy_FadeFromCastColor();
 }
 
@@ -1185,7 +1185,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
     object->scaleX = object->scaleY = 0x4000;
     object->acceleration = object->speedLimit = 0x30000;
     ((struct FieldSprite *)object->sprite)->priority = 0;
-    Actor_SetMode(object, 3);
+    Actor_SelectAnimationFar(object, 3);
     scale = object->scaleX;
     if (scale < Q16_ONE) {
       do {
@@ -1413,7 +1413,7 @@ void FieldPsynergy_Force(void) {
   object->speedLimit = 0x40000;
   object->acceleration = 0x40000;
   object->motionFlags = 0;
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
   Actor_SetSpriteColorModeFar(object, 3);
   scale = object->scaleX;
   if (scale < 0x10000) {
@@ -1438,7 +1438,7 @@ void FieldPsynergy_Force(void) {
       copy->speedLimit = 0x40000;
       copy->acceleration = 0x40000;
       copy->motionFlags = 0;
-      Actor_SetMode(copy, 5);
+      Actor_SelectAnimationFar(copy, 5);
       Actor_SetSpriteColorModeFar(copy, 2);
       resource = Sprite_ShareVramCacheEntry__f0dcb44(copy->sprite, resource);
     }
@@ -1456,13 +1456,13 @@ void FieldPsynergy_Force(void) {
     pos.y = scene->y + 0x100000;
     pos.z = scene->z;
   }
-  Actor_SetTargetPosition(object, pos.x, pos.y, pos.z);
+  Actor_SetMoveTargetFar(object, pos.x, pos.y, pos.z);
   Actor_StartScriptFar(object, gData_080f0ef8);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       wait(3);
-      Actor_SetTargetPosition(copy, pos.x, pos.y, pos.z);
+      Actor_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
       Actor_StartScriptFar(copy, gData_080f0e58);
     }
   }
@@ -1481,7 +1481,7 @@ void FieldPsynergy_Force(void) {
         ActorScript_CheckOverlapFar(target, &pos) == 0) {
       target->acceleration = 0x10000;
       target->speedLimit = 0x10000;
-      Actor_SetTargetPosition(target, pos.x, pos.y, pos.z);
+      Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
     }
   }
 
@@ -1648,7 +1648,7 @@ void FieldPsynergy_Frost(void) {
 
     if (scene->childOption == 0) {
       Sound_PlayFar(220);
-      Actor_SetMode(target, 2);
+      Actor_SelectAnimationFar(target, 2);
     }
 
     target->update = (void (*)(void))FieldEffect_UpdateFrostGlint;
@@ -1824,8 +1824,8 @@ void FieldPsynergy_Ply(void) {
     target->acceleration = 0x6666;
     target->actionFlags = 0;
     Actor_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
-    Actor_CommitPosition(target);
-    Actor_Destroy(target);
+    Actor_WaitForMoveFar(target);
+    Actor_ReleaseFar(target);
   }
   if (marker != 0x60)
     VramCache_FreeEntry(marker);
@@ -1873,7 +1873,7 @@ void FieldPsynergy_EndCloak(void) {
 
   Sound_PlayFar(SE_CLOAK_END);
   Task_Remove(FieldEffect_CheckCloakTile);
-  Actor_SetMode((struct Actor *)caster, 0);
+  Actor_SelectAnimationFar((struct Actor *)caster, 0);
   caster->hook = 0;
 
   // Blink between the flicker palette half transparent and solid...

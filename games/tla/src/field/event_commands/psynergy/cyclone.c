@@ -299,7 +299,7 @@ void FieldPsynergy_Cyclone(void) {
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleFxWork[1];
   ring = Actor_Spawn(280, owner->x, owner->y - 0x60000, owner->z);
-  Actor_SetMode(ring, 2);
+  Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = 0x18000;
   ring->scaleY = 0;
   wait(1);
@@ -351,7 +351,7 @@ void FieldPsynergy_Cyclone(void) {
     }
     FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
-    Actor_SetSingleChildFlagsFar(owner, 0);
+    Actor_SetSpriteFlagsFar(owner, 0);
     Actor_SetSpritePriority(*(s16 *)(effect + 24), 1);
     owner->motionFlags = 0;
     frame = 0;
@@ -386,7 +386,7 @@ void FieldPsynergy_Cyclone(void) {
     }
     FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
-    Actor_SetSingleChildFlagsFar(owner, 0);
+    Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
     work->to[0] = *(s16 *)(event + 0xd3c) << 16;
@@ -421,7 +421,7 @@ void FieldPsynergy_Cyclone(void) {
       BattleEffect_EndX();
   } else if (mode == 1) {
     Sound_PlayFar(136);
-    Actor_SetMode(ring, 6);
+    Actor_SelectAnimationFar(ring, 6);
     if (work->kind)
       Func_080e2acc();
     for (i = 0; i < 16; i++) {
@@ -442,7 +442,7 @@ void FieldPsynergy_Cyclone(void) {
       BattleEffect_EndX();
   } else {
     Sound_PlayFar(136);
-    Actor_SetMode(ring, 6);
+    Actor_SelectAnimationFar(ring, 6);
     for (i = 0; i < 16; i++) {
       owner->facing += 0x1000;
       canvas->angle += 0x400;
@@ -451,7 +451,7 @@ void FieldPsynergy_Cyclone(void) {
     }
   }
   Sound_PlayFar(136);
-  Actor_Destroy(ring);
+  Actor_ReleaseFar(ring);
   owner->update = NULL;
   owner->facing = owner->timer;
   BattleEffect_EndCanvasSprite();
@@ -478,7 +478,7 @@ void Func_080e3698(s32 actor) {
   object->motionFlags = 0;
   object->update = BattleEffect_SpinObject;
   ring = Actor_Spawn(280, object->x, object->y, object->z);
-  Actor_SetMode(ring, 2);
+  Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = 0x18000;
   ring->scaleY = Q16_ONE;
   x = object->x;
@@ -504,9 +504,9 @@ void Func_080e3698(s32 actor) {
   }
   Actor_SetPositionAndResetMotionFar(object, x, y, z);
   Sound_PlayFar(136);
-  Actor_SetMode(ring, 6);
+  Actor_SelectAnimationFar(ring, 6);
   Event_Wait(15);
-  Actor_Destroy(ring);
+  Actor_ReleaseFar(ring);
   object->update = NULL;
   object->facing = angle;
   object->motionFlags = motionFlags;
@@ -532,11 +532,11 @@ void Func_080e37e0(s32 actor) {
   object->scaleX = 0;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSingleChildFlagsFar(Actor_GetById(actor), 0);
+  Actor_SetSpriteFlagsFar(Actor_GetById(actor), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   ring = Actor_Spawn(280, object->x, object->y, object->z);
-  Actor_SetMode(ring, 2);
+  Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = 0x8000;
   ring->scaleY = 0xc000;
   for (i = 0; i < 32; i++) {
@@ -547,15 +547,15 @@ void Func_080e37e0(s32 actor) {
   ring->scaleX = 0x18000;
   ring->scaleY = Q16_ONE;
   Sound_PlayFar(136);
-  Actor_SetMode(ring, 6);
+  Actor_SelectAnimationFar(ring, 6);
   object->scaleY = object->scaleX = 0x8000;
   for (i = 0; i < 16; i++) {
     object->scaleY = object->scaleX = object->scaleX + 0x800;
     wait(1);
   }
-  Actor_SetSingleChildFlagsFar(Actor_GetById(actor), 1);
+  Actor_SetSpriteFlagsFar(Actor_GetById(actor), 1);
   Event_Wait(10);
-  Actor_Destroy(ring);
+  Actor_ReleaseFar(ring);
   object->update = NULL;
   object->facing = angle;
 }

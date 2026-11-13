@@ -21,11 +21,11 @@ Random16Far:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -33,15 +33,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02005164
 	.thumb_func
 Func_02005164:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -69,11 +69,11 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -225,7 +225,7 @@ BattleEffect_ApplyColorToTargetBuffer:
 	.global PaletteFade_StartInterpolation
 	.thumb_func
 PaletteFade_StartInterpolation:
-	overlay_veneer BattleEffect_StartBufferInterpolationFar
+	overlay_veneer PaletteFade_StartInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -245,7 +245,7 @@ Func_020052f4:
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
-	overlay_veneer Field_DispatchTypeHandlerFar
+	overlay_veneer FieldPsynergy_RunHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
@@ -253,7 +253,7 @@ BattleEffect_LoadActionEffectResources:
 	.global FieldPsynergy_SetupActorPair
 	.thumb_func
 FieldPsynergy_SetupActorPair:
-	overlay_veneer BattleEffect_SetupObjectPairFar
+	overlay_veneer FieldPsynergy_SetupActorPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func
 BattleEffect_StopMainActor:
@@ -273,7 +273,7 @@ Djinn_JoinParty:
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
-	overlay_veneer Motion_LaunchFromFocusedObjectFar
+	overlay_veneer Actor_LaunchFromLeaderFar
 	.global Actor_WalkByById
 	.thumb_func
 Actor_WalkByById:

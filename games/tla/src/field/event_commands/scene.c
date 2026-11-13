@@ -215,7 +215,7 @@ void EventObject_Initialize(void) {
   s32 zero;
   s8 sound;
 
-  Actor_SetMode(object, 20);
+  Actor_SelectAnimationFar(object, 20);
   // The stores in a once-only block keep them all ahead of the sound's read;
   // as plain statements, 8 of 109 instructions differ in tla-en.
   do {
@@ -246,7 +246,7 @@ void EventObject_Initialize(void) {
   if (GameFlag_Test(320)) {
     if (work->sound != 0)
       BattleEffect_SetObjectUpdateMode(object, 2);
-    Actor_SetMode(object, 21);
+    Actor_SelectAnimationFar(object, 21);
   } else {
     BattleEffect_StopMainActor();
   }

@@ -9,11 +9,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global PartyInventory_FindMember
 	.thumb_func
 PartyInventory_FindMember:
@@ -25,7 +25,7 @@ PartyInventory_Remove:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -129,7 +129,7 @@ FieldCamera_MoveWithinMapBounds:
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
-	overlay_veneer Field_DispatchTypeHandlerFar
+	overlay_veneer FieldPsynergy_RunHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
@@ -137,7 +137,7 @@ BattleEffect_LoadActionEffectResources:
 	.global FieldPsynergy_SetupActorPair
 	.thumb_func
 FieldPsynergy_SetupActorPair:
-	overlay_veneer BattleEffect_SetupObjectPairFar
+	overlay_veneer FieldPsynergy_SetupActorPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func
 BattleEffect_StopMainActor:
@@ -161,7 +161,7 @@ Djinn_JoinParty:
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
-	overlay_veneer Motion_LaunchFromFocusedObjectFar
+	overlay_veneer Actor_LaunchFromLeaderFar
 	.global Actor_WalkByById
 	.thumb_func
 Actor_WalkByById:

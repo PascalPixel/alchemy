@@ -68,7 +68,7 @@ void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
   struct FxTimerWork *state;
   s32 groupIndex;
 
-  set = GetBattleObjectSlotFar(setId);
+  set = BattleObject_GetFar(setId);
   state = (struct FxTimerWork *)Ram_HeapSlots->battleFxWork[0];
   groupIndex = 0;
 

@@ -23,7 +23,7 @@ void FieldParticle_SetCallbackFar(struct Effect_080b2f4c *effect,
 void FieldParticle_SetActorModeFar(struct Effect_080b2f4c *effect, s32 value);
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void Event_ResolveAllPendingActionsFar(void);
-s32 BattleEffect_GetResourceIdFar(u16 id);
+s32 Speaker_GetVoiceFar(u16 id);
 void FieldEffect_ClearOwnedSlotFar(struct Effect_080b2f4c *);
 s32 BattleBackground_GetSelectedFar(void);
 

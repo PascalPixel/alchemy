@@ -105,7 +105,7 @@ extern const struct EnemyDefinition gEnemy_DefinitionTable[];
 extern u8 gGameFlagBytes[];
 void DjinnRecovery_CountDownTwentyFar(void);
 s32 Djinn_GiveFar(s32, s32, s32);
-void Event_ClearInvalidPackedValuesFar(void);
+void Party_ClearUnusableShortcutsFar(void);
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 void Unit_CalculateBaseElements(s32 owner_id,

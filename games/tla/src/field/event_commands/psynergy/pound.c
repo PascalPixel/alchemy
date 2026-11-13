@@ -68,7 +68,7 @@ s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_Destroy(struct Actor *object);
+void Actor_ReleaseFar(struct Actor *object);
 void Func_080dba5c(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
@@ -170,7 +170,7 @@ void FieldPsynergy_Pound(void) {
     ((u8 *)shine)[35] = 1;
   }
   shine->facing = caster->facing;
-  Actor_SetMode(shine, 2);
+  Actor_SelectAnimationFar(shine, 2);
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
     Func_080dba5c();
 
@@ -239,7 +239,7 @@ void FieldPsynergy_Pound(void) {
   }
   wait(1);
   Func_080dbed0(shine, scene->x, scene->y + lift, scene->z);
-  Actor_SetMode(shine, 1);
+  Actor_SelectAnimationFar(shine, 1);
   wait(15);
   rise = 24;
   do {
@@ -280,7 +280,7 @@ void FieldPsynergy_Pound(void) {
     Sound_PlayFar(114);
     Func_080dbf94(shine, shine->x, shine->y, shine->z);
   }
-  Actor_Destroy(shine);
+  Actor_ReleaseFar(shine);
   VramCache_FreeEntry(starEntry);
   VramCache_FreeEntry(glowEntry);
   BattleEffect_EndCanvasSprite();

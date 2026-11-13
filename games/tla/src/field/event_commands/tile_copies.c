@@ -101,7 +101,7 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
 
   if (object == NULL)
     return;
-  Actor_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSpriteFlagsFar(object, 0);
   object->gravity = 0x5999;
   object->velocityY = 0x50000;
   object->scaleY = object->scaleX = 0x6666;
@@ -111,7 +111,7 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
     object->facing += 0x1000;
   } while (object->scaleX <= 0xffff);
   object->scaleY = object->scaleX = 0x10000;
-  Actor_SetMode(owner, 1);
+  Actor_SelectAnimationFar(owner, 1);
   Actor_TurnPairToFaceEachOther(object, owner);
   owner->timer = owner->facing;
   Event_Wait(10);

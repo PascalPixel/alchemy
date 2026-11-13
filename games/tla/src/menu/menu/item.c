@@ -148,7 +148,7 @@ s32 ItemMenu_Run(void) {
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Ram_HeapSlots->windowTiles[6] = 0;
-  Event_ClearInvalidPackedValuesFar();
+  Party_ClearUnusableShortcutsFar();
   return result;
 }
 
@@ -413,7 +413,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       Unit_CalculateFar(menu->sideMember[0]);
       menu->selectedItemIcon->active = 13;
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       break;
 
     case 4:
@@ -514,7 +514,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       }
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       state = 0;
       break;
 
@@ -635,7 +635,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       Heap_Release(targetCopy);
       Heap_Release(sourceCopy);
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       state = 0;
       break;
 
@@ -690,7 +690,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->equipPreview = 0;
       WindowSprite_ClearListFar(menu->infoWindow);
       ItemMenu_ShowMessage((s32)MsgRemoved, ITEM_MODAL_REMOVED_X, 8);
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       state = 1;
       break;
 

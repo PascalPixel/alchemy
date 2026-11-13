@@ -66,7 +66,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
   // The pillars stand in front of the first target, on its side of the
   // field, at the variant's depths.
-  object = GetBattleObjectSlotFar(effect->actors[0])->object;
+  object = BattleObject_GetFar(effect->actors[0])->object;
   for (i = 0; i != 4; i++) {
     struct EffectStep *base = &work->particles[i];
     s32 x;

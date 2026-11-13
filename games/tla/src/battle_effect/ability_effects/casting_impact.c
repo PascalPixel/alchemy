@@ -592,7 +592,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
 
     work->unk77b4 = 24;
     work->unk77b8 = 0;
-    object = GetBattleObjectSlotFar(action->actor)->object;
+    object = BattleObject_GetFar(action->actor)->object;
     for (i = 0; i != 64; i++) {
       work->particle[i].x = (Random16() & 63) + 32;
       work->particle[i].y = 0;
@@ -601,7 +601,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       work->particle[i].vy = Random16() & 0xffff;
       work->particle[i].vz = Random16() & 0xffff;
     }
-    Actor_SelectAnimationFar(object, 0);
+    Actor_SetAnimationSpeedFar(object, 0);
     /* FAKEMATCH(temporary): vec holds origin and then base while each is
      * filled; as origin[...] and base[...], 62 of 7666 instructions differ in
      * tla-en. */
@@ -730,7 +730,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
-      Actor_SetMode(object, 3);
+      Actor_SelectAnimationFar(object, 3);
       if (kind == 45)
         BattleEffect_RunProjectileVolley(action, 9);
       if (kind == 54)
@@ -739,7 +739,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BattleEffect_RunProjectileVolley(action, 8);
       return;
     }
-    Actor_SelectAnimationFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, 16);
     object->velocityX = save24;
     object->velocityY = save28;
     object->velocityZ = save2c;
@@ -765,7 +765,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BG_PLTT[i] = (v << 10) | (v << 5) | v;
       }
     }
-    object2 = GetBattleObjectSlotFar(action->actors[0])->object;
+    object2 = BattleObject_GetFar(action->actors[0])->object;
     {
       center[0] = (object2->x - origin[0]) / 6;
       center[1] = (object2->y - origin[1] + 0x1e0000) / 6;
@@ -1110,7 +1110,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         if (frame >= start) {
           p = SPARKS;
-          object3 = GetBattleObjectSlotFar(action->actor)->object;
+          object3 = BattleObject_GetFar(action->actor)->object;
           half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
           slot = kind == 78;
           for (i = 0; i != 32; i++, p++) {
@@ -2420,7 +2420,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         drawFuncs.draw[1](screen, buffer + 0x3c56, point[0] - 10, point[1] - 4,
                           20, 40);
         if (frame == 23)
-          (GetBattleObjectSlotFar(action->actor)->object)->velocityY = 0x30000;
+          (BattleObject_GetFar(action->actor)->object)->velocityY = 0x30000;
         if (frame > 19)
           origin[1] += 0x40000;
         if (frame == 23) {

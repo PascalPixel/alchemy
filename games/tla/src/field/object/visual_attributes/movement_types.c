@@ -13,11 +13,11 @@
 extern struct LinkedEffectObject *
 Func_080200c0__f0d489c(s32 kind, s32 x, s32 y,
                        s32 z) __asm__("Actor_CreateFar");
-/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct
- * LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor
+/* VIEW(f0d489c): routine Actor_ReleaseFar as void Actor_ReleaseFar(struct
+ * LinkedEffectObject *object); battle.h has void Actor_ReleaseFar(struct Actor
  * *object). */
 extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__(
-    "Actor_Destroy");
+    "Actor_ReleaseFar");
 /* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32
  * Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the
  * definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
@@ -67,12 +67,12 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   mode = flags & 3;
   switch (mode) {
   case 1:
-    Actor_SetMode(child, 1);
+    Actor_SelectAnimationFar(child, 1);
     object->resource = child;
     child->counter = 1;
     break;
   case 2:
-    Actor_SetMode(child, 2);
+    Actor_SelectAnimationFar(child, 2);
     Actor_StartScriptFar(child, gActor_WaitScript);
     child->counter = 1;
     break;
@@ -111,13 +111,13 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 s32 __divsi3(s32, s32);
 
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
-  Actor_SetSingleChildFlagsFar((struct Actor *)obj, 0);
+  Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   obj->collisionFlags = 0;
   return 0;
 }
 
 s32 Actor_ClearChildFlags(struct Actor *obj) {
-  Actor_SetSingleChildFlagsFar((struct Actor *)obj, 0);
+  Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   return 0;
 }
 
@@ -150,11 +150,11 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
     step = object->timer;
     if (distance >= step) {
       newX = object->x + __divsi3(cellX << 20, step);
-      Actor_SetTargetPosition(object, newX, object->y,
+      Actor_SetMoveTargetFar(object, newX, object->y,
                               object->z + __divsi3(cellY << 20, step));
-      Actor_SetMode(object, 2);
+      Actor_SelectAnimationFar(object, 2);
     } else {
-      Actor_SetMode(object, 1);
+      Actor_SelectAnimationFar(object, 1);
     }
   }
   return 1;
@@ -442,20 +442,20 @@ again:
     if (leader->animationKind == 1)
       spriteFlags = ((struct JumpSprite *)leader->sprite)->flags;
     Event_Start();
-    Actor_SetMode(leader, 6);
+    Actor_SelectAnimationFar(leader, 6);
     wait(6);
     Sound_PlayFar(152);
-    Actor_SetMode(leader, 7);
+    Actor_SelectAnimationFar(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
-    Actor_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
+    Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner,
                             ((s16 *)positionWords)[1],
                             ((s16 *)positionWords)[5]);
-    Actor_SetMode(leader, 6);
-    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
+    Actor_SelectAnimationFar(leader, 6);
+    Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
     map = Ram_HeapSlots->mapWork;
     attr = map->unk017;
@@ -477,7 +477,7 @@ again:
     if (((platform = Actor_FindNearestFacingTarget(leader, 258)) != NULL ||
          (platform = Actor_FindNearestFacingTarget(leader, 259)) != NULL) &&
         (platform->priorityFlags & 2)) {
-      Actor_SetMode(platform, 7);
+      Actor_SelectAnimationFar(platform, 7);
       leader->y -= 0x10000;
       leader->terrainHeight -= 0x10000;
       wait(2);
@@ -499,7 +499,7 @@ again:
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
     if (MapGrid_GetCellBehaviorAtFar(leader->terrainId, position[0],
                                      position[2]) == 254) {
-      Actor_SetMode(leader, 1);
+      Actor_SelectAnimationFar(leader, 1);
       wait(6);
       goto again;
     }
@@ -579,21 +579,21 @@ s32 Func_080d50f8(void) {
     leader->actionFlags = 1;
     leader->motionFlags = 0;
     spriteFlags &= 0xfe;
-    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
-    Actor_SetMode(leader, 13);
-    Actor_SetTargetPosition(leader, gridX << 16, leader->y - 0x100000,
+    Actor_SetSpriteFlagsFar(leader, spriteFlags);
+    Actor_SelectAnimationFar(leader, 13);
+    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y - 0x100000,
                             (gridZ << 16) + 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     gMainRoutineWork.renderMode = 2;
     leader->z = (leader->z & 0xfff00000) + 0x80000;
   } else {
     // Let go of the wall and fall.
-    Actor_SetMode(leader, 10);
+    Actor_SelectAnimationFar(leader, 10);
     leader->motionFlags = 3;
     leader->velocityY = 0x40000;
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
-    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
+    Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(6);
     gMainRoutineWork.renderMode = 0;
     leader->actionFlags = 1;
@@ -654,17 +654,17 @@ s32 Func_080d53b8(void) {
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->actionFlags = result;
     Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, gridX, gridZ);
-    Actor_SetMode(leader, 6);
+    Actor_SelectAnimationFar(leader, 6);
     wait(4);
-    Actor_SetMode(leader, 7);
+    Actor_SelectAnimationFar(leader, 7);
     leader->velocityY = 0x40000;
     wait(4);
     leader->motionFlags = result;
     spriteFlags &= 0xfe;
-    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
+    Actor_SetSpriteFlagsFar(leader, spriteFlags);
     leader->speedLimit = 0x10000;
     leader->velocityY = result;
-    Actor_SetMode(leader, 12);
+    Actor_SelectAnimationFar(leader, 12);
     wait(4);
     gMainRoutineWork.renderMode = 2;
     leader->actionFlags = 1;
@@ -690,14 +690,14 @@ s32 Func_080d53b8(void) {
 
     // Climb over the top: up 8 pixels and a tile north.
     leader->motionFlags = 0;
-    Actor_SetMode(leader, 11);
-    Actor_SetTargetPosition(leader, gridX << 16, leader->y + 0x80000,
+    Actor_SelectAnimationFar(leader, 11);
+    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y + 0x80000,
                             (gridZ << 16) - 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     leader->motionFlags = 3;
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
-    Actor_SetSingleChildFlagsFar(leader, spriteFlags);
+    Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(4);
     gMainRoutineWork.renderMode = 0;
     leader->actionFlags = 1;
@@ -762,9 +762,9 @@ s32 Func_080d5720(void) {
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
   leader->watchedObject = (struct Actor *)item;
-  Actor_SetMode(leader, 2);
-  Actor_SetTargetPosition(leader, item->x, item->y, item->z);
-  Actor_CommitPosition(leader);
+  Actor_SelectAnimationFar(leader, 2);
+  Actor_SetMoveTargetFar(leader, item->x, item->y, item->z);
+  Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
   leader->unk66 = sprite->nextFrame;
@@ -807,9 +807,9 @@ s32 Field_ClimbDown(void) {
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
   leader->acceleration = 0x10000;
-  Actor_SetMode(leader, 2);
-  Actor_SetTargetPosition(leader, position[0], position[1], position[2]);
-  Actor_CommitPosition(leader);
+  Actor_SelectAnimationFar(leader, 2);
+  Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
+  Actor_WaitForMoveFar(leader);
   sprite->priority = ((u8 *)leader)[98];
   gMainRoutineWork.renderMode = 0;
   return 1;
@@ -865,9 +865,9 @@ s32 Func_080d59dc(void) {
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
   leader->watchedObject = (struct Actor *)item;
-  Actor_SetMode(leader, 2);
-  Actor_SetTargetPosition(leader, item->x, item->y, item->z);
-  Actor_CommitPosition(leader);
+  Actor_SelectAnimationFar(leader, 2);
+  Actor_SetMoveTargetFar(leader, item->x, item->y, item->z);
+  Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   leader->unk66 = sprite->nextFrame;
   ((struct GrabSave *)leader)->priority = sprite->priority;
@@ -909,9 +909,9 @@ s32 Func_080d5aa0(void) {
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
-  Actor_SetMode(leader, 2);
-  Actor_SetTargetPosition(leader, position[0], position[1], position[2]);
-  Actor_CommitPosition(leader);
+  Actor_SelectAnimationFar(leader, 2);
+  Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
+  Actor_WaitForMoveFar(leader);
   sprite->priority = ((u8 *)leader)[98];
   gMainRoutineWork.renderMode = 0;
   return 1;

@@ -40,11 +40,11 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   Sound_PlayFar(140);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
-  Actor_SetMode((struct Actor *)djinni, 3);
+  Actor_SelectAnimationFar((struct Actor *)djinni, 3);
   wait(90);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -101,7 +101,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
       djinni->angle = (remaining << 16) / 24;
       djinni->callback = (void *)FieldEffect_UpdateDescendingOrbitActor;
       djinni->mode = 0;
-      Actor_SetMode((struct Actor *)djinni, 7);
+      Actor_SelectAnimationFar((struct Actor *)djinni, 7);
       Animation_ApplyChildValuesFar__mars_join(djinni, 11);
     }
   }

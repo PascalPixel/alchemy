@@ -148,8 +148,8 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   }
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->actorId)->object;
-  Actor_SetMode(actor, 3);
-  Actor_SelectAnimationFar((struct Actor *)actor, 16);
+  Actor_SelectAnimationFar(actor, 3);
+  Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
   IoWriteQueue_Store16(0x04000050, 0x3f40);
   Sound_PlayFar(154);
   wait(10);
@@ -370,7 +370,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   if (work.kind == 10)
-    Actor_SetMode(object, 2);
+    Actor_SelectAnimationFar(object, 2);
   else
     BattleMotion_ApproachTarget(
         work.actor, work.actors[0], frames,
@@ -387,10 +387,10 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
         BattleClass_GetAttackHop__presentation(
             ((struct BattleUnit *)Unit_Get(plan->actorId2))->enemyId)
             << 16);
-    Actor_SelectAnimationFar(
+    Actor_SetAnimationSpeedFar(
         (struct Actor *)((struct BattleObj *)object)->object, 16);
   }
-  Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(work.actor)->object,
+  Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(work.actor)->object,
                            16);
 
   if ((u16)work.actors[0] <= 7)
@@ -525,9 +525,9 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     battle = Ram_HeapSlots->battleWork;
     mode = (u8 *)battle + 0x869;
     object = slot->object;
-    Actor_SetMode(object, *mode);
+    Actor_SelectAnimationFar(object, *mode);
   }
-  Actor_SelectAnimationFar((struct Actor *)object, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if (plan->targetIds[0] <= 7)
     work.side = 1;
   else
@@ -574,7 +574,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     wait(60);
   }
   BattlePlayback_WaitForReady();
-  Actor_SetMode(object, 1);
+  Actor_SelectAnimationFar(object, 1);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++)
     BattleMotion_ReturnToSpot(work.actors[targetOrFadeIndex]);
@@ -716,8 +716,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);
   object = BattleObject_Get(work.actor)->object;
-  Actor_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
-  Actor_SelectAnimationFar((struct Actor *)object, 16);
+  Actor_SelectAnimationFar(object, ((u8 *)heap->battleWork)[0x869]);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   Sound_PlayFar(154);
   if (mode & 2)
     ElementGlow_Play(work.actor, plan->element, 1, 0);
@@ -765,7 +765,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     }
     if (((s32 *)plan)[25] == 0)
       BattlePlayback_WaitForReady();
-    Actor_SetMode(object, 1);
+    Actor_SelectAnimationFar(object, 1);
     for (targetIndex = 0; targetIndex != work.count; targetIndex++)
       BattleMotion_ReturnToSpot(work.actors[targetIndex]);
   }
@@ -779,7 +779,7 @@ void BattleMotion_FlashHit(s32 id) {
   s32 remaining;
 
   Unit_Get(id);
-  Actor_SetMode(BattleObject_Get(id)->object, 5);
+  Actor_SelectAnimationFar(BattleObject_Get(id)->object, 5);
 
   selected = selection;
   remaining = 1;

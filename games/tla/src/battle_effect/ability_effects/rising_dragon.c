@@ -57,14 +57,14 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f178710): routine GetBattleObjectSlotFar as void
- * **GetBattleObjectSlotFar(s32 objectId); f175f74 has struct ActorPos
- * **GetBattleObjectSlotFar(s32); tried as the 11 declarations' void
- * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+/* VIEW(f178710): routine BattleObject_GetFar as void
+ * **BattleObject_GetFar(s32 objectId); f175f74 has struct ActorPos
+ * **BattleObject_GetFar(s32); tried as the 11 declarations' void
+ * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:25232: conflicting types for
- * `GetBattleObjectSlotFar'. */
+ * `BattleObject_GetFar'. */
 extern void **
-GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("BattleObject_GetFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -166,8 +166,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
     caster = *GetBattleObjectSlotFar__f178710(effect->actor);
-    Actor_SelectAnimationFar(caster, 48);
-    Actor_SetMode(caster, 2);
+    Actor_SetAnimationSpeedFar(caster, 48);
+    Actor_SelectAnimationFar(caster, 2);
     EffectPosition_ProjectBattler(effect->actor, &source);
     EffectPosition_ProjectBattler(effect->actors[0], &target);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
@@ -391,7 +391,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
       wait(1);
     }
-    Actor_SelectAnimationFar(caster, 16);
+    Actor_SetAnimationSpeedFar(caster, 16);
     HeapSlot_Release(104);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }

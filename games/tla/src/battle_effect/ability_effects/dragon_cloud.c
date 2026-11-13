@@ -75,7 +75,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 
   // The 56 embers wait at the target: sparks first, then flashes, which rise
   // more slowly.
-  object = GetBattleObjectSlotFar(effect->actors[0])->object;
+  object = BattleObject_GetFar(effect->actors[0])->object;
   for (i = 0; i != 56; i++) {
     step = &work->particles[8 + i];
     step->x = object->x;

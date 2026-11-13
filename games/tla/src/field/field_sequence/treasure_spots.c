@@ -120,11 +120,11 @@ void Field_PlaceTreasureSpots(void) {
               cells->collisionCode = 0;
           }
         }
-        Actor_SetMode(object, 1);
-        Actor_SetSingleChildFlagsFar(object, 0);
+        Actor_SelectAnimationFar(object, 1);
+        Actor_SetSpriteFlagsFar(object, 0);
         if (GameFlag_Test(flag))
-          Actor_SetMode(object, 2);
-        Actor_ResetMotion(object);
+          Actor_SelectAnimationFar(object, 2);
+        Actor_StartIdleFar(object);
         object->timer = object->x / 0x10000;
         object->unk66 = object->z / 0x10000;
         object->priorityFlags = 1;
@@ -248,7 +248,7 @@ void Actor_ShakeAngle(u32 objectId) {
 }
 
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
-  Actor_SetMode(ObjectTable_Get(objectId), 5);
+  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 5);
   Sound_PlayFar(125);
   wait(12);
 }
@@ -258,26 +258,26 @@ void ObjectEvent_Spring(u32 objectId) {
 
   object = ObjectTable_Get(objectId);
   wait(18);
-  Actor_SetMode(object, 7);
+  Actor_SelectAnimationFar(object, 7);
   Sound_PlayFar(146);
   if (object != 0) {
     object->velocityY = 0x80000;
-    Actor_SetSingleChildFlagsFar(object, 1);
+    Actor_SetSpriteFlagsFar(object, 1);
   }
 }
 
 void ObjectEvent_SetMode4WithCue(u32 objectId) {
-  Actor_SetMode(ObjectTable_Get(objectId), 4);
+  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 4);
   Sound_PlayFar(124);
   wait(12);
 }
 
 void ObjectEvent_SetMode2(u32 objectId) {
-  Actor_SetMode(ObjectTable_Get(objectId), 2);
+  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 2);
 }
 
 void ObjectEvent_SetMode6WithCue(u32 objectId) {
-  Actor_SetMode(ObjectTable_Get(objectId), 6);
+  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 6);
   Sound_PlayFar(124);
   wait(12);
 }

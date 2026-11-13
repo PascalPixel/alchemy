@@ -144,8 +144,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The user runs nine tenths of the way to the target.
-  first = GetBattleObjectSlotFar(effect->actor);
-  second = GetBattleObjectSlotFar(effect->actors[0]);
+  first = BattleObject_GetFar(effect->actor);
+  second = BattleObject_GetFar(effect->actors[0]);
   user = first->object;
   target = second->object;
   percent = 90;
@@ -154,9 +154,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   userHeight = BattleUnit_GetEffectHeightFar(effect->actor);
   targetHeight = BattleUnit_GetEffectHeightFar(effect->actors[0]);
   EffectPosition_ProjectBattler(effect->actors[0], &targetScreen);
-  Actor_ResetMotion(user);
-  Actor_SetTargetPosition(user, x, 0, z);
-  Actor_SetMode(user, 2);
+  Actor_StartIdleFar(user);
+  Actor_SetMoveTargetFar(user, x, 0, z);
+  Actor_SelectAnimationFar(user, 2);
   user->snapToTarget = 1;
   user->actionFlags = 1;
   user->acceleration = 2 << 16;
@@ -191,8 +191,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->actionFlags = 0;
-      Actor_ResetMotion(user);
-      Actor_SetTargetPosition(user, 0, 0, user->z);
+      Actor_StartIdleFar(user);
+      Actor_SetMoveTargetFar(user, 0, 0, user->z);
     }
 
     if (effect->variant == 0) {
@@ -291,7 +291,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       user->scaleY = -user->scaleY;
       user->y -= userHeight;
       target->y -= targetHeight;
-      Actor_SetMode(user, 0);
+      Actor_SelectAnimationFar(user, 0);
     }
     if (frame == 54) {
       if (effect->variant == 0)

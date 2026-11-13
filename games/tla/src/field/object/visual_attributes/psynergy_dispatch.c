@@ -102,12 +102,12 @@ void Func_080daecc(s32 objectId, s32 grow) {
   y = object->y & CELL_MASK;
   top = y + (8 << 16);
   z = (object->z & CELL_MASK) + (16 << 16);
-  Actor_SetMode((struct Actor *)object, 0);
+  Actor_SelectAnimationFar((struct Actor *)object, 0);
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->z += 16 << 16;
   object->y -= 64 << 16;
-  Actor_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSpriteFlagsFar(object, 0);
 
   // Hang the links.
   last = 6;
@@ -221,7 +221,7 @@ void Func_080db0b0(s32 id) {
   } else
     letGo = KEY_DOWN | KEY_RIGHT | KEY_B;
   slot->s.active = 1;
-  Actor_SetMode(leader, 32);
+  Actor_SelectAnimationFar(leader, 32);
   while (1) {
     slot->s.phase = SIDE_TURN(side ^ 1) + TRIG_TURN / 4;
     switch (gFrameCount & 63) {
@@ -262,17 +262,17 @@ void Func_080db0b0(s32 id) {
 
   sprite->unk12 = 0;
   slot->s.active = 0;
-  Actor_SetMode(leader, 6);
+  Actor_SelectAnimationFar(leader, 6);
   wait(6);
   Sound_PlayFar(152);
-  Actor_SetMode(leader, 7);
+  Actor_SelectAnimationFar(leader, 7);
   leader->speedLimit = Q16_ONE * 3;
   leader->acceleration = Q16_ONE * 2;
   leader->velocityY = Q16_ONE * 4;
   leader->motionFlags &= 0x7e;
-  Actor_SetSingleChildFlagsFar(leader, 0);
+  Actor_SetSpriteFlagsFar(leader, 0);
   wait(5);
-  Actor_SetMode(leader, 16);
+  Actor_SelectAnimationFar(leader, 16);
   leader->motionFlags = 0;
   rootX = slot->s.root->next->x;
   rootY = slot->s.root->next->y;
@@ -299,7 +299,7 @@ void Func_080db0b0(s32 id) {
     wait(1);
   }
   slot->s.active = 1;
-  Actor_SetMode(leader, 7);
+  Actor_SelectAnimationFar(leader, 7);
   leader->motionFlags = motionFlags & ~1;
   leader->velocityY = Q16_ONE * 4;
   for (i = 7; i >= 0; i--) {
@@ -308,8 +308,8 @@ void Func_080db0b0(s32 id) {
   }
   slot->s.spacing = Q16_ONE * 14;
   heldSprite->unk12 = 0;
-  Actor_SetMode(leader, 6);
-  Actor_SetSingleChildFlagsFar(leader, 1);
+  Actor_SelectAnimationFar(leader, 6);
+  Actor_SetSpriteFlagsFar(leader, 1);
   leader->motionFlags = motionFlags;
   wait(6);
   slot->s.active = 1;
@@ -642,7 +642,7 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
   if (object != 0) {
     SET_VECTOR(values, object->x, object->y, object->z);
     Vector_AddPolarOffset(magnitude, angle, values);
-    Actor_SetTargetPosition(object, values[0], values[1], values[2]);
+    Actor_SetMoveTargetFar(object, values[0], values[1], values[2]);
   }
 }
 

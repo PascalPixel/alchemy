@@ -39,9 +39,9 @@ void Leader_StopMoving(void) {
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gMainRoutineWork.renderMode == 2)
-    Actor_SetMode(object, 12);
+    Actor_SelectAnimationFar(object, 12);
   else
-    Actor_SetMode(object, 1);
+    Actor_SelectAnimationFar(object, 1);
 }
 
 void Event_Start(void) {
@@ -355,13 +355,13 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
                             *(s16 *)(work + 0xcb2), *(s16 *)(work + 0xcb4));
   if (answer != 0) {
     Actor_SetModeById(actor, 4);
-    Window_CloseMatchingIdFar(sprite);
+    Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gMainRoutineWork.eventMode != 2)
       Actor_WaitForAnimationEnd(actor, 4);
   } else {
     Actor_SetModeById(actor, 3);
-    Window_CloseMatchingIdFar(sprite);
+    Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gMainRoutineWork.eventMode != 2)
       Actor_WaitForAnimationEnd(actor, 3);

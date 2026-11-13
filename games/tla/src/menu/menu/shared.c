@@ -124,7 +124,7 @@ extern const u8 gStatusPanel_LvString[];
 void Window_ClearInteriorTilesFar(struct RenderInput *window, s32 x, s32 y,
                                   s32 width, s32 height);
 void WindowSprite_ClearListFar(struct RenderInput *window);
-void *SideObject_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
+void *Portrait_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
                            s32 a, s32 b);
 void Unit_UpdateClassFar(s32 owner);
 
@@ -211,7 +211,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
   }
   WindowSprite_ClearListFar(window);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    state->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
+    state->cursor = Portrait_CreateFar(owner, 0, 0, window, 0, 0);
 
   switch (mode & STATUS_PANEL_KIND_MASK) {
   case STATUS_PANEL_EQUIP_CLASS:

@@ -54,7 +54,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   // The motes start at the caster's chest with random velocities.
-  source = GetBattleObjectSlotFar(effect->actor)->object;
+  source = BattleObject_GetFar(effect->actor)->object;
   y = source->y + BattleUnit_GetEffectHeightFar(effect->actor);
   for (i = 0; i != MOTE_COUNT; i++) {
     point = &work->particles[i];
@@ -71,7 +71,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   // Each target's seat on the ground.
   for (i = 0; i != effect->count; i++) {
     seat = &work->particles[SEAT_FIRST + i];
-    object = GetBattleObjectSlotFar(effect->actors[i])->object;
+    object = BattleObject_GetFar(effect->actors[i])->object;
     seat->x = object->x;
     seat->y = 0;
     seat->z = object->z;

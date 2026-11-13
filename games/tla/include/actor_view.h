@@ -67,7 +67,7 @@ void Animation_ApplyChildValue(struct ActorSpriteView *, s32);
 s32 InitializeAnimationObjects(struct ActorSpriteView *);
 s32 ResourceMetadata_Register(struct ActorSpriteView *, s32);
 void Actor_StartScript(struct Actor *, const s32 *);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlagsFar(struct Actor *object, u32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32);
 void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32);
 void Actor_SetSpriteColorMode(struct Actor *, u32);

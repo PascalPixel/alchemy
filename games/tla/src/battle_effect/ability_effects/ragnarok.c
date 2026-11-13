@@ -65,12 +65,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   cells = Ram_HeapSlots->unk64[0];
 
   // Open the canvas, pose the user and place the columns.
-  user = GetBattleObjectSlotFar(effect->actor)->object;
+  user = BattleObject_GetFar(effect->actor)->object;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
-  Actor_SetMode(user, 2);
-  Actor_SelectAnimationFar(user, 48);
+  Actor_SelectAnimationFar(user, 2);
+  Actor_SetAnimationSpeedFar(user, 48);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   if (effect->side == 0)
     baseX = target.x / 2 - 24;
@@ -265,7 +265,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != BLADE_FRAMES);
 
-  Actor_SelectAnimationFar(user, 16);
+  Actor_SetAnimationSpeedFar(user, 16);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
   HeapSlot_Release(HEAP_BLITTER);

@@ -131,14 +131,14 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   work->transferValue = 50; // leaving a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
-  source = GetBattleObjectSlotFar(effect->actor)->object;
+  source = BattleObject_GetFar(effect->actor)->object;
   {
     s32 total = streaks * effect->count * 6 + 48;
 
     // Each streak flies from 20 pixels above the user to 20 pixels above
     // its target in 24 frames.
     for (k = 0; k != effect->count; k++) {
-      target = GetBattleObjectSlotFar(effect->actors[k])->object;
+      target = BattleObject_GetFar(effect->actors[k])->object;
       for (j = 0; j != streaks; j++) {
         struct EffectStep *streak = &work->particles[k * streaks + j];
 
@@ -214,7 +214,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
           if (RECORD(mode, RECORD_SHAKE) && frame >= k * 32 + 30 &&
               frame < k * 32 + 62) {
             struct MotionObject *struck =
-                GetBattleObjectSlotFar(effect->actors[k])->object;
+                BattleObject_GetFar(effect->actors[k])->object;
 
             struck->x += gStreaks_Tremble[(frame - k * 32 - 30) % 8] << 16;
             if (struck->x > 0)
@@ -340,7 +340,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   // Launch every mote from the user in 16.16 fixed point, with a speed and
   // a direction of its own. Slaver throws them up, faster, in a half-circle
   // fan turned by the user's side, from up to 16 pixels higher.
-  source = GetBattleObjectSlotFar(effect->actor)->object;
+  source = BattleObject_GetFar(effect->actor)->object;
   for (i = 0; i != 256; i++) {
     s32 speed;
     s32 angle;

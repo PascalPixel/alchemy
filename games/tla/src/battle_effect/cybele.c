@@ -363,7 +363,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (phase >= 0 && phase <= 172) {
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *object =
-            GetBattleObjectSlotFar(effect->actors[i])->object;
+            BattleObject_GetFar(effect->actors[i])->object;
 
         point[0] = object->x;
         point[1] = object->y;
@@ -424,7 +424,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame >= 161 && frame <= 223) {
       for (i = 0; i != effect->count; i++) {
         if (frame > i * 8 + 160) {
-          struct BattleObj *slot = GetBattleObjectSlotFar(effect->actors[i]);
+          struct BattleObj *slot = BattleObject_GetFar(effect->actors[i]);
           struct MotionObject *object = slot->object;
           void *record;
           s32 n;
@@ -443,7 +443,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 5 + 286) {
         struct MotionObject *object =
-            GetBattleObjectSlotFar(effect->actors[i])->object;
+            BattleObject_GetFar(effect->actors[i])->object;
 
         object->y = 96 << 16;
         object->verticalMotionStrength = 0xab85;
@@ -480,7 +480,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *object =
-            GetBattleObjectSlotFar(effect->actors[i])->object;
+            BattleObject_GetFar(effect->actors[i])->object;
 
         for (j = 0; j != 10; j++) {
           struct EffectStep *ember = &work->particles[i * 10 + j];
@@ -504,7 +504,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
         if (frame >= start && frame < i * 4 + 314) {
           s32 cel = (frame - start) / 2;
           struct MotionObject *object =
-              GetBattleObjectSlotFar(effect->actors[i])->object;
+              BattleObject_GetFar(effect->actors[i])->object;
 
           point[0] = object->x;
           point[1] = 0;
@@ -1080,7 +1080,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
      * EffectPosition_ProjectPoint(point, &screen), 12 of 337 instructions
      * differ in tla-en. */
     position = &screen;
-    object = GetBattleObjectSlotFar(effect->actors[member])->object;
+    object = BattleObject_GetFar(effect->actors[member])->object;
     height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
     point[0] = object->x;
     point[1] = height;
@@ -1215,7 +1215,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     struct MotionObject *object;
     s32 half;
 
-    object = GetBattleObjectSlotFar(effect->actors[member])->object;
+    object = BattleObject_GetFar(effect->actors[member])->object;
     half = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
     for (i = 0; i != MOTES_PER_MEMBER; i++) {
       struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
@@ -1263,7 +1263,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     struct MotionObject *user;
     s32 half;
 
-    user = GetBattleObjectSlotFar(effect->actor)->object;
+    user = BattleObject_GetFar(effect->actor)->object;
     half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
     if (frame == 64)
       BattlePlayback_StartFar(133);
@@ -1660,7 +1660,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
 
     for (member = 0; member != effect->count; member++) {
       struct MotionObject *object =
-          GetBattleObjectSlotFar(effect->actors[member])->object;
+          BattleObject_GetFar(effect->actors[member])->object;
       s32 start = member * 8;
 
       // The motes turn about a point 40 pixels above the target.
@@ -2066,7 +2066,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
     for (member = 0; member != effect->count; member++) {
       struct MotionObject *object =
-          GetBattleObjectSlotFar(effect->actors[member])->object;
+          BattleObject_GetFar(effect->actors[member])->object;
       s32 height =
           BattleUnit_GetEffectHeightFar(effect->actors[member]) * 2 / 3;
 
@@ -2367,7 +2367,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
       s32 y;
 
       time = frame - j * 4;
-      object = GetBattleObjectSlotFar(effect->actors[j])->object;
+      object = BattleObject_GetFar(effect->actors[j])->object;
       if (time > 0) {
         // The picture stands 40 pixels above the target.
         Transform_Reset();
@@ -2684,7 +2684,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
         for (member = 0; member != effect->count; member++) {
           struct MotionObject *object;
 
-          object = GetBattleObjectSlotFar(effect->actors[member])->object;
+          object = BattleObject_GetFar(effect->actors[member])->object;
           point[0] = object->x;
           point[1] = object->y;
           point[2] = object->z;
@@ -2706,7 +2706,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
       struct MotionObject *object;
       struct EffectStep *state;
 
-      object = GetBattleObjectSlotFar(effect->actors[member])->object;
+      object = BattleObject_GetFar(effect->actors[member])->object;
       state = &work->particles[member];
       if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
         state->variant = 1;
@@ -2770,7 +2770,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
 
   // The embers leave the top of the user's body: a random heading and
   // speed across, -16 to 111 sixty-fourths of a pixel up.
-  user = GetBattleObjectSlotFar(effect->actor)->object;
+  user = BattleObject_GetFar(effect->actor)->object;
   top = user->y + BattleUnit_GetEffectHeightFar(effect->actor);
   for (i = 0; i != 64; i++) {
     struct EffectStep *ember = &EMBERS[i];
@@ -2841,7 +2841,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
         s32 vz;
 
         target =
-            GetBattleObjectSlotFar(effect->actors[i % effect->count])->object;
+            BattleObject_GetFar(effect->actors[i % effect->count])->object;
         vx = ember->velocityX += (target->x - ember->x) >> 9;
         vy = ember->velocityY += (target->y - ember->y) >> 9;
         vz = ember->velocityZ += (target->z - ember->z) >> 9;
@@ -3548,8 +3548,8 @@ void BattleEffect_ArmBg1HBlankDma(void) {
 
 #include "field_event.h"
 
-#define Actor_SelectAnimationFar                                               \
-  ((s32 (*)(struct Actor *, s32))Actor_SelectAnimationFar)
+#define Actor_SetAnimationSpeedFar                                               \
+  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode0,
                    BattleEffect_RunProjectileVolleyB, 0)
@@ -3621,22 +3621,22 @@ void BattleEffect_RunVolleyBMode10WithAction(
     struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 10);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleEffect_RunVolleyBMode11WithAction(
     struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 11);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 // BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
@@ -4029,7 +4029,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       struct MotionObject *object;
       s32 half;
 
-      object = GetBattleObjectSlotFar(effect->actors[0])->object;
+      object = BattleObject_GetFar(effect->actors[0])->object;
       half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
       for (i = 0; i != 128; i++) {
         struct EffectStep *mote = &MOTES[i];
@@ -4305,7 +4305,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         s32 half;
         s32 *camera;
 
-        object = GetBattleObjectSlotFar(effect->actor)->object;
+        object = BattleObject_GetFar(effect->actor)->object;
         half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
         camera = Ram_HeapSlots->cameraWork;
         Transform_Reset();
@@ -4546,7 +4546,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
       struct MotionObject *memberObject;
 
       // The puffs rise from 40 pixels above the target.
-      memberObject = GetBattleObjectSlotFar(effect->actors[member])->object;
+      memberObject = BattleObject_GetFar(effect->actors[member])->object;
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       record[0] = memberObject->x;

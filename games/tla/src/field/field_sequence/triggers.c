@@ -277,7 +277,7 @@ s32 Scene_TalkToActor(s32 id) {
           FieldMessage_ShowFar((s32)&MsgKey0e17 + 1, 1);
         PartyStatus_CloseFar();
         trap->update = NULL;
-        Actor_SetMode(trap, 2);
+        Actor_SelectAnimationFar(trap, 2);
         Sound_PlayFar(246);
         Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgKey0e19, 1);
@@ -344,7 +344,7 @@ s32 Scene_TalkToActor(s32 id) {
           Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
           shown->update = NULL;
         } else {
-          Actor_Destroy(shown);
+          Actor_ReleaseFar(shown);
         }
         goto done;
       }
@@ -388,7 +388,7 @@ s32 Scene_TalkToActor(s32 id) {
         Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
         shown->update = NULL;
       } else {
-        Actor_Destroy(shown);
+        Actor_ReleaseFar(shown);
       }
       if (type == 133)
         ObjectEvent_Remove(index);
@@ -429,7 +429,7 @@ s32 Scene_TalkToActor(s32 id) {
     goto resume;
   if (!paused) {
     ((u8 *)object)[91] = 1;
-    Actor_SelectAnimationFar(object, 0);
+    Actor_SetAnimationSpeedFar(object, 0);
     savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -457,7 +457,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
     }
     ((u8 *)object)[91] = 0;
-    Actor_SelectAnimationFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, 16);
   }
   result = 0;
 resume:

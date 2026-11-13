@@ -47,7 +47,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   position.y = object->y;
   position.z = object->z;
   Camera_WorldToScreen__motes(&position);
-  Actor_Destroy(object);
+  Actor_ReleaseFar(object);
   Sound_PlayFar(164);
   slot = scene->slots;
   count = 23;
@@ -68,7 +68,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   wait(60);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(40);
   Sound_PlayFar(164);
   wait(100);
@@ -117,14 +117,13 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
-    Actor_Destroy(obj);
+    Actor_ReleaseFar(obj);
 }
 
 struct BattleFxScene__motes;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define Actor_ReleaseFar Actor_Destroy
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
@@ -199,6 +198,5 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
 }
 
 #undef Actor_SetChildValueUnlessFifteenFar
-#undef Actor_ReleaseFar
 #undef gBattleEffect_PulseScales
 #undef gEffectWork

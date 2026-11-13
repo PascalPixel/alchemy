@@ -277,7 +277,7 @@ void FieldPsynergy_Whirlwind(void) {
     return;
 
   FieldPsynergy_FadeToCastColor();
-  Actor_SetMode(orb, 2);
+  Actor_SelectAnimationFar(orb, 2);
   step = 0;
   do {
     s32 scale;
@@ -296,11 +296,11 @@ void FieldPsynergy_Whirlwind(void) {
   Sound_PlayFar(SE_ORB_ARRIVES);
 
   if (kind == ORB_PLAIN) {
-    Actor_SetMode(orb, 1);
+    Actor_SelectAnimationFar(orb, 1);
     wait(30);
     Sound_PlayFar(SE_ORB_FADES);
     Func_08020340(orb);
-    Actor_Destroy(orb);
+    Actor_ReleaseFar(orb);
   } else if (kind == ORB_ORBITING) {
     // Sixteen motes, one every six frames, 4 pixels above the orb and 0.8
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
@@ -328,14 +328,14 @@ void FieldPsynergy_Whirlwind(void) {
     }
     wait(20);
     wait(120);
-    Actor_SetMode(orb, 1);
+    Actor_SelectAnimationFar(orb, 1);
     wait(30);
     Sound_PlayFar(SE_ORB_FADES);
     Func_08020340(orb);
-    Actor_Destroy(orb);
+    Actor_ReleaseFar(orb);
   } else if (kind == ORB_WANDER || kind == ORB_HANDOFF) {
     wait(5);
-    Actor_SetMode(orb, 1);
+    Actor_SelectAnimationFar(orb, 1);
     if (kind == ORB_WANDER) {
       // Sixteen motes that wander about the orb, the first pausing longest.
       for (i = 0; i <= 15; i++) {
@@ -365,7 +365,7 @@ void FieldPsynergy_Whirlwind(void) {
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty__f0dfd00;
     Func_080db0b0(scene->secondObjectId);
     Func_08020340(orb);
-    Actor_Destroy(orb);
+    Actor_ReleaseFar(orb);
   }
   FieldPsynergy_FadeFromCastColor();
 }
@@ -460,7 +460,7 @@ void FieldPsynergy_Halt(void) {
   scene->y = user->y;
   obj = Actor_Spawn(309, 0, 0, 0);
   step = 0;
-  Actor_SetMode(obj, 0);
+  Actor_SelectAnimationFar(obj, 0);
   if (obj == 0)
     return;
 
@@ -488,7 +488,7 @@ void FieldPsynergy_Halt(void) {
   }
 
   wait(5);
-  Actor_SetMode(obj, 1);
+  Actor_SelectAnimationFar(obj, 1);
   Sound_PlayFar(108);
   wait(10);
   Sound_PlayFar(108);
@@ -514,14 +514,14 @@ void FieldPsynergy_Halt(void) {
   pos.y = obj->y + (8 << 16);
   pos.z = obj->z;
   wait(8);
-  Actor_Destroy(obj);
+  Actor_ReleaseFar(obj);
   wait(4);
   wait(30);
   FieldPsynergy_FadeFromCastColor();
 }
 
-#define Actor_SelectAnimationFar                                               \
-  ((void (*)(void *, s32))Actor_SelectAnimationFar)
+#define Actor_SetAnimationSpeedFar                                               \
+  ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
 
 void FieldPsynergy_UpdateHaltedActor(struct ActorView *object) {
   s8 *table = gBattleEffect_RandomChildValues;
@@ -545,7 +545,7 @@ void FieldPsynergy_HaltActor(s32 id) {
     }
     object->update = FieldPsynergy_UpdateHaltedActor;
     object->value5b = 1;
-    Actor_SelectAnimationFar(object, 0);
+    Actor_SetAnimationSpeedFar(object, 0);
   }
 }
 
@@ -559,7 +559,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 id) {
       Actor_SetSpriteColorModeFar(object, (s8)gMainRoutineWork.savedByte);
     }
     object->value5b = 0;
-    Actor_SelectAnimationFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, 16);
   }
 }
 
@@ -622,7 +622,7 @@ void FieldPsynergy_Catch(void) {
   object->facing = mainObject->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
   Actor_SetSpriteColorModeFar(object, 1);
   step = 0;
   do {
@@ -638,13 +638,13 @@ void FieldPsynergy_Catch(void) {
     step++;
   } while (step < steps);
   wait(10);
-  Actor_SetMode(object, 6);
+  Actor_SelectAnimationFar(object, 6);
   wait(15);
   for (index = 0; index < 10; index++) {
     object->y -= 0x20000;
     wait(1);
   }
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
   Sound_PlayFar(132);
   if (secondary != 0)
     Actor_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
@@ -669,7 +669,7 @@ void FieldPsynergy_Catch(void) {
     wait(1);
     step++;
   } while (step < steps);
-  Actor_Destroy(object);
+  Actor_ReleaseFar(object);
   FieldPsynergy_FadeFromCastColor();
 }
 
@@ -768,7 +768,7 @@ void Func_080e0618(void) {
     }
     break;
   case 3:
-    Actor_SetMode(object, 3);
+    Actor_SelectAnimationFar(object, 3);
     work->spawnCount = 3;
     object->y += work->timer << 17;
     if (work->timer == 10) {
@@ -842,7 +842,7 @@ void FieldPsynergy_Lash(void) {
     object->motionFlags = 0;
     if (caster->priorityFlags & 0x20)
       object->priorityFlags |= 0x20;
-    Actor_SetMode(object, 0);
+    Actor_SelectAnimationFar(object, 0);
     Sound_PlayFar(138);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
                         work);
@@ -872,7 +872,7 @@ void FieldPsynergy_Lash(void) {
     }
 
     Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
-    Actor_SetMode(object, 1);
+    Actor_SelectAnimationFar(object, 1);
     wait(10);
     for (i = 15; i >= 0; i--) {
       object->y += -0x20000;
@@ -905,7 +905,7 @@ void FieldPsynergy_Lash(void) {
     }
     VramCache_FreeEntry(slotA);
     VramCache_FreeEntry(slotB);
-    Actor_Destroy(object);
+    Actor_ReleaseFar(object);
   }
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
@@ -1004,11 +1004,11 @@ struct SpinScene {
  * Actor_SetSpriteColorModeFar(struct Actor *, u32). */
 extern void Animation_ApplyChildValuesFar__launch(
     void *object, s32 value) __asm__("Actor_SetSpriteColorModeFar");
-/* VIEW(launch): routine Actor_SetSingleChildFlagsFar as void
- * Actor_SetSingleChildFlagsFar(void *object, s32 flags); actor_view.h has void
- * Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags). */
+/* VIEW(launch): routine Actor_SetSpriteFlagsFar as void
+ * Actor_SetSpriteFlagsFar(void *object, s32 flags); actor_view.h has void
+ * Actor_SetSpriteFlagsFar(struct Actor *object, u32 flags). */
 extern void Actor_SetSingleChildFlagsFar__launch(
-    void *object, s32 flags) __asm__("Actor_SetSingleChildFlagsFar");
+    void *object, s32 flags) __asm__("Actor_SetSpriteFlagsFar");
 /* VIEW(launch): routine Camera_WorldToScreen as void
  * Camera_WorldToScreen(struct SpinVector *position); age_and_cue has void
  * Camera_WorldToScreen(struct EffectVector *pos). */
@@ -1043,12 +1043,12 @@ void FieldPsynergy_Retreat(void) {
   wait(30);
   obj->update = Actor_ApplyRandomChildValues;
   Sound_PlayFar(131);
-  Actor_SetMode(obj, 28);
+  Actor_SelectAnimationFar(obj, 28);
   wait(40);
 
   Sound_PlayFar(220);
   Animation_ApplyChildValuesFar__launch(obj, 0);
-  Actor_SetMode(obj, 3);
+  Actor_SelectAnimationFar(obj, 3);
   obj->update = BattleEffect_AdvanceAngleWithRamp__launch;
   obj->timer = 0;
   wait(70);
@@ -1110,7 +1110,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 
   y = particle->y;
   if (y <= limit) {
-    Actor_Destroy(particle);
+    Actor_ReleaseFar(particle);
     return;
   }
 
@@ -1138,7 +1138,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 
   y = particle->y;
   if (y <= limit) {
-    Actor_Destroy(particle);
+    Actor_ReleaseFar(particle);
     return;
   }
 

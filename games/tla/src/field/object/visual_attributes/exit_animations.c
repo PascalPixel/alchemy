@@ -105,6 +105,6 @@ void Func_080d5d70(s32 id, s32 side) {
   object->velocityZ = zero;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
-  Actor_SetMode(object, mode);
+  Actor_SelectAnimationFar(object, mode);
   wait(18);
 }

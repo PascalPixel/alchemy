@@ -55,14 +55,14 @@ void Func_0801521c(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 
-/* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition
- * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
- * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
- * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+/* VIEW(f16c274): routine BattleObject_GetFar as struct BattleObjectPosition
+ * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
+ * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
+ * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:16041: conflicting types for
- * `GetBattleObjectSlotFar'. */
+ * `BattleObject_GetFar'. */
 extern struct BattleObjectPosition **
-GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("BattleObject_GetFar");
 void *Resource_GetTableEntry(s32 resource);
 
 extern char ResourceId_Data0FB;

@@ -75,7 +75,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
     for (k = 0; k != effect->count; k++) {
       struct MotionObject *target =
-          GetBattleObjectSlotFar(effect->actors[k])->object;
+          BattleObject_GetFar(effect->actors[k])->object;
 
       // Each target's skulls turn about a point 20 pixels above it.
       Transform_Reset();
@@ -211,7 +211,7 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
       while (member != effect->count) {
         struct MotionObject *target;
 
-        target = GetBattleObjectSlotFar(effect->actors[member])->object;
+        target = BattleObject_GetFar(effect->actors[member])->object;
         if (frame > member * 16 && frame < (member * 16) + 60) {
           s32 spin;
 
@@ -320,7 +320,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
   for (k = 0; k != effect->count; k++) {
-    struct MotionObject *source = GetBattleObjectSlotFar(effect->actor)->object;
+    struct MotionObject *source = BattleObject_GetFar(effect->actor)->object;
     s32 height = BattleUnit_GetEffectHeightFar(effect->actor);
 
     for (i = 0; i != MOTES_PER_TARGET; i++) {
@@ -381,7 +381,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
     for (k = 0; k != effect->count; k++) {
       struct MotionObject *target =
-          GetBattleObjectSlotFar(effect->actors[k])->object;
+          BattleObject_GetFar(effect->actors[k])->object;
       s32 half = BattleUnit_GetEffectHeightFar(effect->actors[k]) / 2;
 
       if (frame == k * 20 + 71) {

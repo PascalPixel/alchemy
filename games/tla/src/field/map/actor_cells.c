@@ -73,7 +73,7 @@ void Func_080eabd0(u16 *actors) {
 
     object->motionFlags = 0;
     object->collisionFlags = 0;
-    Actor_SetSingleChildFlagsFar(object, 0);
+    Actor_SetSpriteFlagsFar(object, 0);
     shapes += slot;
     tag = Func_080eab98(object->terrainId, key, level + 4);
     cell = &cells[slot];

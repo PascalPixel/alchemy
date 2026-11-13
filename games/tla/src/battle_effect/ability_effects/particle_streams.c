@@ -13,7 +13,7 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
   struct MotionObject *object;
   u32 enemy;
 
-  slot = GetBattleObjectSlotFar(id);
+  slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
@@ -22,14 +22,14 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
     object->acceleration = 0x80000;
     object->speedLimit = 0xa0000;
     object->velocityY = 0x18000;
-    Actor_ResetMotion(object);
-    Actor_SetTargetPosition(object, slot->anchorX * percent / 100, 0,
+    Actor_StartIdleFar(object);
+    Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
                             slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
 }
 
 // Unused: a second copy of Nereid's summon effect.
@@ -299,7 +299,7 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
 
             if (phase == 0) {
               struct MotionObject *target =
-                  GetBattleObjectSlotFar(effect->actors[k])->object;
+                  BattleObject_GetFar(effect->actors[k])->object;
 
               BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
               target->velocityY = 0x48000;
@@ -760,7 +760,7 @@ void SceneTransform_ApplyPosition(const s32 *pos);
 void Transform_ApplyRoll(s32 roll); // Transform_ApplyRoll
 void Transform_ApplyYaw(s32 yaw);
 void BattleEffect_SetupBlendedDisplay(void);
-void BattleActor_CommitPlacementFar(void);
+void BattleObject_PutFar(void);
 
 void Transform_SetLookAt(s32 *eye, s32 *position);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -842,7 +842,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
    * instructions differ in tla-en. */
   direction = mode;
   if (direction == 1) {
-    struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
+    struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
 
     user->velocityY = 0xa0000;
     user->verticalMotionStrength = 0x91eb;
@@ -1246,7 +1246,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       if (mode == 1) {
         Sprite_DestroyFar(work->objects[0]);
         Sprite_DestroyFar(work->objects[1]);
-        BattleActor_CommitPlacementFar();
+        BattleObject_PutFar();
       }
       BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
     }

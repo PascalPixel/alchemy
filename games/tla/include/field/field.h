@@ -64,7 +64,7 @@ void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
 void FieldPsynergy_Run(void);
 void BattleEffect_SelectBattleCue(s32 row, s32 column);
 void FieldPsynergy_SetupActorPair(s32 actor, s32 target);
-s32 BattleEffect_StartBufferInterpolationFar(s32);
+s32 PaletteFade_StartInterpolationFar(s32);
 s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
 struct BattleEffectArgument;
 void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,

@@ -82,7 +82,7 @@ void FieldPsynergy_Hover(void) {
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
   BattleEffect_SetObjectUpdateMode(player, 0);
-  Actor_SetMode(player, 5);
+  Actor_SelectAnimationFar(player, 5);
   Sound_PlayFar(130);
   wait(1);
   work->unk1030 = 0;

@@ -30,12 +30,12 @@ Resource_FarCall004:
 	export Text_SetStyleFar, Text_SetStyle
 	export WindowSprite_CreateFar, WindowSprite_Create
 	export WindowSprite_CreateFromResourceFar, WindowSprite_CreateFromResource
-	export SideObject_CreateFar, Portrait_Create
+	export Portrait_CreateFar, Portrait_Create
 	export Portrait_ReloadFar, Portrait_Reload
 	export WindowSprite_SetMotionFar, WindowSprite_SetMotion
 	export WindowSprite_SetInvertedSentinelFar, WindowSprite_SetInvertedSentinel
 	export Portrait_OpenWindowFar, Portrait_OpenWindow
-	export Window_CloseMatchingIdFar, Portrait_CloseWindow
+	export Portrait_CloseWindowFar, Portrait_CloseWindow
 	export Text_GetMessageSizeFar, Text_GetMessageSize
 	export Text_GetMessageSizeAltFar, Text_GetMessageSizeAlt
 	export MessageArgument_ClearAllFar, MessageArgument_ClearAll
@@ -45,10 +45,10 @@ Resource_FarCall004:
 	export PartyStatus_CloseFar, PartyStatus_Close
 	export Message_CloseFinishedWindowsFar, Message_CloseFinishedWindows
 	export Window_CloseAllFar, Window_CloseAll
-	export UiGlyph_ResetWorkStateFar, SelectionMenu_Create
+	export SelectionMenu_CreateFar, SelectionMenu_Create
 	export SelectionMenu_ClearFar, SelectionMenu_Clear
 	export SelectionMenu_AddEntryFar, SelectionMenu_AddEntry
-	export Resource_ScheduleOwnerResetDelayedFar, SelectionMenu_StartDrawing
+	export SelectionMenu_StartDrawingFar, SelectionMenu_StartDrawing
 	export SelectionMenu_StopDrawingFar, SelectionMenu_StopDrawing
 	export SelectionMenu_OpenNameWindowFar, SelectionMenu_OpenNameWindow
 	export SelectionMenu_CloseFar, SelectionMenu_Close

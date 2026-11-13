@@ -197,7 +197,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
       work->transferValue += 0x01010101;
 
     for (member = 0; member != 1; member++) {
-      motion = GetBattleObjectSlotFar(effect->actors[member])->object;
+      motion = BattleObject_GetFar(effect->actors[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();
@@ -334,7 +334,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
       work->transferValue += 0x01010101;
 
     for (member = 0; member != 1; member++) {
-      object = GetBattleObjectSlotFar(effect->actors[member])->object;
+      object = BattleObject_GetFar(effect->actors[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();

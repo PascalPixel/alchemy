@@ -5,7 +5,7 @@
 Resource_FarCall006:
 	export FieldSequence_RunFar, FieldSequence_Run
 	export MainRoutine_RunFar, MainRoutine_Run
-	export FieldEvent_WaitFar, Event_Wait
+	export Event_WaitFar, Event_Wait
 	export Event_StartFar, Event_Start
 	export Event_EndFar, Event_End
 	export Event_RunObjectHookAndWaitFar, Event_RunObjectHookAndWait
@@ -94,7 +94,7 @@ Resource_FarCall006:
 	export Field_FindNearbyTalkTargetFar, Field_FindNearbyTalkTarget
 	export FieldPsynergy_SteerPushedTargetFar, FieldPsynergy_SteerPushedTarget
 	export FieldPsynergy_StartCloakFar, FieldPsynergy_StartCloak
-	export BattleEffect_FindNearestObjectFar, Field_FindNearbyPsynergyTarget
+	export Field_FindNearbyPsynergyTargetFar, Field_FindNearbyPsynergyTarget
 	export Field_TryJumpForwardFar, Field_TryJumpForward
 	export Func_080c82e8, Func_080d50f8
 	export Func_080c82f0, Func_080d53b8
@@ -117,14 +117,14 @@ Resource_FarCall006:
 	export BattleEffect_ApplyColorToTargetBufferFar, BattleEffect_ApplyColorToTargetBuffer
 	export BattleEffect_ApplyColorToSourceBufferFar, BattleEffect_ApplyColorToSourceBuffer
 	export BattleEffect_InterpolateBuffersFar, BattleEffect_InterpolateBuffers
-	export BattleEffect_StartBufferInterpolationFar, PaletteFade_StartInterpolation
+	export PaletteFade_StartInterpolationFar, PaletteFade_StartInterpolation
 	export BattlePalette_StopBlendAndReleaseBufferFar, BattlePalette_StopBlendAndReleaseBuffer
 	export BattleEffect_SetPrimaryBufferValueFar, BattleEffect_SetPrimaryBufferValue
 	export Event_StartScreenTransitionFar, Event_StartScreenTransition
 	export Event_FinishScreenTransitionFar, Event_FinishScreenTransition
 	export Event_WaitTransitionFramesFar, Event_WaitTransitionFrames
-	export DisplayScroll_InitializeHBlankDmaFar, LineScroll_InitWave
-	export DisplayScroll_DisarmHBlankDmaFar, LineScroll_Stop
+	export LineScroll_InitWaveFar, LineScroll_InitWave
+	export LineScroll_StopFar, LineScroll_Stop
 	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
 	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
 	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem
@@ -141,7 +141,7 @@ Resource_FarCall006:
 	export Func_080c8438, Func_080cb8a4
 	export Func_080c8440, Func_080caa4c
 	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
-	export ObjectTable_DestroyAtIndexFar, Actor_ReleaseAtIndex
+	export Actor_ReleaseAtIndexFar, Actor_ReleaseAtIndex
 	export ObjectTable_GetFar, ObjectTable_Get
 	export Func_080c8460, Func_080ca9cc
 	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay
@@ -150,14 +150,14 @@ Resource_FarCall006:
 	export Func_080c8480, Func_080d1cc0
 	export Func_080c8488, Func_080d1d34
 	export Func_080c8490, Func_080d1d44
-	export Field_DispatchTypeHandlerFar, FieldPsynergy_RunHandler
+	export FieldPsynergy_RunHandlerFar, FieldPsynergy_RunHandler
 	export BattleEffect_LoadActionEffectResourcesFar, BattleEffect_LoadActionEffectResources
-	export BattleEffect_SetupObjectPairFar, FieldPsynergy_SetupActorPair
+	export FieldPsynergy_SetupActorPairFar, FieldPsynergy_SetupActorPair
 	export BattleEffect_StopMainActorFar, BattleEffect_StopMainActor
 	export BattleEffect_CleanupSceneObjectsFar, BattleEffect_CleanupSceneObjects
 	export EventObject_InitializeFar, EventObject_Initialize
-	export BattleEffect_InitializeSharedSceneFar, FieldPsynergy_FadeToCastColor
-	export BattleEffect_PrepareBufferInterpolationFar, FieldPsynergy_FadeFromCastColor
+	export FieldPsynergy_FadeToCastColorFar, FieldPsynergy_FadeToCastColor
+	export FieldPsynergy_FadeFromCastColorFar, FieldPsynergy_FadeFromCastColor
 	export Event_ResolveAllPendingActionsFar, Event_ResolveAllPendingActions
 	export Event_ResolvePendingActionsFar, Event_ResolvePendingActions
 	export FieldPsynergy_StartMindReadWaveFar, FieldPsynergy_StartMindReadWave
@@ -188,16 +188,16 @@ Resource_FarCall006:
 	export FieldParticle_InitializeFar, FieldParticle_Initialize
 	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot
 	export Camera_WorldToScreenFar, Camera_WorldToScreen
-	export BattleEffect_GetResourceIdFar, Speaker_GetVoice
-	export Event_ClearInvalidPackedValuesFar, Party_ClearUnusableShortcuts
+	export Speaker_GetVoiceFar, Speaker_GetVoice
+	export Party_ClearUnusableShortcutsFar, Party_ClearUnusableShortcuts
 	export FieldEffect_InitializeSlotsFar, FieldEffect_InitializeSlots
 	export FieldEffect_ReleaseSlotsFar, FieldEffect_ReleaseSlots
-	export Motion_LaunchFromFocusedObjectFar, Actor_LaunchFromLeader
+	export Actor_LaunchFromLeaderFar, Actor_LaunchFromLeader
 	export Actor_WalkByByIdFar, Actor_WalkByById
 	export Actor_WalkByAndWaitByIdFar, Actor_WalkByAndWaitById
 	export Actor_WatchAndSetScriptFar, Actor_WatchAndSetScript
-	export BattleEffect_PauseObjectFar, FieldPsynergy_HaltActor
-	export BattleEffect_ResumeObjectFar, FieldPsynergy_ResumeHaltedActor
+	export FieldPsynergy_HaltActorFar, FieldPsynergy_HaltActor
+	export FieldPsynergy_ResumeHaltedActorFar, FieldPsynergy_ResumeHaltedActor
 	export Actor_FindBySpriteFar, Actor_FindBySprite
 	export Actor_GetSpriteByIdFar, Actor_GetSpriteById
 	export ObjectTable_SnapshotFar, ObjectTable_Snapshot
@@ -325,6 +325,6 @@ Func_080c88e8:
 	export Func_080c8948, Func_080e28d4
 	export Func_080c8950, Func_080d072c
 	export Party_CheckItemLimitFar, Party_CheckItemLimit
-	export SceneEvent_FindActiveRecordFar, Scene_FindTrigger
+	export Scene_FindTriggerFar, Scene_FindTrigger
 	export Func_080c8968, Func_080d1760
 	export BattleEffect_LoadBufferPaletteFar, BattleEffect_LoadBufferPalette

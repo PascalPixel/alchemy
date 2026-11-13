@@ -512,7 +512,7 @@ struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
   sprite->oam.bits.tile = entries[sprite->vramEntry].offset >> 5;
   return found;
 }
-#undef Actor_SelectAnimationFar
+#undef Actor_SetAnimationSpeedFar
 #undef PARTICLES
 #undef HI
 #undef BLITTER_ADDITIVE

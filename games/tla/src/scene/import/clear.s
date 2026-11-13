@@ -29,7 +29,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -61,7 +61,7 @@ Serial_RemoveIrqHandlers:
 	.global Serial_StartReceive
 	.thumb_func
 Serial_StartReceive:
-	overlay_veneer Party_CheckFar
+	overlay_veneer Serial_StartReceiveFar
 	.global Unit_Get
 	.thumb_func
 Unit_Get:
@@ -73,11 +73,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Window_Create
 	.thumb_func
 Window_Create:
@@ -253,7 +253,7 @@ Func_020023a0:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:

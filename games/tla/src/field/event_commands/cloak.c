@@ -37,7 +37,7 @@ void FieldPsynergy_StartCloak(void) {
   s32 order;
 
   Sound_PlayFar(SE_CLOAK);
-  Actor_SetMode((struct Actor *)caster, 0);
+  Actor_SelectAnimationFar((struct Actor *)caster, 0);
   caster->hook = 0;
 
   for (n = 0; n < 10; n++) {
@@ -235,7 +235,7 @@ void FieldPsynergy_Douse(void) {
         mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
         mote->motionFlags = 0;
         ((struct Effect05Sprite *)mote->sprite)->mode = 2;
-        Actor_SetMode(mote, 8);
+        Actor_SelectAnimationFar(mote, 8);
         Actor_SetSpriteColorModeFar((struct Actor *)mote, 7);
       }
       wait(6);
@@ -271,7 +271,7 @@ void FieldPsynergy_Douse(void) {
     wait(1);
     i++;
   } while (i < steps);
-  Actor_Destroy((struct Actor *)orb);
+  Actor_ReleaseFar((struct Actor *)orb);
   FieldPsynergy_FadeFromCastColor();
 }
 
@@ -295,7 +295,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   if (obj != 0) {
     obj->motionFlags = 2;
     obj->gravity = 0x1999;
-    Actor_SetMode(obj, 0);
+    Actor_SelectAnimationFar(obj, 0);
     ((struct ParticleTimer *)obj)->timer = 12;
     Actor_StartScriptFar((struct Actor *)obj,
                          gBattleEffect_SharedParticleScript);
@@ -382,10 +382,10 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   p->x = target->x;
   p->y = target->y + 0x100000;
   p->z = target->z;
-  Actor_SetTargetPosition(object, p->x + 0x100000, p->y, p->z);
-  Actor_SetTargetPosition(right, p->x - 0x100000, p->y, p->z);
-  Actor_CommitPosition(object);
-  Actor_CommitPosition(right);
+  Actor_SetMoveTargetFar(object, p->x + 0x100000, p->y, p->z);
+  Actor_SetMoveTargetFar(right, p->x - 0x100000, p->y, p->z);
+  Actor_WaitForMoveFar(object);
+  Actor_WaitForMoveFar(right);
   object->x = p->x + 0x100000;
   object->velocityX = 0;
   right->x = p->x - 0x100000;
@@ -394,7 +394,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(130);
   target->flag = 4;
-  Actor_SetSingleChildFlagsFar((struct Actor *)target, 0);
+  Actor_SetSpriteFlagsFar((struct Actor *)target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y - target->ground <= 0x180000) {
       object->y += 0x6000;
@@ -420,24 +420,24 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       position.x = target->x;
       position.y = target->y + 0x100000;
       position.z = target->z;
-      Actor_SetTargetPosition(anchors[0], position.x + 0x100000, position.y,
+      Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
                               position.z);
-      Actor_SetTargetPosition(anchors[1], position.x - 0x100000, position.y,
+      Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
                               position.z);
-      Actor_SetMode(anchors[0], 1);
-      Actor_SetMode(anchors[1], 1);
+      Actor_SelectAnimationFar(anchors[0], 1);
+      Actor_SelectAnimationFar(anchors[1], 1);
       continue;
     }
     position.x = target->x;
     position.y = target->y + 0x100000;
     position.z = target->z;
     Vector_AddPolarOffset(0x20000, angle, &position);
-    Actor_SetTargetPosition(anchors[0], position.x + 0x100000, position.y,
+    Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
                             position.z);
-    Actor_SetTargetPosition(anchors[1], position.x - 0x100000, position.y,
+    Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
                             position.z);
-    Actor_CommitPosition(anchors[0]);
-    Actor_CommitPosition(anchors[1]);
+    Actor_WaitForMoveFar(anchors[0]);
+    Actor_WaitForMoveFar(anchors[1]);
     position.x = target->x;
     position.y = target->ground;
     position.z = target->z;
@@ -450,8 +450,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       goto blocked;
     if (Actor_ProbeRaised(target, p) > 0) {
     blocked:
-      Actor_SetMode(anchors[0], 4);
-      Actor_SetMode(anchors[1], 4);
+      Actor_SelectAnimationFar(anchors[0], 4);
+      Actor_SelectAnimationFar(anchors[1], 4);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(114);
       continue;
@@ -464,21 +464,21 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Sound_PlayFar(175);
       x = p->x;
       z = p->z;
-      Actor_SetMode(anchors[0], 4);
-      Actor_SetMode(anchors[1], 4);
+      Actor_SelectAnimationFar(anchors[0], 4);
+      Actor_SelectAnimationFar(anchors[1], 4);
       wait(15);
       target->unk5b = i;
       target->speed = 0x3333;
       target->lift = 0x3333;
-      Actor_SetTargetPosition(target, p->x, p->y, p->z);
+      Actor_SetMoveTargetFar(target, p->x, p->y, p->z);
       anchors[0]->speed = 0x3333;
       anchors[0]->lift = 0x3333;
       second = anchors[1];
       second->speed = 0x3333;
       second->lift = 0x3333;
-      Actor_SetTargetPosition(anchors[0], p->x + 0x100000, p->y, p->z);
-      Actor_SetTargetPosition(second, p->x - 0x100000, p->y, p->z);
-      Actor_CommitPosition(target);
+      Actor_SetMoveTargetFar(anchors[0], p->x + 0x100000, p->y, p->z);
+      Actor_SetMoveTargetFar(second, p->x - 0x100000, p->y, p->z);
+      Actor_WaitForMoveFar(target);
       target->x = x;
       target->z = z;
       target->velocityX = i;
@@ -487,8 +487,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       break;
     }
   }
-  Actor_SetMode(anchors[0], 4);
-  Actor_SetMode(anchors[1], 4);
+  Actor_SelectAnimationFar(anchors[0], 4);
+  Actor_SelectAnimationFar(anchors[1], 4);
   Task_Remove((u32)FieldEffect_SpawnFallingParticles);
   Sound_PlayFar(135);
   wait(15);
@@ -519,8 +519,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     }
   }
   Sound_PlayFar(131);
-  Actor_Destroy(anchors[0]);
-  Actor_Destroy(anchors[1]);
+  Actor_ReleaseFar(anchors[0]);
+  Actor_ReleaseFar(anchors[1]);
   Actor_SetSpriteColorModeFar((struct Actor *)target, work->palette);
   Actor_StartScriptFar((struct Actor *)target, (u32)(work->script));
   target->callback = work->callback;

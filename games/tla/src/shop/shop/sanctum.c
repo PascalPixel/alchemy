@@ -84,7 +84,7 @@ void Sanctum_ShowKeeperMessage(s32 message) {
   s32 portrait;
 
   shop = Ram_HeapSlots->menuRuntime;
-  portrait = BattleEffect_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
+  portrait = Speaker_GetVoiceFar(*(u16 *)(shop + 0x4fa));
   Message_CloseFinishedWindowsFar();
   message = Sanctum_GetServiceMessage(message);
   Message_OpenWindowFar(message, 5, 0, (portrait << 16) | 0x22);
@@ -105,7 +105,7 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 message) {
   shop = Ram_HeapSlots->menuRuntime;
   anchor = &shop->cursor.anchor;
   saved = (*anchor)[5];
-  portrait = BattleEffect_GetResourceIdFar(shop->keeperResource);
+  portrait = Speaker_GetVoiceFar(shop->keeperResource);
   message = Sanctum_GetServiceMessage(message);
   (*anchor)[5] = 13;
   Message_CloseFinishedWindowsFar();
@@ -127,7 +127,7 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 message) {
 // count the downed, Sanctum_RunPartyService for the service, Shop_ReleaseWork
 // to clean up), its work-block offsets and numbered messages.
 
-void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
+void Portrait_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 
 s32 Sanctum_Run(s32 unitId) {
   s32 partyAction = 0;
@@ -147,7 +147,7 @@ s32 Sanctum_Run(s32 unitId) {
     listWindow = Window_CreateFar(-5, 0, 5, 5, 2);
     if (listWindow == 0) {
       listWindow = Window_CreateFar(0, 0, 5, 5, 2);
-      SideObject_CreateFar(2, 0, 0, listWindow, -4, -4);
+      Portrait_CreateFar(2, 0, 0, listWindow, -4, -4);
     }
   }
 

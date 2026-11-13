@@ -147,7 +147,7 @@ s32 FieldSequence_Run(void) {
 
   if (ARRIVAL.state == 2) {
     Actor_GetById(Party_GetLeaderActor())->scaleX = 0;
-    Actor_SetSingleChildFlagsFar(Actor_GetById(Party_GetLeaderActor()), 0);
+    Actor_SetSpriteFlagsFar(Actor_GetById(Party_GetLeaderActor()), 0);
   }
   Func_080cb05c();
   wait(2);
@@ -246,7 +246,7 @@ s32 FieldSequence_Run(void) {
   for (;;) {
     GameFlag_SetBit(260);
     leader = WorldMap_Unfreeze();
-    Actor_ResetMotion(leader);
+    Actor_StartIdleFar(leader);
     party->x = leader->x;
     party->y = 0;
     party->z = leader->z;
@@ -264,15 +264,15 @@ s32 FieldSequence_Run(void) {
           Leader_StopMoving();
           WorldMap_Freeze();
           for (value = 0; value < work->fallenCount; value++) {
-            Actor_SetMode(leader, 22);
+            Actor_SelectAnimationFar(leader, 22);
             MessageArgument_PushFar(work->fallenOwners[value], 1);
             FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted, 1);
           }
           if (work->survivorCount == 0) {
             if (*leaderId == 4)
-              Actor_SetMode(leader, 36);
+              Actor_SelectAnimationFar(leader, 36);
             else
-              Actor_SetMode(leader, 19);
+              Actor_SelectAnimationFar(leader, 19);
             Sound_PlayFar(59);
             FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated, 1);
             unit = Unit_Get(*leaderId);

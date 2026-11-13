@@ -22,12 +22,12 @@ Resource_FarCall009:
 	export BattleMotion_LeapBackFar, BattleMotion_LeapBack
 	export BattleMotion_ApplyKnockbackFar, BattleMotion_ApplyKnockback
 	export BattleParty_ListActorIdsFar, BattleParty_ListActorIds
-	export GetBattleObjectSlotFar, BattleObject_Get
+	export BattleObject_GetFar, BattleObject_Get
 	export Battle_RunEncounterFar, Battle_RunEncounter
 	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
 	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition
 	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
-	export BattleUnit_ListLivingFar, BattleParty_ListLivingUnits
+	export BattleParty_ListLivingUnitsFar, BattleParty_ListLivingUnits
 	export BattleParty_PrepareMembersFar, BattleParty_PrepareMembers
 	export BattleCamera_SetCommandViewFar, BattleCamera_SetCommandView
 	export GetMotionRecordFar, GetMotionRecord
@@ -38,7 +38,7 @@ Resource_FarCall009:
 	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette
 	export DjinnRecovery_CountDownTwentyFar, DjinnRecovery_CountDownTwenty
 	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
-	export BattleActor_CommitPlacementFar, BattleObject_Put
+	export BattleObject_PutFar, BattleObject_Put
 	export ReleaseBattleObjectRecordsFar, ReleaseBattleObjectRecords
 	export BattleMessage_WaitForAdvanceAtFar, BattleMessage_WaitForAdvanceAt
 	export BattleDjinn_CountStandbyFar, BattleDjinn_CountStandby

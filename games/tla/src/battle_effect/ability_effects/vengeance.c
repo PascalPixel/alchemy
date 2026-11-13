@@ -1003,7 +1003,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 0) {
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *object =
-            GetBattleObjectSlotFar(effect->actors[i])->object;
+            BattleObject_GetFar(effect->actors[i])->object;
 
         work->particles[i].x = object->x;
         work->particles[i].y = 0;

@@ -29,9 +29,9 @@ FieldParticle_Initialize__mars_join(void *slot, s32 kind, s32 x,
  * Animation_ApplyChildValuesToRecordFar(void *object, u32 value). */
 extern void Animation_ApplyChildValuesToRecordFar__mars_join(
     s32 object, s32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
-/* VIEW(mars_join): routine Actor_Destroy as void Actor_Destroy(void *object);
- * battle.h has void Actor_Destroy(struct Actor *object). */
-extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_Destroy");
+/* VIEW(mars_join): routine Actor_ReleaseFar as void Actor_ReleaseFar(void *object);
+ * battle.h has void Actor_ReleaseFar(struct Actor *object). */
+extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_ReleaseFar");
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
@@ -72,7 +72,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   djinni->timer = 0;
   wait(80);
   djinni->update = FieldEffect_ShrinkActorAndDestroySlow;
-  Actor_SetMode(djinni, 3);
+  Actor_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
   position.x = djinni->x;
@@ -106,7 +106,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   wait(60);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
 
   // Every spark still in use stops its fountain (state 2). The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.

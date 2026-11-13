@@ -100,7 +100,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     // Each enemy's place, heading, distance and facing, to restore at the
     // end; its bobbing stops.
     for (index = 0; index != effect->count; index++) {
-      context = GetBattleObjectSlotFar(effect->actors[index]);
+      context = BattleObject_GetFar(effect->actors[index]);
       object = context->object;
       home[index].x = object->x;
       home[index].y = object->z;
@@ -155,7 +155,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       // rise, spinning faster; each comet strike knocks them down.
       for (index = 0; index != effect->count; index++) {
         if (frame > index * 16) {
-          context = GetBattleObjectSlotFar(effect->actors[index]);
+          context = BattleObject_GetFar(effect->actors[index]);
           object = context->object;
           object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
           object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
@@ -280,7 +280,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         } while (index != 512);
 
         for (index = 0; index != effect->count; index++) {
-          context = GetBattleObjectSlotFar(effect->actors[index]);
+          context = BattleObject_GetFar(effect->actors[index]);
           object = context->object;
           object->y = ((Random16() & 15) + 8) << 16;
         }
@@ -530,7 +530,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     for (index = 0; index != effect->count; index++) {
       struct MotionObject *enemy;
 
-      context = GetBattleObjectSlotFar(effect->actors[index]);
+      context = BattleObject_GetFar(effect->actors[index]);
       enemy = context->object;
       enemy->x = home[index].x;
       enemy->z = home[index].y;
@@ -623,7 +623,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     // pixels further right and lower, with its sparks and flashes.
     alternate = 0;
 
-    if (((struct Actor *)GetBattleObjectSlotFar(effect->actors[0])->object)
+    if (((struct Actor *)BattleObject_GetFar(effect->actors[0])->object)
             ->animationKind == 2)
       alternate = 1;
 

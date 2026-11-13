@@ -224,7 +224,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
 
             if (phase == 0) {
               struct MotionObject *target =
-                  GetBattleObjectSlotFar(effect->actors[k])->object;
+                  BattleObject_GetFar(effect->actors[k])->object;
 
               BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
               target->velocityY = 0x48000;

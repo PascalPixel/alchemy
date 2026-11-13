@@ -885,7 +885,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       struct MotionObject *caster;
       s32 traced;
 
-      caster = GetBattleObjectSlotFar(effect->actor)->object;
+      caster = BattleObject_GetFar(effect->actor)->object;
       if (caster->x > 0) {
         point[0] = caster->x - 0x80000;
       } else {

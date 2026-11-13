@@ -26,14 +26,14 @@ void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/* VIEW(f16c6f8): routine GetBattleObjectSlotFar as void
- * **GetBattleObjectSlotFar(s32 objectId); f16c274 has struct
- * BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); tried as the 11
- * declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not
+/* VIEW(f16c6f8): routine BattleObject_GetFar as void
+ * **BattleObject_GetFar(s32 objectId); f16c274 has struct
+ * BattleObjectPosition **BattleObject_GetFar(s32 objectId); tried as the 11
+ * declarations' void **BattleObject_GetFar(s32 objectId), it does not
  * compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:16275:
- * conflicting types for `GetBattleObjectSlotFar'. */
+ * conflicting types for `BattleObject_GetFar'. */
 extern void **
-GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("BattleObject_GetFar");
 void *Resource_GetTableEntry(s32 resource);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -161,7 +161,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
   IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
-  Actor_SelectAnimationFar(caster, 48);
+  Actor_SetAnimationSpeedFar(caster, 48);
   Func_0818de3c(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
   for (frame = 0; frame != 74; frame++) {
@@ -418,7 +418,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Actor_SelectAnimationFar(caster, 16);
+  Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

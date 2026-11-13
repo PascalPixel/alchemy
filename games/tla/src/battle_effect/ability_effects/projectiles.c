@@ -151,8 +151,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  actor = GetBattleObjectSlotFar(effect->actor)->object;
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  actor = BattleObject_GetFar(effect->actor)->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
 
   // 64 sparks start on the ground around the caster, flying outward.
   for (i = 0; i != 64; i++) {
@@ -365,8 +365,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   REG_BLDALPHA = 0x1010;
 }
 
-#define Actor_SelectAnimationFar                                               \
-  ((s32 (*)(struct Actor *, s32))Actor_SelectAnimationFar)
+#define Actor_SetAnimationSpeedFar                                               \
+  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunSlash, BattleEffect_RunProjectileVolley, 0)
 
@@ -388,21 +388,21 @@ DEFINE_EFFECT_KIND(BattleEffect_RunWingBeat, BattleEffect_RunProjectileVolley,
 void BattleEffect_RunCuttingEdge(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 5);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleEffect_RunHeatWave(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 6);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
@@ -410,44 +410,44 @@ DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
 void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 9);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleEffect_RunProjectileVolleyMode12WithAction(
     struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 12);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleEffect_RunProjectileVolleyMode13WithAction(
     struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 13);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 void BattleEffect_RunProjectileVolleyMode14WithAction(
     struct BattleEffectArgument *effect) {
   struct Actor *object;
 
-  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetMode(object, 2);
-  Actor_SelectAnimationFar(object, 0x30);
+  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  Actor_SelectAnimationFar(object, 2);
+  Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 14);
-  Actor_SelectAnimationFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode15,
@@ -722,7 +722,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Where each shot starts and how fast it flies.
-  user = GetBattleObjectSlotFar(effect->actor)->object;
+  user = BattleObject_GetFar(effect->actor)->object;
   shots = Data_08198478[mode][VOLLEY_SHOTS];
   steps = Data_08198478[mode][VOLLEY_STEPS];
   {
@@ -735,7 +735,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
     for (i = 0; i != effect->count; i++) {
       struct MotionObject *target =
-          GetBattleObjectSlotFar(effect->actors[i])->object;
+          BattleObject_GetFar(effect->actors[i])->object;
       s32 targetHeight = BattleUnit_GetEffectHeightFar(effect->actors[i]);
 
       for (j = 0; j != shots; j++) {
@@ -892,7 +892,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       index = 0;
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *target =
-            GetBattleObjectSlotFar(effect->actors[i])->object;
+            BattleObject_GetFar(effect->actors[i])->object;
 
         for (j = 0; j != shots; j++, index++) {
           struct EffectStep *shot;
@@ -1253,7 +1253,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 }
 
 void BattleEffect_InitializeRisingObject(s32 slot) {
-  struct BattleObj *context = GetBattleObjectSlotFar(slot);
+  struct BattleObj *context = BattleObject_GetFar(slot);
   struct Actor *object = context->object;
 
   object->acceleration = 0x20000;
@@ -1263,9 +1263,9 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
   object->bounce = 0;
   object->actionFlags = 0;
   object->snapToTarget = 1;
-  Actor_ResetMotion(object);
-  Actor_SetTargetPosition(object, context->anchorX, 0, context->anchorZ);
-  Actor_SetMode(object, 1);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, context->anchorX, 0, context->anchorZ);
+  Actor_SelectAnimationFar(object, 1);
 }
 
 /// Moves the object rate percent of the way to the target's object in the
@@ -1273,8 +1273,8 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
 // The Broken Seal's BattleEffect_SetApproachMotion always moves 80 percent.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
                                     s32 rate) {
-  struct BattleObj *slot = GetBattleObjectSlotFar(id);
-  struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
+  struct BattleObj *slot = BattleObject_GetFar(id);
+  struct BattleObj *targetSlot = BattleObject_GetFar(targetId);
   struct Actor *obj = (struct Actor *)slot->object;
   struct Actor *target = (struct Actor *)targetSlot->object;
   s32 diffX = target->x - obj->x;
@@ -1298,7 +1298,7 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
   obj->velocityY = 0;
   obj->bounce = 0;
   obj->actionFlags = 1;
-  Actor_ResetMotion(obj);
-  Actor_SetTargetPosition(obj, x, 0, z);
-  Actor_SetMode(obj, 2);
+  Actor_StartIdleFar(obj);
+  Actor_SetMoveTargetFar(obj, x, 0, z);
+  Actor_SelectAnimationFar(obj, 2);
 }

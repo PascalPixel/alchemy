@@ -242,7 +242,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId)
-      Actor_SetMode((struct Actor *)actorRecord, 3);
+      Actor_SelectAnimationFar((struct Actor *)actorRecord, 3);
   }
 
   wait(30);
@@ -326,7 +326,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   MessageArgument_PushFar(work.actor, 1);
   BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
-  Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(work.actor)->object,
+  Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(work.actor)->object,
                            16);
   BattleObject_Get(work.actors[0]);
 
@@ -382,8 +382,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     work.count = BattleParty_ListLivingUnits(1, (u16 *)work.actors);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(work.actor)->object;
-  Actor_SetMode((struct Actor *)object, 3);
-  Actor_SelectAnimationFar((struct Actor *)object, 16);
+  Actor_SelectAnimationFar((struct Actor *)object, 3);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if ((u16)action->target <= 7) {
     work.side = 1;
     BattleParty_ListLivingUnits(1, (u16 *)work.actors);
@@ -412,7 +412,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   BattleEffect_RunElementPillarFar(&work);
   work.kind = 0;
   BattleEffect_RunFromTableFar(&work);
-  Actor_SetMode((struct Actor *)object, 1);
+  Actor_SelectAnimationFar((struct Actor *)object, 1);
   // An empty once-only loop ends CSE's knowledge of work's address, so the
   // return loop's exit test addresses work afresh; without it, 103 of 180
   // instructions differ in tla-en.
@@ -444,7 +444,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
     character->hp = 0;
 
   slot = BattleObject_Get(unitId);
-  Actor_SetMode((struct Actor *)slot->object, 5);
+  Actor_SelectAnimationFar((struct Actor *)slot->object, 5);
   PartyStatus_DrawFar(0);
   MessageArgument_ClearAllFar();
 
@@ -475,7 +475,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   slot = BattleObject_Get(unitId);
-  Actor_SetMode((struct Actor *)slot->object, 1);
+  Actor_SelectAnimationFar((struct Actor *)slot->object, 1);
 }
 
 void BattleMotion_PlayFall(s32 unitId) {

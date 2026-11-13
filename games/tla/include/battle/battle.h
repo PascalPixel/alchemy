@@ -68,7 +68,7 @@ void BattleHighlight_SetModesFar(u16 *, s32);
 void SpriteDissolve_RunManyFar(void **, s32);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
-void Actor_SelectAnimationFar(struct Actor *object, s32 value);
+void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void MessageArgument_ClearAllFar(void);
 void BattleMessage_CloseFar(void);
@@ -147,10 +147,10 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
 void FieldPsynergy_Cyclone(void);
 void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
 void Func_0818f620(struct BattleEffectArgument *effect, u32 mode);
-void GameFlag_ClearFar(s32 flag);
-void GameFlag_SetFar(s32 flag);
+void GameFlag_ClearBitFar(s32 flag);
+void GameFlag_SetBitFar(s32 flag);
 s32 SpriteDissolve_RunFar(void *object);
-void Actor_Destroy(struct Actor *object);
+void Actor_ReleaseFar(struct Actor *object);
 void Actor_SnapToTerrain(void *object);
 s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Unit_CalculateFar

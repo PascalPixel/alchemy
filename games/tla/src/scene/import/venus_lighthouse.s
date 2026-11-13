@@ -21,15 +21,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02001b2c
 	.thumb_func
 Func_02001b2c:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -41,11 +41,11 @@ Import_ActorCreate:
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
@@ -61,7 +61,7 @@ MapGrid_CheckCollision:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func
 Actor_SetBlendMode:
@@ -77,7 +77,7 @@ Party_RemoveMember:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Import_EventStart
 	.thumb_func
 Import_EventStart:
@@ -193,7 +193,7 @@ Event_WaitTransitionFrames:
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
-	overlay_veneer Field_DispatchTypeHandlerFar
+	overlay_veneer FieldPsynergy_RunHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
@@ -201,7 +201,7 @@ BattleEffect_LoadActionEffectResources:
 	.global FieldPsynergy_SetupActorPair
 	.thumb_func
 FieldPsynergy_SetupActorPair:
-	overlay_veneer BattleEffect_SetupObjectPairFar
+	overlay_veneer FieldPsynergy_SetupActorPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func
 BattleEffect_StopMainActor:

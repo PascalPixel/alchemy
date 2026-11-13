@@ -20,14 +20,14 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17d174): routine GetBattleObjectSlotFar as void
- * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
- * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
- * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+/* VIEW(f17d174): routine BattleObject_GetFar as void
+ * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
+ * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
+ * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:28796: conflicting types for
- * `GetBattleObjectSlotFar'. */
+ * `BattleObject_GetFar'. */
 extern void **
-GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("BattleObject_GetFar");
 void *Resource_GetTableEntry(s32 resource);
 
 extern char ResourceId_FlashBurstSheet;

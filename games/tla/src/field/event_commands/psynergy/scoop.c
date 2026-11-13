@@ -64,7 +64,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 8)
-        Actor_SetMode(anchor, 3);
+        Actor_SelectAnimationFar(anchor, 3);
       if (work->timer <= 15)
         anchor->y += 0x24ccc;
       if (work->timer == 28)
@@ -109,7 +109,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 8)
-        Actor_SetMode(work->anchor, 3);
+        Actor_SelectAnimationFar(work->anchor, 3);
       if (work->timer <= 15)
         anchor->y += 0x24ccc;
       if (work->timer == 28)
@@ -144,7 +144,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 0)
-        Actor_SetMode(work->anchor, 4);
+        Actor_SelectAnimationFar(work->anchor, 4);
       anchor->y += 0x24ccc;
       if (work->timer == 15)
         NEXT_PHASE(work);
@@ -162,7 +162,7 @@ void Func_080e6400(void) {
       break;
     case 1:
       if (work->timer == 0)
-        Actor_SetMode(work->anchor, 4);
+        Actor_SelectAnimationFar(work->anchor, 4);
       anchor->y += 0x24ccc;
       if (work->timer == 15)
         NEXT_PHASE(work);
@@ -282,7 +282,7 @@ void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_Destroy(struct Actor *object);
+void Actor_ReleaseFar(struct Actor *object);
 void Func_080dba5c(void);
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
@@ -345,7 +345,7 @@ void FieldPsynergy_Scoop(void) {
     object->priorityFlags = 1;
   }
   object->facing = caster->facing;
-  Actor_SetMode(object, 0);
+  Actor_SelectAnimationFar(object, 0);
   alternate = &scene->alternate;
   if (*alternate != 0)
     Actor_SetSpriteColorModeFar(object, 6);
@@ -365,13 +365,13 @@ void FieldPsynergy_Scoop(void) {
   Sound_PlayFar(138);
   Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
   wait(10);
-  Actor_SetMode(object, 1);
+  Actor_SelectAnimationFar(object, 1);
   wait(15);
   for (i = 9; i >= 0; i--) {
     object->y += -0x28000;
     wait(1);
   }
-  Actor_SetMode(object, 2);
+  Actor_SelectAnimationFar(object, 2);
   Sound_PlayFar(132);
 
   failed = 0;
@@ -567,8 +567,8 @@ void FieldPsynergy_Scoop(void) {
   if (pictureEntry != 96)
     VramCache_FreeEntry(pictureEntry);
 end:
-  Actor_Destroy(object);
-  Actor_Destroy(other);
+  Actor_ReleaseFar(object);
+  Actor_ReleaseFar(other);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
 }
@@ -711,7 +711,7 @@ void Func_080e7238(void) {
   wait(20);
   object->scaleX = 0;
   object->scaleY = 0;
-  Actor_SetSingleChildFlagsFar(object, 0);
+  Actor_SetSpriteFlagsFar(object, 0);
 
   count = 2;
   state = 0;
@@ -784,7 +784,7 @@ void Func_080e7238(void) {
     case 2:
       if (frame == 0) {
         object->facing = 0x4000;
-        Actor_SetSingleChildFlagsFar(object, 1);
+        Actor_SetSpriteFlagsFar(object, 1);
         count = 3;
       }
       if (frame == 10)
@@ -861,12 +861,12 @@ void Func_080e74d8(void) {
   wait(10);
   Actor_ArmCallback(owner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(object, 28);
+  Actor_SelectAnimationFar(object, 28);
   object->update = Actor_ApplyRandomChildValues;
   Sound_PlayFar(131);
   wait(30);
   Sound_PlayFar(220);
-  Actor_SetMode(object, 3);
+  Actor_SelectAnimationFar(object, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
     object->facing += spin + 0x1000;
     wait(1);
@@ -944,7 +944,7 @@ void Func_080e74d8(void) {
       if (object->scaleX < 0)
         object->scaleX = 0;
       object->scaleY = object->scaleX;
-      Actor_SetSingleChildFlagsFar(object, 0);
+      Actor_SetSpriteFlagsFar(object, 0);
       if (frame == 30) {
         state = 2;
         frame = -1;

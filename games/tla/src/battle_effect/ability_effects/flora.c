@@ -972,7 +972,7 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   u32 enemy;
   s32 x;
 
-  slot = GetBattleObjectSlotFar(id);
+  slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
@@ -980,17 +980,17 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
     object->speedLimit = 0x80000;
     if (object->y < 0xa0000)
       object->velocityY += 0x28000;
-    Actor_ResetMotion(object);
+    Actor_StartIdleFar(object);
     if (slot->anchorX > 0)
       x = object->x + 0xf0000;
     else
       x = object->x - 0xf0000;
-    Actor_SetTargetPosition(object, x, 0, slot->anchorZ);
+    Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
 }
 
 #define DAGGER_FRAMES 96
@@ -1052,7 +1052,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Centre the canvas's x 64 on the target.
-  GetBattleObjectSlotFar(effect->actors[0]);
+  BattleObject_GetFar(effect->actors[0]);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - target.x) << 8;
@@ -1168,7 +1168,7 @@ void *GetMotionRecordFar(void *object, s32 index);
 /// Sets the OBJ priority of every motion record of the battle object, unless
 /// its slot is hidden.
 void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
-  struct FxSlot *slot = GetBattleObjectSlotFar(objectId);
+  struct FxSlot *slot = BattleObject_GetFar(objectId);
   struct FxRecord *record;
   s32 i;
 
@@ -1231,8 +1231,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
-  casterObject = GetBattleObjectSlotFar(effect->actor)->object;
+  targetObject = BattleObject_GetFar(effect->actors[0])->object;
+  casterObject = BattleObject_GetFar(effect->actor)->object;
   battle = (u8 *)Ram_HeapSlots->battleWork;
   battle[0x866] = 1;
 

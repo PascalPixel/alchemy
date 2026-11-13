@@ -70,7 +70,7 @@ void BattleEffect_BuildRepeatingTilemap(void);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
-void BattleActor_CommitPlacementFar(void);
+void BattleObject_PutFar(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
 
 void wait(s32 frames);
@@ -141,7 +141,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   else
     BattleEffect_LoadBlitter(104, 1 << 4 | 7);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  caster = GetBattleObjectSlotFar(effect->actor)->object;
+  caster = BattleObject_GetFar(effect->actor)->object;
   transition = Ram_HeapSlots->transitionWork;
   savedScrollX = gBgScroll[1].x;
 
@@ -214,8 +214,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
       Sound_PlayFar(212);
-      Actor_SetMode(caster, 2);
-      Actor_SelectAnimationFar(caster, 48);
+      Actor_SelectAnimationFar(caster, 2);
+      Actor_SetAnimationSpeedFar(caster, 48);
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
     }
 
@@ -478,7 +478,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   }
 
   // The battle's own scene again.
-  BattleActor_CommitPlacementFar();
+  BattleObject_PutFar();
   transition->active = 0;
   gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(1, BACKGROUND(Ram_HeapSlots->battleWork), 24);
@@ -847,7 +847,7 @@ void Func_08191cc4(void) {
 
   for (i = 0; i != work->effect->count; i++) {
     struct MotionObject *object =
-        GetBattleObjectSlotFar(work->effect->actors[i])->object;
+        BattleObject_GetFar(work->effect->actors[i])->object;
 
     object->x = 0;
     object->y = 120 << 16;

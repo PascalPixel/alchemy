@@ -46,14 +46,14 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f172b00): routine GetBattleObjectSlotFar as void
- * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
- * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
- * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+/* VIEW(f172b00): routine BattleObject_GetFar as void
+ * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
+ * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
+ * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:21159: conflicting types for
- * `GetBattleObjectSlotFar'. */
+ * `BattleObject_GetFar'. */
 extern void **
-GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("BattleObject_GetFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -183,7 +183,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
       frames = 50;
     }
     REG_BG2PA = 0x80;
-    Actor_SelectAnimationFar(caster, 240);
+    Actor_SetAnimationSpeedFar(caster, 240);
 
     for (frame = 0; frame != frames; frame++) {
       if (frame == 0) {
@@ -471,7 +471,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
       work->transferPending = 1;
       wait(1);
     }
-    Actor_SelectAnimationFar(caster, 16);
+    Actor_SetAnimationSpeedFar(caster, 16);
     HeapSlot_Release(SLOT_BLITTER);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }

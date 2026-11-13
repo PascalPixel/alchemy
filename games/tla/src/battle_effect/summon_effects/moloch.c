@@ -404,7 +404,7 @@ void Func_0819253c(void) {
   // The targets fall in from just above the ground, halfway closer in depth.
   for (i = 0; i != work->effect->count; i++) {
     struct MotionObject *object =
-        GetBattleObjectSlotFar(work->effect->actors[i])->object;
+        BattleObject_GetFar(work->effect->actors[i])->object;
 
     object->x = 0;
     object->y = (16 - (Random16() & 15)) << 16;

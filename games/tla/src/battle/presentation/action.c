@@ -477,8 +477,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(212);
-        Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
-        Actor_SelectAnimationFar(
+        Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object, 3);
+        Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
         ElementGlow_Play(request->unitId, (request->parameter >> 8) & 15, 3, 0);
         BattlePlayback_WaitForReady();

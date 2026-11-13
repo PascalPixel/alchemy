@@ -9,7 +9,7 @@ Task_Add:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:

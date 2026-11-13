@@ -163,7 +163,7 @@ void BattlePlayback_Run(void) {
             if (events->pendingCue > 0)
               Sound_PlayFar(events->pendingCue);
             events->actorId = events->queue.operands[eventIndex];
-            Actor_SetMode(BattleObject_Get(events->actorId)->object, 5);
+            Actor_SelectAnimationFar(BattleObject_Get(events->actorId)->object, 5);
             events->phase = 10;
             events->timer = 0;
             break;

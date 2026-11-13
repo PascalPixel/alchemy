@@ -33,11 +33,11 @@ Random16Far:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
 Vector_AddPolarOffsetFar:
@@ -49,7 +49,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -73,7 +73,7 @@ DebugText_Clear:
 	.global Func_02001f7c
 	.thumb_func
 Func_02001f7c:
-	overlay_veneer Oam_AddSpriteAtDepthFar
+	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Render_ProjectPoint
 	.thumb_func
 Render_ProjectPoint:
@@ -93,11 +93,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -105,7 +105,7 @@ Animation_ApplyChildArgument:
 	.global Func_02001fbc
 	.thumb_func
 Func_02001fbc:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -117,7 +117,7 @@ Import_ActorCreate:
 	.global Actor_Release
 	.thumb_func
 Actor_Release:
-	overlay_veneer Actor_Destroy
+	overlay_veneer Actor_ReleaseFar
 	.global WorldMap_UpdateCurrentTileBlock
 	.thumb_func
 WorldMap_UpdateCurrentTileBlock:
@@ -125,7 +125,7 @@ WorldMap_UpdateCurrentTileBlock:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func
 Actor_SetBlendMode:
@@ -153,7 +153,7 @@ Func_02002014:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -221,7 +221,7 @@ Party_GetLeaderActor:
 	.global SceneEvent_FindActiveRecord
 	.thumb_func
 SceneEvent_FindActiveRecord:
-	overlay_veneer SceneEvent_FindActiveRecordFar
+	overlay_veneer Scene_FindTriggerFar
 	.global Func_020020ac
 	.thumb_func
 Func_020020ac:

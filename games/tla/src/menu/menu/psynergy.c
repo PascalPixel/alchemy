@@ -76,7 +76,7 @@ s32 PsynergyMenu_Run(void) {
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Ram_HeapSlots->windowTiles[6] = 0;
-  Event_ClearInvalidPackedValuesFar();
+  Party_ClearUnusableShortcutsFar();
   return result;
 }
 

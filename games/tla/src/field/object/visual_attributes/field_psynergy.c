@@ -281,8 +281,8 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   return ret;
 }
 
-#define Actor_SelectAnimationFar                                               \
-  ((void (*)(struct Actor *, s32))Actor_SelectAnimationFar)
+#define Actor_SetAnimationSpeedFar                                               \
+  ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 /* VIEW(depthend): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
  * kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject
@@ -299,7 +299,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   object = Func_080200c0__depthend(kind, x, y, z);
   if (object != NULL) {
     if (object->animationKind == 0) {
-      Actor_Destroy(object);
+      Actor_ReleaseFar(object);
       return NULL;
     }
     object->terrainHeight = scene->mainObject->terrainHeight;
@@ -308,8 +308,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     mask = ~0xc;
     part = object->sprite;
     part[9] &= mask;
-    Actor_SetSingleChildFlagsFar(object, 0);
-    Actor_SetMode(object, 1);
+    Actor_SetSpriteFlagsFar(object, 0);
+    Actor_SelectAnimationFar(object, 1);
   }
   return object;
 }
@@ -327,7 +327,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
     if (objectId != *activeObjectId && object != NULL &&
         object != excludedObject) {
       object->movementState = groupMode;
-      Actor_SelectAnimationFar(object, action);
+      Actor_SetAnimationSpeedFar(object, action);
     }
     objectId++;
   } while (objectId <= 0x50);
@@ -428,5 +428,5 @@ void FieldPsynergy_FadeToCastColor(void) {
     tint = 7;
   Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }
-#undef Actor_SelectAnimationFar
+#undef Actor_SetAnimationSpeedFar
 #undef FLAG_TINT_FIRST

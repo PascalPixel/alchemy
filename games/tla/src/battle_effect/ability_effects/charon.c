@@ -248,14 +248,14 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
-/* VIEW(f175f74): routine GetBattleObjectSlotFar as struct ActorPos
- * **GetBattleObjectSlotFar(s32); motobj.h has struct BattleObj
- * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
- * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+/* VIEW(f175f74): routine BattleObject_GetFar as struct ActorPos
+ * **BattleObject_GetFar(s32); motobj.h has struct BattleObj
+ * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
+ * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:23540: conflicting types for
- * `GetBattleObjectSlotFar'. */
+ * `BattleObject_GetFar'. */
 extern struct ActorPos **
-GetBattleObjectSlotFar__f175f74(s32) __asm__("GetBattleObjectSlotFar");
+GetBattleObjectSlotFar__f175f74(s32) __asm__("BattleObject_GetFar");
 void BattleEffect_TintBattler(s32, s32, s32, s32, s32);
 void BattlePlayback_StartFar(s32);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);

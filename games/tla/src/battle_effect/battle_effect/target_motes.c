@@ -154,7 +154,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 
     for (member = 0; member != effect->count; member++) {
       struct MotionObject *object =
-          GetBattleObjectSlotFar(effect->actors[member])->object;
+          BattleObject_GetFar(effect->actors[member])->object;
 
       // Mode 3: two tornado glints a frame around the target, each drawn
       // with a blitter of its own, mirrored at random.
@@ -385,7 +385,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
     for (member = 0; member != effect->count; member++) {
       struct MotionObject *object;
 
-      object = GetBattleObjectSlotFar(effect->actors[member])->object;
+      object = BattleObject_GetFar(effect->actors[member])->object;
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       record[0] = object->x;
@@ -553,8 +553,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   BattleEffect_FetchRectangleBlitters(effect->side ^ 1, draw = callbacks);
-  actor = GetBattleObjectSlotFar(effect->actor)->object;
-  goal = GetBattleObjectSlotFar(effect->actors[0])->object;
+  actor = BattleObject_GetFar(effect->actor)->object;
+  goal = BattleObject_GetFar(effect->actors[0])->object;
 
   // The swarm: 64 sparks thrown out level from the Djinn.
   for (i = 0; i != 64; i++) {
@@ -699,7 +699,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     // it, and it flashes from 40 to 64 frames into its turn.
     for (member = 0; member != effect->count; member++) {
       struct MotionObject *object =
-          GetBattleObjectSlotFar(effect->actors[member])->object;
+          BattleObject_GetFar(effect->actors[member])->object;
       s32 start = member * 8;
 
       Transform_Reset();

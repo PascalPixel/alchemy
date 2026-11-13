@@ -167,10 +167,10 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
     // copied, where an s16 parameter would load it again halved.
     BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 16, 0xa0000);
   else if (variant == 4) {
-    struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
+    struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
 
-    Actor_SetMode(user, 2);
-    Actor_SelectAnimationFar(user, 48);
+    Actor_SelectAnimationFar(user, 2);
+    Actor_SetAnimationSpeedFar(user, 48);
   } else
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
   if (variant == 4)
@@ -266,7 +266,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
     SummonEffect_RunCanvasMode2(effect);
   } else {
     if (variant == 4)
-      Actor_SelectAnimationFar(GetBattleObjectSlotFar(effect->actor)->object,
+      Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object,
                                16);
     BattleEffect_EndCanvasLayer();
   }

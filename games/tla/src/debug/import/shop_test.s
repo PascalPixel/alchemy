@@ -21,7 +21,7 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -33,7 +33,7 @@ Map_CopyCellsRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Window_Create
 	.thumb_func
 Window_Create:
@@ -195,7 +195,7 @@ Func_02000dd0:
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:

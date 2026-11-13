@@ -33,11 +33,11 @@ Random16Far:
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
-	overlay_veneer Math_SineFar
+	overlay_veneer Trig_SinFar
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
-	overlay_veneer Math_CosineFar
+	overlay_veneer Trig_CosFar
 	.global HeapSlot_AllocFar
 	.thumb_func
 HeapSlot_AllocFar:
@@ -53,7 +53,7 @@ Heap_AllocEwram:
 	.global Heap_Release
 	.thumb_func
 Heap_Release:
-	overlay_veneer Sys_FreeFar
+	overlay_veneer Heap_ReleaseFar
 	.global Decompress_TaggedLz
 	.thumb_func
 Decompress_TaggedLz:
@@ -69,7 +69,7 @@ VramCache_FindFreeEntry:
 	.global Func_02003f88
 	.thumb_func
 Func_02003f88:
-	overlay_veneer Oam_AddSpriteAtDepthFar
+	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -77,19 +77,19 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetFar
+	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearFar
+	overlay_veneer GameFlag_ClearBitFar
 	.global Func_02003fa8
 	.thumb_func
 Func_02003fa8:
-	overlay_veneer Actor_SetMode
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
 Actor_SetAnimationSpeed:
-	overlay_veneer Actor_SelectAnimationFar
+	overlay_veneer Actor_SetAnimationSpeedFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -101,7 +101,7 @@ Func_02003fc0:
 	.global Actor_Release
 	.thumb_func
 Actor_Release:
-	overlay_veneer Actor_Destroy
+	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
 Actor_SetPositionAndResetMotion:
@@ -113,11 +113,11 @@ Map_CenterOnFollowedPoint:
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
-	overlay_veneer Actor_SetTargetPosition
+	overlay_veneer Actor_SetMoveTargetFar
 	.global Actor_WaitForMove
 	.thumb_func
 Actor_WaitForMove:
-	overlay_veneer Actor_CommitPosition
+	overlay_veneer Actor_WaitForMoveFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
@@ -133,7 +133,7 @@ Map_CopyCellAttributeRect:
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
-	overlay_veneer Actor_SetSingleChildFlagsFar
+	overlay_veneer Actor_SetSpriteFlagsFar
 	.global TilesetAnim_SuspendAll
 	.thumb_func
 TilesetAnim_SuspendAll:
@@ -157,7 +157,7 @@ Icon_DrawItem:
 	.global FieldEvent_Wait
 	.thumb_func
 FieldEvent_Wait:
-	overlay_veneer FieldEvent_WaitFar
+	overlay_veneer Event_WaitFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -325,7 +325,7 @@ Func_02004180:
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
-	overlay_veneer Field_DispatchTypeHandlerFar
+	overlay_veneer FieldPsynergy_RunHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
@@ -333,7 +333,7 @@ BattleEffect_LoadActionEffectResources:
 	.global FieldPsynergy_SetupActorPair
 	.thumb_func
 FieldPsynergy_SetupActorPair:
-	overlay_veneer BattleEffect_SetupObjectPairFar
+	overlay_veneer FieldPsynergy_SetupActorPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func
 BattleEffect_StopMainActor:

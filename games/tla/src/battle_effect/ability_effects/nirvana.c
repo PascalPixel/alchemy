@@ -51,7 +51,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)0x05000000,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
                        128);
-  object = GetBattleObjectSlotFar(effect->actors[0])->object;
+  object = BattleObject_GetFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   orb = work->particles;
   orb->x = object->x;
@@ -69,7 +69,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   Sound_PlayFar(142);
 
   for (frame = 0; frame != 80; frame++) {
-    struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
+    struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
     s32 userHalf = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
 
     if (frame == 64)
@@ -206,8 +206,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   scroll = 0;
   scrollSpeed = 0;
   cueTimer = 0;
-  user = GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SelectAnimationFar(user, 48);
+  user = BattleObject_GetFar(effect->actor)->object;
+  Actor_SetAnimationSpeedFar(user, 48);
 
   for (frame = 0; frame != 107; frame++) {
     EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
@@ -236,7 +236,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 52)
-      Actor_SetMode(user, 2);
+      Actor_SelectAnimationFar(user, 2);
 
     // From frame 64 the background follows the boulders, ever faster.
     if (frame > 64) {
@@ -311,7 +311,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     wait(1);
   }
 
-  Actor_SelectAnimationFar(user, 16);
+  Actor_SetAnimationSpeedFar(user, 16);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
@@ -386,7 +386,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   position.x /= 2;
   work->shakeFrames = 8;
@@ -518,7 +518,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       s32 userHalfHeight;
       struct BattleCamera *camera;
 
-      user = GetBattleObjectSlotFar(effect->actor)->object;
+      user = BattleObject_GetFar(effect->actor)->object;
       userHalfHeight = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Transform_Reset();
@@ -745,7 +745,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
 
     camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
     savedYaw = camera->yaw;
-    target = GetBattleObjectSlotFar(effect->actors[0])->object;
+    target = BattleObject_GetFar(effect->actors[0])->object;
     REG_BG2PA = 0x100;
     REG_BG2X = 0;
 
@@ -923,9 +923,9 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       if (frame == 56) {
         // The caster closes four fifths of the way.
         struct Actor *caster =
-            (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
+            (struct Actor *)BattleObject_GetFar(effect->actor)->object;
         struct Actor *to =
-            (struct Actor *)GetBattleObjectSlotFar(effect->actors[0])->object;
+            (struct Actor *)BattleObject_GetFar(effect->actors[0])->object;
         s32 x = caster->x;
         s32 z;
         s32 dx = (to->x - x) * 80 / 100;
@@ -946,9 +946,9 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         caster->gravity = 0x13333;
         caster->bounce = 0;
         caster->actionFlags = 1;
-        Actor_ResetMotion(caster);
-        Actor_SetTargetPosition(caster, x, 0, z);
-        Actor_SetMode(caster, 2);
+        Actor_StartIdleFar(caster);
+        Actor_SetMoveTargetFar(caster, x, 0, z);
+        Actor_SelectAnimationFar(caster, 2);
       }
 
       if (frame > 63) {

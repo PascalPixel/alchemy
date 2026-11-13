@@ -609,8 +609,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
   for (i = 0; i != 256; i++)
     SPARKS[i].variant = 0;
 
-  caster = GetBattleObjectSlotFar(effect->actor)->object;
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  caster = BattleObject_GetFar(effect->actor)->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
   stepX = 0;
   stepY = 0;
   homeX = caster->x;
@@ -653,7 +653,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
         caster->velocityX = 8 << 16;
       if (mode == 1)
         caster->velocityX = -caster->velocityX;
-      Actor_SetMode(caster, 2);
+      Actor_SelectAnimationFar(caster, 2);
       work->shakeFrames = 4;
       Sound_PlayFar(136);
     }
@@ -674,7 +674,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
       caster->velocityZ = 0;
       stepX = (target->x * 60 / 100 - caster->x) / slide;
       stepY = (target->y - caster->y) / slide;
-      Actor_ResetMotion(caster);
+      Actor_StartIdleFar(caster);
     }
 
     if (frame > 17) {

@@ -218,7 +218,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   s8 mode;
 
   message = messageId;
-  value = BattleEffect_GetResourceIdFar(state->keeperResource);
+  value = Speaker_GetVoiceFar(state->keeperResource);
   Message_CloseFinishedWindowsFar();
   mode = state->shopType;
   if (mode == 3)
@@ -245,7 +245,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   slot = &state->cursor.anchor;
   saved = (*slot)->active;
   no = messageId;
-  variant = BattleEffect_GetResourceIdFar(state->keeperResource);
+  variant = Speaker_GetVoiceFar(state->keeperResource);
   mode = state->shopType;
   if (mode == 3)
     no += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;

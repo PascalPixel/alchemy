@@ -14,7 +14,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   s32 scale;
 
   camera = Ram_HeapSlots->cameraWork;
-  object = GetBattleObjectSlotFar(unit)->object;
+  object = BattleObject_GetFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   Transform_Reset();
   Transform_SetLookAt(camera, camera + 12);
@@ -260,7 +260,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
 
   // The sparks leave the middle of the target, away from the caster, each
   // living 16 frames more than the last.
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
@@ -478,7 +478,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   // The gathering ring, for the larger kinds: the caster holds still while
   // 64 sparks spin in towards it on random axes.
   if (big == 1) {
-    object = GetBattleObjectSlotFar(effect->actor)->object;
+    object = BattleObject_GetFar(effect->actor)->object;
     for (i = 0; i != SPARK_COUNT; i++) {
       struct EffectStep *mote = &work->particles[i];
 
@@ -489,7 +489,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
       mote->velocityY = Random16() & 0xffff;
       mote->velocityZ = Random16() & 0xffff;
     }
-    Actor_SelectAnimationFar(object, 0);
+    Actor_SetAnimationSpeedFar(object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
@@ -540,7 +540,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
       wait(1);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Actor_SelectAnimationFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, 16);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
     object->velocityZ = velocityZ;
@@ -570,7 +570,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
 
   // The sparks leave the middle of the target, away from the caster, each
   // living 16 frames more than the last.
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
@@ -649,7 +649,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
   struct MotionObject *object;
   u32 enemy;
 
-  slot = GetBattleObjectSlotFar(id);
+  slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
@@ -657,12 +657,12 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
     object->speedLimit = speedLimit;
     if (force != 0 || object->velocityY != 0)
       object->velocityY = velocityY;
-    Actor_ResetMotion(object);
-    Actor_SetTargetPosition(object, slot->anchorX * percent / 100, 0,
+    Actor_StartIdleFar(object);
+    Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
                             slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
 }

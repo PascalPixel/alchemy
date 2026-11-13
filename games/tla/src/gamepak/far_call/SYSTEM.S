@@ -14,8 +14,8 @@ FarCall_RuntimeTable:
 	export ArcTan2Far, ArcTan2
 	export Math_IntegerSqrtFar, Math_IntegerSqrt
 	export FixedSqrtFar, FixedSqrt
-	export Math_SineFar, Trig_Sin
-	export Math_CosineFar, Trig_Cos
+	export Trig_SinFar, Trig_Sin
+	export Trig_CosFar, Trig_Cos
 	export Func_08000128, Vector_AddPolarOffset
 	export Irq_SetHandlerFar, Irq_SetHandler
 	export Heap_InitializeFar, Heap_Initialize
@@ -26,7 +26,7 @@ FarCall_RuntimeTable:
 	export Heap_GetRemainingEwramFar, Heap_GetRemainingEwram
 	export Heap_AllocFar, Heap_Alloc
 	export Heap_AllocEwramFar, Heap_AllocEwram
-	export Sys_FreeFar, Heap_Release
+	export Heap_ReleaseFar, Heap_Release
 	export DebugText_PrintFar, DebugText_Print
 	export DebugText_PrintHexFar, DebugText_PrintHex
 	export DebugText_PrintDecimalFar, DebugText_PrintDecimal
@@ -40,7 +40,7 @@ FarCall_RuntimeTable:
 	export VramCache_FindFreeEntryFar, VramCache_FindFreeEntry
 	export DebugText_ClearFar, DebugText_Clear
 	export OamMatrix_AllocFromTransformFar, OamMatrix_AllocFromTransform
-	export Oam_AddSpriteAtDepthFar, Oam_AddSpriteAtDepthClamped
+	export Oam_AddSpriteAtDepthClampedFar, Oam_AddSpriteAtDepthClamped
 	export Window_LoadGraphicsFar, Window_LoadGraphics
 	export Palette_LoadBasicSpriteColorsFar, Palette_LoadBasicSpriteColors
 	export Transform_ResetFar, Transform_Reset
@@ -92,7 +92,7 @@ FarCall_RuntimeTable:
 	export Serial_RemoveIrqHandlersFar, Serial_RemoveIrqHandlers
 	export Sound_LoadReverbCodeFar, Sound_LoadReverbCode
 	export Serial_StartSendFar, Serial_StartSend
-	export Party_CheckFar, Serial_StartReceive
+	export Serial_StartReceiveFar, Serial_StartReceive
 	export Serial_WaitForSendFar, Serial_WaitForSend
 	export Serial_WaitForReceiveFar, Serial_WaitForReceive
 	export Serial_WaitForTransfersFar, Serial_WaitForTransfers
@@ -101,8 +101,8 @@ FarCall_RuntimeTable:
 	export Task_SetFlagsFar, Task_SetFlags
 	export Unit_GetFar, Unit_Get
 	export GameFlag_TestFar, GameFlag_Test
-	export GameFlag_SetFar, GameFlag_SetBit
-	export GameFlag_ClearFar, GameFlag_ClearBit
+	export GameFlag_SetBitFar, GameFlag_SetBit
+	export GameFlag_ClearBitFar, GameFlag_ClearBit
 	export GameFlag_ToggleFar, GameFlag_Toggle
 	export GameFlag_GetByteFar, GameFlag_GetByte
 	export GameFlag_SetByteFar, GameFlag_SetByte

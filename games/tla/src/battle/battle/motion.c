@@ -7,10 +7,10 @@
 #include "module/battle/battle.h"
 #include "gamepak/far_call/field.h"
 
-#define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
-#define Actor_SetTargetPosition                                                \
-  ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetTargetPosition)
-#define Actor_SetMode ((void (*)(struct MotionObject *, s32))Actor_SetMode)
+#define Actor_StartIdleFar ((void (*)(struct MotionObject *))Actor_StartIdleFar)
+#define Actor_SetMoveTargetFar                                                \
+  ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetMoveTargetFar)
+#define Actor_SelectAnimationFar ((void (*)(struct MotionObject *, s32))Actor_SelectAnimationFar)
 
 void BattleMotion_ReturnToSpot(s32 slotId) {
   s32 z;
@@ -28,8 +28,8 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   object->verticalMotionPhase = zero;
   object->autoFaceMotion = zero;
   object->snapToTarget = 1;
-  Actor_ResetMotion(object);
-  Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
   z = slot->anchorZ;
   if (z < 0)
     z += 7;
@@ -48,9 +48,9 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   object->verticalMotionStrength = 0x7851;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_ResetMotion(object);
-  Actor_SetTargetPosition(object, slot->anchorX * 3, 0, slot->anchorZ);
-  Actor_SetMode(object, 1);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, slot->anchorX * 3, 0, slot->anchorZ);
+  Actor_SelectAnimationFar(object, 1);
 }
 
 /// Sends the actor of startSlot leaping progress percent of the way toward
@@ -72,8 +72,8 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   start->gravity = 0xab85;
   start->bounce = 0;
   start->actionFlags = 1;
-  Actor_SetTargetPosition(start, x, 0, z);
-  Actor_SetMode(start, 2);
+  Actor_SetMoveTargetFar(start, x, 0, z);
+  Actor_SelectAnimationFar(start, 2);
 }
 
 void BattleMotion_ReturnObjectToSpot(struct BattleObj *slot) {
@@ -84,7 +84,7 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObj *slot) {
   object->verticalMotionStrength = 0xab85;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
+  Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
 }
 
 void BattleMotion_HopBack(s32 objectId) {
@@ -100,9 +100,9 @@ void BattleMotion_HopBack(s32 objectId) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_ResetMotion(object);
+  Actor_StartIdleFar(object);
   scaledX = slot->anchorX * 3;
-  Actor_SetTargetPosition(object, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
+  Actor_SetMoveTargetFar(object, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
                           slot->anchorZ);
 }
 
@@ -120,15 +120,15 @@ void BattleMotion_LeapBack(s32 objectId) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_ResetMotion(object);
+  Actor_StartIdleFar(object);
   {
     s32 (*mul)(s32 a, s32 b);
     s32 anchor = slot->anchorX;
 
     mul = Iwram_MulQ16;
-    Actor_SetTargetPosition(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
+    Actor_SetMoveTargetFar(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
   }
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
 }
 
 /// Sends a battle object back by its variant's distance and speed, with a hop
@@ -156,15 +156,15 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
     object->speedLimit = Data_0812cbd8[variant];
     if (object->y == 0 || variant > 4)
       object->velocityY = gBattleKnockback_DistancePercent[variant];
-    Actor_ResetMotion(object);
+    Actor_StartIdleFar(object);
     scale = slot->anchorX;
     x = (scale * Data_0812cc28[variant]) / 100;
-    Actor_SetTargetPosition(object, x, 0, slot->anchorZ);
+    Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_SetMode(object, 5);
+  Actor_SelectAnimationFar(object, 5);
 }
 
 /// The actor walks three quarters of the way to its target, at a speed that
@@ -203,23 +203,23 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->velocityY = initialVelocityY;
   object->verticalMotionStrength = 0xab85;
   object->autoFaceMotion = 1;
-  Actor_ResetMotion(object);
+  Actor_StartIdleFar(object);
   if (dist != 0)
-    Actor_SetTargetPosition(object, x, 0, z);
-  Actor_SetMode(object, 2);
+    Actor_SetMoveTargetFar(object, x, 0, z);
+  Actor_SelectAnimationFar(object, 2);
 }
 
 void BattleMotion_RestartLeap(s32 id) {
   struct MotionObject *object;
 
   object = BattleObject_Get(id)->object;
-  Actor_ResetMotion(object);
-  Actor_SetMode(object, 2);
+  Actor_StartIdleFar(object);
+  Actor_SelectAnimationFar(object, 2);
 }
 
-#undef Actor_ResetMotion
-#undef Actor_SetTargetPosition
-#undef Actor_SetMode
+#undef Actor_StartIdleFar
+#undef Actor_SetMoveTargetFar
+#undef Actor_SelectAnimationFar
 
 void BattleMotion_MidpointNoOp(void *position, s32 speed) {}
 

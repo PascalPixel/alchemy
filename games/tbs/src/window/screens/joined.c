@@ -117,59 +117,60 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 palette, handle;
   s32 id;
   s32 text;
-  u32 zero;
   s32 *p;
 
   window = NULL;
-  /* FAKEMATCH(temporary): zero holds the 0 the calls and stores take; as 0
-   * at each use, 62 of 123 instructions differ in tbs-en. */
-  zero = 0;
-  name = gDjinn_ElementSprites[element & 3];
-  entry = sprite;
-  window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+  {
+    u32 cleared = 0;
 
-  if (window != NULL) {
-    Window_DrawDividerLine(window, 4, 0, 4, 4);
+    name = gDjinn_ElementSprites[element & 3];
+    entry = sprite;
+    window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
 
-    work->dirty = 1;
+    if (window != NULL) {
+      Window_DrawDividerLine(window, 4, 0, 4, 4);
 
-    id = Portrait_GetForSpeaker(name);
-    Icon_LoadWithPalette(id, zero, &handle, &palette, PORTRAIT_PALETTE, zero);
+      work->dirty = 1;
 
-    // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-    // a link word, attributes 0 and 1 and attribute 2.
-    p = entry;
-    *p++ = zero;
-    *p++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
-    *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
+      id = Portrait_GetForSpeaker(name);
+      Icon_LoadWithPalette(id, cleared, &handle, &palette, PORTRAIT_PALETTE,
+                           cleared);
 
-    // No voice blips while the message types.
-    work->voiceSound = zero;
-    work->voiceCountdown = zero;
+      // The portrait as a bare OAM entry, pushed onto draw layer 250 each
+      // frame: a link word, attributes 0 and 1 and attribute 2.
+      p = entry;
+      *p++ = cleared;
+      *p++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
+      *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
-    // The message's arguments: the party member (MESSAGE_ARGUMENT_ACTOR) and
-    // the Djinni's name, its ability (ABILITY_DJINNI_FIRST,
-    // MESSAGE_ARGUMENT_ABILITY).
-    MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
-                             ABILITY_DJINNI_FIRST,
-                         MESSAGE_ARGUMENT_ABILITY);
+      // No voice blips while the message types.
+      work->voiceSound = cleared;
+      work->voiceCountdown = cleared;
 
-    text = Message_DecodeMode1(element + MsgVenusDjinnJoined);
+      // The message's arguments: the party member (MESSAGE_ARGUMENT_ACTOR) and
+      // the Djinni's name, its ability (ABILITY_DJINNI_FIRST,
+      // MESSAGE_ARGUMENT_ABILITY).
+      MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
+                               ABILITY_DJINNI_FIRST,
+                           MESSAGE_ARGUMENT_ABILITY);
 
-    JOINED_QUEUE_TEXT(window, text, 36, 2, zero);
+      text = Message_DecodeMode1(element + MsgVenusDjinnJoined);
 
-    Sound_PlayFar(MUS_JOINED);
+      JOINED_QUEUE_TEXT(window, text, 36, 2, cleared);
 
-    do {
-      Oam_AddSpriteAtDepth(entry, 250);
+      Sound_PlayFar(MUS_JOINED);
+
+      do {
+        Oam_AddSpriteAtDepth(entry, 250);
+        wait(1);
+      } while (Sound_GetBgmRestoreDelayFar() != 0 &&
+               (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+
+      Window_Close(window, 2);
       wait(1);
-    } while (Sound_GetBgmRestoreDelayFar() != 0 &&
-             (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
-
-    Window_Close(window, 2);
-    wait(1);
-    VramCache_FreeEntry(handle);
+      VramCache_FreeEntry(handle);
+    }
   }
 }
 

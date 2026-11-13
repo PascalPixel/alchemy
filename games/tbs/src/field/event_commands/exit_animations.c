@@ -96,9 +96,6 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
 /// Called by Exit_StartStairsUp and Exit_StartStairsDown below.
 void Exit_PrepareAnimation(s32 animation) {
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 20 of
-   * 49 instructions differ in tbs-en. */
-  u32 zero;
   struct Actor *actor;
   struct Sprite *context;
   struct SpriteAnimation *effect;
@@ -107,20 +104,21 @@ void Exit_PrepareAnimation(s32 animation) {
   context = actor->sprite;
   effect =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(context, SPRITE_DOORWAY);
-  zero = 0;
   {
-    u8 param = SPRITE_COLOR_HIDDEN;
+    u32 cleared = 0;
+    u8 colorMode = SPRITE_COLOR_HIDDEN;
 
     // No shadow as the leader leaves.
-    context->flags = zero;
-    effect->colorMode = param;
+    context->flags = cleared;
+    effect->colorMode = colorMode;
     // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
     // put the leader at its middle in x (8 pixels) and its south edge in z.
-    // The coordinates as plain words: through .fixed, the union moves a store.
+    // The coordinates as plain words: through .fixed, the union moves a
+    // store.
     *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
     *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
-    actor->velocityX = zero;
-    actor->velocityZ = zero;
+    actor->velocityX = cleared;
+    actor->velocityZ = cleared;
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
     Actor_SelectAnimationFar(actor, animation);

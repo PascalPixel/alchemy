@@ -29,7 +29,9 @@
 
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 
-void Func_02000038(void) { Func_080d7788(19, 3, 16); }
+/// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party
+/// when spoken to.
+void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -56,7 +58,8 @@ void Func_020000ac(void) {
   Func_0802b450(69, 82, 10, 12, 24, 71);
 }
 
-void Func_0200012c(s32 actor) {
+/// "Did you want this cannon?"
+void Loho_AskWantCannon(s32 actor) {
   s32 msg = (s32)MsgLoho23;
 
   Event_SetMessageId(msg);
@@ -71,7 +74,8 @@ void Func_0200012c(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Func_02000178(void) {
+/// "It looks like it's empty."
+void Loho_ExamineCannon(void) {
   FieldMessage_Show((s32)MsgLoho27, 1);
   ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }
@@ -85,7 +89,11 @@ void Func_02000178(void) {
 
 void FieldCamera_WaitForArrival();
 
-void Func_02000198(void) {
+/// The Magma Ball used on the cannon: it is loaded and fired at the ancient
+/// wall north of town, which is breached, and the miners give the party the
+/// cannon for its ship.
+/// "Is everyone all right?"
+void Loho_FireCannon(void) {
   s32 v_r1, v_r2, v_r0, t0;
   struct Unk16 *p;
   struct Unk16 *table;
@@ -443,7 +451,9 @@ L_020089c4:
   return;
 }
 
-void Func_02000bf4(void) {
+/// "Now that the wall's been breached, we can get on with the mining! Good
+/// work!"
+void Loho_TalkAboutBreachedWall(void) {
   if (Event_GetFlag(0x90a))
     Event_SetMessageId((s32)MsgLoho32);
   else
@@ -451,7 +461,7 @@ void Func_02000bf4(void) {
   Event_ShowMessage(11, 0);
 }
 
-void Func_02000c24(void) {
+void Loho_MindReadMiner(void) {
   if (Event_GetFlag(0x90a))
     Event_SetMessageId((s32)MsgLoho36);
   else
@@ -474,7 +484,9 @@ DEFINE_FUNC_02000C64(Func_02000c64, 65, 1)
 
 DEFINE_FUNC_02000C64(Func_02000c74, 66, 2)
 
-void Func_02000c84(void) {
+/// Lift raises the rock (flag 0x201), and the Golem Core under it shows until
+/// it is dug up (flag 0xff7).
+void Loho_LiftRock(void) {
   Event_SetFlag(0x201);
   Actor_GetById(22)->collisionFlags &= 0xfe;
   if (Event_GetFlag(0xff7) == 0)
@@ -489,7 +501,8 @@ const struct Trigger *Scene_GetEvents(void) {
   return gData_02001ae0;
 }
 
-void Func_02000d00(void) {
+/// "People staying at the inn can check in at the counter."
+void Loho_ReadInnSign(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
@@ -498,7 +511,7 @@ void Func_02000d00(void) {
     FieldMessage_Show((s32)MsgLoho57, 1);
 }
 
-void Func_02000d40(void) {
+void Loho_TalkToInnkeeper(void) {
   s32 count = 8;
 
   /* FAKEMATCH(barrier): the empty asm on count, so the second argument is set
@@ -507,7 +520,8 @@ void Func_02000d40(void) {
   Inn_CheckIn(13, count);
 }
 
-void Func_02000d4c(void) {
+/// "Commerce really took off when we started this mining colony in Loho."
+void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(800)) {
     Shop_Run(30, 8);
@@ -520,7 +534,8 @@ void Func_02000d4c(void) {
   }
 }
 
-void Func_02000da4(s32 actor) {
+/// "If you're only here for the cannon, you can forget about it."
+void Loho_TalkAboutCannon(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
@@ -594,7 +609,7 @@ loop:
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-void Func_02000eec(void) {
+void Loho_EnterDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
@@ -894,10 +909,10 @@ struct Trigger gData_02001ae0[] = {
 };
 
 struct Trigger gData_02001aec[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000eec)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000eec)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000eec)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02000eec)},
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02000e54)},
     {0x4602, 6, CONDITION_ALWAYS, EVENT(Func_0200105c)},
     {0x8602, 8, CONDITION_ALWAYS, EVENT(Func_0200102c)},
@@ -906,11 +921,11 @@ struct Trigger gData_02001aec[] = {
     {TRIGGER_TALK, 8, 0x1a5f, MSGNO(MsgLoho29)},
     {TRIGGER_TALK, 9, 0x1a5f, MSGNO(MsgLoho30)},
     {TRIGGER_TALK, 10, 0x1a5f, MSGNO(MsgLoho31)},
-    {TRIGGER_TALK, 11, 0x1a5f, EVENT(Func_02000bf4)},
+    {TRIGGER_TALK, 11, 0x1a5f, EVENT(Loho_TalkAboutBreachedWall)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho33)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x1a5f, MSGNO(MsgLoho34)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho35)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x1a5f, EVENT(Func_02000c24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x1a5f, EVENT(Loho_MindReadMiner)},
     {TRIGGER_TALK, 12, 0x1a5f, MSGNO(MsgLoho37)},
     {TRIGGER_TALK, 13, 0x1a5f, MSGNO(MsgLoho38)},
     {TRIGGER_TALK, 14, 0x1a5f, MSGNO(MsgLoho39)},
@@ -935,8 +950,8 @@ struct Trigger gData_02001aec[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLoho12)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLoho21)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLoho22)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200012c)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_02000178)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Loho_AskWantCannon)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Loho_ExamineCannon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLoho05)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLoho06)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLoho07)},
@@ -949,12 +964,12 @@ struct Trigger gData_02001aec[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLoho25)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLoho26)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
-    {0x1cc14, 20, CONDITION_ALWAYS, EVENT(Func_02000198)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {0x1cc14, 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
     {0x50008805, 101, 0x300, EVENT(Func_02000c54)},
     {0x50008805, 102, 0x301, EVENT(Func_02000c64)},
     {0x50008805, 103, 0x302, EVENT(Func_02000c74)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x201, EVENT(Func_02000c84)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x201, EVENT(Loho_LiftRock)},
     {TRIGGERS_END},
 };
 
@@ -973,15 +988,15 @@ struct Trigger gData_02001dd4[] = {
     {0x8402, 22, 0x320, EVENT(Func_02000e0c)},
     {TRIGGER_STEP, 21, 0x1320, EVENT(Func_02000e3c)},
     {TRIGGER_STEP, 23, 0x1320, EVENT(Func_02000e3c)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000d4c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa5f, MSGNO(MsgLoho18)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho52)},
-    {TRIGGER_TALK, 9, 0x1320, EVENT(Func_02000d40)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000da4)},
+    {TRIGGER_TALK, 9, 0x1320, EVENT(Loho_TalkToInnkeeper)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCannon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa5f, MSGNO(MsgLoho20)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho54)},
-    {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Func_02000d40)},
-    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_02000d00)},
+    {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Loho_TalkToInnkeeper)},
+    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Loho_ReadInnSign)},
     {TRIGGERS_END},
 };
 

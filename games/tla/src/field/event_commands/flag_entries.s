@@ -1,8 +1,8 @@
 	.section .rodata
 @ Another copy of The Broken Seal's gWorldMap_CursorDirectionAngles;
 @ read by WorldPicture_UpdateMarkers
-	.global Data_080f1120
-Data_080f1120:
+	.global gWorldMap_CursorDirectionAngles
+gWorldMap_CursorDirectionAngles:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff
 	.2byte 0xc000, 0xe000, 0xa000, 0xc000
 	.2byte 0x4000, 0x2000, 0x6000, 0x4000

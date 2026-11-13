@@ -100,7 +100,7 @@ const s16 gActorScript_EndScriptTail[8] = {
 
 /// gWorldMap_KeyHeadings: the heading for each direction pad state
 /// (0xffff = none).
-const u16 gData_0802ec5c[16] = {
+const u16 gWorldMap_KeyHeadings[16] = {
     0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
     0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
 };

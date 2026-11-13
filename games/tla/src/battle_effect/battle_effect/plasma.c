@@ -357,7 +357,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
             x = HI(point->x) + originX + GROUP_X(i) - 28;
           if (point->variant >= 0 && point->variant < FLASH_FRAMES)
             draw[0](canvas,
-                    work->sheet + (Data_08197a1a[point->variant / 3] << 11),
+                    work->sheet +
+                        (gPlasma_FlashPictures[point->variant / 3] << 11),
                     x - 16, y - 32, 32, 64);
           if (point->variant > 0)
             point->variant--;

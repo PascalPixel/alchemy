@@ -130,15 +130,15 @@ void BattleBackground_ShowZoomedPage(void) {
   }
 }
 
-/// Copies one of eight tiles from gData_0812cc74 into 0x06005000, a new one
-/// every four frames while the transition timer (unk84[9], as
-/// BattleTransition_AdvanceTimer counts it) runs from 1 to 32.
+/// Copies one of eight tiles from gBattleTransition_CurtainVariants into
+/// 0x06005000, a new one every four frames while the transition timer
+/// (unk84[9], as BattleTransition_AdvanceTimer counts it) runs from 1 to 32.
 void BattleTransition_UploadTileVariant(void) {
   u32 variant = *(s32 *)Ram_HeapSlots->unk84[9] - 1;
 
   if (variant <= 31)
-    Dma_Set(gData_0812cc74 + (variant >> 2) * 32, (void *)0x06005000,
-            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainVariants + (variant >> 2) * 32,
+            (void *)0x06005000, DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 void BattleTransition_AdvanceTimer(void) {
@@ -237,13 +237,20 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     s32 y;
     s32 zero;
 
-    Dma_Set(Data_0812cd74, (void *)0x06005020, 0x84000008, DMA3);
-    Dma_Set(Data_0812cd74 + 32, (void *)0x06005040, 0x84000008, DMA3);
-    Dma_Set(Data_0812cd74 + 64, (void *)0x06005060, 0x84000008, DMA3);
-    Dma_Set(Data_0812cd74 + 96, (void *)0x06005080, 0x84000008, DMA3);
-    Dma_Set(Data_0812cd74 + 128, (void *)0x060050a0, 0x84000008, DMA3);
-    Dma_Set(Data_0812cd74 + 160, (void *)0x060050c0, 0x84000008, DMA3);
-    Dma_Set(Data_0812cd74 + 192, (void *)0x060050e0, 0x84000008, DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles, (void *)0x06005020, 0x84000008,
+            DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 32, (void *)0x06005040, 0x84000008,
+            DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 64, (void *)0x06005060, 0x84000008,
+            DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 96, (void *)0x06005080, 0x84000008,
+            DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 128, (void *)0x060050a0,
+            0x84000008, DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 160, (void *)0x060050c0,
+            0x84000008, DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 192, (void *)0x060050e0,
+            0x84000008, DMA3);
     view->secondMode = 1;
     view->busy = 0;
     view->mode = 1;

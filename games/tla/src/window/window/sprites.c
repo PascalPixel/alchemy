@@ -558,7 +558,7 @@ struct PopTransform {
   u32 unk06 : 16;
 };
 
-extern const u8 Data_0805ec84[];
+extern const u8 gWindowSprite_PageArrowTiles[];
 extern const u8 gWindowSprite_CursorBobOffsets[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 extern const s8 gUiSprite_BounceOffsets[];
@@ -585,7 +585,7 @@ void WindowSprite_UpdateAll(void) {
       switch (output->active) {
       case 2:
         if (work->glyphResource != 0x60) {
-          const u8 *tiles = &Data_0805ec84[phase * 128];
+          const u8 *tiles = &gWindowSprite_PageArrowTiles[phase * 128];
 
           sprite->tile = VramCache_Load(work->glyphResource, 128, tiles);
           output->index = sprite->tile;

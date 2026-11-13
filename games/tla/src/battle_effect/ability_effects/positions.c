@@ -103,9 +103,9 @@ extern char ResourceId_YellowOrbSheet;
 // The strike's six cels: ☀️'s gBeam_Cells and
 // gTargetStrike_Reach, _StrikeWidths and _StrikeHeights.
 extern u16 gBeam_Cells[];
-extern u8 Data_08198878[];
-extern u8 Data_08198860[];
-extern u8 Data_08198866[];
+extern u8 gBeam_PictureReaches[];
+extern u8 gBeam_PictureWidths[];
+extern u8 gBeam_PictureHeights[];
 // Byte offsets of the spark cels in the spark sheet, by size - 1 (☀️'s
 // gLuckyWheels_SparkCellOffsets).
 extern u16 gBattleEffect_FlarePictures[];
@@ -330,14 +330,15 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
 
         if (effect->side == 0)
           draw[0](canvas, work->sheet + gBeam_Cells[cel],
-                  pos.x + Data_08198878[cel] + shake - 58,
-                  pos.y - Data_08198866[cel] / 2, Data_08198860[cel],
-                  Data_08198866[cel]);
+                  pos.x + gBeam_PictureReaches[cel] + shake - 58,
+                  pos.y - gBeam_PictureHeights[cel] / 2,
+                  gBeam_PictureWidths[cel], gBeam_PictureHeights[cel]);
         else
           draw[0](canvas, work->sheet + gBeam_Cells[cel],
-                  pos.x - Data_08198878[cel] + shake - Data_08198860[cel] + 58,
-                  pos.y - Data_08198866[cel] / 2, Data_08198860[cel],
-                  Data_08198866[cel]);
+                  pos.x - gBeam_PictureReaches[cel] + shake -
+                      gBeam_PictureWidths[cel] + 58,
+                  pos.y - gBeam_PictureHeights[cel] / 2,
+                  gBeam_PictureWidths[cel], gBeam_PictureHeights[cel]);
       }
     }
 

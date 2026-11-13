@@ -209,7 +209,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
     object->movementState = 0;
     Actor_SetMode(object, 2);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
-    Actor_StartScriptFar(object, gData_080f32e0);
+    Actor_StartScriptFar(object, gActor_LaunchScript);
     object->timer = action;
   }
 }

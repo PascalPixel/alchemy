@@ -58,7 +58,7 @@ void Encounter_SelectMapZones(s32 search) {
   u8 *out = work->settings;
   u32 first = 0;
   u32 second = 0;
-  const struct SceneMusicEntry *entry = Data_080ee6d4;
+  const struct SceneMusicEntry *entry = gScene_EncounterRules;
   u32 i;
 
   if (search != 0) {

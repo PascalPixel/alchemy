@@ -36,7 +36,7 @@ struct PlayerSprite__f0279b0 {
 };
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gData_0802ec5c[16];
+extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -82,7 +82,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     object->acceleration = 0x4000;
   }
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
     collision |= 4;
@@ -302,7 +302,7 @@ s32 Func_08027e20(struct Actor *interpreter) {
     object->acceleration = 0x10000;
   }
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
     goto counted;
@@ -596,7 +596,7 @@ struct PartyKeys__s28534 {
 };
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gData_0802ec5c[16];
+extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 Func_0802db88(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -649,7 +649,7 @@ s32 Func_08028534(struct Actor *object) {
   collision = 0;
   object->speedLimit = 0x14000;
   object->acceleration = 0x8000;
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
     collision |= 4;
@@ -872,7 +872,7 @@ struct WorldEventWork__f028aac {
 };
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gData_0802ec5c[16];
+extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 Func_0802dbd0(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -923,7 +923,7 @@ s32 Func_08028aac(struct Actor *object) {
   collision = 0;
   object->speedLimit = object->y / 16 + 0x14000;
   object->acceleration = 0x8000;
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
     collision |= 4;

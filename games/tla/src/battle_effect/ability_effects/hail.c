@@ -13,7 +13,7 @@
 
 // The ice chip's four cels: ☀️'s gProjectileVolley_PelletOffsets,
 // gHail_CellWidths and gHail_CellHeights.
-extern u16 Data_0819851c[];
+extern u16 gHail_Pictures[];
 extern u8 gHail_CellWidths[];
 extern u8 gHail_CellHeights[];
 
@@ -96,7 +96,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
         u32 height;
 
         cel = (chip->z / 128) & 3;
-        blit[i & 1](canvas, work->sheet + 0x400 + Data_0819851c[cel],
+        blit[i & 1](canvas, work->sheet + 0x400 + gHail_Pictures[cel],
                     HI(chip->x) - (width = gHail_CellWidths[cel]) / 2,
                     HI(chip->y) - (height = gHail_CellHeights[cel]) / 2, width,
                     height);

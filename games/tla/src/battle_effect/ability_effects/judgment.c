@@ -200,7 +200,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
-            OBJ_TILES((struct JudgmentObject *)work->objects[Data_08198ab4[i]]),
+            OBJ_TILES((struct JudgmentObject *)
+                          work->objects[gJudgment_BurstPictures[i]]),
             (u32)(PassBuffer(Ram_MapCellBuffer) + i * 0x400), 0x84000100);
       }
     }
@@ -224,11 +225,13 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         for (i = 0; i != 6; i++) {
           s32 k = i & 3;
           s32 a = Random16() & 0xffff;
-          s32 x = ((size * Trig_Sin(a)) >> 16) - (Data_08198ace[k] >> 1);
-          s32 y = ((size * Trig_Cos(a)) >> 16) - (Data_08198ad4[k] / 2);
+          s32 x =
+              ((size * Trig_Sin(a)) >> 16) - (gJudgment_ShardWidths[k] >> 1);
+          s32 y =
+              ((size * Trig_Cos(a)) >> 16) - (gJudgment_ShardHeights[k] / 2);
 
-          draw[0](canvas, work->sheet + Data_08198ac2[k], x + 60, y + 80,
-                  Data_08198ace[k], Data_08198ad4[k]);
+          draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
+                  y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
         }
       }
     }

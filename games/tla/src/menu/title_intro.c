@@ -108,8 +108,8 @@ extern char ResourceId_IntroLighthousePicture;
 extern char ResourceId_IntroGullSprites;
 extern char ResourceId_TitleScreenPicture;
 extern const u8 gTitle_PromptBlendLevels[];
-extern u16 Data_081a877a[];
-extern u16 Data_081a87ba[];
+extern u16 gTitleIntro_ChannelCurve[];
+extern u16 gTitleIntro_ChannelCurveLight[];
 extern u16 Data_081a87fa[];
 s32 BattleEffect_ClampRgb555Channel(s32 value);
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
@@ -1310,9 +1310,9 @@ void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
           green = 28;
         if (blue > 28)
           blue = 28;
-        *destination++ = Data_081a87ba[blue];
-        *destination++ = Data_081a87ba[green];
-        *destination++ = Data_081a87ba[red];
+        *destination++ = gTitleIntro_ChannelCurveLight[blue];
+        *destination++ = gTitleIntro_ChannelCurveLight[green];
+        *destination++ = gTitleIntro_ChannelCurveLight[red];
       }
       break;
     case 0x10003:
@@ -1329,8 +1329,9 @@ void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green = BattleEffect_ClampRgb555Channel(green);
         blue = BattleEffect_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, Data_081a87fa[blue], Data_081a87ba[green],
-                   Data_081a877a[red]);
+        SET_VECTOR(destination, Data_081a87fa[blue],
+                   gTitleIntro_ChannelCurveLight[green],
+                   gTitleIntro_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -1357,9 +1358,9 @@ void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green = BattleEffect_ClampRgb555Channel(green);
         blue = BattleEffect_ClampRgb555Channel(blue);
-        *destination++ = Data_081a877a[blue];
-        *destination++ = Data_081a877a[green];
-        *destination++ = Data_081a877a[red];
+        *destination++ = gTitleIntro_ChannelCurve[blue];
+        *destination++ = gTitleIntro_ChannelCurve[green];
+        *destination++ = gTitleIntro_ChannelCurve[red];
       }
       break;
     case 0x10005:
@@ -1392,8 +1393,9 @@ void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green -= green / 3;
         blue -= blue / 3;
-        SET_VECTOR(destination, Data_081a877a[blue], Data_081a877a[green],
-                   Data_081a87ba[red]);
+        SET_VECTOR(destination, gTitleIntro_ChannelCurve[blue],
+                   gTitleIntro_ChannelCurve[green],
+                   gTitleIntro_ChannelCurveLight[red]);
         destination += 3;
       }
       break;
@@ -1411,8 +1413,9 @@ void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green = BattleEffect_ClampRgb555Channel(green);
         blue = BattleEffect_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, Data_081a87fa[blue], Data_081a87ba[green],
-                   Data_081a877a[red]);
+        SET_VECTOR(destination, Data_081a87fa[blue],
+                   gTitleIntro_ChannelCurveLight[green],
+                   gTitleIntro_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -1481,9 +1484,9 @@ void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
       clampedGreen = BattleEffect_ClampRgb555Channel(scaledGreen);
       scaledBlue = (u32)scaledBlue >> 16;
       clampedBlue = BattleEffect_ClampRgb555Channel(scaledBlue);
-      destination[colorIndex * 3 + 0] = Data_081a877a[clampedBlue];
-      destination[colorIndex * 3 + 1] = Data_081a877a[clampedGreen];
-      destination[colorIndex * 3 + 2] = Data_081a877a[clampedRed];
+      destination[colorIndex * 3 + 0] = gTitleIntro_ChannelCurve[clampedBlue];
+      destination[colorIndex * 3 + 1] = gTitleIntro_ChannelCurve[clampedGreen];
+      destination[colorIndex * 3 + 2] = gTitleIntro_ChannelCurve[clampedRed];
     }
   } else if (mode & 0x800000) {
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {

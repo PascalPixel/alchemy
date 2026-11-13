@@ -498,7 +498,7 @@ void Battle_ProcessTurnEnd(void) {
   BattleBackground_SetMode(2, *(u16 *)&Ram_HeapSlots->battleWork->unk670[0], 0);
   {
     s32 *groupList;
-    struct BattleGroupOrder order = Data_081297c4;
+    struct BattleGroupOrder order = gBattleParty_TurnEndSideOrder;
     u16 unitIds[16];
     s32 group;
     s32 unitIndex;

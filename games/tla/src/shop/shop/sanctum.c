@@ -535,7 +535,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   savedCursorMode = shop->cursor.anchor->active;
   shop->burstMember = -1;
   shop->cursor.anchor->active = 13;
-  Sound_PlayFar(Data_0810cf28[shop->action]);
+  Sound_PlayFar(sSanctumServiceCues[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 0);
   wait(20);

@@ -171,7 +171,7 @@ extern u8 gData_08197826[];
 extern s32 gData_08197834[];
 extern const u8 gData_0819887e[];
 extern const u8 gData_08198882[];
-extern const u8 gData_08198886[];
+extern const u8 gCastingImpact_GlintDrawFlags[];
 extern const u16 gData_0819888a[];
 extern const u16 gData_0819889e[];
 extern const u16 gData_081988b2[];
@@ -181,12 +181,12 @@ extern const u16 gData_081988ee[];
 extern const u16 gData_081988fc[];
 extern const u16 gData_0819890a[];
 extern const u16 gData_08198918[];
-extern u16 gData_08198926[];
+extern u16 gCastingImpact_PictureX[];
 extern const u16 gData_08198934[];
 extern const u8 gData_0819893a[];
 extern const u8 gData_0819893d[];
 extern u8 gData_08198940[][2];
-extern const u16 gData_08198946[];
+extern const u16 gCastingImpact_PictureY[];
 extern const u8 gData_0819894e[];
 extern const u8 gData_08198952[];
 extern const u8 gData_08198956[];
@@ -1473,7 +1473,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame < 20) {
           s32 m;
           if (frame < 8)
-            m = gData_08198886[frame / 2];
+            m = gCastingImpact_GlintDrawFlags[frame / 2];
           else
             m = 3;
           HeapSlot_Release(188);
@@ -1594,13 +1594,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame >= 0 && (m = frame / 3) < 7) {
           if (action->side == 0)
             drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
-                              gData_08198918[m], gData_08198926[m] - 16,
+                              gData_08198918[m],
+                              gCastingImpact_PictureX[m] - 16,
                               gData_081988fc[m], gData_0819890a[m]);
           else
             drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
                               128 - gData_08198918[m] - gData_081988fc[m],
-                              gData_08198926[m] - 16, gData_081988fc[m],
-                              gData_0819890a[m]);
+                              gCastingImpact_PictureX[m] - 16,
+                              gData_081988fc[m], gData_0819890a[m]);
         }
         for (i = 0; i != 3; i++) {
           s32 m;
@@ -1711,8 +1712,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2 + target[0] / 2;
             point[1] = point[1] + target[1] + 32;
-            drawFuncs.draw[1](screen, buffer + gData_08198946[m], point[0] - 4,
-                              point[1] - 4, 8, 8);
+            drawFuncs.draw[1](screen, buffer + gCastingImpact_PictureY[m],
+                              point[0] - 4, point[1] - 4, 8, 8);
             p->x -= 6;
             if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
               Sound_PlayFar(133);

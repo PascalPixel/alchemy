@@ -492,7 +492,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     pushed = 1;
     x = position.x;
     z = position.z;
-    modes = Data_080f0ee4;
+    modes = gUnused_BattleEffectBytes;
     Actor_SetMode(pusher, modes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->movementState = 0;
@@ -885,7 +885,7 @@ void FieldPsynergy_EndReveal(void) {
   }
 }
 
-extern const s32 gData_080f0ee8[];
+extern const s32 gFieldEffect_HeavyImpactScript[];
 
 /* VIEW(f0dd820): routine Vector_AddPolarOffset as void
  * Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); hue has extern
@@ -947,7 +947,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
       piece = Actor_Spawn__f0dd820(BURST_FALL_OBJECT, p->values[0],
                                    p->values[1], p->values[2]);
       if (piece != 0) {
-        Actor_StartScriptFar(piece, gData_080f0ee8);
+        Actor_StartScriptFar(piece, gFieldEffect_HeavyImpactScript);
         piece->motionFlags = 2;
       }
       wait((((u32)Random16() * 2) >> 16) + 2);
@@ -983,7 +983,7 @@ void FieldPsynergy_Growth(void) {
     object =
         Actor_Spawn__f0dd820(0x119, p->values[0], p->values[1], p->values[2]);
     if (object != 0) {
-      Actor_StartScriptFar(object, gData_080f0ee8);
+      Actor_StartScriptFar(object, gFieldEffect_HeavyImpactScript);
       *((u8 *)object + 0x55) = 2;
     }
     wait((((u32)Random16() * 2) >> 16) + 2);

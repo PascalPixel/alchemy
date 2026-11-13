@@ -224,7 +224,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
           s32 cel = (frame + i) / 4 % 5;
           s32 x = HI(thorn->x);
           s32 y = thorn->y >> 16;
-          u8 *cell = work->sheet + Data_08198202[cel];
+          u8 *cell = work->sheet + gCybele_ThornPictures[cel];
           u32 width = Data_0819820c[cel];
           u32 tall;
 
@@ -316,8 +316,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
         if (chip->variant >= 0) {
           s32 cel = i % 5;
 
-          draw[0](canvas, work->sheet + Data_08198220[cel], HI(chip->x),
-                  HI(chip->y), Data_0819822a[cel], Data_0819822f[cel]);
+          draw[0](canvas, work->sheet + gCybele_ChipPictures[cel], HI(chip->x),
+                  HI(chip->y), gCybele_ChipWidths[cel],
+                  gCybele_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += 0x4000;
@@ -524,7 +525,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
             if (ember->variant >= 0 && ember->variant <= 26) {
               s32 cel = 6;
               u8 *source = work->sheet + gCybele_EmberOffsets[cel];
-              u32 size = Data_08198252[cel];
+              u32 size = gCybele_BlastSizes[cel];
 
               draw[0](canvas, source, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
@@ -713,9 +714,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     for (i = 0; i != count; i++) {
       s32 n = i % 3;
 
-      draw(canvas, work->sheet + Data_08198284[n], gBoreas_Points[i][0] - ox,
-           gBoreas_Points[i][1] - Data_0819828d[n] - oy, Data_0819828a[n],
-           Data_0819828d[n]);
+      draw(canvas, work->sheet + gBoreas_CrystalPictures[n],
+           gBoreas_Points[i][0] - ox,
+           gBoreas_Points[i][1] - gBoreas_CrystalHeights[n] - oy,
+           gBoreas_CrystalWidths[n], gBoreas_CrystalHeights[n]);
     }
 
     // The nine ice objects in a 3x3 block, 32 pixels apart.
@@ -923,9 +925,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       for (i = 0; i != count; i++) {
         s32 n = i % 3;
 
-        draw(canvas, work->sheet + Data_081982cc[n], gBoreas_Points[i][0] - 56,
-             gBoreas_Points[i][1] - Data_081982d5[n], Data_081982d2[n],
-             Data_081982d5[n]);
+        draw(canvas, work->sheet + gBoreas_RisingCrystalPictures[n],
+             gBoreas_Points[i][0] - 56,
+             gBoreas_Points[i][1] - gBoreas_RisingCrystalHeights[n],
+             gBoreas_RisingCrystalWidths[n], gBoreas_RisingCrystalHeights[n]);
       }
     }
     // The boulders burst: 64 pieces fly up from where they stood.
@@ -950,7 +953,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         if (y <= 135) {
           s32 n = i % 3;
 
-          draw(canvas, work->sheet + Data_081982de[n], HI(q->x),
+          draw(canvas, work->sheet + gBoreas_FallPictures[n], HI(q->x),
                y - Data_081982db[n], Data_081982d8[n], Data_081982db[n]);
           BattleEffectKernels_IntegrateVector2(q, 64, 1 << 16);
           if (HI(q->y) > 120 && q->velocityY > 8 << 16) {
@@ -5615,9 +5618,9 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           do {
           } while (0);
           BattleEffect_BuildBlitter(188, 7, 7,
-                                    Data_0819846e[flip & 3] | COMPOSITE_CLIP_X |
-                                        COMPOSITE_CLIP_Y,
-                                    Data_08198472[effect->variant]);
+                                    gBolt_GlintFlips[flip & 3] |
+                                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                                    gBolt_GlintModes[effect->variant]);
           DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintCells[kind], x, y,
                      gData_08197492[kind], gData_08197498[kind]);
           HeapSlot_Release(188);

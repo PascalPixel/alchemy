@@ -385,7 +385,7 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 // Message_SetVoiceFromActor): the voice sound from its value and the
 // countdown from the event mode's table; 0x80000000 clears both.
 
-extern const u8 gData_080f330c[];
+extern const u8 gMessageSpeed_VoiceRates[];
 
 void Message_SetVoiceFromActor(s32 key) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -397,7 +397,7 @@ void Message_SetVoiceFromActor(s32 key) {
     *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
     id = Speaker_GetVoice(Actor_GetSpriteById(key));
-    value = gData_080f330c[gMainRoutineWork.eventMode];
+    value = gMessageSpeed_VoiceRates[gMainRoutineWork.eventMode];
     *(s16 *)&work->speakerVoiceSound = id;
     *(s16 *)&work->speakerVoiceCountdown = value;
   }

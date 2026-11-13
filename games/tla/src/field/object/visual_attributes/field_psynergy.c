@@ -426,7 +426,7 @@ void FieldPsynergy_FadeToCastColor(void) {
     tint = 6;
   if (GameFlag_Test(FLAG_TINT_FIRST + 7))
     tint = 7;
-  Field_StartColorTransition(8, gData_080f3954[tint]);
+  Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }
 #undef Actor_SelectAnimationFar
 #undef FLAG_TINT_FIRST

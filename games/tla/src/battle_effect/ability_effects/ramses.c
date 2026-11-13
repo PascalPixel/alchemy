@@ -43,8 +43,8 @@ extern char ResourceId_DesertBackdrop;
 extern struct FxScale gData_08196e6c; // one to one
 extern u8 gRamses_ObjectColumns[];
 extern u8 gRamses_ObjectRows[];
-extern u16 gData_08198a76[]; // ☀️ gEruption_PuffCells
-extern u16 gData_08198a84[]; // ☀️ gCybele_EmberSizes
+extern u16 gRamses_PuffPictures[]; // ☀️ gEruption_PuffCells
+extern u16 gRamses_PuffSizes[];    // ☀️ gCybele_EmberSizes
 
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 
@@ -265,10 +265,10 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
         if (puff->variant >= 0 && puff->variant <= 23) {
           s32 cell = puff->variant / 6 + 3;
 
-          draw[0](canvas, work->sheet + gData_08198a76[cell],
-                  HI(puff->x) - gData_08198a84[cell] / 2,
-                  HI(puff->y) - gData_08198a84[cell] / 2, gData_08198a84[cell],
-                  gData_08198a84[cell]);
+          draw[0](canvas, work->sheet + gRamses_PuffPictures[cell],
+                  HI(puff->x) - gRamses_PuffSizes[cell] / 2,
+                  HI(puff->y) - gRamses_PuffSizes[cell] / 2,
+                  gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
         }
         BattleEffectKernels_IntegrateVector2(puff, 60, -0x4000);
         puff->variant++;

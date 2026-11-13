@@ -67,8 +67,8 @@ struct FxPartyList;
 
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
-extern char ResourceId_Data134; // ☀️ ParticleSpritesA
-extern u8 gData_0819896a[];     // the pillars' feet, x and y
+extern char ResourceId_Data134;             // ☀️ ParticleSpritesA
+extern u8 gCastingImpact_IceChipPictures[]; // the pillars' feet, x and y
 // ☀️ gBattleEffect_MoteCells: the Data134 sheet's spark cells, by size - 1
 // (byte offsets).
 extern u16 gBattleEffect_MoteCells[];
@@ -239,11 +239,12 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
 
           draw[0](canvas, work->sheet + PILLAR_SHEET,
-                  gData_0819896a[k * 2] - 17,
-                  gData_0819896a[k * 2 + 1] - span - 104, 34, 104);
+                  gCastingImpact_IceChipPictures[k * 2] - 17,
+                  gCastingImpact_IceChipPictures[k * 2 + 1] - span - 104, 34,
+                  104);
           draw[0](canvas, work->sheet + PILLAR_SHEET,
-                  gData_0819896a[k * 2] - 17, gData_0819896a[k * 2 + 1] - span,
-                  34, span);
+                  gCastingImpact_IceChipPictures[k * 2] - 17,
+                  gCastingImpact_IceChipPictures[k * 2 + 1] - span, 34, span);
         }
       }
 
@@ -741,8 +742,8 @@ extern char ResourceId_BlastSheet;
 
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_DropPoints[][2];
-extern u16 Data_08198a48[]; // ☀️ gParticleStreams_FlashCells
-extern u16 Data_08198a56[]; // ☀️ gParticleStreams_FlashSizes
+extern u16 gParticleStreams_FlashPictures[]; // ☀️ gParticleStreams_FlashCells
+extern u16 Data_08198a56[];                  // ☀️ gParticleStreams_FlashSizes
 
 void BattleEffect_ConfigureEffectDisplay(void);
 
@@ -1307,7 +1308,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         if ((u32)flash->variant <= 13) {
           s32 cell = flash->variant / 2;
 
-          draw(canvas, work->sheet + Data_08198a48[cell],
+          draw(canvas, work->sheet + gParticleStreams_FlashPictures[cell],
                point.x - Data_08198a56[cell] / 2,
                point.y - Data_08198a56[cell] / 2, Data_08198a56[cell],
                Data_08198a56[cell]);

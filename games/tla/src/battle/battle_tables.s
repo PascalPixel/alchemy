@@ -4,8 +4,8 @@
 	.balign 4
 	.4byte 17
 @ Party places from the centre out (The Broken Seal's gBattleParty_CenterOrderOffsets)
-	.global gData_081287c8
-gData_081287c8:
+	.global gBattleParty_CenterOrderOffsets
+gBattleParty_CenterOrderOffsets:
 	.byte 0, -1, 1, -2, 2, -3, 3, -4, 4
 	.balign 4
 @ Weapon animations, one table each for classes 0, 1, 2, 3, 5, 4, 6 and 7
@@ -19,20 +19,20 @@ gData_081287e2:
 	.global gData_081287f0
 gData_081287f0:
 	.2byte 0x1f7, 0x1f7, 0x1f7, 0x1f7, 0x1f5, 0x1f6, 0x1f5
-	.global gData_081287fe
-gData_081287fe:
+	.global gBattleUnit_WeaponAnimationsIsaac
+gBattleUnit_WeaponAnimationsIsaac:
 	.2byte 0x1f9, 0x1f9, 0x1fb, 0x1fb, 0x1fa, 0x1f9, 0x1f9
-	.global gData_0812880c
-gData_0812880c:
+	.global gBattleUnit_WeaponAnimationsGaret
+gBattleUnit_WeaponAnimationsGaret:
 	.2byte 0x204, 0x204, 0x204, 0x204, 0x202, 0x203, 0x202
-	.global gData_0812881a
-gData_0812881a:
+	.global gBattleUnit_WeaponAnimationsIvan
+gBattleUnit_WeaponAnimationsIvan:
 	.2byte 0x1fd, 0x1fe, 0x1ff, 0x200, 0x1fd, 0x1fd, 0x1fd
-	.global gData_08128828
-gData_08128828:
+	.global gBattleUnit_WeaponAnimationsMia
+gBattleUnit_WeaponAnimationsMia:
 	.2byte 0x208, 0x208, 0x208, 0x208, 0x206, 0x207, 0x206
-	.global gData_08128836
-gData_08128836:
+	.global gBattleUnit_WeaponAnimationsJenna
+gBattleUnit_WeaponAnimationsJenna:
 	.2byte 0x20c, 0x20d, 0x20b, 0x20a, 0x20c, 0x20c, 0x20c
 	.global gBattlePlacement_StepPairs
 gBattlePlacement_StepPairs:
@@ -77,19 +77,19 @@ Data_08128972:
 Data_08128c50:
 	.incbin "games/tla/src/battle/actflags.table"
 @ A copy of The Broken Seal's gBattleParty_TurnEndSideOrder
-	.global Data_081297c4
-Data_081297c4:
+	.global gBattleParty_TurnEndSideOrder
+gBattleParty_TurnEndSideOrder:
 	.4byte 1, 2
 	.byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 @ A copy of The Broken Seal's gElementGlow_StarWorkOffsets
-	.global Data_0812980c
-Data_0812980c:
+	.global gElementGlow_StarPictures
+gElementGlow_StarPictures:
 	.4byte 0, 1, 5, 14, 30, 46, 62
-	.global Data_08129828
-Data_08129828:
+	.global gElementGlow_StarSizes
+gElementGlow_StarSizes:
 	.byte 1, 2, 3, 4, 4, 4, 4, 0
 	.global Data_08129830
 Data_08129830:
@@ -212,8 +212,8 @@ Data_0812cbd8:
 	.4byte 4 << 16, 4 << 16, 4 << 16, 4 << 16, 20 << 16, 4 << 16, 4 << 16, 4 << 16
 	.4byte 4 << 16, 20 << 16
 @ gBattleMotion_VariantVelocityY
-	.global Data_0812cc00
-Data_0812cc00:
+	.global gBattleKnockback_DistancePercent
+gBattleKnockback_DistancePercent:
 	.4byte 3 << 16, 6 << 16, 7 << 16, 10 << 16, 5 << 16, 2 << 16, 3 << 16, 0x58000
 	.4byte 10 << 16, 5 << 16
 @ gBattleMotion_VariantDistancePercent
@@ -232,12 +232,12 @@ Data_0812cc64:
 Data_0812cc6c:
 	.byte 113, 56, 31, 20, 14, 10, 7, 5
 @ A copy of The Broken Seal's gBattleTransition_CurtainVariants
-	.global gData_0812cc74
-gData_0812cc74:
+	.global gBattleTransition_CurtainVariants
+gBattleTransition_CurtainVariants:
 	.incbin "games/tla/src/battle/presentation/tilevar.4bpp"
 @ A copy of The Broken Seal's gBattleTransition_CurtainTiles
-	.global Data_0812cd74
-Data_0812cd74:
+	.global gBattleTransition_CurtainTiles
+gBattleTransition_CurtainTiles:
 	.incbin "games/tla/src/battle/presentation/curtain.4bpp"
 	.balign 4
 	.include "games/tla/src/battle/presentation/highlight_ramp.s"

@@ -4,8 +4,8 @@
 gBattleEffect_ArcTiles:
 	.incbin "games/tla/src/graphics/field_effects/spark.4bpp32x16"
 @ A copy of The Broken Seal's gBattleEffect_ArcSparkTiles
-	.global gData_080ed90c
-gData_080ed90c:
+	.global gFieldEffect_ArcSparkTiles
+gFieldEffect_ArcSparkTiles:
 	.incbin "games/tla/src/graphics/field_effects/arc_spark.4bpp32x16"
 	.section .rodata.a
 @ A 64x64 disc of 256 colours, shaded in colours 224 to 255: the 4,096

@@ -75,7 +75,6 @@ extern void
 Text_DrawMessageAsTilesFar__shop(s32 message, void *window, s32 x,
                                  s32 y) __asm__("Text_DrawMessageAsTilesFar");
 
-
 struct ShopCursorSprite {
   u8 unk00[5];
   u8 active;
@@ -340,10 +339,10 @@ extern struct ForgeRecipe gData_0810cc34[];
 /// The price per guest of each inn.
 extern const s8 gData_0810cf2c[];
 
-extern s8 Data_0810cf28[];
+extern s8 sSanctumServiceCues[];
 
-extern const s16 Data_0810c38e[];
+extern const s16 sGameTicketCreditCosts[];
 
-extern const s16 gData_0810c3f4[][33];
+extern const s16 sStockTable[][33];
 
 #endif

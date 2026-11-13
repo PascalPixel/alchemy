@@ -19,7 +19,7 @@ const s32 gData_080f3950 = 0;
 /// Eight colours (BGR555).
 // As The Broken Seal's gBattleEffect_TargetColors are.
 // clang-format off
-const u32 gData_080f3954[8] = {
+const u32 gFieldEffect_TargetColors[8] = {
     0x4084, 0x1204, 0x1090, 0x2942, 0x304c, 0x098c, 0x2108, 0x4210,
 };
 // clang-format on
@@ -28,8 +28,8 @@ const s32 gBattleEffect_UntargetedObjectScript[] = {
     SC_FREE,
 };
 
-const s32 *const gData_080f3978[3] = {
-    &gData_080f0ee8[8],
-    &gData_080f0ee8[11],
-    &gData_080f0ee8[14],
+const s32 *const gFieldEffect_DurationScripts[3] = {
+    &gFieldEffect_HeavyImpactScript[8],
+    &gFieldEffect_HeavyImpactScript[11],
+    &gFieldEffect_HeavyImpactScript[14],
 };

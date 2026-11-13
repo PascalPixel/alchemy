@@ -21,7 +21,7 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
   memberIndex = 0;
   savedSelectedItem = shop->selectedItem;
   unitId = 0;
-  creditCost = Data_0810c38e[gMainRoutineWork.counterC];
+  creditCost = sGameTicketCreditCosts[gMainRoutineWork.counterC];
 
   if (creditCost > gMainRoutineWork.counterB)
     return;
@@ -88,14 +88,14 @@ void ShopStock_AddArtifacts(s32 rowNo) {
     // From patch 1 an empty entry is skipped; the Japanese release stops at the
     // row's first one.
     for (i = 0; i <= 7; i++) {
-      s16 value = gData_0810c3f4[rowNo][24 + i];
+      s16 value = sStockTable[rowNo][24 + i];
 
       if (value != 0)
         Item_AdjustCounterFar(value, 1);
     }
 #else
     for (i = 0; i <= 7; i++) {
-      s16 value = gData_0810c3f4[rowNo][24 + i];
+      s16 value = sStockTable[rowNo][24 + i];
 
       if (value == 0)
         break;
@@ -113,9 +113,9 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   s32 count;
 
   count = 0;
-  if (gData_0810c3f4[stockRow][0] != 0) {
+  if (sStockTable[stockRow][0] != 0) {
     dst = output;
-    src = gData_0810c3f4[stockRow];
+    src = sStockTable[stockRow];
     do {
       // The row's halfword read through a volatile pointer, a load apart from
       // the end test's; as *src, 41 of 28 instructions differ in tla-en.
@@ -133,7 +133,7 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
 
 s32 ShopStock_GetType(s32 index) {
   s32 offset = index << 5;
-  u8 *table = (u8 *)gData_0810c3f4;
+  u8 *table = (u8 *)sStockTable;
 
   offset += index;
   offset <<= 1;

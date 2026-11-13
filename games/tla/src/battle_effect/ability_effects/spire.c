@@ -18,7 +18,7 @@ extern char ResourceId_BoulderSheet;
 // ☀️'s gSpire_RockCounts, by variant.
 extern u8 gSpire_RockCounts[];
 // ☀️'s gSpire_ShardOffsets: x, y in the boulder for each shard.
-extern u8 Data_08198566[];
+extern u8 gSpire_ShardOffsets[];
 // ☀️'s gSpire_RockX and gSpire_DropFrames, by boulder.
 extern s8 gSpire_RockX[];
 extern u8 gSpire_DropFrames[];
@@ -78,8 +78,8 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
     for (j = 0; j != SHARDS_PER_ROCK; j++) {
       struct EffectStep *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
 
-      seed->x = (Data_08198566[j * 2] + gSpire_RockX[i]) << 16;
-      seed->y = Data_08198566[j * 2 + 1] << 16;
+      seed->x = (gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]) << 16;
+      seed->y = gSpire_ShardOffsets[j * 2 + 1] << 16;
       seed->velocityX = ((Random16() % 96) - 48) << 10;
       seed->velocityY = -((Random16() & 127) + 32) << 11;
       seed->z = 32;

@@ -494,7 +494,7 @@ void Func_08041254(void) {
   HeapSlot_Release(208);
 }
 
-extern const u8 gData_0805eb50[];
+extern const u8 gPauseMenu_Icons[];
 
 /// Draws the ability's name; ability 0 draws a dash placeholder.
 void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
@@ -502,7 +502,7 @@ void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityNothing,
                             (struct RenderInput *)arg1, arg2, arg3);
   else
-    Text_DrawStringInWindow((u8 *)gData_0805eb50, arg1, arg2, arg3);
+    Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, arg1, arg2, arg3);
 }
 
 extern const s16 gData_080aa170[4][9];

@@ -327,37 +327,37 @@ extern const u8 Data_08199ea4[];
 extern const u8 Data_08199ec5[];
 void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode);
 extern u8 gCybele_ObjectPoses[];
-extern u16 Data_08198202[]; // ☀️ gCybele_ThornOffsets
-extern u8 Data_0819820c[];  // ☀️ gCybele_ThornWidths
-extern u8 Data_08198211[];  // ☀️ gCybele_ThornHeights
+extern u16 gCybele_ThornPictures[]; // ☀️ gCybele_ThornOffsets
+extern u8 Data_0819820c[];          // ☀️ gCybele_ThornWidths
+extern u8 Data_08198211[];          // ☀️ gCybele_ThornHeights
 extern u16 gCybele_LeafOffsets[];
 extern u8 gCybele_LeafSizes[];
-extern u16 Data_08198220[]; // ☀️ the second gCybele_ThornOffsets
-extern u8 Data_0819822a[];  // ☀️ the second gCybele_ThornWidths
-extern u8 Data_0819822f[];  // ☀️ the second gCybele_ThornHeights
+extern u16 gCybele_ChipPictures[]; // ☀️ the second gCybele_ThornOffsets
+extern u8 gCybele_ChipWidths[];    // ☀️ the second gCybele_ThornWidths
+extern u8 gCybele_ChipHeights[];   // ☀️ the second gCybele_ThornHeights
 extern u16 gCybele_SparkOffsets[];
 extern u8 gCybele_SparkSizes[];
 extern u16 gCybele_EmberOffsets[];
-extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
+extern u16 gCybele_BlastSizes[]; // ☀️ gCybele_EmberSizes
 extern u8 gBoreas_Points[][2];
 extern s8 gBoreas_ShakeOffsets[];
-extern u16 Data_08198284[]; // ☀️ gBoreas_RockCells
-extern u8 Data_0819828a[];  // ☀️ gBoreas_RockWidths
-extern u8 Data_0819828d[];  // ☀️ gBoreas_RockHeights
+extern u16 gBoreas_CrystalPictures[]; // ☀️ gBoreas_RockCells
+extern u8 gBoreas_CrystalWidths[];    // ☀️ gBoreas_RockWidths
+extern u8 gBoreas_CrystalHeights[];   // ☀️ gBoreas_RockHeights
 extern u8 gBoreas_Animations[];
 extern struct Scale Data_08196e14; // ☀️ gBattleFx10_UnitScale
 extern u16 gBoreas_DebrisCells[];
 extern u8 gBoreas_DebrisWidths[];
 extern u8 gBoreas_DebrisHeights[];
 extern u16 gBoreas_SprayCells[];
-extern u8 Data_081982c0[];  // ☀️ gBoreas_SprayWidths
-extern u8 Data_081982c3[];  // ☀️ gBoreas_SprayHeights
-extern u16 Data_081982cc[]; // ☀️ gBoreas_BoulderCells
-extern u8 Data_081982d2[];  // ☀️ gBoreas_BoulderWidths
-extern u8 Data_081982d5[];  // ☀️ gBoreas_BoulderHeights
-extern u16 Data_081982de[]; // ☀️ gBoreas_FallCells
-extern u8 Data_081982d8[];  // ☀️ gBoreas_FallWidths
-extern u8 Data_081982db[];  // ☀️ gBoreas_FallHeights
+extern u8 Data_081982c0[];                  // ☀️ gBoreas_SprayWidths
+extern u8 Data_081982c3[];                  // ☀️ gBoreas_SprayHeights
+extern u16 gBoreas_RisingCrystalPictures[]; // ☀️ gBoreas_BoulderCells
+extern u8 gBoreas_RisingCrystalWidths[];    // ☀️ gBoreas_BoulderWidths
+extern u8 gBoreas_RisingCrystalHeights[];   // ☀️ gBoreas_BoulderHeights
+extern u16 gBoreas_FallPictures[];          // ☀️ gBoreas_FallCells
+extern u8 Data_081982d8[];                  // ☀️ gBoreas_FallWidths
+extern u8 Data_081982db[];                  // ☀️ gBoreas_FallHeights
 extern s32 gDrain_Gravities[];
 extern u8 Data_081982f4[]; // the mote size by mode
 void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode);
@@ -419,8 +419,8 @@ extern s8 gGrowth_ThornPuffWidths[];
 // sparks, glints, glint spread and bolts.
 extern u8 gBolt_Counts[];
 // The Broken Seal's gBolt_GlintFlips and _GlintModes.
-extern u8 Data_0819846e[];
-extern u8 Data_08198472[];
+extern u8 gBolt_GlintFlips[];
+extern u8 gBolt_GlintModes[];
 struct Streak {
   s32 head;
   s32 tail;

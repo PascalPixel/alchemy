@@ -235,11 +235,12 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
             draw[0](canvas, work->sheet + gMirroredWall_Cells[pic],
-                    pos.x - Data_0819787a[pic], pos.y - Data_0819787d[pic] + 8,
-                    Data_0819787a[pic], Data_0819787d[pic]);
+                    pos.x - gDjinnBeams_HeadWidths[pic],
+                    pos.y - gDjinnBeams_HeadHeights[pic] + 8,
+                    gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
             draw[1](canvas, work->sheet + gMirroredWall_Cells[pic], pos.x,
-                    pos.y - Data_0819787d[pic] + 8, Data_0819787a[pic],
-                    Data_0819787d[pic]);
+                    pos.y - gDjinnBeams_HeadHeights[pic] + 8,
+                    gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
           }
           for (k = 0; k != pos.y; k++) {
             draw[0](canvas, work->sheet + 5, pos.x - width, k, width, 1);

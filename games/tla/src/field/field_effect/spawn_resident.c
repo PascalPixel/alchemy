@@ -21,7 +21,7 @@ struct LayeredSprite {
   u8 nextFrame;
 };
 
-extern const s32 *gData_080f3978[];
+extern const s32 *gFieldEffect_DurationScripts[];
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
@@ -43,8 +43,8 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
 
   sprite = (struct LayeredSprite *)effect->sprite;
   Actor_SetMode((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScriptFar((void *)effect,
-                       gData_080f3978[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScriptFar(
+      (void *)effect, gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   sprite->nextFrame = 0;
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -69,7 +69,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    script = gData_080f3978[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
       effect->scaleRateX = (options->targetScaleX - effect->scaleX) / script[3];
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];

@@ -218,7 +218,7 @@ void FieldEffect_UpdateSparkles(void) {
       cameraZ = camera[1];
       if (GameFlag_Test(0x166) != 0)
         sparkle->timer++;
-      frame = (const u16 *)&gData_080f0b7c[sparkle->timer >> 1];
+      frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
       x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
@@ -313,7 +313,7 @@ void FieldEffect_InitializeSparkles(void) {
               (sizeof(struct DustWork) / 4),
           REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
-  Resource_DecodeByteLzInRam(gData_080f38b2, buf);
+  Resource_DecodeByteLzInRam(gFieldEffect_SparkleTiles, buf);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x200, buf);
   HeapSlot_Release(56);

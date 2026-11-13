@@ -98,11 +98,11 @@ struct MapLayerFlags {
 
 extern struct BattleFxDefinition gData_080f0308[];
 
-extern const u8 gData_080effd8[];
+extern const u8 gFieldEffect_ParticleEmitterScript[];
 
 extern const u8 gBattleEffect_MarkerParticleScript[];
 
-extern const u8 gData_080f0074[];
+extern const u8 gFieldEffect_RisingPulseScript[];
 
 extern u16 Data_080f0246[];
 
@@ -110,13 +110,13 @@ extern u16 Data_080f0286[];
 
 extern u16 Data_080f02c6[];
 
-extern const u8 Data_080f01c4[];
+extern const u8 gScreenTransition_NoiseWidths[];
 
-extern const s8 Data_080f01e6[];
+extern const s8 gScreenTransition_EdgeOffsets[];
 
 extern struct TransitionShape gScreenTransition_Shapes[];
 
-extern const u8 gData_080f0206[];
+extern const u8 gScreenTransition_DitherTable[];
 
 extern char ResourceId_Headings;
 

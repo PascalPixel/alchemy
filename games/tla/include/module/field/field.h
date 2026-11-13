@@ -930,7 +930,7 @@ void Func_080caa4c(s32 table);
 
 void Window_CloseMatchingIdFar(s32 sprite);
 
-extern const s32 gData_080f0ee8[];
+extern const s32 gFieldEffect_HeavyImpactScript[];
 
 extern const s32 gFieldEffect_FragmentScript[];
 
@@ -1155,7 +1155,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
 
 s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 
-extern const u8 gData_080f3798[];
+extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const u8 gData_080f385e[];
 
 extern u32 gData_080f0bfc[];
@@ -1163,15 +1163,15 @@ extern u32 gData_080f0bfc[];
 void BattleEffect_UpdateDescendingOrbitObject(
     struct DescendingOrbitObject *arg);
 
-extern const s16 Data_080f08b0[];
+extern const s16 gLineScroll_WaveSine[];
 
-extern const s16 Data_080f0ab0[];
+extern const s16 gFieldEffect_GroundParticleFrames[];
 
 extern const u8 Data_080f3901[];
 
-extern const struct SparklePicture gData_080f0b7c[];
+extern const struct SparklePicture gFieldEffect_SparklePictures[];
 
-extern const u8 gData_080f38b2[];
+extern const u8 gFieldEffect_SparkleTiles[];
 
 void Func_080203a0(struct Actor *object, s32 kind);
 

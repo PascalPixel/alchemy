@@ -11,18 +11,18 @@ gEncounter_EnemyGroupTable:
 	.incbin "games/tla/src/field/event_commands/encounter.table"
 	.section .rodata.a
 @ A copy of The Broken Seal's gScreenTransition_NoiseWidths
-	.global Data_080f01c4
-Data_080f01c4:
+	.global gScreenTransition_NoiseWidths
+gScreenTransition_NoiseWidths:
 	.byte 0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13
 	.byte 16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240
 @ A copy of The Broken Seal's gScreenTransition_EdgeOffsets
-	.global Data_080f01e6
-Data_080f01e6:
+	.global gScreenTransition_EdgeOffsets
+gScreenTransition_EdgeOffsets:
 	.byte -4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3
 	.byte 4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3
 @ A copy of The Broken Seal's gScreenTransition_DitherTable
-	.global gData_080f0206
-gData_080f0206:
+	.global gScreenTransition_DitherTable
+gScreenTransition_DitherTable:
 	.byte 0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31
 	.byte 16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24
 	.byte 58, 5, 2, 26, 36, 61, 9, 34, 56, 27, 10, 48, 53, 30, 28, 22
@@ -55,8 +55,8 @@ Data_080f0890:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xffff, 0xffff, 0xc000
 	.2byte 0x4000, 0xffff, 0xffff, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff
 @ A copy of The Broken Seal's gDisplayScroll_WaveSine
-	.global Data_080f08b0
-Data_080f08b0:
+	.global gLineScroll_WaveSine
+gLineScroll_WaveSine:
 	.2byte 0, 100, 200, 301, 401, 501, 601, 700
 	.2byte 799, 897, 995, 1092, 1189, 1284, 1379, 1474
 	.2byte 1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191
@@ -90,8 +90,8 @@ Data_080f08b0:
 	.2byte -1567, -1474, -1379, -1284, -1189, -1092, -995, -897
 	.2byte -799, -700, -601, -501, -401, -301, -200, -100
 @ A copy of The Broken Seal's gFieldEffect_GroundParticleFrames
-	.global Data_080f0ab0
-Data_080f0ab0:
+	.global gFieldEffect_GroundParticleFrames
+gFieldEffect_GroundParticleFrames:
 	.2byte -8, -12, 20, 0, 1
 	.2byte -8, -12, 20, 0, 1
 	.2byte -8, -12, 20, 0, 1
@@ -125,8 +125,8 @@ Data_080f0b50:
 	.2byte -176, -91
 	.2byte -192, -98
 @ A copy of The Broken Seal's gFieldEffect_SparklePictures
-	.global gData_080f0b7c
-gData_080f0b7c:
+	.global gFieldEffect_SparklePictures
+gFieldEffect_SparklePictures:
 	.2byte -2, 12
 	.2byte -4, 12
 	.2byte -6, 12

@@ -376,7 +376,7 @@ extern u8 gData_0202e002[];
 
 extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
-extern const u8 gData_0802e89c[];
+extern const u8 gActor_ShadowTiles[];
 
 extern u8 Render_CopyStridedCode[];
 

@@ -232,9 +232,10 @@ struct ModelDraw {
   s32 tail;
 };
 
-extern s32 Data_0819790c[]; // the triangle's first corner: (0, 24, 0)
+extern s32 gBind_Vertex[]; // the triangle's first corner: (0, 24, 0)
 
-extern s32 Data_08197918[]; // the triangle's first corner: (0, 24, 0)
+extern s32
+    gBind_TriangleStrikeVertex[]; // the triangle's first corner: (0, 24, 0)
 
 extern u8 Data_02010400[];
 
@@ -270,7 +271,7 @@ extern u8 Data_081977f4[];
 
 extern char ResourceId_EffectPalette03;
 
-extern u8 Data_081978f0[]; // each panel's x, by side (7 a side)
+extern u8 gCondemn_PictureX[]; // each panel's x, by side (7 a side)
 
 extern u8 gCondemn_PanelY[]; // each panel's y
 
@@ -279,9 +280,9 @@ extern u8 gCondemn_PanelY[]; // each panel's y
 // StartY).
 extern u8 gDeathPlunge_PieceWidths[];
 
-extern u8 Data_0819762a[];
+extern u8 gDeathPlunge_PieceHeights[];
 
-extern u16 Data_0819764c[];
+extern u16 gDeathPlunge_PiecePictures[];
 
 extern u8 gDeathPlunge_PieceStartX[];
 
@@ -289,7 +290,7 @@ extern u8 gDeathPlunge_PieceStartY[];
 
 // The four corner sparks: their flips and their place around the target
 // (The Broken Seal's gDeathPlunge_DrawFlags, _X and _Y).
-extern u8 Data_081976da[];
+extern u8 gSpiderWeb_PictureHeights[];
 
 extern s8 gDeathPlunge_X[];
 
@@ -303,23 +304,23 @@ extern const u8 Data_081976e0[];
 
 extern const u16 Data_081976f0[];
 
-extern const u16 Data_081976f8[];
+extern const u16 gSpiderWeb_PictureBiasY[];
 
 extern const u8 Data_08197700[];
 
 extern const u8 Data_08197702[];
 
-extern const u8 Data_08197704[];
+extern const u8 gGatheringLights_Counts[];
 
-extern const u8 Data_0819770a[];
+extern const u8 gMirroredWall_Pictures[];
 
-extern const u8 Data_08197710[];
+extern const u8 gDjinnBeams_HeadPictures[];
 
-extern const u8 Data_08197716[];
+extern const u8 gProcne_Pictures[];
 
-extern const u8 Data_0819771c[];
+extern const u8 gTiamat_EmberSpeeds[];
 
-extern const u8 Data_08197720[];
+extern const u8 gTiamat_EmberSizes[];
 
 extern const u8 Data_08197724[];
 
@@ -363,9 +364,9 @@ extern u8
 
 extern u16 gMirroredWall_Cells[]; // the beam's head: three pictures, offsets
 
-extern u8 Data_0819787a[]; // ... their widths
+extern u8 gDjinnBeams_HeadWidths[]; // ... their widths
 
-extern u8 Data_0819787d[]; // ... their heights
+extern u8 gDjinnBeams_HeadHeights[]; // ... their heights
 
 // Each mode's record: whether its shots burst into shards (else into smoke),
 // the shots' blitter, shots per target, and frames before the targets'
@@ -396,7 +397,7 @@ extern u16 gPlasma_Sparks[]; // ☀️ gPlasma_Sparks: sparks, shake
 // group, groups, and each group's x offset.
 extern u16 Data_081979de[][5];
 
-extern u8 Data_08197a1a[]; // ☀️ gPlasma_FlashCells
+extern u8 gPlasma_FlashPictures[]; // ☀️ gPlasma_FlashCells
 
 // ☀️ gPrism_Counts, with a third byte: crystals, frames and the frame
 // that begins phase 134, for each variant.
@@ -420,21 +421,21 @@ extern u16 gProcne_Cells[]; // ... cell offsets
 
 extern u8 gTiamat_DropSpeeds[]; // a grain's added speed, by grain
 
-extern u8 Data_0819796c[]; // a spark's two pixels
+extern u8 gTiamat_SparkPixels[]; // a spark's two pixels
 
 extern u8 gTiamat_DropSizes[]; // a grain's size, by grain
 
-extern u8 Data_08197972[]; // the streak's six pictures: widths
+extern u8 gTiamat_FlameWidths[]; // the streak's six pictures: widths
 
-extern u8 Data_08197978[]; // ... heights
+extern u8 gTiamat_FlameHeights[]; // ... heights
 
 extern u8 gTiamat_StreakDrops[]; // ... drops below the streak
 
-extern u16 Data_08197984[]; // ... cell offsets
+extern u16 gTiamat_FlamePictures[]; // ... cell offsets
 
 extern s32 gStar_Points[]; // the two ring points, alternating
 
-extern u8 gData_0819793c[]; // ring radii, alternating: 32, 16
+extern u8 gStar_Radii[]; // ring radii, alternating: 32, 16
 
 // Four signed bytes for each mode (The Broken Seal's gStreaks_Styles).
 extern s8 gStreaks_Records[];
@@ -450,17 +451,17 @@ extern u8 Data_0819754f[][7];
 
 // The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
 // and the column stages (gTargetStrike_ColumnStages).
-extern u8 Data_081975e2[];
+extern u8 gTargetStrike_Widths[];
 
-extern u8 Data_081975e8[];
+extern u8 gTargetStrike_Heights[];
 
 extern u16 gTargetStrike_Offsets[];
 
-extern u8 Data_081975fa[];
+extern u8 gTargetStrike_Reach[];
 
 extern u8 gTargetStrike_ColumnStages[];
 
-extern u8 Data_08197605[];
+extern u8 gDeathPlunge_SwordWidths[];
 
 extern u8 gVolcano_Counts[]; // ☀️ gVolcano_Counts, for each variant
 

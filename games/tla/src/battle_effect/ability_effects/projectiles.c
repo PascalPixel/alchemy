@@ -507,8 +507,8 @@ extern u8 gProjectileVolley_FlashHeights[];  // _FlashHeights
 extern u8 gProjectileVolley_FlashSteps[];    // _FlashSteps
 extern u8 Data_081984ec[];                   // _FlashRises
 extern u16 gProjectileVolley_FlashOffsets[]; // _FlashOffsets
-extern u16 Data_08198502[];                  // _PelletOffsets
-extern u8 Data_0819850a[];                   // the glints' palettes
+extern u16 gProjectileVolley_PelletPictures[]; // _PelletOffsets
+extern u8 Data_0819850a[];                     // the glints' palettes
 // The glint's six cels: ☀️'s gBattleEffect_GlintCells, _GlintCellWidths
 // and _GlintCellHeights.
 extern u16 gBattleEffect_GlintCells[];
@@ -1052,8 +1052,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
                       pos->y - 12, 32, 24);
           } else if (mode == 7 || mode == 9 || mode == 10 || mode == 18) {
-            draw[0](canvas, work->sheet + Data_08198502[j & 3], pos->x - 4,
-                    pos->y - 4, 8, 8);
+            draw[0](canvas,
+                    work->sheet + gProjectileVolley_PelletPictures[j & 3],
+                    pos->x - 4, pos->y - 4, 8, 8);
           } else if (mode == 2) {
             draw[0](canvas, work->sheet + j % 6 * 128, pos->x - 4, pos->y - 8,
                     8, 16);

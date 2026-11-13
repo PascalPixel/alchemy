@@ -182,19 +182,19 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
       result = gData_081287f0[index];
       break;
     case MIA:
-      result = gData_081287fe[index];
+      result = gBattleUnit_WeaponAnimationsIsaac[index];
       break;
     case JENNA:
-      result = gData_0812880c[index];
+      result = gBattleUnit_WeaponAnimationsGaret[index];
       break;
     case FELIX:
-      result = gData_0812881a[index];
+      result = gBattleUnit_WeaponAnimationsIvan[index];
       break;
     case SHEBA:
-      result = gData_08128828[index];
+      result = gBattleUnit_WeaponAnimationsMia[index];
       break;
     case PIERS:
-      result = gData_08128836[index];
+      result = gBattleUnit_WeaponAnimationsJenna[index];
       break;
     }
   }

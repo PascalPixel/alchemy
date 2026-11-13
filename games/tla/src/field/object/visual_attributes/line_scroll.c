@@ -208,7 +208,8 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         row[0] = a + wave;
         row[2] = b + wave;
         row[4] = waveX3 + wave;
@@ -232,7 +233,8 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         *row = a + wave;
         row += 2;
         *row = b + wave;
@@ -257,7 +259,8 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         row[0] = x1;
         row[2] = x2;
         row[4] = waveX3 + wave;
@@ -279,7 +282,8 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         row[0] = y1;
         row[2] = y2;
         row[4] = waveY3 + wave;
@@ -391,7 +395,7 @@ void Func_080d64f0(void) {
       continue;
     if (GameFlag_Test(358))
       particle->timer++;
-    frame = &Data_080f0ab0[particle->timer * 5];
+    frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
     x = (particle->posX - originX) / 0x10000 + *frame++;
     y = (particle->posZ - particle->posY - originZ) / 0x10000 + *frame++;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {

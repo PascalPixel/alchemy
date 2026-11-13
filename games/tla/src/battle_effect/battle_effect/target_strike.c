@@ -336,16 +336,18 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
           BattleEffect_LoadBlitter(SLOT_BLITTER,
                                    BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
           gBlitter(canvas, work->sheet + gTargetStrike_Offsets[picture],
-                   targetPosition.x / 2 - (Data_081975fa[picture] / 2) -
-                       Data_081975e2[picture] + 8,
-                   targetPosition.y - (Data_081975e8[picture] / 2),
-                   Data_081975e2[picture], Data_081975e8[picture]);
+                   targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
+                       gTargetStrike_Widths[picture] + 8,
+                   targetPosition.y - (gTargetStrike_Heights[picture] / 2),
+                   gTargetStrike_Widths[picture],
+                   gTargetStrike_Heights[picture]);
         } else {
           BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
-          gBlitter(canvas, work->sheet + gTargetStrike_Offsets[picture],
-                   targetPosition.x / 2 + (Data_081975fa[picture] / 2) - 8,
-                   targetPosition.y - (Data_081975e8[picture] / 2),
-                   Data_081975e2[picture], Data_081975e8[picture]);
+          gBlitter(
+              canvas, work->sheet + gTargetStrike_Offsets[picture],
+              targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
+              targetPosition.y - (gTargetStrike_Heights[picture] / 2),
+              gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
         }
         HeapSlot_Release(SLOT_BLITTER);
 
@@ -516,9 +518,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
             (gData_08197492[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gData_08197498[image] / 2);
-        BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
-                                  Data_08197605[Random16() & 3] | CLIP,
-                                  BLIT_ADDITIVE);
+        BattleEffect_BuildBlitter(
+            SLOT_BLITTER_ALTERNATE, 7, 7,
+            gDeathPlunge_SwordWidths[Random16() & 3] | CLIP, BLIT_ADDITIVE);
         do {
           // Empty: its loop notes end CSE's block after the blitter call.
         } while (0);

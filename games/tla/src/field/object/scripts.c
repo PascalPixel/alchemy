@@ -22,7 +22,7 @@ s32 Func_080d4ab4();
 
 /// ScreenTransition_ShapesTail
 // clang-format off
-const u8 gData_080f321c[12] = {
+const u8 ScreenTransition_ShapesTail[12] = {
     0, 2, 4, 2,
     0, 2, 4, 2,
     0, 2, 4, 2,
@@ -62,7 +62,7 @@ const s32 gActor_OffsetScript[] = {
     SC_END,
 };
 
-const s32 gData_080f32e0[] = {
+const s32 gActor_LaunchScript[] = {
     SC_SYNC, SC_WAIT(1), SC_ARG(1), SC_CALL(Actor_StepAngle), SC_END,
 };
 
@@ -73,7 +73,7 @@ const s32 gActor_StepAngleScript[] = {
 
 /// The Broken Seal's gMessageSpeed_VoiceRates: the message voice's rate by
 /// message speed option.
-const u8 gData_080f330c[4] = {
+const u8 gMessageSpeed_VoiceRates[4] = {
     1,
     3,
     10,
@@ -81,7 +81,7 @@ const u8 gData_080f330c[4] = {
 };
 
 /// Squashes and stretches, then releases the actor.
-const s32 gData_080f3310[] = {
+const s32 gFieldEffect_WatchedActorScript[] = {
     SC_ADD(SW_SCALE_X, -0x8000),
     SC_ADD(SW_SCALE_Y, 0x4000),
     SC_WAIT(2),
@@ -112,13 +112,13 @@ const s32 gData_080f3310[] = {
 
 /// The Broken Seal's gActor_WaitScript: waits 40 frames, then releases the
 /// actor.
-const s32 gData_080f341c[] = {
+const s32 gActor_WaitScript[] = {
     SC_WAIT(40),
     SC_FREE,
 };
 
 /// Action kind 2: wanders near home, pausing between steps.
-const s32 gData_080f3428[] = {
+const s32 gMovementType_WanderScript[] = {
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0xccc),
     SC_SET(SW_COLLISION, 0x83),
@@ -143,7 +143,7 @@ const s32 gData_080f3428[] = {
 };
 
 /// Action kind 1: does nothing, as The Broken Seal's gActor_IdleScript.
-const s32 gData_080f34e4[] = {
+const s32 gMovementType_StandScript[] = {
     SC_END,
 };
 
@@ -158,13 +158,13 @@ const s32 gData_080f34f4[] = {
     SC_END,
 };
 
-const s32 gData_080f3500[] = {
+const s32 gMovementType_ResetActionScript[] = {
     SC_CALL(Actor_SetPriorityBit5),
     SC_END,
 };
 
 /// Action kind 3: wanders a shorter way near home.
-const s32 gData_080f350c[] = {
+const s32 gMovementType_WanderNearScript[] = {
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0xccc),
     SC_SET(SW_COLLISION, 0x83),
@@ -189,7 +189,7 @@ const s32 gData_080f350c[] = {
 };
 
 /// Action kind 4: wanders near home without pausing.
-const s32 gData_080f35c8[] = {
+const s32 gMovementType_WanderCloseScript[] = {
     SC_SET(SW_SPEED, 0x6666),
     SC_SET(SW_ACCEL, 0x3333),
     SC_ARG(2),
@@ -233,13 +233,13 @@ const s32 gData_080f3614[] = {
 };
 
 /// Moves the actor toward its target every frame.
-const s32 gData_080f373c[] = {
+const s32 gMovementType_FollowWatchedScript[] = {
     SC_CALL(Actor_MoveTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /// Turns the actor toward its target every frame.
-const s32 gData_080f3750[] = {
+const s32 gMovementType_FaceLeaderScript[] = {
     SC_CALL(Actor_TurnTowardWatchedActor),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

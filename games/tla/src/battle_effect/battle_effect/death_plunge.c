@@ -307,8 +307,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
     if (frame <= 50) {
       for (i = 0; i != 33; i++) {
         piece = &work->particles[i];
-        draw[0](canvas, work->sheet + Data_0819764c[i], HI(piece->x),
-                HI(piece->y), gDeathPlunge_PieceWidths[i], Data_0819762a[i]);
+        draw[0](canvas, work->sheet + gDeathPlunge_PiecePictures[i],
+                HI(piece->x), HI(piece->y), gDeathPlunge_PieceWidths[i],
+                gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
           BattleEffectKernels_IntegrateVector2(piece, 64, 0x4000);
       }
@@ -498,7 +499,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
 
       for (i = 0, mode = BLIT_MAX; i != 4; i++) {
         BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
-                                  Data_081976da[i] | CLIP, mode);
+                                  gSpiderWeb_PictureHeights[i] | CLIP, mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
                 ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
@@ -1069,7 +1070,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               Transform_Reset();
               Func_08015160(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(sc / 2, sc, sc);
-              Transform_ApplyYaw(Data_081976f8[i]);
+              Transform_ApplyYaw(gSpiderWeb_PictureBiasY[i]);
               Transform_ApplyPitch(Data_081976f0[i]);
               Render_TransformVertices(Data_081991e0, verts, 4);
               Render_DrawModelList(model);
@@ -1375,7 +1376,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         model->vertices = verts;
         model->kind = 6;
         for (i = zero; i != 6; i++) {
-          s32 d = frame - Data_08197704[i];
+          s32 d = frame - gGatheringLights_Counts[i];
 
           if (d == 0) {
             if (i == 5) {
@@ -1387,11 +1388,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
           }
           if ((u32)d <= 15) {
-            s32 r = (Trig_Sin(d << 11) * Data_0819770a[i] >> 16) + 2;
+            s32 r = (Trig_Sin(d << 11) * gMirroredWall_Pictures[i] >> 16) + 2;
 
             if (r > 1) {
-              s32 x = Data_08197710[i] + d * 8;
-              s32 y = Data_08197716[i];
+              s32 x = gDjinnBeams_HeadPictures[i] + d * 8;
+              s32 y = gProcne_Pictures[i];
               s32 half;
 
               Func_0815b434(work->sheet, r, 0x10000);
@@ -1418,7 +1419,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != 4; i++) {
         struct EffectStep *p = &work->particles[i + 18];
-        s32 start = Data_0819771c[i] >> 1;
+        s32 start = gTiamat_EmberSpeeds[i] >> 1;
 
         if (frame == 0) {
           p->y = frame;
@@ -1431,7 +1432,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           s32 py = 0;
           s32 angle = 0;
           s32 scale = 0;
-          size = Data_08197720[i];
+          size = gTiamat_EmberSizes[i];
 
           if (p->y < Data_08197730[i] << 16) {
             p->x -= Data_08197728[i] << 16;

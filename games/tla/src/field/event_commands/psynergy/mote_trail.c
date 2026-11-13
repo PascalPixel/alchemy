@@ -4,7 +4,7 @@
 
 #include "../psynergy_internal.h"
 
-extern const s32 gData_080f3954[];
+extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
 extern const u8 gData_080f3614[];
 extern char ResourceId_Runes, ResourceId_Pebbles;
@@ -58,7 +58,7 @@ void Func_080ea14c(s32 targetId) {
   s32 startX = 130 * Q16_ONE;
   s32 startZ = 30 * Q16_ONE;
 
-  Field_StartColorTransition(8, gData_080f3954[gFrameCount & 7]);
+  Field_StartColorTransition(8, gFieldEffect_TargetColors[gFrameCount & 7]);
   pos[0] = owner->x;
   pos[1] = owner->y + 24 * Q16_ONE;
   pos[2] = owner->z;

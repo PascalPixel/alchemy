@@ -281,13 +281,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                 ring[i * 10 + j].velocityX =
                     pos.x +
                     ((Trig_Sin(j * 0x199a - ((frame - star->variant) << 11)) *
-                      gData_0819793c[j & 1]) /
+                      gStar_Radii[j & 1]) /
                          2 >>
                      16);
                 ring[i * 10 + j].velocityY =
                     pos.y -
                     (Trig_Cos(j * 0x199a - ((frame - star->variant) << 11)) *
-                         gData_0819793c[j & 1] >>
+                         gStar_Radii[j & 1] >>
                      16);
               }
               for (j = 0; j != RING_POINTS; j++) {

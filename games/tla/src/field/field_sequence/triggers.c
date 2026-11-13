@@ -610,17 +610,18 @@ s32 Field_RunPushCell(s32 keys) {
 }
 
 // The search command. Collision codes 242 to 247 show their pair of messages
-// from Data_080eff22; otherwise the search event (kind 3) of the cell runs:
-// its "checked the ..." message, then its message or callback, or the
-// matching "found nothing" message. MsgKey0dc4 is the base of the "X
-// checked the Y..." lines, MsgKey0def the base of the "found nothing"
+// from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind 3)
+// of the cell runs: its "checked the ..." message, then its message or
+// callback, or the matching "found nothing" message. MsgKey0dc4 is the base of
+// the "X checked the Y..." lines, MsgKey0def the base of the "found nothing"
 // lines.
 
 /// The search command. Collision codes 242 to 247 show their pair of messages
-/// from Data_080eff22; otherwise the search event (kind 3) of the cell runs:
-/// its "checked the ..." message, then its message or callback, or the matching
-/// "found nothing" message. MsgKey0dc4 is the base of the "X checked the Y..."
-/// lines, MsgKey0def the base of the "found nothing" lines.
+/// from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind
+/// 3) of the cell runs: its "checked the ..." message, then its message or
+/// callback, or the matching "found nothing" message. MsgKey0dc4 is the base of
+/// the "X checked the Y..." lines, MsgKey0def the base of the "found nothing"
+/// lines.
 s32 Field_ExamineCell(s32 id) {
   struct Trigger *event;
   s32 index;
@@ -634,7 +635,7 @@ s32 Field_ExamineCell(s32 id) {
   if ((u32)index <= 5) {
     Leader_StopMoving();
     // id, no longer needed, holds the pair's message number.
-    id = Data_080eff22[index];
+    id = gField_ExamineTriggerMessageOffsets[index];
     FieldMessage_ShowFar(id + (s32)&MsgKey0dc4, 1);
     FieldMessage_ShowFar(id + (s32)&MsgKey0def, 1);
     return 0;

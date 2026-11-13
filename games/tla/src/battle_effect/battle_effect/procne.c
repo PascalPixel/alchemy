@@ -830,8 +830,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         s32 size = 1;
 
         if (spark->variant >= 0) {
-          draw[1](canvas, Data_0819796c, HI(spark->x), HI(spark->y) - size,
-                  size, size * 2);
+          draw[1](canvas, gTiamat_SparkPixels, HI(spark->x),
+                  HI(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
           spark->velocityY += -0x400;
@@ -915,10 +915,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             if (streak->variant >= 0 && streak->variant <= 11) {
               s32 cel = streak->variant / 2;
 
-              draw[0](canvas, work->sheet + Data_08197984[cel] + STREAK_SHEET,
-                      streak->x - Data_08197972[cel] / 2,
-                      streak->y + gTiamat_StreakDrops[cel], Data_08197972[cel],
-                      Data_08197978[cel]);
+              draw[0](canvas,
+                      work->sheet + gTiamat_FlamePictures[cel] + STREAK_SHEET,
+                      streak->x - gTiamat_FlameWidths[cel] / 2,
+                      streak->y + gTiamat_StreakDrops[cel],
+                      gTiamat_FlameWidths[cel], gTiamat_FlameHeights[cel]);
             }
             streak->variant++;
             if (streak->variant == 12)

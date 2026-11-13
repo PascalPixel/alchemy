@@ -1277,7 +1277,7 @@ void FieldPsynergy_Avoid(void) {
   scene->arcTileSlot = slot;
   // tiles holds the picture's address, loaded between the slot's two shifts;
   // as the address in the call, 2 of 156 instructions differ in tla-en.
-  tiles = gData_080ed90c;
+  tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
   gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);

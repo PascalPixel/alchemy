@@ -41,7 +41,7 @@ void Func_080d690c(void) {
   particle = work->particles;
   Dma_Fill32(zero, work, sizeof(struct GroundParticleWork__ground_particles));
   words = HeapSlot_AllocEwram(56, 0x400);
-  Resource_DecodeByteLzInRam(gData_080f3798, words);
+  Resource_DecodeByteLzInRam(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
   HeapSlot_Release(56);

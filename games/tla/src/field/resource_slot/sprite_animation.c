@@ -458,7 +458,7 @@ void ActorSystem_Configure(s32 mode) {
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
   Dma_Fill32Cell(zero, 0, layers,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-  VramCache_Load(93, 128, gData_0802e89c);
+  VramCache_Load(93, 128, gActor_ShadowTiles);
   {
     u32 size = (u32)Render_CopyStridedCodeSize;
 
@@ -470,7 +470,7 @@ void ActorSystem_Configure(s32 mode) {
 void VramBlock_Reset93(void) { VramCache_FreeEntry(93); }
 
 void VramBlock_Load93(void) {
-  const u8 *data = gData_0802e89c;
+  const u8 *data = gActor_ShadowTiles;
   s32 size = 128;
 
   VramCache_Load(93, size, data);

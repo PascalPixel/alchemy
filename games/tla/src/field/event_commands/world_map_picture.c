@@ -287,7 +287,7 @@ void WorldPicture_UpdateMarkers(void) {
       work->z += dz;
     }
   } else {
-    angle = Data_080f1120[(gInput.held >> 4) & 15];
+    angle = gWorldMap_CursorDirectionAngles[(gInput.held >> 4) & 15];
     if (angle != 0xffff) {
       pos[0] = work->x;
       pos[1] = 0;

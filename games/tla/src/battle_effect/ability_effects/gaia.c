@@ -51,8 +51,8 @@ extern u8 gGaia_RowWidths[];
 extern u16 gGaia_RowCells[];
 // The mound's three cels: ☀️'s gGaia_MoundWidths, _MoundHeights and
 // _MoundSheetOffsets.
-extern u8 Data_08198642[];
-extern u8 Data_08198645[];
+extern u8 gGaia_FlameWidths[];
+extern u8 gGaia_FlameHeights[];
 extern u16 gGaia_MoundCells[];
 // ☀️'s gGaia_LateRockColumns.
 extern u8 gGaia_LateRockColumns[];
@@ -154,7 +154,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   for (i = 0; i != 1008; i++)
     work->sheet[offset++] = *source++;
   for (i = 0; i != 3; i++) {
-    for (k = 0; k != Data_08198642[i] * Data_08198645[i]; k++)
+    for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       work->sheet[offset++] = *source++;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -232,10 +232,12 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       if (cel > 2)
         cel = (cel & 1) + 1;
       draw[0](canvas, work->sheet + gGaia_MoundCells[cel],
-              wallX - Data_08198642[cel] + 64, 116 - Data_08198645[cel],
-              Data_08198642[cel], Data_08198645[cel]);
+              wallX - gGaia_FlameWidths[cel] + 64,
+              116 - gGaia_FlameHeights[cel], gGaia_FlameWidths[cel],
+              gGaia_FlameHeights[cel]);
       draw[1](canvas, work->sheet + gGaia_MoundCells[cel], wallX + 64,
-              116 - Data_08198645[cel], Data_08198642[cel], Data_08198645[cel]);
+              116 - gGaia_FlameHeights[cel], gGaia_FlameWidths[cel],
+              gGaia_FlameHeights[cel]);
     }
 
     // The wall grows out of it, a row every three frames (frames 12-87).

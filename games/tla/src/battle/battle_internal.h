@@ -289,7 +289,7 @@ extern const s32 Data_0812cbb0[]; ///< acceleration
 
 extern const s32 Data_0812cbd8[]; ///< speed limit
 
-extern const s32 Data_0812cc00[]; ///< upward velocity
+extern const s32 gBattleKnockback_DistancePercent[]; ///< upward velocity
 
 extern const s32 Data_0812cc28[]; ///< distance, in percent of the anchor's x
 
@@ -297,7 +297,7 @@ extern const s32 gData_08128868[];
 
 extern const s32 gBattleObject_EmptyScript[];
 
-extern const s8 gData_081287c8[];
+extern const s8 gBattleParty_CenterOrderOffsets[];
 
 extern const u16 gData_081287d4[];
 
@@ -305,15 +305,15 @@ extern const u16 gData_081287e2[];
 
 extern const u16 gData_081287f0[];
 
-extern const u16 gData_081287fe[];
+extern const u16 gBattleUnit_WeaponAnimationsIsaac[];
 
-extern const u16 gData_0812880c[];
+extern const u16 gBattleUnit_WeaponAnimationsGaret[];
 
-extern const u16 gData_0812881a[];
+extern const u16 gBattleUnit_WeaponAnimationsIvan[];
 
-extern const u16 gData_08128828[];
+extern const u16 gBattleUnit_WeaponAnimationsMia[];
 
-extern const u16 gData_08128836[];
+extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 
 extern struct BattlePresentationTransition *gTransitionWork;
 

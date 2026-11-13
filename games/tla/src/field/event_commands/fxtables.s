@@ -15,14 +15,14 @@ gBattleEffect_EightWayHeadingWords:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff
 
 @ A copy of The Broken Seal's gBattleEffect_QuadrantModes
-	.global Data_080f0ee4
-Data_080f0ee4:
+	.global gUnused_BattleEffectBytes
+gUnused_BattleEffectBytes:
 	.byte 3, 1, 2, 1
 
 @ The Broken Seal's gBattleEffect_BurstParticleObjectScript: wait 60 frames
 @ and free
-	.global gData_080f0ee8
-gData_080f0ee8:
+	.global gFieldEffect_HeavyImpactScript
+gFieldEffect_HeavyImpactScript:
 	.4byte 0x00, 60
 	.4byte 0x26
 @ The Broken Seal's gUnused_BattleFxBytes: the same four bytes as the

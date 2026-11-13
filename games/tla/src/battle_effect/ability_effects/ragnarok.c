@@ -31,7 +31,7 @@ extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
 
 extern u8 gRagnarok_StrikeColumns[];
-extern u8 gData_08198a98[]; // ☀️ gPlasma_FlashCells
+extern u8 gRagnarok_FlashPictures[]; // ☀️ gPlasma_FlashCells
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 
@@ -199,7 +199,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
           life = flash->variant;
           if (life >= 0 && life <= 17)
             draw[0](canvas,
-                    work->sheet + (gData_08198a98[life / 3] << 11) +
+                    work->sheet + (gRagnarok_FlashPictures[life / 3] << 11) +
                         FLASH_SHEET,
                     x - 16, y + 56, 32, 64);
           life = flash->variant;
@@ -295,8 +295,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, Func_08166b10, 1)
 
 extern char ResourceId_SwordSheet;
 
-extern u8 gData_08198a9e[];  // ☀️ gPlasma_FlashCells
-extern s32 gData_08198aa4[]; // the dust's four gravities
+extern u8 gTitanBlade_FlashPictures[]; // ☀️ gPlasma_FlashCells
+extern s32 gTitanBlade_DustGravity[];  // the dust's four gravities
 
 void Func_0815b634(void);
 
@@ -453,7 +453,8 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
         life = flash->variant;
         if (life >= 0 && life <= 17)
           draw[0](canvas,
-                  work->sheet + (gData_08198a9e[life / 3] << 11) + FLASH_SHEET,
+                  work->sheet + (gTitanBlade_FlashPictures[life / 3] << 11) +
+                      FLASH_SHEET,
                   x - 16, y + 48, 32, 64);
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
@@ -553,7 +554,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
           if (frame > 80)
             dust->velocityY += -32768;
           else
-            dust->velocityY += gData_08198aa4[i & 3];
+            dust->velocityY += gTitanBlade_DustGravity[i & 3];
           dust->velocityX = dust->velocityX * 62 / 64;
           dust->velocityY = dust->velocityY * 62 / 64;
           dust->variant++;
@@ -715,10 +716,10 @@ struct JudgmentScale {
 };
 
 extern const struct JudgmentScale Data_08196e74;
-extern const u8 Data_08198ab4[];
-extern const u8 Data_08198ace[];
-extern const u8 Data_08198ad4[];
-extern const u16 Data_08198ac2[];
+extern const u8 gJudgment_BurstPictures[];
+extern const u8 gJudgment_ShardWidths[];
+extern const u8 gJudgment_ShardHeights[];
+extern const u16 gJudgment_ShardPictures[];
 extern const u8 gData_08199364[];
 extern const u8 gData_08199210[];
 

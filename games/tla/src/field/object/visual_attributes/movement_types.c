@@ -28,13 +28,13 @@ extern s32 Actor_IsOutsideAnimation108__f0d489c(
  * FieldEffect_CopyWatchedActorPosition(struct Actor *object). */
 extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__(
     "FieldEffect_CopyWatchedActorPosition");
-extern const u8 gData_080f341c[];
+extern const u8 gActor_WaitScript[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
 /// calls: with flags & 3 zero it destroys the object's linked effect;
 /// otherwise (mode 2, or when the linked effect is outside animation 0x108)
 /// it creates effect object 264 at the object and links it, mode 1 keeping it
-/// as the object's resource and mode 2 running gData_080f341c on it.
+/// as the object's resource and mode 2 running gActor_WaitScript on it.
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   struct LinkedEffectObject *object = ObjectTable_Get(actorId);
   struct LinkedEffectObject *child;
@@ -73,7 +73,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     break;
   case 2:
     Actor_SetMode(child, 2);
-    Actor_StartScriptFar(child, gData_080f341c);
+    Actor_StartScriptFar(child, gActor_WaitScript);
     child->counter = 1;
     break;
   }
@@ -212,38 +212,38 @@ s32 Func_080d4ab4(struct Actor *object) {
 
 struct Actor *Actor_GetById(u32 objectId);
 
-extern const u8 gData_080f34e4[];
-extern const u8 gData_080f3428[];
-extern const u8 gData_080f350c[];
-extern const u8 gData_080f35c8[];
-extern const u8 gData_080f373c[];
-extern const u8 gData_080f3750[];
+extern const u8 gMovementType_StandScript[];
+extern const u8 gMovementType_WanderScript[];
+extern const u8 gMovementType_WanderNearScript[];
+extern const u8 gMovementType_WanderCloseScript[];
+extern const u8 gMovementType_FollowWatchedScript[];
+extern const u8 gMovementType_FaceLeaderScript[];
 extern const u8 gData_080f34e8[];
 extern const u8 gData_080f3614[];
 extern const u8 gData_080f3764[];
-extern const u8 gData_080f3500[];
+extern const u8 gMovementType_ResetActionScript[];
 extern const u8 gData_080f34f4[];
 
 void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   switch (kind) {
   case 1:
-    kind = (s32)gData_080f34e4;
+    kind = (s32)gMovementType_StandScript;
     break;
   case 2:
-    kind = (s32)gData_080f3428;
+    kind = (s32)gMovementType_WanderScript;
     break;
   case 3:
-    kind = (s32)gData_080f350c;
+    kind = (s32)gMovementType_WanderNearScript;
     break;
   case 4:
-    kind = (s32)gData_080f35c8;
+    kind = (s32)gMovementType_WanderCloseScript;
     break;
   case 5:
-    kind = (s32)gData_080f373c;
+    kind = (s32)gMovementType_FollowWatchedScript;
     break;
   case 6:
     object->watchedObject = Actor_GetById(gMainRoutineWork.currentOwner);
-    kind = (s32)gData_080f3750;
+    kind = (s32)gMovementType_FaceLeaderScript;
     break;
   case 7:
     kind = (s32)gData_080f34e8;
@@ -255,7 +255,7 @@ void Actor_SetActionCallback(struct Actor *object, s32 kind) {
     kind = (s32)gData_080f3764;
     break;
   case 10:
-    kind = (s32)gData_080f3500;
+    kind = (s32)gMovementType_ResetActionScript;
     break;
   case 11:
     kind = (s32)gData_080f34f4;

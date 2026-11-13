@@ -16,7 +16,7 @@ struct WorkA4Slot;
 s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 
-extern const s32 gData_080f32e0[];
+extern const s32 gActor_LaunchScript[];
 
 void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_SpawnRevealMarkers(void);

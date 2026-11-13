@@ -155,7 +155,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
     object->acceleration = Data_0812cbb0[variant];
     object->speedLimit = Data_0812cbd8[variant];
     if (object->y == 0 || variant > 4)
-      object->velocityY = Data_0812cc00[variant];
+      object->velocityY = gBattleKnockback_DistancePercent[variant];
     Actor_ResetMotion(object);
     scale = slot->anchorX;
     x = (scale * Data_0812cc28[variant]) / 100;

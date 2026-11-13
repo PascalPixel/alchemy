@@ -1682,7 +1682,7 @@ void ScriptObject_SetValue(struct ScriptObject *object, s32 value) {
 #include "event_work.h"
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gData_0802ec5c[16];
+extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 MapGrid_CheckCollisionAbove(struct Actor *object,
                                 struct FieldPosition *position);
@@ -1715,7 +1715,7 @@ s32 Func_0802632c(struct Actor *object) {
     object->acceleration = 0x2000;
   }
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
   } else {

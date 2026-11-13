@@ -100,8 +100,8 @@ DebugWarp_Name0:
 	.asciz "0:Jupiter"
 	.balign 4, 0
 @ An empty ability's name
-	.global gData_0805eb50
-gData_0805eb50:
+	.global gPauseMenu_Icons
+gPauseMenu_Icons:
 	.asciz "----"
 	.balign 4, 0
 @ {sprite, portrait} pairs, -1 ending each list

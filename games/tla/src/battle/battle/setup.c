@@ -126,7 +126,7 @@ void BattleUnit_Collect(void) {
     }
   }
   for (i = 0; i < count; i++) {
-    index = gData_081287c8[i] + count / 2;
+    index = gBattleParty_CenterOrderOffsets[i] + count / 2;
     battle->enemyIds[index] = buf[i];
   }
 done:

@@ -572,7 +572,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 
 extern const u8 gWorldMap_MarkerBlendCycle[];
 
-extern const u16 Data_080f1120[];
+extern const u16 gWorldMap_CursorDirectionAngles[];
 
 extern s32 Data_0202a644;
 extern s32 Data_0202a648;
@@ -845,6 +845,6 @@ extern u8 gData_080f0e9c[];
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
                                                   struct Vec3 *position);
 
-extern const u8 Data_080f0ee4[];
+extern const u8 gUnused_BattleEffectBytes[];
 
 #endif

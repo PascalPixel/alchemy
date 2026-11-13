@@ -360,15 +360,15 @@ extern u8 Data_0812cc6c[];
 
 extern u16 Data_08128960[];
 
-extern const u8 gData_0812cc74[];
+extern const u8 gBattleTransition_CurtainVariants[];
 
-extern u8 Data_0812cd74[];
+extern u8 gBattleTransition_CurtainTiles[];
 
 void BattleEffect_RunShatteringOpeningFar(struct BattlePresentationWork *work);
 
 extern char ResourceId_SerpentStarsBackdrop;
 
-extern const struct BattleGroupOrder Data_081297c4;
+extern const struct BattleGroupOrder gBattleParty_TurnEndSideOrder;
 
 void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce);
 

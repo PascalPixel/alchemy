@@ -27,7 +27,7 @@ struct PlayerSprite__f0298c0 {
 };
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gData_0802ec5c[16];
+extern const s16 gWorldMap_KeyHeadings[16];
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
@@ -105,7 +105,7 @@ s32 Func_080298c0(struct Actor *actor) {
       (void)*(volatile u32 *)&gInput.held;
     actor->speedLimit = 0x8000;
     actor->acceleration = 0x4000;
-    angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+    angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
     if ((u16)angle == 0xffff) {
       collision = 4;
     } else {
@@ -220,7 +220,7 @@ s32 Func_080298c0(struct Actor *actor) {
   collision = 0;
   actor->speedLimit = 0x10000;
   actor->acceleration = 0x4000;
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision = 4;
     goto counted;
@@ -469,7 +469,7 @@ s32 Func_0802a124(struct Actor *object) {
   if (gInput.repeat & 0x200)
     object->speedLimit = 0x40000;
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
     collision |= 4;

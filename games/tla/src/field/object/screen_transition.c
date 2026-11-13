@@ -201,7 +201,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
       Actor_CreateFar(489, position[0], position[1] + 0x100000, position[2]);
   if (picture == NULL)
     return NULL;
-  Actor_StartScriptFar(picture, gData_080effd8);
+  Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
   visual = picture->sprite;
   zero = 0;
   visual->value1a = zero;
@@ -277,7 +277,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   Actor_SetSpritePriorityDirectFar(actor, 1);
   wait(3);
   Actor_SetMode(owner, 28);
-  Actor_StartScriptFar(actor, gData_080f0074);
+  Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
   owner->facing = 0x4000;
 }
 
@@ -288,7 +288,7 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
     owner = ObjectTable_Get(Party_GetLeaderActor());
     if (flags & 1) {
       Actor_SetSingleChildFlagsFar(object, 0);
-      Actor_StartScriptFar(object, gData_080effd8);
+      Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
       object->velocityY = 0x20000;
       object->gravity = 0x4000;
       object->update = Marker_MoveLeaderAwayFromEmitter__rising;
@@ -618,7 +618,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
       value = 32 - (value & 31);
     else
       value &= 31;
-    value = Data_080f01c4[value];
+    value = gScreenTransition_NoiseWidths[value];
     for (i = 0; i < 160; i++) {
       leftEdge = (Random16() * (241 - value)) >> 16;
       scanlineData[0] = (leftEdge << 8) | (leftEdge + value);
@@ -799,7 +799,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
       right = centerX + horizontalExtent;
       if (left < right) {
         value = k & 31;
-        delta = Data_080f01e6[value];
+        delta = gScreenTransition_EdgeOffsets[value];
         left -= delta;
         right += delta;
         if (left >= right) {
@@ -1298,7 +1298,7 @@ void ScreenTransition_UpdateDissolve(void) {
     blend = 15;
   value = (value & 31) * 2;
   for (i = 0; i <= 1; i++) {
-    u8 entry = gData_080f0206[value & 63];
+    u8 entry = gScreenTransition_DitherTable[value & 63];
     u8 *p = &state->paletteNibbles[entry >> 1];
 
     if (entry & 1)

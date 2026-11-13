@@ -224,7 +224,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
-            EffectPosition_ProjectPoint(Data_0819790c,
+            EffectPosition_ProjectPoint(gBind_Vertex,
                                         (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
             point->velocityY = vector[1] + screen.y + 16;
@@ -361,7 +361,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
-            EffectPosition_ProjectPoint(Data_08197918,
+            EffectPosition_ProjectPoint(gBind_TriangleStrikeVertex,
                                         (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
             point->velocityY = vector[1] + screen.y + 16;

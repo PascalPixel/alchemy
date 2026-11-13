@@ -389,7 +389,7 @@ struct FadeWork {
   s8 pending;
 };
 
-extern const struct SceneMusicEntry Data_080ee6d4[];
+extern const struct SceneMusicEntry gScene_EncounterRules[];
 
 extern struct TerrainRule gData_080eedbc[];
 
@@ -435,6 +435,6 @@ extern u16 Data_0200044c;
 
 extern s16 Data_080f2204[];
 
-extern const u8 Data_080eff22[];
+extern const u8 gField_ExamineTriggerMessageOffsets[];
 
 #endif

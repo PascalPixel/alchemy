@@ -725,8 +725,8 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
 
 // The Broken Seal's star tables: each frame's size and sheet offset, and
 // the ring's four frames.
-extern const u8 Data_08129828[];
-extern const s32 Data_0812980c[];
+extern const u8 gElementGlow_StarSizes[];
+extern const s32 gElementGlow_StarPictures[];
 extern const s32 Data_08129830[];
 
 // One frame of the star field: sixteen sparks fall in toward the centre
@@ -814,8 +814,8 @@ void ElementGlow_UpdateStarField(void) {
         frame = 0;
       else if (frame > 6)
         frame = 6;
-      size = Data_08129828[frame];
-      draw(dest, (u8 *)work + Data_0812980c[frame], x - (size >> 1),
+      size = gElementGlow_StarSizes[frame];
+      draw(dest, (u8 *)work + gElementGlow_StarPictures[frame], x - (size >> 1),
            y - (size >> 1), size, size);
     }
   }

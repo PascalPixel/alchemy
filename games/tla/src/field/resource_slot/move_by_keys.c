@@ -8,8 +8,11 @@
 #include "module/field/resource_slot.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
-/* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16 gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
-extern const u16 gData_0802ec5c__move_by_keys[16] __asm__("gData_0802ec5c");
+/* VIEW(move_by_keys): variable gWorldMap_KeyHeadings as extern const u16
+ * gWorldMap_KeyHeadings[16]; f028aac has extern const s16
+ * gWorldMap_KeyHeadings[16]. */
+extern const u16
+    gData_0802ec5c__move_by_keys[16] __asm__("gWorldMap_KeyHeadings");
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
@@ -82,12 +85,13 @@ s32 Actor_MoveByKeys(struct Actor *object) {
       collisionFlags = 4;
       animation = 12;
     } else if (INPUT_HELD & 64) {
-      terrainHeight =
-          MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z - 0x100000);
+      terrainHeight = MapGrid_GetTerrainHeight(object->terrainId, position.x,
+                                               position.z - 0x100000);
       if (terrainHeight - object->y < 0x100000)
         goto refused;
     } else if (INPUT_HELD & 128) {
-      terrainHeight = MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z);
+      terrainHeight =
+          MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z);
       if (terrainHeight - object->y > -0x80000) {
       refused:
         collisionFlags = 1;
@@ -118,7 +122,8 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   return 1;
 }
 
-/* VIEW(resource_slot): tag struct ChainSlot as struct ChainSlot__resource_slot; module/field/field.h has another definition. */
+/* VIEW(resource_slot): tag struct ChainSlot as struct ChainSlot__resource_slot;
+ * module/field/field.h has another definition. */
 struct ChainSlot__resource_slot {
   s16 unk00;
   s16 unk02;
@@ -129,7 +134,8 @@ struct ChainSlot__resource_slot {
   u8 unk1c[4];
 };
 
-/* VIEW(resource_slot): tag struct ChainNode as struct ChainNode__resource_slot; module/field/field.h has another definition. */
+/* VIEW(resource_slot): tag struct ChainNode as struct ChainNode__resource_slot;
+ * module/field/field.h has another definition. */
 struct ChainNode__resource_slot {
   u8 unk00[4];
   s32 x;

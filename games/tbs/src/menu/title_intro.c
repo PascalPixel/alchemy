@@ -630,54 +630,52 @@ s32 Title_ShowCamelotLogo(void) {
   u32 workIndex;
   u8 *resourceData;
   s32 resourceId;
+  s32 result;
 
   gOamCopyEnabled = 1;
-  {
-
-    resourceId = (s32)&ResourceId_CamelotLogo;
-    Task_ResetAll();
-    ScreenFade_ToBlack(1);
-    DebugText_Clear();
-    wait(1);
-    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-                 BGCNT_SCREEN_BASE(6);
-    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-    gBgScroll[2].y = 0;
-    resourceData = Resource_GetTableEntry(resourceId);
-    Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
-    // The decoded resource: 224 colours, the map, the still tiles, then four
-    // animation pictures of 1024 bytes each.
-    resourceData = Ram_MapGridCellBuffer;
-    Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
-    resourceData += 448;
-    Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4),
-            REG_DMA3);
-    resourceData += 2048;
-    Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
-            REG_DMA3);
-    resourceData += BG_CHAR_SIZE;
-    for (workIndex = 0; workIndex < 4; workIndex++) {
-      gBgScroll[workIndex].y = 0;
-      gBgScroll[workIndex].x = 0;
-    }
-    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-    Window_LoadGraphics();
-    DebugText_Clear();
-    ScreenFade_FromWhite(1);
-    ScreenFade_Wait();
-    REG_DISPCNT =
-        DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-    // Replace only the animated tiles; the rest of the decoded logo stays
-    // in VRAM while the four animation pictures cycle.
-    for (workIndex = 0; workIndex < 120; workIndex++) {
-      Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
-              BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
-      if (gKeysPressed & (KEY_A | KEY_START))
-        break;
-      wait(1);
-    }
-    return 0;
+  result = 0;
+  resourceId = (s32)&ResourceId_CamelotLogo;
+  Task_ResetAll();
+  ScreenFade_ToBlack(1);
+  DebugText_Clear();
+  wait(1);
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(6);
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  gBgScroll[2].y = result;
+  resourceData = Resource_GetTableEntry(resourceId);
+  Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
+  // The decoded resource: 224 colours, the map, the still tiles, then four
+  // animation pictures of 1024 bytes each.
+  resourceData = Ram_MapGridCellBuffer;
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
+  resourceData += 448;
+  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4), REG_DMA3);
+  resourceData += 2048;
+  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
+          REG_DMA3);
+  resourceData += BG_CHAR_SIZE;
+  for (workIndex = 0; workIndex < 4; workIndex++) {
+    gBgScroll[workIndex].y = 0;
+    gBgScroll[workIndex].x = 0;
   }
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+  Window_LoadGraphics();
+  DebugText_Clear();
+  ScreenFade_FromWhite(1);
+  ScreenFade_Wait();
+  REG_DISPCNT =
+      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  // Replace only the animated tiles; the rest of the decoded logo stays
+  // in VRAM while the four animation pictures cycle.
+  for (workIndex = 0; workIndex < 120; workIndex++) {
+    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
+            BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
+    if (gKeysPressed & (KEY_A | KEY_START))
+      break;
+    wait(1);
+  }
+  return result;
 }
 
 /// Unused: color entry retained in the far-call table.

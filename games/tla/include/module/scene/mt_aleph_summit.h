@@ -6,12 +6,12 @@
 
 #include "types.h"
 
-extern s32 gData_02001650[];
+extern s32 gFieldEffect_DurationScripts[];
 
-extern u32 gData_0200159c[];
+extern u32 gFieldEffect_ShortScript[];
 
-extern u32 gData_020015d8[];
-extern u32 gData_02001614[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 extern char SceneId_Ov6b3;
 

@@ -6,17 +6,17 @@
 
 #include "types.h"
 
-struct Particle6a7;
-struct Spark6a7;
-struct Sprite6a7;
+struct IceShard;
+struct IceShardSpark;
+struct IceShardSprite;
 
 void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
                                     void (*callback)(void));
-void Oam_AddSpriteAtDepthClamped(struct Spark6a7 *spark, s32 value);
+void Oam_AddSpriteAtDepthClamped(struct IceShardSpark *spark, s32 value);
 
-void EffectSprite_DrawAtWorldPosition(struct Sprite6a7 *sprite,
-                                      struct Particle6a7 *particle);
+void EffectSprite_DrawAtWorldPosition(struct IceShardSprite *sprite,
+                                      struct IceShard *particle);
 
-extern s32 gData_02000b80[];
+extern s32 gNorthernReaches_ShipAtRest[];
 
 #endif

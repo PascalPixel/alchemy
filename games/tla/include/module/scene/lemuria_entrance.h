@@ -6,11 +6,11 @@
 
 #include "types.h"
 
-extern u32 gLemuriaEntrance_PiersLeadsTheWay[];
+extern u32 gLemuriaEntrance_ShipSailsOut[];
 void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames);
 
 void LemuriaEntrance_ShebaAsksPiersAge(void);
 
-extern s32 gLemuriaEntrance_PiersAtHelm[];
+extern s32 gLemuriaEntrance_ShipAtRest[];
 
 #endif

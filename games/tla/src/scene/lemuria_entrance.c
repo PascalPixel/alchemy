@@ -1,6 +1,7 @@
 /// @file
 /// The way into Lemuria from its dock: a rock Grind breaks up, two ways on to
-/// the city, and on the walk back Sheba's question about Piers' age.
+/// the city, and the ship's harbour, where Sheba asks Piers his age as they
+/// sail out.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -80,9 +81,10 @@ void LemuriaEntrance_GrindRock(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/// Unused: once flag 0x800 is set, Piers takes the ship's helm (render mode 6);
-/// otherwise the leader takes control again. Nothing calls it.
-UNUSED void LemuriaEntrance_PiersTakesHelm(void) {
+/// Unused: once flag 0x800 is set, the party boards the ship (actor 8) and
+/// sails it (render mode 6); otherwise the leader takes control again. Nothing
+/// calls it.
+UNUSED void LemuriaEntrance_BoardShip(void) {
   if (Event_GetFlag(0x800) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -150,7 +152,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /// Shows the next line of a conversation in a window beside its speaker's
-/// portrait (actor 8's portrait for kind 8) and closes it after the frames.
+/// portrait (portrait 56 for kind 8) and closes it after the frames.
 void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
   // This routine's own view of the event work. A union: the read of width
   // keeps its place after this store.
@@ -196,8 +198,7 @@ void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
   Message_CloseFinishedWindows();
 }
 
-/// On the way back to the ship, Piers walks ahead and Sheba asks him how old he
-/// really is.
+/// As the ship sails out of the harbour, Sheba asks Piers how old he really is.
 /// "Umm... Piers?"
 void LemuriaEntrance_ShebaAsksPiersAge(void) {
   struct EventWork *work;
@@ -208,7 +209,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(8, 0x451e, 0x228f);
-  Actor_SetScript(8, gLemuriaEntrance_PiersLeadsTheWay);
+  Actor_SetScript(8, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);
   FieldEvent_SetMessageId((s32)&MsgFieldAddressCompanion);
   LemuriaEntrance_ShowPortraitLine(6, 90);
@@ -247,8 +248,8 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
 #include "objcmd.h"
 
 // clang-format off
-/// Piers' walk back along the path to the ship.
-u32 gLemuriaEntrance_PiersLeadsTheWay[] = {
+/// The ship's course out of the harbour.
+u32 gLemuriaEntrance_ShipSailsOut[] = {
     SC_MOVE(PIXELS(728), 0, PIXELS(160)),
     SC_SYNC,
     SC_MOVE(PIXELS(608), 0, PIXELS(152)),
@@ -285,7 +286,7 @@ u32 gLemuriaEntrance_PiersLeadsTheWay[] = {
 };
 // clang-format on
 
-s32 gLemuriaEntrance_PiersAtHelm[] = {
+s32 gLemuriaEntrance_ShipAtRest[] = {
     SC_CALL(LemuriaEntrance_ResetAnimationFrame),
     SC_ARG(7),
     SC_END,
@@ -307,7 +308,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {8, CONDITION_ALWAYS, (s32)gLemuriaEntrance_PiersAtHelm, PIXELS(14), 0,
+    {8, CONDITION_ALWAYS, (s32)gLemuriaEntrance_ShipAtRest, PIXELS(14), 0,
      PIXELS(4), FACING_NORTH, 2, 0},
     {342, CONDITION_ALWAYS, 1, PIXELS(636), 0, PIXELS(112), FACING_WEST, 2, 0},
     {342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(112), FACING_EAST, 2, 1},

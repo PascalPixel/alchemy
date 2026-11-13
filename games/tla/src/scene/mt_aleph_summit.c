@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x6b4, in ROM order.
+/// The summit of Mt. Aleph, at the end of the game: the Golden Sun forms over
+/// the mountain, Alex claims its power, and the scene's colours and dust follow
+/// what happens. This file holds the effect spawner and the colour helpers;
+/// mt_aleph_summit/ holds the events.
 
 #include "shared/tables.h"
 #include "types.h"
@@ -23,9 +26,9 @@
 
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party =
       ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;
@@ -42,7 +45,8 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02001650[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -71,7 +75,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_02001650[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -106,7 +110,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_020002a4(u16 *colors, u16 *target, s32 count) {
+/// Moves each of count colours one step of red, green and blue toward its
+/// target colour.
+void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count) {
   s32 i = 0;
 
   if (count == 0)
@@ -141,7 +147,9 @@ next:
     goto next;
 }
 
-void Func_0200032c(u16 *colors, s32 count, s32 delta) {
+/// Adds delta to each of count colours' red, green and blue, kept within 0 to
+/// 31.
+void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
   s32 i;
   s32 r, g, b;
 
@@ -170,7 +178,9 @@ loop:
     goto loop;
 }
 
-void Func_02000394(void) {
+/// A task: the palette at 0x05000082 pulses brighter and darker than its
+/// source at 0x050000c2 with the frame count.
+void MtAlephSummit_PulseColors(void) {
   u16 *src = (u16 *)0x050000c2;
   u16 *dst = (u16 *)0x05000082;
   s32 delta = (Math_Sin((gFrameCount << 11) >> 1) * 2) >> 16;
@@ -204,17 +214,17 @@ next:
 }
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_0200159c, 22)
+DEFINE_G_DATA_020012A4(gFieldEffect_ShortScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_020015d8, 44)
+DEFINE_G_DATA_020012A4(gFieldEffect_MediumScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02001614, 126)
+DEFINE_G_DATA_020012A4(gFieldEffect_LongScript, 126)
 // clang-format on
 
-s32 gData_02001650[] = {
-    (s32)gData_0200159c,
-    (s32)gData_020015d8,
-    (s32)gData_02001614,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

@@ -99,15 +99,12 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   s32 verticalSquared;
   s32 diagonal;
   s32 vertical;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 8 of
-   * 127 instructions differ in tbs-en. */
-  s32 zero;
+  s32 groundHeight = 0;
   s32 horizontal;
 
   // The followed point on the ground (height 0), in camera space; horizon is
   // its height less its depth times the pitch slope.
-  zero = 0;
-  SET_VECTOR(groundPoint, position[0], zero, position[2]);
+  SET_VECTOR(groundPoint, position[0], groundHeight, position[2]);
   Iwram_TransformVector(groundPoint, cameraPoint);
   cameraCoordinates = cameraPoint;
   horizon =

@@ -875,12 +875,12 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
 #endif
 
   spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(*spriteWork));
-  save = *(gHeapSlots + HEAP_SLOT_SAVE);
+  save = gSaveWork;
   summaryWindow = NULL;
   partyWindow = NULL;
   djinnWindow = NULL;
   summaryDirty = 1;
-  work = *(gHeapSlots + HEAP_SLOT_WINDOW);
+  work = WINDOW_WORK;
   buildStamp = BuildStamp_GetTimeFar();
   // Start on the first file the mode allows.
   // BUG: when none is, the jump to done returns FILE_LIST_NO_FILE without

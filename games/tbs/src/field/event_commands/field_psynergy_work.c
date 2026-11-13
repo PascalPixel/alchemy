@@ -17,8 +17,8 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 /// Entrance calls it too, for Ivan's Whirlwind on the stump's ivy. The caster
 /// is the leader, with no target until FieldPsynergy_SetupActorPair names one.
 void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
-  struct FieldWork *ev = *(gHeapSlots + HEAP_SLOT_FIELD);
-  struct MapGridScrollWork *grid = *(gHeapSlots + 8);
+  struct FieldWork *ev = gFieldWork;
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   struct FieldEffectWork *effectWork;
   s32 running;
 
@@ -27,7 +27,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     effectWork = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof *effectWork);
     Dma_Fill32(running, effectWork, sizeof *effectWork);
   } else {
-    effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+    effectWork = gFieldEffectWork;
   }
   effectWork->action = abilityId;
   effectWork->fieldPsynergy = Ability_Get(abilityId)->fieldPsynergy;

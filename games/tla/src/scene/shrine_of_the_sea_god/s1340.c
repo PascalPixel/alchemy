@@ -618,9 +618,6 @@ void Func_020025fc(void) {
     Func_080d4568()->motionFlags = done;
     Camera_MoveWithinMapBounds(328 << 16, 48 << 16, 552 << 16, 1);
     Func_02003ac8();
-    /* FAKEMATCH(temporary): done, the flag result, reused for the angle, built
-     * early; as the constant 0x4000 in the call, 2 of 98 instructions differ
-     * in tla-en. */
     done = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 424 << 16, 520 << 16, done);
     wait(1);
@@ -1356,9 +1353,6 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
 
   if (phase == 0) {
     {
-      /* FAKEMATCH(temporary): the local holding one constant builds the mask
-       * before the random draw; as 15 & Random16Far(), 7 of 46 instructions
-       * differ in tla-en. */
       s32 mask = 15;
 
       dx = mask & Random16Far();

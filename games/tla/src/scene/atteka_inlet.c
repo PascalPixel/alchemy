@@ -114,9 +114,6 @@ void Func_02000208(void) {
     Event_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
     {
-      /* FAKEMATCH(temporary): the angle shifted from a local, so it is built
-       * first, as the ROM builds it; as a constant, it is built last, 2 of
-       * 195 instructions differ in tla-en. */
       s32 angle = 208;
 
       Actor_SetPositionAndFacing(9, 60 << 16, 362 << 16, angle << 8);
@@ -128,8 +125,6 @@ void Func_02000208(void) {
     Actor_WalkToAndWait(9, 70, 308);
     Actor_ArmCallback(9, FACING_EAST, 0);
     {
-      /* FAKEMATCH(temporary): the angle shifted from a local, as above; as a
-       * constant, 2 of 195 instructions differ in tla-en. */
       s32 angle = 160;
 
       Actor_SetPositionAndFacing(10, 94 << 16, 272 << 16, angle << 7);

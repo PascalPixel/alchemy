@@ -266,8 +266,6 @@ sink:
   leader->z += 0x20000;
   slip = (leader->x & 0xfffff) + 0xfff80000;
   {
-    /* FAKEMATCH(temporary): each bound in one local just past the limit; as literal
-     * bounds, 73 of 166 instructions differ in tla-en. */
     s32 limit = 0x10001;
 
     if (slip >= limit)

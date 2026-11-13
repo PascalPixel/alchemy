@@ -514,8 +514,6 @@ step:
     x = object->x;
     offset = (x & 0xfffff) - 0x80000;
     {
-      /* FAKEMATCH(temporary): each bound in one local just past the limit; as
-       * literal bounds, 4 of 120 instructions differ in tla-en. */
       s32 limit = 0x10001;
 
       if (offset >= limit)

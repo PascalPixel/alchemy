@@ -501,9 +501,6 @@ s32 Func_02000b64(void) {
         PaletteFade_ApplyTarget(0x10003, 0);
         PaletteFade_Interpolate(20);
         System_Wait(20);
-        /* FAKEMATCH(temporary): entrance reused for the palette address, which
-         * holds its register; as a plain store, 38 of 324 instructions differ
-         * in tla-en. */
         entrance = 0x500021e;
         *(u16 *)entrance = 0x7fff;
         System_Wait(1);
@@ -1245,8 +1242,6 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 /// gData_020032d4; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
 void Func_02001cc4(struct Actor *object, s32 part) {
-  /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
-   * 0, 29 of 30 instructions differ in tla-en. */
   s32 zero = 0;
 
   object->motionFlags = zero;

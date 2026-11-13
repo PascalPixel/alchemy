@@ -512,9 +512,6 @@ void Func_02000c08(void) {
   Actor_SetSingleChildFlags(Actor_Get(1), 0);
   Actor_SetScript(1, gData_02005524);
   {
-    /* FAKEMATCH(temporary): the priority held in a block local, so 0x480 is
-     * built before the task function's address is loaded; as an argument, 2 of
-     * 57 instructions differ in tla-en. */
     s32 priority = 0x480;
 
     FieldTask_AddFrame((void (*)(void))Func_02000a78, priority);
@@ -1758,9 +1755,6 @@ void Func_02002fc4(s32 mode) {
     Iwram_CopyWordsEntry(gData_02005a60, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
     s32 zero = 0;
 
     gData_02005a14 = zero;

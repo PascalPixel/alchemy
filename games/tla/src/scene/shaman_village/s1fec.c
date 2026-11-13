@@ -1418,9 +1418,6 @@ void Func_02004534(void) {
       521;
   ((struct ShamanVillageObject *)Actor_GetById(12))->collisionFlags = 8;
   if (GameFlag_Test(0x9fe)) {
-    /* FAKEMATCH(temporary): the local holding one constant starts the facing
-     * before the other arguments, as the native has; as the plain argument
-     * 0x3000, 2 of 159 instructions differ in tla-en. */
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(8, PIXELS(88), PIXELS(92), angle);

@@ -1421,8 +1421,6 @@ s32 Func_0200145c(void) {
       gMainRoutineWork.linkTallies[4]++;
       v = gMainRoutineWork.linkTallies[7] + 1;
       gMainRoutineWork.linkTallies[7] = v;
-      /* FAKEMATCH(temporary): the other score branches' address slot reused; as
-       * the row read directly, 8 of 438 instructions differ in tla-en. */
       score = (u32)&gMainRoutineWork.linkTallies[6];
       if (*(u16 *)score < (u16)v)
         *(u16 *)score = v;

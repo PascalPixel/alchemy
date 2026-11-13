@@ -1465,9 +1465,6 @@ void Func_0200516c(void) {
       *(u16 *)(unit + 0x14) =
           Gauge(*(s16 *)(unit + 0x38), *(s16 *)(unit + 0x34));
       if (*(u16 *)(unit + 0x14) == 0 && *(s16 *)(unit + 0x38) != 0) {
-        /* FAKEMATCH(temporary): the 1 built with movs as a word; as a halfword
-         * constant, which loads from the pool, 23 of 218 instructions differ
-         * in tla-en. */
         s32 one = 1;
 
         *(s16 *)(unit + 0x14) = one;
@@ -1475,8 +1472,6 @@ void Func_0200516c(void) {
       *(u16 *)(unit + 0x16) =
           Gauge(*(s16 *)(unit + 0x3a), *(s16 *)(unit + 0x36));
       if (*(u16 *)(unit + 0x16) == 0 && *(s16 *)(unit + 0x3a) != 0) {
-        /* FAKEMATCH(temporary): as for the HP gauge; as a halfword constant, 19
-         * of 218 instructions differ in tla-en. */
         s32 one = 1;
 
         *(s16 *)(unit + 0x16) = one;
@@ -1516,8 +1511,6 @@ void Func_0200516c(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   {
-    /* FAKEMATCH(temporary): the priority built before the task function's
-     * address; as a plain argument, 2 of 218 instructions differ in tla-en. */
     s32 priority = 0x480;
 
     Task_Add(Func_02002c34, priority);
@@ -1656,8 +1649,6 @@ void Func_02005594(void) {
   if (GameFlag_Test(0x92e))
     Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   else if (GameFlag_Test(0x92f)) {
-    /* FAKEMATCH(temporary): a local holding the angle builds it before the
-     * position; as a plain argument, 4 of 223 instructions differ in tla-en. */
     s32 angle = 0x2000;
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);

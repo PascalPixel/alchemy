@@ -288,8 +288,6 @@ void Func_02002a64(void) {
   }
   Actor_SetPositionAndFacing(7, 165 << 17, 156 << 17, speed);
   {
-    /* FAKEMATCH(temporary): actor 23's speed in a local; as the constant in the
-     * call, 4 of 521 instructions differ in tla-en. */
     s32 slow = 0xb000;
 
     Actor_SetPositionAndFacing(23, 216 << 17, 156 << 17, slow);

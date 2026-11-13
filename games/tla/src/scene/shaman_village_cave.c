@@ -389,9 +389,6 @@ void Func_0200087c(void) {
   Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
   Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
   {
-    /* FAKEMATCH(temporary): the local holding one constant starts the facing
-     * before the other arguments, as the native has; as the plain argument
-     * 0xc000, 2 of 169 instructions differ in tla-en. */
     s32 turn = 0xc000;
 
     Actor_SetPositionAndFacing(18, PIXELS(218), PIXELS(320), turn);

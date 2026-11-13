@@ -184,8 +184,6 @@ void Func_02000468(void) {
   Actor_WalkTo(12, 312, 184);
   for (i = 23; i >= 0; i--) {
     {
-      /* FAKEMATCH(temporary): the turn in its own register; as a plain
-       * 0x2000, 24 of 85 instructions differ in tla-en. */
       s32 turn = 0x2000;
 
       object->facing += turn;

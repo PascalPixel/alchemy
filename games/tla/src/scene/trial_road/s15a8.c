@@ -453,9 +453,6 @@ void Func_02001fc4(s32 mode) {
   if (mode != 2)
     Iwram_CopyWords(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
   if (mode == 1) {
-    /* FAKEMATCH(temporary): a local holding the zero builds it in r2 and the
-     * counter address in r3, as overlay 699's twin does; as
-     * gData_02007e20 = 0, 6 of 25 instructions differ in tla-en. */
     s32 zero = 0;
 
     gData_02007e20 = zero;
@@ -1589,15 +1586,11 @@ void Func_02003da0(void) {
     if (mover->speed != 0)
       attributes[3] = 0;
     else {
-      /* FAKEMATCH(temporary): the form kept; as attributes[3] |= 128, 4 of 213
-         instructions differ in tla-en. */
       s32 bits = 128;
       bits |= attributes[3];
       attributes[3] = bits;
     }
     if (mover->offset != 0) {
-      /* FAKEMATCH(temporary): the form kept; as attributes[3] |= 16, 4 of 213
-         instructions differ in tla-en. */
       s32 bits = 16;
       bits |= attributes[3];
       attributes[3] = bits;
@@ -2421,9 +2414,6 @@ void TrialRoad_Idle(void) {}
 
 void TrialRoad_SetBalanceStateReady(void) {
   u16 *state = (u16 *)gSceneState;
-  /* FAKEMATCH(temporary): a local holding 9 builds it with movs; as a plain
-   * constant, which is a halfword pool load, 4 of 4 instructions differ in
-   * tla-en. */
   u16 ready = 9;
 
   *state = ready;
@@ -2880,9 +2870,6 @@ void Func_02005688(s32 a) {
 
 void Func_020056c4(s32 a) {
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
-  /* FAKEMATCH(temporary): a word local builds 0 with movs for both halfword
-   * stores; as a halfword constant, which loads from the pool, 14
-   * of 15 instructions differ in tla-en. */
   s32 zero = 0;
 
   *(u16 *)((Ram_HeapSlots->unkec[0]) + 234) = zero;

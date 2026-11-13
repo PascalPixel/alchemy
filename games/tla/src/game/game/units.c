@@ -1278,8 +1278,6 @@ void Func_080ae868(void) {
       /* FAKEMATCH(temporary): the form kept; as GameFlag_SetBit(0x800 + k + j),
          8 of 206 instructions differ in tla-en. */
       flag = 0x800 + k + j;
-      /* FAKEMATCH(temporary): element reused for the flag; with its own local
-         or inline, 13 of 206 instructions differ in tla-en. */
       element = 0x30 + i * 20 + j;
       if (GameFlag_Test(element))
         GameFlag_SetBit(flag);

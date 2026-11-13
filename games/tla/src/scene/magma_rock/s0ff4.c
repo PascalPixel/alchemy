@@ -997,9 +997,6 @@ void Func_020020f8(s32 mode, s32 cue) {
   }
   if (mode == 3) {
     struct Actor *target;
-    /* FAKEMATCH(temporary): the attribute copies' last argument as a
-     * local set first keeps it in r6; as the constant 8, 12 of 104
-     * instructions differ in tla-en. */
     s32 last = 8;
 
     Func_02002024(work->target->x, work->target->z);

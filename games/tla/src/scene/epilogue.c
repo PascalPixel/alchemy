@@ -418,9 +418,6 @@ s32 Func_02000318(void) {
 L_0200868c:
   System_Wait(1);
 L_02008692:
-  /* FAKEMATCH(temporary): p reused for the input and main work addresses; as
-   * gInput and gMainRoutineWork read directly, 8 of 426 instructions differ in
-   * tla-en. */
   p = &gInput;
   if (((struct InputState *)p)->pressed == 0)
     goto L_0200868c;

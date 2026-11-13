@@ -1376,8 +1376,6 @@ void Func_02001928(struct Actor *object, s32 priority);
 /// gData_02004744; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
 void Func_02001928(struct Actor *object, s32 part) {
-  /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
-   * 0, 29 of 30 instructions differ in tla-en. */
   s32 zero = 0;
 
   object->motionFlags = zero;

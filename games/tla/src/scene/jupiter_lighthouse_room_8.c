@@ -82,8 +82,6 @@ void Func_02000094(s32 unused, s32 id) {
     test:;
     } while (y > floor || object->velocityY != 0);
     {
-      /* FAKEMATCH(temporary): the motion flags cleared from a zero of their
-       * own; as a plain 0 store, 2 of 50 instructions differ in tla-en. */
       s32 cleared = 0;
 
       object->motionFlags = cleared;
@@ -212,9 +210,6 @@ void Func_02000338(s32 mode) {
     Iwram_CopyWordsEntry(gData_02002ad0, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
     s32 zero = 0;
 
     gData_02002a84 = zero;

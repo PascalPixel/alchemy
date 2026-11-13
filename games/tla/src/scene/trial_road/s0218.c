@@ -193,9 +193,6 @@ void Func_0200062c(s32 id) {
   if (object != NULL) {
     u8 *cells = map->layers[0].cells;
     u8 *cell = cells + (((object->x >> 20) + ((object->z >> 20) << 7)) << 2);
-    /* FAKEMATCH(temporary): a local holding the bit builds it in the register
-     * it ORs into; as cell[3] |= 128, 4 of 24 instructions differ in
-     * tla-en. */
     s32 bit = 128;
 
     cell[3] = bit | cell[3];
@@ -320,9 +317,6 @@ void Func_0200082c(s32 a, s32 id) {
     Func_0200062c(id);
     return;
   }
-  /* FAKEMATCH(temporary): one local reused for the object and then its cell
-   * column, so the column stays in r0; as a separate object local, 10 of
-   * 52 instructions differ in tla-en. */
   x = (s32)Actor_GetById(id);
   x = ((struct Actor *)x)->x >> 20;
   id = 0;

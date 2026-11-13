@@ -566,9 +566,6 @@ void Func_02000a30(void) {
     if (x == 47) {
       Event_SetFlag(2549);
       {
-        /* FAKEMATCH(temporary): the column and row in locals, so each stack
-         * word builds in its own register; as constants, 4 of 281 instructions
-         * differ in tla-en. */
         s32 column = 46;
         s32 row = 73;
 
@@ -831,8 +828,6 @@ end:
   Actor_WaitForMove(flame);
   flame->update = 0;
   Func_02004cb0(flame);
-  /* FAKEMATCH(temporary): id is reused as the spark count; with its own local,
-     14 of 270 instructions differ in tla-en. */
   id = 0;
 spark:
   bit = gFrameCount;

@@ -954,9 +954,6 @@ void Func_020015a4(s32 mode) {
     Iwram_CopyWordsEntry(gData_02007088, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (GameFlag_Test(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): the zero held in a local, so it is built in r2 and
-     * the counter's address in r3; as a plain store of 0, 6 of 44
-     * instructions differ in tla-en. */
     s32 zero = 0;
 
     gData_0200703c = zero;
@@ -1583,8 +1580,6 @@ void Func_020022d0(struct Actor *object);
 /// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
 void Func_0200215c(struct Actor *object, s32 part) {
-  /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
-   * 0, 29 of 30 instructions differ in tla-en. */
   s32 zero = 0;
 
   object->motionFlags = zero;

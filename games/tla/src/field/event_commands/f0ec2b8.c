@@ -510,10 +510,6 @@ void Func_080ec4d4(void) {
           cursorY = 0;
         Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
         {
-          /* FAKEMATCH(temporary): one local carries width, then height, into
-             the name box, which keeps the box's address in r3 for all four
-             stores; as plain stores, 20 of 1044 instructions differ in
-             tla-en. */
           s32 value = width;
           NAME_BOX_WIDTH = value;
           value = height;

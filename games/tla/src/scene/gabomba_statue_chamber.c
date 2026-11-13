@@ -548,9 +548,6 @@ void Func_02000f00(void) {
       ((struct GabombaStatueChamberObject *)Actor_GetById(8));
   s32 x = leader->x;
   s32 z = leader->z;
-  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores, set
-   * before the null test, so it takes r7; as the constant 0 in each store, 20
-   * of 58 instructions differ in tla-en. */
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
@@ -580,9 +577,6 @@ void Func_02000f88(void) {
       ((struct GabombaStatueChamberObject *)Actor_GetById(8));
   s32 x = leader->x;
   s32 z = leader->z;
-  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores, set
-   * before the null test, so it takes r7; as the constant 0 in each store, 20
-   * of 58 instructions differ in tla-en. */
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
@@ -752,8 +746,6 @@ void Func_020010d4(void) {
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Sound_Play(0);
   {
-    /* FAKEMATCH(temporary): the turn built before the other arguments; as a
-     * plain 0xd000 argument, 2 of 640 instructions differ in tla-en. */
     s32 turn = 0xd000;
     Actor_SetHorizontalPositionAndAngleWithTerrain(12, PIXELS(400), PIXELS(320),
                                                    turn);

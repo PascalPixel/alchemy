@@ -666,9 +666,6 @@ void Func_02003164(void) {
   }
   Func_020018a8();
   if (GameFlag_Test(0x86c) != 0) {
-    /* FAKEMATCH(temporary): the angle held in a local is started before the two
-     * coordinates, as the native does; as the literal argument, started after
-     * them, 4 of 114 instructions differ in tla-en. */
     s32 angle = 0x4000;
 
     Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);
@@ -1091,9 +1088,6 @@ void HeapSlot_Release(s32 slot);
 
 void Func_02003a30(void) {
   struct Actor **slot = &gData_02004420;
-  /* FAKEMATCH(temporary): one zero held in a local, kept in r7 for the three
-   * byte stores below as the native does; as plain zeros, built in r2 where
-   * they are stored, 22 of 48 instructions differ in tla-en. */
   s32 zero = 0;
   struct Actor *object = ((struct Actor *)Import_ActorCreate(489, 0, 0, 0));
 

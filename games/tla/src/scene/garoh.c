@@ -505,8 +505,6 @@ s32 Func_02000aa8(void) {
     FieldActor_SetSpritePriority(13, 1);
     FieldActor_SetSpritePriority(14, 1);
     if (Event_GetFlag(0x91f)) {
-      /* FAKEMATCH(temporary): the angle in its own local; as a plain 0x4000
-       * argument, 4 of 128 instructions differ in tla-en. */
       s32 angle = 0x4000;
 
       Actor_SetPositionAndFacing(10, PIXELS(328), PIXELS(162), angle);

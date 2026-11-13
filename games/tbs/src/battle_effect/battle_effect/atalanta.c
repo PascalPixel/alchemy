@@ -66,6 +66,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   struct ScreenPoint target;
   BlitterPair draw;
   struct BattleBackgroundWork *view;
+  void **slots;
   void *canvas;
   struct BattleEffectWork *work;
   s8 *path;
@@ -81,10 +82,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
   // The slots are read from the background's: the effect work, the canvas
   // and the sheet come before it.
-  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
+  view = slots[0];
+  canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_BACKGROUND,
+                          HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_BACKGROUND,
+                        HEAP_SLOT_BATTLE_EFFECT);
+  sheet = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_BACKGROUND,
+                         HEAP_SLOT_BATTLE_SHEET);
   scrollX = gBgScroll[1].x;
   work->args = args;
   // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from
@@ -257,7 +262,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
               // The Japanese release draws the trails 16 pixels higher;
               // the later releases move them 16 pixels down.
 #if !TBS_PATCH_1
-              Projection_Point(point, &screen);
+              {
+                /* FAKEMATCH(temporary): out holds &screen; as
+                 * Projection_Point(point, &screen), 386 of 958 instructions
+                 * differ in tbs-ja. */
+                struct ScreenPoint *out = &screen;
+
+                Projection_Point(point, out);
+              }
               screen.x = (screen.x >> 1) + x;
               screen.y = screen.y + y;
 #else

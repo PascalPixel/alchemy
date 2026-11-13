@@ -195,6 +195,10 @@ enum DisplayControl {
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
 #define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
+/// A 15-bit colour's red, green and blue levels, 0 to 31 each.
+#define RGB_RED(color) ((color) & 0x1f)
+#define RGB_GREEN(color) (((color) >> 5) & 0x1f)
+#define RGB_BLUE(color) (((color) >> 10) & 0x1f)
 
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.

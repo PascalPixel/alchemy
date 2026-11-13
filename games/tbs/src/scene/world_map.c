@@ -704,13 +704,13 @@ const struct ActorPlacement *WorldMap_GetActorPlacements(void) {
 /// approaches.
 static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
-  struct Actor *subject;
-  struct Actor *other;
+  struct Actor *area;
+  struct Actor *leader;
 
-  subject = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
-  other = Actor_Get(gMainRoutineWork.leaderActorId);
+  area = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  if (other->x.fixed < subject->x.fixed) {
+  if (leader->x.fixed < area->x.fixed) {
     work->exit = exitBefore;
   } else {
     work->exit = exitAfter;
@@ -721,13 +721,13 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
 /// Chooses a passage exit from the leader's north-south approach.
 static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
-  struct Actor *subject;
-  struct Actor *other;
+  struct Actor *area;
+  struct Actor *leader;
 
-  subject = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
-  other = Actor_Get(gMainRoutineWork.leaderActorId);
+  area = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  if (other->z.fixed < subject->z.fixed) {
+  if (leader->z.fixed < area->z.fixed) {
     work->exit = exitBefore;
   } else {
     work->exit = exitAfter;
@@ -897,22 +897,22 @@ static void WorldMap_ReturnToTolbiShip(void) {
 /// WORLD_MAP_FROM_DEBUG turns encounters off. Leaving Vale the first time sets
 /// FLAG_VALE_PARTY_LEFT and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
-  struct MainRoutineWork *state = &gMainRoutineWork;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
 
-  if (state->entrance == WORLD_MAP_FROM_DEBUG) {
+  if (routine->entrance == WORLD_MAP_FROM_DEBUG) {
     GameFlag_Set(FLAG_NO_ENCOUNTERS);
     GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
   }
-  if (state->entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
+  if (routine->entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
     Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
                          MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (state->entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
+  } else if (routine->entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
     Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (state->entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
+  } else if (routine->entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     Event_Start();
     PartyInventory_Discard(ITEM_BLACK_ORB);
     Import_EventSetExitRequest(WORLD_MAP_TO_ROCK_ROOMS);
@@ -928,7 +928,7 @@ s32 WorldMap_Initialize(void) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
     // Each special entrance resumes its journey or story event.
-    switch (state->entrance) {
+    switch (routine->entrance) {
     case WORLD_MAP_FROM_VALE_PLAZA:
       if (Event_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
         GameFlag_Set(FLAG_VALE_PARTY_LEFT);

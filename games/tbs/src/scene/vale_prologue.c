@@ -2883,13 +2883,13 @@ static void ValePrologue_RebuildRiverbank(void) {
 /// Reached by stepping on cell behavior 16 until
 /// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void ValePrologue_FightThirdMonster(void) {
-  struct FieldWork *state;
+  struct FieldWork *work;
 
   Event_Start();
-  state = gFieldWork;
-  state->transition =
+  work = gFieldWork;
+  work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  state->transitionFrames = 64;
+  work->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
   GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
@@ -2902,13 +2902,13 @@ static void ValePrologue_FightThirdMonster(void) {
 /// Reached by stepping on cell behavior 17 until
 /// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void ValePrologue_FightFourthMonster(void) {
-  struct FieldWork *state;
+  struct FieldWork *work;
 
   Event_Start();
-  state = gFieldWork;
-  state->transition =
+  work = gFieldWork;
+  work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  state->transitionFrames = 64;
+  work->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);
   GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);

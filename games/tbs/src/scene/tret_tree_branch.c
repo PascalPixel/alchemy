@@ -181,12 +181,10 @@ static void TretTreeBranch_GoUpSoutheastVine(void) {
 /// The exits' cells have the exits' own numbers as their cell behaviors. Each
 /// leads into Tret Tree's other scene (SceneId_TreeRooms).
 static void TretTreeBranch_EnterTretTreeRooms(void) {
-  struct FieldWork *state = gFieldWork;
-  s16 *touchedExit;
+  struct FieldWork *work = gFieldWork;
 
   Sound_Play(SE_MAP_EXIT);
-  touchedExit = &state->stepTrigger;
-  Import_EventSetExitRequest(*touchedExit);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 /// Selects the same mask and window parameters for Reveal and scene entry.

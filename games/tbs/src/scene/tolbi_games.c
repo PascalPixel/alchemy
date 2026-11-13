@@ -738,15 +738,15 @@ static s32 TolbiSpring_RunSpringGame(void) {
   s32 prizeIndex;
   s32 prizeRoll;
   s32 message;
-  struct MainRoutineWork *state;
+  struct MainRoutineWork *routine;
 
   Event_Start();
   Field_EndBusyAndReveal();
   message = MsgTolbiThrow;
 #if TBS_PATCH_1
-  state = &gMainRoutineWork;
+  routine = &gMainRoutineWork;
 prompt:
-  coins = state->coins;
+  coins = routine->coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   Event_SetMessageId(message);
   // "What will you throw?"
@@ -813,8 +813,8 @@ prompt:
 #else
   for (;;) {
     text = MsgTolbiCoins;
-    state = &gMainRoutineWork;
-    coins = state->coins;
+    routine = &gMainRoutineWork;
+    coins = routine->coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Event_SetMessageId(message);
     // "What will you throw?"
@@ -912,13 +912,13 @@ prompt:
       prizeIndex = 0;
       if (prizeIndex < result * 3 + 3) {
         do {
-          /* FAKEMATCH(temporary): the weight read as a byte from state's start
-           * leaves the weights' address free for the halving below; as
-           * state->prizeWeights[prizeIndex], 6 of 280 instructions differ in
+          /* FAKEMATCH(temporary): the weight read as a byte from the work's
+           * start leaves the weights' address free for the halving below; as
+           * routine->prizeWeights[prizeIndex], 6 of 280 instructions differ in
            * tbs-en. */
           u8 weight =
-              ((u8 *)state)[prizeIndex +
-                            offsetof(struct MainRoutineWork, prizeWeights)];
+              ((u8 *)routine)[prizeIndex +
+                              offsetof(struct MainRoutineWork, prizeWeights)];
 
           totalWeight += (s8)weight;
           prizeIndex++;
@@ -926,7 +926,7 @@ prompt:
       }
       prizeRoll = (u32)(Random_Next() * totalWeight) >> 16;
       for (prizeIndex = 0; prizeIndex < 15; prizeIndex++) {
-        prizeRoll -= state->prizeWeights[prizeIndex];
+        prizeRoll -= routine->prizeWeights[prizeIndex];
         if (prizeRoll < 0) {
           break;
         }
@@ -936,15 +936,15 @@ prompt:
       }
       // Reveal the selected item, then reduce its chance on later tosses.
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
-      /* FAKEMATCH(dead): stepping state away and back makes the weights'
+      /* FAKEMATCH(dead): stepping routine away and back makes the weights'
        * address be worked out again after the call; without it, 6 of 280
        * instructions differ in tbs-en. */
-      state++;
-      state--;
+      routine++;
+      routine--;
       {
         s32 slot =
             prizeIndex + offsetof(struct MainRoutineWork, prizeWeights) - 1;
-        s8 *weights = (s8 *)state + 1;
+        s8 *weights = (s8 *)routine + 1;
 
         if (weights[slot] > 1) {
           /* FAKEMATCH(dead): the halving in both arms of a test of slot puts

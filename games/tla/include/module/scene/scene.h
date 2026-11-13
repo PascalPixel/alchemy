@@ -193,13 +193,15 @@ struct AnkohlRuinsSpriteWork {
   struct AnkohlRuinsSprite sprites[8];
 };
 
-struct AnkohlRuinsWaterRow {
+/// A block of cells the sand fills in Ankohl Ruins once its level reaches
+/// `level`: `width` by `height` cells from (`x`, `z`).
+struct AnkohlRuinsSandRow {
   u8 level;
   u8 width;
   u8 height;
   u8 x;
   u8 z;
-  u8 unk05[3];
+  u8 unused[3];
 };
 
 struct ActorTail {

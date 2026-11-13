@@ -44,31 +44,12 @@ void Field_StartColorTransition();
 extern s16 gLemuriaPalace_DoorOpening[];
 
 /// The sprite each of the two maps is drawn as.
-struct LemuriaPalaceMapSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 2;
-  u8 shape : 2;
-  u8 unk05_4 : 1;
-  u8 blend : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-  // XXX (no evidence): what these hold; read as s32, whose alias set orders
-  // the stores as the listing does.
-  s32 unk0c[4];
-  u16 unk1c;
-  u16 unk1e;
-};
-
-extern u8 gLemuriaPalace_MapTime[];
+extern s32 gLemuriaPalace_MapTime;
 extern u8 gLemuriaPalace_MapFadeLevels[];
-extern u8 gLemuriaPalace_FirstMapShown[];
-extern u8 gLemuriaPalace_SecondMapShown[];
-extern u8 gLemuriaPalace_FirstMapSprite[];
-extern u8 gLemuriaPalace_SecondMapSprite[];
+extern s32 gLemuriaPalace_FirstMapShown;
+extern s32 gLemuriaPalace_SecondMapShown;
+extern struct EffectSprite gLemuriaPalace_FirstMapSprite;
+extern struct EffectSprite gLemuriaPalace_SecondMapSprite;
 extern const u8 gLemuriaPalace_FirstMapTiles[];
 extern const u8 gLemuriaPalace_SecondMapTiles[];
 extern s32 gLemuriaPalace_SecondMapVram;
@@ -117,14 +98,7 @@ void LemuriaPalace_EnterDoor(s32 kind) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(lemuria_palace): variable gLemuriaPalace_GlowColors as extern s16
- * gLemuriaPalace_GlowColors[]; the definition has u32
- * gLemuriaPalace_GlowColors[] = { 0x76c07b00, 0x6e407280, 0x65c06a00,
- * 0x65c06180, 0x6e406a00, 0x76c07280, }; tried as the definition's extern u32
- * gLemuriaPalace_GlowColors[], LemuriaPalace_CycleGlowColors moves: 2 of 35
- * instructions in tla-ja. */
-extern s16 gLemuriaPalace_GlowColors__lemuria_palace[] __asm__(
-    "gLemuriaPalace_GlowColors");
+extern s16 gLemuriaPalace_GlowColors[];
 
 static inline u32 Frame_Mod6(u32 frame) {
   /* FAKEMATCH(wrapper): the inline keeps gFrameCount's address out of a
@@ -164,7 +138,7 @@ void LemuriaPalace_CycleGlowColors(void) {
       goto loop;
     *(volatile u16 *)&BG_PLTT_COLOR(12, 1) = saved;
   }
-  color = gLemuriaPalace_GlowColors__lemuria_palace[(gFrameCount >> 2) % 12];
+  color = gLemuriaPalace_GlowColors[(gFrameCount >> 2) % 12];
   *(volatile u16 *)&BG_PLTT_COLOR(12, 15) = color;
 }
 
@@ -185,8 +159,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Actor 13 raises a hand and two sparks fly up, as each map is called up.
-void LemuriaPalace_CastMapSparks(void) {
+/// Actor 13 raises a hand and two sparks fly up, as each map is called up. The
+/// caller passes the actor, but the sparks always come from actor 13.
+void LemuriaPalace_CastMapSparks(s32 actorId) {
   struct Actor *object = Actor_Get(13);
   struct Actor *first;
   struct Actor *second;
@@ -215,7 +190,7 @@ void LemuriaPalace_CastMapSparks(void) {
   FieldEvent_Wait(30);
 }
 
-extern u8 gLemuriaPalace_MapMode[];
+extern s8 gLemuriaPalace_MapMode;
 extern u32 gLemuriaPalace_MapCrossfade[];
 s32 __modsi3();
 
@@ -223,10 +198,10 @@ s32 __modsi3();
 /// (1, the fade level by frame; 2, the cross-fade that flickers between them).
 void LemuriaPalace_DrawMaps(void) {
   struct Vector3 position;
-  s8 mode = gLemuriaPalace_MapMode[0];
+  s8 mode = gLemuriaPalace_MapMode;
 
   if (mode == 1) {
-    s32 *time = (s32 *)gLemuriaPalace_MapTime;
+    s32 *time = &gLemuriaPalace_MapTime;
     s32 t = *time;
     s32 level = gLemuriaPalace_MapFadeLevels[(t >> 3) & 15];
 
@@ -247,7 +222,7 @@ void LemuriaPalace_DrawMaps(void) {
     } while (0);
     *time = t;
   } else if (mode == 2) {
-    s32 *time = (s32 *)gLemuriaPalace_MapTime;
+    s32 *time = &gLemuriaPalace_MapTime;
     s32 step = (*time >> 2) % 28;
 
     {
@@ -260,13 +235,13 @@ void LemuriaPalace_DrawMaps(void) {
       REG_BLDALPHA = value;
     }
     if (step == 0) {
-      *(s32 *)gLemuriaPalace_FirstMapShown = 1;
-      *(s32 *)gLemuriaPalace_SecondMapShown = step;
+      gLemuriaPalace_FirstMapShown = 1;
+      gLemuriaPalace_SecondMapShown = step;
       Event_PlaySound(153);
     }
     if (step == 14) {
-      *(s32 *)gLemuriaPalace_FirstMapShown = 0;
-      *(s32 *)gLemuriaPalace_SecondMapShown = 1;
+      gLemuriaPalace_FirstMapShown = 0;
+      gLemuriaPalace_SecondMapShown = 1;
       Event_PlaySound(153);
     }
     (*time)++;
@@ -275,67 +250,19 @@ void LemuriaPalace_DrawMaps(void) {
   position.y = 0;
   position.z = 0x1c00000;
   Camera_WorldToScreen(&position);
-  if (*(s32 *)gLemuriaPalace_FirstMapShown != 0) {
-    ((struct Actor *)gLemuriaPalace_FirstMapSprite)->y = position.x;
-    ((struct Actor *)gLemuriaPalace_FirstMapSprite)->z = position.z;
-    EffectSprite_Draw(gLemuriaPalace_FirstMapSprite);
+  if (gLemuriaPalace_FirstMapShown != 0) {
+    gLemuriaPalace_FirstMapSprite.x = position.x;
+    gLemuriaPalace_FirstMapSprite.y = position.z;
+    EffectSprite_Draw(&gLemuriaPalace_FirstMapSprite);
   }
-  if (*(s32 *)gLemuriaPalace_SecondMapShown != 0) {
-    ((struct Actor *)gLemuriaPalace_SecondMapSprite)->y = position.x;
-    ((struct Actor *)gLemuriaPalace_SecondMapSprite)->z = position.z;
-    EffectSprite_Draw(gLemuriaPalace_SecondMapSprite);
+  if (gLemuriaPalace_SecondMapShown != 0) {
+    gLemuriaPalace_SecondMapSprite.x = position.x;
+    gLemuriaPalace_SecondMapSprite.y = position.z;
+    EffectSprite_Draw(&gLemuriaPalace_SecondMapSprite);
   }
 }
 
 extern s32 gLemuriaPalace_FirstMapVram;
-/* VIEW(s03a0): variable gLemuriaPalace_FirstMapSprite as extern struct
- * LemuriaPalaceMapSprite gLemuriaPalace_FirstMapSprite; lemuria_palace has
- * extern u8 gLemuriaPalace_FirstMapSprite[]; tried as the one declaration
- * extern struct LemuriaPalaceMapSprite gLemuriaPalace_FirstMapSprite, it does
- * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:286: conflicting
- * types for `gLemuriaPalace_FirstMapSprite'. */
-extern struct LemuriaPalaceMapSprite
-    gLemuriaPalace_FirstMapSprite__s03a0 __asm__(
-        "gLemuriaPalace_FirstMapSprite");
-/* VIEW(s03a0): variable gLemuriaPalace_SecondMapSprite as extern struct
- * LemuriaPalaceMapSprite gLemuriaPalace_SecondMapSprite; lemuria_palace has
- * extern u8 gLemuriaPalace_SecondMapSprite[]; tried as the one declaration
- * extern struct LemuriaPalaceMapSprite gLemuriaPalace_SecondMapSprite, it does
- * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:290: conflicting
- * types for `gLemuriaPalace_SecondMapSprite'. */
-extern struct LemuriaPalaceMapSprite
-    gLemuriaPalace_SecondMapSprite__s03a0 __asm__(
-        "gLemuriaPalace_SecondMapSprite");
-/* VIEW(s03a0): variable gLemuriaPalace_FirstMapShown as extern s32
- * gLemuriaPalace_FirstMapShown; lemuria_palace has extern u8
- * gLemuriaPalace_FirstMapShown[]; tried as the one declaration extern s32
- * gLemuriaPalace_FirstMapShown, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:294: conflicting types for
- * `gLemuriaPalace_FirstMapShown'. */
-extern s32
-    gLemuriaPalace_FirstMapShown__s03a0 __asm__("gLemuriaPalace_FirstMapShown");
-/* VIEW(s03a0): variable gLemuriaPalace_SecondMapShown as extern s32
- * gLemuriaPalace_SecondMapShown; lemuria_palace has extern u8
- * gLemuriaPalace_SecondMapShown[]; tried as the one declaration extern s32
- * gLemuriaPalace_SecondMapShown, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:297: conflicting types for
- * `gLemuriaPalace_SecondMapShown'. */
-extern s32 gLemuriaPalace_SecondMapShown__s03a0 __asm__(
-    "gLemuriaPalace_SecondMapShown");
-/* VIEW(s03a0): variable gLemuriaPalace_MapTime as extern s32
- * gLemuriaPalace_MapTime; lemuria_palace has extern u8
- * gLemuriaPalace_MapTime[]; tried as the one declaration extern s32
- * gLemuriaPalace_MapTime, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:300: conflicting types for
- * `gLemuriaPalace_MapTime'. */
-extern s32 gLemuriaPalace_MapTime__s03a0 __asm__("gLemuriaPalace_MapTime");
-/* VIEW(s03a0): variable gLemuriaPalace_MapMode as extern u8
- * gLemuriaPalace_MapMode; lemuria_palace has extern u8
- * gLemuriaPalace_MapMode[]; tried as the one declaration extern u8
- * gLemuriaPalace_MapMode, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:302: conflicting types for
- * `gLemuriaPalace_MapMode'. */
-extern u8 gLemuriaPalace_MapMode__s03a0 __asm__("gLemuriaPalace_MapMode");
 
 /// Loads the two maps the council shows the party, the ancient world and
 /// Lunpa's, and starts drawing them.
@@ -355,29 +282,29 @@ void LemuriaPalace_LoadMaps(void) {
   *firstSlot = VramCache_FindFreeEntry();
   firstTile = &gLemuriaPalace_FirstMapTile;
   *firstTile = Vram_Load(gLemuriaPalace_FirstMapVram, 0x1000, buffer);
-  EffectSprite_Init(&gLemuriaPalace_FirstMapSprite__s03a0, 0, 0, 0xc0000000,
+  EffectSprite_Init(&gLemuriaPalace_FirstMapSprite, 0, 0, 0xc0000000,
                     gLemuriaPalace_FirstMapTile);
-  gLemuriaPalace_FirstMapSprite__s03a0.unk1e = 1;
-  gLemuriaPalace_FirstMapSprite__s03a0.priority = 2;
-  gLemuriaPalace_FirstMapSprite__s03a0.shape = 1;
-  gLemuriaPalace_FirstMapSprite__s03a0.blend = 1;
-  gLemuriaPalace_FirstMapSprite__s03a0.palette = 0;
+  gLemuriaPalace_FirstMapSprite.depth = 1;
+  gLemuriaPalace_FirstMapSprite.oam.priority = 2;
+  gLemuriaPalace_FirstMapSprite.oam.objectMode = 1;
+  gLemuriaPalace_FirstMapSprite.oam.palette256 = 1;
+  gLemuriaPalace_FirstMapSprite.oam.palette = 0;
   Decompress_TaggedLz(gLemuriaPalace_SecondMapTiles, buffer);
   secondSlot = &gLemuriaPalace_SecondMapVram;
   *secondSlot = VramCache_FindFreeEntry();
   secondTile = &gLemuriaPalace_SecondMapTile;
   *secondTile = Vram_Load(gLemuriaPalace_SecondMapVram, 0x1000, buffer);
-  EffectSprite_Init(&gLemuriaPalace_SecondMapSprite__s03a0, 0, 0, 0xc0000000,
+  EffectSprite_Init(&gLemuriaPalace_SecondMapSprite, 0, 0, 0xc0000000,
                     gLemuriaPalace_SecondMapTile);
-  gLemuriaPalace_SecondMapSprite__s03a0.unk1e = 2;
-  gLemuriaPalace_SecondMapSprite__s03a0.priority = 2;
-  gLemuriaPalace_SecondMapSprite__s03a0.shape = 1;
-  gLemuriaPalace_SecondMapSprite__s03a0.blend = 1;
-  gLemuriaPalace_SecondMapSprite__s03a0.palette = 0;
-  gLemuriaPalace_FirstMapShown__s03a0 = 0;
-  gLemuriaPalace_SecondMapShown__s03a0 = 0;
-  gLemuriaPalace_MapTime__s03a0 = 0;
-  gLemuriaPalace_MapMode__s03a0 = 0;
+  gLemuriaPalace_SecondMapSprite.depth = 2;
+  gLemuriaPalace_SecondMapSprite.oam.priority = 2;
+  gLemuriaPalace_SecondMapSprite.oam.objectMode = 1;
+  gLemuriaPalace_SecondMapSprite.oam.palette256 = 1;
+  gLemuriaPalace_SecondMapSprite.oam.palette = 0;
+  gLemuriaPalace_FirstMapShown = 0;
+  gLemuriaPalace_SecondMapShown = 0;
+  gLemuriaPalace_MapTime = 0;
+  gLemuriaPalace_MapMode = 0;
   Task_AddFrame(LemuriaPalace_DrawMaps, TASK_PASS_VBLANK);
   Heap_Release(buffer);
 }
@@ -409,7 +336,7 @@ void LemuriaPalace_FadeMapsIn(void) {
   // The loop is written with goto: a for, do-while or while (1) loop differs
   // 39, as the loop pass hoists the register address and 16 out of it.
   BLEND_SET_ALPHA(0x1000);
-  gLemuriaPalace_MapMode__s03a0 = 0;
+  gLemuriaPalace_MapMode = 0;
   i = 0;
 loop:
   BLEND_SET_ALPHA(((16 - i) << 8) | i);
@@ -418,7 +345,7 @@ loop:
   if (i < 16)
     goto loop;
   BLEND_SET_ALPHA(16);
-  gLemuriaPalace_MapMode__s03a0 = 1;
+  gLemuriaPalace_MapMode = 1;
 }
 
 /// The reverse fade, in steps of three frames.
@@ -426,7 +353,7 @@ void LemuriaPalace_FadeMapsOut(void) {
   s32 i;
 
   BLEND_SET_ALPHA(16);
-  gLemuriaPalace_MapMode__s03a0 = 0;
+  gLemuriaPalace_MapMode = 0;
   i = 0;
 loop:
   BLEND_SET_ALPHA((i << 8) | (16 - i));
@@ -445,14 +372,6 @@ loop:
        ->v)
 
 void Event_Start();
-/* VIEW(s03a0): routine LemuriaPalace_CastMapSparks as s32
- * LemuriaPalace_CastMapSparks(); the definition has void
- * LemuriaPalace_CastMapSparks(void); tried as the definition's void
- * LemuriaPalace_CastMapSparks(void), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:632: too many
- * arguments to function `LemuriaPalace_CastMapSparks'. */
-extern s32
-LemuriaPalace_CastMapSparks__s03a0() __asm__("LemuriaPalace_CastMapSparks");
 s32 __modsi3();
 void Field_StartPaletteTransition();
 
@@ -672,14 +591,14 @@ answeredNo:
   Event_Wait(10);
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
-  LemuriaPalace_CastMapSparks__s03a0(13);
+  LemuriaPalace_CastMapSparks(13);
   Field_StartColorTransition(32, 0x2108);
   Event_Wait(32);
   Event_Wait(20);
   LemuriaPalace_LoadMaps();
   r8_1 = 1;
-  gLemuriaPalace_FirstMapShown__s03a0 = r8_1;
-  gLemuriaPalace_SecondMapShown__s03a0 = r7_1;
+  gLemuriaPalace_FirstMapShown = r8_1;
+  gLemuriaPalace_SecondMapShown = r7_1;
   Event_PlaySound(153);
   LemuriaPalace_FadeMapsIn();
   Actor_ShowEmote(4, 0x100, 0);
@@ -689,11 +608,11 @@ answeredNo:
   FieldEvent_ShowMessageThenWait(0x200d, 0, 5);
   Event_ShowMessageThenWait(15, 0, 10);
   FieldActor_ShowEmote(17, 0x105, 50);
-  v10 = LemuriaPalace_CastMapSparks__s03a0(13);
+  LemuriaPalace_CastMapSparks(13);
   LemuriaPalace_FadeMapsOut();
   Event_Wait(30);
-  gLemuriaPalace_FirstMapShown__s03a0 = r7_1;
-  gLemuriaPalace_SecondMapShown__s03a0 = r8_1;
+  gLemuriaPalace_FirstMapShown = r7_1;
+  gLemuriaPalace_SecondMapShown = r8_1;
   Event_PlaySound(153);
   LemuriaPalace_FadeMapsIn();
   FieldEvent_ShowMessageThenWait(0x200d, 0, 10);
@@ -733,11 +652,11 @@ answeredNo:
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x200d, 0, 5);
-  v14 = LemuriaPalace_CastMapSparks__s03a0(13);
+  LemuriaPalace_CastMapSparks(13);
   LemuriaPalace_FadeMapsOut();
   Event_Wait(10);
-  gLemuriaPalace_MapTime__s03a0 = r7_1;
-  gLemuriaPalace_MapMode__s03a0 = 2;
+  gLemuriaPalace_MapTime = r7_1;
+  gLemuriaPalace_MapMode = 2;
   Event_Wait(150);
   Actor_StartRepeatedMotion(17, 3);
   Actor_SetAttachedEffect(17, 0x102);
@@ -764,7 +683,7 @@ answeredNo:
   FieldActor_ShowEmote(13, 0x109, 30);
   Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
-  LemuriaPalace_CastMapSparks__s03a0(13);
+  LemuriaPalace_CastMapSparks(13);
   Event_PlaySound(153);
   r5_3 = 0;
   goto waitForCycle;
@@ -773,7 +692,7 @@ nextFrame:
 waitForCycle:
   if (r5_3 <= 119) {
     wait(1);
-    v17 = __modsi3((gLemuriaPalace_MapTime__s03a0) >> 2, 14);
+    v17 = __modsi3((gLemuriaPalace_MapTime) >> 2, 14);
     r0 = v17;
     if (v17 != 0)
       goto nextFrame;
@@ -1337,8 +1256,9 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gLemuriaPalace_GlowColors[] = {
-    0x76c07b00, 0x6e407280, 0x65c06a00, 0x65c06180, 0x6e406a00, 0x76c07280,
+s16 gLemuriaPalace_GlowColors[] = {
+    0x7b00, 0x76c0, 0x7280, 0x6e40, 0x6a00, 0x65c0,
+    0x6180, 0x65c0, 0x6a00, 0x6e40, 0x7280, 0x76c0,
 };
 // clang-format on
 #undef BLEND_SET_ALPHA

@@ -199,18 +199,19 @@ static void Xian_SpawnTrainingParticles(void) {
   u8 *student = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {
-    struct EffectOptions config;
-    config.priority = 1;
-    config.palette = 9;
-    config.type = SPRITE_GIRL_IN_PINK;
-    config.script = gXian_TrainingParticleScript;
+    struct EffectOptions options;
+
+    options.priority = 1;
+    options.palette = 9;
+    options.type = SPRITE_GIRL_IN_PINK;
+    options.script = gXian_TrainingParticleScript;
     FieldEffect_Spawn(*(s32 *)(student + offsetof(struct Actor, x)),
                       *(s32 *)(student + offsetof(struct Actor, y)),
                       *(s32 *)(student + offsetof(struct Actor, z)) - px(1), 0,
                       -px(1), -px(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
-                      &config);
+                      &options);
   }
 }
 

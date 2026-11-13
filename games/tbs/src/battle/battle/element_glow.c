@@ -11,6 +11,15 @@ struct Spark {
   s32 life;      ///< frames left
 };
 
+/// The star field's sparks and rings, the frames in which a spent spark
+/// starts again, and its canvas's centre, the unit's place, in pixels; a
+/// ring's pictures are 32 by 32.
+#define STAR_FIELD_SPARKS 16
+#define STAR_FIELD_RINGS 3
+#define STAR_FIELD_SPAWN_FRAMES 25
+#define STAR_FIELD_CENTER 64
+#define STAR_FIELD_RING_SIZE 32
+
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
 /// in the HEAP_SLOT_BATTLE_EFFECT heap slot from
 /// ElementGlow_InitializeStarField to
@@ -23,9 +32,10 @@ struct SparkWork {
   /// gElementGlow_StarPictures, the rings' pictures at
   /// gElementGlow_RingPictures.
   u8 sheet[4544];
-  struct Spark sparks[16];
-  struct Ring rings[3];
-  s32 frames; ///< frames drawn; new sparks start only in the first 25
+  struct Spark sparks[STAR_FIELD_SPARKS];
+  struct Ring rings[STAR_FIELD_RINGS];
+  s32 frames; ///< frames drawn; new sparks start only in the first
+              ///< STAR_FIELD_SPAWN_FRAMES
   s32 ready;  ///< 1 when a drawn frame waits for ElementGlow_UploadStarField
   /// Where BG2 shows the 128 by 128 canvas: ElementGlow_Play
   /// keeps it on the unit, as a battle effect's tracked canvas would be.
@@ -82,7 +92,7 @@ s32 ElementGlow_UpdateStarField(void) {
   work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   work->ready = 0;
   draw = (DrawFunc)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  for (sparkIndex = 0; sparkIndex < 16; sparkIndex++) {
+  for (sparkIndex = 0; sparkIndex < STAR_FIELD_SPARKS; sparkIndex++) {
     spark = &work->sparks[sparkIndex];
     life = spark->life;
     // A live spark ends within 0xfff (4 canvas pixels) of the centre; else
@@ -112,7 +122,7 @@ s32 ElementGlow_UpdateStarField(void) {
     }
     // A spent spark starts again, as ElementGlow_InitializeStarField starts
     // them, while the field is young.
-    if (life == 0 && work->frames <= 24) {
+    if (life == 0 && work->frames < STAR_FIELD_SPAWN_FRAMES) {
       angle = Random16();
       radius = Random16() + Q16_ONE;
       halfRadius = radius >> 1;
@@ -128,11 +138,11 @@ s32 ElementGlow_UpdateStarField(void) {
       spark->motion[5] = 0;
       life = spark->life = (radius >> 13) + 1;
     }
-    // Drawn about the canvas's centre (64, 64), 1 to 4 pixels square by its
+    // Drawn about the canvas's centre, 1 to 4 pixels square by its
     // life left, 4 from three frames left.
     if (life != 0) {
-      x = (spark->motion[0] >> 10) + 64;
-      y = (spark->motion[1] >> 10) + 64;
+      x = (spark->motion[0] >> 10) + STAR_FIELD_CENTER;
+      y = (spark->motion[1] >> 10) + STAR_FIELD_CENTER;
       picture = life;
       if (picture < 0)
         picture = 0;
@@ -146,7 +156,8 @@ s32 ElementGlow_UpdateStarField(void) {
   // The rings, 32 by 32, with the other blitter: each shows its four pictures
   // eight frames apiece, then is no longer drawn.
   draw = (DrawFunc)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
-  for (ring = work->rings, ringIndex = 2; ringIndex >= 0; ringIndex--, ring++) {
+  for (ring = work->rings, ringIndex = STAR_FIELD_RINGS - 1; ringIndex >= 0;
+       ringIndex--, ring++) {
     ring->x += ring->velocityX;
     ring->y += ring->velocityY;
     ringX = ring->x >> 10;
@@ -154,8 +165,10 @@ s32 ElementGlow_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      draw(canvas, (u8 *)work + gElementGlow_RingPictures[phase], ringX + 48,
-           ringY + 48, 32, 32);
+      draw(canvas, (u8 *)work + gElementGlow_RingPictures[phase],
+           ringX + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
+           ringY + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
+           STAR_FIELD_RING_SIZE, STAR_FIELD_RING_SIZE);
     }
   }
   work->frames++;
@@ -218,8 +231,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
    * differ in tbs-en. */
   UNUSED struct Spark unused;
 
-  // Word 2 of the background's work is BattleBackgroundWork.mode.
-  ((s32 *)gBattleBackgroundWork)[2] = BATTLE_BACKGROUND_FIXED;
+  gBattleBackgroundWork->mode = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 128 * 128);
   /* FAKEMATCH(dead): an empty once-only loop keeps the multiply routine's
@@ -230,7 +242,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   // Each spark at a random angle, half of 1 to 2 (16.16) out, a random height
   // above, swirling: its velocity points inward and a little sideways. An odd
   // coordinate is mirrored, and the further out, the longer it lives.
-  for (effectIndex = 0; effectIndex < 16; effectIndex++) {
+  for (effectIndex = 0; effectIndex < STAR_FIELD_SPARKS; effectIndex++) {
     s32 angle = Random16();
     u32 radius = Random16() + Q16_ONE;
     u32 halfRadius = radius >> 1;
@@ -248,7 +260,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     spark->motion[5] = 0;
     spark->life = (radius >> 13) + 1;
   }
-  for (effectIndex = 0; effectIndex < 3; effectIndex++) {
+  for (effectIndex = 0; effectIndex < STAR_FIELD_RINGS; effectIndex++) {
     s32 radius = 4096;
     s32 angle;
 

@@ -52,4 +52,6 @@ void Func_08038340(s32 value);
 void Message_ResetIdleFar(void);
 s32 YesNoMenu_RunAtFar(s32 x, s32 y, s32 selection);
 
+s32 Func_08038418(s32 message, u8 *canvas, s32 align);
+
 #endif

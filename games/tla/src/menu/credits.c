@@ -33,15 +33,56 @@
 #include "display_scroll.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
-#include "module/menu/menu.h"
+
+struct QueuedSprite;
+
+typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
+
+/// One eight-byte OAM entry in the credits' sprite buffer.
+struct DisplayScrollObject {
+  u32 attr01;
+  u32 attr2;
+};
+
+extern s16 Data_02007500;
+extern struct DisplayScrollObject *gDisplayScroll_Objects;
+extern const u32 gDisplayScroll_SlideResources[];
+extern const void *gDisplayScroll_LineTable[];
+
+/// The scrolling picture's state. Func_081a133c, a VBlank task, moves the
+/// scroll toward its target while Func_081a17d0 waits for it to arrive.
+///@{
+extern s16 Data_02007514;           ///< which character block the picture is in
+extern s16 Data_02007516;           ///< frames of the fade-in, to 64
+extern u32 Data_02007518;           ///< the tilemap's scroll, 16.16 pixels
+extern volatile s32 gData_0200751c; ///< the scroll, 16.16 pixels
+extern s16 gData_02007520;          ///< the row the scroll is heading for
+extern s16 Data_02007524;           ///< the most rows a frame moves
+extern u8 *Data_02007528;           ///< the picture's map
+/// The 24 sprites of the picture's border strips.
+extern struct QueuedSprite *gData_0200752c;
+///@}
+
+void Credits_InitTextSprites(void);
+void Credits_InitTextSpritesAtPage(s32 credits);
+void Func_081a0fb8(void);
+s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align);
+extern const u8 BattleEffect_ExpandCode[];
+extern u8 BattleEffect_ExpandCodeSize[];
+extern const u8 gCredits_GlyphWidths[];
+extern const u8 gDisplayScroll_Font[];
+
+void Func_081a1830(void);
+extern const u8 BattleEffect_Expand2Code[];
+extern u8 BattleEffect_Expand2CodeSize[];
+
+#include "gamepak/far_call/window.h"
 #include "module/system/system.h"
 #include "ram_buffer.h"
 #include "resource_ids.h"
 #include "flag_call.h"
 
 extern u8 gDebugTextEnabled;
-
-///@}
 
 /// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
 /// palette colours.

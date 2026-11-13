@@ -26,7 +26,94 @@
 #include "bg_scroll.h"
 #include "palette_buffers.h"
 #include "actor.h"
-#include "module/menu/menu.h"
+
+struct TitleScrollStep {
+  s32 frames;
+  s32 speed[4];
+  u32 mask[4];
+};
+
+struct TitleScroll {
+  s16 pos;
+  s16 limit;
+  u16 step;
+  u8 *src;
+  u8 *dst;
+  u16 *cursor;
+  u16 tile;
+  s16 scroll;
+  u16 rows;
+  u32 frames;
+};
+
+struct TitleFadeTimers {
+  u8 unk00[10];
+  s16 white;
+  s16 back;
+};
+
+struct OamEntry {
+  u32 y : 8;
+  u32 affine : 2;
+  u32 mode : 2;
+  u32 mosaic : 1;
+  u32 colors256 : 1;
+  u32 shape : 2;
+  u32 x : 9;
+  u32 matrix : 5;
+  u32 size : 2;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u16 unused;
+};
+
+struct TitleLogoState {
+  s16 phase;
+  s16 frame; ///< index into gData_081a8378 (5 halfwords a frame)
+  s16 timer;
+  s16 step; ///< index into gData_081a84e6 (3 halfwords a step); the scale in
+            ///< phase 1
+  s16 delay;
+  s16 white;
+  s16 back;
+};
+
+struct TitleSprite {
+  u32 next; ///< the render slot link
+  u8 y;
+  u8 attr0High; ///< shape and mode bits of attribute 0
+  u16 x : 9;
+  u16 attr1High : 7; ///< flip and size bits of attribute 1
+  s32 tile;
+};
+
+/// The title screen's state, in heap slot 172.
+struct TitleScreenWork {
+  u8 unk00[16];
+  struct TitleSprite sprites[8];
+};
+
+extern char ResourceId_Data018;
+void PaletteFade_SetSource(s32 index, s32 transform);
+extern u8 Data_02026800[];
+extern char ResourceId_Data01B;
+extern char ResourceId_Data01C;
+extern char ResourceId_Data01D;
+extern char ResourceId_Data01E;
+extern char ResourceId_Data01F;
+extern u8 Data_02019600[];
+extern u8 Data_02017080[];
+extern char ResourceId_IntroLighthousePicture;
+extern char ResourceId_IntroGullSprites;
+extern char ResourceId_TitleScreenPicture;
+extern const u8 gTitle_PromptBlendLevels[];
+extern u16 Data_081a877a[];
+extern u16 Data_081a87ba[];
+extern u16 Data_081a87fa[];
+s32 BattleEffect_ClampRgb555Channel(s32 value);
+s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
+
 #include "module/system/system.h"
 #include "resource_ids.h"
 

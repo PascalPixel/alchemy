@@ -9,6 +9,7 @@
 #include "module/scene/shrine_of_the_sea_god.h"
 
 void Func_0200030c(void);
+void Islets_TalkToHealer(void);
 void Func_020004f4(void);
 void Func_02000520(void);
 void Func_020006f4(void);
@@ -316,7 +317,7 @@ struct Trigger gData_02004bb0[] = {
      EVENT(Func_020002ac)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
      EVENT(Func_02000380)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_0200040c)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Islets_TalkToHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgMayTheseTravelers)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,

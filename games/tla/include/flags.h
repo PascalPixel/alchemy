@@ -84,4 +84,10 @@
 /// on my own." (MsgWithThisDancing)
 #define FLAG_UZUME_HAS_THE_DOLL 0x92c
 
+/// Set as the party throws the boy Tavi the rope at the Shrine of the Sea God;
+/// Daila's houses then take their later tables.
+/// ★ Named from the game: "These guys threw me the rope..."
+/// (MsgFieldPraiseRopeWork)
+#define FLAG_TAVI_RESCUED 0x873
+
 #endif

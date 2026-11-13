@@ -26,7 +26,7 @@ void Scene_FadeInAndClearFlag(void);
 
 void Func_02000dac(s32 mode);
 
-void Func_02000554(s32 a0);
+void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 a0);
 
 void Func_02000614(void);
 void Func_020006c4(void);

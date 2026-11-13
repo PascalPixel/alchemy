@@ -45,10 +45,10 @@ void Func_0200094c(void);
 void Scene_ShowEntranceLocked(void);
 void Func_020009ac(void);
 void Func_02000af4(void);
-void Func_02000d44(void);
-void Func_02000d94(void);
+void Contigo_TalkToWeaponMerchant(void);
+void Contigo_TalkToArmorMerchant(void);
 
-void Func_02000de4(void);
+void Contigo_TalkToInnkeeper(void);
 
 void Func_02000eb8(void);
 void Func_02000edc(void);

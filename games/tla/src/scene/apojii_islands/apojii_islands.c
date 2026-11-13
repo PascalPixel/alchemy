@@ -399,7 +399,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gData_020024b8;
 }
 
-void Func_02000de0(s32 actor) {
+void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Inn_CheckIn(8, actor);
@@ -432,7 +432,7 @@ void Func_02000e40(s32 actor) {
   Event_End();
 }
 
-void Func_02000e98(s32 actor) {
+void ApojiiIslands_TalkToMerchant(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(23, actor);
@@ -1066,8 +1066,8 @@ struct Trigger gData_02002698[] = {
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHeyMisterDid)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgThatOldAqua)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHeSToo)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000e98)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000de0)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToMerchant)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(ApojiiIslands_TalkToInnkeeper)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000e40)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgIJustWish)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT(Func_02000d20)},

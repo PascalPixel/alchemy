@@ -207,7 +207,7 @@ L_020083cc:
 
 DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
-void Func_0200040c(void) {
+void Islets_TalkToHealer(void) {
   s32 result0;
 
   result0 = Leader_IsFacingNorth();

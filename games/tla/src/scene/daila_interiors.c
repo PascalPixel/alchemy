@@ -14,6 +14,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "field_event.h"
@@ -80,7 +81,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 extern const u8 gData_0200116c__daila_interiors[] __asm__("gData_0200116c");
 
 const void *Scene_GetExits(void) {
-  if (GameFlag_Test(0x873))
+  if (GameFlag_Test(FLAG_TAVI_RESCUED))
     return gData_020011b8;
   return gData_0200116c__daila_interiors;
 }
@@ -88,7 +89,7 @@ const void *Scene_GetExits(void) {
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2)
     return gData_020013fc;
-  if (GameFlag_Test(0x873))
+  if (GameFlag_Test(FLAG_TAVI_RESCUED))
     return gData_020014a4;
   return gData_02001204;
 }
@@ -162,7 +163,7 @@ void DailaInteriors_StartLeaderEvent(void) {
 extern const u8 gData_020016e4__daila_interiors[] __asm__("gData_020016e4");
 
 const struct Trigger *Scene_GetEvents(void) {
-  s32 flag = GameFlag_Test(0x873);
+  s32 flag = GameFlag_Test(FLAG_TAVI_RESCUED);
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 id = (s32)&SceneId_DailaInteriors2;
 
@@ -186,7 +187,7 @@ struct DailaActor *Actor_GetById(s32 id);
 extern void Func_02000dec__daila_interiors(s32 slot,
                                            s32 actor) __asm__("Inn_CheckIn");
 
-void Func_02000270(s32 actor) {
+void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -200,7 +201,7 @@ void Func_02000270(s32 actor) {
   }
 }
 
-void Func_020002d0(s32 actor) {
+void DailaInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -228,7 +229,7 @@ void Func_02000330(s32 actor) {
   }
 }
 
-void Func_02000390(s32 actor) {
+void DailaInteriors_TalkToHealer(s32 actor) {
   s32 msg;
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
@@ -271,7 +272,7 @@ void Func_02000390(s32 actor) {
   }
 }
 
-void Func_02000498(s32 actor) {
+void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -285,7 +286,7 @@ void Func_02000498(s32 actor) {
   }
 }
 
-void Func_020004f4(s32 actor) {
+void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -299,7 +300,7 @@ void Func_020004f4(s32 actor) {
   }
 }
 
-void Func_02000554(s32 actor) {
+void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -594,7 +595,7 @@ s32 DailaInteriors_Start(void) {
     if (gMainRoutineWork.entrance == 7) {
       Scene_FadeInAndClearFlag();
     } else {
-      if (GameFlag_Test(0x873)) {
+      if (GameFlag_Test(FLAG_TAVI_RESCUED)) {
         Actor_SetModeById(24, 5);
         Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(24), 0);
         Actor_SetModeById(25, 5);
@@ -625,7 +626,7 @@ s32 DailaInteriors_Start(void) {
       Actor_GetById__arrival(9)->collisionFlags |= 4;
       Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(9), 0);
     }
-    if (!GameFlag_Test(0x873)) {
+    if (!GameFlag_Test(FLAG_TAVI_RESCUED)) {
       Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -640,7 +641,7 @@ s32 DailaInteriors_Start(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2 &&
-      GameFlag_Test(0x873)) {
+      GameFlag_Test(FLAG_TAVI_RESCUED)) {
     Map_SetLayerEntryFlag(0);
     Daila_CopyCells(29, 33, 10, 6, 10, 12);
   }
@@ -802,8 +803,8 @@ struct Trigger gData_020016e4[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldTheWaveWasAwfulButThe)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFieldALotOfFolkSaidThey)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldBetweenThePiratesAndTheTidal)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_020002d0)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_02000330)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgFieldWeRunAVerySmallInn)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgFieldIDontKnowWhenIllBe)},
@@ -811,7 +812,7 @@ struct Trigger gData_020016e4[] = {
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeCurrents)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeRedRocks)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeThreeGenerations)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(Func_020002d0)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldRikiTaviWhereAreYouWhat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldThatTavisABadInfluenceOn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIllBetThatWhereverTaviIs)},
@@ -842,7 +843,7 @@ struct Trigger gData_02001924[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000390)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldTravelersWithNowhereToGoThis)},
     {TRIGGERS_END},
 };
@@ -865,8 +866,8 @@ struct Trigger gData_02001990[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldItsTooDangerousToGoTo)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFieldWhoWasThatGuyIWonder)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldWhyDidThePirateBriggsPlague)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_020004f4)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000554)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_020005b4)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsDinnerShowPractice)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodWhen)},
@@ -877,7 +878,7 @@ struct Trigger gData_02001990[] = {
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeCurrents)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeRedRocks)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeThreeGenerations)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_020002d0)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToArmorMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldDarnThatRikiAhImGlad)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldHeeHeeMyRikiIsMommys)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIGuessRikiNextDoorMade)},
@@ -915,7 +916,7 @@ struct Trigger gData_02001c18[] = {
     {0x602, 31, CONDITION_ALWAYS, EVENT(Func_02000c74)},
     {0x8602, 32, CONDITION_ALWAYS, EVENT(Func_02000c74)},
     {0xc602, 33, CONDITION_ALWAYS, EVENT(Func_02000c74)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000498)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealerOnceTaviIsRescued)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBoringVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, 0x220, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x221, EVENT(Scene_RaiseHeldActor)},

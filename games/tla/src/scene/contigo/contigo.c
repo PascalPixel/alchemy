@@ -437,7 +437,7 @@ void Inn_CheckIn(s32 a, s32 b);
 
 DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
-void Func_02000cf4(void) {
+void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(28, 13);
   } else {
@@ -452,7 +452,7 @@ void Func_02000cf4(void) {
   }
 }
 
-void Func_02000d44(void) {
+void Contigo_TalkToWeaponMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(26, 18);
   } else {
@@ -467,7 +467,7 @@ void Func_02000d44(void) {
   }
 }
 
-void Func_02000d94(void) {
+void Contigo_TalkToArmorMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(27, 19);
   } else {
@@ -482,7 +482,7 @@ void Func_02000d94(void) {
   }
 }
 
-void Func_02000de4(void) {
+void Contigo_TalkToInnkeeper(void) {
   if (Leader_IsFacingNorth()) {
     Inn_CheckIn(12, 20);
   } else {
@@ -499,7 +499,7 @@ void Func_02000de4(void) {
   }
 }
 
-void Func_02000e50(void) {
+void Contigo_TalkToHealer(void) {
   if (Leader_IsFacingNorth()) {
     Sanctum_Run(28);
   } else {
@@ -2772,7 +2772,7 @@ struct Trigger gData_02005a44[] = {
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo157)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9b2, MSGNO(MsgContigo60)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo159)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000cf4)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigo75)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo177)},
     {TRIGGER_TALK, 14, 0x9b2, MSGNO(MsgContigo61)},
@@ -2790,13 +2790,13 @@ struct Trigger gData_02005a44[] = {
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000af4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigo69)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigo168)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000d44)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWeaponMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x9b2, MSGNO(MsgContigo71)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigo173)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000d94)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_TalkToArmorMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x9b2, MSGNO(MsgContigo73)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgContigo175)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_02000de4)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_TalkToInnkeeper)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0xa21, MSGNO(MsgContigo115)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x9b2, MSGNO(MsgContigo132)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgContigo182)},
@@ -2826,7 +2826,7 @@ struct Trigger gData_02005a44[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgContigo86)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgContigo85)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgContigo87)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Func_02000e50)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Contigo_TalkToHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, 0xa21, MSGNO(MsgContigo89)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, 0x9b2, MSGNO(MsgContigo137)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgContigo187)},

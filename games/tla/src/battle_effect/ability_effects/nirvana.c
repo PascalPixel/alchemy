@@ -18,8 +18,8 @@ s32 BattleUnit_GetEffectHeightFar(s32 unit);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 blitter); // BattleEffect_BuildBlitter, packed
 void BattlePlayback_StartFar(s32 phase);
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames); // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                              s32 frames);
 void Transform_Pop(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32);
@@ -77,11 +77,11 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
     Render_ResetTransformState();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame == 72)
-      Func_0814cd48(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
     if (frame == 79)
-      Func_0814cd48(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
     if (frame == 0)
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 42);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 42);
     if (orb->variant == 0) {
       s32 size = 6;
 
@@ -301,7 +301,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       }
       BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16,
                                     2 << 16, 150);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
       work->shakeFrames = 2;
     }
 
@@ -435,22 +435,22 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     if (frame == 10) {
       work->shakeFrames = 8;
       Sound_PlayFar(144);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 80);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 80);
       target->verticalMotionStrength = 0;
       target->y = 32 << 16;
     }
     if (frame == 80)
       target->verticalMotionStrength = 0xab85;
     if (frame == 24)
-      Func_0814cd48(effect->actor, -1, 3, -1, 0);
+      BattleEffect_TintBattler(effect->actor, -1, 3, -1, 0);
     if (frame == 40)
       Sound_PlayFar(142);
     if (frame == 32)
       BattlePlayback_StartFar(134);
     if (frame == 64)
-      Func_0814cd48(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
     if (frame == 88)
-      Func_0814cd48(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
 
     // The column: two 14-pixel halves, the right one mirrored.
     if (frame > 7) {
@@ -905,17 +905,17 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(-1);
       }
       if (frame == 30) {
-        Func_0814cd48(effect->actors[0], 9, 5, -1, 0);
+        BattleEffect_TintBattler(effect->actors[0], 9, 5, -1, 0);
       }
       if (frame == 26) {
         work->shakeFrames = 8;
       }
       if (frame == 64) {
         work->shakeFrames = 4;
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
       }
       if (frame == 70) {
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
       }
       if (frame == 56) {
         // The caster closes four fifths of the way.

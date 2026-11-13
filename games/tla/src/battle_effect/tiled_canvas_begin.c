@@ -192,7 +192,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     height += speed;
     if (height > 64 << 16)
       height = 64 << 16;
-    Func_0816442c(2, 128 << 16, height);
+    BattleEffect_PlaceFormationObjects(2, 128 << 16, height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
@@ -441,7 +441,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
         object->verticalMotionStrength = 0xab85;
       }
       if (frame == i * 5 + 302) {
-        Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
         Sound_PlayFar(134);
         work->shakeFrames = 8;
       }
@@ -968,7 +968,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 8 + 32)
-        Func_0814cd48(effect->actors[i], 9, 5, -1, 0);
+        BattleEffect_TintBattler(effect->actors[i], 9, 5, -1, 0);
     }
 
     // Puffs of smoke, sent up again until frame 127.
@@ -1107,7 +1107,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
       // The target's cue: a chime and a flash.
       if (frame == member * 20) {
         Sound_PlayFar(143);
-        Func_0814cd48(effect->actors[member], 7, -1, member, 20);
+        BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.
       if (frame > member * 20) {
@@ -1258,12 +1258,12 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 40)
-      Func_0814cd48(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
     if (frame == effect->count * 20 + 52)
-      Func_0814cd48(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
     for (member = 0; member != effect->count; member++) {
       if (frame == member * 20)
-        Func_0814cd48(effect->actors[member], 7, 5, member, 42);
+        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 42);
       if (frame > member * 20) {
         for (i = 0; i != 32; i++) {
           struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
@@ -1661,12 +1661,12 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
         Sound_PlayFar(126);
       if (mode == 8) {
         if (frame == start + 41)
-          Func_0814cd48(effect->actors[member], 7, -1, member, 32);
+          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 32);
       } else if (mode == 11) {
         if (frame == start + 24)
-          Func_0814cd48(effect->actors[member], 7, -1, member, 28);
+          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 28);
       } else if (frame == start + 36) {
-        Func_0814cd48(effect->actors[member], 7, -1, member, 28);
+        BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 28);
       }
       if (frame > start) {
         if (mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10 ||
@@ -2067,10 +2067,10 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       SceneTransform_ApplyPosition(point);
       if (start != 0) {
         if (frame == member * 8 + 53)
-          Func_0814cd48(effect->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 16);
       } else {
         if (frame == member * 8 + 48)
-          Func_0814cd48(effect->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 16);
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
@@ -2517,7 +2517,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     i = 0;
     while (i != effect->count) {
       if (frame == (i * 8) + 16)
-        Func_0814cd48(effect->actors[i], 10, 5, i, 12);
+        BattleEffect_TintBattler(effect->actors[i], 10, 5, i, 12);
       i += 1;
     }
     BattleEffect_CountDownBattlerTints();
@@ -2674,7 +2674,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)
-            Func_0814cd48(effect->actors[member], 0, 5, -1, 0);
+            BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
         }
       }
     }
@@ -2688,7 +2688,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
       state = &work->particles[member];
       if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
         state->variant = 1;
-        Func_0814cd48(effect->actors[member], 7, 5, member, 5);
+        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 5);
       }
     }
     BattleCamera_Shake(Data_081982f7[effect->variant][TIMING_SHAKE],
@@ -2839,8 +2839,8 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
             Sound_PlayFar(134);
           else
             Sound_PlayFar(136);
-          Func_0814cd48(effect->actors[i % effect->count], 10, 5,
-                        i % effect->count, 4);
+          BattleEffect_TintBattler(effect->actors[i % effect->count], 10, 5,
+                                   i % effect->count, 4);
           work->shakeFrames = 2;
         }
       }
@@ -2947,7 +2947,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       Sound_PlayFar(136);
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 4 + 40)
-        Func_0814cd48(effect->actors[i], 9, 5, -1, 0);
+        BattleEffect_TintBattler(effect->actors[i], 9, 5, -1, 0);
     }
 
     // The motes: before the burst they close in and climb to 48 pixels as
@@ -3270,7 +3270,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     if (frame >= 4 && frame < 96) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 4 + 4)
-          Func_0814cd48(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
       }
     }
     BattleCamera_Shake(2, 4);
@@ -3434,14 +3434,14 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == 0) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i + 6) {
-          Func_0814cd48(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
         }
       }
     } else {
       for (i = 0; i != effect->count; i++) {
         if (frame == i + 6)
-          Func_0814cd48(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
       }
     }
     if (frame == 2)
@@ -4241,31 +4241,31 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         for (i = 0; i != effect->count; i++) {
           if (frame >= i * 4 + 2 && (frame & 7) == i) {
             work->shakeFrames = 8;
-            Func_0814cd48(effect->actors[i], 7, 5, i, 4);
+            BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 4);
           }
         }
       } else if (mode == 10) {
         if (frame == 18) {
           work->shakeFrames = 4;
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
         }
         if (frame == 46)
-          Func_0814cd48(effect->actor, 7, -1, -1, 0);
+          BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
         if (frame == 54)
-          Func_0814cd48(effect->actor, 0, -1, -1, 0);
+          BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
       } else if (mode == 8) {
         if (frame == 20) {
           for (i = 0; i != effect->count; i++)
-            Func_0814cd48(effect->actors[i], 6, 5, i, 60);
+            BattleEffect_TintBattler(effect->actors[i], 6, 5, i, 60);
         }
       } else {
         for (i = 0; i != effect->count; i++) {
           if (frame >= i * 4 + 16 && frame < shots - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
             if (mode == 6)
-              Func_0814cd48(effect->actors[i], 14, 5, i, 3);
+              BattleEffect_TintBattler(effect->actors[i], 14, 5, i, 3);
             else
-              Func_0814cd48(effect->actors[i], 7, 5, i, 3);
+              BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 3);
             if (mode != 11 && mode != 14)
               BattleEffect_StartActorMotion(effect->actors[i], 1, 0x10000,
                                             0x40000, 0x20000, frame + 100);
@@ -4894,7 +4894,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
             Sound_PlayFar(134);
             member = i % 6;
             if (member < effect->count) {
-              Func_0814cd48(effect->actors[member], 7, 5, member, 8);
+              BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 8);
               BattleMotion_ApplyKnockbackFar(effect->actors[member], 1);
             }
           }
@@ -5103,7 +5103,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
                   if (!(i & 1)) {
                     Sound_PlayFar(CUE_COLUMN);
                   }
-                  Func_0814cd48(effect->actors[n], 7, 5, n, 3);
+                  BattleEffect_TintBattler(effect->actors[n], 7, 5, n, 3);
                 }
                 n++;
               } while (n != effect->count);
@@ -5248,7 +5248,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
     if (frame == CUE_FRAME) {
       Sound_PlayFar(CUE_VINES);
       for (i = 0; i != effect->count; i++)
-        Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
     }
     i = 0;
     vine = work->particles;
@@ -5429,7 +5429,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       for (j = 0; j != effect->count; j++) {
         if (frame == start + 4) {
           Sound_PlayFar(CUE_THORN);
-          Func_0814cd48(effect->actors[j], 7, 5, j, 3);
+          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 3);
         }
       }
     }
@@ -5528,7 +5528,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
-        Func_0814cd48(effect->actors[i], 7, 5, i, 6);
+        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 6);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 6);
       }
 

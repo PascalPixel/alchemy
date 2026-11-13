@@ -58,8 +58,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(
     s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter, packed
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames); // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                              s32 frames);
 void BattleEffect_CountDownBattlerTints(void);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StepPaletteToResource(s32 resource);
@@ -166,7 +166,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
       if (frame > 7)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
       if (frame == 32)
-        Func_0814cd48(effect->actors[0], 7, -1, 0, 24);
+        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 24);
     }
 
     // The Djinni rises a pixel a frame, swaying, until it leaves the top.

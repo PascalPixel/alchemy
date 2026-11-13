@@ -46,8 +46,8 @@ void ItemMenu_HideAllIcons(void);
 /// a command. Owns the menu work while it runs and frees it before returning.
 /// Returns ItemMenu_RunCommands' result: 1 when an item is to be used on the
 /// field, -1 when the player backed out or pressed Start.
-// The twin of The Broken Seal's ItemMenu_Run.
-s32 Func_080f94a4(void) {
+// The twin of The Broken Seal's routine.
+s32 ItemMenu_Run(void) {
 #if TLA_PATCH_1
   void *backup;
 #endif
@@ -734,14 +734,14 @@ s32 ItemMenu_Use(void) {
 }
 
 /// Sets up the item menu's first screen: the cursor window with the party's
-/// figures (Func_080f88d0, Menu_PlaceOwnerEntryObjects), the info window along
-/// the bottom and an 8 by 2 cursor grid. The parameters are not used.
+/// figures (MenuCursor_Create, Menu_PlaceOwnerEntryObjects), the info window
+/// along the bottom and an 8 by 2 cursor grid. The parameters are not used.
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   s32 ownerIndex;
 
-  Menu_PlaceOwnerEntryObjects(Func_080f88d0((struct OwnerMenuState *)menu), 2,
-                              2);
+  Menu_PlaceOwnerEntryObjects(MenuCursor_Create((struct OwnerMenuState *)menu),
+                              2, 2);
   for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--)
     menu->memberY[ownerIndex] = 26;
 
@@ -918,7 +918,7 @@ s32 ItemMenu_CountItems(s32 owner);
 /// members are paged four at a time by Menu_MoveGridCursor, which moves the
 /// selection and says what to redraw (2 for a new page). Returns the chosen
 /// member's id, or -1.
-// As The Broken Seal's ItemMenu_RunOwnerSelection.
+// As The Broken Seal's routineOwnerSelection.
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->sideIndex[0];
@@ -985,7 +985,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       }
       Menu_HighlightPageEntry(menu->mainWindow, selection, count);
     }
-    Func_080f8a44(selection % 4 * 24 - 10, 16);
+    MenuCursor_Position(selection % 4 * 24 - 10, 16);
     wait(1);
     if (gInput.pressed & 1) {
       if (gInput.held & 0x200) {
@@ -1195,7 +1195,7 @@ s32 Func_080fa870(s32 mode) {
       }
       redraw = 0;
     }
-    Func_080f8a44(selection % 4 * 24 - 10, 16);
+    MenuCursor_Position(selection % 4 * 24 - 10, 16);
     wait(1);
     if (gInput.pressed & 1) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
@@ -1721,7 +1721,8 @@ s32 ItemMenu_ChooseCommand(void) {
         StatusPanel_Draw(menu->statusWindow, menu->paneOwner[0], 0, 0);
       }
     }
-    Func_080f8a44(COMMAND_CURSOR_X(column, row), COMMAND_CURSOR_Y(column, row));
+    MenuCursor_Position(COMMAND_CURSOR_X(column, row),
+                        COMMAND_CURSOR_Y(column, row));
     wait(1);
 
     if ((gInput.pressed & 1) != 0) {
@@ -2584,7 +2585,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         Sound_PlayFar(113);
         break;
       }
-      Func_080f8a44(CURSOR_X, 40);
+      MenuCursor_Position(CURSOR_X, 40);
       if (gInput.repeat & 32) {
         value--;
         changed = 1;
@@ -2677,7 +2678,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
       selection = 1;
       break;
     }
-    Func_080f8a44(104, (selection << 4) + 70);
+    MenuCursor_Position(104, (selection << 4) + 70);
     if (gInput.repeat & 0x40) {
       selection--;
       changed = 1;
@@ -2789,7 +2790,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = 1;
         break;
       }
-      Func_080f8a44(EQUIP_CURSOR_X(selection), EQUIP_CURSOR_Y(selection));
+      MenuCursor_Position(EQUIP_CURSOR_X(selection), EQUIP_CURSOR_Y(selection));
       if (gInput.repeat & EQUIP_PREVIOUS_KEY) {
         selection--;
         changed = 1;
@@ -3064,12 +3065,12 @@ s32 ItemMenu_RunList(s32 pane) {
     ItemMenu_DrawIcons(menu->items, 0);
     menu->selectedItemIcon->state = 13;
     ItemMenu_BuildPagedList(&state, pane);
-    Func_080f8a44(98, state.selectedIndex * 16 + 36);
+    MenuCursor_Position(98, state.selectedIndex * 16 + 36);
     changed = 1;
     redraw = 1;
 
     while (GameFlag_Test(0x150) == 0) {
-      Func_080f8a44(98, state.row * 16 + 36);
+      MenuCursor_Position(98, state.row * 16 + 36);
 
       if (changed != 0) {
         changed = 0;

@@ -165,7 +165,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         // Six frames later every target flashes and recoils.
         if (frame == Data_0819850e[i] + 6) {
           for (j = 0; j != effect->count; j++) {
-            Func_0814cd48(effect->actors[j], 7, 5, j, 6);
+            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
             BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
           }
         }
@@ -290,7 +290,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {
-            Func_0814cd48(effect->actors[j], 7, 5, j, 6);
+            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
             BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
           }
         }
@@ -440,7 +440,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {
-            Func_0814cd48(effect->actors[j], 7, 5, j, 6);
+            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
             BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
           }
         }
@@ -623,7 +623,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     // Every target flashes for sixteen frames and recoils.
     if (frame == 38) {
       for (member = 0; member != effect->count; member++) {
-        Func_0814cd48(effect->actors[member], 7, 5, member, 16);
+        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
         BattleMotion_ApplyKnockbackFar(effect->actors[member], 6);
       }
     }

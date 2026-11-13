@@ -571,11 +571,11 @@ s32 Actor_GetTriggerTileAheadOfCurrent(void) {
   return result;
 }
 
-/// The twin of The Broken Seal's Scene_ApplyEntrance: places the party at
+/// The twin of The Broken Seal's routine: places the party at
 /// its entrance from the area overlay's entrance list and clamps the camera
 /// to that entrance's bounds. With findEntrance it looks the entrance up and
 /// returns 0 when there is none; without, it takes the first row.
-s32 Func_080cc67c(s32 findEntrance) {
+s32 Scene_ApplyEntrance(s32 findEntrance) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 entrance = gMainRoutineWork.entrance;
   // The overlay table's entry 3 returns the scene's entrances.
@@ -736,9 +736,9 @@ void BattleMap_ApplySceneEntranceView(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 done;
 
-  done = Func_080cc67c(1);
+  done = Scene_ApplyEntrance(1);
   if (event->controlMode == 2 && done == 0)
     done = Func_080cc7c4();
   if (done == 0)
-    Func_080cc67c(0);
+    Scene_ApplyEntrance(0);
 }

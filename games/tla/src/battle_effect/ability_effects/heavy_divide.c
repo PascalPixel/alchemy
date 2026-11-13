@@ -15,8 +15,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -159,10 +159,10 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (mode == 0) {
       if (frame == 8) {
-        Func_0814cd48(effect->actor, -1, 2, 0, -1);
+        BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
       }
     } else if (frame == 0) {
-      Func_0814cd48(effect->actor, -1, 2, 0, -1);
+      BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
       Actor_SetAnimationSpeedFar(caster, 32);
     }
 
@@ -271,7 +271,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == Data_08198b96[mode]) {
       BattlePlayback_StartFar(144);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       work->shakeFrames = 8;
     }
     if (frame >= Data_08198b96[mode]) {
@@ -432,7 +432,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
           if (age == 2) {
             s32 member = i % effect->count;
 
-            Func_0814cd48(effect->actors[member], 7, 5, member, 3);
+            BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 3);
             BattleMotion_ApplyKnockbackFar(effect->actors[member], 0);
             Sound_PlayFar(212);
             work->shakeFrames = 3;
@@ -779,7 +779,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       if (frame == i * 4 + 80) {
         work->shakeFrames = 2;
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
         if (i == 0) {
           BattlePlayback_StartFar(134);
         } else {
@@ -913,7 +913,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       BattlePlayback_StartFar(145);
     }
 
@@ -928,7 +928,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
           Sound_PlayFar(144);
           work->shakeFrames = 8;
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         }
         if (burst->variant >= 0 && burst->variant < 32) {
           s32 diameter;
@@ -1106,7 +1106,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
     // The target is struck every four frames from frame 6.
     for (i = 0; i != 8; i++) {
       if (frame == i * 4 + 6) {
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 3);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 3);
         Sound_PlayFar(132);
       }
     }

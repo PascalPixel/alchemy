@@ -13,8 +13,8 @@ extern struct Scale Data_08196e8c; // the serpent's scale
 extern u16 Data_08197424[];        // the sparkle cells by size
 extern s32 Data_08198aec[];        // the spray's four gravities
 
-void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
-                   s32 width); // BattleEffect_DrawClippedCanvasLine
+void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
+                                        s32 width);
 void BattleEffect_BuildWindowEdgeTable(void);
 
 // Summon 6: at dusk the window opens on a sea; a great serpent rises out of
@@ -318,7 +318,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           w = 63;
         if (i & 1)
           d = -d;
-        Func_08143eb4(d + 48, 0, d / 2 + 111, 63 - (d + 1) / 2, w);
+        BattleEffect_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111,
+                                           63 - (d + 1) / 2, w);
       }
     }
 
@@ -487,7 +488,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     }
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 16 + 8) {
-        Func_0814cd48(effect->actors[i], 7, 5, i, 8);
+        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
       }
     }

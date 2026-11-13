@@ -155,7 +155,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
           work->shakeFrames = 2;
           shard->variant = 0;
           for (k = 0; k != effect->count; k++)
-            Func_0814cd48(effect->actors[k], 9, 5, k, 8);
+            BattleEffect_TintBattler(effect->actors[k], 9, 5, k, 8);
         }
       }
 
@@ -373,7 +373,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
           if ((i & 3) == 0)
             Sound_PlayFar(132);
           for (k = 0; k != effect->count; k++)
-            Func_0814cd48(effect->actors[k], 7, 5, k, 2);
+            BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 2);
         }
       } else {
         // Landed: four frames of the small splash, four of the large one.

@@ -131,7 +131,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       // Every target flashes for eight frames at each crash.
       if (frame == Data_081985ab[i] + FALL_FRAMES) {
         for (j = 0; j != effect->count; j++)
-          Func_0814cd48(effect->actors[j], 7, 5, j, 8);
+          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
       }
     }
     BattleCamera_Shake(2, 4);

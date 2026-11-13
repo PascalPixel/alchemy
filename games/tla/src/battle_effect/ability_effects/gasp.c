@@ -27,8 +27,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -436,7 +436,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           BattlePlayback_StartFar(134);
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           work->shakeFrames = 8;
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         }
         for (i = 0; i != 63; i++) {
           struct EffectStep *p = &work->particles[i];
@@ -565,7 +565,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         flash->y = pos.y;
         BattlePlayback_StartFar(145);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 24);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 24);
         work->shakeFrames = 16;
       }
       BattleCamera_Shake(8, 8);
@@ -814,7 +814,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(212);
       }
       if (frame == 24) {
-        Func_0814cd48(effect->actors[0], 7, -1, 0, 12);
+        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 12);
       }
     } else if (mode == 9) {
       struct EffectPosition from;
@@ -922,7 +922,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(134);
         work->shakeFrames = effect->variant * 2 + 8;
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
       }
       BattleCamera_Shake(effect->variant * 2 + 8, effect->variant * 2 + 8);
     } else if (mode == 11) {
@@ -947,7 +947,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
         Sound_PlayFar(212);
         work->shakeFrames = 16;
-        Func_0814cd48(effect->actors[0], 10, -1, 0, 32);
+        BattleEffect_TintBattler(effect->actors[0], 10, -1, 0, 32);
       }
       texture.logWidth = 5;
       texture.logHeight = 5;
@@ -1045,7 +1045,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 26) {
         BattlePlayback_StartFar(144);
         work->shakeFrames = 8;
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       }
@@ -1177,7 +1177,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 8;
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         for (i = 0; i != effect->count; i++)
-          Func_0814cd48(effect->actors[i], 7, 5, i, 7);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 7);
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == 13) {
@@ -1292,7 +1292,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame == 16) {
         Sound_PlayFar(212);
-        Func_0814cd48(effect->actors[0], 7, -1, 0, 30);
+        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)
         BattlePlayback_StartFar(-1);
@@ -1339,7 +1339,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Graphics_LoadGreyRamp();
       if (frame == 16) {
         Sound_PlayFar(212);
-        Func_0814cd48(effect->actors[0], 7, -1, 0, 30);
+        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)
         BattlePlayback_StartFar(-1);

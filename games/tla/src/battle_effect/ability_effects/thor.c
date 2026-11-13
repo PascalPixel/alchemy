@@ -402,7 +402,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       if (frame == 10) {
         for (i = 0; i != effect->count; i++) {
-          Func_0814cd48(effect->actors[i], 7, 5, i, 8);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
       }
@@ -448,8 +448,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               }
               work->shakeFrames = 8;
               for (j = 0; j != effect->count; j++) {
-                Func_0814cd48(effect->actors[j], Data_0819855e[Random16() & 3],
-                              5, j, 4);
+                BattleEffect_TintBattler(
+                    effect->actors[j], Data_0819855e[Random16() & 3], 5, j, 4);
                 BattleMotion_ApplyKnockbackFar(effect->actors[j], 4);
               }
             }
@@ -521,7 +521,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           formationSpeedX = formationSpeedX * 60 / 64;
           formationSpeedY = formationSpeedY * 60 / 64;
         }
-        Func_0816442c(0, formationX, formationY);
+        BattleEffect_PlaceFormationObjects(0, formationX, formationY);
       }
       // Smoke around the formation.
       if ((u32)(frame - 16) <= 127) {

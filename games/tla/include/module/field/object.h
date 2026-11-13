@@ -161,9 +161,9 @@ s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
 void Message_SetVoiceFromActor(s32 key);
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
-void Func_080d6c60(void);
+void FieldMotes_Update(void);
 
-void Func_080d6674(void);
+void Weather_UpdateRain(void);
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames);

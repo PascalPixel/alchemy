@@ -86,7 +86,8 @@ void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
+                              s32 frames);
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -267,7 +268,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
-      Func_0814cd48(effect->actors[0], 7, 5, 0, LUNGE_HIT_FRAME);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, LUNGE_HIT_FRAME);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       if (mode == 5)
         BattlePlayback_StartFar(145);

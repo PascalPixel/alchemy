@@ -75,7 +75,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < 660;
        candidateOrUnitIndex++) {
-    s32 score = Func_08127588(candidateOrUnitIndex);
+    s32 score = BattleFormation_AverageLevel(candidateOrUnitIndex);
 
     if (score >= 0 && score <= targetLevel + 3) {
       s32 lowestIndex = -1;

@@ -123,7 +123,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
       Sound_PlayFar(212);
       BattlePlayback_StartFar(-1);
       for (i = 0; i != effect->count; i++)
-        Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
     }
 
     // With a prelude the Djinn circles over the anchor and climbs away
@@ -358,7 +358,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     strike:
       for (i = 0; i != effect->count; i++) {
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-        Func_0814cd48(effect->actors[i], 7, -1, i, 4);
+        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 4);
       }
     }
     if (frame == 0) {

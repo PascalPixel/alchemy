@@ -6,7 +6,10 @@
 
 struct Model;
 
-/* VIEW(f16c274): tag struct ModelTexture as struct ModelTexture__f16c274; ability_effects.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunCrystal moves: 1 of 487 instructions in tla-ja. */
+/* VIEW(f16c274): tag struct ModelTexture as struct ModelTexture__f16c274;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, BattleEffect_RunCrystal moves: 1 of 487 instructions in
+ * tla-ja. */
 struct ModelTexture__f16c274 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -14,7 +17,8 @@ struct ModelTexture__f16c274 {
   const u8 *pixels;
 };
 
-/* VIEW(f16c274): tag struct RenderModel as struct RenderModel__f16c274; ability_effects.c has another definition. */
+/* VIEW(f16c274): tag struct RenderModel as struct RenderModel__f16c274;
+ * ability_effects.c has another definition. */
 struct RenderModel__f16c274 {
   s32 kind;
   s32 unk04;
@@ -34,12 +38,14 @@ struct BattleObjectPosition {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -49,8 +55,14 @@ void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 
-/* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:16041: conflicting types for `GetBattleObjectSlotFar'. */
-extern struct BattleObjectPosition **GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:16041: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern struct BattleObjectPosition **
+GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 extern char ResourceId_Data0FB;
@@ -106,7 +118,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+                       128);
   REG_BLDALPHA = 0x100e;
   if (effect->side == 1) {
     BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
@@ -195,7 +208,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 4 + 64) {
           Sound_PlayFar(126);
-          Func_0814cd48(effect->actors[i], 7, -1, i, 24);
+          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 24);
         }
       }
 

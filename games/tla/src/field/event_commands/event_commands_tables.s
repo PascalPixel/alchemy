@@ -109,7 +109,7 @@ Data_080f0ab0:
 	.2byte 56, -144, 0, 2, 2
 	.2byte 64, -160, 0, 2, 2
 @ {x, y} screen offsets of a ground particle, in pixels, indexed by its
-@ remaining frame count; read by Func_080d6674 (The Broken Seal's
+@ remaining frame count; read by Weather_UpdateRain (The Broken Seal's
 @ FieldEffect_UpdateGroundParticles), which has no such table.
 	.global Data_080f0b50
 Data_080f0b50:

@@ -108,7 +108,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     if (frame == 8) {
       work->shakeFrames = frame;
       BattlePlayback_StartFar(0x86);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 3);
     }
 
@@ -361,7 +361,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(134);
-              Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+              BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
               BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             }
           }
@@ -453,8 +453,7 @@ void BattleEffect_SelectLivingTargets(
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 
-void Func_0816442c(s32 group, s32 x,
-                   s32 y); // BattleEffect_PlaceFormationObjects
+void BattleEffect_PlaceFormationObjects(s32 group, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 group, s32 x, s32 y);
 
 void Func_0818caa8(void *source, s32 x, s32 y, s32 size); // four motes

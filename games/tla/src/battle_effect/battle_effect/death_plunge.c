@@ -167,7 +167,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
   Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
   Sound_PlayFar(212);
-  Func_0814cd48(effect->actors[0], 7, 3, 0, 30);
+  BattleEffect_TintBattler(effect->actors[0], 7, 3, 0, 30);
 
   for (frame = 0; frame != 128; frame++) {
     if (frame == 2)
@@ -175,7 +175,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
     if (frame == 3)
       Sound_PlayFar(212);
     if (frame == 28)
-      Func_0814cd48(effect->actors[0], -1, 3, -1, 0);
+      BattleEffect_TintBattler(effect->actors[0], -1, 3, -1, 0);
     if (frame == 32)
       Sound_PlayFar(149);
     if (frame == 5)
@@ -377,7 +377,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
   HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Func_0814cd48(effect->actors[0], -1, 1, -1, 0);
+  BattleEffect_TintBattler(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleStaging_ConfigurePaletteFadeFar(2, BACKGROUND(battle), 0);
@@ -482,7 +482,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
     if (frame == 26) {
       Sound_PlayFar(212);
-      Func_0814cd48(effect->actors[0], 7, -1, 0, 20);
+      BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 20);
     }
 
     // The burst, a picture every three frames.
@@ -561,8 +561,8 @@ void BattleEffect_TransferHalvedCanvas(void) {
   }
 }
 
-/// The Broken Seal's BattleEffect_DrawStreaks.
-void Func_0813f8d4(void) {
+/// The Broken Seal's routine.
+void BattleEffect_DrawStreaks(void) {
   struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battleFxWork[0];
   s32 frame;
   s32 i;
@@ -609,9 +609,12 @@ void Func_0813f8d4(void) {
       if (streak->tail < 0)
         streak->tail = 0;
       fade = -streak->tail / 2;
-      Func_08143eb4(tail.x - 1, tail.y, head.x - 1, head.y, fade + 48);
-      Func_08143eb4(tail.x, tail.y - 1, head.x, head.y - 1, fade + 48);
-      Func_08143eb4(tail.x, tail.y, head.x, head.y, fade + 56);
+      BattleEffect_DrawClippedCanvasLine(tail.x - 1, tail.y, head.x - 1, head.y,
+                                         fade + 48);
+      BattleEffect_DrawClippedCanvasLine(tail.x, tail.y - 1, head.x, head.y - 1,
+                                         fade + 48);
+      BattleEffect_DrawClippedCanvasLine(tail.x, tail.y, head.x, head.y,
+                                         fade + 56);
     }
   }
   work->transferPending = 1;
@@ -723,13 +726,13 @@ void Func_0813fa88(s32 kind) {
   work->halvePending = 0;
   Task_Add(BattleEffect_TransferHalvedCanvas, 0xc80);
   work->frame = 0;
-  Task_Add(Func_0813f8d4, 0x480);
+  Task_Add(BattleEffect_DrawStreaks, 0x480);
 }
 
 /// Ends the light-streak backdrop: removes its three callbacks, clears the
 /// canvas in VRAM and frees heap blocks 96 and 92.
 void BattleEffect_EndElementStreaks(void) {
-  Task_Remove(Func_0813f8d4);
+  Task_Remove(BattleEffect_DrawStreaks);
   Task_Remove(BattleEffect_TransferHalvedCanvas);
   Task_Remove(BattleEffect_DimBackgroundStep);
   Iwram_ClearWords((void *)0x06004000, 0x4000);
@@ -1672,7 +1675,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
 
       if (frame == 0) {
         for (i = 0; i != effect->count; i++) {
-          Func_0814cd48(effect->actors[i], 0, -1, i, 16);
+          BattleEffect_TintBattler(effect->actors[i], 0, -1, i, 16);
         }
       }
       if (frame == 127) {

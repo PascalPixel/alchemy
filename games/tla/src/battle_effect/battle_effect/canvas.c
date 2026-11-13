@@ -453,8 +453,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->effect);
   for (i = 0; i != effect->count; i++) {
-    Func_0814cd48(effect->actors[i], 1, -1, -1, 0);
-    Func_0814cd48(effect->actors[i], 0, -1, -1, 0);
+    BattleEffect_TintBattler(effect->actors[i], 1, -1, -1, 0);
+    BattleEffect_TintBattler(effect->actors[i], 0, -1, -1, 0);
   }
   Palette_LoadBasicObjColors();
   REG_DISPCNT = 1;
@@ -505,7 +505,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Sound_PlayFar(145);
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       for (i = 0; i != effect->count; i++) {
-        Func_0814cd48(effect->actors[i], 7, 5, i, 4);
+        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 4);
       }
     }
     if (frame <= 109) {
@@ -907,9 +907,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     if (frame == 56)
       Sound_PlayFar(148);
     if (frame == 32)
-      Func_0814cd48(effect->actor, 7, -1, -1, -1);
+      BattleEffect_TintBattler(effect->actor, 7, -1, -1, -1);
     if (frame == 68)
-      Func_0814cd48(effect->actor, 0, -1, -1, -1);
+      BattleEffect_TintBattler(effect->actor, 0, -1, -1, -1);
     if (kind == KIND_FINALE) {
       // The finale fades to white from frame 62.
       if (frame > 61) {
@@ -1389,7 +1389,8 @@ void BattleEffect_CountDownBattlerTints(void) {
     if (base[0x78dc + i] != 0) {
       if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0) {
         index = i * 2 + 36;
-        Func_0814cd48(*(s16 *)(*(u8 **)(base + 0x78f0) + index), 0, -1, -1, 0);
+        BattleEffect_TintBattler(*(s16 *)(*(u8 **)(base + 0x78f0) + index), 0,
+                                 -1, -1, 0);
       }
     }
     i += 1;
@@ -1725,10 +1726,11 @@ void BattleEffect_SetupCanvasTileMap(void) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-/// The Broken Seal's BattleEffect_DrawClippedCanvasLine, with the fraction in
+/// The Broken Seal's routine, with the fraction in
 /// bit 31 (started at 0x80 << 23, carried when negative and cleared with a
 /// shift pair) and dx and dy reused as the step direction.
-void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
+void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
+                                        s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80 << 23;

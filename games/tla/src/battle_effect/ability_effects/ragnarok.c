@@ -247,9 +247,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       // sparks.
       for (i = 0; i != effect->count; i++) {
         if (frame == start)
-          Func_0814cd48(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
         if (frame == start + 6) {
-          Func_0814cd48(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
       }
@@ -623,13 +623,13 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
     // The hit, and the canvas flooded at frames 9 and 60.
     if (frame == 68) {
       for (i = 0; i != effect->count; i++) {
-        Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 7);
       }
     }
 
     if (frame == 9) {
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
     }
     if (frame == 60)

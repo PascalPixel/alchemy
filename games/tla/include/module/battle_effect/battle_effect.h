@@ -87,8 +87,8 @@ void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames); // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 
@@ -186,7 +186,8 @@ void BattleEffect_ConfigureEffectDisplay(void);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
 
 void BattleEffect_ClearActorTimers(void);
-void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
+void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
+                                        s32 color);
 void Func_0814355c(void); // the BG2 canvas's registers
 
 extern u8 gData_02014000[];
@@ -278,7 +279,8 @@ void BattleEffect_SetupBlendedDisplay(void);
 
 void Func_08147aec(struct BattleEffectArgument *effect, s32 mode);
 
-void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
+void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
+                                        s32 y); // ..PlaceFormationObjects
 void BattleEffect_RunImpactBurst(s32 formation, s32 x,
                                  s32 y); // ..RunImpactBurst
 
@@ -607,7 +609,7 @@ struct StreakPoint {
 
 // The backdrop's work, in place of the battle effect work.
 struct StreakSceneWork {
-  s32 frame;        // the streaks' frame count (Func_0813f8d4)
+  s32 frame;        // the streaks' frame count (BattleEffect_DrawStreaks)
   s32 halvePending; // the streaks are drawn: halve the canvas into VRAM
   s32 fadeFrames;   // frames of the background's fade left
                     // (BattleEffect_DimBackgroundStep)

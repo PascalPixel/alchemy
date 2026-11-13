@@ -128,7 +128,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
             work->shakeFrames = 8;
             Sound_PlayFar(144);
             for (j = 0; j != effect->count; j++)
-              Func_0814cd48(effect->actors[j], 7, 5, j, 4);
+              BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 4);
           }
         }
       }

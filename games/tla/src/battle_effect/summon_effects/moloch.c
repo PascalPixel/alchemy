@@ -41,10 +41,10 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void Func_0816442c(s32 formation, s32 x, s32 y);
+void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
-void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer,
-                   s32 frames); // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 mode, s32 timer,
+                              s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
@@ -321,13 +321,13 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
       }
 
       if (frame > 139)
-        Func_0816442c(5, focus.x, focus.y);
+        BattleEffect_PlaceFormationObjects(5, focus.x, focus.y);
 
       // Frames 212-268, every eight: the targets flash and are thrown back.
       for (i = 0; i != 8; i++) {
         if (frame == i * 8 + 212) {
           for (k = 0; k != work->effect->count; k++) {
-            Func_0814cd48(work->effect->actors[k], 7, 5, k, 8);
+            BattleEffect_TintBattler(work->effect->actors[k], 7, 5, k, 8);
             BattleEffect_StartActorMotion(effect->actors[k], 1, 0x10000,
                                           0x40000, 0x10000, i * 16 + 100);
           }
@@ -542,7 +542,8 @@ void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
   Heap_Release(projected);
 }
 
-void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
+void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
+                                        s32 color);
 
 /// Draws a 45-degree canvas line from (x + w/2, y - w/2) down-left toward
 /// (x, y), at most 48 pixels long, in the given colour.
@@ -557,7 +558,7 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
     h = 48;
   y1 = y + h;
   x1 = x - h;
-  Func_08143eb4(x, y, x1, y1, color);
+  BattleEffect_DrawClippedCanvasLine(x, y, x1, y1, color);
 }
 
 struct StripQuad;
@@ -1187,7 +1188,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           BattleEffect_SelectLivingTargets(work->effect);
           Palette_LoadBasicObjColors();
           for (i = 0; i != work->effect->count; i++)
-            Func_0814cd48(work->effect->actors[i], -1, 5, -1, 0);
+            BattleEffect_TintBattler(work->effect->actors[i], -1, 5, -1, 0);
         }
         frame = 446;
       } else {
@@ -1461,7 +1462,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         BattleEffect_SelectLivingTargets(work->effect);
         Palette_LoadBasicObjColors();
         for (i = 0; i != work->effect->count; i++)
-          Func_0814cd48(work->effect->actors[i], -1, 5, -1, 0);
+          BattleEffect_TintBattler(work->effect->actors[i], -1, 5, -1, 0);
       }
       if (frame <= 191) {
         for (i = 0; i != 3; i++) {
@@ -2621,9 +2622,12 @@ void Func_08196248(s32 vertexCount, s32 faceCount) {
       *y1 += 64 << 16;
       *x2 += 64 << 16;
       *y2 += 64 << 16;
-      Func_08143eb4(HI(*x0), HI(*y0), HI(*x1), HI(*y1), color);
-      Func_08143eb4(HI(*x1), HI(*y1), HI(*x2), HI(*y2), color);
-      Func_08143eb4(HI(*x0), HI(*y0), HI(*x2), HI(*y2), color);
+      BattleEffect_DrawClippedCanvasLine(HI(*x0), HI(*y0), HI(*x1), HI(*y1),
+                                         color);
+      BattleEffect_DrawClippedCanvasLine(HI(*x1), HI(*y1), HI(*x2), HI(*y2),
+                                         color);
+      BattleEffect_DrawClippedCanvasLine(HI(*x0), HI(*y0), HI(*x2), HI(*y2),
+                                         color);
     }
   }
 }

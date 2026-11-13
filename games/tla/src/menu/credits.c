@@ -69,17 +69,21 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 }
 
-/* VIEW(credits): variable gFlash_Handler3 as u16 gFlash_Handler3[]; sound_driver_symbols.h has struct LzPackWork *gFlash_Handler3; tried as the 3 declarations' extern FlashWaitProc gFlash_Handler3, it does not compile in tla-ja: games/tla/src/menu/credits.c:72: parse error before `gFlash_Handler3'. */
+/* VIEW(credits): variable gFlash_Handler3 as u16 gFlash_Handler3[];
+ * sound_driver_symbols.h has struct LzPackWork *gFlash_Handler3; tried as the 3
+ * declarations' extern FlashWaitProc gFlash_Handler3, it does not compile in
+ * tla-ja: games/tla/src/menu/credits.c:72: parse error before
+ * `gFlash_Handler3'. */
 extern u16 gFlash_Handler3__credits[] __asm__("gFlash_Handler3");
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into
 /// one half of BG VRAM and queues its palette for the next VBlank, as The
-/// Broken Seal's Credits_LoadBackground does, but greyed: each channel
+/// Broken Seal does, but greyed: each channel
 /// becomes (2 red + 4 green + blue + 5 * channel) / 16. A zero resource
 /// clears that half instead. The tiles are unpacked by the
 /// BattleEffect_Expand kernel, copied by DMA into a heap block for the call;
 /// the grey colours are built in the EWRAM buffer at gFlash_Handler3.
-void Func_081a052c(u32 resourceId, s32 alternate) {
+void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
   u32 paletteOffset;
@@ -189,7 +193,8 @@ s32 Func_081a06e0(s32 mode) {
     for (slide = 0;; slide++) {
       s16 *count = &Data_02007500;
 
-      Func_081a052c(gDisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
+      Credits_LoadBackground(gDisplayScroll_SlideResources[slide],
+                             (slide & 1) ^ 1);
       for (step = 1; step <= 16; step++) {
         if (slide & 1) {
           s32 t = 16;
@@ -582,7 +587,6 @@ void Func_081a0fb8(void) {
     *objects++ = 0;
   Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }
-
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   u8 *buf = (u8 *)Heap_AllocEwram(0x900);

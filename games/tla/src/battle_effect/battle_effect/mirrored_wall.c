@@ -215,9 +215,9 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
         Render_ResetTransformState();
         Transform_SetLookAt(camera->eye, camera->pos);
         if (frame == start + 72)
-          Func_0814cd48(effect->actors[i], 1, -1, -1, 0);
+          BattleEffect_TintBattler(effect->actors[i], 1, -1, -1, 0);
         if (frame == start + 88)
-          Func_0814cd48(effect->actors[i], 0, -1, -1, 0);
+          BattleEffect_TintBattler(effect->actors[i], 0, -1, -1, 0);
         ground[0] = target->x;
         ground[1] = 0;
         ground[2] = target->z;
@@ -423,7 +423,8 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *shot = &PARTICLES[k * 16 + i];
 
           if (frame == start + 17) {
-            Func_0814cd48(effect->actors[k % effect->count], 7, 5, k, 16);
+            BattleEffect_TintBattler(effect->actors[k % effect->count], 7, 5, k,
+                                     16);
             BattlePlayback_StartFar(133);
           }
           if (shot->variant >= 0) {

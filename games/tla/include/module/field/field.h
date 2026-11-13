@@ -753,8 +753,8 @@ struct Mote {
   u8 pad1e[2];
 };
 
-/// One of Func_080d6674's particles: its sprite's attribute words, its world
-/// position and its frames left.
+/// One of Weather_UpdateRain's particles: its sprite's attribute words, its
+/// world position and its frames left.
 struct SparkParticle {
   u32 sprite[3];
   s32 posX;

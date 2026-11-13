@@ -13,8 +13,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -232,7 +232,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       if (mode == 0) {
         BattlePlayback_StartFar(145);
       } else {
@@ -378,7 +378,8 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
 
 void BattleEffect_StepPaletteToResource(s32 palette);
 
-void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
+void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
+                                        s32 y); // ..PlaceFormationObjects
 void BattleEffect_RunImpactBurst(s32 formation, s32 x,
                                  s32 y); // ..RunImpactBurst
 
@@ -504,7 +505,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       position.y += velocity.y;
       velocity.x = velocity.x * 59 / 64;
       velocity.y = velocity.y * 59 / 64;
-      Func_0816442c(4, position.x, position.y);
+      BattleEffect_PlaceFormationObjects(4, position.x, position.y);
       if (frame == 108) {
         for (i = 0; i != 512; i++) {
           SPARKS[i].variant = -1;
@@ -613,7 +614,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     if (frame == 10) {
       work->shakeFrames = i;
       for (i = 0; i != effect->count; i++) {
-        Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
       }
     }
     if (frame > 107) {
@@ -963,7 +964,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
           work->shakeFrames = 8;
           BattlePlayback_StartFar(145);
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         }
         for (i = 0; i != BEAM_SEGMENTS; i++) {
           point[0] = work->particles[0].x + work->particles[0].velocityX * i;

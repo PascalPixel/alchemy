@@ -75,8 +75,8 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void BattlePlayback_StartFar(s32 phase);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 blitter); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames); // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
+                              s32 frames);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
@@ -146,9 +146,9 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != BURST_FRAMES; frame++) {
     if (frame == 0) {
       if (mode == 2)
-        Func_0814cd48(effect->actors[0], 7, -1, 0, 32);
+        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 32);
       else
-        Func_0814cd48(effect->actors[0], 10, -1, 0, 32);
+        BattleEffect_TintBattler(effect->actors[0], 10, -1, 0, 32);
     }
     if (frame == 24)
       BattlePlayback_StartFar(0);
@@ -1454,7 +1454,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             for (j = 0; j != arg->count; j++) {
               BattleEffect_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000,
                                             100);
-              Func_0814cd48(arg->actors[j], 7, 5, j, 7);
+              BattleEffect_TintBattler(arg->actors[j], 7, 5, j, 7);
               work->shake = 4;
             }
           } else {
@@ -1666,7 +1666,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         for (j = 0; j != effect->count; j++) {
           BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000, 0x80000,
                                         0x20000, 120);
-          Func_0814cd48(effect->actors[j], 7, 5, j, 7);
+          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 7);
         }
         work->shakeFrames = 4;
         Sound_PlayFar(145);

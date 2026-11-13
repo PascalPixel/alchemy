@@ -11,7 +11,11 @@
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
 /// Heap slot 0x74 while the motes run.
-/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3089: structure has no member named `motes'. */
+/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
+ * visual_attributes.c has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes.c:3089: structure has no member
+ * named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;
@@ -19,7 +23,7 @@ struct MoteWork__motes {
   u8 pad808[12];
 };
 
-/// Starts the 64 floating motes (Func_080d6c60): loads their tiles and puts
+/// Starts the 64 floating motes (FieldMotes_Update): loads their tiles and puts
 /// each under the leader with staggered timers, drawn semi-transparent.
 // As ☀️'s function of the same name.
 void FieldMotes_Start(void) {
@@ -94,12 +98,12 @@ void FieldMotes_Start(void) {
     reg++;
     *reg = clear;
   } while (0);
-  Task_Add(Func_080d6c60, TASK_PASS_VBLANK);
+  Task_Add(FieldMotes_Update, TASK_PASS_VBLANK);
 }
 
 #undef Resource_DecodeByteLzInRam
 
-/// Starts Func_080d6674's particles: allocates and clears heap slot 0x74,
+/// Starts Weather_UpdateRain's particles: allocates and clears heap slot 0x74,
 /// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
 /// words and places it on the ground at the map's focus with a timer of
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
@@ -155,12 +159,12 @@ void Func_080d6f34(s32 withCue) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   Io_Write16(clear, &REG_BLDY);
-  Task_Add(Func_080d6674, TASK_PASS_VBLANK);
+  Task_Add(Weather_UpdateRain, TASK_PASS_VBLANK);
   if (withCue != 0)
     Scene_QueueMusic(137);
 }
 
-void Func_080d7024(void) { Task_Remove(Func_080d6674); }
+void Func_080d7024(void) { Task_Remove(Weather_UpdateRain); }
 
 struct SparkleWork {
   u8 padding00[4];
@@ -170,8 +174,11 @@ struct SparkleWork {
   s32 stopped;
 };
 
-/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32 priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__motes(void *entry, s32 priority) __asm__("Func_080140d8");
+/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32
+ * priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
+ * depth). */
+extern void Func_080140d8__motes(void *entry,
+                                 s32 priority) __asm__("Func_080140d8");
 
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;

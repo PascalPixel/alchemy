@@ -1097,11 +1097,11 @@ void BattleBackground_RestorePalette(void) {
 /// Removes the VCount interrupt's handler; nothing calls it.
 void Irq_RemoveVCountHandler(void) { Irq_SetHandler(IRQ_VCOUNT, 0, 0); }
 
-/// The Broken Seal's BattleFormation_AverageLevel without its level check:
+/// The Broken Seal's routine without its level check:
 /// the average level of a formation's enemy kinds, counting only kinds the
 /// player has met (flag 0x608 + id, or all with flag 0x174); -1 for an empty
 /// formation, -2 when one present kind is unmet, -3 when none counts.
-s32 Func_08127588(s32 recordId) {
+s32 BattleFormation_AverageLevel(s32 recordId) {
   struct BattleFormationRecord *record;
   const struct EnemyDefinition *enemy;
   u32 memberIndex;

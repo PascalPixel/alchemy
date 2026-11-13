@@ -16,8 +16,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -285,7 +285,7 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
                                           0x80000, 0x20000, i * 10 + 110);
             Sound_PlayFar(133);
           }
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
           blade->variant = 1;
           if (effect->side == 0) {
             blade->x = pos.x / 2 - HI(blade->x);
@@ -518,7 +518,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         work->shakeFrames = 4;
         speed = 0;
         Sound_PlayFar(133);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       }
       if (scythe->timer == 35) {
         scythe->velocityX = still;
@@ -553,7 +553,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     if (phase == 0) {
       BattlePlayback_StartFar(134);
       work->shakeFrames = 12;
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
     }
@@ -1064,12 +1064,12 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
         starCount = 48;
       if (frame == start) {
         if (mode == 0)
-          Func_0814cd48(effect->actors[member], 7, 5, member, 16);
+          BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
         else
-          Func_0814cd48(effect->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 16);
       }
       if (frame == start + 55 && mode != 0)
-        Func_0814cd48(effect->actors[member], 7, -1, member, 16);
+        BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 16);
 
       // The swarm turns about its point, which rises from frame 4.
       Render_ResetTransformState();
@@ -1254,12 +1254,12 @@ void Func_08182898(struct BattleEffectArgument *effect) {
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 8 + 18) {
         if (i == 0) {
-          Func_0814cd48(effect->actors[i], 7, -1, i, 16);
+          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 16);
           BattlePlayback_StartFar(BUBBLE_HIT_CUE);
           Sound_PlayFar(BUBBLE_HIT_CUE);
         } else {
           Sound_PlayFar(BUBBLE_HIT_CUE);
-          Func_0814cd48(effect->actors[i], 7, -1, i, 16);
+          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 16);
         }
       }
     }
@@ -2298,12 +2298,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 8 + 18) {
         if (i == 0) {
-          Func_0814cd48(effect->actors[0], 7, -1, 0, 16);
+          BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 16);
           BattlePlayback_StartFar(126);
           Sound_PlayFar(126);
         } else {
           Sound_PlayFar(126);
-          Func_0814cd48(effect->actors[i], 7, -1, i, 16);
+          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 16);
         }
       }
     }

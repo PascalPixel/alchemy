@@ -161,7 +161,7 @@ struct BattleSortedUnitEntry;
  * *window, s32 mode). */
 extern void Window_CloseFar__battle(s32 window,
                                     s32 mode) __asm__("Window_CloseFar");
-void Func_08120060(s32 x, s32 y);
+void BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 
 s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
@@ -427,7 +427,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     wait(1);
     window =
         Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8, 10, 4, 1);
-    Func_08120060(44, 24);
+    BattleMessage_WaitForAdvanceAt(44, 24);
     Window_CloseFar__battle(window, 1);
     wait(1);
   }

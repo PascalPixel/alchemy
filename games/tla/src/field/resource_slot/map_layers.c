@@ -235,10 +235,10 @@ void Map_CenterOnFollowedPoint(void) {
 
 /// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG
 /// map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
-/// wraps every 32 tiles and the cells wrap at the layer's window. The Broken
-/// Seal's MapGrid_RenderCellPictureRow, with the window. Called by
+/// wraps every 32 tiles and the cells wrap at the layer's window, which The
+/// Broken Seal's routine does not have. Called by
 /// Func_0802ad84 when a layer scrolls onto a new row of cell pictures.
-void Func_0802abbc(u32 layer, s32 tileX, s32 tileY) {
+void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
@@ -433,9 +433,9 @@ void Func_0802ad84(void) {
     }
     if ((layer->y ^ baseY) & 0x100000) {
       if (layer->y < baseY)
-        Func_0802abbc(layerIndex, x, y + 20);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y + 20);
       else
-        Func_0802abbc(layerIndex, x, y);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y);
     }
     layer->x = baseX;
     layer->y = baseY;

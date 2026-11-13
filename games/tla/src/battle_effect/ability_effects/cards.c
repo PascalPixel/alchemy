@@ -93,8 +93,8 @@ void Func_0815e22c(struct EffectPosition *middle);
 void BattleEffect_StepPaletteToResource(s32 resource);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                              s32 frames);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
@@ -453,7 +453,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(-1);
         work->shakeFrames = 4;
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-        Func_0814cd48(effect->actors[0], 7, -1, 0, 16);
+        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 16);
         for (i = 0; i != 64; i++) {
           s32 angle = Random16() & 0xffff;
           s32 force = 127; // The AND lands in the register holding 127.
@@ -505,7 +505,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(-1);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
                                       0x20000, 110);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
       }
       if (frame > 51) {

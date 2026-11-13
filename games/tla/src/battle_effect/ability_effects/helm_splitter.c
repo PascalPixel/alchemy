@@ -141,7 +141,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     if (frame == 18) {
       EffectPosition_ProjectBattler(effect->actors[0], &position);
       BattlePlayback_StartFar(134);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 6);
       work->shakeFrames = 4;
       for (i = 0; i != effect->variant * 16 + 16; i++) {

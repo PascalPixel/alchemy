@@ -389,7 +389,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       redraw = 0;
       confirmationChoice = Menu_GetModuloOfSum(confirmationChoice, 2);
     }
-    Func_080f8a44(confirmationChoice * 56 + 80, 16);
+    MenuCursor_Position(confirmationChoice * 56 + 80, 16);
     if ((frame & 3) == 0) {
       /* FAKEMATCH(wrapper): the copy forwarded through shared.c's CopyWords
        * inline, so the source loads before the routine and the destination,

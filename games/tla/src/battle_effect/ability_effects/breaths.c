@@ -115,8 +115,8 @@ extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__(
     "Render_DrawModelList");
 void Heap_Release(void *block);
 void BattlePlayback_StartFar(s32 phase);
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                              s32 frames);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -532,9 +532,9 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
             work->shakeFrames = 8;
             // DEAD: never true inside Blast Breath; the source keeps the test.
             if (mode == 6)
-              Func_0814cd48(effect->actors[i], 14, 5, i, 3);
+              BattleEffect_TintBattler(effect->actors[i], 14, 5, i, 3);
             else
-              Func_0814cd48(effect->actors[i], 7, 5, i, 3);
+              BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 3);
             BattleEffect_StartActorMotion(effect->actors[i], 1, 0x10000,
                                           0x40000, 0x20000, frame + 100);
           }
@@ -543,7 +543,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
         // The others hit every target at once, and the screen flashes.
         for (i = 0; i != effect->count; i++) {
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-          Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 8;
         BattlePlayback_StartFar(144);

@@ -7,7 +7,7 @@
 
 s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 
-/// A second item picker an event script opens, built as Func_080f94a4: opens
+/// A second item picker an event script opens, built as ItemMenu_Run: opens
 /// the item menu over the field and runs its command loop; when that returns 1,
 /// looks up the chosen item's action (unused) and records owner << 10 | item in
 /// the event work at 0x166. Returns the loop's result.
@@ -491,7 +491,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         GameFlag_ClearBit(0x151);
       }
     }
-    Func_080f8a44((selection % 4) * 24 - 10, 16);
+    MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
     if (KEYS_PRESSED & 1) {
       if (menu->psynergyCount) {
@@ -614,7 +614,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
         }
       }
     }
-    Func_080f8a44((selection % 4) * 24 - 10, 16);
+    MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
     if (gInput.pressed & 1) {
       Sound_PlayFar(112);
@@ -1132,7 +1132,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     menu->sideIcons[paneIndex]->active = 1;
 
     while (!GameFlag_Test(0x150)) {
-      Func_080f8a44(CURSOR_X, state.row * 16 + 36);
+      MenuCursor_Position(CURSOR_X, state.row * 16 + 36);
 
       if (changed != 0) {
         changed = 0;

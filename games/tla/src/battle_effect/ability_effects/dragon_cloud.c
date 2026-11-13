@@ -366,12 +366,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     // Frame 83: the strike. Frame 50: the puffs burst.
     if (frame == 83) {
       work->shakeFrames = 8;
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
     }
     if (frame == 50) {
       work->shakeFrames = 12;
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
     }
     if (frame > 49) {
       for (i = 0; i != 8; i++) {

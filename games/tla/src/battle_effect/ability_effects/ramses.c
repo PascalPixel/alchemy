@@ -280,7 +280,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     if (frame == HIT_FRAME) {
       for (i = 0; i != effect->count; i++) {
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-        Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
       }
       work->shakeFrames = 8;
     }

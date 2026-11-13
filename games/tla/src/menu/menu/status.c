@@ -425,7 +425,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       redraw = 0;
     }
-    Func_080f8a44((ownerIndex % 4) * 24 - 10, 16);
+    MenuCursor_Position((ownerIndex % 4) * 24 - 10, 16);
     wait(1);
     if (KEYS_PRESSED & 1) {
       Sound_PlayFar(112);
@@ -530,7 +530,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       }
       Menu_HighlightPageEntry(menu->ownerWindow, selection, count);
     }
-    Func_080f8a44((selection % 4) * 24 - 10, 16);
+    MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
     if (((struct InputState *)&gInput)->pressed & 1) {
       Sound_PlayFar(112);
@@ -618,7 +618,7 @@ void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
                              s32 unused3) {
   struct MenuRuntimeCursor *work = Ram_HeapSlots->menuRuntime;
 
-  Menu_PlaceOwnerEntryObjects(Func_080f88d0(work), 2, 2);
+  Menu_PlaceOwnerEntryObjects(MenuCursor_Create(work), 2, 2);
   work->unk2c = 0;
   work->unk28 = 0;
   work->unk30 = 0;
@@ -770,11 +770,11 @@ s32 StatusScreen_SelectCommand(void) {
                                                  hasDjinn);
       }
       if (pane == 0)
-        Func_080f8a44(-10, selected * 16 + 88);
+        MenuCursor_Position(-10, selected * 16 + 88);
       else if (selected <= 3)
-        Func_080f8a44(24, selected * 8 + 48);
+        MenuCursor_Position(24, selected * 8 + 48);
       else
-        Func_080f8a44(48, selected * 8 + 80);
+        MenuCursor_Position(48, selected * 8 + 80);
       wait(1);
       if (gInput.repeat & 0xf0)
         StatusScreen_DrawSelectionCursor(pane, selected, entries, 1);
@@ -1577,7 +1577,7 @@ s32 Func_080ffcd4(void) {
     wait(1);
     navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
                                        &state.row, &state.page);
-    Func_080f8a44(CURSOR_X, state.row * 16 + CURSOR_Y);
+    MenuCursor_Position(CURSOR_X, state.row * 16 + CURSOR_Y);
     if (navigation == 1) {
       refresh = 1;
       listNeedsRedraw = 1;
@@ -1892,7 +1892,7 @@ s32 ItemMenu_SelectItem(void) {
     wait(1);
     navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
                                        &state.row, &state.page);
-    Func_080f8a44(CURSOR_X, state.row * 16 + 52);
+    MenuCursor_Position(CURSOR_X, state.row * 16 + 52);
     if (navigation == 1) {
       refresh = 1;
       listNeedsRedraw = 1;

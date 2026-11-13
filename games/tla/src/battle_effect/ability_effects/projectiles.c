@@ -44,7 +44,8 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
 void Transform_Pop(void);
 /// Flashes an actor in a palette for some frames.
-void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer, s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 a, s32 timer,
+                              s32 frames);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -250,9 +251,9 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     }
     SceneTransform_ApplyPosition(base);
     if (frame == 0)
-      Func_0814cd48(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
     if (frame == 24)
-      Func_0814cd48(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
 
     // The 32 sparks spin about the centre, each on its own axis, and from
     // their 24th frame fall into it; a spark that has arrived stops.
@@ -983,7 +984,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               flash->z = 0;
               if (mode != 7)
                 work->shakeFrames = 2;
-              Func_0814cd48(effect->actors[i], 7, 5, i, 8);
+              BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
               if (mode != 7 && mode != 9 && mode != 10 && mode != 18 &&
                   mode != 14 && mode != 15 && mode != 16 && mode != 17) {
                 if (mode == 5)

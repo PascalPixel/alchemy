@@ -40,7 +40,7 @@ Resource_FarCall009:
 	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
 	export BattleActor_CommitPlacementFar, BattleObject_Put
 	export ReleaseBattleObjectRecordsFar, ReleaseBattleObjectRecords
-	export Func_08118128, Func_08120060
+	export Func_08118128, BattleMessage_WaitForAdvanceAt
 	export BattleParty_CountStandbyDjinnFar, BattleParty_CountStandbyDjinn
 	export BattleParty_PrepareReserveOwnersFar, BattleParty_PrepareReserveOwners
 	export BattleUnit_ListIdsFar, BattleUnit_ListIds

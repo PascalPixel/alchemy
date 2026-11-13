@@ -256,7 +256,7 @@ void ColorBuffer_ScaleFar(void *, void *, s32, s32);
  * `GetBattleObjectSlotFar'. */
 extern struct ActorPos **
 GetBattleObjectSlotFar__f175f74(s32) __asm__("GetBattleObjectSlotFar");
-void Func_0814cd48(s32, s32, s32, s32, s32);
+void BattleEffect_TintBattler(s32, s32, s32, s32, s32);
 void BattlePlayback_StartFar(s32);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -1483,7 +1483,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         struct ActorPos *actor =
             *GetBattleObjectSlotFar__f175f74(arg->actors[i]);
 
-        Func_0814cd48(arg->actors[i], 0, 5, -1, -1);
+        BattleEffect_TintBattler(arg->actors[i], 0, 5, -1, -1);
         actor->x = -(i + 4) * 0x800000;
         actor->z = 0;
         actor->y = 0x140000;
@@ -1551,7 +1551,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
           BattleEffect_StartActorMotion(arg->actors[i], 1, 0x40000, 0x80000,
                                         speed, delay);
-          Func_0814cd48(arg->actors[i], 7, 5, i, 32);
+          BattleEffect_TintBattler(arg->actors[i], 7, 5, i, 32);
         }
         work->unk77a8 = 3;
       }
@@ -1696,7 +1696,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           }
         }
         if (member->timer == 2 || member->timer == 7) {
-          Func_0814cd48(arg->actors[i], 7, 5, i, 32);
+          BattleEffect_TintBattler(arg->actors[i], 7, 5, i, 32);
         }
         /* FAKEMATCH(dead): landed set to 2 though nothing reads it again; flow
          * deletes the store and its test; as no test, 402 of 4354 instructions
@@ -1705,7 +1705,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           landed = 2;
         }
         if (member->timer == 6) {
-          Func_0814cd48(arg->actors[i], 15, -1, i, 32);
+          BattleEffect_TintBattler(arg->actors[i], 15, -1, i, 32);
         }
         if (member->timer == 8) {
           actor->x = 0;

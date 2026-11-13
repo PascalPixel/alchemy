@@ -147,7 +147,8 @@ static inline void RestoreUnit(struct BattleUnit *unit,
 /// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
 /// the work's cursor. The equipment panel equips the item on the real unit for
 /// a moment and puts the unit back from a heap copy it frees before returning.
-void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
+void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
+                      s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
@@ -179,22 +180,22 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
     ailmentRows = 0;
     if (ailments[1]) {
       Text_DrawMessageAsTilesFar(MESSAGE_POISON_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[2]) {
       Text_DrawMessageAsTilesFar(MESSAGE_VENOM_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[3]) {
       Text_DrawMessageAsTilesFar(MESSAGE_CURSE_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[4]) {
       Text_DrawMessageAsTilesFar(MESSAGE_HAUNT_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailmentRows < 2) {
@@ -263,7 +264,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
   case STATUS_PANEL_EQUIP + 1:
     if (!Item_CanUnitEquip(owner, item)) {
       Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window,
-                                    STATUS_PANEL_CANNOT_EQUIP_X, 48);
+                                 STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
     }
     backup = Heap_Alloc(sizeof(struct BattleUnit));
@@ -291,14 +292,14 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
     }
     if (known) {
       Text_DrawMessageAsTilesFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
-                                    STATUS_PANEL_LEARN_NAME_Y);
+                                 STATUS_PANEL_LEARN_NAME_Y);
       Text_DrawMessageAsTilesFar(MESSAGE_LEARNED, window, 0,
-                                    STATUS_PANEL_LEARN_NOTE_Y);
+                                 STATUS_PANEL_LEARN_NOTE_Y);
     } else {
       Text_DrawMessageAsTilesFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
-                                    STATUS_PANEL_LEARN_NAME_Y);
+                                 STATUS_PANEL_LEARN_NAME_Y);
       Text_DrawMessageAsTilesFar(MESSAGE_WILL_LEARN, window, 0,
-                                    STATUS_PANEL_LEARN_NOTE_Y);
+                                 STATUS_PANEL_LEARN_NOTE_Y);
     }
     break;
   }
@@ -441,12 +442,13 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
 #endif
 }
 
-s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant);
+s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
+                               s32 variant);
 
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work) {
-  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel,
-                                (struct RenderInput *)work, 0, 32);
+  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct RenderInput *)work,
+                             0, 32);
   Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
   if (alt->atk != base->atk) {
     Text_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
@@ -457,7 +459,7 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
     }
   }
   Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel,
-                                (struct RenderInput *)work, 0, 48);
+                             (struct RenderInput *)work, 0, 48);
   Text_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
   if (alt->def != base->def) {
     Text_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
@@ -467,8 +469,8 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
       Icon_CreateStatChangeArrow(work, 44, 52, 1);
     }
   }
-  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel,
-                                (struct RenderInput *)work, 0, 64);
+  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct RenderInput *)work,
+                             0, 64);
   Text_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
   if (alt->agi != base->agi) {
     Text_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
@@ -522,9 +524,9 @@ extern char ResourceId_ShopDownArrowTiles;
 /// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right
 /// edge when a VRAM entry is free. Returns the window.
-// The twin of The Broken Seal's MenuCursor_Create, which has no divider or
+// The twin of The Broken Seal's routine, which has no divider or
 // arrows.
-struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
+struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   struct RenderInput *window;
   struct WindowSprite *icon;
   s32 zero = 0;
@@ -593,8 +595,8 @@ extern u8 gUiMenu_CursorBobY[];
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
 
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's window,
-/// bobbing; the twin of The Broken Seal's MenuCursor_Position.
-void Func_080f8a44(s32 xOffset, s32 yOffset) {
+/// bobbing; the twin of The Broken Seal's routine.
+void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct OwnerMenuState *work =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor = work->sideIcon[0];
@@ -1120,7 +1122,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
 void Text_DrawWorkValueWithLabel(s32 work) {
   Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
   Text_DrawMessageAsTilesFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
-                                0x40, 0);
+                             0x40, 0);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   Window_DrawDividerLineFar(work, 12, 0, 12, 2);
 #endif

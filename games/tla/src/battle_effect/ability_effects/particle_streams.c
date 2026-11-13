@@ -79,10 +79,9 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattlePlayback_StartFar(s32 phase);
-void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // BattleEffect_TintBattler
-void Func_0816442c(s32 formation, s32 x,
-                   s32 y); // BattleEffect_PlaceFormationObjects
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 a, s32 timer,
+                              s32 frames);
+void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x,
                                  s32 y); // BattleEffect_RunImpactBurst
 void BattleEffect_EndCanvasLayer(void);
@@ -188,7 +187,7 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
         if (focus.x < 120 << 16)
           velocity.x += 0x8000;
       }
-      Func_0816442c(1, focus.x, focus.y);
+      BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);
 
       // The first spout fills the first 256 slots; then 16 embers a frame
       // from the ground at (32, 96).
@@ -302,12 +301,12 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
               struct MotionObject *target =
                   GetBattleObjectSlotFar(effect->actors[k])->object;
 
-              Func_0814cd48(effect->actors[k], 7, 5, -1, 0);
+              BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
               target->velocityY = 0x48000;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
-              Func_0814cd48(effect->actors[k], 0, 5, -1, 0);
+              BattleEffect_TintBattler(effect->actors[k], 0, 5, -1, 0);
           }
         }
       }
@@ -346,10 +345,10 @@ extern const u8 gData_081989d7[];
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 
-/// The Broken Seal's BattleEffect_PlaceFormationObjects with The Lost Age's
+/// The Broken Seal's routine with The Lost Age's
 /// three more formations (4: eleven objects from signed columns, 5: twelve in
 /// a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
-void Func_0816442c(s32 formation, s32 x, s32 z) {
+void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   struct BattleFxWork *work =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   struct FormationScale normal = gData_08196e5c;
@@ -559,7 +558,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     }
 
     if (frame <= 35)
-      Func_0816442c(formation, orgX, y);
+      BattleEffect_PlaceFormationObjects(formation, orgX, y);
     work->transferPending = 1;
     wait(1);
   }
@@ -844,7 +843,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     user->velocityY = 0xa0000;
     user->verticalMotionStrength = 0x91eb;
-    Func_0814cd48(effect->actor, -1, 2, -1, 0);
+    BattleEffect_TintBattler(effect->actor, -1, 2, -1, 0);
     Sound_PlayFar(SE_RISE);
     direction = effect->side == 1 ? mode : -1;
   } else {

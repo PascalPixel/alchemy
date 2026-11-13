@@ -7,8 +7,8 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -209,7 +209,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       Sound_PlayFar(145);
       BattleEffect_StartActorMotion(effect->actors[member], 1, 0x20000, 0x80000,
                                     0x20000, i * 5 + 110);
-      Func_0814cd48(effect->actors[member], 7, 5, member, 16);
+      BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
       work->shakeFrames = 4;
       star->variant = -1;
     }
@@ -443,7 +443,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 4) {
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 8;
       Sound_PlayFar(145);
     }
@@ -466,7 +466,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       victim[3] = 200 << 15;
       victim[4] = savedZ;
       gBgScroll[1].y = 32;
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
     }
     if (frame == 179) {
       BattlePlayback_StartFar(134);

@@ -402,7 +402,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     if (frame == 300) {
       for (i = 0; i != effect->count; i++) {
-        Func_0814cd48(effect->actors[i], 7, 5, i, 8);
+        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
       }
       BattlePlayback_StartFar(145);

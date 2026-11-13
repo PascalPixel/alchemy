@@ -477,9 +477,9 @@ void BattleMessage_WaitForAdvance(void) {
   wait(1);
 }
 
-/// The Broken Seal's BattleMessage_WaitForAdvanceAt: shows the cursor
+/// The Broken Seal's routine: shows the cursor
 /// bobbing at (x, y) and waits for A, B, L or R; returns 1.
-s32 Func_08120060(s32 x, s32 y) {
+s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct MenuPoint position;
   s32 pointerTiles;
   struct CursorSprite promptStorage;

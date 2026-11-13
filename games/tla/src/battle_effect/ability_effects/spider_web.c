@@ -259,8 +259,8 @@ void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 // Flashes an actor in a palette for some frames.
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames); // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
                    s32 *world);
@@ -780,7 +780,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000,
                                           0x80000, m,
                                           delay + (Random16() & 31) + 52);
-            Func_0814cd48(effect->actors[j], 7, -1, j, 4);
+            BattleEffect_TintBattler(effect->actors[j], 7, -1, j, 4);
           }
         }
         if (draw && (u32)(step->variant - 64) <= 11) {
@@ -1115,7 +1115,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       } else {
         Sound_PlayFar(0x86);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
       }
       work->shakeFrames = 8;
     }
@@ -1227,7 +1227,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       BattlePlayback_StartFar(143);
     for (i = 0; i != effect->count; i++) {
       if (frame == 10)
-        Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

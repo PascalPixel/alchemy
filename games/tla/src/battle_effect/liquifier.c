@@ -336,7 +336,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           else
             Sound_PlayFar(144);
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 5);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 5);
           work->shakeFrames = 4;
         }
       }
@@ -614,7 +614,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
             BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
         }
         for (i = 0; i != effect->count; i++)
-          Func_0814cd48(effect->actors[i], 7, 5, i, 8);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
         work->shakeFrames = 8;
 
         // Sixteen flames, faster one by one.

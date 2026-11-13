@@ -869,7 +869,7 @@ s32 DjinnMenu_ShowHelp(void) {
     UiPanel_SetRectHighlight(list, 0, selection, 6, 1, 14);
     previous = selection;
     for (;;) {
-      Func_080f8a44(-12, (list->y + selection) * 8 + 8);
+      MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
       wait(1);
       if (gInput.repeat & 0x90) {
         selection++;
@@ -1046,9 +1046,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & 1))
         selectedRow = djinnRow;
       if (columnFlags[memberColumn] & 1)
-        Func_080f8a44(memberColumn % 4 * 56 - 8, 52);
+        MenuCursor_Position(memberColumn % 4 * 56 - 8, 52);
       else
-        Func_080f8a44(memberColumn % 4 * 56 - 8, djinnRow * 8 + 60);
+        MenuCursor_Position(memberColumn % 4 * 56 - 8, djinnRow * 8 + 60);
       if (redraw >> 2) {
         s32 page = memberColumn / 4 * 4;
 
@@ -1232,7 +1232,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       switch (backdrop->tutorialStep) {
       case 28:
         while (!(gInput.pressed & 1)) {
-          Func_080f8a44(150, 26);
+          MenuCursor_Position(150, 26);
           wait(1);
         }
         pressed = 2;
@@ -1322,7 +1322,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           while (Message_AllTypedFar() == 0)
             wait(1);
           while (!(gInput.pressed & 1)) {
-            Func_080f8a44(2, 146);
+            MenuCursor_Position(2, 146);
             wait(1);
           }
           Window_CloseFar(messageWindow, 1);
@@ -1333,7 +1333,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           while (Message_AllTypedFar() == 0)
             wait(1);
           while (!(gInput.pressed & 1)) {
-            Func_080f8a44(2, 146);
+            MenuCursor_Position(2, 146);
             wait(1);
           }
           Window_CloseFar(messageWindow, 1);
@@ -1344,7 +1344,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           while (Message_AllTypedFar() == 0)
             wait(1);
           while (!(gInput.pressed & 1)) {
-            Func_080f8a44(2, 146);
+            MenuCursor_Position(2, 146);
             wait(1);
           }
           Window_CloseFar(messageWindow, 1);

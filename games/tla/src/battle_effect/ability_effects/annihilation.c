@@ -176,9 +176,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       work->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)
-      Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actors[0], 10, -1, -1, 0);
     if (frame == FLASH_FRAME)
-      Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actors[0], 10, -1, -1, 0);
     BattleCamera_Shake(16, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

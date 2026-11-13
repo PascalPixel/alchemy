@@ -207,7 +207,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
               struck->x += 0x8000;
             else
               struck->x -= 0x8000;
-            Func_0814cd48(effect->actors[k], -1, 5, -1, 0);
+            BattleEffect_TintBattler(effect->actors[k], -1, 5, -1, 0);
           }
 
           // The hit: a sound and two flashes, 16 frames apart. The first
@@ -217,10 +217,10 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
               Sound_PlayFar(133);
               if (k == 0)
                 BattlePlayback_StartFar(-1);
-              Func_0814cd48(effect->actors[k], 7, 5, k, 8);
+              BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 8);
             }
             if (frame == k * 32 + 40)
-              Func_0814cd48(effect->actors[k], 7, 5, k, 8);
+              BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 8);
           }
           if (RECORD(mode, RECORD_MOTION) != -1 && frame == k * 32 + 24) {
             work->shakeFrames = 4;
@@ -407,7 +407,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 8 + 48) {
           BattlePlayback_StartFar(-1);
-          Func_0814cd48(effect->actors[i], 7, 5, i, 8);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
         }
       }
     } else if (mode == MODE_SOOTHING_STAR) {
@@ -415,7 +415,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(126);
           BattlePlayback_StartFar(-1);
-          Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
         }
       }
     }

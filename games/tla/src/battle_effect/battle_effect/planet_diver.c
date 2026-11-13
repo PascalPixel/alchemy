@@ -91,7 +91,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
       if (frame > k * 32) {
         SceneTransform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
-          Func_0814cd48(effect->actors[k], 7, 5, k, 32);
+          BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 32);
 
         // A skull moves one part in its distance toward the centre each
         // frame, and is gone once it arrives.
@@ -216,7 +216,7 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 
           // Halfway through, the target's flash stops.
           if (frame == (member * 16) + 32)
-            Func_0814cd48(effect->actors[member], 0, 5, -1, 0);
+            BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
           point[0] = target->x;
           point[1] = 40 << 16;
           point[2] = target->z;
@@ -387,7 +387,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
           Sound_PlayFar(133);
       }
       if (frame == k * 20 + 70)
-        Func_0814cd48(effect->actors[k], 7, 5, k, 26);
+        BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 26);
       if (frame > k * 20) {
         for (i = 0; i != Data_08197864[mode * 2]; i++) {
           struct EffectStep *mote = &PARTICLES[k * 128 + i];

@@ -183,7 +183,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           do {
             if (frame == Data_08197950[slot]) {
               object->velocityY = 0;
-              Func_0814cd48(effect->actors[index], 7, 5, index, 8);
+              BattleEffect_TintBattler(effect->actors[index], 7, 5, index, 8);
             }
             slot++;
           } while (slot != 4);
@@ -681,7 +681,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
           Animation_ApplyChildArgumentFar(work->objects[4], 11);
         }
         for (i = 0; i != effect->count; i++) {
-          Func_0814cd48(effect->actors[i], 10, 5, -1, 0);
+          BattleEffect_TintBattler(effect->actors[i], 10, 5, -1, 0);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
         frame = 160;
@@ -892,13 +892,13 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
           Animation_ApplyChildArgumentFar(work->objects[4], 4);
         }
         if (alternate == 1)
-          Func_0816442c(6, focus.x, focus.y);
+          BattleEffect_PlaceFormationObjects(6, focus.x, focus.y);
         else
-          Func_0816442c(3, focus.x, focus.y);
+          BattleEffect_PlaceFormationObjects(3, focus.x, focus.y);
       }
       if (frame == 138) {
         for (i = 0; i != effect->count; i++) {
-          Func_0814cd48(effect->actors[i], 10, 5, -1, 0);
+          BattleEffect_TintBattler(effect->actors[i], 10, 5, -1, 0);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
       }

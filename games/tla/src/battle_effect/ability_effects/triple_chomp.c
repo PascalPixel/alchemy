@@ -67,8 +67,8 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                              s32 frames);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyRoll(s32 angle);
@@ -184,7 +184,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           Sound_PlayFar(134);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
                                       i * 20 + 120);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 8;
       }
 

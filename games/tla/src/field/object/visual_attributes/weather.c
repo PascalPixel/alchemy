@@ -5,7 +5,10 @@
 #include "../visual_attributes_internal.h"
 #include "module/field/field.h"
 
-/* VIEW(f0d6674): tag struct GroundParticleWork as struct GroundParticleWork__f0d6674; visual_attributes.c has another definition; tried with the definition the rest of the object has, Func_080d6674 moves: 1 of 167 instructions in tla-ja. */
+/* VIEW(f0d6674): tag struct GroundParticleWork as struct
+ * GroundParticleWork__f0d6674; visual_attributes.c has another definition;
+ * tried with the definition the rest of the object has, Weather_UpdateRain
+ * moves: 1 of 167 instructions in tla-ja. */
 struct GroundParticleWork__f0d6674 {
   u8 unk00[4];
   // long, not s32: its own alias set lets the sprite stores pass its load.
@@ -13,14 +16,14 @@ struct GroundParticleWork__f0d6674 {
   struct GroundParticle__visual_attributes particles[64];
 };
 
-/// The Broken Seal's Weather_UpdateRain with fixed sprites, and
+/// The Broken Seal's routine with fixed sprites, and
 /// Func_080d64f0's sibling for the same 64 ground particles: each counts down
 /// its frame (held while flag 358 is set), is drawn at its picture's offset
 /// (Data_080f0b50, pairs) with the work's tile, shape 1 and size 2 when on
 /// screen, and when its count runs out is placed again at a random point (x
 /// within -64 to +192, z within -128 to +128 pixels of the map's focus), on
 /// the ground, for 12 frames.
-void Func_080d6674(void) {
+void Weather_UpdateRain(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct GroundParticleWork__f0d6674 *work = Ram_HeapSlots->unk70[1];
   s32 *origin = (s32 *)(map + 228);

@@ -285,7 +285,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 
         if (delay > 31)
           delay = 31;
-        Func_0814cd48(effect->actors[member], 7, 5, member, delay);
+        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, delay);
       }
     }
 
@@ -391,7 +391,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
       record[2] = object->z;
       SceneTransform_ApplyPosition(record);
       if (frame == member * 16 + 64)
-        Func_0814cd48(effect->actors[member], 0, 5, -1, 0);
+        BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
     }
 
     // The sheep fall and bounce, each spinning through its eight cels:
@@ -602,9 +602,9 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
 
     // The caster flashes for the first 24 frames.
     if (frame == 0)
-      Func_0814cd48(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
     if (frame == 24)
-      Func_0814cd48(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
 
     // Each spark spins in one of four planes, smaller further away, and
     // after 30 frames is pulled back toward the Djinn.
@@ -709,9 +709,9 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       if (frame == start + 30)
         Sound_PlayFar(126);
       if (frame == start + 40)
-        Func_0814cd48(effect->actors[member], 7, -1, -1, 0);
+        BattleEffect_TintBattler(effect->actors[member], 7, -1, -1, 0);
       if (frame == start + 64)
-        Func_0814cd48(effect->actors[member], 0, -1, -1, 0);
+        BattleEffect_TintBattler(effect->actors[member], 0, -1, -1, 0);
       if (frame > start) {
         SceneTransform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {

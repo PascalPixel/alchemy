@@ -59,8 +59,8 @@ void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                              s32 frames);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
@@ -183,7 +183,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     // Frame 54: the hit. The target flashes and both are thrown back, the
     // user to where he started.
     if (frame == 54) {
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 10);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 10);
       target->velocityY = 8 << 16;
       target->gravity = 0xab85;
       user->velocityY = 5 << 16;

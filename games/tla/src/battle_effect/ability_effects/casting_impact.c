@@ -219,7 +219,7 @@ void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_RunMysticFlame(struct BattleEffectArgument *);
-void Func_0814cd48(s32, s32, s32, s32, s32);
+void BattleEffect_TintBattler(s32, s32, s32, s32, s32);
 void SummonEffect_RunCanvasMode3(void *action);
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode2(void *action);
@@ -1089,9 +1089,9 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         if (kind == 78)
           start = 0;
         if (frame == 50)
-          Func_0814cd48(action->actor, 7, -1, -1, 0);
+          BattleEffect_TintBattler(action->actor, 7, -1, -1, 0);
         if (frame == 79)
-          Func_0814cd48(action->actor, 0, -1, -1, 0);
+          BattleEffect_TintBattler(action->actor, 0, -1, -1, 0);
         if (frame == start) {
           struct Particle *p;
           p = SPARKS;
@@ -1714,7 +1714,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             p->x -= 6;
             if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
               Sound_PlayFar(133);
-              Func_0814cd48(action->actors[0], 7, 5, 0, 4);
+              BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
             }
           }
         }
@@ -2436,7 +2436,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         if (frame == 24) {
           BattleEffect_StartActorMotion(action->actors[0], 1, 0, 0, 0x90000,
                                         100);
-          Func_0814cd48(action->actors[0], 7, 5, 0, 4);
+          BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
           BattlePlayback_StartFar(134);
           work->unk77a8 = 8;
         }
@@ -2448,7 +2448,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       if (kind == 66) {
         for (i = 0; i != 4; i++) {
           if (frame == i * 4 + 8) {
-            Func_0814cd48(action->actors[0], 7, 5, 0, 2);
+            BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 2);
             work->unk77a8 = 2;
             Sound_PlayFar(133);
           }
@@ -2496,9 +2496,9 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         }
       }
       if (frame == 6)
-        Func_0814cd48(action->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
       if (frame == 14)
-        Func_0814cd48(action->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
       BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
       work->unk78e8 = 1;

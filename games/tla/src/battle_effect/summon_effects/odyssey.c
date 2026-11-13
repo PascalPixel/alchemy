@@ -88,7 +88,8 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 mode, s32 timer,
+                              s32 frames);
 void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
 void Camera_ApplyVerticalShake(s32 range);
 void BattleEffect_CountDownBattlerTints(void);
@@ -224,7 +225,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       Sound_PlayFar(144);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       shard = Data_02016000;
       for (i = 0; i != 128; i++) {
@@ -311,7 +312,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           spark->variant = (Random16() & 7) + 17;
         }
         Sound_PlayFar(133);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 64);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 64);
         work->shakeFrames = 4;
       }
       if (frame >= start && frame <= 89) {
@@ -393,9 +394,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       if (frame == i * 8 + 72) {
         s32 none = 0;
 
-        Func_0814cd48(effect->actor, 7, -1, 0, none);
+        BattleEffect_TintBattler(effect->actor, 7, -1, 0, none);
       } else if (frame == i * 8 + 76)
-        Func_0814cd48(effect->actor, 0, -1, 0, 0);
+        BattleEffect_TintBattler(effect->actor, 0, -1, 0, 0);
       if (frame >= start && frame < start + 11) {
         s32 scale = 0x30000 - ((frame - start) << 14);
 

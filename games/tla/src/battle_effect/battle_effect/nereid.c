@@ -108,7 +108,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         if (focus.x < 120 << 16)
           velocity.x += 0x8000;
       }
-      Func_0816442c(1, focus.x, focus.y);
+      BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);
 
       // Sparks burst up from around (32, 96): every free one at frame 28,
       // then sixteen a frame from 32 to 79.
@@ -225,12 +225,12 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
               struct MotionObject *target =
                   GetBattleObjectSlotFar(effect->actors[k])->object;
 
-              Func_0814cd48(effect->actors[k], 7, 5, -1, 0);
+              BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
               target->velocityY = 0x48000;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
-              Func_0814cd48(effect->actors[k], 0, 5, -1, 0);
+              BattleEffect_TintBattler(effect->actors[k], 0, 5, -1, 0);
           }
         }
       }

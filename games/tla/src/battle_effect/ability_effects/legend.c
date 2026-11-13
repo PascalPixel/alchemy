@@ -63,8 +63,8 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                              s32 frames);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
@@ -173,7 +173,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         else
           Sound_PlayFar(144);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
         for (j = 0; j != 128; j++) {
           struct EffectStep *spark = &SPARKS[i * 128 + j];
@@ -622,7 +622,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
             BattlePlayback_StartFar(134);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
                                         0x10000, 100 + speed);
-          Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
           burst = 0;
           EffectPosition_ProjectScaledBattler(effect->actors[i], &aim);
           for (j = 0; j != 64; j++) {

@@ -58,11 +58,11 @@ struct FxGroup {
 
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 
-/// The Broken Seal's BattleEffect_TintBattler as The Lost Age has it: the
+/// The Broken Seal's routine as The Lost Age has it: the
 /// member count is a byte at 0x1b, the timers sit at 0x78dc of the effect
 /// work, and a member's frame is reset only when its parameter changes.
-void Func_0814cd48(s32 setId, s32 objectValue, s32 groupValue, s32 stateSlot,
-                   s32 stateValue) {
+void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
+                              s32 stateSlot, s32 stateValue) {
   struct FxSlot *set;
   struct FxGroup *group;
   struct FxTimerWork *state;

@@ -12,8 +12,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames); // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
                    s32 *world);
 struct PoolEntry *Render_AllocateModelList(s32 count);
@@ -223,7 +223,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f44, 0x20000);
     }
     if (frame == 18) {
-      Func_0814cd48(effect->actor, -1, 2, 0, -1);
+      BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
     }
     if (frame == 36) {
       work->transferMode = 2;

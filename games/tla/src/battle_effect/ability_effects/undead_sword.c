@@ -91,7 +91,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       BattlePlayback_StartFar(PHASE_HIT);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
     }
 
     // The columns: up 12 pixels a frame until frame 31, then down 6.
@@ -230,7 +230,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       target->verticalMotionStrength = 0;
       target->y = 0;
       pillarY = position.y;
-      Func_0814cd48(effect->actors[0], -1, 5, 0, -1);
+      BattleEffect_TintBattler(effect->actors[0], -1, 5, 0, -1);
       work->shakeFrames = 4;
       Sound_PlayFar(144);
     }
@@ -250,7 +250,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
         step->variant = (Random16() & 7) + 48;
       }
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       BattlePlayback_StartFar(145);
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
@@ -546,7 +546,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 17) {
         BattlePlayback_StartFar(144);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0x80000, 100);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
         work->shakeFrames = 8;
       }
     } else {
@@ -554,7 +554,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(145);
         for (i = 0; i != effect->count; i++) {
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
-          Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 8;
       }
@@ -563,7 +563,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         for (i = 0; i != effect->count; i++) {
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x80000,
                                         100);
-          Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 8;
       }
@@ -939,7 +939,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 28) {
         work->shakeFrames = 6;
         BattlePlayback_StartFar(133);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       }
     } else {
       if (frame == 12) {
@@ -948,7 +948,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       for (k = 0; k != effect->count; k++) {
         if (frame == k * 4 + 12) {
           Sound_PlayFar(126);
-          Func_0814cd48(effect->actors[k], 7, -1, k, 8);
+          BattleEffect_TintBattler(effect->actors[k], 7, -1, k, 8);
         }
       }
     }
@@ -1128,7 +1128,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
             BattlePlayback_StartFar(144);
             Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
           }
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
           top += 8;
           for (k = 0; k != 8; k++) {
             struct EffectStep *shard;

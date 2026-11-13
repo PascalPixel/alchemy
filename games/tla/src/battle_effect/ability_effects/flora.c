@@ -39,8 +39,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -176,7 +176,8 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_StepPaletteToResource(s32 palette);
-void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
+void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
+                                        s32 color);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define w ((struct FloraWork *)petals)
@@ -805,8 +806,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         draw[0](canvas, dot, x1 - 1, y1 - 1, 1, 2);
         draw[0](canvas, dot, x2 - 1, y2 - 1, 1, 2);
         if ((i & 31) == 0) {
-          Func_08143eb4(x1, y1, x2, y2, v);
-          Func_08143eb4(x1, y1 + 1, x2, y2 + 1, v);
+          BattleEffect_DrawClippedCanvasLine(x1, y1, x2, y2, v);
+          BattleEffect_DrawClippedCanvasLine(x1, y1 + 1, x2, y2 + 1, v);
         }
       }
       if ((u32)(frame - 228) <= 24) {
@@ -832,8 +833,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           draw[0](canvas, dot, x1b - 1, y1b - 1, 1, 2);
           draw[0](canvas, dot, x2b - 1, y2b - 1, 1, 2);
           if ((i & 31) == 0) {
-            Func_08143eb4(x1b, y1b, x2b, y2b, c);
-            Func_08143eb4(x1b, y1b + 1, x2b, y2b + 1, c);
+            BattleEffect_DrawClippedCanvasLine(x1b, y1b, x2b, y2b, c);
+            BattleEffect_DrawClippedCanvasLine(x1b, y1b + 1, x2b, y2b + 1, c);
           }
         }
       }
@@ -948,7 +949,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
           Sound_PlayFar(133);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
-          Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
         }
       }
     }
@@ -1085,14 +1086,14 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       if (frame == strikeFrame) {
         work->shakeFrames = 4;
         Sound_PlayFar(133);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
       }
     }
     if (frame == DAGGER_LAST_HIT) {
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 10);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 10);
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
     }
 
@@ -1309,7 +1310,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
       }
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       BattleEffect_StartActorMotion(effect->actors[0], 1, 8 << 16, 20 << 16,
                                     6 << 16, 10);
     }

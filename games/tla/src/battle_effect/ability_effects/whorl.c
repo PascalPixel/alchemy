@@ -39,8 +39,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -464,7 +464,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0x70000,
                                         100);
           work->shakeFrames = 8;
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         }
         if (frame == 0) {
           {
@@ -559,7 +559,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             Sound_PlayFar(134);
             BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x70000,
                                           100);
-            Func_0814cd48(effect->actors[i], 7, 5, i, 8);
+            BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
             work->shakeFrames = 8;
           }
         }

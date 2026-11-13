@@ -28,8 +28,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -229,7 +229,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
                                         0x70000, TARGET_ANCHOR_PERCENT);
         }
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       }
       for (i = 0; i != 64; i++) {
         mote = &work->particles[i];
@@ -576,13 +576,13 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
     if (frame == FIGURE_HIT_FRAME) {
       work->shakeFrames = 6;
       BattlePlayback_StartFar(134);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
     }
     if (frame == FIGURE_SWING_FRAME) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       work->shakeFrames = 3;
       Sound_PlayFar(212);
-      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
     }
 
     BattleCamera_Shake(4, 4);

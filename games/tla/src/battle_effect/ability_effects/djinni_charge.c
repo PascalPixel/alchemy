@@ -16,8 +16,8 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                              s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -265,7 +265,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             Sound_PlayFar(138);
             work->shakeFrames = 2;
           }
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
           for (i = 0, p = work->particles; i != 63; i++, p++) {
             if (p->variant != -1) {
               continue;
@@ -297,7 +297,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         if (frame == 15) {
           work->shakeFrames = 6;
           BattlePlayback_StartFar(134);
-          Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
+          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
           for (i = 0; i != 63; i++) {
             s32 angle;
@@ -393,10 +393,10 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
       }
       if (mode == 0) {
         if (frame == 24) {
-          Func_0814cd48(effect->actor, -1, 2, 0, -1);
+          BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
         }
       } else if (frame == 0) {
-        Func_0814cd48(effect->actor, -1, 2, 0, -1);
+        BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
       }
 
       // Core's glowing orb.

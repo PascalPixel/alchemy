@@ -362,7 +362,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       for (i = 0; i != effect->count; i++) {
         if (frame > 85) {
           if (frame % 12 == 0)
-            Func_0814cd48(effect->actors[i], 7, 5, i, 6);
+            BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 6);
           if ((frame & 3) == 0)
             BattleMotion_ApplyKnockbackFar(effect->actors[i], 5);
         }

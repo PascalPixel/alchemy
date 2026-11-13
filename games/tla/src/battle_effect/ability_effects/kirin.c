@@ -418,7 +418,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         work->transferMode = 2;
       if (frame == 58) {
         for (i = 0; i != effect->count; i++)
-          Func_0814cd48(effect->actors[i], 14, 5, -1, 0);
+          BattleEffect_TintBattler(effect->actors[i], 14, 5, -1, 0);
       }
 
       BattleCamera_Shake(8, 8);

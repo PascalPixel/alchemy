@@ -130,8 +130,8 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
           point->variant = 0;
           point->x = pos.x;
           point->y = pos.y + (Random16() & 31) - 16;
-          Func_0814cd48(effect->actors[i % effect->count], 7, 5,
-                        i % effect->count, 4);
+          BattleEffect_TintBattler(effect->actors[i % effect->count], 7, 5,
+                                   i % effect->count, 4);
           BattleMotion_ApplyKnockbackFar(effect->actors[i % effect->count], 0);
           work->shakeFrames = 4;
           Sound_PlayFar(132);
@@ -274,7 +274,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     for (j = 0; j != effect->count; j++) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
-          Func_0814cd48(effect->actors[j], 7, 5, j, 4);
+          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 4);
           BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
         }
       }

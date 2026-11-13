@@ -1701,43 +1701,43 @@ gData_0819896a:
 	.global gData_08198974
 gData_08198974:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
-@ The Broken Seal's gHelmSplitter_TwelveX; read by Func_0816442c
+@ The Broken Seal's gHelmSplitter_TwelveX; read by BattleEffect_PlaceFormationObjects
 	.global gData_08198984
 gData_08198984:
 	.byte 52, 25, 57, 89, 7, 39, 71, 103, 21, 53, 85, 117
-@ The Broken Seal's gHelmSplitter_TwelveZ; read by Func_0816442c
+@ The Broken Seal's gHelmSplitter_TwelveZ; read by BattleEffect_PlaceFormationObjects
 	.global gData_08198990
 gData_08198990:
 	.byte 0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96
-@ The Broken Seal's gHelmSplitter_RightEightX; read by Func_0816442c
+@ The Broken Seal's gHelmSplitter_RightEightX; read by BattleEffect_PlaceFormationObjects
 	.global gData_0819899c
 gData_0819899c:
 	.byte 0, 32, 64, 16, 48, 0, 32, 64
-@ The Broken Seal's gHelmSplitter_RightEightZ; read by Func_0816442c
+@ The Broken Seal's gHelmSplitter_RightEightZ; read by BattleEffect_PlaceFormationObjects
 	.global gData_081989a4
 gData_081989a4:
 	.byte 0, 0, 0, 32, 32, 64, 64, 64
-@ read by Func_0816442c
+@ read by BattleEffect_PlaceFormationObjects
 	.global gData_081989ac
 gData_081989ac:
 	.byte 0, 32, 64, 0, 32, 64, 32, 64
-@ read by Func_0816442c
+@ read by BattleEffect_PlaceFormationObjects
 	.global gData_081989b4
 gData_081989b4:
 	.byte 10, 0, 0, 42, 32, 32, 64, 64
-@ The Broken Seal's gHelmSplitter_SmallEightX; read by Func_0816442c
+@ The Broken Seal's gHelmSplitter_SmallEightX; read by BattleEffect_PlaceFormationObjects
 	.global gData_081989bc
 gData_081989bc:
 	.byte 0, 40, 80, 0, 40, 80, 40, 80
-@ The Broken Seal's gHelmSplitter_SmallEightZ; read by Func_0816442c
+@ The Broken Seal's gHelmSplitter_SmallEightZ; read by BattleEffect_PlaceFormationObjects
 	.global gData_081989c4
 gData_081989c4:
 	.byte 13, 0, 0, 53, 40, 40, 80, 80
-@ read by Func_0816442c
+@ read by BattleEffect_PlaceFormationObjects
 	.global gData_081989cc
 gData_081989cc:
 	.byte 16, 48, 80, 16, 48, 80, -16, 16, 48, 80, 42
-@ read by Func_0816442c
+@ read by BattleEffect_PlaceFormationObjects
 	.global gData_081989d7
 gData_081989d7:
 	.byte 0, 0, 0, 32, 32, 32, 50, 64, 64, 64, 96

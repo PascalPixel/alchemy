@@ -33,3 +33,17 @@ Field_Map050:
 	.balign 4, 0
 .LField_Map050_SCENE:
 	.incbin "games/tla/src/map/map_050/scene.parts.lz"
+	.global Tileset_Set31Palette
+Tileset_Set31Palette:
+	.incbin "games/tla/src/graphics/tileset/set_31/palette.gbapal.lz"
+	.byte 0x2f, 0x43, 0x0e	@ PACKER: left in the buffer by Field_Map050+0x159
+	.global Tileset_Set31TilesA
+Tileset_Set31TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_31/tiles_a.4bpp.mtf"
+	.byte 0x08, 0x80	@ PACKER: left in the buffer by Tileset_Set30TilesB+0x21de
+	.global Tileset_Set31TilesB
+Tileset_Set31TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_31/tiles_b.4bpp.mtf"
+	.ifdef TLA_EDITION_EN
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.endif

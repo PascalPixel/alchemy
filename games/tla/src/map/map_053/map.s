@@ -33,3 +33,22 @@ Field_Map053:
 	.balign 4, 0
 .LField_Map053_SCENE:
 	.incbin "games/tla/src/map/map_053/scene.parts.lz"
+	.global Tileset_Set34Palette
+Tileset_Set34Palette:
+	.incbin "games/tla/src/graphics/tileset/set_34/palette.gbapal.lz"
+	.byte 0xe7, 0x0b	@ PACKER: left in the buffer by Field_Map053+0x186
+	.global Tileset_Set34TilesA
+Tileset_Set34TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_34/tiles_a.4bpp.mtf"
+	.byte 0x8c, 0xeb	@ PACKER: left in the buffer by Field_Map053+0x11f6
+	.global Tileset_Set34TilesB
+Tileset_Set34TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_34/tiles_b.4bpp.mtf"
+	.byte 0xc8, 0x4f, 0x0d	@ PACKER: left in the buffer by Tileset_Set34TilesA+0xec1
+	.global Tileset_Set34TilesC
+Tileset_Set34TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_34/tiles_c.4bpp.mtf"
+	.global Tileset_Set34TilesD
+Tileset_Set34TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_34/tiles_d.4bpp.mtf"
+	.byte 0x20, 0x3c	@ PACKER: left in the buffer by Tileset_Set34TilesC+0xf1e

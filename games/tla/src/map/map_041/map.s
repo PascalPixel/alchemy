@@ -34,3 +34,27 @@ Field_Map041:
 .LField_Map041_SCENE:
 	.incbin "games/tla/src/map/map_041/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set24Palette
+Tileset_Set24Palette:
+	.incbin "games/tla/src/graphics/tileset/set_24/palette.gbapal.lz"
+	.byte 0xc7	@ PACKER: left in the buffer by Field_Map041+0x177
+	.global Tileset_Set24TilesA
+Tileset_Set24TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_24/tiles_a.4bpp.mtf"
+	.byte 0x08, 0x0a	@ PACKER: left in the buffer by Field_Map041+0x14be
+	.global Tileset_Set24TilesB
+Tileset_Set24TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_24/tiles_b.4bpp.mtf"
+	.byte 0x3c, 0x00	@ PACKER: left in the buffer by Field_Map041+0x1802
+	.global Tileset_Set24TilesC
+Tileset_Set24TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_24/tiles_c.4bpp.mtf"
+	.ifdef TLA_EDITION_JA
+	.byte 0x1d, 0x1e	@ PACKER: left in the buffer by Field_Map041+0x1976
+	.else
+	.byte 0x01, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.endif
+	.global Tileset_Set24TilesD
+Tileset_Set24TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_24/tiles_d.4bpp.mtf"
+	.byte 0x22, 0xb9	@ PACKER: left in the buffer by Tileset_Set24TilesC+0xf1e

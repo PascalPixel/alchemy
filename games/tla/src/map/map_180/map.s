@@ -34,3 +34,25 @@ Field_Map180:
 .LField_Map180_SCENE:
 	.incbin "games/tla/src/map/map_180/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set81Palette
+Tileset_Set81Palette:
+	.incbin "games/tla/src/graphics/tileset/set_81/palette.gbapal.lz"
+	.byte 0x48, 0x1d, 0x3f	@ PACKER: left in the buffer by Field_Map180+0x149
+	.global Tileset_Set81TilesA
+Tileset_Set81TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_81/tiles_a.4bpp.mtf"
+	.ifdef TLA_EDITION_JA
+	.byte 0x30	@ PACKER: left in the buffer by Tileset_Set79TilesB+0x20bb
+	.else
+	.byte 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.endif
+	.global Tileset_Set81TilesB
+Tileset_Set81TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_81/tiles_b.4bpp.mtf"
+	.global Tileset_Set81TilesC
+Tileset_Set81TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_81/tiles_c.4bpp.mtf"
+	.byte 0xd7, 0x23	@ PACKER: left in the buffer by Tileset_Set81TilesB+0x15c2
+	.global Tileset_Set81TilesD
+Tileset_Set81TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_81/tiles_d.4bpp.mtf"

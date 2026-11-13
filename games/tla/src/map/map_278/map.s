@@ -34,3 +34,22 @@ Field_Map278:
 .LField_Map278_SCENE:
 	.incbin "games/tla/src/map/map_278/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set113Palette
+Tileset_Set113Palette:
+	.incbin "games/tla/src/graphics/tileset/set_113/palette.gbapal.lz"
+	.byte 0x9e, 0x4d	@ PACKER: left in the buffer by Field_Map278+0x142
+	.global Tileset_Set113TilesA
+Tileset_Set113TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_113/tiles_a.4bpp.mtf"
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.global Tileset_Set113TilesB
+Tileset_Set113TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_113/tiles_b.4bpp.mtf"
+	.global Tileset_Set113TilesC
+Tileset_Set113TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_113/tiles_c.4bpp.mtf"
+	.byte 0x06, 0x6b, 0x35	@ PACKER: left in the buffer by Tileset_Set113TilesB+0xbe5
+	.global Tileset_Set113TilesD
+Tileset_Set113TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_113/tiles_d.4bpp.mtf"
+	.byte 0x88, 0x5f	@ PACKER: left in the buffer by Tileset_Set113TilesC+0x3fa

@@ -31,3 +31,14 @@ Field_Map187:
 .LField_Map187_SCENE:
 	.incbin "games/tla/src/map/map_187/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Palette34
+Tileset_Palette34:
+	.incbin "games/tla/src/graphics/tileset/palettes/pal_34.gbapal.lz"
+	.byte 0x58, 0xf9	@ PACKER: left in the buffer by Field_Map187+0x102
+	.global Tileset_Palette35
+Tileset_Palette35:
+	.incbin "games/tla/src/graphics/tileset/palettes/pal_35.gbapal.lz"
+	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.global Tileset_Palette36
+Tileset_Palette36:
+	.incbin "games/tla/src/graphics/tileset/palettes/pal_36.gbapal.lz"

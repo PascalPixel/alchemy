@@ -34,3 +34,21 @@ Field_Map096:
 .LField_Map096_SCENE:
 	.incbin "games/tla/src/map/map_096/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set47Palette
+Tileset_Set47Palette:
+	.incbin "games/tla/src/graphics/tileset/set_47/palette.gbapal.lz"
+	.global Tileset_Set47TilesA
+Tileset_Set47TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_47/tiles_a.4bpp.mtf"
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.global Tileset_Set47TilesB
+Tileset_Set47TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_47/tiles_b.4bpp.mtf"
+	.byte 0x71, 0x76, 0xf0	@ PACKER: left in the buffer by Tileset_Set47TilesA+0x1969
+	.global Tileset_Set47TilesC
+Tileset_Set47TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_47/tiles_c.4bpp.mtf"
+	.global Tileset_Set47TilesD
+Tileset_Set47TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_47/tiles_d.4bpp.mtf"
+	.byte 0x3e, 0x8d	@ PACKER: left in the buffer by Tileset_Set47TilesC+0xf1e

@@ -33,3 +33,6 @@ Field_Map210:
 	.balign 4, 0
 .LField_Map210_SCENE:
 	.incbin "games/tla/src/map/map_210/scene.parts.lz"
+	.global Tileset_Palette47
+Tileset_Palette47:
+	.incbin "games/tla/src/graphics/tileset/palettes/pal_47.gbapal.lz"

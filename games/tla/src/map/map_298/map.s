@@ -28,3 +28,23 @@ Field_Map298:
 .LField_Map298_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.parts.lz"
 	.balign 4, 0
+	.global Resource_Data63E
+Resource_Data63E:
+	.incbin "games/tla/src/graphics/tileset/blank/palette.gbapal.lz"
+	.byte 0x00	@ PACKER: left in the buffer by Field_Map298+0xb
+	.global Resource_Data63F
+Resource_Data63F:
+	.incbin "games/tla/src/graphics/tileset/blank/tiles_a.4bpp.mtf"
+	.byte 0x00, 0x01	@ PACKER: left in the buffer by Field_Map298+0x14e
+	.global Resource_Data640
+Resource_Data640:
+	.incbin "games/tla/src/graphics/tileset/blank/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Resource_Data63F+0x13f
+	.global Resource_Data641
+Resource_Data641:
+	.incbin "games/tla/src/graphics/tileset/blank/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Resource_Data640+0x13f
+	.global Resource_Data642
+Resource_Data642:
+	.incbin "games/tla/src/graphics/tileset/blank/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Resource_Data641+0x13f

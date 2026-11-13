@@ -31,3 +31,11 @@ Field_Map072:
 .LField_Map072_SCENE:
 	.incbin "games/tla/src/map/map_072/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set36Palette
+Tileset_Set36Palette:
+	.incbin "games/tla/src/graphics/tileset/set_36/palette.gbapal.lz"
+	.byte 0x1b	@ PACKER: left in the buffer by Field_Map072+0x14f
+	.global Tileset_Set36TilesA
+Tileset_Set36TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_36/tiles_a.4bpp.mtf"
+	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown

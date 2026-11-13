@@ -34,3 +34,11 @@ Field_Map227:
 .LField_Map227_SCENE:
 	.incbin "games/tla/src/map/map_227/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set99Palette
+Tileset_Set99Palette:
+	.incbin "games/tla/src/graphics/tileset/set_99/palette.gbapal.lz"
+	.byte 0x06	@ PACKER: left in the buffer by Field_Map227+0x193
+	.global Tileset_Set99TilesA
+Tileset_Set99TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_99/tiles_a.4bpp.mtf"
+	.byte 0x72	@ PACKER: left in the buffer by Field_Map226+0x20b3

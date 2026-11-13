@@ -34,3 +34,29 @@ Field_Map221:
 .LField_Map221_SCENE:
 	.incbin "games/tla/src/map/map_221/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set95Palette
+Tileset_Set95Palette:
+	.incbin "games/tla/src/graphics/tileset/set_95/palette.gbapal.lz"
+	.byte 0x80, 0x07, 0x98	@ PACKER: left in the buffer by Field_Map221+0x1d5
+	.global Tileset_Set95TilesA
+Tileset_Set95TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_95/tiles_a.4bpp.mtf"
+	.global Tileset_Set95TilesB
+Tileset_Set95TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_95/tiles_b.4bpp.mtf"
+	.byte 0x5b, 0x44, 0x03	@ PACKER: left in the buffer by Tileset_Set95TilesA+0x1679
+	.global Tileset_Set95TilesC
+Tileset_Set95TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_95/tiles_c.4bpp.mtf"
+	.ifdef TLA_EDITION_JA
+	.byte 0x1d, 0xff, 0xf3	@ PACKER: left in the buffer by Tileset_Set95TilesA+0x1751
+	.else
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.endif
+	.global Tileset_Set95TilesD
+Tileset_Set95TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_95/tiles_d.4bpp.mtf"
+	.global Tileset_Palette49
+Tileset_Palette49:
+	.incbin "games/tla/src/graphics/tileset/palettes/pal_49.gbapal.lz"
+	.byte 0xa7	@ PACKER: left in the buffer by Tileset_Set95TilesD+0x1cb

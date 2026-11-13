@@ -34,3 +34,21 @@ Field_Map001:
 .LField_Map001_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set00Palette
+Tileset_Set00Palette:
+	.incbin "games/tla/src/graphics/tileset/set_00/palette.gbapal.lz"
+	.byte 0x85, 0x50	@ PACKER: left in the buffer by Field_Map001+0x1ce
+	.global Tileset_Set00TilesA
+Tileset_Set00TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_00/tiles_a.4bpp.mtf"
+	.byte 0x92	@ PACKER: left in the buffer by Monster_RedWarriorSprites+0x209f
+	.global Tileset_Set00TilesB
+Tileset_Set00TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_00/tiles_b.4bpp.mtf"
+	.global Tileset_Set00TilesC
+Tileset_Set00TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_00/tiles_c.4bpp.mtf"
+	.byte 0x4c, 0x9e, 0x10	@ PACKER: left in the buffer by Monster_RedWarriorSprites+0x22d5
+	.global Tileset_Set00TilesD
+Tileset_Set00TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_00/tiles_d.4bpp.mtf"

@@ -11,6 +11,38 @@
    each main-image routine the overlay's code calls. Each statement names the
    section it places, so the objects keep their order. Where its globals are
    written in assembly, its .bss is DIR/bss/NAME.s. */
+
+/* Most scenes are one overlay of one shape: the entry table, the scene's
+   code, its import table, then the scene's tables; SCENE_WITH_BSS adds the
+   globals the scene's bss/NAME.s defines. A scene of another shape writes
+   its block out. */
+#define SCENE(name) \
+SECTIONS \
+{ \
+    .text 0x2008000 : \
+    { \
+        */games/tla/src/scene/entry.o(.text) \
+        */games/tla/src/scene/name.o(.text) \
+        */imports.o(.text) \
+        */games/tla/src/scene/name.o(.data) \
+    } \
+}
+#define SCENE_WITH_BSS(name) \
+SECTIONS \
+{ \
+    .text 0x2008000 : \
+    { \
+        */games/tla/src/scene/entry.o(.text) \
+        */games/tla/src/scene/name.o(.text) \
+        */imports.o(.text) \
+        */games/tla/src/scene/name.o(.data) \
+    } \
+    .bss : \
+    { \
+        */games/tla/src/scene/bss/name.o(.bss) \
+    } \
+}
+
 #if OVERLAY == 0x649
 SECTIONS
 {
@@ -105,42 +137,11 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x64f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/suhalla_gate.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/suhalla_gate.o"(.data)
-    }
-}
+SCENE(suhalla_gate)
 #elif OVERLAY == 0x650
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/idejima.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/idejima.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/idejima.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(idejima)
 #elif OVERLAY == 0x651
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/daila.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/daila.o"(.data)
-    }
-}
+SCENE(daila)
 #elif OVERLAY == 0x652
 SECTIONS
 {
@@ -153,179 +154,33 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x653
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/kandorean_temple.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/kandorean_temple.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/kandorean_temple.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(kandorean_temple)
 #elif OVERLAY == 0x654
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/shrine_of_the_sea_god.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/shrine_of_the_sea_god.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/shrine_of_the_sea_god.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(shrine_of_the_sea_god)
 #elif OVERLAY == 0x655
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/dehkan_plateau.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/dehkan_plateau.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/dehkan_plateau.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(dehkan_plateau)
 #elif OVERLAY == 0x656
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship.o"(.data)
-    }
-}
+SCENE(lemurian_ship)
 #elif OVERLAY == 0x657
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship_deck.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship_deck.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/lemurian_ship_deck.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(lemurian_ship_deck)
 #elif OVERLAY == 0x658
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/madra.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/madra.o"(.data)
-    }
-}
+SCENE(madra)
 #elif OVERLAY == 0x659
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/madra_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/madra_interiors.o"(.data)
-    }
-}
+SCENE(madra_interiors)
 #elif OVERLAY == 0x65a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/madra_catacombs.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/madra_catacombs.o"(.data)
-    }
-}
+SCENE(madra_catacombs)
 #elif OVERLAY == 0x65b
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/madra_drawbridge.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/madra_drawbridge.o"(.data)
-    }
-}
+SCENE(madra_drawbridge)
 #elif OVERLAY == 0x65c
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/osenia_cliffs.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/osenia_cliffs.o"(.data)
-    }
-}
+SCENE(osenia_cliffs)
 #elif OVERLAY == 0x65d
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mikasalla.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mikasalla.o"(.data)
-    }
-}
+SCENE(mikasalla)
 #elif OVERLAY == 0x65e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mikasalla_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mikasalla_interiors.o"(.data)
-    }
-}
+SCENE(mikasalla_interiors)
 #elif OVERLAY == 0x65f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/garoh.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/garoh.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/garoh.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(garoh)
 #elif OVERLAY == 0x660
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/garoh_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/garoh_interiors.o"(.data)
-    }
-}
+SCENE(garoh_interiors)
 #elif OVERLAY == 0x661
 SECTIONS
 {
@@ -340,128 +195,23 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x662
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/yampi_desert_cave.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/yampi_desert_cave.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/yampi_desert_cave.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(yampi_desert_cave)
 #elif OVERLAY == 0x663
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/airs_rock.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/airs_rock.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/airs_rock.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(airs_rock)
 #elif OVERLAY == 0x664
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/airs_rock_inside.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/airs_rock_inside.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/airs_rock_inside.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(airs_rock_inside)
 #elif OVERLAY == 0x665
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/alhafra.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/alhafra.o"(.data)
-    }
-}
+SCENE(alhafra)
 #elif OVERLAY == 0x666
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/alhafra_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/alhafra_interiors.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/alhafra_interiors.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(alhafra_interiors)
 #elif OVERLAY == 0x667
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor.o"(.data)
-    }
-}
+SCENE(alhafra_manor)
 #elif OVERLAY == 0x668
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/eastern_alhafra.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/eastern_alhafra.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/eastern_alhafra.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(eastern_alhafra)
 #elif OVERLAY == 0x669
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/eastern_alhafra_ship.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/eastern_alhafra_ship.o"(.data)
-    }
-}
+SCENE(eastern_alhafra_ship)
 #elif OVERLAY == 0x66a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/alhafran_cave.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/alhafran_cave.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/alhafran_cave.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(alhafran_cave)
 #elif OVERLAY == 0x66b
 SECTIONS
 {
@@ -480,64 +230,15 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x66c
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/gondowan_cliffs_hideout.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/gondowan_cliffs_hideout.o"(.data)
-    }
-}
+SCENE(gondowan_cliffs_hideout)
 #elif OVERLAY == 0x66d
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/naribwe.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/naribwe.o"(.data)
-    }
-}
+SCENE(naribwe)
 #elif OVERLAY == 0x66e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/naribwe_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/naribwe_interiors.o"(.data)
-    }
-}
+SCENE(naribwe_interiors)
 #elif OVERLAY == 0x66f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/kibombo_mountains.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/kibombo_mountains.o"(.data)
-    }
-}
+SCENE(kibombo_mountains)
 #elif OVERLAY == 0x670
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/kibombo.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/kibombo.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/kibombo.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(kibombo)
 #elif OVERLAY == 0x671
 SECTIONS
 {
@@ -556,94 +257,19 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x672
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/gabomba_statue_chamber.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/gabomba_statue_chamber.o"(.data)
-    }
-}
+SCENE(gabomba_statue_chamber)
 #elif OVERLAY == 0x673
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/gabomba_catacombs.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/gabomba_catacombs.o"(.data)
-    }
-}
+SCENE(gabomba_catacombs)
 #elif OVERLAY == 0x674
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/islets.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/islets.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/islets.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(islets)
 #elif OVERLAY == 0x675
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/islet_cave.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/islet_cave.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/islet_cave.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(islet_cave)
 #elif OVERLAY == 0x676
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/yallam.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/yallam.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/yallam.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(yallam)
 #elif OVERLAY == 0x677
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/yallam_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/yallam_interiors.o"(.data)
-    }
-}
+SCENE(yallam_interiors)
 #elif OVERLAY == 0x678
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/taopo_swamp.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/taopo_swamp.o"(.data)
-    }
-}
+SCENE(taopo_swamp)
 #elif OVERLAY == 0x679
 SECTIONS
 {
@@ -661,16 +287,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x67a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/apojii_islands_cave.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/apojii_islands_cave.o"(.data)
-    }
-}
+SCENE(apojii_islands_cave)
 #elif OVERLAY == 0x67b
 SECTIONS
 {
@@ -707,97 +324,21 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x67d
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/izumo_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/izumo_interiors.o"(.data)
-    }
-}
+SCENE(izumo_interiors)
 #elif OVERLAY == 0x67e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/izumo.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/izumo.o"(.data)
-    }
-}
+SCENE(izumo)
 #elif OVERLAY == 0x67f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins.o"(.data)
-    }
-}
+SCENE(izumo_ruins)
 #elif OVERLAY == 0x680
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/gaia_rock.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/gaia_rock.o"(.data)
-    }
-}
+SCENE(gaia_rock)
 #elif OVERLAY == 0x681
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/gaia_rock_inside.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/gaia_rock_inside.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/gaia_rock_inside.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(gaia_rock_inside)
 #elif OVERLAY == 0x682
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/champa.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/champa.o"(.data)
-    }
-}
+SCENE(champa)
 #elif OVERLAY == 0x683
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/champa_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/champa_interiors.o"(.data)
-    }
-}
+SCENE(champa_interiors)
 #elif OVERLAY == 0x684
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/champa_sanctum.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/champa_sanctum.o"(.data)
-    }
-}
+SCENE(champa_sanctum)
 #elif OVERLAY == 0x685
 SECTIONS
 {
@@ -812,94 +353,19 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x686
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/ankohl_ruins.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(ankohl_ruins)
 #elif OVERLAY == 0x687
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/sea_of_time.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/sea_of_time.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/sea_of_time.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(sea_of_time)
 #elif OVERLAY == 0x688
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/lemuria_entrance.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/lemuria_entrance.o"(.data)
-    }
-}
+SCENE(lemuria_entrance)
 #elif OVERLAY == 0x689
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/lemuria_dock.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/lemuria_dock.o"(.data)
-    }
-}
+SCENE(lemuria_dock)
 #elif OVERLAY == 0x68a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/ancient_lemuria.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/ancient_lemuria.o"(.data)
-    }
-}
+SCENE(ancient_lemuria)
 #elif OVERLAY == 0x68b
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/lemuria.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/lemuria.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/lemuria.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(lemuria)
 #elif OVERLAY == 0x68c
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors.o"(.data)
-    }
-}
+SCENE(lemuria_interiors)
 #elif OVERLAY == 0x68d
 SECTIONS
 {
@@ -918,20 +384,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x68e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/lemuria_spring.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(lemuria_spring)
 #elif OVERLAY == 0x68f
 SECTIONS
 {
@@ -948,98 +401,19 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x690
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/settlements.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/settlements.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/settlements.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(settlements)
 #elif OVERLAY == 0x691
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/magma_rock.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/magma_rock.o"(.data)
-    }
-}
+SCENE(magma_rock)
 #elif OVERLAY == 0x692
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/magma_rock_inside.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/magma_rock_inside.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/magma_rock_inside.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(magma_rock_inside)
 #elif OVERLAY == 0x693
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/atteka_inlet.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/atteka_inlet.o"(.data)
-    }
-}
+SCENE(atteka_inlet)
 #elif OVERLAY == 0x694
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/contigo.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/contigo.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/contigo.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(contigo)
 #elif OVERLAY == 0x695
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/shaman_village_cave.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/shaman_village_cave.o"(.data)
-    }
-}
+SCENE(shaman_village_cave)
 #elif OVERLAY == 0x696
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/shaman_village.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/shaman_village.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/shaman_village.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(shaman_village)
 #elif OVERLAY == 0x697
 SECTIONS
 {
@@ -1341,76 +715,15 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6a8
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/prox.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/prox.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/prox.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(prox)
 #elif OVERLAY == 0x6a9
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/caverns.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/caverns.o"(.data)
-    }
-}
+SCENE(caverns)
 #elif OVERLAY == 0x6aa
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_entrance.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_entrance)
 #elif OVERLAY == 0x6ab
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_star_room.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_star_room)
 #elif OVERLAY == 0x6ac
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_m.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_m.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_room_m.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_room_m)
 #elif OVERLAY == 0x6ad
 SECTIONS
 {
@@ -1431,50 +744,11 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6ae
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_aerie.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_aerie.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_aerie.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_aerie)
 #elif OVERLAY == 0x6af
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/treasure_isle.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/treasure_isle.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/treasure_isle.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(treasure_isle)
 #elif OVERLAY == 0x6b0
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/anemos_inner_sanctum.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(anemos_inner_sanctum)
 #elif OVERLAY == 0x6b1
 SECTIONS
 {
@@ -1494,20 +768,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6b2
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mercury_lighthouse.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mercury_lighthouse.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mercury_lighthouse.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mercury_lighthouse)
 #elif OVERLAY == 0x6b3
 SECTIONS
 {
@@ -1525,16 +786,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6b4
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/mt_aleph_summit.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/mt_aleph_summit.o"(.data)
-    }
-}
+SCENE(mt_aleph_summit)
 #elif OVERLAY == 0x6b5
 SECTIONS
 {

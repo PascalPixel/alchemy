@@ -233,7 +233,7 @@ $(BUILD)/ld/overlay_%.stamp: games/$(GAME)/ld_script.ld $(OVERLAY_LD) $(LD_HEADE
 .PHONY: FORCE
 FORCE:
 # The objects each script names, first mention first, as make variables.
-object_list = sed -n 's|^ *"\*/\(games/[^"]*\)\.o"(.*|\1|p' $(2) | \
+object_list = grep -o '\*/games/[^"( ]*\.o' $(2) | sed 's|^\*/||; s|\.o$$||' | \
               awk -v name=$(1) '!seen[$$0]++ { list = list " \\\n\t$$(BUILD)/obj/" $$0 ".o" } END { print name " :=" list }'
 $(BUILD)/objects.mk: $(LD_SCRIPT) $(OVERLAY_IDS:%=$(BUILD)/ld/overlay_%.ld)
 	@{ echo '# Written by the Makefile from the linker script: do not edit.'; \

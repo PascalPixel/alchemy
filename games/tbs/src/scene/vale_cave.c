@@ -753,12 +753,11 @@ const struct Trigger *ValeCave_GetTriggers(void) {
 /// FLAG_SHOW_AREA_NAME, so the area name is not shown again. The two rooms of
 /// Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
-  s32 *request = &gFieldWork->transition;
 
-  *request =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveMouth) {
-    *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     wait(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);

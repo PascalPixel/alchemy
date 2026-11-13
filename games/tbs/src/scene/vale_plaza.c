@@ -1211,8 +1211,6 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_FaceDirection(ACTOR_STORM_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTHEAST, 10);
-    // Through event.h: called directly, the speeds' copies lengthen
-    // SPEAKER_WINDOW_ABOVE' life and swap r5 and r6 below.
     FieldCamera_SetSpeed(1.2);
     FieldCamera_MoveTo(215, CAMERA_KEEP, 758, 1);
     FieldCamera_WaitForMove();

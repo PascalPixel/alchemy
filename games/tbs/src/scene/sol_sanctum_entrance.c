@@ -80,6 +80,7 @@
 #include "macros.h"
 #include "sounds.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -1199,14 +1200,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
   // Kraden: "Perhaps Psynergy is the key..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
-  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_KRADEN);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_KRADEN);
   GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
   Event_End();
 }

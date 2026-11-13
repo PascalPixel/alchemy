@@ -212,9 +212,8 @@ enum {
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
 static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
-  s16 *counter = &actor->timer;
 
-  switch (*counter) {
+  switch (actor->timer) {
   case 6:
     actor->scaleX -= Q16_ONE / 8;
     actor->scaleY += Q16_ONE / 16;
@@ -230,7 +229,7 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
   case 0:
     actor->scaleX += Q16_ONE / 32;
     actor->scaleY -= Q16_ONE / 64;
-    *counter = Math_RemainderUnsigned(Import_RandomNext(), 80) + 80;
+    actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 80) + 80;
     break;
   }
   {
@@ -1950,7 +1949,7 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
   saturos = Actor_Get(ACTOR_SATUROS);
   menardi = Actor_Get(ACTOR_MENARDI);
   // BUG: Saturos's test is overwritten by Menardi's, so only Menardi needs to
-  // be parked; the ROM still loads and compares Saturos's targets.
+  // be parked.
 #ifdef BUGFIX
   pairParked = Actor_IsParked(saturos) && Actor_IsParked(menardi);
 #else

@@ -82,6 +82,7 @@
 #include "heap.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);
@@ -2099,14 +2100,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_GARET, 1);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
   Party_RemoveMemberRestored(JENNA);
   // Give out the bags and make the pedestal crossings available.

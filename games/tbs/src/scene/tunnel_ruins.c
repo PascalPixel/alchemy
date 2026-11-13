@@ -1016,8 +1016,7 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose actor its timer holds.
 static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
-  s16 *supportingActorId = &supportedActor->timer;
-  struct Actor *supportingActor = Actor_Get(*supportingActorId);
+  struct Actor *supportingActor = Actor_Get(supportedActor->timer);
 
   supportedActor->y.fixed = supportingActor->y.fixed + px(16);
   RETURN_UNREAD(0);

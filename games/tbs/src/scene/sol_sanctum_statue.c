@@ -92,6 +92,7 @@
 #include "heap.h"
 #include "sound_driver_symbols.h"
 #include "ability_ids.h"
+#include "shared/walk_into_leader.h"
 
 /// Both beams have opened the hole in the floor before the centre statue.
 /// ★ Named from what the player sees: the statue holding a bowl at the head of
@@ -473,14 +474,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // Rejoin the companions to the leader and restore normal field control.
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {

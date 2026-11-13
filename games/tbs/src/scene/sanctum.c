@@ -1641,8 +1641,7 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *actor) {
 /// Advances an effect around its watched actor on an elliptical path.
 static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
-  u16 *angle = &effect->timer;
-  u16 orbitAngle = *angle;
+  u16 orbitAngle = effect->timer;
   s32 x;
   s32 z;
   s32 currentX;
@@ -1656,7 +1655,7 @@ static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
   effect->targetZ = z;
   effect->targetX = currentX;
 
-  *angle = (*angle + effect->userValue);
+  effect->timer += effect->userValue;
 }
 
 /// Creates an orbiting effect with the requested angular step.

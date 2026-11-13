@@ -87,6 +87,7 @@
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
 #include "speaker.h"
+#include "shared/walk_into_leader.h"
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.
@@ -1713,14 +1714,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   palette = gPaletteFadeWork;
   palette->target[0] = 0;
   palette->target[1] = 0;

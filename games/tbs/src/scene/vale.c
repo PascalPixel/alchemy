@@ -132,6 +132,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "heap.h"
+#include "shared/walk_into_leader.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
 // (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
@@ -705,9 +706,8 @@ static void Vale_EnterIsaacsHouse(void) {
       // "He promised not to return until he fulfills his mission. My..."
       Event_ShowMessage(ACTOR_DORA, 0);
     } else {
-      u16 *message = &gFieldWork->message;
 
-      *message = *message + 2;
+      gFieldWork->message += 2;
       Event_Wait(40);
       Event_ShowMessage(ACTOR_DORA, 0);
     }
@@ -788,13 +788,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   }
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(2);
-  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Actor_SetDestination(ACTOR_JENNA, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_JENNA);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 110, 303);
   Event_End();
 }

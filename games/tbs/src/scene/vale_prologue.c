@@ -93,6 +93,7 @@
 #include "sound_driver_symbols.h"
 #include "io_reg.h"
 #include "field_psynergy_work.h"
+#include "shared/walk_into_leader.h"
 
 static void ValePrologue_DoraSendsIsaacToThePlaza(void);
 static void ValePrologue_ApplyFirstRockCollision(void);
@@ -2124,14 +2125,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET_CHILD, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-  Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
 }
 
 /// Kyle tells Isaac and Garet to find help for Felix. In Vale on the stormy

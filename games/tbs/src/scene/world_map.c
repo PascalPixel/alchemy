@@ -143,6 +143,7 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
 /// ★ Named from the game: "being smashed by falling rocks here"
@@ -2278,14 +2279,7 @@ static void WorldMap_UseBlackOrb(void) {
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_NOD);
-  Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Actor_SetDestination(gWorldMapIodem, actor->x.part.pixel,
-                         actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(gWorldMapIodem);
-  Actor_SetPosition(gWorldMapIodem, 0, 0);
+  Scene_WalkIntoLeader(gWorldMapIodem);
   WorldMap_Unfreeze();
   WorldMap_StartZoom(Q16_ONE, 6);
   Event_Wait(20);

@@ -570,9 +570,8 @@ static void Tolbi_EnterSpring(void) {
 
 /// Leaves by the exit numbered as the cell behavior the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
-  s16 *trigger = &gFieldWork->stepTrigger;
 
-  Import_EventSetExitRequest(*trigger);
+  Import_EventSetExitRequest(gFieldWork->stepTrigger);
 }
 
 /// Two soldiers searching for the missing Babi stop the party and show his

@@ -592,10 +592,9 @@ static s32 ShipRooms_LookAround(struct Actor *actor) {
 /// Counts the frames of a pause in riseCounter and moves the pacing
 /// actor to its next step after 80 frames.
 static void ShipRooms_WaitThenAdvance(struct Actor *actor) {
-  u8 *counter = &actor->riseCounter;
-  s32 frame = *counter + 1;
+  s32 frame = actor->riseCounter + 1;
 
-  *counter = frame;
+  actor->riseCounter = frame;
   if ((u8)frame > 80) {
     actor->userValue += 1;
   }

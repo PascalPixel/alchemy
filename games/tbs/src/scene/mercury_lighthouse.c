@@ -1523,10 +1523,7 @@ static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
 
 /// The door's light brightens to white as it opens.
 static void MercuryLighthouse_FadePaletteToWhite(void) {
-  // Palette RAM is hardware (its volatile is source, not a device): volatile
-  // makes each read of palette RAM a load of its own: the native reads every
-  // color with three ldrh, one per component; without it one load is shifted
-  // for all three and the function is 104 bytes for 106 in tbs-en.
+  // Palette RAM is hardware, read through a volatile pointer.
   volatile u16 *palette;
   u32 colorIndex;
   u32 whiteColors;
@@ -1735,11 +1732,7 @@ static void MercuryLighthouse_CycleWaterfallPalette(void) {
 
 /// The waterfall's colors fade to black as it stops.
 static void MercuryLighthouse_FadePaletteToBlack(void) {
-  // Palette RAM is hardware (its volatile is source, not a device): volatile
-  // makes each read of palette RAM a load of its own: the native reads every
-  // color with three ldrh, one per component, and again after the store;
-  // without it one load is shifted for all three and the function is 98 bytes
-  // for 100 in tbs-en.
+  // Palette RAM is hardware, read through a volatile pointer.
   volatile u16 *palette;
   u32 colorIndex;
   s32 blackColors;

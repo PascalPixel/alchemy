@@ -24,21 +24,32 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "actor.h"
 #include "event_inline.h"
 
-extern struct ActorPlacement gData_02000318[];
-extern struct ActorPlacement gData_02000270[];
+/// The hideout's placed actors: two not yet understood, then the four
+/// Kibombo warriors, named for what each says when spoken to.
+enum GondowanCliffsHideoutActorId {
+  ACTOR_WARRIOR_FROM_KIBOMBO = ACTOR_FIRST_PLACED + 2,
+  ACTOR_WARRIOR_BLAMING_THE_COLLISION,
+  ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+  ACTOR_WARRIOR_AWAITING_FRIENDS
+};
+
+extern struct ActorPlacement gPlacementsWithoutWarriors[];
+extern struct ActorPlacement gPlacementsWithWarriors[];
 void Event_Start(void);
 void Event_End(void);
 void Func_0200020c(void);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(2219))
-    return gData_02000318;
-  return gData_02000270;
+    return gPlacementsWithoutWarriors;
+  return gPlacementsWithWarriors;
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_02000074(void) {
+/// Felix walks in on the four warriors: they jump, turn to him and talk over
+/// one another, once, until the scene's flag 2447 is set.
+void GondowanCliffsHideout_WarriorsAreFound(void) {
   if (!GameFlag_Test(2219)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -46,10 +57,10 @@ void Func_02000074(void) {
     Camera_SetSpeedParameters(0x10000, 0x2000);
     Camera_FollowActor(8, 1);
     Func_0200020c();
-    Actor_SetAngleToward(10, 4, 2);
+    Actor_SetAngleToward(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
     {
       s32 half = 129;
-      s32 id = 10;
+      s32 id = ACTOR_WARRIOR_FROM_KIBOMBO;
 
       /* FAKEMATCH(barrier): an empty asm on half and id, so the actor is set
        * between the halves of the value; without it, 2 of 84 instructions
@@ -57,24 +68,31 @@ void Func_02000074(void) {
       asm("" : "+l"(half), "+l"(id));
       FieldEffect_SetAttached(id, half << 1);
     }
-    Actor_Jump(10, 4, 15);
-    Event_ShowMessageAndWait(10, 0);
-    Actor_SetAngleToward(11, 4, 0);
-    Actor_SetAngleToward(12, 4, 0);
-    Actor_SetAngleToward(13, 4, 0);
-    Actor_Jump(11, 2, 15);
-    Event_ShowMessageAndWait(11, 0);
-    Actor_SetAngleToward(12, 11, 0);
-    Motion_SetModeAndWaitAnimation(12, 4);
-    Event_ShowMessageAndWait(12, 0);
-    Actor_SetAngleToward(12, 4, 0);
-    Event_ShowMessageAndWait(12, 0);
-    Motion_SetModeAndWaitAnimation(13, 3);
-    Event_ShowMessageAndWait(13, 0);
+    Actor_Jump(ACTOR_WARRIOR_FROM_KIBOMBO, 4, 15);
+    // "We've been found!"
+    Event_ShowMessageAndWait(ACTOR_WARRIOR_FROM_KIBOMBO, 0);
+    Actor_SetAngleToward(ACTOR_WARRIOR_BLAMING_THE_COLLISION, ACTOR_FELIX, 0);
+    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
+    Actor_SetAngleToward(ACTOR_WARRIOR_AWAITING_FRIENDS, ACTOR_FELIX, 0);
+    Actor_Jump(ACTOR_WARRIOR_BLAMING_THE_COLLISION, 2, 15);
+    // "You wanna fight, punk?"
+    Event_ShowMessageAndWait(ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
+    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+                         ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
+    Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 4);
+    // "No one said anything about fighting yet!"
+    Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
+    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
+    // "We haven't done anything to you!"
+    Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
+    Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_AWAITING_FRIENDS, 3);
+    // "And if you think we did, then prove it!"
+    Event_ShowMessageAndWait(ACTOR_WARRIOR_AWAITING_FRIENDS, 0);
     Event_End();
   }
   GameFlag_SetBit(2447);
 }
+
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
@@ -108,7 +126,7 @@ u32 gSceneExits[] = {
 };
 
 // clang-format off
-struct ActorPlacement gData_02000270[] = {
+struct ActorPlacement gPlacementsWithWarriors[] = {
     {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {83, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_WEST, 0, 2},
@@ -120,7 +138,7 @@ struct ActorPlacement gData_02000270[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02000318[] = {
+struct ActorPlacement gPlacementsWithoutWarriors[] = {
     {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
@@ -128,17 +146,17 @@ struct ActorPlacement gData_02000318[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {2, 10, 0x98f, EVENT(Func_02000074)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself)},
-    {0, 11, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_STEP, 10, 2447, EVENT(GondowanCliffsHideout_WarriorsAreFound)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_BLAMING_THE_COLLISION, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWarriorsBlameContinentsCollision)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsClaimCamping)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsFriendsComing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsClaimCamping)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsFriendsComing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_BLAMING_THE_COLLISION, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWarriorsWonderAboutPrisoners)},
     {TRIGGERS_END},
 };

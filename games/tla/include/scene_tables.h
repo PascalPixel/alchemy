@@ -118,8 +118,28 @@ struct TriggerView {
 
 #include "ability_ids.h"
 
-/// A trigger's kind for Psynergy, in control bits 3..0.
-#define TRIGGER_PSYNERGY 5
+/// Actor ids: 0 to 7 the party's characters, the placed actors from 8. A
+/// party member's actor takes its character's number as its actor id, as in
+/// The Broken Seal.
+enum ActorId {
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
+  ACTOR_FELIX = 4,
+  ACTOR_FIRST_PLACED = 8
+};
+
+/// Trigger.kind's low four bits: what the trigger answers.
+enum TriggerKind {
+  TRIGGER_TALK = 0, ///< the A button on an actor; the subject is its id
+  /// Stepping onto a cell whose cell behavior is the subject, when no
+  /// step trigger answers it; value is the exit kind.
+  TRIGGER_EXIT = 1,
+  TRIGGER_STEP = 2,    ///< stepping onto or pushing against a cell behavior
+  TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
+  TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
+  TRIGGER_PSYNERGY = 5,
+  TRIGGER_RAISED = 6, ///< raised by code
+  TRIGGER_TALK_HALTED = 7 ///< talking to an actor Halt has stopped
+};
 
 /// When a Psynergy trigger runs around its field Psynergy, control bits 30..28.
 enum PsynergyPhase {

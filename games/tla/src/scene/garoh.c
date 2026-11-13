@@ -1282,7 +1282,7 @@ loop2:
 
 void Func_020022f4(void) {
   s32 v5;
-  struct Actor *t2;
+  struct Actor *object;
   s32 t3;
   s32 b1;
 
@@ -1331,13 +1331,13 @@ void Func_020022f4(void) {
   Actor_Get(8)->actionFlags &= 254;
   Actor_WalkToAndWait(8, 296, 712);
   FieldEvent_Wait(1);
-  t2 = Actor_Get(8);
+  object = Actor_Get(8);
   /* FAKEMATCH(temporary): a local holding the constant 1, so the value is ORed
    * into the register that holds it; as one |= 1, 4 of 362 instructions differ
    * in tla-en. */
   b1 = 1;
-  b1 |= t2->actionFlags;
-  t2->actionFlags = b1;
+  b1 |= object->actionFlags;
+  object->actionFlags = b1;
   FieldEvent_Wait(15);
   Actor_FaceDirection(8, FACING_WEST + FACING_STEP, 0);
   FieldEvent_Wait(25);
@@ -2167,17 +2167,17 @@ void Func_02003878(void) {
   s32 v6;
   s32 v7;
   s32 v8;
-  s32 t2;
-  s32 t15;
-  s32 t16;
+  struct Actor *t2;
+  struct Actor *t15;
+  struct Actor *t16;
   s32 t17;
-  s32 t18;
-  s32 t22;
-  s32 t23;
-  s32 t27;
-  s32 t28;
-  s32 t29;
-  s32 t31;
+  struct Actor *t18;
+  struct Actor *t22;
+  struct Actor *t23;
+  struct Actor *t27;
+  struct Actor *t28;
+  struct Actor *t29;
+  struct Actor *t31;
   s32 b1;
   s32 p1;
   s32 p2;
@@ -2204,7 +2204,7 @@ void Func_02003878(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetPosition(11, 0x1480000, 0x880000);
-  t2 = (s32)Actor_Get(11);
+  t2 = Actor_Get(11);
   Actor_SetSpriteFlags(t2, 0);
   Func_02001418(11);
   FieldEvent_Wait(30);
@@ -2686,12 +2686,12 @@ L_0200c694:;
   FieldEvent_Wait(10);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(5);
-  t15 = (s32)Actor_Get(12);
+  t15 = Actor_Get(12);
   v5 = t15;
   v8 = *(s32 *)(v5 + 80);
   *(s32 *)(v8 + 12) = 0x6666;
   FieldActor_SetSpritePriority(12, 1);
-  t16 = (s32)Actor_Get(12);
+  t16 = Actor_Get(12);
   Actor_SetSpriteFlags(t16, 0);
   Actor_SetPosition(12, 0x1480000, 0xa00000);
   FieldActor_Jump(12, 9, 0);
@@ -2719,7 +2719,7 @@ L_0200caf6:;
 
     Actor_WalkByAndWait(12, a1, a2);
   }
-  t18 = (s32)Actor_Get(12);
+  t18 = Actor_Get(12);
   Actor_SetSpriteFlags(t18, 1);
   FieldEvent_Wait(5);
   Actor_WalkByAndWait(12, 0, 8);
@@ -2779,18 +2779,18 @@ L_0200ccdc:;
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
   Actor_SetSpeed(10, 0x26666, 0x13333);
-  t22 = (s32)Actor_Get(10);
-  *(u8 *)((t22 + 90)) = (254 & *(u8 *)((t22 + 90)));
+  t22 = Actor_Get(10);
+  *(u8 *)(((u8 *)t22 + 90)) = (254 & *(u8 *)(((u8 *)t22 + 90)));
   Actor_FaceDirection(10, 0x5000, 0);
   Actor_WalkByAndWait(10, 0, 8);
   Actor_WalkByAndWait(10, 0, -8);
   FieldEvent_Wait(1);
-  t23 = (s32)Actor_Get(10);
+  t23 = Actor_Get(10);
   /* FAKEMATCH(temporary): the value is ORed into the register that holds the
    * constant; as one |=, 4 of 2484 instructions differ in tla-en. */
   b1 = 1;
-  b1 |= *(u8 *)((t23 + 90));
-  *(u8 *)((t23 + 90)) = b1;
+  b1 |= *(u8 *)(((u8 *)t23 + 90));
+  *(u8 *)(((u8 *)t23 + 90)) = b1;
   FieldEvent_Wait(1);
   Actor_SetSpeed(10, 0xb333, 0x5999);
   Actor_FaceDirection(10, 0x5000, 0);
@@ -2879,28 +2879,28 @@ L_0200cfbc:;
   Actor_SetAnimation(9, 2);
   p1 = (s32)&gMainRoutineWork;
   v5 = (p1 + 0x214);
-  t27 = (s32)Actor_Get(*(s32 *)(v5));
+  t27 = Actor_Get(*(s32 *)(v5));
   if (t27 == 0)
     goto L_0200d016;
-  Actor_SetDestination(9, *(s16 *)(t27 + 10), *(s16 *)(t27 + 18));
+  Actor_SetDestination(9, *(s16 *)((u8 *)t27 + 10), *(s16 *)((u8 *)t27 + 18));
 L_0200d016:;
   FieldActor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
-  t28 = (s32)Actor_Get(*(s32 *)(v5));
+  t28 = Actor_Get(*(s32 *)(v5));
   if (t28 == 0)
     goto L_0200d054;
-  Actor_SetDestination(5, *(s16 *)(t28 + 10), *(s16 *)(t28 + 18));
+  Actor_SetDestination(5, *(s16 *)((u8 *)t28 + 10), *(s16 *)((u8 *)t28 + 18));
 L_0200d054:;
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
-  t29 = (s32)Actor_Get(*(s32 *)(v5));
+  t29 = Actor_Get(*(s32 *)(v5));
   if (t29 == 0)
     goto L_0200d092;
-  Actor_SetDestination(6, *(s16 *)(t29 + 10), *(s16 *)(t29 + 18));
+  Actor_SetDestination(6, *(s16 *)((u8 *)t29 + 10), *(s16 *)((u8 *)t29 + 18));
 L_0200d092:;
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
@@ -2908,12 +2908,12 @@ L_0200d092:;
     goto L_0200d0fa;
   Actor_SetSpeed(7, 0x13333, 0x9999);
   Actor_SetAnimation(7, 2);
-  t31 = (s32)Actor_Get(*(s32 *)(v5));
+  t31 = Actor_Get(*(s32 *)(v5));
   if (t31 == 0)
     goto L_0200d0ea;
   goto L_0200d0dc;
 L_0200d0dc:;
-  Actor_SetDestination(7, *(s16 *)(t31 + 10), *(s16 *)(t31 + 18));
+  Actor_SetDestination(7, *(s16 *)((u8 *)t31 + 10), *(s16 *)((u8 *)t31 + 18));
 L_0200d0ea:;
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);

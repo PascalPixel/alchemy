@@ -345,7 +345,8 @@ void Rope_Coil();
 /// in another way.
 /// "The door doesn't want to open."
 void Lemuria_KnockAtBrokenDoor(void) {
-  s32 t12, v5;
+  s32 v5;
+  struct Actor *object;
 
   if (Actor_Get(gMainRoutineWork.currentOwner)->y > PIXELS(96) ||
       Event_GetFlag(0x969)) {
@@ -362,8 +363,8 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
   Actor_SetPosition(12, PIXELS(872), PIXELS(880));
-  t12 = (s32)Actor_Get(12);
-  Actor_SetFirstSpriteAnimation(t12, 43);
+  object = Actor_Get(12);
+  Actor_SetFirstSpriteAnimation(object, 43);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(12, 0, 10);

@@ -145,16 +145,20 @@ void FieldCamera_WaitForArrival();
 /// cannon for its ship.
 /// "Is everyone all right?"
 void Loho_FireCannon(void) {
-  s32 v_r1, v_r2, v_r0, t0;
+  s32 v_r1, v_r2, v_r0;
+  struct Actor *t147;
+  struct Actor *t0;
+  struct Actor *t226;
+  struct Actor *t233;
   struct LohoSpark *p;
   struct LohoSpark *table;
   s32 tiles, entry, i, value, zero;
   s32 t38, t47, t48, t49, t50, t51;
-  s32 t147, t189;
-  s32 t190, t193, t194, t226, t233, t234;
+  s32 t189;
+  s32 t190, t193, t194;
   u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
-  t0 = ((s32)Actor_GetById(4));
+  t0 = Actor_GetById(4);
   Event_Start();
   Event_ResolvePendingActions(0);
   p = (struct LohoSpark *)t0;
@@ -385,8 +389,8 @@ nextSpark:
   FieldCamera_SetSpeed(0x8000, 0x1000);
   FieldCamera_MoveTo(0x21e0000, -1, 0x1000000, 1);
   zero = 0;
-  t147 = ((s32)Actor_GetById(16));
-  FIELD_AT(t147, u8, 85) = zero;
+  t147 = Actor_GetById(16);
+  t147->motionFlags = zero;
   Actor_SetSpeed(16, 0x18000, 0xc000);
   Actor_SetScript(16, (s32)gLoho_FirstMinerGoesToWall);
   Actor_SetSpeed(18, 0x8000, 0x4000);
@@ -475,16 +479,16 @@ crewLeaves:
   Actor_SetSpeed(18, 0x4ccc, 0x2666);
   Event_Wait(40);
   Actor_SetSpeed(20, 0x1999, 0xccc);
-  t226 = ((s32)Actor_GetById(20));
-  FIELD_AT(t226, u8, 85) = 0;
+  t226 = Actor_GetById(20);
+  t226->motionFlags = 0;
   Actor_SetScript(20, (s32)gLoho_ForemanComes);
   Actor_RefreshSelectorById(20);
   Actor_SetSpeed(20, 0x4ccc, 0x2666);
   FieldCamera_SetSpeed(0x4ccc, 0x999);
   FieldCamera_MoveTo(0x1cc0000, -1, 0x15e0000, 1);
   Event_Wait(30);
-  t233 = ((s32)Actor_GetById(16));
-  FIELD_AT(t233, u8, 90) &= 254;
+  t233 = Actor_GetById(16);
+  t233->actionFlags &= 254;
   Actor_WalkBy(18, -0x28, -0x14);
   Actor_WalkBy(17, -0x28, -0x14);
   Actor_WalkBy(16, -0x28, -0x14);

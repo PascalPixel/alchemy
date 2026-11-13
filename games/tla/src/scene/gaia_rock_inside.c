@@ -389,10 +389,11 @@ s32 Func_020005dc(void) {
 }
 
 s32 Func_020005f8(void) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = Actor_Get(9);
-  FIELD_AT(t0->sprite, u16, 18) = (FIELD_AT(t0->sprite, u16, 18) + 0x300);
+  object = Actor_Get(9);
+  FIELD_AT(object->sprite, u16, 18) =
+      (FIELD_AT(object->sprite, u16, 18) + 0x300);
   return 0;
 }
 
@@ -463,12 +464,12 @@ s32 Func_020006f8(void) {
 }
 
 s32 Func_02000718(void) {
-  s32 t0;
+  struct Actor *object;
 
-  t0 = ((s32)Actor_Get(9));
-  Actor_StartScript(t0, (s32)gData_020055c0);
-  FIELD_AT(t0, s32, 8) = 0x1d80000;
-  Actor_SetAnimationSpeed(t0, 0x10);
+  object = Actor_Get(9);
+  Actor_StartScript(object, (s32)gData_020055c0);
+  object->x = 0x1d80000;
+  Actor_SetAnimationSpeed(object, 0x10);
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }
@@ -949,7 +950,7 @@ void GaiaRockInside_TalkToSusa(void) {
        ->v)
 
 void GaiaRockInside_ReadSusasMind(void) {
-  struct Actor *t5;
+  struct Actor *object;
   s32 t2;
 
   Event_Start();
@@ -959,8 +960,8 @@ void GaiaRockInside_ReadSusasMind(void) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
     Event_ShowMessage(0xa, 0);
   } else {
-    t5 = Actor_Get(9);
-    if (t5->script == (s32)gData_02005610) {
+    object = Actor_Get(9);
+    if (object->script == (s32)gData_02005610) {
       FieldActor_RefreshSelectorById(9);
     }
     Func_02000f00();
@@ -1450,13 +1451,13 @@ DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 2)
 DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
 
 void Func_02001fa0(void) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = Actor_Get(66);
-  t0->x = 0x2280000;
-  t0->z = 0x1280000;
-  t0->y = -1966080;
-  t0->terrainHeight = -2097152;
+  object = Actor_Get(66);
+  object->x = 0x2280000;
+  object->z = 0x1280000;
+  object->y = -1966080;
+  object->terrainHeight = -2097152;
   Event_ClearFlag(0x142);
   Scene_TalkToActor(0x1042);
 }
@@ -1486,23 +1487,23 @@ void Actor_MoveToObject(s32 id, s32 target);
 void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   s32 t1, t2, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r5, v_r6,
       v_r7, v_r8;
-  struct Actor *v_r10;
+  struct Actor *object;
 
   t1 = ((s32)Actor_Get(8));
   v_r7 = t1;
   t2 = ((s32)Actor_Get(9));
   v_r8 = t2;
-  v_r10 = Actor_Get(13);
+  object = Actor_Get(13);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
   Event_PlaySound(193);
-  Actor_SetSpritePriorityDirect(v_r10, 1);
+  Actor_SetSpritePriorityDirect(object, 1);
   v_r5 = (s32)&gMainRoutineWork;
   v_r5 = (v_r5 + 0x214);
   Actor_MoveToObject(13, FIELD_AT(v_r5, s32, 0));
   Actor_SetDestination(13, 496, 712);
-  v_r10->velocityY = 0x60000;
+  object->velocityY = 0x60000;
   FieldActor_WaitForMoveById(13);
   FieldEvent_Wait(45);
   Actor_FaceActor(8, FIELD_AT(v_r5, s32, 0), 0);
@@ -1579,7 +1580,7 @@ L_0200a1f8:
   if (t50 != 0) {
     Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
   }
-  v_r10->velocityY = 0x60000;
+  object->velocityY = 0x60000;
   FieldActor_WaitForMoveById(13);
   Actor_SetPosition(13, 0, 0);
   Event_End();

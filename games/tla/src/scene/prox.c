@@ -1152,23 +1152,21 @@ void Func_02001b7c(void) {
 }
 
 void Func_02001c24(s32 a0) {
-  s32 t0;
+  struct Actor *object;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  object = Actor_Get(gMainRoutineWork.currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (a0 != 0) {
     Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 0);
-    FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + -65536),
-                                         FIELD_AT(t0, s32, 12),
-                                         (FIELD_AT(t0, s32, 16) + -393216));
+    FieldActor_SetPositionAndResetMotion(object, (object->x + -65536),
+                                         object->y, (object->z + -393216));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x17);
   } else {
-    FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + 0x10000),
-                                         FIELD_AT(t0, s32, 12),
-                                         (FIELD_AT(t0, s32, 16) + -393216));
+    FieldActor_SetPositionAndResetMotion(object, (object->x + 0x10000),
+                                         object->y, (object->z + -393216));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x18);
@@ -1562,7 +1560,7 @@ void Func_020027e4(void) {
 }
 
 void Prox_InitializeRoom3(void) {
-  s32 t9;
+  struct Actor *object;
 
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(19)), 0xf);
@@ -1574,8 +1572,8 @@ void Prox_InitializeRoom3(void) {
       MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
     }
     if (Event_GetFlag(0x9c1)) {
-      t9 = ((s32)Actor_Get(10));
-      FIELD_AT(t9, u16, 6) = 0xb000;
+      object = Actor_Get(10);
+      object->facing = 0xb000;
       System_Wait(1);
     }
   }
@@ -1597,11 +1595,12 @@ void Prox_InitializeRoom3(void) {
 }
 
 void Func_020029a4(void) {
-  s32 t0;
+  struct Actor *object;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  object = Actor_Get(gMainRoutineWork.currentOwner);
   FieldActor_SetSpritePriority(
-      16, ((u32)(FIELD_AT(FIELD_AT(t0, s32, 80), u8, 9) << 28) >> 30));
+      16,
+      ((u32)(FIELD_AT(FIELD_AT((u8 *)object, s32, 80), u8, 9) << 28) >> 30));
 }
 
 void Func_020029c8(void) {

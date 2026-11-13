@@ -673,7 +673,8 @@ void Func_02001034(void) {
        ->v)
 
 void Func_020010ac(void) {
-  s32 t12, cue;
+  s32 cue;
+  struct Actor *object;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -687,9 +688,10 @@ void Func_020010ac(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);
-  t12 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
-  if (t12 != 0) {
-    Actor_SetDestinationById(8, FIELD_AT(t12, s16, 10), FIELD_AT(t12, s16, 18));
+  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  if (object != 0) {
+    Actor_SetDestinationById(8, FIELD_AT((u8 *)object, s16, 10),
+                             FIELD_AT((u8 *)object, s16, 18));
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);

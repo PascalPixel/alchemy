@@ -195,31 +195,29 @@ s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
 void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
-  s32 t1, t2, t3, v10, v6, v7, v8, v9;
+  s32 t3, v10, v6, v7, v8, v9;
   struct Actor *v5;
   u8 *v11;
 
   v5 = object;
   v9 = (v5->x >> 20);
   v10 = (v5->z >> 20);
-  t1 = MapCell_Get(0, v9, v10);
-  v8 = t1;
-  t2 = MapCell_Get(2, v9, v10);
-  v6 = t2;
+  v8 = MapCell_Get(0, v9, v10);
+  v6 = MapCell_Get(2, v9, v10);
   v11 = &v5->terrainId;
   t3 = Map_GetTerrainHeight(v5->terrainId, v5->x, v5->z);
   v7 = (t3 >> 19);
   if (Event_GetFlag(v5->timer)) {
-    v6 = (v6 & -0xff01);
-    v8 = (v8 & -129);
+    v6 &= -0xff01;
+    v8 &= -129;
     if ((v5->terrainHeight >> 19) == v7)
       goto L_02008282;
     v7 = (v7 + -4);
     goto L_02008282;
   }
-  v6 = (v6 & 255);
-  v6 = (v6 | 0xff00);
-  v8 = (v8 | 128);
+  v6 &= 255;
+  v6 |= 0xff00;
+  v8 |= 128;
   v7 = (v7 + 4);
   Scene_SetActorSpritePriority(v5, 2);
 L_02008282:

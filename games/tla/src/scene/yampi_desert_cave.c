@@ -835,7 +835,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
 /// Valukar, the guardian, speaks, and its battle begins; afterwards the party
 /// leaves for overlay 664's fourth room.
 void YampiDesertCave_MeetGuardianOfFire(void) {
-  s32 leader;
+  struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -849,10 +849,10 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  leader = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214)));
+  leader = Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214));
   if (leader != 0)
-    Actor_SetDestination(9, FIELD_AT(leader, s16, 10),
-                         FIELD_AT(leader, s16, 18));
+    Actor_SetDestination(9, FIELD_AT((u8 *)leader, s16, 10),
+                         FIELD_AT((u8 *)leader, s16, 18));
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
    * call's first argument ahead of the scene store's address, where without it

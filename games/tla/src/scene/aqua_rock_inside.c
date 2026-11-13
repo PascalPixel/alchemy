@@ -1265,7 +1265,7 @@ column:
 void Actor_MoveToObject();
 
 void AquaRockInside_ReadParchTablet(void) {
-  s32 t59;
+  struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1329,9 +1329,10 @@ void AquaRockInside_ReadParchTablet(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(7, 0x13333, 0x9999);
   Actor_SetAnimation(7, 2);
-  t59 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t59 != 0) {
-    Actor_SetDestination(7, FIELD_AT(t59, s16, 10), FIELD_AT(t59, s16, 18));
+  object = Actor_Get(gMainRoutineWork.currentOwner);
+  if (object != 0) {
+    Actor_SetDestination(7, FIELD_AT((u8 *)object, s16, 10),
+                         FIELD_AT((u8 *)object, s16, 18));
   }
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);

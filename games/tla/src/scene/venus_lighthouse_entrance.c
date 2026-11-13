@@ -1029,7 +1029,7 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
 
 /// "Not that way, Jenna! The meeting spot is west of here."
 void VenusLighthouseEntrance_PointToMeetingSpot(void) {
-  s32 t7;
+  struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1038,9 +1038,10 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   FieldActor_WaitForMoveById(8);
   FieldEvent_ShowMessageThenWait(0x2008, 0, 0xa);
   Actor_SetAnimation(8, 2);
-  t7 = ((s32)Actor_Get(5));
-  if (t7 != 0) {
-    Actor_SetDestination(8, FIELD_AT(t7, s16, 10), FIELD_AT(t7, s16, 18));
+  object = Actor_Get(5);
+  if (object != 0) {
+    Actor_SetDestination(8, FIELD_AT((u8 *)object, s16, 10),
+                         FIELD_AT((u8 *)object, s16, 18));
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
@@ -1051,7 +1052,7 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
 
 /// ★ Named from the game: " ... Are... Are you all right?" (MsgAreAreYou)
 void VenusLighthouseEntrance_WakeUp(void) {
-  s32 t96;
+  struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1148,9 +1149,10 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(8, 0x13333, 0x9999);
   Actor_SetAnimation(8, 2);
-  t96 = ((s32)Actor_Get(5));
-  if (t96 != 0) {
-    Actor_SetDestination(8, FIELD_AT(t96, s16, 10), FIELD_AT(t96, s16, 18));
+  object = Actor_Get(5);
+  if (object != 0) {
+    Actor_SetDestination(8, FIELD_AT((u8 *)object, s16, 10),
+                         FIELD_AT((u8 *)object, s16, 18));
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);

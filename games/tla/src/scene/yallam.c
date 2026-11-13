@@ -1566,24 +1566,24 @@ extern u8 MsgIfYouWant[];
 
 /// "If you want to go to the moon, if you want to go to the moon."
 void Yallam_SingMoonSong(void) {
-  s32 t1, v5, v6, v7;
+  s32 v5, v6;
+  struct Actor *object;
 
-  t1 = ((s32)Actor_Get(8));
-  v7 = t1;
+  object = Actor_Get(8);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_FaceDirection(10, FACING_WEST, 0);
   Actor_FaceDirection(9, 0xb000, 0);
   Actor_FaceDirection(11, 0xb000, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)&MsgIfYouWant);
-  v5 = v7;
+  v5 = object;
   Event_ShowMessage(8, 0);
   v5 = (v5 + 102);
   Yallam_ResumeSongGame();
   FIELD_AT(v5, s16, 0) = 1;
 waitFirstVerse:
   System_Wait(1);
-  v6 = v7;
+  v6 = object;
   v6 = (v6 + 100);
   if (FIELD_AT(v6, s16, 0) != 114)
     goto waitFirstVerse;

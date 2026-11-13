@@ -379,7 +379,7 @@ void Field_StartPaletteTransition();
 /// "You are Lord Felix, correct?"
 s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r5_1, r7_1, r8_1, r5_3, r5_4, r5_5;
-  s32 v0, v2, r0, v10, v14, v17, r2, r3, v29;
+  s32 r0, v17, r2, r3;
   struct Actor *v3, *v6, *v7, *v12, *v13, *v19, *v20, *v22, *v23, *v24, *v25,
       *v26, *v27;
 
@@ -396,8 +396,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   }
   Actor_FaceActor(16, FIELD_AT(r5_1, s32, 0), 0);
   Event_OpenMessage(16, 0);
-  v0 = Event_AskYesNoWithActorAnimation(4, 0);
-  r7_1 = v0;
+  r7_1 = Event_AskYesNoWithActorAnimation(4, 0);
   if (r7_1 == 0)
     goto answeredNo;
   Event_Wait(30);
@@ -406,8 +405,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Actor_WalkByAndWait(FIELD_AT(r5_1, s32, 0), 0, 16);
   Actor_WalkByAndWait(16, 24, 0);
   Actor_FaceDirectionAndWait(16, FACING_SOUTH + FACING_STEP);
-  v2 = Event_End();
-  r0 = v2;
+  r0 = Event_End();
   goto done;
 answeredNo:
   Actor_SetAnimationAndWait(16, 3);
@@ -1127,8 +1125,7 @@ grow:
   Actor_FaceDirectionAndWait(14, FACING_SOUTHEAST + FACING_STEP);
   Actor_FaceDirection(16, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(10);
-  v29 = Event_End();
-  r0 = v29;
+  r0 = Event_End();
 done:
   return r0;
 }

@@ -519,14 +519,14 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
 }
 
 void Func_02000a78(s32 a0, s32 a1, s16 a2) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), 0x980000);
-  t0->motionFlags = 4;
-  FieldActor_SetSpriteColor(t0, (u16)a2);
-  Scene_SetActorSpritePriority(t0, 2);
-  Actor_SelectAnimation(t0, 7);
-  Actor_SetSpriteFlags(t0, 0);
+  object = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), 0x980000);
+  object->motionFlags = 4;
+  FieldActor_SetSpriteColor(object, (u16)a2);
+  Scene_SetActorSpritePriority(object, 2);
+  Actor_SelectAnimation(object, 7);
+  Actor_SetSpriteFlags(object, 0);
 }
 
 #include "text/msg_ids.h"
@@ -981,13 +981,13 @@ void Func_02001518(void) {
 }
 
 void Func_02001614(void) {
-  struct Actor *t0;
+  struct Actor *object;
   s32 t1;
 
-  t0 = Actor_Get(gMainRoutineWork.currentOwner);
-  t1 = FieldMapGrid_GetCellBehaviorAt(2, t0->x, t0->z);
+  object = Actor_Get(gMainRoutineWork.currentOwner);
+  t1 = FieldMapGrid_GetCellBehaviorAt(2, object->x, object->z);
   if (t1 == 0xe8) {
-    t0->terrainId = 2;
+    object->terrainId = 2;
   }
 }
 
@@ -1012,15 +1012,15 @@ void Func_02001660(void) {
 }
 
 void Func_020016fc(void) {
-  s32 t0;
+  struct Actor *object;
 
-  t0 = ((s32)Actor_Get(14));
+  object = Actor_Get(14);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FIELD_AT(t0, s32, 8) = 0x2180000;
-  FIELD_AT(t0, s32, 16) = 0x1680000;
-  FIELD_AT(t0, s32, 20) = -917504;
-  FIELD_AT(t0, s32, 12) = -917504;
+  object->x = 0x2180000;
+  object->z = 0x1680000;
+  object->terrainHeight = -917504;
+  object->y = -917504;
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
   Event_PlaySound(0x248);
   FieldEvent_Wait(30);
@@ -1393,15 +1393,15 @@ extern s16 gData_02003888[];
 extern u16 gData_020038b4[];
 
 s32 Scene_Initialize(void) {
-  s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1;
-  s32 t27;
-  s32 t30, t35, t36, t38, t42;
-  s32 t59;
-  s32 t60, t61, t64;
+  s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0;
+  struct Actor *t94;
+  struct Actor *t95;
+  struct Actor *t60;
+  struct Actor *t92;
+  struct Actor *t42;
+  struct Actor *t106;
   s32 t78, t80;
-  s32 t91, t92, t93, t94, t95, t96, t106;
-  s32 t126;
-  s32 t132, t136;
+  s32 t91;
   s32 v_two;
 
   v_r2 = (s32)Ram_HeapSlots;
@@ -1465,8 +1465,8 @@ L_0200a03c:
       Actor_SetPosition(9, 0, 0);
     }
     if ((Event_GetFlag(0x207)) != 0) {
-      t42 = (s32)Actor_Get(9);
-      FIELD_AT(t42, u8, 85) = 4;
+      t42 = Actor_Get(9);
+      t42->motionFlags = 4;
     }
     if ((Event_GetFlag(0x200)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
@@ -1495,13 +1495,13 @@ L_0200a03c:
 L_0200a1b4:
   if (v_r1 != (s32)&SceneId_Ov6B0Room3)
     goto L_0200a2ce;
-  t60 = (s32)Actor_Get(14);
+  t60 = Actor_Get(14);
   v_two = 2;
   v_r5 = 1;
-  FIELD_AT(t60, u8, 85) = v_two;
-  FIELD_AT(t60, s32, 20) = 0xfff20000;
-  FIELD_AT(t60, s32, 12) = 0xfff20000;
-  FIELD_AT(t60, u8, 35) |= 128;
+  t60->motionFlags = v_two;
+  t60->terrainHeight = 0xfff20000;
+  t60->y = 0xfff20000;
+  t60->priorityFlags |= 128;
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
   FIELD_AT(((s32)Actor_Get(9)), u8, 98) = v_r5;
   if ((Event_GetFlag(0xa82)) != 0) {
@@ -1545,12 +1545,12 @@ L_0200a2ce:
   v_r5 = (Event_GetFlag(0x304));
   if (v_r5 == 0) {
     t91 = FIELD_AT(v_r6, s32, 532);
-    t92 = (s32)Actor_Get(t91);
-    FIELD_AT(t92, u8, 35) |= 64;
-    t94 = (s32)Actor_Get(8);
-    FIELD_AT(t94, u8, 85) = v_r5;
-    t95 = (s32)Actor_Get(8);
-    FIELD_AT(t95, u8, 35) |= 128;
+    t92 = Actor_Get(t91);
+    t92->priorityFlags |= 64;
+    t94 = Actor_Get(8);
+    t94->motionFlags = v_r5;
+    t95 = Actor_Get(8);
+    t95->priorityFlags |= 128;
     goto L_0200a3a8;
   }
   Actor_SetPosition(8, 0, 0);
@@ -1563,8 +1563,8 @@ L_0200a2ce:
   Event_SetFlag(0x206);
 L_0200a3a8:
   if ((Event_GetFlag(0x207)) != 0) {
-    t106 = (s32)Actor_Get(8);
-    FIELD_AT(t106, u8, 85) = 4;
+    t106 = Actor_Get(8);
+    t106->motionFlags = 4;
   }
   if ((Event_GetFlag(0x200)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
@@ -1609,8 +1609,7 @@ L_0200a4f4:
 L_0200a52c:
   if (v_r1 != (s32)&SceneId_Ov6B0Room5)
     goto L_0200a6e6;
-  t126 = FIELD_AT(v_r2, s32, 32);
-  v_r5 = t126;
+  v_r5 = FIELD_AT(v_r2, s32, 32);
   v_r3 = ((FIELD_AT(v_r6, s16, 482)) - 1);
   if ((u32)v_r3 > (u32)11)
     goto L_0200a6e6;

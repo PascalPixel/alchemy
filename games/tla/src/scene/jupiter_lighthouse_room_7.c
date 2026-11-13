@@ -116,11 +116,12 @@ void Func_02000184(void) {
        ->v)
 
 s32 Func_02000194(void) {
-  s32 t1, t2, v5, v6, v7, v8;
+  s32 v5, v6, v7;
+  struct Actor *v8;
+  struct Actor *t2;
 
-  t1 = ((s32)Actor_Get(18));
-  v5 = t1;
-  t2 = ((s32)Actor_Get(19));
+  v5 = Actor_Get(18);
+  t2 = Actor_Get(19);
   v7 = 1;
   v6 = (FIELD_AT(v5, s32, 8) >> 20);
   v8 = t2;
@@ -153,8 +154,8 @@ L_020081f8:
   Event_SetFlag(0xa14);
   v7 = 4;
 L_0200821a:
-  v6 = (FIELD_AT(v8, s32, 8) >> 20);
-  v5 = (FIELD_AT(v8, s32, 16) >> 20);
+  v6 = (v8->x >> 20);
+  v5 = (v8->z >> 20);
   if (v6 != 35)
     goto L_02008244;
   if (v5 != 15)

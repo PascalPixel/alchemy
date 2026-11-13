@@ -693,18 +693,17 @@ s32 Scene_PrepareMap(void) { return 0; }
        ->v)
 
 void Func_02000fa4(void) {
-  s32 t2, t13, t19, v_r5;
+  struct Actor *object;
 
   if (Event_GetFlag(0x8a6)) {
-    t2 = ((s32)Actor_Get(15));
-    v_r5 = t2;
+    object = Actor_Get(15);
     Actor_SetPosition(15, PIXELS(336), PIXELS(536));
     Actor_SetAnimation(15, 4);
-    FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-    FIELD_AT(v_r5, u8, 85) = 2;
-    FIELD_AT(v_r5, s32, 40) = 0;
-    FIELD_AT(v_r5, s32, 12) = -0x40000;
-    FIELD_AT(v_r5, s32, 20) = -0x40000;
+    object->priorityFlags |= 2;
+    object->motionFlags = 2;
+    object->velocityY = 0;
+    object->y = -0x40000;
+    object->terrainHeight = -0x40000;
     FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
     FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
     FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
@@ -716,38 +715,32 @@ void Func_02000fa4(void) {
     Actor_SetPosition(17, 0, 0);
   }
   if (Event_GetFlag(0x8a0)) {
-    t13 = ((s32)Actor_Get(10));
-    v_r5 = t13;
+    object = Actor_Get(10);
     Actor_SetPosition(10, PIXELS(504), PIXELS(520));
     Actor_SetAnimation(10, 2);
-    FIELD_AT(v_r5, u8, 89) = 0;
+    object->collisionFlags = 0;
     /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
      * as the listing orders it; without it, 4 of 168 instructions differ in
      * tla-en. */
     do {
     } while (0);
-    FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-    FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8),
-                                 FIELD_AT(v_r5, s32, 16), 0, 0);
-    MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                            128);
+    object->priorityFlags |= 2;
+    FieldMapGrid_SetCellBehavior(object->x, object->z, 0, 0);
+    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
   }
   if (Event_GetFlag(0x8a1)) {
-    t19 = ((s32)Actor_Get(11));
-    v_r5 = t19;
+    object = Actor_Get(11);
     Actor_SetPosition(11, PIXELS(408), PIXELS(536));
     Actor_SetAnimation(11, 2);
-    FIELD_AT(v_r5, u8, 89) = 0;
+    object->collisionFlags = 0;
     /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
      * as the listing orders it; without it, 4 of 168 instructions differ in
      * tla-en. */
     do {
     } while (0);
-    FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-    FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8),
-                                 FIELD_AT(v_r5, s32, 16), 0, 0);
-    MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                            128);
+    object->priorityFlags |= 2;
+    FieldMapGrid_SetCellBehavior(object->x, object->z, 0, 0);
+    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
   }
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCells(32, 24, 2, 2, 30, 24);

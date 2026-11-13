@@ -110,10 +110,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000054(void) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = Actor_Get(gMainRoutineWork.currentOwner);
-  if (t0->terrainId == 1) {
+  object = Actor_Get(gMainRoutineWork.currentOwner);
+  if (object->terrainId == 1) {
     FieldMapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xea);
     FieldMapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xea);
   } else {

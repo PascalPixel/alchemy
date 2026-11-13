@@ -128,8 +128,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 originX;
   s32 originY;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -309,8 +307,6 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   } position;
   struct ScreenPoint screen;
   struct Vector3 scale;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

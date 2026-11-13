@@ -261,6 +261,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// right of x, halved for the wide canvas.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   void **slots;
+  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle additive;
@@ -273,9 +274,12 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   // BG2 shows the canvas at twice its width, and BG1 and BG2 blend over the
   // layers below.
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
+  work = *cursor++;
+  canvas = *cursor;
+  sheet =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
   orgX = x;
   x += px(40);
   x /= 2;

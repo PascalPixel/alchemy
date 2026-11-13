@@ -407,8 +407,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   struct ScreenPoint position;
   s32 screenX;
   s32 screenY;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;

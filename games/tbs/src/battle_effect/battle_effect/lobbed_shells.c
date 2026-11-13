@@ -103,8 +103,6 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

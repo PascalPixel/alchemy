@@ -77,7 +77,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   struct ScreenPoint screen[11];
   s32 position[3];
   s32 scale[3];
-  void **slots;
   struct BattleBackgroundWork *view;
   struct BattleEffectWork *work;
   void *canvas;

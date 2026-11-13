@@ -205,8 +205,6 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 ///
 /// args: the targets.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;

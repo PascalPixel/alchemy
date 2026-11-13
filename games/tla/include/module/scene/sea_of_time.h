@@ -18,15 +18,15 @@ struct EventWork_02001650 {
   u16 unk1b2;
 };
 
-extern struct ActorPlacement gData_02002214[];
+extern struct ActorPlacement gSeaOfTime_Room2Placements[];
 extern u32 gData_020022c4[];
 
 void Func_02000c50(void);
 
-extern struct Trigger gData_020022d0[];
+extern struct Trigger gSeaOfTime_Room1Triggers[];
 
 extern struct Trigger gData_0200242c[];
-extern struct Trigger gData_0200251c[];
+extern struct Trigger gSeaOfTime_Triggers[];
 extern s16 gData_0200257c[1];
 void Func_0200054c(void);
 

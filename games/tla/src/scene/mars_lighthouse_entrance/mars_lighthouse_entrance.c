@@ -176,14 +176,14 @@ next:
     goto next;
 }
 
-extern const u8 gData_02005af4[];
-extern const u8 gData_02005b0c[];
-extern const u8 gData_02005b54[];
-extern const u8 gData_02005bcc[];
-extern const u8 gData_02005d4c[];
-extern const u8 gData_02005eb4[];
-extern const u8 gData_02005f74[];
-extern const u8 gData_020060c4[];
+extern const u8 gMarsLighthouseEntrance_Placements[];
+extern const u8 gMarsLighthouseEntrance_Room1Placements[];
+extern const u8 gMarsLighthouseEntrance_Room2Placements[];
+extern const u8 gMarsLighthouseEntrance_Room3Placements[];
+extern const u8 gMarsLighthouseEntrance_Room4Placements[];
+extern const u8 gMarsLighthouseEntrance_Room5Placements[];
+extern const u8 gMarsLighthouseEntrance_Room6Placements[];
+extern const u8 gMarsLighthouseEntrance_Room7Placements[];
 
 /// Grind on the ice at the dead end, actor 10: the crack runs to the ice sheet
 /// a floor below.
@@ -594,14 +594,14 @@ extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
 extern const u8 gData_020055d4[];
 extern const u8 gData_02005644[];
-extern const u8 gData_0200610c[];
-extern const u8 gData_02006118[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_02006250[];
-extern const u8 gData_020063b8[];
-extern const u8 gData_020064fc[];
-extern const u8 gData_02006628[];
-extern const u8 gData_02006778[];
+extern const u8 gMarsLighthouseEntrance_Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
 void Func_02002c2c(void);
@@ -695,20 +695,20 @@ void Func_02001138(void) {
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
-    return gData_02006118;
+    return gMarsLighthouseEntrance_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
-    return gData_0200613c;
+    return gMarsLighthouseEntrance_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom3)
-    return gData_02006250;
+    return gMarsLighthouseEntrance_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom4)
-    return gData_020063b8;
+    return gMarsLighthouseEntrance_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom5)
-    return gData_020064fc;
+    return gMarsLighthouseEntrance_Room5Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom6)
-    return gData_02006628;
+    return gMarsLighthouseEntrance_Room6Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom7)
-    return gData_02006778;
-  return gData_0200610c;
+    return gMarsLighthouseEntrance_Room7Triggers;
+  return gMarsLighthouseEntrance_Triggers;
 }
 
 #include "../mars_lighthouse_entrance.h"
@@ -765,14 +765,14 @@ extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
 extern const u8 gData_020055d4[];
 extern const u8 gData_02005644[];
-extern const u8 gData_0200610c[];
-extern const u8 gData_02006118[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_02006250[];
-extern const u8 gData_020063b8[];
-extern const u8 gData_020064fc[];
-extern const u8 gData_02006628[];
-extern const u8 gData_02006778[];
+extern const u8 gMarsLighthouseEntrance_Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
 void Func_02002c2c(void);
@@ -1104,14 +1104,14 @@ extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
 extern const u8 gData_020055d4[];
 extern const u8 gData_02005644[];
-extern const u8 gData_0200610c[];
-extern const u8 gData_02006118[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_02006250[];
-extern const u8 gData_020063b8[];
-extern const u8 gData_020064fc[];
-extern const u8 gData_02006628[];
-extern const u8 gData_02006778[];
+extern const u8 gMarsLighthouseEntrance_Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
 /* VIEW(s1930): routine Func_02002f4c as s32 Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script); s1344 has void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script); tried as the definition's void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script), Func_0200196c moves: 1 of 11 instructions, Func_02001988 moves: 1 of 11 instructions, Func_020019a4 moves: 1 of 12 instructions, 3 more in tla-ja. */

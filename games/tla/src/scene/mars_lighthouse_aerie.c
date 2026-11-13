@@ -105,7 +105,7 @@ const struct Trigger *Scene_GetPlacements(void) {
     return (const struct Trigger *)gData_0200644c;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 2)
     return (const struct Trigger *)gData_020066bc;
-  return (const struct Trigger *)gData_0200626c;
+  return (const struct Trigger *)gMarsLighthouseAerie_Placements;
 }
 
 DEFINE_FUNC_020001A0(Func_020001a0, Func_02004fac, Func_020057cc, 1,

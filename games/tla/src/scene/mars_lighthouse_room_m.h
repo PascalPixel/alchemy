@@ -65,9 +65,9 @@ void Func_02001cc4(struct Actor *object, s32 layer);
 void Func_02001b64(struct Actor *object);
 
 extern u32 gData_020032d4[];
-extern struct ActorPlacement gData_020034f0[];
-extern struct ActorPlacement gData_02003508[];
-extern struct ActorPlacement gData_02003598[];
+extern struct ActorPlacement gMarsLighthouseRoomM_Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[];
 
 extern u16 gData_02003918;
 extern u16 gData_02003920;
@@ -75,10 +75,10 @@ extern u16 gData_02003924;
 extern u16 *gData_02003928;
 extern u16 gData_02003934;
 extern u16 gData_02003938;
-extern struct Trigger gData_020036b8[];
-extern struct Trigger gData_020036c8[];
-extern struct Trigger gData_02003708[];
-extern struct Trigger gData_02003858[];
+extern struct Trigger gMarsLighthouseRoomM_Triggers[];
+extern struct Trigger gMarsLighthouseRoomM_Room6Triggers[];
+extern struct Trigger gMarsLighthouseRoomM_Room1Triggers[];
+extern struct Trigger gMarsLighthouseRoomM_Room5Triggers[];
 extern s32 gData_0200387c[];
 extern u32 gData_02003900[];
 

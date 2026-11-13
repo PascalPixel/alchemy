@@ -91,16 +91,16 @@ struct SceneWork {
   s32 unk1ac;
 };
 
-extern struct Trigger gData_02001914[];
+extern struct Trigger gMadraCatacombs_Triggers[];
 
 void Func_02000fbc(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
-    return gData_02001400;
+    return gMadraCatacombs_Room4Entrances;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
-    return gData_02001430;
-  return gData_020013d0;
+    return gMadraCatacombs_Room5Entrances;
+  return gMadraCatacombs_Entrances;
 }
 
 const s16 *Scene_GetRegions(void) {
@@ -123,30 +123,30 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
-    return gData_020015b4;
+    return gMadraCatacombs_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
-    return gData_0200165c;
+    return gMadraCatacombs_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
-    return gData_020016bc;
+    return gMadraCatacombs_Room5Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
-    return gData_020016ec;
-  return gData_0200159c;
+    return gMadraCatacombs_Room6Placements;
+  return gMadraCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
-    return gData_02001920;
+    return gMadraCatacombs_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom2)
-    return gData_020019f8;
+    return gMadraCatacombs_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
-    return gData_02001a1c;
+    return gMadraCatacombs_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
-    return gData_02001aac;
+    return gMadraCatacombs_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
-    return gData_02001b54;
+    return gMadraCatacombs_Room5Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
-    return gData_02001bcc;
-  return gData_02001914;
+    return gMadraCatacombs_Room6Triggers;
+  return gMadraCatacombs_Triggers;
 }
 
 void Func_020011e4(const void *data);
@@ -649,17 +649,17 @@ s16 gData_020013ca[] = {
     8, -1, 0,
 };
 
-struct SceneEntrance gData_020013d0[] = {
+struct SceneEntrance gMadraCatacombs_Entrances[] = {
     {0, -1, 172, 0, 149, 0x4000, 0, -1, -1, -1, -1, 0},
     {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-struct SceneEntrance gData_02001400[] = {
+struct SceneEntrance gMadraCatacombs_Room4Entrances[] = {
     {3, -1, 512, 0, 224, 0xc000, 0, 392, 40, 632, 280, 0},
     {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-struct SceneEntrance gData_02001430[] = {
+struct SceneEntrance gMadraCatacombs_Room5Entrances[] = {
     {5, -1, 728, 0, 88, 0x4000, 0, 680, 32, 920, 192, 0},
     {6, -1, 872, 0, 88, 0x4000, 0, 680, 32, 920, 192, 0},
     {7, -1, 872, 0, 120, 0, 0, 680, 32, 920, 192, 0},
@@ -725,11 +725,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_0200159c[] = {
+struct ActorPlacement gMadraCatacombs_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020015b4[] = {
+struct ActorPlacement gMadraCatacombs_Room1Placements[] = {
     {250, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(280), FACING_SOUTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(424), FACING_SOUTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(424), FACING_SOUTH, 2, 1},
@@ -739,19 +739,19 @@ struct ActorPlacement gData_020015b4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200165c[] = {
+struct ActorPlacement gMadraCatacombs_Room3Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(232), FACING_SOUTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(696), 0, PIXELS(232), FACING_SOUTH, 2, 1},
     {71, CONDITION_ALWAYS, 1, PIXELS(794), 0, PIXELS(236), FACING_WEST, 1, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020016bc[] = {
+struct ActorPlacement gMadraCatacombs_Room5Placements[] = {
     {679, CONDITION_ALWAYS, 1, PIXELS(202), 0, PIXELS(408), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020016ec[] = {
+struct ActorPlacement gMadraCatacombs_Room6Placements[] = {
     {330, CONDITION_ALWAYS, 7, PIXELS(150), 0, PIXELS(366), FACING_SOUTH, 2, 0},
     {330, CONDITION_ALWAYS, 7, PIXELS(170), 0, PIXELS(366), FACING_SOUTH, 2, 0},
     {306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -777,11 +777,11 @@ struct ActorPlacement gData_020016ec[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001914[] = {
+struct Trigger gMadraCatacombs_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001920[] = {
+struct Trigger gMadraCatacombs_Room1Triggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000a88)},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000a88)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000a88)},
@@ -802,14 +802,14 @@ struct Trigger gData_02001920[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020019f8[] = {
+struct Trigger gMadraCatacombs_Room2Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGERS_END},
 };
 // clang-format on
 
-struct Trigger gData_02001a1c[] = {
+struct Trigger gMadraCatacombs_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -824,7 +824,7 @@ struct Trigger gData_02001a1c[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001aac[] = {
+struct Trigger gMadraCatacombs_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -841,7 +841,7 @@ struct Trigger gData_02001aac[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001b54[] = {
+struct Trigger gMadraCatacombs_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -854,7 +854,7 @@ struct Trigger gData_02001b54[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001bcc[] = {
+struct Trigger gMadraCatacombs_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000c78)},

@@ -95,10 +95,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
-    return gData_02003508;
+    return gMarsLighthouseRoomM_Room6Placements;
   if (scene == (s32)&SceneId_Ov6ACRoom1)
-    return gData_02003598;
-  return gData_020034f0;
+    return gMarsLighthouseRoomM_Room1Placements;
+  return gMarsLighthouseRoomM_Placements;
 }
 
 #include "iwram_call.h"
@@ -411,13 +411,13 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
-    return gData_020036c8;
+    return gMarsLighthouseRoomM_Room6Triggers;
   if (scene == (s32)&SceneId_Ov6ACRoom1)
-    return gData_02003708;
+    return gMarsLighthouseRoomM_Room1Triggers;
   if (scene == (s32)&SceneId_Ov6ACRoom2 || scene == (s32)&SceneId_Ov6ACRoom3 ||
       scene == (s32)&SceneId_Ov6ACRoom4 || scene == (s32)&SceneId_Ov6ACRoom5)
-    return gData_02003858;
-  return gData_020036b8;
+    return gMarsLighthouseRoomM_Room5Triggers;
+  return gMarsLighthouseRoomM_Triggers;
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/s0b64.c ----

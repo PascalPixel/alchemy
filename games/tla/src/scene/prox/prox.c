@@ -166,7 +166,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gData_02004b2c;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room2)
-    return gData_02004c4c;
+    return gProx_Room2Placements;
   if (scene == (s32)&SceneId_Ov6a8Room3) {
     if (Event_GetFlag(0xa3d))
       return gData_02004f04;
@@ -186,7 +186,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gData_02005444;
   }
   if (scene == (s32)&SceneId_Ov6a8Room6)
-    return gData_0200551c;
+    return gProx_Room6Placements;
   return gData_02004b14__prox;
 }
 
@@ -208,18 +208,18 @@ const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1)
-    return gData_02005558;
+    return gProx_Room1Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room2)
-    return gData_02005588;
+    return gProx_Room2Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room3)
-    return gData_020057f8;
+    return gProx_Room3Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room4)
     return gData_02005a20__prox;
   if (scene == (s32)&SceneId_Ov6a8Room5)
-    return gData_02005da4;
+    return gProx_Room5Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room6)
-    return gData_02005eac;
-  return gData_0200554c;
+    return gProx_Room6Triggers;
+  return gProx_Triggers;
 }
 
 s32 Func_0200446c();
@@ -2222,7 +2222,7 @@ s16 gData_02004b2c[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gData_02004c4c[] = {
+u32 gProx_Room2Placements[] = {
     0xffff00af, 1, 0xf80000, 0, 0x1c80000, 0x33000,
     0xffff00ac, 1, 0xd80000, 0, 0x1500000, 0x15000,
     0xffff00ae, 3, 0x700000, 0, 0xf80000, 0,
@@ -2357,23 +2357,23 @@ u32 gData_020054a4[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-u32 gData_0200551c[] = {
+u32 gProx_Room6Placements[] = {
     0xffff00c9, 1, 0xb00000, 0, 0x3090000, 0x15000,
     0xffff, 0, 0, 0, 0, 0,
 };
 
-struct Trigger gData_0200554c[] = {
+struct Trigger gProx_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005558[] = {
+struct Trigger gProx_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x9cc, EVENT(Prox_SayFarewell)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005588[] = {
+struct Trigger gProx_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02001a9c)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02001ab8)},
@@ -2428,7 +2428,7 @@ struct Trigger gData_02005588[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020057f8[] = {
+struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2555,7 +2555,7 @@ struct Trigger gData_02005a20[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005da4[] = {
+struct Trigger gProx_Room5Triggers[] = {
     {0xca02, 6, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
     {0xca02, 7, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
     {0xca02, 8, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
@@ -2580,7 +2580,7 @@ struct Trigger gData_02005da4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005eac[] = {
+struct Trigger gProx_Room6Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Prox_FearForWeyard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx61)},

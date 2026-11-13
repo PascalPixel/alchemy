@@ -184,11 +184,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02002c54[] = {
+struct ActorPlacement gTaopoSwamp_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002c6c[] = {
+struct ActorPlacement gTaopoSwamp_Room2Placements[] = {
     {307, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(128), FACING_NORTH, 2, 0},
     {307, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(112), FACING_NORTH, 2, 0},
     {307, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(112), FACING_NORTH, 2, 0},
@@ -199,32 +199,32 @@ struct ActorPlacement gData_02002c6c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002d2c[] = {
+struct ActorPlacement gTaopoSwamp_Room4Placements[] = {
     {243, 0x3b, 1, PIXELS(440), 0, PIXELS(632), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002d5c[] = {
+struct ActorPlacement gTaopoSwamp_Room5Placements[] = {
     {243, 0x3b, 1, PIXELS(408), 0, PIXELS(312), FACING_SOUTH, 0, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(232), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(248), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002dbc[] = {
+struct ActorPlacement gTaopoSwamp_Room7Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(136), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(424), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002e04[] = {
+struct ActorPlacement gTaopoSwamp_Room8Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(440), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002e64[] = {
+struct ActorPlacement gTaopoSwamp_Room10Placements[] = {
     {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
     {292, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(248), FACING_NORTH, 2, 0},
     {292, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
@@ -240,30 +240,30 @@ struct ActorPlacement gData_02002e64[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002f9c[] = {
+struct ActorPlacement gTaopoSwamp_Room9Placements[] = {
     {292, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(360), FACING_NORTH, 2, 0},
     {292, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(216), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002fe4[] = {
+struct ActorPlacement gTaopoSwamp_Room11Placements[] = {
     {292, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(632), FACING_NORTH, 2, 0},
     {292, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(632), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_0200302c[] = {
+struct Trigger gTaopoSwamp_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02003038[] = {
+struct Trigger gTaopoSwamp_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02003068[] = {
+struct Trigger gTaopoSwamp_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xce01, 3, 0x18e0, 3},
@@ -282,7 +282,7 @@ struct Trigger gData_02003068[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02003128[] = {
+struct Trigger gTaopoSwamp_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {49, 6, CONDITION_ALWAYS, 6},
@@ -294,7 +294,7 @@ struct Trigger gData_02003128[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02003194[] = {
+struct Trigger gTaopoSwamp_Room4Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000038)},
@@ -304,7 +304,7 @@ struct Trigger gData_02003194[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020031e8[] = {
+struct Trigger gTaopoSwamp_Room5Triggers[] = {
     {49, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {49, 3, CONDITION_ALWAYS, 3},
@@ -339,7 +339,7 @@ struct Trigger gData_02003314[] = {
 };
 // clang-format on
 
-struct Trigger gData_02003338[] = {
+struct Trigger gTaopoSwamp_Room7Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {49, 3, CONDITION_ALWAYS, 3},
@@ -356,7 +356,7 @@ struct Trigger gData_02003338[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020033e0[] = {
+struct Trigger gTaopoSwamp_Room8Triggers[] = {
     {49, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {33, 3, CONDITION_ALWAYS, 3},
@@ -381,7 +381,7 @@ u32 gTaopoSwamp_PoolFrames[] = {
     24,
 };
 
-struct Trigger gData_02003464[] = {
+struct Trigger gTaopoSwamp_Room10Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -395,7 +395,7 @@ struct Trigger gData_02003464[] = {
     {TRIGGERS_END},
 };
 
-s32 gData_020034e8[] = {
+s32 gTaopoSwamp_Room9Triggers[] = {
     1,
     (s32)0xffff0003,
     3,
@@ -430,7 +430,7 @@ s32 gData_020034e8[] = {
     0,
 };
 
-struct Trigger gData_02003560[] = {
+struct Trigger gTaopoSwamp_Room11Triggers[] = {
     {33, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},

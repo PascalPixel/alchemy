@@ -141,11 +141,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02003f08[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003f20[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Room1Placements[] = {
     {297, CONDITION_ALWAYS, 1, PIXELS(224), 0, PIXELS(216), FACING_SOUTH, 2, 0},
     {297, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(280), FACING_SOUTH, 2, 1},
     {407, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(168), FACING_SOUTH, 2, 0},
@@ -156,7 +156,7 @@ struct ActorPlacement gData_02003f20[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003fe0[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Room2Placements[] = {
     {335, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {410, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {369, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(272), FACING_SOUTH, 2, 0},
@@ -164,7 +164,7 @@ struct ActorPlacement gData_02003fe0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004058[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Room3Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(296), FACING_SOUTH, 2, 0},
     {370, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(216), FACING_SOUTH, 2, 0},
     {369, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(216), FACING_SOUTH, 2, 0},
@@ -176,7 +176,7 @@ struct ActorPlacement gData_02004058[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004130[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Room4Placements[] = {
     {270, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {270, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
     {270, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
@@ -196,7 +196,7 @@ struct ActorPlacement gData_02004130[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020042c8[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Room5Placements[] = {
     {335, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {410, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(296), FACING_SOUTH, 2, 0},
@@ -207,7 +207,7 @@ struct ActorPlacement gData_020042c8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004388[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Room6Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(408), FACING_SOUTH, 2, 1},
@@ -215,7 +215,7 @@ struct ActorPlacement gData_02004388[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004400[] = {
+struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[] = {
     {369, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {369, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(264), FACING_SOUTH, 2, 1},
     {369, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(232), FACING_SOUTH, 2, 1},
@@ -239,13 +239,13 @@ struct ActorPlacement gData_02004400[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02001330(gData_020045f8, 297, 160, 202, 176, 298, 1, 320, 218)
+DEFINE_G_DATA_02001330(gShrineOfTheSeaGod_Room8Placements, 297, 160, 202, 176, 298, 1, 320, 218)
 
-struct Trigger gData_02004658[] = {
+struct Trigger gShrineOfTheSeaGod_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02004664[] = {
+struct Trigger gShrineOfTheSeaGod_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -256,14 +256,14 @@ struct Trigger gData_02004664[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020046c4[] = {
+struct Trigger gShrineOfTheSeaGod_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x8400, 11, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_StartleCompanion)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldICantFindAnythingAroundHere)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020046f4[] = {
+struct Trigger gShrineOfTheSeaGod_Room3Triggers[] = {
     {49, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {49, 3, CONDITION_ALWAYS, 3},
@@ -279,7 +279,7 @@ struct Trigger gData_020046f4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02004790[] = {
+struct Trigger gShrineOfTheSeaGod_Room4Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {33, 3, CONDITION_ALWAYS, 3},
@@ -288,7 +288,7 @@ struct Trigger gData_02004790[] = {
 };
 // clang-format on
 
-struct Trigger gData_020047cc[] = {
+struct Trigger gShrineOfTheSeaGod_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {49, 3, CONDITION_ALWAYS, 3},
@@ -315,7 +315,7 @@ struct Trigger gData_020047cc[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020048ec[] = {
+struct Trigger gShrineOfTheSeaGod_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {9, 0, 0x301, EVENT(Func_02001038)},
@@ -323,7 +323,7 @@ struct Trigger gData_020048ec[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02004928[] = {
+struct Trigger gShrineOfTheSeaGod_Room7Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 17, 0x203, 0},
@@ -336,7 +336,7 @@ struct Trigger gData_02004928[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020049a0[] = {
+struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_ExamineStatue)},
@@ -346,7 +346,7 @@ struct Trigger gData_020049a0[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020049f4[] = {
+struct Trigger gShrineOfTheSeaGod_Room9Triggers[] = {
     {TRIGGER_EXAMINE, 1, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_ExamineStatue)},
     {0x1ca04, 1, CONDITION_ALWAYS, EVENT(Func_02000e38)},
     {TRIGGERS_END},

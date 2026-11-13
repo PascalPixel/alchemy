@@ -100,10 +100,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage5)
-    return gData_020052b4;
+    return gShamanVillage_Room5Entrances;
   if (scene == (s32)&SceneId_ShamanVillage6)
-    return gData_02005314;
-  return gData_02005284;
+    return gShamanVillage_Room6Entrances;
+  return gShamanVillage_Entrances;
 }
 
 // ---- games/tla/src/scene/shaman_village/scene_tables.c ----
@@ -131,34 +131,34 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 // ---- games/tla/src/scene/shaman_village/s02dc.c ----
-extern u32 gData_02005410[];
-extern u32 gData_02005428[];
-extern s16 gData_02005590[];
+extern u32 gShamanVillage_Placements[];
+extern u32 gShamanVillage_Room1Placements[];
+extern s16 gShamanVillage_Room3Placements[];
 
 extern struct ShamanVillageSceneBlock gData_020056b0;
-extern u32 gData_02005860[];
-extern u32 gData_02005998[];
-extern u32 gData_02005a40[];
+extern u32 gShamanVillage_Room4Placements[];
+extern u32 gShamanVillage_Room5Placements[];
+extern u32 gShamanVillage_Room6Placements[];
 
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
-    return gData_02005428;
+    return gShamanVillage_Room1Placements;
   if (scene == (s32)&SceneId_ShamanVillage3)
-    return gData_02005590;
+    return gShamanVillage_Room3Placements;
   if (scene == (s32)&SceneId_ShamanVillage2) {
     if (Event_GetFlag(0x9fe))
       gData_020056b0.field16 = 1;
     return &gData_020056b0;
   }
   if (scene == (s32)&SceneId_ShamanVillage4)
-    return gData_02005860;
+    return gShamanVillage_Room4Placements;
   if (scene == (s32)&SceneId_ShamanVillage5)
-    return gData_02005998;
+    return gShamanVillage_Room5Placements;
   if (scene == (s32)&SceneId_ShamanVillage6)
-    return gData_02005a40;
-  return gData_02005410;
+    return gShamanVillage_Room6Placements;
+  return gShamanVillage_Placements;
 }
 
 #include "iwram_call.h"
@@ -517,30 +517,30 @@ fade:
 #undef OBJ14_BYTE
 
 // ---- games/tla/src/scene/shaman_village/s0c80.c ----
-extern u32 gData_02005aa0[];
-extern u32 gData_02005aac[];
-extern u32 gData_02005bc0[];
-extern u32 gData_02005ca4[];
-extern u32 gData_02005f98[];
-extern u32 gData_020061f0[];
-extern u32 gData_020062d4[];
+extern u32 gShamanVillage_Triggers[];
+extern u32 gShamanVillage_Room1Triggers[];
+extern u32 gShamanVillage_Room3Triggers[];
+extern u32 gShamanVillage_Room2Triggers[];
+extern u32 gShamanVillage_Room4Triggers[];
+extern u32 gShamanVillage_Room5Triggers[];
+extern u32 gShamanVillage_Room6Triggers[];
 
 void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
-    return gData_02005aac;
+    return gShamanVillage_Room1Triggers;
   if (scene == (s32)&SceneId_ShamanVillage3)
-    return gData_02005bc0;
+    return gShamanVillage_Room3Triggers;
   if (scene == (s32)&SceneId_ShamanVillage2)
-    return gData_02005ca4;
+    return gShamanVillage_Room2Triggers;
   if (scene == (s32)&SceneId_ShamanVillage4)
-    return gData_02005f98;
+    return gShamanVillage_Room4Triggers;
   if (scene == (s32)&SceneId_ShamanVillage5)
-    return gData_020061f0;
+    return gShamanVillage_Room5Triggers;
   if (scene == (s32)&SceneId_ShamanVillage6)
-    return gData_020062d4;
-  return gData_02005aa0;
+    return gShamanVillage_Room6Triggers;
+  return gShamanVillage_Triggers;
 }
 
 DEFINE_FUNC_0200098C(ShamanVillage_StopAtLockedEntrance)

@@ -416,11 +416,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020034f0[] = {
+struct ActorPlacement gMarsLighthouseRoomM_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003508[] = {
+struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[] = {
     {418, CONDITION_ALWAYS, (s32)gData_020032c8, PIXELS(504), 0, PIXELS(184), FACING_EAST, 2, 0},
     {365, CONDITION_ALWAYS, 7, PIXELS(504), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, (s32)gData_020032c8, PIXELS(504), 0, PIXELS(112), FACING_EAST, 2, 0},
@@ -429,7 +429,7 @@ struct ActorPlacement gData_02003508[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003598[] = {
+struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[] = {
     {416, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(184), FACING_EAST, 2, 0},
     {416, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(184), FACING_WEST, 2, 1},
     {416, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(216), FACING_EAST, 2, 1},
@@ -444,7 +444,7 @@ struct ActorPlacement gData_02003598[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020036b8[] = {
+struct Trigger gMarsLighthouseRoomM_Triggers[] = {
     {TRIGGERS_END},
 };
 
@@ -452,7 +452,7 @@ s32 gData_020036c4[] = {
     -1,
 };
 
-struct Trigger gData_020036c8[] = {
+struct Trigger gMarsLighthouseRoomM_Room6Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020002c8)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_020002e8)},
     {0x60009a15, 10, CONDITION_ALWAYS, EVENT(Func_020002fc)},
@@ -464,7 +464,7 @@ s32 gData_02003704[] = {
     -1,
 };
 
-struct Trigger gData_02003708[] = {
+struct Trigger gMarsLighthouseRoomM_Room1Triggers[] = {
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -495,7 +495,7 @@ struct Trigger gData_02003708[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02003858[] = {
+struct Trigger gMarsLighthouseRoomM_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGERS_END},

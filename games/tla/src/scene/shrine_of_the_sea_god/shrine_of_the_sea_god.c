@@ -72,25 +72,25 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-extern const u8 gData_02003f08[];
-extern const u8 gData_02003f20[];
-extern const u8 gData_02003fe0[];
-extern const u8 gData_02004058[];
-extern const u8 gData_02004130[];
-extern const u8 gData_020042c8[];
-extern const u8 gData_02004388[];
-extern const u8 gData_02004400[];
-extern const u8 gData_020045f8[];
-extern const u8 gData_02004658[];
-extern const u8 gData_02004664[];
-extern const u8 gData_020046c4[];
-extern const u8 gData_020046f4[];
-extern const u8 gData_02004790[];
-extern const u8 gData_020047cc[];
-extern const u8 gData_020048ec[];
-extern const u8 gData_02004928[];
-extern const u8 gData_020049a0[];
-extern const u8 gData_020049f4[];
+extern const u8 gShrineOfTheSeaGod_Placements[];
+extern const u8 gShrineOfTheSeaGod_Room1Placements[];
+extern const u8 gShrineOfTheSeaGod_Room2Placements[];
+extern const u8 gShrineOfTheSeaGod_Room3Placements[];
+extern const u8 gShrineOfTheSeaGod_Room4Placements[];
+extern const u8 gShrineOfTheSeaGod_Room5Placements[];
+extern const u8 gShrineOfTheSeaGod_Room6Placements[];
+extern const u8 gShrineOfTheSeaGod_Room7Placements[];
+extern const u8 gShrineOfTheSeaGod_Room8Placements[];
+extern const u8 gShrineOfTheSeaGod_Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room1Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room2Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room3Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room4Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room5Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room6Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room7Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room8Triggers[];
+extern const u8 gShrineOfTheSeaGod_Room9Triggers[];
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -98,46 +98,46 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
-    return (const struct ActorPlacement *)gData_02003f20;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room1Placements;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
-    return (const struct ActorPlacement *)gData_02003fe0;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room2Placements;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
-    return (const struct ActorPlacement *)gData_02004058;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room3Placements;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
-    return (const struct ActorPlacement *)gData_02004130;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room4Placements;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
-    return (const struct ActorPlacement *)gData_020042c8;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room5Placements;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
-    return (const struct ActorPlacement *)gData_02004388;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room6Placements;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
-    return (const struct ActorPlacement *)gData_02004400;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room7Placements;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
-    return (const struct ActorPlacement *)gData_020045f8;
-  return (const struct ActorPlacement *)gData_02003f08;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room8Placements;
+  return (const struct ActorPlacement *)gShrineOfTheSeaGod_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
-    return (const struct Trigger *)gData_02004664;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room1Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
-    return (const struct Trigger *)gData_020046c4;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room2Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
-    return (const struct Trigger *)gData_020046f4;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room3Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
-    return (const struct Trigger *)gData_02004790;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room4Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
-    return (const struct Trigger *)gData_020047cc;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room5Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
-    return (const struct Trigger *)gData_020048ec;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room6Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
-    return (const struct Trigger *)gData_02004928;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room7Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
-    return (const struct Trigger *)gData_020049a0;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room8Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
-    return (const struct Trigger *)gData_020049f4;
-  return (const struct Trigger *)gData_02004658;
+    return (const struct Trigger *)gShrineOfTheSeaGod_Room9Triggers;
+  return (const struct Trigger *)gShrineOfTheSeaGod_Triggers;
 }
 
 // ---- games/tla/src/scene/shrine_of_the_sea_god/event7.c ----

@@ -121,8 +121,8 @@ void ShamanVillage_CountDownToStart(void);
 
 extern s32 gData_02004c08[];
 extern s32 gData_020050f8[];
-extern struct SceneEntrance gData_02005284[];
-extern struct SceneEntrance gData_020052b4[];
-extern struct SceneEntrance gData_02005314[];
+extern struct SceneEntrance gShamanVillage_Entrances[];
+extern struct SceneEntrance gShamanVillage_Room5Entrances[];
+extern struct SceneEntrance gShamanVillage_Room6Entrances[];
 
 #endif

@@ -264,7 +264,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020024ac[] = {
+struct ActorPlacement gSettlements_Placements[] = {
     {56, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(808), FACING_NORTH, 0, 0},
     {SCENE_TABLE_END},
 };
@@ -275,12 +275,12 @@ struct ActorPlacement gData_020024dc[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002524[] = {
+struct ActorPlacement gSettlements_Room2Placements[] = {
     {116, CONDITION_ALWAYS, 3, PIXELS(120), 0, PIXELS(632), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002554[] = {
+struct ActorPlacement gSettlements_Room4Placements[] = {
     {114, CONDITION_ALWAYS, 2, PIXELS(392), 0, PIXELS(280), FACING_NORTH, 1, 0},
     {299, CONDITION_ALWAYS, 7, PIXELS(56), 0, PIXELS(240), FACING_NORTH, 2, 0},
     {287, CONDITION_ALWAYS, (s32)gData_0200231c, PIXELS(280), 0, PIXELS(184),
@@ -289,13 +289,13 @@ struct ActorPlacement gData_02002554[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020025cc[] = {
+struct ActorPlacement gSettlements_Room5Placements[] = {
     {116, CONDITION_ALWAYS, 1, PIXELS(664), 0, PIXELS(168), FACING_SOUTH, 1, 0},
     {106, CONDITION_ALWAYS, 3, PIXELS(696), 0, PIXELS(456), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002614[] = {
+struct ActorPlacement gSettlements_Room9Placements[] = {
     {93, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(176), FACING_SOUTH, 1, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(200), FACING_SOUTH, 1, 0},
     {288, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(168), FACING_SOUTH, 1, 0},
@@ -325,12 +325,12 @@ struct ActorPlacement gData_02002614[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020027ac[] = {
+struct ActorPlacement gSettlements_Room10Placements[] = {
     {93, CONDITION_ALWAYS, 1, PIXELS(96), 0, PIXELS(816), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020027dc[] = {
+struct ActorPlacement gSettlements_Room7Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {244, 0x52, 1, PIXELS(312), 0, PIXELS(296), FACING_WEST, 0, 0},
@@ -338,13 +338,13 @@ struct ActorPlacement gData_020027dc[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002854[] = {
+struct ActorPlacement gSettlements_Room8Placements[] = {
     {75, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(216), FACING_SOUTH, 1, 0},
     {76, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(136), FACING_NORTH, 1, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_0200289c[] = {
+struct Trigger gSettlements_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 9},
@@ -355,7 +355,7 @@ struct Trigger gData_0200289c[] = {
 };
 // clang-format on
 
-struct Trigger gData_020028f0[] = {
+struct Trigger gSettlements_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x4602, 3, CONDITION_ALWAYS, EVENT(Func_02000624)},
@@ -369,14 +369,14 @@ struct Trigger gData_020028f0[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002974[] = {
+struct Trigger gSettlements_Room2Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements02)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements05)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020029a4[] = {
+struct Trigger gSettlements_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000c44)},
     {0x4602, 3, CONDITION_ALWAYS, EVENT(Func_02000624)},
@@ -396,7 +396,7 @@ struct Trigger gData_020029a4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002a70[] = {
+struct Trigger gSettlements_Room5Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {33, 12, CONDITION_ALWAYS, 12},
     {49, 13, CONDITION_ALWAYS, 13},
@@ -407,7 +407,7 @@ struct Trigger gData_02002a70[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002ad0[] = {
+struct Trigger gSettlements_Room7Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000c44)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02000c1c)},
@@ -419,7 +419,7 @@ struct Trigger gData_02002ad0[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002b3c[] = {
+struct Trigger gSettlements_Room8Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements13)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements14)},
@@ -429,7 +429,7 @@ struct Trigger gData_02002b3c[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002b90[] = {
+struct Trigger gSettlements_Room9Triggers[] = {
     {0xc401, 1, CONDITION_ALWAYS, 1},
     {0xc401, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements18)},
@@ -445,7 +445,7 @@ struct Trigger gData_02002b90[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002c2c[] = {
+struct Trigger gSettlements_Room10Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements17)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements19)},

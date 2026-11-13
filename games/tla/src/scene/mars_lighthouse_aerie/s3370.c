@@ -1386,7 +1386,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 DEFINE_G_SCENE_EXITS_2(297, 287, 1, 297, 3, 309, 2, 272, 20)
 
-s16 gData_0200626c[] = {
+s16 gMarsLighthouseAerie_Placements[] = {
     489, -1, 1, 0, 0, 0, 0, 0,
     0, 0, 0x4000, 2, 489, -1, 1, 0,
     0, 0, 0, 0, 0, 0, 0x4000, 2,

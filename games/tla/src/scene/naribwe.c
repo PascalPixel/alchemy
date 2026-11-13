@@ -26,7 +26,7 @@ void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
 
-extern const u8 gData_020006cc[];
+extern const u8 gNaribwe_Placements[];
 extern const u8 gData_020008c4[];
 extern const u8 gData_02000954[];
 extern const u8 gNaribwe_Triggers[];
@@ -55,7 +55,7 @@ const u8 *Scene_GetPlacements(void) {
     return gData_020008c4;
   if (Event_GetFlag(0x8ff))
     return gData_02000954;
-  return gData_020006cc;
+  return gNaribwe_Placements;
 }
 
 #include "event_inline.h"

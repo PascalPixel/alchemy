@@ -30,15 +30,15 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_020022cc[];
-extern const u8 gData_0200235c[];
+extern const u8 gLemurianShipDeck_Placements[];
+extern const u8 gLemurianShipDeck_Room1Placements[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room1)
-    return gData_0200235c;
-  return gData_020022cc;
+    return gLemurianShipDeck_Room1Placements;
+  return gLemurianShipDeck_Placements;
 }
 
 void Func_02000078(void) {
@@ -80,15 +80,15 @@ void Func_02000078(void) {
   }
 }
 
-extern const u8 gData_020023ec[];
-extern const u8 gData_020023f8[];
+extern const u8 gLemurianShipDeck_Triggers[];
+extern const u8 gLemurianShipDeck_Room2Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room2)
-    return gData_020023f8;
-  return gData_020023ec;
+    return gLemurianShipDeck_Room2Triggers;
+  return gLemurianShipDeck_Triggers;
 }
 
 /// ★ Named from the game: "The door is held closed by a powerful force."

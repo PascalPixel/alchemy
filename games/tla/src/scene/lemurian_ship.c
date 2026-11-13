@@ -25,10 +25,10 @@ u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov656Room1)
-    return gData_02003084;
+    return gLemurianShip_Room1Entrances;
   if (scene == (s32)&SceneId_Ov656Room2)
     return gData_0200312c__scene_tables;
-  return gData_02003054;
+  return gLemurianShip_Entrances;
 }
 
 u8 *Scene_GetRegions(void) {
@@ -215,7 +215,7 @@ struct ActorPlacement *Scene_GetPlacements(void) {
       return gData_02003848;
     }
   }
-  return gData_02003380;
+  return gLemurianShip_Placements;
 }
 
 void Func_0200021c(void) {
@@ -390,7 +390,7 @@ struct Trigger *Scene_GetEvents(void) {
       return gData_02003ebc;
     }
   }
-  return gData_020039c4;
+  return gLemurianShip_Triggers;
 }
 
 /// A switch that toggles flag 0x207 and its map edits once flag 0x983 is set;
@@ -1617,12 +1617,12 @@ s16 gData_0200304e[] = {
     8, 9, -1,
 };
 
-s32 gData_02003054[] = {
+s32 gLemurianShip_Entrances[] = {
     -0x10000, 172, 0x40000095, -0x10000, -1, 0xffff,
     0xffff, 0, 0, 0, 0, 0,
 };
 
-u32 gData_02003084[] = {
+u32 gLemurianShip_Room1Entrances[] = {
     0xffff0009, 406, 0xc0000178, 0x1500000, 0x2680108, 424,
     0xffff000a, 550, 0xc0000179, 0x1500000, 0x2680108, 424,
     0xffff000b, 566, 0xc0000379, 0x1e80000, 0x2d80308, 936,
@@ -1715,7 +1715,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02003380[] = {
+struct ActorPlacement gLemurianShip_Placements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -1810,7 +1810,7 @@ struct LemurianShipWarp gData_0200397c[] = {
     {12, (s32)gData_020038c0, 10, 21},
 };
 
-struct Trigger gData_020039c4[] = {
+struct Trigger gLemurianShip_Triggers[] = {
     {TRIGGERS_END},
 };
 

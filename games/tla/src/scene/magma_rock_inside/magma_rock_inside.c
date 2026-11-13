@@ -187,14 +187,14 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern u8 gData_02005840[];
-extern u8 gData_02005870[];
-extern u8 gData_02005978[];
-extern u8 gData_02005a50[];
-extern u8 gData_02005c30[];
-extern u8 gData_02005ca8[];
-extern u8 gData_02005d38[];
-extern u8 gData_02005ed0[];
+extern u8 gMagmaRockInside_Placements[];
+extern u8 gMagmaRockInside_Room2Placements[];
+extern u8 gMagmaRockInside_Room3Placements[];
+extern u8 gMagmaRockInside_Room4Placements[];
+extern u8 gMagmaRockInside_Room5Placements[];
+extern u8 gMagmaRockInside_Room6Placements[];
+extern u8 gMagmaRockInside_Room7Placements[];
+extern u8 gMagmaRockInside_Room8Placements[];
 
 extern s16 gData_02005528[];
 
@@ -203,21 +203,21 @@ u8 *Scene_GetPlacements(void) {
 
   if (scene != (s32)&SceneId_Ov692Room1) {
     if (scene == (s32)&SceneId_Ov692Room2)
-      return gData_02005870;
+      return gMagmaRockInside_Room2Placements;
     if (scene == (s32)&SceneId_Ov692Room3)
-      return gData_02005978;
+      return gMagmaRockInside_Room3Placements;
     if (scene == (s32)&SceneId_Ov692Room4)
-      return gData_02005a50;
+      return gMagmaRockInside_Room4Placements;
     if (scene == (s32)&SceneId_Ov692Room5)
-      return gData_02005c30;
+      return gMagmaRockInside_Room5Placements;
     if (scene == (s32)&SceneId_Ov692Room6)
-      return gData_02005ca8;
+      return gMagmaRockInside_Room6Placements;
     if (scene == (s32)&SceneId_Ov692Room7)
-      return gData_02005d38;
+      return gMagmaRockInside_Room7Placements;
     if (scene == (s32)&SceneId_Ov692Room8)
-      return gData_02005ed0;
+      return gMagmaRockInside_Room8Placements;
   }
-  return gData_02005840;
+  return gMagmaRockInside_Placements;
 }
 
 void Func_0200099c(void) {
@@ -1854,35 +1854,35 @@ DEFINE_FUNC_02003348(Func_02003348, 280)
 
 DEFINE_FUNC_02003348(Func_020033b0, 248)
 
-extern u8 gData_02005f60[];
-extern u8 gData_02005fe4[];
-extern u8 gData_020060bc[];
-extern u8 gData_020061c4[];
-extern u8 gData_020063a4[];
-extern u8 gData_02006458[];
-extern u8 gData_0200659c[];
-extern u8 gData_02006714[];
+extern u8 gMagmaRockInside_Triggers[];
+extern u8 gMagmaRockInside_Room2Triggers[];
+extern u8 gMagmaRockInside_Room3Triggers[];
+extern u8 gMagmaRockInside_Room4Triggers[];
+extern u8 gMagmaRockInside_Room5Triggers[];
+extern u8 gMagmaRockInside_Room6Triggers[];
+extern u8 gMagmaRockInside_Room7Triggers[];
+extern u8 gMagmaRockInside_Room8Triggers[];
 
 u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {
     if (scene == (s32)&SceneId_Ov692Room2)
-      return gData_02005fe4;
+      return gMagmaRockInside_Room2Triggers;
     if (scene == (s32)&SceneId_Ov692Room3)
-      return gData_020060bc;
+      return gMagmaRockInside_Room3Triggers;
     if (scene == (s32)&SceneId_Ov692Room4)
-      return gData_020061c4;
+      return gMagmaRockInside_Room4Triggers;
     if (scene == (s32)&SceneId_Ov692Room5)
-      return gData_020063a4;
+      return gMagmaRockInside_Room5Triggers;
     if (scene == (s32)&SceneId_Ov692Room6)
-      return gData_02006458;
+      return gMagmaRockInside_Room6Triggers;
     if (scene == (s32)&SceneId_Ov692Room7)
-      return gData_0200659c;
+      return gMagmaRockInside_Room7Triggers;
     if (scene == (s32)&SceneId_Ov692Room8)
-      return gData_02006714;
+      return gMagmaRockInside_Room8Triggers;
   }
-  return gData_02005f60;
+  return gMagmaRockInside_Triggers;
 }
 
 void Func_020034bc(void) {

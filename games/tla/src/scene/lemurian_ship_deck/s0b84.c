@@ -921,7 +921,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020022cc[] = {
+struct ActorPlacement gLemurianShipDeck_Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(312), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
@@ -930,7 +930,7 @@ struct ActorPlacement gData_020022cc[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200235c[] = {
+struct ActorPlacement gLemurianShipDeck_Room1Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
@@ -939,11 +939,11 @@ struct ActorPlacement gData_0200235c[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020023ec[] = {
+struct Trigger gLemurianShipDeck_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020023f8[] = {
+struct Trigger gLemurianShipDeck_Room2Triggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000078)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},

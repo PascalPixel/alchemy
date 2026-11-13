@@ -594,18 +594,18 @@ u32 gData_02005ae8[] = {
     39, 7, 17,
 };
 
-struct ActorPlacement gData_02005af4[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005b0c[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room1Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(280), FACING_EAST, 2, 0},
     {413, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(280), FACING_WEST, 2, 0},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct ActorPlacement gData_02005b54[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room2Placements[] = {
     {406, CONDITION_ALWAYS, (s32)gData_02005ae8, 0, 0, 0, FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, (s32)gData_02005ae8, PIXELS(136), 0, PIXELS(424),
      FACING_SOUTH, 2, 0},
@@ -634,7 +634,7 @@ void Func_0200112c(void);
 void Func_02001138(void);
 
 // clang-format off
-struct ActorPlacement gData_02005bcc[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room3Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(120), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004de8, PIXELS(104), 0, PIXELS(112), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004e50, PIXELS(280), 0, PIXELS(112), FACING_SOUTH, 2, 0},
@@ -655,7 +655,7 @@ struct ActorPlacement gData_02005bcc[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02005d4c[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room4Placements[] = {
     {414, CONDITION_ALWAYS, (s32)gData_02004eb8, PIXELS(840), 0, PIXELS(528), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(872), 0, PIXELS(568), FACING_SOUTH, 2, 0},
     {413, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(792), FACING_EAST, 2, 0},
@@ -675,7 +675,7 @@ struct ActorPlacement gData_02005d4c[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02005eb4[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room5Placements[] = {
     {418, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(72), 0, PIXELS(632), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(72), 0, PIXELS(680), FACING_SOUTH, 2, 0},
     {418, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(904), 0, PIXELS(120), FACING_SOUTH, 2, 0},
@@ -688,7 +688,7 @@ struct ActorPlacement gData_02005eb4[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02005f74[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room6Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(696), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004f44, PIXELS(120), 0, PIXELS(688), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(88), 0, PIXELS(728), FACING_SOUTH, 2, 0},
@@ -707,24 +707,24 @@ struct ActorPlacement gData_02005f74[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_020060c4[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room7Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(152), FACING_EAST, 2, 0},
     {413, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(152), FACING_WEST, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_0200610c[] = {
+struct Trigger gMarsLighthouseEntrance_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006118[] = {
+struct Trigger gMarsLighthouseEntrance_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGERS_END},
 };
 // clang-format on
 
-struct Trigger gData_0200613c[] = {
+struct Trigger gMarsLighthouseEntrance_Room2Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -750,7 +750,7 @@ struct Trigger gData_0200613c[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006250[] = {
+struct Trigger gMarsLighthouseEntrance_Room3Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -783,7 +783,7 @@ struct Trigger gData_02006250[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020063b8[] = {
+struct Trigger gMarsLighthouseEntrance_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -813,7 +813,7 @@ struct Trigger gData_020063b8[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020064fc[] = {
+struct Trigger gMarsLighthouseEntrance_Room5Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -841,7 +841,7 @@ struct Trigger gData_020064fc[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006628[] = {
+struct Trigger gMarsLighthouseEntrance_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -872,7 +872,7 @@ struct Trigger gData_02006628[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006778[] = {
+struct Trigger gMarsLighthouseEntrance_Room7Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},

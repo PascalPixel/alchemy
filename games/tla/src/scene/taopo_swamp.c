@@ -182,36 +182,36 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02002c54[];
-extern const u8 gData_02002c6c[];
-extern const u8 gData_02002d2c[];
-extern const u8 gData_02002d5c[];
-extern const u8 gData_02002dbc[];
-extern const u8 gData_02002e04[];
-extern const u8 gData_02002e64[];
-extern const u8 gData_02002f9c[];
-extern const u8 gData_02002fe4[];
+extern const u8 gTaopoSwamp_Placements[];
+extern const u8 gTaopoSwamp_Room2Placements[];
+extern const u8 gTaopoSwamp_Room4Placements[];
+extern const u8 gTaopoSwamp_Room5Placements[];
+extern const u8 gTaopoSwamp_Room7Placements[];
+extern const u8 gTaopoSwamp_Room8Placements[];
+extern const u8 gTaopoSwamp_Room10Placements[];
+extern const u8 gTaopoSwamp_Room9Placements[];
+extern const u8 gTaopoSwamp_Room11Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov678Room2)
-    return (const struct ActorPlacement *)gData_02002c6c;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room2Placements;
   if (scene == (s32)&SceneId_Ov678Room4)
-    return (const struct ActorPlacement *)gData_02002d2c;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room4Placements;
   if (scene == (s32)&SceneId_Ov678Room5)
-    return (const struct ActorPlacement *)gData_02002d5c;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room5Placements;
   if (scene == (s32)&SceneId_Ov678Room7)
-    return (const struct ActorPlacement *)gData_02002dbc;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room7Placements;
   if (scene == (s32)&SceneId_Ov678Room8)
-    return (const struct ActorPlacement *)gData_02002e04;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room8Placements;
   if (scene == (s32)&SceneId_Ov678Room9)
-    return (const struct ActorPlacement *)gData_02002f9c;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room9Placements;
   if (scene == (s32)&SceneId_Ov678Room10)
-    return (const struct ActorPlacement *)gData_02002e64;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room10Placements;
   if (scene == (s32)&SceneId_Ov678Room11)
-    return (const struct ActorPlacement *)gData_02002fe4;
-  return (const struct ActorPlacement *)gData_02002c54;
+    return (const struct ActorPlacement *)gTaopoSwamp_Room11Placements;
+  return (const struct ActorPlacement *)gTaopoSwamp_Placements;
 }
 
 /// Whirlwind on one of the bushes 8 to 12: its flag (0x8d8 plus its id) keeps
@@ -856,45 +856,45 @@ void TaopoSwamp_ScoopStarDust(s32 a) { Func_02002958_(a, 64, 0x348); }
 
 void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
 
-extern const u8 gData_0200302c[];
-extern const u8 gData_02003038[];
-extern const u8 gData_02003068[];
-extern const u8 gData_02003128[];
-extern const u8 gData_02003194[];
-extern const u8 gData_020031e8[];
+extern const u8 gTaopoSwamp_Triggers[];
+extern const u8 gTaopoSwamp_Room1Triggers[];
+extern const u8 gTaopoSwamp_Room2Triggers[];
+extern const u8 gTaopoSwamp_Room3Triggers[];
+extern const u8 gTaopoSwamp_Room4Triggers[];
+extern const u8 gTaopoSwamp_Room5Triggers[];
 extern const u8 gData_02003314[];
-extern const u8 gData_02003338[];
-extern const u8 gData_020033e0[];
-extern const u8 gData_02003464[];
-extern const u8 gData_020034e8[];
-extern const u8 gData_02003560[];
+extern const u8 gTaopoSwamp_Room7Triggers[];
+extern const u8 gTaopoSwamp_Room8Triggers[];
+extern const u8 gTaopoSwamp_Room10Triggers[];
+extern const u8 gTaopoSwamp_Room9Triggers[];
+extern const u8 gTaopoSwamp_Room11Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov678Room1)
-    return (const struct Trigger *)gData_02003038;
+    return (const struct Trigger *)gTaopoSwamp_Room1Triggers;
   if (scene == (s32)&SceneId_Ov678Room2)
-    return (const struct Trigger *)gData_02003068;
+    return (const struct Trigger *)gTaopoSwamp_Room2Triggers;
   if (scene == (s32)&SceneId_Ov678Room3)
-    return (const struct Trigger *)gData_02003128;
+    return (const struct Trigger *)gTaopoSwamp_Room3Triggers;
   if (scene == (s32)&SceneId_Ov678Room4)
-    return (const struct Trigger *)gData_02003194;
+    return (const struct Trigger *)gTaopoSwamp_Room4Triggers;
   if (scene == (s32)&SceneId_Ov678Room5)
-    return (const struct Trigger *)gData_020031e8;
+    return (const struct Trigger *)gTaopoSwamp_Room5Triggers;
   if (scene == (s32)&SceneId_Ov678Room6)
     return (const struct Trigger *)gData_02003314;
   if (scene == (s32)&SceneId_Ov678Room7)
-    return (const struct Trigger *)gData_02003338;
+    return (const struct Trigger *)gTaopoSwamp_Room7Triggers;
   if (scene == (s32)&SceneId_Ov678Room8)
-    return (const struct Trigger *)gData_020033e0;
+    return (const struct Trigger *)gTaopoSwamp_Room8Triggers;
   if (scene == (s32)&SceneId_Ov678Room9)
-    return (const struct Trigger *)gData_020034e8;
+    return (const struct Trigger *)gTaopoSwamp_Room9Triggers;
   if (scene == (s32)&SceneId_Ov678Room10)
-    return (const struct Trigger *)gData_02003464;
+    return (const struct Trigger *)gTaopoSwamp_Room10Triggers;
   if (scene == (s32)&SceneId_Ov678Room11)
-    return (const struct Trigger *)gData_02003560;
-  return (const struct Trigger *)gData_0200302c;
+    return (const struct Trigger *)gTaopoSwamp_Room11Triggers;
+  return (const struct Trigger *)gTaopoSwamp_Triggers;
 }
 
 /// A falling drop splashes where it lands.

@@ -126,12 +126,12 @@ const struct SceneEntrance *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_0200403c[];
+extern const u8 gMagmaRock_Placements[];
 extern const u8 gData_020041a4[];
 extern const u8 gData_0200427c[];
 extern const u8 gData_020043e4[];
 extern const u8 gData_020044a4[];
-extern const u8 gData_020045c4[];
+extern const u8 gMagmaRock_Room3Placements[];
 
 const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
@@ -144,8 +144,8 @@ const struct Trigger *Scene_GetPlacements(void) {
     return (const struct Trigger *)gData_020044a4;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gData_020045c4;
-  return (const struct Trigger *)gData_0200403c;
+    return (const struct Trigger *)gMagmaRock_Room3Placements;
+  return (const struct Trigger *)gMagmaRock_Placements;
 }
 
 void Func_02003c14(s16 *table);

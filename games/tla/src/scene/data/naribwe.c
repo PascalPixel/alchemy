@@ -42,7 +42,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 DEFINE_G_SCENE_EXITS_4(105, 106, 2, 23, 24)
 
-DEFINE_G_DATA_020006CC(gData_020006cc)
+DEFINE_G_DATA_020006CC(gNaribwe_Placements)
 
 struct ActorPlacement gData_020008c4[] = {
     {364, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, 0},

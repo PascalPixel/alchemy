@@ -174,11 +174,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020049c4[] = {
+struct ActorPlacement gYampiDesert_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020049dc[] = {
+struct ActorPlacement gYampiDesert_Room1Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(216), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(168), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(136), FACING_SOUTH, 2, 0},
@@ -212,7 +212,7 @@ struct ActorPlacement gData_02004b44[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004c04[] = {
+struct ActorPlacement gYampiDesert_Room3Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(216), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(344), FACING_SOUTH, 2, 0},
@@ -228,7 +228,7 @@ struct ActorPlacement gData_02004c04[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004d3c[] = {
+struct ActorPlacement gYampiDesert_Room4Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(568), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(600), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(568), FACING_SOUTH, 2, 0},
@@ -242,7 +242,7 @@ struct ActorPlacement gData_02004d3c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004e44[] = {
+struct ActorPlacement gYampiDesert_Room5Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(728), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(296), FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(344), FACING_SOUTH, 2, 0},
@@ -262,7 +262,7 @@ struct ActorPlacement gData_02004e44[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004fdc[] = {
+struct ActorPlacement gYampiDesert_Room8Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(360), FACING_SOUTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(360), FACING_SOUTH, 2, 1},
     {450, CONDITION_ALWAYS, 1, PIXELS(768), 0, PIXELS(616), FACING_SOUTH, 2, 0},
@@ -271,13 +271,13 @@ struct ActorPlacement gData_02004fdc[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200506c[] = {
+struct ActorPlacement gYampiDesert_Room10Placements[] = {
     {103, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020050b4[] = {
+struct ActorPlacement gYampiDesert_Room12Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(184), FACING_SOUTH, 2, 1},
@@ -289,11 +289,11 @@ struct ActorPlacement gData_020050b4[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_0200518c[] = {
+struct Trigger gYampiDesert_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005198[] = {
+struct Trigger gYampiDesert_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(Func_02000620)},
@@ -307,7 +307,7 @@ struct Trigger gData_02005198[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200521c[] = {
+struct Trigger gYampiDesert_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -350,7 +350,7 @@ struct Trigger gData_0200521c[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020053fc[] = {
+struct Trigger gYampiDesert_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(Func_02000634)},
@@ -372,7 +372,7 @@ struct Trigger gData_020053fc[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020054e0[] = {
+struct Trigger gYampiDesert_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -390,7 +390,7 @@ struct Trigger gData_020054e0[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005594[] = {
+struct Trigger gYampiDesert_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -406,7 +406,7 @@ struct Trigger gData_02005594[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005630[] = {
+struct Trigger gYampiDesert_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
@@ -415,7 +415,7 @@ struct Trigger gData_02005630[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005678[] = {
+struct Trigger gYampiDesert_Room7Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
@@ -423,7 +423,7 @@ struct Trigger gData_02005678[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020056b4[] = {
+struct Trigger gYampiDesert_Room8Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -439,7 +439,7 @@ struct Trigger gData_020056b4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005750[] = {
+struct Trigger gYampiDesert_Room9Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02001518)},
@@ -447,20 +447,20 @@ struct Trigger gData_02005750[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200578c[] = {
+struct Trigger gYampiDesert_Room10Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
     {0x50008805, 10, 0x8ed, EVENT(YampiDesert_ScoopCenterPit)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020057bc[] = {
+struct Trigger gYampiDesert_Room11Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02002e98)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020057e0[] = {
+struct Trigger gYampiDesert_Room12Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(Func_02000670)},

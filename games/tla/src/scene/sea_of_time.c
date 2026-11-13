@@ -76,7 +76,7 @@ extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
-    return (const struct ActorPlacement *)gData_02002214;
+    return (const struct ActorPlacement *)gSeaOfTime_Room2Placements;
   return (const struct ActorPlacement *)gData_020021e4__sea_of_time;
 }
 
@@ -871,10 +871,10 @@ DEFINE_FUNC_020015CC(Func_020015ec, 5)
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1)
-    return gData_020022d0;
+    return gSeaOfTime_Room1Triggers;
   if (gMainRoutineWork.entrance <= 4)
     return gData_0200242c;
-  return gData_0200251c;
+  return gSeaOfTime_Triggers;
 }
 
 #include "map.h"
@@ -1290,7 +1290,7 @@ struct ActorPlacement gData_020021e4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002214[] = {
+struct ActorPlacement gSeaOfTime_Room2Placements[] = {
     {8, CONDITION_ALWAYS, (s32)gData_02002154, PIXELS(120), 0, PIXELS(280),
      FACING_NORTH, 2, 0},
     {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
@@ -1321,7 +1321,7 @@ volatile u32 gData_020022c8 = 0;
 
 u32 gData_020022cc = 0;
 
-struct Trigger gData_020022d0[] = {
+struct Trigger gSeaOfTime_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 49, CONDITION_ALWAYS, EVENT(Func_02001068)},
@@ -1376,7 +1376,7 @@ struct Trigger gData_0200242c[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200251c[] = {
+struct Trigger gSeaOfTime_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020015cc)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020015ec)},
     {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_02000818)},

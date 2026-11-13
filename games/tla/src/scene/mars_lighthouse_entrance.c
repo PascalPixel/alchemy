@@ -35,14 +35,14 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "shared/mars_lighthouse_entrance_room.h"
 
-extern const u8 gData_02005af4[];
-extern const u8 gData_02005b0c[];
-extern const u8 gData_02005b54[];
-extern const u8 gData_02005bcc[];
-extern const u8 gData_02005d4c[];
-extern const u8 gData_02005eb4[];
-extern const u8 gData_02005f74[];
-extern const u8 gData_020060c4[];
+extern const u8 gMarsLighthouseEntrance_Placements[];
+extern const u8 gMarsLighthouseEntrance_Room1Placements[];
+extern const u8 gMarsLighthouseEntrance_Room2Placements[];
+extern const u8 gMarsLighthouseEntrance_Room3Placements[];
+extern const u8 gMarsLighthouseEntrance_Room4Placements[];
+extern const u8 gMarsLighthouseEntrance_Room5Placements[];
+extern const u8 gMarsLighthouseEntrance_Room6Placements[];
+extern const u8 gMarsLighthouseEntrance_Room7Placements[];
 
 s32 Func_02000070(void) {
   Func_0200246c(0, 65);
@@ -51,20 +51,20 @@ s32 Func_02000070(void) {
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
-    return gData_02005b0c;
+    return gMarsLighthouseEntrance_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
-    return gData_02005b54;
+    return gMarsLighthouseEntrance_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom3)
-    return gData_02005bcc;
+    return gMarsLighthouseEntrance_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom4)
-    return gData_02005d4c;
+    return gMarsLighthouseEntrance_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom5)
-    return gData_02005eb4;
+    return gMarsLighthouseEntrance_Room5Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom6)
-    return gData_02005f74;
+    return gMarsLighthouseEntrance_Room6Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom7)
-    return gData_020060c4;
-  return gData_02005af4;
+    return gMarsLighthouseEntrance_Room7Placements;
+  return gMarsLighthouseEntrance_Placements;
 }
 
 void Func_02000118(void) {

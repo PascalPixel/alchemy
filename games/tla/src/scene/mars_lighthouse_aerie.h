@@ -24,7 +24,7 @@ extern u8 MsgUhhhhnnnICan[];
 extern u8 MsgKoffKoffYou[];
 extern u8 MsgUnnnnIAm[];
 extern u8 MsgIUnderstandYour[];
-extern s16 gData_0200626c[];
+extern s16 gMarsLighthouseAerie_Placements[];
 extern struct ActorPlacement gData_0200644c[];
 extern s16 gData_020066bc[];
 extern u32 gData_02006b64;

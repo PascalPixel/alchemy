@@ -15,8 +15,8 @@ extern u32 gData_0200171c[];
 
 void Func_02000f38(void);
 extern u32 gData_0200183c[];
-extern struct ActorPlacement gData_02001900[];
-extern struct ActorPlacement gData_02001a80[];
+extern struct ActorPlacement gLoho_Placements[];
+extern struct ActorPlacement gLoho_Room2Placements[];
 extern u32 gData_02001470[];
 extern s32 gData_0200151c[];
 
@@ -26,9 +26,9 @@ extern u32 gData_0200158c[];
 extern u32 gData_020015e0[];
 extern u32 gData_02001638[];
 extern s32 gData_0200166c[];
-extern struct Trigger gData_02001ae0[];
-extern struct Trigger gData_02001aec[];
-extern struct Trigger gData_02001dd4[];
+extern struct Trigger gLoho_Triggers[];
+extern struct Trigger gLoho_Room1Triggers[];
+extern struct Trigger gLoho_Room2Triggers[];
 extern struct LohoPicture gData_02001f14;
 extern u32 gData_020016b8[];
 

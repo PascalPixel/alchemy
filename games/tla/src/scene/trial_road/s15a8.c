@@ -89,24 +89,24 @@ void Func_0200185c(s32 a, s32 id) {
 #include "dma.h"
 #include "io_reg.h"
 
-extern const u8 gData_02007044[];
-extern const u8 gData_02007cf8[];
-extern const u8 gData_02007d40[];
-extern const u8 gData_02007d94[];
-extern const u8 *const gData_02007e00[];
+extern const u8 gTrialRoad_Triggers[];
+extern const u8 gTrialRoad_Room3Triggers[];
+extern const u8 gTrialRoad_Room4Triggers[];
+extern const u8 gTrialRoad_Room2Triggers[];
+extern const u8 *const gTrialRoad_Room1Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
-    return gData_02007e00[pattern & 7];
+    return gTrialRoad_Room1Triggers[pattern & 7];
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room3)
-    return gData_02007cf8;
+    return gTrialRoad_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room4)
-    return gData_02007d40;
+    return gTrialRoad_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room2)
-    return gData_02007d94;
-  return gData_02007044;
+    return gTrialRoad_Room2Triggers;
+  return gTrialRoad_Triggers;
 }
 
 void Func_02001904(void) {

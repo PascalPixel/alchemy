@@ -1683,19 +1683,19 @@ u32 gData_02005204[] = {
     0x67fff, 0xffff,
 };
 
-struct SceneEntrance gData_02005284[] = {
+struct SceneEntrance gShamanVillage_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gData_020052b4[] = {
+struct SceneEntrance gShamanVillage_Room5Entrances[] = {
     {15, CONDITION_ALWAYS, 544, 0, 680, FACING_NORTH, 0, 420, 560, 660, 720, 0},
     {16, CONDITION_ALWAYS, 752, 0, 680, FACING_NORTH, 0, 630, 560, 870, 720, 0},
     {17, CONDITION_ALWAYS, 544, 0, 904, FACING_NORTH, 0, 420, 780, 660, 940, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gData_02005314[] = {
+struct SceneEntrance gShamanVillage_Room6Entrances[] = {
     {6, CONDITION_ALWAYS, 720, 0, 544, FACING_NORTH, 0, 600, 380, 840, 600, 0},
     {SCENE_TABLE_END},
 };
@@ -1754,11 +1754,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02005410[] = {
+struct ActorPlacement gShamanVillage_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005428[] = {
+struct ActorPlacement gShamanVillage_Room1Placements[] = {
     {305, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_EAST, 2, 2},
     {305, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_EAST, 2, 2},
     {305, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_EAST, 2, 2},
@@ -1776,7 +1776,7 @@ struct ActorPlacement gData_02005428[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005590[] = {
+struct ActorPlacement gShamanVillage_Room3Placements[] = {
     {305, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(120), FACING_EAST, 2, 0},
     {305, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(120), FACING_EAST, 2, 0},
     {305, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(216), FACING_EAST, 2, 0},
@@ -1812,7 +1812,7 @@ struct ActorPlacement gData_020056b0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005860[] = {
+struct ActorPlacement gShamanVillage_Room4Placements[] = {
     {116, CONDITION_ALWAYS, 1, PIXELS(112), 0, PIXELS(90), 0xb000, 1, 0},
     {136, CONDITION_ALWAYS, 3, PIXELS(110), 0, PIXELS(172), FACING_SOUTH, 1, 0},
     {138, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(126), 0x3000, 1, 0},
@@ -1828,7 +1828,7 @@ struct ActorPlacement gData_02005860[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005998[] = {
+struct ActorPlacement gShamanVillage_Room5Placements[] = {
     {112, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(678), 0xb000, 0, 0},
     {113, CONDITION_ALWAYS, 1, PIXELS(508), 0, PIXELS(656), 0x3000, 0, 0},
     {136, CONDITION_ALWAYS, 1, PIXELS(542), 0, PIXELS(628), 0x3000, 0, 0},
@@ -1838,7 +1838,7 @@ struct ActorPlacement gData_02005998[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005a40[] = {
+struct ActorPlacement gShamanVillage_Room6Placements[] = {
     {201, CONDITION_ALWAYS, 1, PIXELS(720), 0, PIXELS(466), 0x3000, 1, 0},
     {112, CONDITION_ALWAYS, 1, PIXELS(746), 0, PIXELS(516), 0xb000, 1, 0},
     {113, CONDITION_ALWAYS, 1, PIXELS(700), 0, PIXELS(524), 0xd000, 1, 0},
@@ -1846,11 +1846,11 @@ struct ActorPlacement gData_02005a40[] = {
 };
 // clang-format on
 
-struct Trigger gData_02005aa0[] = {
+struct Trigger gShamanVillage_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005aac[] = {
+struct Trigger gShamanVillage_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1876,7 +1876,7 @@ struct Trigger gData_02005aac[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005bc0[] = {
+struct Trigger gShamanVillage_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1898,7 +1898,7 @@ struct Trigger gData_02005bc0[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005ca4[] = {
+struct Trigger gShamanVillage_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xce01, 2, 0x194d, 2},
     {0xce01, 3, 0x194d, 3},
@@ -1965,7 +1965,7 @@ struct Trigger gData_02005ca4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005f98[] = {
+struct Trigger gShamanVillage_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2022,7 +2022,7 @@ struct Trigger gData_02005f98[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020061f0[] = {
+struct Trigger gShamanVillage_Room5Triggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
@@ -2048,7 +2048,7 @@ struct Trigger gData_020061f0[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020062d4[] = {
+struct Trigger gShamanVillage_Room6Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe, MSGNO(MsgShamanVisitorsMustFindMoapa)},

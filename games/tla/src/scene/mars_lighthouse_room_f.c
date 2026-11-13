@@ -30,11 +30,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "mars_lighthouse_room_f.h"
 
-extern const u8 gData_02006518[];
-extern const u8 gData_02006530[];
-extern const u8 gData_02006710[];
-extern const u8 gData_02006890[];
-extern const u8 gData_02006a0c[];
+extern const u8 gMarsLighthouseRoomF_Placements[];
+extern const u8 gMarsLighthouseRoomF_Room4Placements[];
+extern const u8 gMarsLighthouseRoomF_Room1Placements[];
+extern const u8 gMarsLighthouseRoomF_Room3Placements[];
+extern const u8 gMarsLighthouseRoomF_Room2Placements[];
 
 s32 Func_0200004c(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -43,14 +43,14 @@ s32 Func_0200004c(struct Actor *object) {
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
-    return gData_02006530;
+    return gMarsLighthouseRoomF_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
-    return gData_02006a0c;
+    return gMarsLighthouseRoomF_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom1)
-    return gData_02006710;
+    return gMarsLighthouseRoomF_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom3)
-    return gData_02006890;
-  return gData_02006518;
+    return gMarsLighthouseRoomF_Room3Placements;
+  return gMarsLighthouseRoomF_Placements;
 }
 
 void Func_020000bc(void) {
@@ -540,11 +540,11 @@ void Func_02000b40(void) {
   }
 }
 
-extern const u8 gData_02006b8c[];
-extern const u8 gData_02006b98[];
-extern const u8 gData_02006d78[];
-extern const u8 gData_02006e38[];
-extern const u8 gData_02006f64[];
+extern const u8 gMarsLighthouseRoomF_Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room4Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room1Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room3Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room2Triggers[];
 void Func_02002ce0(void);
 void Func_020043ec(void);
 
@@ -600,14 +600,14 @@ void Func_02000df8(void) {
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
-    return gData_02006b98;
+    return gMarsLighthouseRoomF_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
-    return gData_02006f64;
+    return gMarsLighthouseRoomF_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom1)
-    return gData_02006d78;
+    return gMarsLighthouseRoomF_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom3)
-    return gData_02006e38;
-  return gData_02006b8c;
+    return gMarsLighthouseRoomF_Room3Triggers;
+  return gMarsLighthouseRoomF_Triggers;
 }
 
 void Func_02000e68(void) {

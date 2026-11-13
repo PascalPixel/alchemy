@@ -84,12 +84,12 @@ void Event_StartScreenTransition(void);
 
 // ---- this overlay
 
-extern struct ActorPlacement gData_02000c8c[];
-extern struct ActorPlacement gData_02000ca4[];
-extern struct ActorPlacement gData_02000dac[];
-extern struct Trigger gData_02000e84[];
-extern struct Trigger gData_02000ea8[];
-extern struct Trigger gData_02000fe0[];
+extern struct ActorPlacement gYallamInteriors_Placements[];
+extern struct ActorPlacement gYallamInteriors_Room1Placements[];
+extern struct ActorPlacement gYallamInteriors_Room2Placements[];
+extern struct Trigger gYallamInteriors_Triggers[];
+extern struct Trigger gYallamInteriors_Room1Triggers[];
+extern struct Trigger gYallamInteriors_Room2Triggers[];
 #include "inventory.h"
 #include "version.h"
 #include "event_inline.h"
@@ -108,10 +108,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov677Room1)
-    return gData_02000ca4;
+    return gYallamInteriors_Room1Placements;
   if (scene == (s32)&SceneId_Ov677Room2)
-    return gData_02000dac;
-  return gData_02000c8c;
+    return gYallamInteriors_Room2Placements;
+  return gYallamInteriors_Placements;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -220,10 +220,10 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov677Room1)
-    return gData_02000ea8;
+    return gYallamInteriors_Room1Triggers;
   if (scene == (s32)&SceneId_Ov677Room2)
-    return gData_02000fe0;
-  return gData_02000e84;
+    return gYallamInteriors_Room2Triggers;
+  return gYallamInteriors_Triggers;
 }
 
 /// "Do you like children's songs?"
@@ -570,12 +570,12 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02000c8c[] = {
+struct ActorPlacement gYallamInteriors_Placements[] = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct ActorPlacement gData_02000ca4[] = {
+struct ActorPlacement gYallamInteriors_Room1Placements[] = {
 #if !TLA_PATCH_2
     {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(136), FACING_SOUTHWEST, 1,
      0},
@@ -601,7 +601,7 @@ struct ActorPlacement gData_02000ca4[] = {
 #include "text/msg_ids.h"
 
 // clang-format off
-struct ActorPlacement gData_02000dac[] = {
+struct ActorPlacement gYallamInteriors_Room2Placements[] = {
     {112, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(188), FACING_EAST, 1, 0},
     {113, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(152), FACING_SOUTH, 1, 0},
     {108, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(405), FACING_SOUTH, 1, 0},
@@ -613,14 +613,14 @@ struct ActorPlacement gData_02000dac[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02000e84[] = {
+struct Trigger gYallamInteriors_Triggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGERS_END},
 };
 // clang-format on
 
-struct Trigger gData_02000ea8[] = {
+struct Trigger gYallamInteriors_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -649,7 +649,7 @@ struct Trigger gData_02000ea8[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02000fe0[] = {
+struct Trigger gYallamInteriors_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

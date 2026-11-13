@@ -45,8 +45,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
-    return gData_02001a80;
-  return gData_02001900;
+    return gLoho_Room2Placements;
+  return gLoho_Placements;
 }
 
 void Func_020000ac(void) {
@@ -495,10 +495,10 @@ void Loho_LiftRock(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1)
-    return gData_02001aec;
+    return gLoho_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
-    return gData_02001dd4;
-  return gData_02001ae0;
+    return gLoho_Room2Triggers;
+  return gLoho_Triggers;
 }
 
 /// "People staying at the inn can check in at the counter."
@@ -878,7 +878,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02001900[] = {
+struct ActorPlacement gLoho_Placements[] = {
     {221, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(304), FACING_SOUTHWEST, 1, 0},
     {221, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(392), FACING_SOUTHEAST, 1, 0},
     {221, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(264), FACING_WEST, 1, 0},
@@ -897,18 +897,18 @@ struct ActorPlacement gData_02001900[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001a80[] = {
+struct ActorPlacement gLoho_Room2Placements[] = {
     {130, CONDITION_ALWAYS, (s32)gData_020016b8, PIXELS(128), 0, PIXELS(120), FACING_NORTHWEST, 1, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(120), FACING_SOUTH, 1, 0},
     {202, CONDITION_ALWAYS, 1, PIXELS(448), 0, PIXELS(408), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001ae0[] = {
+struct Trigger gLoho_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001aec[] = {
+struct Trigger gLoho_Room1Triggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
@@ -973,7 +973,7 @@ struct Trigger gData_02001aec[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001dd4[] = {
+struct Trigger gLoho_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

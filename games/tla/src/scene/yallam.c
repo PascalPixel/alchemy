@@ -184,8 +184,8 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02002ac4[];
-extern const u8 gData_02002be4[];
+extern const u8 gYallam_Placements[];
+extern const u8 gYallam_Room2Placements[];
 extern const u8 gData_02002bfc[];
 
 const u8 *Scene_GetPlacements(void) {
@@ -193,8 +193,8 @@ const u8 *Scene_GetPlacements(void) {
       gMainRoutineWork.entrance == 15)
     return gData_02002bfc;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room2)
-    return gData_02002be4;
-  return gData_02002ac4;
+    return gYallam_Room2Placements;
+  return gYallam_Placements;
 }
 
 /// The party leader walks into one of Yallam's doors, which opens with its cell

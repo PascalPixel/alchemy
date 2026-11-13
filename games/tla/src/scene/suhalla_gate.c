@@ -35,10 +35,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
-    return gData_02000d98;
+    return gSuhallaGate_Room2Entrances;
   if (scene == (s32)&SceneId_SuhallaGate3)
-    return gData_02000e40;
-  return gData_02000cd8;
+    return gSuhallaGate_Room3Entrances;
+  return gSuhallaGate_Entrances;
 }
 
 #include "battle.h"
@@ -59,20 +59,20 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
-    return gData_02000f58;
+    return gSuhallaGate_Room2Placements;
   if (scene == (s32)&SceneId_SuhallaGate1)
-    return gData_02001048;
-  return gData_02000f10;
+    return gSuhallaGate_Room1Placements;
+  return gSuhallaGate_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
-    return gData_020010e4;
+    return gSuhallaGate_Room2Triggers;
   if (scene == (s32)&SceneId_SuhallaGate3)
-    return gData_02001180;
-  return gData_02001078;
+    return gSuhallaGate_Room3Triggers;
+  return gSuhallaGate_Triggers;
 }
 
 #include "event_inline.h"
@@ -392,7 +392,7 @@ s32 gData_02000aa8[] = {
     0xffff, (s32)0xc0010000,
 };
 
-struct SceneEntrance gData_02000cd8[] = {
+struct SceneEntrance gSuhallaGate_Entrances[] = {
     {0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
     {1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
     {2, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
@@ -403,7 +403,7 @@ struct SceneEntrance gData_02000cd8[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gData_02000d98[] = {
+struct SceneEntrance gSuhallaGate_Room2Entrances[] = {
     {1, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
     {2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
     {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
@@ -413,7 +413,7 @@ struct SceneEntrance gData_02000d98[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gData_02000e40[] = {
+struct SceneEntrance gSuhallaGate_Room3Entrances[] = {
     {1, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0},
     {2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
     {3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
@@ -441,13 +441,13 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02000f10[] = {
+struct ActorPlacement gSuhallaGate_Placements[] = {
     {247, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 0, 0},
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTHEAST, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02000f58[] = {
+struct ActorPlacement gSuhallaGate_Room2Placements[] = {
     {299, CONDITION_ALWAYS, 7, PIXELS(264), 0, PIXELS(400), 0x5000, 2, 0},
     {299, CONDITION_ALWAYS, 7, PIXELS(280), 0, PIXELS(368), 0x5000, 2, 0},
     {299, CONDITION_ALWAYS, 7, PIXELS(472), 0, PIXELS(912), 0x5000, 2, 0},
@@ -463,14 +463,14 @@ struct ActorPlacement gData_02000f58[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001048[] = {
+struct ActorPlacement gSuhallaGate_Room1Placements[] = {
     {93, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(264), FACING_SOUTHEAST, 2,
      0},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_02001078[] = {
+struct Trigger gSuhallaGate_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -482,7 +482,7 @@ struct Trigger gData_02001078[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020010e4[] = {
+struct Trigger gSuhallaGate_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -498,7 +498,7 @@ struct Trigger gData_020010e4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001180[] = {
+struct Trigger gSuhallaGate_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {33, 3, CONDITION_ALWAYS, 3},

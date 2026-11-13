@@ -226,13 +226,13 @@ extern u16 gData_02001fd4;
 extern u16 *gData_02001fd8;
 extern u16 gData_02001fe4;
 extern u16 gData_02001fe8;
-extern u32 gData_02001b58[];
-extern s32 gData_02001bd0[];
-extern s32 gData_02001c18[];
+extern u32 gYampiDesertCave_Placements[];
+extern s32 gYampiDesertCave_Room2Placements[];
+extern s32 gYampiDesertCave_Room3Placements[];
 extern const u8 gData_02001d20[];
-extern const u8 gData_02001d28[];
-extern const u8 gData_02001ddc[];
-extern const u8 gData_02001e78[];
+extern const u8 gYampiDesertCave_Triggers[];
+extern const u8 gYampiDesertCave_Room2Triggers[];
+extern const u8 gYampiDesertCave_Room3Triggers[];
 
 s32 Func_020001d4(s32 *position);
 void Func_02000458(struct YampiDesertCaveRect rect);
@@ -524,10 +524,10 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 u32 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
-    return (u32 *)gData_02001bd0;
+    return (u32 *)gYampiDesertCave_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
-    return (u32 *)gData_02001c18;
-  return gData_02001b58;
+    return (u32 *)gYampiDesertCave_Room3Placements;
+  return gYampiDesertCave_Placements;
 }
 
 void Func_02000d84(void) {
@@ -758,10 +758,10 @@ void Func_020013c8(s32 a) { YampiDesertCave_Call1920(a, 64, 0x302); }
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
-    return gData_02001ddc;
+    return gYampiDesertCave_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
-    return gData_02001e78;
-  return gData_02001d28;
+    return gYampiDesertCave_Room3Triggers;
+  return gYampiDesertCave_Triggers;
 }
 
 // Sets up Yampi Desert Cave's three rooms as each one loads: the first

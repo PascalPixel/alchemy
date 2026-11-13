@@ -402,7 +402,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_0200403c[] = {
+struct ActorPlacement gMagmaRock_Placements[] = {
     {272, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
     {377, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
@@ -476,14 +476,14 @@ struct ActorPlacement gData_020044a4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020045c4[] = {
+struct ActorPlacement gMagmaRock_Room3Placements[] = {
     {384, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {377, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_WEST, 2, 2},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_0200460c[] = {
+struct Trigger gMagmaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xca02, 2, 0x2f8, EVENT(Func_02001b44)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02001b24)},
@@ -590,7 +590,7 @@ struct Trigger gData_02004930[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02004a5c[] = {
+struct Trigger gMagmaRock_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, 0x2f0, EVENT(Func_02001110)},

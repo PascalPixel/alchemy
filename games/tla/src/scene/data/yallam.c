@@ -121,7 +121,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gData_02002ac4[] = {
+s32 gYallam_Placements[] = {
     (s32)0xffff0146,
     (s32)gData_020025d4,
     0xb80000,
@@ -203,7 +203,7 @@ s32 gData_02002ac4[] = {
     0,
 };
 
-struct ActorPlacement gData_02002be4[] = {
+struct ActorPlacement gYallam_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 

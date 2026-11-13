@@ -52,15 +52,15 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "io_reg.h"
 #include "version.h"
 
-extern u8 gData_020024ac[];
+extern u8 gSettlements_Placements[];
 extern u8 gData_020024dc[];
-extern u8 gData_02002524[];
-extern u8 gData_02002554[];
-extern u8 gData_020025cc[];
-extern u8 gData_02002614[];
-extern u8 gData_020027ac[];
-extern u8 gData_020027dc[];
-extern u8 gData_02002854[];
+extern u8 gSettlements_Room2Placements[];
+extern u8 gSettlements_Room4Placements[];
+extern u8 gSettlements_Room5Placements[];
+extern u8 gSettlements_Room9Placements[];
+extern u8 gSettlements_Room10Placements[];
+extern u8 gSettlements_Room7Placements[];
+extern u8 gSettlements_Room8Placements[];
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -68,20 +68,20 @@ u8 *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov690Room1)
     return gData_020024dc;
   if (scene == (s32)&SceneId_Ov690Room2)
-    return gData_02002524;
+    return gSettlements_Room2Placements;
   if (scene == (s32)&SceneId_Ov690Room4)
-    return gData_02002554;
+    return gSettlements_Room4Placements;
   if (scene == (s32)&SceneId_Ov690Room5)
-    return gData_020025cc;
+    return gSettlements_Room5Placements;
   if (scene == (s32)&SceneId_Ov690Room7)
-    return gData_020027dc;
+    return gSettlements_Room7Placements;
   if (scene == (s32)&SceneId_Ov690Room8)
-    return gData_02002854;
+    return gSettlements_Room8Placements;
   if (scene == (s32)&SceneId_Ov690Room9)
-    return gData_02002614;
+    return gSettlements_Room9Placements;
   if (scene == (s32)&SceneId_Ov690Room10)
-    return gData_020027ac;
-  return gData_020024ac;
+    return gSettlements_Room10Placements;
+  return gSettlements_Placements;
 }
 
 void Func_02000404(void) {
@@ -178,36 +178,36 @@ void Func_02000644(void) {
   Event_SetFlag(0x230);
 }
 
-extern u8 gData_0200289c[];
-extern u8 gData_020028f0[];
-extern u8 gData_02002974[];
-extern u8 gData_020029a4[];
-extern u8 gData_02002a70[];
-extern u8 gData_02002ad0[];
-extern u8 gData_02002b3c[];
-extern u8 gData_02002b90[];
-extern u8 gData_02002c2c[];
+extern u8 gSettlements_Triggers[];
+extern u8 gSettlements_Room1Triggers[];
+extern u8 gSettlements_Room2Triggers[];
+extern u8 gSettlements_Room4Triggers[];
+extern u8 gSettlements_Room5Triggers[];
+extern u8 gSettlements_Room7Triggers[];
+extern u8 gSettlements_Room8Triggers[];
+extern u8 gSettlements_Room9Triggers[];
+extern u8 gSettlements_Room10Triggers[];
 
 u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
-    return gData_020028f0;
+    return gSettlements_Room1Triggers;
   if (scene == (s32)&SceneId_Ov690Room2)
-    return gData_02002974;
+    return gSettlements_Room2Triggers;
   if (scene == (s32)&SceneId_Ov690Room4)
-    return gData_020029a4;
+    return gSettlements_Room4Triggers;
   if (scene == (s32)&SceneId_Ov690Room5)
-    return gData_02002a70;
+    return gSettlements_Room5Triggers;
   if (scene == (s32)&SceneId_Ov690Room7)
-    return gData_02002ad0;
+    return gSettlements_Room7Triggers;
   if (scene == (s32)&SceneId_Ov690Room8)
-    return gData_02002b3c;
+    return gSettlements_Room8Triggers;
   if (scene == (s32)&SceneId_Ov690Room9)
-    return gData_02002b90;
+    return gSettlements_Room9Triggers;
   if (scene == (s32)&SceneId_Ov690Room10)
-    return gData_02002c2c;
-  return gData_0200289c;
+    return gSettlements_Room10Triggers;
+  return gSettlements_Triggers;
 }
 
 void Func_02000714(struct Actor *object) {

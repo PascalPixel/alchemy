@@ -75,7 +75,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_0200646c[] = {
+struct ActorPlacement gTrialRoad_Placements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -216,17 +216,17 @@ struct ActorPlacement gData_02006d9c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006ea4[] = {
+struct ActorPlacement gTrialRoad_Room3Placements[] = {
     {329, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(280), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006ed4[] = {
+struct ActorPlacement gTrialRoad_Room4Placements[] = {
     {246, 0x7b, 1, PIXELS(344), 0, PIXELS(264), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006f04[] = {
+struct ActorPlacement gTrialRoad_Room2Placements[] = {
     {4, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
@@ -241,7 +241,7 @@ struct ActorPlacement gData_02006f04[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gData_02007024[] = {
+s32 gTrialRoad_Room1Placements[] = {
     (s32)gData_02006484,
     (s32)gData_020065d4,
     (s32)gData_02006754,
@@ -252,7 +252,7 @@ s32 gData_02007024[] = {
     (s32)gData_02006d9c,
 };
 
-struct Trigger gData_02007044[] = {
+struct Trigger gTrialRoad_Triggers[] = {
     {TRIGGERS_END},
 };
 
@@ -559,7 +559,7 @@ struct Trigger gData_02007bcc[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02007cf8[] = {
+struct Trigger gTrialRoad_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -568,7 +568,7 @@ struct Trigger gData_02007cf8[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02007d40[] = {
+struct Trigger gTrialRoad_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_020015b8)},
     {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_020015d8)},
@@ -578,7 +578,7 @@ struct Trigger gData_02007d40[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02007d94[] = {
+struct Trigger gTrialRoad_Room2Triggers[] = {
     {TRIGGER_STEP, 33, 0x283, EVENT(Func_02001754)},
     {TRIGGER_STEP, 40, 0x19ff, EVENT(Func_020017e0)},
     {TRIGGER_STEP, 41, 0x19ff, EVENT(Func_020017e0)},
@@ -590,7 +590,7 @@ struct Trigger gData_02007d94[] = {
     {TRIGGERS_END},
 };
 
-s32 gData_02007e00[] = {
+s32 gTrialRoad_Room1Triggers[] = {
     (s32)gData_02007050, (s32)gData_02007200, (s32)gData_020073bc,
     (s32)gData_0200756c, (s32)gData_02007740, (s32)gData_0200789c,
     (s32)gData_02007a64, (s32)gData_02007bcc,

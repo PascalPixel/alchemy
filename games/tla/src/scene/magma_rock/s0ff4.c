@@ -853,12 +853,12 @@ void Func_020020f8(s32 mode, s32 cue) {
     Func_02003998();
 }
 
-extern const u8 gData_0200460c[];
+extern const u8 gMagmaRock_Triggers[];
 extern const u8 gData_02004720[];
 extern const u8 gData_020047e0[];
 extern const u8 gData_0200487c[];
 extern const u8 gData_02004930[];
-extern const u8 gData_02004a5c[];
+extern const u8 gMagmaRock_Room3Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
@@ -871,7 +871,7 @@ const struct Trigger *Scene_GetEvents(void) {
     return (const struct Trigger *)gData_02004930;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gData_02004a5c;
-  return (const struct Trigger *)gData_0200460c;
+    return (const struct Trigger *)gMagmaRock_Room3Triggers;
+  return (const struct Trigger *)gMagmaRock_Triggers;
 }
 #undef BYTE_AT

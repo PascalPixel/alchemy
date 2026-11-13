@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x69f, in ROM order.
+/// The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
+/// and the teleporter cells, found, uncovered and sunk into.
 
 #include "../shared/teleporter.h"
 #include "types.h"
@@ -9,12 +10,15 @@
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
-#include "../jupiter_lighthouse_room_6.h"
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
 
 extern const s32 *gFieldEffect_LifeScripts[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -108,3 +112,25 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 /// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
 DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
+
+struct CellTargetEntry;
+
+/* VIEW(s158c): tag struct CellTarget as struct CellTarget__s158c; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * with cell_target.h included it compiles,
+ * and the bytes move in tla-en, tla-es and tla-ja. */
+struct CellTarget__s158c {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+DEFINE_TELEPORTER_SINK(Teleporter_Sink, CellTarget__s158c, Leader_CenterInCell)

@@ -94,6 +94,10 @@
 /// button beside them: the gates stay open.
 #define FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED 0xa01
 
+/// Set once the pillar on the floor below Jupiter Lighthouse's aerie stands on
+/// the button by its door: the door stays open, a shortcut.
+#define FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED 0xa19
+
 /// Set once Felix has woken on Idejima's shore.
 /// ★ Named from the game: "Do you want to check yourself for injuries?"
 /// (MsgIdejimaCheckForInjuries)

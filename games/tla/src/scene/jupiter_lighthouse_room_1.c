@@ -182,7 +182,6 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001b14, Func_02001bc4)
 
 #include "actor.h"
 #include "frame.h"
-#include "event_work.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 

@@ -74,9 +74,9 @@ void KandoreanTemple_CycloneFourthPatch(void);
 
 void KandoreanTemple_CycloneFifthPatch(void);
 
-extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
 
-extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_MediumScript[];
 
 extern s32 gKandoreanTemple_LevitateHighScript[];
 extern s32 gKandoreanTemple_LevitateLowScript[];

@@ -20,9 +20,9 @@ void Map_CenterOnFollowedPoint(void);
 
 void JupiterLighthouse_StepOnButton(void);
 void JupiterLighthouse_StepOffButton(void);
-extern u32 gFieldEffect_ShortLifeScript[];
-extern u32 gFieldEffect_MediumLifeScript[];
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);

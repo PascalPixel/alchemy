@@ -613,7 +613,7 @@ u32 gData_02002ff0[] = {
     99, 0,
 };
 
-s32 gFieldEffect_LifeScripts[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02002ef4,
     (s32)gData_02002f30,
     (s32)gData_02002f6c,

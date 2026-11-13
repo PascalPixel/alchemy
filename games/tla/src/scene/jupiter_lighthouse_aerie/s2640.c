@@ -64,14 +64,14 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
 void Func_02000314(void);
 void Func_0200032c(void);
 
-extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 560, 96, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -124,8 +124,8 @@ u32 gData_0200331c[] = {
 };
 // clang-format on
 
-s32 gFieldEffect_LifeScripts[] = {
-    (s32)gFieldEffect_ShortLifeScript,
-    (s32)gFieldEffect_MediumLifeScript,
-    (s32)gFieldEffect_LongLifeScript,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };

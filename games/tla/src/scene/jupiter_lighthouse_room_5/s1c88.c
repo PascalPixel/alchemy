@@ -12,7 +12,7 @@
 #include "module/scene/jupiter_lighthouse_room_5.h"
 #include "module/scene/scene.h"
 
-extern const s32 *gFieldEffect_LifeScripts[];
+extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
@@ -38,7 +38,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   sprite = effect->sprite;
   Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
-                    gFieldEffect_LifeScripts[flags & EFFECT_SCRIPT_MASK]);
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -64,7 +64,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    script = gFieldEffect_LifeScripts[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     count = script[EFFECT_SCRIPT_REPEAT_COUNT];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {

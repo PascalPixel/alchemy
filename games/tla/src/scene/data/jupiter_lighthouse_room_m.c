@@ -12,15 +12,15 @@ void Func_02000970(void);
 void Func_02000ad0(void);
 void Func_02000b38(void);
 
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02005078[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
 s32 gData_02005078[] = {
     SC_CALL(Func_02000038),
@@ -279,8 +279,8 @@ u32 gWhirlwindEndScript[] = {
 };
 // clang-format on
 
-s32 gFieldEffect_LifeScripts[] = {
-    (s32)gFieldEffect_ShortLifeScript,
-    (s32)gFieldEffect_MediumLifeScript,
-    (s32)gFieldEffect_LongLifeScript,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };

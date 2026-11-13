@@ -30,9 +30,9 @@ void Func_020000f8(void);
 
 void Func_02000118(void);
 
-extern u32 gFieldEffect_ShortLifeScript[];
-extern u32 gFieldEffect_MediumLifeScript[];
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 extern u16 gPaletteCycleColors[];

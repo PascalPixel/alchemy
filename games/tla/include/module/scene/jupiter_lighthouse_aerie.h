@@ -41,8 +41,8 @@ extern s16 gLightSpritePriority;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
-extern u32 gFieldEffect_MediumLifeScript[];
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 struct CellTarget;
 struct CellTargetEntry;

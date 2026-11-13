@@ -28,9 +28,9 @@ void JupiterLighthouse_CycloneFourthPatch(void);
 void JupiterLighthouse_CycloneFifthPatch(void);
 void JupiterLighthouse_CycloneUncoversTheSpot(void);
 void JupiterLighthouse_LeaveByCyclone(void);
-extern u32 gFieldEffect_ShortLifeScript[];
-extern u32 gFieldEffect_MediumLifeScript[];
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);

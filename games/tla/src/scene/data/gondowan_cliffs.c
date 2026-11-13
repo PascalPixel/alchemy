@@ -23,9 +23,9 @@ void GondowanCliffs_ScoopUpGeyser(void);
 void GondowanCliffs_TalkToDog(void);
 void GondowanCliffs_GrindTheRock(void);
 
-extern u8 gFieldEffect_ShortLifeScript[];
-extern u8 gFieldEffect_MediumLifeScript[];
-extern u8 gFieldEffect_LongLifeScript[];
+extern u8 gFieldEffect_ShortScript[];
+extern u8 gFieldEffect_MediumScript[];
+extern u8 gFieldEffect_LongScript[];
 
 s32 gGondowanCliffs_ResetTileSpriteScript[] = {
     SC_CALL(TileSprite_Reset),
@@ -90,10 +90,10 @@ struct ActorPlacement gGondowanCliffs_PassActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gFieldEffect_LifeScripts[] = {
-    (s32)gFieldEffect_ShortLifeScript,
-    (s32)gFieldEffect_MediumLifeScript,
-    (s32)gFieldEffect_LongLifeScript,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 struct Trigger gGondowanCliffs_PassTriggers[] = {

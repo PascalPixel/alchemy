@@ -598,7 +598,7 @@ s16 gData_02001220[] = {
     8, 9, -1, 0,
 };
 
-s32 gFieldEffect_LifeScripts[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_0200116c,
     (s32)gData_020011a8,
     (s32)gData_020011e4,

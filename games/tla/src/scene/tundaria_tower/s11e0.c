@@ -18,7 +18,7 @@
 #include "tundaria_tower.h"
 #include "module/field/field_effect.h"
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
@@ -62,7 +62,7 @@ void Func_020011e0(void) {
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
     velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
-    Func_020000b8(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+    FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                   velocity[2], 0x01090001, &options);
     i++;
   } while (i <= 16);

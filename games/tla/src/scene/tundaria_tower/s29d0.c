@@ -281,7 +281,7 @@ u32 gData_02003304[] = {
     0, 0, 0, 0, 1, 38,
 };
 
-s32 gData_02003334[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_020031b0,
     (s32)gData_020031ec,
     (s32)gData_02003228,

@@ -7,7 +7,7 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_MediumScript[];
 extern u32 gData_02001310[];
 extern struct ActorPlacement gData_02001378[];
 extern struct ActorPlacement gData_02001390[];

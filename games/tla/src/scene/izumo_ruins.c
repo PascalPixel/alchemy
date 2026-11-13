@@ -33,9 +33,9 @@
 #include "event_inline.h"
 
 struct Actor;
-extern u32 gFieldEffect_ShortLifeScript[];
-extern u32 gFieldEffect_MediumLifeScript[];
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 // Set as Parch dries the pool before the room of the stone tablet.
 #define FLAG_IZUMO_RUINS_POOL_PARCHED 0x941
@@ -284,11 +284,11 @@ DEFINE_G_DATA_02001540(gIzumoRuins_RubbleSprayScript, 33)
 
 DEFINE_G_DATA_02001540(gIzumoRuins_RubbleBurstScript, 44)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
 s16 gIzumoRuins_FirstRoomMovablePillars[] = {
     13, -1,
@@ -298,10 +298,10 @@ s16 gIzumoRuins_SecondRoomMovablePillars[] = {
     10, 11, 12, 13, 14, 15, -1, 0,
 };
 
-s32 gFieldEffect_LifeScripts[] = {
-    (s32)gFieldEffect_ShortLifeScript,
-    (s32)gFieldEffect_MediumLifeScript,
-    (s32)gFieldEffect_LongLifeScript,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 s16 gIzumoRuins_FirstRoomPoundPillars[] = {

@@ -52,8 +52,8 @@ void Func_020008c8(void);
 
 void Whirlwind_CarryLeader(void);
 
-extern u32 gFieldEffect_ShortLifeScript[];
-extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;

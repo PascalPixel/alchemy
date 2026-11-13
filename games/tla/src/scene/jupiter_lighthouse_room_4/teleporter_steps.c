@@ -25,7 +25,7 @@ void JupiterLighthouse_HideThePassage(void);
 void JupiterLighthouse_LeaveByFirstCyclone(void);
 void JupiterLighthouse_LeaveBySecondCyclone(void);
 void JupiterLighthouse_TryLockedDoor(void);
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_LongScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);

@@ -18,9 +18,9 @@
 
 void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_StepOffButton(void);
-extern u32 gFieldEffect_ShortLifeScript[];
-extern u32 gFieldEffect_MediumLifeScript[];
-extern u32 gFieldEffect_LongLifeScript[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 void JupiterLighthouse_FinishMovingBlock(void);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

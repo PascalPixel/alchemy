@@ -217,7 +217,7 @@
 
 /// A field effect's script that keeps it for `frames` frames, then frees it;
 /// each overlay's effect spawner picks one of three by its flags.
-#define DEFINE_FIELD_EFFECT_LIFE_SCRIPT(name, frames)                          \
+#define DEFINE_FIELD_EFFECT_DURATION_SCRIPT(name, frames)                          \
   u32 name[] = {                                                               \
       SC_WAIT(1), SC_LOOP(frames, SC_TOP),                                     \
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        \

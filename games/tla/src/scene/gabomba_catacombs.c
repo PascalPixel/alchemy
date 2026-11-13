@@ -322,7 +322,7 @@ void Func_020009d4(void) {
   statue->terrainHeight += 0x100000;
   Sound_Play(220);
   glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
-  Actor_StartScript(glow, gFieldEffect_MediumLifeScript);
+  Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
   glow->x = statue->x;
@@ -526,7 +526,7 @@ u32 gData_0200128c[] = {
     0, 15, 3, 0, 1, 38,
 };
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

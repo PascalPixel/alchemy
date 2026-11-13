@@ -858,7 +858,7 @@ u32 gWaterDropScript[] = {
 
 DEFINE_G_DATA_02001F18(gGroundParticleFrames)
 
-s32 gFieldEffect_LifeScripts[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02001e34,
     (s32)gData_02001e70,
     (s32)gData_02001eac,

@@ -155,7 +155,7 @@ s32 System_GetLanguage(void);
 void Serial_QueueCommand(u32 command);
 
 s32 Func_08015ca4(s32 partId, void *source);
-s32 Func_0801596c(void);
+s32 Save_InitializeWork(void);
 s32 Save_LoadFileSummaries(void);
 void Save_ReleaseWork(void);
 

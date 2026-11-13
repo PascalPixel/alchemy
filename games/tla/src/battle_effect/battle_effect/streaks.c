@@ -8,23 +8,35 @@
 #include "resource_ids.h"
 
 /// Abilities: Sonic Wave (kind 300).
-void BattleEffect_RunSonicWave(void *object) { Func_0813c5f4(object, 0); }
+void BattleEffect_RunSonicWave(void *object) {
+  BattleEffect_RunStreakVolley(object, 0);
+}
 
 /// Abilities: Shriek, Harpy (kind 301).
-void BattleEffect_RunShriek(void *object) { Func_0813c5f4(object, 1); }
+void BattleEffect_RunShriek(void *object) {
+  BattleEffect_RunStreakVolley(object, 1);
+}
 
 /// Abilities: Banshee Howl (kind 302).
-void BattleEffect_RunBansheeHowl(void *object) { Func_0813c5f4(object, 2); }
+void BattleEffect_RunBansheeHowl(void *object) {
+  BattleEffect_RunStreakVolley(object, 2);
+}
 
 /// Abilities: War Cry (kind 304).
-void BattleEffect_RunWarCry(void *object) { Func_0813c5f4(object, 4); }
+void BattleEffect_RunWarCry(void *object) {
+  BattleEffect_RunStreakVolley(object, 4);
+}
 
 /// Abilities: Wicked Howl (kind 305).
-void BattleEffect_RunWickedHowl(void *object) { Func_0813c5f4(object, 3); }
+void BattleEffect_RunWickedHowl(void *object) {
+  BattleEffect_RunStreakVolley(object, 3);
+}
 
 /// The streak volley in lime (mode 1). UNUSED: no effect table entry
 /// points here.
-void BattleEffect_RunLimeStreaks(void *object) { Func_0813c5f4(object, 1); }
+void BattleEffect_RunLimeStreaks(void *object) {
+  BattleEffect_RunStreakVolley(object, 1);
+}
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
@@ -47,7 +59,8 @@ void BattleEffect_RunLimeStreaks(void *object) { Func_0813c5f4(object, 1); }
 // the colour, whether the streak animates, the hit's sound and flash, a
 // recoil, and a tremble of the target.
 
-void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct EffectPosition position;
   struct HeapSlots *heap;
   struct BattleEffectWork *work;

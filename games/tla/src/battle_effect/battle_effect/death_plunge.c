@@ -33,8 +33,8 @@
 // stores stay in source order.
 /* VIEW(f13eb70): tag struct BattleBackgroundId as struct
  * BattleBackgroundId__f13eb70; battle_effect.c has another definition; tried
- * with the definition the rest of the object has, Func_0813eb70 moves: 1 of
- * 1093 instructions in tla-ja. */
+ * with the definition the rest of the object has,
+ * BattleEffect_RunShatteringOpening moves: 1 of 1093 instructions in tla-ja. */
 union BattleBackgroundId__f13eb70 {
   u16 id;
   s32 word;
@@ -58,7 +58,7 @@ union BattleBackgroundId__f13eb70 {
 // pieces, and 32 flashes rise from x 32-63, y 80-111, one more every four
 // frames. At the end the background and the display are put back.
 
-void Func_0813eb70(struct BattleEffectArgument *effect) {
+void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -388,12 +388,11 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
-// Twin: The Broken Seal's BattleEffect_RunElementBurst, reached from the
-// scenes through the far-call table (table_47.s). Like 0813e3d0 it sets up
-// its own heap blocks, stores work->effect and marks the work active
-// itself, and reads the actors from the argument. The corner sparks' four
-// blitters are loaded through Func_08196404 directly, with all five
-// arguments.
+// Reached from the scenes through the far-call table (table_47.s). Like
+// 0813e3d0 it sets up its own heap blocks, stores work->effect and marks the
+// work active itself, and reads the actors from the argument. The corner
+// sparks' four blitters are loaded through Func_08196404 directly, with all
+// five arguments.
 
 // The rising sparkles live in the map cell buffer.
 #define gSparkles ((struct EffectStep *)Ram_MapCellBuffer)
@@ -408,7 +407,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
 // last 6 frames fade out. The 128 sparkles set up in the map cell buffer are
 // never drawn.
 
-void Func_0813f518(struct BattleEffectArgument *effect) {
+void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct BattleEffectWork *work;
   void *canvas;

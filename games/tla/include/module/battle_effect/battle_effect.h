@@ -258,8 +258,9 @@ extern const u8 Data_08198ec4[];
 extern u8 gBattleEffect_PuffSizes[];
 extern u16 gBattleEffect_PuffCells[];
 
-void Func_08144b14(struct BattleEffectArgument *effect, s32 mode);
-void Func_0814512c(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
+                                  s32 mode);
 
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode3(void *action);
@@ -284,7 +285,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
 void BattleEffect_RunImpactBurst(s32 formation, s32 x,
                                  s32 y); // ..RunImpactBurst
 
-void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
+                                  s32 mode);
 void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode);
 
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
@@ -493,7 +495,7 @@ extern u8 gFrost_ChipWidths[];
 extern u8 gFrost_ChipHeights[];
 extern u8 gRay_Sparks[][2];
 
-void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode);
 
 extern u8 gEruption_Counts[][3];
 extern u16 gEruption_PuffCells[];
@@ -504,7 +506,8 @@ extern char ResourceId_LeafWarriorTiles;
 
 extern s32 gAtalanta_UnitScale[];
 
-void Func_081548d0(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
+                                    s32 mode);
 
 // The Broken Seal's gGrowth_* tables, in effect_table.s.
 extern u8 gGrowth_ColumnCounts[];  // _ColumnCounts: columns by strength

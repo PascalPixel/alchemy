@@ -98,13 +98,13 @@ Resource_FarCall004:
 	export Func_080382e0, Func_08043534
 	export Save_WriteFileFar, Save_WriteFile
 	export Func_080382f0, Func_080432a4
-	export Func_080382f8, Func_08044558
+	export Func_080382f8, NameEntry_EditMemberName
 	export Resource_CopyFixedBlockBFar, Resource_CopyFixedBlockB
 	export Resource_CopyFixedBlockAFar, Resource_CopyFixedBlockA
 	export SelectionMenu_SetPositionFar, SelectionMenu_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
-	export Func_08038328, Func_08044a58
+	export Func_08038328, Djinn_ShowJoinedMessage
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage
 	export Func_08038340, Func_08044dc8

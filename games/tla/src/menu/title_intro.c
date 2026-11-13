@@ -769,7 +769,7 @@ s32 Func_081a71c8(void) {
 /// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it
 /// early, returning 1 (else 0).
 // As the end of The Broken Seal's Title_RunIntro.
-s32 Func_081a729c(s32 prompt) {
+s32 Title_ShowIntro(s32 prompt) {
   s32 blankTile = 0x1ff;
   s32 result = 0;
   struct TitleScreenWork *work = HeapSlot_AllocEwram(172, 0x70);

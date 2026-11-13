@@ -18,7 +18,7 @@ extern const u8 gNameEntry_SemivoicedMarkRanges[];
 /// Returns whether `letter` may follow `previous` in a name: any character but
 /// a voicing mark may, and a voicing mark only after a kana in its table of
 /// ranges (pairs of first and last kana, ended by 0).
-s32 Func_08044488(s32 letter, s32 previous) {
+s32 NameEntry_AcceptsMark(s32 letter, s32 previous) {
   const u8 *range;
 
   if (letter < TEXT_MARK_VOICED || letter > TEXT_MARK_SEMIVOICED)
@@ -47,8 +47,8 @@ s32 Func_080444c4(const u8 *name) {
   return count;
 }
 #else
-/// Unused: the Japanese edition's mark test (Func_08044488 there), which
-/// accepts every letter where no letter takes a mark.
+/// Unused: the Japanese edition's mark test (NameEntry_AcceptsMark there),
+/// which accepts every letter where no letter takes a mark.
 UNUSED s32 Window_ReturnOne(void) { return 1; }
 #endif
 
@@ -264,12 +264,12 @@ void MenuCursor_SetFar(struct NameCursorMotion *cursor, s32 x, s32 y,
                        s32 speed);
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
-// it (Func_08044488 refuses a mark that cannot), takes a byte but is no
+// it (NameEntry_AcceptsMark refuses a mark that cannot), takes a byte but is no
 // letter, and goes with it when that kana is removed; Select or the top
 // command key turns to the other kana page. It also returns without waiting
 // for every button to be released, which the later editions added.
 #if LANGUAGE == LANGUAGE_JAPANESE
-s32 Func_08044558(s32 member) {
+s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
   s32 page = 0;
@@ -528,7 +528,7 @@ s32 Func_08044558(s32 member) {
       if (letterCount == NAME_MAX_LETTERS && !IS_KANA_MARK(letter))
         continue;
       slot = editedName + byteCount;
-      if (!Func_08044488(letter, *end)) {
+      if (!NameEntry_AcceptsMark(letter, *end)) {
         Sound_PlayFar(113);
         continue;
       }
@@ -556,7 +556,7 @@ s32 Func_08044558(s32 member) {
   return result;
 }
 #else
-s32 Func_08044558(s32 member) {
+s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
   s32 originalLength = 0;

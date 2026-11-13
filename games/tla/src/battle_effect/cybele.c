@@ -3306,10 +3306,10 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
 #include "battle_effect_argument.h"
 
 /// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
-DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, Func_08151ff0, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
 
 /// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
-DEFINE_EFFECT_KIND(BattleEffect_RunBlast, Func_08151ff0, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunBlast, BattleEffect_RunEruption, 0)
 
 #define MOTE_SHEET 0x3200 // the mote pictures in the sheet
 
@@ -3324,7 +3324,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunBlast, Func_08151ff0, 0)
 // through seven pictures. The targets are hit from frame 6, a frame apart;
 // in mode 0 they also recoil. The variant chooses the number of motes and
 // puffs and the length.
-void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: draw[1] gives the stack frame its 4 bytes.
@@ -4936,10 +4936,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 }
 
 /// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
-void BattleEffect_RunGrowth(void *object) { Func_081548d0(object, 0); }
+void BattleEffect_RunGrowth(void *object) {
+  BattleEffect_RunGrowingColumns(object, 0);
+}
 
 /// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
-void BattleEffect_RunPunji(void *object) { Func_081548d0(object, 1); }
+void BattleEffect_RunPunji(void *object) {
+  BattleEffect_RunGrowingColumns(object, 1);
+}
 
 // The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
 #define PUFFS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -4955,7 +4959,8 @@ void BattleEffect_RunPunji(void *object) { Func_081548d0(object, 1); }
 // slot.
 #define BLITTER_TRANSPARENT (2 << 4)
 
-void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
+                                    s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   void *rectangle[2];

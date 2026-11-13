@@ -98,12 +98,12 @@ gFalling_IceCounts:
 	.global gFalling_Counts
 gFalling_Counts:
 	.byte 6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80
-@ The Broken Seal's table of this name; read by Func_0813c5f4
+@ The Broken Seal's table of this name; read by BattleEffect_RunStreakVolley
 	.global gStreaks_Records
 gStreaks_Records:
 	.byte 0, 1, 0, 0, 0, 1, 4, 0, 0, 1, -1, 1, 1, 1, -1, 1
 	.byte 1, 1, 4, 0
-@ The Broken Seal's gStreaks_Tremble; read by Func_0813c5f4
+@ The Broken Seal's gStreaks_Tremble; read by BattleEffect_RunStreakVolley
 	.global gStreaks_Tremble
 gStreaks_Tremble:
 	.byte -1, -1, 1, 1, 1, 1, -1, -1
@@ -144,13 +144,13 @@ gTargetStrike_ColumnStages:
 	.global Data_08197605
 Data_08197605:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's table of this name; read by Func_0813eb70
+@ The Broken Seal's table of this name; read by BattleEffect_RunShatteringOpening
 	.global gDeathPlunge_PieceWidths
 gDeathPlunge_PieceWidths:
 	.byte 21, 20, 24, 30, 35, 69, 19, 23, 9, 22, 33, 10, 18, 9, 7, 9
 	.byte 17, 55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19, 32, 8, 43
 	.byte 15
-@ read by Func_0813eb70
+@ read by BattleEffect_RunShatteringOpening
 	.global Data_0819762a
 Data_0819762a:
 	.byte 23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35, 17, 18, 14, 15, 12
@@ -163,27 +163,27 @@ Data_0819764c:
 	.2byte 10449, 10619, 10943, 11069, 11174, 11282, 11503, 13538, 14678, 15703, 18103
 	.2byte 19292, 19442, 20702, 21528, 21733, 22565, 23715, 24114, 25234, 25330, 27781
 	.2byte 27946
-@ The Broken Seal's table of this name; read by Func_0813eb70
+@ The Broken Seal's table of this name; read by BattleEffect_RunShatteringOpening
 	.global gDeathPlunge_PieceStartX
 gDeathPlunge_PieceStartX:
 	.byte 0, 21, 28, 46, 70, 51, 0, 13, 37, 77, 87, 19, 25, 35, 44, 45
 	.byte 48, 65, 0, 0, 0, 5, 33, 15, 36, 46, 47, 50, 53, 65, 72, 77
 	.byte 105
-@ The Broken Seal's table of this name; read by Func_0813eb70
+@ The Broken Seal's table of this name; read by BattleEffect_RunShatteringOpening
 	.global gDeathPlunge_PieceStartY
 gDeathPlunge_PieceStartY:
 	.byte 0, 0, 0, 0, 0, 0, 19, 17, 23, 28, 8, 36, 43, 43, 40, 47
 	.byte 48, 37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74, 85, 108, 63
 	.byte 74
-@ The Broken Seal's table of this name; read by Func_0813f518
+@ The Broken Seal's table of this name; read by BattleEffect_RunElementBurst
 	.global gDeathPlunge_X
 gDeathPlunge_X:
 	.byte 0, 32, 0, 32
-@ The Broken Seal's table of this name; read by Func_0813f518
+@ The Broken Seal's table of this name; read by BattleEffect_RunElementBurst
 	.global gDeathPlunge_Y
 gDeathPlunge_Y:
 	.byte 0, 0, 32, 32
-@ The Broken Seal's gTargetMotes_GlintFlips; read by Func_0813f518
+@ The Broken Seal's gTargetMotes_GlintFlips; read by BattleEffect_RunElementBurst
 	.global Data_081976da
 Data_081976da:
 	.byte 0, 4, 8, 12
@@ -326,39 +326,39 @@ gData_08197834:
 	.global Data_08197864
 Data_08197864:
 	.byte 16, 88, 8, 72, 12, 80, 16, 88
-@ The Broken Seal's table of this name; read by Func_08144b14
+@ The Broken Seal's table of this name; read by BattleEffect_RunDjinnBeams
 	.global gDjinnBeams_MotePictures
 gDjinnBeams_MotePictures:
 	.byte 2, 1, 0, 1, 2, 3, 4, 3
-@ The Broken Seal's table of this name; read by Func_08144b14
+@ The Broken Seal's table of this name; read by BattleEffect_RunDjinnBeams
 	.global gMirroredWall_Cells
 gMirroredWall_Cells:
 	.2byte 2702, 3535, 4580
-@ The Broken Seal's gMirroredWall_CellWidths; read by Func_08144b14
+@ The Broken Seal's gMirroredWall_CellWidths; read by BattleEffect_RunDjinnBeams
 	.global Data_0819787a
 Data_0819787a:
 	.byte 17, 19, 20
-@ The Broken Seal's gMirroredWall_CellHeights; read by Func_08144b14
+@ The Broken Seal's gMirroredWall_CellHeights; read by BattleEffect_RunDjinnBeams
 	.global Data_0819787d
 Data_0819787d:
 	.byte 49, 55, 64
-@ read by Func_0814512c
+@ read by BattleEffect_RunLobbedShells
 	.global Data_08197880
 Data_08197880:
 	.byte 0, 0, 1, 72, 0, 0, 1, 72, 0, 0, 1, 72, 1, 0, 1, 40
 	.byte 1, 0, 1, 56, 0, 0, 1, 56, 0, 0, 1, 72, 1, 0, 4, 52
 	.byte 0, 1, 1, 72, 0, 0, 1, 72
-@ The Broken Seal's table of this name; read by Func_0814512c
+@ The Broken Seal's table of this name; read by BattleEffect_RunLobbedShells
 	.global gLobbedShells_ShardWidths
 gLobbedShells_ShardWidths:
 	.byte 9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8
 	.byte 8, 8
-@ The Broken Seal's table of this name; read by Func_0814512c
+@ The Broken Seal's table of this name; read by BattleEffect_RunLobbedShells
 	.global gLobbedShells_ShardHeights
 gLobbedShells_ShardHeights:
 	.byte 12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4
 	.byte 3, 3
-@ The Broken Seal's table of this name; read by Func_0814512c
+@ The Broken Seal's table of this name; read by BattleEffect_RunLobbedShells
 	.global gLobbedShells_ShardOffsets
 gLobbedShells_ShardOffsets:
 	.2byte 0, 108, 228, 336, 444, 552, 684, 816
@@ -1214,16 +1214,16 @@ gFrost_ChipCells:
 	.global gRay_Sparks
 gRay_Sparks:
 	.byte 2, 4, 2, 6, 4, 8
-@ The Broken Seal's gEruption_Counts; read by Func_08151ff0
+@ The Broken Seal's gEruption_Counts; read by BattleEffect_RunEruption
 	.global gEruption_Counts
 gEruption_Counts:
 	.byte 16, 8, 72, 32, 16, 80, 128, 32, 88
 	.balign 2
-@ The Broken Seal's gEruption_PuffCells; read by Func_08151ff0
+@ The Broken Seal's gEruption_PuffCells; read by BattleEffect_RunEruption
 	.global gEruption_PuffCells
 gEruption_PuffCells:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
-@ The Broken Seal's gCybele_EmberSizes; read by Func_08151ff0
+@ The Broken Seal's gCybele_EmberSizes; read by BattleEffect_RunEruption
 	.global gEruption_PuffSizes
 gEruption_PuffSizes:
 	.2byte 16, 32, 48, 48, 48, 48, 48
@@ -1235,49 +1235,49 @@ gTargetStrike_GlintDrawFlags:
 	.global gAtalanta_UnitScale
 gAtalanta_UnitScale:
 	.4byte 0x10000, 0x10000
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_VineWidths
 gGrowth_VineWidths:
 	.byte 21, 28, 19
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_HeightLimits
 gGrowth_HeightLimits:
 	.byte 119, 119, 102
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_VineCells
 gGrowth_VineCells:
 	.2byte 0, 2499, 5831
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_PillarWidths
 gGrowth_PillarWidths:
 	.byte 10, 8, 9
 	.balign 2
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_PillarCells
 gGrowth_PillarCells:
 	.2byte 0, 1080, 1888
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_ColumnCounts
 gGrowth_ColumnCounts:
 	.byte 4, 8, 12
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_ColumnX
 gGrowth_ColumnX:
 	.byte 64, 72, 56, 80, 48, 88, 40, 96, 32, 104, 24, 72, 56, 80, 48, 88
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_PillarHeights
 gGrowth_PillarHeights:
 	.byte 100, 60, 88, 96, 64, 104, 82, 98
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_PuffWidths
 gGrowth_PuffWidths:
 	.byte 5, 7, 11, 16, 23, 27, 16
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_PuffHeights
 gGrowth_PuffHeights:
 	.byte 10, 14, 21, 32, 45, 50, 32
 	.balign 2
-@ The Broken Seal's table of this name; read by Func_081548d0
+@ The Broken Seal's table of this name; read by BattleEffect_RunGrowingColumns
 	.global gGrowth_PuffCells
 gGrowth_PuffCells:
 	.2byte 0, 50, 148, 379, 891, 1926, 3276

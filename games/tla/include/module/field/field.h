@@ -32,8 +32,8 @@ typedef s32 (*ScriptCommandFn)();
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
-/// A sprite's attribute words. They are volatile, as The Broken Seal's
-/// LuckyWheels_Update keeps its OAM shadow; as plain words, the two offset
+/// A sprite's attribute words. They are volatile, as LuckyWheels_Update keeps
+/// its OAM shadow in both games; as plain words, the two offset
 /// counters, the multiply on each pass and the stack slots all differ.
 struct ReelSprite {
   volatile u32 attr01;

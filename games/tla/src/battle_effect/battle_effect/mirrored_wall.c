@@ -47,13 +47,13 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
 }
 
 /// Abilities: Revive, Water of Life, Lich (kind 25); Quartz (kind 201).
-DEFINE_EFFECT_KIND(BattleEffect_RunRevive, Func_08144b14, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunRevive, BattleEffect_RunDjinnBeams, 0)
 
 /// Abilities: Dew (kind 209).
-DEFINE_EFFECT_KIND(BattleEffect_RunDew, Func_08144b14, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunDew, BattleEffect_RunDjinnBeams, 1)
 
 /// Abilities: Spark (kind 255).
-DEFINE_EFFECT_KIND(BattleEffect_RunSpark, Func_08144b14, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunSpark, BattleEffect_RunDjinnBeams, 2)
 
 // The pictures in the work sheet, after the beam (EarthWallSheet).
 #define PIC_MOTE 0x2710  // the crescent motes, 24 x 24
@@ -65,7 +65,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunSpark, Func_08144b14, 2)
 // rises away; for each target in turn, sixteen frames apart, eight motes
 // drift down swaying; from frame 72 a beam of light falls on each target,
 // flashing it, and narrows from frame 88.
-void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   s32 djinn[3];
   s32 djinnSize[3];
   struct EffectPosition one;
@@ -258,34 +258,35 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
 }
 
 /// Abilities: Mad Spatter (kind 347).
-DEFINE_EFFECT_KIND(BattleEffect_RunMadSpatter, Func_0814512c, 4)
+DEFINE_EFFECT_KIND(BattleEffect_RunMadSpatter, BattleEffect_RunLobbedShells, 4)
 
 /// Abilities: Mud (kind 237).
-DEFINE_EFFECT_KIND(BattleEffect_RunMud, Func_0814512c, 7)
+DEFINE_EFFECT_KIND(BattleEffect_RunMud, BattleEffect_RunLobbedShells, 7)
 
 /// Abilities: Decompose (kind 350).
-DEFINE_EFFECT_KIND(BattleEffect_RunDecompose, Func_0814512c, 5)
+DEFINE_EFFECT_KIND(BattleEffect_RunDecompose, BattleEffect_RunLobbedShells, 5)
 
 /// Abilities: Bone Chiller (kind 309).
-DEFINE_EFFECT_KIND(BattleEffect_RunBoneChiller, Func_0814512c, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunBoneChiller, BattleEffect_RunLobbedShells, 0)
 
 /// Abilities: Sticky Goo (kind 315).
-DEFINE_EFFECT_KIND(BattleEffect_RunStickyGoo, Func_0814512c, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunStickyGoo, BattleEffect_RunLobbedShells, 1)
 
 /// Abilities: Poison Ink (kind 340).
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonInk, Func_0814512c, 6)
+DEFINE_EFFECT_KIND(BattleEffect_RunPoisonInk, BattleEffect_RunLobbedShells, 6)
 
 /// Abilities: Sticky Poison (kind 322).
-DEFINE_EFFECT_KIND(BattleEffect_RunStickyPoison, Func_0814512c, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunStickyPoison, BattleEffect_RunLobbedShells,
+                   2)
 
 /// Abilities: Rotten Blood (kind 330).
-DEFINE_EFFECT_KIND(BattleEffect_RunRottenBlood, Func_0814512c, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunRottenBlood, BattleEffect_RunLobbedShells, 3)
 
 /// Abilities: Rising Venom (kind 430).
-DEFINE_EFFECT_KIND(BattleEffect_RunRisingVenom, Func_0814512c, 8)
+DEFINE_EFFECT_KIND(BattleEffect_RunRisingVenom, BattleEffect_RunLobbedShells, 8)
 
 /// Abilities: Formic Acid (kind 453).
-DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, Func_0814512c, 9)
+DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, BattleEffect_RunLobbedShells, 9)
 
 // The shots live in the map buffer, 16 for each target, and the bursts
 // after them, 32 for each target.
@@ -306,7 +307,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, Func_0814512c, 9)
 // it lands into smoke or shards, flashing the target. Mode 7 prepares a
 // canvas for its prelude first; modes 3 and 5 hand the canvas to a summon
 // canvas effect at the end.
-void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct EffectPosition position;
   s32 preludeSize[3];
   s32 preludeOrigin[3];

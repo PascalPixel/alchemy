@@ -20,7 +20,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 
 extern const u8 gSave_HeaderTemplate[];
 
-s32 Func_0801596c(void) {
+s32 Save_InitializeWork(void) {
   struct SaveWorkspace *work;
   struct SaveSectorHeader header;
   struct SaveSectorHeader *slot;

@@ -282,7 +282,7 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
   struct SaveSummary *summary;
   struct SaveWorkspace *work;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     cnt = -9;
   } else {
     cnt = Save_LoadFileSummaries();
@@ -311,7 +311,7 @@ s32 Func_080432a4(void) {
   s32 cnt;
   s32 ret;
 
-  err = Func_0801596c();
+  err = Save_InitializeWork();
   cnt = 0;
   ret = -9;
   if (err == 0) {
@@ -422,7 +422,7 @@ void FieldMessage_Show(s32 message, s32 position);
 s32 Save_WriteFile(s32 file) {
   s32 result = 0;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else if (Func_08042f10(file, gData_02000000) != 0) {
@@ -444,7 +444,7 @@ s32 Func_08043534(void) {
   buffer = Heap_AllocEwram(0x3000);
   value = gData_020036d0;
   if (value != -1) {
-    found = Func_0801596c();
+    found = Save_InitializeWork();
     if (found != 0) {
       FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
       result = -9;
@@ -481,7 +481,7 @@ s32 Save_ToFile(u32 slot) {
 
   if (slot > 2)
     slot = 2;
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
@@ -515,7 +515,7 @@ s32 Func_08043690(void) {
   s32 token;
   struct SaveWorkspace *work;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
@@ -560,7 +560,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
   s32 file;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
@@ -588,7 +588,7 @@ s32 Save_CopyFile(void) {
   s32 value;
   s32 token;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
@@ -639,7 +639,7 @@ s32 Save_EraseSelectedFile(void) {
   s32 token;
   s32 found;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {

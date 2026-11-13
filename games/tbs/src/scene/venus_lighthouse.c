@@ -442,7 +442,8 @@ enum VenusLighthouseFourthFloorActorId {
 /// Animations the lighthouse plays by number beyond enum ActorAnimation,
 /// from each sprite's animation table (graphics/sprite/<name>.tsv).
 enum {
-  /// The hurt scholars and soldiers lying on the ground (old_man_in_blue_cap.tsv and
+  /// The hurt scholars and soldiers lying on the ground
+  /// (old_man_in_blue_cap.tsv and
   /// soldier.tsv, the same pose).
   ANIM_HURT_LYING = 5,
   /// A light's sparkle, flickering between its two largest pictures

@@ -355,8 +355,8 @@ enum { ROWING_BALANCE_OFF_COURSE = 11 };
 /// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge's drawbridge is down.
 enum { WORLD_MAP_BRIDGE_ANIMATION_LOWERED = 2 };
 
-/// The falling rock's animations (blue_crystal.png). It tumbles as it falls, then
-/// shatters where it lands.
+/// The falling rock's animations (blue_crystal.png). It tumbles as it falls,
+/// then shatters where it lands.
 enum { FALLING_ROCK_ANIMATION_TUMBLE = 2, FALLING_ROCK_ANIMATION_SHATTER = 3 };
 
 /// The actors of Hammet's caravan leaving Vault

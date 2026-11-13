@@ -330,7 +330,8 @@ enum {
 /// Animations of the fortress's sprites beyond enum ActorAnimation, as their
 /// animation tables and frames under graphics/sprite draw them.
 enum LunpaFortressAnimation {
-  /// One of Dodonpa's men lying beaten on the floor (man_with_orange_hair.png), as the three
+  /// One of Dodonpa's men lying beaten on the floor (man_with_orange_hair.png),
+  /// as the three
   /// guards lie after their fight.
   ANIM_GUARD_BEATEN = 5,
   /// Donpa lying in bed, only his head on the pillow showing (donpa.png).

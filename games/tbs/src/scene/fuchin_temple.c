@@ -219,7 +219,8 @@ enum {
   /// A drill of kicks, a knee raised, a kick and a leaping kick, from a
   /// fighting stance (youth_with_headband.tsv).
   ANIM_STUDENT_KICKS = 5,
-  /// A drill of quick punches with one kick among them (youth_with_tied_hair.tsv).
+  /// A drill of quick punches with one kick among them
+  /// (youth_with_tied_hair.tsv).
   ANIM_STUDENT_PUNCHES = 5
 };
 

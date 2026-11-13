@@ -209,7 +209,8 @@ enum StormNightActorId {
 enum StormNightAnimation {
   /// Garet leaning into his chest to drag it (garet_child.png).
   ANIM_GARET_DRAG = 5,
-  /// Garet's chest, its rope pulled taut as he drags it (chest_of_valuables.png).
+  /// Garet's chest, its rope pulled taut as he drags it
+  /// (chest_of_valuables.png).
   ANIM_CHEST_DRAGGED = 2,
   ANIM_CHEST_ROPE_DROPPED = 3, ///< its rope let fall on the ground
   /// Kyle crouched at the bank, reaching out to Felix (kyle.png).

@@ -89,7 +89,8 @@ enum StuccoRoomsAActorId {
   /// ★ Named from the game: "I do not want my son to face any danger."
   /// (MsgKalayInteriorsIDoNotWantMySon)
   ACTOR_WORRIED_FATHER,
-  /// Drawn with the young man in green's frames (sprite 127, young_man_in_green.png's
+  /// Drawn with the young man in green's frames (sprite 127,
+  /// young_man_in_green.png's
   /// picture), whose mother's thoughts call him a merchant.
   /// ★ Named from the game: "I feel like I am living with a merchant...
   /// Actually, he is one!" (MsgKalayInteriorsMySonIsVeryTightWith)

@@ -445,13 +445,15 @@ enum TolbiShipRowingDeckActorId {
 /// Animations of the rowing deck's sprites beyond enum ActorAnimation, as
 /// their animation tables and frames under graphics/sprite draw them.
 enum ShipRoomsAnimation {
-  /// Pulling an oar from a seat, as the oarsmen's sheet (man_in_red_bandana.png) and most
+  /// Pulling an oar from a seat, as the oarsmen's sheet
+  /// (man_in_red_bandana.png) and most
   /// passengers' sheets draw it.
   ANIM_ROW = 5,
   /// The tour guide's sheet rowing with a pink oar in place of ANIM_ROW's
   /// brown one (man_carrying_a_pack.png).
   ANIM_SECOND_GUIDE_ROW = 6,
-  /// An oarsman lying on his back, arms flung out (man_in_red_bandana.png): "An oarsman
+  /// An oarsman lying on his back, arms flung out (man_in_red_bandana.png): "An
+  /// oarsman
   /// was injured by a sea monster?"
   ANIM_OARSMAN_INJURED = 6,
   /// The drummer standing with his drum at his side (man_in_green_bandana.png).

@@ -204,7 +204,8 @@ enum {
   /// ground past the Wall Wedge (its render)
   ACTOR_GROWTH_PLANT = 29,
   /// The log Force knocks off the Moving Sidewalk Stage's conveyor belt.
-  /// ★ Named from what the player sees: a log (standing_log.png) at the conveyor
+  /// ★ Named from what the player sees: a log (standing_log.png) at the
+  /// conveyor
   /// belt of the Moving Sidewalk Stage (its render)
   ACTOR_SIDEWALK_LOG = 30,
   /// The log-rolling area's long log.

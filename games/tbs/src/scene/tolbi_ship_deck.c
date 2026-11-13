@@ -361,8 +361,9 @@ enum TolbiShipDeckActorId {
   ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET = ACTOR_ARRIVED_FIRST_PASSENGER + 9
 };
 
-/// Sean or Ouranos lying on his back, arms flung out (young_man_with_blue_hair.png,
-/// young_man_with_red_hair.png), beyond enum ActorAnimation.
+/// Sean or Ouranos lying on his back, arms flung out
+/// (young_man_with_blue_hair.png, young_man_with_red_hair.png), beyond enum
+/// ActorAnimation.
 enum { ANIM_LYING_FLAT = 5 };
 
 /// The deck's step triggers at Kalay, beside the ways below, whose cell

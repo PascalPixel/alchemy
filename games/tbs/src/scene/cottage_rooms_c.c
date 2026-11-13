@@ -44,9 +44,9 @@
 ///
 /// He stands at the north edge of the restaurant's table, on cell (7, 49).
 /// That cell alone of the diners' cells gives an actor standing on it priority
-/// 3 (cottage_rooms_c's map.txt). Taken from that cell, his priority would put him
-/// behind the middle layer (`BG2`, priority 2 in this map). The fixed priority
-/// 2 draws him in front of it, as the other diners are.
+/// 3 (cottage_rooms_c's map.txt). Taken from that cell, his priority would put
+/// him behind the middle layer (`BG2`, priority 2 in this map). The fixed
+/// priority 2 draws him in front of it, as the other diners are.
 
 #include "module/scene/cottage_rooms_c.h"
 #include "flags.h"

@@ -79,7 +79,8 @@ enum SpriteId {
   /// (footprints.png)
   SPRITE_FOOTPRINTS,
   /// The sparkles of Tret's glamour that rain on Kolima and its forest.
-  /// ★ Named from what the player sees: rings of golden light (golden_rings.png)
+  /// ★ Named from what the player sees: rings of golden light
+  /// (golden_rings.png)
   SPRITE_GOLDEN_RINGS,
   /// The dark doorway added as a second part of the leader's sprite as the
   /// leader leaves through an exit (Exit_PrepareAnimation).
@@ -337,7 +338,8 @@ enum SpriteId {
   /// hat and a long purple and blue robe (man_in_tall_hat.png)
   SPRITE_MAN_IN_TALL_HAT,
   /// ★ Named from what the player sees: a man with long brown hair and a
-  /// beard in a red shawl and a long lavender robe (bearded_man_in_long_robe.png)
+  /// beard in a red shawl and a long lavender robe
+  /// (bearded_man_in_long_robe.png)
   SPRITE_BEARDED_MAN_IN_LONG_ROBE,
   /// ★ Named from what the player sees: a man in a white cook's cap and white
   /// clothes, with a frying pan (cook.png)
@@ -801,9 +803,11 @@ enum SpriteId {
   /// ★ Named from what the player sees: a tall blue-green tower, where Mercury
   /// Lighthouse's exit is (world_map_mercury_lighthouse.png)
   SPRITE_WORLD_MAP_MERCURY_LIGHTHOUSE,
-  /// ★ Named from what the player sees: a wooden barricade (world_map_barricade.png)
+  /// ★ Named from what the player sees: a wooden barricade
+  /// (world_map_barricade.png)
   SPRITE_WORLD_MAP_BARRICADE,
-  /// ★ Named from what the player sees: a snow-capped mountain (world_map_mountain.png)
+  /// ★ Named from what the player sees: a snow-capped mountain
+  /// (world_map_mountain.png)
   SPRITE_WORLD_MAP_MOUNTAIN,
   /// ★ Named from what the player sees: a pink and white tower, where Babi
   /// Lighthouse's road begins (world_map_babi_lighthouse.png)
@@ -875,7 +879,8 @@ enum SpriteId {
   SPRITE_SANDSTORM,
   /// The Board Walk's platforms, the Scales of Justice's ledges and the pillar
   /// that rises in a Crossbone Isle puddle.
-  /// ★ Named from what the player sees: a white square platform (white_platform.png)
+  /// ★ Named from what the player sees: a white square platform
+  /// (white_platform.png)
   SPRITE_WHITE_PLATFORM,
   /// The Wall Wedge's pistons.
   /// ★ Named from the game: "The pistons move back and forth."
@@ -891,7 +896,8 @@ enum SpriteId {
   /// colors." (MsgAltmillerDontTrustAnyone)
   SPRITE_TURNING_ROCK,
   /// The log Force knocks off the Moving Sidewalk Stage.
-  /// ★ Named from what the player sees: a log standing on end (standing_log.png)
+  /// ★ Named from what the player sees: a log standing on end
+  /// (standing_log.png)
   SPRITE_STANDING_LOG,
   /// The boulders of Gondowan Cave that Lift raises.
   /// ★ Named from what the player sees: a round grey boulder (its render)
@@ -946,30 +952,36 @@ enum SpriteId {
   /// (weapon_isaac_sword.png)
   SPRITE_WEAPON_ISAAC_SWORD,
   /// Garet's for maces, staffs, ankhs and anything the list lacks.
-  /// ★ Named from what the player sees: a spiked ball on a handle (weapon_garet_mace.png)
+  /// ★ Named from what the player sees: a spiked ball on a handle
+  /// (weapon_garet_mace.png)
   SPRITE_WEAPON_GARET_MACE,
   /// Ivan's for staffs and anything the list lacks.
   /// ★ Named from what the player sees: a staff with a red forked head
   /// (weapon_ivan_staff.png)
   SPRITE_WEAPON_IVAN_STAFF,
   /// Mia's for swords, light blades, ankhs and anything the list lacks.
-  /// ★ Named from what the player sees: a silver ankh on a staff (weapon_mia_ankh.png)
+  /// ★ Named from what the player sees: a silver ankh on a staff
+  /// (weapon_mia_ankh.png)
   SPRITE_WEAPON_MIA_ANKH,
   SPRITE_324,
   /// Jenna's for axes, maces, staffs, ankhs and anything the list lacks.
   /// ★ Named from what the player sees: a golden staff with a crescent head
   /// (weapon_jenna_staff.png)
   SPRITE_WEAPON_JENNA_STAFF,
-  /// ★ Named from what the player sees: a double-bladed axe (weapon_isaac_axe.png)
+  /// ★ Named from what the player sees: a double-bladed axe
+  /// (weapon_isaac_axe.png)
   SPRITE_WEAPON_ISAAC_AXE,
-  /// ★ Named from what the player sees: a mace with a spiked head (weapon_isaac_mace.png)
+  /// ★ Named from what the player sees: a mace with a spiked head
+  /// (weapon_isaac_mace.png)
   SPRITE_WEAPON_ISAAC_MACE,
-  /// ★ Named from what the player sees: a long-hafted axe (weapon_garet_axe.png)
+  /// ★ Named from what the player sees: a long-hafted axe
+  /// (weapon_garet_axe.png)
   SPRITE_WEAPON_GARET_AXE,
   /// Garet's for long swords and light blades.
   /// ★ Named from what the player sees: a broad sword (weapon_garet_sword.png)
   SPRITE_WEAPON_GARET_SWORD,
-  /// ★ Named from what the player sees: a golden ankh on a staff (weapon_ivan_ankh.png)
+  /// ★ Named from what the player sees: a golden ankh on a staff
+  /// (weapon_ivan_ankh.png)
   SPRITE_WEAPON_IVAN_ANKH,
   /// Ivan's for swords, light blades, axes and maces.
   /// ★ Named from what the player sees: a slender sword (weapon_ivan_blade.png)
@@ -1043,23 +1055,31 @@ enum SpriteId {
   SPRITE_STATUS_WIDE_PSY_SEAL,
   /// ★ Named from what the player sees: blue letters Z (status_wide_sleep.png)
   SPRITE_STATUS_WIDE_SLEEP,
-  /// ★ Named from what the player sees: a purple cloud (status_wide_delusion.png)
+  /// ★ Named from what the player sees: a purple cloud
+  /// (status_wide_delusion.png)
   SPRITE_STATUS_WIDE_DELUSION,
   /// ★ Named from what the player sees: a pale wisp (status_wide_haunt.png)
   SPRITE_STATUS_WIDE_HAUNT,
-  /// ★ Named from what the player sees: one flame (status_wide_grim_reaper_1.png)
+  /// ★ Named from what the player sees: one flame
+  /// (status_wide_grim_reaper_1.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_1,
-  /// ★ Named from what the player sees: two flames (status_wide_grim_reaper_2.png)
+  /// ★ Named from what the player sees: two flames
+  /// (status_wide_grim_reaper_2.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_2,
-  /// ★ Named from what the player sees: three flames (status_wide_grim_reaper_3.png)
+  /// ★ Named from what the player sees: three flames
+  /// (status_wide_grim_reaper_3.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_3,
-  /// ★ Named from what the player sees: four flames (status_wide_grim_reaper_4.png)
+  /// ★ Named from what the player sees: four flames
+  /// (status_wide_grim_reaper_4.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_4,
-  /// ★ Named from what the player sees: five flames (status_wide_grim_reaper_5.png)
+  /// ★ Named from what the player sees: five flames
+  /// (status_wide_grim_reaper_5.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_5,
-  /// ★ Named from what the player sees: six flames (status_wide_grim_reaper_6.png)
+  /// ★ Named from what the player sees: six flames
+  /// (status_wide_grim_reaper_6.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_6,
-  /// ★ Named from what the player sees: seven flames (status_wide_grim_reaper_7.png)
+  /// ★ Named from what the player sees: seven flames
+  /// (status_wide_grim_reaper_7.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_7,
   SPRITE_369,
   /// ★ Named from the game: "Atalanta" (MsgDjinnName)
@@ -1367,8 +1387,8 @@ enum BabiAnimation {
   BABI_ANIMATION_IN_BED = 5
 };
 
-/// SPRITE_LOG_NORTH_SOUTH's animations (log_north_south.tsv) as a log tips into a
-/// river
+/// SPRITE_LOG_NORTH_SOUTH's animations (log_north_south.tsv) as a log tips into
+/// a river
 /// (places/kolima-forest-entrance/events/KolimaForestEntrance_PushLog.gif).
 enum LogAnimation {
   LOG_ANIMATION_ROLL_WEST = 3, ///< rolling over toward the west
@@ -1433,7 +1453,8 @@ enum ShebaAnimation {
   SHEBA_ANIMATION_LIE = 8 ///< lying on her back
 };
 
-/// SPRITE_ISAAC_CHILD's animations beyond enum ActorAnimation (isaac_child.tsv).
+/// SPRITE_ISAAC_CHILD's animations beyond enum ActorAnimation
+/// (isaac_child.tsv).
 enum IsaacChildAnimation {
   ISAAC_CHILD_ANIMATION_RECOIL = 17, ///< arms flung out
   /// Asleep, only his head on the pillow.

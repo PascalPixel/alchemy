@@ -92,22 +92,22 @@ void Func_020011a0(void);
 
 void Func_02000f18(s32 actor);
 
-void Func_02003094(void);
-void Func_02003134(void);
+void ShrineOfTheSeaGod_InitializeRoom1(void);
+void ShrineOfTheSeaGod_InitializeRoom2(void);
 
-void Func_0200320c(void);
+void ShrineOfTheSeaGod_InitializeRoom3(void);
 
-void Func_02003354(void);
-void Func_0200338c(void);
+void ShrineOfTheSeaGod_InitializeRoom4(void);
+void ShrineOfTheSeaGod_InitializeRoom5(void);
 
-void Func_02003504(void);
+void ShrineOfTheSeaGod_InitializeRoom6(void);
 
-void Func_02003598(void);
-void Func_02003740(void);
+void ShrineOfTheSeaGod_InitializeRoom7(void);
+void ShrineOfTheSeaGod_InitializeRoom8(void);
 
-void Func_0200377c(void);
+void ShrineOfTheSeaGod_InitializeRoom9(void);
 
-void Func_0200380c(void);
+void ShrineOfTheSeaGod_InitializeRoom11(void);
 
 void Func_02000994(void);
 

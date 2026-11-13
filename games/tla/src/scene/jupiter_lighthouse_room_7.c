@@ -84,7 +84,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Field_TryJumpForward(void);
 
-void Func_02000038(void) { Field_RequestDjinnBattle(21, 74); }
+void JupiterLighthouse_FightWhorl(void) { Field_RequestDjinnBattle(21, 74); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -1172,7 +1172,7 @@ s16 gData_02002c64[][2] = {
 
 #undef FieldEffect_Spawn
 
-void Func_02000038(void);
+void JupiterLighthouse_FightWhorl(void);
 void JupiterLighthouse_StepOnButton(void);
 void Func_02000e20(void);
 
@@ -1232,7 +1232,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {0xc602, 41, CONDITION_ALWAYS, EVENT(Func_02000cec)},
     {0x602, 42, CONDITION_ALWAYS, EVENT(Func_02000cec)},
     {0x4602, 43, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {0xc400, 21, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {0xc400, 21, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FightWhorl)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000778)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_020007a4)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000778)},

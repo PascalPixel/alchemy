@@ -152,7 +152,7 @@ struct Wanderer {
   u16 facingB;
 };
 
-void Func_02000280(void) { Field_RequestDjinnBattle(33, 9); }
+void GabombaStatue_FightSteel(void) { Field_RequestDjinnBattle(33, 9); }
 s32 Func_0200028c(struct Wanderer *actor) {
   u8 *timer = &actor->timer;
 
@@ -3608,7 +3608,7 @@ u32 gData_02005944[] = {
 #undef SceneState
 #undef gSceneState
 
-void Func_02000280(void);
+void GabombaStatue_FightSteel(void);
 void GabombaStatue_LashRope(void);
 void Func_02000784(void);
 void Func_020013bc(void);
@@ -4040,7 +4040,7 @@ LATE_DATA struct Trigger gGabombaStatue_Room3Triggers[] = {
     {0xc602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
     {0x4602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 31, 0x201, 0},
-    {TRIGGER_TALK, 33, IF_FLAG_SET(0x204), EVENT(Func_02000280)},
+    {TRIGGER_TALK, 33, IF_FLAG_SET(0x204), EVENT(GabombaStatue_FightSteel)},
     {TRIGGER_TABLE_END},
 };
 

@@ -109,9 +109,13 @@ s32 Func_02000038(struct Actor *object) {
   return 0;
 }
 
-void Func_02000044(void) { Field_RequestDjinnBattle(11, 57); }
+void MarsLighthouseEntrance_FightFugue(void) {
+  Field_RequestDjinnBattle(11, 57);
+}
 
-void Func_02000050(void) { Field_RequestDjinnBattle(17, 36); }
+void MarsLighthouseEntrance_FightBalm(void) {
+  Field_RequestDjinnBattle(17, 36);
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -2995,8 +2999,8 @@ struct ActorPlacement gMarsLighthouseEntrance_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-void Func_02000044(void);
-void Func_02000050(void);
+void MarsLighthouseEntrance_FightFugue(void);
+void MarsLighthouseEntrance_FightBalm(void);
 void MarsLighthouseEntrance_GrindIce(void);
 void Func_02000648(void);
 #define MarsLighthouseEntrance_BurstIceSheet                                   \
@@ -3115,8 +3119,8 @@ struct Trigger gMarsLighthouseEntrance_Room2Triggers[] = {
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
-    {0x8400, 11, CONDITION_ALWAYS, EVENT(Func_02000044)},
-    {0xc400, 11, CONDITION_ALWAYS, EVENT(Func_02000044)},
+    {0x8400, 11, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_FightFugue)},
+    {0xc400, 11, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_FightFugue)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201,
@@ -3187,7 +3191,8 @@ struct Trigger gMarsLighthouseEntrance_Room4Triggers[] = {
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {TRIGGER_STEP, 90, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_SlideOnIce)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000050)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_FightBalm)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS), 10,
      CONDITION_ALWAYS, EVENT(Func_0200096c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, 0},

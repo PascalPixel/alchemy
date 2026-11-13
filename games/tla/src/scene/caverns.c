@@ -48,7 +48,7 @@ void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Func_02000ba8(void);
 void Func_02000f50(void);
-void Func_02000f98(void);
+void Caverns_InitializeRoom4(void);
 s32 Func_02000c38(struct Actor *object, s16 *position);
 #include "flags.h"
 #include "battle/battle.h"
@@ -444,7 +444,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room1)
     Func_02000ba8();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room4)
-    Func_02000f98();
+    Caverns_InitializeRoom4();
   return 0;
 }
 
@@ -632,7 +632,7 @@ void Func_02000f50(void) {
   }
 }
 
-void Func_02000f98(void) {
+void Caverns_InitializeRoom4(void) {
   Func_02000454(gData_02001220);
   Actor_GetById(8)->priorityFlags |= 0x20;
   Actor_GetById(9)->priorityFlags |= 0x20;

@@ -483,7 +483,7 @@ void Func_02000a68(void) {
   }
 }
 
-void Func_02000d30(void);
+void Garoh_InitializeRoom2(void);
 
 s32 Scene_Initialize(void) {
   struct EventWork *work;
@@ -515,7 +515,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(0x919);
       Func_02000be4();
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom2) {
-      Func_02000d30();
+      Garoh_InitializeRoom2();
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom3) {
       Func_02000e00();
       if (Event_GetFlag(0x919)) {
@@ -568,7 +568,7 @@ void Func_02000be4(void) {
   }
 }
 
-void Func_02000d30(void) {
+void Garoh_InitializeRoom2(void) {
   s32 t4;
 
   Task_AddFrame(Func_02000a68, 0x480);

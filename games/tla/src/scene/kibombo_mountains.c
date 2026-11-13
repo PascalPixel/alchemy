@@ -75,7 +75,7 @@ void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
 void Field_TryJumpForward(void);
 
-void Func_02000038(void) { Field_RequestDjinnBattle(18, 70); }
+void KibomboMountains_FightWaft(void) { Field_RequestDjinnBattle(18, 70); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -624,7 +624,7 @@ void Func_02000ff4(void) {
 #undef EVENT_WORK_VALUE
 #include "text/msg_ids.h"
 
-void Func_02000038(void);
+void KibomboMountains_FightWaft(void);
 void Pillar_SetMoved(void);
 void Func_02000124(void);
 void Func_02000428(void);
@@ -820,7 +820,7 @@ struct Trigger gKibomboMountains_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgThisRockIs)},
     {TRIGGER_TALK, 15, IF_FLAG_SET(0x200), MSGNO(MsgHeyWhoS)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x200), MSGNO(MsgItSDark)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(KibomboMountains_FightWaft)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x221, EVENT(Pillar_SetMoved)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 12, 0x222, EVENT(Func_02000124)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(Func_02000428)},

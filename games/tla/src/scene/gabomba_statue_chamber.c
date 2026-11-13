@@ -35,10 +35,10 @@
 void Func_02001094(void);
 
 void Func_02000ef0();
-void Func_02001b14(void);
-void Func_02001ba8(void);
+void GabombaStatueChamber_InitializeRoom1(void);
+void GabombaStatueChamber_InitializeRoom2(void);
 
-void Func_02001c44(void);
+void GabombaStatueChamber_InitializeRoom3(void);
 
 void Func_02000be8(void);
 void Func_02000184(void);
@@ -940,17 +940,17 @@ s32 Scene_Initialize(void) {
       ->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov672Room1)
-    Func_02001b14();
+    GabombaStatueChamber_InitializeRoom1();
   else if (scene == (s32)&SceneId_Ov672Room2)
-    Func_02001ba8();
+    GabombaStatueChamber_InitializeRoom2();
   else if (scene == (s32)&SceneId_Ov672Room3)
-    Func_02001c44();
+    GabombaStatueChamber_InitializeRoom3();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02001b14(void) {
+void GabombaStatueChamber_InitializeRoom1(void) {
   Actor_DisableById(8);
   Actor_DisableById(9);
   Actor_DisableById(10);
@@ -984,7 +984,7 @@ void Func_02001b14(void) {
   }
 }
 
-void Func_02001ba8(void) {
+void GabombaStatueChamber_InitializeRoom2(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(519)) {
       struct GabombaStatueChamberMapWork *map =
@@ -1022,7 +1022,7 @@ void Func_02001ba8(void) {
 /// set, else Func_02000f88; arriving by entrance 2 it sets the retreat to
 /// Ov671Room7's entrance 1 (flag 0xa27) or Ov672Room1's entrance 3 (flag
 /// 0xa28).
-void Func_02001c44(void) {
+void GabombaStatueChamber_InitializeRoom3(void) {
   u32 i;
   char *scene;
 

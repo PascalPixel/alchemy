@@ -117,8 +117,8 @@ static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f) {
   /* FAKEMATCH(wrapper): the blend start reaches the main image through one
    * inline layer; as direct Map_CopyCellAttributeRect calls, 12 of 153
-   * instructions differ in tla-en (Func_0200338c), and 48 in all over the
-   * ten callers that change. */
+   * instructions differ in tla-en (ShrineOfTheSeaGod_InitializeRoom5), and 48
+   * in all over the ten callers that change. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
@@ -1869,25 +1869,25 @@ s32 Scene_Initialize(void) {
       ->screenEffect = 0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
-    Func_02003094();
+    ShrineOfTheSeaGod_InitializeRoom1();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
-    Func_02003134();
+    ShrineOfTheSeaGod_InitializeRoom2();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
-    Func_0200320c();
+    ShrineOfTheSeaGod_InitializeRoom3();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
-    Func_02003354();
+    ShrineOfTheSeaGod_InitializeRoom4();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
-    Func_0200338c();
+    ShrineOfTheSeaGod_InitializeRoom5();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
-    Func_02003504();
+    ShrineOfTheSeaGod_InitializeRoom6();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
-    Func_02003598();
+    ShrineOfTheSeaGod_InitializeRoom7();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
-    Func_02003740();
+    ShrineOfTheSeaGod_InitializeRoom8();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
-    Func_0200377c();
+    ShrineOfTheSeaGod_InitializeRoom9();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod11)
-    Func_0200380c();
+    ShrineOfTheSeaGod_InitializeRoom11();
   return 0;
 }
 
@@ -1929,7 +1929,7 @@ void Func_02003024(void) {
   }
 }
 
-void Func_02003094(void) {
+void ShrineOfTheSeaGod_InitializeRoom1(void) {
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
 
@@ -1961,7 +1961,7 @@ void Func_020030fc(void) {
     object->collisionFlags &= ~8;
 }
 
-void Func_02003134(void) {
+void ShrineOfTheSeaGod_InitializeRoom2(void) {
 
   Func_02002f88(10)->y = -0x100000;
   Actor_SetSpritePriority(10, 3);
@@ -1987,7 +1987,7 @@ void Func_02003134(void) {
   SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(Func_020030fc, 0x480);
 }
 
-void Func_0200320c(void) {
+void ShrineOfTheSeaGod_InitializeRoom3(void) {
   struct ShrineOfTheSeaGodObject *block;
 
   Func_02002f88(9);
@@ -2025,7 +2025,7 @@ void Func_0200320c(void) {
   wait(1);
 }
 
-void Func_02003354(void) {
+void ShrineOfTheSeaGod_InitializeRoom4(void) {
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
 
@@ -2040,7 +2040,7 @@ void Func_02003354(void) {
   }
 }
 
-void Func_0200338c(void) {
+void ShrineOfTheSeaGod_InitializeRoom5(void) {
   struct ShrineOfTheSeaGodObject *object = Func_02002f88(13);
   u8 *flags = &object->priorityFlags;
 
@@ -2083,7 +2083,7 @@ void Func_0200338c(void) {
   }
 }
 
-void Func_02003504(void) {
+void ShrineOfTheSeaGod_InitializeRoom6(void) {
   s32 open;
 
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
@@ -2105,7 +2105,7 @@ void Func_02003504(void) {
 // The Shrine of the Sea God's prepare step: sets up actors 8 to 24 and,
 // for each of flags 0x231 and 0x232 that is set, copies its opened tiles
 // and places actor 15 or 16 where it rests.
-void Func_02003598(void) {
+void ShrineOfTheSeaGod_InitializeRoom7(void) {
   struct ShrineOfTheSeaGodObject *object;
   struct ShrineOfTheSeaGodObject *lastObject;
 
@@ -2157,7 +2157,7 @@ void Func_02003598(void) {
   object->motionFlags = 0;
 }
 
-void Func_02003740(void) {
+void ShrineOfTheSeaGod_InitializeRoom8(void) {
   Func_02003854(8);
   Func_02003854(9);
   Func_02003854(10);
@@ -2165,7 +2165,7 @@ void Func_02003740(void) {
     Func_02000994();
 }
 
-void Func_0200377c(void) {
+void ShrineOfTheSeaGod_InitializeRoom9(void) {
   if (gMainRoutineWork.entrance == 1 && GameFlag_Get(265) == 0)
     Func_02000ce8();
 }
@@ -2190,7 +2190,7 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
   }
 }
 
-void Func_0200380c(void) {
+void ShrineOfTheSeaGod_InitializeRoom11(void) {
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(64);
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;

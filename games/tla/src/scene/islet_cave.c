@@ -38,9 +38,9 @@ void PaletteCycle_Fade(void);
 
 void Func_020008c8(void);
 
-void Func_020003b0(void);
+void IsletCave_FightMeld(void);
 
-void Func_020003bc(void);
+void IsletCave_FightSerac(void);
 
 void Func_02000508(void);
 
@@ -156,12 +156,12 @@ void Func_02000328(void) {
 
 #include "text/msg_ids.h"
 
-void Func_020003b0(void) {
+void IsletCave_FightMeld(void) {
   Field_RequestDjinnBattle(15, 12);
   return;
 }
 
-void Func_020003bc(void) {
+void IsletCave_FightSerac(void) {
   Field_RequestDjinnBattle(9, 37);
   return;
 }
@@ -872,7 +872,7 @@ struct Trigger gIsletCave_Triggers[] = {
     {TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Func_020009d4)},
     {TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Func_020009e0)},
     {TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Func_020009ec)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020003b0)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
     {0x9c05, 50, CONDITION_ALWAYS, EVENT(Func_02000508)},
     {0x9c05, 51, CONDITION_ALWAYS, EVENT(Func_02000544)},
     {TRIGGER_TABLE_END},
@@ -890,7 +890,7 @@ struct Trigger gIsletCave_Room2Triggers[] = {
     {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_020005fc)},
     {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_020005fc)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, 0x230, EVENT(Func_0200115c)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_020003bc)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
     {TRIGGER_TABLE_END},
 };
 

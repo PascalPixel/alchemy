@@ -101,7 +101,7 @@ void Actor_DepartInRing(s32 id);
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
   } while (0)
 
-void Func_02000038(void) { Field_RequestDjinnBattle(8, 10); }
+void GabombaCatacombs_FightMud(void) { Field_RequestDjinnBattle(8, 10); }
 
 void Func_02000044(void) { Func_02001274_(7, 63, 1, 16, 16, 57, 63); }
 
@@ -614,7 +614,7 @@ struct Trigger gGabombaCatacombs_Room1Triggers[] = {
 struct Trigger gGabombaCatacombs_Room2Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(GabombaCatacombs_FightMud)},
     {TRIGGER_TABLE_END},
 };
 

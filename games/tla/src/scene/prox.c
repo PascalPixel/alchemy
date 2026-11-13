@@ -178,7 +178,7 @@ extern s32 gProx_EnterDoorScript[];
 
 void Func_020027e4(void);
 
-void Func_02002878(void);
+void Prox_InitializeRoom3(void);
 
 void Func_020029c8(void);
 
@@ -1545,7 +1545,7 @@ s32 Scene_Initialize(void) {
         Actor_SetWideSprite(64, 1);
       Func_020027e4();
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
-      Func_02002878();
+      Prox_InitializeRoom3();
     }
     if (Event_GetFlag(0x201)) {
       BattleEffect_ApplyColorToTargetBuffer(0x10004, 1);
@@ -1597,7 +1597,7 @@ void Func_020027e4(void) {
   FieldActor_SetSpriteColor(((s32)Actor_Get(20)), 0xf);
 }
 
-void Func_02002878(void) {
+void Prox_InitializeRoom3(void) {
   s32 t9;
   s32 t3;
   s32 t4;

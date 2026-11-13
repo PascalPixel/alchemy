@@ -164,11 +164,11 @@ extern char SceneId_Ov674Room3;
 extern char SceneId_Ov674Room4;
 extern char SceneId_Ov674Room5;
 
-void Func_02002c38(void);
-void Func_02002f1c(void);
-void Func_020030b4(void);
-void Func_02003164(void);
-void Func_0200329c(void);
+void Islets_InitializeRoom1(void);
+void Islets_InitializeRoom2(void);
+void Islets_InitializeRoom3(void);
+void Islets_InitializeRoom4(void);
+void Islets_InitializeRoom5(void);
 
 struct IsletsMapFlags {
   u8 unk00[0x17];
@@ -1792,15 +1792,15 @@ s32 Scene_Initialize(void) {
   work->field1ac = 0x100;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov674Room1)
-    Func_02002c38();
+    Islets_InitializeRoom1();
   else if (scene == (s32)&SceneId_Ov674Room2)
-    Func_02002f1c();
+    Islets_InitializeRoom2();
   else if (scene == (s32)&SceneId_Ov674Room3)
-    Func_020030b4();
+    Islets_InitializeRoom3();
   else if (scene == (s32)&SceneId_Ov674Room4)
-    Func_02003164();
+    Islets_InitializeRoom4();
   else if (scene == (s32)&SceneId_Ov674Room5)
-    Func_0200329c();
+    Islets_InitializeRoom5();
   return 0;
 }
 
@@ -1814,7 +1814,7 @@ void Func_02002bd8(void) {
   }
 }
 
-void Func_02002c38(void) {
+void Islets_InitializeRoom1(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
   struct Actor *spawned;
 
@@ -1929,7 +1929,7 @@ void Func_02002d7c(void) {
 extern u32 gData_02004274[];
 
 /// The room's setup: flags, the objects' places and the scene state.
-void Func_02002f1c(void) {
+void Islets_InitializeRoom2(void) {
   struct Actor *object;
   struct Actor *other;
   u16 *state;
@@ -1985,7 +1985,7 @@ void Func_02002f1c(void) {
   }
 }
 
-void Func_020030b4(void) {
+void Islets_InitializeRoom3(void) {
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 3)
@@ -2010,7 +2010,7 @@ void Func_020030b4(void) {
 // A room's setup.
 
 /// Sets up the room's actors and map work.
-void Func_02003164(void) {
+void Islets_InitializeRoom4(void) {
   struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_Get(10);
   struct Actor *last;
@@ -2079,11 +2079,12 @@ void Func_02003410(void);
  * s32 c, s32 d); graphics/palette_snapshots.h has s32 PaletteCycle_Add(s16
  * bank, s16 index, s16 delay, s16 count); tried as the definition's s32
  * PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count), which the object
- * already declares, Func_0200329c moves: 2 of 145 instructions in tla-en. */
+ * already declares, Islets_InitializeRoom5 moves: 2 of 145 instructions in
+ * tla-en. */
 void PaletteCycle_Add__islets(s32 a, s32 b, s32 c,
                               s32 d) __asm__("PaletteCycle_Add");
 
-void Func_0200329c(void) {
+void Islets_InitializeRoom5(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 done;
 
@@ -2166,7 +2167,7 @@ void Func_02003410(void);
 s32 PaletteCycle_Add__islets(s16 bank, s16 index, s16 delay,
                              s16 count) __asm__("PaletteCycle_Add");
 
-void Func_0200329c(void) {
+void Islets_InitializeRoom5(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 done;
 

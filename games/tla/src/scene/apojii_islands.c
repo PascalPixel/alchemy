@@ -39,7 +39,7 @@ void Func_02000974(void);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
-void Func_02001054(void);
+void ApojiiIslands_InitializeRoom2(void);
 void Func_020010b4(void);
 void Func_020010d8(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
@@ -639,7 +639,7 @@ s32 Scene_Initialize(void) {
   party = &gMainRoutineWork;
   scene = party->scene;
   if (scene == (s32)&SceneId_Ov679Room2) {
-    Func_02001054();
+    ApojiiIslands_InitializeRoom2();
   } else if (scene == (s32)&SceneId_Ov679Room1) {
     FieldTask_AddFrame(Func_02000540, 0x480);
     if (Event_GetFlag(0x95e))
@@ -654,7 +654,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02001054(void) {
+void ApojiiIslands_InitializeRoom2(void) {
   Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);

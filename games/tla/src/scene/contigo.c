@@ -91,10 +91,10 @@ void Contigo_StopPaletteCycle(void);
 extern u32 gData_02004630[];
 extern s32 gData_0200466c[];
 extern u32 gData_02004b18[];
-void Func_02003720(void);
-void Func_02003880(void);
-void Func_020039d4(void);
-void Func_02003a8c(void);
+void Contigo_InitializeRoom1(void);
+void Contigo_InitializeRoom4(void);
+void Contigo_InitializeRoom2(void);
+void Contigo_InitializeRoom3(void);
 extern s16 gData_0200469c[];
 extern s16 gData_020046ac[];
 extern s16 gData_020046d8[];
@@ -1127,8 +1127,8 @@ void Func_020017f4(void) {
  * value, s32 digits); module/window/window.h has void MessageArgument_Push(u32
  * value, u32 kind); tried as the definition's void MessageArgument_Push(u32
  * value, u32 kind), which the object already declares, Func_02001938 moves: 2
- * of 105 instructions, Func_02001abc moves: 2 of 72 instructions, Func_02003a8c
- * moves: 5 of 220 instructions in tla-ja. */
+ * of 105 instructions, Func_02001abc moves: 2 of 72 instructions,
+ * Contigo_InitializeRoom3 moves: 5 of 220 instructions in tla-ja. */
 extern void
 MessageArgument_Push__contigo(s32 value,
                               s32 digits) __asm__("MessageArgument_Push");
@@ -2050,13 +2050,13 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    Func_02003720();
+    Contigo_InitializeRoom1();
   else if (scene == (s32)&SceneId_Ov694Room4)
-    Func_02003880();
+    Contigo_InitializeRoom4();
   else if (scene == (s32)&SceneId_Ov694Room2)
-    Func_020039d4();
+    Contigo_InitializeRoom2();
   else if (scene == (s32)&SceneId_Ov694Room3)
-    Func_02003a8c();
+    Contigo_InitializeRoom3();
   return 0;
 }
 
@@ -2079,7 +2079,7 @@ void Map_CenterOnFollowedPoint(void);
 // 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109 is set, and
 // while flag 0x200 is set has the camera follow the leader; it ends with
 // Palette_SetColors.
-void Func_02003720(void) {
+void Contigo_InitializeRoom1(void) {
   struct Actor *object = Actor_GetById(14);
   s32 zero;
 
@@ -2130,7 +2130,7 @@ void Func_02003720(void) {
                     gData_02004704);
 }
 
-void Func_02003880(void) {
+void Contigo_InitializeRoom4(void) {
   Func_02001c44(18);
   if (GameFlag_Get(0xa21) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
@@ -2174,7 +2174,7 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-void Func_020039d4(void) {
+void Contigo_InitializeRoom2(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
@@ -2222,7 +2222,7 @@ struct ContigoPrizes {
 
 void ItemDisplay_ShowItem(s32 item, s32 count);
 
-void Func_02003a8c(void) {
+void Contigo_InitializeRoom3(void) {
   s32 diff;
   s8 *list;
   s8 *prize;

@@ -52,7 +52,7 @@ void Func_02001cd4(s32 actor);
 
 void Func_020006ac(void);
 
-void Func_0200078c(void);
+void VenusLighthouse_StepOnFloorSwitch(void);
 
 extern u32 gData_02001ce4[];
 extern u32 gData_02001d1c[];

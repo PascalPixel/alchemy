@@ -140,7 +140,7 @@ void Func_020002e0(void) {
   Event_SetFlag(0x8de);
 }
 
-void Func_02000308(void) {
+void SuhallaGate_EnterHouse(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   Actor_GetById(0)->motionFlags = 0;
@@ -472,7 +472,7 @@ struct Trigger gData_02001078[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000308)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(SuhallaGate_EnterHouse)},
     {TRIGGER_STEP, 20, 0x894, EVENT(Func_020003ac)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_020008cc)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOoooogMaybeI)},

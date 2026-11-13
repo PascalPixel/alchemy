@@ -26,7 +26,7 @@ void Event_Start(void);
 void Event_End(void);
 void Sanctum_Run(s32 value);
 
-void Func_02000044(void) {
+void LinkLobby_InitializeSerial(void) {
   volatile u16 *ime = &REG_IME;
   u32 saved = *ime;
 
@@ -50,7 +50,7 @@ struct LinkPeer {
 
 extern struct LinkPeer gLinkPeerSignatures[2];
 
-s32 Func_0200006c(s32 slot) {
+s32 LinkLobby_PeerSlotMatches(s32 slot) {
   s32 id = -1;
 
   if ((gLinkStatus & 3) == 3) {
@@ -101,7 +101,7 @@ extern s32 gData_020022b8;
 /// the peer signatures after 25, and raises the event trigger when both sides
 /// are ready or the link is lost. Returns whether the peer answered.
 // Ported from ☀️'s LinkLobby_PollPeerReady.
-s32 Func_02000134(void) {
+s32 LinkLobby_PollPeerReady(void) {
   struct LobbyEventWork *work;
   s32 result;
   s32 i;
@@ -115,7 +115,7 @@ s32 Func_02000134(void) {
   if (z > 0xe00000)
     Event_ClearFlag(0x304);
   if (work->raisedTrigger != 2) {
-    Func_0200006c(0);
+    LinkLobby_PeerSlotMatches(0);
     set = Event_GetFlag(0x303);
     if (!set) {
       if (++gData_020022b8 > 25) {
@@ -138,7 +138,7 @@ s32 Func_02000134(void) {
       gData_020022b8 = 0;
     }
     if (gData_020022b8 == 0) {
-      if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {
+      if (LinkLobby_PeerSlotMatches(0) && (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
         Event_SetFlag(0x201);
         if (Event_GetFlag(0x202))
           work->raisedTrigger = 1;
@@ -152,7 +152,7 @@ s32 Func_02000134(void) {
       work->raisedTrigger = 1;
   }
   if ((Event_GetFlag(0x201) || Event_GetFlag(0x202)) && !Event_GetFlag(0x173) &&
-      !Func_0200006c(0) && gData_020022b8 > 24) {
+      !LinkLobby_PeerSlotMatches(0) && gData_020022b8 > 24) {
     work->raisedTrigger = 2;
     Event_SetFlag(0x205);
     Event_ClearFlag(0x201);
@@ -192,7 +192,7 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_End();
 }
 
-s32 Func_02000344(void) {
+s32 LinkLobby_ReportDisconnection(void) {
   struct LobbyEventWork *work = Ram_HeapSlots->eventWork;
 
   LinkLobby_WriteSlotValue(4);
@@ -582,7 +582,7 @@ extern char SceneId_Ov6b5;
 
 // Touching the lobby counter: waits for the opponent, walks the lead to the
 // arena door, swaps party records and starts the link battle.
-s32 Func_02000864(void) {
+s32 LinkLobby_EnterBattle(void) {
   struct LobbyEventWork *work;
   s32 failed;
   struct Window *window;
@@ -611,16 +611,16 @@ s32 Func_02000864(void) {
     Event_ResolvePendingActions(0);
     Event_SetFlag(0x203);
     LinkLobby_WriteSlotValue(2);
-    if (!Func_0200006c(2))
+    if (!LinkLobby_PeerSlotMatches(2))
       window = Message_OpenWindow(MsgAwaitingYourOpponent, 5, 4, 1);
-    while (!Func_0200006c(2)) {
+    while (!LinkLobby_PeerSlotMatches(2)) {
       wait(1);
       stop = 0;
       if (!Event_GetFlag(0x201))
         stop = 1;
       if (Event_GetFlag(0x205))
         stop = 1;
-      if (!Func_0200006c(2) && !Func_0200006c(1)) {
+      if (!LinkLobby_PeerSlotMatches(2) && !LinkLobby_PeerSlotMatches(1)) {
         if (++cnt > 25)
           stop = 1;
       } else {
@@ -643,7 +643,7 @@ s32 Func_02000864(void) {
   }
   if (!failed) {
     buf = HeapSlot_AllocEwram(216, 0x7c8);
-    Task_RemoveFar(Func_02000134);
+    Task_RemoveFar(LinkLobby_PollPeerReady);
     Map_ClearLayerEntryFlag(5);
     wait(8);
     Map_SetLayerEntryFlag(5);
@@ -673,8 +673,8 @@ s32 Func_02000864(void) {
         HeapSlot_Release(216);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
-        Task_Add((TaskFunc)Func_02000134, TASK_PASS_VBLANK);
-        Func_02001944(Func_02000134, 1);
+        Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_VBLANK);
+        Func_02001944(LinkLobby_PollPeerReady, 1);
         Event_ClearFlag(0x201);
         Event_ClearFlag(0x202);
         Event_ClearFlag(0x303);
@@ -729,7 +729,7 @@ s32 Func_02000864(void) {
 }
 
 /// The lobby clerk: offers the link battle, or reports on the one waiting.
-s32 Func_02000bb0(void) {
+s32 LinkLobby_ChooseBattleMode(void) {
   s32 answer;
   s32 msg;
   s32 line;
@@ -738,11 +738,11 @@ s32 Func_02000bb0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
-  if (Func_0200006c(0) == 0)
+  if (LinkLobby_PeerSlotMatches(0) == 0)
     wait(1);
-  if (Func_0200006c(0) == 0) {
+  if (LinkLobby_PeerSlotMatches(0) == 0) {
     LinkLobby_WriteSlotValue(5);
-    Func_02000044();
+    LinkLobby_InitializeSerial();
     if (!Event_GetFlag(0x173)) {
       Event_SetMessageId(msg + 5);
       Event_OpenMessage(8, 0);
@@ -795,7 +795,7 @@ s32 Func_02000bb0(void) {
         Event_SetMessageId(msg + 1);
       Event_OpenMessage(8, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-        if (Func_0200006c(0)) {
+        if (LinkLobby_PeerSlotMatches(0)) {
           Event_SetFlag(0x16c);
           Event_SetFlag(0x172);
           if (Event_GetFlag(0x201))
@@ -821,7 +821,7 @@ void MessageArgument_ClearAll(void);
 void MessageArgument_Push(s32 value, s32 digits);
 
 // Tells the leader's win count, total or in a row by the way the lead faces.
-s32 Func_02000da0(s32 actor) {
+s32 LinkLobby_ReportWinTallies(s32 actor) {
   u32 facing = Actor_GetById(4)->facing;
   u16 *count;
   s32 base;
@@ -936,33 +936,21 @@ void Func_02000f50(s32 value) {
 
 /// Whether owner is one of the first three active owners, or the first four
 /// while flag 370 is clear; an 0xff entry ends the list.
-s32 Func_02000f6c(s32 owner) {
+s32 LinkLobby_PartyContains(s32 owner) {
   s32 count = Party_CountMembers();
   s32 limit = 3;
   s32 i;
-  struct MainRoutineWork *party;
 
   if (!Event_GetFlag(370))
     limit = 4;
   if (count > limit)
     count = limit;
-  i = 0;
-  if (i >= count)
-    goto none;
-next:
-  party = &gMainRoutineWork;
-  if (party->activeOwners[i] == 0xff)
-    goto none;
-  /* FAKEMATCH(barrier): the empty asm with a memory clobber, so the owner byte
-   * is read again for the second test; as no asm, 9 of 33 instructions differ
-   * in tla-en. */
-  __asm__ volatile("" ::: "memory");
-  if (gMainRoutineWork.activeOwners[i] == owner)
-    return 1;
-  i++;
-  if (i < count)
-    goto next;
-none:
+  for (i = 0; i < count; i++) {
+    if (gMainRoutineWork.activeOwners[i] == 0xff)
+      return 0;
+    if (gMainRoutineWork.activeOwners[i] == owner)
+      return 1;
+  }
   return 0;
 }
 
@@ -1056,7 +1044,7 @@ void Func_02000fbc(s32 actor) {
 // ---- games/tla/src/scene/lobby/talk.c ----
 #include "scene_ids.h"
 
-s32 Func_02000f6c(s32 id);
+s32 LinkLobby_PartyContains(s32 id);
 void Serial_RemoveIrqHandlers(void);
 void Map_CenterOnFollowedPoint(void);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
@@ -1074,10 +1062,10 @@ void FieldMessage_Show(s32 no, s32 flags);
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-s32 Func_02001130(s32 actor) {
+s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 base = (s32)MsgItSOur;
-  s32 lead = Func_02000f6c(4);
-  s32 own = Func_02000f6c(actor);
+  s32 lead = LinkLobby_PartyContains(4);
+  s32 own = LinkLobby_PartyContains(actor);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1173,7 +1161,7 @@ s32 Func_0200122c(s32 actor) {
   Event_End();
 }
 
-s32 Func_02001304(s32 actor) {
+s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
   Event_Start();
@@ -1196,7 +1184,7 @@ s32 Func_02001304(s32 actor) {
   Event_End();
 }
 
-s32 Func_02001388(s32 id) {
+s32 LinkLobby_ReportMonsterRecord(s32 id) {
   struct MainRoutineWork *gs;
 
   Event_Start();
@@ -1216,7 +1204,7 @@ s32 Func_02001388(s32 id) {
 // ---- games/tla/src/scene/lobby/scene_events.c ----
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_02000f6c(s32 id);
+s32 LinkLobby_PartyContains(s32 id);
 void Map_CenterOnFollowedPoint(void);
 void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
@@ -1264,8 +1252,8 @@ extern s32 gData_020022bc;
 extern u16 gData_02003a74[];
 extern u8 gAutoSleepEnabled;
 
-s32 Func_02000134(void);
-void Func_02000044(void);
+s32 LinkLobby_PollPeerReady(void);
+void LinkLobby_InitializeSerial(void);
 void Serial_Initialize(void);
 void Func_02001944(void *func, s32 mask);
 void Map_SetLayerEntryFlag(s32 entry);
@@ -1313,7 +1301,7 @@ s32 LinkLobby_RunRoundResult(void) {
     s32 flag = 0x2f0 + i;
 
     Event_ClearFlag(flag);
-    if (Func_02000f6c(i))
+    if (LinkLobby_PartyContains(i))
       Event_SetFlag(flag);
   }
   if (gMainRoutineWork.entrance == 8) {
@@ -1410,7 +1398,7 @@ s32 LinkLobby_RunRoundResult(void) {
       work->raisedTrigger = 2;
       Event_ClearFlag(0x304);
       wait(20);
-      Func_02000044();
+      LinkLobby_InitializeSerial();
       LinkLobby_WriteSlotValue(0);
       LinkLobby_WriteSlotValue(4);
     } else {
@@ -1462,7 +1450,7 @@ s32 LinkLobby_RunRoundResult(void) {
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
   }
-  func = Func_02000134;
+  func = LinkLobby_PollPeerReady;
   Task_Add(func, 0x480);
   Func_02001944(func, 1);
   if (gMainRoutineWork.entrance != 8 || !Event_GetFlag(0x173)) {
@@ -1586,34 +1574,34 @@ u32 gData_02001ee0[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_TALK, 0, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {TRIGGER_TALK, 1, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {TRIGGER_TALK, 2, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {TRIGGER_TALK, 3, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {TRIGGER_TALK, 5, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {TRIGGER_TALK, 6, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000da0)},
+    {TRIGGER_TALK, 0, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, 1, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, 2, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, 3, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, 5, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, 6, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseBattleMode)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(LinkLobby_ReportWinTallies)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000f50)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgWelcomeToBattle)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseDebugParameterSet)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02001304)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(LinkLobby_ExplainPartyOrder)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgYouCouldUse)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgShouldIEnter)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMonsterBattleRules)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02001388)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(LinkLobby_ReportMonsterRecord)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgSometimesYourClass)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIDonTHaveThe)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02000864)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(LinkLobby_EnterBattle)},
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
     {TRIGGER_RAISED, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},
-    {TRIGGER_RAISED, 2, CONDITION_ALWAYS, EVENT(Func_02000344)},
+    {TRIGGER_RAISED, 2, CONDITION_ALWAYS, EVENT(LinkLobby_ReportDisconnection)},
     {TRIGGERS_END},
 };

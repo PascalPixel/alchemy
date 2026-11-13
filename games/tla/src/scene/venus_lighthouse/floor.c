@@ -88,7 +88,7 @@ void Func_020006ac(void) {
   Import_EventEnd();
 }
 
-void Func_0200078c(void) {
+void VenusLighthouse_StepOnFloorSwitch(void) {
   struct VenusActor *leader = Actor_GetById__floor(Party_GetLeaderActor());
   s32 z = leader->zPixel;
 
@@ -984,7 +984,7 @@ struct Trigger gSceneEvents[] = {
     {33, 31, CONDITION_ALWAYS, 31},
     {33, 32, CONDITION_ALWAYS, 32},
     {TRIGGER_STEP, 45, 0x200, EVENT(Func_020006ac)},
-    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(Func_0200078c)},
+    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnFloorSwitch)},
     {TRIGGER_EXAMINE, 35, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {TRIGGER_EXAMINE, 36, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {TRIGGER_EXAMINE, 37, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},

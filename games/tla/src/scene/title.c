@@ -62,31 +62,17 @@ void Func_02000634(s32 value);
 // ☀️'s Title_Run with ⚓️'s entrances.
 s32 Title_Run(void) {
   s32 frames;
-  s32 limit;
 
   if (gMainRoutineWork.entrance == 10) {
     Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
     Event_PlaySound(75);
-    Func_0200031c(0);
+    Title_RevealScreen(0);
     wait(120);
-    // Goto loops: the native reloads gInput's address on every pass,
-    // which loop.c hoists out of a for loop.
-    frames = 0;
-    goto test;
-  next:
-    frames++;
-  test:
-    limit = 3599;
-    /* FAKEMATCH(barrier): the bound goes through an empty asm, so 3599 is
-     * compared with bgt; as frames > 3599, which combine canonicalizes to 3600
-     * with bge, 19 of 155 instructions differ in tla-en. */
-    __asm__("" : "+l"(limit));
-    if (frames > limit)
-      goto out;
-    wait(1);
-    if (gInput.pressed == 0)
-      goto next;
-  out:
+    for (frames = 0; frames <= 3599; frames++) {
+      wait(1);
+      if (gInput.pressed != 0)
+        break;
+    }
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
@@ -224,7 +210,7 @@ void Func_02000278(void) {
 
 /// The title screen appears: the logo and its sprite row are loaded, the
 /// blend fades the logo in over 17 steps and the screen transition opens.
-void Func_0200031c(void) {
+void Title_RevealScreen(void) {
   s32 i;
 
   Title_LoadBackground();

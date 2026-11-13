@@ -281,14 +281,30 @@ $(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 	$(LD) --unresolved-symbols=ignore-all --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(LIBGCC)
 
+# An overlay's import table (⚓️): a far-call stub for each main-image routine
+# its code calls and does not define, copied from the game's list of them,
+# imports.inc, in the list's order. The overlay's script places it as
+# "*/imports.o".
+IMPORT_LIST_tla := games/tla/src/system/overlay/imports.inc
+IMPORT_LIST := $(IMPORT_LIST_$(GAME))
+OVERLAY_IMPORTS = $(if $(IMPORT_LIST),$(BUILD)/overlays/$*/imports.o)
+.SECONDEXPANSION:
+$(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $(IMPORT_LIST)
+	@mkdir -p $(@D)
+	{ $(NM) -g --defined-only $(OVERLAY_OBJS_$*) | awk 'NF == 3 { print "own", $$3 }'; \
+	  $(NM) -u $(OVERLAY_OBJS_$*) | awk '{ print "calls", $$NF }'; } | \
+	awk 'NR == FNR { seen[$$1 " " $$2] = 1; next } $$1 == "export" { name = $$2; sub(/,$$/, "", name); \
+	     if (!(("calls " name) in seen) || ("own " name) in seen) next } { print }' - $(IMPORT_LIST) > $@
+$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s games/$(GAME)/src/gamepak/far_call/veneer.s
+	$(AS) $(EDITION_ASFLAGS) -o $@ $<
+
 # An overlay links at 0x2008000 against the main image's symbols, less the
 # names it defines itself; its image is packed as Camelot's packer did.
-.SECONDEXPANSION:
-$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_DEPS) $(BUILD)/symbols.elf $(LIBGCC)
+$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_IMPORTS) $$(OVERLAY_DEPS) $(BUILD)/symbols.elf $(LIBGCC)
 	@mkdir -p $(@D)
-	$(NM) -g --defined-only $(OVERLAY_OBJS_$*) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
+	$(NM) -g --defined-only $(OVERLAY_OBJS_$*) $(OVERLAY_IMPORTS) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
 	$(OBJCOPY) --extract-symbol --strip-symbols=$(@:.elf=.own) $(BUILD)/symbols.elf $(@:.elf=.symbols.elf)
-	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $(OVERLAY_OBJS_$*) $(LIBGCC)
+	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $(OVERLAY_OBJS_$*) $(OVERLAY_IMPORTS) $(LIBGCC)
 
 $(BUILD)/overlays/resource_%.lz: $(BUILD)/overlays/resource_%.elf $(OVLPACK)
 	$(OBJCOPY) -O binary $< $(@:.lz=.bin)

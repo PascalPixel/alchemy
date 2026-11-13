@@ -1266,16 +1266,6 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   Event_End();
 }
 
-/// Sets the leader's movement speed for the shared Colosso dialogue.
-static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-}
-
-/// Sets an attendant's movement speed for the shared Colosso dialogue.
-static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, 1);
-}
-
 // This scene's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST

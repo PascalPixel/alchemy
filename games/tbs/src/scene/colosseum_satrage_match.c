@@ -320,16 +320,6 @@ enum FallingLogAnimation {
   FALLING_LOG_ANIMATION_FALLEN = 4
 };
 
-/// Sets the party leader's walking speed and acceleration.
-static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-}
-
-/// Sets the specified actor's walking speed and acceleration.
-static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, 1);
-}
-
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumSatrageMatchEntrances;
 }

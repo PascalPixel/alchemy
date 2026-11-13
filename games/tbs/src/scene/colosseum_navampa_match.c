@@ -298,16 +298,6 @@ enum {
 
 enum { PISTON_COUNT = 5 };
 
-/// Sets the leader speed for the shared solo-party placement routine.
-static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-}
-
-/// Sets a companion speed for the shared solo-party placement routine.
-static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, 1);
-}
-
 const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
 }

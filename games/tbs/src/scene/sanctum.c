@@ -1989,6 +1989,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   struct Sprite *sprite;
   u8 *transferBuffer;
   u32 frame;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 15 of
+   * 74 instructions differ in tbs-en. */
   u8 zero;
 
   icon = FieldActor_Create(SPRITE_BLANK, fixedX, fixedY, fixedZ);

@@ -592,6 +592,8 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   struct Actor *felix;
   struct Actor *shadow;
   s32 i;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 29 of
+   * 464 instructions differ in tbs-en. */
   u8 zero;
 
   Sound_Play(MUS_OMINOUS);

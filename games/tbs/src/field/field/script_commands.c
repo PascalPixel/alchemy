@@ -84,6 +84,8 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
   s16 *waitCounter = &interpreter->wait;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 10 of
+   * 24 instructions differ in tbs-en. */
   s32 zero = 0;
 
   *waitCounter = zero;

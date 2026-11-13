@@ -256,6 +256,8 @@ void BattleTransition_DrawRows(void) {
 /// Installed by BattleTransition_Run as the VCount interrupt's
 /// handler at line 32, while gBgScroll[0].y holds BG0 scrolled.
 void BattleTransition_ClearBg0Vofs(void) {
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 4 of
+   * 4 instructions differ in tbs-en. */
   u32 zero = 0;
 
   REG_BG0VOFS = zero;

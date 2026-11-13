@@ -1510,6 +1510,8 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
 static void VenusLighthouse_FallThroughFloor(void) {
   struct Actor *leader;
   struct Actor *leaderActor;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 9 of
+   * 100 instructions differ in tbs-es. */
   s32 zero;
 #if TBS_PATCH_3
   u8 *motionFlags;

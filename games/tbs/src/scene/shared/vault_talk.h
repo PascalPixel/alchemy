@@ -8,6 +8,8 @@
 /// actor stops and stands while the thought is shown.
 static void Vault_ShowThought(s32 actorId) {
   u8 *paused = &Actor_GetById(actorId)->paused;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 10 of
+   * 28 instructions differ in tbs-en. */
   s32 zero = 0;
 
   *paused = 1;

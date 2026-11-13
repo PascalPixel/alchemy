@@ -96,6 +96,8 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
 /// Called by Exit_StartStairsUp and Exit_StartStairsDown below.
 void Exit_PrepareAnimation(s32 animation) {
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 20 of
+   * 49 instructions differ in tbs-en. */
   u32 zero;
   u8 param;
   struct Actor *actor;

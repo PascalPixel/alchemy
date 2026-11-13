@@ -480,6 +480,8 @@ static void TolbiShipMast_RunAvastEvent(void) {
   struct Actor *actor;
   struct FieldWork **work;
   s32 x;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 8 of
+   * 207 instructions differ in tbs-en. */
   s32 zero = 0;
   s32 scale;
   void (*update)(struct Actor *);

@@ -30,7 +30,7 @@ Field_BattleArena:
 .LField_BattleArena_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette53
-Tileset_Palette53:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_53.gbapal.lz"
+	.global Tileset_PaletteBattleArena
+Tileset_PaletteBattleArena:
+	.incbin "games/tbs/src/graphics/tileset/palettes/battle_arena.gbapal.lz"
 	.byte 0x1c	@ PACKER: left in the buffer by Field_BattleArena+0x1c7

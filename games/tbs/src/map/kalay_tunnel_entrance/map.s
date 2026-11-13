@@ -30,6 +30,6 @@ Field_KalayTunnelEntrance:
 .LField_KalayTunnelEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette37
-Tileset_Palette37:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_37.gbapal.lz"
+	.global Tileset_PaletteKalayTunnelEntrance
+Tileset_PaletteKalayTunnelEntrance:
+	.incbin "games/tbs/src/graphics/tileset/palettes/kalay_tunnel_entrance.gbapal.lz"

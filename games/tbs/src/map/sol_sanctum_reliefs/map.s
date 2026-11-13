@@ -31,7 +31,7 @@ Field_SolSanctumReliefs:
 	treasure_spot 17, 3, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette00
-Tileset_Palette00:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_00.gbapal.lz"
+	.global Tileset_PaletteSolSanctumReliefs
+Tileset_PaletteSolSanctumReliefs:
+	.incbin "games/tbs/src/graphics/tileset/palettes/sol_sanctum_reliefs.gbapal.lz"
 	.byte 0x41, 0x28, 0x40	@ PACKER: left in the buffer by Field_SolSanctumReliefs+0x159

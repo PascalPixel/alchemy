@@ -24,7 +24,7 @@ Field_BabiPalaceEntrance:
 .LField_BabiPalaceEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette27
-Tileset_Palette27:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_27.gbapal.lz"
+	.global Tileset_PaletteBabiPalaceEntrance
+Tileset_PaletteBabiPalaceEntrance:
+	.incbin "games/tbs/src/graphics/tileset/palettes/babi_palace_entrance.gbapal.lz"
 	.byte 0x86, 0xf1	@ PACKER: left in the buffer by Field_BabiPalaceEntrance+0x18e

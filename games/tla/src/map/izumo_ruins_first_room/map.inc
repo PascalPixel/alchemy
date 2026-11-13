@@ -29,11 +29,11 @@ Field_IzumoRuinsFirstRoom:
 .LField_IzumoRuinsFirstRoom_SCENE:
 	.incbin "games/tla/src/map/izumo_ruins_first_room/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set75Palette
-Tileset_Set75Palette:
-	.incbin "games/tla/src/graphics/tileset/set_75/palette.gbapal.lz"
+	.global Tileset_IzumoRuinsFirstRoomPalette
+Tileset_IzumoRuinsFirstRoomPalette:
+	.incbin "games/tla/src/graphics/tileset/izumo_ruins_first_room/palette.gbapal.lz"
 	.byte 0xc1	@ PACKER: left in the buffer by Field_IzumoRuinsFirstRoom+0x123
-	.global Tileset_Set75TilesA
-Tileset_Set75TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_75/tiles_a.4bpp.mtf"
+	.global Tileset_IzumoRuinsFirstRoomTilesA
+Tileset_IzumoRuinsFirstRoomTilesA:
+	.incbin "games/tla/src/graphics/tileset/izumo_ruins_first_room/tiles_a.4bpp.mtf"
 	.byte 0x63, 0x15, 0xcc	@ PACKER: left in the buffer by Field_IzumoRuinsFirstRoom+0x4d1

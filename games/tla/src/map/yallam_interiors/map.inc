@@ -32,22 +32,22 @@ Field_YallamInteriors:
 .LField_YallamInteriors_SCENE:
 	.incbin "games/tla/src/map/yallam_interiors/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set63Palette
-Tileset_Set63Palette:
-	.incbin "games/tla/src/graphics/tileset/set_63/palette.gbapal.lz"
+	.global Tileset_YallamInteriorsPalette
+Tileset_YallamInteriorsPalette:
+	.incbin "games/tla/src/graphics/tileset/yallam_interiors/palette.gbapal.lz"
 	.byte 0x04	@ PACKER: left in the buffer by Field_YallamInteriors+0x1db
-	.global Tileset_Set63TilesA
-Tileset_Set63TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_63/tiles_a.4bpp.mtf"
-	.global Tileset_Set63TilesB
-Tileset_Set63TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_63/tiles_b.4bpp.mtf"
+	.global Tileset_YallamInteriorsTilesA
+Tileset_YallamInteriorsTilesA:
+	.incbin "games/tla/src/graphics/tileset/yallam_interiors/tiles_a.4bpp.mtf"
+	.global Tileset_YallamInteriorsTilesB
+Tileset_YallamInteriorsTilesB:
+	.incbin "games/tla/src/graphics/tileset/yallam_interiors/tiles_b.4bpp.mtf"
 	.byte 0x0c	@ PACKER: left in the buffer by Field_YallamInteriors+0x1aef
-	.global Tileset_Set63TilesC
-Tileset_Set63TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_63/tiles_c.4bpp.mtf"
-	.byte 0xbb, 0x1f	@ PACKER: left in the buffer by Tileset_Set63TilesB+0x1482
-	.global Tileset_Set63TilesD
-Tileset_Set63TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_63/tiles_d.4bpp.mtf"
-	.byte 0x7b, 0x9c, 0xde	@ PACKER: left in the buffer by Tileset_Set63TilesC+0x104d
+	.global Tileset_YallamInteriorsTilesC
+Tileset_YallamInteriorsTilesC:
+	.incbin "games/tla/src/graphics/tileset/yallam_interiors/tiles_c.4bpp.mtf"
+	.byte 0xbb, 0x1f	@ PACKER: left in the buffer by Tileset_YallamInteriorsTilesB+0x1482
+	.global Tileset_YallamInteriorsTilesD
+Tileset_YallamInteriorsTilesD:
+	.incbin "games/tla/src/graphics/tileset/yallam_interiors/tiles_d.4bpp.mtf"
+	.byte 0x7b, 0x9c, 0xde	@ PACKER: left in the buffer by Tileset_YallamInteriorsTilesC+0x104d

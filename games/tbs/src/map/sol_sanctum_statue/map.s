@@ -31,34 +31,34 @@ Field_SolSanctumStatue:
 .LField_SolSanctumStatue_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set09Palette
-Tileset_Set09Palette:
+	.global Tileset_SolSanctumStatuePalette
+Tileset_SolSanctumStatuePalette:
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/tileset/set_09/palette_es.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/palette_es.gbapal.lz"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/tileset/set_09/palette_es.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/palette_es.gbapal.lz"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/tbs/src/graphics/tileset/set_09/palette_es.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/palette_es.gbapal.lz"
 	.else
-	.incbin "games/tbs/src/graphics/tileset/set_09/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/palette.gbapal.lz"
 	.endif
 	.endif
 	.endif
 	.byte 0xd4	@ PACKER: left in the buffer by Field_SolSanctumStatue+0x133
-	.global Tileset_Set09TilesA
-Tileset_Set09TilesA:
+	.global Tileset_SolSanctumStatueTilesA
+Tileset_SolSanctumStatueTilesA:
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/tiles_a_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/tiles_a_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/tiles_a_es.4bpp.mtf"
 	.else
-	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/tiles_a.4bpp.mtf"
 	.endif
 	.endif
 	.endif
@@ -75,23 +75,23 @@ Tileset_Set09TilesA:
 	.endif
 	.endif
 	.endif
-	.global Tileset_Set09TilesB
-Tileset_Set09TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_b.4bpp.mtf"
+	.global Tileset_SolSanctumStatueTilesB
+Tileset_SolSanctumStatueTilesB:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/tiles_b.4bpp.mtf"
 	.ifdef TBS_EDITION_JA
-	.byte 0xee	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.byte 0xee	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0xd7b
 	.else
 	.ifdef TBS_EDITION_EN
-	.byte 0xee	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.byte 0xee	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0xd7b
 	.else
 	.ifdef TBS_EDITION_DE
-	.byte 0xee	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.byte 0xee	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0xd7b
 	.else
-	.byte 0x86	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.byte 0x86	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0xd7b
 	.endif
 	.endif
 	.endif
-	.global Tileset_Set09TilesC
-Tileset_Set09TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_c.4bpp.mtf"
-	.byte 0x1c, 0x40	@ PACKER: left in the buffer by Tileset_Set09TilesB+0xade
+	.global Tileset_SolSanctumStatueTilesC
+Tileset_SolSanctumStatueTilesC:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_statue/tiles_c.4bpp.mtf"
+	.byte 0x1c, 0x40	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesB+0xade

@@ -30,6 +30,6 @@ Field_WestLunpaCave:
 .LField_WestLunpaCave_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette10
-Tileset_Palette10:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_10.gbapal.lz"
+	.global Tileset_PaletteWestLunpaCave
+Tileset_PaletteWestLunpaCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/west_lunpa_cave.gbapal.lz"

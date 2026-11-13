@@ -29,6 +29,6 @@ Field_PirateShip:
 	treasure_spot 0, 3, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette23
-Tileset_Palette23:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_23.gbapal.lz"
+	.global Tileset_PalettePirateShip
+Tileset_PalettePirateShip:
+	.incbin "games/tbs/src/graphics/tileset/palettes/pirate_ship.gbapal.lz"

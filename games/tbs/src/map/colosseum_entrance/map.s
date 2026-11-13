@@ -30,7 +30,7 @@ Field_ColosseumEntrance:
 .LField_ColosseumEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette30
-Tileset_Palette30:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_30.gbapal.lz"
+	.global Tileset_PaletteColosseumEntrance
+Tileset_PaletteColosseumEntrance:
+	.incbin "games/tbs/src/graphics/tileset/palettes/colosseum_entrance.gbapal.lz"
 	.byte 0x7f, 0x45, 0xd8	@ PACKER: left in the buffer by Field_ColosseumEntrance+0x18d

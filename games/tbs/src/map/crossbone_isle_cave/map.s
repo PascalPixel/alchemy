@@ -65,9 +65,9 @@ Field_CrossboneIsleCave:
 	treasure_spots_end
 	.endif
 	.balign 4, 0
-	.global Tileset_Palette24
-Tileset_Palette24:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_24.gbapal.lz"
+	.global Tileset_PaletteCrossboneIsleCave
+Tileset_PaletteCrossboneIsleCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_cave.gbapal.lz"
 	.ifdef TBS_EDITION_JA
 	.byte 0x5c	@ PACKER: left in the buffer by Field_CrossboneIsleCave+0x1a7
 	.else

@@ -45,7 +45,7 @@ Tileset_Set42Palette:
 	.global Tileset_Set42TilesA
 Tileset_Set42TilesA:
 	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_a.4bpp.mtf"
-	.byte 0x47, 0x90, 0x0e	@ PACKER: left in the buffer by Tileset_Set40TilesA+0x2901
+	.byte 0x47, 0x90, 0x0e	@ PACKER: left in the buffer by Tileset_BilibinCaveIceTilesA+0x2901
 	.global Tileset_Set42TilesB
 Tileset_Set42TilesB:
 	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_b.4bpp.mtf"

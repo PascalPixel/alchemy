@@ -37,7 +37,7 @@ Field_VenusEntrance:
 .LField_VenusEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette49
-Tileset_Palette49:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_49.gbapal.lz"
+	.global Tileset_PaletteVenusEntrance
+Tileset_PaletteVenusEntrance:
+	.incbin "games/tbs/src/graphics/tileset/palettes/venus_entrance.gbapal.lz"
 	.byte 0x1e, 0x33	@ PACKER: left in the buffer by Field_VenusEntrance+0x106

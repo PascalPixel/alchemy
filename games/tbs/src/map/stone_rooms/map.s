@@ -36,21 +36,21 @@ Field_StoneRooms:
 	treasure_spot 35, 8, 105
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set16Palette
-Tileset_Set16Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_16/palette.gbapal.lz"
+	.global Tileset_StoneRoomsPalette
+Tileset_StoneRoomsPalette:
+	.incbin "games/tbs/src/graphics/tileset/stone_rooms/palette.gbapal.lz"
 	.byte 0x3f	@ PACKER: left in the buffer by Field_StoneRooms+0xf3
-	.global Tileset_Set16TilesA
-Tileset_Set16TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_16/tiles_a.4bpp.mtf"
-	.global Tileset_Set16TilesB
-Tileset_Set16TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_16/tiles_b.4bpp.mtf"
-	.global Tileset_Set16TilesC
-Tileset_Set16TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_16/tiles_c.4bpp.mtf"
-	.byte 0x1d, 0x65	@ PACKER: left in the buffer by Tileset_Set16TilesB+0x186
-	.global Tileset_Set16TilesD
-Tileset_Set16TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_16/tiles_d.4bpp.mtf"
-	.byte 0x82, 0xb0	@ PACKER: left in the buffer by Tileset_Set16TilesA+0xda2
+	.global Tileset_StoneRoomsTilesA
+Tileset_StoneRoomsTilesA:
+	.incbin "games/tbs/src/graphics/tileset/stone_rooms/tiles_a.4bpp.mtf"
+	.global Tileset_StoneRoomsTilesB
+Tileset_StoneRoomsTilesB:
+	.incbin "games/tbs/src/graphics/tileset/stone_rooms/tiles_b.4bpp.mtf"
+	.global Tileset_StoneRoomsTilesC
+Tileset_StoneRoomsTilesC:
+	.incbin "games/tbs/src/graphics/tileset/stone_rooms/tiles_c.4bpp.mtf"
+	.byte 0x1d, 0x65	@ PACKER: left in the buffer by Tileset_StoneRoomsTilesB+0x186
+	.global Tileset_StoneRoomsTilesD
+Tileset_StoneRoomsTilesD:
+	.incbin "games/tbs/src/graphics/tileset/stone_rooms/tiles_d.4bpp.mtf"
+	.byte 0x82, 0xb0	@ PACKER: left in the buffer by Tileset_StoneRoomsTilesA+0xda2

@@ -30,10 +30,10 @@ Field_CottageRoomsE:
 .LField_CottageRoomsE_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set55Palette
-Tileset_Set55Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_55/palette.gbapal.lz"
+	.global Tileset_CottageRoomsEPalette
+Tileset_CottageRoomsEPalette:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_e/palette.gbapal.lz"
 	.byte 0x05	@ PACKER: left in the buffer by Field_CottageRoomsE+0x1bf
-	.global Tileset_Set55TilesA
-Tileset_Set55TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_55/tiles_a.4bpp.mtf"
+	.global Tileset_CottageRoomsETilesA
+Tileset_CottageRoomsETilesA:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_e/tiles_a.4bpp.mtf"

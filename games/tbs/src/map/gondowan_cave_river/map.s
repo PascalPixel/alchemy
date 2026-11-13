@@ -32,6 +32,6 @@ Field_GondowanCaveRiver:
 	treasure_spot 24, 13, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette34
-Tileset_Palette34:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_34.gbapal.lz"
+	.global Tileset_PaletteGondowanCave
+Tileset_PaletteGondowanCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/gondowan_cave.gbapal.lz"

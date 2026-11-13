@@ -27,7 +27,7 @@ Field_TolbiShipMast:
 .LField_TolbiShipMast_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette11
-Tileset_Palette11:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_11.gbapal.lz"
+	.global Tileset_PaletteTolbiShipMast
+Tileset_PaletteTolbiShipMast:
+	.incbin "games/tbs/src/graphics/tileset/palettes/tolbi_ship_mast.gbapal.lz"
 	.byte 0xe7, 0x99	@ PACKER: left in the buffer by Field_TolbiShipMast+0x1d2

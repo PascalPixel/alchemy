@@ -32,22 +32,22 @@ Field_GondowanCliffsHideout:
 .LField_GondowanCliffsHideout_SCENE:
 	.incbin "games/tla/src/map/gondowan_cliffs_hideout/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set21Palette
-Tileset_Set21Palette:
-	.incbin "games/tla/src/graphics/tileset/set_21/palette.gbapal.lz"
+	.global Tileset_GondowanCliffsHideoutPalette
+Tileset_GondowanCliffsHideoutPalette:
+	.incbin "games/tla/src/graphics/tileset/gondowan_cliffs_hideout/palette.gbapal.lz"
 	.byte 0x3a, 0x16, 0xda	@ PACKER: left in the buffer by Field_GondowanCliffsHideout+0x105
-	.global Tileset_Set21TilesA
-Tileset_Set21TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_21/tiles_a.4bpp.mtf"
+	.global Tileset_GondowanCliffsHideoutTilesA
+Tileset_GondowanCliffsHideoutTilesA:
+	.incbin "games/tla/src/graphics/tileset/gondowan_cliffs_hideout/tiles_a.4bpp.mtf"
 	.byte 0x7e, 0xa7	@ PACKER: left in the buffer by Tileset_Set17TilesC+0x1cbe
-	.global Tileset_Set21TilesB
-Tileset_Set21TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_21/tiles_b.4bpp.mtf"
-	.global Tileset_Set21TilesC
-Tileset_Set21TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_21/tiles_c.4bpp.mtf"
-	.byte 0xd4	@ PACKER: left in the buffer by Tileset_Set21TilesB+0x2df
-	.global Tileset_Set21TilesD
-Tileset_Set21TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_21/tiles_d.4bpp.mtf"
-	.byte 0x0f, 0x7c, 0xfe	@ PACKER: left in the buffer by Tileset_Set21TilesC+0x2b5
+	.global Tileset_GondowanCliffsHideoutTilesB
+Tileset_GondowanCliffsHideoutTilesB:
+	.incbin "games/tla/src/graphics/tileset/gondowan_cliffs_hideout/tiles_b.4bpp.mtf"
+	.global Tileset_GondowanCliffsHideoutTilesC
+Tileset_GondowanCliffsHideoutTilesC:
+	.incbin "games/tla/src/graphics/tileset/gondowan_cliffs_hideout/tiles_c.4bpp.mtf"
+	.byte 0xd4	@ PACKER: left in the buffer by Tileset_GondowanCliffsHideoutTilesB+0x2df
+	.global Tileset_GondowanCliffsHideoutTilesD
+Tileset_GondowanCliffsHideoutTilesD:
+	.incbin "games/tla/src/graphics/tileset/gondowan_cliffs_hideout/tiles_d.4bpp.mtf"
+	.byte 0x0f, 0x7c, 0xfe	@ PACKER: left in the buffer by Tileset_GondowanCliffsHideoutTilesC+0x2b5

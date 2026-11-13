@@ -32,34 +32,34 @@ Field_SolSanctumPsynergyStone:
 	treasure_spot 4, 5, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set10Palette
-Tileset_Set10Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_10/palette.gbapal.lz"
-	.global Tileset_Set10TilesA
-Tileset_Set10TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_a.4bpp.mtf"
+	.global Tileset_SolSanctumPsynergyStonePalette
+Tileset_SolSanctumPsynergyStonePalette:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_psynergy_stone/palette.gbapal.lz"
+	.global Tileset_SolSanctumPsynergyStoneTilesA
+Tileset_SolSanctumPsynergyStoneTilesA:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_psynergy_stone/tiles_a.4bpp.mtf"
 	.ifdef TBS_EDITION_JA
-	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0x1f7e
 	.else
 	.ifdef TBS_EDITION_EN
-	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0x1f7e
 	.else
 	.ifdef TBS_EDITION_DE
-	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0x1f7e
 	.else
-	.byte 0xc9, 0x36	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.byte 0xc9, 0x36	@ PACKER: left in the buffer by Tileset_SolSanctumStatueTilesA+0x1f7e
 	.endif
 	.endif
 	.endif
-	.global Tileset_Set10TilesB
-Tileset_Set10TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_b.4bpp.mtf"
-	.byte 0x7d, 0x04, 0xc1	@ PACKER: left in the buffer by Tileset_Set10TilesA+0x945
-	.global Tileset_Set10TilesC
-Tileset_Set10TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_c.4bpp.mtf"
-	.byte 0x12, 0xa2	@ PACKER: left in the buffer by Tileset_Set10TilesA+0xc4a
-	.global Tileset_Set10TilesD
-Tileset_Set10TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_d.4bpp.mtf"
-	.byte 0xe3, 0xb0, 0xd3	@ PACKER: left in the buffer by Tileset_Set10TilesC+0x225
+	.global Tileset_SolSanctumPsynergyStoneTilesB
+Tileset_SolSanctumPsynergyStoneTilesB:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_psynergy_stone/tiles_b.4bpp.mtf"
+	.byte 0x7d, 0x04, 0xc1	@ PACKER: left in the buffer by Tileset_SolSanctumPsynergyStoneTilesA+0x945
+	.global Tileset_SolSanctumPsynergyStoneTilesC
+Tileset_SolSanctumPsynergyStoneTilesC:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_psynergy_stone/tiles_c.4bpp.mtf"
+	.byte 0x12, 0xa2	@ PACKER: left in the buffer by Tileset_SolSanctumPsynergyStoneTilesA+0xc4a
+	.global Tileset_SolSanctumPsynergyStoneTilesD
+Tileset_SolSanctumPsynergyStoneTilesD:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_psynergy_stone/tiles_d.4bpp.mtf"
+	.byte 0xe3, 0xb0, 0xd3	@ PACKER: left in the buffer by Tileset_SolSanctumPsynergyStoneTilesC+0x225

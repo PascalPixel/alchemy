@@ -31,22 +31,22 @@ Resource_Overlay649:
 Resource_Overlay64A:
 	.incbin "overlays/resource_64a.lz"
 	.ifdef TLA_EDITION_JA
-	.byte 0x0c, 0x2d	@ PACKER: left in the buffer by Tileset_Set121TilesA+0x1c86
+	.byte 0x0c, 0x2d	@ PACKER: left in the buffer by Tileset_ShopTestTilesA+0x1c86
 	.endif
 	.ifdef TLA_EDITION_EN
-	.byte 0x03, 0x3a	@ PACKER: left in the buffer by Tileset_Set121TilesA+0x1d0e
+	.byte 0x03, 0x3a	@ PACKER: left in the buffer by Tileset_ShopTestTilesA+0x1d0e
 	.endif
 	.ifdef TLA_EDITION_DE
-	.byte 0x41	@ PACKER: left in the buffer by Tileset_Set121TilesA+0x1d07
+	.byte 0x41	@ PACKER: left in the buffer by Tileset_ShopTestTilesA+0x1d07
 	.endif
 	.ifdef TLA_EDITION_ES
-	.byte 0x41	@ PACKER: left in the buffer by Tileset_Set121TilesA+0x1d07
+	.byte 0x41	@ PACKER: left in the buffer by Tileset_ShopTestTilesA+0x1d07
 	.endif
 	.ifdef TLA_EDITION_FR
-	.byte 0x3a, 0xb2	@ PACKER: left in the buffer by Tileset_Set121TilesA+0x1d0a
+	.byte 0x3a, 0xb2	@ PACKER: left in the buffer by Tileset_ShopTestTilesA+0x1d0a
 	.endif
 	.ifdef TLA_EDITION_IT
-	.byte 0x3a, 0xb2	@ PACKER: left in the buffer by Tileset_Set121TilesA+0x1d0a
+	.byte 0x3a, 0xb2	@ PACKER: left in the buffer by Tileset_ShopTestTilesA+0x1d0a
 	.endif
 	.balign 4, 0
 

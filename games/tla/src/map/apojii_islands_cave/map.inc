@@ -32,21 +32,21 @@ Field_ApojiiIslandsCave:
 .LField_ApojiiIslandsCave_SCENE:
 	.incbin "games/tla/src/map/apojii_islands_cave/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set70Palette
-Tileset_Set70Palette:
-	.incbin "games/tla/src/graphics/tileset/set_70/palette.gbapal.lz"
+	.global Tileset_ApojiiIslandsCavePalette
+Tileset_ApojiiIslandsCavePalette:
+	.incbin "games/tla/src/graphics/tileset/apojii_islands_cave/palette.gbapal.lz"
 	.byte 0x80, 0xa0	@ PACKER: left in the buffer by Field_ApojiiIslandsCave+0xe2
-	.global Tileset_Set70TilesA
-Tileset_Set70TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_70/tiles_a.4bpp.mtf"
-	.global Tileset_Set70TilesB
-Tileset_Set70TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_70/tiles_b.4bpp.mtf"
-	.global Tileset_Set70TilesC
-Tileset_Set70TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_70/tiles_c.4bpp.mtf"
-	.byte 0x67	@ PACKER: left in the buffer by Tileset_Set70TilesB+0x13f
-	.global Tileset_Set70TilesD
-Tileset_Set70TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_70/tiles_d.4bpp.mtf"
-	.byte 0x67	@ PACKER: left in the buffer by Tileset_Set70TilesC+0x13f
+	.global Tileset_ApojiiIslandsCaveTilesA
+Tileset_ApojiiIslandsCaveTilesA:
+	.incbin "games/tla/src/graphics/tileset/apojii_islands_cave/tiles_a.4bpp.mtf"
+	.global Tileset_ApojiiIslandsCaveTilesB
+Tileset_ApojiiIslandsCaveTilesB:
+	.incbin "games/tla/src/graphics/tileset/apojii_islands_cave/tiles_b.4bpp.mtf"
+	.global Tileset_ApojiiIslandsCaveTilesC
+Tileset_ApojiiIslandsCaveTilesC:
+	.incbin "games/tla/src/graphics/tileset/apojii_islands_cave/tiles_c.4bpp.mtf"
+	.byte 0x67	@ PACKER: left in the buffer by Tileset_ApojiiIslandsCaveTilesB+0x13f
+	.global Tileset_ApojiiIslandsCaveTilesD
+Tileset_ApojiiIslandsCaveTilesD:
+	.incbin "games/tla/src/graphics/tileset/apojii_islands_cave/tiles_d.4bpp.mtf"
+	.byte 0x67	@ PACKER: left in the buffer by Tileset_ApojiiIslandsCaveTilesC+0x13f

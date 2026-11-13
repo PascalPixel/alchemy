@@ -43,7 +43,7 @@ Field_Champa:
 	.else
 	.incbin "games/tla/src/map/champa/scene.scene.lz"
 	.endif
-	.global Tileset_Palette30
-Tileset_Palette30:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_30.gbapal.lz"
+	.global Tileset_PaletteChampa
+Tileset_PaletteChampa:
+	.incbin "games/tla/src/graphics/tileset/palettes/champa.gbapal.lz"
 	.byte 0x22, 0xb6, 0x05	@ PACKER: left in the buffer by Field_Champa+0x175

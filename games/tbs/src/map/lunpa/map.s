@@ -34,14 +34,14 @@ Field_Lunpa:
 	treasure_spot 28, 31, 102
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set53Palette
-Tileset_Set53Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_53/palette.gbapal.lz"
+	.global Tileset_LunpaPalette
+Tileset_LunpaPalette:
+	.incbin "games/tbs/src/graphics/tileset/lunpa/palette.gbapal.lz"
 	.byte 0x14, 0x41, 0xb9	@ PACKER: left in the buffer by Field_Lunpa+0x189
-	.global Tileset_Set53TilesA
-Tileset_Set53TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_53/tiles_a.4bpp.mtf"
+	.global Tileset_LunpaTilesA
+Tileset_LunpaTilesA:
+	.incbin "games/tbs/src/graphics/tileset/lunpa/tiles_a.4bpp.mtf"
 	.byte 0x09, 0x02	@ PACKER: left in the buffer by Field_Lunpa+0x1a82
-	.global Tileset_Set53TilesB
-Tileset_Set53TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_53/tiles_b.4bpp.mtf"
+	.global Tileset_LunpaTilesB
+Tileset_LunpaTilesB:
+	.incbin "games/tbs/src/graphics/tileset/lunpa/tiles_b.4bpp.mtf"

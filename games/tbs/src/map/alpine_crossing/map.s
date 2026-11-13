@@ -31,7 +31,7 @@ Field_AlpineCrossing:
 	treasure_spot 27, 24, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette04
-Tileset_Palette04:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_04.gbapal.lz"
+	.global Tileset_PaletteAlpineCrossing
+Tileset_PaletteAlpineCrossing:
+	.incbin "games/tbs/src/graphics/tileset/palettes/alpine_crossing.gbapal.lz"
 	.byte 0xdb, 0x0e, 0xea	@ PACKER: left in the buffer by Field_AlpineCrossing+0x195

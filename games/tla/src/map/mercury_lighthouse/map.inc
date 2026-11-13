@@ -32,23 +32,23 @@ Field_MercuryLighthouse:
 .LField_MercuryLighthouse_SCENE:
 	.incbin "games/tla/src/map/mercury_lighthouse/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set112Palette
-Tileset_Set112Palette:
-	.incbin "games/tla/src/graphics/tileset/set_112/palette.gbapal.lz"
+	.global Tileset_MercuryLighthousePalette
+Tileset_MercuryLighthousePalette:
+	.incbin "games/tla/src/graphics/tileset/mercury_lighthouse/palette.gbapal.lz"
 	.byte 0x25	@ PACKER: left in the buffer by Field_MercuryLighthouse+0x117
-	.global Tileset_Set112TilesA
-Tileset_Set112TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_112/tiles_a.4bpp.mtf"
+	.global Tileset_MercuryLighthouseTilesA
+Tileset_MercuryLighthouseTilesA:
+	.incbin "games/tla/src/graphics/tileset/mercury_lighthouse/tiles_a.4bpp.mtf"
 	.byte 0x7d, 0x00, 0x00	@ PACKER: left in the buffer by Field_MercuryLighthouse+0x1e01
-	.global Tileset_Set112TilesB
-Tileset_Set112TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_112/tiles_b.4bpp.mtf"
-	.byte 0x00, 0x07	@ PACKER: left in the buffer by Tileset_Set112TilesA+0x1ac2
-	.global Tileset_Set112TilesC
-Tileset_Set112TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_112/tiles_c.4bpp.mtf"
-	.byte 0x10, 0x9e	@ PACKER: left in the buffer by Tileset_Set112TilesB+0x726
-	.global Tileset_Set112TilesD
-Tileset_Set112TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_112/tiles_d.4bpp.mtf"
-	.byte 0xfb, 0x4f	@ PACKER: left in the buffer by Tileset_Set112TilesB+0x13fa
+	.global Tileset_MercuryLighthouseTilesB
+Tileset_MercuryLighthouseTilesB:
+	.incbin "games/tla/src/graphics/tileset/mercury_lighthouse/tiles_b.4bpp.mtf"
+	.byte 0x00, 0x07	@ PACKER: left in the buffer by Tileset_MercuryLighthouseTilesA+0x1ac2
+	.global Tileset_MercuryLighthouseTilesC
+Tileset_MercuryLighthouseTilesC:
+	.incbin "games/tla/src/graphics/tileset/mercury_lighthouse/tiles_c.4bpp.mtf"
+	.byte 0x10, 0x9e	@ PACKER: left in the buffer by Tileset_MercuryLighthouseTilesB+0x726
+	.global Tileset_MercuryLighthouseTilesD
+Tileset_MercuryLighthouseTilesD:
+	.incbin "games/tla/src/graphics/tileset/mercury_lighthouse/tiles_d.4bpp.mtf"
+	.byte 0xfb, 0x4f	@ PACKER: left in the buffer by Tileset_MercuryLighthouseTilesB+0x13fa

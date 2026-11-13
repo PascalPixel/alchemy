@@ -25,23 +25,23 @@ Field_ValeKradensCottage:
 	treasure_spot 8, 12, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set03Palette
-Tileset_Set03Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_03/palette.gbapal.lz"
+	.global Tileset_ValeKradensCottagePalette
+Tileset_ValeKradensCottagePalette:
+	.incbin "games/tbs/src/graphics/tileset/vale_kradens_cottage/palette.gbapal.lz"
 	.byte 0xc1, 0xac, 0xce	@ PACKER: left in the buffer by Field_ValeKradensCottage+0x191
-	.global Tileset_Set03TilesA
-Tileset_Set03TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_03/tiles_a.4bpp.mtf"
+	.global Tileset_ValeKradensCottageTilesA
+Tileset_ValeKradensCottageTilesA:
+	.incbin "games/tbs/src/graphics/tileset/vale_kradens_cottage/tiles_a.4bpp.mtf"
 	.byte 0x1e	@ PACKER: left in the buffer by Field_ValePlaza+0x283f
-	.global Tileset_Set03TilesB
-Tileset_Set03TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_03/tiles_b.4bpp.mtf"
-	.byte 0xcb, 0x42, 0xda	@ PACKER: left in the buffer by Tileset_Set03TilesA+0x1e15
-	.global Tileset_Set03TilesC
-Tileset_Set03TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_03/tiles_c.4bpp.mtf"
-	.byte 0xeb, 0x91	@ PACKER: left in the buffer by Tileset_Set03TilesA+0x26de
-	.global Tileset_Set03TilesD
-Tileset_Set03TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_03/tiles_d.4bpp.mtf"
-	.byte 0xe1, 0xf0, 0xf8	@ PACKER: left in the buffer by Tileset_Set03TilesC+0x1145
+	.global Tileset_ValeKradensCottageTilesB
+Tileset_ValeKradensCottageTilesB:
+	.incbin "games/tbs/src/graphics/tileset/vale_kradens_cottage/tiles_b.4bpp.mtf"
+	.byte 0xcb, 0x42, 0xda	@ PACKER: left in the buffer by Tileset_ValeKradensCottageTilesA+0x1e15
+	.global Tileset_ValeKradensCottageTilesC
+Tileset_ValeKradensCottageTilesC:
+	.incbin "games/tbs/src/graphics/tileset/vale_kradens_cottage/tiles_c.4bpp.mtf"
+	.byte 0xeb, 0x91	@ PACKER: left in the buffer by Tileset_ValeKradensCottageTilesA+0x26de
+	.global Tileset_ValeKradensCottageTilesD
+Tileset_ValeKradensCottageTilesD:
+	.incbin "games/tbs/src/graphics/tileset/vale_kradens_cottage/tiles_d.4bpp.mtf"
+	.byte 0xe1, 0xf0, 0xf8	@ PACKER: left in the buffer by Tileset_ValeKradensCottageTilesC+0x1145

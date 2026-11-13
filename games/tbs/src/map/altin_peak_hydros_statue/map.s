@@ -31,7 +31,7 @@ Field_AltinPeakHydrosStatue:
 	treasure_spot 20, 4, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette06
-Tileset_Palette06:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_06.gbapal.lz"
+	.global Tileset_PaletteAltinPeakHydrosStatue
+Tileset_PaletteAltinPeakHydrosStatue:
+	.incbin "games/tbs/src/graphics/tileset/palettes/altin_peak_hydros_statue.gbapal.lz"
 	.byte 0x2a, 0x02, 0x98	@ PACKER: left in the buffer by Field_AltinPeakHydrosStatue+0x15d

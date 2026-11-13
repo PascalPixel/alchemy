@@ -32,7 +32,7 @@ Field_ShamanVillageCave:
 .LField_ShamanVillageCave_SCENE:
 	.incbin "games/tla/src/map/shaman_village_cave/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette50
-Tileset_Palette50:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_50.gbapal.lz"
+	.global Tileset_PaletteShamanVillageCave
+Tileset_PaletteShamanVillageCave:
+	.incbin "games/tla/src/graphics/tileset/palettes/shaman_village_cave.gbapal.lz"
 	.byte 0x0e	@ PACKER: left in the buffer by Field_ShamanVillageCave+0x137

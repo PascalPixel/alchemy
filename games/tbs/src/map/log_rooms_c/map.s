@@ -40,11 +40,11 @@ Field_LogRoomsC:
 	treasure_spot 22, 39, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set30Palette
-Tileset_Set30Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_30/palette.gbapal.lz"
+	.global Tileset_LogRoomsCPalette
+Tileset_LogRoomsCPalette:
+	.incbin "games/tbs/src/graphics/tileset/log_rooms_c/palette.gbapal.lz"
 	.byte 0x8e, 0x9e, 0x21	@ PACKER: left in the buffer by Field_LogRoomsC+0x1a1
-	.global Tileset_Set30TilesA
-Tileset_Set30TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_30/tiles_a.4bpp.mtf"
+	.global Tileset_LogRoomsCTilesA
+Tileset_LogRoomsCTilesA:
+	.incbin "games/tbs/src/graphics/tileset/log_rooms_c/tiles_a.4bpp.mtf"
 	.byte 0x21, 0x2e	@ PACKER: left in the buffer by Tileset_Set29TilesC+0x1902

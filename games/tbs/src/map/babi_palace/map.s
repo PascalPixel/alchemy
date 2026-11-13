@@ -44,7 +44,7 @@ Field_BabiPalace:
 	treasure_spot 59, 33, 206
 	treasure_spot 34, 61, 100
 	treasure_spots_end
-	.global Tileset_Palette28
-Tileset_Palette28:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_28.gbapal.lz"
+	.global Tileset_PaletteBabiPalace
+Tileset_PaletteBabiPalace:
+	.incbin "games/tbs/src/graphics/tileset/palettes/babi_palace.gbapal.lz"
 	.byte 0x15, 0x30	@ PACKER: left in the buffer by Field_BabiPalace+0x186

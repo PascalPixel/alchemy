@@ -32,22 +32,22 @@ Field_OseniaCliffs:
 .LField_OseniaCliffs_SCENE:
 	.incbin "games/tla/src/map/osenia_cliffs/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set30Palette
-Tileset_Set30Palette:
-	.incbin "games/tla/src/graphics/tileset/set_30/palette.gbapal.lz"
-	.global Tileset_Set30TilesA
-Tileset_Set30TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_30/tiles_a.4bpp.mtf"
+	.global Tileset_OseniaCliffsPalette
+Tileset_OseniaCliffsPalette:
+	.incbin "games/tla/src/graphics/tileset/osenia_cliffs/palette.gbapal.lz"
+	.global Tileset_OseniaCliffsTilesA
+Tileset_OseniaCliffsTilesA:
+	.incbin "games/tla/src/graphics/tileset/osenia_cliffs/tiles_a.4bpp.mtf"
 	.byte 0x61	@ PACKER: left in the buffer by Field_OseniaCliffs+0x1a2b
-	.global Tileset_Set30TilesB
-Tileset_Set30TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_30/tiles_b.4bpp.mtf"
+	.global Tileset_OseniaCliffsTilesB
+Tileset_OseniaCliffsTilesB:
+	.incbin "games/tla/src/graphics/tileset/osenia_cliffs/tiles_b.4bpp.mtf"
 	.byte 0x5a, 0x14	@ PACKER: left in the buffer by Tileset_Set29TilesC+0x2336
-	.global Tileset_Set30TilesC
-Tileset_Set30TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_30/tiles_c.4bpp.mtf"
-	.byte 0x9d	@ PACKER: left in the buffer by Tileset_Set30TilesB+0x11af
-	.global Tileset_Set30TilesD
-Tileset_Set30TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_30/tiles_d.4bpp.mtf"
-	.byte 0x53, 0xb6, 0x22	@ PACKER: left in the buffer by Tileset_Set30TilesB+0x1921
+	.global Tileset_OseniaCliffsTilesC
+Tileset_OseniaCliffsTilesC:
+	.incbin "games/tla/src/graphics/tileset/osenia_cliffs/tiles_c.4bpp.mtf"
+	.byte 0x9d	@ PACKER: left in the buffer by Tileset_OseniaCliffsTilesB+0x11af
+	.global Tileset_OseniaCliffsTilesD
+Tileset_OseniaCliffsTilesD:
+	.incbin "games/tla/src/graphics/tileset/osenia_cliffs/tiles_d.4bpp.mtf"
+	.byte 0x53, 0xb6, 0x22	@ PACKER: left in the buffer by Tileset_OseniaCliffsTilesB+0x1921

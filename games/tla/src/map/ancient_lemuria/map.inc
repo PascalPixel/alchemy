@@ -32,7 +32,7 @@ Field_AncientLemuria:
 .LField_AncientLemuria_SCENE:
 	.incbin "games/tla/src/map/ancient_lemuria/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette38
-Tileset_Palette38:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_38.gbapal.lz"
+	.global Tileset_PaletteAncientLemuria
+Tileset_PaletteAncientLemuria:
+	.incbin "games/tla/src/graphics/tileset/palettes/ancient_lemuria.gbapal.lz"
 	.byte 0x2d, 0x03, 0x3c	@ PACKER: left in the buffer by Field_AncientLemuria+0x155

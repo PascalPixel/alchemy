@@ -40,7 +40,7 @@ Field_StuccoRoomsB:
 	treasure_spot 35, 52, 102
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette26
-Tileset_Palette26:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_26.gbapal.lz"
+	.global Tileset_PaletteStuccoRooms
+Tileset_PaletteStuccoRooms:
+	.incbin "games/tbs/src/graphics/tileset/palettes/stucco_rooms.gbapal.lz"
 	.byte 0x9c, 0x00	@ PACKER: left in the buffer by Field_StuccoRoomsB+0x1de

@@ -32,7 +32,7 @@ Field_ChampaSanctum:
 .LField_ChampaSanctum_SCENE:
 	.incbin "games/tla/src/map/champa_sanctum/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette32
-Tileset_Palette32:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_32.gbapal.lz"
+	.global Tileset_PaletteChampaSanctum
+Tileset_PaletteChampaSanctum:
+	.incbin "games/tla/src/graphics/tileset/palettes/champa_sanctum.gbapal.lz"
 	.byte 0x84, 0x03, 0x15	@ PACKER: left in the buffer by Field_ChampaSanctum+0x13d

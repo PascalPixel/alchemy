@@ -27,21 +27,21 @@ Field_KolimaForestEntrance:
 .LField_KolimaForestEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set32Palette
-Tileset_Set32Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_32/palette.gbapal.lz"
+	.global Tileset_KolimaForestPalette
+Tileset_KolimaForestPalette:
+	.incbin "games/tbs/src/graphics/tileset/kolima_forest/palette.gbapal.lz"
 	.byte 0xb1, 0xc1	@ PACKER: left in the buffer by Field_KolimaForestEntrance+0x176
-	.global Tileset_Set32TilesA
-Tileset_Set32TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_32/tiles_a.4bpp.mtf"
-	.global Tileset_Set32TilesB
-Tileset_Set32TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_32/tiles_b.4bpp.mtf"
-	.byte 0x4d, 0x0c, 0x83	@ PACKER: left in the buffer by Tileset_Set32TilesA+0x1d6d
-	.global Tileset_Set32TilesC
-Tileset_Set32TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_32/tiles_c.4bpp.mtf"
-	.byte 0xb8, 0x92, 0x64	@ PACKER: left in the buffer by Tileset_Set32TilesB+0xa65
-	.global Tileset_Set32TilesD
-Tileset_Set32TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_32/tiles_d.4bpp.mtf"
+	.global Tileset_KolimaForestTilesA
+Tileset_KolimaForestTilesA:
+	.incbin "games/tbs/src/graphics/tileset/kolima_forest/tiles_a.4bpp.mtf"
+	.global Tileset_KolimaForestTilesB
+Tileset_KolimaForestTilesB:
+	.incbin "games/tbs/src/graphics/tileset/kolima_forest/tiles_b.4bpp.mtf"
+	.byte 0x4d, 0x0c, 0x83	@ PACKER: left in the buffer by Tileset_KolimaForestTilesA+0x1d6d
+	.global Tileset_KolimaForestTilesC
+Tileset_KolimaForestTilesC:
+	.incbin "games/tbs/src/graphics/tileset/kolima_forest/tiles_c.4bpp.mtf"
+	.byte 0xb8, 0x92, 0x64	@ PACKER: left in the buffer by Tileset_KolimaForestTilesB+0xa65
+	.global Tileset_KolimaForestTilesD
+Tileset_KolimaForestTilesD:
+	.incbin "games/tbs/src/graphics/tileset/kolima_forest/tiles_d.4bpp.mtf"

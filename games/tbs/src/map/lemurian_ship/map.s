@@ -30,22 +30,22 @@ Field_LemurianShip:
 .LField_LemurianShip_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set66Palette
-Tileset_Set66Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_66/palette.gbapal.lz"
+	.global Tileset_LemurianShipPalette
+Tileset_LemurianShipPalette:
+	.incbin "games/tbs/src/graphics/tileset/lemurian_ship/palette.gbapal.lz"
 	.byte 0x43, 0x11, 0xf8	@ PACKER: left in the buffer by Field_LemurianShip+0xe5
-	.global Tileset_Set66TilesA
-Tileset_Set66TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_66/tiles_a.4bpp.mtf"
+	.global Tileset_LemurianShipTilesA
+Tileset_LemurianShipTilesA:
+	.incbin "games/tbs/src/graphics/tileset/lemurian_ship/tiles_a.4bpp.mtf"
 	.byte 0xfd, 0x17, 0x05	@ PACKER: left in the buffer by Field_LemurianShip+0x299
-	.global Tileset_Set66TilesB
-Tileset_Set66TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_66/tiles_b.4bpp.mtf"
-	.global Tileset_Set66TilesC
-Tileset_Set66TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_66/tiles_c.4bpp.mtf"
-	.byte 0xd2, 0x14	@ PACKER: left in the buffer by Tileset_Set66TilesB+0x1ef2
-	.global Tileset_Set66TilesD
-Tileset_Set66TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_66/tiles_d.4bpp.mtf"
-	.byte 0x04, 0x5c	@ PACKER: left in the buffer by Tileset_Set66TilesC+0x5b2
+	.global Tileset_LemurianShipTilesB
+Tileset_LemurianShipTilesB:
+	.incbin "games/tbs/src/graphics/tileset/lemurian_ship/tiles_b.4bpp.mtf"
+	.global Tileset_LemurianShipTilesC
+Tileset_LemurianShipTilesC:
+	.incbin "games/tbs/src/graphics/tileset/lemurian_ship/tiles_c.4bpp.mtf"
+	.byte 0xd2, 0x14	@ PACKER: left in the buffer by Tileset_LemurianShipTilesB+0x1ef2
+	.global Tileset_LemurianShipTilesD
+Tileset_LemurianShipTilesD:
+	.incbin "games/tbs/src/graphics/tileset/lemurian_ship/tiles_d.4bpp.mtf"
+	.byte 0x04, 0x5c	@ PACKER: left in the buffer by Tileset_LemurianShipTilesC+0x5b2

@@ -29,7 +29,7 @@ Field_TolbiDocks:
 	treasure_spot 25, 12, 101
 	treasure_spot 53, 56, 101
 	treasure_spots_end
-	.global Tileset_Palette12
-Tileset_Palette12:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_12.gbapal.lz"
+	.global Tileset_PaletteTolbiDocks
+Tileset_PaletteTolbiDocks:
+	.incbin "games/tbs/src/graphics/tileset/palettes/tolbi_docks.gbapal.lz"
 	.byte 0x19, 0xe9, 0x78	@ PACKER: left in the buffer by Field_TolbiDocks+0x1a5

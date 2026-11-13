@@ -32,23 +32,23 @@ Field_TreeRooms:
 	treasure_spot 10, 24, 100
 	treasure_spot 54, 25, 101
 	treasure_spots_end
-	.global Tileset_Set36Palette
-Tileset_Set36Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_36/palette.gbapal.lz"
+	.global Tileset_TreeRoomsPalette
+Tileset_TreeRoomsPalette:
+	.incbin "games/tbs/src/graphics/tileset/tree_rooms/palette.gbapal.lz"
 	.byte 0x34	@ PACKER: left in the buffer by Field_TreeRooms+0x18f
-	.global Tileset_Set36TilesA
-Tileset_Set36TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_36/tiles_a.4bpp.mtf"
+	.global Tileset_TreeRoomsTilesA
+Tileset_TreeRoomsTilesA:
+	.incbin "games/tbs/src/graphics/tileset/tree_rooms/tiles_a.4bpp.mtf"
 	.balign 4, 0
-	.global Tileset_Set36TilesB
-Tileset_Set36TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_36/tiles_b.4bpp.mtf"
+	.global Tileset_TreeRoomsTilesB
+Tileset_TreeRoomsTilesB:
+	.incbin "games/tbs/src/graphics/tileset/tree_rooms/tiles_b.4bpp.mtf"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global Tileset_Set36TilesC
-Tileset_Set36TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_36/tiles_c.4bpp.mtf"
-	.byte 0xe8, 0x95, 0x5a	@ PACKER: left in the buffer by Tileset_Set36TilesB+0xc81
-	.global Tileset_Set36TilesD
-Tileset_Set36TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_36/tiles_d.4bpp.mtf"
-	.byte 0xa4	@ PACKER: left in the buffer by Tileset_Set36TilesC+0x13f
+	.global Tileset_TreeRoomsTilesC
+Tileset_TreeRoomsTilesC:
+	.incbin "games/tbs/src/graphics/tileset/tree_rooms/tiles_c.4bpp.mtf"
+	.byte 0xe8, 0x95, 0x5a	@ PACKER: left in the buffer by Tileset_TreeRoomsTilesB+0xc81
+	.global Tileset_TreeRoomsTilesD
+Tileset_TreeRoomsTilesD:
+	.incbin "games/tbs/src/graphics/tileset/tree_rooms/tiles_d.4bpp.mtf"
+	.byte 0xa4	@ PACKER: left in the buffer by Tileset_TreeRoomsTilesC+0x13f

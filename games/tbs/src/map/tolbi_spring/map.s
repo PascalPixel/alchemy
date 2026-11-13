@@ -30,22 +30,22 @@ Field_TolbiSpring:
 .LField_TolbiSpring_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set67Palette
-Tileset_Set67Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_67/palette.gbapal.lz"
-	.global Tileset_Set67TilesA
-Tileset_Set67TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_a.4bpp.mtf"
-	.byte 0x4e, 0x14	@ PACKER: left in the buffer by Tileset_Set66TilesC+0x1856
-	.global Tileset_Set67TilesB
-Tileset_Set67TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_b.4bpp.mtf"
-	.byte 0x58, 0xfe, 0x8a	@ PACKER: left in the buffer by Tileset_Set67TilesA+0xc6d
-	.global Tileset_Set67TilesC
-Tileset_Set67TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_c.4bpp.mtf"
-	.byte 0x0f, 0x7c, 0xfe	@ PACKER: left in the buffer by Tileset_Set67TilesB+0x2a5
-	.global Tileset_Set67TilesD
-Tileset_Set67TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_d.4bpp.mtf"
-	.byte 0xc4, 0x02	@ PACKER: left in the buffer by Tileset_Set67TilesA+0xe82
+	.global Tileset_TolbiSpringPalette
+Tileset_TolbiSpringPalette:
+	.incbin "games/tbs/src/graphics/tileset/tolbi_spring/palette.gbapal.lz"
+	.global Tileset_TolbiSpringTilesA
+Tileset_TolbiSpringTilesA:
+	.incbin "games/tbs/src/graphics/tileset/tolbi_spring/tiles_a.4bpp.mtf"
+	.byte 0x4e, 0x14	@ PACKER: left in the buffer by Tileset_LemurianShipTilesC+0x1856
+	.global Tileset_TolbiSpringTilesB
+Tileset_TolbiSpringTilesB:
+	.incbin "games/tbs/src/graphics/tileset/tolbi_spring/tiles_b.4bpp.mtf"
+	.byte 0x58, 0xfe, 0x8a	@ PACKER: left in the buffer by Tileset_TolbiSpringTilesA+0xc6d
+	.global Tileset_TolbiSpringTilesC
+Tileset_TolbiSpringTilesC:
+	.incbin "games/tbs/src/graphics/tileset/tolbi_spring/tiles_c.4bpp.mtf"
+	.byte 0x0f, 0x7c, 0xfe	@ PACKER: left in the buffer by Tileset_TolbiSpringTilesB+0x2a5
+	.global Tileset_TolbiSpringTilesD
+Tileset_TolbiSpringTilesD:
+	.incbin "games/tbs/src/graphics/tileset/tolbi_spring/tiles_d.4bpp.mtf"
+	.byte 0xc4, 0x02	@ PACKER: left in the buffer by Tileset_TolbiSpringTilesA+0xe82

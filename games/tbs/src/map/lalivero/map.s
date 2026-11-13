@@ -149,21 +149,21 @@ Field_Lalivero:
 	.endif
 	.endif
 	.endif
-	.global Tileset_Palette47
-Tileset_Palette47:
+	.global Tileset_PaletteLalivero
+Tileset_PaletteLalivero:
 	.ifdef TBS_EDITION_DE
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_47_de.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/lalivero_de.gbapal.lz"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_47_de.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/lalivero_de.gbapal.lz"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_47_de.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/lalivero_de.gbapal.lz"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_47_de.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/lalivero_de.gbapal.lz"
 	.else
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_47.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/lalivero.gbapal.lz"
 	.endif
 	.endif
 	.endif

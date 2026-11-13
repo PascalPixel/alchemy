@@ -24,23 +24,23 @@ Field_Test2:
 .LField_Test2_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set70Palette
-Tileset_Set70Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_68/palette.gbapal.lz"
+	.global Tileset_Test2Palette
+Tileset_Test2Palette:
+	.incbin "games/tbs/src/graphics/tileset/test_0/palette.gbapal.lz"
 	.byte 0x00	@ PACKER: left in the buffer by Field_Test2+0xb
-	.global Tileset_Set70TilesA
-Tileset_Set70TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_a.4bpp.mtf"
+	.global Tileset_Test2TilesA
+Tileset_Test2TilesA:
+	.incbin "games/tbs/src/graphics/tileset/test_0/tiles_a.4bpp.mtf"
 	.byte 0xff, 0x00	@ PACKER: left in the buffer by Field_Test2+0x14e
-	.global Tileset_Set70TilesB
-Tileset_Set70TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
-	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set70TilesA+0x13f
-	.global Tileset_Set70TilesC
-Tileset_Set70TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
-	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set70TilesA+0x13f
-	.global Tileset_Set70TilesD
-Tileset_Set70TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_68/tiles_b.4bpp.mtf"
-	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set70TilesA+0x13f
+	.global Tileset_Test2TilesB
+Tileset_Test2TilesB:
+	.incbin "games/tbs/src/graphics/tileset/test_0/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Test2TilesA+0x13f
+	.global Tileset_Test2TilesC
+Tileset_Test2TilesC:
+	.incbin "games/tbs/src/graphics/tileset/test_0/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Test2TilesA+0x13f
+	.global Tileset_Test2TilesD
+Tileset_Test2TilesD:
+	.incbin "games/tbs/src/graphics/tileset/test_0/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Test2TilesA+0x13f

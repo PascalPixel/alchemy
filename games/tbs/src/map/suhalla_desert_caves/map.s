@@ -30,7 +30,7 @@ Field_SuhallaDesertCaves:
 .LField_SuhallaDesertCaves_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette40
-Tileset_Palette40:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_40.gbapal.lz"
+	.global Tileset_PaletteSuhallaDesertCaves
+Tileset_PaletteSuhallaDesertCaves:
+	.incbin "games/tbs/src/graphics/tileset/palettes/suhalla_desert_caves.gbapal.lz"
 	.byte 0xb5, 0x03	@ PACKER: left in the buffer by Field_SuhallaDesertCaves+0x172

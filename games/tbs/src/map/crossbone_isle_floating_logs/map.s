@@ -136,7 +136,7 @@ Field_CrossboneIsleFloatingLogs:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Palette21
-Tileset_Palette21:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_21.gbapal.lz"
+	.global Tileset_PaletteCrossboneIsleFloatingLogs
+Tileset_PaletteCrossboneIsleFloatingLogs:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_floating_logs.gbapal.lz"
 	.byte 0xfe, 0xa6	@ PACKER: left in the buffer by Field_CrossboneIsleFloatingLogs+0x1ba

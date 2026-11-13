@@ -32,21 +32,21 @@ Field_Lobby:
 .LField_Lobby_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set00Palette
-Tileset_Set00Palette:
-	.incbin "games/tla/src/graphics/tileset/set_00/palette.gbapal.lz"
+	.global Tileset_LobbyPalette
+Tileset_LobbyPalette:
+	.incbin "games/tla/src/graphics/tileset/lobby/palette.gbapal.lz"
 	.byte 0x85, 0x50	@ PACKER: left in the buffer by Field_Lobby+0x1ce
-	.global Tileset_Set00TilesA
-Tileset_Set00TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_00/tiles_a.4bpp.mtf"
+	.global Tileset_LobbyTilesA
+Tileset_LobbyTilesA:
+	.incbin "games/tla/src/graphics/tileset/lobby/tiles_a.4bpp.mtf"
 	.byte 0x92	@ PACKER: left in the buffer by Monster_RedWarriorSprites+0x209f
-	.global Tileset_Set00TilesB
-Tileset_Set00TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_00/tiles_b.4bpp.mtf"
-	.global Tileset_Set00TilesC
-Tileset_Set00TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_00/tiles_c.4bpp.mtf"
+	.global Tileset_LobbyTilesB
+Tileset_LobbyTilesB:
+	.incbin "games/tla/src/graphics/tileset/lobby/tiles_b.4bpp.mtf"
+	.global Tileset_LobbyTilesC
+Tileset_LobbyTilesC:
+	.incbin "games/tla/src/graphics/tileset/lobby/tiles_c.4bpp.mtf"
 	.byte 0x4c, 0x9e, 0x10	@ PACKER: left in the buffer by Monster_RedWarriorSprites+0x22d5
-	.global Tileset_Set00TilesD
-Tileset_Set00TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_00/tiles_d.4bpp.mtf"
+	.global Tileset_LobbyTilesD
+Tileset_LobbyTilesD:
+	.incbin "games/tla/src/graphics/tileset/lobby/tiles_d.4bpp.mtf"

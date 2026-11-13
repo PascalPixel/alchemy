@@ -36,7 +36,7 @@ Field_RockRooms:
 	treasure_spot 30, 53, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette09
-Tileset_Palette09:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_09.gbapal.lz"
+	.global Tileset_PaletteRockRooms
+Tileset_PaletteRockRooms:
+	.incbin "games/tbs/src/graphics/tileset/palettes/rock_rooms.gbapal.lz"
 	.byte 0xcc	@ PACKER: left in the buffer by Field_RockRooms+0x1c3

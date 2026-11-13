@@ -27,7 +27,7 @@ Field_VenusLighthouseAerie:
 .LField_VenusLighthouseAerie_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette52
-Tileset_Palette52:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_52.gbapal.lz"
+	.global Tileset_PaletteVenusLighthouseAerie
+Tileset_PaletteVenusLighthouseAerie:
+	.incbin "games/tbs/src/graphics/tileset/palettes/venus_lighthouse_aerie.gbapal.lz"
 	.byte 0x06	@ PACKER: left in the buffer by Field_VenusLighthouseAerie+0x103

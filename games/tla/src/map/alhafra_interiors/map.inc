@@ -40,10 +40,10 @@ Field_AlhafraInteriors:
 	.incbin "games/tla/src/map/alhafra_interiors/scene.scene.lz"
 	.endif
 	.balign 4, 0
-	.global Tileset_Set42Palette
-Tileset_Set42Palette:
-	.incbin "games/tla/src/graphics/tileset/set_42/palette.gbapal.lz"
-	.global Tileset_Set42TilesA
-Tileset_Set42TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_42/tiles_a.4bpp.mtf"
+	.global Tileset_AlhafraPalette
+Tileset_AlhafraPalette:
+	.incbin "games/tla/src/graphics/tileset/alhafra/palette.gbapal.lz"
+	.global Tileset_AlhafraTilesA
+Tileset_AlhafraTilesA:
+	.incbin "games/tla/src/graphics/tileset/alhafra/tiles_a.4bpp.mtf"
 	.byte 0x70, 0x0e	@ PACKER: left in the buffer by Field_AlhafraInteriors+0x15e6

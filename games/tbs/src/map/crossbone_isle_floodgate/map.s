@@ -31,9 +31,9 @@ Field_CrossboneIsleFloodgate:
 	treasure_spot 4, 18, 103
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette17
-Tileset_Palette17:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_17.gbapal.lz"
+	.global Tileset_PaletteCrossboneIsleFloodgate
+Tileset_PaletteCrossboneIsleFloodgate:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_floodgate.gbapal.lz"
 	.byte 0x53	@ PACKER: left in the buffer by Field_CrossboneIsleFloodgate+0x12b
 	.global Tileset_Palette18
 Tileset_Palette18:

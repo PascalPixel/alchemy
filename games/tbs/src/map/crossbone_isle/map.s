@@ -29,7 +29,7 @@ Field_CrossboneIsle:
 	treasure_spot 22, 22, 101
 	treasure_spot 53, 56, 101
 	treasure_spots_end
-	.global Tileset_Palette13
-Tileset_Palette13:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_13.gbapal.lz"
+	.global Tileset_PaletteCrossboneIsle
+Tileset_PaletteCrossboneIsle:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle.gbapal.lz"
 	.byte 0x94, 0x4b, 0xc1	@ PACKER: left in the buffer by Field_CrossboneIsle+0x191

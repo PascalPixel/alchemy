@@ -35,7 +35,7 @@ Field_Tolbi:
 	treasure_spot 3, 32, 102
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette25
-Tileset_Palette25:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_25.gbapal.lz"
+	.global Tileset_PaletteTolbi
+Tileset_PaletteTolbi:
+	.incbin "games/tbs/src/graphics/tileset/palettes/tolbi.gbapal.lz"
 	.byte 0x5b, 0x24, 0xd1	@ PACKER: left in the buffer by Field_Tolbi+0x18d

@@ -30,7 +30,7 @@ Field_KolimaTunnel:
 .LField_KolimaTunnel_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette01
-Tileset_Palette01:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_01.gbapal.lz"
+	.global Tileset_PaletteKolimaTunnel
+Tileset_PaletteKolimaTunnel:
+	.incbin "games/tbs/src/graphics/tileset/palettes/kolima_tunnel.gbapal.lz"
 	.byte 0x94, 0x01, 0x06	@ PACKER: left in the buffer by Field_KolimaTunnel+0x159

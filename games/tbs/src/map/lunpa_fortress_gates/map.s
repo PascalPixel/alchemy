@@ -30,6 +30,6 @@ Field_LunpaFortressGates:
 .LField_LunpaFortressGates_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette35
-Tileset_Palette35:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_35.gbapal.lz"
+	.global Tileset_PaletteLunpaFortressGates
+Tileset_PaletteLunpaFortressGates:
+	.incbin "games/tbs/src/graphics/tileset/palettes/lunpa_fortress_gates.gbapal.lz"

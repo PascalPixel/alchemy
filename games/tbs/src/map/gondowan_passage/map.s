@@ -30,6 +30,6 @@ Field_GondowanPassage:
 .LField_GondowanPassage_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette33
-Tileset_Palette33:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_33.gbapal.lz"
+	.global Tileset_PaletteGondowanPassage
+Tileset_PaletteGondowanPassage:
+	.incbin "games/tbs/src/graphics/tileset/palettes/gondowan_passage.gbapal.lz"

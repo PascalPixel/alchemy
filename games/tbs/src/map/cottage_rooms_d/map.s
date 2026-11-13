@@ -40,11 +40,11 @@ Field_CottageRoomsD:
 	treasure_spot 24, 45, 201
 	treasure_spot 52, 45, 102
 	treasure_spots_end
-	.global Tileset_Set49Palette
-Tileset_Set49Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_49/palette.gbapal.lz"
+	.global Tileset_CottageRoomsDPalette
+Tileset_CottageRoomsDPalette:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_d/palette.gbapal.lz"
 	.byte 0xb3, 0xec, 0xe0	@ PACKER: left in the buffer by Field_CottageRoomsD+0x1c9
-	.global Tileset_Set49TilesA
-Tileset_Set49TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_49/tiles_a.4bpp.mtf"
+	.global Tileset_CottageRoomsDTilesA
+Tileset_CottageRoomsDTilesA:
+	.incbin "games/tbs/src/graphics/tileset/cottage_rooms_d/tiles_a.4bpp.mtf"
 	.byte 0x00, 0xc1, 0x01	@ PACKER: left in the buffer by Field_CottageRoomsD+0x2345

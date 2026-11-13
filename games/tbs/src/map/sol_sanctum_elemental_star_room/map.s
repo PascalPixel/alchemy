@@ -30,22 +30,22 @@ Field_SolSanctumElementalStarRoom:
 .LField_SolSanctumElementalStarRoom_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set12Palette
-Tileset_Set12Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_12/palette.gbapal.lz"
+	.global Tileset_SolSanctumElementalStarRoomPalette
+Tileset_SolSanctumElementalStarRoomPalette:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_elemental_star_room/palette.gbapal.lz"
 	.byte 0xb1	@ PACKER: left in the buffer by Field_SolSanctumElementalStarRoom+0x127
-	.global Tileset_Set12TilesA
-Tileset_Set12TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_12/tiles_a.4bpp.mtf"
+	.global Tileset_SolSanctumElementalStarRoomTilesA
+Tileset_SolSanctumElementalStarRoomTilesA:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_elemental_star_room/tiles_a.4bpp.mtf"
 	.byte 0x7a	@ PACKER: left in the buffer by Field_SolSanctumElementalStarRoom+0x1887
-	.global Tileset_Set12TilesB
-Tileset_Set12TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_12/tiles_b.4bpp.mtf"
-	.global Tileset_Set12TilesC
-Tileset_Set12TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_12/tiles_c.4bpp.mtf"
-	.byte 0x8a, 0x18, 0x32	@ PACKER: left in the buffer by Tileset_Set12TilesB+0xf3d
-	.global Tileset_Set12TilesD
-Tileset_Set12TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_12/tiles_d.4bpp.mtf"
-	.byte 0x01	@ PACKER: left in the buffer by Tileset_Set12TilesC+0x13f
+	.global Tileset_SolSanctumElementalStarRoomTilesB
+Tileset_SolSanctumElementalStarRoomTilesB:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_elemental_star_room/tiles_b.4bpp.mtf"
+	.global Tileset_SolSanctumElementalStarRoomTilesC
+Tileset_SolSanctumElementalStarRoomTilesC:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_elemental_star_room/tiles_c.4bpp.mtf"
+	.byte 0x8a, 0x18, 0x32	@ PACKER: left in the buffer by Tileset_SolSanctumElementalStarRoomTilesB+0xf3d
+	.global Tileset_SolSanctumElementalStarRoomTilesD
+Tileset_SolSanctumElementalStarRoomTilesD:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_elemental_star_room/tiles_d.4bpp.mtf"
+	.byte 0x01	@ PACKER: left in the buffer by Tileset_SolSanctumElementalStarRoomTilesC+0x13f

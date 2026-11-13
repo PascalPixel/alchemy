@@ -31,45 +31,45 @@ Field_GomaCavePond:
 .LField_GomaCavePond_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set18Palette
-Tileset_Set18Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_18/palette.gbapal.lz"
+	.global Tileset_GomaCavePondPalette
+Tileset_GomaCavePondPalette:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/palette.gbapal.lz"
 	.byte 0x71	@ PACKER: left in the buffer by Field_GomaCavePond+0xcb
-	.global Tileset_Set18TilesA
-Tileset_Set18TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_a.4bpp.mtf"
-	.global Tileset_Set18TilesB
-Tileset_Set18TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_b.4bpp.mtf"
-	.global Tileset_Set18TilesC
-Tileset_Set18TilesC:
+	.global Tileset_GomaCavePondTilesA
+Tileset_GomaCavePondTilesA:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf"
+	.global Tileset_GomaCavePondTilesB
+Tileset_GomaCavePondTilesB:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf"
+	.global Tileset_GomaCavePondTilesC
+Tileset_GomaCavePondTilesC:
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf"
 	.else
-	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf"
 	.endif
 	.endif
 	.endif
 	.ifdef TBS_EDITION_ES
-	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xec1
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xec1
 	.else
 	.ifdef TBS_EDITION_FR
-	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xec1
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xec1
 	.else
 	.ifdef TBS_EDITION_IT
-	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xec1
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xec1
 	.else
-	.byte 0x00, 0x90	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xfaa
+	.byte 0x00, 0x90	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesB+0xfaa
 	.endif
 	.endif
 	.endif
-	.global Tileset_Set18TilesD
-Tileset_Set18TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_d.4bpp.mtf"
-	.byte 0x04	@ PACKER: left in the buffer by Tileset_Set18TilesC+0x13f
+	.global Tileset_GomaCavePondTilesD
+Tileset_GomaCavePondTilesD:
+	.incbin "games/tbs/src/graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf"
+	.byte 0x04	@ PACKER: left in the buffer by Tileset_GomaCavePondTilesC+0x13f

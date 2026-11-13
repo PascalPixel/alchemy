@@ -32,7 +32,7 @@ Field_Alhafra:
 .LField_Alhafra_SCENE:
 	.incbin "games/tla/src/map/alhafra/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette10
-Tileset_Palette10:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_10.gbapal.lz"
+	.global Tileset_PaletteAlhafra
+Tileset_PaletteAlhafra:
+	.incbin "games/tla/src/graphics/tileset/palettes/alhafra.gbapal.lz"
 	.byte 0x10, 0x08	@ PACKER: left in the buffer by Field_Alhafra+0x11a

@@ -34,6 +34,6 @@ Field_CrossboneIsleDragonStatue:
 	treasure_spot 25, 16, 103
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette20
-Tileset_Palette20:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_20.gbapal.lz"
+	.global Tileset_PaletteCrossboneIsleDragonStatue
+Tileset_PaletteCrossboneIsleDragonStatue:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_dragon_statue.gbapal.lz"

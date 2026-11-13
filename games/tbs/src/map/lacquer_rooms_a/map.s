@@ -32,22 +32,22 @@ Field_LacquerRoomsA:
 	treasure_spot 12, 27, 101
 	treasure_spot 27, 27, 102
 	treasure_spots_end
-	.global Tileset_Set45Palette
-Tileset_Set45Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_45/palette.gbapal.lz"
+	.global Tileset_LacquerRoomsAPalette
+Tileset_LacquerRoomsAPalette:
+	.incbin "games/tbs/src/graphics/tileset/lacquer_rooms_a/palette.gbapal.lz"
 	.byte 0xa8, 0x80, 0x60	@ PACKER: left in the buffer by Field_LacquerRoomsA+0x1d9
-	.global Tileset_Set45TilesA
-Tileset_Set45TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_a.4bpp.mtf"
+	.global Tileset_LacquerRoomsATilesA
+Tileset_LacquerRoomsATilesA:
+	.incbin "games/tbs/src/graphics/tileset/lacquer_rooms_a/tiles_a.4bpp.mtf"
 	.byte 0x13, 0x00	@ PACKER: left in the buffer by Field_FuchinTempleGrounds+0x24ee
-	.global Tileset_Set45TilesB
-Tileset_Set45TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_b.4bpp.mtf"
-	.global Tileset_Set45TilesC
-Tileset_Set45TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_c.4bpp.mtf"
-	.byte 0x18	@ PACKER: left in the buffer by Tileset_Set45TilesB+0x1573
-	.global Tileset_Set45TilesD
-Tileset_Set45TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_d.4bpp.mtf"
-	.byte 0xfb, 0x14, 0x4d	@ PACKER: left in the buffer by Tileset_Set45TilesC+0xb99
+	.global Tileset_LacquerRoomsATilesB
+Tileset_LacquerRoomsATilesB:
+	.incbin "games/tbs/src/graphics/tileset/lacquer_rooms_a/tiles_b.4bpp.mtf"
+	.global Tileset_LacquerRoomsATilesC
+Tileset_LacquerRoomsATilesC:
+	.incbin "games/tbs/src/graphics/tileset/lacquer_rooms_a/tiles_c.4bpp.mtf"
+	.byte 0x18	@ PACKER: left in the buffer by Tileset_LacquerRoomsATilesB+0x1573
+	.global Tileset_LacquerRoomsATilesD
+Tileset_LacquerRoomsATilesD:
+	.incbin "games/tbs/src/graphics/tileset/lacquer_rooms_a/tiles_d.4bpp.mtf"
+	.byte 0xfb, 0x14, 0x4d	@ PACKER: left in the buffer by Tileset_LacquerRoomsATilesC+0xb99

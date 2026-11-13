@@ -35,6 +35,6 @@ Field_LunpaFortressGroundFloor:
 	treasure_spot 48, 55, 102
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette36
-Tileset_Palette36:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_36.gbapal.lz"
+	.global Tileset_PaletteLunpaFortress
+Tileset_PaletteLunpaFortress:
+	.incbin "games/tbs/src/graphics/tileset/palettes/lunpa_fortress.gbapal.lz"

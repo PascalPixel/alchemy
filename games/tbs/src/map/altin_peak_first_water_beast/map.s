@@ -30,7 +30,7 @@ Field_AltinPeakFirstWaterBeast:
 .LField_AltinPeakFirstWaterBeast_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette05
-Tileset_Palette05:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_05.gbapal.lz"
+	.global Tileset_PaletteAltinPeak
+Tileset_PaletteAltinPeak:
+	.incbin "games/tbs/src/graphics/tileset/palettes/altin_peak.gbapal.lz"
 	.byte 0x5d, 0x02, 0x06	@ PACKER: left in the buffer by Field_AltinPeakFirstWaterBeast+0x1b1

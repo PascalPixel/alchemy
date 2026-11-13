@@ -30,11 +30,11 @@ Field_KolimaForestGlade:
 .LField_KolimaForestGlade_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set33Palette
-Tileset_Set33Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_33/palette.gbapal.lz"
+	.global Tileset_KolimaForestGladePalette
+Tileset_KolimaForestGladePalette:
+	.incbin "games/tbs/src/graphics/tileset/kolima_forest_glade/palette.gbapal.lz"
 	.byte 0xcb, 0x81	@ PACKER: left in the buffer by Field_KolimaForestGlade+0x166
-	.global Tileset_Set33TilesA
-Tileset_Set33TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_33/tiles_a.4bpp.mtf"
+	.global Tileset_KolimaForestGladeTilesA
+Tileset_KolimaForestGladeTilesA:
+	.incbin "games/tbs/src/graphics/tileset/kolima_forest_glade/tiles_a.4bpp.mtf"
 	.byte 0x00, 0x80, 0x57	@ PACKER: left in the buffer by Field_KolimaForestGlade+0x1145

@@ -32,24 +32,24 @@ Field_LemuriaSpring:
 .LField_LemuriaSpring_SCENE:
 	.incbin "games/tla/src/map/lemuria_spring/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set85Palette
-Tileset_Set85Palette:
-	.incbin "games/tla/src/graphics/tileset/set_85/palette.gbapal.lz"
+	.global Tileset_LemuriaSpringPalette
+Tileset_LemuriaSpringPalette:
+	.incbin "games/tla/src/graphics/tileset/lemuria_spring/palette.gbapal.lz"
 	.byte 0x18, 0x61, 0xb5	@ PACKER: left in the buffer by Field_LemuriaSpring+0x1a9
-	.global Tileset_Set85TilesA
-Tileset_Set85TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_85/tiles_a.4bpp.mtf"
-	.byte 0xd5, 0x83	@ PACKER: left in the buffer by Tileset_Set84TilesA+0x1b0a
-	.global Tileset_Set85TilesB
-Tileset_Set85TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_85/tiles_b.4bpp.mtf"
-	.global Tileset_Set85TilesC
-Tileset_Set85TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_85/tiles_c.4bpp.mtf"
-	.byte 0x29	@ PACKER: left in the buffer by Tileset_Set85TilesA+0xe77
-	.global Tileset_Set85TilesD
-Tileset_Set85TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_85/tiles_d.4bpp.mtf"
+	.global Tileset_LemuriaSpringTilesA
+Tileset_LemuriaSpringTilesA:
+	.incbin "games/tla/src/graphics/tileset/lemuria_spring/tiles_a.4bpp.mtf"
+	.byte 0xd5, 0x83	@ PACKER: left in the buffer by Tileset_LemuriaInteriorsTilesA+0x1b0a
+	.global Tileset_LemuriaSpringTilesB
+Tileset_LemuriaSpringTilesB:
+	.incbin "games/tla/src/graphics/tileset/lemuria_spring/tiles_b.4bpp.mtf"
+	.global Tileset_LemuriaSpringTilesC
+Tileset_LemuriaSpringTilesC:
+	.incbin "games/tla/src/graphics/tileset/lemuria_spring/tiles_c.4bpp.mtf"
+	.byte 0x29	@ PACKER: left in the buffer by Tileset_LemuriaSpringTilesA+0xe77
+	.global Tileset_LemuriaSpringTilesD
+Tileset_LemuriaSpringTilesD:
+	.incbin "games/tla/src/graphics/tileset/lemuria_spring/tiles_d.4bpp.mtf"
 	.ifdef TLA_EDITION_EN
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.endif

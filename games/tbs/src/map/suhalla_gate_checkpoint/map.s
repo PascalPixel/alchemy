@@ -120,7 +120,7 @@ Field_SuhallaGateCheckpoint:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Palette41
-Tileset_Palette41:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_41.gbapal.lz"
+	.global Tileset_PaletteSuhallaGate
+Tileset_PaletteSuhallaGate:
+	.incbin "games/tbs/src/graphics/tileset/palettes/suhalla_gate.gbapal.lz"
 	.byte 0xfc, 0x22, 0x8f	@ PACKER: left in the buffer by Field_SuhallaGateCheckpoint+0x171

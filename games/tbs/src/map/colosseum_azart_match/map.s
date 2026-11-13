@@ -32,22 +32,22 @@ Field_ColosseumAzartMatch:
 	treasure_spot 48, 6, 101
 	treasure_spot 61, 13, 103
 	treasure_spots_end
-	.global Tileset_Set60Palette
-Tileset_Set60Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_60/palette.gbapal.lz"
+	.global Tileset_ColosseumAzartMatchPalette
+Tileset_ColosseumAzartMatchPalette:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_azart_match/palette.gbapal.lz"
 	.byte 0x31, 0x9d, 0x0f	@ PACKER: left in the buffer by Field_ColosseumAzartMatch+0x14d
-	.global Tileset_Set60TilesA
-Tileset_Set60TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_60/tiles_a.4bpp.mtf"
+	.global Tileset_ColosseumAzartMatchTilesA
+Tileset_ColosseumAzartMatchTilesA:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_azart_match/tiles_a.4bpp.mtf"
 	.byte 0x63	@ PACKER: left in the buffer by Tileset_Set59TilesA+0x29df
-	.global Tileset_Set60TilesB
-Tileset_Set60TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_60/tiles_b.4bpp.mtf"
-	.global Tileset_Set60TilesC
-Tileset_Set60TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_60/tiles_c.4bpp.mtf"
-	.byte 0x25, 0x96, 0x85	@ PACKER: left in the buffer by Tileset_Set60TilesB+0x1895
-	.global Tileset_Set60TilesD
-Tileset_Set60TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_60/tiles_d.4bpp.mtf"
-	.byte 0x69	@ PACKER: left in the buffer by Tileset_Set60TilesB+0x1907
+	.global Tileset_ColosseumAzartMatchTilesB
+Tileset_ColosseumAzartMatchTilesB:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_azart_match/tiles_b.4bpp.mtf"
+	.global Tileset_ColosseumAzartMatchTilesC
+Tileset_ColosseumAzartMatchTilesC:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_azart_match/tiles_c.4bpp.mtf"
+	.byte 0x25, 0x96, 0x85	@ PACKER: left in the buffer by Tileset_ColosseumAzartMatchTilesB+0x1895
+	.global Tileset_ColosseumAzartMatchTilesD
+Tileset_ColosseumAzartMatchTilesD:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_azart_match/tiles_d.4bpp.mtf"
+	.byte 0x69	@ PACKER: left in the buffer by Tileset_ColosseumAzartMatchTilesB+0x1907

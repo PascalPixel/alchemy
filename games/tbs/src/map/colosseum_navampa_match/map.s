@@ -32,23 +32,23 @@ Field_ColosseumNavampaMatch:
 	treasure_spot 12, 7, 101
 	treasure_spot 75, 13, 103
 	treasure_spots_end
-	.global Tileset_Set62Palette
-Tileset_Set62Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_62/palette.gbapal.lz"
+	.global Tileset_ColosseumNavampaMatchPalette
+Tileset_ColosseumNavampaMatchPalette:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_navampa_match/palette.gbapal.lz"
 	.byte 0x22, 0xb6	@ PACKER: left in the buffer by Field_ColosseumNavampaMatch+0x13a
-	.global Tileset_Set62TilesA
-Tileset_Set62TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_a.4bpp.mtf"
-	.byte 0x81, 0xdf	@ PACKER: left in the buffer by Tileset_Set61TilesA+0x2732
-	.global Tileset_Set62TilesB
-Tileset_Set62TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_b.4bpp.mtf"
-	.byte 0xba	@ PACKER: left in the buffer by Tileset_Set62TilesA+0x1c43
-	.global Tileset_Set62TilesC
-Tileset_Set62TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_c.4bpp.mtf"
-	.byte 0x3c, 0xe0, 0x13	@ PACKER: left in the buffer by Tileset_Set62TilesB+0x1445
-	.global Tileset_Set62TilesD
-Tileset_Set62TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_d.4bpp.mtf"
-	.byte 0xa3	@ PACKER: left in the buffer by Tileset_Set62TilesB+0x1b7b
+	.global Tileset_ColosseumNavampaMatchTilesA
+Tileset_ColosseumNavampaMatchTilesA:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_navampa_match/tiles_a.4bpp.mtf"
+	.byte 0x81, 0xdf	@ PACKER: left in the buffer by Tileset_ColosseumSatrageMatchTilesA+0x2732
+	.global Tileset_ColosseumNavampaMatchTilesB
+Tileset_ColosseumNavampaMatchTilesB:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_navampa_match/tiles_b.4bpp.mtf"
+	.byte 0xba	@ PACKER: left in the buffer by Tileset_ColosseumNavampaMatchTilesA+0x1c43
+	.global Tileset_ColosseumNavampaMatchTilesC
+Tileset_ColosseumNavampaMatchTilesC:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_navampa_match/tiles_c.4bpp.mtf"
+	.byte 0x3c, 0xe0, 0x13	@ PACKER: left in the buffer by Tileset_ColosseumNavampaMatchTilesB+0x1445
+	.global Tileset_ColosseumNavampaMatchTilesD
+Tileset_ColosseumNavampaMatchTilesD:
+	.incbin "games/tbs/src/graphics/tileset/colosseum_navampa_match/tiles_d.4bpp.mtf"
+	.byte 0xa3	@ PACKER: left in the buffer by Tileset_ColosseumNavampaMatchTilesB+0x1b7b

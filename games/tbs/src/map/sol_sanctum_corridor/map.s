@@ -30,21 +30,21 @@ Field_SolSanctumCorridor:
 .LField_SolSanctumCorridor_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set11Palette
-Tileset_Set11Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_11/palette.gbapal.lz"
+	.global Tileset_SolSanctumCorridorPalette
+Tileset_SolSanctumCorridorPalette:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_corridor/palette.gbapal.lz"
 	.byte 0x43	@ PACKER: left in the buffer by Field_SolSanctumCorridor+0x113
-	.global Tileset_Set11TilesA
-Tileset_Set11TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_11/tiles_a.4bpp.mtf"
-	.global Tileset_Set11TilesB
-Tileset_Set11TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_11/tiles_b.4bpp.mtf"
-	.byte 0x50, 0x92, 0x3f	@ PACKER: left in the buffer by Tileset_Set11TilesA+0x909
-	.global Tileset_Set11TilesC
-Tileset_Set11TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_11/tiles_c.4bpp.mtf"
-	.byte 0xe1	@ PACKER: left in the buffer by Tileset_Set11TilesB+0x147
-	.global Tileset_Set11TilesD
-Tileset_Set11TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_11/tiles_d.4bpp.mtf"
+	.global Tileset_SolSanctumCorridorTilesA
+Tileset_SolSanctumCorridorTilesA:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_corridor/tiles_a.4bpp.mtf"
+	.global Tileset_SolSanctumCorridorTilesB
+Tileset_SolSanctumCorridorTilesB:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_corridor/tiles_b.4bpp.mtf"
+	.byte 0x50, 0x92, 0x3f	@ PACKER: left in the buffer by Tileset_SolSanctumCorridorTilesA+0x909
+	.global Tileset_SolSanctumCorridorTilesC
+Tileset_SolSanctumCorridorTilesC:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_corridor/tiles_c.4bpp.mtf"
+	.byte 0xe1	@ PACKER: left in the buffer by Tileset_SolSanctumCorridorTilesB+0x147
+	.global Tileset_SolSanctumCorridorTilesD
+Tileset_SolSanctumCorridorTilesD:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_corridor/tiles_d.4bpp.mtf"

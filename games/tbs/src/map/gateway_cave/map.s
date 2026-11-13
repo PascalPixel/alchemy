@@ -31,7 +31,7 @@ Field_GatewayCave:
 	treasure_spot 33, 26, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette42
-Tileset_Palette42:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_42.gbapal.lz"
+	.global Tileset_PaletteGatewayCave
+Tileset_PaletteGatewayCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/gateway_cave.gbapal.lz"
 	.byte 0x94, 0x1c	@ PACKER: left in the buffer by Field_GatewayCave+0x1b6

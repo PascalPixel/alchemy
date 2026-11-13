@@ -31,6 +31,6 @@ Field_KalayTunnelCave:
 	treasure_spot 24, 19, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette38
-Tileset_Palette38:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_38.gbapal.lz"
+	.global Tileset_PaletteKalayTunnelCave
+Tileset_PaletteKalayTunnelCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/kalay_tunnel_cave.gbapal.lz"

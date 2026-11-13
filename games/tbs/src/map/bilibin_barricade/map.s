@@ -108,19 +108,19 @@ Field_BilibinBarricade:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Set26Palette
-Tileset_Set26Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_26/palette.gbapal.lz"
+	.global Tileset_BilibinBarricadePalette
+Tileset_BilibinBarricadePalette:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_barricade/palette.gbapal.lz"
 	.byte 0x08	@ PACKER: left in the buffer by Field_BilibinBarricade+0x183
-	.global Tileset_Set26TilesA
-Tileset_Set26TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_26/tiles_a.4bpp.mtf"
+	.global Tileset_BilibinBarricadeTilesA
+Tileset_BilibinBarricadeTilesA:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_barricade/tiles_a.4bpp.mtf"
 	.byte 0x9e	@ PACKER: left in the buffer by Tileset_Set23TilesA+0x2b3b
-	.global Tileset_Set26TilesB
-Tileset_Set26TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_26/tiles_b.4bpp.mtf"
-	.byte 0xf1, 0xb3, 0x21	@ PACKER: left in the buffer by Tileset_Set26TilesA+0x2779
-	.global Tileset_Set26TilesC
-Tileset_Set26TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_26/tiles_c.4bpp.mtf"
-	.byte 0xc9, 0xe1	@ PACKER: left in the buffer by Tileset_Set26TilesB+0xfea
+	.global Tileset_BilibinBarricadeTilesB
+Tileset_BilibinBarricadeTilesB:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_barricade/tiles_b.4bpp.mtf"
+	.byte 0xf1, 0xb3, 0x21	@ PACKER: left in the buffer by Tileset_BilibinBarricadeTilesA+0x2779
+	.global Tileset_BilibinBarricadeTilesC
+Tileset_BilibinBarricadeTilesC:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_barricade/tiles_c.4bpp.mtf"
+	.byte 0xc9, 0xe1	@ PACKER: left in the buffer by Tileset_BilibinBarricadeTilesB+0xfea

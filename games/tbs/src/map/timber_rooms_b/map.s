@@ -38,7 +38,7 @@ Field_TimberRoomsB:
 	treasure_spot 10, 19, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette48
-Tileset_Palette48:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_48.gbapal.lz"
+	.global Tileset_PaletteTimberRooms
+Tileset_PaletteTimberRooms:
+	.incbin "games/tbs/src/graphics/tileset/palettes/timber_rooms.gbapal.lz"
 	.byte 0x38, 0x16	@ PACKER: left in the buffer by Field_TimberRoomsB+0x1e6

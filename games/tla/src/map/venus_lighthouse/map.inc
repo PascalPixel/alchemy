@@ -32,22 +32,22 @@ Field_VenusLighthouse:
 .LField_VenusLighthouse_SCENE:
 	.incbin "games/tla/src/map/venus_lighthouse/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set02Palette
-Tileset_Set02Palette:
-	.incbin "games/tla/src/graphics/tileset/set_02/pal_50.gbapal.lz"
-	.global Tileset_Set02TilesA
-Tileset_Set02TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_02/tiles_a.4bpp.mtf"
+	.global Tileset_VenusLighthousePalette
+Tileset_VenusLighthousePalette:
+	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/pal_50.gbapal.lz"
+	.global Tileset_VenusLighthouseTilesA
+Tileset_VenusLighthouseTilesA:
+	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/tiles_a.4bpp.mtf"
 	.byte 0x14, 0xf0	@ PACKER: left in the buffer by Field_VenusLighthouseEntrance+0x2866
-	.global Tileset_Set02TilesB
-Tileset_Set02TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_02/tiles_b.4bpp.mtf"
-	.byte 0xb0	@ PACKER: left in the buffer by Tileset_Set02TilesA+0x27c7
-	.global Tileset_Set02TilesC
-Tileset_Set02TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_02/tiles_c.4bpp.mtf"
-	.byte 0x08	@ PACKER: left in the buffer by Tileset_Set02TilesB+0x151f
-	.global Tileset_Set02TilesD
-Tileset_Set02TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_02/tiles_d.4bpp.mtf"
-	.byte 0x0c	@ PACKER: left in the buffer by Tileset_Set02TilesB+0x1943
+	.global Tileset_VenusLighthouseTilesB
+Tileset_VenusLighthouseTilesB:
+	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/tiles_b.4bpp.mtf"
+	.byte 0xb0	@ PACKER: left in the buffer by Tileset_VenusLighthouseTilesA+0x27c7
+	.global Tileset_VenusLighthouseTilesC
+Tileset_VenusLighthouseTilesC:
+	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/tiles_c.4bpp.mtf"
+	.byte 0x08	@ PACKER: left in the buffer by Tileset_VenusLighthouseTilesB+0x151f
+	.global Tileset_VenusLighthouseTilesD
+Tileset_VenusLighthouseTilesD:
+	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/tiles_d.4bpp.mtf"
+	.byte 0x0c	@ PACKER: left in the buffer by Tileset_VenusLighthouseTilesB+0x1943

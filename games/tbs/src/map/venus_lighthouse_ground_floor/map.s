@@ -65,6 +65,6 @@ Field_VenusLighthouseGroundFloor:
 	treasure_spots_end
 	.endif
 	.balign 4, 0
-	.global Tileset_Palette50
-Tileset_Palette50:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_50.gbapal.lz"
+	.global Tileset_PaletteVenusLighthouseGroundFloor
+Tileset_PaletteVenusLighthouseGroundFloor:
+	.incbin "games/tbs/src/graphics/tileset/palettes/venus_lighthouse_ground_floor.gbapal.lz"

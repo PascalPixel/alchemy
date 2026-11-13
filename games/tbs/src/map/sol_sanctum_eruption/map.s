@@ -30,22 +30,22 @@ Field_SolSanctumEruption:
 .LField_SolSanctumEruption_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set13Palette
-Tileset_Set13Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_13/palette.gbapal.lz"
+	.global Tileset_SolSanctumEruptionPalette
+Tileset_SolSanctumEruptionPalette:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_eruption/palette.gbapal.lz"
 	.byte 0x27, 0x50	@ PACKER: left in the buffer by Field_SolSanctumEruption+0x10a
-	.global Tileset_Set13TilesA
-Tileset_Set13TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_13/tiles_a.4bpp.mtf"
+	.global Tileset_SolSanctumEruptionTilesA
+Tileset_SolSanctumEruptionTilesA:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_eruption/tiles_a.4bpp.mtf"
 	.byte 0xfe, 0x4c	@ PACKER: left in the buffer by Field_SolSanctumEruption+0x1fe2
-	.global Tileset_Set13TilesB
-Tileset_Set13TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_13/tiles_b.4bpp.mtf"
-	.byte 0xa5	@ PACKER: left in the buffer by Tileset_Set13TilesA+0x1723
-	.global Tileset_Set13TilesC
-Tileset_Set13TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_13/tiles_c.4bpp.mtf"
-	.global Tileset_Set13TilesD
-Tileset_Set13TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_13/tiles_d.4bpp.mtf"
-	.byte 0x01	@ PACKER: left in the buffer by Tileset_Set13TilesC+0x13f
+	.global Tileset_SolSanctumEruptionTilesB
+Tileset_SolSanctumEruptionTilesB:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_eruption/tiles_b.4bpp.mtf"
+	.byte 0xa5	@ PACKER: left in the buffer by Tileset_SolSanctumEruptionTilesA+0x1723
+	.global Tileset_SolSanctumEruptionTilesC
+Tileset_SolSanctumEruptionTilesC:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_eruption/tiles_c.4bpp.mtf"
+	.global Tileset_SolSanctumEruptionTilesD
+Tileset_SolSanctumEruptionTilesD:
+	.incbin "games/tbs/src/graphics/tileset/sol_sanctum_eruption/tiles_d.4bpp.mtf"
+	.byte 0x01	@ PACKER: left in the buffer by Tileset_SolSanctumEruptionTilesC+0x13f

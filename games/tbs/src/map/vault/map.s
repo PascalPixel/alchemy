@@ -25,23 +25,23 @@ Field_Vault:
 	treasure_spot 4, 9, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set14Palette
-Tileset_Set14Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_14/palette.gbapal.lz"
+	.global Tileset_VaultPalette
+Tileset_VaultPalette:
+	.incbin "games/tbs/src/graphics/tileset/vault/palette.gbapal.lz"
 	.byte 0xc8	@ PACKER: left in the buffer by Field_Vault+0x183
-	.global Tileset_Set14TilesA
-Tileset_Set14TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_14/tiles_a.4bpp.mtf"
+	.global Tileset_VaultTilesA
+Tileset_VaultTilesA:
+	.incbin "games/tbs/src/graphics/tileset/vault/tiles_a.4bpp.mtf"
 	.byte 0x8a, 0x33, 0x2a	@ PACKER: left in the buffer by Field_CottageRoomsB+0x2b51
-	.global Tileset_Set14TilesB
-Tileset_Set14TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_14/tiles_b.4bpp.mtf"
-	.byte 0x13, 0x1d	@ PACKER: left in the buffer by Tileset_Set14TilesA+0x26c2
-	.global Tileset_Set14TilesC
-Tileset_Set14TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_14/tiles_c.4bpp.mtf"
-	.byte 0x0a, 0xcd	@ PACKER: left in the buffer by Tileset_Set14TilesA+0x2756
-	.global Tileset_Set14TilesD
-Tileset_Set14TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_14/tiles_d.4bpp.mtf"
-	.byte 0x5e, 0x11, 0x7d	@ PACKER: left in the buffer by Tileset_Set14TilesC+0x1851
+	.global Tileset_VaultTilesB
+Tileset_VaultTilesB:
+	.incbin "games/tbs/src/graphics/tileset/vault/tiles_b.4bpp.mtf"
+	.byte 0x13, 0x1d	@ PACKER: left in the buffer by Tileset_VaultTilesA+0x26c2
+	.global Tileset_VaultTilesC
+Tileset_VaultTilesC:
+	.incbin "games/tbs/src/graphics/tileset/vault/tiles_c.4bpp.mtf"
+	.byte 0x0a, 0xcd	@ PACKER: left in the buffer by Tileset_VaultTilesA+0x2756
+	.global Tileset_VaultTilesD
+Tileset_VaultTilesD:
+	.incbin "games/tbs/src/graphics/tileset/vault/tiles_d.4bpp.mtf"
+	.byte 0x5e, 0x11, 0x7d	@ PACKER: left in the buffer by Tileset_VaultTilesC+0x1851

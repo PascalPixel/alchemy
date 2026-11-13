@@ -48,7 +48,7 @@ Field_NorthernReaches:
 	.incbin "games/tla/src/map/northern_reaches/scene.scene.lz"
 	.endif
 	.balign 4, 0
-	.global Tileset_Palette57
-Tileset_Palette57:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_57.gbapal.lz"
+	.global Tileset_PaletteNorthernReaches
+Tileset_PaletteNorthernReaches:
+	.incbin "games/tla/src/graphics/tileset/palettes/northern_reaches.gbapal.lz"
 	.byte 0x2e	@ PACKER: left in the buffer by Field_NorthernReaches+0x117

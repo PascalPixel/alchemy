@@ -30,7 +30,7 @@ Field_KolimaForestCliff:
 .LField_KolimaForestCliff_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette02
-Tileset_Palette02:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_02.gbapal.lz"
+	.global Tileset_PaletteKolimaForestCliff
+Tileset_PaletteKolimaForestCliff:
+	.incbin "games/tbs/src/graphics/tileset/palettes/kolima_forest_cliff.gbapal.lz"
 	.byte 0xe3, 0x65	@ PACKER: left in the buffer by Field_KolimaForestCliff+0x166

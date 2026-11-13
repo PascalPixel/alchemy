@@ -29,6 +29,6 @@ Field_SuhallaDesertNorth:
 	treasure_spot 18, 45, 102
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette39
-Tileset_Palette39:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_39.gbapal.lz"
+	.global Tileset_PaletteSuhallaDesert
+Tileset_PaletteSuhallaDesert:
+	.incbin "games/tbs/src/graphics/tileset/palettes/suhalla_desert.gbapal.lz"

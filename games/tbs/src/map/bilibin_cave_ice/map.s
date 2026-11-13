@@ -29,10 +29,10 @@ Field_BilibinCaveIce:
 	treasure_spot 53, 36, 101
 	treasure_spot 52, 37, 102
 	treasure_spots_end
-	.global Tileset_Set40Palette
-Tileset_Set40Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_40/palette.gbapal.lz"
-	.global Tileset_Set40TilesA
-Tileset_Set40TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_40/tiles_a.4bpp.mtf"
-	.byte 0x45, 0x58	@ PACKER: left in the buffer by Tileset_Set36TilesB+0x2966
+	.global Tileset_BilibinCaveIcePalette
+Tileset_BilibinCaveIcePalette:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_cave_ice/palette.gbapal.lz"
+	.global Tileset_BilibinCaveIceTilesA
+Tileset_BilibinCaveIceTilesA:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_cave_ice/tiles_a.4bpp.mtf"
+	.byte 0x45, 0x58	@ PACKER: left in the buffer by Tileset_TreeRoomsTilesB+0x2966

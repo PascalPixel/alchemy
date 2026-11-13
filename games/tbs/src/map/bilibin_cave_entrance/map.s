@@ -30,10 +30,10 @@ Field_BilibinCaveEntrance:
 .LField_BilibinCaveEntrance_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set38Palette
-Tileset_Set38Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_38/palette.gbapal.lz"
-	.global Tileset_Set38TilesA
-Tileset_Set38TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_38/tiles_a.4bpp.mtf"
+	.global Tileset_BilibinCaveEntrancePalette
+Tileset_BilibinCaveEntrancePalette:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_cave_entrance/palette.gbapal.lz"
+	.global Tileset_BilibinCaveEntranceTilesA
+Tileset_BilibinCaveEntranceTilesA:
+	.incbin "games/tbs/src/graphics/tileset/bilibin_cave_entrance/tiles_a.4bpp.mtf"
 	.byte 0x80, 0x03	@ PACKER: left in the buffer by Field_BilibinCaveEntrance+0x13da

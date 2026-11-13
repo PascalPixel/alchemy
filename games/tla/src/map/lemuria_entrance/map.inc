@@ -29,7 +29,7 @@ Field_LemuriaEntrance:
 .LField_LemuriaEntrance_SCENE:
 	.incbin "games/tla/src/map/lemuria_entrance/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette37
-Tileset_Palette37:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_37.gbapal.lz"
+	.global Tileset_PaletteLemuriaEntrance
+Tileset_PaletteLemuriaEntrance:
+	.incbin "games/tla/src/graphics/tileset/palettes/lemuria_entrance.gbapal.lz"
 	.byte 0xfc, 0x8c, 0x34	@ PACKER: left in the buffer by Field_LemuriaEntrance+0xf5

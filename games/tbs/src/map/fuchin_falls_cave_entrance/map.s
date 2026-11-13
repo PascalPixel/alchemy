@@ -31,7 +31,7 @@ Field_FuchinFallsCaveEntrance:
 	treasure_spot 18, 27, 100
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette03
-Tileset_Palette03:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_03.gbapal.lz"
+	.global Tileset_PaletteFuchinFallsCave
+Tileset_PaletteFuchinFallsCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/fuchin_falls_cave.gbapal.lz"
 	.byte 0x7e, 0x5e	@ PACKER: left in the buffer by Field_FuchinFallsCaveEntrance+0x156

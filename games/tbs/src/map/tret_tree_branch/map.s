@@ -30,23 +30,23 @@ Field_TretTreeBranch:
 .LField_TretTreeBranch_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set37Palette
-Tileset_Set37Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_37/palette.gbapal.lz"
+	.global Tileset_TretTreeBranchPalette
+Tileset_TretTreeBranchPalette:
+	.incbin "games/tbs/src/graphics/tileset/tret_tree_branch/palette.gbapal.lz"
 	.byte 0x9b, 0x46	@ PACKER: left in the buffer by Field_TretTreeBranch+0x16a
-	.global Tileset_Set37TilesA
-Tileset_Set37TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_37/tiles_a.4bpp.mtf"
-	.byte 0xe0, 0x91, 0x0f	@ PACKER: left in the buffer by Tileset_Set36TilesB+0x1d59
-	.global Tileset_Set37TilesB
-Tileset_Set37TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_37/tiles_b.4bpp.mtf"
-	.byte 0x2f	@ PACKER: left in the buffer by Tileset_Set37TilesA+0x13f
-	.global Tileset_Set37TilesC
-Tileset_Set37TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_37/tiles_c.4bpp.mtf"
-	.byte 0x23, 0xe7	@ PACKER: left in the buffer by Tileset_Set36TilesB+0x27fe
-	.global Tileset_Set37TilesD
-Tileset_Set37TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_37/tiles_d.4bpp.mtf"
-	.byte 0x09	@ PACKER: left in the buffer by Tileset_Set37TilesC+0x13f
+	.global Tileset_TretTreeBranchTilesA
+Tileset_TretTreeBranchTilesA:
+	.incbin "games/tbs/src/graphics/tileset/tret_tree_branch/tiles_a.4bpp.mtf"
+	.byte 0xe0, 0x91, 0x0f	@ PACKER: left in the buffer by Tileset_TreeRoomsTilesB+0x1d59
+	.global Tileset_TretTreeBranchTilesB
+Tileset_TretTreeBranchTilesB:
+	.incbin "games/tbs/src/graphics/tileset/tret_tree_branch/tiles_b.4bpp.mtf"
+	.byte 0x2f	@ PACKER: left in the buffer by Tileset_TretTreeBranchTilesA+0x13f
+	.global Tileset_TretTreeBranchTilesC
+Tileset_TretTreeBranchTilesC:
+	.incbin "games/tbs/src/graphics/tileset/tret_tree_branch/tiles_c.4bpp.mtf"
+	.byte 0x23, 0xe7	@ PACKER: left in the buffer by Tileset_TreeRoomsTilesB+0x27fe
+	.global Tileset_TretTreeBranchTilesD
+Tileset_TretTreeBranchTilesD:
+	.incbin "games/tbs/src/graphics/tileset/tret_tree_branch/tiles_d.4bpp.mtf"
+	.byte 0x09	@ PACKER: left in the buffer by Tileset_TretTreeBranchTilesC+0x13f

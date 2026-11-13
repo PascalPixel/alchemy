@@ -32,22 +32,22 @@ Field_EasternAlhafra:
 .LField_EasternAlhafra_SCENE:
 	.incbin "games/tla/src/map/eastern_alhafra/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set43Palette
-Tileset_Set43Palette:
-	.incbin "games/tla/src/graphics/tileset/set_43/palette.gbapal.lz"
+	.global Tileset_EasternAlhafraPalette
+Tileset_EasternAlhafraPalette:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra/palette.gbapal.lz"
 	.byte 0x0d	@ PACKER: left in the buffer by Field_EasternAlhafra+0x147
-	.global Tileset_Set43TilesA
-Tileset_Set43TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_43/tiles_a.4bpp.mtf"
+	.global Tileset_EasternAlhafraTilesA
+Tileset_EasternAlhafraTilesA:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra/tiles_a.4bpp.mtf"
 	.byte 0x01	@ PACKER: left in the buffer by Field_AlhafraManor+0x26af
-	.global Tileset_Set43TilesB
-Tileset_Set43TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_43/tiles_b.4bpp.mtf"
+	.global Tileset_EasternAlhafraTilesB
+Tileset_EasternAlhafraTilesB:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra/tiles_b.4bpp.mtf"
 	.balign 4, 0xff	@ PACKER: 0xff fill, not an earlier stream's bytes
-	.global Tileset_Set43TilesC
-Tileset_Set43TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_43/tiles_c.4bpp.mtf"
-	.byte 0x8a, 0xbc, 0xc1	@ PACKER: left in the buffer by Tileset_Set43TilesB+0xd89
-	.global Tileset_Set43TilesD
-Tileset_Set43TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_43/tiles_d.4bpp.mtf"
+	.global Tileset_EasternAlhafraTilesC
+Tileset_EasternAlhafraTilesC:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra/tiles_c.4bpp.mtf"
+	.byte 0x8a, 0xbc, 0xc1	@ PACKER: left in the buffer by Tileset_EasternAlhafraTilesB+0xd89
+	.global Tileset_EasternAlhafraTilesD
+Tileset_EasternAlhafraTilesD:
+	.incbin "games/tla/src/graphics/tileset/eastern_alhafra/tiles_d.4bpp.mtf"

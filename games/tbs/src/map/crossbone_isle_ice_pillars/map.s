@@ -34,7 +34,7 @@ Field_CrossboneIsleIcePillars:
 	treasure_spot 12, 17, 103
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette14
-Tileset_Palette14:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_14.gbapal.lz"
+	.global Tileset_PaletteCrossboneIsleIcePillars
+Tileset_PaletteCrossboneIsleIcePillars:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_ice_pillars.gbapal.lz"
 	.byte 0xf8, 0xe4	@ PACKER: left in the buffer by Field_CrossboneIsleIcePillars+0x17e

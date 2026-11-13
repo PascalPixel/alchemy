@@ -32,9 +32,9 @@ Field_GarohInteriors:
 .LField_GarohInteriors_SCENE:
 	.incbin "games/tla/src/map/garoh_interiors/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette08
-Tileset_Palette08:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_08.gbapal.lz"
+	.global Tileset_PaletteGarohInteriors
+Tileset_PaletteGarohInteriors:
+	.incbin "games/tla/src/graphics/tileset/palettes/garoh_interiors.gbapal.lz"
 	.byte 0xf3, 0xff	@ PACKER: left in the buffer by Field_GarohInteriors+0x1c2
 	.global Tileset_Palette09
 Tileset_Palette09:

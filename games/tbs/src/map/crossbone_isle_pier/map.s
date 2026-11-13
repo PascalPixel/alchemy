@@ -28,7 +28,7 @@ Field_CrossboneIslePier:
 	treasure_spot 53, 56, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette22
-Tileset_Palette22:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_22.gbapal.lz"
+	.global Tileset_PaletteCrossboneIslePier
+Tileset_PaletteCrossboneIslePier:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_pier.gbapal.lz"
 	.byte 0x50, 0x42, 0x7d	@ PACKER: left in the buffer by Field_CrossboneIslePier+0x171

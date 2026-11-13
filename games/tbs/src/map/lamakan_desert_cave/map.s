@@ -30,7 +30,7 @@ Field_LamakanDesertCave:
 .LField_LamakanDesertCave_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette07
-Tileset_Palette07:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_07.gbapal.lz"
+	.global Tileset_PaletteLamakanDesertCave
+Tileset_PaletteLamakanDesertCave:
+	.incbin "games/tbs/src/graphics/tileset/palettes/lamakan_desert_cave.gbapal.lz"
 	.byte 0x14, 0x26	@ PACKER: left in the buffer by Field_LamakanDesertCave+0x162

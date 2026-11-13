@@ -28,22 +28,22 @@ Field_JupiterLighthouseRoom1:
 	.balign 4, 0
 .LField_JupiterLighthouseRoom1_SCENE:
 	.incbin "games/tla/src/map/jupiter_lighthouse_room_1/scene.scene.lz"
-	.global Tileset_Set104Palette
-Tileset_Set104Palette:
-	.incbin "games/tla/src/graphics/tileset/set_104/palette.gbapal.lz"
+	.global Tileset_JupiterLighthouseRoomPalette
+Tileset_JupiterLighthouseRoomPalette:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_room/palette.gbapal.lz"
 	.byte 0x00, 0x1d, 0x0f	@ PACKER: left in the buffer by Field_JupiterLighthouseRoom1+0x179
-	.global Tileset_Set104TilesA
-Tileset_Set104TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_104/tiles_a.4bpp.mtf"
+	.global Tileset_JupiterLighthouseRoomTilesA
+Tileset_JupiterLighthouseRoomTilesA:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_room/tiles_a.4bpp.mtf"
 	.byte 0xf1, 0x6c, 0x88	@ PACKER: left in the buffer by Tileset_Set103TilesC+0x1f3d
-	.global Tileset_Set104TilesB
-Tileset_Set104TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_104/tiles_b.4bpp.mtf"
-	.byte 0x80, 0x62, 0xc6	@ PACKER: left in the buffer by Tileset_Set104TilesA+0x1471
-	.global Tileset_Set104TilesC
-Tileset_Set104TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_104/tiles_c.4bpp.mtf"
-	.byte 0xac	@ PACKER: left in the buffer by Tileset_Set104TilesA+0x1cb7
-	.global Tileset_Set104TilesD
-Tileset_Set104TilesD:
-	.incbin "games/tla/src/graphics/tileset/set_104/tiles_d.4bpp.mtf"
+	.global Tileset_JupiterLighthouseRoomTilesB
+Tileset_JupiterLighthouseRoomTilesB:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_room/tiles_b.4bpp.mtf"
+	.byte 0x80, 0x62, 0xc6	@ PACKER: left in the buffer by Tileset_JupiterLighthouseRoomTilesA+0x1471
+	.global Tileset_JupiterLighthouseRoomTilesC
+Tileset_JupiterLighthouseRoomTilesC:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_room/tiles_c.4bpp.mtf"
+	.byte 0xac	@ PACKER: left in the buffer by Tileset_JupiterLighthouseRoomTilesA+0x1cb7
+	.global Tileset_JupiterLighthouseRoomTilesD
+Tileset_JupiterLighthouseRoomTilesD:
+	.incbin "games/tla/src/graphics/tileset/jupiter_lighthouse_room/tiles_d.4bpp.mtf"

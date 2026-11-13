@@ -34,22 +34,22 @@ Field_TimberRoomsA:
 	treasure_spot 21, 3, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set65Palette
-Tileset_Set65Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_65/palette.gbapal.lz"
-	.global Tileset_Set65TilesA
-Tileset_Set65TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_65/tiles_a.4bpp.mtf"
+	.global Tileset_TimberRoomsPalette
+Tileset_TimberRoomsPalette:
+	.incbin "games/tbs/src/graphics/tileset/timber_rooms/palette.gbapal.lz"
+	.global Tileset_TimberRoomsTilesA
+Tileset_TimberRoomsTilesA:
+	.incbin "games/tbs/src/graphics/tileset/timber_rooms/tiles_a.4bpp.mtf"
 	.byte 0x94	@ PACKER: left in the buffer by Field_TimberRoomsA+0x1e7f
 	.balign 4, 0
-	.global Tileset_Set65TilesB
-Tileset_Set65TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_65/tiles_b.4bpp.mtf"
+	.global Tileset_TimberRoomsTilesB
+Tileset_TimberRoomsTilesB:
+	.incbin "games/tbs/src/graphics/tileset/timber_rooms/tiles_b.4bpp.mtf"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global Tileset_Set65TilesC
-Tileset_Set65TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_65/tiles_c.4bpp.mtf"
-	.global Tileset_Set65TilesD
-Tileset_Set65TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_65/tiles_d.4bpp.mtf"
-	.byte 0x69, 0x4e, 0x50	@ PACKER: left in the buffer by Tileset_Set65TilesC+0x160d
+	.global Tileset_TimberRoomsTilesC
+Tileset_TimberRoomsTilesC:
+	.incbin "games/tbs/src/graphics/tileset/timber_rooms/tiles_c.4bpp.mtf"
+	.global Tileset_TimberRoomsTilesD
+Tileset_TimberRoomsTilesD:
+	.incbin "games/tbs/src/graphics/tileset/timber_rooms/tiles_d.4bpp.mtf"
+	.byte 0x69, 0x4e, 0x50	@ PACKER: left in the buffer by Tileset_TimberRoomsTilesC+0x160d

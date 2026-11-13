@@ -29,6 +29,6 @@ Field_Yallam:
 .LField_Yallam_SCENE:
 	.incbin "games/tla/src/map/yallam/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette24
-Tileset_Palette24:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_24.gbapal.lz"
+	.global Tileset_PaletteYallam
+Tileset_PaletteYallam:
+	.incbin "games/tla/src/graphics/tileset/palettes/yallam.gbapal.lz"

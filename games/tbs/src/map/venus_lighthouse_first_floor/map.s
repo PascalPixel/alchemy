@@ -128,7 +128,7 @@ Field_VenusLighthouseFirstFloor:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Tileset_Palette51
-Tileset_Palette51:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_51.gbapal.lz"
+	.global Tileset_PaletteVenusLighthouse
+Tileset_PaletteVenusLighthouse:
+	.incbin "games/tbs/src/graphics/tileset/palettes/venus_lighthouse.gbapal.lz"
 	.byte 0xf0, 0x40, 0xef	@ PACKER: left in the buffer by Field_VenusLighthouseFirstFloor+0x159

@@ -38,6 +38,6 @@ Field_HammetPalace:
 	treasure_spot 42, 16, 101
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Palette08
-Tileset_Palette08:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_08.gbapal.lz"
+	.global Tileset_PaletteHammetPalace
+Tileset_PaletteHammetPalace:
+	.incbin "games/tbs/src/graphics/tileset/palettes/hammet_palace.gbapal.lz"

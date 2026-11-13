@@ -29,7 +29,7 @@ Field_JupiterLighthouseRoomM:
 .LField_JupiterLighthouseRoomM_SCENE:
 	.incbin "games/tla/src/map/jupiter_lighthouse_room_m/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Palette55
-Tileset_Palette55:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_55.gbapal.lz"
+	.global Tileset_PaletteJupiterLighthouseRoomM
+Tileset_PaletteJupiterLighthouseRoomM:
+	.incbin "games/tla/src/graphics/tileset/palettes/jupiter_lighthouse_room_m.gbapal.lz"
 	.byte 0x34, 0x61, 0x91	@ PACKER: left in the buffer by Field_JupiterLighthouseRoomM+0x13d

@@ -30,20 +30,20 @@ Field_Altin:
 .LField_Altin_MARKERS:
 	treasure_spots_end
 	.balign 4, 0
-	.global Tileset_Set48Palette
-Tileset_Set48Palette:
-	.incbin "games/tbs/src/graphics/tileset/set_48/palette.gbapal.lz"
-	.global Tileset_Set48TilesA
-Tileset_Set48TilesA:
-	.incbin "games/tbs/src/graphics/tileset/set_48/tiles_a.4bpp.mtf"
-	.global Tileset_Set48TilesB
-Tileset_Set48TilesB:
-	.incbin "games/tbs/src/graphics/tileset/set_48/tiles_b.4bpp.mtf"
-	.byte 0xd6, 0x54	@ PACKER: left in the buffer by Tileset_Set48TilesA+0x2062
-	.global Tileset_Set48TilesC
-Tileset_Set48TilesC:
-	.incbin "games/tbs/src/graphics/tileset/set_48/tiles_c.4bpp.mtf"
-	.global Tileset_Set48TilesD
-Tileset_Set48TilesD:
-	.incbin "games/tbs/src/graphics/tileset/set_48/tiles_d.4bpp.mtf"
-	.byte 0xd0	@ PACKER: left in the buffer by Tileset_Set48TilesC+0x130b
+	.global Tileset_AltinPalette
+Tileset_AltinPalette:
+	.incbin "games/tbs/src/graphics/tileset/altin/palette.gbapal.lz"
+	.global Tileset_AltinTilesA
+Tileset_AltinTilesA:
+	.incbin "games/tbs/src/graphics/tileset/altin/tiles_a.4bpp.mtf"
+	.global Tileset_AltinTilesB
+Tileset_AltinTilesB:
+	.incbin "games/tbs/src/graphics/tileset/altin/tiles_b.4bpp.mtf"
+	.byte 0xd6, 0x54	@ PACKER: left in the buffer by Tileset_AltinTilesA+0x2062
+	.global Tileset_AltinTilesC
+Tileset_AltinTilesC:
+	.incbin "games/tbs/src/graphics/tileset/altin/tiles_c.4bpp.mtf"
+	.global Tileset_AltinTilesD
+Tileset_AltinTilesD:
+	.incbin "games/tbs/src/graphics/tileset/altin/tiles_d.4bpp.mtf"
+	.byte 0xd0	@ PACKER: left in the buffer by Tileset_AltinTilesC+0x130b

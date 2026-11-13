@@ -32,22 +32,22 @@ Field_ShopTest:
 .LField_ShopTest_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_Set121Palette
-Tileset_Set121Palette:
-	.incbin "games/tla/src/graphics/tileset/set_121/palette.gbapal.lz"
-	.global Tileset_Set121TilesA
-Tileset_Set121TilesA:
-	.incbin "games/tla/src/graphics/tileset/set_121/tiles_a.4bpp.mtf"
+	.global Tileset_ShopTestPalette
+Tileset_ShopTestPalette:
+	.incbin "games/tla/src/graphics/tileset/shop_test/palette.gbapal.lz"
+	.global Tileset_ShopTestTilesA
+Tileset_ShopTestTilesA:
+	.incbin "games/tla/src/graphics/tileset/shop_test/tiles_a.4bpp.mtf"
 	.byte 0x26, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
-	.global Tileset_Set121TilesB
-Tileset_Set121TilesB:
-	.incbin "games/tla/src/graphics/tileset/set_121/tiles_b.4bpp.mtf"
-	.byte 0x0f, 0xd8	@ PACKER: left in the buffer by Tileset_Set121TilesA+0x1772
-	.global Tileset_Set121TilesC
-Tileset_Set121TilesC:
-	.incbin "games/tla/src/graphics/tileset/set_121/tiles_c.4bpp.mtf"
-	.byte 0x06	@ PACKER: left in the buffer by Tileset_Set121TilesB+0x12bb
-	.global Tileset_Set121TilesD
-Tileset_Set121TilesD:
+	.global Tileset_ShopTestTilesB
+Tileset_ShopTestTilesB:
+	.incbin "games/tla/src/graphics/tileset/shop_test/tiles_b.4bpp.mtf"
+	.byte 0x0f, 0xd8	@ PACKER: left in the buffer by Tileset_ShopTestTilesA+0x1772
+	.global Tileset_ShopTestTilesC
+Tileset_ShopTestTilesC:
+	.incbin "games/tla/src/graphics/tileset/shop_test/tiles_c.4bpp.mtf"
+	.byte 0x06	@ PACKER: left in the buffer by Tileset_ShopTestTilesB+0x12bb
+	.global Tileset_ShopTestTilesD
+Tileset_ShopTestTilesD:
 	.incbin "games/tla/src/graphics/tileset/set_119/tiles_d.4bpp.mtf"
-	.byte 0xe5, 0x3d	@ PACKER: left in the buffer by Tileset_Set121TilesC+0x842
+	.byte 0xe5, 0x3d	@ PACKER: left in the buffer by Tileset_ShopTestTilesC+0x842

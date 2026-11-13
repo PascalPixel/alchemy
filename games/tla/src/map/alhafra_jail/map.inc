@@ -28,7 +28,7 @@ Field_AlhafraJail:
 	.balign 4, 0
 .LField_AlhafraJail_SCENE:
 	.incbin "games/tla/src/map/alhafra_jail/scene.scene.lz"
-	.global Tileset_Palette11
-Tileset_Palette11:
-	.incbin "games/tla/src/graphics/tileset/palettes/pal_11.gbapal.lz"
+	.global Tileset_PaletteAlhafraJail
+Tileset_PaletteAlhafraJail:
+	.incbin "games/tla/src/graphics/tileset/palettes/alhafra_jail.gbapal.lz"
 	.byte 0x5d	@ PACKER: left in the buffer by Field_AlhafraJail+0x19b

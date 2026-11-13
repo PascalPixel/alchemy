@@ -247,7 +247,6 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 #include "scene_tables.h"
 
 DEFINE_LEADER_CENTER_IN_CELL(Func_02003af0)
-#include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
 

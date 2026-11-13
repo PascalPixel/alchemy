@@ -100,7 +100,6 @@ DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gData_02002308, Func_020010
 #include "scene_tables.h"
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
-#include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
 

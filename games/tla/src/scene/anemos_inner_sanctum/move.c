@@ -134,7 +134,6 @@ void Func_02002cb8(void) {
   FieldEvent_Wait(4);
   FieldCamera_GetActor()->y -= 0x80000;
 }
-#include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
 

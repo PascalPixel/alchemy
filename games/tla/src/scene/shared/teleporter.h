@@ -469,18 +469,11 @@
 #define DEFINE_TELEPORTER_UNCOVER(name, call1)                                 \
   void name(struct CellTarget *table, struct CellTargetEntry *entry) {         \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
-    s16 sourceX;                                                               \
-    s32 leaderX = leader->x;                                                   \
     s32 x;                                                                     \
     s32 z;                                                                     \
                                                                                \
-    /* FAKEMATCH(barrier): passes the source column through an asm reading the \
-     * leader's x, so the x load ties the 64 mask's copy and wins on order; as \
-     * (leader->x >> 20) | (s16)(table->x & 64), 2 of 49 instructions differ   \
-     * in tla-en. */                                                           \
-    asm("" : "=r"(sourceX) : "0"(table->x), "r"(leaderX));                     \
-    x = (leaderX >> 20) | (s16)(sourceX & 64);                                 \
-    z = CellTarget_CellWithBit(leader->z, table->z & 64);                      \
+    x = (leader->x >> 20) | (s16)(table->x & 64);                              \
+    z = (leader->z >> 20) | (s16)(table->z & 64);                              \
     call1();                                                                   \
     Event_PlaySound(161);                                                      \
     MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);                     \

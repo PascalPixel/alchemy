@@ -26,7 +26,6 @@ DEFINE_TELEPORTERS_FIND(Func_02003930, gData_02004cf4, Func_02003804)
 #include "scene_tables.h"
 
 DEFINE_LEADER_CENTER_IN_CELL(Func_02003b74)
-#include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
 

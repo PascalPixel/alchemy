@@ -122,7 +122,6 @@ void Func_02001790(void) {
   FieldEvent_Wait(4);
   ((struct Actor *)FieldCamera_GetActor())->y += 0xfff80000;
 }
-#include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and

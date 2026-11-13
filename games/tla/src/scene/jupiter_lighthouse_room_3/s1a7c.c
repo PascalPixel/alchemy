@@ -21,7 +21,6 @@
 DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gData_02002e34, Func_02001950)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
-#include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and

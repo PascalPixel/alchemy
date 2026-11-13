@@ -102,7 +102,6 @@ void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_TELEPORTERS_FIND(Teleporters_Find, Data_02005b88, Func_02003d44)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
-#include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and

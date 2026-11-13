@@ -391,11 +391,12 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
 
     if (obj->flags & 14) {
       if (obj->flags & 2) {
-        u32 codeSize = (u32)Data_08021824Size;
+        u32 codeSize = (u32)Grid_DrawOutlineCodeSize;
         OutlineFn outline = Heap_Alloc(codeSize);
         u32 outlineHeight;
 
-        Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), REG_DMA3);
+        Dma_Set(Grid_DrawOutlineCode, outline, 0x84000000 | (codeSize >> 2),
+                REG_DMA3);
         {
           /* FAKEMATCH(temporary): the width read into a local before the
            * asm below; as obj->width in the call, 2 of 578 instructions

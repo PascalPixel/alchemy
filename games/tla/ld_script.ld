@@ -68,8 +68,8 @@ Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
 BattleEffect_ExpandCodeSize = BattleEffect_DotProduct2 - BattleEffect_ExpandCode;
 BattleEffect_Expand2CodeSize = BattleEffect_Expand2End - BattleEffect_Expand2Code;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
-Data_08021824Size = Resource_GetMetadataRecordFar - Data_08021824;
-Data_0802146cSize = Render_ConvertMapCode - Data_0802146c;
+Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
+Transform_UpdateVerticesCodeSize = Render_ConvertMapCode - Transform_UpdateVerticesCode;
 
 MEMORY
 {
@@ -178,14 +178,14 @@ SECTIONS
         "*/games/tla/src/field/picture_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/picture_decode_data.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/draw_map.o"(.text .rodata .data .padding)
-        "*/games/tla/src/field/f0212d8.o"(.text)
-        "*/games/tla/src/field/f021470_entries.o"(.text)
-        "*/games/tla/src/field/f021470.o"(.text)
-        "*/games/tla/src/field/f021470_call_thumb.o"(.text .rodata .data .padding)
+        "*/games/tla/src/field/world_map_scanlines.o"(.text)
+        "*/games/tla/src/field/world_map_lines_entry.o"(.text)
+        "*/games/tla/src/field/world_map_lines.o"(.text)
+        "*/games/tla/src/field/world_map_lines_call_thumb.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/map_grid_convert.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/copy_strided.o"(.text .rodata .data .padding)
-        "*/games/tla/src/field/f021828_entries.o"(.text)
-        "*/games/tla/src/field/f021828.o"(.text)
+        "*/games/tla/src/field/grid_outline_entry.o"(.text)
+        "*/games/tla/src/field/grid_outline.o"(.text)
         "*/games/tla/src/field/field.o"(.text)
         "*/games/tla/src/field/resource_slot.o"(.text)
         "*/games/tla/src/field/map/tile_animation.o"(.text)

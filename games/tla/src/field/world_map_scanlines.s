@@ -1,6 +1,6 @@
-@ Why assembly: Func_080212d8 is a Thumb entry whose bx pc switches to the ARM
-@ code of Func_080212dc that follows, a mode switch inside a function; its
-@ halfword after bx pc is never run. Func_080212dc, an ARM copy of the
+@ Why assembly: WorldMap_BuildScanlineTableArm is a Thumb entry whose bx pc switches to the ARM
+@ code of WorldMap_BuildScanlineTableInArm that follows, a mode switch inside a function; its
+@ halfword after bx pc is never run. WorldMap_BuildScanlineTableInArm, an ARM copy of the
 @ perspective map's scanline table builder (WorldMap_BuildScanlineTable is the Thumb one),
 @ calls IwramSqrt and IwramTransformVector by bl through two 8-byte far-call
 @ veneers placed after its literal pool, and two of its smull take free
@@ -8,17 +8,17 @@
 @ GCC's register-pair multiply cannot emit.
 .syntax unified
 	.thumb
-	.global Func_080212d8
+	.global WorldMap_BuildScanlineTableArm
 	.thumb_func
-Func_080212d8:
+WorldMap_BuildScanlineTableArm:
 	bx	pc
 AlchemyUncredited_080212da:
 	.2byte	0x0200
 AlchemyUncreditedEnd_080212da:
 	.arm
-	.global Func_080212dc
-	.type Func_080212dc, %function
-Func_080212dc:
+	.global WorldMap_BuildScanlineTableInArm
+	.type WorldMap_BuildScanlineTableInArm, %function
+WorldMap_BuildScanlineTableInArm:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	mov	r5, #0
 	sub	sp, sp, #76

@@ -961,9 +961,9 @@ extern u8 Render_DecodePictureCopyEnd[];
 
 extern u8 Render_DecodePictureBlockSize[];
 
-extern const u8 Data_08021824[];
+extern const u8 Grid_DrawOutlineCode[];
 
-extern u8 Data_08021824Size[];
+extern u8 Grid_DrawOutlineCodeSize[];
 
 extern const u8 Data_080209a8[];
 

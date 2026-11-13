@@ -389,9 +389,9 @@ extern char ResourceId_Map000;
 
 extern char ResourceId_Data199;
 
-extern const u8 Data_0802146c[];
+extern const u8 Transform_UpdateVerticesCode[];
 
-extern u8 Data_0802146cSize[];
+extern u8 Transform_UpdateVerticesCodeSize[];
 
 s32 Func_080c8770(s32 x, s32 z, s32 kind);
 

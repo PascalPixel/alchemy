@@ -1,10 +1,10 @@
 /// @file
 /// The grid outliner, compiled as ARM code and copied to RAM to run, entered
-/// in Thumb through Data_08021824 (f021828_entries.s).
+/// in Thumb through Grid_DrawOutlineCode (grid_outline_entry.s).
 
 #include "types.h"
 
-void Func_08021828(u32 width, u32 height, u8 *grid, u32 edge, u32 fill) {
+void Grid_DrawOutlineArm(u32 width, u32 height, u8 *grid, u32 edge, u32 fill) {
   u32 size = width * height;
   u8 *next = grid + width + 1;
   s32 above = -width - 1;

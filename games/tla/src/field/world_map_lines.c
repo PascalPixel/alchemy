@@ -1,9 +1,10 @@
 /// @file
 /// An ARM routine that builds the per-scanline affine table of a perspective
 /// ground plane, as The Broken Seal's Transform_UpdateVertices. Its caller
-/// copies 0x298 bytes from Data_0802146c (f021470_entries.s) into a heap slot
-/// and enters it in Thumb from there, so its stub Func_080216f0
-/// (f021470_call_thumb.s) travels with it.
+/// copies 0x298 bytes from Transform_UpdateVerticesCode
+/// (world_map_lines_entry.s) into a heap slot and enters it in Thumb from
+/// there, so its stub Transform_CallInThumb (world_map_lines_call_thumb.s)
+/// travels with it.
 
 #include "types.h"
 #include "mul_q16.h"
@@ -32,9 +33,9 @@ struct FarCallRuntimeTrigView {
   struct FarCallTrigVeneer cos;
 };
 
-/* VIEW(f021470): tag struct Vector3 as struct Vector3__f021470; vector3.h has
- * another definition. */
-struct Vector3__f021470 {
+/* VIEW(world_map_lines): tag struct Vector3 as struct Vector3__world_map_lines;
+ * vector3.h has another definition. */
+struct Vector3__world_map_lines {
   s32 x;
   s32 y;
   s32 z;
@@ -62,11 +63,12 @@ extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
 extern s32 Data_030011ec;
 extern u32 gScanlineAngle;
 
-s32 Func_080216f0(s32 x, s32 y);
+s32 Transform_CallInThumb(s32 x, s32 y);
 
-void Func_08021470(struct Vector3__f021470 *eye,
-                   struct Vector3__f021470 *target, struct ScanVertex *line,
-                   struct BgAffine *affine) {
+void Transform_UpdateVertices(struct Vector3__world_map_lines *eye,
+                              struct Vector3__world_map_lines *target,
+                              struct ScanVertex *line,
+                              struct BgAffine *affine) {
   u32 angle;
   s32 originX;
   s32 originZ;
@@ -91,15 +93,15 @@ void Func_08021470(struct Vector3__f021470 *eye,
        * differ in tla-en. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
       s32 y = depth >> 4;
-      /* FAKEMATCH(pin): the target held in ip, where the stub Func_080216f0
-       * reads it; as the plain call through table->atan2.target, 1 of 156
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the target held in ip, where the stub
+       * Transform_CallInThumb reads it; as the plain call through
+       * table->atan2.target, 1 of 156 instructions differ in tla-en. */
       register void *entry __asm__("ip") = table->atan2.target;
       /* FAKEMATCH(barrier): an empty asm reading the arguments and the
        * target, which keeps ip's load alive into the stub's call; without it,
        * 2 of 156 instructions differ in tla-en. */
       __asm__("" : : "r"(x), "r"(y), "r"(entry));
-      angle = (u16)Func_080216f0(x, y);
+      angle = (u16)Transform_CallInThumb(x, y);
     }
   }
   originX = MulQ16(target->x, 0x8000);

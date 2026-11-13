@@ -111,7 +111,8 @@ void WorldMap_InitializePerspective(void) {
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState__f02b998();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
-  RamCode_LoadSlot(104, Data_0802146c, Data_0802146cSize);
+  RamCode_LoadSlot(104, Transform_UpdateVerticesCode,
+                   Transform_UpdateVerticesCodeSize);
   WorldMap_BuildScanlineTable(
       Iwram_RatioMulQ14(Trig_Cos(view->pitch), Trig_Sin(view->pitch)),
       cameraPosition, affineWork);

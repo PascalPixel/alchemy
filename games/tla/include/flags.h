@@ -25,4 +25,11 @@
 /// and fangs" (MsgGarohInteriors17)
 #define FLAG_GAROH_NIGHT 0x310
 
+/// Set as Briggs sails from Alhafra in the boat he bought with the Ankohl
+/// jewels, leaving the party on the shore; from then on Champa is fed and
+/// talks of his return.
+/// ★ Named from the game: "I paid for this boat, fair and square. I'm no
+/// thief." (MsgBriggs2)
+#define FLAG_BRIGGS_SAILED_FROM_ALHAFRA 0x97f
+
 #endif

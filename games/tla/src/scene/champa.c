@@ -11,6 +11,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 #include "main_routine_work.h"
@@ -31,7 +32,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern s16 gData_02002c5c[];
 
 const s16 *Scene_GetPlacements(void) {
-  if (Event_GetFlag(0x97f))
+  if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
     return gData_02002efc;
   return gData_02002c5c;
 }
@@ -204,7 +205,7 @@ void Func_02000468(s32 actor) {
 }
 
 void Func_020004b4(s32 actor) {
-  if (Event_GetFlag(0x97f)) {
+  if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldEvent_SetMessageId((s32)MsgChampa30);
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
@@ -455,7 +456,7 @@ void Func_02000638(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (Event_GetFlag(0x97f))
+  if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
     return gData_0200b410;
   return gData_0200320c;
 }
@@ -514,7 +515,7 @@ s32 Scene_Initialize(void) {
   Func_02002ba4();
   Func_02002bac(0, 8, 9);
   Map_SetLayerEntryFlag(3);
-  t12 = Event_GetFlag(0x97f);
+  t12 = Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   if (t12 != 0) {
     FieldActor_SetSpritePriority(20, 2);
     FieldActor_SetSpritePriority(21, 3);
@@ -538,7 +539,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s32 t0;
 
-  t0 = Event_GetFlag(0x97f);
+  t0 = Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   if (t0 != 0) {
     MapGrid_CopyCellsLayered(0xb, 0x33, 5, 4, 0x10, 0x17);
     MapGrid_CopyCellAttributes(11, 51, 5, 6, 16, 23);

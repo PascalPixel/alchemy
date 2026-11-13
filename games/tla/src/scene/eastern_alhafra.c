@@ -13,6 +13,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -1540,8 +1541,8 @@ void Func_02002048(void) {
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which
-/// sets flags 0x90f and 0x97f and ends by sending the party to
-/// SceneId_Ov668Room1, entrance 99.
+/// sets flags 0x90f and FLAG_BRIGGS_SAILED_FROM_ALHAFRA and ends by sending the
+/// party to SceneId_Ov668Room1, entrance 99.
 void Func_02002a08(void) {
   struct MapWork *map;
   s32 i;
@@ -1550,7 +1551,7 @@ void Func_02002a08(void) {
   if (Event_GetFlag(0x8a7) == 0)
     return;
   Event_SetFlag(0x90f);
-  Event_SetFlag(0x97f);
+  Event_SetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgBriggs2);

@@ -5,6 +5,7 @@
 
 #include "event_inline.h"
 #include "types.h"
+#include "flags.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_event.h"
@@ -109,7 +110,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     if (scene == (s32)&SceneId_Ov685Room4)
       return gData_02003c84;
   } else {
-    if (GameFlag_Test(0x97f)) {
+    if (GameFlag_Test(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
       scene = gMainRoutineWork.scene;
       if (scene == (s32)&SceneId_Ov685Room1)
         return gData_020038ac;

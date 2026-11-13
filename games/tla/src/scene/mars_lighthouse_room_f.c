@@ -1124,7 +1124,7 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
 /* VIEW(s167c): tag struct EventWork as struct EventWork__s167c; event_work.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1146: structure has no member
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1140: structure has no member
  * named `unk_d46'. */
 struct EventWork__s167c {
   u8 unk_00[0x154];
@@ -1363,7 +1363,7 @@ struct RideDirection {
 /* VIEW(s1ffc): tag struct RideWork as struct RideWork__s1ffc;
  * mars_lighthouse_room_f.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1362: request for member `unk02'
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1356: request for member `unk02'
  * in something not a structure or union. */
 struct RideWork__s1ffc {
   u8 unk00[4];
@@ -1410,7 +1410,7 @@ DEFINE_RIDE_SPAWN_SPARK(Ride_SpawnSpark, Func_02005498_, Actor_SetupScriptedFor,
 
 /* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1451:
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1445:
  * structure has no member named `flag5b'. */
 typedef struct Actor__s242c {
   u8 pad0[8];
@@ -1510,7 +1510,7 @@ struct RideRow {
 /* VIEW(s25b0): tag struct RideWork as struct RideWork__s25b0;
  * mars_lighthouse_room_f.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1505: structure has no member
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1499: structure has no member
  * named `handle'. */
 struct RideWork__s25b0 {
   s32 counter;
@@ -1544,7 +1544,7 @@ DEFINE_BEAM_START(Beam_Start, Beam_DrawTargets)
 /* VIEW(ride): tag struct RideSlot as struct RideSlot__ride;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1532: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1522: redefinition of `struct
  * RideSlot'. */
 #define RideSlot RideSlot__ride
 struct RideSlot {
@@ -1555,7 +1555,7 @@ struct RideSlot {
 /* VIEW(ride): tag struct RideWork as struct RideWork__ride;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1539: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1529: redefinition of `struct
  * RideWork'. */
 #define RideWork RideWork__ride
 struct RideWork {
@@ -1615,7 +1615,7 @@ struct MarsLighthouseEventWork {
 /* VIEW(ride): routine Unit_Get as this part declared it; the joined file has
  * another; tried as the definition's void *Unit_Get(s32 owner), which the
  * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1594: request for member `hp' in
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1584: request for member `hp' in
  * something not a structure or union. */
 struct BattleUnit *Unit_Get__ride(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride
@@ -1631,7 +1631,7 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Party_TakeFallDamage)
 /* VIEW(flash): tag struct RideSlot as struct RideSlot__flash;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1609: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1595: redefinition of `struct
  * RideSlot'. */
 #define RideSlot RideSlot__flash
 struct RideSlot {
@@ -1642,7 +1642,7 @@ struct RideSlot {
 /* VIEW(flash): tag struct RideWork as struct RideWork__flash;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1616: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1602: redefinition of `struct
  * RideWork'. */
 #define RideWork RideWork__flash
 struct RideWork {
@@ -2103,7 +2103,7 @@ DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 /* VIEW(s328c): tag struct RideSlot as struct RideSlot__s328c;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2071: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:2052: redefinition of `struct
  * RideSlot'. */
 #define RideSlot RideSlot__s328c
 struct RideSlot {
@@ -2114,7 +2114,7 @@ struct RideSlot {
 /* VIEW(s328c): tag struct RideWork as struct RideWork__s328c;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2078: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:2059: redefinition of `struct
  * RideWork'. */
 #define RideWork RideWork__s328c
 struct RideWork {
@@ -2280,10 +2280,8 @@ DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3d80): routine CrackedTile_FallEvent as this part declared it; the
- * joined file has another; tried as the one declaration void
- * CrackedTile_FallEvent(), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2274: too many arguments to
- * function `CrackedTile_FallEvent'. */
+ * joined file has another; not tried: CrackedTile_FallEvent's declaration holds
+ * a FAKEMATCH tag. */
 void CrackedTile_FallEvent__s3d80(
     struct WarpWork *work,
     struct WarpEntry *entry) __asm__("CrackedTile_FallEvent");
@@ -2772,10 +2770,8 @@ DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 #undef MapLayer
 
 /* VIEW(data): routine Func_02001010 as module/scene/airs_rock.h declares it;
- * the joined file has another; tried as the definition's void
- * Func_02001010(void), which the object already declares, it does not compile
- * in tla-ja: games/tla/include/module/scene/airs_rock.h:67: conflicting types
- * for `Func_02001010'. */
+ * the joined file has another; not tried: Func_02001010's declaration holds a
+ * FAKEMATCH tag. */
 void Func_02001010__data(void) __asm__("Func_02001010");
 #define Func_02001010 Func_02001010__data
 #include "module/scene/airs_rock.h"

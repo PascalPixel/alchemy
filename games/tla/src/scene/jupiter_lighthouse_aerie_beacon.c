@@ -1208,14 +1208,14 @@ extern u32 gData_02005ff8[];
 /* VIEW(s0198): routine gData_02006088 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02006088[], it does
  * not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1379: `gData_02006088'
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1361: `gData_02006088'
  * undeclared (first use in this function). */
 extern u8 gData_02006088__s0198[] __asm__("gData_02006088");
 #define gData_02006088 gData_02006088__s0198
 /* VIEW(s0198): routine gData_020061e0 as this part declared it; the joined file
  * has another; tried as the one declaration extern u8 gData_020061e0[], it does
  * not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1602: `gData_020061e0'
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1578: `gData_020061e0'
  * undeclared (first use in this function). */
 extern u8 gData_020061e0__s0198[] __asm__("gData_020061e0");
 #define gData_020061e0 gData_020061e0__s0198
@@ -2193,7 +2193,7 @@ struct SceneWork {
 /* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2236: dereferencing
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2205: dereferencing
  * pointer to incomplete type. */
 struct FieldWork__s0198 {
   u8 pad0[0x178];
@@ -2298,7 +2298,7 @@ void Func_02003a6c(s32 mode) {
 /* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2323: structure has no
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2292: structure has no
  * member named `map'. */
 struct HeapSlotWords__s0198 {
   s32 unk00[8];
@@ -2436,8 +2436,10 @@ s32 Scene_PrepareMap(void) {
 #undef SET_MODE_AND_WAIT
 
 /* VIEW(s3f54): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another; not tried: gPaletteCyclePausesInEvents's bound
- * declaration was not found. */
+ * the joined file has another; tried as the definition's extern s32
+ * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2423:
+ * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__s3f54 __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__s3f54
@@ -2878,7 +2880,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s539c): routine CrackedTile_FallEvent as this part declared it; the
  * joined file has another; tried as the one declaration void
  * CrackedTile_FallEvent(), it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2910: too many
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2860: too many
  * arguments to function `CrackedTile_FallEvent'. */
 void CrackedTile_FallEvent__s539c(
     struct CellTarget *work,

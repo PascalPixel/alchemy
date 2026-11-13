@@ -54,7 +54,7 @@ u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
  * s32 x, s32 z); tried as the definition's void
  * Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z), which the
  * object already declares, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_internal.h:52: conflicting types for
+ * games/tla/src/field/field_sequence.c:54: conflicting types for
  * `Actor_SetHorizontalPositionWithTerrain'. */
 void Actor_SetHorizontalPositionWithTerrain__event_commands(
     u32 objectId, s32 x,

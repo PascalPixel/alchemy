@@ -75,37 +75,6 @@ s32 Yallam_HideSprite(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-/* VIEW(first): routine MsgDoYouWant as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/yallam.c:356: `MsgDoYouWant' undeclared (first
- * use in this function). */
-extern const u8 MsgDoYouWant__first[] __asm__("MsgDoYouWant");
-#define MsgDoYouWant MsgDoYouWant__first
-/* VIEW(first): routine MsgRunningAroundIn as this part declared it; the joined
- * file has another; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/yallam.c:377: `MsgRunningAroundIn'
- * undeclared (first use in this function). */
-extern const u8 MsgRunningAroundIn__first[] __asm__("MsgRunningAroundIn");
-#define MsgRunningAroundIn MsgRunningAroundIn__first
-/* VIEW(first): routine MsgThereSALot as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/yallam.c:379: `MsgThereSALot' undeclared
- * (first use in this function). */
-extern const u8 MsgThereSALot__first[] __asm__("MsgThereSALot");
-#define MsgThereSALot MsgThereSALot__first
-/* VIEW(first): routine MsgThereSAGame as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/yallam.c:400: `MsgThereSAGame' undeclared
- * (first use in this function). */
-extern const u8 MsgThereSAGame__first[] __asm__("MsgThereSAGame");
-#define MsgThereSAGame MsgThereSAGame__first
-/* VIEW(first): routine MsgIOnceHeard as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/yallam.c:402: `MsgIOnceHeard' undeclared
- * (first use in this function). */
-extern const u8 MsgIOnceHeard__first[] __asm__("MsgIOnceHeard");
-#define MsgIOnceHeard MsgIOnceHeard__first
-
 void Yallam_RunSongPath(s32 id);
 void Yallam_ShowSongGame(void);
 void Event_End(void);
@@ -1410,12 +1379,6 @@ void Yallam_StartRunner(s32 id) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-/* VIEW(first): routine MsgHereLetMe as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/yallam.c:1414: `MsgHereLetMe' undeclared
- * (first use in this function). */
-extern const u8 MsgHereLetMe__first[] __asm__("MsgHereLetMe");
-#define MsgHereLetMe MsgHereLetMe__first
 extern u32 gYallam_SongGameGather9[];
 extern u32 gYallam_SongGameGather10[];
 extern u32 gYallam_SongGameForm8[];

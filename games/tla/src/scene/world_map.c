@@ -2111,7 +2111,7 @@ DEFINE_ACTOR_FLICKER(Func_02003b38, WorldMap_SpawnSparkPair)
  * has another; tried as the definition's extern LATE_DATA
  * DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, Func_020035e0, 17, 0)
  * LATE_DATA u32 gData_02006be4[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2168: `gData_02006be4' undeclared (first use
+ * games/tla/src/scene/world_map.c:2101: `gData_02006be4' undeclared (first use
  * in this function). */
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38

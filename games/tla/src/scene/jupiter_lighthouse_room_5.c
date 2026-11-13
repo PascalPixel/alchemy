@@ -191,14 +191,14 @@ DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x201, gOrbScript, Orb_Update, 1)
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02003274 as this part declared
  * it; the joined file has another; tried as the definition's extern
  * DEFINE_G_DATA_02003214(gOrbScript) u32 gData_02003274[], it does not compile
- * in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:202:
+ * in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:196:
  * `gData_02003274' undeclared (first use in this function). */
 extern s32 gData_02003274__jupiter_lighthouse_room_5 __asm__("gData_02003274");
 #define gData_02003274 gData_02003274__jupiter_lighthouse_room_5
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02003278 as this part declared
  * it; the joined file has another; tried as the definition's extern u32
  * gData_02003278[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:204: `gData_02003278'
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:198: `gData_02003278'
  * undeclared (first use in this function). */
 extern s32 gData_02003278__jupiter_lighthouse_room_5 __asm__("gData_02003278");
 #define gData_02003278 gData_02003278__jupiter_lighthouse_room_5
@@ -358,7 +358,7 @@ struct SparkWork {
 /* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this
  * part declared it; the joined file has another; tried as the definition's
  * extern s32 gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:1217: conflicting types for
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:1186: conflicting types for
  * `gPaletteCyclePausesInEvents'. */
 extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
     "gPaletteCyclePausesInEvents");
@@ -774,7 +774,7 @@ struct Spark {
 /* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct
  * SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:814: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:798: structure has no
  * member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
@@ -786,7 +786,7 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
 /* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230;
  * jupiter_lighthouse_room_5.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:789: structure has no member
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:773: structure has no member
  * named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
@@ -833,7 +833,7 @@ void Func_02001538(void) {
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
  * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:850: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:830: structure has no
  * member named `sparks'. */
 struct SparkWork__s1650 {
   u8 tiles[0x400];

@@ -826,7 +826,7 @@ void Func_02001080(void) {
 /* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;
  * games/tla/src/scene/jupiter_lighthouse_aerie/s0d08 has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie.c:869: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie.c:857: structure has no
  * member named `smallTile'. */
 struct BeamWork__s17a8 {
   u8 tiles[0x200];

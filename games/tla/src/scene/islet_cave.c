@@ -472,7 +472,7 @@ void Func_020009ec(void) {
 /* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
  * field_event.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:489: dereferencing pointer to incomplete
+ * games/tla/src/scene/islet_cave.c:486: dereferencing pointer to incomplete
  * type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];

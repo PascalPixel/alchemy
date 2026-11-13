@@ -1912,7 +1912,7 @@ struct CellTarget__s41ac {
  * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
  * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
  * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1932: conflicting types for
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1908: conflicting types for
  * `CrackedTile_Fall'. */
 void CrackedTile_Fall__s41ac(
     struct CellTarget__s41ac *table,

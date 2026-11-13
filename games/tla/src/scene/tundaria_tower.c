@@ -1563,7 +1563,7 @@ next:
 // A falling rock's sprite.
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:2168:
+ * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:1601:
  * structure has no member named `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];

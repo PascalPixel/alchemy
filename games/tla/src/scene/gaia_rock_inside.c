@@ -493,7 +493,7 @@ s32 Func_02000748(void) {
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:521: structure has no member named
+ * games/tla/src/scene/gaia_rock_inside.c:508: structure has no member named
  * `layer'. */
 struct DustSprite__s07f4 {
   u8 unk00[9];
@@ -728,7 +728,7 @@ void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 /* VIEW(s07f4): variable gData_020051d8 as const struct CellPoint
  * gData_020051d8[12]; scene/gaia_rock_inside/s4d00 has u16 gData_020051d8[] =
  * {; tried as the definition's extern u16 gData_020051d8[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside.c:751: `gData_020051d8'
+ * in tla-ja: games/tla/src/scene/gaia_rock_inside.c:736: `gData_020051d8'
  * undeclared (first use in this function). */
 extern const struct CellPoint
     gData_020051d8__s07f4[12] __asm__("gData_020051d8");
@@ -861,7 +861,7 @@ void Func_02000fac(void) {
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
  * has extern struct Actor gData_0200646c; tried as the one declaration extern
  * s32 gData_0200646c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:869: conflicting types for
+ * games/tla/src/scene/gaia_rock_inside.c:850: conflicting types for
  * `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
@@ -1925,7 +1925,7 @@ const struct Trigger *Scene_GetEvents(void) {
 /* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1957: too few
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1915: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
 
@@ -1968,7 +1968,7 @@ void Func_02002b04(u32 id, s8 mode) {
 /* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1997: too few
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1953: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
 
@@ -2044,7 +2044,7 @@ step:
 /* VIEW(s2cb4): variable gSceneState as u16 gSceneState[];
  * games/tla/src/scene/gaia_rock_inside/s2b8c has struct SwayState gSceneState;
  * tried as the 3 declarations' extern struct SceneState gSceneState, it does
- * not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:2077:
+ * not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:2026:
  * incompatible types in initialization. */
 extern u16 gSceneState__s2cb4[] __asm__("gSceneState");
 #define gSceneState gSceneState__s2cb4

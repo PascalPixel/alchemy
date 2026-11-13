@@ -1485,9 +1485,7 @@ void Func_02001de4(s16 value) {
 
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
  * MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1544: structure has
- * no member named `stopCount'. */
+ * not tried: struct MarsLighthouseBeam__ride_handle was not found. */
 struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];
   u16 unk0a;
@@ -1634,11 +1632,8 @@ struct MarsLighthouseEventWork {
 };
 
 /* VIEW(ride_handle): routine Unit_Get as struct BattleUnit *Unit_Get(s32
- * owner); scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); tried
- * as the definition's void *Unit_Get(s32 owner), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1621: request for member `hp'
- * in something not a structure or union. */
+ * owner); scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); not
+ * tried: Unit_Get's declaration holds a FAKEMATCH tag. */
 struct BattleUnit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride_handle
 
@@ -1891,10 +1886,8 @@ void Func_02002738(struct Actor *object) {
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1890: structure has no member
- * named `unk6c'. */
+ * has another definition; not tried: struct Work020023c4__s236c was not found.
+ */
 struct Work020023c4__s236c {
   u8 unk00[4];
   u16 unk04;
@@ -2152,10 +2145,8 @@ DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3e04): routine CrackedTile_FallEvent as this part declared it; the
- * joined file has another; tried as the one declaration void
- * CrackedTile_FallEvent(), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:2170: too many arguments to
- * function `CrackedTile_FallEvent'. */
+ * joined file has another; not tried: CrackedTile_FallEvent's declaration holds
+ * a FAKEMATCH tag. */
 void CrackedTile_FallEvent__s3e04(
     struct CellTarget *work,
     struct CellTargetEntry *entry) __asm__("CrackedTile_FallEvent");

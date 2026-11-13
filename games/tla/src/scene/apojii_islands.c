@@ -317,8 +317,8 @@ DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
  * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
  * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the
  * definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode),
- * which the object already declares, Func_020007a4 moves: 1 of 188 instructions
- * in tla-ja. */
+ * which the object already declares, Actor_FlickerChild (gone) moves: 13 of 13
+ * instructions in tla-ja. */
 extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__(
     "BattleEffect_ApplyColorToTargetBuffer");
 

@@ -1072,7 +1072,7 @@ DEFINE_ACTORS_SET_HIDDEN(YampiDesert_SetActorsHidden)
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
  * declared it; the joined file has another; tried as the definition's extern
  * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:1124: `gYampiDesert_FinderRunsAhead'
+ * games/tla/src/scene/yampi_desert.c:1119: `gYampiDesert_FinderRunsAhead'
  * undeclared (first use in this function). */
 extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
     "gYampiDesert_FinderRunsAhead");
@@ -1080,7 +1080,7 @@ extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
 /* VIEW(yampi_desert): routine gYampiDesert_TravelersFollow as this part
  * declared it; the joined file has another; tried as the definition's extern
  * LATE_DATA u32 gYampiDesert_TravelersFollow[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:1178: `gYampiDesert_TravelersFollow'
+ * games/tla/src/scene/yampi_desert.c:1169: `gYampiDesert_TravelersFollow'
  * undeclared (first use in this function). */
 extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
     "gYampiDesert_TravelersFollow");

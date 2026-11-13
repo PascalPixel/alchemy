@@ -79,8 +79,9 @@ s32 Text_DrawPrefixedNumberAtOffset__screens() __asm__(
 #define Text_DrawPrefixedNumberAtOffset Text_DrawPrefixedNumberAtOffset__screens
 /* VIEW(screens): routine Text_DrawWideStringInWindow as int
  * Text_DrawWideStringInWindow(), called with no declaration in scope; another
- * part has its declaration; tried as the rest of the object declares it,
- * BattleDjinnMenu_ShowChangePreview moves: 6 of 684 instructions in tla-ja. */
+ * part has its declaration; tried as the one declaration s32
+ * Text_DrawWideStringInWindow(), BattleDjinnMenu_ShowChangePreview moves: 6 of
+ * 684 instructions in tla-ja. */
 s32 Text_DrawWideStringInWindow__screens() __asm__(
     "Text_DrawWideStringInWindow");
 #define Text_DrawWideStringInWindow Text_DrawWideStringInWindow__screens

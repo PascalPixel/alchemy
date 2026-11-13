@@ -745,7 +745,7 @@ void Func_02000ca8(void) {
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:791: too many arguments to
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:775: too many arguments to
  * function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 
@@ -2413,7 +2413,7 @@ DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
  * const u8 *b, void (*handler)(void)); tried as the definition's void
  * Func_02003ab0(const u16 *spots, const u16 *levels, void(*handler) (void)),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:2434: conflicting types for
+ * games/tla/src/scene/aqua_rock_inside.c:2404: conflicting types for
  * `Func_02003ab0'. */
 void Func_02003ab0__s3844(const u16 *spots, const u16 *levels,
                           void (*handler)(void)) __asm__("Func_02003ab0");

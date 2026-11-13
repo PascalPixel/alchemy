@@ -813,7 +813,7 @@ struct Trigger gSceneEvents[] = {
 /* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:852: structure has no member named
+ * games/tla/src/debug/psynergy_test.c:849: structure has no member named
  * `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
@@ -831,7 +831,7 @@ struct SparkleSprite__s0c4c {
 /* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:842: incompatible types in assignment. */
+ * games/tla/src/debug/psynergy_test.c:839: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;

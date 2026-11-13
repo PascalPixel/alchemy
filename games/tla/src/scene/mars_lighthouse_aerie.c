@@ -2869,7 +2869,7 @@ void Func_02005268(struct Actor *object) {
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:2914: structure has no member
+ * games/tla/src/scene/mars_lighthouse_aerie.c:2908: structure has no member
  * named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
@@ -2886,7 +2886,7 @@ struct SparkleSprite__s53e4 {
 
 /* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2904:
+ * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2898:
  * incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];

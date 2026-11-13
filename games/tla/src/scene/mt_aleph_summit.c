@@ -326,7 +326,7 @@ next:
 /* VIEW(s0478): tag struct EventWorkView as struct EventWorkView__s0478;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mt_aleph_summit.c:360: dereferencing pointer to
+ * games/tla/src/scene/mt_aleph_summit.c:358: dereferencing pointer to
  * incomplete type. */
 struct EventWorkView__s0478 {
   u8 unk000[0x1ac];

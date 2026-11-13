@@ -698,7 +698,7 @@ s32 Scene_Initialize(void) {
 /* VIEW(s0b64): routine Func_02000058 as s32 Func_02000058(); the definition has
  * void Func_02000058(s32 id, s32 value); tried as the definition's void
  * Func_02000058(void), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:698: conflicting types for
+ * games/tla/src/scene/mars_lighthouse_room_m.c:696: conflicting types for
  * `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
 /* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void
@@ -1438,10 +1438,8 @@ struct MarsLighthouseEventWork {
 };
 
 /* VIEW(s2118): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
- * item_icon.h has void *Unit_Get(s32 owner); tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1427: request for
- * member `hp' in something not a structure or union. */
+ * item_icon.h has void *Unit_Get(s32 owner); not tried: Unit_Get's declaration
+ * holds a FAKEMATCH tag. */
 struct BattleUnit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__s2118
 
@@ -1693,7 +1691,7 @@ void Func_02002ad4(struct Actor *object) {
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:1676: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1666: redefinition of `struct
  * Work020023c4'. */
 #define Work020023c4 Work020023c4__s2708
 struct Work020023c4 {

@@ -202,7 +202,7 @@ extern s32 gData_0200519c;
 extern s32 gData_02004028[];
 /* VIEW(first): routine gData_020046bc as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_020046bc[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:1593: `gData_020046bc'
+ * not compile in tla-ja: games/tla/src/scene/islets.c:1569: `gData_020046bc'
  * undeclared (first use in this function). */
 extern const struct IsletsExit
     gData_020046bc__first[] __asm__("gData_020046bc");
@@ -849,7 +849,7 @@ void Func_02001278(struct Actor *object) {
 
 /* VIEW(first): routine gData_02004004 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02004004[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:875: `gData_02004004'
+ * not compile in tla-ja: games/tla/src/scene/islets.c:851: `gData_02004004'
  * undeclared (first use in this function). */
 extern struct ActionScript gData_02004004__first __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__first
@@ -2233,7 +2233,7 @@ void Func_020034ec(void) {
 /* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
  * palette_snapshots.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:2258: structure has no member named `count'. */
+ * games/tla/src/scene/islets.c:2230: structure has no member named `count'. */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;

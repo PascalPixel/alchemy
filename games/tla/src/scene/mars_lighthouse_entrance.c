@@ -759,7 +759,7 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
  * Func_02002c2c(struct Actor *object) {; tried as the definition's
  * DEFINE_EMBERS_SPAWN(Embers_Spawn, gData_02005714) void Func_02002c2c(struct
  * Actor *object), which the object already declares, it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1828: conflicting
+ * tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1641: conflicting
  * types for `Func_02002c2c'. */
 void Func_02002c2c__mars_lighthouse_entrance(void) __asm__("Func_02002c2c");
 #define Func_02002c2c Func_02002c2c__mars_lighthouse_entrance
@@ -1183,7 +1183,7 @@ DEFINE_ACTOR_IS_BESIDE(Actor_IsBeside)
 /* VIEW(s1930): tag struct RideSlot as struct RideSlot__s1930; ride.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1367: structure has no member
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1188: structure has no member
  * named `id'. */
 struct RideSlot__s1930 {
   u16 id;
@@ -1193,7 +1193,7 @@ struct RideSlot__s1930 {
 /* VIEW(s1930): tag struct RideWork as struct RideWork__s1930; ride.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1358: structure has no member
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1179: structure has no member
  * named `value68'. */
 struct RideWork__s1930 {
   u8 unk00[4];
@@ -1223,7 +1223,7 @@ DEFINE_RIDE_SPAWN_FRONT(Func_02001c74, Func_02004bd8_, Actor_ResetScriptedFor,
 /* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1403: structure has no member
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1224: structure has no member
  * named `id'. */
 struct RideSlot__s1c44 {
   u16 id;
@@ -1238,7 +1238,7 @@ struct RideDirection {
 /* VIEW(s1c44): tag struct RideWork as struct RideWork__s1c44; ride.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1395: structure has no member
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1216: structure has no member
  * named `direction'. */
 struct RideWork__s1c44 {
   u8 unk00[4];
@@ -1284,7 +1284,7 @@ DEFINE_RIDE_SPAWN_SPARK(Ride_SpawnSpark, Func_02004bd8_, Actor_SetupScriptedFor,
 
 /* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1483:
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1304:
  * structure has no member named `flag5b'. */
 typedef struct Actor__s20ec {
   u8 pad0[8];
@@ -1402,7 +1402,7 @@ s32 Func_02002444(s32 limit) {
  * Func_0200246c(s32 index, s32 value); tried as the definition's void
  * Func_0200246c(s32 index, s32 value), which the object already declares, it
  * does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1550: conflicting types for
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1367: conflicting types for
  * `Func_0200246c'. */
 void Func_0200246c__s2270(s32 index, s32 value) __asm__("Func_0200246c");
 #define Func_0200246c Func_0200246c__s2270
@@ -1440,7 +1440,7 @@ struct MarsLighthouseEventWork {
 /* VIEW(s2270): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
  * item_icon.h has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1585: request for
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1402: request for
  * member `hp' in something not a structure or union. */
 struct BattleUnit *Unit_Get__s2270(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__s2270
@@ -1469,7 +1469,7 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
  * "module/field/field.h" #include "module/scene/mars_lighthouse_entrance.h"
  * #include "module/system/system.h" #include "scene_ids.h" void
  * Party_TakeFallDamage(); tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1629:
+ * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1442:
  * conflicting types for `Func_02002614'. */
 void Func_02002614__s263c(void) __asm__("Func_02002614");
 #define Func_02002614 Func_02002614__s263c
@@ -1709,7 +1709,7 @@ void Func_02002c2c(struct Actor *object) {
 /* VIEW(s2860): tag struct Work020023c4 as struct Work020023c4__s2860; s263c.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1848: structure has no member
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1661: structure has no member
  * named `unk6c'. */
 struct Work020023c4__s2860 {
   u8 unk00[4];
@@ -2104,7 +2104,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
  * DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, Data_020068b4,
  * CrackedTiles_Update) DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
  * DEFINE_CR..., which the object already declares, it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:2268: too many
+ * tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:2042: too many
  * arguments to function `Func_02004160'. */
 void Func_02004160__s42f8(
     struct CellTarget *work,

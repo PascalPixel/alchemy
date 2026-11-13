@@ -39,7 +39,7 @@ extern struct Trigger gNaribwe_TriggersOnReturn[];
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
  * has another; tried as the one declaration extern const struct WarpEntry
  * gNaribwe_Doors[], it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:238: `gNaribwe_Doors' undeclared (first use in
+ * games/tla/src/scene/naribwe.c:211: `gNaribwe_Doors' undeclared (first use in
  * this function). */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first

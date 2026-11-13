@@ -301,7 +301,7 @@ extern s32 gVenusLighthouse_LeaderFlashes[];
  * id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the
  * definition's struct Actor *Actor_GetById(u32 objectId), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:343: invalid type argument of `->'. */
+ * games/tla/src/scene/venus_lighthouse.c:337: invalid type argument of `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -316,7 +316,7 @@ void Actor_WaitForMove(struct Actor *actor);
  * actorId, s32 emote, s32 frames); tried as the definition's struct
  * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
  * state), it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:316: conflicting types for
+ * games/tla/src/scene/venus_lighthouse.c:310: conflicting types for
  * `Actor_ShowEmoteById'. */
 extern void
 Actor_ShowEmoteById__floor(s32 actor, s32 height,
@@ -506,7 +506,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 /* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:507: structure has no member named
+ * games/tla/src/scene/venus_lighthouse.c:501: structure has no member named
  * `mode'. */
 struct AerieEventWork__floor {
   u8 unk000[0x1ac];

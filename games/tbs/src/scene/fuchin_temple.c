@@ -696,24 +696,20 @@ static void FuchinTemple_StudentWalksAroundTree(void) {
   u32 leaderFacing;
 
   leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
-  {
-    u32 quadrantLimit = 0x3fff;
-
-    if (((leaderFacing - FACING_SOUTHEAST) << 16) <= 0x3fff0000) {
-      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
-      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 168);
-      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
-    } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= quadrantLimit) {
-      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
-      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH_SOUTHWEST, 20);
-    } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= quadrantLimit) {
-      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
-      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 172);
-      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
-    } else {
-      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
-      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
-    }
+  if ((u16)(leaderFacing - FACING_SOUTHEAST) <= 0x3fff) {
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 168);
+    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
+  } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= 0x3fff) {
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
+    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH_SOUTHWEST, 20);
+  } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= 0x3fff) {
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 172);
+    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
+  } else {
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
+    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
   }
 }
 

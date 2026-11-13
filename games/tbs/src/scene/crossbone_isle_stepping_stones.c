@@ -513,9 +513,9 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     return 0;
   }
 #if TBS_PATCH_1
-  destination.x = (leader->x.fixed & -0x100000) + px(8);
+  destination.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   destination.y = leader->y.fixed;
-  destination.z = (leader->z.fixed & -0x100000) + px(8);
+  destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   Vector_AddPolarOffset(px(16), jumpDirection, &destination);
 #else
   jumpDirection = leader->facing >> 12;
@@ -525,9 +525,9 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   if (FieldActor_CheckMovementCollision(leader, &destination) != 1 &&
       PushedActor_FindAtTile(&destination, leader) == 0) {
 #if TBS_PATCH_1
-    destination.x = (leader->x.fixed & -0x100000) + px(8);
+    destination.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
     destination.y = leader->y.fixed;
-    destination.z = (leader->z.fixed & -0x100000) + px(8);
+    destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     Vector_AddPolarOffset(px(32), jumpDirection, &destination);
 #else
     step = gPushedActor_DirectionSteps[jumpDirection];

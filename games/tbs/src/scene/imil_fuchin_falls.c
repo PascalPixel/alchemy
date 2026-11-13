@@ -1716,7 +1716,7 @@ static void Imil_SlideActorAcrossIce(void) {
 
   for (;;) {
     heading = gImilFuchinFalls_SlideHeadings[(gKeysHeld >> 4) & 15];
-    if (((u32)heading << 16) == 0xffff0000) {
+    if ((u16)heading == 0xffff) {
       return;
     }
 

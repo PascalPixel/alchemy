@@ -225,8 +225,8 @@ static void Ship_UpdateSwell(void) {
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
-    x = grid->view[0] & -0x10000;
-    z = grid->view[1] & -0x10000;
+    x = grid->view[0] & FIELD_PIXEL_MASK;
+    z = grid->view[1] & FIELD_PIXEL_MASK;
     x += Random_Next() * 240;
     sprayPosition.x = x;
     sprayPosition.y = 0;

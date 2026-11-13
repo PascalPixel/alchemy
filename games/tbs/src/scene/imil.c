@@ -1486,7 +1486,7 @@ static void Imil_RunIceSlide(void) {
 
   for (;;) {
     heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];
-    if ((heading << 16) == -0x10000) {
+    if ((u16)heading == 0xffff) {
       return;
     }
 

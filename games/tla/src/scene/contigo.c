@@ -23,20 +23,20 @@ extern u16 *gData_02006004;
 DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02006010, gData_02006014,
     Data_02006018, gData_02006004, Func_02000328)
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Func_020000f4, gData_02006020, gData_0200601c,
+DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartSlowPaletteCycle, gData_02006020, gData_0200601c,
     Func_020001d4, gData_02006010, gData_0200600c, 15, gData_02006008, 16,
-    gData_02006000, Func_020001f8)
+    gData_02006000, PaletteCycle_Fade)
 
-void Func_02000158(void) {
+void Contigo_StopPaletteCycle(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 256;
-  Task_RemoveFar(Func_020001f8);
+  Task_RemoveFar(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000178, gData_02006020, gData_0200601c,
+DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartFastPaletteCycle, gData_02006020, gData_0200601c,
     Func_020001d4, gData_02006010, gData_0200600c, 2, gData_02006008, 2,
-    gData_02006000, Func_020001f8)
+    gData_02006000, PaletteCycle_Fade)
 
 s32 Func_020001d4(u16 *list) {
   s32 count = 0;
@@ -47,45 +47,9 @@ s32 Func_020001d4(u16 *list) {
   return count;
 }
 
-void Func_020001f8(void) {
-  s32 step;
-  u32 i;
-  u16 *src;
-  volatile u16 *dst;
-  int red, green, blue;
-
-  step = 0;
-  if (gData_02006008 != 0) {
-    if (--gData_02006008 == 0) {
-      step = 1;
-      gData_02006008 = gData_0200600c;
-      if (gData_0200600c > 2)
-        gData_0200600c--;
-    }
-  }
-  if (step == 0)
-    return;
-  src = Data_02006018;
-  for (i = 0; i < gData_0200601c; i++) {
-    dst = &BG_PLTT[gData_02006004[gData_02006020 * gData_0200601c + i]];
-    red = *src++;
-    green = *src++;
-    blue = *src++;
-    SET_RGB(*dst, red, green, blue);
-  }
-  dst = &BG_PLTT[gData_02006010[gData_0200601c]];
-  if (gData_02006000 != 0)
-    src = gData_02006014 + gData_0200601c * 3;
-  else
-    src = Data_02006018 + gData_0200601c * 3;
-  red = *src++;
-  green = *src++;
-  blue = *src++;
-  SET_RGB(*dst, red, green, blue);
-  gData_02006000 ^= 1;
-  if (++gData_02006020 == gData_0200601c)
-    gData_02006020 = 0;
-}
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02006008, gData_0200600c,
+    Data_02006018, gData_0200601c, gData_02006004, gData_02006020,
+    gData_02006010, gData_02006000, gData_02006014)
 
 void Func_02004284(void);
 
@@ -99,10 +63,10 @@ void Func_02000328(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000178();
+  Contigo_StartFastPaletteCycle();
   Func_02004284();
   wait(40);
-  Func_02000158();
+  Contigo_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
   BattleEffect_StartBufferInterpolation(16);
   wait(16);

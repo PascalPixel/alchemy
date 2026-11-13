@@ -17,9 +17,9 @@ extern s32 gData_020054ec[];
 extern s32 gData_02005a44[];
 extern s32 gData_02005e70[];
 
-void Func_020000f4(void);
+void Contigo_StartSlowPaletteCycle(void);
 
-void Func_02000158(void);
+void Contigo_StopPaletteCycle(void);
 
 extern u32 gData_02004630[];
 extern s32 gData_0200466c[];
@@ -106,6 +106,6 @@ extern u16 gData_02006020;
 
 s32 Func_020001d4(u16 *list);
 
-void Func_020001f8(void);
+void PaletteCycle_Fade(void);
 
 #endif

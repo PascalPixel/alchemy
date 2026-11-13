@@ -29,60 +29,24 @@ DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gData_02001a28,
 
 extern u16 gData_02001a1c;
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Func_020000f4, gData_02001a34, gData_02001a30,
+DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle, gData_02001a34, gData_02001a30,
     List_CountEntries, gData_02001a24, gData_02001a20, 15, gData_02001a1c, 16,
-    gData_02001a14, Func_020001f8)
+    gData_02001a14, PaletteCycle_Fade)
 
-void Func_02000158(void) {
+void IsletCave_StopPaletteCycle(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-  Task_RemoveFar(Func_020001f8);
+  Task_RemoveFar(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000178, gData_02001a34, gData_02001a30,
+DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle, gData_02001a34, gData_02001a30,
     List_CountEntries, gData_02001a24, gData_02001a20, 2, gData_02001a1c, 2,
-    gData_02001a14, Func_020001f8)
+    gData_02001a14, PaletteCycle_Fade)
 
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
-void Func_020001f8(void) {
-  s32 step;
-  u32 i;
-  u16 *src;
-  volatile u16 *dst;
-  int red, green, blue;
-
-  step = 0;
-  if (gData_02001a1c != 0) {
-    if (--gData_02001a1c == 0) {
-      step = 1;
-      gData_02001a1c = gData_02001a20;
-      if (gData_02001a20 > 2)
-        gData_02001a20--;
-    }
-  }
-  if (step == 0)
-    return;
-  src = Data_02001a2c;
-  for (i = 0; i < gData_02001a30; i++) {
-    dst = &BG_PLTT[gData_02001a18[gData_02001a34 * gData_02001a30 + i]];
-    red = *src++;
-    green = *src++;
-    blue = *src++;
-    SET_RGB(*dst, red, green, blue);
-  }
-  dst = &BG_PLTT[gData_02001a24[gData_02001a30]];
-  if (gData_02001a14 != 0)
-    src = gData_02001a28 + gData_02001a30 * 3;
-  else
-    src = Data_02001a2c + gData_02001a30 * 3;
-  red = *src++;
-  green = *src++;
-  blue = *src++;
-  SET_RGB(*dst, red, green, blue);
-  gData_02001a14 ^= 1;
-  if (++gData_02001a34 == gData_02001a30)
-    gData_02001a34 = 0;
-}
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02001a1c, gData_02001a20,
+    Data_02001a2c, gData_02001a30, gData_02001a18, gData_02001a34,
+    gData_02001a24, gData_02001a14, gData_02001a28)
 
 #include "actor.h"
 
@@ -96,10 +60,10 @@ void Func_02000328(void) {
   ((struct IsletCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000178();
+  IsletCave_StartFastPaletteCycle();
   Func_0200132c();
   wait(40);
-  Func_02000158();
+  IsletCave_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
   BattleEffect_StartBufferInterpolation(16);
   wait(16);
@@ -193,10 +157,10 @@ void Func_020004ac(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   s32 effect = work->screenEffect;
 
-  Func_02000178();
+  IsletCave_StartFastPaletteCycle();
   Func_0200132c();
   wait(40);
-  Func_02000158();
+  IsletCave_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
   BattleEffect_StartBufferInterpolation(16);
   wait(16);
@@ -209,7 +173,7 @@ void Func_020004ac(void) {
 /// 2 copies: islet_cave, islet_cave.
 #define DEFINE_FUNC_02000508(name, n1, n2)                                     \
   void name(void) {                                                            \
-    Func_020000f4();                                                           \
+    IsletCave_StartSlowPaletteCycle();                                                           \
     Func_02001334();                                                           \
                                                                                \
     gMainRoutineWork.unk2c2 = 1;                                               \
@@ -452,7 +416,7 @@ struct FieldActor__islet_cave {
 
 void Func_02001214(struct FieldActor__islet_cave *actor, s32 mode);
 
-void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
+void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor__islet_cave *leader;
   struct FieldActor__islet_cave *actor;
   s32 x;
@@ -485,57 +449,26 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   Event_End();
 }
 
-/// 3 copies: islet_cave, islet_cave, islet_cave.
-#define DEFINE_FUNC_02000AEC(name, n1, n2, n3)                                 \
+/// Rides log `logId` `dx` pixels across the water and moves its cells with it,
+/// then sets or clears its flag (`flagCall`) to say where it lies. The
+/// name is ours.
+#define DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(name, logId, dx, flagCall, flag)    \
   void name(void) {                                                            \
-    struct Actor *object0;                                                     \
-    s32 value1;                                                                \
-    struct Actor *object2;                                                     \
-    s32 value3;                                                                \
-    struct Actor *object4;                                                     \
+    s32 fromX = Actor_GetById(logId)->x;                                       \
+    s32 fromZ = Actor_GetById(logId)->z;                                       \
                                                                                \
-    object0 = Actor_GetById(n1);                                               \
-    value1 = object0->x;                                                       \
-    object2 = Actor_GetById(n1);                                               \
-    value3 = object2->z;                                                       \
-    Func_020009f8(n1, n2, 0);                                                  \
+    IsletCave_RideLog(logId, dx, 0);                                           \
     wait(2);                                                                   \
-    object4 = Actor_GetById(n1);                                               \
-    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
-                              (object4->x >> 20), ((value3 >> 20) - 1));       \
-    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
-                              ((value3 >> 20) - 1));                           \
-    GameFlag_ClearBit(n3);                                                     \
-    return;                                                                    \
+    Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,            \
+                              Actor_GetById(logId)->x >> 20,                   \
+                              (fromZ >> 20) - 1);                              \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);     \
+    flagCall(flag);                                                            \
   }
 
-DEFINE_FUNC_02000AEC(Func_02000aec, 8, 32, 0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_ClearBit, 0x280)
 
-/// 2 copies: islet_cave, islet_cave.
-#define DEFINE_FUNC_02000B4C(name, n1, n2, n3)                                 \
-  void name(void) {                                                            \
-    struct Actor *object0;                                                     \
-    s32 value1;                                                                \
-    struct Actor *object2;                                                     \
-    s32 value3;                                                                \
-    struct Actor *object4;                                                     \
-                                                                               \
-    object0 = Actor_GetById(n1);                                               \
-    value1 = object0->x;                                                       \
-    object2 = Actor_GetById(n1);                                               \
-    value3 = object2->z;                                                       \
-    Func_020009f8(n1, -n2, 0);                                                 \
-    wait(2);                                                                   \
-    object4 = Actor_GetById(n1);                                               \
-    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
-                              (object4->x >> 20), ((value3 >> 20) - 1));       \
-    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
-                              ((value3 >> 20) - 1));                           \
-    GameFlag_SetBit(n3);                                                       \
-    return;                                                                    \
-  }
-
-DEFINE_FUNC_02000B4C(Func_02000b4c, 8, 32, 0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000b4c, 8, -32, GameFlag_SetBit, 0x280)
 
 void Func_02000bb0(void) {
   struct Actor *object0;
@@ -548,8 +481,8 @@ void Func_02000bb0(void) {
   value1 = object0->x;
   object2 = Actor_GetById(9);
   value3 = object2->z;
-  Func_020009f8(9, 112, 0);
-  Func_020009f8(9, 96, 0);
+  IsletCave_RideLog(9, 112, 0);
+  IsletCave_RideLog(9, 96, 0);
   wait(2);
   object4 = Actor_GetById(9);
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
@@ -570,8 +503,8 @@ void Func_02000c1c(void) {
   value1 = object0->x;
   object2 = Actor_GetById(9);
   value3 = object2->z;
-  Func_020009f8(9, -112, 0);
-  Func_020009f8(9, -96, 0);
+  IsletCave_RideLog(9, -112, 0);
+  IsletCave_RideLog(9, -96, 0);
   wait(2);
   object4 = Actor_GetById(9);
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
@@ -581,69 +514,21 @@ void Func_02000c1c(void) {
   return;
 }
 
-/// 2 copies: islet_cave, islet_cave.
-#define DEFINE_FUNC_02000C8C(name, n1, n2)                                     \
-  void name(void) {                                                            \
-    struct Actor *object0;                                                     \
-    s32 value1;                                                                \
-    struct Actor *object2;                                                     \
-    s32 value3;                                                                \
-    struct Actor *object4;                                                     \
-                                                                               \
-    object0 = Actor_GetById(n1);                                               \
-    value1 = object0->x;                                                       \
-    object2 = Actor_GetById(n1);                                               \
-    value3 = object2->z;                                                       \
-    Func_020009f8(n1, 80, 0);                                                  \
-    wait(2);                                                                   \
-    object4 = Actor_GetById(n1);                                               \
-    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
-                              (object4->x >> 20), ((value3 >> 20) - 1));       \
-    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
-                              ((value3 >> 20) - 1));                           \
-    GameFlag_SetBit(n2);                                                       \
-    return;                                                                    \
-  }
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000c8c, 10, 80, GameFlag_SetBit, 0x282)
 
-DEFINE_FUNC_02000C8C(Func_02000c8c, 10, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_ClearBit, 0x282)
 
-/// 3 copies: islet_cave, islet_cave, islet_cave.
-#define DEFINE_FUNC_02000CF0(name, n1, n2)                                     \
-  void name(void) {                                                            \
-    struct Actor *object0;                                                     \
-    s32 value1;                                                                \
-    struct Actor *object2;                                                     \
-    s32 value3;                                                                \
-    struct Actor *object4;                                                     \
-                                                                               \
-    object0 = Actor_GetById(n1);                                               \
-    value1 = object0->x;                                                       \
-    object2 = Actor_GetById(n1);                                               \
-    value3 = object2->z;                                                       \
-    Func_020009f8(n1, -80, 0);                                                 \
-    wait(2);                                                                   \
-    object4 = Actor_GetById(n1);                                               \
-    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
-                              (object4->x >> 20), ((value3 >> 20) - 1));       \
-    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
-                              ((value3 >> 20) - 1));                           \
-    GameFlag_ClearBit(n2);                                                     \
-    return;                                                                    \
-  }
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_ClearBit, 0x283)
 
-DEFINE_FUNC_02000CF0(Func_02000cf0, 10, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_ClearBit, 0x283)
 
-DEFINE_FUNC_02000AEC(Func_02000d54, 11, 80, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e1c, 12, 80, GameFlag_SetBit, 0x284)
 
-DEFINE_FUNC_02000CF0(Func_02000db8, 11, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_ClearBit, 0x284)
 
-DEFINE_FUNC_02000C8C(Func_02000e1c, 12, 0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_ClearBit, 0x285)
 
-DEFINE_FUNC_02000CF0(Func_02000e7c, 12, 0x284)
-
-DEFINE_FUNC_02000AEC(Func_02000ee0, 13, 80, 0x285)
-
-DEFINE_FUNC_02000B4C(Func_02000f44, 13, 80, 0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_SetBit, 0x285)
 
 void Func_02000fa8(void) {
   struct Actor *object0;
@@ -662,9 +547,9 @@ void Func_02000fa8(void) {
   v8 = object2->z;
   v6 = -v6;
   v8 = (v8 >> 20);
-  Func_020009f8(14, 0, v6);
-  Func_020009f8(14, 0, v6);
-  Func_020009f8(14, 0, -128);
+  IsletCave_RideLog(14, 0, v6);
+  IsletCave_RideLog(14, 0, v6);
+  IsletCave_RideLog(14, 0, -128);
   wait(2);
   object3 = Actor_GetById(14);
   v5 = (v5 >> 20);
@@ -690,9 +575,9 @@ void Func_02001034(void) {
   object2 = Actor_GetById(14);
   value3 = object2->z;
   v6 = value3;
-  Func_020009f8(14, 0, 112);
-  Func_020009f8(14, 0, 112);
-  Func_020009f8(14, 0, 128);
+  IsletCave_RideLog(14, 0, 112);
+  IsletCave_RideLog(14, 0, 112);
+  IsletCave_RideLog(14, 0, 128);
   wait(2);
   object4 = Actor_GetById(14);
   v5 = (v5 >> 20);

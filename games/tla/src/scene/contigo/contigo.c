@@ -676,13 +676,13 @@ void Func_0200118c(void) {
 void Func_0200428c(void);
 
 void Func_02001250(void) {
-  Func_020000f4();
+  Contigo_StartSlowPaletteCycle();
   Func_0200428c();
   
   gMainRoutineWork.unk2c2 = 2;
   Event_SetDestination((s32)&SceneId_Ov6B0Room1, 99);
   Event_Wait(40);
-  Func_02000158();
+  Contigo_StopPaletteCycle();
 }
 
 void Func_02001284(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }

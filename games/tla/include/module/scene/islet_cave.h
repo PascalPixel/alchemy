@@ -10,7 +10,7 @@ void Func_02000328(void);
 
 s32 List_CountEntries(u16 *list);
 
-void Func_020001f8(void);
+void PaletteCycle_Fade(void);
 
 void Func_020008c8(void);
 

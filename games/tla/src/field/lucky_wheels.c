@@ -99,7 +99,8 @@ void LuckyWheels_TransferCanvas(void) {
       if (work->transferValue == 50)
         ColorBuffer_HalveNonzero(buf, (u8 *)0x06003500, 0x8000);
       else
-        ColorBuffer_ScaleNonzeroThreeQuarters(buf, (u8 *)0x06003500, 0x8000);
+        ColorBuffer_ScaleNonzeroThreeQuarters(buf, (u8 *)0x06003500,
+                                              Q16_ONE / 2);
       break;
     }
     work->transferPending = 0;
@@ -408,7 +409,7 @@ void LuckyWheels_Update(void) {
   Random16();
 
   keys = *(volatile u32 *)&gInput.held;
-  dpad = *(volatile u32 *)&gInput.held & 0xf0;
+  dpad = *(volatile u32 *)&gInput.held & KEYS_DPAD;
   work->pressed = keys & ~work->keys;
   work->direction = dpad;
   if ((work->keys & 0xf0) == work->direction) {
@@ -808,9 +809,9 @@ void LuckyWheels_Update(void) {
 #if TLA_PATCH_1
       // The Japanese release draws the letters without moving them.
       p->y += p->velocityY;
-      p->velocityY += 0x4000;
+      p->velocityY += px(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = 0x60000;
+        p->velocityY = px(6);
         p->variant = 0;
       }
       if (p->y > 0x400000) {
@@ -936,9 +937,9 @@ void LuckyWheels_FinishFrame(void) {
       struct EffectStep *p = &fx->particles[i];
 
       p->y += p->velocityY;
-      p->velocityY += 0x4000;
+      p->velocityY += px(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = 0x60000;
+        p->velocityY = px(6);
         p->variant = 0;
       }
       if (p->y > 0x400000) {
@@ -1348,9 +1349,9 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
+      LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, Q16_ONE - (j << 12),
                               0x100);
-      LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0x10000 - (j << 12),
+      LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, Q16_ONE - (j << 12),
                               0x100);
       wait(1);
     }

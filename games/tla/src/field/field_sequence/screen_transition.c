@@ -375,13 +375,6 @@ void Reveal_EmitSparkles(const struct ParticleSource *source) {
 // event has not run, a marker object goes at its event object, or at the map
 // cell of a tile event, when that point is on screen.
 
-/* VIEW(rising): variable gBattleEffect_MarkerParticleScript as extern const s32
- * gBattleEffect_MarkerParticleScript[]; emitter has extern const u8
- * gBattleEffect_MarkerParticleScript[]; not tried:
- * gBattleEffect_MarkerParticleScript's bound declaration was not found. */
-extern const s32
-    Data_080f01b8__rising[] __asm__("gBattleEffect_MarkerParticleScript");
-
 /// Places a marker at each waiting scene item event that is on screen.
 void FieldEffect_SpawnRevealMarkers(void) {
   // The row type is s16, as the rows are: with it the copied head test stays
@@ -449,7 +442,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
     object = Actor_CreateFar(673, x, y, z);
     if (object != NULL) {
       object->motionFlags = 0;
-      Actor_StartScriptFar((struct Actor *)object, Data_080f01b8__rising);
+      Actor_StartScriptFar((struct Actor *)object,
+                           gBattleEffect_MarkerParticleScript);
       Actor_SetSpriteFlagsFar((struct Actor *)object, 0);
       Actor_SelectAnimationFar(object, 1);
       ((struct FieldSprite *)object->sprite)->priority = 1;

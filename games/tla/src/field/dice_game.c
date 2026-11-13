@@ -641,12 +641,12 @@ void SuperLuckyDice_Run(void) {
           Window_CloseFar(sprites->helpWindow, 1);
           break;
         }
-        if (gInput.repeat & 2) {
+        if (gInput.repeat & KEY_B) {
           Sound_PlayFar(SE_MENU_CANCEL);
           Window_CloseFar(sprites->helpWindow, 1);
           break;
         }
-        if (gInput.repeat & 1) {
+        if (gInput.repeat & KEY_A) {
           Sound_PlayFar(SE_LUCKY_DICE_THROW);
           Window_CloseFar(sprites->helpWindow, 1);
           Sound_PlayFar(SE_LUCKY_DICE_THROW);
@@ -676,7 +676,7 @@ void SuperLuckyDice_Run(void) {
           DICE_GAME_THROW(dice, spinRate);
           state = 2;
         }
-      } else if (gInput.repeat & 2) {
+      } else if (gInput.repeat & KEY_B) {
         if (CANNOT_QUIT(round)) {
           Sound_PlayFar(SE_MENU_ERROR);
         } else {
@@ -706,7 +706,7 @@ void SuperLuckyDice_Run(void) {
       } else {
         s32 message = -1;
 
-        if ((gInput.repeat & 0x40) && lower == 1) {
+        if ((gInput.repeat & KEY_UP) && lower == 1) {
           if (target == 24)
             goto refuse;
           if (round == 0)
@@ -715,7 +715,7 @@ void SuperLuckyDice_Run(void) {
             message = (s32)&MsgDiceGameHigherAgain;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           lower = 0;
-        } else if ((gInput.repeat & 0x80) && lower == 0) {
+        } else if ((gInput.repeat & KEY_DOWN) && lower == 0) {
           if (target == 4) {
           refuse:
             Sound_PlayFar(SE_MENU_CANCEL);
@@ -802,7 +802,7 @@ void SuperLuckyDice_Run(void) {
           else
             die->velocityZ = ABS(die->velocityZ);
         }
-        die->velocityY += -0x8000;
+        die->velocityY += -(px(1) / 2);
         if (die->y <= 0) {
           die->y = 0;
           die->velocityY = -die->velocityY * 48 / 64;
@@ -977,7 +977,7 @@ void SuperLuckyDice_Run(void) {
                                    WINNINGS_TEXT_X, 0);
       }
       if (timer > 19) {
-        if (gInput.repeat & 1) {
+        if (gInput.repeat & KEY_A) {
           Window_CloseFar(sprites->helpWindow, 1);
           Sound_PlayFar(MUS_001);
           Sound_PlayFar(SE_MENU_CONFIRM);
@@ -1046,13 +1046,13 @@ void SuperLuckyDice_Run(void) {
           }
           timer = 0;
         }
-      } else if (gInput.repeat & 1) {
+      } else if (gInput.repeat & KEY_A) {
         timer = 1;
         Sound_PlayFar(SE_MENU_CONFIRM);
-      } else if ((gInput.repeat & 0x40) && cashOut == 1) {
+      } else if ((gInput.repeat & KEY_UP) && cashOut == 1) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         cashOut = 0;
-      } else if ((gInput.repeat & 0x80) && cashOut == 0) {
+      } else if ((gInput.repeat & KEY_DOWN) && cashOut == 0) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         cashOut = 1;
       }
@@ -1333,7 +1333,7 @@ void SuperLuckyDice_Run(void) {
         x = 100;
       if (state == 5) {
         angle = slide << 12;
-        angle += 0x1000;
+        angle += TRIG_TURN / 16;
         x = (Trig_Cos(angle) * 40 >> 16) - (timer << 4) + 56;
         y = 48 - (Trig_Sin(angle) * 48 >> 16);
       } else if (resultKind != 0) {

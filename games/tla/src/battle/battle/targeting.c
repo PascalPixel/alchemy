@@ -24,14 +24,6 @@
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
 
-/* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit
- * has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares,
- * BattleAI_ChooseTarget moves: 5 of 776 instructions, BattleUnit_ClearStatuses
- * moves: 1 of 97 instructions, BattleObject_DestroyTemporaryObject moves: 1 of
- * 24 instructions, 32 more in tla-ja. */
-extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
-
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
     if ((unit)->delusion != 0)                                                 \
@@ -300,7 +292,7 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
     return -2;
 
   for (targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
-    unit = Unit_Get__f11f66c(unitIds[targetIndex]);
+    unit = Unit_Get(unitIds[targetIndex]);
     CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
     if (applies != 0) {
       unitIds[targetCount] = unitIds[targetIndex];
@@ -313,18 +305,17 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
     return -1;
 
   if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
-      Enemy_GetDefinitionFar(
-          ((struct BattleUnit *)Unit_Get__f11f66c(actorId))->enemyId)
+      Enemy_GetDefinitionFar(((struct BattleUnit *)Unit_Get(actorId))->enemyId)
               ->targetStrategy != STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
            innerIndex++) {
-        thisUnit = Unit_Get__f11f66c(unitIds[innerIndex]);
-        nextUnit = Unit_Get__f11f66c(unitIds[innerIndex + 1]);
+        thisUnit = Unit_Get(unitIds[innerIndex]);
+        nextUnit = Unit_Get(unitIds[innerIndex + 1]);
         if (Enemy_GetDefinitionFar(
-                ((struct BattleUnit *)Unit_Get__f11f66c(actorId))->enemyId)
+                ((struct BattleUnit *)Unit_Get(actorId))->enemyId)
                 ->targetStrategy == STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
@@ -387,7 +378,7 @@ void BattleUnit_ClearStatuses(s32 actor) {
   s32 count;
   u8 zero;
 
-  state = Unit_Get__f11f66c(actor);
+  state = Unit_Get(actor);
   zero = 0;
   count = 3;
   cursor = state + 0x12f;
@@ -524,7 +515,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
   struct BattleUnit *creature;
   struct BattleObj *runtime;
 
-  creature = Unit_Get__f11f66c(arg0);
+  creature = Unit_Get(arg0);
   if (creature->side == 1) {
     Unit_SetHpFar(creature, 0);
     BattleObject_RemoveFromLists(arg0);
@@ -655,7 +646,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 }
 
 s32 BattleUnit_KeepsOneHp(s32 unitId) {
-  struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
 
   if (unit->enemyId == 110 || unit->enemyId == 113)
     return 1;
@@ -836,8 +827,8 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   crit = plan->targetCritical[slot];
 
   action = Ability_Get(abilityId);
-  actor = Unit_Get__f11f66c(aid);
-  target = Unit_Get__f11f66c(tid);
+  actor = Unit_Get(aid);
+  target = Unit_Get(tid);
   Iwram_CopyWordsEntry(bak, target, size);
   switch (target->enemyId) {
   case 221:
@@ -1074,11 +1065,9 @@ power_end:
 
           atk = actor->atk;
           if (abilityId == 312 || abilityId == 316) {
-            atk = ((struct BattleUnit *)Unit_Get__f11f66c(plan->actorId))->atk;
+            atk = ((struct BattleUnit *)Unit_Get(plan->actorId))->atk;
             if (abilityId == 312)
-              atk += ((struct BattleUnit *)Unit_Get__f11f66c(plan->actorId2))
-                         ->atk /
-                     4;
+              atk += ((struct BattleUnit *)Unit_Get(plan->actorId2))->atk / 4;
           }
           dmg = Battle_CalculateAttackDamageFar(atk, scale, ap, bonus);
         }
@@ -2199,7 +2188,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
     return selectedAction;
   }
 
-  unit = Unit_Get__f11f66c(request->unitId);
+  unit = Unit_Get(request->unitId);
   itemsAllowed = 1;
   failedChoices = 0;
   needsChoice = 1;

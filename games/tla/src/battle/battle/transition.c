@@ -323,7 +323,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     for (i = 0; i != ownerCount; i++) {
       s32 id = owners[i];
       struct BattleObj *battleObject = BattleObject_Get(id);
-      u16 enemyId = ((struct BattleUnit *)Unit_Get__f11f66c(id))->enemyId;
+      u16 enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
 
       if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376)
         battleObject->scale = 0xb333;

@@ -13,10 +13,6 @@
 #include "scene_call.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(mars_join): routine Actor_ReleaseFar as void Actor_ReleaseFar(void
- * *object); battle.h has void Actor_ReleaseFar(struct Actor *object); not
- * tried: Actor_ReleaseFar's bound declaration was not found. */
-extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_ReleaseFar");
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
@@ -157,24 +153,16 @@ void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
-    Actor_Destroy__mars_join(obj);
+    Actor_ReleaseFar(obj);
 }
 
 struct BattleFxScene;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define Actor_ReleaseFar Actor_Destroy__mars_join
+#define Actor_ReleaseFar Actor_ReleaseFar
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
-
-/* VIEW(mars_join): routine Actor_SetSpriteColorModeFar as void
- * Actor_SetSpriteColorModeFar(struct CaptureObject *object, s32 value); motes
- * has void Actor_SetSpriteColorModeFar(struct Actor *object, u32 value); not
- * tried: Actor_SetSpriteColorModeFar's bound declaration was not found. */
-extern void Animation_ApplyChildValuesFar__mars_join(
-    struct CaptureObject *object,
-    s32 value) __asm__("Actor_SetSpriteColorModeFar");
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a

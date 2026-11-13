@@ -847,13 +847,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
-/* VIEW(menus): variable gWindowSprite_BounceScales as const u16
- * gWindowSprite_BounceScales[]; module/window/scales.h has const u16
- * gWindowSprite_BounceScales[32]; not tried: gWindowSprite_BounceScales's
- * declaration holds a FAKEMATCH tag. */
-extern const u16
-    gWindowSprite_BounceScales__menus[] __asm__("gWindowSprite_BounceScales");
-
 // The transition's byte after its fields; while it is set the window lines
 // are left alone.
 #define TRANSITION_BUSY(state) (((s8 *)(state))[0x53f])
@@ -886,7 +879,7 @@ void IconMenu_DrawIcons(void) {
 
   work = Ram_HeapSlots->menuSelectWork;
   sprite = work->entries;
-  scale = gWindowSprite_BounceScales__menus[(gFrameCount * 2) & 31];
+  scale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
   buffers = Ram_HeapSlots->screenTransition;
   scale = (scale - 256) / 4 + 304;
   effect.scaleX = scale;

@@ -501,7 +501,7 @@ void LuckyDice_Run(void) {
       if (payoutTimer > 0) {
         payoutTimer--;
       }
-      if (resultTimer > 19 && (gInput.repeat & 1)) {
+      if (resultTimer > 19 && (gInput.repeat & KEY_A)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = 3;
@@ -538,11 +538,11 @@ void LuckyDice_Run(void) {
       // The held keys read through a volatile pointer, as The Broken Seal's
       // gKeysHeld is declared; as gInput.held, 10 of 2055 instructions differ
       // in tla-en.
-      if (*(volatile u32 *)&gInput.held & 0x40) {
+      if (*(volatile u32 *)&gInput.held & KEY_UP) {
         diceWork->particles[0].y += 0x40000;
         diceWork->particles[1].y += 0x40000;
       }
-      if (gInput.held & 0x80) {
+      if (gInput.held & KEY_DOWN) {
         diceWork->particles[0].y += -0x40000;
         diceWork->particles[1].y += -0x40000;
       }
@@ -563,12 +563,12 @@ void LuckyDice_Run(void) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
-      if (gInput.repeat & 2) {
+      if (gInput.repeat & KEY_B) {
         Sound_PlayFar(SE_MENU_CANCEL);
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
-      if (gInput.repeat & 1) {
+      if (gInput.repeat & KEY_A) {
         Sound_PlayFar(SE_LUCKY_DICE_THROW);
         Window_CloseFar(sprites->helpWindow, 1);
         state = 1;
@@ -741,7 +741,7 @@ void LuckyDice_Run(void) {
             rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
           }
         }
-        rollingDie->velocityY += -0x8000;
+        rollingDie->velocityY += -(px(1) / 2);
         if (rollingDie->y <= 0) {
           rollingDie->y = 0;
           rollingDie->velocityY = -rollingDie->velocityY * 48 / 64;
@@ -772,7 +772,7 @@ void LuckyDice_Run(void) {
             rollAngle = rollingDie->variant;
             faceTile = rollAngle / 1024 % 3;
             if (faceTile == 1) {
-              rollingDie->variant = rollAngle + 0x800;
+              rollingDie->variant = rollAngle + TRIG_TURN / 32;
             } else if (faceTile == 2) {
               rollingDie->variant = rollAngle + 0x400;
             }
@@ -884,7 +884,7 @@ void LuckyDice_Run(void) {
   }
 
   for (index = 0; index != 17; index++) {
-    scale = 0x10000 - (index << 12);
+    scale = Q16_ONE - (index << 12);
     LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
     LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
     wait(1);

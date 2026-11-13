@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "fixed_math.h"
 #include "system/projection.h"
 
 struct ProjectedPoint {
@@ -18,7 +19,7 @@ struct ProjectedPoint {
 #define MTX_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
 
 /// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
-#define COS(a) Trig_Sin((a) + 0x4000)
+#define COS(a) Trig_Sin((a) + TRIG_TURN / 4)
 
 void Render_EmptyHook(void) {}
 
@@ -349,7 +350,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 
   // Normalize the horizontal axis u = (dz, 0, -dx).
   w = 0x10000 - mul(dy, dy);
-  scale = 0x10000;
+  scale = Q16_ONE;
   if (w > 0)
     scale = divide(num, FixedSqrt(w)) << 1;
   ux = mul(dz, scale);
@@ -401,7 +402,7 @@ void Projection_SetFieldOfView(s32 value, s32 param1, s32 param2) {
 
   half = value / 2;
   first = Trig_Sin(half);
-  result = Iwram_RatioMulQ14(first, Trig_Sin(half + 0x4000) * 0x50);
+  result = Iwram_RatioMulQ14(first, Trig_Sin(half + TRIG_TURN / 4) * 0x50);
   gCameraSceneParameters[1] = param1;
   gCameraSceneParameters[0] = result;
   gCameraSceneParameters[2] = param2;
@@ -441,8 +442,8 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
     } else {
       scale = 0x151eb;
     }
-    x = projection->centerX + Iwram_MulQ16(view.x, scale) / 0x10000;
-    y = projection->centerY - Iwram_MulQ16(view.y, scale) / 0x10000;
+    x = projection->centerX + Iwram_MulQ16(view.x, scale) / (Q16_ONE);
+    y = projection->centerY - Iwram_MulQ16(view.y, scale) / (Q16_ONE);
     screen->x = x;
     screen->y = y;
     return scale;

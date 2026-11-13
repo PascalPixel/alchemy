@@ -33,13 +33,6 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-/* VIEW(menus): routine VramCache_Reload as s32 VramCache_Reload(s32 entry,
- * const void *tiles); resource.h has s32 VramCache_Reload(s32 slot, s32
- * source); tried as the definition's s32 VramCache_Reload(s32 no, s32 src),
- * BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
-extern s32
-VramCache_Reload__menus(s32 entry,
-                        const void *tiles) __asm__("VramCache_Reload");
 /* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the
  * definition has s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16
  * selected[2]; struct BattleWork *battle; s32 count; count =
@@ -53,16 +46,6 @@ extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
  */
 extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
     "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
-/* VIEW(menus): routine Text_DrawStringAtOffset as void
- * Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x,
- * s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct
- * RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void
- * Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32
- * offsetY), which the object already declares, BattleTarget_RunSelection moves:
- * 8 of 1647 instructions in tla-ja. */
-extern void
-Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
-                               s32 x, s32 y) __asm__("Text_DrawStringAtOffset");
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \
@@ -274,8 +257,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       ((u32 *)firstSprite)[2] = 0;
     } while (0);
     firstSprite->tile =
-        VramCache_Reload__menus(cursorSlot, ((gFrameCount >> 2) & 31) * 256 +
-                                                gMenu_AnimatedCursorTiles);
+        VramCache_Reload(cursorSlot, ((gFrameCount >> 2) & 31) * 256 +
+                                         gMenu_AnimatedCursorTiles);
     TARGET_BOB(selectedPosition.y);
     y = selectedPosition.y;
     if (cursorTracks[0].flags & 1) {
@@ -391,36 +374,36 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_KpString,
-                                             conditionWindow, 0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_KpString, conditionWindow, 0,
+                                      0);
               break;
             case CARTRIDGE_LANGUAGE_FRENCH:
             case CARTRIDGE_LANGUAGE_SPANISH:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_PvString,
-                                             conditionWindow, 0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_PvString, conditionWindow, 0,
+                                      0);
               break;
             case CARTRIDGE_LANGUAGE_ITALIAN:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_HpString,
-                                             conditionWindow, 0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
+                                      0);
               break;
             }
 #else
-            Text_DrawStringAtOffset__menus(gOwnerStatus_HpString,
-                                           conditionWindow, 0, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
+                                    0);
 #endif
             Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
-                                           conditionWindow, 48, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
+                                    48, 0);
             Text_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
             break;
           case 2:
             TARGET_HELP_COLUMN(7, 6, 17);
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_PpString,
-                                           conditionWindow, 0, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
+                                    0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
-                                           conditionWindow, 48, 0);
+            Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
+                                    48, 0);
             Text_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
             break;
           case 5:

@@ -4,6 +4,7 @@
 /// in bank 04 it follows the field sequence's picture decoders.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "sounds.h"
 #include "debug.h"
 #include "field/field.h"
@@ -170,7 +171,7 @@ void Scene_ReturnFromSequence(s32 result) {
     } else {
       gMainRoutineWork.scene = gMainRoutineWork.primary;
       gMainRoutineWork.entrance = gMainRoutineWork.secondary;
-      GameFlag_Set(0x109);
+      GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     }
   }
 }
@@ -263,9 +264,10 @@ void MainRoutine_Run(s32 mode) {
       continue;
     }
 
-    Scene_Arrive(gMainRoutineWork.scene, GameFlag_Get(0x109));
+    Scene_Arrive(gMainRoutineWork.scene,
+                 GameFlag_Get(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
-    if (!GameFlag_Get(0x109)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       if (GameFlag_Get(0x11a) || GameFlag_Get(0x11b))
         GameFlag_Clear(0x11a);
       else

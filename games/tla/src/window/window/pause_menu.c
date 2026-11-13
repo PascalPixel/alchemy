@@ -79,14 +79,6 @@ void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
-/* VIEW(flag_bit_rect): routine Window_Create as struct RenderInput
- * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); selrow has
- * struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer); not
- * tried: Window_Create's declaration holds a FAKEMATCH tag. */
-extern struct RenderInput *
-Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
-                             s32 style) __asm__("Window_Create");
-
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// field's actor system while the browser owns its window and cache entries.
 /// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
@@ -139,7 +131,7 @@ s32 DebugBrowser_Icons(void) {
       page = (page + 12) % 12;
       mode = (mode + 3) % 3;
       Window_Close(window, 2);
-      window = Window_Create__flag_bit_rect(10, 0, 18, 12, 2);
+      window = Window_Create(10, 0, 18, 12, 2);
       if (mode == 0)
         Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
       else if (mode == 1)
@@ -199,7 +191,7 @@ s32 DebugBrowser_Portraits(void) {
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
-  window = Window_Create__flag_bit_rect(10, 10, 14, 3, 2);
+  window = Window_Create(10, 10, 14, 3, 2);
   index = 0;
   palette = 15;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {

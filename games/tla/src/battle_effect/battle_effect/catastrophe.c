@@ -104,12 +104,6 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
 extern u8 gMapCellBuffer[];
-/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698
- * has extern struct EffectStep gData_02014000[]; tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:53207: `gData_02014000__f1843fc'
- * undeclared (first use in this function). */
-extern u8 gData_02014000__f1843fc[] __asm__("gData_02014000");
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 Data_02016000[];
@@ -152,17 +146,6 @@ extern const s16 Data_081999f2[];
 
 void VramBlock_Reset93Far(void);
 void VramBlock_Load93Far(void);
-/* VIEW(f1843fc): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); the definition has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags); tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, BattleEffect_RunCatastrophe moves:
- * 4 of 4547 instructions in tla-ja. */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__f1843fc(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 /* VIEW(f1843fc): routine EffectSprite_Acquire as struct SpriteObject
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f17e698
  * has Sprite *EffectSprite_Acquire(s32, s32, u32, s32); tried as the
@@ -307,7 +290,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80002000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
@@ -339,7 +322,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xc000);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xc000);
       obj->priority = 1;
       work->objects[34 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -354,7 +337,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xd000);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xd000);
       obj->priority = 1;
       work->objects[39 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -369,7 +352,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 6; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xe000);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xe000);
       obj->priority = 1;
       work->objects[44 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -1721,7 +1704,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (frame >= lim && frame < lim + 8) {
-                u8 *src = gData_02014000__f1843fc;
+                u8 *src = gData_02014000;
 
                 blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + src,
                         p2->x - 12, 0, 24, 120);

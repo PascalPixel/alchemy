@@ -26,12 +26,6 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 terrain);
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 void FieldPsynergy_WatchSandGround(void);
 void FieldPsynergy_EndSand(void);
-/* VIEW(f0e4a34): routine Sand_InitLeaderSprite as void
- * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
- * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
- * tried: Sand_InitLeaderSprite's bound declaration was not found. */
-extern void Func_080e4510__f0e4a34(void *sprite,
-                                   s32 tiles) __asm__("Sand_InitLeaderSprite");
 void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
 void Sand_DrawLeaderSprite(void *sprite);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -105,7 +99,7 @@ void FieldPsynergy_Sand(void) {
                               0x400);
   pictureEntry = VramCache_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
-  Func_080e4510__f0e4a34(work + 0x1900, pictureTiles);
+  Sand_InitLeaderSprite(work + 0x1900, pictureTiles);
   frame = 15;
   for (; frame <= 92; frame++) {
     Picture_SinkColumnsByWave(work, work + 0x400, frame * 3 / 2);

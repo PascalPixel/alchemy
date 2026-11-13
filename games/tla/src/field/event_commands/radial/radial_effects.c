@@ -6,6 +6,7 @@
 
 #include "../radial_internal.h"
 #include "sounds.h"
+#include "gamepak/far_call/field.h"
 
 #include "module/field/event_commands.h"
 
@@ -1016,16 +1017,6 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->y = y - 0x20000;
   particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
 }
-
-/* VIEW(radial): routine Actor_CreateFar as struct ArcObject
- * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); gamepak/far_call/field.h has
- * struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); tried as the
- * rest of the object declares it, it does not compile in tla-ja (make modern):
- * games/tla/src/field/event_commands/radial.c:79:13: note:
- * 'FieldEffect_AdvanceMotion' declared here. */
-struct ArcObject *Actor_CreateFar__radial(s32 kind, s32 x, s32 y,
-                                          s32 z) __asm__("Actor_CreateFar");
-#define Actor_CreateFar Actor_CreateFar__radial
 
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 *work = Ram_HeapSlots->effectWork;

@@ -344,7 +344,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
@@ -352,7 +352,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
         scale = object->scaleX + 0x51e;
         {
           /* FAKEMATCH(temporary): the turn is added as a word. */
-          s32 angle = object->facing + 0x1000;
+          s32 angle = object->facing + TRIG_TURN / 16;
 
           object->facing = angle;
         }
@@ -362,7 +362,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x8000;
+          Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }

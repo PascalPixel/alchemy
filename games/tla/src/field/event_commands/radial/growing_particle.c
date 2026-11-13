@@ -58,13 +58,6 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 void FieldPsynergy_WatchSandGround(void);
 extern char ResourceId_DustPuffA;
-/* VIEW(growing_particle): routine Sand_InitLeaderSprite as void
- * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
- * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
- * tried: Sand_InitLeaderSprite's bound declaration was not found. */
-extern void
-Func_080e4510__growing_particle(void *sprite,
-                                s32 tiles) __asm__("Sand_InitLeaderSprite");
 void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
 void Sand_DrawLeaderSprite(void *sprite);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -152,7 +145,7 @@ void FieldPsynergy_EndSand(void) {
   asm("" : : "r"(party));
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
-  Func_080e4510__growing_particle(work + 0x1900, sprite);
+  Sand_InitLeaderSprite(work + 0x1900, sprite);
   wait(1);
 
   frame = 0;

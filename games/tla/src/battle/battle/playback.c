@@ -178,7 +178,7 @@ void BattlePlayback_Run(void) {
             events->actorId = events->queue.operands[eventIndex];
             BattleEnemy_RecordDefeat(events->actorId, events->flags);
             BattleUnit_ClearStatuses(events->actorId);
-            unit = Unit_Get__f11f66c(events->actorId);
+            unit = Unit_Get(events->actorId);
             for (recordIndex = 0;
                  (record =
                       GetMotionRecord(BattleObject_Get(events->actorId)->object,
@@ -297,8 +297,7 @@ void BattlePlayback_Run(void) {
 
         if (events->timer == 0 && events->flags != 0) {
           s32 kind = BattleSprite_GetDefeatSound(
-              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))
-                  ->enemyId);
+              ((struct BattleUnit *)Unit_Get(events->actorId))->enemyId);
 
           if (kind >= 0) {
             kind--;
@@ -312,8 +311,7 @@ void BattlePlayback_Run(void) {
           events->timer = 0;
         if (events->timer == 0) {
           s32 kind = BattleSprite_GetDefeatSound(
-              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))
-                  ->enemyId);
+              ((struct BattleUnit *)Unit_Get(events->actorId))->enemyId);
 
           if (kind >= 0)
             Sound_PlayFar(146 + kind);

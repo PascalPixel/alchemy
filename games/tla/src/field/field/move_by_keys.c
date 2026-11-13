@@ -9,12 +9,6 @@
 #include "module/field/resource_slot.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
-/* VIEW(move_by_keys): variable gWorldMap_KeyHeadings as extern const u16
- * gWorldMap_KeyHeadings[16]; f028aac has extern const s16
- * gWorldMap_KeyHeadings[16]; not tried: gWorldMap_KeyHeadings's bound
- * declaration was not found. */
-extern const u16
-    gData_0802ec5c__move_by_keys[16] __asm__("gWorldMap_KeyHeadings");
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
@@ -51,7 +45,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     keys = INPUT_HELD;
   keys = INPUT_HELD;
   {
-    const u16 *table = gData_0802ec5c__move_by_keys;
+    const u16 *table = gWorldMap_KeyHeadings;
 
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
@@ -152,7 +146,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
-  angle = gData_0802ec5c__move_by_keys[(INPUT_HELD >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
     best = (struct RopeNode *)object->watchedObject;
     value = 0;
@@ -281,7 +275,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
-  angle = gData_0802ec5c__move_by_keys[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     collisionFlags = 4;
     best = (struct TightropeNode *)object->watchedObject;

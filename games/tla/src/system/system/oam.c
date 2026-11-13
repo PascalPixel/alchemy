@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "fixed_math.h"
 
 void Oam_ResetFrame(void) {
   gObjAffineCount = 0;
@@ -33,7 +34,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
     s32 reciprocal;
     s32 xReciprocal;
 
-    reciprocal = Iwram_SignedDivide(0x10000, yScale);
+    reciprocal = Iwram_SignedDivide(Q16_ONE, yScale);
     xReciprocal = reciprocal;
     if (xScale == -yScale)
       xReciprocal = -reciprocal;

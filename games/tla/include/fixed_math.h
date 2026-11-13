@@ -5,6 +5,8 @@
 
 /// One in the game's signed 16.16 fixed-point format.
 #define Q16_ONE (1 << 16)
+/// Whole pixels as a 16.16 position, speed or distance.
+#define px(value) ((value) << 16)
 
 /// A whole turn in the angles that Trig_Sin and Trig_Cos take: TRIG_TURN / 4
 /// is a quarter turn.

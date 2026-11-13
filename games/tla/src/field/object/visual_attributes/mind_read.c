@@ -1244,12 +1244,6 @@ void FieldPsynergy_ForceOnTarget(struct BattleEffectArgument *effect) {
 #include "module/field/event_commands.h"
 
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);
-/* VIEW(f0de21c): routine FieldEffect_UpdateRadialBurst as void
- * FieldEffect_UpdateRadialBurst(struct FieldParticle *slot); the definition has
- * void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect); not
- * tried: FieldEffect_UpdateRadialBurst's bound declaration was not found. */
-extern void Func_080de060__f0de21c(struct FieldParticle *slot) __asm__(
-    "FieldEffect_UpdateRadialBurst");
 
 // Twelve sparks burst over the user, two frames apart; a ball grows in
 // front of it and flies off with three trailing copies, and the target is
@@ -1282,7 +1276,7 @@ void FieldPsynergy_Force(void) {
     pos.z = source->z;
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
-    FieldParticle_SetCallback(slot, Func_080de060__f0de21c);
+    FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, 9);
     slot->scaleY = 0xb333;

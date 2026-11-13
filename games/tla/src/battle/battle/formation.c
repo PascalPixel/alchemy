@@ -27,7 +27,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
     candidateOrUnitIndex = unitCount;
     do {
-      u8 level = ((struct BattleUnit *)Unit_Get__f11f66c(*unitCursor))->level;
+      u8 level = ((struct BattleUnit *)Unit_Get(*unitCursor))->level;
 
       candidateOrUnitIndex--;
       unitCursor++;
@@ -145,7 +145,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   s32 i;
 
   base = Heap_AllocEwram(sizeof(struct OwnerStats__presentation));
-  state = Unit_Get__f11f66c(owner);
+  state = Unit_Get(owner);
   stats = &state->stats;
   Iwram_CopyWordsEntry(base, stats, sizeof(struct OwnerStats__presentation));
 
@@ -231,7 +231,7 @@ struct UnitBaseStats__presentation {
 // No ☀️ twin found.
 void BattleUnit_Strengthen(s32 unitId) {
   struct UnitBaseStats__presentation *saved = Heap_AllocEwram(36);
-  struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
   s32 value;
   s32 floor;
 
@@ -318,7 +318,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   s32 bit;
   s32 classId;
 
-  actor = Unit_Get__f11f66c(actorId);
+  actor = Unit_Get(actorId);
   if (actor->unavailable != 0)
     return;
 
@@ -352,7 +352,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
   objectIndex = 0;
   marker = LIST_MARKER_CHAR;
 scan_objects:
-  summon = Unit_Get__f11f66c(objectIndex + 0x80);
+  summon = Unit_Get(objectIndex + 0x80);
   occupied = summon->side;
   if (occupied != 1)
     goto next_object;
@@ -558,8 +558,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   battle->firstDefeated = 6;
   battle->defeatState = 0;
   for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134; memberOrEnemyIndex++)
-    Iwram_ClearWordsEntry(Unit_Get__f11f66c(memberOrEnemyIndex),
-                          BATTLE_UNIT_SIZE);
+    Iwram_ClearWordsEntry(Unit_Get(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
   if (enemyClasses[0] == 0)
@@ -576,7 +575,7 @@ assign_enemy:
       BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
     BattleUnit_SetFar(memberOrEnemyIndex + 128,
                       enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
-    unit = Unit_Get__f11f66c(memberOrEnemyIndex + 128);
+    unit = Unit_Get(memberOrEnemyIndex + 128);
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + 128, levelAdjustment);
     else if (!GameFlag_Get(0x173) && GameFlag_Get(0x2e))

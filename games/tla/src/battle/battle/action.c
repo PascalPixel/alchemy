@@ -86,7 +86,7 @@ s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
 
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
-  struct BattleUnit *actor = Unit_Get__f11f66c(request->unitId);
+  struct BattleUnit *actor = Unit_Get(request->unitId);
   struct ActionRunBattleWork *battle =
       (struct ActionRunBattleWork *)Ram_HeapSlots->battleWork;
   s32 selectedTargetId;
@@ -145,7 +145,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               if (targetId == 254)
                 continue;
               if (!includeDowned &&
-                  ((struct BattleUnit *)Unit_Get__f11f66c(targetId))->hp == 0)
+                  ((struct BattleUnit *)Unit_Get(targetId))->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;
@@ -158,7 +158,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               if (targetId == 254)
                 continue;
               if (!includeDowned &&
-                  ((struct BattleUnit *)Unit_Get__f11f66c(targetId))->hp == 0)
+                  ((struct BattleUnit *)Unit_Get(targetId))->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;
@@ -568,7 +568,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   }
 
   if (abilityId == 1) {
-    struct BattleUnit *target = Unit_Get__f11f66c(plan->targetIds[0]);
+    struct BattleUnit *target = Unit_Get(plan->targetIds[0]);
 
     plan->abilityId = 1;
     plan->element = Item_GetEquippedElementFar(request->unitId);

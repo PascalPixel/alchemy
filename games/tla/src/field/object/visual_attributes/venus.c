@@ -103,7 +103,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
       djinni->callback = (void *)FieldEffect_UpdateDescendingOrbitActor;
       djinni->mode = 0;
       Actor_SelectAnimationFar((struct Actor *)djinni, 7);
-      Animation_ApplyChildValuesFar__mars_join(djinni, 11);
+      Actor_SetSpriteColorModeFar(djinni, 11);
     }
   }
 
@@ -126,7 +126,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
     Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
-    Animation_ApplyChildValuesFar__mars_join(djinni, 11);
+    Actor_SetSpriteColorModeFar(djinni, 11);
     djinni->lifetime = 8;
     Actor_StartScriptFar((struct Actor *)djinni,
                          gBattleEffect_SharedParticleScript);

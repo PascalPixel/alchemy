@@ -604,17 +604,7 @@ struct SprayEvent {
 };
 
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-/* VIEW(psynergy): routine EffectSprite_DrawAtWorldPosition as void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * SprayParticle *particle); field/event_commands/radial has void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * ScatterParticle *p); not tried: EffectSprite_DrawAtWorldPosition's marker was
- * not found. */
-void EffectSprite_DrawAtWorldPosition__psynergy(
-    struct EffectSprite *sprite,
-    struct SprayParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
-#define EffectSprite_DrawAtWorldPosition                                       \
-  EffectSprite_DrawAtWorldPosition__psynergy
+#define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 

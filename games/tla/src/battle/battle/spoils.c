@@ -120,7 +120,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   s32 slot;
   s32 classIndex;
 
-  unit = Unit_Get__f11f66c(unitId);
+  unit = Unit_Get(unitId);
   battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)
@@ -231,7 +231,7 @@ void Battle_AwardSpoils(void) {
   backup = Heap_AllocEwram(sizeof(struct BattleUnit));
   for (i = 0; i < count; i++) {
     unitId = list[i];
-    unit = Unit_Get__f11f66c(unitId);
+    unit = Unit_Get(unitId);
     if (i >= living)
       unit->experience += (u32)spoils->experience >> 1;
     else

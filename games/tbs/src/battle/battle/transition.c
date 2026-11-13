@@ -80,14 +80,20 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
 /// 31 (BATTLE_BG1CNT) by BattleBackground_Load and
 /// BattleBackground_SetMode.
 void BattleTransition_BuildTilemap(void *tilemap) {
-  u16 *entries = tilemap;
-  s32 i;
+  u32 *pairs = tilemap;
+  u32 pair;
+  u32 i;
 
-  Iwram_FillWords(entries, 4 * 64, -1);
-  Iwram_FillWords(entries + 4 * 32, 2 * 64, 0x03ff03ff);
-  for (i = 0; i < 15 * 32; i++)
-    entries[6 * 32 + i] = 512 + i;
-  Iwram_FillWords(entries + 21 * 32, 640, 0x03ff03ff);
+  Iwram_FillWords(pairs, 4 * 64, -1);
+  pairs += 4 * 16;
+  Iwram_FillWords(pairs, 2 * 64, 0x03ff03ff);
+  pairs += 2 * 16;
+  pair = 513 << 16 | 512;
+  for (i = 0; i < 15 * 16; i++) {
+    *pairs++ = pair;
+    pair += 1 << 17 | 2;
+  }
+  Iwram_FillWords(pairs, 640, 0x03ff03ff);
 }
 
 /// Shows the zoomed background's finished page each VBlank while the
@@ -135,16 +141,23 @@ void BattleTransition_UploadTileVariant(void) {
 /// (HEAP_SLOT_BATTLE_ENTRY_TIMER), and writes gBgScroll[0].y and the camera's
 /// yaw.
 void BattleTransition_AdvanceTimer(void) {
-  u32 frame = *gBattleEntryTimer;
-  s32 scroll = 52 - (s32)frame;
+  void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER];
+  u32 *timer = slots[0];
+  u32 frame = *timer;
+  struct BattleCamera *camera =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_ENTRY_TIMER, HEAP_SLOT_CAMERA);
+  s32 scroll = 52 - frame;
 
-  CLAMP(scroll, 0, 32);
+  if (scroll > 32)
+    scroll = 32;
+  if (scroll < 0)
+    scroll = 0;
   gBgScroll[0].y = scroll;
   // 360 a frame from 44928 reaches 73728, a turn past YAW_PARTY_ACTION, at
   // frame 80.
   if (frame <= 80)
-    gBattleCamera->yaw = frame * 360 + 44928;
-  frame = ++*gBattleEntryTimer;
+    camera->yaw = frame * 360 + 44928;
+  frame = ++*timer;
   if (frame <= 80)
     BattleCamera_SetView(0, 0, 0, 180 - frame);
   else
@@ -159,23 +172,26 @@ void BattleTransition_AdvanceTimer(void) {
 /// which BattleTransition_AdvanceTimer counts in the frame pass; writes BG1's
 /// map in screen block 12.
 void BattleTransition_DrawRows(void) {
+  u32 column;
   s32 frame = *gBattleEntryTimer;
-  u16 *map = (u16 *)BG_SCREEN_BLOCK(12);
   s32 entry;
-  s32 row;
-  s32 column;
+  u32 row;
+  u16 *tiles;
 
-  if (frame < 0 || frame > 79)
-    return;
   // The upper half moves up from row 13, the lower half, flipped, down.
-  entry = (frame & 7) + TRANSITION_CURTAIN_ENTRY(1);
-  row = 13 - frame / 8;
-  for (column = 0; column < 32; column++)
-    map[row * 32 + column] = entry;
-  row = 13 + frame / 8;
-  if (row <= 20) {
-    for (column = 0; column < 32; column++)
-      map[row * 32 + column] = entry | TILE_VFLIP;
+  if (frame >= 0 && frame <= 79) {
+    entry = (frame & 7) + TRANSITION_CURTAIN_ENTRY(1);
+    row = 13 - frame / 8;
+    tiles = (u16 *)BG_SCREEN_BLOCK(12) + row * 32;
+    for (column = 0; column != 32; column++)
+      *tiles++ = entry;
+    entry |= TILE_VFLIP;
+    row = 13 + frame / 8;
+    if (row <= 20) {
+      tiles = (u16 *)BG_SCREEN_BLOCK(12) + row * 32;
+      for (column = 0; column != 32; column++)
+        *tiles++ = entry;
+    }
   }
 }
 

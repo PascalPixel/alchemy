@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_MODULE_WINDOW_F04A85C_H
-#define ALCHEMY_MODULE_WINDOW_F04A85C_H
+#ifndef ALCHEMY_MODULE_WINDOW_MENUS_H
+#define ALCHEMY_MODULE_WINDOW_MENUS_H
 
 /// @file
-/// What games/tla/src/window/f04a85c/ declares for the files that use it,
+/// What games/tla/src/window/menus.c declares for the files that use it,
 /// written once.
 
 #include "types.h"

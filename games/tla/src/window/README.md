@@ -12,9 +12,8 @@ explains the window system for The Broken Seal.
   `window/` cut where The Broken Seal's are, with one part more: `debug.c`,
   the debug menus, which The Broken Seal keeps in its screens object.
   `screens.c` is its screens object as far as the battle Psynergy menu
-  (`battle_psynergy_menu.c`), written the same way. Each other file
-  holds a run of functions the ROM keeps together, one still named by its
-  address (`f04a85c.c`).
+  (`battle_psynergy_menu.c`), written the same way. `menus.c` holds the
+  rest of that object, from the battle target selection to the pause menu.
 - `cell_picture.c` is ARM code, compiled with GCC 2.95.2 like The Broken
   Seal's ARM files (`ARM_C`).
 - `screens/save.c` holds `FileList_UpdatePulse`, which pulses four colours

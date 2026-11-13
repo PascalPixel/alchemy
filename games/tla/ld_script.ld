@@ -213,7 +213,7 @@ SECTIONS
         "*/games/tla/src/window/expand_opaque_masks.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/window.o"(.text)
         "*/games/tla/src/window/screens.o"(.text)
-        "*/games/tla/src/window/f04a85c.o"(.text)
+        "*/games/tla/src/window/menus.o"(.text)
         "*/games/tla/src/graphics/ui/slider.o"(.rodata)
         "*/games/tla/src/graphics/ui/marks.o"(.rodata)
         "*/games/tla/src/graphics/ui/menu_icons.o"(.rodata)

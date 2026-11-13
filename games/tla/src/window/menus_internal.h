@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_F04A85C_INTERNAL_H
-#define ALCHEMY_F04A85C_INTERNAL_H
+#ifndef ALCHEMY_MENUS_INTERNAL_H
+#define ALCHEMY_MENUS_INTERNAL_H
 
 /// @file
-/// What every part of the f04a85c object shares: its includes. f04a85c.c
+/// What every part of the menus object shares: its includes. menus.c
 /// includes it before the parts, and each part includes it too.
 
 #include "types.h"
@@ -51,4 +51,4 @@
 #include "sprite.h"
 #include "render_input.h"
 
-#endif // ALCHEMY_F04A85C_INTERNAL_H
+#endif // ALCHEMY_MENUS_INTERNAL_H

@@ -5,16 +5,16 @@
 /// bouncing, and fits the window's lines around it.
 /// Then the resource selection menus: shop commands, sanctum services, Yes or
 /// No, coins or medals, and the save screen's actions.
-// Part of f04a85c.c.
+// Part of menus.c.
 
-#include "../f04a85c_internal.h"
+#include "../menus_internal.h"
 #include "affine.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "item_icon.h"
 #include "menu_list.h"
 #include "module/tla.h"
-#include "module/window/f04a85c.h"
+#include "module/window/menus.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
 #include "resource_ids.h"
@@ -59,11 +59,11 @@
 
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
-/* VIEW(f04a85c): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile u16 gLinkStatus. */
-extern u16 gLinkStatus__f04a85c __asm__("gLinkStatus");
-/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16 gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature gLinkPeerSignatures[]; tried as the 2 declarations' extern u16 gLinkPeerSignatures[][12], it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1344: conflicting types for `gLinkPeerSignatures'. */
+/* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile u16 gLinkStatus. */
+extern u16 gLinkStatus__menus __asm__("gLinkStatus");
+/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16 gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature gLinkPeerSignatures[]; tried as the 2 declarations' extern u16 gLinkPeerSignatures[][12], it does not compile in tla-ja: games/tla/src/window/menus.c:1344: conflicting types for `gLinkPeerSignatures'. */
 extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__("gLinkPeerSignatures");
-/* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1346: conflicting types for `gMainRoutineWork'. */
+/* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/src/window/menus.c:1346: conflicting types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__battle_party_commands[] __asm__("gMainRoutineWork");
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
@@ -79,9 +79,9 @@ extern s32 BattleParty_ListActorIdsFar__battle_party_commands(s32 side, u16 *uni
 /* VIEW(battle_party_commands): routine Message_DecodeRaw as void Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object already declares, Func_0804bbd0.1 moves: 2 of 24 instructions in tla-ja. */
 extern void Message_DecodeRaw__battle_party_commands(s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
 void *Unit_Get(s32 owner);
-/* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
 extern struct Window *Window_Create__battle_party_commands(s32 x, s32 y, s32 width, s32 height, s32 flags) __asm__("Window_Create");
-/* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y); menus has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
 extern void Text_DrawCharacterAtOffset__battle_party_commands(s32 message, struct Window *window, s32 x,
                                 s32 y) __asm__("Text_DrawMessageAsTiles");
 /* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y), Battle_CollectPartyCommands moves: 2 of 1909 instructions in tla-ja. */
@@ -94,13 +94,13 @@ void Window_PutGlyph(struct Window *window, s32 character, s32 x, s32 y,
                    s32 mode);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 void *Message_ShowAndWait(s32 message, s32 x, s32 y);
-/* VIEW(battle_party_commands): routine Item_Get as u16 *Item_Get(s32 item); item.h has struct ItemDefinition *Item_Get(s32 item); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:2047: subscripted value is neither array nor pointer. */
+/* VIEW(battle_party_commands): routine Item_Get as u16 *Item_Get(s32 item); item.h has struct ItemDefinition *Item_Get(s32 item); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/menus.c:2047: subscripted value is neither array nor pointer. */
 extern u16 *Item_Get__battle_party_commands(s32 item) __asm__("Item_Get");
 /* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void Text_FillCanvasBackground(void); countdown has unsigned char Text_FillCanvasBackground(void); tried as the definition's void Text_FillCanvasBackground(void), which the object already declares, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
 extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__("Text_FillCanvasBackground");
-/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1419: conflicting types for `Message_CopyExpanded'. */
+/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); menus has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:1419: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__battle_party_commands(s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
-/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1421: conflicting types for `Text_DrawWideStringAtOffset'. */
+/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); menus has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y), it does not compile in tla-ja: games/tla/src/window/menus.c:1421: conflicting types for `Text_DrawWideStringAtOffset'. */
 extern void Text_DrawWideStringAtOffset__battle_party_commands(u16 *text, struct Window *window, s32 x,
                                  s32 y) __asm__("Text_DrawWideStringAtOffset");
 
@@ -201,7 +201,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           state->linkTimer = 0;
           break;
         }
-        if ((gLinkStatus__f04a85c & 3) != 3) {
+        if ((gLinkStatus__menus & 3) != 3) {
           if (++missedLinkFrames > 24) {
             commandCount = -1;
             state->linkTimer = 0;
@@ -836,7 +836,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandCount = -1;
         break;
       }
-      if ((gLinkStatus__f04a85c & 3) != 3) {
+      if ((gLinkStatus__menus & 3) != 3) {
         mode++;
         if (mode > 24) {
           commandCount = -1;
@@ -867,11 +867,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
-/* VIEW(battle_party_commands): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform); f04a85c has s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine). */
+/* VIEW(battle_party_commands): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform); menus has s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine). */
 extern s32 AffineMatrix_BuildForEffect__battle_party_commands(struct AffineTransform *transform) __asm__("AffineMatrix_BuildForEffect");
 
-/* VIEW(f04a85c): variable gWindowSprite_BounceScales as const u16 gWindowSprite_BounceScales[]; module/window/scales.h has const u16 gWindowSprite_BounceScales[32]. */
-extern const u16 gWindowSprite_BounceScales__f04a85c[] __asm__("gWindowSprite_BounceScales");
+/* VIEW(menus): variable gWindowSprite_BounceScales as const u16 gWindowSprite_BounceScales[]; module/window/scales.h has const u16 gWindowSprite_BounceScales[32]. */
+extern const u16 gWindowSprite_BounceScales__menus[] __asm__("gWindowSprite_BounceScales");
 
 // The transition's byte after its fields; while it is set the window lines
 // are left alone.
@@ -905,7 +905,7 @@ void IconMenu_DrawIcons(void) {
 
   work = Ram_HeapSlots->menuSelectWork;
   sprite = work->entries;
-  scale = gWindowSprite_BounceScales__f04a85c[(gFrameCount * 2) & 31];
+  scale = gWindowSprite_BounceScales__menus[(gFrameCount * 2) & 31];
   buffers = Ram_HeapSlots->screenTransition;
   scale = (scale - 256) / 4 + 304;
   effect.scaleX = scale;
@@ -1178,7 +1178,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
-/* VIEW(resource_work): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
+/* VIEW(resource_work): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
 extern struct Window *Window_Create__resource_work(s32 x, s32 y, s32 width, s32 height, s32 style) __asm__("Window_Create");
 
 /// Decodes one command-icon table entry into the requested VRAM cache slot,
@@ -1449,8 +1449,8 @@ void Menu_DrawModeLabel(void) {
   }
 }
 
-/* VIEW(f04a85c): routine Text_DrawMessage as void Text_DrawMessage(s32 message, void *window, s32 x, s32 y); module/window/window.h has void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3). */
-extern void Text_DrawMessage__f04a85c(s32 message, void *window, s32 x, s32 y) __asm__("Text_DrawMessage");
+/* VIEW(menus): routine Text_DrawMessage as void Text_DrawMessage(s32 message, void *window, s32 x, s32 y); module/window/window.h has void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3). */
+extern void Text_DrawMessage__menus(s32 message, void *window, s32 x, s32 y) __asm__("Text_DrawMessage");
 
 // The Spanish descriptions are indented.
 #if LANGUAGE == LANGUAGE_SPANISH
@@ -1472,15 +1472,15 @@ void Menu_DrawModeIndicator(void) {
   if (*shown != *current) {
     if (*current == 0) {
       WindowSprite_ClearList(state->lowerWindow);
-      Text_DrawMessage__f04a85c((s32)MsgPasswordTransferHelp, state->lowerWindow, 8, 4);
-      Text_DrawMessage__f04a85c((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow, 8, 4);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
                        16);
     } else if (*shown == 0) {
       WindowSprite_ClearList(state->lowerWindow);
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
                        16);
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp + 2, state->lowerWindow, 0,
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow, 0,
                        28);
     }
     // Through the pointers, the selection would be loaded once at the top.
@@ -1492,35 +1492,35 @@ void Menu_DrawModeIndicator(void) {
     WindowSprite_PrepareForRedraw(state->lowerWindow);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
     if (*current == 0) {
-      Text_DrawMessage__f04a85c((s32)MsgPasswordTransferHelp, state->lowerWindow, HELP_X,
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow, HELP_X,
                        4);
-      Text_DrawMessage__f04a85c((s32)MsgPasswordTransferHelp + 1, state->lowerWindow,
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1, state->lowerWindow,
                        HELP_X, 16);
     } else {
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp, state->lowerWindow, HELP_X,
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, HELP_X,
                        4);
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp + 1, state->lowerWindow,
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow,
                        HELP_X, 16);
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp + 2, state->lowerWindow,
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow,
                        HELP_X, 28);
     }
 #else
     switch (*current) {
     case 0:
-      Text_DrawMessage__f04a85c((s32)MsgPasswordTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__f04a85c((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow, 0, 4);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
                        16);
       break;
     case 1:
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
                        16);
-      Text_DrawMessage__f04a85c((s32)MsgCableTransferHelp + 2, state->lowerWindow, 0,
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow, 0,
                        28);
       break;
     default:
-      Text_DrawMessage__f04a85c((s32)MsgClearDataTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__f04a85c((s32)MsgClearDataTransferHelp + 1, state->lowerWindow, 0,
+      Text_DrawMessage__menus((s32)MsgClearDataTransferHelp, state->lowerWindow, 0, 4);
+      Text_DrawMessage__menus((s32)MsgClearDataTransferHelp + 1, state->lowerWindow, 0,
                        16);
       break;
     }
@@ -1643,20 +1643,20 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     msg = (s32)MsgPasswordEntry;
     upper = &work->upperWindow;
     *upper = window;
-    Text_DrawMessage__f04a85c(msg, window, 0, 4);
+    Text_DrawMessage__menus(msg, window, 0, 4);
     window = Window_Create__resource_work(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
     work->lowerWindow = window;
-    Text_DrawMessage__f04a85c(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
+    Text_DrawMessage__menus(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
     // French writes a third line: "Niveaux" (MsgPasswordLevel).
-    Text_DrawMessage__f04a85c(msg + 2, work->lowerWindow, PASSWORD_TEXT_X,
+    Text_DrawMessage__menus(msg + 2, work->lowerWindow, PASSWORD_TEXT_X,
                      PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
     msg += 3;
-    Text_DrawMessage__f04a85c(msg, work->lowerWindow, PASSWORD_TEXT_X,
+    Text_DrawMessage__menus(msg, work->lowerWindow, PASSWORD_TEXT_X,
                      PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT * 2);
 #else
     msg += 2;
-    Text_DrawMessage__f04a85c(msg, work->lowerWindow, PASSWORD_TEXT_X,
+    Text_DrawMessage__menus(msg, work->lowerWindow, PASSWORD_TEXT_X,
                      PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
 #endif
   } else {
@@ -1665,7 +1665,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     window = Window_Create__resource_work(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
-    Text_DrawMessage__f04a85c((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
+    Text_DrawMessage__menus((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
     work->lowerWindow =
         Window_Create__resource_work(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
   }
@@ -1806,7 +1806,7 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
   return ret;
 }
 
-/* VIEW(resource_work): routine DebugSceneSelect_Run as void DebugSceneSelect_Run(void); the definition has s16 DebugSceneSelect_Run(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3143: `DebugSceneSelect_Run' undeclared (first use in this function). */
+/* VIEW(resource_work): routine DebugSceneSelect_Run as void DebugSceneSelect_Run(void); the definition has s16 DebugSceneSelect_Run(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/menus.c:3143: `DebugSceneSelect_Run' undeclared (first use in this function). */
 extern void Menu_RunSelection__resource_work(void) __asm__("DebugSceneSelect_Run");
 
 /// Schedules the debug scene and entrance selector;

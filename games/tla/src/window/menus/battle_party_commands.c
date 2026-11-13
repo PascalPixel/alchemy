@@ -1,11 +1,11 @@
 /// @file
 /// An ability classified for target selection, and a reserve member chosen for
 /// a party slot.
-// Part of f04a85c.c.
+// Part of menus.c.
 
-#include "../f04a85c_internal.h"
+#include "../menus_internal.h"
 #include "module/tla.h"
-#include "module/window/f04a85c.h"
+#include "module/window/menus.h"
 #include "motobj.h"
 
 /// Classifies an ability's effect for target selection.

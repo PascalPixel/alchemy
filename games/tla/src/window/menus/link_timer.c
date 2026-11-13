@@ -1,20 +1,20 @@
 /// @file
 /// The link battle timer, and a localized message shown until the player reads
 /// it.
-// Part of f04a85c.c.
+// Part of menus.c.
 
-#include "../f04a85c_internal.h"
-#include "module/window/f04a85c.h"
+#include "../menus_internal.h"
+#include "module/window/menus.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
-/* VIEW(f04a85c): variable gLinkPeerSignatures as struct LinkSignature gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]. */
-extern struct LinkSignature gLinkPeerSignatures__f04a85c[] __asm__("gLinkPeerSignatures");
+/* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]. */
+extern struct LinkSignature gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 
-/* VIEW(countdown): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4); f04a85c has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
+/* VIEW(countdown): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4); menus has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
 extern void Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
                              s32 arg4) __asm__("Text_DrawNumberInWindow");
 
@@ -84,7 +84,7 @@ void UpdateLinkSessionCountdown(void) {
     timer = state->timer;
     if (timer >= 0)
       goto timer_ready;
-    signature = &gLinkPeerSignatures__f04a85c[runtime->side ^ 1];
+    signature = &gLinkPeerSignatures__menus[runtime->side ^ 1];
     if (signature->e != 'E')
       goto signature_done;
     if (signature->d == 'D')
@@ -120,9 +120,9 @@ done:
   return;
 }
 
-/* VIEW(f04a85c): routine Text_FillCanvasBackground as unsigned char Text_FillCanvasBackground(void); module/window/window.h has void Text_FillCanvasBackground(void). */
-extern unsigned char Text_FillCanvasBackground__f04a85c(void) __asm__("Text_FillCanvasBackground");
-/* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
+/* VIEW(menus): routine Text_FillCanvasBackground as unsigned char Text_FillCanvasBackground(void); module/window/window.h has void Text_FillCanvasBackground(void). */
+extern unsigned char Text_FillCanvasBackground__menus(void) __asm__("Text_FillCanvasBackground");
+/* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); menus has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
 extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
 // The Japanese edition decodes the message (Message_DecodeRaw) into at most 32
@@ -135,10 +135,10 @@ extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-/* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32, s32, s32); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
+/* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32, s32, s32); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
 extern s32 Window_Create__countdown(s32, s32, s32, s32, s32) __asm__("Window_Create");
 
-/* VIEW(countdown): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32, s16 *, s32); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:977: conflicting types for `Message_CopyExpanded'. */
+/* VIEW(countdown): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32, s16 *, s32); menus has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:977: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__countdown(s32, s16 *, s32) __asm__("Message_CopyExpanded");
 
 /* VIEW(countdown): variable MsgNoTimeToRun as extern char MsgNoTimeToRun; msg_ids.h has extern u8 MsgNoTimeToRun[]. */
@@ -173,7 +173,7 @@ s32 Battle_RefuseFlee(void) {
   if (result != 0) {
     attrs = 42;
     work = Window_Create__countdown(0, 7, 30, 4, attrs);
-    Text_FillCanvasBackground__f04a85c();
+    Text_FillCanvasBackground__menus();
     BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun__countdown, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);

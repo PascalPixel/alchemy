@@ -1,10 +1,10 @@
 /// @file
 /// The debug menus' destination row.
-// Part of f04a85c.c.
+// Part of menus.c.
 
-#include "../f04a85c_internal.h"
+#include "../menus_internal.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "module/window/f04a85c.h"
+#include "module/window/menus.h"
 
 /* VIEW(selrow): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void *window); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
 extern void WindowSprite_PrepareForRedraw__selrow(void *window) __asm__("WindowSprite_PrepareForRedraw");
@@ -33,9 +33,9 @@ void DebugSceneSelect_DrawRow(void *window, s16 first, const s16 *second) {
   Text_DrawNumber(selected, 3, window, 0, 14);
   Text_DrawNumber(*second, 3, window, SELROW_LABEL_X, 14);
   Text_DrawString__selrow(gMenu_ColonString, window, SELROW_TEXT_X, 0);
-  Text_DrawMessage__f04a85c(selected + (s32)MsgDebugSceneCode, window, 0, 0);
+  Text_DrawMessage__menus(selected + (s32)MsgDebugSceneCode, window, 0, 0);
   Text_DrawString__selrow(gMenu_ColonString, window, SELROW_TEXT_X, 14);
-  Text_DrawMessage__f04a85c(label, window, SELROW_LABEL_X, 0);
+  Text_DrawMessage__menus(label, window, SELROW_LABEL_X, 0);
 }
 
 struct Work;
@@ -48,7 +48,7 @@ extern void UiTextResource_SetPosition__selrow(struct TextObject *object, s32 x,
 extern struct Work *Window_Create__selrow(s32 kind, s32 x, s32 y, s32 width, s32 layer) __asm__("Window_Create");
 /* VIEW(selrow): routine Window_Close as void Window_Close(struct Work *work, s32 release); uiflow.h has void Window_Close(struct Window *window, s32 release). */
 extern void Window_Close__selrow(struct Work *work, s32 release) __asm__("Window_Close");
-/* VIEW(selrow): routine DebugSceneSelect_HandleRowInput as s32 DebugSceneSelect_HandleRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode); the definition has s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode); tried as the rest of the object declares it, it does not compile in tla-ja (make modern): games/tla/src/window/f04a85c.c:129:74: note: expected 'struct TargetWindow *' but argument is of type 's32' {aka 'int'}. */
+/* VIEW(selrow): routine DebugSceneSelect_HandleRowInput as s32 DebugSceneSelect_HandleRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode); the definition has s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode); tried as the rest of the object declares it, it does not compile in tla-ja (make modern): games/tla/src/window/menus.c:129:74: note: expected 'struct TargetWindow *' but argument is of type 's32' {aka 'int'}. */
 extern s32 Menu_HandleSelectionRowInput__selrow(struct Work *work, s16 value, s16 *sub,
                                  s16 *mode) __asm__("DebugSceneSelect_HandleRowInput");
 

@@ -1,9 +1,9 @@
 /// @file
 /// The debug menus' keys, the flag browser, and hexadecimal numbers written as
 /// text.
-// Part of f04a85c.c.
+// Part of menus.c.
 
-#include "../f04a85c_internal.h"
+#include "../menus_internal.h"
 #include "flag_call.h"
 
 // The debug selection row's keys (The Broken Seal's
@@ -97,7 +97,7 @@ s32 DebugFlagEditor_Run(void) {
   win = 0;
   cur[0] = win;
   cur[1] = win;
-  win = Window_Create__f04a85c(1, 0, 28, 20, 2);
+  win = Window_Create__menus(1, 0, 28, 20, 2);
   DebugFlagEditor_DrawTable(win, page);
   MenuArrow_Create(obj, &res);
   for (;;) {
@@ -136,10 +136,10 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
     *out++ = buf[i];
 }
 
-/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's void WindowSprite_PrepareForRedraw(struct Window *work), which the object already declares, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3393: too few arguments to function `WindowSprite_PrepareForRedraw'. */
+/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's void WindowSprite_PrepareForRedraw(struct Window *work), which the object already declares, it does not compile in tla-ja: games/tla/src/window/menus.c:3393: too few arguments to function `WindowSprite_PrepareForRedraw'. */
 extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(void) __asm__("WindowSprite_PrepareForRedraw");
-/* VIEW(f04a85c): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y); module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y). */
-extern void Text_DrawStringInWindow__f04a85c(s32 text, s32 window, s32 x, s32 y) __asm__("Text_DrawStringInWindow");
+/* VIEW(menus): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y); module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y). */
+extern void Text_DrawStringInWindow__menus(s32 text, s32 window, s32 x, s32 y) __asm__("Text_DrawStringInWindow");
 
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
 /// Each row: its first flag's number in three hex digits, then its 16 flags
@@ -152,7 +152,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
   char bits[17];
 
   WindowSprite_PrepareForRedraw__handle_selection_row_input();
-  Text_DrawStringInWindow__f04a85c((s32)gMenu_HexDigitsString, window, 48, 0);
+  Text_DrawStringInWindow__menus((s32)gMenu_HexDigitsString, window, 48, 0);
 
   flag = startFlag << 8;
   for (row = 0; row != 16; row++) {
@@ -164,8 +164,8 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
       label[i] = 0;
     }
     String_FormatHexDigits(flag, 3, label);
-    Text_DrawStringInWindow__f04a85c((s32)label, window, 0, y);
-    Text_DrawStringInWindow__f04a85c((s32)gMenu_ColonString, window, 32, y);
+    Text_DrawStringInWindow__menus((s32)label, window, 0, y);
+    Text_DrawStringInWindow__menus((s32)gMenu_ColonString, window, 32, y);
 
     for (i = 0; i < 16; i++) {
       s32 val = GameFlag_Test(flag);
@@ -173,7 +173,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
       flag++;
     }
     bits[i] = 0;
-    Text_DrawStringInWindow__f04a85c((s32)bits, window, 48, y);
+    Text_DrawStringInWindow__menus((s32)bits, window, 48, y);
   }
 }
 

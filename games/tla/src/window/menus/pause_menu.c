@@ -1,11 +1,11 @@
 /// @file
 /// The save screen's selection, the portrait browser, and the flag grid drawn
 /// into a tilemap.
-// Part of f04a85c.c.
+// Part of menus.c.
 
-#include "../f04a85c_internal.h"
+#include "../menus_internal.h"
 #include "item_icon.h"
-#include "module/window/f04a85c.h"
+#include "module/window/menus.h"
 #include "module/window/window.h"
 
 /// Runs the save screen's selection until a choice completes: saving (refused
@@ -86,7 +86,7 @@ extern struct RenderInput *Window_Create__flag_bit_rect(s32 x, s32 y, s32 width,
 /* VIEW(flag_bit_rect): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(u8 *text, struct RenderInput *window, u32 x, u32 y); handle_selection_row_input has void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y). */
 extern void Text_DrawStringInWindow__flag_bit_rect(u8 *text, struct RenderInput *window, u32 x,
                              u32 y) __asm__("Text_DrawStringInWindow");
-/* VIEW(flag_bit_rect): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window, s32 x, s32 y); f04a85c has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
+/* VIEW(flag_bit_rect): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window, s32 x, s32 y); menus has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
 extern void Text_DrawNumberInWindow__flag_bit_rect(s32 value, s32 width, struct RenderInput *window,
                              s32 x, s32 y) __asm__("Text_DrawNumberInWindow");
 void Icon_BuildItemIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,

@@ -72,9 +72,9 @@ struct YallamInteriorsEventWork {
 };
 
 void Event_End(void);
-void Func_02000a68(s32 shop, s32 keeper);
-void Func_02000a70(s32 keeper);
-void Func_02000a78(s32 shop, s32 keeper);
+void Shop_Run(s32 shop, s32 keeper);
+void Sanctum_Run(s32 keeper);
+void Inn_CheckIn(s32 shop, s32 keeper);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -252,7 +252,7 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000a68(20, actor);
+    Shop_Run(20, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -268,7 +268,7 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000a68(21, actor);
+    Shop_Run(21, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -284,7 +284,7 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000a68(22, actor);
+    Shop_Run(22, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -300,7 +300,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000a78(7, actor);
+    Inn_CheckIn(7, actor);
     Event_ClearFlag(0x301);
   } else {
     Event_Start();
@@ -315,7 +315,7 @@ void YallamInteriors_TalkToHealer(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000a70(actor);
+    Sanctum_Run(actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -346,7 +346,7 @@ void YallamInteriors_OfferToForge(void) {
   Event_End();
 }
 
-s32 Func_02000a90(void);
+s32 Forge_GetItem(void);
 void Func_02000a60(s32 actor, s32 angle);
 
 /// Whether anyone in the party carries a material Sunshine can forge: items 417
@@ -366,15 +366,15 @@ s32 YallamInteriors_PartyHasForgeMaterial(void) {
 }
 
 /// Actor 14's talk. Flag 0x10f follows YallamInteriors_PartyHasForgeMaterial's item check (it stays
-/// set while flag 0x301 or Func_02000a90 holds). Once 0x10f is set and
-/// neither holds, a yes moves actor 14 and the leader, and if Func_02000a90
+/// set while flag 0x301 or Forge_GetItem holds). Once 0x10f is set and
+/// neither holds, a yes moves actor 14 and the leader, and if Forge_GetItem
 /// then holds, places actor 16 and sets flag 0x301.
 void YallamInteriors_TalkToSunshine(void) {
   s32 message;
 
   if (YallamInteriors_PartyHasForgeMaterial())
     Event_SetFlag(0x10f);
-  else if (!Event_GetFlag(0x301) && !Func_02000a90())
+  else if (!Event_GetFlag(0x301) && !Forge_GetItem())
     Event_ClearFlag(0x10f);
 
   if (!Event_GetFlag(0x10f)) {
@@ -392,7 +392,7 @@ void YallamInteriors_TalkToSunshine(void) {
   } else if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgICanTWait);
     Event_ShowMessage(14, 0);
-  } else if (Func_02000a90()) {
+  } else if (Forge_GetItem()) {
     Event_SetMessageId((s32)MsgMyWifeHas);
     Event_ShowMessage(14, 0);
   } else {
@@ -410,8 +410,8 @@ void YallamInteriors_TalkToSunshine(void) {
       Actor_SetDestination(14, 504, 408);
       Actor_WaitForMoveById(14);
       Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);
-      Func_02000a80(14);
-      if (Func_02000a90()) {
+      Forge_Run(14);
+      if (Forge_GetItem()) {
         Actor_SetSpeed(14, 0x6666, 0x3333);
         Actor_WalkTo(14, 568, 408);
         Actor_WaitForMoveById(14);
@@ -458,8 +458,8 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
   } else if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     Event_ShowMessage(actor, 0);
-  } else if (Func_02000a90()) {
-    s32 item = Func_02000a90();
+  } else if (Forge_GetItem()) {
+    s32 item = Forge_GetItem();
     u32 price = *Func_02000988(item);
     s32 message;
 
@@ -480,9 +480,9 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
     } else {
       Event_SetMessageId(message + 4);
       Event_ShowMessage(actor, 0);
-      Func_02000a40(item, 3);
+      BattleEffect_StartEffectObject22(item, 3);
       Party_GiveItem(item, 0);
-      Func_02000a88(0);
+      Forge_SetItem(0);
       Party_AdjustCoins(-price);
     }
   } else {

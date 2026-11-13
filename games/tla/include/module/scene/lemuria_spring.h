@@ -28,4 +28,7 @@ extern u16 gData_02001754[];
 
 void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 
+s32 Party_RestoreHpPp();
+s32 Class_GetSeries();
+
 #endif

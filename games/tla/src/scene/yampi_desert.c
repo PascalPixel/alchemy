@@ -227,7 +227,7 @@ loop_3:
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   FieldEvent_Wait(20);
-  Func_02004108(gMainRoutineWork.currentOwner, 0x102);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 27);
   FieldEvent_Wait(30);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
@@ -442,7 +442,7 @@ void Func_02001690(s32 p0) {
   ((struct Actor *)Func_02004130())->motionFlags = 0;
   Call2((void (*)())Camera_SetSpeedParameters, 0x19999, 0x3333);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
-  Func_02004128();
+  FieldCamera_WaitForArrival();
   Call2((void (*)())Event_ShowMessageAndWait, 12, 0);
   Call3((void (*)())Actor_ArmCallback, 11, 0, 10);
   Call2((void (*)())Event_ShowMessageAndWait, 11, 0);
@@ -461,7 +461,7 @@ void Func_02001690(s32 p0) {
   Call2((void (*)())Actor_SetMovementTypeById, 14, (s32)gData_0200468c);
   Call2((void (*)())Camera_SetSpeedParameters, 0xcccc, 0x1999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000, 1);
-  Func_02004128();
+  FieldCamera_WaitForArrival();
   Call1((void (*)())Actor_Stop, 8);
   Call1((void (*)())Actor_Stop, 9);
   Call1((void (*)())Actor_Stop, 10);
@@ -470,7 +470,7 @@ void Func_02001690(s32 p0) {
   Call1((void (*)())Actor_Stop, 13);
   Call2((void (*)())Camera_SetSpeedParameters, 0x26666, 0x4ccc);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
-  Func_02004128();
+  FieldCamera_WaitForArrival();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 20);
@@ -601,7 +601,7 @@ struct Actor *Func_02001b70(void) {
     visual->value1a = 0;
     visual->value1b = 0;
     buffer = HeapSlot_AllocFar(68, 0x608);
-    Func_02004030(209);
+    Icon_DrawItem(209);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }
@@ -622,7 +622,7 @@ void Func_02001bec(void) {
   if (object != 0) {
     Actor_SetPositionAndResetMotion((struct Actor *)object, 0, 0, 0);
     wait(1);
-    Func_02003fc8(object);
+    Actor_Release(object);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   GameFlag_SetBit(0x88c);
@@ -907,7 +907,7 @@ void Func_02002208(struct Actor *object) {
 
   switch (*state) {
   case 0:
-    Call4((void (*)())Func_02003fe0, (s32)object, 140 << 17, 0, 200 << 16);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0, 200 << 16);
     *state = 1;
     break;
   case 1:
@@ -915,7 +915,7 @@ void Func_02002208(struct Actor *object) {
       *state = 2;
     break;
   case 2:
-    Call4((void (*)())Func_02003fe0, (s32)object, 140 << 17, 0, 132 << 17);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0, 132 << 17);
     *state = 3;
     break;
   case 3:
@@ -923,7 +923,7 @@ void Func_02002208(struct Actor *object) {
       *state = 4;
     break;
   case 4:
-    Call4((void (*)())Func_02003fe0, (s32)object, 184 << 16, 0, 132 << 17);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0, 132 << 17);
     *state = 5;
     break;
   case 5:
@@ -931,7 +931,7 @@ void Func_02002208(struct Actor *object) {
       *state = 6;
     break;
   case 6:
-    Call4((void (*)())Func_02003fe0, (s32)object, 184 << 16, 0, 248 << 16);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0, 248 << 16);
     *state = 7;
     break;
   case 7:
@@ -945,7 +945,7 @@ void Func_02002208(struct Actor *object) {
     }
     break;
   case 8:
-    Call4((void (*)())Func_02003fe0, (s32)object, 184 << 16, 0, 200 << 16);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0, 200 << 16);
     *state = 9;
     break;
   case 9:
@@ -988,7 +988,7 @@ void Func_02002318(void) {
 /// Sends the object toward a point and moves to the next state.
 #define WALK(state_, x, z)                                                     \
   case state_:                                                                 \
-    Call4((void (*)())Func_02003fe0, (s32)object, x, 0, z);                    \
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);                    \
     *state = state_ + 1;                                                       \
     break;
 
@@ -1041,7 +1041,7 @@ void Func_020023cc(struct Actor *object) {
     ARRIVE(19, 0)
   case 32:
     Func_020021d4();
-    Call4((void (*)())Func_02003fe0, (s32)object, 148 << 17, 0, 186 << 18);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 148 << 17, 0, 186 << 18);
     *state = 33;
     break;
     ARRIVE(33, 34)
@@ -1092,7 +1092,7 @@ void Func_020026a0(void) {
 #define WALK_ON(state_, x, z)                                                  \
   case state_:                                                                 \
     Func_020021d4();                                                           \
-    Call4((void (*)())Func_02003fe0, (s32)object, x, 0, z);                    \
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);                    \
     *state = state_ + 1;                                                       \
     break;
 
@@ -1247,8 +1247,8 @@ void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   Actor_ArmCallbackAndRefresh(party->currentOwner, 0xc000);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
-  Func_02003fe0(object, object->x, object->y - 0xa0000, object->z);
-  Func_02003fe8(object);
+  Actor_SetMoveTarget(object, object->x, object->y - 0xa0000, object->z);
+  Script_WaitForEventTimeout(object);
   Actor_SetModeById(party->currentOwner, 10);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -1331,7 +1331,7 @@ void Func_02002ebc(void) {
   FieldEvent_Wait(24);
   Func_02000b84(leader->x, leader->y, leader->z);
   Sound_Play(188);
-  Func_02004108(party->currentOwner, 0x101);
+  FieldEffect_SetAttached(party->currentOwner, 0x101);
   Motion_SetModeAndWaitAnimation(party->currentOwner, 49);
   Sound_Play(204);
   actor8->motionFlags = 3;
@@ -1549,7 +1549,7 @@ void Func_020035d8(void) {
   struct Actor *object = Actor_GetById(64);
   s32 scene;
 
-  Func_020041c8(137);
+  Scene_QueueMusic(137);
   Func_020041d0();
   Scene_Call41d8(0, 524, 8, 9);
   if (object != NULL)
@@ -1621,7 +1621,7 @@ void Func_020037d4(void) {
 
 void Func_020037e8(void) {
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_020041c8(137);
+  Scene_QueueMusic(137);
   Func_02003820(gData_02004800);
   Func_02002d54();
   Scene_TaskAdd(Func_02001e58, 0x480);

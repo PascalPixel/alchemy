@@ -136,7 +136,7 @@ void Func_020004bc(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWeFollowedThe);
-  Func_020040d8(8, 0);
+  Event_AskYesNoAndShowResponse(8, 0);
   Event_End();
 }
 
@@ -218,7 +218,7 @@ void Func_020006ac(void) {
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Func_020041e0(object);
-      s32 shape = Func_02004020(layer, object->x, object->z);
+      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
 
       cells += index;
@@ -263,7 +263,7 @@ next:
       /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130 instructions
        * differ in tla-en. */
       register s32 index asm("r10") = Func_020041e0(object);
-      s32 shape = Func_02004020(layer, object->x, object->z);
+      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
       struct MapCell *cell = cells + index;
 

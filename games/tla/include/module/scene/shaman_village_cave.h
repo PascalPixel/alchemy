@@ -15,4 +15,6 @@ void Func_020011c0();
 extern s32 gData_020012a0[];
 extern u32 gData_020012b8[];
 
+void FieldCamera_WaitForArrival();
+
 #endif

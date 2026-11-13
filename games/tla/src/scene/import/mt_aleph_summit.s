@@ -146,9 +146,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_0200152c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_0200152c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Event_SetDestination
 	.thumb_func
@@ -174,9 +174,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02001564
+	.global Field_StartColorTransition
 	.thumb_func
-Func_02001564:
+Field_StartColorTransition:
 	overlay_veneer Func_080c87f8
 	.global Field_StartPaletteTransition
 	.thumb_func

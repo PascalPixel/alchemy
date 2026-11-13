@@ -77,7 +77,7 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
   FieldCamera_MoveTo((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
-  Func_02001014();
+  FieldCamera_WaitForArrival();
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(567);

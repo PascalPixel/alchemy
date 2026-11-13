@@ -147,4 +147,6 @@ void Func_02005440(struct LightOam *oam, s32 depth);
 
 void Func_02000d80(void);
 
+void Actor_Release(void *handle);
+
 #endif

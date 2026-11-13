@@ -15,4 +15,6 @@ extern u32 gData_02001614[];
 
 extern char SceneId_Ov6b3;
 
+void FieldCamera_WaitForArrival(void);
+
 #endif

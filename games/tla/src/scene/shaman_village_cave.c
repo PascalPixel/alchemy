@@ -97,7 +97,7 @@ void Func_02000148(void) {
   MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
 }
 
-void Func_02001188();
+void FieldCamera_MoveToActorById();
 
 /// Pushes Shaman Village cave's object 17 away from the leader, unless the two
 /// stand on opposite sides of the boundary between 8-pixel columns 36 and 37.
@@ -132,7 +132,7 @@ void Func_02000184(void) {
     FieldActor_Jump(17, 4, 20);
     Actor_SetDestinationOffset(17, 0, 32);
     FieldActor_WaitForMoveById(17);
-    Func_02001188(17, 1);
+    FieldCamera_MoveToActorById(17, 1);
     FieldActor_StartRepeatedMotion(17, 2);
     Actor_FaceDirection(17, FACING_WEST, 0);
     Actor_SetDestinationOffset(17, -8, 0);
@@ -277,7 +277,7 @@ void Func_02000430(void) {
   Actor_ShowEmote(18, 256, 0);
   Actor_ShowEmote(4, 256, 40);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(177), 1);
-  Func_02001180();
+  FieldCamera_WaitForArrival();
   angle = 0x4000;
   Actor_SetPositionAndFacing(19, PIXELS(199), PIXELS(130), angle);
   Actor_WalkTo(19, 231, 199);
@@ -288,7 +288,7 @@ void Func_02000430(void) {
   Actor_SetPositionAndFacing(21, PIXELS(199), PIXELS(130), angle);
   Actor_WalkTo(21, 204, 191);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(225), 1);
-  Func_02001180();
+  FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(19);
   Actor_FaceDirection(19, 0x5000, 0);
   FieldActor_WaitForMoveById(20);

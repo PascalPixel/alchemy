@@ -67,9 +67,13 @@ extern u32 gData_020045d4[];
 
 extern u32 gData_02004630[];
 
-s32 Func_02004020(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_020041e8(s32 layer, s32 shape, s32 height);
 
 void Func_02003da0(s32 unused, s32 value);
+
+void Icon_DrawItem(s32 item);
+void FieldEffect_SetAttached(s32 actor, s32 a);
+void FieldCamera_WaitForArrival();
 
 #endif

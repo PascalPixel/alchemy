@@ -138,7 +138,7 @@ void Func_0200185c(void) {
   HeapSlot_Release(220);
 }
 
-extern struct LightOam gData_02003488[];
+extern struct LightOam gLightSpriteOams[];
 
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
@@ -146,32 +146,34 @@ void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gData_02003488,
-                          gLightSpriteCount, gData_02003448, gLightSpritesLarge,
-                          gLightSpritePriority, Func_020029f0__s1650,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge, gLightSpritePriority,
+                          Func_020029f0__s1650,
                           Import_OamAddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02003448,
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02003448,
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02003448,
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount, gData_02003448)
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
+                         gLightSpriteActors)
 
-void Func_02001bfc(s32 value) { gLightSpritePriority = value; }
+void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../../field/object/set_sprite_priority.c"

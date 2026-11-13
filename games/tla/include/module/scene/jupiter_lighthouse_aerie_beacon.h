@@ -17,8 +17,8 @@ void SceneActor_ParkRecord(struct Actor *actor);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_02006a70[];
-extern struct LightOam Data_02006ab0[];
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
@@ -113,7 +113,7 @@ extern s32 Data_02006a1c;
 
 s32 Func_020059b4();
 
-extern u16 gData_02006a2c[];
+extern u16 gPaletteCycleColors[];
 extern u16 gLighthousePalette13[];
 extern u16 gLighthouseUnlitColors[];
 

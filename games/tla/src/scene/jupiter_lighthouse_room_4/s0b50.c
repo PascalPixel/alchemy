@@ -96,12 +96,13 @@ void Func_02000cc8(void) {
   }
 }
 
-/* VIEW(s0b50): variable gData_02002760 as struct Actor *gData_02002760[];
- * module/scene/alhafra.h has s16 gData_02002760[]; tried as the definition's
- * extern s16 gData_02002760[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_4/s0b50.c:143:
- * `gData_02002760' undeclared (first use in this function). */
-extern struct Actor *gData_02002760__s0b50[] __asm__("gData_02002760");
+/* VIEW(s0b50): variable gLightSpriteActors as struct Actor
+ * *gLightSpriteActors[]; module/scene/alhafra.h has s16 gLightSpriteActors[];
+ * tried as the definition's extern s16 gLightSpriteActors[], which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_4/s0b50.c:143:
+ * `gLightSpriteActors' undeclared (first use in this function). */
+extern struct Actor *gLightSpriteActors__s0b50[] __asm__("gLightSpriteActors");
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
@@ -111,7 +112,7 @@ void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOam,
-                          gLightSpriteCount, gData_02002760__s0b50,
+                          gLightSpriteCount, gLightSpriteActors__s0b50,
                           gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
                           Import_OamAddSpriteAtDepthClamped)
@@ -120,24 +121,24 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOam,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02002760__s0b50,
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors__s0b50,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02002760__s0b50,
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors__s0b50,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02002760__s0b50,
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors__s0b50,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
-                         gData_02002760__s0b50)
+                         gLightSpriteActors__s0b50)
 
-void Func_020011cc(s32 value) { gLightSpritePriority = value; }
+void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../../field/object/set_sprite_priority.c"

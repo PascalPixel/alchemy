@@ -5,6 +5,12 @@
 #include "shared/jupiter_lighthouse.h"
 #include "shared/effects.h"
 #include "shared/jupiter_lighthouse_room_3.h"
+
+extern s32 gPaletteCycleFrame;
+extern s32 gPaletteCyclePausesInEvents;
+extern const u16 gPaletteCycleColors[];
+extern const u16 gPaletteCycleUnlitPalette[];
+extern const u16 gPaletteCycleUnlitColors[];
 #include "event_work.h"
 #include "field.h"
 
@@ -157,16 +163,18 @@ void Func_020003c4(void) { Field_TryJumpForward(); }
 #include "field_event.h"
 #include "event_inline.h"
 
-void Func_020003f8(s32 value) { gData_02002cc4 = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002cc0,
-                             gData_02002cc4, gData_02002cec, 0x05000184)
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
+                             gPaletteCyclePausesInEvents, gPaletteCycleColors,
+                             0x05000184)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
-                                             gData_02002cc4, gData_02002cec,
-                                             gData_02002d0c, gData_02002cc0,
-                                             PaletteCycle_StepAt,
-                                             gData_02002d10)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
+    JupiterLighthouse_LoadPalettesZero, gPaletteCyclePausesInEvents,
+    gPaletteCycleColors, gPaletteCycleUnlitPalette, gPaletteCycleFrame,
+    PaletteCycle_StepAt, gPaletteCycleUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002368, Func_02002460)
 

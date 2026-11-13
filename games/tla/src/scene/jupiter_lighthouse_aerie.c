@@ -20,6 +20,13 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "shared/jupiter_lighthouse_aerie.h"
+
+extern s32 gPaletteCycleFrame;
+extern s32 gPaletteCyclePausesInEvents;
+extern u16 gPaletteCycleColors[];
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 #include "event_work.h"
 #include "module/field/field.h"
 #include "module/scene/jupiter_lighthouse_aerie.h"
@@ -291,16 +298,18 @@ s32 Scene_PrepareMap(void) {
 #include "ram_buffer.h"
 #include "field_event.h"
 
-void Func_02000790(s32 value) { gData_02003318 = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
 void PaletteCycle_Step(void) {
   u16 colors[16];
-  s32 phase = (gData_02003314 / 4) % 5;
+  s32 phase = (gPaletteCycleFrame / 4) % 5;
   s32 i;
   s32 offset;
   u16 *p;
 
-  if (gData_02003318 != 0) {
+  if (gPaletteCyclePausesInEvents != 0) {
     u8 *work = Ram_HeapSlots->eventWork;
     s16 *state = (s16 *)(work + 358);
 
@@ -317,10 +326,10 @@ next:
   p = colors;
   {
     /* FAKEMATCH(temporary): the slot and the table's address held in
-     * locals; as colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02003340 +
+     * locals; as colors[(phase + i) % 5] = *(u16 *)((u8 *)gPaletteCycleColors +
      * offset), 2 of 83 instructions differ in tla-en. */
     s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gData_02003340;
+    u8 *table = (u8 *)gPaletteCycleColors;
 
     colors[slot] = *(u16 *)(table + offset);
   }
@@ -329,13 +338,13 @@ next:
   if (i <= 4)
     goto next;
   Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
-  gData_02003314++;
+  gPaletteCycleFrame++;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
-                                             gData_02003318, gData_02003340,
-                                             gData_02003360, gData_02003314,
-                                             PaletteCycle_Step, gData_02003364)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
+    JupiterLighthouse_LoadPalettesZero, gPaletteCyclePausesInEvents,
+    gPaletteCycleColors, gPaletteCycleUnlitPalette, gPaletteCycleFrame,
+    PaletteCycle_Step, gPaletteCycleUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002a78, Func_02002b58)
 

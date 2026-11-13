@@ -434,9 +434,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.h"
 
-extern s32 gData_02002b38;
+extern s32 gPaletteCyclePausesInEvents;
 
-void Func_020009dc(s32 a0) { gData_02002b38 = a0; }
+void Func_020009dc(s32 a0) { gPaletteCyclePausesInEvents = a0; }
 
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "dma.h"
@@ -447,14 +447,17 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
-                             gData_02002b38, gData_02002b98, 0x05000184)
+                             gPaletteCyclePausesInEvents, gPaletteCycleColors,
+                             0x05000184)
 
 extern u16 gLighthousePalette13[];
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_02002b38, gData_02002b98,
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
                                         gLighthousePalette13,
-                                        PaletteCycle_StepAt, gData_02002bbc)
+                                        PaletteCycle_StepAt,
+                                        gPaletteCycleUnlitColors)
 
 void Func_0200223c();
 /* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void

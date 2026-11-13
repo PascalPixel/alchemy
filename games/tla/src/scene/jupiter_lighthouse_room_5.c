@@ -279,7 +279,7 @@ struct SparkWork {
   s16 resource;
 };
 
-extern s32 gData_020033dc;
+extern s32 gPaletteCyclePausesInEvents;
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
                        struct EffectParams *params);
@@ -529,22 +529,26 @@ s32 Scene_PrepareMap(void) {
 #include "dma.h"
 #include "io_reg.h"
 
-void Func_02000cb8(s32 value) { gData_020033dc = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020033dc,
-                          gData_02003404)
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
+                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 void Func_02002888();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_020033dc, gData_02003404,
-                                        gData_02003424, PaletteCycle_Step,
-                                        gData_02003428)
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
+                                        gPaletteCycleUnlitPalette,
+                                        PaletteCycle_Step,
+                                        gPaletteCycleUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002888, Func_02002a30)
 

@@ -36,7 +36,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-extern s32 gData_020023c0;
+extern s32 gPaletteCyclePausesInEvents;
 s32 Teleporters_Step(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
@@ -132,15 +132,19 @@ s32 Scene_PrepareMap(void) {
 #include "ram_buffer.h"
 #include "field_event.h"
 
-void Func_020002dc(s32 value) { gData_020023c0 = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020023c0,
-                          gData_020023e8)
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
+                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_020023c0, gData_020023e8,
-                                        gData_02002408, PaletteCycle_Step,
-                                        gData_0200240c)
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
+                                        gPaletteCycleUnlitPalette,
+                                        PaletteCycle_Step,
+                                        gPaletteCycleUnlitColors)
 
 void Func_02000428(s32 id) {
   struct JupiterLighthouseRoom6Object *object;

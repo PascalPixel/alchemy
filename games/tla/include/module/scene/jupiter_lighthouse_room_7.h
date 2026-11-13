@@ -39,7 +39,7 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 s32 Func_02002c1c(struct Actor *object);
 
 extern s16 gLightSpriteTile;
-extern struct LightOam Data_02003640[];
+extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
@@ -49,7 +49,7 @@ void Teleporter_Uncover(struct CellTarget *table,
 
 void Teleporter_Sink(struct CellTarget *table, struct CellTargetEntry *entry);
 
-extern s16 gData_020035fe;
+extern s16 gLightSpriteCount;
 void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002bec(void);

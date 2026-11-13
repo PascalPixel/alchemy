@@ -14,7 +14,7 @@ void JupiterLighthouse_CheckBlockOnCell(void);
 void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 
 extern s16 gLightSpriteTile;
-extern struct LightOam Data_0200246c[];
+extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
@@ -29,12 +29,12 @@ extern u32 gFieldEffect_LongLifeScript[];
 
 void Func_020001d0(void);
 
-extern s16 gData_0200242a;
-extern u16 gData_0200252e;
-extern u16 gData_020023e8[];
+extern s16 gLightSpriteCount;
+extern u16 gLightSpritePriority;
+extern u16 gPaletteCycleColors[];
 void Func_02001be4();
-extern u16 gData_02002408[];
-extern u16 gData_0200240c[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 extern s32 Data_020023e4;
 
 #endif

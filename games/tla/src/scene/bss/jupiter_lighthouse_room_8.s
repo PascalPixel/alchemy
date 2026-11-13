@@ -4,14 +4,14 @@
 	.global Data_02002aac
 Data_02002aac:
 	.space 0x00000004
-	.global gData_02002ab0
-gData_02002ab0:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000020
 	.global gLighthousePalette13
 gLighthousePalette13:
 	.space 0x00000004
-	.global gData_02002ad4
-gData_02002ad4:
+	.global gPaletteCycleUnlitColors
+gPaletteCycleUnlitColors:
 	.space 0x0000001c
 	.global gLightSpriteTile
 gLightSpriteTile:
@@ -19,11 +19,11 @@ gLightSpriteTile:
 	.global gLightSpriteCount
 gLightSpriteCount:
 	.space 0x00000002
-	.global gData_02002af4
-gData_02002af4:
+	.global gLightSpriteActors
+gLightSpriteActors:
 	.space 0x00000040
-	.global gData_02002b34
-gData_02002b34:
+	.global gLightSpriteOams
+gLightSpriteOams:
 	.space 0x000000c0
 	.global gLightSpritesLarge
 gLightSpritesLarge:

@@ -163,7 +163,7 @@ s32 gPaletteCycleFrame[] = {
     -1,
 };
 
-u32 gData_020026f4[] = {
+u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 

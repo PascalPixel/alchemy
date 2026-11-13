@@ -11,7 +11,7 @@
 struct CellTarget;
 struct CellTargetEntry;
 
-void Func_02002efc(s32 value);
+void PaletteCycle_SetPausesInEvents(s32 value);
 
 extern u32 gData_02005524[];
 extern u32 gData_02005548[];
@@ -57,8 +57,8 @@ extern u32 gFieldEffect_MediumLifeScript[];
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_02005a84[];
-extern struct LightOam Data_02005ac4[];
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
@@ -75,8 +75,8 @@ s32 Event_ClearInvalidPackedValues();
 void Func_02004994(s32 id, s32 mode);
 void Func_02004984(void);
 void Func_0200498c(s32 a, s32 b, s32 c, s32 d);
-extern u16 gData_02005a60[];
-extern u16 gData_02005a64[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 void Func_020049b4();
 s32 Func_020049a4(s32 x, s32 z, s32 layer);
 

@@ -38,8 +38,8 @@ extern u32 gFieldEffect_LongLifeScript[];
 
 void LightSprites_InitA(void);
 
-extern u16 gData_0200273c[];
-extern u16 gData_02002740[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 void Func_02001e28();
 extern s32 gData_02002718;
 

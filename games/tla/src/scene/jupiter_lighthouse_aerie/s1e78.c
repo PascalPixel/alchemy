@@ -99,6 +99,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_TELEPORTERS_FIND(Teleporters_Find, gData_02003488, Teleporters_Update)
 
 #include "../shared/jupiter_lighthouse_aerie.h"
+
+extern s32 gPaletteCycleFrame;
+extern s32 gPaletteCyclePausesInEvents;
+extern u16 gPaletteCycleColors[];
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 #include "scene_tables.h"
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)

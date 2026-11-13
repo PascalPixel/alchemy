@@ -10,8 +10,8 @@ gData_02006a24:
 	.global Data_02006a28
 Data_02006a28:
 	.space 0x00000004
-	.global gData_02006a2c
-gData_02006a2c:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000020
 	.global gLighthousePalette13
 gLighthousePalette13:
@@ -25,14 +25,14 @@ gLightSpriteTile:
 	.global gLightSpriteCount
 gLightSpriteCount:
 	.space 0x00000002
-	.global gData_02006a70
-gData_02006a70:
+	.global gLightSpriteActors
+gLightSpriteActors:
 	.space 0x00000040
-	.global Data_02006ab0
-Data_02006ab0:
+	.global gLightSpriteOams
+gLightSpriteOams:
 	.space 0x000000c0
-	.global gData_02006b70
-gData_02006b70:
+	.global gLightSpritesLarge
+gLightSpritesLarge:
 	.space 0x00000002
 	.global gLightSpritePriority
 gLightSpritePriority:

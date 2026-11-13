@@ -34,7 +34,7 @@ void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_02003448[];
+extern struct Actor *gLightSpriteActors[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
@@ -59,9 +59,9 @@ struct FieldEffect;
 struct SparkSprite__jupiter_lighthouse_room_5;
 
 void Func_020029d8(void);
-extern u16 gData_02003404[];
-extern u16 gData_02003424[];
-extern u16 gData_02003428[];
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 void Func_02002a30();
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);

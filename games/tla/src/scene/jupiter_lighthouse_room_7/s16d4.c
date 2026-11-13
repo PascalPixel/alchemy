@@ -79,7 +79,7 @@ top:
 DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02002c1c,
                            Actor_SelectAnimation)
 
-extern u32 gData_02003600[];
+extern u32 gLightSpriteActors[];
 extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
@@ -88,33 +88,37 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02003640,
-                          gData_020035fe, gData_02003600, gLightSpritesLarge,
-                          gLightSpritePriority, BattleEffect_GetObjectPriority,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge, gLightSpritePriority,
+                          BattleEffect_GetObjectPriority,
                           Import_OamAddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02003600,
-                            gLightSpriteTile, LightSprites_Draw, gData_020035fe,
-                            gLightSpritesLarge, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02003600,
-                            gLightSpriteTile, LightSprites_Draw, gData_020035fe,
-                            gLightSpritesLarge, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02003600,
-                            gLightSpriteTile, LightSprites_Draw, gData_020035fe,
-                            gLightSpritesLarge, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
 
 extern const u8 gData_020031c4[];
-extern s32 gData_02003594;
+extern s32 gPaletteCyclePausesInEvents;
 
-DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gData_02003600,
-                                 gData_020035fe)
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
+                                 gLightSpriteCount)
 
-void Func_02001ee8(u16 value) { gLightSpritePriority = value; }
+void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 #include "../../field/object/set_sprite_priority.c"

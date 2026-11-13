@@ -84,7 +84,7 @@ void LightSprites_Draw(void) {
   oam = Data_02002434;
 
   for (i = 0; i < gLightSpriteCount; i++) {
-    struct Actor *actor = gData_020023f4[i];
+    struct Actor *actor = gLightSpriteActors[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -147,22 +147,23 @@ void LightSprites_Draw(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020023f4,
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gData_020024f4__s098c,
                             gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_020023f4,
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gData_020024f4__s098c,
                             gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020023f4,
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gData_020024f4__s098c,
                             gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount, gData_020023f4)
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
+                         gLightSpriteActors)
 
 void Func_02001008(s32 value) { gData_020024f6 = value; }
 

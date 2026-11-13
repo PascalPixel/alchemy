@@ -19,7 +19,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_020023f4[];
+extern struct Actor *gLightSpriteActors[];
 extern struct LightOam Data_02002434[];
 
 void Leader_CenterInCell(void);
@@ -35,9 +35,9 @@ extern u32 gFieldEffect_MediumLifeScript[];
 extern u32 gFieldEffect_LongLifeScript[];
 
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-extern u16 gData_020023b0[];
-extern u16 gData_020023d0[];
-extern u16 gData_020023d4[];
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 extern s32 Data_020023ac;
 
 #endif

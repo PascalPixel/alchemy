@@ -20,10 +20,10 @@ extern s32 gData_02001970[];
 struct Actor;
 
 extern s16 gData_02001cde;
-extern struct Actor *gData_02001ce0[];
+extern struct Actor *gLightSpriteActors[];
 extern u16 gData_02001de2;
 extern u16 gData_02001de4;
-extern s16 gData_02001cdc;
+extern s16 gLightSpriteTile;
 extern s16 gData_02001de0;
 
 #endif

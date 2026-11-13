@@ -10,6 +10,13 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "../shared/jupiter_lighthouse_aerie.h"
+
+extern s32 gPaletteCycleFrame;
+extern s32 gPaletteCyclePausesInEvents;
+extern u16 gPaletteCycleColors[];
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 #include "event_work.h"
 #include "module/field/field_effect.h"
 #include "module/scene/jupiter_lighthouse_aerie.h"
@@ -108,9 +115,9 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02003314 = -1;
+s32 gPaletteCycleFrame = -1;
 
-s32 gData_02003318 = 1;
+s32 gPaletteCyclePausesInEvents = 1;
 
 u32 gData_0200331c[] = {
     39, 5, 0, 12, 38,

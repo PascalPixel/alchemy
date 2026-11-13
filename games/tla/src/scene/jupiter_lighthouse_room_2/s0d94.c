@@ -55,26 +55,27 @@ void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02002c1c,
-                          gLightSpriteCount, gData_02002bdc, gLightSpritesLarge,
-                          gLightSpritePriority, BattleEffect_GetObjectPriority,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge, gLightSpritePriority,
+                          BattleEffect_GetObjectPriority,
                           Import_OamAddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02002bdc,
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02002bdc,
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02002bdc,
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
@@ -88,7 +89,7 @@ void Func_020015a0(s32 id, s32 value) {
       s16 *count;
 
       count = &gLightSpriteCount;
-      gData_02002bdc[*count] = object;
+      gLightSpriteActors[*count] = object;
       (*count)++;
     }
   }

@@ -17,7 +17,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 
 extern s16 gLightSpriteCount;
-extern struct LightOam Data_02002244[];
+extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
@@ -42,7 +42,7 @@ extern u32 gFieldEffect_MediumLifeScript[];
 
 extern u32 gFieldEffect_LongLifeScript[];
 
-extern u16 gData_020021c0[];
-extern u16 gData_020021e0[];
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
 
 #endif

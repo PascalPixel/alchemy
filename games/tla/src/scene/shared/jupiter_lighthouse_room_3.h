@@ -36,12 +36,6 @@ void Func_02000c78(s32 id);
 s32 PushTarget_FindSlide(struct PushedBlock *block);
 void PushTarget_PushFill(struct PushedBlock block);
 
-extern s32 gData_02002cc0;
-extern s32 gData_02002cc4;
-extern const u16 gData_02002cec[];
-extern const u16 gData_02002d0c[];
-extern const u16 gData_02002d10[];
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {

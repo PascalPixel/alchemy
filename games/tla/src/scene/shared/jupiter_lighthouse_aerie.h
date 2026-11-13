@@ -19,9 +19,6 @@ struct JupiterLighthouseAerieSpark {
 };
 
 extern u8 gDecodeFillByte;
-extern s32 gData_02003314;
-extern s32 gData_02003318;
-extern u16 gData_02003340[];
 extern struct CellTarget gData_02003488;
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -29,9 +26,6 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02000858(s32 mode);
 void Func_02000e80(void);
 void Func_02001010(struct Actor *object);
-void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
 void Func_020023b0(void);
 void Func_02002438(struct CellTarget *work, struct CellTargetEntry *entry);
 void Func_020024a8(struct CellTarget *work, struct CellTargetEntry *entry);

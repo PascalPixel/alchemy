@@ -4,32 +4,32 @@
 	.global Data_020023e4
 Data_020023e4:
 	.space 0x00000004
-	.global gData_020023e8
-gData_020023e8:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000020
-	.global gData_02002408
-gData_02002408:
+	.global gPaletteCycleUnlitPalette
+gPaletteCycleUnlitPalette:
 	.space 0x00000004
-	.global gData_0200240c
-gData_0200240c:
+	.global gPaletteCycleUnlitColors
+gPaletteCycleUnlitColors:
 	.space 0x0000001c
 	.global gLightSpriteTile
 gLightSpriteTile:
 	.space 0x00000002
-	.global gData_0200242a
-gData_0200242a:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
-	.global gData_0200242c
-gData_0200242c:
+	.global gLightSpriteActors
+gLightSpriteActors:
 	.space 0x00000040
-	.global Data_0200246c
-Data_0200246c:
+	.global gLightSpriteOams
+gLightSpriteOams:
 	.space 0x000000c0
 	.global gLightSpritesLarge
 gLightSpritesLarge:
 	.space 0x00000002
-	.global gData_0200252e
-gData_0200252e:
+	.global gLightSpritePriority
+gLightSpritePriority:
 	.space 0x00000002
 	.global gTeleporters
 gTeleporters:

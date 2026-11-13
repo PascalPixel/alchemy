@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02001cdc
-gData_02001cdc:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
 	.global gData_02001cde
 gData_02001cde:
 	.space 0x00000002
-	.global gData_02001ce0
-gData_02001ce0:
+	.global gLightSpriteActors
+gLightSpriteActors:
 	.space 0x00000040
 	.global gData_02001d20
 gData_02001d20:

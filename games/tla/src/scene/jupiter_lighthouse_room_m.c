@@ -252,7 +252,7 @@ void Func_020003b8(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
     FieldEvent_Wait(40);
-    Func_02002efc(0);
+    PaletteCycle_SetPausesInEvents(0);
     Func_020000c4();
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
@@ -271,7 +271,7 @@ void Func_020003b8(s32 unused, s32 id) {
     Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
-    Func_02002efc(1);
+    PaletteCycle_SetPausesInEvents(1);
     Event_End();
   }
   Func_02004774_(object->x, object->z, 0, -6);
@@ -1635,23 +1635,27 @@ s32 Scene_PrepareMap(void) {
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 
-extern s32 gData_02005a18;
+extern s32 gPaletteCyclePausesInEvents;
 
-void Func_02002efc(s32 value) { gData_02005a18 = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
-extern u16 gData_02005a40[];
+extern u16 gPaletteCycleColors[];
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_02005a18,
-                          gData_02005a40)
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
+                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_02005a18, gData_02005a40,
-                                        gData_02005a60, PaletteCycle_Step,
-                                        gData_02005a64)
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
+                                        gPaletteCycleUnlitPalette,
+                                        PaletteCycle_Step,
+                                        gPaletteCycleUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell,
                              Func_02004774__jupiter_lighthouse_room_m,

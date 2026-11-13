@@ -331,13 +331,13 @@ void LightSprites_Draw(void) {
 
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_02001cdc].offset >> 5;
+  tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gData_02001d20;
   picture = gData_02001de4__s0588 * ((gFrameCount >> 2) % 5 * 32 + 32);
 
   for (i = 0; i < gData_02001cde; i++) {
-    struct Actor *actor = gData_02001ce0[i];
+    struct Actor *actor = gLightSpriteActors[i];
 
     if (actor != 0 && actor->x != 0) {
       s32 ox = actor->x - viewX;
@@ -400,17 +400,17 @@ void LightSprites_Draw(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02001ce0, gData_02001cdc,
-                            LightSprites_Draw, gData_02001cde, gData_02001de0,
-                            gData_02001de2__s0588)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw, gData_02001cde,
+                            gData_02001de0, gData_02001de2__s0588)
 
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
 
-  Iwram_ClearWordsEntry(gData_02001ce0, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
   Decompress_TaggedLz(gField_CachedTilesD, buffer);
-  gData_02001cdc = VramCache_FindFreeEntry();
-  VramCache_Load(gData_02001cdc, 0x1800, buffer);
+  gLightSpriteTile = VramCache_FindFreeEntry();
+  VramCache_Load(gLightSpriteTile, 0x1800, buffer);
   Heap_Release(buffer);
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gData_02001cde = 0;
@@ -424,7 +424,7 @@ void Func_02000ba4(s32 id, s32 value) {
 
   if (object != NULL) {
     object->timer = value;
-    gData_02001ce0[gData_02001cde] = object;
+    gLightSpriteActors[gData_02001cde] = object;
     gData_02001cde++;
   }
 }

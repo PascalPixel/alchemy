@@ -4,14 +4,14 @@
 	.global gWhirlwindRiding
 gWhirlwindRiding:
 	.space 0x00000004
-	.global gData_02002258
-gData_02002258:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000020
-	.global gData_02002278
-gData_02002278:
+	.global gPaletteCycleUnlitPalette
+gPaletteCycleUnlitPalette:
 	.space 0x00000004
-	.global gData_0200227c
-gData_0200227c:
+	.global gPaletteCycleUnlitColors
+gPaletteCycleUnlitColors:
 	.space 0x0000001c
 	.global gLightSpriteTile
 gLightSpriteTile:
@@ -19,11 +19,11 @@ gLightSpriteTile:
 	.global gLightSpriteCount
 gLightSpriteCount:
 	.space 0x00000002
-	.global gData_0200229c
-gData_0200229c:
+	.global gLightSpriteActors
+gLightSpriteActors:
 	.space 0x00000040
-	.global gData_020022dc
-gData_020022dc:
+	.global gLightSpriteOams
+gLightSpriteOams:
 	.space 0x000000c0
 	.global gLightSpritesLarge
 gLightSpritesLarge:

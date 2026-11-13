@@ -22,7 +22,7 @@
 #include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 #include "module/scene/scene.h"
 
-extern u8 gData_02006b70[];
+extern u8 gLightSpritesLarge[];
 
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_Update(struct GustObject *object);
@@ -85,12 +85,12 @@ void Func_02004644(void) {
   }
 }
 
-/* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70;
- * module/scene/scene.h has u8 gData_02006b70[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
+/* VIEW(s44cc): variable gLightSpritesLarge as s16 gLightSpritesLarge;
+ * module/scene/scene.h has u8 gLightSpritesLarge[]; tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:217:
- * `gData_02006b70' has an incomplete type. */
-extern s16 gData_02006b70__s44cc __asm__("gData_02006b70");
+ * `gLightSpritesLarge' has an incomplete type. */
+extern s16 gLightSpritesLarge__s44cc __asm__("gLightSpritesLarge");
 
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
@@ -98,9 +98,9 @@ void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02006ab0,
-                          gLightSpriteCount, gData_02006a70,
-                          gData_02006b70__s44cc, gLightSpritePriority,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge__s44cc, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
                           Import_OamAddSpriteAtDepthClamped)
 
@@ -108,24 +108,24 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02006ab0,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02006a70,
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_02006b70__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge__s44cc,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02006a70,
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_02006b70__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge__s44cc,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02006a70,
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_02006b70__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge__s44cc,
                             gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gData_02006a70,
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
                                  gLightSpriteCount)
 
-void Func_02004b48(s32 value) { gLightSpritePriority = value; }
+void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../../field/object/set_sprite_priority.c"

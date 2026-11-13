@@ -17,7 +17,7 @@ void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
 extern s16 gLightSpriteTile;
-extern struct Actor *gData_02002660[];
+extern struct Actor *gLightSpriteActors[];
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
@@ -37,9 +37,9 @@ extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];
 
 extern s32 gData_02002618;
-extern u16 gData_0200261c[];
-extern u16 gData_0200263c[];
-extern u16 gData_02002640[];
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 void Func_02001bd8();
 void Func_02001c98();
 

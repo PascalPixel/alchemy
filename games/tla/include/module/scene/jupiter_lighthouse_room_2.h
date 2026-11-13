@@ -28,8 +28,8 @@ s32 Position_FlatDistance(s32 *a, s32 *b);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_02002bdc[];
-extern struct LightOam Data_02002c1c[];
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
@@ -57,7 +57,7 @@ void Func_0200230c(s32 actor);
 extern s32 gData_02002b88[3];
 extern const u8 gData_02002b60[];
 void Func_02002324(const void *script, s32 a, s32 b, s32 c);
-extern u16 gData_02002b98[];
-extern u16 gData_02002bbc[];
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitColors[];
 
 #endif

@@ -218,9 +218,11 @@ s32 Scene_PrepareMap(void) {
 #include "io_reg.h"
 #include "field_event.h"
 
-extern s32 gData_02002388;
+extern s32 gPaletteCyclePausesInEvents;
 
-void Func_02000414(s32 value) { gData_02002388 = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
 extern s32 gPaletteCycleFrame;
 
@@ -228,12 +230,15 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
-                             gData_02002388, gData_020023b0, 0x05000184)
+                             gPaletteCyclePausesInEvents, gPaletteCycleColors,
+                             0x05000184)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_02002388, gData_020023b0,
-                                        gData_020023d0, PaletteCycle_StepAt,
-                                        gData_020023d4)
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
+                                        gPaletteCycleUnlitPalette,
+                                        PaletteCycle_StepAt,
+                                        gPaletteCycleUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74, Func_02001d34)
 

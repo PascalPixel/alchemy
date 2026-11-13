@@ -11,7 +11,7 @@ struct EffectOptions;
 struct EffectSprite;
 struct LightOam;
 
-void Func_02001dec(s32 value);
+void LightSprites_SetPriority(s32 value);
 
 void Func_0200105c(struct Actor *object);
 
@@ -33,8 +33,8 @@ void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 void Func_02001080(void);
 
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_02003384[];
-extern struct LightOam Data_020033c4[];
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
@@ -65,8 +65,8 @@ struct FieldEffect;
 
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
-extern u16 gData_02003360[];
-extern u16 gData_02003364[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 void Func_02002b38(struct BeamSprite *sprite);
 void EffectSprite_DrawAtWorldPosition(struct BeamSprite *sprite,
                                       struct BeamSpark *spark);

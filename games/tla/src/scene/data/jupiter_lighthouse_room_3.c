@@ -77,11 +77,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02002cc0[] = {
+s32 gPaletteCycleFrame[] = {
     -1,
 };
 
-u32 gData_02002cc4[] = {
+u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 

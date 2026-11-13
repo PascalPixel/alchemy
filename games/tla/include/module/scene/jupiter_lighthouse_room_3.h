@@ -27,8 +27,8 @@ s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 extern u16 gPushKinds[];
 
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_02002d30[];
-extern struct LightOam Data_02002d70[];
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam gLightSpriteOams[];
 
 extern s16 gLightSpritesLarge;
 

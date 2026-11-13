@@ -2279,9 +2279,9 @@ s32 Scene_PrepareMap(void) {
 #undef SET_MODE_AND_WAIT
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s3f54.c ----
-extern s32 gData_020069f8;
+extern s32 gPaletteCyclePausesInEvents;
 
-void Func_02003f54(s32 a0) { gData_020069f8 = a0; }
+void Func_02003f54(s32 a0) { gPaletteCyclePausesInEvents = a0; }
 
 #include "../shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
@@ -2294,8 +2294,8 @@ extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020069f8,
-                          gData_02006a2c)
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
+                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 /* VIEW(s0198): routine Func_020057c4 as void Func_020057c4();
  * module/scene/scene.h has void Func_020057c4(void); tried as the rest of the
@@ -2305,7 +2305,8 @@ DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020069f8,
 extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_020069f8, gData_02006a2c,
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
                                         gLighthousePalette13, PaletteCycle_Step,
                                         gLighthouseUnlitColors)
 

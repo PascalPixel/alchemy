@@ -17,7 +17,7 @@ s32 Func_02001bbc(s32 x, s32 z, s32 layer);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gData_0200229c[];
+extern struct Actor *gLightSpriteActors[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
@@ -33,8 +33,8 @@ extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];
 extern u32 gFieldEffect_LongLifeScript[];
 
-extern u16 gData_02002258[];
-extern u16 gData_02002278[];
-extern u16 gData_0200227c[];
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
 
 #endif

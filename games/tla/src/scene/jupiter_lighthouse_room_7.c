@@ -22,8 +22,8 @@
 #include "module/field/field.h"
 
 extern const u8 gData_020031c4[];
-extern s32 gData_02003594;
-extern s16 gData_020035fe;
+extern s32 gPaletteCyclePausesInEvents;
+extern s16 gLightSpriteCount;
 extern u16 gLightSpritePriority;
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CloseDoor(void);
@@ -550,7 +550,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Actors_SetCellsOpen();
 void LightSprites_InitB();
 void LightSprites_AddCounted();
-void Func_02001ee8();
+void LightSprites_SetPriority();
 
 s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
@@ -579,7 +579,7 @@ L_02008eaa:
   JupiterLighthouse_OpenDoor(0);
 L_02008ebe:
   LightSprites_InitB();
-  Func_02001ee8(2);
+  LightSprites_SetPriority(2);
   LightSprites_AddCounted(18, 2);
   LightSprites_AddCounted(19, 1);
   LightSprites_AddCounted(20, 0);
@@ -679,16 +679,18 @@ s32 Scene_PrepareMap(void) {
 #include "io_reg.h"
 #include "field_event.h"
 
-void Func_0200115c(s32 value) { gData_02003594 = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
-extern u32 gData_020035bc[];
+extern u32 gPaletteCycleColors[];
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_02003594,
-                          gData_020035bc)
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
+                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 extern u16 gLighthousePalette13[];
 extern u16 gLighthouseUnlitColors[];
@@ -696,7 +698,8 @@ extern u16 gLighthouseUnlitColors[];
 void Func_02002c44();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_02003594, gData_020035bc,
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
                                         gLighthousePalette13, PaletteCycle_Step,
                                         gLighthouseUnlitColors)
 

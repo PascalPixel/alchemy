@@ -33,7 +33,7 @@
 void Func_02001f00(s32 id);
 void Func_02001ef8();
 
-extern u16 gData_0200271c[];
+extern u16 gPaletteCycleColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -249,22 +249,26 @@ s32 Scene_PrepareMap(void) {
 #include "dma.h"
 #include "io_reg.h"
 
-extern s32 gData_020026f4;
+extern s32 gPaletteCyclePausesInEvents;
 
-void Func_020005d8(s32 value) { gData_020026f4 = value; }
+void PaletteCycle_SetPausesInEvents(s32 value) {
+  gPaletteCyclePausesInEvents = value;
+}
 
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020026f4,
-                          gData_0200271c)
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
+                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gData_020026f4, gData_0200271c,
-                                        gData_0200273c, PaletteCycle_Step,
-                                        gData_02002740)
+                                        gPaletteCyclePausesInEvents,
+                                        gPaletteCycleColors,
+                                        gPaletteCycleUnlitPalette,
+                                        PaletteCycle_Step,
+                                        gPaletteCycleUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001e28, Func_02001ef8)
 

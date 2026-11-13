@@ -9,10 +9,10 @@ Func_08038248:
 	.thumb_func
 Text_DrawWideStringAtOffsetFar:
 	overlay_veneer Text_DrawWideStringAtOffset
-	.global Window_FillFromSceneFar
+	.global ScanlineWindow_FillSpansFar
 	.thumb_func
-Window_FillFromSceneFar:
-	overlay_veneer Window_FillFromScene
+ScanlineWindow_FillSpansFar:
+	overlay_veneer ScanlineWindow_FillSpans
 	.global WindowSprite_RedrawSavedRectFar
 	.thumb_func
 WindowSprite_RedrawSavedRectFar:
@@ -25,14 +25,14 @@ WindowSprite_ClearListFar:
 	.thumb_func
 Window_SetTilemapEntryFar:
 	overlay_veneer Window_SetTilemapEntry
-	.global Menu_RunSelectionFar
+	.global DebugSceneSelect_RunFar
 	.thumb_func
-Menu_RunSelectionFar:
-	overlay_veneer Menu_RunSelection
-	.global Menu_RunSelectionWithCursorObjectFar
+DebugSceneSelect_RunFar:
+	overlay_veneer DebugSceneSelect_Run
+	.global DebugFlagEditor_RunFar
 	.thumb_func
-Menu_RunSelectionWithCursorObjectFar:
-	overlay_veneer Menu_RunSelectionWithCursorObject
+DebugFlagEditor_RunFar:
+	overlay_veneer DebugFlagEditor_Run
 	.global Func_08038288
 	.thumb_func
 Func_08038288:

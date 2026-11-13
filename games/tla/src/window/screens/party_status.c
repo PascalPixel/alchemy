@@ -66,7 +66,12 @@ void PartyStatus_CreateWindow(s32 flags) {
 
 extern const s8 gWindow_PartyColumnOffsets[];
 
-void Func_080426e0(struct Window *window, u32 flags) {
+/// Draws the vertical lines between the party members' columns of the party
+/// status `window`, with their top and bottom joints, at the offsets listed in
+/// gWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
+/// line comes first in the list). In battle it also draws the window's bottom
+/// edge.
+void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 first = 1;
   s32 bias = 0;
@@ -271,7 +276,7 @@ void PartyStatus_Draw(s32 flags) {
   work->menuBusy = 1;
   if (layout->flags == flags) {
     WindowSprite_RedrawSavedRect(window);
-    Func_080426e0(window, flags);
+    Window_DrawColumnBorders(window, flags);
   } else {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
     PartyStatus_BuildLayoutBounds(flags);
@@ -279,7 +284,7 @@ void PartyStatus_Draw(s32 flags) {
     window->height = layout->height;
     window->x = layout->x;
     Window_DrawBorder(layout->x, layout->y, layout->width, layout->height);
-    Func_080426e0(window, flags);
+    Window_DrawColumnBorders(window, flags);
   }
 
   if (flags & PARTY_STATUS_SHOW_DJINN)

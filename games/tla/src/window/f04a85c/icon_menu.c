@@ -1,7 +1,7 @@
 /// @file
 /// Collecting the party's battle commands, as The Broken Seal's
 /// Battle_CollectPartyCommands does on this game's work and menus, then
-/// Func_0804cda8, which draws a menu's icons each frame, the selected one
+/// IconMenu_DrawIcons, which draws a menu's icons each frame, the selected one
 /// bouncing, and fits the window's lines around it.
 /// Then the resource selection menus: shop commands, sanctum services, Yes or
 /// No, coins or medals, and the save screen's actions.
@@ -134,18 +134,18 @@ void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Resource_LoadIndexedIntoBuffer(s32 slot, s32 index);
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
-/* VIEW(battle_party_commands): routine Link_DrawShiftedTilePair as void Link_DrawShiftedTilePair(u32 address); countdown has void Link_DrawShiftedTilePair(s32 destination); tried as the rest of the object declares it, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
-extern void Link_DrawShiftedTilePair__battle_party_commands(u32 address) __asm__("Link_DrawShiftedTilePair");
+/* VIEW(battle_party_commands): routine Link_DrawPageArrows as void Link_DrawPageArrows(u32 address); countdown has void Link_DrawPageArrows(s32 destination); tried as the rest of the object declares it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
+extern void Link_DrawShiftedTilePair__battle_party_commands(u32 address) __asm__("Link_DrawPageArrows");
 void Menu_BuildLocalizedPatternTiles(void);
 void wait(s32 frames);
 void UpdateLinkSessionCountdown(void);
-/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16 *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...; tried as the rest of the object declares it, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16 *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...; tried as the rest of the object declares it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
 extern s32 Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction **cursor, s32 *forcedCount) __asm__("Func_0804babc");
-/* VIEW(battle_party_commands): routine BattleLayout_HighlightPartyPanels as void BattleLayout_HighlightPartyPanels(u16 *units); countdown has s32 BattleLayout_HighlightPartyPanels(u16 *ids); tried as the definition's s32 BattleLayout_HighlightPartyPanels(u16 *ids), which the object already declares, Battle_DrawPartyPanelsWithEmptyList.0 moves: 1 of 18 instructions, Func_0804bc08 moves: 3 of 1909 instructions in tla-ja. */
-extern void BattleLayout_HighlightPartyPanels__battle_party_commands(u16 *units) __asm__("BattleLayout_HighlightPartyPanels");
+/* VIEW(battle_party_commands): routine PartyStatus_HighlightMembers as void PartyStatus_HighlightMembers(u16 *units); countdown has s32 PartyStatus_HighlightMembers(u16 *ids); tried as the definition's s32 PartyStatus_HighlightMembers(u16 *ids), which the object already declares, Battle_DrawPartyPanelsWithEmptyList.0 moves: 1 of 18 instructions, Battle_CollectPartyCommands moves: 3 of 1909 instructions in tla-ja. */
+extern void BattleLayout_HighlightPartyPanels__battle_party_commands(u16 *units) __asm__("PartyStatus_HighlightMembers");
 void BattleHighlight_SetModesFar(u16 *units, s32 mode);
 s32 GameFlag_Test(s32 flag);
-s32 Func_080457d0(s32 mode, s32 fleeAllowed);
+s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed);
 void PartyStatus_Draw(s32 flags);
 void BattleActor_CommitPlacementFar(void);
 void Func_08118158(void);
@@ -154,29 +154,29 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 s32 Func_0804b8b8(s32 slot);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
-/* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32 BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32 BattleParty_ListActorIdsFar(s32 side, s32 group); tried as the rest of the object declares it, Func_0804bc08 moves: 2 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32 BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32 BattleParty_ListActorIdsFar(s32 side, s32 group); tried as the rest of the object declares it, Battle_CollectPartyCommands moves: 2 of 1909 instructions in tla-ja. */
 extern s32 BattleParty_ListActorIdsFar__battle_party_commands(s32 side, u16 *units) __asm__("BattleParty_ListActorIdsFar");
 s32 BattleParty_PrepareReserveOwnersFar(u16 *units);
-s32 Func_08046b08(u16 *list, s32 listCount, s32 member);
-s32 Message_ShowLocalizedAndWait(void);
+s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
+s32 Battle_RefuseFlee(void);
 /* VIEW(battle_party_commands): routine Message_DecodeRaw as void Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object already declares, Func_0804bbd0.1 moves: 2 of 24 instructions in tla-ja. */
 extern void Message_DecodeRaw__battle_party_commands(s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
 void Func_08118130(s32 kind, u8 *counts);
 void *Unit_Get(s32 owner);
 s32 Func_08045528(s32 portrait, s32 slot);
 void Window_MarkVisibleTextTiles(void);
-/* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Func_0804bc08 moves: 7 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
 extern struct Window *Window_Create__battle_party_commands(s32 x, s32 y, s32 width, s32 height, s32 flags) __asm__("Window_Create");
-/* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Func_0804bc08 moves: 7 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
 extern void Text_DrawCharacterAtOffset__battle_party_commands(s32 message, struct Window *window, s32 x,
                                 s32 y) __asm__("Text_DrawMessageAsTiles");
-s32 Func_0804a134(s32 unit, u16 *actions, s32 count);
+s32 BattlePsynergyMenu_Run(s32 unit, u16 *actions, s32 count);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
 void Text_SetColor(s32 color);
-/* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y), Func_0804bc08 moves: 2 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y), Battle_CollectPartyCommands moves: 2 of 1909 instructions in tla-ja. */
 extern void Text_DrawNumberAtOffset__battle_party_commands(s32 value, s32 digits, struct Window *window,
                              s32 x, s32 y) __asm__("Text_DrawNumberAtOffset");
-/* VIEW(battle_party_commands): routine Window_SetTilemapEntry as void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y, s32 flags); graphics.h has void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode); tried as the definition's void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode), which the object already declares, Func_0804bc08 moves: 11 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Window_SetTilemapEntry as void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y, s32 flags); graphics.h has void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode); tried as the definition's void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode), which the object already declares, Battle_CollectPartyCommands moves: 11 of 1909 instructions in tla-ja. */
 extern void Window_SetTilemapEntry__battle_party_commands(struct Window *window, s32 entry, s32 x, s32 y,
                             s32 flags) __asm__("Window_SetTilemapEntry");
 s32 Resource_ResetEntry(u32 slot);
@@ -195,7 +195,7 @@ extern u16 *Item_Get__battle_party_commands(s32 item) __asm__("Item_Get");
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 u32 Random16(void);
-/* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void Text_FillCanvasBackground(void); countdown has unsigned char Text_FillCanvasBackground(void); tried as the definition's void Text_FillCanvasBackground(void), which the object already declares, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void Text_FillCanvasBackground(void); countdown has unsigned char Text_FillCanvasBackground(void); tried as the definition's void Text_FillCanvasBackground(void), which the object already declares, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
 extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__("Text_FillCanvasBackground");
 /* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1419: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__battle_party_commands(s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
@@ -221,7 +221,7 @@ void Camera_ConfigureSceneFar(s32 mode);
 /// undoes a reserve swap; command 49 swaps a reserve member in (Func_0804b8b8
 /// after choosing the slot); Status lists the reserve as well; Flee is command
 /// 99; and the Djinn tutorial's hint follows an unleash.
-s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
+s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                   s32 commandCount) {
   u16 signatureHeader[2];
   struct BattleMenuWork *state;
@@ -343,7 +343,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
       state->tutorialDelay = 60;
     }
     if (commandCount >= 0)
-      mode = Func_080457d0(0, commandCount);
+      mode = BattleCommandRow_Run(0, commandCount);
     else
       mode = 14;
 
@@ -403,13 +403,13 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
       if (side == 1)
         count += BattleParty_PrepareReserveOwnersFar(block + count);
       wait(1);
-      Func_08046b08(block, count, block[0]);
+      BattleStatusScreen_Run(block, count, block[0]);
       Heap_Release(block);
       continue;
     }
     // Flee: one command 99 for the party, first in the round.
     if (mode == 4) {
-      s32 refused = Message_ShowLocalizedAndWait();
+      s32 refused = Battle_RefuseFlee();
 
       if (refused != 0)
         continue;
@@ -477,7 +477,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
       BattleHighlight_SetModesFar(signatureHeader, 1);
       BattleLayout_HighlightPartyPanels__battle_party_commands(signatureHeader);
       wait(1);
-      mode = Func_080457d0(1, 0);
+      mode = BattleCommandRow_Run(1, 0);
       wait(1);
       if (mode == -2) {
         u16 *block = Heap_Alloc(12);
@@ -485,7 +485,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
 
         state->iconShown[2] = 0;
         wait(1);
-        Func_08046b08(block, count, actorId);
+        BattleStatusScreen_Run(block, count, actorId);
         state->iconShown[2] = 1;
         Heap_Release(block);
         continue;
@@ -568,7 +568,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
         }
         pick[cnt] = 0;
         list[cnt] = 0;
-        mode = Func_0804a134(actorId, list, cnt);
+        mode = BattlePsynergyMenu_Run(actorId, list, cnt);
         if (mode == -1)
           goto mark_visible;
         parameter = unit->actionSlots[pick[mode]].encodedAction & 0x3fff;
@@ -995,7 +995,18 @@ struct WindowBuffer {
 // are left alone.
 #define TRANSITION_BUSY(state) (((s8 *)(state))[0x53f])
 
-void Func_0804cda8(void) {
+/// Draws the resource-menu icons, pulsing the selected icon with one affine
+/// matrix, and updates the horizontal window spans to reveal the active icon
+/// row. A task of the command icon menus
+/// (IconMenu_Open). Each icon is a 32x32, 256-colour sprite;
+/// the selected one is double-size affine, pulsing between 1.19 and 1.31
+/// times, on layer 246, the others on 245, and one at x 0 is not drawn.
+/// While a window transition runs (gScreenTransitionWork), it widens window 1
+/// over the icon row so the icons show through: from the first icon on the
+/// row's 24 lines, keeping each line's right edge, and around the selected
+/// icon on the lines it overhangs (below a row at the top, above one at the
+/// bottom, whose lines are 136 to 159).
+void IconMenu_DrawIcons(void) {
   struct ResourceMenuWork *work;
   struct ResourceMenuEntry *sprite;
   struct AffineTransform effect;
@@ -1129,24 +1140,31 @@ void Func_0804cda8(void) {
 
 
 #define AFFINE_EFFECT_SLOT 232
-void Func_0804cda8(void);
+void IconMenu_DrawIcons(void);
 
-void *AffineEffect_InitializeWork(void) {
+/// Allocates and clears the resource-menu state, then schedules its icon pulse.
+/// The work (struct IconMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU
+/// until IconMenu_Close frees it; it is returned, and also reached
+/// as gIconMenuWork. Every command icon menu starts here.
+void *IconMenu_Open(void) {
   void *work = HeapSlot_AllocEwram(AFFINE_EFFECT_SLOT, 152);
 
   Dma_Fill32(0, work, 152);
-  Task_Add((TaskFunc)Func_0804cda8, TASK_PASS_VBLANK - 10);
+  Task_Add((TaskFunc)IconMenu_DrawIcons, TASK_PASS_VBLANK - 10);
   return work;
 }
 
-void Menu_EndResourceSelection(void) {
+/// Stops the icon pulse, closes the label window and releases each loaded icon
+/// before freeing the resource-menu state (HEAP_SLOT_ICON_MENU), then waits a
+/// frame.
+void IconMenu_Close(void) {
   struct Window *child;
   s32 i;
   u16 *entry;
   void *work;
 
   work = Ram_HeapSlots->menuSelectWork;
-  Task_Remove(Func_0804cda8);
+  Task_Remove(IconMenu_DrawIcons);
   child = FIELD_AT_OFFSET(work, struct Window **, 0x78);
   if (child != 0) {
     Window_Close(child, 2);
@@ -1165,7 +1183,11 @@ void Menu_EndResourceSelection(void) {
 void Sound_PlayFar(s32 cue);
 void WindowSprite_PrepareForRedraw(struct Window *);
 
-s32 Menu_RunResourceSelectionLoop(s32 initial) {
+/// Selects an icon position with wrapped directional input. A returns the
+/// position; B or Start returns -1. Redraws the label only after a move. The
+/// label is message resourceBase + position when the layout set a
+/// resourceBase, else the icon's command name (MsgCommandName + its icon).
+s32 IconMenu_Run(s32 initial) {
   struct ResourceMenuWork *work = Ram_HeapSlots->menuSelectWork;
   s32 resource;
 
@@ -1235,7 +1257,13 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
 /// Steps the selection from start to goal, redrawing the label each step and
 /// slowing as it nears the goal, then confirms.
 // ☀️'s function of the same name in window/battle_command.c.
-s32 Menu_SelectResource(s32 start, s32 goal) {
+/// Animates a cursor from start to goal with table-driven delays. Draws each
+/// intervening label, pauses at the destination, and returns its position.
+/// It moves one icon at a time with the cursor sound, waiting
+/// gMenu_SelectionStepDelays[icons still to go] frames at each (12 more at
+/// the first), then 48 frames on the goal before the confirm sound: a menu
+/// choice made for the player to watch (Menu_AnimateSelectionToEntry).
+s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   s16 resourceBase;
   s16 cur;
   s32 diff;
@@ -1292,7 +1320,9 @@ extern char ResourceId_CommandIcons;
 /* VIEW(resource_work): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
 extern struct Window *Window_Create__resource_work(s32 x, s32 y, s32 width, s32 height, s32 style) __asm__("Window_Create");
 
-void Menu_LoadResourceSlot(s32 slot, s32 index) {
+/// Decodes one command-icon table entry into the requested VRAM cache slot,
+/// through a 1 KB block it allocates and frees.
+void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
   s32 size = 1024;
   void *buffer = (void *)Heap_Alloc(size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
@@ -1302,7 +1332,11 @@ void Menu_LoadResourceSlot(s32 slot, s32 index) {
   Heap_Release(buffer);
 }
 
-void Menu_AppendResourceEntry(s32 no) {
+/// Appends a command icon if fewer than six are present. Its initial position
+/// is on the bottom icon row; a layout routine places the final row. The
+/// icon's number (ResourceId_CommandIcons) is also its command name's
+/// (MsgCommandName + icon). Its VRAM slot is taken unchecked.
+void IconMenu_AddIcon(s32 no) {
   struct ResourceMenuWork *work;
   struct ResourceMenuEntry *entry;
   s16 index;
@@ -1315,7 +1349,7 @@ void Menu_AppendResourceEntry(s32 no) {
     work->count++;
     entry = &work->entries[index];
     slot = Resource_FindFreeEntry();
-    Menu_LoadResourceSlot(slot, no);
+    CommandIcon_LoadIntoSlot(slot, no);
     entry->x = index * 24 + 32;
     flags = 136;
     entry->y = flags;
@@ -1324,7 +1358,12 @@ void Menu_AppendResourceEntry(s32 no) {
   }
 }
 
-void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
+/// Centers the icons and their label window together on the given tile row.
+/// A nonzero resourceBase supplies labels; otherwise command-name IDs do.
+/// The icons stand three tiles apart and the label window, `width` + 2 tiles
+/// wide and 3 tall, follows them; the centring counts two thirds of the
+/// window's width.
+void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
   struct ResourceMenuWork *menu = Ram_HeapSlots->menuSelectWork;
   s32 x;
   s32 i;
@@ -1350,7 +1389,7 @@ void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
 
 /// Lays the entries out in a row three cells apart from x, on row y, and
 /// opens the menu's window after them.
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
+void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   struct ResourceMenuWork *work;
   s32 i;
   struct ResourceMenuEntry *entry;
@@ -1372,7 +1411,13 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
 
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
 
-s32 Menu_SelectTopEntry(s32 selection) {
+/// Builds the field command menu, omitting Djinn when none are owned.
+/// Translates between command IDs and visible icon positions using the two
+/// lookup rows. The icons are Psynergy, Djinn, Item and Status on row 17;
+/// `selection` is the command to start on and the result the command
+/// chosen (enum FieldMenuCommand), or -1 when cancelled. The
+/// field's menu runs it (window/window/selection.c).
+s32 FieldMenu_SelectCommand(s32 selection) {
   s32 group = 0;
   s32 offset;
   s32 triple;
@@ -1391,16 +1436,16 @@ s32 Menu_SelectTopEntry(s32 selection) {
     selection = 0;
   }
 
-  AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(1);
+  IconMenu_Open();
+  IconMenu_AddIcon(1);
   if (group == 0) {
-    Menu_AppendResourceEntry(15);
+    IconMenu_AddIcon(15);
   }
-  Menu_AppendResourceEntry(2);
-  Menu_AppendResourceEntry(7);
-  Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
-  ret = Menu_RunResourceSelectionLoop(selection);
-  Menu_EndResourceSelection();
+  IconMenu_AddIcon(2);
+  IconMenu_AddIcon(7);
+  IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
+  ret = IconMenu_Run(selection);
+  IconMenu_Close();
 
   if (ret >= 0) {
     s8 *commands = gMenu_TopEntryCommandByPosition;
@@ -1415,17 +1460,17 @@ s32 Menu_SelectTopEntry(s32 selection) {
 
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
   PartyStatus_OpenAndWait();
-  AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(1);
-  Menu_AppendResourceEntry(0xF);
-  Menu_AppendResourceEntry(2);
-  Menu_AppendResourceEntry(7);
+  IconMenu_Open();
+  IconMenu_AddIcon(1);
+  IconMenu_AddIcon(0xF);
+  IconMenu_AddIcon(2);
+  IconMenu_AddIcon(7);
   // Only Japanese centres the entries before selecting.
 #if LANGUAGE == LANGUAGE_JAPANESE
-  Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
 #endif
-  arg1 = Menu_SelectResource(arg0, arg1 - 1);
-  Menu_EndResourceSelection();
+  arg1 = IconMenu_AnimateTo(arg0, arg1 - 1);
+  IconMenu_Close();
   PartyStatus_CloseWithMenu();
   return arg1;
 }
@@ -1439,10 +1484,18 @@ s32 Func_080432a4(void);
 /// Offers the actions the files allow (plus two optional entries
 /// behind EWRAM flags) and maps the chosen position to an action. The second
 /// optional entry is 31, and with the first option off, action 4 becomes 5.
-// As ☀️'s Menu_SelectSaveSlotAction. A module of its own: in the Japanese
+// As ☀️'s FileList_SelectAction. A module of its own: in the Japanese
 // edition it follows Menu_AnimateSelectionToEntry, which is still scaffolded
 // there.
-s32 Menu_SelectSaveSlotAction(void) {
+/// Builds the File Screen's menu from the save summaries and optional send
+/// flags. Translates the chosen visible position back to its action (enum
+/// FileAction), or -1 when cancelled or the backup memory cannot be read. With
+/// no files it returns 0 at once. The icons, by Save_ScanFileSummaries' count:
+/// New Game, Continue, Copy and Erase for one or two files (starting on
+/// Continue); no New Game or Copy with three; with every file cleared no
+/// Continue, and only Erase with three such files. Battle and Send follow when
+/// enabled. The file list runs it (scene/file_screen.c).
+s32 FileList_SelectAction(void) {
   s32 type;
   s32 ret;
   s32 initial;
@@ -1463,21 +1516,21 @@ s32 Menu_SelectSaveSlotAction(void) {
     group = 3;
   else
     initial = 1;
-  AffineEffect_InitializeWork();
+  IconMenu_Open();
   if (group == 0 || group == 3)
-    Menu_AppendResourceEntry(21);
+    IconMenu_AddIcon(21);
   if (group <= 1)
-    Menu_AppendResourceEntry(22);
+    IconMenu_AddIcon(22);
   if (group == 0 || group == 3)
-    Menu_AppendResourceEntry(23);
-  Menu_AppendResourceEntry(24);
+    IconMenu_AddIcon(23);
+  IconMenu_AddIcon(24);
   if (gData_020036d8 != 0)
-    Menu_AppendResourceEntry(29);
+    IconMenu_AddIcon(29);
   if (gData_02005350 != 0)
-    Menu_AppendResourceEntry(31);
-  Menu_CenterResourceEntries(17, SAVE_SLOT_MENU_WIDTH, 0);
-  ret = Menu_RunResourceSelectionLoop(initial);
-  Menu_EndResourceSelection();
+    IconMenu_AddIcon(31);
+  IconMenu_Center(17, SAVE_SLOT_MENU_WIDTH, 0);
+  ret = IconMenu_Run(initial);
+  IconMenu_Close();
   if (ret >= 0) {
     u32 twice = group * 2;
 
@@ -1715,7 +1768,12 @@ void Menu_DrawModeIndicator(void) {
 #define PASSWORD_LINE_HEIGHT 12
 #endif
 
-s32 Func_0804d7fc(s32 mode) {
+/// Selects either the transfer method or the password level (enum
+/// ResourceLayoutMode). Schedules the
+/// appropriate help redraw while the icon menu is active, then closes both
+/// help windows and the icon menu. Returns the place
+/// chosen, or -1 when cancelled. The Send screens run it (scene/file_screen.c).
+s32 IconMenu_ChooseSendOption(s32 mode) {
   struct ResourceMenuWork *work;
   struct Window *window;
   s32 msg;
@@ -1723,17 +1781,17 @@ s32 Func_0804d7fc(s32 mode) {
   s32 result;
 
   mode &= 1;
-  AffineEffect_InitializeWork();
+  IconMenu_Open();
   work = Ram_HeapSlots->menuSelectWork;
   if (mode == 0) {
-    Menu_AppendResourceEntry(44);
-    Menu_AppendResourceEntry(45);
+    IconMenu_AddIcon(44);
+    IconMenu_AddIcon(45);
   } else {
-    Menu_AppendResourceEntry(46);
-    Menu_AppendResourceEntry(47);
-    Menu_AppendResourceEntry(48);
+    IconMenu_AddIcon(46);
+    IconMenu_AddIcon(47);
+    IconMenu_AddIcon(48);
   }
-  Menu_CenterResourceEntries(17, ENTRY_WIDTH, 0);
+  IconMenu_Center(17, ENTRY_WIDTH, 0);
   if (mode != 0) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
@@ -1767,7 +1825,7 @@ s32 Func_0804d7fc(s32 mode) {
     work->lowerWindow =
         Window_Create__resource_work(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
   }
-  result = Menu_RunResourceSelectionLoop(0);
+  result = IconMenu_Run(0);
   if (mode != 0)
     Task_Remove(Menu_DrawModeLabel);
   else
@@ -1777,7 +1835,7 @@ s32 Func_0804d7fc(s32 mode) {
   Window_Close(*upper, 2);
   Window_Close(work->lowerWindow, 2);
   wait(1);
-  Menu_EndResourceSelection();
+  IconMenu_Close();
   return result;
 }
 
@@ -1790,20 +1848,20 @@ s32 Func_0804d7fc(s32 mode) {
 s32 Menu_SelectShopCommand(s32 selection) {
   s32 ret;
 
-  AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(0x11);
-  Menu_AppendResourceEntry(0x12);
-  Menu_AppendResourceEntry(0x13);
-  Menu_AppendResourceEntry(0x14);
+  IconMenu_Open();
+  IconMenu_AddIcon(0x11);
+  IconMenu_AddIcon(0x12);
+  IconMenu_AddIcon(0x13);
+  IconMenu_AddIcon(0x14);
 #if (LANGUAGE == LANGUAGE_GERMAN)
-  Menu_CenterResourceEntries(17, 8, 0); // Name window width.
+  IconMenu_Center(17, 8, 0); // Name window width.
 #elif (LANGUAGE != LANGUAGE_JAPANESE)
-  Menu_CenterResourceEntries(17, 7, 0);
+  IconMenu_Center(17, 7, 0);
 #else
-  Menu_CenterResourceEntries(17, 6, 0);
+  IconMenu_Center(17, 6, 0);
 #endif
-  ret = Menu_RunResourceSelectionLoop(selection);
-  Menu_EndResourceSelection();
+  ret = IconMenu_Run(selection);
+  IconMenu_Close();
   return ret;
 }
 
@@ -1811,18 +1869,18 @@ s32 Menu_SelectShopCommand(s32 selection) {
 s32 Menu_SelectSanctumService(s32 selection) {
   s32 ret;
 
-  AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(0x19);
-  Menu_AppendResourceEntry(0x1A);
-  Menu_AppendResourceEntry(0x1B);
-  Menu_AppendResourceEntry(0x1C);
+  IconMenu_Open();
+  IconMenu_AddIcon(0x19);
+  IconMenu_AddIcon(0x1A);
+  IconMenu_AddIcon(0x1B);
+  IconMenu_AddIcon(0x1C);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-  Menu_CenterResourceEntries(17, 10, 0);
+  IconMenu_Center(17, 10, 0);
 #else
-  Menu_CenterResourceEntries(17, 8, 0);
+  IconMenu_Center(17, 8, 0);
 #endif
-  ret = Menu_RunResourceSelectionLoop(selection);
-  Menu_EndResourceSelection();
+  ret = IconMenu_Run(selection);
+  IconMenu_Close();
   return ret;
 }
 
@@ -1831,12 +1889,12 @@ s32 Menu_SelectSanctumService(s32 selection) {
 /// message: first name message, or 0 for command names.
 /// w: name window width, or 3 if zero.
 /// selection: initial selection.
-s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
+s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection) {
   s32 row;
 
   row = 0;
 
-  AffineEffect_InitializeWork();
+  IconMenu_Open();
 
   if (w == 0) {
     w = 3;
@@ -1845,12 +1903,12 @@ s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
     row = 17;
   }
 
-  Menu_AppendResourceEntry(5);
-  Menu_AppendResourceEntry(6);
-  Menu_CenterResourceEntries(row, w, message);
+  IconMenu_AddIcon(5);
+  IconMenu_AddIcon(6);
+  IconMenu_Center(row, w, message);
 
-  selection = Menu_RunResourceSelectionLoop(selection);
-  Menu_EndResourceSelection();
+  selection = IconMenu_Run(selection);
+  IconMenu_Close();
   if (selection == -1) {
     selection = 1;
   }
@@ -1858,15 +1916,15 @@ s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
 }
 
 /// Selects Yes or No at (x, y). Cancel returns 1 (No).
-s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
+s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
   s32 message = (s32)MsgCommandYes;
 
-  AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(5);
-  Menu_AppendResourceEntry(6);
-  Menu_LayoutResourceEntries(x, y, 3, message);
-  selection = Menu_RunResourceSelectionLoop(selection);
-  Menu_EndResourceSelection();
+  IconMenu_Open();
+  IconMenu_AddIcon(5);
+  IconMenu_AddIcon(6);
+  IconMenu_LayoutIcons(x, y, 3, message);
+  selection = IconMenu_Run(selection);
+  IconMenu_Close();
   if (selection == -1) {
     selection = 1;
   }
@@ -1895,19 +1953,22 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 ret;
 
-  AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(0x20);
-  Menu_AppendResourceEntry(0x21);
-  Menu_CenterResourceEntries(17, PAIR_WIDTH, 0);
-  ret = Menu_RunResourceSelectionLoop(selection);
-  Menu_EndResourceSelection();
+  IconMenu_Open();
+  IconMenu_AddIcon(0x20);
+  IconMenu_AddIcon(0x21);
+  IconMenu_Center(17, PAIR_WIDTH, 0);
+  ret = IconMenu_Run(selection);
+  IconMenu_Close();
   return ret;
 }
 
-/* VIEW(resource_work): routine Menu_RunSelection as void Menu_RunSelection(void); the definition has s16 Menu_RunSelection(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3143: `Menu_RunSelection' undeclared (first use in this function). */
-extern void Menu_RunSelection__resource_work(void) __asm__("Menu_RunSelection");
+/* VIEW(resource_work): routine DebugSceneSelect_Run as void DebugSceneSelect_Run(void); the definition has s16 DebugSceneSelect_Run(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3143: `DebugSceneSelect_Run' undeclared (first use in this function). */
+extern void Menu_RunSelection__resource_work(void) __asm__("DebugSceneSelect_Run");
 
-void Func_0804dabc(void) { Task_Add(Menu_RunSelection__resource_work, TASK_PASS_VBLANK); }
+/// Schedules the debug scene and entrance selector;
+/// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
+/// Nothing in the game calls it.
+void DebugSceneSelect_Schedule(void) { Task_Add(Menu_RunSelection__resource_work, TASK_PASS_VBLANK); }
 #undef AFFINE_EFFECT_SLOT
 #undef SOUND_MENU_CURSOR_MOVE
 #undef SOUND_MENU_CONFIRM

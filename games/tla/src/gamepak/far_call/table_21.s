@@ -9,10 +9,10 @@ Window_DrawBorderFar:
 	.thumb_func
 Window_EraseBorderRectFar:
 	overlay_veneer Window_EraseBorderRect
-	.global Link_DrawShiftedTilePairFar
+	.global Link_DrawPageArrowsFar
 	.thumb_func
-Link_DrawShiftedTilePairFar:
-	overlay_veneer Link_DrawShiftedTilePair
+Link_DrawPageArrowsFar:
+	overlay_veneer Link_DrawPageArrows
 	.global Func_08038400
 	.thumb_func
 Func_08038400:

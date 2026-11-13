@@ -81,9 +81,9 @@ void Func_080d57e4(void);
 void Func_080d59dc(void);
 void Func_080d5aa0(void);
 void Field_StartEncounterTransition(s32 battle);
-void Menu_RunSelectionWithCursorObjectFar(void);
+void DebugFlagEditor_RunFar(void);
 void FieldMenu_RunFar(void);
-void Menu_RunSelectionFar(void);
+void DebugSceneSelect_RunFar(void);
 s32 Sound_GetCurrentBgmFar(void);
 void Func_08038358(s32 mode);
 void Func_080200b0(void);
@@ -473,7 +473,7 @@ s32 FieldSequence_Run(void) {
         GameFlag_SetBit(262);
         if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
             ((*(volatile u32 *)&gInput.held & 4) != 0)) {
-          Menu_RunSelectionWithCursorObjectFar();
+          DebugFlagEditor_RunFar();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
         } else {
@@ -519,7 +519,7 @@ s32 FieldSequence_Run(void) {
         Func_080cb82c();
         GameFlag_SetBit(262);
         if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
-          Menu_RunSelectionFar();
+          DebugSceneSelect_RunFar();
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
           Debug_RunPaletteEditor();
         } else if (GameFlag_Test(263)) {

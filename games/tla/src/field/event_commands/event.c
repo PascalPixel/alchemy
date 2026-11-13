@@ -354,7 +354,7 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
 }
 
 s32 Message_AllTypedFar(void);
-s32 Menu_RunConfirmSelectionFar(s32 useBottom, s32 name, s32 width, s32 third);
+s32 YesNoMenu_RunFar(s32 useBottom, s32 name, s32 width, s32 third);
 void Window_CloseMatchingIdFar(s32 sprite);
 
 /// The event command "choose yes or no": waits for the message, asks yes or no
@@ -390,7 +390,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
       useBottom = 0;
   }
 
-  answer = Menu_RunConfirmSelectionFar(useBottom, *(s16 *)(work + 0xcb0),
+  answer = YesNoMenu_RunFar(useBottom, *(s16 *)(work + 0xcb0),
                                        *(s16 *)(work + 0xcb2),
                                        *(s16 *)(work + 0xcb4));
   if (answer != 0) {
@@ -410,7 +410,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   return answer;
 }
 
-s32 Func_080d295c(s32 a) { return Menu_RunConfirmSelectionFar(a, 0, 0, 0); }
+s32 Func_080d295c(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 
 void BattleEffect_StartEffectObject22(s32 item, s32 mode);
 void GameFlag_SetBit(s32 flag);

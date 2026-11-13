@@ -98,7 +98,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
 /// input: destination window.
 /// x, y: position within the window, in pixels.
 /// ability: ability index.
-s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
                                     s32 ability) {
   s32 slot;
 
@@ -194,7 +194,18 @@ struct ArrowSprite {
   } tile;
 };
 
-struct Window *Func_080464dc(struct Window *window, s32 member,
+/// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
+/// index) would change for `member`: closes the preview window `win`, opens a
+/// new one and returns it, or NULL when none could be opened. Page 0
+/// compares the class and stats, old against new, with an arrow by each stat
+/// that rises or falls; pages 1 on list, five a page, the unit's battle
+/// abilities after the change (unchanged ones in TEXT_COLOR_WHITE, new ones in
+/// TEXT_COLOR_YELLOW) and then those it would lose (TEXT_COLOR_RED), and
+/// *pageCount is set to their number (at least 1). The Djinni is toggled and
+/// the unit recalculated (Unit_CalculateFar) only to measure: the unit is
+/// restored from a copy before it returns. BattleDjinnMenu_Run calls it as the
+/// cursor moves.
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 member,
                              s32 encodedDjinn, s32 page, s32 *pageCount) {
   struct PreviewUnit *unit;
   struct PreviewUnit *savedUnit;
@@ -332,7 +343,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       else
         rangePattern--;
       Window_DrawThreeTileColumn(window, 16, visibleRow * 2, rangePattern, 0);
-      WindowSprite_CreateFromResourceSlot((struct RenderInput *)window, 0,
+      WindowSprite_CreateAbilityIcon((struct RenderInput *)window, 0,
                                           visibleRow * 16 - 4,
                                           changedAbilities[i] & 0x3fff);
       if (changedAbilities[i] & 0x8000)

@@ -43,7 +43,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
 void PartyStatus_Draw(s32 flags);
 void BattleActor_CommitPlacementFar(void);
 void BattleHighlight_SetModesFar(u16 *, s32);
-s32 BattleLayout_HighlightPartyPanels(u16 *ids);
+s32 PartyStatus_HighlightMembers(u16 *ids);
 
 // The keys, read through a volatile view: the loop reloads them on each test.
 #define INPUT ((volatile struct InputState *)&gInput)
@@ -134,7 +134,7 @@ s32 Func_0804b8b8(s32 slot) {
           selected[0] = newId;
           selected[1] = 0xff;
           BattleHighlight_SetModesFar(selected, 2);
-          BattleLayout_HighlightPartyPanels(selected);
+          PartyStatus_HighlightMembers(selected);
         }
         wait(1);
       test:
@@ -148,7 +148,7 @@ s32 Func_0804b8b8(s32 slot) {
     done:
       selected[0] = 0xff;
       BattleHighlight_SetModesFar(selected, 0);
-      BattleLayout_HighlightPartyPanels(selected);
+      PartyStatus_HighlightMembers(selected);
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
       BattleActor_CommitPlacementFar();
       wait(1);

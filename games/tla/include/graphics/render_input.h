@@ -24,8 +24,8 @@ void Window_CopyTilemapRegion(const struct RenderInput *window,
                               const void *source);
 void Window_SetTileAttributeRect(const struct RenderInput *window, s32 x, s32 y,
                                  s32 width, s32 height, u32 field);
-s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *window, s32 x,
-                                        s32 y, s32 resource);
+s32 WindowSprite_CreateAbilityIcon(struct RenderInput *window, s32 x, s32 y,
+                                   s32 resource);
 
 /// A sprite's OAM attribute 2 (tile index, priority and palette) and the
 /// halfword after it, as one word or as fields.

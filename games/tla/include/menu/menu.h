@@ -18,10 +18,10 @@ extern s8 gMenu_TopEntryCommandByPosition[];
 extern s8 gMenu_TopEntryPositionByCommand[];
 extern u8 gShop_GlyphBytes[];
 extern u8 gStatusMenu_LevelLetterString[];
-void *AffineEffect_InitializeWork(void);
+void *IconMenu_Open(void);
 void ItemMenu_PositionCategory(void);
-void Menu_AppendResourceEntry(s32 no);
-void Menu_EndResourceSelection(void);
+void IconMenu_AddIcon(s32 no);
+void IconMenu_Close(void);
 void Resource_ResetPendingTransfer(void);
 s32 Sanctum_NeedsService(s32 entry_id, s32 kind);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
@@ -43,10 +43,10 @@ void BattlePalette_StopBlendAndReleaseBufferFar(void);
 void BattleEffect_SetPrimaryBufferValueFar(void);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
-void Menu_DrawFlagBitTable(s32, s32);
-s32 Menu_HandleFlagGridInput(s32, s32 *, s32 *);
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h);
-s32 Menu_RunResourceSelectionLoop(s32);
+void DebugFlagEditor_DrawTable(s32, s32);
+s32 DebugFlagEditor_HandleInput(s32, s32 *, s32 *);
+void IconMenu_LayoutIcons(s32 x, s32 y, s32 w, s32 h);
+s32 IconMenu_Run(s32);
 void Party_AdjustCoinsFar(s32);
 s32 Party_ListActiveOwnersFar(s16 *);
 s32 Party_SumDjinnCountsFar(s32);
@@ -56,7 +56,7 @@ WindowSprite_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2,
                                    s32 arg3, s32 arg4);
 #endif
 void SelectionMenu_StopDrawing(void);
-void *Text_FormatPlayTime(s32, u8 *);
+void *String_FormatPlayTime(s32, u8 *);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_PrepareActor(struct WindowSprite *icon);
 #ifndef OWN_UiTextResource_Initialize

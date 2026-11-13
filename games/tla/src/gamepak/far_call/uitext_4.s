@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Menu_RunConfirmSelectionAtFar
+	.global YesNoMenu_RunAtFar
 	.thumb_func
-Menu_RunConfirmSelectionAtFar:
-	overlay_veneer Menu_RunConfirmSelectionAt
+YesNoMenu_RunAtFar:
+	overlay_veneer YesNoMenu_RunAt
 	.global Resource_LoadFixedBlockBIntoFreeSlotFar
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlotFar:

@@ -86,7 +86,7 @@ s32 Func_080f94a4(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
   Palette_LightenHighlight(14);
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawPageArrowsFar(0x06002500);
   screen->questionWindow =
       (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, 2);
 #if TLA_PATCH_1

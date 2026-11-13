@@ -73,9 +73,9 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 // The screens object's functions its parts call before their definitions.
 struct BobPairObject;
 void Func_08043b70(void);
-s32 Func_08043cd8(s32 selectedFile, s32 menuMode);
+s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
 void MenuTitle_Bob(struct BobPairObject *object);
-struct WindowSprite *RenderResource_CreatePair(s32 group,
+struct WindowSprite *MenuTitle_Create(s32 group,
                                                struct RenderInput *input, s32 x,
                                                s32 y);
 

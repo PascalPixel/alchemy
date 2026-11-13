@@ -10,10 +10,18 @@
 // the field, Left and Right step the value (0 to 324) or the second number
 // (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
 
-/* VIEW(handle_selection_row_input): routine Menu_DrawSelectionRow as void Menu_DrawSelectionRow(s32 arg, s32 value, s16 *sub); the definition has void Menu_DrawSelectionRow(void *window, s16 first, const s16 *second). */
-extern void Menu_DrawSelectionRow__handle_selection_row_input(s32 arg, s32 value, s16 *sub) __asm__("Menu_DrawSelectionRow");
+/* VIEW(handle_selection_row_input): routine DebugSceneSelect_DrawRow as void DebugSceneSelect_DrawRow(s32 arg, s32 value, s16 *sub); the definition has void DebugSceneSelect_DrawRow(void *window, s16 first, const s16 *second). */
+extern void Menu_DrawSelectionRow__handle_selection_row_input(s32 arg, s32 value, s16 *sub) __asm__("DebugSceneSelect_DrawRow");
 
-s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
+/// Edits the debug scene or entrance, returning -1 to exit and -2 to
+/// cancel. Shoulder buttons step by ten; it keeps the original 99-step
+/// entrance wrap. Otherwise it returns the scene after this frame's keys. Up
+/// and Down switch the field (`selectedField`: 0 scene, 1 entrance), Left
+/// and Right step by one, wrapping scenes 0 to 200 and entrances 0 to 99.
+/// R and L step a scene by ten, setting the entrance to 0, and past
+/// either end go to the other (195 + 10 gives 0); they step an entrance
+/// by ten, wrapping by 99 (95 + 10 gives 6).
+s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   if (gInput.repeat & KEY_A)
     return -1;
   if (gInput.repeat & KEY_B)
@@ -77,7 +85,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
 
 /// Shows 16x16 flags per page and takes input until closed, starting on page
 /// 8. Returns 0.
-s32 Menu_RunSelectionWithCursorObject(void) {
+s32 DebugFlagEditor_Run(void) {
   u8 obj[12]; // Cursor object.
   s32 cur[2]; // Cursor column and row.
   s32 res;
@@ -90,15 +98,15 @@ s32 Menu_RunSelectionWithCursorObject(void) {
   cur[0] = win;
   cur[1] = win;
   win = Window_Create(1, 0, 28, 20, 2);
-  Menu_DrawFlagBitTable(win, page);
+  DebugFlagEditor_DrawTable(win, page);
   MenuArrow_Create(obj, &res);
   for (;;) {
     wait(1);
-    ret = Menu_HandleFlagGridInput(win, &page, cur);
+    ret = DebugFlagEditor_HandleInput(win, &page, cur);
     if (ret == -1)
       break; // Close.
     if (ret == 1)
-      Menu_DrawFlagBitTable(win, page); // A flag or the page changed.
+      DebugFlagEditor_DrawTable(win, page); // A flag or the page changed.
     MenuArrow_SetPosition(obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
   }
   MenuArrow_Release(res);
@@ -108,7 +116,7 @@ s32 Menu_RunSelectionWithCursorObject(void) {
 
 /// Writes the lowest count digits of value (up to five), most significant
 /// first, to out as uppercase hexadecimal, without a terminating zero.
-void Text_FormatHex(u32 value, u32 count, u8 *out) {
+void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
   u8 buf[8];
   u32 i;
 
@@ -137,7 +145,10 @@ extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(void) __as
 void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
 
-void Menu_DrawFlagBitTable(s32 window, s32 startFlag) {
+/// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
+/// Each row: its first flag's number in three hex digits, then its 16 flags
+/// as 0 or 1, lowest first, under a heading of hex digits.
+void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
   s32 row;
   s32 y;
   s32 flag;
@@ -156,7 +167,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 startFlag) {
     for (i = 0; i != 5; i++) {
       label[i] = 0;
     }
-    Text_FormatHex(flag, 3, label);
+    String_FormatHexDigits(flag, 3, label);
     Text_DrawStringInWindow((s32)label, window, 0, y);
     Text_DrawStringInWindow((s32)gMenu_ColonString, window, 32, y);
 
@@ -172,7 +183,12 @@ void Menu_DrawFlagBitTable(s32 window, s32 startFlag) {
 
 void GameFlag_ClearBit(s32);
 
-s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor) {
+/// Moves within the flag grid, changes pages, or toggles the selected flag.
+/// Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
+/// A toggles flag page * 256 + row * 16 + column; B or Select closes. L and
+/// R turn a page, wrapping 0 to 15; with Start held they jump ten, to the
+/// other end when that passes it (5 - 10 gives 15).
+s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
   if (gInput.repeat & 1) {

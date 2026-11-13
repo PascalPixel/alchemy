@@ -21,9 +21,9 @@
 ///   Party status    party_status.c: PartyStatus_CreateWindow,
 ///                   PartyStatus_Draw
 ///   Saving          save.c: Save_WriteFile, Save_ChooseAndLoadFile
-///   Menus           menu_titles.c: RenderResource_CreatePair,
-///                   RenderResource_CreateCommandIcon
-///   Battle menus    battle_command_row.c: Func_080457d0
+///   Menus           menu_titles.c: MenuTitle_Create,
+///                   CommandIcon_Create
+///   Battle menus    battle_command_row.c: BattleCommandRow_Run
 
 #include "screens_internal.h"
 

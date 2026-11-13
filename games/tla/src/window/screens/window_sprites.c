@@ -169,7 +169,9 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   }
 }
 
-void Func_0804257c(u8 *window, s32 value) {
+/// Sets the draw layer of the window sprite `sprite` to 255 - `priority`, so a
+/// higher priority draws on a lower layer. Does nothing when `sprite` is NULL.
+void WindowSprite_SetInvertedSentinel(u8 *window, s32 value) {
   if (window != NULL)
     window[15] = ~value;
 }
@@ -179,7 +181,7 @@ extern u8 Tile_BuildCellPicturesCodeSize[];
 
 /// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
 /// window tiles' map through the cell picture routine copied to RAM.
-void Window_FillFromScene(void *dst) {
+void ScanlineWindow_FillSpans(void *dst) {
   u8 *scene = Ram_HeapSlots->windowTiles;
 
   if (scene == 0) {

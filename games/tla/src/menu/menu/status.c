@@ -124,7 +124,7 @@ s32 StatusScreen_Run(void) {
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   if (Party_SumDjinnCountsFar(result) != 0)
     Func_081051a8();
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawPageArrowsFar(0x06002500);
   Func_081053a8();
   Menu_CancelSoundReset();
   *page = 0;
@@ -311,7 +311,7 @@ void DjinnMenu_ShowCurrentList(void) {
       ((struct WindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
       redraw = 0;
     }
-    Link_DrawShiftedTilePairFar((void *)0x06002500);
+    Link_DrawPageArrowsFar((void *)0x06002500);
     wait(1);
     if (gInput.pressed & 7)
       break;

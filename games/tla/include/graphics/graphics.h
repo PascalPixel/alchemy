@@ -37,9 +37,9 @@ extern u8 *gPsynergyIconsEnd[];
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);
 #ifndef OWN_BattleLayout_HighlightPartyPanels
-s32 BattleLayout_HighlightPartyPanels(u16 *ids);
+s32 PartyStatus_HighlightMembers(u16 *ids);
 #endif
-void PaletteGlow_UpdateSine(void);
+void FileList_UpdatePulse(void);
 void Render_ResetTransformState(void);
 s32 Text_ClearCanvas(void);
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);

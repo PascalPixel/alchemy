@@ -1657,7 +1657,7 @@ void Resource_ResetPendingTransfer(void) {
 }
 
 void PartyStatus_CreateWindow(s32 flags);
-s32 Menu_SelectTopEntry(s32);
+s32 FieldMenu_SelectCommand(s32);
 s32 DjinnMenu_Open(void);
 s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
 s32 PsynergyMenu_RunFar(void);
@@ -1680,7 +1680,7 @@ s32 FieldMenu_Run(void) {
 
 loop:
   PartyStatus_OpenAndWait();
-  selection = Menu_SelectTopEntry(selection);
+  selection = FieldMenu_SelectCommand(selection);
 #ifdef UBFIX
   // UB: the original reads the void return of PartyStatus_CloseWithMenu, called
   // with no prototype in scope, as The Broken Seal's FieldMenu_Run does.

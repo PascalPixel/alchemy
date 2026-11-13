@@ -9,11 +9,11 @@ Portrait_GetForSpeakerFar:
 	.thumb_func
 FieldMenu_RunFar:
 	overlay_veneer FieldMenu_Run
-	.global Menu_SelectSaveSlotActionFar
+	.global FileList_SelectActionFar
 	.thumb_func
-Menu_SelectSaveSlotActionFar:
-	overlay_veneer Menu_SelectSaveSlotAction
+FileList_SelectActionFar:
+	overlay_veneer FileList_SelectAction
 	.global Func_080381f8
 	.thumb_func
 Func_080381f8:
-	overlay_veneer Func_0804d7fc
+	overlay_veneer IconMenu_ChooseSendOption

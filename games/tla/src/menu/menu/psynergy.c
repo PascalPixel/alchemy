@@ -48,7 +48,7 @@ s32 PsynergyMenu_Run(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenHighlight(14);
-  Link_DrawShiftedTilePairFar((void *)0x06002500);
+  Link_DrawPageArrowsFar((void *)0x06002500);
 
   Menu_CancelSoundReset();
   result = PsynergyMenu_RunSteps(&owner, &target, &item);

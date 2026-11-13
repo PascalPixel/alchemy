@@ -199,7 +199,7 @@ extern s8 gOptionMenu_SleepIcons[];
 extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 
-void *RenderResource_CreateCommandIcon(s32 frame, s32 flags,
+void *CommandIcon_Create(s32 frame, s32 flags,
                                        struct RenderInput *input, s32 offsetX,
                                        s32 offsetY);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
@@ -319,21 +319,21 @@ struct RenderInput *SettingsMenu_Open(void) {
   }
 
   y = 28;
-  work->frame[0][0] = RenderResource_CreateCommandIcon(
+  work->frame[0][0] = CommandIcon_Create(
       gOptionMenu_SpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
-  work->frame[0][1] = RenderResource_CreateCommandIcon(
+  work->frame[0][1] = CommandIcon_Create(
       gOptionMenu_SpeedIcons[1], 0, win, OPTION_CHOICE_X + 24, y);
-  work->frame[0][2] = RenderResource_CreateCommandIcon(
+  work->frame[0][2] = CommandIcon_Create(
       gOptionMenu_SpeedIcons[2], 0, win, OPTION_CHOICE_X + 48, y);
   y = 52;
-  work->frame[1][0] = RenderResource_CreateCommandIcon(
+  work->frame[1][0] = CommandIcon_Create(
       gOptionMenu_SpeechIcons[0], 0, win, 100, y);
-  work->frame[1][1] = RenderResource_CreateCommandIcon(
+  work->frame[1][1] = CommandIcon_Create(
       gOptionMenu_SpeechIcons[1], 0, win, 124, y);
   y = 76;
-  work->frame[2][0] = RenderResource_CreateCommandIcon(
+  work->frame[2][0] = CommandIcon_Create(
       gOptionMenu_SleepIcons[0], 0, win, 100, y);
-  work->frame[2][1] = RenderResource_CreateCommandIcon(
+  work->frame[2][1] = CommandIcon_Create(
       gOptionMenu_SleepIcons[1], 0, win, 124, y);
   return win;
 }
@@ -396,10 +396,10 @@ void SettingsMenu_Release(void);
 struct RenderInput *SettingsMenu_Open(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
 struct WindowSprite *
-RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
+MenuTitle_Create(s32 group, struct RenderInput *input, s32 x, s32 y);
 void MenuTitle_Bob(struct WindowSprite *pair);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
-void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
+void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void FieldMessage_Show(s32 message, s32 mode);
 
@@ -428,7 +428,7 @@ s32 SettingsMenu_Run(void) {
   work = Ram_HeapSlots->unkd0[0];
   helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3, 2);
   settingsWindow = SettingsMenu_Open();
-  pair = RenderResource_CreatePair(SETTINGS_HEADING, settingsWindow, 64, -48);
+  pair = MenuTitle_Create(SETTINGS_HEADING, settingsWindow, 64, -48);
   wait(1);
   hue = &work->option[0];
   brightness = &work->option[1];
@@ -452,7 +452,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
-        RenderResource_LoadCommandIcon(gOptionMenu_SpeedIcons[i], resourceIndex,
+        CommandIcon_Load(gOptionMenu_SpeedIcons[i], resourceIndex,
                                        dimmed);
       }
       for (i = 0; i <= 1; i++) {
@@ -463,7 +463,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
-        RenderResource_LoadCommandIcon(gOptionMenu_SpeechIcons[i],
+        CommandIcon_Load(gOptionMenu_SpeechIcons[i],
                                        resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
@@ -474,7 +474,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;
-        RenderResource_LoadCommandIcon(gOptionMenu_SleepIcons[i], resourceIndex,
+        CommandIcon_Load(gOptionMenu_SleepIcons[i], resourceIndex,
                                        dimmed);
       }
 
@@ -683,7 +683,7 @@ struct RenderInput *PauseMenu_Open(void) {
                                      0x40000000, win, 0, 0);
   y = -4;
   for (i = 0; i < rows; i++) {
-    work->icons[i] = RenderResource_CreateCommandIcon(
+    work->icons[i] = CommandIcon_Create(
         gMenu_WorkspaceIcons[first + i], 0, win, 12, y);
     y += 24;
   }
@@ -713,10 +713,10 @@ void PauseMenu_Initialize(void);
 void PauseMenu_Release(void);
 struct RenderInput *PauseMenu_Open(void);
 struct WindowSprite *
-RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
+MenuTitle_Create(s32 group, struct RenderInput *input, s32 x, s32 y);
 void MenuTitle_Bob(struct WindowSprite *pair);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
-void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
+void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 
@@ -756,7 +756,7 @@ s32 PauseMenu_Choose(s32 initial) {
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
   window = PauseMenu_Open();
-  pair = RenderResource_CreatePair(7, window, 40, HEADING_Y);
+  pair = MenuTitle_Create(7, window, 40, HEADING_Y);
   if (settingsOnly != 0) {
     rows = 1;
     first = 2;
@@ -779,7 +779,7 @@ s32 PauseMenu_Choose(s32 initial) {
           dimmed = 0;
           if (i != work->page)
             dimmed = 1;
-          RenderResource_LoadCommandIcon(*(s8 *)(j + (s32)pauseIcons),
+          CommandIcon_Load(*(s8 *)(j + (s32)pauseIcons),
                                          resourceIndex, dimmed);
           i++;
           j++;

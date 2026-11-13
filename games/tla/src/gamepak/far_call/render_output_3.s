@@ -52,8 +52,8 @@ Func_08038310:
 	.global Func_08038318
 	.thumb_func
 Func_08038318:
-	overlay_veneer Func_0804e1d8
+	overlay_veneer DebugBrowser_Icons
 	.global Func_08038320
 	.thumb_func
 Func_08038320:
-	overlay_veneer Func_0804e3f4
+	overlay_veneer DebugBrowser_Portraits

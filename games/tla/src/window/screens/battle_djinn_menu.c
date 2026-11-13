@@ -274,14 +274,14 @@ s32 BattleDjinnMenu_Run(s32 member) {
               previewPage = 0;
             }
           } else {
-            previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
+            previewWindow = BattleDjinnMenu_ShowChangePreview(previewWindow, member, selectedDjinn,
                                           previewPage, &previewPages);
             Message_CopyExpanded((s32)MsgReadyToSummon, messageText,
                                  DJINN_MESSAGE_CAPACITY);
             standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
           }
         } else {
-          previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
+          previewWindow = BattleDjinnMenu_ShowChangePreview(previewWindow, member, selectedDjinn,
                                         previewPage, &previewPages);
           DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) * 20 +
                                  (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,

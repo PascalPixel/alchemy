@@ -323,7 +323,7 @@ void BattleEvent_Playback(void) {
           BattleMotion_SetRecordChildValues(
               BattleObject_Get(events->actorId)->object, 7);
         }
-        BattleLayout_HighlightPartyPanelsFar(selection);
+        PartyStatus_HighlightMembersFar(selection);
       }
       events->timer++;
       if (events->timer <= 7)

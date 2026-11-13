@@ -94,7 +94,21 @@ extern struct BgScrollPair gBgScroll[];
 
 void Func_08118128(s32 x, s32 y);
 
-s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
+/// Runs a battle command row: the commands as icons along the bottom of the
+/// screen, the selected one pulsing as a sprite and named in a window, until
+/// a command is chosen. Returns the command chosen (enum CommandIcon), -1 when
+/// B cancels, or -2 when L or R asks for the Status screen; the last two in a
+/// party member's row only. When the link battle's time runs out the row takes
+/// its first command. Battle_CollectPartyCommands runs both rows.
+///
+/// COMMAND_ROW_PARTY is the party's row at the start of a turn: Fight, Flee
+/// and Status. COMMAND_ROW_MEMBER, as any other mode, is a party member's row:
+/// Attack, Psynergy, Djinn once the party's Djinn are enough for a summon
+/// (BattleSummonState.availableMask), Summon while any Djinni is on standby,
+/// Item and Defend. Each row remembers its choice in
+/// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
+/// presses the keys for the player.
+s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   u8 party[4];
   struct CommandRowWindowWork *work;
   struct CommandRowWork *selectionUi;
@@ -178,8 +192,8 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
-  Task_Add(Graphics_SetBg1Priority3, 0xc80);
-  Irq_SetHandler(2, 136, Func_08045780);
+  Task_Add(CommandRow_PutBg1Behind, 0xc80);
+  Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);
 
   for (;;) {
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
@@ -377,7 +391,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   }
   work->dirty = 1;
   wait(1);
-  Task_Remove(Graphics_SetBg1Priority3);
+  Task_Remove(CommandRow_PutBg1Behind);
   Irq_SetHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000);
   Heap_Release(selectionUi);
@@ -439,7 +453,14 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
   }
 }
 
-s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
+/// Clears the highlight from the party status window's party member columns,
+/// then highlights the columns of the units in `ids` (up to four, ended by
+/// BATTLE_UNIT_LIST_END): the party member whose commands are being chosen. A
+/// unit not in the party is skipped. The window is right-aligned on the 30-tile
+/// row, so its party member columns start at column 29 - 6 * members (the Djinn
+/// column, when shown, lies left of them). Returns 0.
+/// Battle_CollectPartyCommands calls it.
+s32 PartyStatus_HighlightMembers(u16 *ids) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 count;
   s32 i;

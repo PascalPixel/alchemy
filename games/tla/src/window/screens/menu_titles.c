@@ -8,7 +8,12 @@
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
-void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
+/// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
+/// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
+/// bytes, into VRAM slot `slot`, through a 1 KB staging block in
+/// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
+/// valid VRAM slot.
+void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
   void *stagingBuffer = HeapSlot_AllocEwram(56, 0x400);
   s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
@@ -20,7 +25,7 @@ void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
 }
 
 struct WindowSprite *
-RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y) {
+MenuTitle_Create(s32 group, struct RenderInput *input, s32 x, s32 y) {
   s32 index;
   struct WindowSprite *first;
   struct WindowSprite *second;
@@ -29,7 +34,7 @@ RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y) {
   if (index > 95)
     return NULL;
 
-  RenderResource_LoadPair(group, index);
+  MenuTitle_Load(group, index);
   first = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x, y);
   first->sentinel = 0xFD;
   second = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x + 32, y);
@@ -53,7 +58,7 @@ extern volatile u32 gVBlankCount;
 #endif
 extern const u8 gWindow_PairBobOffsets[];
 
-/// Bobs the two sprites of a pair (see RenderResource_CreatePair) up and down
+/// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
 /// by gWindow_PairBobOffsets, one step every four VBlanks.
 void MenuTitle_Bob(struct BobPairObject *obj) {
   s32 value;
@@ -67,7 +72,10 @@ void MenuTitle_Bob(struct BobPairObject *obj) {
 
 extern char ResourceId_CommandIcons;
 
-void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag) {
+/// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
+/// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
+/// when `remap` is nonzero.
+void CommandIcon_Load(s32 index, s32 value, s32 flag) {
   s32 size = 1024;
   void *buffer = HeapSlot_AllocEwram(56, size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
@@ -81,7 +89,11 @@ void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag) {
   }
 }
 
-struct WindowSprite *RenderResource_CreateCommandIcon(s32 arg0, s32 arg1,
+/// Shows command icon `icon` (see CommandIcon_Load) as a 32x32
+/// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
+/// when no VRAM slot is free. The settings menu's icons come through here
+/// (window/settings_menu.c).
+struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
                                                       struct RenderInput *arg2,
                                                       s32 arg3, s32 arg4) {
   s32 index;
@@ -90,7 +102,7 @@ struct WindowSprite *RenderResource_CreateCommandIcon(s32 arg0, s32 arg1,
   index = Resource_FindFreeEntry();
   entity = NULL;
   if (index != 0x60) {
-    RenderResource_LoadCommandIcon(arg0, index, arg1);
+    CommandIcon_Load(arg0, index, arg1);
     entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, arg2, arg3, arg4);
     entity->sprite.oam.palette256 = 1;
     entity->sentinel = 0xfb;
@@ -255,7 +267,15 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   } while (i <= 7);
 }
 
-void Link_DrawShiftedTilePair(s32 offset) {
+/// Draws the two page arrows (gPageArrowTiles) into the two tiles at
+/// VRAM address `offset`, sliding outward: the left arrow 2 or 3 pixels to
+/// the left, the right one as far to the right, eight frames each. They are
+/// drawn over the border's top edge tile (WINDOW_TILE_BORDER_TOP) and top-right
+/// corner tile (WINDOW_TILE_BORDER_TOP_RIGHT). The battle menus call it each
+/// frame for LIST_PAGE_ARROW_VRAM; the field menus (menu/menu, by far call) and
+/// the password pages of the title's Send (scene/file_screen.c) call it for
+/// PAGE_ARROW_VRAM.
+void Link_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
   if (phase > 2) {
@@ -488,7 +508,11 @@ void BattleCommandRow_LoadIcon(u8 *base, s32 index, u32 value) {
       Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
 }
 
-void Graphics_SetBg1Priority3(void) {
+/// Puts BG1 behind the other layers (priority 3). The command row runs it as
+/// a task each VBlank, in the VBlank pass, with CommandRow_PutBg1InFront at
+/// line 136 (tile row 17, the top of the row's icons), so that BG1 is behind
+/// above the strip and in front from it down.
+void CommandRow_PutBg1Behind(void) {
   u32 mask = 4;
   u32 value = REG_BG1CNT;
 
@@ -498,7 +522,9 @@ void Graphics_SetBg1Priority3(void) {
   REG_BG1CNT = value;
 }
 
-void Func_08045780(void) {
+/// Brings BG1 to the front (priority 0): the command row's VCount handler,
+/// run at line 136, the top of its icon strip (tile row 17).
+void CommandRow_PutBg1InFront(void) {
   u32 mask = 4;
   u32 value = REG_BG1CNT;
 
@@ -507,12 +533,12 @@ void Func_08045780(void) {
   REG_BG1CNT = value;
 }
 
-/// Clears BG0's vertical scroll (REG_BG0VOFS) and installs Func_08045780,
+/// Clears BG0's vertical scroll (REG_BG0VOFS) and installs CommandRow_PutBg1InFront,
 /// which clears BG1's priority bits, as the VCount handler at line 136.
 /// Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Io_Write16(0, &REG_BG0VOFS);
-  Irq_SetHandler(2, 136, Func_08045780);
+  Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);
 }
 
 #undef Resource_DecodeByteLzInRam

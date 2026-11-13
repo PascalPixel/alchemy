@@ -286,9 +286,9 @@ s32 Shop_AskYesNo(s32 choice) {
   Icon_PrepareActorFar(*slot);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
     (LANGUAGE == LANGUAGE_ITALIAN)
-  choice = Menu_RunConfirmSelectionAtFar(6, 5, choice);
+  choice = YesNoMenu_RunAtFar(6, 5, choice);
 #else
-  choice = Menu_RunConfirmSelectionAtFar(7, 5, choice);
+  choice = YesNoMenu_RunAtFar(7, 5, choice);
 #endif
   (*slot)->active = saved;
   return choice;
@@ -303,7 +303,7 @@ s32 Sanctum_AskYesNo(s32 choice) {
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);
-  choice = Menu_RunConfirmSelectionAtFar(7, 7, choice);
+  choice = YesNoMenu_RunAtFar(7, 7, choice);
   (*slot)->active = saved;
   return choice;
 }

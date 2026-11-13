@@ -12,7 +12,7 @@ s32 SettingsMenu_Run(void);
 /// Runs the save screen's selection until a choice completes: saving (refused
 /// while flag 0x17c or 0x17d is set), sleep mode or the options. Returns -1
 /// when the screen is cancelled and 0 otherwise.
-s32 Func_0804e0d0(void) {
+s32 PauseMenu_Run(void) {
   s32 selection = 0;
 
 again:
@@ -104,7 +104,13 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot, s32 *ti
 s32 Resource_FindFreeEntry(void);
 void Icon_BuildMiscIconTiles(s32 pattern, s32 unused, s32 slot);
 
-s32 Func_0804e1d8(void) {
+/// Browses pages of item, Psynergy and status-pattern icons, suspending the
+/// field's actor system while the browser owns its window and cache entries.
+/// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
+/// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
+/// every page, whatever the heading says), A or B closes it. Returns 0. The
+/// debug menus open it (debug/test.c, debug/level.c).
+s32 DebugBrowser_Icons(void) {
   s32 redraw;
   s32 tile;
   s32 page;
@@ -201,7 +207,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 /// A debug browser of the portraits: left and right step through
 /// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by ten, each
 /// drawn with its number and its name from MsgTestName; A or B leaves.
-s32 Func_0804e3f4(void) {
+s32 DebugBrowser_Portraits(void) {
   struct WindowWork *work;
   struct RenderInput *portrait;
   s32 redraw;

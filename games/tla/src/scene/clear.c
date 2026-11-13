@@ -278,8 +278,8 @@ void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Message_CloseFinishedWindows(void);
-s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
-s32 Menu_SelectSaveSlotAction(void);
+s32 YesNoMenu_Run(s32 a, s32 b, s32 c, s32 d);
+s32 FileList_SelectAction(void);
 void Party_AddActiveOwner(s32 id);
 
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
@@ -367,7 +367,7 @@ top:
     started = 1;
   }
   if (result > 0)
-    result = Menu_SelectSaveSlotAction();
+    result = FileList_SelectAction();
   else
     result = 0;
   if (result == 0) {
@@ -391,7 +391,7 @@ top:
       goto open;
   ask:
     FieldMessage_Show((s32)MsgTransferDataFromGoldenSun, 13);
-    result = Menu_RunConfirmSelection(1, 0, 0, 0);
+    result = YesNoMenu_Run(1, 0, 0, 0);
     Message_CloseFinishedWindows();
     if (result == 0) {
     enter:
@@ -443,7 +443,7 @@ top:
     save:
       message = (s32)MsgPlayOnEasyLevel;
       FieldMessage_Show(message, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
+      i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
         if (gData_02003860 == 0) {
@@ -465,7 +465,7 @@ top:
         }
       }
       FieldMessage_Show((s32)MsgPlayOnHardLevel, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
+      i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
         Event_SetFlag(46);
@@ -473,7 +473,7 @@ top:
         goto leave;
       }
       FieldMessage_Show((s32)MsgPlayOnNormalLevel, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
+      i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i != 0)
         goto save;
@@ -504,7 +504,7 @@ top:
         recovery = (s32)MsgSomeDataIsCorrupted;
         FieldMessage_Show(recovery, 9);
         FieldMessage_Show(recovery + 1, 13);
-        if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0) {
+        if (YesNoMenu_Run(1, 0, 0, 0) != 0) {
           Message_CloseFinishedWindows();
           goto top;
         }

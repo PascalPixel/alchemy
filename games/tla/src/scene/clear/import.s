@@ -120,10 +120,10 @@ WindowSprite_Create:
 	.thumb_func
 Message_CloseFinishedWindows:
 	overlay_veneer Message_CloseFinishedWindowsFar
-	.global Menu_SelectSaveSlotAction
+	.global FileList_SelectAction
 	.thumb_func
-Menu_SelectSaveSlotAction:
-	overlay_veneer Menu_SelectSaveSlotActionFar
+FileList_SelectAction:
+	overlay_veneer FileList_SelectActionFar
 	.global Func_020022b0
 	.thumb_func
 Func_020022b0:
@@ -176,10 +176,10 @@ Func_02002308:
 	.thumb_func
 Func_0803f9c0:
 	overlay_veneer Func_08038348
-	.global Menu_RunConfirmSelection
+	.global YesNoMenu_Run
 	.thumb_func
-Menu_RunConfirmSelection:
-	overlay_veneer Menu_RunConfirmSelectionFar
+YesNoMenu_Run:
+	overlay_veneer YesNoMenu_RunFar
 	.global Func_02002320
 	.thumb_func
 Func_02002320:

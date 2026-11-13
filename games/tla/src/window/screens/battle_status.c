@@ -263,7 +263,16 @@ s32 System_GetLanguage(void);
     Window_SetTilemapEntry(window, 0xf337, (window)->width - 10, 7, 0);        \
   }
 
-s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
+/// Runs the Status screen for party member `member` until B is pressed or
+/// the link battle's time runs out: the party member's level, experience, HP
+/// and PP, class, stats, Djinn, elements and statuses, with a help line for the
+/// item under the cursor. With `listCount` nonzero, L and R step through the
+/// party members of `list` (BATTLE_UNIT_LIST_END ends it, BATTLE_UNIT_REMOVED
+/// is an empty place). The link timer's window is closed while it is open
+/// (BattleMenuWork.timerHidden), and the party status window is redrawn on the
+/// way out. Returns 0. Battle_CollectPartyCommands opens it from the Status
+/// command and from L or R in a party member's command row.
+s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct SummaryOam portraitSprite;
   struct SummaryOam cursorSprite;
   s32 statusSlots[11];

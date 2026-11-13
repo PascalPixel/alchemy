@@ -916,7 +916,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   result = -1;
   if (count == 0)
     goto done;
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawPageArrowsFar(0x06002500);
   pages = __divsi3(count, pageSize);
   if (__modsi3(count, pageSize) != 0)
     pages++;

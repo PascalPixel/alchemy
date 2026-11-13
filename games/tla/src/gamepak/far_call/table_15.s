@@ -4,7 +4,7 @@
 	.global Func_080381c0
 	.thumb_func
 Func_080381c0:
-	overlay_veneer Func_0804bc08
+	overlay_veneer Battle_CollectPartyCommands
 	.global BattleMessage_ShowAndWaitFar
 	.thumb_func
 BattleMessage_ShowAndWaitFar:

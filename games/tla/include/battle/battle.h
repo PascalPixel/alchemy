@@ -123,7 +123,7 @@ void BattleEffect_SnapScaleToFull(struct Actor *object);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
-void BattleLayout_HighlightPartyPanelsFar(u16 *);
+void PartyStatus_HighlightMembersFar(u16 *);
 void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
                                     s32 travelDivisor, s32 initialVelocityY);
 void BattleMotion_DestroyAllSlotObjects(void);

@@ -308,7 +308,7 @@ s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
 extern u8 MsgShortcutHelp[];
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-void Link_DrawShiftedTilePairFar(s32 addr);
+void Link_DrawPageArrowsFar(s32 addr);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 owner);

@@ -856,12 +856,12 @@ void BattleMotion_FlashHit(s32 id) {
     target = 0xff;
     selected[1] = target;
     selected[0] = id;
-    BattleLayout_HighlightPartyPanelsFar(selected);
+    PartyStatus_HighlightMembersFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object, 7);
     wait(2);
 
     selected[0] = id;
-    BattleLayout_HighlightPartyPanelsFar(selected);
+    PartyStatus_HighlightMembersFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object,
                                       BattleMotion_GetSlotPalette(id));
     wait(2);

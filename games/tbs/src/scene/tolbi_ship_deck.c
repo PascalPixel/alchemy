@@ -2197,6 +2197,21 @@ enum TolbiShipDeckRowerReply {
   ROWER_REPLY_OLD_MAN = 20        ///< MsgTolbiShipMakeOldMan
 };
 
+/// The passengers (from ACTOR_ARRIVED_FIRST_PASSENGER) in the order they come
+/// up at Tolbi, and the reply of each, or -1 for those who answer by how many
+/// came up before them.
+static const s8 sDisembarkOrder[][2] = {
+    {0, -1},
+    {1, -1},
+    {2, -1},
+    {4, -1},
+    {5, -1},
+    {6, -1},
+    {3, ROWER_REPLY_ROWING_MORE},
+    {7, ROWER_REPLY_LOST_AT_SEA},
+    {8, ROWER_REPLY_OLD_MAN},
+};
+
 /// At Tolbi, the four passengers who rowed come up from below in turn and
 /// each says something.
 ///
@@ -2211,104 +2226,29 @@ static void TolbiShipDeck_RowersDisembark(void) {
   s32 matched[4];
   s32 category[4];
   u32 index;
+  u32 turn;
   s32 found;
   s32 actorId;
   s32 member;
   struct Actor *actor;
 
-  found = 0;
   for (index = 0; index <= 3; index++) {
     roster[index] = TolbiShipDeck_GetRowerAtSeat(index);
     category[index] = 0;
   }
 
-  member = ACTOR_ARRIVED_FIRST_PASSENGER;
-  for (index = 0; index <= 3; index++) {
-    if (roster[index] == member) {
-      matched[found] = member;
-      category[found] = found;
-      found++;
-      break;
-    }
-  }
-  member = ACTOR_ARRIVED_FIRST_PASSENGER + 1;
-  for (index = 0; index <= 3; index++) {
-    if (roster[index] == member) {
-      matched[found] = member;
-      category[found] = found;
-      found++;
-      break;
-    }
-  }
-  member = ACTOR_ARRIVED_FIRST_PASSENGER + 2;
-  for (index = 0; index <= 3; index++) {
-    if (roster[index] == member) {
-      matched[found] = member;
-      category[found] = found;
-      found++;
-      break;
-    }
-  }
-  member = ACTOR_ARRIVED_FIRST_PASSENGER + 4;
-  for (index = 0; index <= 3; index++) {
-    if (roster[index] == member) {
-      matched[found] = member;
-      category[found] = found;
-      found++;
-      break;
-    }
-  }
-  if (found != 4) {
-    member = ACTOR_ARRIVED_FIRST_PASSENGER + 5;
+  found = 0;
+  for (turn = 0; turn < sizeof(sDisembarkOrder) / sizeof(sDisembarkOrder[0]) &&
+                 found != 4;
+       turn++) {
+    member = ACTOR_ARRIVED_FIRST_PASSENGER + sDisembarkOrder[turn][0];
     for (index = 0; index <= 3; index++) {
       if (roster[index] == member) {
         matched[found] = member;
-        category[found] = found;
+        category[found] =
+            sDisembarkOrder[turn][1] < 0 ? found : sDisembarkOrder[turn][1];
         found++;
         break;
-      }
-    }
-    if (found != 4) {
-      member = ACTOR_ARRIVED_FIRST_PASSENGER + 6;
-      for (index = 0; index <= 3; index++) {
-        if (roster[index] == member) {
-          matched[found] = member;
-          category[found] = found;
-          found++;
-          break;
-        }
-      }
-      if (found != 4) {
-        member = ACTOR_ARRIVED_FIRST_PASSENGER + 3;
-        for (index = 0; index <= 3; index++) {
-          if (roster[index] == member) {
-            matched[found] = member;
-            category[found] = ROWER_REPLY_ROWING_MORE;
-            found++;
-            break;
-          }
-        }
-        if (found != 4) {
-          member = ACTOR_ARRIVED_FIRST_PASSENGER + 7;
-          for (index = 0; index <= 3; index++) {
-            if (roster[index] == member) {
-              matched[found] = member;
-              category[found] = ROWER_REPLY_LOST_AT_SEA;
-              found++;
-              break;
-            }
-          }
-          if (found != 4) {
-            member = ACTOR_ARRIVED_FIRST_PASSENGER + 8;
-            for (index = 0; index <= 3; index++) {
-              if (roster[index] == member) {
-                matched[found] = member;
-                category[found] = ROWER_REPLY_OLD_MAN;
-                break;
-              }
-            }
-          }
-        }
       }
     }
   }
@@ -2459,13 +2399,12 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 /// pattern, wrapping at 32 pixels.
 static void TolbiShipDeck_RockDeck(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-  s32 *camera = grid->origin;
   s32 dx = Trig_Cos(sSwayAngleX);
   s32 dy = Trig_Sin(sSwayAngleY);
   struct MapGridLayerScroll *layer;
 
-  *camera++ += dx >> 1;
-  *camera += dy;
+  grid->origin[0] += dx >> 1;
+  grid->origin[1] += dy;
   sSwayAngleX += (u32)(Import_RandomNext() * 3 << 7) >> 16;
   sSwayAngleY += (u32)(Import_RandomNext() << 9) >> 16;
   sSwayAngleX &= 0xffff;

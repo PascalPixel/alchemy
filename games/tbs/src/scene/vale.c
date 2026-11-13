@@ -3039,15 +3039,12 @@ static void Vale_CycleThirdBoardPalette(void) {
 
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
-static s32 Vale_DistanceInPixels(s32 *first_position, s32 *second_position) {
-  s32 delta_x = (*first_position++ - *second_position++) >> 16;
-  s32 delta_y = (*first_position++ - *second_position++) >> 16;
-  s32 delta_z = (*first_position - *second_position) >> 16;
-  s32 delta_x_squared = delta_x * delta_x;
-  s32 delta_y_squared = delta_y * delta_y;
-  s32 delta_z_squared = delta_z * delta_z;
+static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
+  s32 dx = (first[0] - second[0]) >> 16;
+  s32 dy = (first[1] - second[1]) >> 16;
+  s32 dz = (first[2] - second[2]) >> 16;
 
-  return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
+  return Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
 }
 
 /// Whether the man guarding Mt. Aleph sees the target.

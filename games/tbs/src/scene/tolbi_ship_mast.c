@@ -192,14 +192,12 @@ enum TolbiShipMastCellBehavior {
 
 /// Keeps the effect actor relative to the saved camera origin and rotates it.
 static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *actor) {
-  s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-  s32 *origin = gTolbiShipMast_CameraOrigin;
-  s32 *center = gTolbiShipMast_CameraCenter;
-  s32 cameraX = *position++;
-  s32 cameraY = *position;
+  s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
 
-  actor->x.fixed = center[0] + (cameraX - origin[0]);
-  actor->y.fixed = center[1] + (cameraY - origin[1]) / 2;
+  actor->x.fixed = gTolbiShipMast_CameraCenter[0] +
+                   (camera[0] - gTolbiShipMast_CameraOrigin[0]);
+  actor->y.fixed = gTolbiShipMast_CameraCenter[1] +
+                   (camera[1] - gTolbiShipMast_CameraOrigin[1]) / 2;
   actor->sprite->rotation += TRIG_TURN * 3 / 128;
   return 0;
 }
@@ -846,13 +844,12 @@ static void TolbiShipMast_AnnounceLand(void) {
 
 /// Adds horizontal and vertical sway to the camera origin each frame.
 static void TolbiShipMast_UpdateSway(void) {
-  s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   s32 swayX = Trig_Cos(gTolbiShipMast_SwayX);
-  s32 swayY = Trig_Sin(gTolbiShipMast_SwayY);
+  s32 swayY = Trig_Sin(gTolbiShipMast_SwayY) * 4;
 
-  *position++ += swayX;
-  swayY *= 4;
-  *position += swayY;
+  camera[0] += swayX;
+  camera[1] += swayY;
   gTolbiShipMast_DriftX += swayX;
   gTolbiShipMast_DriftY += swayY;
   gTolbiShipMast_SwayX += (u32)(Import_RandomNext() * 3 << 7) >> 16;

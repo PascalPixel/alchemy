@@ -129,6 +129,14 @@
 #define PASSWORD_SYMBOLS_PER_PAGE 50 ///< five rows of ten
 #define PASSWORD_SYMBOL_MASK 0x3f    ///< six bits: 64 symbols
 
+// UB: the second code's held flag, a word, is read and written as its low
+// halfword.
+#ifdef UBFIX
+#define EXTRA_CODE_HELD gFileScreen_ExtraCodeHeld
+#else
+#define EXTRA_CODE_HELD (*(s16 *)&gFileScreen_ExtraCodeHeld)
+#endif
+
 static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
@@ -275,15 +283,15 @@ static void FileScreen_CheckButtonCodes(void) {
     }
   }
   if (gFileScreen_ExtraCodeUnlocked == 0) {
-    if (gFileScreen_ExtraCodeHeld != 0) {
+    if (EXTRA_CODE_HELD != 0) {
       if (gKeysHeld == 0)
-        gFileScreen_ExtraCodeHeld = 0;
+        EXTRA_CODE_HELD = 0;
     } else if (gKeysHeld != 0) {
       if (gKeysHeld ==
           FILE_SCREEN_BUTTON_CODE_KEYS(
               gFileScreen_ExtraButtonCode)[gFileScreen_ExtraCodeProgress]) {
         gFileScreen_ExtraCodeProgress++;
-        gFileScreen_ExtraCodeHeld = 1;
+        EXTRA_CODE_HELD = 1;
         if (FILE_SCREEN_BUTTON_CODE_KEYS(
                 gFileScreen_ExtraButtonCode)[gFileScreen_ExtraCodeProgress] ==
             0) {
@@ -583,7 +591,8 @@ menu_top:;
       }
       Message_CloseFinishedWindows();
       if (FileScreen_GetSaveRecoveryBlockMask() != 0) {
-        FieldMessage_Show(MsgSaveRecoveryFailed,
+        // The third of the corrupted save's messages, MsgSaveRecoveryFailed.
+        FieldMessage_Show(MsgSaveDataCorrupted + 2,
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
@@ -900,8 +909,13 @@ menu_top:;
           for (index = pageIndex * PASSWORD_SYMBOLS_PER_PAGE,
               pageGlyphIndex = 0;
                index != result; index++, pageGlyphIndex++) {
-            FileScreen_NameEntryCharacter(
-                password[index] & PASSWORD_SYMBOL_MASK, glyph);
+            /* FAKEMATCH(dead): a once-only block round the draw call makes each
+             * call rebuild the glyph's address; as the plain call, 170 of 920
+             * instructions differ in tbs-en. */
+            do {
+              FileScreen_NameEntryCharacter(
+                  password[index] & PASSWORD_SYMBOL_MASK, glyph);
+            } while (0);
             passwordColumn = (index % 10);
             if (passwordColumn > 4) {
               s32 row;
@@ -914,7 +928,10 @@ menu_top:;
               s32 row;
 
               glyphColumn = (pageGlyphIndex % 10);
-              row = pageGlyphIndex / 10;
+              /* FAKEMATCH(wrapper): the division written as its library call;
+               * as pageGlyphIndex / 10, 45 of 921 instructions differ in
+               * tbs-en. */
+              row = __divsi3(pageGlyphIndex, 10);
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                               (row << 4) + 2);
             }
@@ -948,11 +965,12 @@ UNUSED static void FileList_FillTileGrid(struct Window *window,
   s32 col;
   s32 cell;
 
+  shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
   decodedTiles = Heap_AllocEwram(768);
   FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
   cell = window->y * 32 + window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
-  shadow = ((struct WindowWork *)gWindowWork[0])->tilemap + cell;
+  shadow += cell;
   for (row = 0; row <= 7; row++) {
     for (col = 0; col <= 15; col++) {
       s16 tile = WINDOW_TILE(window->width * row + col);
@@ -1196,6 +1214,8 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       s32 m;
 
       for (m = 0; m != 23; m++) {
+        UNUSED u16 quantity;
+
         j = 0;
         for (n = 0; n != 15; n++) {
           if ((member->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
@@ -1204,6 +1224,10 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
                 INVENTORY_QUANTITY_SHIFT;
           }
         }
+        /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads keeps
+         * the shift hoisted above the sign test; without it, 71 of 485
+         * instructions differ in tbs-en. */
+        quantity = j;
         if (bitOffset < 0) {
           out[outputIndex] += (u16)j >> -bitOffset;
           outputIndex++;
@@ -1389,8 +1413,9 @@ s16 gFileScreen_ExtraCodeProgress = 0;
 /// Set while the first code's last correct key is still held.
 s16 gFileScreen_CodeHeld = 0;
 
-/// The same for the second code.
-s16 gFileScreen_ExtraCodeHeld = 0;
+/// The same for the second code: a word, of which only the low halfword is
+/// used.
+s32 gFileScreen_ExtraCodeHeld = 0;
 
 // clang-format off
 /// The party members the password packs: Isaac, Garet, Ivan and Mia.

@@ -115,12 +115,8 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
   s32 index;
 
   if (direction != 0) {
-    index = 0;
-    if (index < count) {
-      do {
-        *second++ = *first++;
-        index++;
-      } while (index < count);
+    for (index = 0; index < count; index++) {
+      *second++ = *first++;
     }
   } else if (count > 0) {
     index = count;

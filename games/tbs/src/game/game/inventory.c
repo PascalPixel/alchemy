@@ -106,13 +106,9 @@ s32 PartyInventory_HasSpace(void) {
     return 1;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
-  unitIndex = 0;
-  if (unitIndex < unitCount) {
-    do {
-      if (Inventory_Count(*unitCursor++) != INVENTORY_SLOTS)
-        return 1;
-      unitIndex++;
-    } while (unitIndex < unitCount);
+  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+    if (Inventory_Count(*unitCursor++) != INVENTORY_SLOTS)
+      return 1;
   }
   return 0;
 }
@@ -193,15 +189,11 @@ s32 PartyInventory_Add(s32 itemId) {
 
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
-  unitIndex = 0;
-  if (unitIndex < unitCount) {
-    do {
-      s16 unitId = *unitCursor++;
+  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+    s16 unitId = *unitCursor++;
 
-      if (Inventory_AddItem(unitId, itemId) >= 0)
-        return unitId;
-      unitIndex++;
-    } while (unitIndex < unitCount);
+    if (Inventory_AddItem(unitId, itemId) >= 0)
+      return unitId;
   }
   return -1;
 }
@@ -236,14 +228,10 @@ s32 PartyInventory_FindMember(s32 itemId) {
     return gMainRoutineWork.leaderActorId;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
-  unitIndex = 0;
-  if (unitIndex < unitCount) {
-    do {
-      unitId = *unitCursor++;
-      if (Inventory_Find(unitId, itemId) != -1)
-        return unitId;
-      unitIndex++;
-    } while (unitIndex < unitCount);
+  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+    unitId = *unitCursor++;
+    if (Inventory_Find(unitId, itemId) != -1)
+      return unitId;
   }
   return -1;
 }

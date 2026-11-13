@@ -183,12 +183,8 @@ s32 Party_ListMembers(s16 *unitIds) {
     s32 index;
 
     count = Party_CountMembers();
-    index = 0;
-    if (count != 0) {
-      do {
-        *unitIds++ = gMainRoutineWork.party[index];
-        index++;
-      } while (index != count);
+    for (index = 0; index != count; index++) {
+      *unitIds++ = gMainRoutineWork.party[index];
     }
     *unitIds = BATTLE_UNIT_LIST_END;
   }

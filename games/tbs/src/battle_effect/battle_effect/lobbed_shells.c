@@ -214,77 +214,73 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     // Frame loop. The shells: target k's shell flies from frame 8k, and the
     // target is hit on frame 8k + 17, about when its shell lands; a shell's
     // variant turns 1 when it does.
-    k = 0;
-    if (work->args->targetCount != 0) {
-      do {
-        if (frame >= k * 8) {
-          struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS];
+    for (k = 0; k != work->args->targetCount; k++) {
+      if (frame >= k * 8) {
+        struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS];
 
-          if (frame == k * 8 + 17) {
-            BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, k, 16);
-            EFFECT_SHOW_DAMAGE(SE_IMPACT);
-          }
-          if (shot->variant >= 0) {
-            s32 step;
+        if (frame == k * 8 + 17) {
+          BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, k, 16);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
+        }
+        if (shot->variant >= 0) {
+          s32 step;
 
-            // The shell tumbles through ten images, three frames each; the
-            // last five lie on their side.
-            step = (frame - k * 8) / 3;
-            if (step > 9)
-              step = 9;
-            // shot's address spelled out, which loop.c reads from its
-            // strength-reduced register; as shot, r7 is passed (2 differ).
-            Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
-            position.x >>= 1;
-            if (step > 4)
-              draw[0](canvas, work->sheet + step * (32 * 24), position.x - 16,
-                      position.y - 12, 32, 24);
+          // The shell tumbles through ten images, three frames each; the
+          // last five lie on their side.
+          step = (frame - k * 8) / 3;
+          if (step > 9)
+            step = 9;
+          // shot's address spelled out, which loop.c reads from its
+          // strength-reduced register; as shot, r7 is passed (2 differ).
+          Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
+          position.x >>= 1;
+          if (step > 4)
+            draw[0](canvas, work->sheet + step * (32 * 24), position.x - 16,
+                    position.y - 12, 32, 24);
+          else
+            draw[0](canvas, work->sheet + step * (24 * 32), position.x - 12,
+                    position.y - 16, 24, 32);
+          // Half a pixel of gravity a frame while it flies.
+          if (shot->variant == 0)
+            Particle_AdvanceWithGravity3D(shot, 63, -px(1) / 2);
+          // On the ground: the shell stops, stays drawn where it lies, and
+          // bursts into target k's run of LOBBED_SHELLS_BURSTS.
+          if (shot->y < 0) {
+            s32 count;
+            s8 *records = gLobbedShells_Styles;
+            s32 row;
+            // Each target has four groups of eight burst slots.
+            s32 groupSlots = 8;
+
+            shot->y = 0;
+            shot->variant = 1;
+            row = mode * 2;
+            if (records[row] == 0)
+              count = 4;
             else
-              draw[0](canvas, work->sheet + step * (24 * 32), position.x - 12,
-                      position.y - 16, 24, 32);
-            // Half a pixel of gravity a frame while it flies.
-            if (shot->variant == 0)
-              Particle_AdvanceWithGravity3D(shot, 63, -px(1) / 2);
-            // On the ground: the shell stops, stays drawn where it lies, and
-            // bursts into target k's run of LOBBED_SHELLS_BURSTS.
-            if (shot->y < 0) {
-              s32 count;
-              s8 *records = gLobbedShells_Styles;
-              s32 row;
-              // Each target has four groups of eight burst slots.
-              s32 groupSlots = 8;
+              count = 16;
+            for (i = 0; i != count; i++) {
+              struct Particle *burst;
+              s32 group = k * 4;
+              burst = &LOBBED_SHELLS_BURSTS[group * groupSlots + i];
 
-              shot->y = 0;
-              shot->variant = 1;
-              row = mode * 2;
-              if (records[row] == 0)
-                count = 4;
-              else
-                count = 16;
-              for (i = 0; i != count; i++) {
-                struct Particle *burst;
-                s32 group = k * 4;
-                burst = &LOBBED_SHELLS_BURSTS[group * groupSlots + i];
-
-                SET_POSITION(burst, shot->x, shot->y, shot->z);
-                // Smoke drifts up to a pixel a frame across the ground;
-                // shards fly up to 4 across and 2 to 4 up.
-                if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
-                  SET_VELOCITY(burst, ((Random16() & 63) - 32) << 11, 0,
-                               ((Random16() & 63) - 32) << 11);
-                } else {
-                  SET_VELOCITY(burst, ((Random16() & 63) - 32) << 13,
-                               ((Random16() & 31) + 32) << 12,
-                               ((Random16() & 63) - 32) << 13);
-                }
-                burst->variant = 0;
+              SET_POSITION(burst, shot->x, shot->y, shot->z);
+              // Smoke drifts up to a pixel a frame across the ground;
+              // shards fly up to 4 across and 2 to 4 up.
+              if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
+                SET_VELOCITY(burst, ((Random16() & 63) - 32) << 11, 0,
+                             ((Random16() & 63) - 32) << 11);
+              } else {
+                SET_VELOCITY(burst, ((Random16() & 63) - 32) << 13,
+                             ((Random16() & 31) + 32) << 12,
+                             ((Random16() & 63) - 32) << 13);
               }
+              burst->variant = 0;
             }
           }
         }
-        k++;
-      } while (k != work->args->targetCount);
+      }
     }
     // The bursts, for 45 frames: smoke through six 24x48 images, eight
     // frames each, drifting up; or shards that tumble through nine images,

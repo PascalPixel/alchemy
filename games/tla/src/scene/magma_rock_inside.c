@@ -2929,13 +2929,6 @@ test:
 
 // Magma Rock's inside: its falling rocks and rubble, and its tables.
 
-/* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct
- * FieldEffect *effect, const s32 *script); local.h has void
- * Actor_StartScript(struct Actor *object, const void *data); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern void
-Func_02004ca0__s46e8(struct FieldEffect *effect,
-                     const s32 *script) __asm__("Actor_StartScript");
 void Actor_StartScript(struct Actor *object, const void *data);
 
 void MagmaRockInside_SpawnRubble(s32 spread) {
@@ -2959,7 +2952,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Func_02004c98(effect, 2);
-      Func_02004ca0__s46e8(effect, gMagmaRockInside_RubbleScript);
+      Actor_StartScript(effect, gMagmaRockInside_RubbleScript);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -2998,7 +2991,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Func_02004c98(effect, 2);
-      Func_02004ca0__s46e8(effect, gMagmaRockInside_DustScript);
+      Actor_StartScript(effect, gMagmaRockInside_DustScript);
       effect->velocity.x = Trig_Cos(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);

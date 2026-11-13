@@ -1711,12 +1711,11 @@ struct RideWork {
 DEFINE_ACTOR_BLINK(Actor_Blink, 10, 4, 0)
 
 /* VIEW(flash): routine MapGrid_CheckCollision as s32
- * MapGrid_CheckCollision(struct Actor *actor);
- * module/scene/mars_lighthouse_room_f.h has s32 MapGrid_CheckCollision(struct
- * Actor *object, s32 *position); not tried: MapGrid_CheckCollision's bound
- * declaration was not found. */
-extern s32
-Func_020054f8__flash(struct Actor *actor) __asm__("MapGrid_CheckCollision");
+ * MapGrid_CheckCollision(struct Actor *object); the definition has s32
+ * MapGrid_CheckCollision(struct Actor *object, s32 *position); this part passes
+ * only the actor, and the bytes set no second argument. */
+extern s32 MapGrid_CheckCollisionOfActor(struct Actor *actor) __asm__(
+    "MapGrid_CheckCollision");
 
 #if TLA_PATCH_1
 void Func_0200297c(void) {
@@ -1777,7 +1776,7 @@ s32 Func_0200297c(void) {
           position.x = actor->x + (work->unk68 << 19);
           position.y = actor->y;
           position.z = actor->z + (work->unk6a << 19);
-          if (Func_020054f8__flash(actor) != 0) {
+          if (MapGrid_CheckCollisionOfActor(actor) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -1800,7 +1799,7 @@ s32 Func_0200297c(void) {
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
         position.z = actor->z + (work->unk6a << 19);
-        result = Func_020054f8__flash(actor);
+        result = MapGrid_CheckCollisionOfActor(actor);
         if (result > 0)
           break;
         if (result < 0) {

@@ -135,7 +135,6 @@ Actor_SetPartAttribute__kibombo(struct Actor *object,
                                 s32 attribute) __asm__("Actor_SetSpriteColor");
 #define Actor_SetSpriteColor Actor_SetPartAttribute__kibombo
 #include "field/field.h"
-#undef Actor_SetSpriteColor
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags
 #undef Actor_SetSpritePriority
@@ -863,7 +862,6 @@ extern struct Actor *Func_080d4568__s1318(void) __asm__("FieldCamera_GetActor");
 #include "field/event_inline.h"
 #undef FieldCamera_GetActor
 #undef Actor_WaitForMove
-#undef Actor_SetSpriteColor
 #undef Actor_SetPositionAndResetMotion
 #undef Actor_SetSpritePriority
 #undef Import_ActorCreate
@@ -1663,8 +1661,6 @@ void Func_02002eb0(void) {
 #undef DEFINE_KIBOMBO_WOBBLE
 #undef Actor_SetSpriteFlags
 #undef Actor_SetBlendMode
-#undef Actor_SetSpriteColor
-#undef Actor_SetSpriteColor
 #undef Actor_WaitForMove
 #undef FieldCamera_GetActor
 #undef EVENT_WORK
@@ -1917,7 +1913,6 @@ extern struct Actor *Func_080d4568__s3308(void) __asm__("FieldCamera_GetActor");
 #include "field/event_inline.h"
 #undef FieldCamera_GetActor
 #undef Actor_WaitForMove
-#undef Actor_SetSpriteColor
 
 s32 VramCache_FreeEntry(u32 slot);
 
@@ -3028,16 +3023,7 @@ extern void
 Animation_SetStateFlags__s516c(struct Actor *object,
                                u32 value) __asm__("Actor_SetBlendMode");
 #define Actor_SetBlendMode Animation_SetStateFlags__s516c
-/* VIEW(s516c): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
- * Actor *object, s32 attribute); kibombo.h has void Actor_SetSpriteColor(struct
- * KibomboObject *object, s32 value); not tried: Actor_SetSpriteColor's bound
- * declaration was not found. */
-extern void
-Actor_SetPartAttribute__s516c(struct Actor *object,
-                              s32 attribute) __asm__("Actor_SetSpriteColor");
-#define Actor_SetSpriteColor Actor_SetPartAttribute__s516c
 #include "field/field.h"
-#undef Actor_SetSpriteColor
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags
 
@@ -4121,13 +4107,11 @@ struct Trigger gKibombo_Room3Triggers[] = {
 };
 #undef PALETTE_WORD
 #undef DEFINE_KIBOMBO_SET_CROWD_MODE
-#undef Actor_SetSpriteColor
 #undef Actor_WaitForMove
 #undef FieldCamera_GetActor
 #undef DEFINE_KIBOMBO_STEP_WHEN_HELD
 #undef Actor_SetSpriteFlags
 #undef Actor_SetBlendMode
-#undef Actor_SetSpriteColor
 #undef Actor_SetPositionAndResetMotion
 #undef Actor_SetSpritePriority
 #undef Task_Add

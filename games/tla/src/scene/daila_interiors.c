@@ -611,13 +611,6 @@ void Map_SetLayerEntryFlag(s32 mode);
  * `priorityFlags'. */
 extern struct DailaStartActor *
 Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
-/* VIEW(arrival): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct DailaStartActor *object, s32 value); field.h has
- * void Actor_SetSpriteFlags(struct Actor *object, u32 flags); not tried:
- * Actor_SetSpriteFlags's bound declaration was not found. */
-extern void
-Actor_SetSingleChildFlags__arrival(struct DailaStartActor *object,
-                                   s32 value) __asm__("Actor_SetSpriteFlags");
 void Actor_SetItemIcon(struct DailaStartActor *object, s32 item);
 void FlagBlock_PlaceAll(const s16 *flags);
 
@@ -633,9 +626,9 @@ s32 DailaInteriors_Start(void) {
     } else {
       if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
         Actor_SetModeById(24, 5);
-        Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(24), 0);
+        Actor_SetSpriteFlags(Actor_GetById__arrival(24), 0);
         Actor_SetModeById(25, 5);
-        Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(25), 0);
+        Actor_SetSpriteFlags(Actor_GetById__arrival(25), 0);
       }
       Actor_GetById__arrival(gMainRoutineWork.currentOwner)->priorityFlags |=
           32;
@@ -648,13 +641,11 @@ s32 DailaInteriors_Start(void) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(ACTOR_TEAR_SPOT),
-                                       0);
+    Actor_SetSpriteFlags(Actor_GetById__arrival(ACTOR_TEAR_SPOT), 0);
     FieldEffect_StartBlankOverlay(0);
     if (!GameFlag_Get(FLAG_SEA_GODS_TEAR_TAKEN)) {
       Actor_SetItemIcon(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 458);
-      Actor_SetSingleChildFlags__arrival(
-          Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
+      Actor_SetSpriteFlags(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
       Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->speed1c = 0x13333;
       Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->speed18 = 0x13333;
@@ -662,8 +653,7 @@ s32 DailaInteriors_Start(void) {
       Actor_GetById__arrival(ACTOR_TEAR_SPOT)->collisionFlags |= 4;
     } else {
       Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
-      Actor_SetSingleChildFlags__arrival(
-          Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
+      Actor_SetSpriteFlags(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
     }
     if (!GameFlag_Get(FLAG_TAVI_RESCUED)) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_FIRST_PILLAR, 0, 0);

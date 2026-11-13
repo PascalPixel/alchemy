@@ -148,8 +148,8 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 /* VIEW(s00b8): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
  * FieldEffect *effect, s32 flags); shaman_village.h has void
- * Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value); not
- * tried: Actor_SetSpriteFlags's bound declaration was not found. */
+ * Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value); tried as
+ * field.h's u32 flags, FieldEffect_Spawn moves: 2 instructions in tla-en. */
 extern void
 Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect,
                                  s32 flags) __asm__("Actor_SetSpriteFlags");
@@ -290,8 +290,8 @@ void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
 void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Actor_Release(struct ShamanVillageObject *object);
-void Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value);
-void Actor_SetBlendMode(struct ShamanVillageObject *object, s32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+void Actor_SetBlendMode(struct Actor *object, u32 value);
 void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -371,17 +371,7 @@ struct Actor;
 extern void Actor_SetSingleChildFlags__scene_tables(
     struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__scene_tables
-/* VIEW(scene_tables): routine Actor_SetBlendMode as void
- * Actor_SetBlendMode(struct Actor *object, u32 value); shaman_village.h has
- * void Actor_SetBlendMode(struct ShamanVillageObject *object, s32 flags); not
- * tried: Actor_SetBlendMode's bound declaration was not found. */
-extern void
-Animation_SetStateFlags__scene_tables(struct Actor *object,
-                                      u32 value) __asm__("Actor_SetBlendMode");
-#define Actor_SetBlendMode Animation_SetStateFlags__scene_tables
 #include "field/field.h"
-#undef Actor_SetBlendMode
-#undef Actor_SetSpriteFlags
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
@@ -3631,8 +3621,6 @@ u32 gDriftScene_SpawnScript[] = {
 };
 #undef TLA_SHAMAN_VILLAGE_H
 #undef SHAMAN_VILLAGE_EMOTE
-#undef Actor_SetSpriteFlags
-#undef Actor_SetBlendMode
 #undef WORD_AT
 #undef OBJ14_BYTE
 #undef gShamanVillage_WalkToLeftStartScript

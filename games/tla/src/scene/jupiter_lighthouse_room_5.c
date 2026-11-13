@@ -681,13 +681,6 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
  * tla-ja. */
 extern void Camera_WorldToScreen__jupiter_lighthouse_room_5(
     s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(s0cb8): routine Actor_StartScript as void Actor_StartScript(struct Actor
- * *object, const s32 *script); jupiter_lighthouse_room_5 has void
- * Actor_StartScript(struct OrbitEffect *object, const void *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern void
-Func_02002820__s0cb8(struct Actor *object,
-                     const s32 *script) __asm__("Actor_StartScript");
 
 void Func_02001070(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -763,7 +756,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02002820__s0cb8(self, gData_020033e0);
+    Actor_StartScript(self, gData_020033e0);
     Event_PlaySound(228);
     gData_02003400 = zero;
   }
@@ -1063,12 +1056,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s1c88): routine Actor_StartScript as this part declared it; the joined
- * file has another; not tried: Actor_StartScript's bound declaration was not
- * found. */
-void Actor_StartScript__s1c88(struct FieldEffect *effect,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s1c88
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1187,7 +1174,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // @file
 // Scene code of overlay 0x69e, in ROM order.
 

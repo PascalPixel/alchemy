@@ -143,7 +143,7 @@ void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-void Actor_SetSpriteFlags(struct ShrineOfTheSeaGodObject *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(pin): the height pinned to r1, so the actor loads after the
@@ -276,16 +276,7 @@ void Func_02000280(void) {
 
 struct Actor;
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags);
- * shrine_of_the_sea_god.h has void Actor_SetSpriteFlags(struct
- * ShrineOfTheSeaGodObject *object, u32 value); not tried:
- * Actor_SetSpriteFlags's bound declaration was not found. */
-extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
-#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
 #include "field/field.h"
-#undef Actor_SetSpriteFlags
 #undef Actor_SetPositionAndResetMotion
 
 extern u32 gData_02003df4[];
@@ -1005,7 +996,6 @@ void Func_020012b4(void) {
 
 #undef Actor_SetPositionAndResetMotion
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
-#undef Actor_SetSpriteFlags
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE

@@ -643,14 +643,6 @@ void Func_02000d64(struct Actor *object, s32 limit) {
   }
 }
 
-/* VIEW(aqua_rock): routine MapGrid_CheckCollision as s32
- * MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
- * module/scene/lemurian_ship.h has void MapGrid_CheckCollision(void); not
- * tried: MapGrid_CheckCollision's bound declaration was not found. */
-extern s32 Func_02002970__aqua_rock(
-    struct Actor *object,
-    struct Vector3 *position) __asm__("MapGrid_CheckCollision");
-
 void Func_02000d80(void) {
   struct Actor *leader, *carried;
   struct Vector3 ahead;
@@ -669,7 +661,7 @@ void Func_02000d80(void) {
     ahead.x = leader->x;
     ahead.y = leader->y;
     ahead.z = leader->z + 0x20000;
-    result = Func_02002970__aqua_rock(leader, &ahead);
+    result = MapGrid_CheckCollision(leader, &ahead);
     if ((gFrameCount & 4) == 0)
       Func_02001d30(leader);
     if (result < 0) {
@@ -688,7 +680,7 @@ void Func_02000d80(void) {
     ahead.x = leader->x;
     ahead.y = leader->y;
     ahead.z = leader->z - 0x80000;
-    result = Func_02002970__aqua_rock(leader, &ahead);
+    result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
       if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1)
         return;
@@ -714,13 +706,13 @@ void Func_02000d80(void) {
     ahead.x = leader->x + 0x5b333;
     ahead.y = leader->y;
     ahead.z = leader->z - 0x5b333;
-    result = Func_02002970__aqua_rock(leader, &ahead);
+    result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
     ahead.x = leader->x - 0x5b333;
     ahead.y = leader->y;
     ahead.z = leader->z - 0x5b333;
-    result = Func_02002970__aqua_rock(leader, &ahead);
+    result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
     carried->z += -0x20000;
@@ -1252,7 +1244,7 @@ void Func_02001e00(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z + 0x20000;
-  result = Func_02002970__aqua_rock(leader, position);
+  result = MapGrid_CheckCollision(leader, position);
   if ((gFrameCount & 4) == 0)
     Func_02001d30(leader);
   if (result < 0) {
@@ -1271,19 +1263,19 @@ void Func_02001e00(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z + 0x80000;
-  result = Func_02002970__aqua_rock(leader, position);
+  result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
   position[0] = leader->x + 0x5b333;
   position[1] = leader->y;
   position[2] = leader->z + 0x5b333;
-  result = Func_02002970__aqua_rock(leader, position);
+  result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
   position[0] = leader->x - 0x5b333;
   position[1] = leader->y;
   position[2] = leader->z + 0x5b333;
-  result = Func_02002970__aqua_rock(leader, position);
+  result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
   anchor->z += 0x20000;

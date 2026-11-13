@@ -1390,7 +1390,7 @@ DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
 /// Scene code of overlay 0x6ac, in ROM order.
 
 void Actor_Release(void *handle);
-s32 MapGrid_CheckCollision(s32 layer, s32 shape, s32 height);
+s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 
 void Func_02002118(void) {
   struct MarsLighthouseRoomMRideWork *work =
@@ -1468,21 +1468,13 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Party_TakeFallDamage)
 DEFINE_ACTOR_BLINK(Actor_Blink, 10, 4, 0)
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
-/* VIEW(s2118): routine MapGrid_CheckCollision as s32
- * MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
- * module/scene/scene.h has s32 MapGrid_CheckCollision(s32 layer, s32 shape, s32
- * height); not tried: MapGrid_CheckCollision's bound declaration was not found.
- */
-extern s32 Func_02003180__s2118(
-    struct Actor *actor,
-    struct Vector3 *position) __asm__("MapGrid_CheckCollision");
 
 #define SHARED_F02002148_NAME Func_020024e4
 #define SHARED_F02002148_ID2 Party_TakeFallDamage
 #define SHARED_F02002148_ID3 Actor_Blink
 #define SHARED_F02002148_ID4 Actor_SelectAnimation
 #define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
-#define SHARED_F02002148_ID6 Func_02003180__s2118
+#define SHARED_F02002148_ID6 MapGrid_CheckCollision
 #define SHARED_F02002148_ID7 Field_CheckSpheresOverlap
 #include "shared/func_02002148.c"
 #undef SHARED_F02002148_NAME

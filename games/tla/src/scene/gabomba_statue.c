@@ -1466,13 +1466,6 @@ void Func_020020f0(s32 direction) {
 
 extern s32 gData_0200e88c[];
 
-/* VIEW(find_near): routine Actor_StartScript as void Actor_StartScript(struct
- * Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void
- * Actor_StartScript(struct FieldEffect *effect, const s32 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern void
-Func_02005634__find_near(struct Orbiter__find_near *object,
-                         const u8 *script) __asm__("Actor_StartScript");
 void Actor_SetSpriteColorMode(struct Orbiter__find_near *object, s32 value);
 
 void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
@@ -1482,7 +1475,7 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
       ((struct Orbiter__find_near *)Actor_Get(targetId));
 
   Func_02005624__gabomba_statue(object, 0);
-  Func_02005634__find_near(object, gData_0200e88c);
+  Actor_StartScript(object, gData_0200e88c);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->link = target;
@@ -3014,12 +3007,6 @@ extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
 extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
 #define gData_02006ec0 gData_02006ec0__puzzle_turn
 #define gData_02006f38 gData_02006f38__puzzle_turn
-/* VIEW(puzzle_turn): routine Actor_StartScript as this part declared it; the
- * joined file has another; not tried: Actor_StartScript's bound declaration was
- * not found. */
-void Actor_StartScript__puzzle_turn(
-    struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__puzzle_turn
 
 void Func_02004938(struct Actor *ball, s32 step) {
   s16 *colp = (s16 *)((u8 *)ball + 100);
@@ -3603,7 +3590,6 @@ u32 gData_02005944[] = {
 #undef FieldEffect_Spawn
 #undef gData_02006ec0
 #undef gData_02006f38
-#undef Actor_StartScript
 #undef Wanderer
 #undef SceneState
 #undef gSceneState

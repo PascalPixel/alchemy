@@ -74,7 +74,6 @@ struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
 #include "../field/field_effect/move.c"
 
 #undef Actor_SetSpriteFlags
-#undef Actor_SetSpriteColor
 
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -320,13 +319,6 @@ void Actor_SetMovementTypeById(s32 actor, const void *callback);
  * of 85 instructions in tla-ja. */
 extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__(
     "Actor_RefreshSelectorById");
-/* VIEW(floor): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
- * VenusActor *object, s32 value); event.h has void Actor_SetSpriteColor(struct
- * Actor *object, s32 attribute); not tried: Actor_SetSpriteColor's bound
- * declaration was not found. */
-extern void
-Actor_SetPartAttribute__floor(struct VenusActor *object,
-                              s32 value) __asm__("Actor_SetSpriteColor");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -365,7 +357,7 @@ void VenusLighthouse_RepelLeader(void) {
   Event_ResolvePendingActions(0);
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
   Actor_RefreshSelectorById__floor(leader);
-  Actor_SetPartAttribute__floor(Actor_GetById__floor(leader), 6);
+  Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
   {
     /* FAKEMATCH(pin): the leader pinned to r0, so it is copied there before the
      * acceleration is built, as the native does; as
@@ -388,11 +380,11 @@ void VenusLighthouse_RepelLeader(void) {
   Event_Wait(1);
   Actor_GetById__floor(leader)->selectFlags |= 1;
   Event_Wait(20);
-  Actor_SetPartAttribute__floor(actor, 0);
+  Actor_SetSpriteColor(actor, 0);
   actor->update = VenusLighthouse_EmitRisingParticles__floor;
   Actor_ShowEmoteById__floor(leader, 258, 60);
   Motion_SetModeAndWaitAnimation(leader, 4);
-  Actor_SetPartAttribute__floor(Actor_GetById__floor(leader), 0);
+  Actor_SetSpriteColor(Actor_GetById__floor(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
 
   /* FAKEMATCH(dead): an empty once-only block, so the null callback is built
@@ -1306,6 +1298,5 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(VenusLighthouse_HidePaths)},
     {TRIGGER_TABLE_END},
 };
-#undef Actor_SetSpriteColor
 #undef FieldActor_SetSpriteColor
 #undef Actor_SetSpriteFlags

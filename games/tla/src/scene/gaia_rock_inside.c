@@ -301,9 +301,9 @@ void Func_0200036c(void) {
 #endif
 
 /* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
- * module/scene/scene.h has void Event_End(void); not tried: Event_End's bound
- * declaration was not found. */
-extern s32 Func_02004e64__gaia_rock_inside(void) __asm__("Event_End");
+ * module/scene/scene.h has void Event_End(void); two events return its value,
+ * which the bytes need. */
+extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
@@ -373,7 +373,7 @@ loop:
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  return Func_02004e64__gaia_rock_inside();
+  return Event_EndWithResult();
 }
 #endif
 
@@ -404,14 +404,6 @@ s32 Func_020005f8(void) {
 }
 
 extern u32 gData_020050d0[];
-
-/* VIEW(gaia_rock_inside): routine Actor_StartScript as void
- * Actor_StartScript(struct Actor *object, const u8 *script); actor_view.h has
- * void Actor_StartScript(struct Actor *, const s32 *); not tried:
- * Actor_StartScript's bound declaration was not found. */
-void Actor_StartScript__gaia_rock_inside(
-    struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__gaia_rock_inside
 
 s32 Func_02000610(void) {
   struct FieldSprite *sprite = Actor_Get(9)->sprite;
@@ -500,7 +492,6 @@ s32 Func_02000748(void) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#undef Actor_StartScript
 #undef FIELD_AT
 
 // ---- scene/gaia_rock_inside/s07f4.c ----
@@ -510,14 +501,6 @@ s32 Func_02000748(void) {
 // ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
 
 #include "text/msg_ids.h"
-
-/* VIEW(s07f4): routine Actor_StartScript as void Actor_StartScript(struct Actor
- * *object, const s32 *script); scene/gaia_rock_inside/gaia_rock_inside has void
- * Actor_StartScript(struct Actor *object, const u8 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-void Actor_StartScript__s07f4(struct Actor *object,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s07f4
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
  * module/scene/scene.h has another definition; tried with the definition the
@@ -889,7 +872,6 @@ void Func_02000fac(void) {
 #undef FIELD_AT
 
 #undef FIELD_AT
-#undef Actor_StartScript
 #undef gData_020051d8
 #undef gData_02005ee4
 // ---- games/tla/src/scene/gaia_rock_inside/s1048.c ----
@@ -1016,10 +998,6 @@ void GaiaRockInside_ReadSusasMind(void) {
   Event_End();
 }
 
-/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has
- * void Actor_StartScript(struct Actor *object, const s32 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
 extern u32 gData_02005208[];
 
 void Func_02001314(s32 a0) {
@@ -1035,7 +1013,7 @@ void Func_02001314(s32 a0) {
   Actor_SelectAnimation(t0, 1);
   Actor_SetSpriteFlags(t0, 0);
   Actor_SetBlendMode(t0, 1);
-  Func_02004dac__s12ac(t0, (s32)gData_02005208);
+  Actor_StartScript(t0, (s32)gData_02005208);
 }
 #undef FIELD_AT
 
@@ -1170,13 +1148,6 @@ extern const u8 gData_020052ac__s15d0[] __asm__("gData_020052ac");
  * (first use in this function). */
 extern const u8 gData_020052dc__s15d0[] __asm__("gData_020052dc");
 #define gData_020052dc gData_020052dc__s15d0
-/* VIEW(s15d0): routine Actor_StartScript as void Actor_StartScript(void
- * *object, const u8 *script); scene/gaia_rock_inside/gaia_rock_inside has void
- * Actor_StartScript(struct Actor *object, const u8 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-void Actor_StartScript__s15d0(void *object,
-                              const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s15d0
 
 void Func_020015d0(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
@@ -1322,10 +1293,6 @@ third:
 void Actor_MoveToObject(s32 id, s32 target);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
-/* VIEW(s15d0): routine Event_End as s32 Event_End(void); module/scene/scene.h
- * has void Event_End(void); not tried: Event_End's bound declaration was not
- * found. */
-extern s32 Func_02004e64__s15d0(void) __asm__("Event_End");
 
 // The party meets person 11 on the ledge: they talk, the ground shakes, the
 // screen blends out and back while the ledge changes, the party gains the item
@@ -1403,7 +1370,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   FieldActor_WaitForMoveById(11);
   Actor_SetPosition(11, 0, 0);
   FieldEvent_Wait(20);
-  return Func_02004e64__s15d0();
+  return Event_EndWithResult();
 }
 
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
@@ -1511,7 +1478,7 @@ void Func_02001d14(void) {
     System_Wait(1);
   }
   BlendScript_Resume();
-  Func_02004e64__s15d0();
+  Event_End();
 }
 
 // Leaving Gaia Rock: after FLAG_SERPENT_SLAIN a message; otherwise sets the
@@ -1553,7 +1520,6 @@ void GaiaRockInside_ChallengeSerpent(void) {
   }
 }
 
-#undef Actor_StartScript
 #undef gData_02005218
 #undef gData_02005244
 #undef gData_02005264
@@ -2365,13 +2331,6 @@ void Func_02001c9c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s2cb4): routine Actor_StartScript as void Actor_StartScript(struct Actor
- * *object, const u8 *script); actor_view.h has void Actor_StartScript(struct
- * Actor *, const s32 *); not tried: Actor_StartScript's bound declaration was
- * not found. */
-void Actor_StartScript__s2cb4(struct Actor *object,
-                              const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s2cb4
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
@@ -3109,13 +3068,6 @@ void Func_02001c9c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s2cb4): routine Actor_StartScript as void Actor_StartScript(struct Actor
- * *object, const u8 *script); actor_view.h has void Actor_StartScript(struct
- * Actor *, const s32 *); not tried: Actor_StartScript's bound declaration was
- * not found. */
-void Actor_StartScript__s2cb4(struct Actor *object,
-                              const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s2cb4
 void Actor_Release();
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
@@ -4379,7 +4331,6 @@ burst:
 
 #undef gSceneState
 #undef gData_0200530c
-#undef Actor_StartScript
 #undef Func_02000aac
 #undef Func_02000a60
 #undef gData_0200533c
@@ -4923,8 +4874,6 @@ DEFINE_G_DATA_020016CC(gData_020062d4)
 #undef AT
 #undef AT_ADDRESS
 #undef GAIA_ROCK_INSIDE_PATH
-#undef Actor_StartScript
-#undef Actor_StartScript
 #undef gData_02005ee4
 #undef gData_020051d8
 #undef gData_02005264
@@ -4933,7 +4882,6 @@ DEFINE_G_DATA_020016CC(gData_020062d4)
 #undef gData_02005244
 #undef gData_020052ac
 #undef gData_020052dc
-#undef Actor_StartScript
 #undef gData_0200530c
 #undef gSceneState
 #undef gData_0200533c
@@ -4942,13 +4890,11 @@ DEFINE_G_DATA_020016CC(gData_020062d4)
 #undef gData_0200539c
 #undef gData_020053d8
 #undef gData_0200578c
-#undef Actor_StartScript
 #undef gData_0200530c
 #undef gData_02005360
 #undef gData_0200539c
 #undef gData_020053d8
 #undef gData_0200578c
-#undef Actor_StartScript
 #undef Func_02000aac
 #undef Func_02000a60
 #undef gData_020053fc

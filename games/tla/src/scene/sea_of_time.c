@@ -598,11 +598,9 @@ void SeaOfTime_TrackWaves(void) {
 
 extern u32 gSeaOfTime_WaveState;
 /* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h has void
- * Event_End(void); tried as the definition's void Event_End(void), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/sea_of_time.c:634: void value not ignored as it ought to
- * be. */
-extern s32 Event_End__s0c94(void) __asm__("Event_End");
+ * Event_End(void); tried as the definition's void Event_End(void), it does not
+ * compile: two events return its value, which the bytes need. */
+extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
 // Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
 // channel every 10 frames, then hands the rest of the event to
@@ -658,7 +656,7 @@ s32 SeaOfTime_StartWaves(void) {
   gSeaOfTime_WaveState = 360;
   gSeaOfTime_WaveStartFrame = frame;
   Task_Add(SeaOfTime_TrackWaves, 0x480);
-  return Event_End__s0c94();
+  return Event_EndWithResult();
 }
 
 extern struct SavedColors gSeaOfTime_SavedColors;
@@ -726,7 +724,7 @@ fade:
   /* FAKEMATCH(signature): typed to return s32, passing on Event_End's,
    * though its target Event_End returns nothing; as void, 6 of 150 instructions
    * differ in tla-en. */
-  return Event_End__s0c94();
+  return Event_EndWithResult();
 }
 
 // next object the overlay links.

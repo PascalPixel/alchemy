@@ -366,11 +366,6 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0198): routine Event_End as s32 Event_End();
- * module/scene/jupiter_lighthouse_aerie_beacon.h has void Event_End(void); not
- * tried: Event_End's bound declaration was not found. */
-extern s32 Func_0200581c__s0198() __asm__("Event_End");
-
 void Func_0200045c(void) {
   s32 t0;
   s32 t2;
@@ -394,7 +389,7 @@ void Func_0200045c(void) {
       } while (0);
       FieldEvent_Wait(20);
       Event_ShowMessage(0x1b, 0);
-      Func_0200581c__s0198();
+      Event_End();
     }
   }
 }
@@ -684,7 +679,7 @@ void Func_0200065c(void) {
       Event_SetFlag(0x11a);
       FieldEvent_SetExitRequest(2);
     }
-    Func_0200581c__s0198();
+    Event_End();
   }
 }
 
@@ -1698,7 +1693,7 @@ L_0200a9e0:
   Event_WaitTransitionFrames();
   Func_02001b04(0);
   FieldEvent_SetExitRequest(1);
-  Func_0200581c__s0198();
+  Event_End();
   return;
 }
 
@@ -2195,7 +2190,7 @@ void Func_02002ae4(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);
-  Func_0200581c__s0198();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -2581,18 +2576,11 @@ void Func_020040f4(void) {
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_0200581c__s0198();
+  Event_End();
 }
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct
- * Object6a5 *object, const void *script); s0198 has void
- * Actor_StartScript(struct Actor *object, const void *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern void
-Func_02005764__s3f54(struct Object6a5 *object,
-                     const void *script) __asm__("Actor_StartScript");
 extern u32 gData_020069fc[];
 
 void Whirlwind_Update(struct Object6a5 *object) {
@@ -2654,7 +2642,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
   }
   object->unk63 = 0;
   object->update = 0;
-  Func_02005764__s3f54(object, gData_020069fc);
+  Actor_StartScript(object, gData_020069fc);
   Event_PlaySound(228);
   Data_02006a28 = 0;
 }
@@ -2791,13 +2779,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 
-/* VIEW(s4bd4): routine Actor_StartScript as this part declared it; the joined
- * file has another; not tried: Actor_StartScript's bound declaration was not
- * found. */
-extern void
-Actor_StartScript__s4bd4(struct FieldEffect *effect,
-                         const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s4bd4
 extern const s32 *gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -2896,7 +2877,6 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 

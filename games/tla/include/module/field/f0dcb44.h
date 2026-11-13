@@ -2,8 +2,8 @@
 #define ALCHEMY_MODULE_FIELD_F0DCB44_H
 
 /// @file
-/// What games/tla/src/field/event_commands/f0dcb44/ declares for the files that
-/// use it, written once.
+/// What games/tla/src/field/event_commands/f0dcb44.c declares for the files
+/// that use it, written once.
 
 #include "types.h"
 #include "field/field_particle.h"

@@ -4,7 +4,7 @@
 /// prompt, and the palette fades they share.
 ///
 /// One object, as The Broken Seal's title_intro.c is. Its logo frames and
-/// palettes are the data objects in title_intro/.
+/// palettes are the data objects logo.c and title_intro_tables.s.
 
 #include "types.h"
 #include "graphics.h"
@@ -441,7 +441,7 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
 
 // Declared here without const, as Camelot's code read them: a const table's
 // loads are scheduled across the stores before them (4 of 360 differ with
-// either const, 6 with both). menu/title_intro/logo.c defines both, const, in
+// either const, 6 with both). menu/logo.c defines both, const, in
 // ROM.
 extern s16 gData_081a8378[];
 extern s16 gData_081a84e6[];

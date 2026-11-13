@@ -262,4 +262,4 @@ Data_08130c5c:
 @ 387 battle graphics entries.
 	.global gSummon_EntryTable
 gSummon_EntryTable:
-	.incbin "games/tla/src/battle/summon/sprites.table"
+	.incbin "games/tla/src/battle/summon_sprites.table"

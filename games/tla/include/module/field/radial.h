@@ -2,7 +2,7 @@
 #define ALCHEMY_MODULE_FIELD_RADIAL_H
 
 /// @file
-/// What games/tla/src/field/event_commands/radial/ declares for the files that
+/// What games/tla/src/field/event_commands/radial.c declares for the files that
 /// use it, written once.
 
 #include "types.h"

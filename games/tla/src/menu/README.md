@@ -2,8 +2,8 @@
 
 The Lost Age's field menu and its screens (`menu.c`), with the two
 small banks the Title calls: the staff credits (`credits.c`, its background
-decoders in `credits/`) and the Title's intro (`title_intro.c`, its data in
-`title_intro/`). [Menus](../../../tbs/src/menu/README.md) explains how these
+decoders in the `credits_background_*.s` files) and the Title's intro
+(`title_intro.c`, its data in `logo.c` and `title_intro_tables.s`). [Menus](../../../tbs/src/menu/README.md) explains how these
 work in The Broken Seal. The shops are in
 [The Lost Age: shop](../shop/README.md), and the Title, the scene after it and
 the lobby are scene [overlays](../../../tbs/glossary.md#overlay) in

@@ -1832,9 +1832,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/rooms/entry.o"(.text)
+        "*/games/tla/src/debug/entry/rooms.o"(.text)
         "*/games/tla/src/debug/test_scenes.o"(.text)
-        "*/games/tla/src/debug/rooms/import.o"(.text)
+        "*/games/tla/src/debug/import/rooms.o"(.text)
         "*/games/tla/src/debug/test_scenes.o"(.data)
     }
 }
@@ -1843,9 +1843,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/level/entry.o"(.text)
+        "*/games/tla/src/debug/entry/level.o"(.text)
         "*/games/tla/src/debug/level.o"(.text)
-        "*/games/tla/src/debug/level/import.o"(.text)
+        "*/games/tla/src/debug/import/level.o"(.text)
         "*/games/tla/src/debug/level.o"(.data)
     }
 }
@@ -1854,14 +1854,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/psynergy_test/entry.o"(.text)
+        "*/games/tla/src/debug/entry/psynergy_test.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.text)
-        "*/games/tla/src/debug/psynergy_test/import.o"(.text)
+        "*/games/tla/src/debug/import/psynergy_test.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.data)
     }
     .bss :
     {
-        "*/games/tla/src/debug/psynergy_test/bss.o"(.bss)
+        "*/games/tla/src/debug/bss/psynergy_test.o"(.bss)
     }
 }
 #elif OVERLAY == 0x6b9
@@ -1869,9 +1869,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/psynergy_test_2/entry.o"(.text)
+        "*/games/tla/src/debug/entry/psynergy_test_2.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2.o"(.text)
-        "*/games/tla/src/debug/psynergy_test_2/import.o"(.text)
+        "*/games/tla/src/debug/import/psynergy_test_2.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2.o"(.data)
     }
 }
@@ -1880,9 +1880,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/shop_test/entry.o"(.text)
+        "*/games/tla/src/debug/entry/shop_test.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.text)
-        "*/games/tla/src/debug/shop_test/import.o"(.text)
+        "*/games/tla/src/debug/import/shop_test.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.data)
     }
 }

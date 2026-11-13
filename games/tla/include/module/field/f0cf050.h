@@ -2,8 +2,8 @@
 #define ALCHEMY_MODULE_FIELD_F0CF050_H
 
 /// @file
-/// What games/tla/src/field/object/f0cf050/ declares for the files that use it,
-/// written once.
+/// What games/tla/src/field/object/f0cf050.c declares for the files that use
+/// it, written once.
 
 #include "types.h"
 #include "battle/battle.h"

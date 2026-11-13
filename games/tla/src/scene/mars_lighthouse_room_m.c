@@ -1503,7 +1503,6 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  /* FAKEMATCH(signature): typed returning s32, though it returns nothing. */
   if (event->started == 0) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
@@ -1544,6 +1543,9 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   leader->update = 0;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 extern u16 gData_02004cf0[];

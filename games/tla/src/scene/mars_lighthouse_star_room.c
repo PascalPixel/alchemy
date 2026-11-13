@@ -1701,8 +1701,6 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   struct Actor *leader;
   s32 frame[3]; // Unused: gives the stack frame its 12 bytes.
 
-  /* FAKEMATCH(signature): typed returning s32, though it returns nothing. */
-
   if (event->started == 0) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
@@ -1746,6 +1744,9 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   leader->update = 0;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide,

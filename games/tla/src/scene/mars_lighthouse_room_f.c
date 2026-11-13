@@ -1670,7 +1670,6 @@ extern s32 MapGrid_CheckCollisionOfActor(struct Actor *actor) __asm__(
 void Func_0200297c(void) {
 #else
 s32 Func_0200297c(void) {
-  /* FAKEMATCH(signature): declared returning s32, though it returns nothing. */
 #endif
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
@@ -1800,6 +1799,9 @@ s32 Func_0200297c(void) {
     Actor_SetSpriteColorMode(actor, 0);
   }
   work->unk04 = 0;
+#if !TLA_PATCH_1 && defined(UBFIX)
+  return 0;
+#endif
 }
 #if !TLA_PATCH_1
 #undef position
@@ -1815,7 +1817,6 @@ void ScreenTransition_Start(s32 mode, s32 frames);
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
-  /* FAKEMATCH(signature): declared returning s32 with no return. */
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct RideWork *ride;
   struct Actor *leader;
@@ -1868,6 +1869,9 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   leader->update = 0;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomF_ContinueSlide,

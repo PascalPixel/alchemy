@@ -4,6 +4,7 @@
 /// a visitor takes song requests.
 
 #include "battle/battle.h"
+#include "sound_driver_symbols.h"
 #include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -1092,7 +1093,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
 /// and goes back to the File Screen (its entrance FILE_SCREEN_FROM_SANCTUM).
 s32 LinkLobby_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
-  Sound_LoadReverbCode(2);
+  Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   /* FAKEMATCH(dead): the return in a once-only block. */
   do {
     return Import_EventSetDestination((s32)&SceneId_Ov64a, 1);

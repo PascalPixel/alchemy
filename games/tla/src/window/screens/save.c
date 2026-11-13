@@ -75,7 +75,7 @@ struct Window *SaveProgress_Open(u32 kind) {
 /// Closes the progress screen.
 struct Window *SaveProgress_Close(struct Window *window) {
   wait(10);
-  Func_080c8698();
+  Scene_PlayQueuedMusicFar();
   Sound_SetBgmVolumeTargetFar(0x100, 30);
   Window_Close(window, 0);
   return window;
@@ -759,8 +759,8 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
   }
 }
 
-void Func_08043a64(struct RenderInput *origin, s32 x, s32 y,
-                   struct SaveSummary *descriptor) {
+void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
+                               struct SaveSummary *descriptor) {
   struct ObjectRowWork *state = Ram_HeapSlots->menuRuntime;
   s32 i;
 
@@ -780,7 +780,7 @@ void Func_08043a64(struct RenderInput *origin, s32 x, s32 y,
     state->scale[i] = 0x10000;
   }
 
-  Task_Add(Func_08043b70, TASK_PASS_VBLANK);
+  Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
 }
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
@@ -789,7 +789,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
   s32 zero;
   s32 count;
 
-  Task_Remove((s32)Func_08043b70);
+  Task_Remove((s32)FileList_PlacePartySprites);
   zero = 0;
   offset = 248;
   count = 3;
@@ -805,7 +805,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
   } while (count >= 0);
 }
 
-void Func_08043b70(void) {
+void FileList_PlacePartySprites(void) {
   struct ObjectRowState *state =
       (struct ObjectRowState *)Ram_HeapSlots->menuRuntime;
   s32 source[2];
@@ -1045,7 +1045,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   modePicture =
       MenuTitle_Create(menuMode, (struct RenderInput *)fileList, 72, -24);
-  Func_080f8070();
+  DjinnFigures_InitializeTopRowFar();
   for (i = 0, y = 144; i < 4; i++, y += 24)
     MenuIcon_SetPositionFar(i, y, 128);
   Menu_SetEntryObjectsHiddenFar(0);
@@ -1065,8 +1065,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, 2);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
-        Func_08043a64((struct RenderInput *)partyWindow, 0, 0,
-                      &save->summary[selectedFile]);
+        FileList_ShowPartySprites((struct RenderInput *)partyWindow, 0, 0,
+                                  &save->summary[selectedFile]);
         wait(1);
         if ((s8)save->summary[selectedFile].djinn[0] +
                 (s8)save->summary[selectedFile].djinn[1] +

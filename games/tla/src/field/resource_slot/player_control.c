@@ -328,7 +328,7 @@ counted:
   return 1;
 }
 
-s32 Func_08026dd0(u32 value) {
+s32 Field_RequestShortcut(u32 value) {
   struct EventPrompt *event = Ram_HeapSlots->eventWork;
   u32 kind = value >> 14;
   s32 code = value & 0x3fff;
@@ -360,8 +360,8 @@ s32 Func_08026dd0(u32 value) {
 
 /// Checks the keys the player has configured: the menu, examine and start
 /// keys set their request and return 1, the two shortcut keys pass on their
-/// assignment (Func_08026dd0). While a second event is pending, any of the
-/// five requests command 0x209b instead. Returns 0 when none is pressed.
+/// assignment (Field_RequestShortcut). While a second event is pending, any of
+/// the five requests command 0x209b instead. Returns 0 when none is pressed.
 // As ☀️'s function of the same name.
 s32 Field_CheckConfiguredKeys(void) {
   struct EventPrompt *work = Ram_HeapSlots->eventWork;
@@ -390,9 +390,9 @@ s32 Field_CheckConfiguredKeys(void) {
       work->start = 1;
       result = 1;
     } else if (gInput.pressed & gMainRoutineWork.keys238) {
-      result = Func_08026dd0(gMainRoutineWork.packedEvents[0]);
+      result = Field_RequestShortcut(gMainRoutineWork.packedEvents[0]);
     } else if (gInput.pressed & gMainRoutineWork.keys23a) {
-      result = Func_08026dd0(gMainRoutineWork.packedEvents[1]);
+      result = Field_RequestShortcut(gMainRoutineWork.packedEvents[1]);
     }
   }
   return result;

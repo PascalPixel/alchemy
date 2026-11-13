@@ -776,7 +776,7 @@ s32 Func_080d5720(void) {
   return 1;
 }
 
-s32 Func_080d57e4(void) {
+s32 Field_ClimbDown(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];

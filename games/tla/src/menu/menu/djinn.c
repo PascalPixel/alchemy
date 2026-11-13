@@ -93,7 +93,7 @@ s32 DjinnMenu_Run(void) {
   menu->selectedColumn[1] = zero;
   menu->selection[0] = 0;
   menu->selection[1] = 0;
-  Func_081051a8();
+  DjinnFigures_InitializeTopRow();
   DjinnMenu_RunScreen();
   MenuIcon_ReleaseObjects();
   Menu_ResetTwoResourceEntries();
@@ -755,7 +755,7 @@ struct WindowTiles {
 
 /// Gives every cell of a tile rectangle that uses palette 15 the palette
 /// given instead, clipped to the screen, and marks its rows for upload.
-void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette) {
+void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
 
   palette <<= 12;
@@ -807,7 +807,8 @@ void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette) {
 
 void UiPanel_SetRectPalette(struct UiPanel *panel, s32 x, s32 y, s32 width,
                             s32 height, s32 palette) {
-  Func_08101c7c(panel->x + x + 1, panel->y + y + 1, width, height, palette);
+  Window_SetRectPalette(panel->x + x + 1, panel->y + y + 1, width, height,
+                        palette);
 }
 
 struct UiChannelSlot *Message_OpenDecodedFar(void *window, s32 message);
@@ -844,7 +845,7 @@ s32 DjinnMenu_ShowHelp(void) {
   Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 0);
   message++;
   Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 16);
-  Func_08101c7c(1, 1, 11, 3, 6);
+  Window_SetRectPalette(1, 1, 11, 3, 6);
   UiPanel_SetRectPalette(menu->listWindow, 0, 0, 28, 10, 6);
   list = Window_CreateFar(0, 9, 8, 10, 6);
   helpWindow = Window_CreateFar(8, 12, 22, 7, 2);

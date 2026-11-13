@@ -14,14 +14,15 @@ extern struct BattleUnit *
 Unit_Get__strongest_unit(s32 unitId) __asm__("Unit_Get");
 /* VIEW(strongest_unit): routine Battle_RandomFar as u32 Battle_RandomFar(void);
  * battle_system.h has s32 Battle_RandomFar(void); tried as the rest of the
- * object declares it, Func_0811f4d4 moves: 1 of 95 instructions in tla-ja. */
+ * object declares it, BattleAI_ChooseRandomTarget moves: 1 of 95 instructions
+ * in tla-ja. */
 extern u32 Battle_RandomFar__strongest_unit(void) __asm__("Battle_RandomFar");
 
 /// Picks a random living target on one side: the party (target codes 0x100 +
 /// slot) when party is set, otherwise the enemies (0x180 + slot); 0 when none
 /// lives.
 // No ☀️ twin found.
-s32 Func_0811f4d4(s32 party) {
+s32 BattleAI_ChooseRandomTarget(s32 party) {
   struct BattleWork *work;
   u16 targets[6];
   s32 count;

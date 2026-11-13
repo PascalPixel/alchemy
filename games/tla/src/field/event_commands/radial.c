@@ -1243,7 +1243,7 @@ void BattleEffect_UpdatePairedArcSpawner(
 
 void FieldPsynergy_ShowAvoidWoreOff(void) {
   gMainRoutineWork.avoidDistance = 0;
-  Func_080cb82c();
+  WorldMap_Freeze();
   if (gMainRoutineWork.avoidByItem == 0) {
     MessageArgument_PushFar(150, 4);
     FieldMessage_ShowFar((s32)&MsgAbilityWoreOff, 1);
@@ -2029,7 +2029,8 @@ void Func_080e249c(void) {
     /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i,
      * so the id is read before the kind; as ids[i], 18 of 160 instructions
      * differ in tla-en. */
-    s32 event = Func_080ce458(0x50000005, work->kind, ids[Index(i)]);
+    s32 event =
+        Scene_FindPsynergyTrigger(0x50000005, work->kind, ids[Index(i)]);
 
     if (event != 0)
       Field_RunPsynergyEvent__f0e150c(event, work->argument0, work->argument1);
@@ -2069,7 +2070,8 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
     if (x >= 0 && x < width && z >= 0 && z < height) {
       s32 n;
 
-      Func_080201f0(toX + x, toZ + z, 1, 1, originX + x, originZ + z);
+      MapGrid_CopyCellPictureCellsRectFar(toX + x, toZ + z, 1, 1, originX + x,
+                                          originZ + z);
       Func_080dbb78(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
       n = gData_02001000.count;
       if (n < 64) {
@@ -2102,8 +2104,9 @@ extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
 extern struct MapCell *
 Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("Func_080dbb78");
 
-/// For each entry of the event work's list at 0x174c, calls Func_080201f0 with
-/// its bytes and clears the collision code of the cell at its position.
+/// For each entry of the event work's list at 0x174c, calls
+/// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
+/// code of the cell at its position.
 void Func_080e2718(void) {
   u8 *base = gData_02001000__f0e2718;
   s32 i;
@@ -2111,7 +2114,8 @@ void Func_080e2718(void) {
   for (i = 0; i < (s8)gData_02001000__f0e2718[0x194c]; i++) {
     u8 *entry = base + 0x174c + i * 8;
 
-    Func_080201f0(entry[0], entry[1], 1, 1, entry[2], entry[3]);
+    MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],
+                                        entry[3]);
     Func_080dbb78__f0e2718(entry[4] << 20, entry[5] << 20, 2)->collisionCode =
         0;
   }

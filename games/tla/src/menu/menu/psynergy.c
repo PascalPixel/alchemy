@@ -550,7 +550,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   psynergies = menu->psynergies;
   menu->psynergyCount = PsynergyMenu_CollectActions(owner, psynergies, 2);
   WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
-  PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
+  PsynergyMenu_RefreshMemberEntries(0x6c, 0x20, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyMenuEmpty, menu->psynergyWindow,

@@ -221,8 +221,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 
-void Func_080201f0(s32 toX, s32 toZ, s32 width, s32 height, s32 fromX,
-                   s32 fromZ);
+void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
+                                         s32 height, s32 fromX, s32 fromZ);
 
 void Func_080e2c38(void);
 

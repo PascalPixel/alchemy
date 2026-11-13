@@ -51,7 +51,11 @@ burst:
     goto burst;
 }
 
-/* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the definition has u32 gData_02006330[] = { 38, }; tried as the definition's extern u32 gData_02006330[], it does not compile in tla-ja: games/tla/src/scene/garoh/s12a8.c:82: `gData_02006330__s12a8' undeclared (first use in this function). */
+/* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the
+ * definition has u32 gData_02006330[] = { 38, }; tried as the definition's
+ * extern u32 gData_02006330[], it does not compile in tla-ja:
+ * games/tla/src/scene/garoh/s12a8.c:82: `gData_02006330__s12a8' undeclared
+ * (first use in this function). */
 extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
@@ -95,7 +99,8 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 }
 
 // ---- games/tla/src/scene/garoh/push.c ----
-// Scene code of overlay 0x65f, in ROM order, from push's offset up to the next object the overlay links, and the overlay's data.
+// Scene code of overlay 0x65f, in ROM order, from push's offset up to the next
+// object the overlay links, and the overlay's data.
 
 #include "system.h"
 #include "main_routine_work.h"
@@ -109,23 +114,28 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  Func_0802b450(a0, a1, a2, a3, a4, a5);
+  MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
 }
 
 /// The fourth argument is passed unextended (0xf000), where spawn.c's
 /// definition takes an s16: the callers saw an int parameter.
-/* VIEW(push): routine Func_02001360 as void Func_02001360(s32 x, s32 y, s32 z, s32 value, s32 timer); the definition has void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer); tried as the definition's void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object already declares, Func_020013b0 moves: 4 of 43 instructions in tla-ja. */
-extern void Func_02001360__push(s32 x, s32 y, s32 z, s32 value, s32 timer) __asm__("Func_02001360");
+/* VIEW(push): routine Func_02001360 as void Func_02001360(s32 x, s32 y, s32 z,
+ * s32 value, s32 timer); the definition has void Func_02001360(s32 x, s32 y,
+ * s32 z, s16 value, s32 timer); tried as the definition's void
+ * Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object
+ * already declares, Func_020013b0 moves: 4 of 43 instructions in tla-ja. */
+extern void Func_02001360__push(s32 x, s32 y, s32 z, s32 value,
+                                s32 timer) __asm__("Func_02001360");
 
 void Func_020013b0(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_02001360__push(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
-                20);
+  Func_02001360__push(object->x + 0x80000, object->y + 0x1c0000, object->z,
+                      0x1000, 20);
   Event_PlaySound(151);
   FieldEvent_Wait(20);
-  Func_02001360__push(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
-                20);
+  Func_02001360__push(object->x - 0x80000, object->y + 0x1c0000, object->z,
+                      0xf000, 20);
   Event_PlaySound(151);
   FieldEvent_Wait(20);
 }
@@ -136,21 +146,21 @@ DEFINE_FUNC_02001418(Func_02001454, 3, 39)
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                            \
-    FieldEvent_Wait(frames);                                     \
+    Actor_SetAnimation(id, mode);                                              \
+    FieldEvent_Wait(frames);                                                   \
   } while (0)
 #define FOLLOW_LEADER(id)                                                      \
   {                                                                            \
     struct Actor *leader_;                                                     \
                                                                                \
-    Actor_SetSpeed(id, 0x13333, 0x9999);          \
-    Actor_SetAnimation(id, 2);                                                  \
-    leader_ = Actor_Get(gMainRoutineWork.currentOwner);                    \
+    Actor_SetSpeed(id, 0x13333, 0x9999);                                       \
+    Actor_SetAnimation(id, 2);                                                 \
+    leader_ = Actor_Get(gMainRoutineWork.currentOwner);                        \
     if (leader_ != NULL)                                                       \
-      Actor_SetDestination(id, *(s16 *)((u8 *)leader_ + 10),              \
-                                *(s16 *)((u8 *)leader_ + 18));                 \
-    FieldActor_WaitForMoveById(id);                                                 \
-    Actor_SetPosition(id, 0, 0);                          \
+      Actor_SetDestination(id, *(s16 *)((u8 *)leader_ + 10),                   \
+                           *(s16 *)((u8 *)leader_ + 18));                      \
+    FieldActor_WaitForMoveById(id);                                            \
+    Actor_SetPosition(id, 0, 0);                                               \
   }
 
 static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
@@ -2705,13 +2715,20 @@ struct Trigger gData_02005e34[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgGaroh05)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020005cc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGaroh07)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGaroh08)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGaroh09)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGaroh10)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgGaroh11)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_0200105c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh07)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh08)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh10)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh11)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_02000fbc)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200105c)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaroh31))},
     {TRIGGERS_END},
 };
@@ -2735,15 +2752,23 @@ struct Trigger gData_02005f78[] = {
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02000618)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGaroh19)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_020006ec)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGaroh22)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGaroh23)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGaroh24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGaroh25)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgGaroh26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh23)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh25)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh26)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1037, 0x301, EVENT(Func_020006ec)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgGaroh27)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_0200105c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh27)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_02000fbc)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200105c)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaroh31))},
     {TRIGGERS_END},
 };
@@ -2753,7 +2778,8 @@ struct Trigger gData_020060d4[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 30, 0x91c, EVENT(Func_02001490)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_0200108c)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200108c)},
     {TRIGGERS_END},
 };
 
@@ -2787,8 +2813,10 @@ struct Trigger gData_020061d0[] = {
     {0x21, 9, CONDITION_ALWAYS, 9},
     {0x31, 10, CONDITION_ALWAYS, 10},
     {0x21, 11, CONDITION_ALWAYS, 11},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02000fec)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020010d4)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_02000fec)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_020010d4)},
     {TRIGGERS_END},
 };
 
@@ -2804,9 +2832,12 @@ struct Trigger gData_02006278[] = {
     {TRIGGER_STEP, 30, 0x91d, EVENT(Func_020022f4)},
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_020009a4)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGaroh29)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGaroh30)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200101c)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02001104)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgGaroh30)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200101c)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_02001104)},
     {TRIGGERS_END},
 };
 

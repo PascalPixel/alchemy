@@ -156,9 +156,9 @@ static __inline__ void Bring(s32 id) {
 /// (Func_02001718) and a pulse callback (Func_02000294) that quickens over 20
 /// steps, sounds 390 and 144 with the screen shaking, objects 23 and 24 brought
 /// in on their action scripts, flashes, the room's cells copied open
-/// (Func_0802b450) and Func_02000d80(2); then the callbacks stop, objects 13 to
-/// 16 rise 2 pixels a frame for 16 frames, take their next state
-/// (Func_02000e04) and sound 80 plays.
+/// (MapGrid_CopyCellPictureCellsRect) and Func_02000d80(2); then the callbacks
+/// stop, objects 13 to 16 rise 2 pixels a frame for 16 frames, take their next
+/// state (Func_02000e04) and sound 80 plays.
 void Func_020002b8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *a = Actor_GetById(13);

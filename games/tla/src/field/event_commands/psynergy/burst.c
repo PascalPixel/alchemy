@@ -138,7 +138,7 @@ void FieldPsynergy_Burst(void) {
   work->newBursts = 0;
   Task_Add(Func_080e4d9c, 0x480);
   kind = scene->fieldKind;
-  pending = Func_080ce458(0x50000005, kind, Func_080ce31c(kind));
+  pending = Scene_FindPsynergyTrigger(0x50000005, kind, Func_080ce31c(kind));
   frame = 0;
   while (work->phase != 999) {
     wait(1);

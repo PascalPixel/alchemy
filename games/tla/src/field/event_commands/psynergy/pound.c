@@ -262,8 +262,8 @@ void FieldPsynergy_Pound(void) {
     Sound_PlayFar(114);
     wait(1);
   } else {
-    pending = Func_080ce458(0x50000005, scene->fieldKind,
-                            Func_080ce31c(scene->fieldKind));
+    pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
+                                        Func_080ce31c(scene->fieldKind));
     Task_Add(Func_080e5a64, 0x480);
     frame = 0;
     while (work->state != 999) {

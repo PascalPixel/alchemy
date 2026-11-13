@@ -113,7 +113,7 @@ Map_CopyCellAttributeRect:
 	.global Func_02005db4
 	.thumb_func
 Func_02005db4:
-	overlay_veneer Func_080201f0
+	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:

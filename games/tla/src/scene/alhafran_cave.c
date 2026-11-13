@@ -110,7 +110,7 @@ static __inline__ void Func_02001400_(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static __inline__ void Func_02001408_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Func_0802b450(a, b, c, d, e, f);
+  MapGrid_CopyCellPictureCellsRect(a, b, c, d, e, f);
 }
 #include "version.h"
 

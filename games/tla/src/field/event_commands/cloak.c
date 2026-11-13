@@ -213,7 +213,7 @@ void FieldPsynergy_Douse(void) {
       Sound_PlayFar(132);
       wait(6);
       if (n == 12) {
-        ev = Func_080ce458(0x50000005, 5, Func_080ce31c(5));
+        ev = Scene_FindPsynergyTrigger(0x50000005, 5, Func_080ce31c(5));
         if (ev != 0)
           Field_RunPsynergyEvent(ev, work->firstObjectId, work->secondObjectId);
       }

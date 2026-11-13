@@ -190,7 +190,7 @@ s32 Credits_Run(s32 mode) {
 
   if (mode == 1) {
 
-    Func_081a0a70();
+    Credits_InitTextSprites();
     wait(60);
     for (slide = 0;; slide++) {
       s16 *count = &Data_02007500;
@@ -224,7 +224,7 @@ s32 Credits_Run(s32 mode) {
       Data_02007500--;
     }
   } else {
-    Func_081a0e0c(mode - 2);
+    Credits_InitTextSpritesAtPage(mode - 2);
     while (gDisplayScroll_Busy <= 375)
       wait(1);
     Func_081a0fb8();
@@ -294,7 +294,7 @@ void DisplayScroll_RenderEnteringLine(void) {
   }
 }
 
-void Func_081a0a70(void) {
+void Credits_InitTextSprites(void) {
   /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 152
    * instructions differ in tla-en. */
   volatile u32 fill;
@@ -421,7 +421,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   return busy;
 }
 
-void Func_081a0cac(void) {
+void Credits_UpdateTextSprites(void) {
   u32 frame = gDisplayScroll_Position;
   u32 fine = frame & 7;
   s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
@@ -447,7 +447,7 @@ void Func_081a0cac(void) {
     gDisplayScroll_Position++;
 }
 
-/// A task added by Func_081a0e0c: draws each line entering the
+/// A task added by Credits_InitTextSpritesAtPage: draws each line entering the
 /// credits sixteen rows ahead of the visible top. A line table value of 255
 /// ends the text, and blank rows follow it.
 void Func_081a0d78(void) {
@@ -475,12 +475,13 @@ void Func_081a0d78(void) {
   }
 }
 
-/// Starts the scrolling credits at a page, as Func_081a0a70 starts them at the
-/// top: counts the line table's 255 page marks up to the page asked for (at
-/// most 500 lines, stopping at the end mark 0) and sets the scroll there, then
-/// builds the sprite table and its tiles, adds Func_081a0cac and Func_081a0d78
-/// to the task table and draws the first 32 lines blank.
-void Func_081a0e0c(s32 page) {
+/// Starts the scrolling credits at a page, as Credits_InitTextSprites starts
+/// them at the top: counts the line table's 255 page marks up to the page asked
+/// for (at most 500 lines, stopping at the end mark 0) and sets the scroll
+/// there, then builds the sprite table and its tiles, adds
+/// Credits_UpdateTextSprites and Func_081a0d78 to the task table and draws the
+/// first 32 lines blank.
+void Credits_InitTextSpritesAtPage(s32 page) {
   /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 178
    * instructions differ in tla-en. */
   volatile u32 fill;
@@ -568,7 +569,7 @@ void Func_081a0e0c(s32 page) {
   }
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
-  Task_Add(Func_081a0cac, TASK_PASS_FRAME);
+  Task_Add(Credits_UpdateTextSprites, TASK_PASS_FRAME);
   Task_Add(Func_081a0d78, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
     Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
@@ -580,7 +581,7 @@ void Func_081a0fb8(void) {
 
   for (i = 0; i < 32; i++)
     Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
-  Task_Remove(Func_081a0cac);
+  Task_Remove(Credits_UpdateTextSprites);
   Task_Remove(Func_081a0d78);
   objects = (u32 *)gDisplayScroll_Objects;
   for (i = 0; i != 0x100; i++)

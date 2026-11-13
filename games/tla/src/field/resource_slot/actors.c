@@ -157,7 +157,7 @@ void ObjectSystem_Initialize(s32 mode) {
   if (mode == 4) {
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
-    Task_Add(Func_08023f9c, TASK_PASS_VBLANK + 11);
+    Task_Add(Actor_UpdateAllThumb, TASK_PASS_VBLANK + 11);
     Task_Add(Func_080246b8, TASK_PASS_VBLANK + 10);
   }
   if (mode == 3 || mode == 4)
@@ -692,7 +692,7 @@ s32 Actor_ReturnTrue(void) { return 1; }
 
 void Func_08022318(struct PlacedSprite *sprite, struct SpritePlacement *point,
                    s32 *scale, s32 facing, s32 depth);
-void Func_08021a84(struct PlacedSprite *sprite, s32 facing);
+void Sprite_ComposePicture(struct PlacedSprite *sprite, s32 facing);
 
 #define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
 // The priority field (bits 15..14) of a cell's word.
@@ -901,7 +901,7 @@ void ActorSystem_PlaceSprites(void) {
         continue;
       }
       if (object->unk5c[0] & 2) {
-        Func_08021a84(sprite, object->facing);
+        Sprite_ComposePicture(sprite, object->facing);
       } else if (!(object->unk5c[0] & 1) && !(sprite->retainCacheEntry & 1)) {
         VramCache_ReleaseVram(sprite->slot);
         sprite->dirty = 1;

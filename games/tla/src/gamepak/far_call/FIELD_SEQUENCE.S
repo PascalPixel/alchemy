@@ -137,7 +137,7 @@ Resource_FarCall006:
 	export Func_080c8418, Func_080cf050
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
 	export Actor_ReturnHomeFar, Actor_ReturnHome
-	export Func_080c8430, Func_080cb82c
+	export WorldMap_FreezeFar, WorldMap_Freeze
 	export Func_080c8438, Func_080cb8a4
 	export Func_080c8440, Func_080caa4c
 	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
@@ -214,7 +214,7 @@ Resource_FarCall006:
 	export Actor_SetActionCallbackFar, Actor_SetActionCallback
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Event_NoOpFar, Event_NoOp
-	export Func_080c8698, Func_080d2c9c
+	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
 	export Func_080c86a0, Func_080ca6e4
 	export Func_080c86a8, Func_080d897c
 	export Func_080c86b0, Func_080d8d68
@@ -325,6 +325,6 @@ Func_080c88e8:
 	export Func_080c8948, Func_080e28d4
 	export Func_080c8950, Func_080d072c
 	export Party_CheckItemLimitFar, Party_CheckItemLimit
-	export SceneEvent_FindActiveRecordFar, Func_080ccd78
+	export SceneEvent_FindActiveRecordFar, Scene_FindTrigger
 	export Func_080c8968, Func_080d1760
 	export BattleEffect_LoadBufferPaletteFar, BattleEffect_LoadBufferPalette

@@ -2415,7 +2415,7 @@ select_again:
         allyIsParty = 0;
         if ((u16)request->unitId <= 7)
           allyIsParty = 1;
-        allyTarget = Func_0811f4d4(allyIsParty);
+        allyTarget = BattleAI_ChooseRandomTarget(allyIsParty);
       }
       if (allyTarget != -1) {
         request->target = allyTarget;
@@ -2428,7 +2428,7 @@ select_again:
         opponentIsParty = 0;
         if ((u16)request->unitId <= 7)
           opponentIsParty = 1;
-        opponentTarget = Func_0811f4d4(opponentIsParty);
+        opponentTarget = BattleAI_ChooseRandomTarget(opponentIsParty);
       }
       if (opponentTarget != -1) {
         request->target = opponentTarget;

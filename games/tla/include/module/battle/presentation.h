@@ -42,7 +42,7 @@ s32 Func_08122514(struct BattleActionRecord *request, s32 retry);
 u32 BattleClass_GetAttackEffect(u32 index);
 u32 BattleClass_GetDefeatSoundKind(s32 index);
 
-s32 Func_0811f4d4(s32 party);
+s32 BattleAI_ChooseRandomTarget(s32 party);
 
 s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts);
 

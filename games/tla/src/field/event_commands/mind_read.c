@@ -322,12 +322,13 @@ struct Vec3 {
 
 struct PendingEvent;
 
-/* VIEW(f0dd054): routine Func_080ce458 as struct PendingEvent
- * *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct
- * TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
+/* VIEW(f0dd054): routine Scene_FindPsynergyTrigger as struct PendingEvent
+ * *Scene_FindPsynergyTrigger(u32 filter, s32 kind, s32 selector); battle.h has
+ * struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind, s32
+ * selector). */
 extern struct PendingEvent *
 Func_080ce458__f0dd054(u32 filter, s32 kind,
-                       s32 selector) __asm__("Func_080ce458");
+                       s32 selector) __asm__("Scene_FindPsynergyTrigger");
 /* VIEW(f0dd054): routine BattleEffect_GetCycledTableWord as u32
  * BattleEffect_GetCycledTableWord(u32 keys); the definition has u16
  * BattleEffect_GetCycledTableWord(void); tried as the definition's u16
@@ -823,8 +824,8 @@ void FieldPsynergy_Reveal(void) {
   event->active = 0;
   wait(1);
 
-  pending = Func_080ce458(REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
-                          Func_080ce31c(FIELD_PSYNERGY_REVEAL));
+  pending = Scene_FindPsynergyTrigger(REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
+                                      Func_080ce31c(FIELD_PSYNERGY_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
                            scene->secondObjectId);
@@ -870,8 +871,8 @@ void FieldPsynergy_EndReveal(void) {
     BattleEffect_ApplyColorToTargetBuffer__f0dcb44(0x10000, 0);
     PaletteFade_StartInterpolation(30);
     wait(1);
-    pending = Func_080ce458(0x40000005, FIELD_PSYNERGY_REVEAL,
-                            Func_080ce31c(FIELD_PSYNERGY_REVEAL));
+    pending = Scene_FindPsynergyTrigger(0x40000005, FIELD_PSYNERGY_REVEAL,
+                                        Func_080ce31c(FIELD_PSYNERGY_REVEAL));
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->firstObjectId,
                              scene->secondObjectId);
@@ -1485,7 +1486,7 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  event = Func_080ce458(0x50000005, 4, Func_080ce31c(4));
+  event = Scene_FindPsynergyTrigger(0x50000005, 4, Func_080ce31c(4));
   if (event != NULL)
     Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
   wait(10);
@@ -1654,7 +1655,7 @@ void FieldPsynergy_Frost(void) {
     }
 
     target->update = (void (*)(void))BattleEffect_UpdateOrbitingParticleMain;
-    ev = Func_080ce458(0x50000005, 6, Func_080ce31c(6));
+    ev = Scene_FindPsynergyTrigger(0x50000005, 6, Func_080ce31c(6));
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, scene->firstObjectId, scene->secondObjectId);
     wait(20);

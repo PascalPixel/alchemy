@@ -446,7 +446,7 @@ struct MenuIconWork {
 
 extern s32 gMenuIcon_ResourceIds[];
 
-void Func_081051a8(void) {
+void DjinnFigures_InitializeTopRow(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   s8 *object;
   s32 i;

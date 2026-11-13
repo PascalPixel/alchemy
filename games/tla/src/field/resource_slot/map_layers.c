@@ -229,7 +229,7 @@ void Map_CenterOnFollowedPoint(void) {
       followedPosition[-1] = z;
     }
   }
-  Func_0802af9c(x, z - height);
+  MapGrid_SetCameraCenter(x, z - height);
   MapGrid_UpdateLayerScroll();
 }
 
@@ -461,7 +461,7 @@ static __inline__ void CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
   *(u32 *)(screenTile + 64) = *cellPictureRows;
 }
 
-void Func_0802af9c(s32 x, s32 y) {
+void MapGrid_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
   u32 *cells;
@@ -722,8 +722,8 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
  * undeclared (first use in this function). */
 extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
 
-void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                   s32 dstY) {
+void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
+                                      s32 dstX, s32 dstY) {
   s32 y;
   u32 *src = (u32 *)gMapCellBuffer__f02aa74 + (srcY * 128 + srcX);
   u32 *dst = &((u32 *)gMapCellBuffer__f02aa74)[dstY * 128 + dstX];

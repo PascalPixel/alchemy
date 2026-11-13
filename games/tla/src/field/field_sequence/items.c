@@ -64,7 +64,7 @@ s32 Event_FindFacingTrigger(s32 source) {
   s32 collision;
 
   source &= 0x1ff;
-  collision = Func_080cb09c();
+  collision = Field_GetCollisionAheadOfLeader();
 
   while (trigger->control != -1) {
     s32 highValue = (s16)(u16)trigger->subject & 0xf000;
@@ -226,7 +226,7 @@ s32 Func_080ce31c(s32 kind) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
-  s32 focused = Func_080cb09c();
+  s32 focused = Field_GetCollisionAheadOfLeader();
   s32 special = Func_080cb144();
   s32 best = 9999;
   // Default: -1, though every path below sets it.
@@ -288,7 +288,8 @@ s32 Func_080ce31c(s32 kind) {
   return result;
 }
 
-struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
+struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
+                                               s32 selector) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
@@ -346,8 +347,10 @@ s32 Event_ExecutePackedAction(u32 packed) {
   mode = (packed >> 10) & 15;
   kind = Ability_Get(action)->unk04[2];
   selector = Func_080ce31c(kind);
-  first = (struct PendingEvent *)Func_080ce458(0x30000005, kind, selector);
-  second = (struct PendingEvent *)Func_080ce458(0x20000005, kind, selector);
+  first = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x30000005, kind,
+                                                           selector);
+  second = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x20000005, kind,
+                                                            selector);
   target = -1;
   if (first != NULL || second != NULL) {
     if (selector != -1 && (selector & 0x100))

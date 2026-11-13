@@ -686,8 +686,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
       plan->actorId2 = plan->targetIds[0];
       do {
-        plan->targetIds[0] =
-            Battle_GetTaggedSlotValue(Func_0811f4d4(plan->actorId2 <= 7));
+        plan->targetIds[0] = Battle_GetTaggedSlotValue(
+            BattleAI_ChooseRandomTarget(plan->actorId2 <= 7));
         if (plan->targetIds[0] != plan->actorId2)
           break;
       } while (++tries <= 9);

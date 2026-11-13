@@ -17,7 +17,7 @@ Resource_FarCall007:
 	export Menu_CreateOwnerEntryObjectsFar, Menu_CreateOwnerEntryObjects
 	export Menu_PlaceOwnerEntryObjectsFar, Menu_PlaceOwnerEntryObjects
 	export Menu_ReleaseEntryObjectsFar, Menu_ReleaseEntryObjects
-	export Func_080f8070, Func_081051a8
+	export DjinnFigures_InitializeTopRowFar, DjinnFigures_InitializeTopRow
 	export MenuIcon_ReleaseObjectsFar, MenuIcon_ReleaseObjects
 	export Menu_SetEntryObjectsHiddenFar, Menu_SetEntryObjectsHidden
 	export MenuIcon_ReplaceObjectFar, MenuIcon_ReplaceObject

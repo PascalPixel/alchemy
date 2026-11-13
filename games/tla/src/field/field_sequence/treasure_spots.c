@@ -50,7 +50,7 @@ s32 Func_080cec24(s32 value, s32 *out) {
 
 void Actor_ShowItemIconById(s32 id, s32 item);
 
-void Func_080cec34(void) {
+void Field_PlaceTreasureSpots(void) {
   s16 *rows = Func_080ceba8();
   struct SceneItemWork *work = Ram_HeapSlots->eventWork;
   s32 i;

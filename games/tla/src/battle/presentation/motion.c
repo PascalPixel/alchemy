@@ -354,7 +354,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   }
 
   BattleHighlight_SetModes(0, 0);
-  Func_0811ddd8(plan, &work);
+  BattleStaging_BuildTargetList(plan, &work);
   if (work.kind == 135)
     PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);
@@ -480,8 +480,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
 // from the battle work's byte 0x869. The dimming loop reads the battle work
 // through a heap pointer, which keeps 0x03000000 in r11 as the native. Message
 // 3176 is MsgItemBroke here, a name not yet in the catalogs.
-// Func_0811ddd8 is void (r0 is set before r1 for the call, as the
-// native).
+// BattleStaging_BuildTargetList is void (r0 is set before r1 for the call, as
+// the native).
 
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
@@ -513,7 +513,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     targetYaw = 0x2000;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
-  Func_0811ddd8(plan, &work);
+  BattleStaging_BuildTargetList(plan, &work);
   BattleHighlight_SetModes(0, 0);
   {
     struct BattleObj *slot = BattleObject_Get(work.actor);
@@ -705,7 +705,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     transition->frames = 60;
   }
 
-  Func_0811ddd8(plan, &work);
+  BattleStaging_BuildTargetList(plan, &work);
   isDjinni = mode & 1;
   if (isDjinni)
     work.flags = 1;

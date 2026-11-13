@@ -648,13 +648,13 @@ extern const u8 gWindow_ProgressBarTiles[];
 
 void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
 
-void Func_080c8698(void);
+void Scene_PlayQueuedMusicFar(void);
 
 extern u8 gData_02000504[];
 
 void ObjectTable_SnapshotFar(void);
 
-void Func_080f8070(void);
+void DjinnFigures_InitializeTopRowFar(void);
 void MenuIcon_ReleaseObjectsFar(void);
 void Menu_SetEntryObjectsHiddenFar(s32 shown);
 

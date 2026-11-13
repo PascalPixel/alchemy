@@ -70,7 +70,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// gMainRoutineWork.renderMode is 2.
 // XXX: what kinds 8 and 9 are; the triggers of the scenes that use them would
 // settle it.
-struct TriggerView *Func_080ccd78(s32 kind, s32 target) {
+struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
@@ -153,7 +153,7 @@ UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
 /// has stopped (gMainRoutineWork.pausedObject), its kind 7 trigger if it has
 /// one, the event for talking to it while it is stopped.
 void *Scene_FindActorTalkTrigger(s32 id) {
-  void *found = Func_080ccd78(0, id);
+  void *found = Scene_FindTrigger(0, id);
   struct MainRoutineWork *party = &gMainRoutineWork;
   void *event;
   s32 stopped;
@@ -161,7 +161,7 @@ void *Scene_FindActorTalkTrigger(s32 id) {
   stopped = party->pausedObject;
   event = found;
   if (stopped == id) {
-    void *alt = Func_080ccd78(7, stopped);
+    void *alt = Scene_FindTrigger(7, stopped);
 
     if (alt != NULL)
       return alt;
@@ -406,9 +406,9 @@ s32 Scene_TalkToActor(s32 id) {
 
   if (gMainRoutineWork.pausedObject == id) {
     paused = 1;
-    talk = Func_080ccd78(7, id);
+    talk = Scene_FindTrigger(7, id);
     if (talk == NULL) {
-      talk = Func_080ccd78(0, id);
+      talk = Scene_FindTrigger(0, id);
       busyFlags = 1;
       if (talk == NULL)
         return result;
@@ -420,7 +420,7 @@ s32 Scene_TalkToActor(s32 id) {
       goto check;
     }
   } else {
-    talk = Func_080ccd78(0, id);
+    talk = Scene_FindTrigger(0, id);
   check:
     if (talk == NULL)
       goto resume;
@@ -478,7 +478,7 @@ struct TouchWork__field_sequence {
 };
 
 s32 Scene_RunRaisedEvent(s32 id) {
-  u8 *descriptor = (u8 *)Func_080ccd78(6, id);
+  u8 *descriptor = (u8 *)Scene_FindTrigger(6, id);
   s32 result = -1;
 
   if (descriptor != NULL) {
@@ -504,7 +504,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
   s32 handled;
   struct TouchWork__field_sequence *work;
 
-  event = Func_080ccd78(2, value);
+  event = Scene_FindTrigger(2, value);
   handled = -1;
   work = Ram_HeapSlots->eventWork;
   if (event != NULL && event->u.result != 0) {
@@ -518,7 +518,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
       handled = 0;
     }
   } else {
-    event = Func_080ccd78(1, value);
+    event = Scene_FindTrigger(1, value);
     if (event != NULL) {
       switch (event->flags & 0x70) {
       case 0:
@@ -588,7 +588,7 @@ s32 Field_RunPushCell(s32 keys) {
   if ((keys & 2) && work->blockedSteps > 12 && Func_080cdc74()) {
     target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
     if (target != -1) {
-      event = Func_080ccd78(8, target);
+      event = Scene_FindTrigger(8, target);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)
           Event_RunMessage(-1, result);
@@ -596,7 +596,7 @@ s32 Field_RunPushCell(s32 keys) {
           ((void (*)(s32, s32))result)(keys, target);
       }
       Func_080cdd80();
-      event = Func_080ccd78(9, keys);
+      event = Scene_FindTrigger(9, keys);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)
           Event_RunMessage(-1, result);
@@ -639,7 +639,7 @@ s32 Func_080cd808(s32 id) {
     FieldMessage_ShowFar(id + (s32)&MsgKey0def, 1);
     return 0;
   }
-  event = Func_080ccd78(3, id);
+  event = Scene_FindTrigger(3, id);
   if (event != NULL) {
     s32 flags = event->control;
 

@@ -534,8 +534,8 @@ void FieldPsynergy_Scoop(void) {
       frame++;
     }
   } else {
-    pending = Func_080ce458(0x50000005, scene->fieldKind,
-                            Func_080ce31c(scene->fieldKind));
+    pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
+                                        Func_080ce31c(scene->fieldKind));
     frame = 0;
     while (work->phase != 999) {
       stage = 0;
@@ -1100,8 +1100,9 @@ void FieldPsynergy_Parch(void) {
     // DEAD: pending is already NULL; the ROM stores it again.
     pending = NULL;
   } else if (Func_080dbd5c(pos[0], pos[2], caster->terrainId) != 0) {
-    pending = Func_080ce458(0x50000005, scene->fieldKind,
-                            Func_080dbdc8(pos[0], pos[2], caster->terrainId));
+    pending = Scene_FindPsynergyTrigger(
+        0x50000005, scene->fieldKind,
+        Func_080dbdc8(pos[0], pos[2], caster->terrainId));
     result = 2;
     if (pending == NULL)
       result = 1;

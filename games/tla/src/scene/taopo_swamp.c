@@ -176,7 +176,7 @@ static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
 
 static __inline__ void Func_02002848_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Func_0802b450(a, b, c, d, e, f);
+  MapGrid_CopyCellPictureCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02002818_(struct Actor *object, s32 x, s32 y,

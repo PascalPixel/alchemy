@@ -51,9 +51,9 @@ void Func_080cb05c(void) {
     work[0xd39] = 0;
 }
 
-s32 Func_080cb09c(void) {
+s32 Field_GetCollisionAheadOfLeader(void) {
   struct DisplayBlock *block = Ram_HeapSlots->eventWork;
-  struct Actor *object = Func_080cb8e8();
+  struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 position[3];
   u8 *cell;
@@ -84,7 +84,7 @@ s32 Func_080cb09c(void) {
 
 s32 Func_080cb144(void) {
   struct DisplayBlock *block = Ram_HeapSlots->eventWork;
-  struct Actor *object = Func_080cb8e8();
+  struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Vector3 position;
   struct MapCell *cell;
@@ -166,7 +166,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct StepWork *work = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 leaderId = Party_GetLeaderActor();
-  struct Actor *leader = Func_080cb8e8();
+  struct Actor *leader = WorldMap_Unfreeze();
   s16 previousHp[8];
   struct MapCell *tile;
   struct UnitStepView *unit;
@@ -387,7 +387,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// In control mode 3, marks the event work busy, shows its object and, when a
 /// fade is pending, starts it at level 80 and waits 2 frames; then calls
 /// MapAnimation_StartFar.
-void Func_080cb82c(void) {
+void WorldMap_Freeze(void) {
   struct FxWork *work = HeapSlot_AllocEwram(108, 0xd50);
 
   if (*(u16 *)&work->state == 3) {
@@ -420,7 +420,7 @@ void Func_080cb8a4(void) {
   }
 }
 
-void *Func_080cb8e8(void) {
+void *WorldMap_Unfreeze(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   void **event;
 

@@ -102,8 +102,8 @@ extern u8 *Data_02007528;           ///< the picture's map
 /// The 24 sprites of the picture's border strips.
 extern struct QueuedSprite *gData_0200752c;
 
-void Func_081a0a70(void);
-void Func_081a0e0c(s32 credits);
+void Credits_InitTextSprites(void);
+void Credits_InitTextSpritesAtPage(s32 credits);
 void Func_081a0fb8(void);
 s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align);
 

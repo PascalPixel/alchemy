@@ -30,9 +30,10 @@ s32 Func_0811d79c(s32 kind) {
 
 void Func_0811d7e4(void) {}
 
-/* VIEW(battle): routine Func_0811f4d4 as s32 Func_0811f4d4();
- * module/battle/presentation.h has s32 Func_0811f4d4(s32 party). */
-extern s32 Func_0811f4d4__battle() __asm__("Func_0811f4d4");
+/* VIEW(battle): routine BattleAI_ChooseRandomTarget as s32
+ * BattleAI_ChooseRandomTarget(); module/battle/presentation.h has s32
+ * BattleAI_ChooseRandomTarget(s32 party). */
+extern s32 Func_0811f4d4__battle() __asm__("BattleAI_ChooseRandomTarget");
 
 void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
   u16 ids[10];
@@ -312,8 +313,8 @@ finish:
   return fled;
 }
 
-void Func_0811ddd8(struct BattlePlan *plan,
-                   struct BattlePresentationWork *effect) {
+void BattleStaging_BuildTargetList(struct BattlePlan *plan,
+                                   struct BattlePresentationWork *effect) {
   s16 *outputTarget;
   u32 flags;
   s32 livingTargets;
@@ -425,7 +426,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   struct MotionObject *object;
   u16 *list;
 
-  Func_0811ddd8(plan, &work);
+  BattleStaging_BuildTargetList(plan, &work);
   actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->presentationFlags & 0x8000) {

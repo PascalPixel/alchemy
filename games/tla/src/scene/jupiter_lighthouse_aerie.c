@@ -141,11 +141,11 @@ void Func_02000314(s32 unused, s32 actor) {
 
 // Jupiter Lighthouse aerie's two pushed objects: object 13 on cell (6, 12) or
 // object 14 on cell (57, 12) sets its flag (2570, 2571), falls into place
-// (waited on for at most 30 frames), copies cells (Func_0802b450,
-// Map_CopyCellAttributeRect) with sounds 134 and 167 and runs its part
-// (Func_020001b4, Func_02000264); off its cell it only marks the cell it stands
-// on (Func_02002a78). With both flags set, flag 2591 is set. The fall wait is
-// an if around a do-while.
+// (waited on for at most 30 frames), copies cells
+// (MapGrid_CopyCellPictureCellsRect, Map_CopyCellAttributeRect) with sounds 134
+// and 167 and runs its part (Func_020001b4, Func_02000264); off its cell it
+// only marks the cell it stands on (Func_02002a78). With both flags set, flag
+// 2591 is set. The fall wait is an if around a do-while.
 
 void Func_0200032c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);

@@ -262,7 +262,7 @@ static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so each stack argument keeps its own register; as a direct
    * call, 10 of 157 instructions of Func_02000500 differ in tla-en. */
-  Func_0802b450(srcX, srcY, width, height, destX, destY);
+  MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, destX, destY);
 }
 
 /// Actor id comes down: once it rests on the terrain (or after 30 frames) cue

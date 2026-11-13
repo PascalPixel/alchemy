@@ -272,7 +272,7 @@ void Func_02000844(void) {
     {
       s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
           height = opened->unk10, destX = opened->unk08, destY = opened->unk0A;
-      Func_0802b450(srcX, srcY, 3, height, destX, destY);
+      MapGrid_CopyCellPictureCellsRect(srcX, srcY, 3, height, destX, destY);
     }
     {
       s32 srcX = opened->unk04 + 3, srcY = opened->unk06,
@@ -288,7 +288,7 @@ void Func_02000844(void) {
     {
       s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
           height = opened->unk10, destX = opened->unk08, destY = opened->unk0A;
-      Func_0802b450(srcX, srcY, 3, height, destX, destY);
+      MapGrid_CopyCellPictureCellsRect(srcX, srcY, 3, height, destX, destY);
     }
     {
       s32 srcX = opened->unk04 + 3, srcY = opened->unk06,
@@ -531,8 +531,8 @@ void Func_02000f8c(void) {
 
 void Func_02001010(void) {
   Func_02002960_(62, 41, 1, 2, 33, 41);
-  Func_0802b450(125, 32, 3, 13, 96, 32);
-  Func_0802b450(61, 96, 3, 13, 32, 96);
+  MapGrid_CopyCellPictureCellsRect(125, 32, 3, 13, 96, 32);
+  MapGrid_CopyCellPictureCellsRect(61, 96, 3, 13, 32, 96);
   Actor_SetPartAttribute(Actor_GetById(12), 5);
   Func_02001f60(12);
   GameFlag_SetBit(0xa6b);
@@ -602,7 +602,7 @@ void Func_02001224(s32 unused, s32 id) {
   Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
   object->update = (void (*)(void))Func_02000b58;
   Func_020025a8(8);
-  Func_0802b450(64, 68, 5, 13, 14, 94);
+  MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
   Func_02002a20_(0x10000, 0);
@@ -895,8 +895,8 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Test(0xa6b)) {
       Call6(Map_CopyCellAttributeRect, 62, 41, 1, 2, 33, 41);
-      Func_0802b450(116, 95, 3, 13, 0x60, 0x20);
-      Call6(Func_0802b450, 122, 95, 3, 13, 0x20, 0x60);
+      MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 0x60, 0x20);
+      Call6(MapGrid_CopyCellPictureCellsRect, 122, 95, 3, 13, 0x20, 0x60);
       Func_02001f60(12);
     }
     Func_02000844();
@@ -949,7 +949,7 @@ s32 Scene_Initialize(void) {
         Actor_GetById(15)->update = Func_02001d98;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
-        Func_0802b450(0x40, 68, 5, 13, 14, 94);
+        MapGrid_CopyCellPictureCellsRect(0x40, 68, 5, 13, 14, 94);
         Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
       }
     }

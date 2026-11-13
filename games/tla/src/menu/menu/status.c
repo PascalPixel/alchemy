@@ -123,7 +123,7 @@ s32 StatusScreen_Run(void) {
   Text_UseExtraTilesFar(1);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   if (Party_SumDjinnCountsFar(result) != 0)
-    Func_081051a8();
+    DjinnFigures_InitializeTopRow();
   Link_DrawPageArrowsFar(0x06002500);
   Func_081053a8();
   Menu_CancelSoundReset();

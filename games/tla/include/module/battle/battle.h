@@ -336,8 +336,8 @@ void BattleParty_ListAllUnitsAndSubmit(void);
 
 s32 BattlePlayback_WaitForReady(void);
 
-void Func_0811ddd8(struct BattlePlan *plan,
-                   struct BattlePresentationWork *effect);
+void BattleStaging_BuildTargetList(struct BattlePlan *plan,
+                                   struct BattlePresentationWork *effect);
 
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned);
 

@@ -197,7 +197,7 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
-s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
+s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemColours *system;
@@ -480,8 +480,9 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     heightCopy;                                                                \
   })
 
-void Func_08022010(struct LayeredSprite *sprite, s32 screenX, s32 height,
-                   s32 screenY, s32 groundHeight, s32 *scale) {
+void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
+                                s32 height, s32 screenY, s32 groundHeight,
+                                s32 *scale) {
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = HEIGHT_COPY(sprite) >> 1;
   s32 marginX = 8;
@@ -555,7 +556,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
   py = *pos++;
   pz = *pos++;
   pw = *pos;
-  flip = Func_08021a84(object, mode);
+  flip = Sprite_ComposePicture(object, mode);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       object->rotation == 0) {
     affine = 0;
@@ -655,7 +656,7 @@ void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
   py = *pos++;
   pz = *pos++;
   pw = *pos;
-  flip = Func_08021a84(object, mode);
+  flip = Sprite_ComposePicture(object, mode);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       object->rotation == 0) {
     affine = 0;
@@ -745,7 +746,7 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
       if (sprite->useOwnScale)
         z = 0x10000;
       z = Iwram_MulQ16(z, sprite->scale);
-      flip = Func_08021a84(sprite, facing);
+      flip = Sprite_ComposePicture(sprite, facing);
       z >>= 10;
       rounded = ((z + 1) >> 1) << 11;
       scaleX = Iwram_MulQ16(rounded, scale[0]);

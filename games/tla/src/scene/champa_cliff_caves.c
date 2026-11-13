@@ -34,7 +34,7 @@ void Actor_SetDestinationOffsetById(s32 id, s32 dx, s32 dz);
 
 void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void MapGrid_CopyCellPictureCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003474(s32 a, s32 b, s32 c);
 void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
 void Func_02003624(struct Actor *object, struct Actor *target);
@@ -233,7 +233,7 @@ void Func_0200038c(s32 actor) {
 }
 
 void Func_020003bc(void) {
-  Func_0802b450(41, 97, 1, 4, 41, 77);
+  MapGrid_CopyCellPictureCellsRect(41, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(41, 33, 1, 4, 41, 13);
 }
 
@@ -242,7 +242,7 @@ void Func_020003ec(void) {
   s32 x;
   s32 z;
 
-  Func_0802b450(50, 97, 1, 4, 41, 77);
+  MapGrid_CopyCellPictureCellsRect(50, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(46, 33, 1, 4, 41, 13);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   x = object->x >> 20;

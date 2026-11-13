@@ -138,10 +138,10 @@ Map_GetTerrainHeight:
 	.thumb_func
 Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
-	.global Func_0802b450
+	.global MapGrid_CopyCellPictureCellsRect
 	.thumb_func
-Func_0802b450:
-	overlay_veneer Func_080201f0
+MapGrid_CopyCellPictureCellsRect:
+	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:

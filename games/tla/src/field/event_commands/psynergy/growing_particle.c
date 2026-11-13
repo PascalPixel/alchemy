@@ -83,12 +83,12 @@ void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(growing_particle): routine Func_080ce458 as struct PendingEvent
- * *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct
- * TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
-extern struct PendingEvent *
-Func_080ce458__growing_particle(u32 filter, s32 kind,
-                                s32 selector) __asm__("Func_080ce458");
+/* VIEW(growing_particle): routine Scene_FindPsynergyTrigger as struct
+ * PendingEvent *Scene_FindPsynergyTrigger(u32 filter, s32 kind, s32 selector);
+ * battle.h has struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32
+ * kind, s32 selector). */
+extern struct PendingEvent *Func_080ce458__growing_particle(
+    u32 filter, s32 kind, s32 selector) __asm__("Scene_FindPsynergyTrigger");
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument);
 
 void FieldPsynergy_EndSand(void) {

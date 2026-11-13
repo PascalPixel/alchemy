@@ -69,7 +69,8 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
       s32 dz = cellZ - top;
       s32 n;
 
-      Func_080201f0(toX + dx, toZ + dz, 1, 1, x + dx, z + dz);
+      MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
+                                          z + dz);
       Func_080dbb78(cx << 20, cz << 20, 2)->unk02 = 0;
       n = gData_02001000__f0e2774.count;
       if (n < 64) {

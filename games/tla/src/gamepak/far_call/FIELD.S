@@ -10,10 +10,10 @@ Resource_FarCall003:
 	export Func_08020020, Func_0802254c
 	export InitializeAnimationObjectsFar, InitializeAnimationObjects
 	export Animation_ApplyChildArgumentFar, Animation_ApplyChildArgument
-	export Func_08020038, Func_08022b80
+	export Sprite_SetAnimationTimersFar, Sprite_SetAnimationTimers
 	export ResourceObject_CreateFar, ResourceObject_Create
 	export ResourceObject_ReleaseFar, ResourceObject_Release
-	export Func_08020050, Func_08022010
+	export Render_PlaceSpritePartPairFar, Render_PlaceSpritePartPair
 	export ResourceMetadata_RegisterFar, ResourceMetadata_Register
 	export Sprite_RemoveAnimationFar, Sprite_RemoveAnimation
 	export Sprite_RemoveAnimationAtFar, Sprite_RemoveAnimationAt
@@ -38,7 +38,7 @@ Resource_FarCall003:
 	export SpriteDissolve_RunManyFar, SpriteDissolve_RunMany
 	export MapGrid_LoadMapFar, MapGrid_LoadMap
 	export WorldMap_InitializePerspectiveFar, WorldMap_InitializePerspective
-	export Func_08020118, Func_0802af9c
+	export MapGrid_SetCameraCenterFar, MapGrid_SetCameraCenter
 	export Map_CenterOnFollowedPointFar, Map_CenterOnFollowedPoint
 	export Map_UpdateCurrentTileBlockFar, Map_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
@@ -65,7 +65,7 @@ Resource_FarCall003:
 	export Func_080201d8, Func_0802d530
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
-	export Func_080201f0, Func_0802b450
+	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
 	export Func_080201f8, Func_0802b590
 	export Map_SetWindowCellTileFar, Map_SetWindowCellTile
 	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw

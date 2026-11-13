@@ -86,7 +86,7 @@ void Scene_QueueMusic(s32 soundId) {
 
 void Event_NoOp(void) {}
 
-void Func_080d2c9c(void) {
+void Scene_PlayQueuedMusic(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   if (work != 0) {

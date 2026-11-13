@@ -1309,8 +1309,9 @@ void Func_020023e8(void) {
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
   /* FAKEMATCH(wrapper): CopyCells forwarded inline; as direct calls to
-   * Func_0802b450, 12 of 70 instructions differ in tla-en. */
-  Func_0802b450(srcX, srcZ, width, height, destX, destZ);
+   * MapGrid_CopyCellPictureCellsRect, 12 of 70 instructions differ in tla-en.
+   */
+  MapGrid_CopyCellPictureCellsRect(srcX, srcZ, width, height, destX, destZ);
 }
 
 void Func_020024ac(void) {

@@ -20,7 +20,7 @@ void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
 s32 Field_GetSceneAttributes(s32 scene);
 s32 PartyInventory_GiveItem(s32 item);
 void Func_080d5720(void);
-void Func_080d57e4(void);
+void Field_ClimbDown(void);
 void Func_080d59dc(void);
 void Func_080d5aa0(void);
 
@@ -85,11 +85,11 @@ s32 FieldSequence_Run(void) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.unk244[0] = 1;
     mode = 3;
-    Func_080c9e48(0);
+    Encounter_SelectMapZones(0);
   } else {
     MapGrid_LoadMapFar(gMainRoutineWork.map);
     mode = 2;
-    Func_080c9e48(1);
+    Encounter_SelectMapZones(1);
   }
   work->eventMode = mode;
   if (!GameFlag_Test(265))
@@ -102,7 +102,7 @@ s32 FieldSequence_Run(void) {
   work->events = (const void *)OVERLAY_CALL(9);
   BattleMap_ApplySceneEntranceView();
   Func_080caa4c(OVERLAY_CALL(7));
-  Func_080cec34();
+  Field_PlaceTreasureSpots();
   if (GameFlag_Test(265))
     ObjectTable_Restore();
   if (gMainRoutineWork.pendingDjinnEvent != 0)
@@ -223,7 +223,7 @@ s32 FieldSequence_Run(void) {
       gMainRoutineWork.pendingDjinnEvent = 0;
     }
     if (gMainRoutineWork.tally25c != 0) {
-      Func_080cb82c();
+      WorldMap_Freeze();
       if (Party_CheckItemLimit(gMainRoutineWork.tally25c) == 0) {
         // UB: called with a second argument (0) its definition does not take.
 #ifdef UBFIX
@@ -245,7 +245,7 @@ s32 FieldSequence_Run(void) {
   turn = &gMainRoutineWork.turn;
   for (;;) {
     GameFlag_SetBit(260);
-    leader = Func_080cb8e8();
+    leader = WorldMap_Unfreeze();
     Actor_ResetMotion(leader);
     party->x = leader->x;
     party->y = 0;
@@ -262,7 +262,7 @@ s32 FieldSequence_Run(void) {
         work->busy = 1;
         if (work->raisedEvent == -1) {
           Leader_StopMoving();
-          Func_080cb82c();
+          WorldMap_Freeze();
           for (value = 0; value < work->fallenCount; value++) {
             Actor_SetMode(leader, 22);
             MessageArgument_PushFar(work->fallenOwners[value], 1);
@@ -316,7 +316,7 @@ s32 FieldSequence_Run(void) {
           }
         } else if (work->raisedEvent == -0x37a) {
           if (work->keys == gInput.held) {
-            Func_080d57e4();
+            Field_ClimbDown();
             work->menu = 0;
             work->start = 0;
             work->examine = 0;
@@ -391,7 +391,7 @@ s32 FieldSequence_Run(void) {
         AreaNameWindow_HideFar();
         Leader_StopMoving();
         Sound_PlayFar(111);
-        Func_080cb82c();
+        WorldMap_Freeze();
         GameFlag_SetBit(262);
         if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
             ((*(volatile u32 *)&gInput.held & 4) != 0)) {
@@ -409,12 +409,12 @@ s32 FieldSequence_Run(void) {
         GameFlag_RefreshLureCapFar();
         work->menu = 0;
       } else if (work->talk != 0) {
-        Func_080cb82c();
+        WorldMap_Freeze();
         Scene_TalkToActor(work->talk & 0x3fff);
         Func_080cb8a4();
         work->talk = 0;
       } else if (work->searchCell != 0) {
-        Func_080cb82c();
+        WorldMap_Freeze();
         Func_080cd808(work->searchCell);
         Func_080cb8a4();
         work->searchCell = 0;
@@ -422,7 +422,7 @@ s32 FieldSequence_Run(void) {
         packed = work->psynergy & 0x2000;
         AreaNameWindow_HideFar();
         if (packed == 0) {
-          Func_080cb82c();
+          WorldMap_Freeze();
           if (TLA_PATCH_1)
             wait(1);
         }
@@ -431,14 +431,14 @@ s32 FieldSequence_Run(void) {
           Func_080cb8a4();
         work->psynergy = 0;
       } else if (work->item != 0) {
-        Func_080cb82c();
+        WorldMap_Freeze();
         Field_UseItem(work->item, work->itemArgument);
         Func_080cb8a4();
         work->item = 0;
       } else if (work->start != 0) {
         Sound_PlayFar(111);
         Leader_StopMoving();
-        Func_080cb82c();
+        WorldMap_Freeze();
         GameFlag_SetBit(262);
         if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
           DebugSceneSelect_RunFar();
@@ -476,12 +476,12 @@ s32 FieldSequence_Run(void) {
       }
     }
     GameFlag_ClearBit(260);
-    if (Func_080cb8e8() != NULL)
+    if (WorldMap_Unfreeze() != NULL)
       Func_080200b0();
     pending = &gMainRoutineWork.pendingThird;
     do {
       wait(1);
-      leader = Func_080cb8e8();
+      leader = WorldMap_Unfreeze();
       if (gDebugMode == 0 || !GameFlag_Test(355)) {
         // unk66 read signed (ldrsh), as its other readers read it; as
         // leader->unk66 == 0, 39 of 1300 instructions differ in tla-en.
@@ -525,7 +525,7 @@ s32 Actor_GetTriggerTileAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = Func_080cb8e8();
+  leader = WorldMap_Unfreeze();
   workBytes = Ram_HeapSlots->eventWork;
   mapBytes = (u8 *)Ram_HeapSlots->mapWork;
   if (leader != 0) {
@@ -560,7 +560,7 @@ s32 Actor_GetTriggerTileAheadOfCurrent(void) {
           terrainHeight <= leader->pos.y + 0x100000) {
         result = collisionCode;
       }
-    } else if (Func_080ccd78(3, collisionCode) != 0) {
+    } else if (Scene_FindTrigger(3, collisionCode) != 0) {
       result = collisionCode;
     }
     if (result == 0 && (s8)workBytes[0x18a] == 3) {

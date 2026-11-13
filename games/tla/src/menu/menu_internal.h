@@ -315,7 +315,7 @@ s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
 void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode);
 s32 Ability_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 s32 Ability_PlayUseAnimation(s32 action);
-void Func_081051a8(void);
+void DjinnFigures_InitializeTopRow(void);
 void MenuIcon_ReleaseObjects(void);
 void Menu_ResetTwoResourceEntries(void);
 extern u8 gMenu_BackdropBorderTile[];

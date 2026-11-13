@@ -214,7 +214,7 @@ struct TalkEvent {
   s32 script;
 };
 
-/// A scene event as the event finder (Func_080ccd78) returns it.
+/// A scene event as the event finder (Scene_FindTrigger) returns it.
 struct TouchEvent {
   s32 flags;
   u8 target;

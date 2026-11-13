@@ -429,7 +429,7 @@ Event_WaitTransitionFrames:
 	.global Func_02004da8
 	.thumb_func
 Func_02004da8:
-	overlay_veneer Func_080c8430
+	overlay_veneer WorldMap_FreezeFar
 	.global Func_02004db0
 	.thumb_func
 Func_02004db0:

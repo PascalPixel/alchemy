@@ -68,7 +68,8 @@ void FieldPsynergy_Hover(void) {
   s32 i;
   s32 n;
 
-  pending = Func_080ce458(0x50000005, scene->kind, Func_080ce31c(scene->kind));
+  pending = Scene_FindPsynergyTrigger(0x50000005, scene->kind,
+                                      Func_080ce31c(scene->kind));
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
   slot = Resource_FindFreeEntry();
   tile = VramCache_Load(slot, 0x800, work);

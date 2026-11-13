@@ -77,7 +77,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 
 void MessageArgument_Push(u32 value, u32 kind);
 
-void Func_08043b70(void);
+void FileList_PlacePartySprites(void);
 
 extern const u8 gResource_FixedBlockBTiles[];
 

@@ -66,11 +66,13 @@ extern char ResourceId_WaterSplash;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(f0e92b4): routine Func_080ce458 as struct PendingEvent__f0e92b4
- * *Func_080ce458(u32 kind, s32 entry, s32 arg); f0e5d5c has void
- * *Func_080ce458(u32 kind, s32 entry, s32 arg). */
+/* VIEW(f0e92b4): routine Scene_FindPsynergyTrigger as struct
+ * PendingEvent__f0e92b4 *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
+ * arg); f0e5d5c has void *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
+ * arg). */
 extern struct PendingEvent__f0e92b4 *
-Func_080ce458__f0e92b4(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
+Func_080ce458__f0e92b4(u32 kind, s32 entry,
+                       s32 arg) __asm__("Scene_FindPsynergyTrigger");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_08020330(struct Actor *object);
 void FieldPsynergy_FadeToCastColor(void);

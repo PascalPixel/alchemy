@@ -50,7 +50,7 @@ s32 Func_080c9e1c(s32 flag) {
   return 1;
 }
 
-void Func_080c9e48(s32 search) {
+void Encounter_SelectMapZones(s32 search) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;

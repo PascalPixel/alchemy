@@ -247,7 +247,7 @@ s32 Scene_Initialize(void) {
       C1(GameFlag_SetBit, 0x144);
       if (Test(0x927)) {
         C2(Actor_SetModeById, 8, 4);
-        C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
       }
@@ -330,7 +330,7 @@ s32 Scene_Initialize(void) {
         C2(Animation_ApplyChildValues, partner, 6);
         width = 30;
         height = 19;
-        C6(Func_0802b450, 85, 76, 5, 2, width, height);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 76, 5, 2, width, height);
         C1(Sound_Play, 572);
         C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
         C1(PaletteFade_StartInterpolation, 10);
@@ -341,7 +341,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 60);
         C2(Animation_ApplyChildValues, dragon, 0);
         C2(Animation_ApplyChildValues, partner, 0);
-        C6(Func_0802b450, 85, 74, 5, 2, width, height);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 74, 5, 2, width, height);
         dragon->movementState = 0;
         partner->movementState = 0;
         C2(Actor_SetAnimationSpeed, dragon, 16);
@@ -536,7 +536,7 @@ s32 Scene_Initialize(void) {
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
-      C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+      C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
       dragon->y = -0x200000;
       dragon->velocityY = 0;
       dragon->speedLimit = slow;
@@ -741,7 +741,7 @@ s32 Scene_Initialize(void) {
       C6(Map_CopyCellAttributeRect, 32, 16, 2, 1, 37, height);
     }
     if (Test(0x9bf)) {
-      C6(Func_0802b450, 61, 0, 3, 3, 37, 26);
+      C6(MapGrid_CopyCellPictureCellsRect, 61, 0, 3, 3, 37, 26);
       C6(Map_CopyCellAttributeRect, 36, 23, 1, 1, 38, 25);
     }
     if (work->entrance == 6) {
@@ -808,8 +808,8 @@ s32 Scene_Initialize(void) {
     if (Test(0x9c4)) {
       s32 height = 20;
 
-      C6(Func_0802b450, 117, 20, 7, 8, 104, height);
-      C6(Func_0802b450, 111, 12, 1, 6, 111, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 117, 20, 7, 8, 104, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 111, 12, 1, 6, 111, height);
       C6(Map_CopyCellAttributeRect, 49, 84, 8, 8, 40, 84);
       C3(Actor_SetHorizontalPositionWithTerrain, 15, 0, 0);
     }
@@ -959,7 +959,7 @@ s32 Scene_Initialize(void) {
       C1(GameFlag_SetBit, 0x144);
       if (Test(0x927)) {
         C2(Actor_SetModeById, 8, 4);
-        C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
       }
@@ -1042,7 +1042,7 @@ s32 Scene_Initialize(void) {
         C2(Animation_ApplyChildValues, partner, 6);
         width = 30;
         height = 19;
-        C6(Func_0802b450, 85, 76, 5, 2, width, height);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 76, 5, 2, width, height);
         C1(Sound_Play, 572);
         C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
         C1(PaletteFade_StartInterpolation, 10);
@@ -1053,7 +1053,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 60);
         C2(Animation_ApplyChildValues, dragon, 0);
         C2(Animation_ApplyChildValues, partner, 0);
-        C6(Func_0802b450, 85, 74, 5, 2, width, height);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 74, 5, 2, width, height);
         dragon->movementState = 0;
         partner->movementState = 0;
         C2(Actor_SetAnimationSpeed, dragon, 16);
@@ -1248,7 +1248,7 @@ s32 Scene_Initialize(void) {
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
-      C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+      C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
       dragon->y = -0x200000;
       dragon->velocityY = 0;
       dragon->speedLimit = slow;
@@ -1454,7 +1454,7 @@ s32 Scene_Initialize(void) {
       C6(Map_CopyCellAttributeRect, 32, 16, 2, 1, 37, height);
     }
     if (Test(0x9bf)) {
-      C6(Func_0802b450, 61, 0, 3, 3, 37, 26);
+      C6(MapGrid_CopyCellPictureCellsRect, 61, 0, 3, 3, 37, 26);
       C6(Map_CopyCellAttributeRect, 36, 23, 1, 1, 38, 25);
     }
     if (work->entrance == 6) {
@@ -1519,8 +1519,8 @@ s32 Scene_Initialize(void) {
     if (Test(0x9c4)) {
       s32 height = 20;
 
-      C6(Func_0802b450, 117, 20, 7, 8, 104, height);
-      C6(Func_0802b450, 111, 12, 1, 6, 111, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 117, 20, 7, 8, 104, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 111, 12, 1, 6, 111, height);
       C6(Map_CopyCellAttributeRect, 49, 84, 8, 8, 40, 84);
       C3(Actor_SetHorizontalPositionWithTerrain, 15, 0, 0);
     }

@@ -105,7 +105,7 @@ GameFlag_ClearBit:
 	.global Func_0200561c
 	.thumb_func
 Func_0200561c:
-	overlay_veneer Func_08020038
+	overlay_veneer Sprite_SetAnimationTimersFar
 	.global Func_02005624
 	.thumb_func
 Func_02005624:
@@ -150,10 +150,10 @@ Map_CopyCellsRect:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_0802b450
+	.global MapGrid_CopyCellPictureCellsRect
 	.thumb_func
-Func_0802b450:
-	overlay_veneer Func_080201f0
+MapGrid_CopyCellPictureCellsRect:
+	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
 	.global Func_02005684
 	.thumb_func
 Func_02005684:

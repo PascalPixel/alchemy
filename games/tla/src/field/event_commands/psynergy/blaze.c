@@ -251,12 +251,12 @@ void FieldPsynergy_Blaze(void) {
   for (k = 0; k < 80; k++) {
     wait(1);
     if (work->hit != 0) {
-      pending = Func_080ce458(0x60000005, scene->fieldKind,
-                              (s16)(work->hitObject | 0x100));
+      pending = Scene_FindPsynergyTrigger(0x60000005, scene->fieldKind,
+                                          (s16)(work->hitObject | 0x100));
       if (pending != NULL)
         Field_RunPsynergyEvent(pending, scene->firstObjectId, work->hitObject);
-      if (Func_080ce458(0x20000005, scene->fieldKind,
-                        (s16)(work->hitObject | 0x100)) != NULL) {
+      if (Scene_FindPsynergyTrigger(0x20000005, scene->fieldKind,
+                                    (s16)(work->hitObject | 0x100)) != NULL) {
         event->unkd30 = work->hitObject;
         break;
       }

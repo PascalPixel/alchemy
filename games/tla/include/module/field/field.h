@@ -944,7 +944,7 @@ s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position);
 
 u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 
-void Func_080cb82c(void);
+void WorldMap_Freeze(void);
 void Func_080cb8a4(void);
 
 void Event_NoOp(void);
@@ -987,7 +987,7 @@ void ObjectTable_Clear(void);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 scaled);
 s32 Party_ApplyPoisonDamage(void);
-void *Func_080cb8e8(void);
+void *WorldMap_Unfreeze(void);
 
 s32 Actor_GetTriggerTileAheadOfCurrent(void);
 u32 Stream_ReadU16(u8 **cursor);
@@ -996,7 +996,7 @@ void BattleMap_ApplySceneEntranceView(void);
 
 void Debug_RunPaletteEditor(void);
 
-struct TriggerView *Func_080ccd78(s32 kind, s32 target);
+struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
 s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedEvent(s32 id);
 s32 Scene_RunTouchOrExit(s32 value);
@@ -1009,7 +1009,7 @@ void Func_080cdd80(void);
 s32 Field_UsePsynergy(u32 code);
 
 s16 *Func_080ceba8(void);
-void Func_080cec34(void);
+void Field_PlaceTreasureSpots(void);
 s32 Actor_GetSpriteShape(u32 objectId);
 void ObjectEvent_SetMode5WithCue(u32 objectId);
 void ObjectEvent_Spring(u32 objectId);
@@ -1187,7 +1187,7 @@ extern const s16 Data_080f0b50[];
 
 void Actor_UpdateAllMotion(void);
 
-void Func_08023f9c(void);
+void Actor_UpdateAllThumb(void);
 void Func_080246b8(void);
 
 void ActorSystem_PlaceSprites(void);
@@ -1225,7 +1225,7 @@ void MapGrid_UpdateLayerScroll(void);
 void WorldMap_UpdateView(void);
 void WorldMap_ApplyAffinePage(void);
 
-void Func_0802af9c(s32 x, s32 y);
+void MapGrid_SetCameraCenter(s32 x, s32 y);
 u32 Map_ReadEditU16(u8 **cursor);
 void Map_ApplyFlagEdits(s32 flag, s32 attributes);
 

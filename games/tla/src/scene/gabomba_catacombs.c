@@ -173,12 +173,12 @@ void Func_02000608(void) {
 }
 
 void Func_0200066c(void) {
-  Func_0802b450(0, 0, 1, 2, 7, 11);
+  MapGrid_CopyCellPictureCellsRect(0, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 4, 1, 1, 7, 14);
 }
 
 void Func_0200069c(void) {
-  Func_0802b450(1, 0, 1, 2, 7, 11);
+  MapGrid_CopyCellPictureCellsRect(1, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 5, 1, 1, 7, 14);
 }
 

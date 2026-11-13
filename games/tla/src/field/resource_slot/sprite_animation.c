@@ -403,7 +403,7 @@ struct ChildGroup {
   struct ChildObject *children[1];
 };
 
-s32 Func_08022b80(struct ChildGroup *group, s32 value) {
+s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
   s32 i;
 
   for (i = 0; i < group->count; i++) {

@@ -81,7 +81,7 @@ s32 Field_UsePsynergy(u32 code) {
   }
 
   selector = Func_080ce31c(group);
-  pending = Func_080ce458(0x80000005, group, selector);
+  pending = Scene_FindPsynergyTrigger(0x80000005, group, selector);
   if (pending != NULL) {
     target = -1;
     if (selector != -1 && (selector & 0x100))
@@ -92,9 +92,9 @@ s32 Field_UsePsynergy(u32 code) {
     return Event_ExecutePackedAction(code);
 
   selector = Func_080ce31c(group);
-  before = Func_080ce458(0x10000005, group, selector);
-  after = Func_080ce458(5, group, selector);
-  during = Func_080ce458(0x50000005, group, selector);
+  before = Scene_FindPsynergyTrigger(0x10000005, group, selector);
+  after = Scene_FindPsynergyTrigger(5, group, selector);
+  during = Scene_FindPsynergyTrigger(0x50000005, group, selector);
   if (abilityId == 156 && gMainRoutineWork.scene != (s32)&SceneId_WorldMap &&
       before == NULL && after == NULL && during == NULL) {
     FIELD_PSYNERGY_MESSAGE(userId, 156, MsgKey0dbd);
@@ -168,7 +168,7 @@ s32 Field_UsePsynergy(u32 code) {
   hit = ((s8 *)event)[0xd30];
   if (hit != -1) {
     selector = hit | 0x100;
-    pending = Func_080ce458(0x20000005, group, selector);
+    pending = Scene_FindPsynergyTrigger(0x20000005, group, selector);
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, userId, ((s8 *)event)[0xd30]);
   }
@@ -205,7 +205,8 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
 
 s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
   u16 kind = effectId;
-  s32 result = (s32)Func_080ce458(0xf0000005, kind, Func_080ce31c(kind));
+  s32 result =
+      (s32)Scene_FindPsynergyTrigger(0xf0000005, kind, Func_080ce31c(kind));
 
   return (u32)((-result) | result) >> 31;
 }

@@ -323,9 +323,9 @@ void Func_020006c8(s32 state) {
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
 }
 
-/// Calls Func_0802b450 with (0, 125, 3, 3) for four places, steps
-/// gData_02003a7e through 12 and 8 to 0, then calls it with (0, 122, 3, 3) for
-/// the same places.
+/// Calls MapGrid_CopyCellPictureCellsRect with (0, 125, 3, 3) for four places,
+/// steps gData_02003a7e through 12 and 8 to 0, then calls it with (0, 122, 3,
+/// 3) for the same places.
 void Func_0200080c(void) {
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);

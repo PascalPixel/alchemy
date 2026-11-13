@@ -49,11 +49,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_020000ac(void) {
   Map_CopyCellAttributeRect(69, 70, 10, 12, 24, 7);
-  Func_0802b450(69, 70, 10, 12, 24, 7);
+  MapGrid_CopyCellPictureCellsRect(69, 70, 10, 12, 24, 7);
   Map_CopyCellAttributeRect(79, 70, 10, 12, 88, 7);
-  Func_0802b450(79, 70, 10, 12, 88, 7);
+  MapGrid_CopyCellPictureCellsRect(79, 70, 10, 12, 88, 7);
   Map_CopyCellAttributeRect(69, 82, 10, 12, 24, 71);
-  Func_0802b450(69, 82, 10, 12, 24, 71);
+  MapGrid_CopyCellPictureCellsRect(69, 82, 10, 12, 24, 71);
 }
 
 void Func_0200012c(s32 actor) {

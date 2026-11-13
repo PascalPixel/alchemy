@@ -198,7 +198,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
     else if (element == 3)
       Djinn_RunJupiterJoinEffect(actor);
   }
-  Func_080cb82c();
+  WorldMap_Freeze();
   Djinn_ShowJoinedMessageFar(owner, element, djinni);
   Func_080cb8a4();
 #if TLA_PATCH_1

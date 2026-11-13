@@ -142,7 +142,8 @@ s32 Map_SetFlagAndApplyAttributeEditsFar(s32, s32, s32);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 s32 Func_080ce31c(s32 kind);
 struct TriggerEvent;
-struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector);
+struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
+                                               s32 selector);
 void FieldPsynergy_Cyclone(void);
 void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
 void Func_0818f620(struct BattleEffectArgument *effect, u32 mode);

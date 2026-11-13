@@ -4317,12 +4317,12 @@
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
       if (phase == 3)                                                          \
-        Func_0802b450(0, 120, 1, 2, n1, phase);                                \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n1, phase);             \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, n2, 3);                           \
       MapGrid_CopyCellAttributes(n3, 127, 1, 1, n1, 8);                        \
     } else {                                                                   \
       if (phase == 3)                                                          \
-        Func_0802b450(0, 120, 1, 2, n4, phase);                                \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n4, phase);             \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, n5, 3);                           \
       MapGrid_CopyCellAttributes(n6, 127, 1, 1, n4, 8);                        \
     }                                                                          \

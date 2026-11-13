@@ -563,7 +563,7 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   return window;
 }
 
-void Func_080f89a4(void) {
+void Menu_PlacePartyFigures(void) {
   struct OwnerMenuState *menu =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
   struct SpriteScale scale;
@@ -664,11 +664,13 @@ void MenuCursor_Slide(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 width);
+void PsynergyMenu_RefreshMemberEntries(s32 x, s32 y, s32 width);
 
-void Func_080f8bbc(void) { PsynergyMenu_RefreshOwnerEntries(108, 40, 8); }
+void PsynergyMenu_RefreshMemberEntriesDefault(void) {
+  PsynergyMenu_RefreshMemberEntries(108, 40, 8);
+}
 
-void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   s32 index;

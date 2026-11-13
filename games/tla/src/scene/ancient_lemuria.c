@@ -328,8 +328,8 @@ s32 Scene_PrepareMap(void) {
   else if (entrance == 5)
     GameFlag_SetBit(0x960);
   if (GameFlag_Test(0x960)) {
-    Func_0802b450(38, 47, 26, 12, 8, 47);
-    Func_0802b450(102, 47, 26, 12, 72, 47);
+    MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
+    MapGrid_CopyCellPictureCellsRect(102, 47, 26, 12, 72, 47);
     Map_CopyCellAttributeRect(38, 47, 26, 12, 8, 47);
   }
   return 0;

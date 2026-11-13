@@ -78,10 +78,10 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_0802b450
+	.global MapGrid_CopyCellPictureCellsRect
 	.thumb_func
-Func_0802b450:
-	overlay_veneer Func_080201f0
+MapGrid_CopyCellPictureCellsRect:
+	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:

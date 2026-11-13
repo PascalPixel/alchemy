@@ -54,45 +54,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gTrialRoad_Placements as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA struct
- * ActorPlacement gTrialRoad_Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:96: `gTrialRoad_Placements' undeclared
- * (first use in this function). */
-extern const u8 gTrialRoad_Placements__first[] __asm__("gTrialRoad_Placements");
-#define gTrialRoad_Placements gTrialRoad_Placements__first
-/* VIEW(first): routine gTrialRoad_Room3Placements as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA struct
- * ActorPlacement gTrialRoad_Room3Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:90: `gTrialRoad_Room3Placements' undeclared
- * (first use in this function). */
-extern const u8
-    gTrialRoad_Room3Placements__first[] __asm__("gTrialRoad_Room3Placements");
-#define gTrialRoad_Room3Placements gTrialRoad_Room3Placements__first
-/* VIEW(first): routine gTrialRoad_Room4Placements as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA struct
- * ActorPlacement gTrialRoad_Room4Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:92: `gTrialRoad_Room4Placements' undeclared
- * (first use in this function). */
-extern const u8
-    gTrialRoad_Room4Placements__first[] __asm__("gTrialRoad_Room4Placements");
-#define gTrialRoad_Room4Placements gTrialRoad_Room4Placements__first
-/* VIEW(first): routine gTrialRoad_Room2Placements as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA struct
- * ActorPlacement gTrialRoad_Room2Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:94: `gTrialRoad_Room2Placements' undeclared
- * (first use in this function). */
-extern const u8
-    gTrialRoad_Room2Placements__first[] __asm__("gTrialRoad_Room2Placements");
-#define gTrialRoad_Room2Placements gTrialRoad_Room2Placements__first
-/* VIEW(first): routine gTrialRoad_Room1Placements as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA s32
- * gTrialRoad_Room1Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:88: `gTrialRoad_Room1Placements' undeclared
- * (first use in this function). */
-extern const u8 *const
-    gTrialRoad_Room1Placements__first[] __asm__("gTrialRoad_Room1Placements");
-#define gTrialRoad_Room1Placements gTrialRoad_Room1Placements__first
+extern struct ActorPlacement gTrialRoad_Placements[];
+extern struct ActorPlacement gTrialRoad_Room3Placements[];
+extern struct ActorPlacement gTrialRoad_Room4Placements[];
+extern struct ActorPlacement gTrialRoad_Room2Placements[];
+extern s32 gTrialRoad_Room1Placements[];
 
 s32 TrialRoad_SettleOnGround(struct Actor *object) {
   s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
@@ -1211,11 +1177,6 @@ void TrialRoad_RevealVine(void) {
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
 #undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
-#undef gTrialRoad_Placements
-#undef gTrialRoad_Room3Placements
-#undef gTrialRoad_Room4Placements
-#undef gTrialRoad_Room2Placements
-#undef gTrialRoad_Room1Placements
 #undef gTrialRoad_PoundPartners
 // @file
 // Trial Road's effect spawner and the sand stage's stream.
@@ -1403,45 +1364,11 @@ void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   }
 }
 
-/* VIEW(s15a8): routine gTrialRoad_Triggers as this part declared it; the joined
- * file has another; tried as the definition's extern LAST_DATA struct Trigger
- * gTrialRoad_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:1410: `gTrialRoad_Triggers' undeclared
- * (first use in this function). */
-extern const u8 gTrialRoad_Triggers__s15a8[] __asm__("gTrialRoad_Triggers");
-#define gTrialRoad_Triggers gTrialRoad_Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room3Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA struct
- * Trigger gTrialRoad_Room3Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:1404: `gTrialRoad_Room3Triggers' undeclared
- * (first use in this function). */
-extern const u8
-    gTrialRoad_Room3Triggers__s15a8[] __asm__("gTrialRoad_Room3Triggers");
-#define gTrialRoad_Room3Triggers gTrialRoad_Room3Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room4Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA struct
- * Trigger gTrialRoad_Room4Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:1406: `gTrialRoad_Room4Triggers' undeclared
- * (first use in this function). */
-extern const u8
-    gTrialRoad_Room4Triggers__s15a8[] __asm__("gTrialRoad_Room4Triggers");
-#define gTrialRoad_Room4Triggers gTrialRoad_Room4Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room2Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA struct
- * Trigger gTrialRoad_Room2Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:1408: `gTrialRoad_Room2Triggers' undeclared
- * (first use in this function). */
-extern const u8
-    gTrialRoad_Room2Triggers__s15a8[] __asm__("gTrialRoad_Room2Triggers");
-#define gTrialRoad_Room2Triggers gTrialRoad_Room2Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room1Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA s32
- * gTrialRoad_Room1Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:1402: `gTrialRoad_Room1Triggers' undeclared
- * (first use in this function). */
-extern const u8 *const
-    gTrialRoad_Room1Triggers__s15a8[] __asm__("gTrialRoad_Room1Triggers");
-#define gTrialRoad_Room1Triggers gTrialRoad_Room1Triggers__s15a8
+extern struct Trigger gTrialRoad_Triggers[];
+extern struct Trigger gTrialRoad_Room3Triggers[];
+extern struct Trigger gTrialRoad_Room4Triggers[];
+extern struct Trigger gTrialRoad_Room2Triggers[];
+extern s32 gTrialRoad_Room1Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s32 pattern = gTrialRoadState->pattern;
@@ -3289,13 +3216,7 @@ void TrialRoad_SetLeaderCellShape(s32 a, s32 b) {
   TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_HexDigits as this part declared it; the
- * joined file has another; tried as the definition's extern LAST_DATA u32
- * gTrialRoad_HexDigits[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:3244: `gTrialRoad_HexDigits' undeclared
- * (first use in this function). */
-extern const u8 gTrialRoad_HexDigits__s15a8[] __asm__("gTrialRoad_HexDigits");
-#define gTrialRoad_HexDigits gTrialRoad_HexDigits__s15a8
+extern u32 gTrialRoad_HexDigits[];
 
 // Writes value as eight hexadecimal digits and a terminating null.
 UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
@@ -3866,14 +3787,8 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef FIELD_AT
 #undef SET_LAYER
 #undef MARKER
-#undef gTrialRoad_Triggers
-#undef gTrialRoad_Room3Triggers
-#undef gTrialRoad_Room4Triggers
-#undef gTrialRoad_Room2Triggers
-#undef gTrialRoad_Room1Triggers
 #undef gTrialRoad_PaletteCycleRunning
 #undef gTrialRoad_PaletteCycleFrame
-#undef gTrialRoad_HexDigits
 
 // clang-format off
 LATE_DATA s32 gTrialRoad_RubbleScript[] = {

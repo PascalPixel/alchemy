@@ -1783,8 +1783,13 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
-  // the lift goes as a third argument, as the bytes show: the cast keeps it
+  // UB: the lift's layer is passed as a third argument to a routine that
+  // takes two; UBFIX passes the two.
+#ifdef UBFIX
+  MercuryLighthouseAerie_FindLiftRiders(ids, lift->offsetY);
+#else
   ((void (*)())MercuryLighthouseAerie_FindLiftRiders)(ids, lift->offsetY, lift);
+#endif
   for (i = 0; i <= 4; i++) {
     if (ids[i] == 66)
       break;

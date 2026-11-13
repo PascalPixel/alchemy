@@ -852,7 +852,7 @@ s32 TreeRooms_EnterRoom(void) {
   struct FieldWork *work;
   s32 entrance;
   s32 leaderActorId;
-  struct Actor *tretSpeaker;
+  struct Actor *secondTret;
 
   tret = Actor_Get(ACTOR_TRET);
   // Point the cocoon latch at the scene state and save the palette first.
@@ -860,10 +860,10 @@ s32 TreeRooms_EnterRoom(void) {
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -px(10);
-  tretSpeaker = Actor_Get(ACTOR_SECOND_TRET);
+  secondTret = Actor_Get(ACTOR_SECOND_TRET);
 
-  tretSpeaker->motionFlags = 0;
-  tretSpeaker->y.fixed = -px(10);
+  secondTret->motionFlags = 0;
+  secondTret->y.fixed = -px(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
@@ -950,7 +950,6 @@ static void TretPalette_UpdateMapTint(void) {
   struct FieldWork *work;
   struct PaletteFade *paletteWork;
 
-  // Both heap slots are read from one address.
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   sourceColors = paletteWork->palette;
@@ -960,8 +959,8 @@ static void TretPalette_UpdateMapTint(void) {
     return;
   sourceColors += 16;
   destinationColors = (u16 *)&BG_PLTT_COLOR(1, 0);
-  colorIndex = 0;
-  for (; colorIndex < TRET_TINT_COLOR_COUNT; colorIndex++, sourceColors++) {
+  for (colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT;
+       colorIndex++, sourceColors++) {
     redStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex];
     greenStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 1];
     blueStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 2];
@@ -979,9 +978,9 @@ static void TretPalette_UpdateMapTint(void) {
       blueStep -= blueStep / 4 + blueStep / 5;
     }
     color = *sourceColors;
-    red = color & 31;
-    green = (color >> 5) & 31;
-    blue = (color >> 10) & 31;
+    red = RGB_RED(color);
+    green = RGB_GREEN(color);
+    blue = RGB_BLUE(color);
     red += redStep;
     green += greenStep;
     blue += blueStep;
@@ -997,7 +996,7 @@ static void TretPalette_UpdateMapTint(void) {
       green = 0;
     if (blue < 0)
       blue = 0;
-    *destinationColors++ = (blue << 10) | (green << 5) | red;
+    *destinationColors++ = RGB(red, green, blue);
   }
   gTreeRooms_TintIndex += (Random_Next() & 7) * 3;
   if (gTreeRooms_TintSteps[gTreeRooms_TintIndex] == TRET_TINT_END)

@@ -753,17 +753,23 @@ STATIC_ASSERT(sizeof(struct MapGridCellAnimationStep) == 10);
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *step =
       (struct MapGridCellAnimationStep *)steps;
+  // Each step's rectangle and delay, read a step at a time beside it.
+  s16 *rectangle = (s16 *)(steps + 1);
+  u32 end = MAPGRID_ANIMATION_STEPS_END;
+  u32 source = step->source;
 
-  while (step->source != MAPGRID_ANIMATION_STEPS_END) {
-    s32 sourceY = step->y;
-    s32 width = step->width;
-    s32 height = step->height;
-    s32 delay = step->delay;
+  while (source != end) {
+    s32 sourceY = rectangle[0];
+    s32 width = rectangle[1];
+    s32 height = rectangle[2];
+    s32 delay = rectangle[3];
 
-    MapGrid_CopyCellPictureIndicesRect(step->source, (u16)sourceY, destinationX,
+    rectangle += 5;
+    MapGrid_CopyCellPictureIndicesRect(source, (u16)sourceY, destinationX,
                                        destinationY, (u16)width, (u16)height);
     step++;
     wait((u16)delay);
+    source = step->source;
   }
 }
 

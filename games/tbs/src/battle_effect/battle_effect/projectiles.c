@@ -262,9 +262,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
 // Projectile volleys and rushing strikes.
 // The folder README describes them under "Effect families".
 
-#define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST 48 ///< the user's, while firing
-/// The user's effect step after the volley: the usual speed.
-#define PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL 16
+#define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST                                  \
+  (ANIMATION_STEP_NORMAL * 3) ///< the user's, while firing
 
 /// Six comets fly at each target, three frames apart, and burst into a flash
 /// and sparks; the effect's variant picks one of three comets.
@@ -319,7 +318,7 @@ BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleEffect_RunProjectileVolley(args, mode);
-  Actor_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, one large comet in ice colours flies at each
@@ -1049,7 +1048,6 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
 }
 
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST
-#undef PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL
 #undef PROJECTILE_VOLLEY_PARTICLE_COUNT
 #undef PROJECTILE_VOLLEY_COMET_PICTURES
 #undef PROJECTILE_VOLLEY_STREAK_PICTURES

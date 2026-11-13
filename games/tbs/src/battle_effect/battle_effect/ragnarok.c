@@ -56,7 +56,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   // The user takes its leap pose and animates fast until the end: an
   // effect step of 48, three times the usual 16.
   Actor_SelectAnimationFar(user, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(user, 48);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
 
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
                              1);
@@ -270,7 +270,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     frame++;
   } while (frame != RAGNAROK_FRAMES);
 
-  Actor_SetAnimationSpeedFar(user, 16);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
 }
 

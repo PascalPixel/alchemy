@@ -66,7 +66,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
   Actor_SelectAnimationFar(caster, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(caster, 48);
+  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   // Trails keep 75% of each pixel a frame.

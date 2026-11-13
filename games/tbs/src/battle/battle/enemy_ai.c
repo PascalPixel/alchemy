@@ -4,10 +4,7 @@
 
 #include "../battle_internal.h"
 
-/// An enemy's memory of its action choice, kept in Unit.aiActionIndex (0 in
-/// every row of enemy_table.c, so it starts cleared). Only
-/// ACTION_STRATEGY_RANDOM_START and ACTION_STRATEGY_IN_ORDER use it.
-/// bits: 31..4 unused | 3..1 selection | 0 initialized
+/// An enemy's memory of its action choice, in Unit.aiActionIndex.
 struct BattleAIState {
   unsigned initialized
       : 1;                 ///< ACTION_STRATEGY_RANDOM_START has drawn its start
@@ -15,14 +12,10 @@ struct BattleAIState {
   unsigned remaining : 28; ///< not used here
 };
 
-/// Chooses an enemy's action (a party member's is chosen in the menu): one of
-/// the eight in its definition, picked by its action strategy, with an item
-/// instead where its item mask says so, and a target worth the ability. A
-/// choice that cannot be made (too little PP, sealed, a forbidden flight, no
-/// worthwhile target) picks again; after 18 tries the enemy defends. Returns
-/// nothing.
-/// @param retry 0 when the turn is built: only a guard is settled now (it
-/// must raise before anyone acts); 1 when the enemy acts: the rest
+/// Chooses an enemy's action: one of the eight in its definition, picked by its
+/// strategy, and a target worth it; after 18 tries that fail, the enemy
+/// defends. retry is 0 as the turn is built, when only a guard is chosen, and 1
+/// when the enemy acts.
 UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   u32 selection;
   struct BattleAIState *selectionMemory;
@@ -75,9 +68,7 @@ UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   unit = Unit_GetFar(request->unitId);
   needsChoice = itemsAllowed = 1;
   failedChoices = 0;
-  // ACTION_STRATEGY_NEXT_PICK's first pick is place 0, and
-  // ACTION_STRATEGY_SAME would keep this -1 as its place; no row of
-  // enemy_table.c uses either.
+  // No enemy uses ACTION_STRATEGY_NEXT_PICK or ACTION_STRATEGY_SAME.
   selection = -1U;
   // A party member chooses in the menu.
   if (unit->classId != CLASS_NONE)
@@ -139,30 +130,15 @@ select_again:
       useItem = 0;
       if (enemy->targetStrategy == TARGET_STRATEGY_MOST_HP) {
         request->command = COMMAND_ITEM;
-        // The parameter is the ability Can't Use, yet COMMAND_ITEM reads its
-        // parameter as an inventory slot (BattleActionRun_Build): slot 509,
-        // 1,018 bytes past the unit's inventory. For the first three enemies
-        // that is the twelfth inventory slot of the enemy three places on,
-        // which no enemy fills, so the item is the empty one and the enemy
-        // defends (MsgActorDefends). For the others it lies past the enemy
-        // units: for the fourth and fifth in the 640 bytes Battle_Run takes
-        // for heap slot 11, which read 0 at every enemy's choice in the
-        // battles measured, and for the sixth in the sprite pool
-        // (HEAP_SLOT_SPRITES), the high half of a sprite's image link, 0 or
-        // the 0x0203 of an EWRAM address. Those name ITEM_000 or the
-        // Claymore, neither with an ability, so these enemies defend too
-        // (render probe enemy-slot-509-field). Of the enemies that come here,
-        // only a Rat Fighter stands that far along, fourth or fifth, in its
-        // formations with Apes, Grubs or Orcs.
+        // BUG: the ability Can't Use, read by the item command as inventory
+        // slot 509; the enemy defends (README.md, "The party's commands").
         request->parameter = ABILITY_CANT_USE;
         return;
       }
     }
     if (useItem != 0) {
       item = Item_GetDirectFar(unit->inventory[0]);
-      // Only an item that is used up, whose ability's flags are exactly
-      // ABILITY_FORMULA_HEAL_HP or ABILITY_FORMULA_EFFECT, with no higher bit
-      // set.
+      // Only an item that is used up and heals or has an effect.
       if (item->useType == ITEM_USE_CONSUMED) {
         itemAction = Ability_Get(item->abilityId);
         abilityId = item->abilityId;
@@ -242,12 +218,8 @@ select_again:
         request->command = COMMAND_ATTACK;
     }
 
-    // The target. With no one listed on the side (TARGET_PICK_SIDE_EMPTY) a
-    // random place is taken instead, on the unit's own side for both modes
-    // (allyIsParty and opponentIsParty both test the unit); with no one worth
-    // it (TARGET_PICK_NONE) the enemy picks again. A mode no ability has (3, or
-    // one above ABILITY_TARGET_SELF) targets the user, but 3 leaves the choice
-    // open, so the enemy picks again after it too.
+    // The target: with no one on the side, a random place on the enemy's own
+    // side; with no one worth it, the enemy picks again.
     request->range = ability->range;
     targetMode = ability->targetMode;
     switch (targetMode) {

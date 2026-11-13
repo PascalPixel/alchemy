@@ -4,12 +4,8 @@
 
 #include "../battle_internal.h"
 
-/// Creates the battle object of unit at (x, y) on the battlefield, in pixels:
-/// its sprite (an enemy's from its class, sharing the slot it already holds; a
-/// party member's battle sprite), palette, size and weapon sprite, turned to
-/// face the centre, and starts its actor script (gBattleObject_EmptyScript).
-/// Fills in actor, creates an actor for it and, for an enemy, claims its sprite
-/// slots.
+/// Creates the battle object of a unit at (x, y) on the battlefield: its
+/// sprite, palette, size and weapon, turned to face the centre.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -25,19 +21,14 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // Positions are 16.16 fixed point; y is the battlefield's depth.
   fixedX = px(x);
   fixedZ = px(y);
-  // The id 0xf000 has no sprite kind of enum ActorCreateKind, so
-  // FieldActor_Create makes no sprite; BattleObject_SpawnObjectsForList
-  // attaches the battle sprites later.
+  // The actor has no sprite of its own; its battle sprites are attached later.
   object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
 
-  // The sprite: an enemy's from its class (CLASS_NONE), a party member's
-  // by character. An enemy whose sprite went into its own slots takes the
-  // slot's sprite and palette 0, else its class's sprite and palette; a
-  // character fighting on the enemy side (a link opponent, a unit id above
-  // ALLY_MAX) takes palette 1.
+  // The sprite: an enemy's from its class, a party member's by character; a
+  // character on the enemy side, a link opponent, takes palette 1.
   if (unit->classId == CLASS_NONE) {
     sprite = BattleSprite_GetSprite(unit->id);
     if (registeredSprite == 0)
@@ -238,9 +229,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     actor->overlay = 0;
   }
 
-  // Face the centre of the battlefield (half a turn on, so the
-  // angle points back along the line to the origin); enemies are drawn at
-  // 1.3 times their size. ACTOR_FALLS lets the actor fall.
+  // Face the centre of the battlefield; enemies are drawn at 1.3 times their
+  // size.
   facingAngle = ArcTan2(y / 8, x) + TRIG_TURN / 2;
   object->facing = facingAngle;
   object->collisionFlags = 3;
@@ -255,9 +245,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   Actor_StartScriptFar(object, gBattleObject_EmptyScript);
 }
 
-/// Reads the battlefield position of party place index from
-/// gBattlePlacement_StepPairs, in pixels. Nothing in the source calls it;
-/// BattleUnit_RefreshPlacement reads the table directly.
+/// Unused: reads the battlefield position of a party place.
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
   partyPlace *= 2;
   *x = gBattlePlacement_StepPairs[partyPlace];
@@ -277,13 +265,8 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 #define ENEMY_SPACING_SMALL 27
 #define ENEMY_SPACING_EMPTY 25
 
-/// Lays out count enemies in a column left of the centre (ENEMY_COLUMN_X),
-/// spaced by their size: each takes its ENEMY_SPACING_ pixels of the line, half
-/// before and half after it, none before the first. The column starts from an
-/// estimate of its length, 30 pixels an enemy (27 for more than four), so it
-/// sits only roughly centred. The Kraken and the Fusion Dragon would stand
-/// nearer (ENEMY_COLUMN_NEAR_X), past the first place; each is fought alone
-/// (formations.c rows 213 and 347), so neither does.
+/// Lays out count enemies in a column left of the centre, spaced by their size,
+/// from a rough estimate of the column's length.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -366,9 +349,8 @@ UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
   }
 }
 
-/// Places every unit at the start of a battle: numbers the places (party
-/// members 0 up in their order, enemies 8 to 13) and creates each unit's battle
-/// object at its spot.
+/// Places every unit at the start of a battle and creates its battle object at
+/// its spot.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
   u16 unitIds[UNIT_MAX];
@@ -422,8 +404,6 @@ void BattleUnit_RefreshPlacement(void) {
 }
 
 /// Returns 1 if the unit at place is in list.
-/// @param list unit ids, ended by BATTLE_UNIT_LIST_END, UNIT_MAX at most
-/// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 i;
 

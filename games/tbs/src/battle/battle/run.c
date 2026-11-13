@@ -12,12 +12,9 @@
 /// 133 while the battle lasts.
 #define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
 
-/// Fights the battle against the enemy formation enemyGroup, from the
-/// opening transition to the end, and returns how it ended: the number of
-/// enemies defeated when the party won (or the link broke), BATTLE_OUTCOME_FLED
-/// when the party ran, or BATTLE_OUTCOME_LOST.
-///
-/// A broken link also sets FLAG_AREA_TEMP_E8 for the Battle Arena.
+/// Fights the battle against the enemy formation enemyGroup, from the opening
+/// to the end. Returns the number of enemies defeated when the party won or the
+/// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -200,10 +197,7 @@ s32 Battle_Run(s32 enemyGroup) {
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->arrowTiles);
     if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
-      // The free-memory reads around the command menu change nothing: each
-      // only subtracts, and its result is dropped.
-      // XXX (no evidence): who read them; a debug build might have shown the
-      // figures, but nothing in the ROM keeps them.
+      // XXX (no evidence): who read the free memory around the command menu.
       Heap_GetRemainingIwram();
       Heap_GetRemainingEwram();
       actionCount = Battle_GatherActions(battle->actions);
@@ -258,9 +252,7 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0)
       continue;
 
-    // The Djinn tutorial explains unleashing and standby: two windows that
-    // zoom open at tiles (0, 4) and (10, 4), the second closed by a key at
-    // the cursor, at pixel (92, 24).
+    // The Djinn tutorial explains unleashing, then standby.
     tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
     while (Message_AllTypedFar() == 0)
       wait(1);
@@ -342,10 +334,8 @@ finished:
   return result;
 }
 
-/// Lists the party members who fight (the first four of the party, three in a
-/// link battle) and marks each unit as a party member. unitIds, if not null,
-/// receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many fight.
-/// Sets each fighting party member's side to BATTLE_SIDE_PARTY.
+/// Lists the party members who fight, three in a link battle, into unitIds when
+/// it is not null, and returns how many.
 s32 BattleParty_PrepareMembers(u16 *unitIds) {
   s32 limit;
   s32 count;
@@ -372,9 +362,7 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
   return count;
 }
 
-/// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
-/// how many there are (0 when unitIds is null). A link battle looks only at
-/// the opponent's three places.
+/// Lists the enemy units present and returns how many, 0 when unitIds is null.
 s32 BattleEnemy_List(s16 *unitIds) {
   s16 *output = unitIds;
   s32 listed = 0;
@@ -398,10 +386,8 @@ s32 BattleEnemy_List(s16 *unitIds) {
   return count;
 }
 
-/// Lists the units still standing (HP above 0) on the sides in sideMask
-/// (BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES or both), party first.
-/// unitIds, if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns
-/// how many there are.
+/// Lists the units still standing on the sides in sideMask, party first, into
+/// unitIds when it is not null, and returns how many.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
@@ -466,10 +452,8 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
-/// Lists the units in the battle's unit lists on the sides in sideMask, party
-/// first, skipping those removed from the battle. unitIds, if not null,
-/// receives them ended by BATTLE_UNIT_LIST_END. Returns how many there are.
-/// Unlike BattleUnit_ListLiving, it does not test HP.
+/// Lists the units in the battle on the sides in sideMask, standing or not, and
+/// returns how many.
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
   struct BattleWork *battle;
   s32 count;

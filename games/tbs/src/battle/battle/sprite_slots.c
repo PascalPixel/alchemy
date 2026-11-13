@@ -29,9 +29,8 @@ s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 /// side, a small one (BattleSprite_IsSmall) one.
 #define ENEMY_SPRITE_SLOTS 6
 
-/// Returns 1 if an enemy of class classId would find room among the enemy
-/// sprite slots: one free slot for a small enemy, two free side by side for a
-/// large one.
+/// Returns 1 if an enemy of the class would find room among the enemy sprite
+/// slots, two side by side for a large one.
 s32 Enemy_HasSpriteRoom(s32 classId) {
   struct BattleWork *battle;
   s32 needsSingleSlot;
@@ -51,13 +50,9 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
   return spriteSlot != ENEMY_SPRITE_SLOTS;
 }
 
-/// Loads an enemy unit's battle sprite into the first free enemy sprite slots
-/// (one for a small enemy, two side by side for a large one) and marks them as
-/// the unit's. Two sprites, the Kraken's and the Fusion Dragon's, take a second
-/// part, loaded the same way into further slots. The slots stay the unit's
-/// until BattleObject_ReleaseSpriteSlots frees them as it leaves the battle.
-/// Returns the first slot and the sprite as (slot << 12) | sprite, or 0 for a
-/// party member's unit or when a load fails.
+/// Loads an enemy's battle sprite into the first free enemy sprite slots, the
+/// Kraken's and the Fusion Dragon's second part too. Returns (slot << 12) |
+/// sprite, or 0.
 s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
@@ -140,9 +135,7 @@ UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId) {
   }
 }
 
-// gBattleUnit_WeaponKinds: each entry is a weapon's item id in the low nine
-// bits and its kind above them; the list ends with -1. Each class's table of
-// weapon sprites has one entry a kind.
+// gBattleUnit_WeaponKinds: a weapon's item id with its kind above it.
 #define WEAPON_ITEM_MASK 0x1ff
 #define WEAPON_KIND_SHIFT 9
 
@@ -181,9 +174,8 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
   return weaponKind;
 }
 
-/// Returns the weapon sprite a party member's attack shows for the kind of
-/// weapon they have equipped (gBattleUnit_WeaponAnimations tables), or 0 for no
-/// weapon, for Felix, or for a unit that is no party member.
+/// Returns the weapon sprite a party member's attack shows for the weapon they
+/// have equipped, or 0.
 s32 BattleUnit_GetWeaponSprite(s32 unitId) {
   struct Unit *unit;
   s32 slot;

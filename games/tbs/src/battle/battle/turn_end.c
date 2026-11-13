@@ -6,9 +6,7 @@
 #include "../battle_internal.h"
 
 /// Rolls whether a stat change or status with five turns or fewer left ends
-/// early, and returns 1 when it does. The chance is `luck * 3 - turns * 5 +
-/// bias` percent, so a lucky unit and a counter near its end recover sooner; a
-/// chance above 100 always ends it.
+/// early, at `luck * 3 - turns * 5 + bias` percent, and returns 1 when it does.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct Unit *unit = Unit_GetFar(unitId);
 
@@ -22,9 +20,8 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   return 0;
 }
 
-/// Counts down an Attack change and returns 1 when it ends. Clears attackStage
-/// when the turns run out, and clears attackStage and attackTurns when a
-/// lowered Attack recovers early (bias 30).
+/// Counts down an Attack change and returns 1 when it ends; a lowered Attack
+/// may recover early.
 s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
 
@@ -46,9 +43,7 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
 }
 
 /// Defines a stat change's turn-end countdown, as
-/// BattleUnit_CountDownAttackStage is with bias 20: clears `level` and returns
-/// 1 when `counter` runs out, or clears both when a lowered stat recovers
-/// early.
+/// BattleUnit_CountDownAttackStage is with bias 20.
 #define DEFINE_COUNT_DOWN_MODIFIER(name, counter, level)                       \
   s32 name(s32 unitId) {                                                       \
     struct Unit *state = Unit_GetFar(unitId);                                  \
@@ -113,10 +108,8 @@ DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownStun, stun, 40)
 /// shows `MsgWakes` when it returns 1.
 DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownSleep, sleep, 50)
 
-/// Counts down both seals packed in Unit.psySeal and returns 1 when the last
-/// ends. Luff's seal counts down by 8 above the low three bits and Bind's by 1
-/// in them (PSY_SEAL_LUFF, PSY_SEAL_BIND); only Bind's, once Luff's is gone,
-/// may end early (bias 30), which clears psySeal.
+/// Counts down both seals in Unit.psySeal and returns 1 when the last ends;
+/// only Bind's, once Luff's is gone, may end early.
 s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
   s32 decremented;
   u8 remaining;
@@ -177,9 +170,8 @@ s32 BattleUnit_CountDownReflect(s32 unitId) {
   return 0;
 }
 
-/// Counts down an Agility change, clearing agilityStage and returning 1 when
-/// it runs out; unlike the other stats it never ends early.
-/// Battle_ProcessTurnEnd then shows `MsgAgiNormal`.
+/// Counts down an Agility change and returns 1 when it runs out; it never ends
+/// early.
 s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
   u8 *turns = &unit->agilityTurns;
@@ -193,10 +185,8 @@ s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
   return 0;
 }
 
-/// Brings the party's recovering Djinn one turn nearer, setting each whose
-/// turns reach 0, and returns 1 when any was set. A Djinni counts down only
-/// while its unit has HP; one that is set is taken off the party's recovery
-/// list and its unit's stats worked out again (Unit_Calculate).
+/// Brings the party's recovering Djinn one turn nearer, setting each that is
+/// ready, and returns 1 when any was set.
 s32 DjinnRecovery_CountDown(void) {
   struct DjinnRecoveryList *list =
       &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
@@ -244,9 +234,7 @@ s32 DjinnRecovery_CountDownTwenty(void) {
 /// the battle.
 void Battle_ReservedNoOpF674(void) {}
 
-/// The order the two sides' units take their turn-end effects in, as
-/// gBattleParty_TurnEndSideOrder gives it. Battle_ProcessTurnEnd copies it
-/// to its stack, and the link child swaps the copy's two sides.
+/// The order the two sides take their turn-end effects in.
 struct BattleSideOrder {
   s32 group[2]; ///< enum BattleSideMask: the party, then the enemies
 };
@@ -275,10 +263,7 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
           Unit_GetFar(entry->unitId)->hp != 0)
         entry->turns--;
     }
-    // Set each recovered Djinni, as DjinnRecovery_CountDown does, with its
-    // message, the unit's POSE_CAST and its element's battle effect. As there,
-    // i stays on a removed entry; it would stay for ever on one whose unit is
-    // off the field, but only a unit on the field counts down to 0 above.
+    // Set each recovered Djinni, with its message and its element's effect.
     for (i = 0; i < list->count;) {
       struct DjinnRecoveryEntry *entry = &list->entries[i];
 
@@ -324,9 +309,8 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
     s32 group;
     s32 unitIndex;
 
-    // Each unit's regeneration and counters, the party's first. The link
-    // child takes the enemies first, so both consoles go through the
-    // parent's units first and show the same messages in the same order.
+    // Each unit's regeneration and counters, the party's first; the link child
+    // takes the enemies first, so both consoles show the same order.
     if (battle->isLink != 0 && battle->linkSide != 0) {
       order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
       order.group[1] = BATTLE_SIDE_MASK_PARTY;
@@ -471,9 +455,7 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   s32 strongestElement;
   s32 recoveryTurn;
 
-  // Take the unit's standby Djinn (DJINN_RECOVERY_AFTER_BATTLE, as an
-  // unleashed Djinni is left by BattleActionRun_Build) off its set. The table
-  // is the opponent's for an enemy unit id.
+  // The unit's standby Djinn come off its set.
   unitId = plan->unitId;
   battleContinues = 0;
   unit = Unit_GetFar(unitId);
@@ -499,10 +481,8 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     pending = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                     (unitId < 0 || unitId > ALLY_MAX)))
                    ->list;
-    // The Djinn a summon used (DJINN_RECOVERY_SUMMONED, from
-    // BattleActionRun_Build), unit by unit: they recover one a turn, after
-    // the last the unit already has recovering and no sooner than in 2 turns.
-    // counts gathers how many of each element the summon used.
+    // The Djinn a summon used recover one a turn, after those already
+    // recovering and no sooner than in 2 turns.
     for (i = 0; i < ELEMENT_COUNT; i++) {
       counts[i] = 0;
     }
@@ -542,9 +522,8 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     struct Unit *before;
     s32 mostOfOneElement;
     s32 i;
-    // The summon's boost: the element it used most Djinn of rises to that
-    // many levels (summonBoost), and each element's power that Unit_Calculate
-    // then raises is announced against a copy taken before.
+    // The summon's boost: the element it used most Djinn of rises that many
+    // levels.
     mostOfOneElement = 0;
     before = Heap_AllocEwram(sizeof(struct Unit));
     Iwram_CopyWords(before, unit, sizeof(struct Unit));
@@ -584,9 +563,8 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     }
     Heap_Release(before);
   }
-  // Damage at the action's end, each queue played at once: the haunting
-  // spirit's (the shares of its damage BattleAbility_ApplyToTarget gathered),
-  // poison's, then the Grim Reaper's countdown.
+  // Damage at the action's end: the haunting spirit's, poison's, then the Grim
+  // Reaper's countdown.
   if (battleContinues != 0) {
     s8 *poison;
     BattlePlayback_Reset();
@@ -644,9 +622,7 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     }
     BattlePlayback_RunAll();
     BattlePlayback_Reset();
-    // At 0 the Reaper takes far more HP than any unit has. The downed
-    // message is MsgGoesDown or MsgStrengthExhausted, three either side of
-    // MsgReaperCalls (see Matching on message offsets).
+    // At 0 the Reaper takes far more HP than any unit has.
     if (unit->grimReaper != 0) {
       if (--unit->grimReaper == 0 && Unit_AddHpFar(unitId, 0xc0000000) == 0) {
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);

@@ -6,11 +6,8 @@
 
 #include "../battle_internal.h"
 
-/// Clears every status and stat change of a unit that goes down, recalculates
-/// its stats and rebuilds its status icons. Clears the unit's element levels,
-/// poison, stat stages and their turns, every status, its equipment bonuses,
-/// ready, immobile and challenge; Unit_CalculateFar then recomputes its stats,
-/// and BattleUnit_BuildStatusFlags its battle object's status flags.
+/// Clears every status and stat change of a unit that goes down and works out
+/// its stats again.
 UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
   struct Unit *unit;
   s32 element;
@@ -53,10 +50,7 @@ UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
 #define ADVANCE_ARROW_ATTR0 0xa400
 
 /// Shows the bobbing arrow at the message window and waits for the player to go
-/// on (B, or one of KEY_ADVANCE), then plays the cursor sound. Waits for the
-/// message window first. Takes a 128-byte VRAM cache entry for the arrow's
-/// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
-/// and pushes the arrow sprite.
+/// on.
 UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
   struct AdvanceArrowSprite *prompt;
   struct AdvanceArrowSprite promptStorage;
@@ -78,20 +72,16 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
         ((gFrameCount >> 2) & 7) * 128 + (s32)gBattleMessage_AdvanceArrowTiles;
     window = gBattleMessageWork->window;
     offset = gBattleMessageWork->offset;
-    // Outside windows 0 and 1, sprites show (WINOUT bit 4) and BG2 does not
-    // (bit 2); the semi-transparent arrow blends at full weight.
-    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
+    // Outside the windows, sprites show and BG2 does not.
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    // Both attribute words are set whole, as PLAY_ADVANCE sets them
-    // (playback.c).
+    // Both attribute words are set whole, as PLAY_ADVANCE sets them.
     ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
-    // The window is placed in tiles, its offset in 1/256 pixels.
     prompt->x = window->x * 8 + (offset->x >> 8) + 4;
-    // Bob up and down by up to 2 pixels, once every 16 frames (a sixteenth
-    // of a turn a frame).
+    // Bob up and down by up to 2 pixels every 16 frames.
     prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                 (offset->y >> 8) + 6;
     Oam_AddSpriteAtDepth(prompt, 240);
@@ -107,10 +97,7 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
   wait(1);
 }
 
-/// Shows the cursor bobbing at (x, y), in screen pixels, and waits for one of
-/// KEY_ADVANCE. Waits for the message window first; takes a 128-byte VRAM cache
-/// entry for the cursor's tiles and frees it, and each frame queues the WINOUT
-/// writes, sets REG_BLDALPHA and pushes the cursor sprite.
+/// Shows the cursor bobbing at (x, y) and waits for the player to go on.
 UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct MenuPoint position;
   s32 pointerTiles;
@@ -128,8 +115,8 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
-    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((s32 *)prompt)[1] = OBJ_SIZE_16X16;
     ((s32 *)prompt)[2] = 0;
@@ -146,14 +133,10 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   wait(1);
 }
 
-/// Sets gBattleMessageWork->marked, which the next message reads, as
-/// PLAYBACK_MARK does.
+/// Marks the next message, as PLAYBACK_MARK does.
 void BattlePlayback_MarkMessage(void) { gBattleMessageWork->marked = 1; }
 
-/// Takes an enemy out of the battle at once (one that leaves rather than
-/// falls): its HP to 0, out of the lists, and its actor released. A party unit
-/// is left as it is. Releases the battle object's actor, then clears its actor
-/// and active.
+/// Takes an enemy out of the battle at once, one that leaves rather than falls.
 UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
   struct Unit *enemy;
   struct BattleObject *slot;
@@ -174,18 +157,14 @@ UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
 /// fall pay the Djinn bonus (BattleEnemy_RecordDefeat).
 #define PLAYBACK_FLAG_DJINN_BONUS 1
 
-/// The PLAYBACK_DJINN_BONUS event: grants the Djinn bonus for the rest of the
-/// action. Its operand is ignored. Sets PLAYBACK_FLAG_DJINN_BONUS in
-/// runtime->flags, which BattlePlayback_Reset clears.
+/// Grants the Djinn bonus for the rest of the action.
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
                                     u32 operand) {
   runtime->flags |= PLAYBACK_FLAG_DJINN_BONUS;
 }
 
-/// Plays the queued playback at once, in order (BattlePlayback_Run plays them
-/// over frames instead): the messages with their arguments, the hit flashes,
-/// the downed units, the redraws. Then empties the queue. Each message, flash
-/// and fall waits its frames here. Ends with BattlePlayback_Reset.
+/// Plays the queued playback at once, in order, where BattlePlayback_Run plays
+/// it over frames.
 #ifdef UBFIX
 void BattlePlayback_RunAll(void) {
 #else
@@ -197,8 +176,7 @@ u32 BattlePlayback_RunAll(void) {
 
   for (eventIndex = 0; eventIndex < queue->count; eventIndex++) {
     u8 opcode = queue->opcodes[eventIndex];
-    // PLAYBACK_SOUND, the last opcode, is skipped: played at once, the
-    // queue makes no sounds but a hit's.
+    // A queue played at once makes no sounds but a hit's.
     if (opcode <= PLAYBACK_DJINN_BONUS)
       switch (opcode) {
       case PLAYBACK_DJINN_BONUS:
@@ -231,8 +209,7 @@ u32 BattlePlayback_RunAll(void) {
       case PLAYBACK_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();
         break;
-      // A negative message (MESSAGE_NONE in ability.c) shows nothing:
-      // the event only waits for the player.
+      // A message of MESSAGE_NONE only waits for the player.
       case PLAYBACK_MESSAGE:
         if ((s32)queue->operands[eventIndex] >= 0)
           BattleMessage_ShowAndWaitFar(queue->operands[eventIndex]);
@@ -268,12 +245,8 @@ u32 BattlePlayback_RunAll(void) {
   BattlePlayback_Reset();
 }
 
-/// Queues one playback command (enum BattlePlaybackCommand) with its operand,
-/// and returns the opcode. Appends to gBattleWork->playback.queue with no test
-/// against BATTLE_PLAYBACK_CAPACITY: a caller must keep one target's commands,
-/// or one queue played at once, within it. The queue is emptied by
-/// BattlePlayback_Reset, by BattlePlayback_SchedulePhase and before each target
-/// BattlePlayback_Run resolves.
+/// Queues one playback command with its operand, and returns the opcode.
+/// Nothing checks the queue's capacity.
 u32 BattlePlayback_Push(u32 opcode, u32 operand) {
   struct BattlePlaybackQueue *queue = &gBattleWork->playback.queue;
   u32 index = queue->count;

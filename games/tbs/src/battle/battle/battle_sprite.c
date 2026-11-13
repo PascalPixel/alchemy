@@ -24,10 +24,8 @@ s32 BattleSprite_GetSprite(s32 index) {
   return gBattleSprites[index].animation;
 }
 
-// XXX (no evidence): whether returning the sprite is a slip copied from
-// BattleSprite_GetSprite, as no other getter here returns another column for a
-// bad index; only the author's intent would say, since the code behaves the
-// same either way for every class in range.
+// XXX (no evidence): whether returning the sprite for a bad index is a slip
+// copied from BattleSprite_GetSprite.
 /// Returns the class's sprite palette. For a class out of range it returns row
 /// 0's sprite, not a palette.
 s32 BattleSprite_GetPalette(s32 index) {
@@ -71,10 +69,8 @@ u32 BattleSprite_GetAttackHop(u32 index) {
   return value ? value : 0;
 }
 
-/// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
-/// SE_IMPACT; 0 out of range. Only the Venus Lighthouse aerie bosses set it in
-/// battle_sprites.c: ENEMY_SATUROS_VENUS_LIGHTHOUSE, ENEMY_MENARDI and
-/// ENEMY_FUSION_DRAGON.
+/// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT, the Venus
+/// Lighthouse aerie's bosses.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;

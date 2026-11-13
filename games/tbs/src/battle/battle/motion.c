@@ -8,10 +8,8 @@
 /// Actor.targetX and targetZ while the actor has no move target.
 #define NO_MOVE_TARGET 0x80000000
 
-// The motion values below are 16.16 fixed point, in pixels and frames:
-// acceleration and speedLimit per frame, velocityY the hop's upward speed,
-// and verticalMotionStrength the gravity taken from it each frame
-// (BATTLE_UNIT_GRAVITY about 0.67, px(3) / 5, and px(47) / 100).
+// The motion values below are per frame; verticalMotionStrength is the gravity
+// taken from a hop's speed.
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once.
@@ -63,9 +61,7 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   Actor_SelectAnimationFar(actor, POSE_STANDING);
 }
 
-/// Sends the unit of startSlot leaping progress percent of the way toward
-/// the unit of endSlot, in POSE_LEAP. Also clears REG_BLDCNT. Nothing in the
-/// source calls it.
+/// Unused: sends one unit leaping progress percent of the way toward another.
 void BattleMotion_LeapToward(struct BattleObject *startSlot,
                              struct BattleObject *endSlot, s32 progress) {
   s32 zStep;
@@ -126,9 +122,7 @@ void BattleMotion_HopBack(s32 unitId) {
                          battleObject->anchorZ);
 }
 
-/// Sends unit id leaping back to 1.3 times its spot's distance from the
-/// centre, in POSE_DAMAGE. Only an unnamed overlay veneer in
-/// BATTLE.S reaches it, and nothing in the source calls that.
+/// Unused: sends a unit leaping back from the centre in its damage pose.
 void BattleMotion_LeapBack(s32 unitId) {
   struct BattleObject *battleObject = BattleObject_Get(unitId);
   struct Actor *actor = battleObject->actor;
@@ -146,9 +140,8 @@ void BattleMotion_LeapBack(s32 unitId) {
   Actor_SelectAnimationFar(actor, POSE_DAMAGE);
 }
 
-/// Knocks unit id back by the speed, hop and distance of the knockback variant
-/// (enum BattleKnockback), and puts it in POSE_DAMAGE. The Fusion Dragon only
-/// takes the pose.
+/// Knocks a unit back as the knockback variant says, in its damage pose; the
+/// Fusion Dragon only takes the pose.
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   struct BattleObject *battleObject;
   struct Actor *actor;
@@ -174,9 +167,8 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   Actor_SelectAnimationFar(actor, POSE_DAMAGE);
 }
 
-/// Sends unit unitId three quarters of the way to unit targetId, arriving in
-/// travelDivisor frames at a steady speed, leaping up at initialVelocityY
-/// (16.16 pixels a frame), in POSE_LEAP.
+/// Sends one unit leaping three quarters of the way to another, arriving in
+/// travelDivisor frames.
 void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
   struct BattleObject *actorSlot = BattleObject_Get(unitId);
@@ -228,9 +220,8 @@ void BattleMotion_RestartLeap(s32 unitId) {
 /// a position and a distance.
 void BattleMotion_MidpointNoOp() {}
 
-/// Works out the point halfway between two units, at their move targets
-/// where they have one, and hands it to BattleMotion_MidpointNoOp,
-/// which does nothing. Nothing in the source calls it.
+/// Unused: works out the point halfway between two units and hands it to a
+/// routine that does nothing.
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObject *secondSlot;
   struct Actor *first;
@@ -289,9 +280,8 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
   }
 }
 
-/// Projects the point above unit id where its battle effects play (its class's
-/// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
-/// height is scaled by the sprite's projected scale. Returns 0.
+/// Projects the point above a unit where its battle effects play onto the
+/// screen, scaled as its sprite is. Returns 0.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
@@ -311,9 +301,8 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   return 0;
 }
 
-/// Projects the point above unit id onto the screen, into projected: 24 pixels
-/// up for a small enemy, 48 for others, scaled as the sprite is drawn. Returns
-/// 0.
+/// Projects the point above a unit onto the screen, 24 pixels up for a small
+/// enemy and 48 for others. Returns 0.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
@@ -331,9 +320,8 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   return 0;
 }
 
-/// Returns the height above unit id where its battle effects play, 16.16: its
-/// class's own (BattleSprite_GetEffectHeight), else 24 for a small enemy and 48
-/// for others.
+/// Returns the height above a unit where its battle effects play: its class's
+/// own, else 24 pixels for a small enemy and 48 for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;

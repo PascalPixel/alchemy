@@ -5,11 +5,7 @@
 #include "../battle_internal.h"
 
 /// Auto battle: gives every living unit a plain attack and sorts them into
-/// action order. The party act at their Agility and target the first enemy
-/// unit, 128; enemies act at half their Agility plus a random part of it and
-/// target unit id 0 to n - 1 for n living party members, which
-/// AutoBattle_RunAction replaces if it is down. Returns how many actions there
-/// are.
+/// action order. Returns how many actions there are.
 s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   struct BattleAction swap;
   u16 unitIds[UNIT_MAX];
@@ -37,9 +33,8 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
     entry->target = FIRST_ENEMY_UNIT;
     count++;
   }
-  // The enemies' actions. Random16() * n >> 16 is a roll from 0 to n - 1;
-  // the target is that number taken as a unit id, which
-  // AutoBattle_RunAction replaces if the unit is down.
+  // The enemies attack a random party member, replaced when the action plays if
+  // it is down.
   enemyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
   entry = &entries[partyCount];
   targetRange = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
@@ -58,9 +53,8 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
     entry++;
   }
 
-  // Bubble the faster units forward until a pass swaps nothing.
-  // BUG: count - 2 passes at most, one short of a full sort; with two
-  // actions nothing is sorted.
+  // Bubble the faster units forward.
+  // BUG: one pass short of a full sort; with two actions nothing is sorted.
   for (index = count - 2; index > 0; index--) {
     s32 swaps = 0;
     s32 pos;
@@ -82,10 +76,8 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
 /// Turns the camera while L or R is held. Nothing in the source calls it.
 DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 
-/// Auto battle: plays one action. A unit already down does nothing (-1); a
-/// defeated target is replaced by a living unit of its side first. Returns 1
-/// when the party got away, 0 otherwise. Turns the camera to the acting unit's
-/// side (gBattleBackgroundWork) and rewrites action->target.
+/// Auto battle: plays one action, a defeated target replaced by a living unit
+/// of its side. Returns 1 when the party got away, -1 when the unit is down.
 s32 AutoBattle_RunAction(struct BattleAction *action) {
   struct BattleBackgroundWork *view;
   s32 unitId;
@@ -151,9 +143,8 @@ s32 BattleObject_IsValidId(u32 unitId) {
   return -1;
 }
 
-/// Auto battle: the party tries to run, and gets away 15 times in 16, each
-/// living party member running off in turn. Returns 1 when they got away; else
-/// shows MsgCannotEscape and returns 0.
+/// Auto battle: the party tries to run, and gets away 15 times in 16. Returns 1
+/// when it got away.
 s32 BattleFlee_PlayRun(struct BattleAction *action) {
   s16 partyMembers[UNIT_MAX];
   s32 partySize;
@@ -202,10 +193,8 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
   return 0;
 }
 
-/// Auto battle: casts Psynergy. The camera turns to the caster's side and the
-/// caster raises its hand; the target side fades out, its living units are
-/// readied alone, the Psynergy's effect (kind action->parameter) plays on them,
-/// and everyone fades back in. Returns -1 for an invalid unit or target.
+/// Auto battle: casts Psynergy, the caster's side fading out while its effect
+/// plays on the target side.
 s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   u16 visibleUnits[UNIT_MAX];
   struct BattleStagingWork context;
@@ -256,9 +245,8 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
     }
   }
 
-  // Fade the caster's side out: its sprites SPRITE_SEMI_TRANSPARENT,
-  // their blend weight falling from 16 to 1 over 16 frames. Then the party
-  // status window is erased (PARTY_STATUS_CLOSED).
+  // Fade the caster's side out over 16 frames, and close the party status
+  // window.
   wait(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
@@ -270,9 +258,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
-  // Ready only the target side's living units, and play the effect. The
-  // walk counts unit ids up from the side's first until it has found as
-  // many living units as the side has.
+  // Ready only the target side's living units, and play the effect.
   if (targetId > FIRST_ENEMY_UNIT - 1) {
     u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
@@ -324,9 +310,8 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   return 0;
 }
 
-/// Auto battle: an attack. Shows `<unit> attacks!`, sends the attacker up
-/// to its target, plays the blow and sends both back. Returns -1 for an
-/// invalid attacker or target. Nothing in the source calls it.
+/// Unused auto battle attack: "<unit> attacks!", the attacker runs up to its
+/// target, the blow, and both return.
 s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   struct BattleStagingWork work;
 
@@ -373,10 +358,8 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   return 0;
 }
 
-/// Auto battle: an attack or an item. Turns the camera to the acting unit's
-/// side, poses the unit and plays the battle effect (kind action->parameter) on
-/// the first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid unit.
+/// Auto battle: an attack or an item, played on the first living unit of the
+/// target's side.
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   struct BattleStagingWork work;
   struct BattleBackgroundWork *view = gBattleBackgroundWork;
@@ -457,12 +440,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   return 0;
 }
 
-/// Auto battle: deals damage HP to unit unitId and shows it. When showMessage
-/// is set, "A bitter blow!" (to the party) or "A critical hit!" (to an enemy)
-/// comes first; then `<unit> takes <damage> damage!`, and `<unit> goes down...`
-/// or `<unit> has been downed!` when the HP runs out.
-/// context, if null, is replaced by four cleared bytes nothing reads.
-/// Nothing in the source calls it. Lowers unit->hp, no lower than 0.
+/// Unused auto battle damage: takes damage HP from a unit and shows it, with "A
+/// bitter blow!" or "A critical hit!" first when showMessage is set.
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
                             u8 *context) {
   u8 localContext[4];
@@ -536,9 +515,8 @@ void BattleMotion_PlayFall(s32 unitId) {
   }
 }
 
-/// BattleAbility_ReplaceDefeated's result when the target's side is all down.
-/// It does not come up: Battle_Run ends the battle as soon as a
-/// side is down, before the next action.
+/// BattleAbility_ReplaceDefeated's result when the target's side is all down,
+/// which the battle's end comes before.
 #define TARGET_SIDE_DEFEATED 256
 
 /// Returns the action's target, or a random living unit of its side when the

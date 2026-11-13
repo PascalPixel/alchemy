@@ -9,9 +9,7 @@
 
 // clang-format off
 const struct BattleSpriteDefinition gBattleSprites[] = {
-    // The characters' rows. Their sprite, palette and attack effect go
-    // unused: a character's sprite is its own (BattleObject_Make) and its
-    // attack effect BattleActionRun_Build's, which these rows repeat.
+    // The characters' rows; their sprite, palette and attack effect go unused.
     [ISAAC] = {
         .animation = SPRITE_BATTLE_VERMIN,
         .attackEffect = 1,

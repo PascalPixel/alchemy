@@ -37,6 +37,16 @@ Enemies choose by dice from a list of eight moves in their row of the
 enemy table, weighted by a habit, such as favouring the start of the list
 (`enemy_ai.c`).
 
+A move marked for an item uses the first item the enemy holds. An enemy
+that holds none is given the ability Can't Use, but an item command reads
+that number as an inventory slot, slot 509, far past the unit's own
+twelve. What lies there is never a usable item: for the first three
+enemies it is an empty slot of another enemy, and for the others it is
+memory past the enemy units that held nothing or the Claymore whenever it
+was measured. Either way the enemy defends. Of the enemies that come here,
+only a Rat Fighter stands that far along, fourth or fifth in its formations
+with Apes, Grubs or Orcs.
+
 Priority is Agility, with a little luck added for party members. A few
 things jump the queue by having their priority raised past any Agility,
 which is how a guarding Djinni always goes first.
@@ -91,7 +101,25 @@ text share the screen, and it is `playback.c` and `playback_queue.c`.
 
 For each target in turn, the rules decide the damage or healing and
 whether the ability's added effect, such as sleep or poison, takes hold
-(`ability.c`).
+(`ability.c`). Nothing is shown while this happens: each step queues the
+names, numbers, messages and reactions that playback then shows in order,
+while the units themselves change at once.
+
+A target is settled in seven steps:
+
+1. A copy of the target as it was, its distance from the place aimed at,
+   how well it resists the element, and the user's Power in it.
+2. For a Djinni striking a weakness, the roll for the Djinn bonus, which
+   gives more coins and experience for an enemy it fells; then whether
+   the effect lands at all.
+3. Calling an ally: an enemy calls another into an empty place.
+4. The effects that change how damage works: Ground, Torch, Severe Blow,
+   instant death, a self-destruct, Psy Drain.
+5. The damage or healing, by the ability kind.
+6. The added effect: cures, healing, stat changes, revival, statuses,
+   drains, Break, the curse, guards.
+7. Waking a sleeping target that took damage, one time in four, the
+   stats worked out again, and a haunted user's share of what it took.
 
 ### The ability kind
 

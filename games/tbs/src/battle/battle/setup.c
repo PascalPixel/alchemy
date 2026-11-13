@@ -5,13 +5,9 @@
 
 #include "../battle_internal.h"
 
-/// Runs each frame of a battle. In a link battle it first checks the link: a
-/// connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a console
-/// whose link number changed, pauses the battle. Then it turns the camera a
-/// sixteenth of the way toward gBattleBackgroundWork's targetYaw, places the
-/// camera at its position (or at the one it follows) with its yaw, pitch and
-/// distance, and, unless its flag holds the background, refreshes the
-/// background's zoom.
+/// Runs each frame of a battle: pauses a link battle whose connection is lost,
+/// turns the camera a sixteenth of the way toward its target yaw, places it,
+/// and refreshes the background's zoom.
 void BattleCamera_Update(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
@@ -71,11 +67,8 @@ void BattleCamera_Update(void) {
   }
 }
 
-/// Announces the enemies at the start of a battle, then whether the party
-/// strikes first or is caught by surprise. Each of the first enemyCount
-/// enemies gets `<enemy> appeared!`; the last one's comes from a message of
-/// its own, MsgLastEnemyAppeared, whose text matches MsgEnemyAppeared's in
-/// every edition. Rewrites the message argument tables.
+/// Announces the enemies at the start of a battle, "<enemy> appeared!" for
+/// each, then whether the party strikes first or is caught by surprise.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle = gBattleWork;
@@ -107,10 +100,8 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 }
 
-/// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END: the
-/// party members in their order, and the enemies, left to right for a random
-/// formation or, for a fixed one, alternating out from the centre
-/// (gBattleParty_CenterOrderOffsets).
+/// Fills the battle's two unit lists: the party in its order, and the enemies
+/// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
   u16 unitIds[UNIT_MAX];
   struct BattleWork *battle;
@@ -125,9 +116,8 @@ void BattleUnit_Collect(void) {
     battle->partyUnits[i] = unitIds[i];
   battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
-  // The shuffled and interleaved formations (a link battle's included)
-  // keep the enemies in unit order; the others place the first enemy in
-  // the centre and the rest alternately either side of it.
+  // The shuffled and interleaved formations keep the enemies in unit order; the
+  // others put the first in the centre and the rest either side of it.
   count = BattleEnemy_List(unitIds);
   formation = battle->layout;
   if (formation >= FORMATION_LAYOUT_SHUFFLED) {
@@ -145,11 +135,9 @@ placed:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-// XXX (no evidence): what the tiles at 0x06000280 are when it runs; The Lost
-// Age keeps the same function, and nothing in either game calls it or holds
-// its address, so no moment of play shows what it moves.
-/// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the 20
-/// bytes from 0x0600028c. Nothing in the source calls it.
+// XXX (no evidence): what the tiles moved are; nothing calls this in either
+// game.
+/// Unused: moves 16 bytes of tiles down in VRAM and clears the 20 after them.
 s32 Battle_ShiftVramTiles(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
@@ -167,9 +155,8 @@ void Battle_ClearBg0Vofs(void) {
 /// up.
 void Party_BattleSetupNoOp(s32 unused) {}
 
-/// Clears every battle-only state of the party members (stat stages and their
-/// turns, statuses, Djinn element boosts, the countdowns) and recalculates
-/// their stats, as a battle ends.
+/// Clears the party's battle-only states, and works their stats out again, as a
+/// battle ends.
 UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
   u16 unitIds[10];
   s32 count;
@@ -212,10 +199,8 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
   }
 }
 
-/// Brings the Djinn recovery list up to date as a battle starts: every Djinni a
-/// party member has on standby that the list lacks joins it. Then, outside a
-/// link battle, each Djinni waiting for a battle to end whose unit has no
-/// battle object is Set again and leaves the list.
+/// Brings the Djinn recovery list up to date as a battle starts, and outside a
+/// link battle sets again each Djinni waiting for a battle's end.
 UNREAD_RESULT DjinnRecovery_Reconcile(void) {
   u16 unitIds[10];
   s32 count;
@@ -280,13 +265,9 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
 /// The summon ids the mask covers, one bit each.
 #define SUMMON_COUNT 32
 
-/// Works out which summons the party can call: one whose Djinn requirement of
-/// every element is met by the Djinn the party holds of that element
-/// (djinnHeldCounts, set or not), all party members together. Whether enough of
-/// them are on standby is checked as the summon is chosen
-/// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it is
-/// built (BattleActionRun_Build). Stores the mask of them (bit n for summon n)
-/// and returns the state that holds it.
+/// Works out which summons the party can call, by the Djinn it holds of each
+/// element, set or not; whether enough are on standby is checked when one is
+/// chosen.
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];

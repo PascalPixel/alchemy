@@ -1,5 +1,11 @@
 /// @file
-/// The scene code of overlay 0x65d, in ROM order.
+/// Mikasalla, the village in the far south of Osenia, and the tunnels under
+/// it, in two scenes that share this overlay (SceneId_Ov65dRoom1, the village,
+/// and SceneId_Ov65dRoom2, the tunnels).
+///
+/// Scoop digs up a ladder by the sheep (Mikasalla_DigUpLadder); the tunnels
+/// lead to the inn's back yard, where Spark the Mars Djinni joins the party
+/// (Mikasalla_MeetSpark).
 
 #include "shared/routines.h"
 #include "shared/tables.h"
@@ -18,13 +24,48 @@
 #include "event_work.h"
 #include "module/scene/mikasalla.h"
 
+/// The village's actors, numbering the rows of gMikasalla_VillagePlacements.
+enum MikasallaActorId {
+  /// ★ Named from the game: "It's been a long time since we had any visitors
+  /// in Mikasalla." (MsgFieldItSBeenALong)
+  ACTOR_VILLAGER_NO_VISITORS = ACTOR_FIRST_PLACED,
+  /// Mikasalla_AskLookingForSomeone's villager.
+  /// ★ Named from the game: "Are you looking for someone?"
+  /// (MsgFieldAreYouLookingForSomeone)
+  ACTOR_VILLAGER_LOOKING_FOR_SOMEONE,
+  /// ★ Named from the game: "I went out to investigate after the
+  /// earthquake..." (MsgFieldIWentOutToInvestigate)
+  ACTOR_VILLAGER_AFTER_EARTHQUAKE,
+  /// ★ Named from the game: "If you're going deeper into Osenia, you'd better
+  /// be ready for trouble." (MsgFieldIfYouReGoingDeeper)
+  ACTOR_VILLAGER_DEEPER_INTO_OSENIA,
+  /// ★ Named from the game: "In the heart of Osenia lies a sacred place, Air's
+  /// Rock..." (MsgFieldInTheHeartOfOsenia)
+  ACTOR_VILLAGER_AIRS_ROCK,
+  /// ★ Named from the game: "If you want to go into the heart of Osenia, there
+  /// are two ways..." (MsgFieldIfYouWantToGo)
+  ACTOR_VILLAGER_TWO_WAYS,
+  /// ★ Named from the game: "If you look across the ocean to the south, you
+  /// can see Tundaria." (MsgFieldIfYouLookAcrossThe)
+  ACTOR_VILLAGER_TUNDARIA,
+  /// ★ Named from the game: "A town called Garoh lies to the east of us..."
+  /// (MsgFieldATownCalledGarohLies)
+  ACTOR_VILLAGER_GAROH,
+  /// ★ Named from the game: "Buk buk buk..." (MsgFieldBukBukBuk)
+  ACTOR_CHICKEN,
+  /// ★ Named from the game: "Bah! Baaaaaaa!" (MsgFieldBahBaaaaaaa)
+  ACTOR_SHEEP,
+  /// ★ Named from the game: "Spark" (Mikasalla_MeetSpark's Djinni)
+  ACTOR_SPARK
+};
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)
-    return gData_02000794;
+    return gMikasalla_TunnelRegions;
   return 0;
 }
 
@@ -34,8 +75,8 @@ void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom1)
-    return gData_02000fa0;
-  return gData_020010c0;
+    return gMikasalla_VillagePlacements;
+  return gMikasalla_TunnelPlacements;
 }
 
 #include "types.h"
@@ -47,7 +88,10 @@ void *Scene_GetPlacements(void) {
 
 void Func_02000620(s32 a);
 
-void Func_02000438(void);
+/// The leader, already beside a ladder top, turns north, steps onto the rungs
+/// and climbs down out of sight, then leaves by exit 12 from the village or
+/// exit 3 from the tunnels.
+void Mikasalla_ClimbDownLadder(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone[];
 #include "event_inline.h"
@@ -59,9 +103,13 @@ struct WarpEntry__mikasalla {
   u16 z;
 };
 
-extern struct WarpEntry__mikasalla gData_0200073c[];
+extern struct WarpEntry__mikasalla gMikasalla_Doors[];
 
-void Func_0200009c(void) {
+/// The party leader walks into one of the village's doors. Everyone stops, the
+/// door opens with its cell animation (gMikasalla_Doors), and the leader walks
+/// in and leaves by the exit of the door's number. The fifth door is entered
+/// without the walk.
+void Mikasalla_EnterDoor(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   u32 id;
   s16 *choice;
@@ -70,21 +118,17 @@ void Func_0200009c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   for (id = 8; id <= 63; id++) {
-    u8 *actor = (u8 *)Actor_GetById(id);
+    struct Actor *actor = Actor_GetById(id);
 
-    if (actor != NULL) {
-      u8 *flags = &actor[85];
-      s32 zero = 0;
-
-      *flags = zero;
-    }
+    if (actor != NULL)
+      actor->motionFlags = 0;
   }
   choice = (s16 *)(work + 340);
   index = *choice;
   Sound_Play(158);
   index--;
-  MapGrid_AnimateCells(gData_0200073c[index].map, gData_0200073c[index].x,
-                 gData_0200073c[index].z);
+  MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
+                 gMikasalla_Doors[index].z);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 
@@ -99,24 +143,29 @@ void Func_0200009c(void) {
   Event_End();
 }
 
-void Func_0200014c(void) { Func_080d7788(18, 2, 8); }
+/// Spark, the Mars Djinni behind the inn, joins the party when spoken to,
+/// without a fight.
+void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
 
 struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)
-    return gData_020012ac;
-  return gData_020010d8;
+    return gMikasalla_TunnelTriggers;
+  return gMikasalla_VillageTriggers;
 }
 
-void Func_02000188(void) {
+/// A villager asks whether the party is looking for someone, and answers either
+/// way that strangers are rare here.
+/// "Are you looking for someone?"
+void Mikasalla_AskLookingForSomeone(void) {
   s32 msg;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
-  FieldMessage_ShowAtActor(9, 0);
+  FieldMessage_ShowAtActor(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -124,17 +173,23 @@ void Func_02000188(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
   Event_End();
 }
 
-void Func_020001e0(void) {
+/// Scoop on the patch of ground by the sheep digs up the ladder down to the
+/// tunnels, and it stays dug (flag 0x85b), Scene_PrepareMap redrawing it on
+/// every visit.
+void Mikasalla_DigUpLadder(void) {
   Map_CopyCellPictureIndicesRect(5, 49, 5, 41, 1, 1);
   MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
   GameFlag_SetBit(0x85b);
 }
 
-void Func_02000218(void) {
+/// Parch on cell 60 in the tunnels redraws three stretches of the cave and its
+/// ground, once a visit (flag 0x200), as Scene_PrepareMap redraws them on a
+/// return.
+void Mikasalla_CastParch(void) {
   if (Event_GetFlag(0x200) == 0) {
     Func_02000620(0);
     Func_02000620(1);
@@ -188,20 +243,20 @@ s32 Scene_PrepareMap(void) {
       Map_CopyCellsRect(30, 92, 2, 2, 17, 92);
     }
   } else if (GameFlag_Test(0x85b)) {
-    Func_020001e0();
+    Mikasalla_DigUpLadder();
   }
   return 0;
 }
 
-void Func_02000438(void) {
-  s32 sound;
+void Mikasalla_ClimbDownLadder(void) {
+  s32 exit;
   s32 drop;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65dRoom1) {
-    sound = 12;
+    exit = 12;
     drop = 17;
   } else {
-    sound = 3;
+    exit = 3;
     drop = 9;
   }
   Actor_ArmCallback(4, FACING_NORTH, 0);
@@ -217,41 +272,29 @@ void Func_02000438(void) {
   Actor_SetModeById(4, 10);
   Event_Wait(10);
   Sound_Play(123);
-  Import_EventSetExitRequest(sound);
+  Import_EventSetExitRequest(exit);
   Event_End();
 }
 
-void Func_020004ec(void) {
-  s32 id;
-
+void Mikasalla_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
-  id = 4;
-  Actor_CommitPositionAndActivate(id, 16, 0);
-  Func_02000438();
+  Actor_WalkByAndWait(4, 16, 0);
+  Mikasalla_ClimbDownLadder();
 }
 
-void Func_02000514(void) {
-  s32 id, x, z;
-
+void Mikasalla_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
-  x = 14;
-  z = 8;
-  id = 4;
-  /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between the
-   * distances and their negation; as no asm, 2 of 18 instructions differ in
-   * tla-en. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_CommitPositionAndActivate(id, -x, -z);
-  Func_02000438();
+  Actor_WalkByAndWait(4, -14, -8);
+  Mikasalla_ClimbDownLadder();
 }
 
-DEFINE_FUNC_02000544(Func_02000544, Func_02000438)
+DEFINE_FUNC_02000544(Func_02000544, Mikasalla_ClimbDownLadder)
 
-void Func_02000564(void) {
+void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];
 
   Event_Start();
@@ -264,15 +307,15 @@ void Func_02000564(void) {
     Actor_WalkByAndWait(4, 4, -8);
   }
   Actor_WalkToAndWait(4, 424, 99);
-  Func_02000438();
+  Mikasalla_ClimbDownLadder();
 }
 
-void Func_020005d4(void) {
+void Mikasalla_StepOntoLadderAhead(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -4);
   Actor_WalkToAndWait(4, 424, 99);
-  Func_02000438();
+  Mikasalla_ClimbDownLadder();
 }
 
 #include "text/msg_ids.h"
@@ -294,7 +337,7 @@ s16 gData_02000724[] = {
     2, 6, -1, 0,
 };
 
-struct WarpEntry__mikasalla gData_0200073c[] = {
+struct WarpEntry__mikasalla gMikasalla_Doors[] = {
     {(s32)gData_020006f8, 84, 29},
     {(s32)gData_020006f8, 77, 34},
     {(s32)gData_0200070e, 86, 38},
@@ -307,7 +350,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_02000794[] = {
+s16 gMikasalla_TunnelRegions[] = {
     68, 28, 404, 76, 36, 412, -1, 1,
     244, 28, 100, 252, 36, 108, -1, 2,
     -1, 0, 0, 0, 0, 0, 0, 0,
@@ -339,7 +382,7 @@ DEFINE_G_DATA_02000850(gData_02000850, 0x9999, 120, 648, 72)
 
 DEFINE_G_DATA_02000850(gData_02000bf8, 0x4ccc, 88, 680, 120)
 
-struct ActorPlacement gData_02000fa0[] = {
+struct ActorPlacement gMikasalla_VillagePlacements[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(552), FACING_SOUTH, 1, 0},
     {72, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(600), FACING_SOUTH, 3, 0},
     {73, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(504), FACING_SOUTH, 1, 0},
@@ -354,18 +397,18 @@ struct ActorPlacement gData_02000fa0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020010c0[] = {
+struct ActorPlacement gMikasalla_TunnelPlacements[] = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
-struct Trigger gData_020010d8[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_0200009c)},
+struct Trigger gMikasalla_VillageTriggers[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
@@ -374,43 +417,43 @@ struct Trigger gData_020010d8[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {0x4602, 30, CONDITION_ALWAYS, EVENT(Func_02000544)},
-    {0x602, 31, CONDITION_ALWAYS, EVENT(Func_020004ec)},
-    {0x8602, 32, CONDITION_ALWAYS, EVENT(Func_02000514)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFieldItSBeenALong)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000188)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldIWentOutToInvestigate)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouReGoingDeeper)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldInTheHeartOfOsenia)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWantToGo)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouLookAcrossThe)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldATownCalledGarohLies)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFieldBukBukBuk)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldBahBaaaaaaa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldWhyWouldAnyoneTravelAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldILikeThisTimeOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldOseniaWasBigAlreadyBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldNoWayIDLeave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldAirSRockHasStood)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldItSWeirdThatYou)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFieldItSBitterColdIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFieldThePeopleInGarohAre)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFieldTheGroundHereIsSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFieldOhYeahMmmIJust)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_0200014c)},
+    {0x602, 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
+    {0x8602, 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_NO_VISITORS, CONDITION_ALWAYS, MSGNO(MsgFieldItSBeenALong)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, CONDITION_ALWAYS, EVENT(Mikasalla_AskLookingForSomeone)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_AFTER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgFieldIWentOutToInvestigate)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_DEEPER_INTO_OSENIA, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouReGoingDeeper)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgFieldInTheHeartOfOsenia)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_TWO_WAYS, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWantToGo)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouLookAcrossThe)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_GAROH, CONDITION_ALWAYS, MSGNO(MsgFieldATownCalledGarohLies)},
+    {TRIGGER_TALK, ACTOR_CHICKEN, CONDITION_ALWAYS, MSGNO(MsgFieldBukBukBuk)},
+    {TRIGGER_TALK, ACTOR_SHEEP, CONDITION_ALWAYS, MSGNO(MsgFieldBahBaaaaaaa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NO_VISITORS, CONDITION_ALWAYS, MSGNO(MsgFieldWhyWouldAnyoneTravelAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, CONDITION_ALWAYS, MSGNO(MsgFieldILikeThisTimeOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_AFTER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgFieldOseniaWasBigAlreadyBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DEEPER_INTO_OSENIA, CONDITION_ALWAYS, MSGNO(MsgFieldNoWayIDLeave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgFieldAirSRockHasStood)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TWO_WAYS, CONDITION_ALWAYS, MSGNO(MsgFieldItSWeirdThatYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgFieldItSBitterColdIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GAROH, CONDITION_ALWAYS, MSGNO(MsgFieldThePeopleInGarohAre)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHICKEN, CONDITION_ALWAYS, MSGNO(MsgFieldTheGroundHereIsSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEEP, CONDITION_ALWAYS, MSGNO(MsgFieldOhYeahMmmIJust)},
+    {TRIGGER_TALK, ACTOR_SPARK, CONDITION_ALWAYS, EVENT(Mikasalla_MeetSpark)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldItSCompletelyFullOf))},
-    {0x50008805, 50, CONDITION_ALWAYS, EVENT(Func_020001e0)},
+    {0x50008805, 50, CONDITION_ALWAYS, EVENT(Mikasalla_DigUpLadder)},
     {TRIGGERS_END},
 };
 // clang-format on
 
-struct Trigger gData_020012ac[] = {
+struct Trigger gMikasalla_TunnelTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x4602, 30, CONDITION_ALWAYS, EVENT(Func_02000544)},
-    {0x602, 31, CONDITION_ALWAYS, EVENT(Func_020004ec)},
-    {0x8602, 32, CONDITION_ALWAYS, EVENT(Func_02000514)},
-    {0xc602, 33, CONDITION_ALWAYS, EVENT(Func_02000564)},
-    {0xc602, 34, CONDITION_ALWAYS, EVENT(Func_020005d4)},
-    {0x50008a05, 60, 0x200, EVENT(Func_02000218)},
+    {0x602, 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
+    {0x8602, 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
+    {0xc602, 33, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingNorth)},
+    {0xc602, 34, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderAhead)},
+    {0x50008a05, 60, 0x200, EVENT(Mikasalla_CastParch)},
     {TRIGGERS_END},
 };

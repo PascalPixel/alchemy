@@ -46,14 +46,6 @@ static inline void ColorBuffer_Interpolate(s32 frames) {
   BattleEffect_StartBufferInterpolation(frames);
 }
 
-static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline, which
-   * evaluates the position before the type; as a direct call of
-   * Import_ActorCreate, 2 of 204 instructions of Func_02000198 differ in
-   * tla-en. */
-  return ((struct Actor *)Import_ActorCreate(type, x, y, z));
-}
-
 void Func_02000198(void) {
   struct Actor *center;
   struct Actor *effect;
@@ -136,7 +128,7 @@ void Func_02000198(void) {
   if (spawn) {
     rise = ((u32)(Random16Far() * 80) >> 16) << 16;
     effect =
-        Actor_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
+        FieldActor_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
     if (effect != 0) {
       sprite = effect->sprite;
       Func_02005764(effect, gData_02006470);
@@ -220,7 +212,7 @@ void Func_020004c8(void) {
     u32 random;
 
     random = Random16Far();
-    effect = Actor_Create(672, center->x,
+    effect = FieldActor_Create(672, center->x,
                           (s32)((u32)(random << 8) >> 16 << 16) + center->y -
                               0x1c0000,
                           center->z);
@@ -228,7 +220,7 @@ void Func_020004c8(void) {
     u32 random;
 
     random = Random16Far();
-    effect = Actor_Create(672, center->x,
+    effect = FieldActor_Create(672, center->x,
                           (s32)((u32)(random << 6) >> 16 << 16) + center->y -
                               0x1c0000,
                           center->z);

@@ -376,12 +376,6 @@ void Func_020032e0(struct Actor *object, s32 value);
 void Func_020032e8(struct Actor *object, const s32 *script);
 void Func_02003438(s32 id, s32 a);
 
-static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
-   * of 159 instructions differ in tla-en. */
-  return ((struct Actor *)Import_ActorCreate(type, x, y, z));
-}
-
 /// An event handler from the sanctum's event table (in s2f48.c):
 /// changes the cells at the leader's place, spawns an effect of type 0x15d
 /// there and sets the flag the event work's exit selects; once flags 0x200 to
@@ -400,7 +394,7 @@ void Func_02001398(void) {
   else
     MapGrid_CopyCellsTo(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   Event_PlaySound(106);
-  object = Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
+  object = FieldActor_Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
                   ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;

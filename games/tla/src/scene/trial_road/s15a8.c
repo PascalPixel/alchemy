@@ -1712,57 +1712,7 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-void Func_020042f0(const u16 *table) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object;
-  s32 id;
-  s32 flag;
-  s32 nextFlag;
-  struct MapCell *cells;
-  u8 *shapes;
-  struct MapCell *cell;
-  s32 index;
-  struct Actor *leader;
-  s32 ground;
-
-  if (*table == 0xffff)
-    goto done;
-next:
-  id = table[0];
-  object = Actor_GetById(id);
-  flag = table[1];
-  nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
-  shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  if (Event_GetFlag(nextFlag)) {
-    Actor_SetPosition(id, 0, 0);
-  } else {
-    s32 shape;
-    u8 *slot;
-    s32 height;
-
-    index = Func_02005a18(object);
-    cell = &cells[index];
-    slot = shapes + index;
-    shape = Func_02005848(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_02005958(id);
-    cell->attributeB = 128;
-    *slot = Func_02005a20(object->terrainId, shape, (height >> 19) + 4);
-    if (Event_GetFlag(flag))
-      Func_020057c8(object, 0);
-  }
-  table += 2;
-  if (*table != 0xffff)
-    goto next;
-done:
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
-  if (leader->y < ground) {
-    leader->terrainHeight = ground;
-    leader->y = ground;
-  }
-}
+DEFINE_FUNC_02002D08(Func_020042f0, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20, Func_020057c8)
 
 DEFINE_FUNC_0200406C(Func_02004418, Func_020059c0, Func_02005a28, Func_020057c8,
     Func_02004a94, Func_02004d6c, Func_02004bc8)
@@ -1815,65 +1765,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-void Func_020046a4(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object;
-  s32 id;
-  s32 flag;
-  s32 nextFlag;
-  struct MapCell *cells;
-  u8 *shapes;
-  struct MapCell *cell;
-  s32 index;
-  u8 *grid = gMapShapeGrid; // the shape grid, read once
-
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
-  wait(1);
-  Func_0200468c(8);
-  Func_0200468c(9);
-  Func_0200468c(10);
-  Actor_SetAnimation(9, 0);
-  wait(1);
-  Actor_SetPosition(8, 0, 0);
-  Actor_SetPosition(9, 0, 0);
-  Actor_SetPosition(10, 0, 0);
-  wait(1);
-  if (*list == 0xffff)
-    goto done;
-next:
-  id = list[0];
-  object = Actor_GetById(id);
-  flag = list[1];
-  nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
-  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  object->unk5c[0] = 3;
-  if (Event_GetFlag(nextFlag)) {
-    Actor_SetPosition(id, 0, 0);
-  } else {
-    s32 shape;
-    u8 *slot;
-    s32 height;
-
-    index = Func_02005a18(object);
-    cell = &cells[index];
-    slot = shapes + index;
-    shape = Func_02005848(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_02005958(id);
-    cell->attributeB = 128;
-    *slot = Func_02005a20(object->terrainId, shape, (height >> 19) + 4);
-    if (Event_GetFlag(flag))
-      ObjectVisual_CopyAttributes(id, 9);
-  }
-  list += 2;
-  if (*list != 0xffff)
-    goto next;
-done:
-  wait(10);
-}
+DEFINE_FUNC_020030BC(Func_020046a4, Func_0200468c, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20)
 
 void Func_0200480c(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);

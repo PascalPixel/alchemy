@@ -18,7 +18,6 @@ void HeapSlot_Release(s32 slot);
 /// Releases `buffer`, a block taken with no heap slot, and every later block of
 /// its pool, as HeapSlot_Release does.
 void Heap_Release(void *buffer);
-void Heap_FillFreeWords(u32 value);
 
 static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
                                                s32 size) {

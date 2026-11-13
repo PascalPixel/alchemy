@@ -46,6 +46,5 @@ STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 0x0a);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 0x0c);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 0x10);
 
-struct AnimationMetadata *Resource_GetMetadataRecordFarFar(u32 number);
 
 #endif

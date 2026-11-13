@@ -333,7 +333,7 @@ SECTIONS
         "*/games/tla/src/battle_effect/relocated_kernel_10.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/relocated_kernel_11.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/battle_effect.o"(.text)
-        "*/games/tla/src/battle_effect/tiled_canvas_begin.o"(.text)
+        "*/games/tla/src/battle_effect/cybele.o"(.text)
         "*/games/tla/src/battle_effect/ability_effects.o"(.text)
         "*/games/tla/src/battle_effect/liquifier.o"(.text)
         "*/games/tla/src/battle_effect/summon_effects.o"(.text)

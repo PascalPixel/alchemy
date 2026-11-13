@@ -5,7 +5,7 @@
 /// battle_effect.c holds them. battle_effect_internal.h holds the includes
 /// every part shares; the parts under battle_effect/ follow in ROM order. The
 /// bank is five objects, not The Broken Seal's one, because the merge could
-/// not reconcile tiled_canvas_begin.c and liquifier.c with their neighbours.
+/// not reconcile cybele.c and liquifier.c with their neighbours.
 
 #include "battle_effect_internal.h"
 

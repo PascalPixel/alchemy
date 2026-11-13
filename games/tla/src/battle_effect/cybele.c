@@ -1,3 +1,9 @@
+/// @file
+/// The bank's second object: the effects from the Cybele summon to Bolt
+/// (Boreas, Break, Drain, Cure Poison, Flare, Quake, Fire, Frost, Ray,
+/// Atalanta, Growth, Vine, Thorn and the rest), an object of its own as the
+/// merge could not reconcile it with its neighbours.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

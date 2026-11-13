@@ -114,7 +114,7 @@ struct MapGridScrollAnimView {
   /// MapGridScrollWork's view, bounds and shown layers; not named through this
   /// view.
   ///@{
-  s32 viewX, viewY;
+  s32 view[2];
   s32 minX, minY, maxX, maxY;
   s8 animationActive;
   u8 unused[3];

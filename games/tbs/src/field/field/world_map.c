@@ -133,8 +133,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   ScreenFade_FromBlack(0);
   perspective = HeapSlot_Alloc(HEAP_SLOT_MAP_GRID, sizeof(struct WorldMapView));
   Dma_Fill32(0, perspective, sizeof(struct WorldMapView));
-  perspective->viewX = 0;
-  perspective->viewY = 0;
+  perspective->view[0] = 0;
+  perspective->view[1] = 0;
   perspective->scaleX = Q16_ONE * 32;
   perspective->scaleY = Q16_ONE * 64;
   perspective->limitX = px(8160);
@@ -515,7 +515,7 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
 ///
 /// Added as a task by WorldMap_InitializePerspective (priority
 /// TASK_PASS_FRAME + 5, as MapGrid_UpdateLayerScroll is on layered maps). Sets
-/// viewX and viewY, decays the shake, moves the camera and its eye, and runs
+/// the view, decays the shake, moves the camera and its eye, and runs
 /// Transform_UpdateVertices from heap slot 46 into this frame's affine page.
 void WorldMap_UpdateView(void) {
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
@@ -562,20 +562,20 @@ void WorldMap_UpdateView(void) {
     // row 12 on when y grows and 18 back when it falls.
     tileColumn = x / px(16);
     tileRow = y / px(16);
-    if ((perspective->viewX ^ x) & (16 << 16)) {
-      if (perspective->viewX < x)
+    if ((perspective->view[0] ^ x) & (16 << 16)) {
+      if (perspective->view[0] < x)
         WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
       else
         WorldMap_RenderPaletteMappedColumn(tileColumn - 16);
     }
-    if ((perspective->viewY ^ y) & (16 << 16)) {
-      if (perspective->viewY < y)
+    if ((perspective->view[1] ^ y) & (16 << 16)) {
+      if (perspective->view[1] < y)
         WorldMap_RenderPaletteMappedRow(tileRow + 12);
       else
         WorldMap_RenderPaletteMappedRow(tileRow - 18);
     }
-    perspective->viewX = x;
-    perspective->viewY = y;
+    perspective->view[0] = x;
+    perspective->view[1] = y;
   }
   // Rebuild the projection and look at the followed position from the
   // current pitch and yaw, the eye one pixel beyond the zoomed distance.

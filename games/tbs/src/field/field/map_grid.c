@@ -259,8 +259,8 @@ s32 MapGrid_LoadMap(s32 index) {
   grid->minY = px(mapHeader->cameraBounds[1] * 8);
   grid->maxX = px(mapHeader->cameraBounds[2] * 8);
   grid->maxY = px(mapHeader->cameraBounds[3] * 8);
-  grid->viewX = 0;
-  grid->viewY = 0;
+  grid->view[0] = 0;
+  grid->view[1] = 0;
   grid->enabled[0] = mapHeader->priority[0];
   grid->enabled[1] = mapHeader->priority[1];
   grid->enabled[2] = mapHeader->priority[2];
@@ -285,8 +285,8 @@ s32 MapGrid_LoadMap(s32 index) {
     // 2x2 tiles, 128 cells to a row).
     layer->cells =
         (struct MapGridCell *)Ram_MapGridCellBuffer + (y / 2) * 128 + x / 2;
-    layer->x = Iwram_MulQ16(grid->viewX, layer->scaleX) + layer->offsetX;
-    layer->y = Iwram_MulQ16(grid->viewY, layer->scaleY) + layer->offsetY;
+    layer->x = Iwram_MulQ16(grid->view[0], layer->scaleX) + layer->offsetX;
+    layer->y = Iwram_MulQ16(grid->view[1], layer->scaleY) + layer->offsetY;
     layerSource++;
     layer++;
   }
@@ -430,7 +430,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
 /// row that scrolls into view, and sets its BG scroll.
 ///
 /// Added as a task by MapGrid_LoadMap (priority TASK_PASS_FRAME +
-/// 5), and called by MapGrid_CenterOnFollowedPoint. Sets map->viewX and viewY,
+/// 5), and called by MapGrid_CenterOnFollowedPoint. Sets map->view,
 /// decays map->shakeX and shakeY, advances each drifting layer's phase, and
 /// writes each layer's position and gBgScroll entry.
 void MapGrid_UpdateLayerScroll(void) {
@@ -485,11 +485,11 @@ void MapGrid_UpdateLayerScroll(void) {
     baseY += Iwram_MulQ16(shakeAmplitude, shakeRollA - shakeRollB);
     grid->shakeY = Iwram_MulQ16(shakeAmplitude, grid->shakeDecay);
   }
-  grid->viewX = baseX;
-  grid->viewY = baseY;
+  grid->view[0] = baseX;
+  grid->view[1] = baseY;
   for (layerIndex = 0; layerIndex < 3; layerIndex++, layer++) {
-    baseX = Iwram_MulQ16(grid->viewX, layer->scaleX);
-    baseY = Iwram_MulQ16(grid->viewY, layer->scaleY);
+    baseX = Iwram_MulQ16(grid->view[0], layer->scaleX);
+    baseY = Iwram_MulQ16(grid->view[1], layer->scaleY);
     // A drifting layer wraps at its period: maskX and maskY are in 8-pixel
     // tiles, and the mask keeps the pixel and fraction bits below them.
     if (layer->speedX != 0) {
@@ -529,7 +529,7 @@ void MapGrid_UpdateLayerScroll(void) {
 
 /// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
 /// and redraws every enabled layer's BG map around it. Called by
-/// MapGrid_CenterOnFollowedPoint. Sets map->viewX and viewY, and advances each
+/// MapGrid_CenterOnFollowedPoint. Sets map->view, and advances each
 /// drifting layer's phase by one frame.
 void MapGrid_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
@@ -541,8 +541,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   y -= FIELD_VIEW_FOCUS_Y;
   CLAMP(x, grid->minX, grid->maxX - FIELD_VIEW_WIDTH);
   CLAMP(y, grid->minY, grid->maxY - FIELD_VIEW_HEIGHT);
-  grid->viewX = x;
-  grid->viewY = y;
+  grid->view[0] = x;
+  grid->view[1] = y;
 
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
     if (grid->enabled[layerIndex]) {
@@ -550,8 +550,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellPictureRow, cellPictureColumn;
 
-      x = Iwram_MulQ16(grid->viewX, layer->scaleX);
-      y = Iwram_MulQ16(grid->viewY, layer->scaleY);
+      x = Iwram_MulQ16(grid->view[0], layer->scaleX);
+      y = Iwram_MulQ16(grid->view[1], layer->scaleY);
       if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x = (x + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);

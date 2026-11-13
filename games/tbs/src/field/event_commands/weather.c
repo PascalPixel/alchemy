@@ -13,9 +13,9 @@
 /// Vale runs them with the lightning while FLAG_VALE_STORM is set
 /// (vale_plaza.c).
 void Weather_UpdateRain(void) {
-  struct MapGridScrollWork *view = gMapGridWork[0];
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   struct WeatherWork *work = gWeatherWork;
-  s32 *camera = &view->viewX;
+  s32 *camera = grid->view;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
   struct GroundParticle *particle = work->particles;
@@ -187,7 +187,7 @@ void FieldMotes_Update(void) {
     s32 y;
 
     if (--mote->timer != 0xffff) {
-      s32 *camera = &grid->viewX;
+      s32 *camera = grid->view;
       s32 cameraX = camera[0];
       s32 cameraZ = camera[1];
       u16 age = mote->timer;
@@ -320,7 +320,7 @@ void FieldEffect_UpdateSparkles(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
   spawned = 0;
   grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  camera = &grid->viewX;
+  camera = grid->view;
   spawnX = 0;
   spawnZ = 0;
   i = 0;

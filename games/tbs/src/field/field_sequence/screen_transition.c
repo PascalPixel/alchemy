@@ -285,8 +285,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_INVERSE: {
     s32 ax;
 
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     // Centred on the leader's place on screen, 16 pixels above its feet.
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
@@ -335,9 +339,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     break;
   }
-  case WINDOW_TRANSITION_RIPPLE:
-    cameraX = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY8 = grid->viewY & FIELD_PIXEL_MASK;
+  case WINDOW_TRANSITION_RIPPLE: {
+    s32 *view = grid->view;
+
+    cameraX = view[0] & FIELD_PIXEL_MASK;
+    cameraY8 = view[1] & FIELD_PIXEL_MASK;
+  }
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
@@ -391,8 +398,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER: {
     s32 ax;
 
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
@@ -435,8 +446,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_LOW: {
     s32 ax;
 
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in

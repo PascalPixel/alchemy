@@ -66,8 +66,12 @@ void ActorSystem_PlaceSprites(void) {
   // MapGridScrollWork owns all three layer cell pointers at their 48-byte
   // stride.
   grid = gMapGridWork[0];
-  viewX = grid->viewX & FIELD_PIXEL_MASK;
-  viewZ = grid->viewY & FIELD_PIXEL_MASK;
+  {
+    s32 *view = grid->view;
+
+    viewX = view[0] & FIELD_PIXEL_MASK;
+    viewZ = view[1] & FIELD_PIXEL_MASK;
+  }
   system = gActorSystemWork;
   // Copy the picture decoder (Render_DecodePicture) into its heap slot.
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,

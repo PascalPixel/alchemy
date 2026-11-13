@@ -331,8 +331,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     struct MapGridScrollWork *state =
         *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
 #endif
-    s32 x = state->viewX & FIELD_PIXEL_MASK;
-    s32 z = state->viewY & FIELD_PIXEL_MASK;
+    s32 x = state->view[0] & FIELD_PIXEL_MASK;
+    s32 z = state->view[1] & FIELD_PIXEL_MASK;
 
     // Relative to the view's whole-pixel corner; height lifts a point up
     // the screen.

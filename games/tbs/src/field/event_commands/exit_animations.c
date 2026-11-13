@@ -14,6 +14,7 @@
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct MapGridScrollWork *grid;
+  s32 *view;
   s32 cameraX;
   s32 cameraZ;
   s32 x;
@@ -22,8 +23,9 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   if (actor == 0)
     return -1;
   grid = gMapGridWork[0];
-  cameraX = grid->viewX & FIELD_PIXEL_MASK;
-  cameraZ = grid->viewY & FIELD_PIXEL_MASK;
+  view = grid->view;
+  cameraX = view[0] & FIELD_PIXEL_MASK;
+  cameraZ = view[1] & FIELD_PIXEL_MASK;
   x = actor->x.fixed - cameraX;
   z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / Q16_ONE;

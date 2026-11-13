@@ -379,12 +379,12 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect) {
   if (effect->kind > 199)
-    Func_0818f620(effect, 2);
+    BattleEffect_RunCanvasBurst(effect, 2);
   else
-    Func_0818f620(effect, 1);
+    BattleEffect_RunCanvasBurst(effect, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunCanvasMode0, Func_0818f620, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunCanvasMode0, BattleEffect_RunCanvasBurst, 0)
 
 void BattleEffect_RunCanvasMode3WithAction(
     struct BattleEffectArgument *effect) {
@@ -393,7 +393,7 @@ void BattleEffect_RunCanvasMode3WithAction(
   object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x1c);
-  Func_0818f620(effect, 3);
+  BattleEffect_RunCanvasBurst(effect, 3);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
@@ -444,7 +444,8 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 //   the
 //      midpoint of the targets, its own palette, hit at 24.
 // Modes 1 and 2 close by restoring the battle display themselves.
-void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
+void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
+                                 u32 mode) {
   struct EffectPosition from;
   struct EffectPosition to;
   struct BattleEffectWork *work;

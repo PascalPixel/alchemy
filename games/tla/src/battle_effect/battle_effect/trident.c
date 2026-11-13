@@ -518,13 +518,15 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
+                                   s32 mode);
 
 /// Abilities: Planet Diver (kind 60).
-DEFINE_EFFECT_KIND(BattleEffect_RunPlanetDiver, Func_0818d5a8, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunPlanetDiver, BattleEffect_RunLeapingStrike,
+                   0)
 
 /// Abilities: Planetary (kind 128).
-DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, Func_0818d5a8, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, BattleEffect_RunLeapingStrike, 1)
 
 #define LEAP_FRAMES 88
 #define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x6000))
@@ -554,7 +556,8 @@ void BattleEffect_ConfigureEffectDisplay(void);
 // landing 256 sparks burst from it. In mode 0 the caster then shows a fireball
 // and one target is struck; in mode 1 a claw slashes in 3D, three rings and two
 // pillars spread, every target is struck and at frame 50 all are thrown back.
-void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   struct EffectPosition pos;
   struct ModelTexture texture;
   struct BattleEffectWork *work;

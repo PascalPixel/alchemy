@@ -10,6 +10,7 @@
 /// on one who needs it. A later test wins: an effect over the ability
 /// kind, revival over all.
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
+  s32 signedEffect;
   s32 abilityKind;
   s32 targetKind;
   u8 effect;
@@ -20,7 +21,10 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
     targetKind = TARGET_HINT_HP;
   if (abilityKind == ABILITY_FORMULA_HEAL_PP)
     targetKind = TARGET_HINT_PP;
-  effect = act->effect;
+  /* FAKEMATCH(cast): read through a signed word, a load apart from the
+   * call's; as a plain read, 5 of 30 instructions differ in tbs-en. */
+  signedEffect = (s8)act->effect;
+  effect = signedEffect;
   if (effect == ABILITY_EFFECT_CURE_POISON)
     targetKind = TARGET_HINT_CURE_POISON;
   if (effect == ABILITY_EFFECT_RESTORE)
@@ -749,11 +753,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   Task_Remove(UpdateLinkSessionCountdown);
   if (state->linkTimer != 0) {
     // Keep the completion wait visible while the peer finishes its commands.
-    void Link_DrawWaitingForOpponent(void) {
+    // UB: declared to return a value it never returns.
+    s32 Link_DrawWaitingForOpponent(void) {
       u16 data[64];
       BATTLE_MENU_MESSAGE_COPY(MsgWaitingForOpponent, data,
                                BATTLE_MENU_MESSAGE_CAPACITY);
       Text_DrawWideStringAtOffset(data, state->timerWindow, 0, 4);
+#ifdef UBFIX
+      return 0;
+#endif
     }
 
     // The wait message shows only when the countdown never opened its

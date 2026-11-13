@@ -153,9 +153,13 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->sentinel = 240;
       sprite->x = 120;
       sprite->y = 120;
-      entry->attributes.word =
-          OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      entry->tile.value = 0;
+      /* FAKEMATCH(type): the two words stored through pointer types, which
+       * keeps the stores before them in place; through the unions, 1 of 87
+       * instructions moves in tbs-en. */
+      *(struct Window **)&entry->attributes =
+          (struct Window *)(OBJ_SIZE_16X16 |
+                            OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+      *(void **)&entry->tile = NULL;
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
       /* FAKEMATCH(dead): advancing and restoring the captured pointer keeps

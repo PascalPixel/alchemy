@@ -140,11 +140,9 @@ s32 Party_AddMember(s32 unitId) {
   s32 partyIndex;
 
   GameFlag_Set(FLAG_IN_PARTY(unitId));
-  partyIndex = 0;
-  while (partyIndex < partySize) {
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     if (gMainRoutineWork.party[partyIndex] == unitId)
       return partySize;
-    partyIndex++;
   }
   gMainRoutineWork.party[partyIndex] = unitId;
   return partySize + 1;

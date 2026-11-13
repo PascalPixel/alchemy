@@ -49,8 +49,7 @@ s32 LinkBattle_ReceiveParty(void) {
   // so no run of the game uses it either way.
   buffer = Heap_AllocEwram(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
-  partySlot = 0;
-  while (partySlot < LINK_PARTY_SIZE) {
+  for (partySlot = 0; partySlot < LINK_PARTY_SIZE; partySlot++) {
     opponent = Unit_GetFar(partySlot + FIRST_ENEMY_UNIT);
     if (Serial_StartReceive(opponent) == -1) {
       break;
@@ -85,7 +84,6 @@ s32 LinkBattle_ReceiveParty(void) {
       opponent->name[i] = label[i];
     }
     opponent->name[UNIT_NAME_LENGTH] = 0;
-    partySlot += 1;
   }
   Heap_Release(buffer);
 

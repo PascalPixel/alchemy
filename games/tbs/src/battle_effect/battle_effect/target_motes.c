@@ -535,8 +535,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   EFFECT_FOR_EACH_TARGET(i, work->args) {
     work->particles[i].variant = Random16() & 63;
   }
-  frame = 0;
-  while (frame != (work->args->targetCount << 5) + 32) {
+  for (frame = 0; frame != (work->args->targetCount << 5) + 32; frame++) {
     if (frame == 32) {
       EFFECT_SHOW_DAMAGE(0);
     }
@@ -570,7 +569,6 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
       } while (i != work->args->targetCount);
     }
     EFFECT_PRESENT_CANVAS(work);
-    frame += 1;
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

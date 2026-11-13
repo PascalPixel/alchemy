@@ -227,10 +227,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   }
 
   // Where each target stands.
-  i = 0;
-  while (i != work->args->targetCount) {
+  for (i = 0; i != work->args->targetCount; i++) {
     Projection_ScaledUnit(work->args->targets[i], &targetSpots[i]);
-    i += 1;
   }
 
   frame = 0;
@@ -330,8 +328,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     // Hit each target every 8 frames, once its turn has come: target i on
     // frames whose low three bits are i.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
-      i = 0;
-      while (i != work->args->targetCount) {
+      for (i = 0; i != work->args->targetCount; i++) {
         // The bolt strikes target i from frame i * 4 + 2 and does not knock
         // it back.
         if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
@@ -339,11 +336,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 4);
         }
-        i += 1;
       }
     } else {
-      i = 0;
-      while (i != work->args->targetCount) {
+      for (i = 0; i != work->args->targetCount; i++) {
         // The bursts reach target i from frame i * 4 + 16.
         if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
           work->shakeFrames = 8;
@@ -357,7 +352,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                          KNOCKBACK_HURL);
         }
-        i += 1;
       }
     }
 

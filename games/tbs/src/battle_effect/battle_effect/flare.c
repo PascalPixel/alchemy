@@ -152,13 +152,11 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     } while (i != FLARE_ARC_COUNT);
 
     // The targets flash red, 8 frames apart from frame 16.
-    i = 0;
-    while (i != work->args->targetCount) {
+    for (i = 0; i != work->args->targetCount; i++) {
       if (frame == (i * 8) + 16) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
                                  POSE_DAMAGE, i, 12);
       }
-      i += 1;
     }
     EFFECT_END_FRAME(work);
     frame += 1;

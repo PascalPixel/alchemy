@@ -236,12 +236,11 @@ s32 Sanctum_RunPartyService(void) {
       chooseAgain = 0;
       Sanctum_ShowKeeperMessage(MsgWhoToRevive);
       redraw = 1;
-      memberIndex = 0;
-      while (memberIndex < shop->partyMemberCount) {
+      for (memberIndex = 0; memberIndex < shop->partyMemberCount;
+           memberIndex++) {
         unitId = shop->partyMemberIds[memberIndex];
         if (Sanctum_NeedsService(unitId, serviceKind) != 0)
           break;
-        memberIndex++;
       }
     }
 

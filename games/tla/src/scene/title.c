@@ -212,7 +212,7 @@ void Title_RevealSpriteRow(void) {
     if (n <= 2 && (gFrameCount & 1))
       n = 0;
     if (n != 0)
-      Import_OamAddSpriteAtDepthClamped(p++, 255);
+      Oam_AddSpriteAtDepthClamped(p++, 255);
     tile += 2;
   } while (++i <= 17);
   gTitle_RevealStep++;

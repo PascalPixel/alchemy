@@ -293,7 +293,7 @@ DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_020074cc, Data_0200f510,
                           gData_020074ce, gData_020074d0, gData_020075d0,
                           gData_020075d2, BattleEffect_GetObjectPriority,
-                          Import_OamAddSpriteAtDepthClamped)
+                          Oam_AddSpriteAtDepthClamped)
 
 #include "iwram_call.h"
 #include "task.h"

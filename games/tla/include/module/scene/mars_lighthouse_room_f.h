@@ -144,7 +144,6 @@ extern s16 gData_020075d0;
 extern s16 gData_020075d2;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 void Func_02000d80(void);
 

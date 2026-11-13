@@ -361,7 +361,7 @@ void Func_020048f4(void) {
     *oam++ = (y | (x << 16)) | attributes;
   }
   *oam = tile | 0x400;
-  Import_OamAddSpriteAtDepthClamped(Data_02006e14, 255);
+  Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
 DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38, gData_02006e0e__s3b38,

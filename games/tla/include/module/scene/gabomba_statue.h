@@ -104,8 +104,6 @@ s32 abs(s32);
 s32 Func_02004224(s32 from, s32 to, s32 kind);
 void Func_02004288(s32 id, s32 value);
 
-void Import_OamAddSpriteAtDepthClamped(struct Sprite *oam, s32 depth);
-
 void Func_020038ac(void);
 void Func_02003974(void);
 s32 Func_02003a64(s32 value);

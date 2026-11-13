@@ -62,9 +62,9 @@ VramCache_FindFreeEntry:
 	.thumb_func
 DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
-	.global Import_OamAddSpriteAtDepthClamped
+	.global Oam_AddSpriteAtDepthClamped
 	.thumb_func
-Import_OamAddSpriteAtDepthClamped:
+Oam_AddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Window_LoadGraphics
 	.thumb_func

@@ -97,7 +97,6 @@ extern u32 Data_02006e14[3];
 
 void Party_DrainPp(s32 value);
 s32 Party_GetPpRatio(void);
-void Import_OamAddSpriteAtDepthClamped(u32 *oam, s32 priority);
 
 void WorldMap_WatchVenusLighthouseCollapse(void);
 

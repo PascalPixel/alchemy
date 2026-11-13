@@ -18,7 +18,4 @@ void Title_LoadBackground(void);
 
 struct TitleSprite__title;
 
-void Import_OamAddSpriteAtDepthClamped(struct TitleSprite__title *sprite,
-                                       s32 priority);
-
 #endif

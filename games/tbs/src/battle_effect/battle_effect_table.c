@@ -15,11 +15,12 @@
 
 struct BattleEffectParams;
 
-// Picture layouts that several effects read from the same sheet. The ROM
-// holds a copy of each table for every effect, so each copy below is
-// defined from one of these.
+// Picture layouts that several effects read from the same sheet; each effect
+// keeps its own copy, defined from one of these.
 
-/// The six pictures of an erupting flame puff: where each begins in the sheet.
+/// The six pictures of an erupting flame puff: width, height, how far below its
+/// anchor its top goes, so that all six stand on one line, and where each
+/// begins.
 #define FLAME_PUFF_PICTURES {0, 552, 1480, 2590, 3913, 5185}
 #define FLAME_PUFF_PICTURE_WIDTHS {24, 29, 30, 27, 24, 16}
 #define FLAME_PUFF_PICTURE_HEIGHTS {23, 32, 37, 49, 53, 52}
@@ -51,9 +52,8 @@ struct BattleEffectParams;
 // Shared picture layouts, read by many parts.
 
 /// Mote pictures: particle sheets hold ten, picture n (from 0) n + 1 pixels
-/// wide and twice that tall. EFFECT_DRAW_MOTE and many parts read it. It stays
-/// the first table: BattleEffect_BuildBlitter (battle_effect/blitter.c) checks
-/// that a walk of the blitter template ended at its address.
+/// wide and twice that tall. It stays the first table, where the blitter
+/// template's walk ends.
 u16 gBattleEffect_MotePictures[] = {0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
 /// Flare pictures: the first ten are squares 2x2 to 20x20, picture n (from 0) n
 /// + 1 pixels from its centre to each edge (EFFECT_DRAW_FLARE, and Neptune and
@@ -75,9 +75,7 @@ u8 gBattleEffect_PuffArcPictureWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
 u8 gBattleEffect_PuffArcPictureHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
 u8 gBattleEffect_PuffArcPictureBiasY[] = FLAME_PUFF_PICTURE_BIAS_Y;
 u16 gBattleEffect_PuffArcPictures[] = FLAME_PUFF_PICTURES;
-// Six glint pictures, each GlintPictureWidths by GlintPictureHeights pixels:
-// read by the target strikes and motes, Bolt, the vortices, the casting impacts
-// and Thor.
+// Six glint pictures, each GlintPictureWidths by GlintPictureHeights pixels.
 u16 gBattleEffect_GlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
 u8 gBattleEffect_GlintPictureWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gBattleEffect_GlintPictureHeights[] = {31, 31, 31, 21, 21, 24};

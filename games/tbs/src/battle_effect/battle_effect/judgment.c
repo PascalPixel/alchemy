@@ -121,7 +121,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                                           HEAP_SLOT_RAM_CODE);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  // Setup: wipe the battle away, change the battle background behind it, wipe
+  // Wipe the battle away, change the battle background behind it, wipe
   // back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
@@ -527,7 +527,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                                (s32)&ResourceId_BeachBackdrop, 0);
     }
 
-    // Frame 214, the forest.
+    // The forest.
     if (frame == 214) {
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);

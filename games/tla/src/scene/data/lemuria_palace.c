@@ -2,7 +2,7 @@
 #include "scene_tables.h"
 
 // clang-format off
-u32 gData_02002fe8[] = {
+u32 gLemuriaPalace_MapCrossfade[] = {
     0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c, 0xa060808,
     0xe020c04, 0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c,
     0xa060808, 0xe020c04,

@@ -1,7 +1,7 @@
 /// @file
-/// Scene code of overlay 0x690, in ROM order.
+/// The settlements' events, continued; settlements.c says which places these
+/// are.
 
-// ---- games/tla/src/scene/settlements/s1620.c ----
 #include "types.h"
 #include "field_effect.h"
 #include "actor.h"
@@ -15,11 +15,11 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
-void Func_02001620(s32 objectId) {
+void Settlements_SpawnSplashRing(s32 objectId) {
   struct Actor *object;
   struct Vec vec;
   struct EffectOptions params;
@@ -39,21 +39,21 @@ void Func_02001620(s32 objectId) {
     vec.z = z;
     x += x / 3;
     vec.x = x;
-    Func_020000b8(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
-                  &params);
+    FieldEffect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
+                      &params);
   }
 }
 
-void Func_020016a4(void) { GameFlag_SetBit(0x208); }
+void Settlements_LiftBoulder(void) { GameFlag_SetBit(0x208); }
 
 /* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the 3 declarations' extern u32 gInput, it does
  * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
  * for `gInput'. */
 extern u32 gInput__s1620 __asm__("gInput");
-extern const s16 gData_02002276[];
+extern const s16 gSettlements_SlideAngles[];
 
-void Func_020016b0(struct Actor *object) {
+void Settlements_KeepSliding(struct Actor *object) {
   s32 angle;
   s32 turn;
 
@@ -65,7 +65,7 @@ void Func_020016b0(struct Actor *object) {
   if (Event_GetFlag(0x106))
     angle = -1;
   else
-    angle = gData_02002276[(gInput__s1620 >> 4) & 15];
+    angle = gSettlements_SlideAngles[(gInput__s1620 >> 4) & 15];
   if (angle == -1) {
     Import_ActorSelectAnimation(object, 9);
     return;
@@ -80,7 +80,6 @@ void Func_020016b0(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-// ---- games/tla/src/scene/settlements/s173c.c ----
 #include "event_work.h"
 #include "call.h"
 #include "main_routine_work.h"
@@ -88,7 +87,7 @@ void Func_020016b0(struct Actor *object) {
 #include "iwram_call.h"
 #include "input.h"
 
-void Func_0200173c(void) {
+void Settlements_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (work->actionCounter != 0) {
@@ -99,14 +98,17 @@ void Func_0200173c(void) {
   }
 }
 
-/* VIEW(s173c): routine Func_020016b0 as void Func_020016b0(void); the
- * definition has void Func_020016b0(struct Actor *object); tried as the
- * definition's void Func_020016b0(void), it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:96: conflicting types for `Func_020016b0'.
+/* VIEW(s173c): routine Settlements_KeepSliding as void
+ * Settlements_KeepSliding(void); the definition has void
+ * Settlements_KeepSliding(struct Actor *object); tried as the definition's void
+ * Settlements_KeepSliding(void), it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:96: conflicting types for
+ * `Settlements_KeepSliding'.
  */
-extern void Func_020016b0__s173c(void) __asm__("Func_020016b0");
+extern void
+Settlements_KeepSliding__s173c(void) __asm__("Settlements_KeepSliding");
 
-void Func_02001770(void) {
+void Settlements_SlideOnIce(void) {
   struct Actor *object;
   s32 startCell;
   s32 targetX;
@@ -127,7 +129,7 @@ void Func_02001770(void) {
 
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
 retry:
-  Func_0200173c();
+  Settlements_StopLeader();
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -145,7 +147,7 @@ retry:
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_020022b6[(gInput.held >> 4) & 15];
+    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
     if ((u16)angle == 0xffff)
       return;
   } else {
@@ -175,7 +177,7 @@ retry:
   Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   FieldActor_WaitForMove(object);
-  object->update = Func_020016b0__s173c;
+  object->update = Settlements_KeepSliding__s173c;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)

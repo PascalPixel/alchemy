@@ -32,8 +32,8 @@ void Madra_AskAboutBriggs(void);
 void Madra_MindReadBriggsFan(void);
 
 void Madra_InspectPartyAtGate(void);
-extern s16 gData_020032f0[];
-extern s16 gData_020032fc[];
+extern s16 gMadra_DoorOpening[];
+extern s16 gMadra_CavernHomeDoorOpening[];
 
 void FieldCamera_WaitForArrival(void);
 

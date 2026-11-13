@@ -1,6 +1,9 @@
 /// @file
-/// The scene code of overlay 0x64e that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in venus_lighthouse/.
+/// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
+/// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
+/// leave, meet Alex and set off for Idejima. This file holds the scene's entry
+/// routines and the block push; the rest of the overlay is in
+/// venus_lighthouse/.
 
 #include "shared/push.h"
 #include "types.h"
@@ -11,13 +14,14 @@
 #include "module/scene/scene.h"
 #include "scene.h"
 
-extern s32 gData_02001d8c[];
+extern s32 gPushLeaderSteps[];
 
 void Import_ActorSelectAnimation(struct StagedActor *object, s32 mode);
 s32 MapGrid_CheckCollision(struct StagedActor *object,
                            struct FieldPosition *position);
 
-DEFINE_BLOCK_PUSH_ONTO(Func_0200038c, gData_02001d8c, MapGrid_CheckCollision,
+DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto,
+                       gPushLeaderSteps, MapGrid_CheckCollision,
                        Import_ActorSelectAnimation)
 
 #include "../field/map/cell_fill_byte.c"
@@ -35,7 +39,8 @@ DEFINE_BLOCK_PUSH_ONTO(Func_0200038c, gData_02001d8c, MapGrid_CheckCollision,
 #include "scene_tables.h"
 #include "frame.h"
 
-void Func_0200056c(void) {}
+/// Unused: does nothing; nothing calls it.
+UNUSED void VenusLighthouse_Nothing(void) {}
 
 #define FieldActor_SetSpriteColor ((void (*)(void *, s32))Actor_SetSpriteColor)
 
@@ -50,8 +55,8 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   return 0;
 }
 
-void Func_02000150(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
-                   s32 life, struct SceneEffectParams *params);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
+                       s32 life, struct SceneEffectParams *params);
 
 /// Emits a rising particle near the actor every eight frames.
 s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
@@ -68,8 +73,8 @@ s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   particleY = actor->y + ((32 - (s32)((u32)(Random16Far() * 32) >> 16)) << 16);
   riseSpeed =
       ((((s32)((u32)(Random16Far() * 5) >> 16)) << 16) + 0x00050000) / 10;
-  Func_02000150(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
-                0x000b0000, &options);
+  FieldEffect_Spawn(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
+                    0x000b0000, &options);
 done:
   return 0;
 }

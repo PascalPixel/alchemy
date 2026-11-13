@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x689, in ROM order.
+/// Lemuria's dock, where the Lemurian ship ties up: Piers steps off to wait by
+/// the ship and asks whether the party is ready to sail, and a house stands on
+/// the quay.
 
 #include "battle.h"
 #include "field.h"
@@ -39,8 +41,8 @@ struct WarpTarget {
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
 extern u8 MsgAreWeSetting[];
-extern s32 gData_0200057c[];
-extern s32 gData_0200059c[];
+extern s32 gLemuriaDock_Exits[];
+extern s32 gLemuriaDock_ExitsWithFlag960[];
 extern struct WarpTarget gLemuriaDock_HouseDoor;
 
 void Event_FinishScreenTransition(void);
@@ -60,8 +62,8 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 s32 *Scene_GetExits(void) {
   if (!Event_GetFlag(0x960))
-    return gData_0200057c;
-  return gData_0200059c;
+    return gLemuriaDock_Exits;
+  return gLemuriaDock_ExitsWithFlag960;
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -239,12 +241,17 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-s32 gData_0200057c[] = {
+/// The dock's exits: which of Ancient Lemuria's entrances the way north leads
+/// to follows flag 0x960, which Ancient Lemuria sets by the way the party last
+/// came.
+// XXX: what flag 0x960 records; Ancient Lemuria's entrances 1, 4 and 5
+// against 2 and 3 would settle it, read from that scene's map.
+s32 gLemuriaDock_Exits[] = {
     200, 0x101030c7, -1, 0x102020c9, -1, 0x10301028,
     -1, 511,
 };
 
-s32 gData_0200059c[] = {
+s32 gLemuriaDock_ExitsWithFlag960[] = {
     200, 0x101050c7, -1, 0x102050c9, -1, 0x10301028,
     -1, 511,
 };
@@ -257,12 +264,13 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_02000604[] = {
+s16 gLemuriaDock_HouseDoorOpening[] = {
     51, 38, 1, 1, 6, -1,
 };
 // clang-format on
 
-struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gData_02000604, 70, 22};
+struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gLemuriaDock_HouseDoorOpening,
+                                            70, 22};
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},

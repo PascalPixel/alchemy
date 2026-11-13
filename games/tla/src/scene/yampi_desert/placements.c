@@ -1,31 +1,32 @@
 /// @file
-/// Scene code of overlay 0x661, in ROM order, from placements' offset up to the
-/// next object the overlay links.
+/// The Yampi Desert's tables of entrances, placements and triggers by room, its
+/// travelers' talk, and the stakes Pound sinks and Sand slips under; linked
+/// apart from yampi_desert.c, with the field's shared effect code between.
 
 #include "scene.h"
 #include "module/scene/yampi_desert.h"
 #include "module/tla.h"
 
-extern const u8 gData_02004810[];
-extern const u8 gData_02004840[];
-extern const u8 gData_020048b8[];
-extern const u8 gData_020048d8[];
+extern const u8 gYampiDesert_Entrances[];
+extern const u8 gYampiDesert_Room11Entrances[];
+extern const u8 gYampiDesert_Room10Regions[];
+extern const u8 gYampiDesert_Room11Regions[];
 
-void Func_02000280(void) { Import_FieldRequestDjinnBattle(19, 68); }
+void YampiDesert_FightBlitz(void) { Import_FieldRequestDjinnBattle(19, 68); }
 
-const u8 *Func_0200028c(void) {
+const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room11)
-    return gData_02004840;
-  return gData_02004810;
+    return gYampiDesert_Room11Entrances;
+  return gYampiDesert_Entrances;
 }
 
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room10)
-    return gData_020048b8;
+    return gYampiDesert_Room10Regions;
   if (scene == (s32)&SceneId_Ov661Room11)
-    return gData_020048d8;
+    return gYampiDesert_Room11Regions;
   return 0;
 }
 
@@ -50,8 +51,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern const u8 gYampiDesert_Placements[];
 extern const u8 gYampiDesert_Room1Placements[];
-extern const u8 gData_02004a84[];
-extern const u8 gData_02004b44[];
+extern const u8 gYampiDesert_Room2Placements[];
+extern const u8 gYampiDesert_Room2PlacementsAfterMeeting[];
 extern const u8 gYampiDesert_Room3Placements[];
 extern const u8 gYampiDesert_Room4Placements[];
 extern const u8 gYampiDesert_Room5Placements[];
@@ -66,8 +67,8 @@ const u8 *Scene_GetPlacements(void) {
     return gYampiDesert_Room1Placements;
   if (scene == (s32)&SceneId_Ov661Room2) {
     if (GameFlag_Test(0x8f0))
-      return gData_02004b44;
-    return gData_02004a84;
+      return gYampiDesert_Room2PlacementsAfterMeeting;
+    return gYampiDesert_Room2Placements;
   }
   if (scene == (s32)&SceneId_Ov661Room3)
     return gYampiDesert_Room3Placements;
@@ -84,7 +85,7 @@ const u8 *Scene_GetPlacements(void) {
   return gYampiDesert_Placements;
 }
 
-void Func_020003b8(s32 a) { Scene_Call4178(a, 64, 0x302); }
+void YampiDesert_ScoopTreasurePit(s32 a) { Scene_Call4178(a, 64, 0x302); }
 
 extern const u8 gYampiDesert_Triggers[];
 extern const u8 gYampiDesert_Room1Triggers[];
@@ -142,7 +143,7 @@ void YampiDesert_TalkToTraveler(void) {
   Event_End();
 }
 
-void Func_020004e0(void) {
+void YampiDesert_ElderRefusesToQuit(void) {
   Event_SetMessageId((s32)MsgCanTWe);
   Actor_SetModeById(12, 4);
   Event_ShowMessageAndWait(12, 0);
@@ -162,7 +163,7 @@ void YampiDesert_TalkToElderAboutWay(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
-    Func_020004e0();
+    YampiDesert_ElderRefusesToQuit();
   Actor_FaceActorById(12, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgAsYouCan);
   Event_ShowMessageAndWait(12, 0);
@@ -176,7 +177,7 @@ void YampiDesert_TalkToElder(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
-    Func_020004e0();
+    YampiDesert_ElderRefusesToQuit();
   Actor_FaceActorById(13, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgThisIsWhere);
   Event_ShowMessageAndWait(13, 0);
@@ -193,36 +194,44 @@ void YampiDesert_ReadSignpost(void) {
   Event_End();
 }
 
-void Func_02000620(s32 a, s32 b) { Statue_Sink(gData_02004768, a, b); }
+void YampiDesert_PoundRoom1Stake(s32 a, s32 b) {
+  Statue_Sink(gYampiDesert_Room1Stakes, a, b);
+}
 
-void Func_02000634(s32 a, s32 b) { Statue_Sink(gData_0200478e, a, b); }
+void YampiDesert_PoundRoom3Stake(s32 a, s32 b) {
+  Statue_Sink(gYampiDesert_Room3Stakes, a, b);
+}
 
-#define DEFINE_FUNC_02000648(name, data1)                                      \
+#define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, data1)                      \
   void name(s32 a, s32 b) {                                                    \
     Statue_Sink(data1, a, b);                                                  \
     if (a == 1) {                                                              \
-      if (gData_02004808 == 0)                                                 \
-        gData_02004808 = 210;                                                  \
+      if (gYampiDesert_RaisedEvent == 0)                                       \
+        gYampiDesert_RaisedEvent = 210;                                        \
     }                                                                          \
   }
 
-DEFINE_FUNC_02000648(Func_02000648, gData_020047d2)
+DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom4Stake,
+                                     gYampiDesert_Room4Stakes)
 
-void Func_02000670(s32 a, s32 b) { Statue_Sink(gData_02004800, a, b); }
+void YampiDesert_PoundRoom12Stake(s32 a, s32 b) {
+  Statue_Sink(gYampiDesert_Room12Stakes, a, b);
+}
 
-DEFINE_FUNC_02000648(Func_02000684, gData_020047ec)
+DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom5Stake,
+                                     gYampiDesert_Room5Stakes)
 
-void Func_020006ac(void) {
+void YampiDesert_StepOntoStakeTops(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3)
-    list = gData_0200478e;
+    list = gYampiDesert_Room3Stakes;
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room4)
-    list = gData_020047d2;
+    list = gYampiDesert_Room4Stakes;
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room5)
-    list = gData_020047ec;
+    list = gYampiDesert_Room5Stakes;
   if (list == NULL)
     return;
   while (*list != 0xffff) {
@@ -250,17 +259,17 @@ void Func_020006ac(void) {
   GameFlag_SetBit(0x20b);
 }
 
-void Func_020007e0(void) {
+void YampiDesert_StepOffStakeTops(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3)
-    list = gData_0200478e;
+    list = gYampiDesert_Room3Stakes;
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room4)
-    list = gData_020047d2;
+    list = gYampiDesert_Room4Stakes;
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room5)
-    list = gData_020047ec;
+    list = gYampiDesert_Room5Stakes;
   if (list == NULL)
     return;
   if (*list == 0xffff)
@@ -300,7 +309,7 @@ done:
 /// For each six-byte record (actor, unused, flag) up to an actor of 0xffff:
 /// when the record's flag is set, the cell under the actor in map layer 2 takes
 /// collision code 255.
-void Func_02000918(u16 *list) {
+void YampiDesert_BlockPoundedStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object;
   /* FAKEMATCH(pin): the limit in r2, so the next id takes r3; as a plain
@@ -325,7 +334,7 @@ void Func_02000918(u16 *list) {
 
 /// For each six-byte record up to an actor of 0xffff, the cell under the actor
 /// in map layer 2 takes collision code 232.
-void Func_0200095c(u16 *list) {
+void YampiDesert_UnblockStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cell;
   s32 collisionCode;
@@ -351,32 +360,32 @@ void YampiDesert_CastSand(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov661Room1)
-    Func_02000918((u16 *)gData_02004768);
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room1Stakes);
   else if (scene == (s32)&SceneId_Ov661Room3)
-    Func_02000918((u16 *)gData_0200478e);
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room3Stakes);
   else if (scene == (s32)&SceneId_Ov661Room4)
-    Func_02000918((u16 *)gData_020047d2);
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room4Stakes);
   else if (scene == (s32)&SceneId_Ov661Room5)
-    Func_02000918((u16 *)gData_020047ec);
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room5Stakes);
 }
 
-void Func_02000a10(void) {
+void YampiDesert_EndSand(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s16 scene;
 
   leader->terrainId = 0;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov661Room1)
-    Func_0200095c((u16 *)gData_02004768);
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room1Stakes);
   else if (scene == (s32)&SceneId_Ov661Room3)
-    Func_0200095c((u16 *)gData_0200478e);
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room3Stakes);
   else if (scene == (s32)&SceneId_Ov661Room4)
-    Func_0200095c((u16 *)gData_020047d2);
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room4Stakes);
   else if (scene == (s32)&SceneId_Ov661Room5)
-    Func_0200095c((u16 *)gData_020047ec);
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room5Stakes);
 }
 
-void Func_02000a8c(void) {
+void YampiDesert_WatchScorpionStop(void) {
   s16 scene;
 
   Event_Start();
@@ -396,6 +405,6 @@ void Func_02000a8c(void) {
   do {
     wait(1);
   test:;
-  } while (gData_02004808 == 210);
+  } while (gYampiDesert_RaisedEvent == 210);
   Event_End();
 }

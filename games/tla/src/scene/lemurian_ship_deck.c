@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x657, in ROM order.
+/// The Lemurian ship's deck, in two scenes: the deck at the tiller, where the
+/// crew takes its places as the leader sails (Room1), and the deck where the
+/// party sights a ship, reaches Piers' ship, sets the Black Crystal back in it
+/// and sets out for Madra (Room2).
 
 #include "battle.h"
 #include "field.h"
@@ -23,8 +26,8 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
-extern s32 gData_020024b4;
-extern s32 gData_020024b0;
+extern s32 gLemurianShipDeck_WaveScroll;
+extern s32 gLemurianShipDeck_BobPhase;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -43,7 +46,9 @@ const u8 *Scene_GetPlacements(void) {
   return gLemurianShipDeck_Placements;
 }
 
-void Func_02000078(void) {
+/// Once flag 0x985 is set, the leader goes through the cabin door, the door
+/// opening first unless it already has (flag 0x201).
+void LemurianShipDeck_EnterCabin(void) {
   if (Event_GetFlag(0x985)) {
     u8 *work = Ram_HeapSlots->eventWork;
     u32 i;
@@ -104,7 +109,7 @@ void LemurianShipDeck_TryHeldDoor(void) {
 
 #define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
-#define DEFINE_FUNC_02000188(name, n1, n2)                                     \
+#define DEFINE_ROTATE_PALETTE_COLORS(name, n1, n2)                             \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0) {                                              \
       s16 last = OBJ_PALETTE[n1];                                              \
@@ -125,17 +130,19 @@ void LemurianShipDeck_TryHeldDoor(void) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02000188(Func_02000188, 15, 12)
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors12To15, 15, 12)
 
-DEFINE_FUNC_02000188(Func_020001cc, 9, 4)
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors4To9, 9, 4)
 
 void Map_ClearLayerEntryFlag(s32 a);
 
-void Func_02000210(void) {
+/// Arriving by entrance 99: the screen opens and two of the map's layer entries
+/// are cleared in turn.
+void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  FieldTask_AddFrame(Func_020001cc, 0x480);
+  FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, 0x480);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
   Map_ClearLayerEntryFlag(13);
@@ -147,25 +154,26 @@ void Func_02000210(void) {
 
 #define LAYER_WORD(layer, offset) (*(s32 *)((u8 *)(layer) + (offset)))
 
-void Func_02000258(void) {
+/// A task: scrolls the waves' layer half a pixel a frame.
+void LemurianShipDeck_ScrollWaves(void) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x108);
-  s32 phase = gData_020024b4;
+  s32 phase = gLemurianShipDeck_WaveScroll;
 
   layer[2] = phase;
   phase += 0x8000;
-  gData_020024b4 = phase;
+  gLemurianShipDeck_WaveScroll = phase;
   if (phase == 0x200000)
-    gData_020024b4 = 0;
+    gLemurianShipDeck_WaveScroll = 0;
 }
 
-/// Bobs the object returned by FieldCamera_GetActor and the first map layer's
-/// word 12 together on a sine wave, its phase advancing 0x200 a frame.
-void Func_02000288(void) {
+/// A task: bobs the camera's actor and the first map layer together on a sine
+/// wave, its phase advancing 0x200 a frame.
+void LemurianShipDeck_BobDeck(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
   struct Actor *object = EventCamera_GetActor();
-  s32 offset = Math_Sin(gData_020024b0) >> 2;
+  s32 offset = Math_Sin(gLemurianShipDeck_BobPhase) >> 2;
 
   object->y += offset;
   LAYER_WORD(layer, 12) += offset;
-  gData_020024b0 += 0x200;
+  gLemurianShipDeck_BobPhase += 0x200;
 }

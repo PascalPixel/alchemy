@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x676, in ROM order.
+/// Yallam, the village by Taopo Swamp: its children's song game, run in a
+/// circle round the village to the words of the songs of the moon, the stars
+/// and the sun, the Scoop spots that hide its treasure, and the pillar Force
+/// pushes down to reach the Masamune.
 
 #include "types.h"
 #include "actor.h"
@@ -9,14 +12,14 @@
 
 void Func_02002598(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 
-s32 Func_02000038(struct Actor *object) {
+s32 Yallam_ClearSpriteTile(struct Actor *object) {
   struct TileSprite *sprite = object->sprite;
 
   sprite->tile = 0x8000;
   return 0;
 }
 
-s32 Func_02000044(struct Actor *object) {
+s32 Yallam_HideSprite(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
 }
@@ -37,7 +40,7 @@ extern const u8 MsgThereSALot[];
 extern const u8 MsgThereSAGame[];
 extern const u8 MsgIOnceHeard[];
 
-void Func_020006bc(s32 id);
+void Yallam_RunSongPath(s32 id);
 void Yallam_ShowSongGame(void);
 void Event_End(void);
 
@@ -54,16 +57,16 @@ struct YallamStop {
   u16 c;
 };
 
-extern struct YallamSaved gData_02002fc0[5];
-extern const struct YallamStop gData_02002ce4[];
+extern struct YallamSaved gYallam_SavedSongGame[5];
+extern const struct YallamStop gYallam_Doors[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Func_02000088(struct Actor *object, struct Actor *target, s32 range,
-                  s32 force);
-void Func_02001688(void);
+s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
+                      s32 force);
+void Yallam_UpdateSongGame(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 #include "version.h"
 #include "battle.h"
@@ -81,8 +84,10 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 #include "ram_buffer.h"
 #include "macros.h"
 
-s32 Func_02000088(struct Actor *object, struct Actor *target, s32 range,
-                  s32 force) {
+/// Stops an actor and turns it to the target when it is within range (or
+/// forced) and already faces near it; returns whether it did.
+s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
+                      s32 force) {
   s32 result = 0;
   s32 *targetPos;
   s32 *objectPos;
@@ -118,7 +123,7 @@ s32 Func_02000088(struct Actor *object, struct Actor *target, s32 range,
 /// Stops the object (mode 2) when the leader is within 11 of it; otherwise
 /// lets it face object 10 or 9 by bit 0 of its action word and, failing that,
 /// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
-s32 Func_0200014c(struct Actor *object) {
+s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *leader;
@@ -148,17 +153,17 @@ s32 Func_0200014c(struct Actor *object) {
       target = Actor_Get(10);
     else
       target = Actor_Get(9);
-    if (Func_02000088(object, target, 24, 0) == 0) {
+    if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
       leader = Actor_Get(gMainRoutineWork.currentOwner);
       if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
         force = 1;
-      Func_02000088(object, leader, 24, force);
+      Yallam_FaceIfNear(object, leader, 24, force);
     }
   }
   return 0;
 }
 #else
-s32 Func_0200014c(struct Actor *object) {
+s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;
   s32 force = 0;
@@ -169,12 +174,12 @@ s32 Func_0200014c(struct Actor *object) {
     target = Actor_Get(10);
   else
     target = Actor_Get(9);
-  if (Func_02000088(object, target, 24, 0) == 0) {
+  if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
     if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
-    Func_02000088(object, leader, 24, force);
+    Yallam_FaceIfNear(object, leader, 24, force);
   }
   return 0;
 }
@@ -188,12 +193,12 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern const u8 gYallam_Placements[];
 extern const u8 gYallam_Room2Placements[];
-extern const u8 gData_02002bfc[];
+extern const u8 gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
       gMainRoutineWork.entrance == 15)
-    return gData_02002bfc;
+    return gYallam_SongGamePlacements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room2)
     return gYallam_Room2Placements;
   return gYallam_Placements;
@@ -221,8 +226,8 @@ void Yallam_EnterDoor(void) {
   index = *(s16 *)(event + 340);
   Event_PlaySound(158);
   index--;
-  MapGrid_AnimateCells(gData_02002ce4[index].a, gData_02002ce4[index].b,
-                       gData_02002ce4[index].c);
+  MapGrid_AnimateCells(gYallam_Doors[index].a, gYallam_Doors[index].b,
+                       gYallam_Doors[index].c);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   {
@@ -240,25 +245,25 @@ void Yallam_EnterDoor(void) {
   Event_End();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline void Yallam_02002598(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                                   s32 a5, s32 a6) {
+static inline void Yallam_EditMap(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
+                                  s32 a5, s32 a6) {
   Func_02002598(a0, a1, a2, a3, a4, a5, a6);
 }
 
-void Func_02000328(void) {
+/// Scoop at one of the village's six spots digs into the ground; the third and
+/// fifth bring up a buried item the first time, throwing the leader back.
+void Yallam_DigFirstHole(void) {
   Func_02002598(67, 25, 5, 5, 67, 5, 1);
   MapGrid_CopyCellsTo(23, 29, 5, 6, 1, 1);
   MapGrid_CopyCellAttributes(23, 29, 1, 1, 5, 8);
 }
 
-void Func_0200036c(void) { Yallam_02002598(67, 25, 2, 1, 79, 22, 1); }
+void Yallam_DigSecondHole(void) { Yallam_EditMap(67, 25, 2, 1, 79, 22, 1); }
 
-void Func_0200038c(void) {
+void Yallam_DigThirdHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
-  Yallam_02002598(26, 95, 2, 1, 26, 76, 2);
+  Yallam_EditMap(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(0xf62) == 0) {
     Actor_SetPosition(66, PIXELS(424), PIXELS(232));
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
@@ -273,12 +278,12 @@ void Func_0200038c(void) {
   }
 }
 
-void Func_0200041c(void) { Yallam_02002598(67, 25, 3, 3, 106, 20, 1); }
+void Yallam_DigFourthHole(void) { Yallam_EditMap(67, 25, 3, 3, 106, 20, 1); }
 
-void Func_0200043c(void) {
+void Yallam_DigFifthHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
-  Yallam_02002598(67, 25, 3, 3, 106, 20, 1);
+  Yallam_EditMap(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(0xf60) == 0) {
     Actor_SetPosition(64, PIXELS(680), PIXELS(344));
     if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
@@ -293,7 +298,7 @@ void Func_0200043c(void) {
   }
 }
 
-void Func_020004cc(void) { Yallam_02002598(67, 25, 2, 2, 87, 8, 1); }
+void Yallam_DigSixthHole(void) { Yallam_EditMap(67, 25, 2, 2, 87, 8, 1); }
 
 extern const u8 gYallam_Triggers[];
 extern const u8 gYallam_RoomTwoTriggers[];
@@ -369,7 +374,7 @@ void Yallam_TalkAboutSongGame(void) {
   Event_End();
 }
 
-s32 Func_020006a4(struct Actor *object) {
+s32 Yallam_HasArrived(struct Actor *object) {
   s32 x = object->targetX;
 
   if (x == 0x80000000 && object->targetZ == 0x80000000)
@@ -377,7 +382,9 @@ s32 Func_020006a4(struct Actor *object) {
   return 0;
 }
 
-void Func_020006bc(s32 actor) {
+/// One step of a runner's path round the village in the song game, by its
+/// step counter, stopping or going on by the game's mode.
+void Yallam_RunSongPath(s32 actor) {
   /* FAKEMATCH(pin): the object in r5, as the native keeps it; as a plain local,
    * 372 of 1163 instructions differ in tla-en. */
   register struct YallamActor *object asm("r5") =
@@ -884,7 +891,7 @@ void Func_020006bc(s32 actor) {
     return;
   case 223:
   case 239:
-    if (Func_020006a4(object) != 0)
+    if (Yallam_HasArrived(object) != 0)
       (*timer)++;
   case 224:
   case 240:
@@ -1224,7 +1231,7 @@ void Func_020006bc(s32 actor) {
   case 319:
   case 321:
   case 323:
-    if (Func_020006a4(object) == 0)
+    if (Yallam_HasArrived(object) == 0)
       return;
     (*timer)++;
     return;
@@ -1234,7 +1241,8 @@ void Func_020006bc(s32 actor) {
   (*timer)++;
 }
 
-void Func_02001688(void) {
+/// A task: sets every runner's mode from the lead child's and moves them on.
+void Yallam_UpdateSongGame(void) {
   struct Actor *a = Actor_Get(8);
   struct Actor *b = Actor_Get(10);
   struct Actor *c = Actor_Get(9);
@@ -1266,76 +1274,79 @@ void Func_02001688(void) {
     break;
   }
   a->unk66 = 0;
-  Func_020006bc(8);
-  Func_020006bc(10);
-  Func_020006bc(9);
-  Func_020006bc(11);
-  Func_020006bc(gMainRoutineWork.currentOwner);
+  Yallam_RunSongPath(8);
+  Yallam_RunSongPath(10);
+  Yallam_RunSongPath(9);
+  Yallam_RunSongPath(11);
+  Yallam_RunSongPath(gMainRoutineWork.currentOwner);
 }
 
-void Func_02001730(void) {
+/// Saves every runner's state and stops the game's task.
+void Yallam_PauseSongGame(void) {
   struct Actor *object;
 
   object = Actor_Get(8);
-  gData_02002fc0[0].action = object->timer;
-  gData_02002fc0[0].mode = (s16)object->unk66;
-  gData_02002fc0[0].byte98 = BYTE_AT(object, 98);
-  gData_02002fc0[0].byte99 = BYTE_AT(object, 99);
+  gYallam_SavedSongGame[0].action = object->timer;
+  gYallam_SavedSongGame[0].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[0].byte98 = BYTE_AT(object, 98);
+  gYallam_SavedSongGame[0].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(10);
-  gData_02002fc0[1].action = object->timer;
-  gData_02002fc0[1].mode = (s16)object->unk66;
-  gData_02002fc0[1].byte98 = BYTE_AT(object, 98);
-  gData_02002fc0[1].byte99 = BYTE_AT(object, 99);
+  gYallam_SavedSongGame[1].action = object->timer;
+  gYallam_SavedSongGame[1].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[1].byte98 = BYTE_AT(object, 98);
+  gYallam_SavedSongGame[1].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(9);
-  gData_02002fc0[2].action = object->timer;
-  gData_02002fc0[2].mode = (s16)object->unk66;
-  gData_02002fc0[2].byte98 = BYTE_AT(object, 98);
-  gData_02002fc0[2].byte99 = BYTE_AT(object, 99);
+  gYallam_SavedSongGame[2].action = object->timer;
+  gYallam_SavedSongGame[2].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[2].byte98 = BYTE_AT(object, 98);
+  gYallam_SavedSongGame[2].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(11);
-  gData_02002fc0[3].action = object->timer;
-  gData_02002fc0[3].mode = (s16)object->unk66;
-  gData_02002fc0[3].byte98 = BYTE_AT(object, 98);
-  gData_02002fc0[3].byte99 = BYTE_AT(object, 99);
+  gYallam_SavedSongGame[3].action = object->timer;
+  gYallam_SavedSongGame[3].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[3].byte98 = BYTE_AT(object, 98);
+  gYallam_SavedSongGame[3].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(gMainRoutineWork.currentOwner);
-  gData_02002fc0[4].action = object->timer;
-  gData_02002fc0[4].mode = (s16)object->unk66;
-  gData_02002fc0[4].byte98 = BYTE_AT(object, 98);
-  gData_02002fc0[4].byte99 = BYTE_AT(object, 99);
-  FieldTask_Remove(Func_02001688);
+  gYallam_SavedSongGame[4].action = object->timer;
+  gYallam_SavedSongGame[4].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[4].byte98 = BYTE_AT(object, 98);
+  gYallam_SavedSongGame[4].byte99 = BYTE_AT(object, 99);
+  FieldTask_Remove(Yallam_UpdateSongGame);
 }
 
-void Func_0200182c(void) {
+/// Restores every runner's state and starts the game's task again.
+void Yallam_ResumeSongGame(void) {
   struct Actor *object;
 
   object = Actor_Get(8);
-  object->timer = gData_02002fc0[0].action;
-  object->unk66 = gData_02002fc0[0].mode;
-  BYTE_AT(object, 98) = gData_02002fc0[0].byte98;
-  BYTE_AT(object, 99) = gData_02002fc0[0].byte99;
+  object->timer = gYallam_SavedSongGame[0].action;
+  object->unk66 = gYallam_SavedSongGame[0].mode;
+  BYTE_AT(object, 98) = gYallam_SavedSongGame[0].byte98;
+  BYTE_AT(object, 99) = gYallam_SavedSongGame[0].byte99;
   object = Actor_Get(10);
-  object->timer = gData_02002fc0[1].action;
-  object->unk66 = gData_02002fc0[1].mode;
-  BYTE_AT(object, 98) = gData_02002fc0[1].byte98;
-  BYTE_AT(object, 99) = gData_02002fc0[1].byte99;
+  object->timer = gYallam_SavedSongGame[1].action;
+  object->unk66 = gYallam_SavedSongGame[1].mode;
+  BYTE_AT(object, 98) = gYallam_SavedSongGame[1].byte98;
+  BYTE_AT(object, 99) = gYallam_SavedSongGame[1].byte99;
   object = Actor_Get(9);
-  object->timer = gData_02002fc0[2].action;
-  object->unk66 = gData_02002fc0[2].mode;
-  BYTE_AT(object, 98) = gData_02002fc0[2].byte98;
-  BYTE_AT(object, 99) = gData_02002fc0[2].byte99;
+  object->timer = gYallam_SavedSongGame[2].action;
+  object->unk66 = gYallam_SavedSongGame[2].mode;
+  BYTE_AT(object, 98) = gYallam_SavedSongGame[2].byte98;
+  BYTE_AT(object, 99) = gYallam_SavedSongGame[2].byte99;
   object = Actor_Get(11);
-  object->timer = gData_02002fc0[3].action;
-  object->unk66 = gData_02002fc0[3].mode;
-  BYTE_AT(object, 98) = gData_02002fc0[3].byte98;
-  BYTE_AT(object, 99) = gData_02002fc0[3].byte99;
+  object->timer = gYallam_SavedSongGame[3].action;
+  object->unk66 = gYallam_SavedSongGame[3].mode;
+  BYTE_AT(object, 98) = gYallam_SavedSongGame[3].byte98;
+  BYTE_AT(object, 99) = gYallam_SavedSongGame[3].byte99;
   object = Actor_Get(gMainRoutineWork.currentOwner);
-  object->timer = gData_02002fc0[4].action;
-  object->unk66 = gData_02002fc0[4].mode;
-  BYTE_AT(object, 98) = gData_02002fc0[4].byte98;
-  BYTE_AT(object, 99) = gData_02002fc0[4].byte99;
-  Task_AddFrame(Func_02001688, TASK_PASS_VBLANK);
+  object->timer = gYallam_SavedSongGame[4].action;
+  object->unk66 = gYallam_SavedSongGame[4].mode;
+  BYTE_AT(object, 98) = gYallam_SavedSongGame[4].byte98;
+  BYTE_AT(object, 99) = gYallam_SavedSongGame[4].byte99;
+  Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_VBLANK);
 }
 
-void Func_02001904(s32 id) {
+/// Readies an actor to run the song game's path from its start.
+void Yallam_StartRunner(s32 id) {
   struct YallamActor *actor = ((struct YallamActor *)Actor_Get(id));
 
   Actor_SetSpeed(id, 0x13333, 0x13333);
@@ -1349,15 +1360,15 @@ void Func_02001904(s32 id) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 extern const u8 MsgHereLetMe[];
-extern const u8 gData_0200277c[];
-extern const u8 gData_020027c0[];
-extern const u8 gData_02002804[];
-extern const u8 gData_02002870[];
-extern const u8 gData_020028dc[];
-extern const u8 gData_02002948[];
-extern const u8 gData_02002998[];
-extern const u8 gData_020029c0[];
-extern const u8 gData_02002a04[];
+extern const u8 gYallam_SongGameGather9[];
+extern const u8 gYallam_SongGameGather10[];
+extern const u8 gYallam_SongGameForm8[];
+extern const u8 gYallam_SongGameForm9[];
+extern const u8 gYallam_SongGameForm10[];
+extern const u8 gYallam_SongGameForm11[];
+extern const u8 gYallam_SongGameStart8[];
+extern const u8 gYallam_SongGameStart10[];
+extern const u8 gYallam_SongGameStart9[];
 
 /// The child shows the party the song's game.
 /// "Here, let me show you!"
@@ -1373,8 +1384,8 @@ void Yallam_ShowSongGame(void) {
   System_Wait(1);
   Actor_SetSpeed(9, 0x19999, 0xcccc);
   Actor_SetSpeed(10, 0x19999, 0xcccc);
-  Actor_SetScript(9, gData_0200277c);
-  Actor_SetScript(10, gData_020027c0);
+  Actor_SetScript(9, gYallam_SongGameGather9);
+  Actor_SetScript(10, gYallam_SongGameGather10);
   (FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(0x1300000, -1, 0x36e0000, 1);
@@ -1389,10 +1400,10 @@ void Yallam_ShowSongGame(void) {
   Actor_SetAnimationAndWait(8, 3);
   Actor_SetSpeed(8, 0x19999, 0xcccc);
   Actor_SetSpeed(11, 0x19999, 0xcccc);
-  Actor_SetScript(8, gData_02002804);
-  Actor_SetScript(9, gData_02002870);
-  Actor_SetScript(10, gData_020028dc);
-  Actor_RunScriptAndWait(11, gData_02002948);
+  Actor_SetScript(8, gYallam_SongGameForm8);
+  Actor_SetScript(9, gYallam_SongGameForm9);
+  Actor_SetScript(10, gYallam_SongGameForm10);
+  Actor_RunScriptAndWait(11, gYallam_SongGameForm11);
   Actor_SetPosition(5, 0x1280000, 0x3680000);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
@@ -1416,19 +1427,19 @@ void Yallam_ShowSongGame(void) {
   Actor_FaceDirectionAndWait(8, 0xc000);
   Event_ShowMessage(8, 0);
   EventCamera_FollowActor(8, 1);
-  Actor_SetScript(8, gData_02002998);
-  Actor_SetScript(10, gData_020029c0);
-  Actor_RunScriptAndWait(9, gData_02002a04);
+  Actor_SetScript(8, gYallam_SongGameStart8);
+  Actor_SetScript(10, gYallam_SongGameStart10);
+  Actor_RunScriptAndWait(9, gYallam_SongGameStart9);
   Actor_WalkToAndWait(11, 344, 890);
   Actor_FaceDirectionAndWait(11, 0xc000);
-  Func_02001904(8);
-  Func_02001904(10);
-  Func_02001904(9);
-  Func_02001904(11);
-  Func_02001904(gMainRoutineWork.currentOwner);
+  Yallam_StartRunner(8);
+  Yallam_StartRunner(10);
+  Yallam_StartRunner(9);
+  Yallam_StartRunner(11);
+  Yallam_StartRunner(gMainRoutineWork.currentOwner);
   {
     s32 priority = 0x480;
-    Task_AddFrame(Func_02001688, priority);
+    Task_AddFrame(Yallam_UpdateSongGame, priority);
   }
   Event_ShowMessage(8, 0);
   actor->unk66 = 1;
@@ -1464,7 +1475,7 @@ wait3:
   actor->unk66 = 3;
   System_Wait(1);
   Event_ShowMessage(8, 0);
-  Func_02001730();
+  Yallam_PauseSongGame();
   FieldActor_Jump(8, 4, 0);
   FieldActor_Jump(10, 4, 0);
   FieldActor_Jump(9, 4, 0);
@@ -1512,42 +1523,42 @@ void Yallam_SingMoonSong(void) {
   v5 = v7;
   Event_ShowMessage(8, 0);
   v5 = (v5 + 102);
-  Func_0200182c();
+  Yallam_ResumeSongGame();
   FIELD_AT(v5, s16, 0) = 1;
-L_02009d78:
+waitFirstVerse:
   System_Wait(1);
   v6 = v7;
   v6 = (v6 + 100);
   if (FIELD_AT(v6, s16, 0) != 114)
-    goto L_02009d78;
+    goto waitFirstVerse;
   FIELD_AT(v5, s16, 0) = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
-L_02009da0:
+waitSecondVerse:
   System_Wait(1);
   if (FIELD_AT(v6, s16, 0) != 150)
-    goto L_02009da0;
+    goto waitSecondVerse;
   FIELD_AT(v5, s16, 0) = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
-L_02009dc4:
+waitThirdVerse:
   System_Wait(1);
   if (FIELD_AT(v6, s16, 0) != 154)
-    goto L_02009dc4;
+    goto waitThirdVerse;
   FIELD_AT(v5, s16, 0) = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
-L_02009de8:
+waitFourthVerse:
   System_Wait(1);
   if (FIELD_AT(v6, s16, 0) != 216)
-    goto L_02009de8;
+    goto waitFourthVerse;
   FIELD_AT(v5, s16, 0) = 3;
   System_Wait(1);
   Event_ShowMessage(8, 0);
-  Func_02001730();
+  Yallam_PauseSongGame();
   FieldActor_Jump(8, 4, 0);
   FieldActor_Jump(10, 4, 0);
   FieldActor_Jump(9, 4, 0);
@@ -1562,17 +1573,17 @@ L_02009de8:
   Event_OpenMessage(8, 0);
   t33 = FieldEvent_AskYesNoWithActorAnimation(FIELD_AT(v5, s32, 0), 0);
   if (t33 != 0)
-    goto L_02009e90;
+    goto declined;
   Yallam_SingSunSong();
-  goto L_02009eb4;
-L_02009e90:
+  goto done;
+declined:
   FieldEvent_ShowMessageThenWait(8, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(123);
   FieldEvent_Wait(40);
   FieldEvent_SetExitRequest(15);
-L_02009eb4:
+done:
 }
 
 extern u8 MsgIfYouWantTo[];
@@ -1593,42 +1604,42 @@ void Yallam_SingSunSong(void) {
   v5 = v6;
   Event_ShowMessage(8, 0);
   v5 = (v5 + 102);
-  Func_0200182c();
+  Yallam_ResumeSongGame();
   FIELD_AT(v5, s16, 0) = 1;
-L_02009f28:
+waitFirstVerse:
   System_Wait(1);
   v7 = v6;
   v7 = (v7 + 100);
   if (FIELD_AT(v7, s16, 0) != 218)
-    goto L_02009f28;
+    goto waitFirstVerse;
   FIELD_AT(v5, s16, 0) = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
-L_02009f50:
+waitSecondVerse:
   System_Wait(1);
   if (FIELD_AT(v7, s16, 0) != 254)
-    goto L_02009f50;
+    goto waitSecondVerse;
   FIELD_AT(v5, s16, 0) = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
-L_02009f74:
+waitThirdVerse:
   System_Wait(1);
   if (FIELD_AT(v7, s16, 0) != 0x102)
-    goto L_02009f74;
+    goto waitThirdVerse;
   FIELD_AT(v5, s16, 0) = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
-L_02009f9c:
+waitFourthVerse:
   System_Wait(1);
   if (FIELD_AT(v7, s16, 0) != 0x144)
-    goto L_02009f9c;
+    goto waitFourthVerse;
   FIELD_AT(v5, s16, 0) = 3;
   System_Wait(1);
   Event_ShowMessage(8, 0);
-  Func_02001730();
+  Yallam_PauseSongGame();
   Actor_FaceDirectionAndWait(8, 0x5000);
   t24 = ((s32)Actor_Get(8));
   FIELD_AT(t24, u8, 90) = (254 & FIELD_AT(t24, u8, 90));
@@ -1707,7 +1718,8 @@ L_02009f9c:
   FieldEvent_SetExitRequest(15);
 }
 
-void Func_02002244(void) {
+/// Once Force has pushed it (flag 0x300), the pillar lies where it fell.
+void Yallam_PlaceFallenPillar(void) {
   if (Event_GetFlag(0x300)) {
     SET_POSITION(Actor_Get(9), 0xa80000, 0, 0xc00000);
   }
@@ -1716,9 +1728,9 @@ void Func_02002244(void) {
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1) {
     if (gMainRoutineWork.entrance == 15)
-      Func_020023c8();
+      Yallam_StartWatchers();
     else
-      Func_02002244();
+      Yallam_PlaceFallenPillar();
   }
   return 0;
 }
@@ -1730,9 +1742,11 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_020022f4(void) {}
+/// The Force trigger's first phase, which does nothing here.
+void Yallam_DoNothing(void) {}
 
-void Func_020022f8(void) {
+/// Force pushes the pillar off its ledge; it tumbles down and lands as a step.
+void Yallam_ForcePillarDown(void) {
   s32 step;
   s32 i;
   struct Actor *object = Actor_Get(9);
@@ -1769,19 +1783,19 @@ void Func_020022f8(void) {
   MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
 }
 
-/// Yallam's view of the two objects Func_020023c8 restarts.
+/// Yallam's view of the two objects Yallam_StartWatchers restarts.
 
-/// Hands objects 9 and 10 to Func_0200014c's update, object 9 with its timer
-/// at 1 and object 10 at 0.
-void Func_020023c8(void) {
+/// Hands objects 9 and 10 to Yallam_WatchSongGame's update, object 9 with its
+/// timer at 1 and object 10 at 0.
+void Yallam_StartWatchers(void) {
   struct YallamActor *actor = ((struct YallamActor *)Actor_Get(9));
   struct YallamActor *other;
 
   actor->timer = 1;
   actor->kind = 0;
-  actor->update = Func_0200014c;
+  actor->update = Yallam_WatchSongGame;
   other = ((struct YallamActor *)Actor_Get(10));
   other->timer = 0;
   other->kind = 0;
-  other->update = Func_0200014c;
+  other->update = Yallam_WatchSongGame;
 }

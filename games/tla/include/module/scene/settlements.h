@@ -6,47 +6,47 @@
 
 #include "types.h"
 
-extern s16 gData_020022b6[];
+extern s16 gSettlements_SlideAnglesByKey[];
 
-void Func_0200125c(void);
+void Settlements_StepOntoWall(void);
 
-void Func_0200173c(void);
+void Settlements_StopLeader(void);
 
-void Func_02000290(void);
+void Settlements_MeetTinder(void);
 
-void Func_02000404(void);
-void Func_02000488(void);
+void Settlements_CatchApple(void);
+void Settlements_CutLeftBush(void);
 
-void Func_020004a8(void);
+void Settlements_CutStairsBush(void);
 
-void Func_020005f4(void);
+void Settlements_EnterDoor5(void);
 
-void Func_02000624(void);
+void Settlements_EnterDoor3(void);
 
-void Func_02000c1c(void);
+void Settlements_StepOntoIce(void);
 
-void Func_02000c2c(void);
-void Func_02000c3c(void);
-void Func_02000cfc(void);
+void Settlements_StepOffIce(void);
+void Settlements_StepOnIceSlide(void);
+void Settlements_LashRope(void);
 
-void Func_02000ef0(void);
+void Settlements_UnblockFallsObjects(void);
 
-void Func_02000f00(void);
+void Settlements_BlockFallsObject(void);
 
-void Func_020011c8(void);
+void Settlements_MoveCrate(void);
 
-void Func_020012c0(void);
+void Settlements_StepOffWall(void);
 
-void Func_02001304(void);
+void Settlements_UnblockCrate(void);
 
-void Func_0200155c(void);
+void Settlements_BlockCrate(void);
 
-void Func_020016a4(void);
+void Settlements_LiftBoulder(void);
 
-extern u32 gData_020021b8[];
-extern u32 gData_020021f4[];
-extern s32 gData_020022e4[];
-extern u32 gData_0200231c[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern s32 gSettlements_BobScript[];
+extern u32 gSettlements_CrateBobScript[];
 
 struct OrbitSprite {
   u8 unk00[5];
@@ -120,17 +120,17 @@ void Func_02002170(void);
 
 extern char SceneId_Ov690Room6;
 
-void Func_0200125c(void);
+void Settlements_StepOntoWall(void);
 
 void Func_02002140(s32 a);
 
 void Func_02002188(const void *data);
 
-extern u16 gData_02002c60[];
-extern u16 gData_02002c80[];
+extern u16 gSettlements_WaterColors[];
+extern u16 gSettlements_WaterColorsSaved[];
 
-void Func_02001620(s32 objectId);
+void Settlements_SpawnSplashRing(s32 objectId);
 
-void Func_020011bc(void);
+void Settlements_MovePillar(void);
 
 #endif

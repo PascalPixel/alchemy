@@ -296,7 +296,9 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-DEFINE_SCENE_TURN_ACTOR_AND_RUN(Func_02000544, Mikasalla_ClimbDownLadder)
+/// Stepping onto a ladder top facing south, the leader turns and climbs down.
+DEFINE_SCENE_TURN_ACTOR_AND_RUN(Mikasalla_TurnAndClimbDownLadder,
+                                Mikasalla_ClimbDownLadder)
 
 void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];
@@ -326,27 +328,29 @@ void Mikasalla_StepOntoLadderAhead(void) {
 #include "objcmd.h"
 
 // clang-format off
-s16 gData_020006f8[] = {
+/// The doors' cell animations: most doors, the third door's own cells, and
+/// the fifth door, two cells wide.
+s16 gMikasalla_DoorOpening[] = {
     81, 50, 1, 2, 6, 80, 50, 1,
     2, 6, -1,
 };
 
-s16 gData_0200070e[] = {
+s16 gMikasalla_ThirdDoorOpening[] = {
     79, 50, 1, 2, 6, 78, 50, 1,
     2, 6, -1,
 };
 
-s16 gData_02000724[] = {
+s16 gMikasalla_WideDoorOpening[] = {
     78, 52, 2, 2, 6, 78, 53, 2,
     2, 6, -1, 0,
 };
 
 struct WarpEntry__mikasalla gMikasalla_Doors[] = {
-    {(s32)gData_020006f8, 84, 29},
-    {(s32)gData_020006f8, 77, 34},
-    {(s32)gData_0200070e, 86, 38},
-    {(s32)gData_020006f8, 75, 41},
-    {(s32)gData_02000724, 69, 27},
+    {(s32)gMikasalla_DoorOpening, 84, 29},
+    {(s32)gMikasalla_DoorOpening, 77, 34},
+    {(s32)gMikasalla_ThirdDoorOpening, 86, 38},
+    {(s32)gMikasalla_DoorOpening, 75, 41},
+    {(s32)gMikasalla_WideDoorOpening, 69, 27},
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -382,9 +386,10 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-DEFINE_G_DATA_02000850(gData_02000850, 0x9999, 120, 648, 72)
+/// The chicken and the sheep pace back and forth, squashing as they turn.
+DEFINE_G_DATA_02000850(gMikasalla_ChickenPaces, 0x9999, 120, 648, 72)
 
-DEFINE_G_DATA_02000850(gData_02000bf8, 0x4ccc, 88, 680, 120)
+DEFINE_G_DATA_02000850(gMikasalla_SheepPaces, 0x4ccc, 88, 680, 120)
 
 struct ActorPlacement gMikasalla_VillagePlacements[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(552), FACING_SOUTH, 1, 0},
@@ -395,8 +400,8 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     {76, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(680), FACING_NORTHEAST, 1, 0},
     {77, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(632), FACING_NORTHWEST, 1, 0},
     {78, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(616), FACING_SOUTHEAST, 1, 0},
-    {203, CONDITION_ALWAYS, (s32)gData_02000850, PIXELS(72), 0, PIXELS(648), FACING_EAST, 0, 0},
-    {81, CONDITION_ALWAYS, (s32)gData_02000bf8, PIXELS(120), 0, PIXELS(680), FACING_WEST, 0, 0},
+    {203, CONDITION_ALWAYS, (s32)gMikasalla_ChickenPaces, PIXELS(72), 0, PIXELS(648), FACING_EAST, 0, 0},
+    {81, CONDITION_ALWAYS, (s32)gMikasalla_SheepPaces, PIXELS(120), 0, PIXELS(680), FACING_WEST, 0, 0},
     {245, 0x60, 1, PIXELS(312), 0, PIXELS(168), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
@@ -420,7 +425,7 @@ struct Trigger gMikasalla_VillageTriggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {0x4602, 30, CONDITION_ALWAYS, EVENT(Func_02000544)},
+    {0x4602, 30, CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
     {0x602, 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
     {0x8602, 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
     {TRIGGER_TALK, ACTOR_VILLAGER_NO_VISITORS, CONDITION_ALWAYS, MSGNO(MsgFieldItSBeenALong)},
@@ -445,7 +450,7 @@ struct Trigger gMikasalla_VillageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEEP, CONDITION_ALWAYS, MSGNO(MsgFieldOhYeahMmmIJust)},
     {TRIGGER_TALK, ACTOR_SPARK, CONDITION_ALWAYS, EVENT(Mikasalla_MeetSpark)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldItSCompletelyFullOf))},
-    {0x50008805, 50, CONDITION_ALWAYS, EVENT(Mikasalla_DigUpLadder)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Mikasalla_DigUpLadder)},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
@@ -453,11 +458,11 @@ struct Trigger gMikasalla_VillageTriggers[] = {
 struct Trigger gMikasalla_TunnelTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x4602, 30, CONDITION_ALWAYS, EVENT(Func_02000544)},
+    {0x4602, 30, CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
     {0x602, 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
     {0x8602, 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
     {0xc602, 33, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingNorth)},
     {0xc602, 34, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderAhead)},
-    {0x50008a05, 60, 0x200, EVENT(Mikasalla_CastParch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, 0x200, EVENT(Mikasalla_CastParch)},
     {TRIGGER_TABLE_END},
 };

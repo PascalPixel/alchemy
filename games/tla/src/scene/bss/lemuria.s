@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02002590
-gData_02002590:
+	.global gLemuria_RippleBuffer
+gLemuria_RippleBuffer:
 	.space 0x00000010
-	.global gData_020025a0
-gData_020025a0:
+	.global gLemuria_RippleLines
+gLemuria_RippleLines:

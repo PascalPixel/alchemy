@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6b4, in ROM order.
+/// The summit's events: the Golden Sun's formation and what follows it.
 
 #include "types.h"
 #include "system.h"
@@ -24,17 +24,17 @@
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field_effect.h"
-#include "module/scene/contigo.h"
 #include "module/scene/mt_aleph_summit.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "text/msg_ids.h"
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
-void Func_02000478(s32 radius, u32 count) {
+/// Scatters count dust puffs in a ring of radius around actor 8.
+void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
   struct Actor *object;
   struct EffectOptions options;
   struct Vector3 dir;
@@ -55,10 +55,10 @@ next:
   dir.x += dir.x >> 1;
   dir.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
   dir.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
-  Func_020000b8(object->x, object->y, object->z, dir.x, dir.y, dir.z,
-                EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                    EFFECT_USE_PRIORITY | 1,
-                &options);
+  FieldEffect_Spawn(object->x, object->y, object->z, dir.x, dir.y, dir.z,
+                    EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | 1,
+                    &options);
   i++;
   if (i <= count)
     goto next;
@@ -77,9 +77,9 @@ struct EventWorkView__s0478 {
   s32 unk1ac;
 };
 
-void Func_020002a4(u16 *colors, u16 *target, s32 count);
-void Func_0200032c(u16 *colors, s32 count, s32 delta);
-void Func_02000394(void);
+void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count);
+void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta);
+void MtAlephSummit_PulseColors(void);
 void Field_StartColorTransition(s32 a, s32 b);
 
 s32 Scene_Initialize(void) {
@@ -245,9 +245,9 @@ s32 Scene_Initialize(void) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, value | 0x1000, 0x20000);
     }
     if (j >= 20 && j <= 51)
-      Func_020002a4((u16 *)0x5000080, (u16 *)0x50000c0, 16);
+      MtAlephSummit_StepColorsToward((u16 *)0x5000080, (u16 *)0x50000c0, 16);
     if (j > 49)
-      Call3((void (*)())Func_0200032c, (u16 *)0x5000000, 224, 1);
+      Call3((void (*)())MtAlephSummit_ShiftColors, (u16 *)0x5000000, 224, 1);
     System_Wait(4);
     j++;
     if (j != 84)
@@ -259,10 +259,10 @@ s32 Scene_Initialize(void) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, (REG_BG1CNT & ~3) | 3, 0x20000);
     Event_PlaySound(212);
     System_Wait(1);
-    Task_AddFrame(Func_02000394, 0x480);
+    Task_AddFrame(MtAlephSummit_PulseColors, 0x480);
     j = 0;
   L7:
-    Func_020002a4((u16 *)0x5000000, buffer, 224);
+    MtAlephSummit_StepColorsToward((u16 *)0x5000000, buffer, 224);
     System_Wait(4);
     j++;
     if (j != 32)
@@ -394,15 +394,15 @@ s32 Scene_Initialize(void) {
     Field_StartColorTransition(8, 0x1110);
     FieldEvent_Wait(20);
     Actor_SetSpeed(8, 0x80000, 0x40000);
-    Func_02000478(128, 8);
+    MtAlephSummit_ScatterDustRing(128, 8);
     ACTOR(8)->actionFlags &= ~1;
     Actor_WalkTo(8, 0x118, 160);
     Actor_SetAnimation(8, 17);
     Event_PlaySound(134);
     FieldEvent_Wait(2);
-    Func_02000478(128, 8);
+    MtAlephSummit_ScatterDustRing(128, 8);
     FieldEvent_Wait(2);
-    Func_02000478(128, 8);
+    MtAlephSummit_ScatterDustRing(128, 8);
     FieldEvent_Wait(56);
     Event_PlaySound(178);
     i = 0;
@@ -433,7 +433,7 @@ s32 Scene_Initialize(void) {
     i++;
     if (i != 5)
       goto L13;
-    Func_02000478(0x100, 16);
+    MtAlephSummit_ScatterDustRing(0x100, 16);
     Actor_SetAnimation(8, 17);
     Event_PlaySound(145);
     MapGrid_SetShake(0x100000, 0x100000, 0x10000);
@@ -515,7 +515,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(32);
     Event_PlaySound(208);
     FieldEvent_Wait(120);
-    FieldTask_Remove(Func_02000394);
+    FieldTask_Remove(MtAlephSummit_PulseColors);
     PaletteFade_ApplyTarget(0x7fff, 0);
     PaletteFade_Interpolate(1);
     System_Wait(1);

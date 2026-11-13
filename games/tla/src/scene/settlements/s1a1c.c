@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x690, in ROM order.
+/// The settlements' events, continued; settlements.c says which places these
+/// are.
 
 #include "version.h"
 #include "event_inline.h"
@@ -14,10 +15,10 @@
 #include "input.h"
 #include "call.h"
 
-extern volatile s16 gData_02002ce8;
-extern s16 gData_020022b6[];
-void Func_020016b0(struct Actor *object);
-void Func_0200173c(void);
+extern volatile s16 gSettlements_SlideStopped;
+extern s16 gSettlements_SlideAnglesByKey[];
+void Settlements_KeepSliding(struct Actor *object);
+void Settlements_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
@@ -25,7 +26,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-void Func_02001a1c(void) {
+void Settlements_SlideOnIceFromEdge(void) {
   struct Actor *object;
   s32 startCell;
   s32 targetX;
@@ -45,13 +46,13 @@ void Func_02001a1c(void) {
   s32 *q;
   s32 *p;
 
-  /* FAKEMATCH(volatile): gData_02002ce8 read as a volatile s16, reread after
-   * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(volatile): gSettlements_SlideStopped read as a volatile s16,
+   * reread after each test and for lsls #16; as a plain u16, 54 of 347
+   * instructions differ in tla-en. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_02002ce8 = 0;
+  gSettlements_SlideStopped = 0;
 retry:
-  Func_0200173c();
+  Settlements_StopLeader();
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -69,7 +70,7 @@ retry:
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_020022b6[(gInput.held >> 4) & 15];
+    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
     if ((u16)angle == 0xffff)
       goto end;
@@ -97,16 +98,16 @@ retry:
   Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   for (i = 0; i <= 179 && Func_02002048(object) == 0; i++) {
-    if (gData_02002ce8 != 0)
+    if (gSettlements_SlideStopped != 0)
       goto end;
     System_Wait(1);
   }
-  object->update = (void (*)(void))Func_020016b0;
+  object->update = (void (*)(void))Settlements_KeepSliding;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  if (gData_02002ce8 != 0)
+  if (gSettlements_SlideStopped != 0)
     goto end;
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
@@ -136,9 +137,9 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && Func_02002048(object) == 0 && gData_02002ce8 == 0)
+  if (i <= 179 && Func_02002048(object) == 0 && gSettlements_SlideStopped == 0)
     goto next;
-  if (gData_02002ce8 != 0)
+  if (gSettlements_SlideStopped != 0)
     goto end;
   if (cell != startCell)
     goto changed;
@@ -179,10 +180,10 @@ end:
 #include "input.h"
 #include "call.h"
 
-extern volatile s16 gData_02002ce8;
-extern s16 gData_020022b6[];
-void Func_020016b0(struct Actor *object);
-void Func_0200173c(void);
+extern volatile s16 gSettlements_SlideStopped;
+extern s16 gSettlements_SlideAnglesByKey[];
+void Settlements_KeepSliding(struct Actor *object);
+void Settlements_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
@@ -190,7 +191,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-void Func_02001a1c(void) {
+void Settlements_SlideOnIceFromEdge(void) {
   struct Actor *object;
   s32 startCell;
   s32 targetX;
@@ -210,11 +211,12 @@ void Func_02001a1c(void) {
   s32 *q;
   s32 *p;
 
-  // gData_02002ce8 is read as a volatile s16: it is reread after each test.
+  // gSettlements_SlideStopped is read as a volatile s16: it is reread after
+  // each test.
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_02002ce8 = 0;
+  gSettlements_SlideStopped = 0;
 retry:
-  Func_0200173c();
+  Settlements_StopLeader();
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -232,7 +234,7 @@ retry:
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_020022b6[(gInput.held >> 4) & 15];
+    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
     if ((u16)angle == 0xffff)
       return;
@@ -260,12 +262,12 @@ retry:
   Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   FieldActor_WaitForMove(object);
-  object->update = (void (*)(void))Func_020016b0;
+  object->update = (void (*)(void))Settlements_KeepSliding;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  if (gData_02002ce8 != 0)
+  if (gSettlements_SlideStopped != 0)
     goto blocked;
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
@@ -295,9 +297,9 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && Func_02002048(object) == 0 && gData_02002ce8 == 0)
+  if (i <= 179 && Func_02002048(object) == 0 && gSettlements_SlideStopped == 0)
     goto next;
-  if (gData_02002ce8 != 0)
+  if (gSettlements_SlideStopped != 0)
     goto end;
   if (cell != startCell)
     goto changed;

@@ -8,30 +8,30 @@
 #include "module/scene/scene.h"
 #include "scene_tables.h"
 
-extern u32 gData_020017d8[];
-extern u32 gData_020017a4[];
+extern u32 gLoho_VillagerMovesNorth[];
+extern u32 gLoho_VillagerMovesWest[];
 
-extern u32 gData_0200171c[];
+extern u32 gLoho_VillagerReturns[];
 
-void Func_02000f38(void);
-extern u32 gData_0200183c[];
+void Loho_ClimbDownLadder(void);
+extern u32 gLoho_Regions[];
 extern struct ActorPlacement gLoho_Placements[];
 extern struct ActorPlacement gLoho_Room2Placements[];
-extern u32 gData_02001470[];
-extern s32 gData_0200151c[];
+extern u32 gLoho_FirstMinerGoesToWall[];
+extern s32 gLoho_SecondMinerStepsUp[];
 
-extern s32 gData_0200154c[];
+extern s32 gLoho_ThirdMinerStepsUp[];
 
-extern u32 gData_0200158c[];
-extern u32 gData_020015e0[];
-extern u32 gData_02001638[];
-extern s32 gData_0200166c[];
+extern u32 gLoho_FirstMinerWalksBack[];
+extern u32 gLoho_FirstMinerFetchesCannon[];
+extern u32 gLoho_FirstMinerReturns[];
+extern s32 gLoho_ForemanComes[];
 extern struct Trigger gLoho_Triggers[];
 extern struct Trigger gLoho_Room1Triggers[];
 extern struct Trigger gLoho_Room2Triggers[];
-extern struct LohoPicture gData_02001f14;
-extern u32 gData_020016b8[];
+extern struct LohoPicture gLoho_HouseDoor;
+extern u32 gLoho_VillagerPaces[];
 
-extern s16 gData_02001ef4[];
+extern s16 gLoho_DoorOpening[];
 
 #endif

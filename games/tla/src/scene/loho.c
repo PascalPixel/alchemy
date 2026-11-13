@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x6a6, in ROM order.
+/// Loho, the miners' village whose wall the party blows open with the
+/// cannon, which the miners then give it; its ladder down to the mine, its
+/// houses' doors and the treasure Scoop digs up.
 
 #include "shared/tables.h"
 #include "types.h"
@@ -28,6 +30,28 @@
 
 s32 Oam_AddSpriteAtDepthClamped();
 
+/// One of the 96 sparks the cannon's blast throws over the screen: the link the
+/// sprite list threads it by, its sprite, and its age in frames, negative while
+/// it waits to appear.
+struct LohoSpark {
+  struct LohoSpark *next;
+  union {
+    u32 words[2];
+    u16 halves[4];
+    u8 bytes[8];
+    struct {
+      u16 y : 8;
+      u16 attr0 : 8;
+      u16 x : 9;
+      u16 attr1 : 7;
+      u16 tile : 10;
+      u16 priority : 2;
+      u16 palette : 4;
+    } oam;
+  } sprite;
+  s32 age;
+};
+
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 
 /// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party
@@ -38,7 +62,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const u32 *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
-    return gData_0200183c;
+    return gLoho_Regions;
   return 0;
 }
 
@@ -50,7 +74,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gLoho_Placements;
 }
 
-void Func_020000ac(void) {
+void Loho_DrawBrokenWall(void) {
   MapGrid_CopyCellAttributes(69, 70, 10, 12, 24, 7);
   MapGrid_CopyCellsLayered(69, 70, 10, 12, 24, 7);
   MapGrid_CopyCellAttributes(79, 70, 10, 12, 88, 7);
@@ -96,8 +120,8 @@ void FieldCamera_WaitForArrival();
 /// "Is everyone all right?"
 void Loho_FireCannon(void) {
   s32 v_r1, v_r2, v_r0, t0;
-  struct Unk16 *p;
-  struct Unk16 *table;
+  struct LohoSpark *p;
+  struct LohoSpark *table;
   s32 tiles, entry, i, value, zero;
   s32 t38, t47, t48, t49, t50, t51;
   s32 t147, t186, t189;
@@ -107,45 +131,45 @@ void Loho_FireCannon(void) {
   t0 = ((s32)Actor_GetById(4));
   Event_Start();
   Event_ResolvePendingActions(0);
-  p = (struct Unk16 *)t0;
-  goto L_020081ec;
-L_020081b6:
+  p = (struct LohoSpark *)t0;
+  goto start;
+approach:
   if (v_r1 == 0)
-    goto L_020081dc;
+    goto turned;
   if (i == 0)
-    goto L_020081ce;
+    goto fromEast;
   Actor_WalkToAndWait(4, 0x1d7, 0x15a);
-  goto L_020081dc;
-L_020081ce:
+  goto turned;
+fromEast:
   Actor_WalkToAndWait(4, 0x1fa, 0x15a);
-L_020081dc:
+turned:
   if (i == 0)
-    goto L_020081e2;
-  goto L_02008982;
-L_020081e2:
+    goto fromNorth;
+  goto fromSouth;
+fromNorth:
   Actor_WalkToAndWait(4, 0x1fa, 0x175);
-  goto L_0200821e;
-L_020081ec:
+  goto inPlace;
+start:
   i = 0;
   v_r1 = 0;
   v_r2 = 0;
   if (FIELD_AT(p, s32, 8) > 0x1e8ffff)
-    goto L_020081fc;
+    goto checkZ;
   i = 1;
-L_020081fc:
+checkZ:
   v_r0 = FIELD_AT(p, s32, 16);
   if (v_r0 > 0x15affff)
-    goto L_02008210;
+    goto checkSouth;
   v_r1 = 1;
-  goto L_0200821a;
-L_02008210:
+  goto placed;
+checkSouth:
   if (v_r0 <= 0x1720000)
-    goto L_0200821a;
+    goto placed;
   v_r2 = 1;
-L_0200821a:
+placed:
   if (v_r2 == 0)
-    goto L_020081b6;
-L_0200821e:
+    goto approach;
+inPlace:
   FieldCamera_MoveTo(0x1e80000, -1, 0x1740000, 1);
   Event_SetFlag(0xa5f);
   Actor_MoveToAndWait(4, 0x1e7, 0x179);
@@ -175,21 +199,21 @@ L_0200821e:
   Actor_WaitForMoveById(21);
   Actor_SetPosition(21, 0, 0);
   MapGrid_SetShake(0x70000, 0x70000, 0x10000);
-  table = (struct Unk16 *)Heap_AllocEwram(0x600);
-  p = (struct Unk16 *)Heap_Alloc(0x1000);
+  table = (struct LohoSpark *)Heap_AllocEwram(0x600);
+  p = (struct LohoSpark *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
   Decompress_TaggedLz(t38, p);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
-  p = (struct Unk16 *)&table->unk_0c;
+  p = (struct LohoSpark *)&table->age;
   i = 95;
-L_0200838c:
+seedSparks:
   *(s32 *)p = -((u32)(Random16Far() << 5) >> 16);
   i = (i - 1);
-  p = (struct Unk16 *)((s32)p + 16);
+  p = (struct LohoSpark *)((s32)p + 16);
   if (i >= 0)
-    goto L_0200838c;
+    goto seedSparks;
   Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
           (volatile u32 *)0x40000d4);
   i = 0;
@@ -197,23 +221,23 @@ L_0200838c:
    * which combine folds away; as the loop entered only at its top, 28 of 1050
    * instructions differ in tla-en. */
   if (((entry & 255) >> 8) == 0)
-    goto L_020083b6;
+    goto frame;
   i = 1;
-  goto L_02008452;
-L_020083b6:
+  goto ageSpark;
+frame:
   if ((31 & i) != 0)
-    goto L_020083c4;
+    goto checkFlash;
   Event_PlaySound(145);
-L_020083c4:
+checkFlash:
   if (i != 30)
-    goto L_020083d4;
+    goto sparks;
   ScreenFade_ToWhite(90);
   Event_PlaySound(141);
-L_020083d4:
+sparks:
   p = table;
-L_020083d6:
-  if (p->unk_0c != 0)
-    goto L_02008430;
+spark:
+  if (p->age != 0)
+    goto drawSpark;
   p->sprite.words[0] = 0x40000000;
   p->sprite.words[1] = 0;
   t47 = (u16)((((u32)(Random16Far() * 96) >> 16) + 72) & 0x1ff);
@@ -223,33 +247,33 @@ L_020083d6:
   t51 = p->sprite.bytes[5];
   t51 |= 240;
   p->sprite.bytes[5] = t51 & -13;
-L_02008430:
+drawSpark:
   // Through long: read as s32, PRE merges this with the read after the call.
-  value = *(long *)&p->unk_0c;
+  value = *(long *)&p->age;
   if (value < 0)
-    goto L_02008452;
+    goto ageSpark;
   t49 = (u16)(((value >> 2) * 4 + tiles) & 0x3ff);
   t50 = p->sprite.halves[2];
   p->sprite.halves[2] = (t50 & -0x400) | t49;
   Oam_AddSpriteAtDepthClamped(p, 100);
-L_02008452:
-  p->unk_0c += 1;
-  if (p->unk_0c <= 31)
-    goto L_02008474;
-  p->unk_0c = -((u32)(Random16Far() * 7) >> 16);
-L_02008474:
+ageSpark:
+  p->age += 1;
+  if (p->age <= 31)
+    goto nextSpark;
+  p->age = -((u32)(Random16Far() * 7) >> 16);
+nextSpark:
   p++;
   if ((s32)p <= (s32)&table[95])
-    goto L_020083d6;
+    goto spark;
   wait(1);
   i = (i + 1);
   if (i <= 119)
-    goto L_020083b6;
+    goto frame;
   VramCache_FreeEntry(entry);
   Heap_Release(table);
   FieldCamera_MoveTo(0x1e80000, -1, 0x1860000, 1);
   Actor_SetPositionAndFacing(14, 0xf80000, 0x1e00000, 0);
-  Func_020000ac();
+  Loho_DrawBrokenWall();
   MapGrid_SetShake(0, 0, 0x10000);
   Event_PlaySound(0x186);
   Event_Wait(180);
@@ -338,11 +362,11 @@ L_02008474:
   t147 = ((s32)Actor_GetById(16));
   FIELD_AT(t147, u8, 85) = zero;
   Actor_SetSpeed(16, 0x18000, 0xc000);
-  Actor_SetScript(16, (s32)gData_02001470);
+  Actor_SetScript(16, (s32)gLoho_FirstMinerGoesToWall);
   Actor_SetSpeed(18, 0x8000, 0x4000);
-  Actor_SetScript(18, (s32)gData_0200151c);
+  Actor_SetScript(18, (s32)gLoho_SecondMinerStepsUp);
   Actor_SetSpeed(17, 0x6666, 0x3333);
-  Actor_SetScript(17, (s32)gData_0200154c);
+  Actor_SetScript(17, (s32)gLoho_ThirdMinerStepsUp);
   Actor_RefreshSelectorById(16);
   Actor_FaceDirectionAndWait(16, 0x6000);
   Event_Wait(10);
@@ -365,31 +389,31 @@ L_02008474:
   Actor_RefreshSelectorById(18);
   Actor_FaceEachOther(17, 18, 0);
   Event_Wait(20);
-  goto L_020088f0;
-L_020088f0:
+  goto askCannon;
+askCannon:
   Actor_SetAnimation(18, 3);
   Actor_SetAnimation(17, 3);
   Event_Wait(30);
   Actor_FaceActor(17, 4, 0);
   Actor_SetSpeed(16, 0x10000, 0x8000);
-  Actor_SetScript(16, (s32)gData_0200158c);
+  Actor_SetScript(16, (s32)gLoho_FirstMinerWalksBack);
   FieldCamera_SetSpeed(0x1cccc, 0x3999);
   FieldCamera_MoveTo(0x21e0000, -1, 0x15e0000, 1);
   FieldCamera_WaitForArrival();
   Event_OpenMessage(17, 0);
   t186 = Event_AskYesNoWithActorAnimation(4, 0);
   if (t186 != 0)
-    goto L_02008992;
+    goto answeredNo;
   Actor_SetAnimation(18, 3);
   Event_ShowMessage(18, 0);
   t189 = (s32)Ram_HeapSlots->eventWork;
   t190 = FIELD_AT(t189, u16, 452);
   FIELD_AT(t189, u16, 452) = (t190 + 1);
-  goto L_020089c4;
-L_02008982:
+  goto crewLeaves;
+fromSouth:
   Actor_WalkToAndWait(4, 0x1d7, 0x175);
-  goto L_0200821e;
-L_02008992:
+  goto inPlace;
+answeredNo:
   Actor_SetAnimation(18, 4);
   t193 = (s32)Ram_HeapSlots->eventWork;
   t194 = FIELD_AT(t193, u16, 452);
@@ -397,13 +421,13 @@ L_02008992:
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(18, 3);
   Event_ShowMessage(18, 0);
-L_020089c4:
+crewLeaves:
   Actor_WalkBy(18, 0, 24);
   Actor_WalkByAndWait(17, 0, 24);
   Actor_FaceDirection(17, 0, 0);
   Actor_FaceDirection(18, 0xd000, 0);
   Actor_RefreshSelectorById(16);
-  Actor_SetScript(16, (s32)gData_020015e0);
+  Actor_SetScript(16, (s32)gLoho_FirstMinerFetchesCannon);
   Actor_RefreshSelectorById(16);
   Actor_FaceDirection(18, 0xc000, 0);
   Actor_FaceDirection(17, 0, 0);
@@ -416,7 +440,7 @@ L_020089c4:
   FieldActor_WatchAndSetScript(4, 16);
   Actor_WalkTo(18, 0x1f8, 0x172);
   Actor_WalkTo(17, 0x1f8, 0x160);
-  Actor_SetScript(16, (s32)gData_02001638);
+  Actor_SetScript(16, (s32)gLoho_FirstMinerReturns);
   Actor_WaitForMoveById(17);
   Actor_WaitForMoveById(18);
   Actor_RefreshSelectorById(16);
@@ -428,7 +452,7 @@ L_020089c4:
   Actor_SetSpeed(20, 0x1999, 0xccc);
   t226 = ((s32)Actor_GetById(20));
   FIELD_AT(t226, u8, 85) = 0;
-  Actor_SetScript(20, (s32)gData_0200166c);
+  Actor_SetScript(20, (s32)gLoho_ForemanComes);
   Actor_RefreshSelectorById(20);
   Actor_SetSpeed(20, 0x4ccc, 0x2666);
   FieldCamera_SetSpeed(0x4ccc, 0x999);
@@ -470,32 +494,22 @@ void Loho_MindReadMiner(void) {
   Event_ShowMessage(11, 0);
 }
 
-void Func_02000c54(s32 id) {
-  s32 high = 192;
-  s32 kind = 64;
-
-  /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is set
-   * between the value's halves; as constant arguments, 2 of 6 instructions
-   * differ in tla-en. */
-  asm("" : "+l"(high), "+l"(kind));
-  Actor_ReturnHome(id, kind, high << 2);
+/// Scoop digs up a buried treasure: its actor comes up out of the ground and
+/// its flag is set (Actor_ReturnHome). The helper, our name, is the forward
+/// the Scoop spots of Loho, Taopo Swamp and the Yampi Desert Cave all
+/// make.
+static inline void Loho_DigUpTreasure(s32 id, s32 kind, s32 flag) {
+  Actor_ReturnHome(id, kind, flag);
 }
 
-#define DEFINE_FUNC_02000C64(name, n1, n2)                                     \
-  void name(s32 id) {                                                          \
-    s32 value = 768;                                                           \
-    s32 kind = n1;                                                             \
-                                                                               \
-    /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is \
-     * set between the value's halves; as constant arguments, 2 of 7           \
-     * instructions differ in tla-en. */                                       \
-    asm("" : "+l"(value), "+l"(kind));                                         \
-    Actor_ReturnHome(id, kind, value + n2);                                    \
-  }
+void Loho_ScoopFirstTreasure(s32 id) { Loho_DigUpTreasure(id, 64, 0x300); }
 
-DEFINE_FUNC_02000C64(Func_02000c64, 65, 1)
+#define DEFINE_SCOOP_TREASURE(name, n1, n2)                                    \
+  void name(s32 id) { Loho_DigUpTreasure(id, n1, 0x300 + n2); }
 
-DEFINE_FUNC_02000C64(Func_02000c74, 66, 2)
+DEFINE_SCOOP_TREASURE(Loho_ScoopSecondTreasure, 65, 1)
+
+DEFINE_SCOOP_TREASURE(Loho_ScoopThirdTreasure, 66, 2)
 
 /// Lift raises the rock (flag 0x201), and the Golem Core under it shows until
 /// it is dug up (flag 0xff7).
@@ -564,28 +578,26 @@ void Loho_TalkAboutCannon(s32 actor) {
   }
 }
 
-void Func_02000e0c(void) {
-  Actor_SetScript(8, gData_020017d8);
+void Loho_VillagerStepsAsideNorth(void) {
+  Actor_SetScript(8, gLoho_VillagerMovesNorth);
   Event_SetFlag(800);
 }
 
-void Func_02000e24(void) {
-  Actor_SetScript(8, gData_020017a4);
+void Loho_VillagerStepsAsideWest(void) {
+  Actor_SetScript(8, gLoho_VillagerMovesWest);
   Event_SetFlag(800);
 }
 
-void Func_02000e3c(void) {
+void Loho_VillagerStepsBack(void) {
   Event_ClearFlag(800);
-  Actor_SetScript(8, gData_0200171c);
+  Actor_SetScript(8, gLoho_VillagerReturns);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_020012a0_(const void *data, s32 a, s32 b) {
+static __inline__ void Loho_AnimateCells(const void *data, s32 a, s32 b) {
   MapGrid_AnimateCells(data, a, b);
 }
 
-void Func_02000e54(void) {
+void Loho_OpenDoorAndEnter(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 i;
 
@@ -607,7 +619,7 @@ loop:
     goto loop;
   work = (u8 *)&((struct EventWork154 *)work)->returnEntrance;
   Event_PlaySound(158);
-  Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
+  Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
@@ -618,9 +630,6 @@ loop:
   Event_WaitTransitionFrames();
   Event_End();
 }
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 
 void Loho_EnterDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -638,7 +647,7 @@ void Loho_EnterDoor(void) {
   Import_EventSetExitRequest(work->returnEntrance);
 }
 
-void Func_02000f38(void) {
+void Loho_ClimbDownLadder(void) {
   s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->returnEntrance;
 
   if (value == 2)
@@ -662,48 +671,48 @@ void Func_02000f38(void) {
   Event_End();
 }
 
-void Func_02000ffc(void) {
+void Loho_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
   Actor_WalkByAndWait(4, 16, 0);
   Event_Wait(10);
-  Func_02000f38();
+  Loho_ClimbDownLadder();
 }
 
-void Func_0200102c(void) {
+void Loho_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
   Actor_WalkByAndWait(4, -16, 0);
   Event_Wait(10);
-  Func_02000f38();
+  Loho_ClimbDownLadder();
 }
 
-void Func_0200105c(void) {
+void Loho_TurnAndClimbDownLadder(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(10);
-  Func_02000f38();
+  Loho_ClimbDownLadder();
 }
 
-void Func_02001080(void) {
+void Loho_SetUpTown(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
   Actor_SetSpriteFlags(Actor_GetById(20), 0);
 }
 
-void Func_020010a0(void) {
+void Loho_SetUpRoom2(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 521;
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
 }
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 
-static __inline__ void Func_02001350_(s32 id, s32 x, s32 z, u16 angle) {
-  /* FAKEMATCH(wrapper): forwarded inline, so each call builds its angle
-   * first; as plain calls, 14 of 121 instructions differ in tla-en. */
-  Actor_SetPositionAndFacing(id, x, z, angle);
+/// Places an actor facing an angle, the angle taken as the u16 an actor's
+/// facing is; the helper, our name, Madra and its houses use too.
+static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
+  Actor_SetPositionAndFacing(id, x, z, facing);
 }
 
 s32 Scene_Initialize(void) {
@@ -714,9 +723,9 @@ s32 Scene_Initialize(void) {
       Actor_SetWideSprite(65, 1);
     if (!Event_GetFlag(0x302))
       Actor_SetWideSprite(66, 1);
-    Func_02001080();
+    Loho_SetUpTown();
   } else {
-    Func_020010a0();
+    Loho_SetUpRoom2();
   }
   if (Event_GetFlag(0xa5f)) {
     Actor_SetPosition(20, 0, 0);
@@ -726,9 +735,9 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(16, 0, 0);
       Actor_SetPosition(18, 0, 0);
     } else {
-      Func_02001350_(16, PIXELS(459), PIXELS(254), FACING_NORTHEAST);
-      Func_02001350_(18, PIXELS(442), PIXELS(203), FACING_WEST);
-      Func_02001350_(17, PIXELS(490), PIXELS(188), FACING_SOUTHEAST);
+      Loho_PlaceFacing(16, PIXELS(459), PIXELS(254), FACING_NORTHEAST);
+      Loho_PlaceFacing(18, PIXELS(442), PIXELS(203), FACING_WEST);
+      Loho_PlaceFacing(17, PIXELS(490), PIXELS(188), FACING_SOUTHEAST);
       Actor_GetById(17)->timer = Actor_GetById(17)->x >> 16;
       Actor_GetById(17)->unk66 = Actor_GetById(17)->z >> 16;
       Actor_SetScript(17, 2);
@@ -740,14 +749,14 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 &&
       Event_GetFlag(0xa5f))
-    Func_020000ac();
+    Loho_DrawBrokenWall();
   return 0;
 }
 
 #include "objcmd.h"
 
 // clang-format off
-u32 gData_02001470[] = {
+u32 gLoho_FirstMinerGoesToWall[] = {
     39, 2, 48, 0x21b0000, 0x1470000, 1,
     48, 0x2470000, 0x1470000, 1, 48, 0x2470000,
     0x12c0000, 1, 3, 0, 150, 22,
@@ -758,7 +767,7 @@ u32 gData_02001470[] = {
     17,
 };
 
-s32 gData_0200151c[] = {
+s32 gLoho_SecondMinerStepsUp[] = {
     SC_WAIT(50),
     SC_ARG(2),
     SC_MOVE_BY(PIXELS(4), 0, PIXELS(-40)),
@@ -767,7 +776,7 @@ s32 gData_0200151c[] = {
     SC_END,
 };
 
-s32 gData_0200154c[] = {
+s32 gLoho_ThirdMinerStepsUp[] = {
     SC_WAIT(70),
     SC_ARG(2),
     SC_MOVE_BY(0, 0, PIXELS(-40)),
@@ -778,14 +787,14 @@ s32 gData_0200154c[] = {
     SC_END,
 };
 
-u32 gData_0200158c[] = {
+u32 gLoho_FirstMinerWalksBack[] = {
     39, 2, 4, 0x23a0000, 0, 0xf80000,
     1, 4, 0x2470000, 0, 0xf80000, 1,
     4, 0x2460000, 0, 0x10a0000, 1, 3,
     0, 20, 17,
 };
 
-u32 gData_020015e0[] = {
+u32 gLoho_FirstMinerFetchesCannon[] = {
     SC_POSITION(PIXELS(583), 0, PIXELS(327)),
     SC_SET(SW_MOTION, 0),
     SC_POSITION(PIXELS(583), 0, PIXELS(300)),
@@ -797,7 +806,7 @@ u32 gData_020015e0[] = {
     SC_END,
 };
 
-u32 gData_02001638[] = {
+u32 gLoho_FirstMinerReturns[] = {
     SC_ARG(2),
     SC_MOVE_XZ(PIXELS(472), PIXELS(331)),
     SC_SYNC,
@@ -807,7 +816,7 @@ u32 gData_02001638[] = {
     SC_END,
 };
 
-s32 gData_0200166c[] = {
+s32 gLoho_ForemanComes[] = {
     SC_MOVE_BY(0, PIXELS(2), 0),
     SC_SYNC,
     SC_END,
@@ -820,7 +829,7 @@ s32 gData_0200166c[] = {
     SC_END,
 };
 
-u32 gData_020016b8[] = {
+u32 gLoho_VillagerPaces[] = {
     SC_LABEL(1),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_WEST),
@@ -834,7 +843,7 @@ u32 gData_020016b8[] = {
     SC_END,
 };
 
-u32 gData_0200171c[] = {
+u32 gLoho_VillagerReturns[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(128), 0, PIXELS(120)),
     SC_SYNC,
@@ -852,16 +861,16 @@ u32 gData_0200171c[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_020017A4(gData_020017a4, 128, 144)
+DEFINE_G_DATA_020017A4(gLoho_VillagerMovesWest, 128, 144)
 
-DEFINE_G_DATA_020017A4(gData_020017d8, 159, 128)
+DEFINE_G_DATA_020017A4(gLoho_VillagerMovesNorth, 159, 128)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gData_0200183c[] = {
+u32 gLoho_Regions[] = {
     0x1c01c4, 0x1cc02e4, 0x2ec0024, 0x6ffff, 0xffff, 0,
     0, 0,
 };
@@ -911,7 +920,7 @@ struct ActorPlacement gLoho_Placements[] = {
 };
 
 struct ActorPlacement gLoho_Room2Placements[] = {
-    {130, CONDITION_ALWAYS, (s32)gData_020016b8, PIXELS(128), 0, PIXELS(120), FACING_NORTHWEST, 1, 0},
+    {130, CONDITION_ALWAYS, (s32)gLoho_VillagerPaces, PIXELS(128), 0, PIXELS(120), FACING_NORTHWEST, 1, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(120), FACING_SOUTH, 1, 0},
     {202, CONDITION_ALWAYS, 1, PIXELS(448), 0, PIXELS(408), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
@@ -926,10 +935,10 @@ struct Trigger gLoho_Room1Triggers[] = {
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {0xc602, 4, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02000e54)},
-    {0x4602, 6, CONDITION_ALWAYS, EVENT(Func_0200105c)},
-    {0x8602, 8, CONDITION_ALWAYS, EVENT(Func_0200102c)},
-    {0x602, 9, CONDITION_ALWAYS, EVENT(Func_02000ffc)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Loho_OpenDoorAndEnter)},
+    {0x4602, 6, CONDITION_ALWAYS, EVENT(Loho_TurnAndClimbDownLadder)},
+    {0x8602, 8, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
+    {0x602, 9, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, 8, 0x1a5f, MSGNO(MsgLoho29)},
     {TRIGGER_TALK, 9, 0x1a5f, MSGNO(MsgLoho30)},
@@ -979,9 +988,9 @@ struct Trigger gLoho_Room1Triggers[] = {
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
     {0x1cc14, 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
-    {0x50008805, 101, 0x300, EVENT(Func_02000c54)},
-    {0x50008805, 102, 0x301, EVENT(Func_02000c64)},
-    {0x50008805, 103, 0x302, EVENT(Func_02000c74)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 101, 0x300, EVENT(Loho_ScoopFirstTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 102, 0x301, EVENT(Loho_ScoopSecondTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 103, 0x302, EVENT(Loho_ScoopThirdTreasure)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x201, EVENT(Loho_LiftRock)},
     {TRIGGER_TABLE_END},
 };
@@ -997,10 +1006,10 @@ struct Trigger gLoho_Room2Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {0xc402, 20, 0x320, EVENT(Func_02000e24)},
-    {0x8402, 22, 0x320, EVENT(Func_02000e0c)},
-    {TRIGGER_STEP, 21, 0x1320, EVENT(Func_02000e3c)},
-    {TRIGGER_STEP, 23, 0x1320, EVENT(Func_02000e3c)},
+    {0xc402, 20, 0x320, EVENT(Loho_VillagerStepsAsideWest)},
+    {0x8402, 22, 0x320, EVENT(Loho_VillagerStepsAsideNorth)},
+    {TRIGGER_STEP, 21, 0x1320, EVENT(Loho_VillagerStepsBack)},
+    {TRIGGER_STEP, 23, 0x1320, EVENT(Loho_VillagerStepsBack)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa5f, MSGNO(MsgLoho18)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho52)},
@@ -1013,10 +1022,10 @@ struct Trigger gLoho_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s16 gData_02001ef4[] = {
+s16 gLoho_DoorOpening[] = {
     64, 50, 2, 2, 2, 64, 52, 2,
     2, 2, 64, 54, 2, 2, 2, -1,
 };
 // clang-format on
 
-struct LohoPicture gData_02001f14 = {gData_02001ef4, 79, 15};
+struct LohoPicture gLoho_HouseDoor = {gLoho_DoorOpening, 79, 15};

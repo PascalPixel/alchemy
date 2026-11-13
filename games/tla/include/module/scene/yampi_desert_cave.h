@@ -8,32 +8,32 @@
 
 struct Actor;
 
-extern u16 gData_02001968[];
+extern u16 gYampiDesertCave_LogSprites[];
 
-void Func_02000754(struct Actor *object);
+void YampiDesertCave_StopLeaderAtLog(struct Actor *object);
 
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
-void Func_02000acc(void);
+void YampiDesertCave_ArriveByTeleport(void);
 
-extern u16 gData_02001a54[];
+extern u16 gYampiDesertCave_MarkCycle[];
 
 void Func_02001928(s32 value);
 
-void Func_02000cec(void);
+void YampiDesertCave_FightCrystal(void);
 
-void Func_02000d04(void);
+void YampiDesertCave_WonderAtRipple(void);
 
-void Func_02000d84(void);
+void YampiDesertCave_TryPushLog(void);
 
-void Func_02000dac(void);
+void YampiDesertCave_TeleportFromFirstMark(void);
 
-void Func_02000de0(void);
+void YampiDesertCave_TeleportFromSecondMark(void);
 
-void Func_02001040(void);
-void Func_02001120(void);
+void YampiDesertCave_CastSand(void);
+void YampiDesertCave_EndSand(void);
 
-extern u32 gData_02001b48[];
+extern u32 gYampiDesertCave_Settle[];
 
 void Func_02001950(void);
 

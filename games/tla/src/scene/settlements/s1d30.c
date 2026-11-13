@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x690, in ROM order.
+/// The settlements' events, continued; settlements.c says which places these
+/// are.
 
 #include "../shared/tables.h"
 #include "../settlements.h"
@@ -15,11 +16,13 @@
 #include "module/scene/settlements.h"
 #include "module/tla.h"
 
-void Func_02001d30(s32 value) { gData_02002ce8 = value; }
+void Settlements_SetSlideStopped(s32 value) {
+  gSettlements_SlideStopped = value;
+}
 
-void Func_020016b0(void);
+void Settlements_KeepSliding(void);
 
-void Func_02001d3c(void) {
+void Settlements_SlideOnIceFacing(void) {
   struct Actor *object;
   s16 angle;
   s32 startCell;
@@ -40,7 +43,7 @@ void Func_02001d3c(void) {
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   angle = (object->facing + 0x2000) & 0xc000;
 retry:
-  Func_0200173c();
+  Settlements_StopLeader();
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -73,7 +76,7 @@ retry:
   object->timer = 0;
   Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  object->update = Func_020016b0;
+  object->update = Settlements_KeepSliding;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
@@ -129,60 +132,60 @@ end:
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 
-void Func_02000280(void);
-void Func_020002a0(void);
-void Func_020002b0(void);
+void Settlements_MeetGel(void);
+void Settlements_MeetLostJupiterDjinni(void);
+void Settlements_ClearSpriteFlags(void);
 void Actor_Bob(void);
 void Settlements_WarnOfRiddleOfRock(void);
-void Func_020005cc(void);
-void Func_02000644(void);
-void Func_02000c44(void);
-void Func_020011d4(void);
+void Settlements_EnterDoor4(void);
+void Settlements_GrowVine(void);
+void Settlements_EnterCave(void);
+void Settlements_PushIntoFalls(void);
 
-extern u32 gData_02002230[];
+extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gData_020021b8[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020021f4[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02002230[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-s16 gData_0200226c[] = {
+s16 gSettlements_FallsObjects[] = {
     9, 10, -1,
 };
 
-s16 gData_02002272[] = {
+s16 gSettlements_WallCrate[] = {
     10, -1,
 };
 
-DEFINE_G_DATA_02002276(gData_02002276)
+DEFINE_G_DATA_02002276(gSettlements_SlideAngles)
 
-s16 gData_020022b6[] = {
+s16 gSettlements_SlideAnglesByKey[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
     0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
     0,
 };
 
-s32 gData_020022d8[] = {
-    (s32)gData_020021b8,
-    (s32)gData_020021f4,
-    (s32)gData_02002230,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
-s32 gData_020022e4[] = {
+s32 gSettlements_BobScript[] = {
     39,
     3,
     22,
@@ -192,19 +195,19 @@ s32 gData_020022e4[] = {
     6,
     -0x100000,
     46,
-    (s32)Func_020002b0,
+    (s32)Settlements_ClearSpriteFlags,
     17,
 };
 
-u32 gData_02002310[] = {
+u32 gSettlements_SmokeScript[] = {
     39, 2, 17,
 };
 
-u32 gData_0200231c[] = {
+u32 gSettlements_CrateBobScript[] = {
     22, 26, 0, 17,
 };
 
-s32 gData_0200232c[] = {
+s32 gSettlements_CrateDropScript[] = {
     46,
     (s32)Actor_Bob,
     17,
@@ -216,12 +219,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gData_02002380[] = {
+u32 gSettlements_Room5Regions[] = {
     0x2e02a0, 0x2b00190, 0x1a0003e, 0xeffff, 0xffff, 0,
     0, 0,
 };
 
-u32 gData_020023a0[] = {
+u32 gSettlements_Room3Regions[] = {
     0xc00d4, 0xdc0084, 0x8c0014, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -269,7 +272,7 @@ struct ActorPlacement gSettlements_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020024dc[] = {
+struct ActorPlacement gSettlements_Room1Placements[] = {
     {115, CONDITION_ALWAYS, 2, PIXELS(192), 0, PIXELS(240), FACING_NORTH, 1, 0},
     {106, CONDITION_ALWAYS, 2, PIXELS(336), 0, PIXELS(240), FACING_NORTH, 1, 0},
     {SCENE_TABLE_END},
@@ -283,7 +286,7 @@ struct ActorPlacement gSettlements_Room2Placements[] = {
 struct ActorPlacement gSettlements_Room4Placements[] = {
     {114, CONDITION_ALWAYS, 2, PIXELS(392), 0, PIXELS(280), FACING_NORTH, 1, 0},
     {299, CONDITION_ALWAYS, 7, PIXELS(56), 0, PIXELS(240), FACING_NORTH, 2, 0},
-    {287, CONDITION_ALWAYS, (s32)gData_0200231c, PIXELS(280), 0, PIXELS(184),
+    {287, CONDITION_ALWAYS, (s32)gSettlements_CrateBobScript, PIXELS(280), 0, PIXELS(184),
      FACING_NORTH, 2, 0},
     {245, 0x66, 1, PIXELS(312), 0, PIXELS(248), FACING_WEST, 0, 0},
     {SCENE_TABLE_END},
@@ -299,27 +302,27 @@ struct ActorPlacement gSettlements_Room9Placements[] = {
     {93, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(176), FACING_SOUTH, 1, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(200), FACING_SOUTH, 1, 0},
     {288, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(168), FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(120), 0, PIXELS(72),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(120), 0, PIXELS(72),
      FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(72), 0, PIXELS(104),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(72), 0, PIXELS(104),
      FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(88), 0, PIXELS(104),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(88), 0, PIXELS(104),
      FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(120), 0, PIXELS(104),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(120), 0, PIXELS(104),
      FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(72), 0, PIXELS(136),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(72), 0, PIXELS(136),
      FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(104), 0, PIXELS(136),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(104), 0, PIXELS(136),
      FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(104), 0, PIXELS(152),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(104), 0, PIXELS(152),
      FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(120), 0, PIXELS(184),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(120), 0, PIXELS(184),
      FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(152), 0, PIXELS(184),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(152), 0, PIXELS(184),
      FACING_SOUTH, 1, 1},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, PIXELS(152), 0, PIXELS(152),
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, PIXELS(152), 0, PIXELS(152),
      FACING_SOUTH, 1, 0},
-    {274, CONDITION_ALWAYS, (s32)gData_020022e4, 0, 0, 0, FACING_SOUTH, 1, 0},
+    {274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 0, 0, 0, FACING_SOUTH, 1, 0},
     {329, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(92), FACING_SOUTH, 1, 0},
     {246, 0x7f, 1, PIXELS(72), 0, PIXELS(104), FACING_WEST, 0, 0},
     {SCENE_TABLE_END},
@@ -358,16 +361,16 @@ struct Trigger gSettlements_Triggers[] = {
 struct Trigger gSettlements_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x4602, 3, CONDITION_ALWAYS, EVENT(Func_02000624)},
-    {0x602, 4, CONDITION_ALWAYS, EVENT(Func_020005cc)},
+    {0x4602, 3, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor3)},
+    {0x602, 4, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor4)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Settlements_WarnOfRiddleOfRock)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements03)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgSettlements04)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgSettlements06)},
-    {0x50008905, 10, CONDITION_ALWAYS, EVENT(Func_02000488)},
-    {0x50008905, 11, CONDITION_ALWAYS, EVENT(Func_020004a8)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10, CONDITION_ALWAYS, EVENT(Settlements_CutLeftBush)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11, CONDITION_ALWAYS, EVENT(Settlements_CutStairsBush)},
     {TRIGGER_TABLE_END},
 };
 
@@ -381,24 +384,24 @@ struct Trigger gSettlements_Room2Triggers[] = {
 
 struct Trigger gSettlements_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000c44)},
-    {0x4602, 3, CONDITION_ALWAYS, EVENT(Func_02000624)},
-    {0x602, 4, CONDITION_ALWAYS, EVENT(Func_020005cc)},
-    {0x8602, 5, CONDITION_ALWAYS, EVENT(Func_020005f4)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Settlements_EnterCave)},
+    {0x4602, 3, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor3)},
+    {0x602, 4, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor4)},
+    {0x8602, 5, CONDITION_ALWAYS, EVENT(Settlements_EnterDoor5)},
     {0xc401, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_STEP, 34, 0x220, EVENT(Func_0200125c)},
-    {TRIGGER_STEP, 35, 0x1220, EVENT(Func_020012c0)},
+    {TRIGGER_STEP, 34, 0x220, EVENT(Settlements_StepOntoWall)},
+    {TRIGGER_STEP, 35, 0x1220, EVENT(Settlements_StepOffWall)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements07)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgSettlements10)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02000290)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Settlements_MeetTinder)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
-     CONDITION_ALWAYS, EVENT(Func_02001304)},
+     CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS,
-     EVENT(Func_0200155c)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02001304)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_0200155c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 9, 0x230, EVENT(Func_02000644)},
+     EVENT(Settlements_BlockCrate)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 9, 0x230, EVENT(Settlements_GrowVine)},
     {TRIGGER_TABLE_END},
 };
 
@@ -417,13 +420,14 @@ struct Trigger gSettlements_Room5Triggers[] = {
 
 struct Trigger gSettlements_Room7Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000c44)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02000c1c)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_02000c2c)},
-    {TRIGGER_STEP, 20, 0x201, EVENT(Func_02000c3c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x203, EVENT(Func_02000cfc)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000280)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xf5d, EVENT(Func_02000404)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Settlements_EnterCave)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Settlements_StepOffIce)},
+    {TRIGGER_STEP, 20, 0x201, EVENT(Settlements_StepOnIceSlide)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x203, EVENT(Settlements_LashRope)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xf5d,
+     EVENT(Settlements_CatchApple)},
     {TRIGGER_TABLE_END},
 };
 
@@ -443,18 +447,20 @@ struct Trigger gSettlements_Room9Triggers[] = {
     {0xc401, 1, CONDITION_ALWAYS, 1},
     {0xc401, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements18)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(Func_020002a0)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS,
+     EVENT(Settlements_MeetLostJupiterDjinni)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgSettlements20)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
-     0x204, EVENT(Func_02000ef0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x204, EVENT(Func_020011bc)},
+     0x204, EVENT(Settlements_UnblockFallsObjects)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x204, EVENT(Settlements_MovePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
-     0x205, EVENT(Func_02000ef0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x205, EVENT(Func_020011c8)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000f00)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x208, EVENT(Func_020016a4)},
+     0x205, EVENT(Settlements_UnblockFallsObjects)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x205, EVENT(Settlements_MoveCrate)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Settlements_PushIntoFalls)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x208,
+     EVENT(Settlements_LiftBoulder)},
     {TRIGGER_TABLE_END},
 };
 
@@ -466,6 +472,6 @@ struct Trigger gSettlements_Room10Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02002c5c[] = {
+s32 gSettlements_WaterColorFrame[] = {
     -1,
 };

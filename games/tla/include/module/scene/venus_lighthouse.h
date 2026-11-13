@@ -44,19 +44,19 @@ struct SetupWork {
   s32 (*idle)(void);
 };
 
-extern s32 gData_02001d8c[];
+extern s32 gPushLeaderSteps[];
 
-void Func_02000b2c(void);
+void VenusLighthouse_FelixLeaves(void);
 
 void Func_02001cd4(s32 actor);
 
-void Func_020006ac(void);
+void VenusLighthouse_RepelLeader(void);
 
 void VenusLighthouse_StepOnFloorSwitch(void);
 
-extern u32 gData_02001ce4[];
-extern u32 gData_02001d1c[];
-extern s32 gData_0200215c[];
-extern s32 gData_02002180[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern s32 gVenusLighthouse_StatueGlows[];
+extern s32 gVenusLighthouse_ShrinkAndHide[];
 
 #endif

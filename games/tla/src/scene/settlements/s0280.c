@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x690, in ROM order.
+/// The settlements' events, continued; settlements.c says which places these
+/// are.
 
 #include "../shared/actors.h"
 #include "../shared/effects.h"
@@ -9,13 +10,13 @@
 #include "module/scene/settlements.h"
 #include "palette_snapshots.h"
 
-void Func_02000280(void) { Djinn_JoinParty(10, 1, 14); }
+void Settlements_MeetGel(void) { Djinn_JoinParty(10, 1, 14); }
 
-void Func_02000290(void) { Djinn_JoinParty(11, 2, 14); }
+void Settlements_MeetTinder(void) { Djinn_JoinParty(11, 2, 14); }
 
-void Func_020002a0(void) { Djinn_JoinParty(23, 3, 19); }
+void Settlements_MeetLostJupiterDjinni(void) { Djinn_JoinParty(23, 3, 19); }
 
-s32 Func_020002b0(struct Actor *object) {
+s32 Settlements_ClearSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
 }
@@ -40,10 +41,10 @@ u32 *Scene_GetRegions(void) {
   u32 *placements;
 
   if (scene == (s32)&SceneId_Ov690Room5)
-    return gData_02002380;
+    return gSettlements_Room5Regions;
   placements = 0;
   if (scene == (s32)&SceneId_Ov690Room3)
-    placements = gData_020023a0;
+    placements = gSettlements_Room3Regions;
   return placements;
 }
 
@@ -54,7 +55,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "version.h"
 
 extern u8 gSettlements_Placements[];
-extern u8 gData_020024dc[];
+extern u8 gSettlements_Room1Placements[];
 extern u8 gSettlements_Room2Placements[];
 extern u8 gSettlements_Room4Placements[];
 extern u8 gSettlements_Room5Placements[];
@@ -67,7 +68,7 @@ u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
-    return gData_020024dc;
+    return gSettlements_Room1Placements;
   if (scene == (s32)&SceneId_Ov690Room2)
     return gSettlements_Room2Placements;
   if (scene == (s32)&SceneId_Ov690Room4)
@@ -85,7 +86,7 @@ u8 *Scene_GetPlacements(void) {
   return gSettlements_Placements;
 }
 
-void Func_02000404(void) {
+void Settlements_CatchApple(void) {
   s32 mode;
 
   Event_Start();
@@ -116,9 +117,9 @@ void Settlements_WarnOfRiddleOfRock(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Func_02000488(void) { Window(5, 70, 9, 7, 5, 43, 1); }
+void Settlements_CutLeftBush(void) { Window(5, 70, 9, 7, 5, 43, 1); }
 
-void Func_020004a8(void) {
+void Settlements_CutStairsBush(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
@@ -133,7 +134,7 @@ void Func_020004a8(void) {
   Event_SetFlag(0xa60);
 }
 
-void Func_0200052c(void) {
+void Settlements_EnterDoor(void) {
   s32 next = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   Actor_FaceDirection(4, FACING_NORTH, 0);
@@ -153,30 +154,30 @@ void Func_0200052c(void) {
   Event_End();
 }
 
-void Func_020005cc(void) {
+void Settlements_EnterDoor4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
   Actor_WalkByAndWait(4, 16, 0);
-  Func_0200052c();
+  Settlements_EnterDoor();
 }
 
-void Func_020005f4(void) {
+void Settlements_EnterDoor5(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
   Actor_WalkByAndWait(4, -14, -8);
-  Func_0200052c();
+  Settlements_EnterDoor();
 }
 
-void Func_02000624(void) {
+void Settlements_EnterDoor3(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirection(4, 192 << 8, 0);
-  Func_0200052c();
+  Settlements_EnterDoor();
 }
 
-void Func_02000644(void) {
+void Settlements_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
   Event_SetFlag(0x230);
 }
@@ -213,7 +214,7 @@ u8 *Scene_GetEvents(void) {
   return gSettlements_Triggers;
 }
 
-void Func_02000714(struct Actor *object) {
+void Settlements_DriftSmoke(struct Actor *object) {
   s32 step;
 
   object->x += object->timer << 8;
@@ -228,7 +229,7 @@ void Func_02000714(struct Actor *object) {
     Actor_Release(object);
 }
 
-void Func_02000758(s32 x, s32 y, s32 z) {
+void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *object = FieldActor_Create(0x11d, x, y, z);
 
   if (object != NULL) {
@@ -245,21 +246,21 @@ void Func_02000758(s32 x, s32 y, s32 z) {
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;
-    object->update = (void (*)(void))Func_02000714;
+    object->update = (void (*)(void))Settlements_DriftSmoke;
     Import_ActorSelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);
   }
 }
 
-void Func_020007d8(void) {
+void Settlements_PuffChimneySmoke(void) {
   if ((gFrameCount & 63) == 0)
-    Func_02000758(0xf80000, 0x300000, 0x1000000);
+    Settlements_SpawnSmoke(0xf80000, 0x300000, 0x1000000);
 }
 
 /// Moves the object around its orbit's centre (words 14 and 15) and steps the
 /// angle by a random amount.
 // As ☀️'s Scene_UpdateFloatingNut does.
-s32 Func_020007fc(s32 *p) {
+s32 Settlements_CircleCentre(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;
   s32 d = Math_Sin(p[12]) * 2;
@@ -288,7 +289,7 @@ static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
   Func_02002180(a, b, c, d);
 }
 
-void Func_02000860(void) {
+void Settlements_SetUpKaltIsland(void) {
   struct OrbitObject *actor;
   struct OrbitSprite *sprite;
   u8 *transfer;
@@ -298,7 +299,7 @@ void Func_02000860(void) {
   {
     s32 priority = 0x480;
 
-    FieldTask_AddFrame(Func_020007d8, priority);
+    FieldTask_AddFrame(Settlements_PuffChimneySmoke, priority);
   }
   Func_02002170();
   Func_02002170();
@@ -329,21 +330,21 @@ void Func_02000860(void) {
   actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;
   actor->active = 1;
-  actor->callback = (u32)Func_020007fc;
+  actor->callback = (u32)Settlements_CircleCentre;
   actor->state = 0;
 }
 
-extern const u8 gData_02002272[];
+extern const u8 gSettlements_WallCrate[];
 
-void Func_02000e04(void);
+void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
-    Func_02000860();
+    Settlements_SetUpKaltIsland();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     Func_02002140(0);
-    Func_02002188(gData_0200226c);
+    Func_02002188(gSettlements_FallsObjects);
     if (Event_GetFlag(0x206))
       Actor_SetPosition(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
@@ -352,7 +353,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(21, 2);
     if (Event_GetFlag(0x205))
       Actor_SetAnimation(10, 2);
-    Func_02000e04();
+    Settlements_StartWaterfall();
 #if TLA_PATCH_1
     if (Event_GetFlag(0x204)) {
       Actor_SetPosition(9, 0, 0);
@@ -369,9 +370,9 @@ s32 Scene_Initialize(void) {
     }
     if (Event_GetFlag(0x109) && Event_GetFlag(0x220)) {
       Event_ClearFlag(0x220);
-      Func_0200125c();
+      Settlements_StepOntoWall();
     }
-    Func_02002188(gData_02002272);
+    Func_02002188(gSettlements_WallCrate);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room3)
     Func_02002140(0);
@@ -415,13 +416,13 @@ s32 Scene_PrepareMap(void) {
 #include "system/irq_lock.h"
 #include "map.h"
 
-void Func_02000c1c(void) { GameFlag_SetBit(0x201); }
+void Settlements_StepOntoIce(void) { GameFlag_SetBit(0x201); }
 
-void Func_02000c2c(void) { GameFlag_ClearBit(0x201); }
+void Settlements_StepOffIce(void) { GameFlag_ClearBit(0x201); }
 
-void Func_02000c3c(void) { Func_02001770(); }
+void Settlements_StepOnIceSlide(void) { Settlements_SlideOnIce(); }
 
-void Func_02000c44(void) {
+void Settlements_EnterCave(void) {
   u32 i;
 
   Event_Start();
@@ -454,14 +455,14 @@ loop:
   Event_End();
 }
 
-void Func_02000cfc(void) {
+void Settlements_LashRope(void) {
   Func_02002178(1, 8, 9);
   Event_SetFlag(0x203);
 }
 
-extern s32 gData_02002c5c;
+extern s32 gSettlements_WaterColorFrame;
 
-void Func_02000d14(void) {
+void Settlements_CycleWaterColors(void) {
   struct PaletteCycleWork *work =
       (struct PaletteCycleWork *)Ram_HeapSlots->eventWork;
   s32 *frame;
@@ -469,18 +470,19 @@ void Func_02000d14(void) {
 
   if (work->unk166 != 0 || work->unkca4 != 0)
     return;
-  frame = &gData_02002c5c;
+  frame = &gSettlements_WaterColorFrame;
   if (*frame == -1) {
-    u16 *colors = gData_02002c60;
+    u16 *colors = gSettlements_WaterColors;
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy(colors, (void *)0x5000060, 32);
-    copy(gData_02002c80, colors, 32);
+    copy(gSettlements_WaterColorsSaved, colors, 32);
     *frame = 0;
   }
   phase = (*frame / 8) % 4;
   for (i = 0; i <= 3; i++)
-    gData_02002c80[12 + (phase + i) % 4] = gData_02002c60[12 + i];
+    gSettlements_WaterColorsSaved[12 + (phase + i) % 4] =
+        gSettlements_WaterColors[12 + i];
   {
     struct IoWriteQueue *q = &gIoWriteQueue;
     u32 saved;
@@ -491,19 +493,19 @@ void Func_02000d14(void) {
     if (count <= 31) {
       u32 *entry = q->entries[count];
 
-      *entry++ = (u32)gData_02002c80;
+      *entry++ = (u32)gSettlements_WaterColorsSaved;
       q->count = count + 1;
       *entry++ = 0x5000060;
       *entry = 0x84000008;
     }
     IRQ_UNLOCK(saved);
   }
-  gData_02002c5c++;
+  gSettlements_WaterColorFrame++;
 }
 
-void Func_02000e04(void) {
+void Settlements_StartWaterfall(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
-  FieldTask_AddFrame(Func_02000d14, 0x480);
+  FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
   Scene_QueueMusic(170);
   Scroll_StartHBlank();
 }
@@ -515,31 +517,34 @@ void Func_02000e04(void) {
 /// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
 /// value and blending is off; below it, by the other, with BG1 blended.
 void Scroll_HBlank(void) {
-  if (REG_VCOUNT < gData_02002ce0) {
-    Io_Write16(gData_02002ce4, &REG_BG1HOFS);
+  if (REG_VCOUNT < gSettlements_WaterfallLine) {
+    Io_Write16(gSettlements_WaterfallScrollAbove, &REG_BG1HOFS);
     REG_BLDCNT = 0;
   } else {
-    Io_Write16(gData_02002ce6, &REG_BG1HOFS);
+    Io_Write16(gSettlements_WaterfallScrollBelow, &REG_BG1HOFS);
     REG_BLDALPHA = 0x100c;
     REG_BLDCNT = 0x3f42;
   }
 }
 
-DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gData_02002ce0, gData_02002ce4,
-                          gData_02002ce6)
+DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gSettlements_WaterfallLine,
+                          gSettlements_WaterfallScrollAbove,
+                          gSettlements_WaterfallScrollBelow)
 
 DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Scroll_HBlank, Layer_TrackScroll)
 
-void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
-
-void Func_02000f00(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 2;
-  Func_02002190(gData_0200226c);
+void Settlements_UnblockFallsObjects(void) {
+  Func_02002190(gSettlements_FallsObjects);
 }
 
-void Func_0200156c(s32 id);
+void Settlements_BlockFallsObject(void) {
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 2;
+  Func_02002190(gSettlements_FallsObjects);
+}
 
-void Func_02000f2c(void) {
+void Settlements_SplashCrate(s32 id);
+
+void Settlements_SinkPillar(void) {
   struct Actor *object = Actor_GetById(9);
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;
@@ -551,7 +556,7 @@ void Func_02000f2c(void) {
       object->y -= 0x20000;
       Event_Wait(1);
     }
-    Func_0200156c(9);
+    Settlements_SplashCrate(9);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(21, PIXELS(184), PIXELS(184));
     Actor_GetById(21)->motionFlags = 0;
@@ -561,7 +566,7 @@ void Func_02000f2c(void) {
   }
 }
 
-void Func_02000fd0(void) {
+void Settlements_SlideCrateDownFalls(void) {
   struct Actor *object = Actor_GetById(10);
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;
@@ -579,7 +584,7 @@ void Func_02000fd0(void) {
     i--;
     if (i > 0)
       goto sink;
-    Func_0200156c(10);
+    Settlements_SplashCrate(10);
     FieldEvent_Wait(20);
     FieldCamera_MoveTo(0xc00000, -1, 0xe00000, 1);
     Actor_SetSpeed(10, 0xcccc, 0x6666);
@@ -590,7 +595,7 @@ void Func_02000fd0(void) {
     Actor_SetSpeed(10, 0x26666, 0x13333);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
-    Func_0200156c(10);
+    Settlements_SplashCrate(10);
     if (!Event_GetFlag(0x204)) {
       FieldEvent_Wait(10);
       Actor_SetSpeed(10, 0xcccc, 0x6666);
@@ -624,34 +629,34 @@ void Func_02000fd0(void) {
   }
 }
 
-void Func_020011bc(void) {
+void Settlements_MovePillar(void) {
   Func_02002198();
-  Func_02000f2c();
+  Settlements_SinkPillar();
 }
 
-void Func_020011c8(void) {
+void Settlements_MoveCrate(void) {
   Func_02002198();
-  Func_02000fd0();
+  Settlements_SlideCrateDownFalls();
 }
 
-void Func_020011d4(void) {
+void Settlements_PushIntoFalls(void) {
   Func_02002198();
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags += 254;
-  Func_02000f2c();
-  Func_02000fd0();
+  Settlements_SinkPillar();
+  Settlements_SlideCrateDownFalls();
 }
 
-void Func_02001200(void) {
+void Settlements_SaveWallCells(void) {
   MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 0);
   MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 10);
 }
 
-void Func_0200122c(void) {
+void Settlements_RestoreWallCells(void) {
   MapGrid_CopyCellAttributes(64, 0, 10, 10, 11, 73);
   MapGrid_CopyCellAttributes(64, 10, 10, 10, 42, 73);
 }
 
-void Func_0200125c(void) {
+void Settlements_StepOntoWall(void) {
   if (!Event_GetFlag(0x221) && !Event_GetFlag(0x220)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
     MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 60);
@@ -660,7 +665,7 @@ void Func_0200125c(void) {
   }
 }
 
-void Func_020012c0(void) {
+void Settlements_StepOffWall(void) {
   if (Event_GetFlag(0x220)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
     MapGrid_CopyCellAttributes(64, 60, 10, 10, 42, 73);
@@ -668,13 +673,13 @@ void Func_020012c0(void) {
   }
 }
 
-void Func_02001304(void) {
+void Settlements_UnblockCrate(void) {
   struct Actor *object = Actor_Get(10);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
-  Func_02001200();
-  Func_02002190(gData_02002272);
+  Settlements_SaveWallCells();
+  Func_02002190(gSettlements_WallCrate);
   if (x == 12 && z == 15) {
     MapGrid_CopyCellAttributes(42, 3, 7, 3, 42, 14);
     MapGrid_CopyCellAttributes(42, 9, 10, 10, 11, 73);
@@ -689,7 +694,7 @@ void Func_02001304(void) {
   }
 }
 
-extern const u8 gData_0200232c[];
+extern const u8 gSettlements_CrateDropScript[];
 
 #define SINK(frames)                                                           \
   i = (frames);                                                                \
@@ -699,7 +704,7 @@ extern const u8 gData_0200232c[];
     i--;                                                                       \
   } while (i > 0)
 
-void Func_0200138c(void) {
+void Settlements_DropCrate(void) {
   struct Actor *object;
   s32 column;
   s32 row;
@@ -715,24 +720,24 @@ void Func_0200138c(void) {
     Event_SetFlag(0x221);
     object->motionFlags = 0;
     SINK(32);
-    Func_02001620(10);
+    Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(20);
   } else if (!Event_GetFlag(0x205) && column == 16 && row == 15) {
     object->motionFlags = 0;
     Event_SetFlag(0x205);
     Event_SetFlag(0x221);
     SINK(48);
-    Func_02001620(10);
+    Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     MapGrid_CopyCellAttributes(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
     Event_SetFlag(0x221);
     SINK(32);
-    Func_02001620(10);
+    Settlements_SpawnSplashRing(10);
     if (!Event_GetFlag(102)) {
       Actor_SetPosition(11, 0, 0);
-      Actor_SetScript(10, gData_0200232c);
+      Actor_SetScript(10, gSettlements_CrateDropScript);
       FieldEvent_Wait(20);
     }
     FieldEvent_Wait(20);
@@ -741,7 +746,7 @@ void Func_0200138c(void) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
     object->motionFlags = 0;
     SINK(16);
-    Func_02001620(10);
+    Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(20);
     Event_SetFlag(0x204);
   } else if (column == 14 && row == 15) {
@@ -751,22 +756,22 @@ void Func_0200138c(void) {
   Event_End();
 }
 
-void Func_0200155c(void) {
+void Settlements_BlockCrate(void) {
   Func_02002198();
-  Func_0200122c();
-  Func_0200138c();
+  Settlements_RestoreWallCells();
+  Settlements_DropCrate();
 }
 
-extern const u8 gData_02002310[];
+extern const u8 gSettlements_SmokeScript[];
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
-                   struct SettlementsSpawn *spawn);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
+                       struct SettlementsSpawn *spawn);
 
-void Func_0200156c(s32 id) {
+void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
-   * addresses the 12 at sp+56 to sp+67, where Func_02001620 keeps its
-   * velocity; as without it, 4 of 41 instructions differ in tla-en. */
+   * addresses the 12 at sp+56 to sp+67, where Settlements_SpawnSplashRing keeps
+   * its velocity; as without it, 4 of 41 instructions differ in tla-en. */
   UNUSED struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
   struct Actor *object = Actor_Get(id);
@@ -776,7 +781,7 @@ void Func_0200156c(s32 id) {
   spawn.scaleY = 0xcccc;
   spawn.speed = 0x10000;
   spawn.acceleration = 0x10000;
-  spawn.script = gData_02002310;
+  spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(154);
-  Func_020000b8(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
+  FieldEffect_Spawn(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
 }

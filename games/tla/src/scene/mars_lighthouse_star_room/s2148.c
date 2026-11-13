@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6ab, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s2148.c ----
 #include "../shared/mars_lighthouse.h"
 #include "version.h"
 
@@ -98,7 +97,6 @@ void Func_02002354(void) {
     Func_02002148();
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s236c.c ----
 #include "../mars_lighthouse_star_room.h"
 
 extern u8 gInventorySnapshot[];
@@ -351,8 +349,6 @@ DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c, Func_0200422c,
 #undef WORK
 #undef ABS
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s2a58.c ----
-
 void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
                    const void *script) {
   struct Actor *source = Actor_Get(sourceId);
@@ -410,7 +406,6 @@ void Func_02002d90(void) {
   }
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s2dc4.c ----
 #include "system/iwram_call.h"
 #include "system/input.h"
 #include "system/main_routine_work.h"
@@ -429,7 +424,6 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
                            Import_ActorSelectAnimation, Func_02002d04,
                            Import_FieldCheckSpheresOverlap)
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s3070.c ----
 #include "input.h"
 
 /* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0;

@@ -94,9 +94,9 @@ Event_Wait:
 	.thumb_func
 Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001fb4
+	.global Event_End
 	.thumb_func
-Func_02001fb4:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func

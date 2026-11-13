@@ -6,29 +6,29 @@
 
 #include "types.h"
 
-void Func_02001c5c(void);
+void YampiDesert_RippleFollowsScorpion(void);
 
-extern u32 gData_020042b4[];
+extern u32 gYampiDesert_SandCloudCells[];
 
-extern u32 gData_02005828[];
+extern u32 gYampiDesert_SandCloudDrifts[];
 
-void Func_02002ca0(void);
+void YampiDesert_ScorpionUsesScoop(void);
 // Const: the cell helper only computes from its argument.
-s32 Func_020012d4(s32 cell) __attribute__((const));
-extern u32 gData_020042f0[];
-void Func_0200316c(void);
-void Func_020031b4(void);
-void Func_020032f4(void);
-void Func_02003364(void);
-void Func_02003404(void);
+s32 YampiDesert_CellCenter(s32 cell) __attribute__((const));
+extern u32 gYampiDesert_SlideDust[];
+void YampiDesert_SetUpRoom1(void);
+void YampiDesert_SetUpRoom2(void);
+void YampiDesert_SetUpRoom3(void);
+void YampiDesert_SetUpRoom4(void);
+void YampiDesert_SetUpRoom5(void);
 
-void Func_020035b8(void);
+void YampiDesert_SetUpRoom6(void);
 
-void Func_020035d8(void);
-void Func_020036d0(void);
-void Func_0200371c(void);
-void Func_020037d4(void);
-void Func_020037e8(void);
+void YampiDesert_SetUpRoom8(void);
+void YampiDesert_SetUpRoom9(void);
+void YampiDesert_SetUpRoom10(void);
+void YampiDesert_SetUpRoom11(void);
+void YampiDesert_SetUpRoom12(void);
 
 void YampiDesert_DropScoopGem(void);
 
@@ -36,41 +36,41 @@ void YampiDesert_TalkToElder(void);
 
 void YampiDesert_ReadSignpost(void);
 
-void Func_020007e0(void);
+void YampiDesert_StepOffStakeTops(void);
 
 void YampiDesert_CastSand(void);
 
-void Func_02000a10(void);
+void YampiDesert_EndSand(void);
 
-void Func_02000a8c(void);
+void YampiDesert_WatchScorpionStop(void);
 
 void YampiDesert_StirScorpion(void);
 
 void YampiDesert_StirScorpionAgain(void);
 
-void Func_02000e78(void);
+void YampiDesert_CornerScorpion(void);
 
 void YampiDesert_TrapKingScorpion(void);
 
-void Func_020012dc(void);
+void YampiDesert_RevealRockHint(void);
 
-void Func_020013f8(void);
+void YampiDesert_HideRockHint(void);
 
-void Func_02001518(void);
+void YampiDesert_RevealMedalSpot(void);
 
-void Func_02001628(void);
+void YampiDesert_ShowSlideActors(void);
 
-void Func_02002e14(void);
-void Func_02002e98(void);
+void YampiDesert_ClimbRevealedLadder(void);
+void YampiDesert_ClimbOutOfRoom11(void);
 
-extern u32 gData_020045d4[];
+extern u32 gYampiDesert_TravelerLooksAround[];
 
-extern u32 gData_02004630[];
+extern u32 gYampiDesert_OtherTravelerLooksAround[];
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_020041e8(s32 layer, s32 shape, s32 height);
 
-void Func_02003da0(s32 unused, s32 value);
+void YampiDesert_StartRisingSand(s32 unused, s32 value);
 
 void Icon_DrawItem(s32 item);
 void FieldEffect_SetAttached(s32 actor, s32 a);

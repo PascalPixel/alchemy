@@ -11,6 +11,7 @@
 #include "event_inline.h"
 #include "frame.h"
 #include "scene_tables.h"
+#include "event_work.h"
 
 struct ShamanVillageObject {
   u8 unk00[6];
@@ -44,23 +45,6 @@ struct ShamanVillageObject {
   s16 field66;
   s32 field68;
   void *update;
-};
-
-struct ShamanVillageEventWork {
-  u8 unk000[0x154];
-  s16 exit;
-  u8 unk156[4];
-  s16 field15a;
-  u8 unk15c[2];
-  s16 field15e;
-  u8 unk160[6];
-  s16 field166;
-  u8 unk168[0x44];
-  s32 screenEffect;
-  u8 unk1b0[4];
-  s32 field1b4;
-  u8 unk1b8[0x0c];
-  u16 field1c4;
 };
 
 void Event_End(void);

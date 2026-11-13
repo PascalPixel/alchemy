@@ -62,13 +62,13 @@ FieldMessage_ShowCentered:
 	.thumb_func
 Event_Wait:
 	overlay_veneer Event_WaitFar
-	.global Func_02000fcc
+	.global Event_Start
 	.thumb_func
-Func_02000fcc:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02000fd4
+	.global Event_End
 	.thumb_func
-Func_02000fd4:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func

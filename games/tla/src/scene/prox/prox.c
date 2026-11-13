@@ -1,8 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6a8, in ROM order.
 
-// ---- games/tla/src/scene/prox.c ----
-
 #include "../shared/tables.h"
 #include "../shared/mars_lighthouse.h"
 #include "../shared/actors.h"
@@ -1012,8 +1010,6 @@ void Func_02001c24(s32 a0) {
 #undef BYTE_AT
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/prox/s1cf0.c ----
-// Scene code of overlay 0x6a8, in ROM order, from s1cf0's offset up to the next
 // object the overlay links.
 
 #include "io_reg.h"
@@ -1925,8 +1921,6 @@ void Func_020038e8(void) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/prox/s391c.c ----
-// Scene code of overlay 0x6a8, in ROM order, from s391c's offset up to the next
 // object the overlay links.
 
 #include "fixed_math.h"
@@ -2057,8 +2051,6 @@ struct RockWork {
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/prox/s4254.c ----
-// Scene code of overlay 0x6a8, in ROM order, from s4254's offset up to the next
 // object the overlay links, and the overlay's data.
 
 #include "system/task.h"
@@ -2483,7 +2475,7 @@ struct Trigger gProx_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
-    {0x50008805, 100, 0x300, EVENT(Func_02000588)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, 0x300, EVENT(Func_02000588)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 19, CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
 };
@@ -2497,7 +2489,7 @@ struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_0200391c)},
     {0x10008805, 255, CONDITION_ALWAYS, EVENT(Func_020017e4)},
     {0x8805, 255, CONDITION_ALWAYS, EVENT(Func_02001800)},
-    {0x50008805, 8, CONDITION_ALWAYS, EVENT(Func_02001770)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Func_02001770)},
     {TRIGGER_RAISED, 200, 0xa3d, EVENT(Func_02000280)},
     {TRIGGER_STEP, 11, 0x9c0, EVENT(Prox_SearchForParents)},
     {TRIGGER_STEP, 12, 0x9c1, EVENT(Prox_DecideToGoToLighthouse)},

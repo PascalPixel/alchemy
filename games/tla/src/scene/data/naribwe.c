@@ -1,3 +1,6 @@
+/// @file
+/// Naribwe's data: its scripts, door, placements and triggers.
+
 #include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -10,29 +13,78 @@ void Naribwe_TalkToPilgrim(void);
 void Naribwe_TalkToPilgrimOnReturn(void);
 void Naribwe_HideStone(void);
 
+/// The village's placements, the same before and after the return with Piers.
+#define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
+  struct ActorPlacement name[] = {                                             \
+      {365, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, \
+       0},                                                                     \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(316), 0,      \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(372), 0,      \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(316), 0,        \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(372), 0,        \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {115, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(344), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {116, CONDITION_ALWAYS, 3, PIXELS(200), 0, PIXELS(296), FACING_EAST, 0,  \
+       0},                                                                     \
+      {114, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(152), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {128, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_NORTHEAST, \
+       0, 0},                                                                  \
+      {112, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(88), FACING_SOUTHEAST, \
+       1, 0},                                                                  \
+      {113, CONDITION_ALWAYS, 1, PIXELS(368), 0, PIXELS(224),                  \
+       FACING_SOUTHEAST, 1, 0},                                                \
+      {136, CONDITION_ALWAYS, 2, PIXELS(200), 0, PIXELS(200),                  \
+       FACING_NORTHEAST, 0, 0},                                                \
+      {147, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(232),                  \
+       FACING_SOUTHWEST, 1, 0},                                                \
+      {112, CONDITION_ALWAYS, 2, PIXELS(56), 0, PIXELS(232), FACING_EAST, 0,   \
+       0},                                                                     \
+      {110, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(360), FACING_EAST, 1,  \
+       0},                                                                     \
+      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, PIXELS(40), 0,       \
+       PIXELS(168), FACING_SOUTH, 2, 0},                                       \
+      {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(376), FACING_SOUTH, 2, \
+       0},                                                                     \
+      {489, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(376), FACING_SOUTH, 2, \
+       0},                                                                     \
+      {201, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(168), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {328, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(104), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {SCENE_TABLE_END},                                                       \
+  };
+
 // clang-format off
-s16 gData_020005fc[] = {
+/// Unused: a list of actor 26 and flag 0x200; nothing reads it.
+s16 gNaribwe_UnusedList[] = {
     26, 512, -1, 0,
 };
 
-u32 gData_02000604[] = {
+/// The braziers burn, the fire's flames rising above them.
+u32 gNaribwe_BrazierBurns[] = {
     39, 2, 17,
 };
 
-u32 gData_02000610[] = {
+u32 gNaribwe_FlameRises[] = {
     39, 0, 22, 26, 0, 23,
     6, 0x180000, 17,
 };
 
-u32 gData_02000634[] = {
+u32 gNaribwe_IvyAnimation[] = {
     39, 3, 17,
 };
 
-s16 gData_02000640[] = {
+/// The cell animation of the village's doors.
+s16 gNaribwe_DoorOpening[] = {
     8, 42, 1, 2, 6, -1,
 };
 
-DEFINE_G_DATA_0200064C(gNaribwe_Doors, gData_02000640, 0x330012, gData_02000640,
+DEFINE_G_DATA_0200064C(gNaribwe_Doors, gNaribwe_DoorOpening, 0x330012, gNaribwe_DoorOpening,
     0x220015)
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -42,9 +94,9 @@ struct SceneEntrance gSceneEntrances[] = {
 
 DEFINE_G_SCENE_EXITS_4(105, 106, 2, 23, 24)
 
-DEFINE_G_DATA_020006CC(gNaribwe_Placements)
+DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
 
-struct ActorPlacement gData_020008c4[] = {
+struct ActorPlacement gNaribwe_Entrance10Placements[] = {
     {364, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, 0},
     {305, CONDITION_ALWAYS, 1, PIXELS(316), 0, PIXELS(132), FACING_SOUTH, 0, 0},
     {305, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(132), FACING_SOUTH, 0, 0},
@@ -54,7 +106,7 @@ struct ActorPlacement gData_020008c4[] = {
 };
 // clang-format on
 
-DEFINE_G_DATA_020006CC(gData_02000954)
+DEFINE_NARIBWE_PLACEMENTS(gNaribwe_PlacementsOnReturn)
 
 struct Trigger gNaribwe_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
@@ -100,7 +152,7 @@ struct Trigger gNaribwe_Triggers[] = {
      MSGNO(MsgNaribwe24)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgNaribwe47))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     CONDITION_ALWAYS, EVENT(Func_02000088)},
+     CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,
      EVENT(Naribwe_BlowAwayIvy)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 24, 0x202, 0},
@@ -155,7 +207,7 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      MSGNO(MsgNaribwe46)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgNaribwe47))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     CONDITION_ALWAYS, EVENT(Func_02000088)},
+     CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,
      EVENT(Naribwe_BlowAwayIvy)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 24, 0x202, 0},

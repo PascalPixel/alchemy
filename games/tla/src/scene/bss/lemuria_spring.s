@@ -2,20 +2,20 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.space 0x00000004
-	.global gData_02001760
-gData_02001760:
+	.global gLemuriaSpring_Toss
+gLemuriaSpring_Toss:
 	.space 0x00000050
-	.global gData_020017b0
-gData_020017b0:
+	.global gLemuriaSpring_TossChoice
+gLemuriaSpring_TossChoice:
 	.space 0x00000010
-	.global gData_020017c0
-gData_020017c0:
+	.global gLemuriaSpring_Obstacles
+gLemuriaSpring_Obstacles:
 	.space 0x00000060
-	.global gData_02001820
-gData_02001820:
+	.global gLemuriaSpring_TossFrame
+gLemuriaSpring_TossFrame:
 	.space 0x00000004
-	.global gData_02001824
-gData_02001824:
+	.global gLemuriaSpring_TossDone
+gLemuriaSpring_TossDone:
 	.space 0x00000004
-	.global gData_02001828
-gData_02001828:
+	.global gLemuriaSpring_TossResult
+gLemuriaSpring_TossResult:

@@ -22,9 +22,9 @@ Actor_SetSpriteFlags:
 	.thumb_func
 MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
-	.global Func_02000988
+	.global Import_ItemGet
 	.thumb_func
-Func_02000988:
+Import_ItemGet:
 	overlay_veneer Item_Get
 	.global PartyInventory_FindMember
 	.thumb_func

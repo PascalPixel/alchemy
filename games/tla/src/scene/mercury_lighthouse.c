@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x6b2, in ROM order.
+/// The base of Mercury Lighthouse in Imil, near the end of the game: with all
+/// four beacons lit, two of Imil's children hear the voices of the scattered
+/// heroes, motes of light drifting round them.
 
 #include "types.h"
 #include "main_routine_work.h"

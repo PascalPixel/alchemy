@@ -10,32 +10,32 @@ void Func_02001038(void);
 void Func_020018bc(void);
 void Func_020019dc(void);
 
-extern u32 gData_02003b50[];
-extern u32 gData_02003bc8[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gData_02003b50[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003b8c[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003bc8[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-s32 gData_02003c04[] = {
-    (s32)gData_02003b50,
-    (s32)gData_02003b8c,
-    (s32)gData_02003bc8,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 u32 gData_02003c10[] = {

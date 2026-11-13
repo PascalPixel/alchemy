@@ -1,7 +1,8 @@
 /// @file
-/// The scene code of overlay 0x6b5, in ROM order.
+/// The Battle Arena's lobby, The Broken Seal's arena reworked: two players
+/// link, trade their parties' records and fight, or fight the monster record;
+/// a visitor takes song requests.
 
-// ---- games/tla/src/scene/lobby/lobby.c ----
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -95,7 +96,7 @@ struct LobbyEventWork {
   s16 raisedTrigger;
 };
 
-extern s32 gData_020022b8;
+extern s32 gLinkLobby_WaitFrames;
 
 /// The lobby's task each frame: counts frames without the opponent, clears
 /// the peer signatures after 25, and raises the event trigger when both sides
@@ -118,7 +119,7 @@ s32 LinkLobby_PollPeerReady(void) {
     LinkLobby_PeerSlotMatches(0);
     set = Event_GetFlag(0x303);
     if (!set) {
-      if (++gData_020022b8 > 25) {
+      if (++gLinkLobby_WaitFrames > 25) {
         s32 offset = 0;
 
         // A goto loop counting down with the stride stepped by hand; as ☀️'s
@@ -131,13 +132,13 @@ s32 LinkLobby_PollPeerReady(void) {
         offset += 24;
         if (i >= 0)
           goto clear;
-        gData_020022b8 = 0;
+        gLinkLobby_WaitFrames = 0;
         LinkLobby_WriteSlotValue(4);
       }
     } else {
-      gData_020022b8 = 0;
+      gLinkLobby_WaitFrames = 0;
     }
-    if (gData_020022b8 == 0) {
+    if (gLinkLobby_WaitFrames == 0) {
       if (LinkLobby_PeerSlotMatches(0) &&
           (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
         Event_SetFlag(0x201);
@@ -153,7 +154,7 @@ s32 LinkLobby_PollPeerReady(void) {
       work->raisedTrigger = 1;
   }
   if ((Event_GetFlag(0x201) || Event_GetFlag(0x202)) && !Event_GetFlag(0x173) &&
-      !LinkLobby_PeerSlotMatches(0) && gData_020022b8 > 24) {
+      !LinkLobby_PeerSlotMatches(0) && gLinkLobby_WaitFrames > 24) {
     work->raisedTrigger = 2;
     Event_SetFlag(0x205);
     Event_ClearFlag(0x201);
@@ -167,7 +168,7 @@ s32 LinkLobby_PollPeerReady(void) {
 
 #include "text/msg_ids.h"
 
-extern s32 gData_020022bc;
+extern s32 gLinkLobby_CallFrames;
 
 s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
@@ -176,8 +177,8 @@ s32 LinkLobby_PromptToParticipate(void) {
   if (set != 0) {
     return set;
   }
-  if (++gData_020022bc == 300) {
-    gData_020022bc = 0;
+  if (++gLinkLobby_CallFrames == 300) {
+    gLinkLobby_CallFrames = 0;
     Event_ClearFlag(0x200);
   }
   set = Event_GetFlag(0x200);
@@ -218,7 +219,9 @@ s32 LinkLobby_ReportDisconnection(void) {
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
-s32 Func_0200039c(void) {
+/// The Broken Seal's BattleArena_ReceivePartyRecords: takes the other player's
+/// party records over the link.
+s32 LinkLobby_ReceivePartyRecords(void) {
   u16 namePrefix[24];
   s32 result;
   u32 size;
@@ -319,7 +322,7 @@ done:
 #include "main_routine_work.h"
 
 /// Writes up to three active party owners to out, ending the list with 0xff.
-s32 Func_02000538(u16 *out) {
+s32 LinkLobby_CopyPartyOwnerIds(u16 *out) {
   struct MainRoutineWork *party;
   s32 count = Party_CountMembers();
   s32 i;
@@ -364,7 +367,9 @@ struct OfferTable {
 
 s32 Serial_StartSend(void *data, s32 size);
 
-s32 Func_02000578(void) {
+/// The Broken Seal's BattleArena_SendPartyRecords: sends the party's records to
+/// the other player.
+s32 LinkLobby_SendPartyRecords(void) {
   s32 result;
   u16 memberIds[8];
   u8 peerSlots[8];
@@ -383,7 +388,7 @@ s32 Func_02000578(void) {
   heap = Heap_AllocEwram(size);
   result = 0;
   timeout = 600;
-  memberCount = Func_02000538(memberIds);
+  memberCount = LinkLobby_CopyPartyOwnerIds(memberIds);
   for (i = 0; i <= 7; i++)
     peerSlots[i] = 0;
   i = 0;
@@ -546,19 +551,19 @@ s32 LinkLobby_ExchangePartyRecords(void) {
   gLinkExchangeState = result;
   if (!flag) {
     wait(5);
-    result = Func_02000578();
+    result = LinkLobby_SendPartyRecords();
     if (result < 0)
       goto fail;
     wait(5);
-    first = result = Func_0200039c();
+    first = result = LinkLobby_ReceivePartyRecords();
     if (result < 0)
       goto check;
   } else {
-    first = result = Func_0200039c();
+    first = result = LinkLobby_ReceivePartyRecords();
     if (result < 0)
       goto fail;
     wait(10);
-    result = Func_02000578();
+    result = LinkLobby_SendPartyRecords();
     if (result < 0)
       goto fail;
   }
@@ -929,7 +934,8 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   Event_End();
 }
 
-void Func_02000f50(s32 value) {
+/// The lobby's healer opens the sanctum.
+void LinkLobby_OpenSanctum(s32 value) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sanctum_Run(value);
@@ -956,13 +962,13 @@ s32 LinkLobby_PartyContains(s32 owner) {
   return 0;
 }
 
-void Func_02000fb8(void) {}
+/// Unused: does nothing; nothing calls it.
+UNUSED void LinkLobby_DoNothing(void) {}
 #undef LOBBY_PREFIX_LIMIT
 
-// ---- games/tla/src/scene/lobby/s0fbc.c ----
 extern u8 MsgYouHaveA[];
 extern u8 MsgComeBackWhen[];
-extern u16 gData_02001b02[];
+extern u16 gLinkLobby_RequestableSounds[];
 extern s16 gData_02003860;
 
 void Event_Start(void);
@@ -973,7 +979,11 @@ void WindowSprite_PrepareForRedraw(s32 window);
 void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Window_Close(s32 window, s32 release);
 
-void Func_02000fbc(s32 actor) {
+/// A song request: the player picks a sound by number, only the ones already
+/// heard unless all are unlocked (L, R and Select held as it opens), and
+/// hears it, until B.
+/// "You have a song request?"
+void LinkLobby_TakeSongRequest(s32 actor) {
   s32 window;
   s32 song;
   s32 shown;
@@ -1012,7 +1022,7 @@ void Func_02000fbc(s32 actor) {
           song = 0;
         if (all != 0 || gMainRoutineWork.unk22d[2] != 0 || gData_02003860 != 0)
           break;
-        if (SoundFlag_Test(gData_02001b02[song]) != 0)
+        if (SoundFlag_Test(gLinkLobby_RequestableSounds[song]) != 0)
           goto keys;
       }
     keys:
@@ -1027,7 +1037,7 @@ void Func_02000fbc(s32 actor) {
     Window_Close(window, 1);
     if (song < 0)
       break;
-    Event_PlaySound(gData_02001b02[song]);
+    Event_PlaySound(gLinkLobby_RequestableSounds[song]);
   }
   Event_PlaySound(78);
   wait(120);
@@ -1043,7 +1053,6 @@ void Func_02000fbc(s32 actor) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/lobby/talk.c ----
 #include "scene_ids.h"
 
 s32 LinkLobby_PartyContains(s32 id);
@@ -1061,8 +1070,8 @@ void Event_End(void);
  * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
  * state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1075:
  * conflicting types for `Actor_ShowEmoteById'. */
-extern void Func_080d47b4__talk(s32 actor, s32 animation,
-                                s32 flags) __asm__("Actor_ShowEmoteById");
+extern void Actor_ShowEmoteById__talk(s32 actor, s32 animation,
+                                      s32 flags) __asm__("Actor_ShowEmoteById");
 s32 Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
@@ -1101,7 +1110,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   Event_SetMessageId(base + actor);
   Event_ShowMessage(actor, 0);
   if (base == (s32)MsgILlFight && actor == 5) {
-    Func_080d47b4__talk(5, 263, 0);
+    Actor_ShowEmoteById__talk(5, 263, 0);
     Event_Wait(10);
   }
   Event_End();
@@ -1120,11 +1129,13 @@ s32 LinkLobby_LeaveArena(void) {
   } while (0);
 }
 
-s32 Func_0200122c(s32 actor) {
+/// The visitors' talk, by whether the party has fought here (flag 0x206);
+/// actor 14 takes song requests while L or R is held.
+s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
 
   if (actor == 14 && (gInput.held & 0x300)) {
-    Func_02000fbc(14);
+    LinkLobby_TakeSongRequest(14);
     return;
   }
   Event_Start();
@@ -1209,7 +1220,6 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/lobby/scene_events.c ----
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 LinkLobby_PartyContains(s32 id);
@@ -1219,18 +1229,20 @@ void Save_ProcessSelectedFile(void);
 void Event_End(void);
 s32 Import_EventSetDestination(s32 scene, s32 entrance);
 
-s32 Func_020013ec(void) {
+/// Saves and reports the link battle's results.
+s32 LinkLobby_SaveBattleResults(void) {
   Save_ProcessSelectedFile();
   FieldMessage_Show(MsgBattleResultsWere, 1);
 }
 
-s32 Func_02001400(void) {
+/// Saves and reports the monster battle's results.
+s32 LinkLobby_SaveMonsterBattleResults(void) {
   Save_ProcessSelectedFile();
   FieldMessage_Show(MsgMonsterBattleResults, 1);
 }
 
 /// Draws value, at most 999, as three digits from right to left.
-void Func_02001414(s32 value) {
+void LinkLobby_DrawThreeDigitValue(s32 value) {
   s32 i;
 
   if (value > 999)
@@ -1259,8 +1271,8 @@ struct LobbyEventWork__scene_events {
   s32 startTransition;
 };
 
-extern s32 gData_020022b8;
-extern s32 gData_020022bc;
+extern s32 gLinkLobby_WaitFrames;
+extern s32 gLinkLobby_CallFrames;
 extern u16 gData_02003a74[];
 extern u8 gAutoSleepEnabled;
 
@@ -1294,12 +1306,12 @@ s32 LinkLobby_Initialize(void) {
   Event_SetFlag(0x17e);
   gMainRoutineWork.packedEvents[0] = 0;
   gMainRoutineWork.packedEvents[1] = 0;
-  gData_020022bc = 0;
-  gData_020022b8 = 0;
+  gLinkLobby_CallFrames = 0;
+  gLinkLobby_WaitFrames = 0;
   ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)
       ->startTransition = 0x201;
   Sound_LoadReverbCode(2);
-  Func_02001414(gMainRoutineWork.linkTallies[6]);
+  LinkLobby_DrawThreeDigitValue(gMainRoutineWork.linkTallies[6]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
   wait(1);
@@ -1360,7 +1372,7 @@ s32 LinkLobby_Initialize(void) {
         gMainRoutineWork.linkTallies[2] = score;
         Event_SetMessageId((s32)MsgYouWonBattle);
         Event_OpenMessage(8, 0);
-        Func_02001400();
+        LinkLobby_SaveMonsterBattleResults();
       } else {
         Event_SetMessageId((s32)MsgYouWonBattlePlease);
         Event_OpenMessage(8, 0);
@@ -1384,7 +1396,7 @@ s32 LinkLobby_Initialize(void) {
       gMainRoutineWork.linkTallies[2] = score;
       Event_SetMessageId((s32)MsgYouWonBattle);
       Event_OpenMessage(8, 0);
-      Func_02001400();
+      LinkLobby_SaveMonsterBattleResults();
     } else {
       Event_SetMessageId((s32)MsgYouWonBattleI);
       Event_OpenMessage(8, 0);
@@ -1419,8 +1431,8 @@ s32 LinkLobby_Initialize(void) {
       score = (u32)&gMainRoutineWork.linkTallies[6];
       if (*(u16 *)score < (u16)v)
         *(u16 *)score = v;
-      Func_02001414(*(u16 *)score);
-      Func_020013ec();
+      LinkLobby_DrawThreeDigitValue(*(u16 *)score);
+      LinkLobby_SaveBattleResults();
       Event_SetFlag(0x304);
       Event_SetFlag(0x305);
     }
@@ -1437,7 +1449,7 @@ s32 LinkLobby_Initialize(void) {
     if ((v = Event_GetFlag(0x173)) == 0) {
       gMainRoutineWork.linkTallies[5]++;
       gMainRoutineWork.linkTallies[7] = v;
-      Func_020013ec();
+      LinkLobby_SaveBattleResults();
     }
     Event_SetFlag(0x304);
     Event_ClearFlag(0x305);
@@ -1495,7 +1507,7 @@ u8 gLinkLobby_SlotColumns[] = {
     0, 1, 1, 1, 1, 0,
 };
 
-u16 gData_02001b02[] = {
+u16 gLinkLobby_RequestableSounds[] = {
     709, 68, 74, 727, 1, 2, 3, 4,
     5, 6, 7, 8, 9, 10, 11, 12,
     13, 14, 15, 16, 17, 18, 20, 21,
@@ -1554,7 +1566,8 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gData_02001ee0[] = {
+/// Unused: a placement table nothing reads.
+u32 gLinkLobby_UnusedPlacements[] = {
     0xffff00be, 1, 0x980000, 0, 0xcc0000, 0x1004000,
     0xffff00bb, 1, 0x1180000, 0, 0xcc0000, 0x14000,
     0xffff00c9, 1, 0x1300000, 0, 0xa80000, 0x10000,
@@ -1594,11 +1607,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseBattleMode)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(LinkLobby_ReportWinTallies)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000f50)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(LinkLobby_OpenSanctum)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgWelcomeToBattle)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(LinkLobby_TalkToVisitor)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(LinkLobby_TalkToVisitor)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS,
      EVENT(LinkLobby_ChooseDebugParameterSet)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(LinkLobby_ExplainPartyOrder)},
@@ -1609,7 +1622,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMonsterBattleRules)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(LinkLobby_ReportMonsterRecord)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgSometimesYourClass)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(LinkLobby_TakeSongRequest)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIDonTHaveThe)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(LinkLobby_EnterBattle)},
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},

@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x6ac, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_room_m.c ----
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -439,7 +438,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gMarsLighthouseRoomM_Triggers;
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_room_m/s0b64.c ----
 #include "call.h"
 
 void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
@@ -855,8 +853,6 @@ DEFINE_PALETTE_SET_COLORS_FADE(Func_0200154c, gData_02003928, Data_0200392c,
 
 DEFINE_FUNC_02001608(Func_02001608, 15, 16)
 
-// ---- games/tla/src/scene/mars_lighthouse_room_m/stop.c ----
-
 extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -946,7 +942,6 @@ s32 Func_02001928(struct Actor *a, struct Actor *b) {
   return 0;
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_room_m/s1988.c ----
 #include "shared/mars_lighthouse_entrance_room.h"
 #include "field/event_work.h"
 
@@ -1005,7 +1000,6 @@ void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
   }
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_room_m/s1b64.c ----
 #include "shared/mars_lighthouse_entrance_room.h"
 
 /* VIEW(s1b64): tag struct RideSlot as struct RideSlot__s1b64;
@@ -1168,7 +1162,6 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   }
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_room_m/s1f94.c ----
 /* VIEW(s1f94): tag struct Actor as struct Actor__s1f94; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
  * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1456:

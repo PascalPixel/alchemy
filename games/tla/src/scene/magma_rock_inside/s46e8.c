@@ -1,7 +1,6 @@
 /// @file
-/// Scene code of overlay 0x692, in ROM order.
+/// Magma Rock's inside: its falling rocks and rubble, and its tables.
 
-// ---- games/tla/src/scene/magma_rock_inside/s46e8.c ----
 #include "../shared/map_cells.h"
 #include "../shared/effects.h"
 #include "../shared/tables.h"
@@ -32,7 +31,7 @@ Func_02004ca0__s46e8(struct FieldEffect *effect,
                      const s32 *script) __asm__("Actor_StartScript");
 void Actor_StartScript(struct Actor *object, const void *data);
 
-void Func_020046e8(s32 spread) {
+void MagmaRockInside_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -53,7 +52,7 @@ void Func_020046e8(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Func_02004c98(effect, 2);
-      Func_02004ca0__s46e8(effect, gData_02005638);
+      Func_02004ca0__s46e8(effect, gMagmaRockInside_RubbleScript);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -73,7 +72,7 @@ void Func_020046e8(s32 spread) {
   } while (i <= 7);
 }
 
-void Func_0200481c(void) {
+void MagmaRockInside_SpawnDustRing(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
@@ -92,7 +91,7 @@ void Func_0200481c(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Func_02004c98(effect, 2);
-      Func_02004ca0__s46e8(effect, gData_02005668);
+      Func_02004ca0__s46e8(effect, gMagmaRockInside_DustScript);
       effect->velocity.x = Trig_Cos(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
@@ -110,27 +109,27 @@ void Func_0200481c(void) {
   } while (i <= 16);
 }
 
-// ---- games/tla/src/scene/magma_rock_inside/s4934.c ----
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 #include "map.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004934, MapGrid_GetTerrainKind,
-                            Func_02004ef0)
+DEFINE_ACTOR_SET_CELL_SHAPE(MagmaRockInside_SetActorCellShape,
+                            MapGrid_GetTerrainKind, Func_02004ef0)
 
 #include "../magma_rock_inside.h"
 
-void Func_020049c0(s32 a, s32 b) {
-  Func_02004934(a, b, gMainRoutineWork.currentOwner);
+void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
+  MagmaRockInside_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
 #include "system/ram_buffer.h"
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Func_020049d8, EffectSprite_DrawAtWorldPosition)
+DEFINE_PARTICLES_UPDATE_FALLING(MagmaRockInside_UpdateFallingRocks,
+                                EffectSprite_DrawAtWorldPosition)
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -145,12 +144,11 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_ROCKS_SPAWN(Func_02004a5c)
+DEFINE_ROCKS_SPAWN(MagmaRockInside_DropRocks)
 
-// ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
 #include "system/task.h"
 
-void Func_02004b18(void) {
+void MagmaRockInside_StartFallingRocks(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
@@ -178,13 +176,13 @@ void Func_02004b18(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Func_020049d8, 0x480);
+  FieldTask_AddFrame(MagmaRockInside_UpdateFallingRocks, 0x480);
 }
 
-void Func_02004bd4(void) {
+void MagmaRockInside_EndFallingRocks(void) {
   struct MagmaRockInsideSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  FieldTask_Remove(Func_020049d8);
+  FieldTask_Remove(MagmaRockInside_UpdateFallingRocks);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
@@ -192,44 +190,44 @@ void Func_02004bd4(void) {
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_020005a0(void);
-void Func_02000e14(void);
-void Func_02000e20(void);
-void Func_02001148(void);
-void Func_02001ca0(void);
-void Func_02001cd0(void);
-void Func_0200217c(void);
-void Func_020023e8(void);
-void Func_02002a6c(void);
+void MagmaRockInside_MeetDjinni(void);
+void MagmaRockInside_ResolveBeforeBurst(void);
+void MagmaRockInside_TargetStatue(void);
+void MagmaRockInside_FireStatue(void);
+void MagmaRockInside_BurstCrackedPillar1(void);
+void MagmaRockInside_BurstCrackedPillar2(void);
+void MagmaRockInside_LightTorch(void);
+void MagmaRockInside_OpenStairs(void);
+void MagmaRockInside_OrbitParent(void);
 void Orbit_Update(void);
 void Actor_AimAtWatched(void);
 
-extern u32 gData_02004fb0[];
+extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gData_02004f38, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gData_02004f74, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gData_02004fb0, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongScript, 126)
 
-DEFINE_PUSH_LEADER_STEPS(gData_02004fec)
+DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 
-u32 gData_0200502c[] = {
+u32 gMagmaRockInside_EmberScript[] = {
     39, 2, 0, 18, 3, 0,
     1, 38, 17,
 };
 
-u32 gData_02005050[] = {
+u32 gMagmaRockInside_FlameEmberScript[] = {
     39, 3, 0, 23, 3, 0,
     1, 38, 17,
 };
 
-DEFINE_G_DATA_02005074(gData_02005074, 776, 680, 744, 680, 744, 632, 776, 632)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath1, 776, 680, 744, 680, 744, 632, 776, 632)
 
-DEFINE_G_DATA_020050D4(gData_020050d4, 216, 568, 216, 584, 136, 584, 136, 568)
+DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath2, 216, 568, 216, 584, 136, 584, 136, 568)
 
-u16 gData_02005134[] = {
+u16 gMagmaRockInside_PlatformPath3[] = {
     4, 0, 0, 600, 0, 16, 0, 664,
     1, 0, 4, 0, 0, 728, 0, 16,
     0, 664, 1, 0, 4, 0, 0, 728,
@@ -239,84 +237,86 @@ u16 gData_02005134[] = {
     1, 0, 17, 0,
 };
 
-DEFINE_G_DATA_020050D4(gData_0200519c, 184, 232, 280, 232, 280, 264, 184, 264)
+DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath4, 184, 232, 280, 232, 280, 264, 184, 264)
 
-DEFINE_G_DATA_02005074(gData_020051fc, 472, 296, 424, 296, 424, 264, 472, 264)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath5, 472, 296, 424, 296, 424, 264, 472, 264)
 
-DEFINE_G_DATA_02005074(gData_0200525c, 216, 600, 280, 600, 280, 664, 216, 664)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath6, 216, 600, 280, 600, 280, 664, 216, 664)
 
-DEFINE_G_DATA_02005074(gData_020052bc, 312, 664, 376, 664, 376, 600, 312, 600)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath7, 312, 664, 376, 664, 376, 600, 312, 600)
 
-DEFINE_G_DATA_02005074(gData_0200531c, 440, 600, 504, 600, 504, 664, 440, 664)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath8, 440, 600, 504, 600, 504, 664, 440, 664)
 
-DEFINE_G_DATA_02005074(gData_0200537c, 536, 664, 600, 664, 600, 600, 536, 600)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath9, 536, 664, 600, 664, 600, 600, 536, 600)
 
-DEFINE_G_DATA_02005074(gData_020053dc, 376, 264, 376, 232, 408, 232, 408, 264)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath10, 376, 264, 376, 232, 408, 232, 408, 264)
 
-DEFINE_G_DATA_02005074(gData_0200543c, 216, 680, 280, 680, 280, 712, 216, 712)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11, 216, 680, 280, 680, 280, 712, 216, 712)
 
-DEFINE_G_DATA_02005074(gData_0200549c, 376, 680, 312, 680, 312, 712, 376, 712)
+DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680, 312, 712, 376, 712)
 
-s16 gData_020054fc[] = {
+s16 gMagmaRockInside_Room2Pillars[] = {
     15, -1,
 };
 
-s32 gData_02005500[] = {
+s32 gMagmaRockInside_Statues[] = {
     0x320008, -1,
 };
 
-s16 gData_02005508[] = {
+s16 gMagmaRockInside_Room3Pillars[] = {
     11, -1,
 };
 
-s16 gData_0200550c[] = {
+s16 gMagmaRockInside_Room4Statues[] = {
     8, 50, -1, 13, 51, -1, 14, 52,
     -1, -1,
 };
 
-s16 gData_02005520[] = {
+s16 gMagmaRockInside_Room4Pillars[] = {
     23, 24, 25, -1,
 };
 
-s16 gData_02005528[] = {
+s16 gMagmaRockInside_Room6Pillars[] = {
     9, 12, -1,
 };
 
-s16 gData_0200552e[] = {
+s16 gMagmaRockInside_Room7Pillars[] = {
     23, -1, 0,
 };
 
-u32 gData_02005534[] = {
+u32 gMagmaRockInside_FlameScript[] = {
     0, 6, 38, 17,
 };
 
-DEFINE_G_DATA_02005218(gData_02005544)
+DEFINE_G_DATA_02005218(gMagmaRockInside_TorchScript)
 
-s32 gData_02005560[] = {
-    SC_CALL(Func_02002a6c),
+s32 gMagmaRockInside_SparkScript[] = {
+    SC_CALL(MagmaRockInside_OrbitParent),
     SC_FREE,
     SC_END,
 };
 
-DEFINE_G_DATA_02005244(gData_02005570, Orbit_Update, Actor_AimAtWatched,
-    Func_02002c1c)
+s32 MagmaRockInside_DriftForSteps(struct Actor *object);
 
-DEFINE_G_DATA_02005264(gData_02005590, 24)
+DEFINE_G_DATA_02005244(gMagmaRockInside_OrbitScript, Orbit_Update, Actor_AimAtWatched,
+    MagmaRockInside_DriftForSteps)
 
-DEFINE_G_DATA_02005264(gData_020055b4, 16)
+DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeCasterScript, 24)
 
-DEFINE_G_DATA_020052AC(gData_020055d8, 24, 0)
+DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeWatcherScript, 16)
 
-DEFINE_G_DATA_020052AC(gData_02005608, 16, 3)
+DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeCasterReturnScript, 24, 0)
 
-DEFINE_G_DATA_02001540(gData_02005638, 33)
+DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
 
-DEFINE_G_DATA_02001540(gData_02005668, 44)
+DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
 
-s32 gData_02005698[] = {
-    (s32)gData_02004f38,
-    (s32)gData_02004f74,
-    (s32)gData_02004fb0,
+DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44)
+
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -528,8 +528,8 @@ struct Trigger gMagmaRockInside_Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {0x31, 8, CONDITION_ALWAYS, 8},
-    {0x202, 70, CONDITION_ALWAYS, EVENT(Func_020011fc)},
-    {0x202, 78, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {0x202, 70, CONDITION_ALWAYS, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {0x202, 78, CONDITION_ALWAYS, EVENT(MagmaRockInside_PushPillarIntoLava)},
     {TRIGGER_TABLE_END},
 };
 
@@ -542,16 +542,18 @@ struct Trigger gMagmaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02001828)},
-    {0xc400, 17, CONDITION_ALWAYS, EVENT(Func_020005a0)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_FloodWithLava)},
+    {0xc400, 17, CONDITION_ALWAYS, EVENT(MagmaRockInside_MeetDjinni)},
+    {8, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15,
-     0x9f0, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9f0, EVENT(Func_02000a30)},
-    {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
-    {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e20)},
-    {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
+     0x9f0, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9f0,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
+    {0x80009705, 50, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ResolveBeforeBurst)},
+    {0x50009705, 50, CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
+    {0x9705, 50, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
     {TRIGGER_TABLE_END},
 };
 
@@ -567,17 +569,19 @@ struct Trigger gMagmaRockInside_Room3Triggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02001828)},
-    {0x202, 70, CONDITION_ALWAYS, EVENT(Func_020011fc)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000594)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_FloodWithLava)},
+    {0x202, 70, CONDITION_ALWAYS, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(MagmaRockInside_FightFury)},
+    {8, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11,
-     0x9f1, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9f1, EVENT(Func_02000a30)},
-    {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
-    {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e20)},
-    {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
+     0x9f1, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9f1,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
+    {0x80009705, 50, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ResolveBeforeBurst)},
+    {0x50009705, 50, CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
+    {0x9705, 50, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
     {TRIGGER_TABLE_END},
 };
 
@@ -596,34 +600,41 @@ struct Trigger gMagmaRockInside_Room4Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {0x202, 70, CONDITION_ALWAYS, EVENT(Func_020011fc)},
-    {0x202, 71, 0x1301, EVENT(Func_020011fc)},
-    {0x202, 72, CONDITION_ALWAYS, EVENT(Func_020011fc)},
-    {0xc602, 73, CONDITION_ALWAYS, EVENT(Func_020011fc)},
-    {0x8602, 75, CONDITION_ALWAYS, EVENT(Func_020011fc)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {0x202, 70, CONDITION_ALWAYS, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {0x202, 71, 0x1301, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {0x202, 72, CONDITION_ALWAYS, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {0xc602, 73, CONDITION_ALWAYS, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {0x8602, 75, CONDITION_ALWAYS, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {8, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 23,
-     0x9f2, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, 0x9f2, EVENT(Func_02000a30)},
+     0x9f2, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, 0x9f2,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 24,
-     0x9f3, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 24, 0x9f3, EVENT(Func_02000a30)},
+     0x9f3, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 24, 0x9f3,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 25,
-     0x9f4, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 25, 0x9f4, EVENT(Func_02000a30)},
-    {0x50009705, 71, 0x350, EVENT(Func_02001ca0)},
-    {0x50009705, 72, 0x351, EVENT(Func_02001cd0)},
-    {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
-    {0x50009705, 50, 0x2f0, EVENT(Func_02000e20)},
-    {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ca0)},
-    {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
-    {0x80009705, 51, CONDITION_ALWAYS, EVENT(Func_02000e14)},
-    {0x50009705, 51, CONDITION_ALWAYS, EVENT(Func_02000e20)},
-    {0x9705, 51, CONDITION_ALWAYS, EVENT(Func_02001148)},
-    {0x80009705, 52, CONDITION_ALWAYS, EVENT(Func_02000e14)},
-    {0x50009705, 52, CONDITION_ALWAYS, EVENT(Func_02000e20)},
-    {0x9705, 52, CONDITION_ALWAYS, EVENT(Func_02001148)},
+     0x9f4, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 25, 0x9f4,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
+    {0x50009705, 71, 0x350, EVENT(MagmaRockInside_BurstCrackedPillar1)},
+    {0x50009705, 72, 0x351, EVENT(MagmaRockInside_BurstCrackedPillar2)},
+    {0x80009705, 50, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ResolveBeforeBurst)},
+    {0x50009705, 50, 0x2f0, EVENT(MagmaRockInside_TargetStatue)},
+    {0x50009705, 50, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_BurstCrackedPillar1)},
+    {0x9705, 50, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
+    {0x80009705, 51, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ResolveBeforeBurst)},
+    {0x50009705, 51, CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
+    {0x9705, 51, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
+    {0x80009705, 52, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ResolveBeforeBurst)},
+    {0x50009705, 52, CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
+    {0x9705, 52, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
     {TRIGGER_TABLE_END},
 };
 
@@ -638,8 +649,8 @@ struct Trigger gMagmaRockInside_Room5Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02001828)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_02001828)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_FloodWithLava)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(MagmaRockInside_FloodWithLava)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
@@ -665,20 +676,22 @@ struct Trigger gMagmaRockInside_Room6Triggers[] = {
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {TRIGGER_EXIT, 19, CONDITION_ALWAYS, 19},
-    {0x202, 70, 0x1302, EVENT(Func_020011fc)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {0x202, 70, 0x1302, EVENT(MagmaRockInside_PushPillarIntoLava)},
+    {8, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
-     0x9f5, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9f5, EVENT(Func_02000a30)},
+     0x9f5, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9f5,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
-     0x9f6, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9f6, EVENT(Func_02000a30)},
+     0x9f6, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9f6,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRockInside_Room7Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_020023e8)},
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(MagmaRockInside_OpenStairs)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -689,66 +702,76 @@ struct Trigger gMagmaRockInside_Room7Triggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {0x21, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 30, 0x9f8, EVENT(Func_02001d64)},
+    {TRIGGER_STEP, 30, 0x9f8, EVENT(MagmaRockInside_ReleaseRocks)},
     {TRIGGER_EXAMINE, 31, 0x9f9, EVENT(MagmaRockInside_ExamineEmberStone)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {8, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 23,
-     0x9f7, EVENT(Func_0200099c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, 0x9f7, EVENT(Func_02000a30)},
+     0x9f7, EVENT(MagmaRockInside_UnblockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, 0x9f7,
+     EVENT(MagmaRockInside_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17,
-     CONDITION_ALWAYS, EVENT(Func_02002128)},
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_TakeFlame)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 18,
-     CONDITION_ALWAYS, EVENT(Func_02002128)},
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_TakeFlame)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 19,
-     CONDITION_ALWAYS, EVENT(Func_02002128)},
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_TakeFlame)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 20,
-     CONDITION_ALWAYS, EVENT(Func_02002128)},
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_TakeFlame)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 21,
      CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 22,
-     CONDITION_ALWAYS, EVENT(Func_0200217c)},
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_LightTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 22,
-     0x304, EVENT(Func_020021c0)},
+     0x304, EVENT(MagmaRockInside_GrowFlame)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 21,
-     0x303, EVENT(Func_020021c0)},
+     0x303, EVENT(MagmaRockInside_GrowFlame)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 17, CONDITION_ALWAYS,
-     EVENT(Func_02002318)},
+     EVENT(MagmaRockInside_PutOutFlames)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 18, CONDITION_ALWAYS,
-     EVENT(Func_02002318)},
+     EVENT(MagmaRockInside_PutOutFlames)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 19, CONDITION_ALWAYS,
-     EVENT(Func_02002318)},
+     EVENT(MagmaRockInside_PutOutFlames)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 20, CONDITION_ALWAYS,
-     EVENT(Func_02002318)},
+     EVENT(MagmaRockInside_PutOutFlames)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 22, CONDITION_ALWAYS,
-     EVENT(Func_02002318)},
+     EVENT(MagmaRockInside_PutOutFlames)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02006710 = -1;
+s32 gMagmaRockInside_LastStepCell = -1;
 
 struct Trigger gMagmaRockInside_Room8Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_0200257c)},
-    {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02002610)},
-    {0xc403, 30, CONDITION_ALWAYS, EVENT(Func_020030cc)},
-    {0x4403, 30, CONDITION_ALWAYS, EVENT(Func_020032d8)},
-    {0x8403, 30, CONDITION_ALWAYS, EVENT(Func_02003348)},
-    {0x403, 30, CONDITION_ALWAYS, EVENT(Func_020033b0)},
-    {TRIGGER_RAISED, 202, CONDITION_ALWAYS, EVENT(Func_020027d4)},
-    {TRIGGER_RAISED, 203, CONDITION_ALWAYS, EVENT(Func_020027d4)},
-    {TRIGGER_RAISED, 204, CONDITION_ALWAYS, EVENT(Func_020027d4)},
-    {TRIGGER_RAISED, 205, CONDITION_ALWAYS, EVENT(Func_020027d4)},
-    {TRIGGER_RAISED, 206, CONDITION_ALWAYS, EVENT(Func_020027d4)},
+    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(MagmaRockInside_StampStepCell)},
+    {TRIGGER_STEP, 81, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_StampOtherStepCell)},
+    {0xc403, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_ReadBlazeTablet)},
+    {0x4403, 30, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ReadBlazeTabletFromWest)},
+    {0x8403, 30, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ReadBlazeTabletFromEast)},
+    {0x403, 30, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ReadBlazeTabletFromSouth)},
+    {TRIGGER_RAISED, 202, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_StepOnMarker)},
+    {TRIGGER_RAISED, 203, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_StepOnMarker)},
+    {TRIGGER_RAISED, 204, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_StepOnMarker)},
+    {TRIGGER_RAISED, 205, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_StepOnMarker)},
+    {TRIGGER_RAISED, 206, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_StepOnMarker)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 10,
-     CONDITION_ALWAYS, EVENT(Func_02002868)},
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_LightTabletTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 11,
      CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 11,
-     0x305, EVENT(Func_020028ac)},
+     0x305, EVENT(MagmaRockInside_GrowTabletFlame)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 10, CONDITION_ALWAYS,
-     EVENT(Func_020029dc)},
+     EVENT(MagmaRockInside_PutOutTabletFlame)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 11, CONDITION_ALWAYS,
-     EVENT(Func_020029dc)},
+     EVENT(MagmaRockInside_PutOutTabletFlame)},
     {TRIGGER_TABLE_END},
 };

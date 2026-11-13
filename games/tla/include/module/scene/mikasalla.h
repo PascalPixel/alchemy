@@ -14,10 +14,10 @@ extern struct ActorPlacement gMikasalla_TunnelPlacements[];
 extern struct Trigger gMikasalla_TunnelTriggers[];
 
 extern struct Trigger gMikasalla_VillageTriggers[];
-extern s16 gData_020006f8[];
-extern s16 gData_0200070e[];
-extern s16 gData_02000724[];
-extern s32 gData_02000850[];
-extern s32 gData_02000bf8[];
+extern s16 gMikasalla_DoorOpening[];
+extern s16 gMikasalla_ThirdDoorOpening[];
+extern s16 gMikasalla_WideDoorOpening[];
+extern s32 gMikasalla_ChickenPaces[];
+extern s32 gMikasalla_SheepPaces[];
 
 #endif

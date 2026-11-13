@@ -8,9 +8,9 @@
 
 extern s16 gTitleVramBlock;
 
-void Func_0200061c(s32 value);
+void Credits_Run(s32 value);
 
-s32 Func_02000624(s32 value);
+s32 Title_ShowIntro(s32 value);
 
 void Func_0200063c(s32 value);
 
@@ -18,6 +18,7 @@ void Title_LoadBackground(void);
 
 struct TitleSprite__title;
 
-void Func_020005ac(struct TitleSprite__title *sprite, s32 priority);
+void Import_OamAddSpriteAtDepthClamped(struct TitleSprite__title *sprite,
+                                       s32 priority);
 
 #endif

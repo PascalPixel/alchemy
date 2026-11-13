@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x656, in ROM order.
 
-// ---- games/tla/src/scene/lemurian_ship/scene_tables.c ----
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
@@ -47,8 +46,6 @@ u8 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-// ---- games/tla/src/scene/lemurian_ship/s00b8.c ----
-// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next
 // object the overlay links.
 
 /* VIEW(s00b8): routine Actor_SetSpriteFlags as void
@@ -2009,7 +2006,7 @@ struct Trigger gData_02003d9c[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000d44)},
     {0x80008a05, 255, CONDITION_ALWAYS, EVENT(Func_02001368)},
-    {0x50008a05, 255, CONDITION_ALWAYS, EVENT(Func_020012b4)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 255, CONDITION_ALWAYS, EVENT(Func_020012b4)},
     {TRIGGER_TABLE_END},
 };
 

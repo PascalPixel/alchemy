@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x6a7, in ROM order.
+/// The Northern Reaches, where an ice wall blocks the ship's way to Prox until
+/// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
 #include "battle.h"
@@ -24,11 +25,34 @@
 #include "module/scene/northern_reaches.h"
 #include "module/scene/scene.h"
 #include "render_input.h"
+#include "effect_sprite.h"
 #include "resource.h"
 
-void Func_02000b08(void);
+/// The Magma Ball's ice shards and the explosion's sparks, as the ice wall
+/// shatters (NorthernReaches_ShatterIceWall).
+struct IceShard {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  u32 age;
+};
 
-s32 Func_02000038(s32 arg0) {
+struct IceShardSpark {
+  struct IceShardSpark *next; ///< The sprite list's link.
+  union SparkOam oam;
+  s32 timer;
+};
+
+struct IceWallWork {
+  u8 sheet[0x1000];
+  struct EffectSprite sprites[54];
+  struct IceShard particles[54];
+};
+
+s32 NorthernReaches_ResetAnimationFrame(s32 arg0) {
   *(u8 *)((u8 *)*(s32 *)((u8 *)arg0 + 80) + 26) = 0;
   *(u8 *)((u8 *)(arg0 + 34) + 0) = 1;
   return 1;
@@ -66,7 +90,7 @@ void NorthernReaches_SightIceWall(void) {
 
   result0 = Event_GetFlag(0x200);
   if (result0 != 0)
-    goto L_02008100;
+    goto done;
   Event_SetFlag(0x200);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -78,7 +102,7 @@ void NorthernReaches_SightIceWall(void) {
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Event_End();
-L_02008100:
+done:
   return;
 }
 
@@ -89,7 +113,7 @@ void NorthernReaches_DiscussIceWall(void) {
 
   result0 = Event_GetFlag(0x90c);
   if (result0 != 0)
-    goto L_020081d2;
+    goto done;
   Event_SetFlag(0x90c);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -111,7 +135,7 @@ void NorthernReaches_DiscussIceWall(void) {
   Actor_SetPosition(5, 0, 0);
   Actor_SetPosition(6, 0, 0);
   Event_End();
-L_020081d2:
+done:
   return;
 }
 
@@ -144,9 +168,9 @@ void NorthernReaches_FireMagmaBall(void) {
   v_r8 = t1;
   v_r5 = t3;
   if (v_r5 == 0)
-    goto L_0200820c;
-  goto L_020085f2;
-L_0200820c:
+    goto fire;
+  goto done;
+fire:
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
@@ -176,21 +200,21 @@ L_0200820c:
   t26 = Event_GetFlag(0x90d);
   v_r10 = (s32)MsgShipSafeFiringDistance;
   if (t26 != 0)
-    goto L_020082ea;
+    goto ask;
   Event_SetFlag(0x90d);
   FieldEvent_ShowMessageThenWait(0x2007, 0, 5);
-L_020082ea:
+ask:
   FieldEvent_SetMessageId((v_r10 + 1));
   Event_OpenMessage(11, 0);
   t31 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (t31 == 0)
-    goto L_0200832c;
+    goto ready;
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Actor_SetDestinationOffset(8, 0, 16);
   FieldActor_WaitForMove(v_r7);
   FieldEvent_Wait(5);
-  goto L_020085c6;
-L_0200832c:
+  goto putAway;
+ready:
   t36 = (s32)Ram_HeapSlots->eventWork;
   t37 = FIELD_AT(t36, u16, 452);
   FIELD_AT(t36, u16, 452) = (t37 + 1);
@@ -213,7 +237,7 @@ L_0200832c:
   Actor_SetPosition(9, 0x1d00000, 0xd80000);
   Actor_WalkTo(9, 0x1d0, 144);
   v_r5 = 15;
-L_020083da:
+growBall:
   t52 = FIELD_AT(v_r6, s32, 24);
   FIELD_AT(v_r6, s32, 24) = (t52 + 0x800);
   t53 = FIELD_AT(v_r6, s32, 28);
@@ -221,7 +245,7 @@ L_020083da:
   System_Wait(1);
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
-    goto L_020083da;
+    goto growBall;
   FieldCamera_MoveTo(0x1d80000, -1, 0xb00000, 1);
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(9);
@@ -282,26 +306,26 @@ L_020083da:
   Actor_SetSpeed(8, 0x3333, 0x1999);
   Actor_SetDestinationOffset(8, 0, -12);
   v_r5 = 19;
-L_02008594:
+settle:
   t96 = FIELD_AT(v_r7, s32, 28);
   FIELD_AT(v_r7, s32, 28) = (t96 - 0x900);
   FIELD_AT(v_r7, s32, 24) = (t96 - 0x900);
   System_Wait(7);
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
-    goto L_02008594;
+    goto settle;
   FIELD_AT(v_r7, s32, 28) = 0;
   FIELD_AT(v_r7, s32, 24) = 0;
   FieldEvent_Wait(10);
   Event_SetFlag(0x90e);
   FieldEvent_SetExitRequest(4);
-L_020085c6:
+putAway:
   Actor_SetPosition(11, 0, 0);
   Actor_SetPosition(5, 0, 0);
   Actor_SetPosition(6, 0, 0);
   Actor_SetPosition(7, 0, 0);
   Event_End();
-L_020085f2:
+done:
   return;
 }
 
@@ -335,18 +359,18 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void BattleEffect_StepVector3(struct Particle6a7 *particle, s32 a, s32 b);
+void BattleEffect_StepVector3(struct IceShard *particle, s32 a, s32 b);
 
 /// The Magma Ball's flight and the wall's ice shards
 /// (ResourceId_FieldEffectIceShard); `callback` draws the wall gone.
 void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
                                     void (*callback)(void)) {
-  struct Work6a7 *work;
-  struct Particle6a7 *particle;
-  struct Sprite6a7 *sprite;
-  struct Sprite6a7 *flySprite;
-  struct Spark6a7 *sparks;
-  struct Spark6a7 *spark;
+  struct IceWallWork *work;
+  struct IceShard *particle;
+  struct EffectSprite *sprite;
+  struct EffectSprite *flySprite;
+  struct IceShardSpark *sparks;
+  struct IceShardSpark *spark;
   s32 *timer;
   // Unused: gives the stack frame its 4 bytes.
   u8 frameSlot[4];
@@ -365,9 +389,9 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   for (; i <= 53; i++) {
     Func_02000b40(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
     zero = 0;
-    sprite->unk_1e = 250;
+    sprite->depth = 250;
     sprite->oam.priority = zero;
-    sprite->oam.fullColor = 1;
+    sprite->oam.palette256 = 1;
     sprite->oam.palette = zero;
     column = i / 6;
     particle->x = position[0] + (column << 20);
@@ -377,7 +401,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     particle->z = position[2];
     particle->velocityX = (Random16Far() * 3 >> 1) * column;
     particle->velocityY = (Random16Far() << 2) + 0x20000;
-    particle->unk_14 = zero;
+    particle->velocityZ = zero;
     particle->age = zero;
     particle++;
   }
@@ -459,8 +483,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   HeapSlot_Release(220);
 }
 
-s32 gData_02000b80[] = {
-    46, (s32)Func_02000038, 39, 7, 17,
+s32 gNorthernReaches_ShipAtRest[] = {
+    46, (s32)NorthernReaches_ResetAnimationFrame, 39, 7, 17,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -473,8 +497,8 @@ struct SceneEntrance gSceneEntrances[] = {
 DEFINE_G_SCENE_EXITS_5(268, 60, 4, 61)
 
 struct ActorPlacement gActorPlacements[] = {
-    {8, CONDITION_ALWAYS, (s32)gData_02000b80, PIXELS(120), 0, PIXELS(280),
-     FACING_SOUTH, 2, 0},
+    {8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, PIXELS(120), 0,
+     PIXELS(280), FACING_SOUTH, 2, 0},
     {263, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {285, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_EAST, 2, 0},

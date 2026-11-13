@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global Data_020067ec
-Data_020067ec:
+	.global gMagmaRockInside_StepCellWidth
+gMagmaRockInside_StepCellWidth:
 	.space 0x00000004
-	.global Data_020067f0
-Data_020067f0:
+	.global gMagmaRockInside_StepCellHeight
+gMagmaRockInside_StepCellHeight:
 	.space 0x00000004
-	.global Data_020067f4
-Data_020067f4:
+	.global gMagmaRockInside_StepCellX
+gMagmaRockInside_StepCellX:
 	.space 0x00000004
-	.global Data_020067f8
-Data_020067f8:
+	.global gMagmaRockInside_StepCellZ
+gMagmaRockInside_StepCellZ:

@@ -4,17 +4,17 @@
 #include "module/scene/lemurian_ship.h"
 #include "module/scene/taopo_swamp.h"
 
-void Func_02000038(void);
+void TaopoSwamp_FightFlower(void);
 void TaopoSwamp_BlowAwayBush(void);
 void TaopoSwamp_SinkPillar(void);
 void TaopoSwamp_ScoopHiddenItem(void);
 void TaopoSwamp_ScoopOtherHiddenItem(void);
-void Func_02000314(void);
+void TaopoSwamp_DigHole(void);
 void TaopoSwamp_FallThroughHole(void);
 void TaopoSwamp_PushPillarOverVent(void);
 void TaopoSwamp_StepOnVent(void);
 void TaopoSwamp_BlowFlowerOffLedge(void);
-void Func_02000744(void);
+void TaopoSwamp_DropPillarIntoGap(void);
 void TaopoSwamp_DouseVentSpot(void);
 void TaopoSwamp_FreezeVentSpot(void);
 void TaopoSwamp_FillDripSpot(void);
@@ -33,14 +33,14 @@ void TaopoSwamp_ScoopStarDust(void);
 void TaopoSwamp_ShowSparkleMessage(void);
 void TaopoSwamp_LandDrop(void);
 void TaopoSwamp_LandDrip(void);
-void Func_0200166c(void);
+void TaopoSwamp_IsDropFalling(void);
 
-u32 gData_020029b8[] = {
+u32 gTaopoSwamp_Room5HoleVents[] = {
     0x6090200,
     0x1050604,
 };
 
-u32 gData_020029c0[] = {
+u32 gTaopoSwamp_Room7HoleVents[] = {
     0x10003,
     1,
 };
@@ -58,7 +58,7 @@ u32 gTaopoSwamp_TremorPillarScript[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-u32 gData_02002a48[] = {
+u32 gTaopoSwamp_SparkFades[] = {
     0, 30, 38,
 };
 
@@ -74,40 +74,40 @@ s32 gTaopoSwamp_DripFromCeilingScript[] = {
     38,
 };
 
-s32 gData_02002a6c[] = {
+s32 gTaopoSwamp_DropFalls[] = {
     46,
-    (s32)Func_0200166c,
+    (s32)TaopoSwamp_IsDropFalling,
     38,
 };
 
-u16 gData_02002a78[] = {
+u16 gTaopoSwamp_Room5Vents[] = {
     200, 200, 4, 264, 200, 4, 232, 216,
     4, 280, 216, 4, 568, 200, 4, 632,
     200, 4, 536, 216, 4, 600, 216, 4,
     408, 232, 4, 472, 232, 4, 0,
 };
 
-u16 gData_02002ab6[] = {
+u16 gTaopoSwamp_Room5VentPair[] = {
     9, 10, 0,
 };
 
-u16 gData_02002abc[] = {
+u16 gTaopoSwamp_Room7Vents[] = {
     424, 104, 4, 536, 136, 4, 0,
 };
 
-u16 gData_02002aca[] = {
+u16 gTaopoSwamp_Room8Vents[] = {
     408, 408, 4, 472, 360, 4, 0,
 };
 
-u16 gData_02002ad8[] = {
+u16 gTaopoSwamp_RockRoomVents[] = {
     216, 184, 4, 312, 136, 4, 0, 0,
 };
 
-u32 gData_02002ae8[] = {
+u32 gTaopoSwamp_SplashFades[] = {
     0, 32, 38,
 };
 
-u32 gData_02002af4[] = {
+u32 gTaopoSwamp_PuffRises[] = {
     0, 44, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
@@ -297,9 +297,9 @@ struct Trigger gTaopoSwamp_Room3Triggers[] = {
 struct Trigger gTaopoSwamp_Room4Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(Func_02000334)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(TaopoSwamp_FightFlower)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(TaopoSwamp_DigHole)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(TaopoSwamp_DigHoleUnderfoot)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(TaopoSwamp_StartMadPlantBattle)},
     {TRIGGER_TABLE_END},
 };
@@ -332,7 +332,7 @@ struct Trigger gTaopoSwamp_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003314[] = {
+struct Trigger gTaopoSwamp_Room6Triggers[] = {
     {49, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TABLE_END},
@@ -349,8 +349,9 @@ struct Trigger gTaopoSwamp_Room7Triggers[] = {
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6f, EVENT(Func_02000744)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000744)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6f,
+     EVENT(TaopoSwamp_DropPillarIntoGap)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropPillarIntoGap)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 8, 0x220,
      EVENT(TaopoSwamp_DouseVentSpot)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, IF_FLAG_SET(0x222),
@@ -420,7 +421,7 @@ s32 gTaopoSwamp_Room9Triggers[] = {
 #if TLA_PATCH_1 /* Absent from the Japanese edition. */
     0x602,
     (s32)0xffff0040,
-    (s32)Func_020010bc,
+    (s32)TaopoSwamp_JumpForward,
 #endif
     0x2115,
     0x3380008,

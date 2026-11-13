@@ -1,29 +1,29 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02001fc8
-gData_02001fc8:
+	.global gYampiDesertCave_MarkBright
+gYampiDesertCave_MarkBright:
 	.space 0x00000004
-	.global gData_02001fcc
-gData_02001fcc:
+	.global gYampiDesertCave_MarkCycleSlots
+gYampiDesertCave_MarkCycleSlots:
 	.space 0x00000004
-	.global gData_02001fd0
-gData_02001fd0:
+	.global gYampiDesertCave_MarkTimer
+gYampiDesertCave_MarkTimer:
 	.space 0x00000004
-	.global gData_02001fd4
-gData_02001fd4:
+	.global gYampiDesertCave_MarkPeriod
+gYampiDesertCave_MarkPeriod:
 	.space 0x00000004
-	.global gData_02001fd8
-gData_02001fd8:
+	.global gYampiDesertCave_MarkSlots
+gYampiDesertCave_MarkSlots:
 	.space 0x00000004
-	.global gData_02001fdc
-gData_02001fdc:
+	.global gYampiDesertCave_MarkColors
+gYampiDesertCave_MarkColors:
 	.space 0x00000004
-	.global gData_02001fe0
-gData_02001fe0:
+	.global gYampiDesertCave_MarkDimColors
+gYampiDesertCave_MarkDimColors:
 	.space 0x00000004
-	.global gData_02001fe4
-gData_02001fe4:
+	.global gYampiDesertCave_MarkCount
+gYampiDesertCave_MarkCount:
 	.space 0x00000004
-	.global gData_02001fe8
-gData_02001fe8:
+	.global gYampiDesertCave_MarkCycleIndex
+gYampiDesertCave_MarkCycleIndex:

@@ -6,14 +6,14 @@
 
 #include "types.h"
 
-extern u32 gData_020015e0[];
+extern u32 gShamanVillageCave_GladiatorLeaves[];
 
-extern s32 gData_0200161c[];
+extern s32 gShamanVillageCave_GladiatorFollowsOut[];
 
 void Field_TryJumpForward();
 
-extern s32 gData_020012a0[];
-extern u32 gData_020012b8[];
+extern s32 gShamanVillageCave_OvergrowthRests[];
+extern u32 gShamanVillageCave_Settle[];
 
 void FieldCamera_WaitForArrival();
 

@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x6ad, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f.c ----
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/mars_lighthouse.h"
@@ -893,7 +892,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02005540, Func_020056a8)
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s167c.c ----
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
@@ -994,7 +992,6 @@ extern const s32 gData_02007044[];
 DEFINE_WHIRLWIND_UPDATE(Func_02001894, Func_020056a0, Position_FlatDistance,
                         gData_02007044, Data_02007064)
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s1a54.c ----
 #include "field_effect.h"
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
@@ -1096,7 +1093,6 @@ DEFINE_ACTOR_IS_TOUCHING(Func_02001d5c)
 
 DEFINE_ACTOR_IS_BESIDE(Func_02001dc0)
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s1e20.c ----
 #define MapLayer MapLayer__s1e20
 #define SceneWork SceneWork__s1e20
 #define Camera_SetBounds Camera_SetBounds__s1e20
@@ -1142,7 +1138,6 @@ DEFINE_ACTOR_RESET_SCRIPTED_FOR(Func_02001f84, gData_02005d8c)
 DEFINE_RIDE_SPAWN_FRONT(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
                         Func_02001e20, Func_02005480)
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s1ffc.c ----
 #include "shared/mars_lighthouse_entrance_room.h"
 
 struct RideDirection {
@@ -1199,7 +1194,6 @@ DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Func_0200236c, Func_02005480, gData_02005d8c)
 DEFINE_RIDE_SPAWN_SPARK(Func_020023ac, Func_02005498_, Func_0200236c,
                         Func_020022d0)
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s242c.c ----
 /* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
  * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1695:

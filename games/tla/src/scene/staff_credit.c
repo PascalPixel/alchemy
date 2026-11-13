@@ -31,7 +31,8 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "scene_ids.h"
-#include "module/scene/venus_lighthouse.h"
+
+extern s32 gData_0200215c[];
 
 extern u16 gData_02003dbc;
 extern u16 gData_02003dbe;

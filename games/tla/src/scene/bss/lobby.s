@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_020022b8
-gData_020022b8:
+	.global gLinkLobby_WaitFrames
+gLinkLobby_WaitFrames:
 	.space 0x00000004
-	.global gData_020022bc
-gData_020022bc:
+	.global gLinkLobby_CallFrames
+gLinkLobby_CallFrames:

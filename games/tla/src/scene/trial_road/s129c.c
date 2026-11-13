@@ -1,20 +1,20 @@
 /// @file
-/// Scene code of overlay 0x697, in ROM order.
+/// Trial Road's effect spawner and the sand stage's stream.
 
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
 
-extern const s32 *gData_02007bc0[];
+extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
-void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
@@ -29,7 +29,8 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02007bc0[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -58,7 +59,7 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_02007bc0[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -87,7 +88,7 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "actor.h"
 #include "frame.h"
 
-void Func_020014e4(void) {
+void TrialRoad_DriftWithStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   s32 velocity[3];
@@ -107,6 +108,6 @@ void Func_020014e4(void) {
   velocity[0] = 0;
   velocity[0] += ((Random16Far() << 17) >> 16) - 0x10000;
   velocity[2] += ((Random16Far() << 16) >> 16) - 0x8000;
-  Func_0200129c(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                velocity[2], 0x1000001, &options);
+  FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+                    velocity[2], 0x1000001, &options);
 }

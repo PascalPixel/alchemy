@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x695, in ROM order.
+/// The cave by the Shaman Village: overgrowth Whirlwind clears, a pillar Move
+/// pushes into a gap, rocks Lift raises, Eddy the Mercury Djinni who runs from
+/// the party, and in a linked game the three gladiators from Colosso.
 
 #include "battle.h"
 #include "field.h"
@@ -19,9 +21,9 @@
 #include "event_inline.h"
 #include "module/scene/scene.h"
 #include "module/scene/shaman_village_cave.h"
-#include "module/scene/garoh.h"
 
 void Func_02001208();
+s32 Func_02001098();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -29,17 +31,19 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void Func_0200004c(s32 arg0, s32 arg1) {
+/// Whirlwind blows away one of the two overgrowths (actors 8 and 10) for good,
+/// opening the cell behind it (flags 0x9a9 and 0x9aa).
+void ShamanVillageCave_BlowAwayOvergrowth(s32 arg0, s32 arg1) {
   if (arg1 != 8)
-    goto L_02008072;
+    goto notFirst;
   Event_SetFlag(0x9a9);
   MapGrid_CopyCellAttributes(0, 2, 1, 1, 2, arg1);
-L_02008072:
+notFirst:
   if (arg1 != 10)
-    goto L_02008094;
+    goto done;
   Event_SetFlag(0x9aa);
   MapGrid_CopyCellAttributes(0, 32, 1, 1, 14, 38);
-L_02008094:
+done:
   return;
 }
 
@@ -57,9 +61,11 @@ struct ShamanVillageCaveEventWork {
 
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
-void Func_02000098(s32 id);
+void ShamanVillageCave_DropPillarIntoGap(s32 id);
 
-void Func_02000098(s32 id) {
+/// The pillar falls until it lands, or for a second, then vanishes into the
+/// gap it fills.
+void ShamanVillageCave_DropPillarIntoGap(s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 frames = 60;
 
@@ -75,22 +81,28 @@ void Func_02000098(s32 id) {
   object->motionFlags = 0;
 }
 
-void Func_020000d4(void) { MapGrid_CopyCellAttributes(99, 10, 4, 3, 99, 18); }
+/// Move on the brown pillar: its old cells open first.
+void ShamanVillageCave_StartMovingPillar(void) {
+  MapGrid_CopyCellAttributes(99, 10, 4, 3, 99, 18);
+}
 
-void Func_020000f0(s32 unused, s32 id) {
+/// Pushed two spots to column 38, the pillar drops into the gap there and makes
+/// the shortcut (flag 0x9a8).
+void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 x = object->x >> 20;
 
   if (x == 38) {
     Event_SetFlag(0x9a8);
     object->priorityFlags = 0;
-    Func_02000098(id);
+    ShamanVillageCave_DropPillarIntoGap(id);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, x, 19);
   }
   MapGrid_CopyCellAttributes(99, 6, 4, 3, 99, 18);
 }
 
-void Func_02000148(void) {
+/// Frost freezes the puddle (actor 16) into a pillar of ice (flag 0x302).
+void ShamanVillageCave_FreezePuddle(void) {
   struct Actor *object = Actor_Get(16);
 
   Event_SetFlag(0x302);
@@ -101,13 +113,13 @@ void Func_02000148(void) {
 
 void FieldCamera_MoveToActorById();
 
-/// Pushes Shaman Village cave's object 17 away from the leader, unless the two
+/// Eddy, the Mercury Djinni (actor 17), runs from the leader, unless the two
 /// stand on opposite sides of the boundary between 8-pixel columns 36 and 37.
 /// With flag 514 set and the leader in the upper half (z cell 95 or less) it
 /// slides down two cells, turns, settles with emote 258 and sets flag 516, only
 /// once; otherwise it slides two cells along z, one and then three along x
 /// away from the leader with a hop, and back along z.
-void Func_02000184(void) {
+void ShamanVillageCave_EddyFlees(void) {
   struct Actor *object = Actor_GetById(17);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 leaderX = leader->x >> 19;
@@ -169,13 +181,14 @@ void Func_02000184(void) {
   Event_End();
 }
 
-void Func_0200030c(void) {
+/// Talking to Eddy, the Mercury Djinni, starts its battle.
+void ShamanVillageCave_FightEddy(void) {
   Event_SetFlag(0x205);
   Event_SetFlag(0x206);
   Event_RequestDjinnBattle(17, 35);
 }
 
-s32 Func_0200032c(struct Actor *object) {
+s32 ShamanVillageCave_SettleOvergrowth(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->priority = 2;
   object->motionFlags = 0;
@@ -186,22 +199,23 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000358(void) {
+/// Lift raises one of the four rocks (actors 11 to 14), each for good.
+void ShamanVillageCave_LiftFirstRock(void) {
   Event_SetFlag(0x200);
   return;
 }
 
-void Func_02000364(void) {
+void ShamanVillageCave_LiftSecondRock(void) {
   Event_SetFlag(0x201);
   return;
 }
 
-void Func_02000374(void) {
+void ShamanVillageCave_LiftThirdRock(void) {
   Event_SetFlag(0x202);
   return;
 }
 
-void Func_02000384(void) {
+void ShamanVillageCave_LiftFourthRock(void) {
   Event_SetFlag(0x203);
   return;
 }
@@ -210,21 +224,23 @@ void Func_02000384(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_0200039c(void) {
+/// The Golden Shirt the gladiators leave goes to the party, if there is room.
+void ShamanVillageCave_TakeGoldenShirt(void) {
   s32 result0;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
   if (result0 != 0)
-    goto L_020083c4;
+    goto taken;
   Event_ClearFlag(0xa73);
-L_020083c4:
+taken:
   Event_End();
   return;
 }
 
-void Func_020003cc(void) {
+/// The three gladiators stand where their rematch left them.
+void ShamanVillageCave_PlaceGladiators(void) {
   s32 angle;
 
   angle = 0x5000;
@@ -234,7 +250,8 @@ void Func_020003cc(void) {
   return;
 }
 
-void Func_02000404(void) {
+/// The Golden Shirt (item 400) lies where the gladiators left it (flag 0xa73).
+void ShamanVillageCave_PlaceGoldenShirt(void) {
   s32 angle;
 
   FieldActor_ShowItemIconById(22, 0x190);
@@ -368,7 +385,8 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Field_RequestBattleFromEncounterTable(102, 2);
 }
 
-void Func_0200083c(void) {
+/// Talking to a gladiator starts the rematch.
+void ShamanVillageCave_FightGladiators(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   {
@@ -499,7 +517,7 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Actor_SetAnimationAndWait(21, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
-  Func_02000404();
+  ShamanVillageCave_PlaceGoldenShirt();
   FieldEvent_Wait(60);
   Actor_ShowEmote(0, 257, 30);
   Actor_SetAnimationAndWait(19, 3);
@@ -525,11 +543,11 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Actor_SetSpeed(19, 0x10000, 0x8000);
   Actor_SetSpeed(20, 0x10000, 0x8000);
   Actor_SetSpeed(21, 0x10000, 0x8000);
-  Actor_SetScript(19, gData_020015e0);
+  Actor_SetScript(19, gShamanVillageCave_GladiatorLeaves);
   FieldEvent_Wait(20);
-  Actor_SetScript(20, gData_0200161c);
+  Actor_SetScript(20, gShamanVillageCave_GladiatorFollowsOut);
   FieldEvent_Wait(20);
-  Actor_SetScript(21, gData_0200161c);
+  Actor_SetScript(21, gShamanVillageCave_GladiatorFollowsOut);
   FieldEvent_Wait(100);
   Actor_FaceEachOther(0, 4, 0);
   Actor_FaceActor(18, 4, 0);
@@ -553,7 +571,9 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Event_End();
 }
 
-void Func_02000d84(void) {
+/// The party goes through a passage in the rock: everyone stops and the screen
+/// fades.
+void ShamanVillageCave_EnterPassage(void) {
   struct ShamanVillageCaveEventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
   u32 id;
@@ -618,7 +638,7 @@ s32 Scene_Initialize(void) {
   if ((!Event_GetFlag(265) &&
        (gMainRoutineWork.entrance == 20 || gMainRoutineWork.entrance == 21)) ||
       Event_GetFlag(0xa71)) {
-    Func_020003cc();
+    ShamanVillageCave_PlaceGladiators();
     if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 20) {
       ShamanVillageCave_BeatColossoFans();
     } else if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 21) {
@@ -627,7 +647,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (Event_GetFlag(0xa73))
-    Func_02000404();
+    ShamanVillageCave_PlaceGoldenShirt();
   return 0;
 }
 
@@ -637,18 +657,18 @@ s32 Scene_PrepareMap(void) {
 
   result0 = Event_GetFlag(0x9a9);
   if (result0 == 0)
-    goto L_0200900e;
+    goto firstDone;
   MapGrid_CopyCellAttributes(0, 2, 1, 1, 2, 8);
-L_0200900e:
+firstDone:
   result1 = Event_GetFlag(0x9aa);
   if (result1 == 0)
-    goto L_02009030;
+    goto done;
   MapGrid_CopyCellAttributes(0, 32, 1, 1, 14, 38);
-L_02009030:
+done:
   return 0;
 }
 
-void Func_02001038(void) {
+void ShamanVillageCave_JumpForward(void) {
   Field_TryJumpForward();
   return;
 }
@@ -673,26 +693,26 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gData_020012a0[] = {
-    22, 11, 0x18000, 46, (s32)Func_0200032c, 17,
+s32 gShamanVillageCave_OvergrowthRests[] = {
+    22, 11, 0x18000, 46, (s32)ShamanVillageCave_SettleOvergrowth, 17,
 };
 
 // clang-format off
-u32 gData_020012b8[] = {
+u32 gShamanVillageCave_Settle[] = {
     22, 26, 0, 17,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {307, CONDITION_ALWAYS, (s32)gData_020012a0, PIXELS(40), 0, PIXELS(128),
+    {307, CONDITION_ALWAYS, (s32)gShamanVillageCave_OvergrowthRests, PIXELS(40), 0, PIXELS(128),
      FACING_NORTH, 2, 0},
     {329, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_020012a0, PIXELS(232), 0, PIXELS(608),
+    {307, CONDITION_ALWAYS, (s32)gShamanVillageCave_OvergrowthRests, PIXELS(232), 0, PIXELS(608),
      FACING_NORTH, 2, 0},
     {329, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(808), FACING_NORTH, 2, 0},
     {329, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(808), FACING_NORTH, 2, 0},
     {329, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(792), FACING_NORTH, 2, 0},
     {329, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(792), FACING_NORTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gData_020012b8, PIXELS(584), 0, PIXELS(312),
+    {272, CONDITION_ALWAYS, (s32)gShamanVillageCave_Settle, PIXELS(584), 0, PIXELS(312),
      FACING_NORTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(680), FACING_SOUTH, 2, 0},
     {244, 0x53, 1, PIXELS(264), 0, PIXELS(760), FACING_SOUTH, 0, 0},
@@ -707,46 +727,48 @@ struct ActorPlacement gActorPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc402, 2, CONDITION_ALWAYS, EVENT(Func_02000d84)},
-    {0xc402, 3, CONDITION_ALWAYS, EVENT(Func_02000d84)},
-    {0xc402, 4, CONDITION_ALWAYS, EVENT(Func_02000d84)},
+    {0xc402, 2, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {0xc402, 3, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {0xc402, 4, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {0xc402, 8, CONDITION_ALWAYS, EVENT(Func_02000d84)},
+    {0xc402, 8, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 50, 0x205, EVENT(Func_02000184)},
-    {0x602, 41, 0x201, EVENT(Func_02001038)},
-    {0x8602, 42, 0x201, EVENT(Func_02001038)},
-    {0x602, 43, 0x202, EVENT(Func_02001038)},
-    {0x8602, 44, 0x202, EVENT(Func_02001038)},
+    {TRIGGER_STEP, 50, 0x205, EVENT(ShamanVillageCave_EddyFlees)},
+    {0x602, 41, 0x201, EVENT(ShamanVillageCave_JumpForward)},
+    {0x8602, 42, 0x201, EVENT(ShamanVillageCave_JumpForward)},
+    {0x602, 43, 0x202, EVENT(ShamanVillageCave_JumpForward)},
+    {0x8602, 44, 0x202, EVENT(ShamanVillageCave_JumpForward)},
     {TRIGGER_STEP, 100, 0xa70, EVENT(ShamanVillageCave_MeetColossoFans)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200030c)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_0200083c)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200083c)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_0200083c)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_0200039c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(Func_0200004c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_0200004c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, 0x200, EVENT(Func_02000358)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 12, 0x201, EVENT(Func_02000364)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 13, 0x202, EVENT(Func_02000374)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 14, 0x203, EVENT(Func_02000384)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x302, EVENT(Func_02000148)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x9a8, EVENT(Func_020000d4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9a8, EVENT(Func_020000f0)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_020000f0)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightEddy)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(ShamanVillageCave_TakeGoldenShirt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(ShamanVillageCave_BlowAwayOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(ShamanVillageCave_BlowAwayOvergrowth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, 0x200, EVENT(ShamanVillageCave_LiftFirstRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 12, 0x201, EVENT(ShamanVillageCave_LiftSecondRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 13, 0x202, EVENT(ShamanVillageCave_LiftThirdRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 14, 0x203, EVENT(ShamanVillageCave_LiftFourthRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x302, EVENT(ShamanVillageCave_FreezePuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x9a8, EVENT(ShamanVillageCave_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9a8, EVENT(ShamanVillageCave_FinishMovingPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_020015e0[] = {
+/// The beaten gladiators walk out of the cave, one after another.
+u32 gShamanVillageCave_GladiatorLeaves[] = {
     39, 2, 48, 0xe80000, 0xe30000, 1,
     48, 0xd90000, 0xf30000, 1, 48, 0xd90000,
     0x14e0000, 1, 38,
 };
 // clang-format on
 
-s32 gData_0200161c[] = {
-    39, 2, 48, 0xe00000, 0xc30000, 1, 43, (s32)gData_020015e0,
+s32 gShamanVillageCave_GladiatorFollowsOut[] = {
+    39,       2, 48, 0xe00000,
+    0xc30000, 1, 43, (s32)gShamanVillageCave_GladiatorLeaves,
 };

@@ -6,16 +6,16 @@
 
 #include "types.h"
 
-extern s32 gData_0200349c[];
-extern s32 gData_02003418[];
-void Func_02001910(void);
+extern s32 gMadraInteriors_InterrogatorLifted[];
+extern s32 gMadraInteriors_InterrogatorTopples[];
+void MadraInteriors_SayGoodbyeAgain(void);
 
-void Func_02001a20(void);
+void MadraInteriors_AskToStayLonger(void);
 
-extern u32 gData_02001f90[];
-extern u32 gData_02001fc4[];
-extern u32 gData_02002054[];
+extern u32 gMadraInteriors_OldManWalksToBackRoom[];
+extern u32 gMadraInteriors_WifeComesBack[];
+extern u32 gMadraInteriors_OldManComesBack[];
 
-extern u32 gData_020020e4[];
+extern u32 gMadraInteriors_CharFollows[];
 
 #endif

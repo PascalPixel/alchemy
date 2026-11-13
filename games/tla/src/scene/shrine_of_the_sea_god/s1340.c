@@ -76,9 +76,9 @@ struct EffectOptions {
   void (*update)(void *object);
 };
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void MapGrid_WaitForShakeToSettle(void);
 s32 Trig_Sin(s32 angle);
@@ -124,8 +124,8 @@ void Func_02001474(void) {
     i++;
     velocity[0] += -0x6000;
     velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
-    Func_020000b8(leader->x, leader->y + -0x40000, leader->z, velocity[0],
-                  velocity[1], velocity[2], 0x01090001, &options);
+    FieldEffect_Spawn(leader->x, leader->y + -0x40000, leader->z, velocity[0],
+                      velocity[1], velocity[2], 0x01090001, &options);
   }
   *(s32 *)((u8 *)leader + 40) = 0x40000;
   wait(2);
@@ -575,11 +575,7 @@ void Func_020024e4(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
   FieldCamera_WaitForArrival();
-  /* FAKEMATCH(temporary): the angle in a local holding one constant, built
-   * before the coordinates; as the constant 0xc000 in the call, 4 of 112
-   * instructions differ in tla-en. */
-  angle = 0xc000;
-  ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 624 << 16, angle);
+  ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 624 << 16, 0xc000);
   wait(1);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 14);
   object->priorityFlags &= ~2;
@@ -963,7 +959,6 @@ void Func_020030fc(void) {
 }
 
 void Func_02003134(void) {
-  s32 angle;
 
   Func_02002f88(10)->y = -0x100000;
   Actor_SetSpritePriority(10, 3);
@@ -977,11 +972,7 @@ void Func_02003134(void) {
   if (GameFlag_Test(0x873)) {
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   } else if (GameFlag_Test(0x872)) {
-    /* FAKEMATCH(temporary): the function-scope angle local holding one
-     * constant, built early; as the constant 0x8000 in the call, 2 of 79
-     * instructions differ in tla-en. */
-    angle = 0x8000;
-    ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
+    ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, 0x8000);
     wait(1);
     Actor_SetMovementTypeById(11, gData_02003c10);
     Actor_SetSpriteFlags(Actor_GetById(11), 1);
@@ -995,7 +986,6 @@ void Func_02003134(void) {
 
 void Func_0200320c(void) {
   struct ShrineOfTheSeaGodObject *block;
-  s32 angle;
 
   Func_02002f88(9);
   Func_02002f88(10);
@@ -1026,11 +1016,7 @@ void Func_0200320c(void) {
   if (GameFlag_Test(0x875))
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   else if (GameFlag_Test(0x874)) {
-    /* FAKEMATCH(temporary): the function-scope angle local holding one
-     * constant, built early; as the constant 0x4000 in the call, 4 of 127
-     * instructions differ in tla-en. */
-    angle = 0x4000;
-    ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
+    ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, 0x4000);
   }
   Func_02003b00(0);
   wait(1);
@@ -1052,7 +1038,6 @@ void Func_02003354(void) {
 }
 
 void Func_0200338c(void) {
-  s32 angle;
   struct ShrineOfTheSeaGodObject *object = Func_02002f88(13);
   u8 *flags = &object->priorityFlags;
 
@@ -1091,11 +1076,7 @@ void Func_0200338c(void) {
     }
     Actor_WatchAndSetScript(14, gMainRoutineWork.currentOwner);
   } else if (GameFlag_Test(0x877)) {
-    /* FAKEMATCH(temporary): the function-scope angle local holding one
-     * constant, built early; as the constant 0x4000 in the call, 4 of 153
-     * instructions differ in tla-en. */
-    angle = 0x4000;
-    ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
+    ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, 0x4000);
   }
 }
 
@@ -1200,8 +1181,9 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
     }
     dy = Random16Far() & 7;
     params.kind = 673;
-    Func_020000b8(object->x + ((dx - 8) << 16), object->y + ((dy - 8) << 16),
-                  object->z, 0, 0x8000, phase, 0x100000, &params);
+    FieldEffect_Spawn(object->x + ((dx - 8) << 16),
+                      object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,
+                      0x100000, &params);
   }
 }
 
@@ -1233,7 +1215,6 @@ void Func_02003854(s32 id) {
 }
 
 s32 Scene_PrepareMap(void) {
-  s32 angle;
 
   if (GameFlag_Test(0x340)) {
     struct ShrineOfTheSeaGodPartyExtra *party =
@@ -1243,11 +1224,7 @@ s32 Scene_PrepareMap(void) {
       if (GameFlag_Test(0x341))
         ShrineOfTheSeaGod_ObjPlaceAt(14, 360 << 16, 216 << 16, 0);
       else if (GameFlag_Test(0x342)) {
-        /* FAKEMATCH(temporary): the function-scope angle local holding one
-         * constant, built early; as the constant 0x8000 in the call, 4 of 56
-         * instructions differ in tla-en. */
-        angle = 0x8000;
-        ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 216 << 16, angle);
+        ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 216 << 16, 0x8000);
       }
     }
     GameFlag_ClearBit(0x340);

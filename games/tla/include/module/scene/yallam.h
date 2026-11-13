@@ -9,31 +9,31 @@
 void Yallam_SingMoonSong(void);
 
 void Yallam_SingSunSong(void);
-void Func_020023c8(void);
+void Yallam_StartWatchers(void);
 
-void Func_02000328(void);
+void Yallam_DigFirstHole(void);
 
-void Func_0200036c(void);
+void Yallam_DigSecondHole(void);
 
-void Func_0200041c(void);
+void Yallam_DigFourthHole(void);
 
-void Func_020004cc(void);
+void Yallam_DigSixthHole(void);
 
 void Yallam_OfferYeppSong(void);
 
 void Yallam_TalkAboutSongGame(void);
 
-void Func_020022f8(void);
+void Yallam_ForcePillarDown(void);
 
-void Func_020022f4(void);
+void Yallam_DoNothing(void);
 
-extern s32 gData_020025a8[];
-extern s32 gData_020025d4[];
-extern u32 gData_02002634[];
-extern u32 gData_020026d8[];
-extern s16 gData_02002c8c[];
-extern s16 gData_02002ca2[];
-extern s16 gData_02002cb8[];
-extern s16 gData_02002cce[];
+extern s32 gYallam_PillarRaised[];
+extern s32 gYallam_PillarSunk[];
+extern u32 gYallam_FirstVillagerPaces[];
+extern u32 gYallam_SecondVillagerPaces[];
+extern s16 gYallam_DoorOpening[];
+extern s16 gYallam_SecondDoorOpening[];
+extern s16 gYallam_ThirdDoorOpening[];
+extern s16 gYallam_FourthDoorOpening[];
 
 #endif

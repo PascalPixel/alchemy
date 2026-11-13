@@ -1,3 +1,10 @@
+/// @file
+/// Magma Rock's outside, the volcano north of Loho the party climbs to its
+/// summit: the Moai statues Burst wakes, which fire magma rocks or lift the
+/// leader on a column of flame, the cracked columns they break, the pillars
+/// Move pushes and the crumbling ones, Growth's vines and the slides, and at
+/// the top the Psynergy rock that blasts the way in.
+
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "types.h"
@@ -15,7 +22,7 @@ struct EventObjects {
   struct Actor *objects[64];
 };
 
-void Func_02000594(void) { Field_RequestDjinnBattle(8, 56); }
+void MagmaRock_FightFury(void) { Field_RequestDjinnBattle(8, 56); }
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
@@ -25,13 +32,14 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-DEFINE_MAP_CELL_SET_SHAPE(Func_020005cc, MapGrid_GetTerrainKind, Func_02003c24)
+DEFINE_MAP_CELL_SET_SHAPE(MagmaRock_SetCellShape, MapGrid_GetTerrainKind,
+                          Func_02003c24)
 
 #include "../field/map/cell_get.c"
 
 #include "field.h"
 
-DEFINE_ACTORS_RAISE_CELLS(Func_02000668, Func_020005cc)
+DEFINE_ACTORS_RAISE_CELLS(MagmaRock_RaiseActorCells, MagmaRock_SetCellShape)
 
 #include "battle.h"
 #include "game.h"
@@ -62,7 +70,7 @@ struct Object0200074c {
   u8 marked;
 };
 
-DEFINE_BLOCK_CLEAR_CELLS(Func_0200074c)
+DEFINE_BLOCK_CLEAR_CELLS(MagmaRock_ClearBlockCells)
 
 // For each id of a list ended by 0xffff: settles the object on its ground,
 // copies the cell under it, and blocks the cells ahead of and behind it on a
@@ -72,7 +80,7 @@ DEFINE_BLOCK_CLEAR_CELLS(Func_0200074c)
 /// For each id of a list ended by 0xffff: settles the object on its ground,
 /// copies the cell under it, and blocks the cells ahead of and behind it on a
 /// cell with attribute bit 6.
-void Func_0200079c(u16 *ids) {
+void MagmaRock_SettleBlocks(u16 *ids) {
   while (*ids != 0xffff) {
     struct Actor *object = Actor_Get(*ids);
     u8 *terrainId = &object->terrainId;
@@ -88,8 +96,8 @@ void Func_0200079c(u16 *ids) {
     object->motionFlags = 0;
     object->collisionFlags = 0;
     Actor_SetSpriteFlags(object, 0);
-    Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
-                  (height >> 19) + 4);
+    MagmaRock_SetCellShape(*terrainId, object->x >> 20, object->z >> 20,
+                           (height >> 19) + 4);
     blocked = (u8 *)object + 99;
     *blocked = 0;
     if (MapCell_GetAttributes(0, object->x >> 20, object->z >> 20) & 64) {
@@ -113,36 +121,36 @@ void Func_0200079c(u16 *ids) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern const u8 gData_02003ea8[];
-extern const u8 gData_02003ed8[];
-extern const u8 gData_02003f88[];
+extern const u8 gMagmaRock_Regions[];
+extern const u8 gMagmaRock_Room2Regions[];
+extern const u8 gMagmaRock_Room3Regions[];
 
 const struct SceneEntrance *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2)
-    return (const struct SceneEntrance *)gData_02003ed8;
+    return (const struct SceneEntrance *)gMagmaRock_Room2Regions;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct SceneEntrance *)gData_02003f88;
-  return (const struct SceneEntrance *)gData_02003ea8;
+    return (const struct SceneEntrance *)gMagmaRock_Room3Regions;
+  return (const struct SceneEntrance *)gMagmaRock_Regions;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern const u8 gMagmaRock_Placements[];
-extern const u8 gData_020041a4[];
-extern const u8 gData_0200427c[];
-extern const u8 gData_020043e4[];
-extern const u8 gData_020044a4[];
+extern const u8 gMagmaRock_Room2LowerPlacements[];
+extern const u8 gMagmaRock_Room2MiddlePlacements[];
+extern const u8 gMagmaRock_Room2UpperPlacements[];
+extern const u8 gMagmaRock_Room2TopPlacements[];
 extern const u8 gMagmaRock_Room3Placements[];
 
 const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
-      return (const struct Trigger *)gData_020041a4;
+      return (const struct Trigger *)gMagmaRock_Room2LowerPlacements;
     if (gMainRoutineWork.entrance <= 8)
-      return (const struct Trigger *)gData_0200427c;
+      return (const struct Trigger *)gMagmaRock_Room2MiddlePlacements;
     if (gMainRoutineWork.entrance <= 12)
-      return (const struct Trigger *)gData_020043e4;
-    return (const struct Trigger *)gData_020044a4;
+      return (const struct Trigger *)gMagmaRock_Room2UpperPlacements;
+    return (const struct Trigger *)gMagmaRock_Room2TopPlacements;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
     return (const struct Trigger *)gMagmaRock_Room3Placements;
@@ -151,31 +159,31 @@ const struct Trigger *Scene_GetPlacements(void) {
 
 void Func_02003c14(s16 *table);
 
-void Func_02000940(void) {
+void MagmaRock_UnblockMovedPillar(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
-    Func_02003c14(gData_02003d98);
+    Func_02003c14(gMagmaRock_Room1Pillars);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {
-      Func_02003c14(gData_02003dac);
+      Func_02003c14(gMagmaRock_Room2LowerPillars);
     } else if (gMainRoutineWork.entrance <= 7) {
-      Func_02003c14(gData_02003dd2);
+      Func_02003c14(gMagmaRock_Room2MiddlePillars);
     } else if (gMainRoutineWork.entrance <= 11) {
       MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
-      Func_02003c14(gData_02003de4);
+      Func_02003c14(gMagmaRock_Room2UpperPillars);
     } else {
       if (((s16 *)&work->target->z)[1] == 600)
         MapGrid_CopyCellAttributes(104, 38, 1, 1, 103, 38);
       else
         MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
-      Func_02003c14(gData_02003de8);
+      Func_02003c14(gMagmaRock_Room2TopPillars);
     }
   }
-  Func_0200074c(*(struct Actor **)(event + 0xcbc));
+  MagmaRock_ClearBlockCells(*(struct Actor **)(event + 0xcbc));
 }
 
 void Event_Start();
@@ -184,7 +192,7 @@ s32 Func_02003af4();
 
 /// Rebuilds the room's opened passages on entry and sets the flag of the cell
 /// the leader stands on.
-s32 Func_02000a48(void) {
+s32 MagmaRock_BlockMovedPillar(void) {
   struct Actor *leader =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 3260);
   s32 x, z;
@@ -195,19 +203,19 @@ s32 Func_02000a48(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
-    Blocks_MarkCells(gData_02003d98);
+    Blocks_MarkCells(gMagmaRock_Room1Pillars);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {
-      Blocks_MarkCells(gData_02003dac);
+      Blocks_MarkCells(gMagmaRock_Room2LowerPillars);
     } else if (gMainRoutineWork.entrance <= 8) {
-      Blocks_MarkCells(gData_02003dd2);
+      Blocks_MarkCells(gMagmaRock_Room2MiddlePillars);
     } else if (gMainRoutineWork.entrance <= 12) {
       MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
-      Blocks_MarkCells(gData_02003de4);
+      Blocks_MarkCells(gMagmaRock_Room2UpperPillars);
     } else {
       MapGrid_CopyCellAttributes(103, 39, 1, 1, 103, 38);
       MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
-      Blocks_MarkCells(gData_02003de8);
+      Blocks_MarkCells(gMagmaRock_Room2TopPillars);
     }
   }
   x = leader->x >> 20;
@@ -240,7 +248,7 @@ s32 Func_02000a48(void) {
 
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 
-void Func_02000c08(s16 value) {
+void MagmaRock_PlayBurst(s16 value) {
   struct MainRoutineWork *party;
 
   BattleEffect_LoadActionEffectResources(151, 1);
@@ -260,12 +268,12 @@ struct MagmaRockEffectParams {
   u8 unk20[8];
 };
 
-extern const u8 gData_02003d74[];
+extern const u8 gMagmaRock_FlameEmberScript[];
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                   s32 *params);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
+                       s32 *params);
 
-void Func_02000c40(struct Actor *object) {
+void MagmaRock_ThrowEmbers(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
   s16 *timer = &object->timer;
 
@@ -279,16 +287,16 @@ void Func_02000c40(struct Actor *object) {
 
       params.kind = 403;
       params.unk00 = 1;
-      params.script = gData_02003d74;
+      params.script = gMagmaRock_FlameEmberScript;
       {
         s32 mask = 15;
 
         dx = mask & Random16Far();
       }
       dy = Random16Far() & 31;
-      Func_0200015c(object->x + ((dx - 8) << 16),
-                    object->y + (dy << 16) - 0x80000, object->z, 0, phase,
-                    phase, 0x320001, &params);
+      FieldEffect_Spawn(object->x + ((dx - 8) << 16),
+                        object->y + (dy << 16) - 0x80000, object->z, 0, phase,
+                        phase, 0x320001, &params);
     }
     if (gFrameCount & 4)
       FieldActor_SetSpriteColor(object, 10);
@@ -312,7 +320,7 @@ void Func_02000c40(struct Actor *object) {
     linked->x = object->x;
     linked->y = object->y;
     linked->z = object->z;
-    linked->update = Func_02000dc0;
+    linked->update = MagmaRock_RollMagmaRock;
   }
   (*timer)++;
 }
@@ -331,7 +339,7 @@ void Func_02003c4c(struct Actor *object, s32 value);
 
 /// Every fourth frame, spawns effect 403 at the object with a random z offset
 /// and z velocity.
-void Func_02000d40(struct Actor *object) {
+void MagmaRock_TrailEmbers(struct Actor *object) {
   u32 frame = gFrameCount;
 
   if ((frame & 3) == 0) {
@@ -342,14 +350,14 @@ void Func_02000d40(struct Actor *object) {
 
     config.id = 403;
     config.kind = 2;
-    config.data = gData_02003d50;
+    config.data = gMagmaRock_EmberScript;
     if ((frame & 15) == 0 && !Event_GetFlag(608))
       Func_02003c4c(object, 136);
     dz = ((Random16Far() & 15) - 8) << 15;
     velocityZ = ((Random16Far() & 31) - 16) << 12;
     z = object->z;
-    Func_0200015c(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
-                  &config);
+    FieldEffect_Spawn(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
+                      &config);
   }
 }
 
@@ -363,7 +371,7 @@ s32 Trig_Cos(s32 angle);
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
-void Func_02000dc0(struct Actor *object) {
+void MagmaRock_RollMagmaRock(struct Actor *object) {
   s32 step;
   struct Actor *partner;
   struct Actor *leader;
@@ -372,7 +380,7 @@ void Func_02000dc0(struct Actor *object) {
   partner = Actor_Get(HALF_AT(object, 102) + BYTE_AT(object, 98));
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   object->x += step * 2;
-  Func_02000d40(object);
+  MagmaRock_TrailEmbers(object);
   if (leader->x - 0x80000 < object->x + 0x60000 &&
       object->x - 0x60000 < leader->x + 0x80000 &&
       leader->z - 0x80000 < object->z + 0x60000 &&
@@ -394,15 +402,16 @@ void Func_02000dc0(struct Actor *object) {
     object->z = 0;
     BYTE_AT(object, 98) ^= 1;
     partner->timer = 0;
-    partner->update = (void *)Func_02000c40;
+    partner->update = (void *)MagmaRock_ThrowEmbers;
     partner->watchedObject = object;
   }
 }
 
 // Unless flag 0x109 is set, places the object at the watched object first +
-// side, gives it Func_02000dc0 and faces it along the pair first and first + 1.
+// side, gives it MagmaRock_RollMagmaRock and faces it along the pair first and
+// first + 1.
 
-void Func_02000ee4(u16 id, s16 first, s16 side) {
+void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
   struct Actor *object = Actor_Get(id);
   struct Actor *a;
   struct Actor *b;
@@ -427,7 +436,7 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
    * BYTE_AT(object, 98) = side ^ 1, 6 of 104 instructions differ in tla-en. */
   facing = side ^ 1;
   BYTE_AT(object, 98) = facing;
-  object->update = (void *)Func_02000dc0;
+  object->update = (void *)MagmaRock_RollMagmaRock;
   next = left + 1;
   flags = &object->motionFlags;
   if (right != 0) {
@@ -448,4 +457,4 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   *flags = 0;
 }
 
-DEFINE_ACTOR_FLASH_COLOR(Func_02000fcc, 10)
+DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)

@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x688, in ROM order.
+/// The way into Lemuria from its dock: a rock Grind breaks up, two ways on to
+/// the city, and the ship's harbour, where Sheba asks Piers his age as they
+/// sail out.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -27,7 +29,8 @@ void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
 s32 Portrait_OpenWindow(s32 a, s32 b, s32 c, s32 d);
 
-s32 Func_02000038(struct Actor *object) {
+/// Starts an actor's animation from its first frame.
+s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *object) {
   ((struct AnimationRecord26 *)object->sprite)->frame = 0;
   return 1;
 }
@@ -42,7 +45,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000060(s32 arg) {
+/// The party leaves for Lemuria by one of its two ways in, Ancient Lemuria
+/// clearing or setting flag 0x960 to remember which.
+void LemuriaEntrance_LeaveByExit3(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_ClearFlag(0x960);
@@ -55,7 +60,7 @@ void Func_02000060(s32 arg) {
   FieldEvent_SetExitRequest(arg);
 }
 
-void Func_020000b0(s32 arg) {
+void LemuriaEntrance_LeaveByExit5(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_SetFlag(0x960);
@@ -76,7 +81,10 @@ void LemuriaEntrance_GrindRock(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_02000120(void) {
+/// Unused: once flag 0x800 is set, the party boards the ship (actor 8) and
+/// sails it (render mode 6); otherwise the leader takes control again. Nothing
+/// calls it.
+UNUSED void LemuriaEntrance_BoardShip(void) {
   if (Event_GetFlag(0x800) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -136,14 +144,16 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x96b)) {
     Event_ClearFlag(0x96b);
-    Func_020003cc();
+    LemuriaEntrance_ShebaAsksPiersAge();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000310(s32 kind, s32 frames) {
+/// Shows the next line of a conversation in a window beside its speaker's
+/// portrait (portrait 56 for kind 8) and closes it after the frames.
+void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
   // This routine's own view of the event work. A union: the read of width
   // keeps its place after this store.
   struct EventWork1c4 {
@@ -188,7 +198,9 @@ void Func_02000310(s32 kind, s32 frames) {
   Message_CloseFinishedWindows();
 }
 
-void Func_020003cc(void) {
+/// As the ship sails out of the harbour, Sheba asks Piers how old he really is.
+/// "Umm... Piers?"
+void LemuriaEntrance_ShebaAsksPiersAge(void) {
   struct EventWork *work;
   u8 saved;
 
@@ -197,30 +209,30 @@ void Func_020003cc(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(8, 0x451e, 0x228f);
-  Actor_SetScript(8, gData_020005e4);
+  Actor_SetScript(8, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);
   FieldEvent_SetMessageId((s32)&MsgFieldAddressCompanion);
-  Func_02000310(6, 90);
-  Func_02000310(7, 90);
-  Func_02000310(6, 180);
-  Func_02000310(7, 90);
-  Func_02000310(6, 250);
-  Func_02000310(7, 180);
-  Func_02000310(5, 250);
-  Func_02000310(8, 90);
-  Func_02000310(7, 180);
-  Func_02000310(8, 180);
-  Func_02000310(7, 180);
-  Func_02000310(6, 90);
-  Func_02000310(7, 250);
-  Func_02000310(5, 250);
-  Func_02000310(7, 250);
-  Func_02000310(6, 90);
-  Func_02000310(5, 90);
-  Func_02000310(8, 90);
-  Func_02000310(7, 250);
-  Func_02000310(4, 90);
-  Func_02000310(7, 250);
+  LemuriaEntrance_ShowPortraitLine(6, 90);
+  LemuriaEntrance_ShowPortraitLine(7, 90);
+  LemuriaEntrance_ShowPortraitLine(6, 180);
+  LemuriaEntrance_ShowPortraitLine(7, 90);
+  LemuriaEntrance_ShowPortraitLine(6, 250);
+  LemuriaEntrance_ShowPortraitLine(7, 180);
+  LemuriaEntrance_ShowPortraitLine(5, 250);
+  LemuriaEntrance_ShowPortraitLine(8, 90);
+  LemuriaEntrance_ShowPortraitLine(7, 180);
+  LemuriaEntrance_ShowPortraitLine(8, 180);
+  LemuriaEntrance_ShowPortraitLine(7, 180);
+  LemuriaEntrance_ShowPortraitLine(6, 90);
+  LemuriaEntrance_ShowPortraitLine(7, 250);
+  LemuriaEntrance_ShowPortraitLine(5, 250);
+  LemuriaEntrance_ShowPortraitLine(7, 250);
+  LemuriaEntrance_ShowPortraitLine(6, 90);
+  LemuriaEntrance_ShowPortraitLine(5, 90);
+  LemuriaEntrance_ShowPortraitLine(8, 90);
+  LemuriaEntrance_ShowPortraitLine(7, 250);
+  LemuriaEntrance_ShowPortraitLine(4, 90);
+  LemuriaEntrance_ShowPortraitLine(7, 250);
   FieldActor_RefreshSelectorById(8);
   FieldEvent_Wait(10);
   work = Ram_HeapSlots->eventWork;
@@ -236,7 +248,8 @@ void Func_020003cc(void) {
 #include "objcmd.h"
 
 // clang-format off
-u32 gData_020005e4[] = {
+/// The ship's course out of the harbour.
+u32 gLemuriaEntrance_ShipSailsOut[] = {
     SC_MOVE(PIXELS(728), 0, PIXELS(160)),
     SC_SYNC,
     SC_MOVE(PIXELS(608), 0, PIXELS(152)),
@@ -273,8 +286,8 @@ u32 gData_020005e4[] = {
 };
 // clang-format on
 
-s32 gData_02000728[] = {
-    SC_CALL(Func_02000038),
+s32 gLemuriaEntrance_ShipAtRest[] = {
+    SC_CALL(LemuriaEntrance_ResetAnimationFrame),
     SC_ARG(7),
     SC_END,
 };
@@ -295,8 +308,8 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {8, CONDITION_ALWAYS, (s32)gData_02000728, PIXELS(14), 0, PIXELS(4),
-     FACING_NORTH, 2, 0},
+    {8, CONDITION_ALWAYS, (s32)gLemuriaEntrance_ShipAtRest, PIXELS(14), 0,
+     PIXELS(4), FACING_NORTH, 2, 0},
     {342, CONDITION_ALWAYS, 1, PIXELS(636), 0, PIXELS(112), FACING_WEST, 2, 0},
     {342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(112), FACING_EAST, 2, 1},
     {342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(216), FACING_EAST, 2, 1},
@@ -315,8 +328,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000060)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_020000b0)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(LemuriaEntrance_LeaveByExit3)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(LemuriaEntrance_LeaveByExit5)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 19, CONDITION_ALWAYS,
      EVENT(LemuriaEntrance_GrindRock)},
     {TRIGGER_TABLE_END},

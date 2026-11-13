@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x697, in ROM order.
+/// Trial Road, the mountain path above the Shaman Village where the party races
+/// Moapa to the summit: four stages dealt from eight puzzle rooms, a left and a
+/// right path through each, the blue chests that open each stage's door for
+/// the weight of the party's equipment, and the battle at the peak; after the
+/// race, the summit's cave and pools and Gasp the Djinni.
 
 #include "shared/trial_road.h"
 #include "battle.h"
@@ -14,7 +18,7 @@
 #include "scene_tables.h"
 #include "module/field/object.h"
 
-void Func_02000038(void) { Field_RequestDjinnBattle(8, 75); }
+void TrialRoad_FightGasp(void) { Field_RequestDjinnBattle(8, 75); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -28,7 +32,7 @@ extern const u8 gTrialRoad_Room4Placements[];
 extern const u8 gTrialRoad_Room2Placements[];
 extern const u8 *const gTrialRoad_Room1Placements[];
 
-s32 Func_02000058(struct Actor *object) {
+s32 TrialRoad_SettleOnGround(struct Actor *object) {
   s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
 
   object->terrainHeight = height;
@@ -53,7 +57,7 @@ const u8 *Scene_GetPlacements(void) {
   return gTrialRoad_Placements;
 }
 
-s32 Func_020000fc(s32 fallback) {
+s32 TrialRoad_RivalIsAhead(s32 fallback) {
   struct TrialRoadState *state = gTrialRoadState;
 
   if (state->field1a < state->field1c)
@@ -71,7 +75,7 @@ s32 Func_020000fc(s32 fallback) {
 
 s32 TrialRoad_OfferToGiveUp(s32 value);
 
-void Func_02000138(s32 direction) {
+void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
   s16 *order = (s16 *)state;
 
@@ -92,7 +96,7 @@ void Func_02000138(s32 direction) {
   if ((u32)(direction - 3) <= 1) {
     state->field16[0]++;
     if (state->field16[0] > 3) {
-      if (Event_GetFlag(2559) && Func_020000fc(0) == 0)
+      if (Event_GetFlag(2559) && TrialRoad_RivalIsAhead(0) == 0)
         Event_SetFlag(901);
       Event_PlaySound(128);
       Exit_StartStairsUp();

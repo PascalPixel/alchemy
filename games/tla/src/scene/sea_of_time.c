@@ -1,8 +1,8 @@
 /// @file
-/// The scene code of overlay 0x687 that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in sea_of_time/.
-
-// ---- games/tla/src/scene/sea_of_time.c ----
+/// The Sea of Time, east of Lemuria: currents and swirls that carry the ship
+/// round and sweep it back to the entrance, the laps and waves Yepp's songs
+/// tell the way by, and rocks Grind breaks; the rest of the overlay is in
+/// sea_of_time/.
 
 #include "shared/actors.h"
 #include "sea_of_time/sea_of_time.h"
@@ -13,15 +13,15 @@
 
 s32 Func_02001f9c(struct Actor *actor);
 void Actor_SelectAnimation(struct Actor *object, s32 value);
-extern u16 Data_02002580[160];
+extern u16 gSeaOfTime_RippleLines[160];
 
-s32 Func_0200033c(struct Actor *object) {
+s32 SeaOfTime_HideSprite(struct Actor *object) {
   ((struct SeaOfTimeSprite *)object->sprite)->visible = 0;
   object->terrainId = 1;
   return 1;
 }
 
-s32 Func_0200034c(u32 layer, s32 x, s32 y) {
+s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
   struct SeaOfTimeMapWork *map =
       (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapWork;
   u8 *cell;
@@ -36,7 +36,7 @@ s32 Func_0200034c(u32 layer, s32 x, s32 y) {
   return (cell[2] << 8) | cell[3];
 }
 
-s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value) {
+s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
   struct SeaOfTimeMapWork *map =
       (struct SeaOfTimeMapWork *)Ram_HeapSlots->mapWork;
   u8 *cell;
@@ -75,21 +75,23 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8
- * gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] =
- * { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280),
- * FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct
- * WarpTarget gData_020021e4, it does not compile in tla-ja:
+/* VIEW(sea_of_time): variable gSeaOfTime_Placements as extern const u8
+ * gSeaOfTime_Placements[]; the definition has struct ActorPlacement
+ * gSeaOfTime_Placements[] = { { 8, CONDITION_ALWAYS, (s32)
+ * gSeaOfTime_ShipRests, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 },
+ * {...; tried as the definition's extern struct WarpTarget
+ * gSeaOfTime_Placements, it does not compile in tla-ja:
  * games/tla/src/scene/sea_of_time.c:83: cannot convert to a pointer type. */
-extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
+extern const u8
+    gSeaOfTime_Placements__sea_of_time[] __asm__("gSeaOfTime_Placements");
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
     return (const struct ActorPlacement *)gSeaOfTime_Room2Placements;
-  return (const struct ActorPlacement *)gData_020021e4__sea_of_time;
+  return (const struct ActorPlacement *)gSeaOfTime_Placements__sea_of_time;
 }
 
-void Func_0200043c(void) {
+void SeaOfTime_CircleSwirl(void) {
   struct Actor *object = Actor_GetById(8);
   s32 turn[1];
   s32 center[3];
@@ -112,7 +114,7 @@ void Func_0200043c(void) {
       object->z += 0x3333;
     else
       object->z -= 0x3333;
-    if (Func_0200034c(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
+    if (SeaOfTime_GetCellCode(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
       turn[0] = SeaOfTime_Cos(-0x200);
       sine = Trig_Sin(-0x200);
     } else {
@@ -130,7 +132,7 @@ void Func_0200043c(void) {
   }
 }
 
-void Func_0200054c(void) {
+void SeaOfTime_RideCurrent(void) {
   struct SeaOfTimeEventWork0154 *work =
       (struct SeaOfTimeEventWork0154 *)Ram_HeapSlots->eventWork;
   struct Actor *object = Actor_GetById(8);
@@ -203,7 +205,7 @@ void Func_0200054c(void) {
     else
       object->z -= 0x8000;
   }
-  if (Func_0200034c(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
+  if (SeaOfTime_GetCellCode(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
     turn[0] = SeaOfTime_Cos(-0x200);
     s = Trig_Sin(-0x200);
   } else {
@@ -257,13 +259,13 @@ void Func_0200054c(void) {
     py = object->y;
     pz = ends[1];
     if (flip) {
-      Func_0200015c(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
-      Func_0200015c(ends[2] - 0x30000, object->y, ends[3], -speed, 0, 0,
-                    0xb0000, &spark);
+      FieldEffect_Spawn(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] - 0x30000, object->y, ends[3], -speed, 0, 0,
+                        0xb0000, &spark);
     } else {
-      Func_0200015c(px - 0x30000, py, pz, -speed, 0, 0, 0xb0000, &spark);
-      Func_0200015c(ends[2] + 0x30000, object->y, ends[3], speed, 0, 0, 0xb0000,
-                    &spark);
+      FieldEffect_Spawn(px - 0x30000, py, pz, -speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] + 0x30000, object->y, ends[3], speed, 0, 0,
+                        0xb0000, &spark);
     }
   }
 }
@@ -277,7 +279,7 @@ void Func_0200054c(void) {
 
 /// Walks actor 8 along a run of cells in the facing the event work names,
 /// throwing sparks from both sides of it every fourth frame.
-void Func_02000818(void) {
+void SeaOfTime_FollowChannel(void) {
   s32 pos[4];
   struct EffectOptions spark;
   struct EventWork *work;
@@ -300,14 +302,16 @@ void Func_02000818(void) {
   actor->acceleration = 0x40000;
   targetZ = 0;
   targetX = 0;
-  if (Func_0200034c(1, x + (dz < 0 ? -dz : dz), z + (dx < 0 ? -dx : dx)) >> 8 ==
+  if (SeaOfTime_GetCellCode(1, x + (dz < 0 ? -dz : dz),
+                            z + (dx < 0 ? -dx : dx)) >>
+          8 ==
       work->exit) {
     targetX = (dz < 0 ? -dz : dz) * 15 << 16;
     targetZ = (dx < 0 ? -dx : dx) * 15 << 16;
   }
   targetX += x << 20;
   targetZ += z << 20;
-  while (Func_0200034c(1, x, z) >> 8 == work->exit) {
+  while (SeaOfTime_GetCellCode(1, x, z) >> 8 == work->exit) {
     x += dx;
     z += dz;
     targetX += dx << 20;
@@ -343,59 +347,64 @@ void Func_02000818(void) {
         x0 = pos[0];
         z0 = pos[1];
         if (flip) {
-          Func_0200015c(x0 + 0x40000, y0, z0, 0x8000, 0, 0, 0xb0000, &spark);
-          Func_0200015c(pos[2] - 0x40000, actor->y, pos[3], -0x8000, 0, 0,
-                        0xb0000, &spark);
+          FieldEffect_Spawn(x0 + 0x40000, y0, z0, 0x8000, 0, 0, 0xb0000,
+                            &spark);
+          FieldEffect_Spawn(pos[2] - 0x40000, actor->y, pos[3], -0x8000, 0, 0,
+                            0xb0000, &spark);
         } else {
-          Func_0200015c(x0 - 0x40000, y0, z0, -0x8000, 0, 0, 0xb0000, &spark);
-          Func_0200015c(pos[2] + 0x40000, actor->y, pos[3], 0x8000, 0, 0,
-                        0xb0000, &spark);
+          FieldEffect_Spawn(x0 - 0x40000, y0, z0, -0x8000, 0, 0, 0xb0000,
+                            &spark);
+          FieldEffect_Spawn(pos[2] + 0x40000, actor->y, pos[3], 0x8000, 0, 0,
+                            0xb0000, &spark);
         }
       }
       wait(1);
     }
   }
-  Func_02001fb4();
+  Event_End();
 }
 
 #include "iwram_call.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 
-/* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the
- * definition has u16 gData_020022be[] = { 0, }; tried as the definition's
- * extern u16 gData_020022be[], it does not compile in tla-ja:
- * games/tla/src/scene/sea_of_time.c:388: `gData_020022be' has an incomplete
- * type. */
-extern u16 gData_020022be__sea_of_time __asm__("gData_020022be");
-/* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the
- * definition has u32 gData_020022c0[] = { 0, }; tried as the definition's
- * extern u32 gData_020022c0[], it does not compile in tla-ja:
- * games/tla/src/scene/sea_of_time.c:389: `gData_020022c0' has an incomplete
- * type. */
-extern s16 gData_020022c0__sea_of_time __asm__("gData_020022c0");
-/* VIEW(sea_of_time): variable gData_020022bc as extern u16 gData_020022bc; the
- * definition has u16 gData_020022bc[] = { 0, }; tried as the definition's
- * extern u16 gData_020022bc[], it does not compile in tla-ja:
- * games/tla/src/scene/sea_of_time.c:424: `gData_020022bc' has an incomplete
- * type. */
-extern u16 gData_020022bc__sea_of_time __asm__("gData_020022bc");
-/* VIEW(sea_of_time): variable gData_02002118 as extern struct Spots
- * gData_02002118; the definition has u16 gData_02002118[] = { 0, 672, 0, 704,
- * 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0, 96, 0,
- * 160, }; tried as the definition's extern u16 gData_02002118[], it does not
- * compile in tla-ja: games/tla/src/scene/sea_of_time.c:428: invalid
+/* VIEW(sea_of_time): variable gSeaOfTime_LapCount as extern u16
+ * gSeaOfTime_LapCount; the definition has u16 gSeaOfTime_LapCount[] = { 0, };
+ * tried as the definition's extern u16 gSeaOfTime_LapCount[], it does not
+ * compile in tla-ja: games/tla/src/scene/sea_of_time.c:388:
+ * `gSeaOfTime_LapCount' has an incomplete type. */
+extern u16 gSeaOfTime_LapCount__sea_of_time __asm__("gSeaOfTime_LapCount");
+/* VIEW(sea_of_time): variable gSeaOfTime_LapTurn as extern s16
+ * gSeaOfTime_LapTurn; the definition has u32 gSeaOfTime_LapTurn[] = { 0, };
+ * tried as the definition's extern u32 gSeaOfTime_LapTurn[], it does not
+ * compile in tla-ja: games/tla/src/scene/sea_of_time.c:389:
+ * `gSeaOfTime_LapTurn' has an incomplete type. */
+extern s16 gSeaOfTime_LapTurn__sea_of_time __asm__("gSeaOfTime_LapTurn");
+/* VIEW(sea_of_time): variable gSeaOfTime_LastLapCell as extern u16
+ * gSeaOfTime_LastLapCell; the definition has u16 gSeaOfTime_LastLapCell[] = {
+ * 0, }; tried as the definition's extern u16 gSeaOfTime_LastLapCell[], it does
+ * not compile in tla-ja: games/tla/src/scene/sea_of_time.c:424:
+ * `gSeaOfTime_LastLapCell' has an incomplete type. */
+extern u16
+    gSeaOfTime_LastLapCell__sea_of_time __asm__("gSeaOfTime_LastLapCell");
+/* VIEW(sea_of_time): variable gSeaOfTime_LapSpots as extern struct Spots
+ * gSeaOfTime_LapSpots; the definition has u16 gSeaOfTime_LapSpots[] = { 0, 672,
+ * 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0,
+ * 96, 0, 160, }; tried as the definition's extern u16 gSeaOfTime_LapSpots[], it
+ * does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:428: invalid
  * initializer. */
-extern struct Spots gData_02002118__sea_of_time __asm__("gData_02002118");
-/* VIEW(sea_of_time): variable gData_02002110 as extern u8 gData_02002110[]; the
- * definition has u32 gData_02002110[] = { 0x18101810, 0x1810, }; tried as the
- * definition's extern u32 gData_02002110[], Func_02000a80 moves: 5 of 188
- * instructions in tla-ja. */
-extern u8 gData_02002110__sea_of_time[] __asm__("gData_02002110");
+extern struct Spots
+    gSeaOfTime_LapSpots__sea_of_time __asm__("gSeaOfTime_LapSpots");
+/* VIEW(sea_of_time): variable gSeaOfTime_LapsNeeded as extern u8
+ * gSeaOfTime_LapsNeeded[]; the definition has u32 gSeaOfTime_LapsNeeded[] = {
+ * 0x18101810, 0x1810, }; tried as the definition's extern u32
+ * gSeaOfTime_LapsNeeded[], SeaOfTime_CountLaps moves: 5 of 188 instructions in
+ * tla-ja. */
+extern u8 gSeaOfTime_LapsNeeded__sea_of_time[] __asm__("gSeaOfTime_LapsNeeded");
 
 /// Tracks actor 8 around the ring of cells: counts steps made in one direction,
 /// spawning an effect every fourth frame once past 3, and rewards a full count.
-void Func_02000a80(void) {
+void SeaOfTime_CountLaps(void) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(8);
   s16 index;
@@ -406,20 +415,20 @@ void Func_02000a80(void) {
   u32 *frame;
   u32 *stamp;
 
-  index = (Func_0200034c(0, actor->x >> 20, actor->z >> 20) >> 8) - 1;
+  index = (SeaOfTime_GetCellCode(0, actor->x >> 20, actor->z >> 20) >> 8) - 1;
   frame = &gFrameCount;
-  stamp = &gData_020022c4;
+  stamp = &gSeaOfTime_LapStamp;
 
   if (*frame - *stamp > 50) {
-    gData_020022be__sea_of_time = 0;
-    gData_020022c0__sea_of_time = 0;
+    gSeaOfTime_LapCount__sea_of_time = 0;
+    gSeaOfTime_LapTurn__sea_of_time = 0;
   }
-  last = gData_020022bc__sea_of_time;
+  last = gSeaOfTime_LastLapCell__sea_of_time;
   now = *(s16 *)(work + 340);
   nowRaw = *(u16 *)(work + 340);
   if (last != now) {
     // Each read below takes its own expression: the native reloads for each.
-    s16 *delta = (s16 *)&gData_020022c0__sea_of_time;
+    s16 *delta = (s16 *)&gSeaOfTime_LapTurn__sea_of_time;
     s32 raw;
     s32 diff;
     u16 *count;
@@ -438,7 +447,7 @@ void Func_02000a80(void) {
     diff = last - now;
     raw = *(u16 *)delta;
     step = (s16)raw;
-    count = &gData_020022be__sea_of_time;
+    count = &gSeaOfTime_LapCount__sea_of_time;
     if (diff == step || now - last == step * 7) {
       (*count)++;
       *stamp = *frame;
@@ -447,11 +456,11 @@ void Func_02000a80(void) {
       *delta = 0;
     }
   }
-  gData_020022bc__sea_of_time = *(u16 *)(work + 340);
-  if (gData_020022be__sea_of_time > 3) {
+  gSeaOfTime_LastLapCell__sea_of_time = *(u16 *)(work + 340);
+  if (gSeaOfTime_LapCount__sea_of_time > 3) {
     phase = gFrameCount & 3;
     if (phase == 0) {
-      struct Spots spots = gData_02002118__sea_of_time;
+      struct Spots spots = gSeaOfTime_LapSpots__sea_of_time;
       struct EffectOptions params;
       u32 z;
       u32 x;
@@ -465,47 +474,47 @@ void Func_02000a80(void) {
       Event_PlaySound(246);
       x <<= 16;
       z <<= 16;
-      Func_0200015c(spots.spot[(u16)index].x + x, 0,
-                    spots.spot[(u16)index].z + z, 0, 0x13333, phase, 0x120001,
-                    p);
+      FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
+                        spots.spot[(u16)index].z + z, 0, 0x13333, phase,
+                        0x120001, p);
     }
   }
-  if (gData_020022be__sea_of_time == gData_02002110__sea_of_time[(u16)index]) {
+  if (gSeaOfTime_LapCount__sea_of_time ==
+      gSeaOfTime_LapsNeeded__sea_of_time[(u16)index]) {
     s32 zero = 0;
 
     ((struct EventWork687 *)work)->unk16a = 200;
-    gData_020022be__sea_of_time = zero;
-    gData_020022c0__sea_of_time = zero;
+    gSeaOfTime_LapCount__sea_of_time = zero;
+    gSeaOfTime_LapTurn__sea_of_time = zero;
   }
 }
 
-void Func_02000c50(void) {
+void SeaOfTime_TrackWaves(void) {
   u32 *state = gSceneState;
 
-  if (gFrameCount - gData_020022c8 > 120)
+  if (gFrameCount - gSeaOfTime_WaveStartFrame > 120)
     ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->alarm = 201;
-  *state++ = gData_020022c8;
-  *state++ = gData_020022cc;
+  *state++ = gSeaOfTime_WaveStartFrame;
+  *state++ = gSeaOfTime_WaveState;
   *state = gFrameCount;
 }
 
-// ---- games/tla/src/scene/sea_of_time/s0c94.c ----
-// Two fades of BG palette 3: toward RGB(11, 6, 23), then, in Func_02000da0,
-// back to its saved colours.
+// Two fades of BG palette 3: toward RGB(11, 6, 23), then, in
+// SeaOfTime_StopWaves, back to its saved colours.
 #include "system/io_reg.h"
 
-extern u32 gData_020022cc;
-/* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h
- * has void Func_02001fb4(void); tried as the definition's void
- * Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in
+extern u32 gSeaOfTime_WaveState;
+/* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h
+ * has void Event_End(void); tried as the definition's void
+ * Event_End(s32 *position, s32 speed, s32 mode), it does not compile in
  * tla-ja: games/tla/src/scene/sea_of_time.c:473: conflicting types for
- * `Func_02001fb4'. */
-extern s32 Func_02001fb4__s0c94(void) __asm__("Func_02001fb4");
+ * `Event_End'. */
+extern s32 Event_End__s0c94(void) __asm__("Event_End");
 
 /// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
-/// channel every 10 frames, then hands the rest of the event to Func_02000c50's
-/// task.
-s32 Func_02000c94(void) {
+/// channel every 10 frames, then hands the rest of the event to
+/// SeaOfTime_TrackWaves's task.
+s32 SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
   s32 i;
@@ -551,28 +560,28 @@ s32 Func_02000c94(void) {
       *palette = RGB(r, g, b);
     }
     frame = gFrameCount;
-    gData_020022cc += frame & 1;
+    gSeaOfTime_WaveState += frame & 1;
   } while (changed);
-  gData_020022cc = 360;
-  gData_020022c8 = frame;
-  Task_Add(Func_02000c50, 0x480);
-  return Func_02001fb4__s0c94();
+  gSeaOfTime_WaveState = 360;
+  gSeaOfTime_WaveStartFrame = frame;
+  Task_Add(SeaOfTime_TrackWaves, 0x480);
+  return Event_End__s0c94();
 }
 
-extern struct SavedColors gData_020026c0;
+extern struct SavedColors gSeaOfTime_SavedColors;
 
-s32 Func_02000da0(void) {
+s32 SeaOfTime_StopWaves(void) {
   s32 changed;
   volatile u16 *palette;
   struct SavedColors *saved;
   u32 i;
   u32 j;
 
-  Task_RemoveFar(Func_02000c50);
+  Task_RemoveFar(SeaOfTime_TrackWaves);
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0x22c);
-  gData_020022cc = 1;
+  gSeaOfTime_WaveState = 1;
   // Each of the 14 colours steps one unit per channel toward its saved colour
   // every 10 frames, until none changes.
 fade:
@@ -581,7 +590,7 @@ fade:
   palette = &BG_PLTT_COLOR(3, 0);
   // i counts palette entries from 1 and j saved colours from 0; the saved
   // colours are read through a pointer set after i, each pass.
-  for (i = 1, saved = &gData_020026c0, j = 0; i != 15; i++, j++) {
+  for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
     u16 color = palette[i];
     u16 target = saved->colors[j];
     u16 r = color & 31;
@@ -619,25 +628,23 @@ fade:
   }
   if (changed)
     goto fade;
-  gData_020022cc = 1;
+  gSeaOfTime_WaveState = 1;
   GameFlag_ClearBit(0x200);
-  /* FAKEMATCH(signature): typed to return s32, passing on Func_02001fb4's,
+  /* FAKEMATCH(signature): typed to return s32, passing on Event_End's,
    * though its target Event_End returns nothing; as void, 6 of 150 instructions
    * differ in tla-en. */
-  return Func_02001fb4__s0c94();
+  return Event_End__s0c94();
 }
 
-// ---- games/tla/src/scene/sea_of_time/s0ef0.c ----
-// Scene code of overlay 0x687, in ROM order, from s0ef0's offset up to the
 // next object the overlay links.
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 /// Sends actor 8 to a point 8 pixels along z and, until Func_02001f9c says it
 /// is done, raises a pair of effects at its two sides every fourth frame.
-void Func_02000ef0(void) {
+void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 sides[4];
   struct EffectOptions options;
   struct Actor *actor;
@@ -678,33 +685,33 @@ void Func_02000ef0(void) {
       y = actor->y;
       z = sides[1];
       if (alternate) {
-        Func_0200015c(x + 0x40000, y, z, velocity, 0, 0,
-                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                          EFFECT_USE_START_SCALE,
-                      &options);
-        Func_0200015c(
+        FieldEffect_Spawn(x + 0x40000, y, z, velocity, 0, 0,
+                          EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                              EFFECT_USE_START_SCALE,
+                          &options);
+        FieldEffect_Spawn(
             sides[2] - 0x40000, actor->y, sides[3], reverseVelocity, 0, 0,
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
             &options);
       } else {
-        Func_0200015c(x - 0x40000, y, z, reverseVelocity, 0, 0,
-                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                          EFFECT_USE_START_SCALE,
-                      &options);
-        Func_0200015c(sides[2] + 0x40000, actor->y, sides[3], velocity, 0, 0,
-                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                          EFFECT_USE_START_SCALE,
-                      &options);
+        FieldEffect_Spawn(x - 0x40000, y, z, reverseVelocity, 0, 0,
+                          EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                              EFFECT_USE_START_SCALE,
+                          &options);
+        FieldEffect_Spawn(
+            sides[2] + 0x40000, actor->y, sides[3], velocity, 0, 0,
+            EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
+            &options);
       }
     }
     wait(1);
   }
-  Func_02001fb4();
+  Event_End();
 }
 
 #include "io_reg.h"
 
-void Func_02001068(void) {
+void SeaOfTime_SweptBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x8dd)) {
@@ -715,10 +722,10 @@ void Func_02001068(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001fb4();
+  Event_End();
 }
 
-void Func_020010a8(struct Actor *object) {
+void SeaOfTime_UpdateSpray(struct Actor *object) {
   struct EffectOptions spark;
   s32 even = gFrameCount & 1;
 
@@ -729,14 +736,14 @@ void Func_020010a8(struct Actor *object) {
     spark.startScaleY = 0xb333;
     spark.palette = 7;
     spark.priority = 1;
-    Func_0200015c(object->x + dx, 0, object->z + 0x100000, 0, even, even,
-                  0xb0000, &spark);
+    FieldEffect_Spawn(object->x + dx, 0, object->z + 0x100000, 0, even, even,
+                      0xb0000, &spark);
   }
 }
 
-extern struct SavedColors gData_020026c0;
+extern struct SavedColors gSeaOfTime_SavedColors;
 
-void Func_02001108(void) {
+void SeaOfTime_CrossToLemuria(void) {
   volatile u16 fill;
   struct EffectOptions burst;
   struct EffectOptions rain;
@@ -772,7 +779,7 @@ fade:
   palette = &BG_PLTT_COLOR(3, 0);
   // i counts palette entries from 1 and j saved colours from 0; the saved
   // colours are read through a pointer set after i, each pass.
-  for (i = 1, saved = &gData_020026c0, j = 0; i != 15; i++, j++) {
+  for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
     u16 color = palette[i];
     u16 target = saved->colors[j];
     u16 r = color & 31;
@@ -833,8 +840,8 @@ sparks:
     s32 z = Random16Far();
 
     burst.palette = 7;
-    Func_0200015c(((x & mask) << 16) + 0x1500000, 0,
-                  ((z & mask) << 16) + 0xb00000, 0, 0, 0, 0x10000, &burst);
+    FieldEffect_Spawn(((x & mask) << 16) + 0x1500000, 0,
+                      ((z & mask) << 16) + 0xb00000, 0, 0, 0, 0x10000, &burst);
     wait(1);
   }
 next:
@@ -857,78 +864,78 @@ next:
       rain.startScaleY = 0x18000;
       rain.palette = 7;
       rain.priority = 1;
-      Func_0200015c(offsetX + 0x1500000, 0, offsetZ + 0xb00000, 0, 0x10000, 0,
-                    0xb0000, &rain);
+      FieldEffect_Spawn(offsetX + 0x1500000, 0, offsetZ + 0xb00000, 0, 0x10000,
+                        0, 0xb0000, &rain);
       wait(1);
     }
     i++;
   }
   object = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
   // The object's per-frame hook, struct Actor's update.
-  *(void (**)(struct Actor *))((u8 *)object + 0x6c) = Func_020010a8;
+  *(void (**)(struct Actor *))((u8 *)object + 0x6c) = SeaOfTime_UpdateSpray;
   Event_Wait(60);
   Actor_SelectAnimation(object, 1);
   Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov687Room2, 4);
   Field_RequestBattleFromEncounterTable(12, 6);
-  Func_02001fb4();
+  Event_End();
 }
 
-void Func_0200141c(s32 x, s32 z, s32 actor) {
+void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
   s32 cx = x >> 20;
   s32 cz = z >> 20;
 
-  Func_02000388(1, cx - 1, cz - 1, 0);
-  Func_02000388(1, cx, cz - 1, 0);
-  Func_02000388(1, cx - 1, cz, 0);
-  Func_02000388(1, cx, cz, 0);
+  SeaOfTime_SetCellCode(1, cx - 1, cz - 1, 0);
+  SeaOfTime_SetCellCode(1, cx, cz - 1, 0);
+  SeaOfTime_SetCellCode(1, cx - 1, cz, 0);
+  SeaOfTime_SetCellCode(1, cx, cz, 0);
   Actor_SetPosition(actor, 0, 0);
 }
 
-#define DEFINE_FUNC_02001480(name, n1, n2)                                     \
+#define DEFINE_GRIND_ROCK(name, n1, n2)                                        \
   void name(void) {                                                            \
     struct Actor *object;                                                      \
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     object = Actor_GetById(n1);                                                \
-    Func_0200141c(object->x, Actor_GetById(n1)->z, n1);                        \
+    SeaOfTime_RemoveRock(object->x, Actor_GetById(n1)->z, n1);                 \
     GameFlag_SetBit(n2);                                                       \
-    Func_02001fb4();                                                           \
+    Event_End();                                                               \
   }
 
-DEFINE_FUNC_02001480(Func_02001480, 9, 0xa90)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindFirstRock, 9, 0xa90)
 
-DEFINE_FUNC_02001480(Func_020014b4, 10, 0xa91)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindSecondRock, 10, 0xa91)
 
-DEFINE_FUNC_02001480(Func_020014ec, 11, 0xa92)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindThirdRock, 11, 0xa92)
 
-DEFINE_FUNC_02001480(Func_02001524, 12, 0xa93)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindFourthRock, 12, 0xa93)
 
-DEFINE_FUNC_02001480(Func_0200155c, 13, 0xa94)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, 13, 0xa94)
 
-DEFINE_FUNC_02001480(Func_02001594, 9, 0xa95)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, 9, 0xa95)
 
-#define DEFINE_FUNC_020015CC(name, n1)                                         \
+#define DEFINE_LEAVE_BY_EXIT(name, n1)                                         \
   void name(void) {                                                            \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     Import_EventSetExitRequest(n1);                                            \
     Event_FinishScreenTransition();                                            \
     Event_WaitTransitionFrames();                                              \
-    Func_02001fb4();                                                           \
+    Event_End();                                                               \
   }
 
-DEFINE_FUNC_020015CC(Func_020015cc, 4)
+DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit4, 4)
 
-DEFINE_FUNC_020015CC(Func_020015ec, 5)
+DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit5, 5)
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1)
     return gSeaOfTime_Room1Triggers;
   if (gMainRoutineWork.entrance <= 4)
-    return gData_0200242c;
+    return gSeaOfTime_EntranceTriggers;
   return gSeaOfTime_Triggers;
 }
 
@@ -937,8 +944,8 @@ const struct Trigger *Scene_GetEvents(void) {
 /// The Sea of Time's frame callback: rotates two runs of the background
 /// palette, pulses the red of colour 15 (or steps it with the alarm), copies
 /// the palette and ripples the layer's horizontal scroll line by line.
-void Func_02001650(void) {
-  u16 *line = Data_02002580;
+void SeaOfTime_AnimateSea(void) {
+  u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
   u8 *block = Ram_HeapSlots->block32;
   struct EventWork_02001650 *event = Ram_HeapSlots->eventWork;
@@ -952,19 +959,20 @@ void Func_02001650(void) {
   if (event->unk1b2 == 0)
     return;
 
-  if (gFrameCount - gData_020022c8 > gData_020022cc) {
+  if (gFrameCount - gSeaOfTime_WaveStartFrame > gSeaOfTime_WaveState) {
     s16 target;
 
     color = BG_PLTT[62];
-    target = gData_020026c0.colors[13];
+    target = gSeaOfTime_SavedColors.colors[13];
 
     for (i = 14; i != 0; i--) {
       BG_PLTT[48 + i] = BG_PLTT[47 + i];
-      gData_020026c0.colors[i - 1] = gData_020026c0.colors[i - 2];
+      gSeaOfTime_SavedColors.colors[i - 1] =
+          gSeaOfTime_SavedColors.colors[i - 2];
     }
     BG_PLTT[49] = color;
-    gData_020026c0.colors[0] = target;
-    gData_020022c8 = gFrameCount;
+    gSeaOfTime_SavedColors.colors[0] = target;
+    gSeaOfTime_WaveStartFrame = gFrameCount;
   }
 
   if ((gFrameCount & 1) == 0) {
@@ -988,15 +996,15 @@ void Func_02001650(void) {
       u32 blueBits = blue << 16;
 
       if (flag == 0) {
-        u32 step = (u16)gData_0200257c[0];
+        u32 step = (u16)gSeaOfTime_RedPulseStep[0];
         u32 sum = (u16)(redBits >> 16) + step;
         red = (s16)sum;
         if ((u16)sum < 18) {
           red = 18;
-          gData_0200257c[0] = 1;
+          gSeaOfTime_RedPulseStep[0] = 1;
         } else if ((u16)sum > 31) {
           red = 31;
-          gData_0200257c[0] = -1;
+          gSeaOfTime_RedPulseStep[0] = -1;
         }
       } else {
         if (((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->alarm ==
@@ -1027,23 +1035,23 @@ void Func_02001650(void) {
         (s16)(layer->x >> 16) +
         (Trig_Sin((i + *(u8 *)&gFrameCount + (s16)(layer->y >> 16)) << 9) >>
          15);
-  line = Data_02002580;
+  line = gSeaOfTime_RippleLines;
   REG_BG1HOFS = *line;
   Dma_Set(line + 1, (void *)&REG_BG1HOFS, 0xa2600001, (volatile u32 *)REG_DMA0);
 }
 
-void Func_020018a8(s32 x, s32 z, s32 actor) {
+void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
   Actor_SetPosition(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
   x >>= 1;
   z >>= 1;
-  Func_02000388(1, x, z, 0xff00);
-  Func_02000388(1, x + 1, z, 0xff00);
-  Func_02000388(1, x, z + 1, 0xff00);
-  Func_02000388(1, x + 1, z + 1, 0xff00);
+  SeaOfTime_SetCellCode(1, x, z, 0xff00);
+  SeaOfTime_SetCellCode(1, x + 1, z, 0xff00);
+  SeaOfTime_SetCellCode(1, x, z + 1, 0xff00);
+  SeaOfTime_SetCellCode(1, x + 1, z + 1, 0xff00);
 }
 
-void Func_02001928(s32 x, s32 z, s32 actor) {
+void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   struct EffectOptions spark;
   s32 px;
   s32 pz;
@@ -1061,9 +1069,9 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   spark.startScaleY = 0x18000;
   spark.priority = 1;
   spark.type = 276;
-  Func_0200015c(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
+  FieldEffect_Spawn(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
   Actor_GetById(actor)->scaleY = 0x1999;
-  Func_020018a8(x, z, actor);
+  SeaOfTime_PlaceRock(x, z, actor);
   for (i = 0; i != 10; i++) {
     Actor_GetById(actor)->scaleY += 0x1999;
     Event_Wait(1);
@@ -1075,7 +1083,7 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
 /// The Sea of Time's opening: places the camera and the first effects, showers
 /// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
 /// RGB(11, 6, 23).
-void Func_02001a14(void) {
+void SeaOfTime_Open(void) {
   struct Actor *actor;
   u32 i;
   s32 changed;
@@ -1088,17 +1096,17 @@ void Func_02001a14(void) {
   Event_PlaySound(0);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
-  actor->update = (void (*)(void))Func_020010a8;
+  actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 0);
   Event_StartScreenTransition();
   wait(1);
-  Task_Add(Func_02001650, 0xc80);
+  Task_Add(SeaOfTime_AnimateSea, 0xc80);
   Event_WaitTransitionFrames();
   Event_Wait(60);
-  Func_02001928(21, 23, 9);
-  Func_02001928(37, 17, 10);
-  Func_02001928(47, 27, 12);
-  Func_02001928(59, 19, 13);
+  SeaOfTime_RaiseRock(21, 23, 9);
+  SeaOfTime_RaiseRock(37, 17, 10);
+  SeaOfTime_RaiseRock(47, 27, 12);
+  SeaOfTime_RaiseRock(59, 19, 13);
   MapGrid_WaitForShakeToSettle();
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 1);
   FieldCamera_WaitForArrival();
@@ -1129,8 +1137,8 @@ void Func_02001a14(void) {
       x &= mask;
       x <<= 16;
       x += 0x1500000;
-      Func_0200015c(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0, 0, 0xb0000,
-                    &params);
+      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0, 0, 0xb0000,
+                        &params);
       wait(1);
     }
   }
@@ -1146,8 +1154,8 @@ void Func_02001a14(void) {
     x &= mask;
     x <<= 16;
     x += 0x1500000;
-    Func_0200015c(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0x10000, 0, 0xb0000,
-                  &burst);
+    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0x10000, 0,
+                      0xb0000, &burst);
     wait(1);
   }
   Actor_Release(actor);
@@ -1187,12 +1195,12 @@ void Func_02001a14(void) {
       }
       *palette = RGB(r, g, b);
     }
-    gData_020022cc += gFrameCount & 1;
+    gSeaOfTime_WaveState += gFrameCount & 1;
   } while (changed);
-  Task_RemoveFar(Func_02001650);
+  Task_RemoveFar(SeaOfTime_AnimateSea);
   Scene_PlayMusic();
   Event_SetFlag(0x940);
-  Func_02001fb4();
+  Event_End();
 }
 
 // The overlay's start: sets the screen effect, restores the clock and palette
@@ -1205,16 +1213,16 @@ void Func_02001a14(void) {
 s32 Scene_Initialize(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {
-    gData_020022c8 = gFrameCount;
-    gData_020022cc = 1;
-    Dma_Set((const void *)0x05000062, gData_020026c0.colors, 0x8000000e,
+    gSeaOfTime_WaveStartFrame = gFrameCount;
+    gSeaOfTime_WaveState = 1;
+    Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors, 0x8000000e,
             (volatile u32 *)0x040000d4);
     if (GameFlag_Test(0x200)) {
       u32 *state = gSceneState;
       u32 offset, i;
 
-      gData_020022c8 = *state++;
-      gData_020022cc = *state++;
+      gSeaOfTime_WaveStartFrame = *state++;
+      gSeaOfTime_WaveState = *state++;
       gFrameCount = *state;
       i = 1;
       offset = 98;
@@ -1223,24 +1231,24 @@ s32 Scene_Initialize(void) {
         i++;
         offset += 2;
       } while (i != 14);
-      Task_Add(Func_02000c50, 0x480);
+      Task_Add(SeaOfTime_TrackWaves, 0x480);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2) {
-    gData_020022c8 = gFrameCount;
-    gData_020022cc = 0;
+    gSeaOfTime_WaveStartFrame = gFrameCount;
+    gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
       if (!GameFlag_Test(0x940)) {
-        Dma_Set((const void *)0x05000062, gData_020026c0.colors, 0x8000000e,
-                (volatile u32 *)0x040000d4);
+        Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
+                0x8000000e, (volatile u32 *)0x040000d4);
       } else {
         if (!GameFlag_Test(0xa90))
-          Func_020018a8(21, 23, 9);
+          SeaOfTime_PlaceRock(21, 23, 9);
         if (!GameFlag_Test(0xa91))
-          Func_020018a8(37, 17, 10);
+          SeaOfTime_PlaceRock(37, 17, 10);
         if (!GameFlag_Test(0xa93))
-          Func_020018a8(47, 27, 12);
+          SeaOfTime_PlaceRock(47, 27, 12);
         if (!GameFlag_Test(0xa94))
-          Func_020018a8(59, 19, 13);
+          SeaOfTime_PlaceRock(59, 19, 13);
         {
           void *block = Ram_HeapSlots->block32;
 
@@ -1251,16 +1259,16 @@ s32 Scene_Initialize(void) {
         BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       }
       if (gMainRoutineWork.entrance == 4 && !GameFlag_Test(265))
-        Func_02001a14();
+        SeaOfTime_Open();
     } else {
       if (!GameFlag_Test(0xa95))
-        Func_020018a8(89, 85, 9);
+        SeaOfTime_PlaceRock(89, 85, 9);
     }
   }
   {
     s32 priority = 0xc80;
 
-    Task_Add(Func_02001650, priority);
+    Task_Add(SeaOfTime_AnimateSea, priority);
   }
   return 0;
 }
@@ -1273,48 +1281,48 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_0200043c(void);
-void Func_02000818(void);
+void SeaOfTime_CircleSwirl(void);
+void SeaOfTime_FollowChannel(void);
 
 // clang-format off
-u32 gData_0200205c[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02002098[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020020d4[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02002110[] = {
+u32 gSeaOfTime_LapsNeeded[] = {
     0x18101810, 0x1810,
 };
 
-u16 gData_02002118[] = {
+u16 gSeaOfTime_LapSpots[] = {
     0, 672, 0, 704, 0, 896, 0, 320,
     0, 512, 0, 192, 0, 320, 0, 416,
     0, 320, 0, 832, 0, 96, 0, 160,
 };
 // clang-format on
 
-s32 gData_02002148[] = {
-    (s32)gData_0200205c,
-    (s32)gData_02002098,
-    (s32)gData_020020d4,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
-s32 gData_02002154[] = {
+s32 gSeaOfTime_ShipRests[] = {
     46,
-    (s32)Func_0200033c,
+    (s32)SeaOfTime_HideSprite,
     17,
 };
 
@@ -1338,15 +1346,15 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020021e4[] = {
-    {8, CONDITION_ALWAYS, (s32)gData_02002154, PIXELS(120), 0, PIXELS(280),
-     FACING_NORTH, 2, 0},
+struct ActorPlacement gSeaOfTime_Placements[] = {
+    {8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, PIXELS(120), 0,
+     PIXELS(280), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSeaOfTime_Room2Placements[] = {
-    {8, CONDITION_ALWAYS, (s32)gData_02002154, PIXELS(120), 0, PIXELS(280),
-     FACING_NORTH, 2, 0},
+    {8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, PIXELS(120), 0,
+     PIXELS(280), FACING_NORTH, 2, 0},
     {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
     {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
     {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
@@ -1355,98 +1363,98 @@ struct ActorPlacement gSeaOfTime_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-u16 gData_020022bc[] = {
+u16 gSeaOfTime_LastLapCell[] = {
     0,
 };
 
-u16 gData_020022be[] = {
+u16 gSeaOfTime_LapCount[] = {
     0,
 };
 
-u32 gData_020022c0[] = {
+u32 gSeaOfTime_LapTurn[] = {
     0,
 };
 
-u32 gData_020022c4[] = {
+u32 gSeaOfTime_LapStamp[] = {
     0,
 };
 
-volatile u32 gData_020022c8 = 0;
+volatile u32 gSeaOfTime_WaveStartFrame = 0;
 
-u32 gData_020022cc = 0;
+u32 gSeaOfTime_WaveState = 0;
 
 struct Trigger gSeaOfTime_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 49, CONDITION_ALWAYS, EVENT(Func_02001068)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(Func_02000ef0)},
-    {TRIGGER_STEP, 45, 0x200, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 46, 0x200, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 47, 0x200, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 48, 0x200, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 50, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_STEP, 51, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_STEP, 52, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_STEP, 53, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_STEP, 54, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_STEP, 55, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_STEP, 56, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_STEP, 57, 0x200, EVENT(Func_02000a80)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02000c94)},
-    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(Func_02000da0)},
+    {TRIGGER_STEP, 49, CONDITION_ALWAYS, EVENT(SeaOfTime_SweptBack)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(SeaOfTime_SinkIntoWhirlpool)},
+    {TRIGGER_STEP, 45, 0x200, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 46, 0x200, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 47, 0x200, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 48, 0x200, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 50, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, 51, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, 52, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, 53, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, 54, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, 55, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, 56, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, 57, 0x200, EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(SeaOfTime_StartWaves)},
+    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(SeaOfTime_StopWaves)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200242c[] = {
+struct Trigger gSeaOfTime_EntranceTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 5, 0x940, EVENT(Func_02001108)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_0200043c)},
+    {TRIGGER_STEP, 5, 0x940, EVENT(SeaOfTime_CrossToLemuria)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
-     EVENT(Func_02001480)},
+     EVENT(SeaOfTime_GrindFirstRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, CONDITION_ALWAYS,
-     EVENT(Func_020014b4)},
+     EVENT(SeaOfTime_GrindSecondRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 11, CONDITION_ALWAYS,
-     EVENT(Func_020014ec)},
+     EVENT(SeaOfTime_GrindThirdRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 12, CONDITION_ALWAYS,
-     EVENT(Func_02001524)},
+     EVENT(SeaOfTime_GrindFourthRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 13, CONDITION_ALWAYS,
-     EVENT(Func_0200155c)},
+     EVENT(SeaOfTime_GrindFifthRock)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSeaOfTime_Triggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020015cc)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020015ec)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 47, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(SeaOfTime_LeaveByExit4)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(SeaOfTime_LeaveByExit5)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 47, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
-     EVENT(Func_02001594)},
+     EVENT(SeaOfTime_GrindLastRock)},
     {TRIGGER_TABLE_END},
 };
 
-s16 gData_0200257c[] = {
+s16 gSeaOfTime_RedPulseStep[] = {
     1,
 };

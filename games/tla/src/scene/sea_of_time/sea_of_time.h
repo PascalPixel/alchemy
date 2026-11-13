@@ -34,25 +34,25 @@ struct SeaOfTimeEventWork {
   s32 screenEffect;
 };
 
-extern volatile u32 gData_020022c8;
-extern u32 gData_020022cc;
+extern volatile u32 gSeaOfTime_WaveStartFrame;
+extern u32 gSeaOfTime_WaveState;
 extern u32 gSceneState[];
 extern u8 gMapCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 s32 Trig_Cos(s32 angle);
-void Func_02001fb4(void);
+void Event_End(void);
 void FieldCamera_WaitForArrival(void);
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
-s32 Func_0200034c(u32 layer, s32 x, s32 y);
-s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
+s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y);
+s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value);
 s32 Position_FlatDistance(s32 *a, s32 *b);
-void Func_0200141c(s32 x, s32 z, s32 actor);
-void Func_020018a8(s32 x, s32 z, s32 actor);
+void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
+void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

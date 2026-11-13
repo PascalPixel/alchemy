@@ -22,7 +22,7 @@ struct MagmaRockEffectOptions {
   void (*update)();
 };
 
-struct Func_02002fc4_Entry {
+struct MagmaRockCrumblingPillar {
   u16 id;
   u16 flag;
 };
@@ -51,87 +51,87 @@ struct MagmaRockSparkWork {
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
-extern s16 gData_02003d98[];
+extern s16 gMagmaRock_Room1Pillars[];
 
-extern s16 gData_02003dac[];
+extern s16 gMagmaRock_Room2LowerPillars[];
 
-extern s16 gData_02003dd2[];
-extern s16 gData_02003de4[];
-extern s16 gData_02003de8[];
+extern s16 gMagmaRock_Room2MiddlePillars[];
+extern s16 gMagmaRock_Room2UpperPillars[];
+extern s16 gMagmaRock_Room2TopPillars[];
 
-void Func_02000dc0(struct Actor *object);
+void MagmaRock_RollMagmaRock(struct Actor *object);
 
-extern u32 gData_02003d50[];
+extern u32 gMagmaRock_EmberScript[];
 
-void Func_02001738(struct Actor *object);
+void MagmaRock_BurnStatue(struct Actor *object);
 
-extern s16 gData_02003d9e[];
-extern s16 gData_02003db2[];
-extern s16 gData_02003dc4[];
-extern s16 gData_02003dd6[];
-extern s16 gData_02003dee[];
-extern s16 gData_02003e02[];
+extern s16 gMagmaRock_Room1Statues[];
+extern s16 gMagmaRock_Room2LowerStatues[];
+extern s16 gMagmaRock_Room2MiddleStatues[];
+extern s16 gMagmaRock_Room2UpperStatues[];
+extern s16 gMagmaRock_Room2TopStatues[];
+extern s16 gMagmaRock_Room3Statues[];
 
-void Func_02000fcc(struct Actor *object);
+void MagmaRock_FlashStatue(struct Actor *object);
 
-void Func_02003a54(struct Actor *object, s32 a);
+void Actor_SelectAnimation(struct Actor *object, s32 a);
 
-void Func_02003820(s32 x, s32 y, s32 z, s32 count);
-void Func_020038dc(void);
-void Func_02003998(void);
+void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count);
+void MagmaRock_StartFallingRocks(void);
+void MagmaRock_EndFallingRocks(void);
 
-void Func_020014bc(s32 mode, s32 cue);
+void MagmaRock_BurstStatue(s32 mode, s32 cue);
 
 void Func_02003b3c(s32 id);
 
-void Func_020036f8(s32 heightOffset, s32 layer, s32 id);
+void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id);
 
 struct Actor *Actor_FindInCell(s32 *position, struct Actor *self);
 
-extern s16 gData_02003dba[];
+extern s16 gMagmaRock_CrumblingPillars[];
 
 void Func_02003c0c();
 
-void Func_02002d08(const u16 *table);
+void MagmaRock_RestoreCrumblingPillars(const u16 *table);
 
 void Func_02003bec();
 void Func_02003bf4();
 void Func_02003be4();
 s32 Func_02003c04(struct Actor *object);
-s32 Func_02003b8c(void);
+s32 Field_TryJumpForward(void);
 struct Actor *Func_02003c2c(s32 *position, s32 flags);
 
-void Func_020034ac(s32 spread);
-void Func_02003784(s32 a, s32 b);
-extern u32 gData_02003e0c[];
+void MagmaRock_SpawnRubble(s32 spread);
+void MagmaRock_SetLeaderCellShape(s32 a, s32 b);
+extern u32 gMagmaRock_RubbleScript[];
 
 struct ResourceEntry *Func_02003bd4(void *sprite, struct ResourceEntry *last);
 
-extern u32 gData_02003e3c[];
+extern u32 gMagmaRock_DustScript[];
 
-void Func_02001444(void);
+void MagmaRock_FireStatue(void);
 
-void Func_0200148c(void);
-void Func_02001b24(void);
+void MagmaRock_IgniteStatue(void);
+void MagmaRock_ClearSlideFlag(void);
 
-void Func_02001b44(void);
+void MagmaRock_SlideDown(void);
 
-void Func_02001ba4(void);
-void Func_02001bb0(void);
+void MagmaRock_ResolveBeforeBurst(void);
+void MagmaRock_CheckCrumblingPillars(void);
 
-void Func_02001bc0(void);
+void MagmaRock_SetLedgeBehavior(void);
 
-void Func_02001be0(void);
-void Func_02001c00(void);
-void Func_02001e08(void);
-void Func_02001edc(void);
-void Func_02001fb0(void);
-void Func_02001fd4(void);
-void Func_02001ffc(void);
+void MagmaRock_ClearLedgeBehavior(void);
+void MagmaRock_AmplifyBurst(void);
+void MagmaRock_PushPillarEast(void);
+void MagmaRock_PushPillarWest(void);
+void MagmaRock_GrowVine1(void);
+void MagmaRock_GrowVine2(void);
+void MagmaRock_GrowVine3(void);
 
-extern u32 gData_02003c5c[];
-extern u32 gData_02003c98[];
-extern u32 gData_02003cd4[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 

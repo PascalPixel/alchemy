@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global Data_02001aa8
-Data_02001aa8:
+	.global gTreasureIsle_SavedBgColors
+gTreasureIsle_SavedBgColors:
 	.space 0x00000020
-	.global gData_02001ac8
-gData_02001ac8:
+	.global gTreasureIsle_BgColors
+gTreasureIsle_BgColors:
 	.space 0x00000020
-	.global Data_02001ae8
-Data_02001ae8:
+	.global gTreasureIsle_SavedObjColors
+gTreasureIsle_SavedObjColors:
 	.space 0x00000020
-	.global Data_02001b08
-Data_02001b08:
+	.global gTreasureIsle_ObjColors
+gTreasureIsle_ObjColors:

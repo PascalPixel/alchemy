@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x6ab, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room.c ----
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"
 #include "types.h"
@@ -552,7 +551,6 @@ void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s0ae4.c ----
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
@@ -1062,7 +1060,6 @@ void Func_020013e4(struct Actor *object) {
     Actor_Release(object);
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s1424.c ----
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
@@ -1188,7 +1185,6 @@ extern u8 gInventorySnapshot[];
 DEFINE_RIDE_UPDATE_CARRIED(Func_020015ec, RideWork__s1424, Func_02001528,
                            Func_0200158c)
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/spawn.c ----
 extern const u8 gData_02004744[];
 
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
@@ -1280,8 +1276,6 @@ DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
 
 DEFINE_FUNC_0200196C_97(Func_0200196c, Func_020015ec)
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s19b4.c ----
-
 void Func_020019b4(s32 *position, s32 speed, s32 flag) {
   struct Actor *object =
       FieldActor_Create(366, position[0], position[1], position[2]);
@@ -1319,7 +1313,6 @@ extern const u8 gData_02004744[];
 DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001b38, Import_ActorSelectAnimation,
                             gData_02004744)
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s1b78.c ----
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 void Func_02001a9c();
 /* VIEW(s1b78): routine Func_02001b38 as void Func_02001b38(struct Actor
@@ -1352,7 +1345,6 @@ void Func_02001b78(s32 *position, s32 base) {
   }
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s1bf8.c ----
 /* VIEW(s1bf8): tag struct Actor as struct Actor__s1bf8; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
  * compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1601:
@@ -1423,7 +1415,6 @@ DEFINE_BEAM_DRAW_TARGETS(Func_02001bf8, Func_02001b78__s1bf8, Func_0200196c,
                          Func_020019fc, Func_020019b4, Func_02001780)
 #undef IWRAM
 
-// ---- games/tla/src/scene/mars_lighthouse_star_room/s1d7c.c ----
 struct RideAnimation {
   u8 unk00[0x10];
   u8 value10;

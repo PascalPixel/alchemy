@@ -10,18 +10,19 @@ struct Actor;
 struct GlowSprite;
 struct GlowState;
 
-void Func_0200260c(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_020026f4(void);
-void VenusLighthouseEntrance_StopSparks(void);
-extern u32 gData_0200b000[];
+void VenusLighthouseEntrance_EmitDust(struct Actor *object, s32 x, s32 y,
+                                      s32 z);
+void VenusLighthouseEntrance_StartDust(void);
+void VenusLighthouseEntrance_StopDust(void);
+extern u32 gVenusLighthouseEntrance_BirdLands[];
 
 void EffectSprite_DrawAtWorldPosition(struct GlowSprite *sprite,
                                       struct GlowState *state);
 
-void Func_02001fd0(void);
-void Func_0200258c(void);
+void VenusLighthouseEntrance_UpdateBlastColumn(void);
+void VenusLighthouseEntrance_UpdateDust(void);
 
-void Func_02000440(void);
+void VenusLighthouseEntrance_BirdsFlyOff(void);
 
 void VenusLighthouseEntrance_ThievesAttack(void);
 

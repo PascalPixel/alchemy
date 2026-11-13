@@ -16,16 +16,6 @@ struct EventWork184 {
   s16 value;
 };
 
-/// The head of a mover's slot, as Func_02004224 fills it.
-struct TrialRoadMover {
-  s16 id;
-  s16 value;
-  s16 unk04;
-  s16 unk06;
-  s16 unk08;
-  s16 unk0a;
-};
-
 /// A view of the map work's byte 23.
 struct MapWorkByte23 {
   u8 unk00[0x17];
@@ -56,13 +46,6 @@ struct TrialRoadDeal {
   s16 field16[2];
   s16 field1a;
   s16 field1c;
-};
-
-struct TrialRoadGauge {
-  u16 handle;
-  u16 field02;
-  u8 unk004[0x1c0];
-  void *buffer;
 };
 
 /// The sprite's priority bits, read as the byte that holds them.
@@ -126,138 +109,152 @@ struct TrialRoadControl {
 
 s32 TrialRoad_IsMirrored(void);
 
-void Func_02000418(void);
+void TrialRoad_BlockCellUnder(s32 id);
+void TrialRoad_UnblockCellUnder(s32 id);
+void TrialRoad_AddPillarTop(s32 id);
+void TrialRoad_SetPillarTopLift(s32 id, s32 value);
+void TrialRoad_OpenSpoutCell(s32 id);
+void TrialRoad_TrackLeaderOnPillars(void);
+void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b);
+void TrialRoad_PoundPillar(s32 id, s32 a, s32 b);
+void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side);
+void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis);
+void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame);
+void TrialRoad_CheckCrumblingStep(const u16 *table);
+void TrialRoad_CrumblePillar(const void *data, s32 a);
 
-void Func_02000768(void);
+void TrialRoad_ClearGiveUpAsked(void);
 
-void Func_020007e8(void);
+void TrialRoad_BlowBushOffLonePillar(void);
 
-void Func_020008a4(void);
+void TrialRoad_JumpAcrossGap(void);
 
-void Func_02000c34(void);
+void TrialRoad_JumpMeltedPuddle(void);
 
-void Func_02000c48(void);
+void TrialRoad_StepOnPillar18(void);
 
-void Func_02000c5c(void);
+void TrialRoad_StepOnPillar19(void);
 
-void Func_02000c70(void);
+void TrialRoad_StepOnPillar20(void);
 
-void Func_02000c84(void);
+void TrialRoad_StepOnPillar21(void);
 
-void Func_02000cc0(void);
+void TrialRoad_LandOnPillar(void);
 
-void Func_0200106c(void);
+void TrialRoad_CheckCrumblingPillars(void);
 
-void Func_02001080(void);
+void TrialRoad_PushLog16West(void);
 
-void Func_02001090(void);
+void TrialRoad_PushLog16East(void);
 
-void Func_020010a4(void);
+void TrialRoad_PushLog17West(void);
 
-void Func_020010b4(void);
+void TrialRoad_PushLog17East(void);
 
-void Func_020010c8(void);
+void TrialRoad_PushLog18North(void);
 
-void Func_020010d8(void);
+void TrialRoad_PushLog18South(void);
 
-void Func_020011c0(void);
+void TrialRoad_PushLog18SouthFromRow52(void);
 
-void Func_020011dc(void);
+void TrialRoad_StartSand(void);
 
-void Func_020011f8(void);
+void TrialRoad_EndSand(void);
 
-void Func_020014e4(void);
+void TrialRoad_RevealVine(void);
 
-void Func_020015a8(void);
+void TrialRoad_DriftWithStream(void);
 
-void Func_020015b8(void);
+void TrialRoad_LiftCaveRock(void);
 
-void Func_020015d8(void);
+void TrialRoad_CutBushes(void);
 
-void Func_0200163c(void);
+void TrialRoad_CutMadPlantBushes(void);
 
-void Func_020016c8(void);
+void TrialRoad_RevealPoolTiles(void);
 
-void Func_020017e0(void);
+void TrialRoad_HidePoolTiles(void);
 
-extern struct ActorPlacement gData_02006484[];
-extern struct ActorPlacement gData_020065d4[];
-extern struct ActorPlacement gData_02006754[];
-extern struct ActorPlacement gData_020068bc[];
-extern struct ActorPlacement gData_02006a3c[];
-extern struct ActorPlacement gData_02006b2c[];
-extern struct ActorPlacement gData_02006c4c[];
-extern struct ActorPlacement gData_02006d9c[];
-extern struct Trigger gData_02007050[];
-extern struct Trigger gData_02007200[];
-extern struct Trigger gData_020073bc[];
-extern struct Trigger gData_0200756c[];
-extern struct Trigger gData_02007740[];
-extern struct Trigger gData_0200789c[];
-extern struct Trigger gData_02007a64[];
-extern struct Trigger gData_02007bcc[];
+void TrialRoad_ChallengeMoapa(void);
+
+extern struct ActorPlacement gTrialRoad_PillarStagePlacements[];
+extern struct ActorPlacement gTrialRoad_TorchStagePlacements[];
+extern struct ActorPlacement gTrialRoad_BushPillarStagePlacements[];
+extern struct ActorPlacement gTrialRoad_PoundStagePlacements[];
+extern struct ActorPlacement gTrialRoad_CrumblingStagePlacements[];
+extern struct ActorPlacement gTrialRoad_LogStagePlacements[];
+extern struct ActorPlacement gTrialRoad_FountainStagePlacements[];
+extern struct ActorPlacement gTrialRoad_SandStagePlacements[];
+extern struct Trigger gTrialRoad_PillarStageTriggers[];
+extern struct Trigger gTrialRoad_TorchStageTriggers[];
+extern struct Trigger gTrialRoad_BushPillarStageTriggers[];
+extern struct Trigger gTrialRoad_PoundStageTriggers[];
+extern struct Trigger gTrialRoad_CrumblingStageTriggers[];
+extern struct Trigger gTrialRoad_LogStageTriggers[];
+extern struct Trigger gTrialRoad_FountainStageTriggers[];
+extern struct Trigger gTrialRoad_SandStageTriggers[];
 
 void InventorySnapshot_Restore();
 
 void TrialRoad_Idle(void);
 
-s32 Func_020000fc(s32 fallback);
+s32 TrialRoad_RivalIsAhead(s32 fallback);
 
 /// Func_080af0e4 through its far call: empties an inventory slot and returns 2.
 s32 Func_02005870(s32 owner, s32 slot);
 
-extern s16 gData_02007734[];
+extern s16 gTrialRoad_CrumblingPillars[];
 
 void TrialRoad_ReachPeakFirst(void);
 void TrialRoad_ReachPeakSecond(void);
 
-void Func_02000924(s32 id);
+void TrialRoad_LowerPillar(s32 id);
 
-void Func_0200095c(s32 id);
+void TrialRoad_RaisePillar(s32 id);
 
-void Func_02000d70(void);
+void TrialRoad_BlockLogs(void);
 
-void Func_02004188(s32 a, s32 b);
+void TrialRoad_StartFountains(s32 a, s32 b);
 
 void Func_02005a08(void);
 void Func_02005a10(s32 a, s32 b, s32 c);
 
-extern u32 gData_02005b44[];
+extern u32 gTrialRoad_GaspHopScript[];
 
-extern u16 gData_02007e28[];
+extern u16 gTrialRoad_PaletteCycleColors[];
 
 void PaletteCycle_StepAt(void);
-void Func_02001754();
+void TrialRoad_OpenSummitGate();
 void TrialRoad_PlaceMoapaAtPeak(void);
 void TrialRoad_BeatMoapa(void);
 void TrialRoad_LoseToMoapa(void);
 void TrialRoad_ShowTraps(void);
 
-void Func_02001dd0(void);
+void TrialRoad_SetUpCave(void);
 
-void Func_02001eb0(void);
+void TrialRoad_SetUpPoolRoom(void);
 
-extern u32 gData_02005b84[];
-s32 Func_020056e8(void);
-void Func_020056c4(s32 a);
+extern u32 gTrialRoad_RivalRecordings[];
+s32 TrialRoad_RivalIsWaiting(void);
+void TrialRoad_PlayRivalRecording(s32 a);
 void TrialRoad_DealStageOrder(u32 seed);
 
 void Func_02005828(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-void Func_020055c4(s32 a, s32 b);
+void TrialRoad_ShowProgress(s32 a, s32 b);
 
-void Func_02000218(s32 side, s32 phase);
+void TrialRoad_OpenLeaderDoor(s32 side, s32 phase);
 
 void Import_FieldCameraWaitForArrival(void);
 
-extern u32 gData_02005c88[];
+extern u32 gTrialRoad_LeftKnightEntersScript[];
 
-extern u32 gData_02005be8[];
+extern u32 gTrialRoad_RightKnightEntersScript[];
 
-extern u32 gData_02005d28[];
-extern u32 gData_02005e40[];
+extern u32 gTrialRoad_LeftKnightToChestScript[];
+extern u32 gTrialRoad_RightKnightToChestsScript[];
 
-extern u32 gData_02005ed4[];
+extern u32 gTrialRoad_RightKnightLeavesScript[];
 
 void Import_DecompressTaggedLz(const void *source, void *destination);
 s32 Func_02005a18(struct Actor *object);
@@ -266,30 +263,30 @@ void Func_02005958(s32 id);
 s32 Func_02005a20(s32 layer, s32 shape, s32 height);
 struct Actor *Func_02005a28(s32 *position, s32 mode);
 
-void Func_02004a94(s32 value);
-void Func_02004d6c(s32 offset, s32 layer);
-void Func_02004bc8(void);
-void Func_02004ce0(s32 a, s32 b, s32 c);
+void TrialRoad_SpawnRubble(s32 value);
+void TrialRoad_SetLeaderCellShape(s32 offset, s32 layer);
+void TrialRoad_SpawnDustRing(void);
+void TrialRoad_SetActorCellShape(s32 a, s32 b, s32 c);
 
 u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
-void Func_02004a14(union FieldObject *object);
+void TrialRoad_DriftRubble(union FieldObject *object);
 
 void Actor_StartIdle(struct Actor *object);
 
-extern const u16 Data_020062b4[];
+extern const u16 gTrialRoad_ProgressPalette[];
 
-void Func_02004ddc(void);
-void Func_02001904(void);
-void Func_02001974(void);
-void Func_02001a70(void);
-void Func_02001afc(void);
-void Func_02001bdc(void);
-void Func_02001bec(void);
-void Func_02001c6c(void);
+void TrialRoad_MoveRival(void);
+void TrialRoad_SetUpPillarStage(void);
+void TrialRoad_SetUpTorchStage(void);
+void TrialRoad_SetUpBushPillarStage(void);
+void TrialRoad_SetUpPoundStage(void);
+void TrialRoad_SetUpCrumblingStage(void);
+void TrialRoad_SetUpLogStage(void);
+void TrialRoad_SetUpFountainStage(void);
 
-void Func_02001d8c(void);
+void TrialRoad_SetUpSandStage(void);
 
-void Func_02003da0(void);
+void TrialRoad_UpdateFountains(void);
 
 #endif

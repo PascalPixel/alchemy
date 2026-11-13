@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x659, in ROM order.
+/// Madra's houses: the inn, the shops, the elder's home with the Black Crystal
+/// on its mantel, the jail where Piers is questioned (entrance 20), and, as a
+/// second scene, the left cavern home. The old couple trade Char the Mars
+/// Djinni for the Healing Fungus, and on the return with Piers the elder's
+/// household welcomes him home.
 
 #include "shared/tables.h"
 #include "battle.h"
@@ -293,7 +297,9 @@ const struct Trigger *Scene_GetEvents(void) {
   return gMadraInteriors_TriggersBeforeRaid;
 }
 
-void Func_02000534(void) {
+/// The Black Crystal (item 242) sits on the elder's mantel until it is stolen
+/// (flag 0x8ab), after which its actor is put out of sight.
+void MadraInteriors_PlaceBlackCrystal(void) {
   if (Event_GetFlag(0x8ab)) {
     Actor_SetPosition(26, PIXELS(888), PIXELS(8));
   } else {
@@ -302,15 +308,16 @@ void Func_02000534(void) {
   }
 }
 
-static inline void ActorPlaceFacing(s32 actor, s32 x, s32 z, u16 angle) {
-  Actor_SetPositionAndFacing(actor, x, z, angle);
+/// Places an actor facing an angle, the angle taken as the u16 an actor's
+/// facing is; the jail's four placements, named by us.
+static inline void MadraInteriors_PlaceFacing(s32 actorId, s32 x, s32 z,
+                                              u16 facing) {
+  Actor_SetPositionAndFacing(actorId, x, z, facing);
 }
 
-void Func_02000570(void) {
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionAndAngleWithTerrain
-   * forwarded through ActorPlaceFacing; as direct calls to
-   * Actor_SetHorizontalPositionAndAngleWithTerrain, 18 of 72 instructions
-   * differ in tla-en. */
+/// The jail on entrance 20: Piers' interrogation the first time, then his
+/// interrogators by the story flags.
+void MadraInteriors_SetUpJail(void) {
   if (!Event_GetFlag(0x8ab)) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x911)) {
@@ -320,17 +327,17 @@ void Func_02000570(void) {
       Actor_SetPosition(10, 0, 0);
     }
   } else if (Event_GetFlag(0x8ff)) {
-    ActorPlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHEAST);
-    ActorPlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
+    MadraInteriors_PlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHEAST);
+    MadraInteriors_PlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
     Actor_SetPosition(8, 0, 0);
   } else {
-    ActorPlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHWEST);
-    ActorPlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
+    MadraInteriors_PlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHWEST);
+    MadraInteriors_PlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
     Actor_SetPosition(8, 0, 0);
   }
 }
 
-extern u32 gData_020033c8[];
+extern u32 gMadraInteriors_InterrogatorsLeave[];
 void FieldCamera_WaitForArrival();
 void BattleEffect_LoadActionEffectResources();
 void FieldPsynergy_SetupActorPair();
@@ -361,7 +368,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gMainRoutineWork.entrance == 20)
-    Func_02000570();
+    MadraInteriors_SetUpJail();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2) {
     if (Event_GetFlag(0x8ab)) {
       Actor_SetPosition(10, 0, 0);
@@ -374,7 +381,7 @@ s32 Scene_Initialize(void) {
       ((struct FieldSprite *)Actor_Get(10)->sprite)->unk19 = 1;
     }
   }
-  Func_02000534();
+  MadraInteriors_PlaceBlackCrystal();
   if (Event_GetFlag(0x8ff))
     FieldActor_SetSpriteColor(Actor_Get(33), 2);
   else
@@ -384,7 +391,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-s32 Func_020007ac(struct Actor *object) {
+/// Tips an actor's sprite a thirty-second of a turn, a frame of the
+/// interrogator toppling over (gMadraInteriors_InterrogatorTopples).
+s32 MadraInteriors_TiltSprite(struct Actor *object) {
   struct FieldSprite *sprite;
 
   sprite = object->sprite;
@@ -393,7 +402,8 @@ s32 Func_020007ac(struct Actor *object) {
   return 0;
 }
 
-s32 Func_020007c8(struct Actor *object) {
+/// Unused: stands an actor's sprite upright again; no script calls it.
+UNUSED s32 MadraInteriors_StraightenSprite(struct Actor *object) {
   struct FieldSprite *sprite;
 
   sprite = object->sprite;
@@ -512,7 +522,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_FaceActor(10, 7, 0);
   object2 = Actor_Get(9);
   Actor_SetSpriteFlags(object2, 0);
-  Actor_SetScript(9, gData_0200349c);
+  Actor_SetScript(9, gMadraInteriors_InterrogatorLifted);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
@@ -528,7 +538,7 @@ void MadraInteriors_InterrogatePiers(void) {
   object6 = Actor_Get(9);
   object6->actionFlags &= 254;
   Actor_SetDestinationOffset(9, -8, 0);
-  Actor_SetScript(9, gData_02003418);
+  Actor_SetScript(9, gMadraInteriors_InterrogatorTopples);
   FieldActor_RefreshSelectorById(9);
   Event_PlaySound(127);
   FieldEvent_Wait(60);
@@ -567,7 +577,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   object11 = Actor_Get(9);
   object11->actionFlags = (object11->actionFlags | 1);
-  Actor_SetScript(9, gData_020033c8);
+  Actor_SetScript(9, gMadraInteriors_InterrogatorsLeave);
   FieldActor_WatchAndSetScript(4, 9);
   FieldActor_WatchAndSetScript(11, 9);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
@@ -592,7 +602,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   object12 = Actor_Get(10);
   object12->actionFlags |= 1;
-  Actor_SetScript(10, gData_020033c8);
+  Actor_SetScript(10, gMadraInteriors_InterrogatorsLeave);
   FieldEvent_Wait(40);
   FieldActor_Stop(4);
   FieldActor_Stop(11);
@@ -611,16 +621,16 @@ void MadraInteriors_InterrogatePiers(void) {
   Event_OpenMessage(11, 0);
   result13 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result13 != 0)
-    goto L_02008e40;
+    goto answeredNo;
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  goto L_02008e64;
-L_02008e40:
+  goto answered;
+answeredNo:
   Actor_SetAnimationAndWait(11, 4);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   FieldEvent_ShowMessageThenWait(11, 0, 10);
-L_02008e64:
+answered:
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(11, 0, 10);
@@ -630,10 +640,10 @@ L_02008e64:
   Actor_SetAnimation(11, 2);
   object14 = Actor_Get(4);
   if (object14 == 0)
-    goto L_02008eb2;
+    goto piersLeft;
   Actor_SetDestination(11, *(s16 *)((u8 *)object14 + 10),
                        *(s16 *)((u8 *)object14 + 18));
-L_02008eb2:
+piersLeft:
   FieldActor_WaitForMoveById(11);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0x911);
@@ -683,7 +693,9 @@ void MadraInteriors_MindReadPiers(void) {
   return;
 }
 
-void Func_02000fe0(void) {
+/// Unused: Piers' Psynergy at actor 8 alone, as the interrogation plays it;
+/// nothing calls it.
+UNUSED void MadraInteriors_PiersUsesPsynergy(void) {
   BattleEffect_LoadActionEffectResources(24, 1);
   FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
@@ -693,8 +705,8 @@ void Func_02000fe0(void) {
   return;
 }
 
-extern u32 gData_02001f18[];
-extern u32 gData_02001f4c[];
+extern u32 gMadraInteriors_WifeWalksToBackRoom[];
+extern u32 gMadraInteriors_LeaderStepsAside[];
 
 /// The couple are given the Healing Fungus from the Gondowan Cliffs, his
 /// favourite, and trade the party Char the Mars Djinni for it.
@@ -755,17 +767,17 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_SetSpeed(10, 0x8000, 0x4000);
   Actor_SetSpeed(11, 0x8000, 0x4000);
   Actor_SetSpeed(25, 0x8000, 0x4000);
-  Actor_SetScript(11, (s32)gData_02001f18);
-  Actor_SetScript(4, (s32)gData_02001f4c);
+  Actor_SetScript(11, (s32)gMadraInteriors_WifeWalksToBackRoom);
+  Actor_SetScript(4, (s32)gMadraInteriors_LeaderStepsAside);
   FieldEvent_Wait(60);
-  Actor_SetScript(10, (s32)gData_02001f90);
+  Actor_SetScript(10, (s32)gMadraInteriors_OldManWalksToBackRoom);
   FieldActor_RefreshSelectorById(10);
   FieldEvent_Wait(120);
-  Actor_SetScript(11, (s32)gData_02001fc4);
+  Actor_SetScript(11, (s32)gMadraInteriors_WifeComesBack);
   FieldActor_WatchAndSetScript(4, 11);
   FieldEvent_Wait(60);
-  Actor_SetScript(10, (s32)gData_02002054);
-  Actor_SetScript(25, (s32)gData_020020e4);
+  Actor_SetScript(10, (s32)gMadraInteriors_OldManComesBack);
+  Actor_SetScript(25, (s32)gMadraInteriors_CharFollows);
   FieldActor_RefreshSelectorById(10);
   FieldActor_RefreshSelectorById(11);
   FieldActor_RefreshSelectorById(25);
@@ -831,15 +843,26 @@ void MadraInteriors_GiveLaughingFungus(void) {
   return;
 }
 
+/// A party member runs into the leader and vanishes, as the party gathers up
+/// to leave; the four sites of the welcome-home event, named by us.
+static inline void MadraInteriors_WalkIntoLeader(s32 actorId) {
+  struct Actor *leader;
+
+  Actor_SetSpeed(actorId, 0x13333, 0x9999);
+  Actor_SetAnimation(actorId, 2);
+  leader = Actor_Get(4);
+  if (leader != NULL)
+    Actor_SetDestination(actorId, ((s16 *)&leader->x)[1],
+                         ((s16 *)&leader->z)[1]);
+  FieldActor_WaitForMoveById(actorId);
+  Actor_SetPosition(actorId, 0, 0);
+}
+
 /// On the return with Piers, the elder's household welcomes him home.
 /// "Felix! You're back!"
 void MadraInteriors_WelcomePiersHome(void) {
   s32 result0;
   s32 result1;
-  struct Actor *object2;
-  struct Actor *object3;
-  struct Actor *object4;
-  struct Actor *object5;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -891,7 +914,7 @@ void MadraInteriors_WelcomePiersHome(void) {
   Event_OpenMessage(28, 0);
   result0 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result0 != 0)
-    goto L_02009690;
+    goto answeredNo;
   Actor_ShowEmote(27, 0x108, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
@@ -901,8 +924,8 @@ void MadraInteriors_WelcomePiersHome(void) {
   Actor_ShowEmote(15, 0x108, 30);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
-  goto L_02009700;
-L_02009690:
+  goto answered;
+answeredNo:
   Actor_ShowEmote(15, 0x102, 30);
   Func_02001ef8();
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
@@ -915,7 +938,7 @@ L_02009690:
   Actor_SetAttachedEffect(15, 0x102);
   FieldEvent_Wait(50);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
-L_02009700:
+answered:
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(31, 3);
@@ -927,12 +950,12 @@ L_02009700:
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   result1 = Event_GetFlag(0x981);
   if (result1 == 0)
-    goto L_02009760;
-  Func_02001910();
-  goto L_02009764;
-L_02009760:
-  Func_02001a20();
-L_02009764:
+    goto firstGoodbye;
+  MadraInteriors_SayGoodbyeAgain();
+  goto saidGoodbye;
+firstGoodbye:
+  MadraInteriors_AskToStayLonger();
+saidGoodbye:
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(20);
@@ -951,52 +974,18 @@ L_02009764:
   Actor_SetAnimation(7, 3);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(31, 0x13333, 0x9999);
-  Actor_SetAnimation(31, 2);
-  object2 = Actor_Get(4);
-  if (object2 == 0)
-    goto L_02009832;
-  Actor_SetDestination(31, *(s16 *)((u8 *)object2 + 10),
-                       *(s16 *)((u8 *)object2 + 18));
-L_02009832:
-  FieldActor_WaitForMoveById(31);
-  Actor_SetPosition(31, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
-  Actor_SetAnimation(6, 2);
-  object3 = Actor_Get(4);
-  if (object3 == 0)
-    goto L_02009870;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object3 + 10),
-                       *(s16 *)((u8 *)object3 + 18));
-L_02009870:
-  FieldActor_WaitForMoveById(6);
-  Actor_SetPosition(6, 0, 0);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
-  Actor_SetAnimation(7, 2);
-  object4 = Actor_Get(4);
-  if (object4 == 0)
-    goto L_020098ae;
-  Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                       *(s16 *)((u8 *)object4 + 18));
-L_020098ae:
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
-  Actor_SetAnimation(5, 2);
-  object5 = Actor_Get(4);
-  if (object5 == 0)
-    goto L_020098ec;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                       *(s16 *)((u8 *)object5 + 18));
-L_020098ec:
-  FieldActor_WaitForMoveById(5);
-  Actor_SetPosition(5, 0, 0);
+  MadraInteriors_WalkIntoLeader(31);
+  MadraInteriors_WalkIntoLeader(6);
+  MadraInteriors_WalkIntoLeader(7);
+  MadraInteriors_WalkIntoLeader(5);
   Event_SetFlag(0x989);
   Event_End();
   return;
 }
 
-void Func_02001910(void) {
+/// Leaving a second time, the household asks whether the party must go so soon.
+/// "Ah, so you'll be leaving again, will you?"
+void MadraInteriors_SayGoodbyeAgain(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors127);
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceEachOther(4, 31, 0);
@@ -1030,7 +1019,11 @@ void Func_02001910(void) {
   return;
 }
 
-void Func_02001a20(void) {
+/// The first farewell: the household asks the party to stay, and Piers explains
+/// why he cannot.
+/// "If you've already recovered your jewel, why don't you stay here for a bit
+/// longer?"
+void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors128);
   Actor_SetAnimationAndWait(17, 3);
   FieldEvent_Wait(20);
@@ -1120,13 +1113,19 @@ void Func_02001a20(void) {
 #include "objcmd.h"
 
 // clang-format off
-u32 gData_02001f18[] = {
-    39, 2, 48, 0x1640000, 0x480000, 1,
-    4, 0x1440000, 0, 0x490000, 1, 3,
-    17,
+/// The old couple's walks into their back room and out again, Char hopping
+/// after them, as they fetch the Djinni for the Healing Fungus.
+u32 gMadraInteriors_WifeWalksToBackRoom[] = {
+    SC_ARG(2),
+    SC_MOVE_XZ(PIXELS(356), PIXELS(72)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(324), 0, PIXELS(73)),
+    SC_SYNC,
+    SC_CMD_03,
+    SC_END,
 };
 
-u32 gData_02001f4c[] = {
+u32 gMadraInteriors_LeaderStepsAside[] = {
     SC_ARG(2),
     SC_MOVE_XZ(PIXELS(339), PIXELS(111)),
     SC_SYNC,
@@ -1137,17 +1136,21 @@ u32 gData_02001f4c[] = {
     SC_END,
 };
 
-u32 gData_02001f90[] = {
-    39, 2, 48, 0x1640000, 0x480000, 1,
-    4, 0x1440000, 0, 0x490000, 1, 3,
-    17,
+u32 gMadraInteriors_OldManWalksToBackRoom[] = {
+    SC_ARG(2),
+    SC_MOVE_XZ(PIXELS(356), PIXELS(72)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(324), 0, PIXELS(73)),
+    SC_SYNC,
+    SC_CMD_03,
+    SC_END,
 };
 
-DEFINE_G_DATA_02001FC4(gData_02001fc4, 109)
+DEFINE_G_DATA_02001FC4(gMadraInteriors_WifeComesBack, 109)
 
-DEFINE_G_DATA_02001FC4(gData_02002054, 97)
+DEFINE_G_DATA_02001FC4(gMadraInteriors_OldManComesBack, 97)
 
-u32 gData_020020e4[] = {
+u32 gMadraInteriors_CharFollows[] = {
     SC_ARG(2),
     SC_POSITION(PIXELS(327), PIXELS(24), PIXELS(71)),
     SC_SET(SW_FACING, FACING_EAST),
@@ -1527,29 +1530,32 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {TRIGGER_TABLE_END},
 };
 
-DEFINE_G_DATA_020033C8(gData_020033c8, 408, 872, 904, 408, 920)
+/// The interrogators walk out of the jail once Piers has been questioned.
+DEFINE_G_DATA_020033C8(gMadraInteriors_InterrogatorsLeave, 408, 872, 904, 408, 920)
 
-s32 gData_02003418[] = {
-    SC_CALL(Func_020007ac),
+/// The interrogator topples over, a quarter turn in eight frames.
+s32 gMadraInteriors_InterrogatorTopples[] = {
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
-    SC_CALL(Func_020007ac),
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
-    SC_CALL(Func_020007ac),
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
-    SC_CALL(Func_020007ac),
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
-    SC_CALL(Func_020007ac),
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
-    SC_CALL(Func_020007ac),
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
-    SC_CALL(Func_020007ac),
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
-    SC_CALL(Func_020007ac),
+    SC_CALL(MadraInteriors_TiltSprite),
     SC_WAIT(1),
     SC_END,
 };
 
-s32 gData_0200349c[] = {
+/// Piers' Psynergy lifts the interrogator and holds him bobbing in the air.
+s32 gMadraInteriors_InterrogatorLifted[] = {
     SC_SET(SW_MOTION, 0),
     SC_WAIT(100),
     SC_WAIT(36),

@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x697, in ROM order.
+/// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
+/// torches, logs, spouts and sand the eight rooms are built from.
 
 #include "../shared/trial_road.h"
 #include "event_inline.h"
@@ -15,7 +16,7 @@
 #include "module/scene/trial_road.h"
 #include "module/window/window.h"
 
-#define DEFINE_FUNC_02000218(name, n1, n2, n3, n4, n5, n6)                     \
+#define DEFINE_TRIAL_ROAD_OPEN_DOOR(name, n1, n2, n3, n4, n5, n6)              \
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
       if (phase == 3)                                                          \
@@ -30,9 +31,9 @@
     }                                                                          \
   }
 
-DEFINE_FUNC_02000218(Func_02000218, 23, 57, 0, 9, 43, 1)
+DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenLeaderDoor, 23, 57, 0, 9, 43, 1)
 
-DEFINE_FUNC_02000218(Func_020002a4, 28, 62, 1, 4, 38, 0)
+DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -44,45 +45,41 @@ DEFINE_FUNC_02000218(Func_020002a4, 28, 62, 1, 4, 38, 0)
 /// A step at a stage's foot asks; giving up takes the party back to the start.
 /// ★ Named from the game: "Do you want to give up?" (MsgTrialRoadGiveUpPrompt)
 s32 TrialRoad_OfferToGiveUp(void) {
-  s32 t1, t2, t9, v_r5, v_r6;
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  s32 message;
 
-  t1 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
-  v_r5 = t1;
-  v_r6 = (s32)Ram_HeapSlots->eventWork;
-  t2 = Event_GetFlag(0x9ff);
-  if (t2 == 0)
-    goto L_02008400;
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
-                      (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
-                      (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
-  Event_PlaySound(229);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
-  FieldMessage_Show(v_r5, 13);
-  v_r5 = (v_r5 + 1);
-  FIELD_AT((v_r6 + 0xcb0), s16, 0) = v_r5;
-  FIELD_AT((v_r6 + 0xcb2), s16, 0) = 4;
-  FIELD_AT((v_r6 + 0xcb4), s16, 0) = 1;
-  t9 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1);
-  if (t9 != 0)
-    goto L_02008400;
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Event_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
-  Event_Wait(10);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x109, 0);
-  Event_Wait(30);
-  InventorySnapshot_Restore();
-  Import_EventSetExitRequest(9);
-  return 1;
-L_02008400:
+  if (Event_GetFlag(0x9ff)) {
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
+                        ((leader->x >> 20) << 4) + 8,
+                        ((leader->z >> 20) << 4) + 8);
+    Event_PlaySound(229);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+    message = (s32)&MsgTrialRoadGiveUpPrompt;
+    FieldMessage_Show(message, 13);
+    work->unkcb0 = message + 1;
+    work->unkcb2 = 4;
+    work->unkcb4 = 1;
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) ==
+        0) {
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+      Event_Wait(10);
+      Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
+      Event_Wait(10);
+      FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x109, 0);
+      Event_Wait(30);
+      InventorySnapshot_Restore();
+      Import_EventSetExitRequest(9);
+      return 1;
+    }
+  }
   Event_SetFlag(0x281);
   return 0;
 }
 
-void Func_02000418(void) { GameFlag_ClearBit(0x281); }
+void TrialRoad_ClearGiveUpAsked(void) { GameFlag_ClearBit(0x281); }
 
 /// The leader reaches the door at a stage's end: the blue chests open (flags
 /// 645 and 646), the second only when the rival arrived first and twice the
@@ -98,7 +95,7 @@ void TrialRoad_OpenChests(void) {
                       ((leader->x >> 20) << 4) + 8,
                       ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();
-  found = Func_020000fc(0);
+  found = TrialRoad_RivalIsAhead(0);
   if (found != 0)
     Event_SetFlag(state->field16[0] + 897);
   Event_PlaySound(124);
@@ -124,9 +121,9 @@ void TrialRoad_OpenChests(void) {
 /// Puts an item in the chest: "{protagonist} put {actor}'s {item} in the
 /// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object
 /// Field_FindNearbyTalkTarget picks plays motion 5; chests 9 and 11 clear flag
-/// 645, the others 646, and once both are clear it calls Func_02000218 with the
-/// stage state's mirrored and field16[0], plays sound 138 and sets flag 642.
-/// Then the item leaves the owner's slot.
+/// 645, the others 646, and once both are clear it calls
+/// TrialRoad_OpenLeaderDoor with the stage state's mirrored and field16[0],
+/// plays sound 138 and sets flag 642. Then the item leaves the owner's slot.
 void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   s32 kind = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   struct TrialRoadState *state = gTrialRoadState;
@@ -143,7 +140,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   else
     Event_ClearFlag(646);
   if (!Event_GetFlag(645) && !Event_GetFlag(646)) {
-    Func_02000218(state->mirrored, state->field16[0]);
+    TrialRoad_OpenLeaderDoor(state->mirrored, state->field16[0]);
     Event_PlaySound(138);
     Event_SetFlag(642);
   }
@@ -182,9 +179,9 @@ void TrialRoad_ExamineChest(s32 id) {
   }
 }
 
-void Func_02000628(void) {}
+void TrialRoad_StepPastChests(void) {}
 
-void Func_0200062c(s32 id) {
+void TrialRoad_BlockCellUnder(s32 id) {
   struct TrialRoadMapWork *map =
       (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_GetById(id);
@@ -198,7 +195,7 @@ void Func_0200062c(s32 id) {
   }
 }
 
-void Func_02000660(s32 id) {
+void TrialRoad_UnblockCellUnder(s32 id) {
   struct TrialRoadMapWork *map =
       (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_GetById(id);
@@ -211,7 +208,7 @@ void Func_02000660(s32 id) {
   }
 }
 
-s32 Func_02000694(struct Actor *object) {
+s32 TrialRoad_FollowPillar(struct Actor *object) {
   struct Actor *owner = object->watchedObject;
 
   SET_POSITION(object, owner->x, owner->y + (OBJECT_BYTE(object, 99) << 16),
@@ -220,9 +217,9 @@ s32 Func_02000694(struct Actor *object) {
   return 1;
 }
 
-extern const u8 gData_02005a7c[];
+extern const u8 gTrialRoad_PillarTopScript[];
 
-void Func_020006b4(s32 id) {
+void TrialRoad_AddPillarTop(s32 id) {
   struct Actor *owner = Actor_GetById(id);
   struct Actor *object;
 
@@ -230,7 +227,7 @@ void Func_020006b4(s32 id) {
     object = Actor_Create(489, owner->x, owner->y, owner->z);
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
-      Actor_StartScript(object, gData_02005a7c);
+      Actor_StartScript(object, gTrialRoad_PillarTopScript);
       object->watchedObject = owner;
       object->priorityFlags |= 0x80;
       object->motionFlags = 0;
@@ -241,7 +238,7 @@ void Func_020006b4(s32 id) {
   }
 }
 
-void Func_0200070c(s32 id, s32 value) {
+void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
@@ -253,7 +250,7 @@ void Func_0200070c(s32 id, s32 value) {
 
 /// While the party's render mode is 0, clears the map cell flag under the
 /// object.
-#define DEFINE_FUNC_02000728(name, call1)                                      \
+#define DEFINE_TRIAL_ROAD_ON_FOOT(name, call1)                                 \
   void name(s32 a, s32 id) {                                                   \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
     u8 mode;                                                                   \
@@ -264,26 +261,27 @@ void Func_0200070c(s32 id, s32 value) {
       call1(id);                                                               \
   }
 
-DEFINE_FUNC_02000728(Func_02000728, Func_02000660)
+DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_UnblockMovedPillar,
+                          TrialRoad_UnblockCellUnder)
 
 /// While the party's render mode is 0, sets the map cell flag under the object.
-DEFINE_FUNC_02000728(Func_02000748, Func_0200062c)
+DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_BlockMovedPillar, TrialRoad_BlockCellUnder)
 
-void Func_02000768(void) {
+void TrialRoad_BlowBushOffLonePillar(void) {
   OBJECT_BYTE(Actor_GetById(17), 98) = 0;
   Event_SetFlag(0x307);
 }
 
-void Func_02000784(void) { Import_FieldTryJumpForward(); }
+void TrialRoad_JumpForward(void) { Import_FieldTryJumpForward(); }
 
-void Func_0200078c(s32 id) {
+void TrialRoad_OpenSpoutCell(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL)
     MapGrid_CopyCellsLayered(14, 27, 1, 1, object->x >> 20, object->z >> 20);
 }
 
-void Func_020007b4(void) {
+void TrialRoad_TrackLeaderOnPillars(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   if (y == 0x200000)
@@ -292,23 +290,23 @@ void Func_020007b4(void) {
     Event_ClearFlag(0x208);
 }
 
-void Func_020007e8(void) {
+void TrialRoad_JumpAcrossGap(void) {
   if (Actor_GetById(16)->z >> 20 == 23)
     Import_FieldTryJumpForward();
   else
     Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
 }
 
-void Func_02000818(s32 a, s32 id) {
+void TrialRoad_UnblockTorch(s32 a, s32 id) {
   if ((u32)(id - 15) <= 1)
-    Func_02000660(id);
+    TrialRoad_UnblockCellUnder(id);
 }
 
-void Func_0200082c(s32 a, s32 id) {
+void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
   s32 x;
 
   if ((u32)(id - 15) <= 1) {
-    Func_0200062c(id);
+    TrialRoad_BlockCellUnder(id);
     return;
   }
   x = (s32)Actor_GetById(id);
@@ -331,62 +329,62 @@ void Func_0200082c(s32 a, s32 id) {
       object->update = NULL;
       Actor_SetSpriteColorMode(object, 0);
       Actor_SetAnimation(id, 6);
-      Func_0200070c(id, -16);
+      TrialRoad_SetPillarTopLift(id, -16);
       Event_SetFlag(flag);
     }
   }
 }
 
-void Func_020008a4(void) {
+void TrialRoad_JumpMeltedPuddle(void) {
   if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) +
                     0x203))
     Import_FieldTryJumpForward();
 }
 
-void Func_020008d0(s32 a, s32 id) {
+void TrialRoad_FreezePuddle(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  Func_0200070c(id, 16);
+  TrialRoad_SetPillarTopLift(id, 16);
   Event_ClearFlag(id + 0x203);
   if (object != NULL)
     object->priorityFlags &= 0xfd;
 }
 
-void Func_02000904(s32 a, s32 id) {
+void TrialRoad_BlowBushOffPillar(s32 a, s32 id) {
   OBJECT_BYTE(Actor_GetById(id - 5), 98) = 0;
   Event_SetFlag(id + 0x313);
 }
 
-void Func_02000924(s32 id) {
+void TrialRoad_LowerPillar(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    Func_0200070c(id, -16);
+    TrialRoad_SetPillarTopLift(id, -16);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     Actor_SelectAnimation(object, 6);
   }
 }
 
-void Func_0200095c(s32 id) {
+void TrialRoad_RaisePillar(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    Func_0200070c(id, 16);
+    TrialRoad_SetPillarTopLift(id, 16);
     object->collisionFlags = 1;
     object->priorityFlags &= 0xfd;
     Actor_SelectAnimation(object, 5);
   }
 }
 
-void Func_02000990(void) {
+void TrialRoad_BlowBushOffPoundPillar(void) {
   OBJECT_BYTE(Actor_GetById(16), 98) = 0;
   Event_SetFlag(0x339);
 }
 
-extern const s8 gData_02005a88[4];
+extern const s8 gTrialRoad_PoundPartners[4];
 
-void Func_020009ac(s32 a, s32 b) {
+void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
   s32 id;
 
   id = 18;
@@ -397,8 +395,8 @@ next:
     struct Actor *object = Actor_GetById(id);
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
-    u8 *covered =
-        &OBJECT_BYTE(Actor_GetById(gData_02005a88[(id - 18) & 3]), 99);
+    u8 *covered = &OBJECT_BYTE(
+        Actor_GetById(gTrialRoad_PoundPartners[(id - 18) & 3]), 99);
     s32 other;
 
     other = 15;
@@ -421,8 +419,8 @@ next:
     goto next;
 }
 
-void Func_02000a18(s32 id, s32 mode, s32 frame) {
-  s32 other = gData_02005a88[(id - 18) & 3];
+void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
+  s32 other = gTrialRoad_PoundPartners[(id - 18) & 3];
   struct Actor *object = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -432,8 +430,8 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
   else
     object->scaleY = 0x10000;
   if (mode == 1) {
-    Func_02000924(id);
-    Func_0200095c(other);
+    TrialRoad_LowerPillar(id);
+    TrialRoad_RaisePillar(other);
     switch (id) {
     case 18:
       Event_SetFlag(821);
@@ -465,15 +463,15 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
     partner->scaleY = 0x10000;
 }
 
-void Func_02000b3c(s32 a, s32 b) { Func_02000a18(18, a, b); }
+void TrialRoad_PoundPillar18(s32 a, s32 b) { TrialRoad_PoundPillar(18, a, b); }
 
-void Func_02000b4c(s32 a, s32 b) { Func_02000a18(19, a, b); }
+void TrialRoad_PoundPillar19(s32 a, s32 b) { TrialRoad_PoundPillar(19, a, b); }
 
-void Func_02000b5c(s32 a, s32 b) { Func_02000a18(20, a, b); }
+void TrialRoad_PoundPillar20(s32 a, s32 b) { TrialRoad_PoundPillar(20, a, b); }
 
-void Func_02000b6c(s32 a, s32 b) { Func_02000a18(21, a, b); }
+void TrialRoad_PoundPillar21(s32 a, s32 b) { TrialRoad_PoundPillar(21, a, b); }
 
-void Func_02000b7c(s32 id, s32 other, s32 flag, s32 side) {
+void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
   struct Actor *object = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
   s32 t;
@@ -484,10 +482,10 @@ void Func_02000b7c(s32 id, s32 other, s32 flag, s32 side) {
   Event_ResolvePendingActions(0);
   partner->scaleY = 0x2000;
   wait(1);
-  Func_0200095c(other);
+  TrialRoad_RaisePillar(other);
   t = 0x2000;
 grow:
-  Func_0200070c(id, (0x8000 - t) / 2048);
+  TrialRoad_SetPillarTopLift(id, (0x8000 - t) / 2048);
   object->scaleY = 0x10000 - t;
   partner->scaleY = t;
   wait(1);
@@ -495,7 +493,7 @@ grow:
   if (t <= 0x10000)
     goto grow;
   object->scaleY = 0x10000;
-  Func_02000924(id);
+  TrialRoad_LowerPillar(id);
   Event_PlaySound(138);
   if (side != 0)
     Event_SetFlag(flag);
@@ -504,35 +502,45 @@ grow:
   Event_End();
 }
 
-void Func_02000c34(void) { Func_02000b7c(18, 19, 0x335, 1); }
+void TrialRoad_StepOnPillar18(void) {
+  TrialRoad_StepOnSeesawPillar(18, 19, 0x335, 1);
+}
 
-void Func_02000c48(void) { Func_02000b7c(19, 18, 0x335, 0); }
+void TrialRoad_StepOnPillar19(void) {
+  TrialRoad_StepOnSeesawPillar(19, 18, 0x335, 0);
+}
 
-void Func_02000c5c(void) { Func_02000b7c(20, 21, 0x337, 1); }
+void TrialRoad_StepOnPillar20(void) {
+  TrialRoad_StepOnSeesawPillar(20, 21, 0x337, 1);
+}
 
-void Func_02000c70(void) { Func_02000b7c(21, 20, 0x337, 0); }
+void TrialRoad_StepOnPillar21(void) {
+  TrialRoad_StepOnSeesawPillar(21, 20, 0x337, 0);
+}
 
-void Func_02000c84(void) {
+void TrialRoad_LandOnPillar(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   if (y >= 0x100000) {
     Import_FieldTryJumpForward();
   } else if (Func_02005a30()) {
     Func_02005a38();
-    Func_020009ac(0, 0);
+    TrialRoad_CheckPoundedPillarsCovered(0, 0);
   }
 }
 
-void Func_02000cc0(void) { Func_02004418(gData_02007734); }
-
-void Func_02000cd0(s32 phase) {
-  if (phase == 3)
-    Func_020045ac(gData_02007734, 15);
+void TrialRoad_CheckCrumblingPillars(void) {
+  TrialRoad_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
 }
 
-void Func_02000ce4(s32 phase) {
+void TrialRoad_CrumblePillar15(s32 phase) {
   if (phase == 3)
-    Func_020045ac(gData_02007734, 16);
+    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars, 15);
+}
+
+void TrialRoad_CrumblePillar16(s32 phase) {
+  if (phase == 3)
+    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars, 16);
 }
 
 // Blocks the three cells through an object's cell on layers 0 and 2 (collision
@@ -543,7 +551,7 @@ void Func_02000ce4(s32 phase) {
 /// Blocks the three cells through an object's cell on layers 0 and 2 (collision
 /// code 255): the column above and below it in mode 0, the row beside it
 /// otherwise.
-void Func_02000cf8(s32 id, s32 mode) {
+void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_GetById(id);
   s32 index;
@@ -572,19 +580,19 @@ void Func_02000cf8(s32 id, s32 mode) {
   }
 }
 
-void Func_02000d70(void) {
+void TrialRoad_BlockLogs(void) {
   MapGrid_CopyCellAttributes(11, 64, 11, 8, 11, 22);
   MapGrid_CopyCellAttributes(79, 64, 11, 8, 79, 22);
-  Func_02000cf8(16, 0);
-  Func_02000cf8(17, 0);
-  Func_02000cf8(18, 1);
+  TrialRoad_BlockLogCells(16, 0);
+  TrialRoad_BlockLogCells(17, 0);
+  TrialRoad_BlockLogCells(18, 1);
   if (Event_GetFlag(0x253))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 23);
   if (Event_GetFlag(0x254))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 26);
 }
 
-s32 Func_02000df8(s32 x, s32 z) {
+s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   struct Actor *object = Actor_GetById(15);
   struct TrialRoadMapWork *map =
       (struct TrialRoadMapWork *)Ram_HeapSlots->mapWork;
@@ -600,7 +608,7 @@ s32 Func_02000df8(s32 x, s32 z) {
   return IsZero(value ^ 0xff);
 }
 
-void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
+void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *object = Actor_GetById(id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 fromX = object->x >> 20;
@@ -622,18 +630,18 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     x = toX + dx;
     z = toZ + dz;
     if (axis == 0) {
-      if (Func_02000df8(x, z - 1))
+      if (TrialRoad_IsLogBlocked(x, z - 1))
         break;
-      if (Func_02000df8(x, z))
+      if (TrialRoad_IsLogBlocked(x, z))
         break;
-      if (Func_02000df8(x, z + 1))
+      if (TrialRoad_IsLogBlocked(x, z + 1))
         break;
     } else {
-      if (Func_02000df8(x - 1, z))
+      if (TrialRoad_IsLogBlocked(x - 1, z))
         break;
-      if (Func_02000df8(x, z))
+      if (TrialRoad_IsLogBlocked(x, z))
         break;
-      if (Func_02000df8(x + 1, z))
+      if (TrialRoad_IsLogBlocked(x + 1, z))
         break;
     }
     toX = x;
@@ -686,31 +694,31 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   }
   Event_Wait(15);
   Event_End();
-  Func_02000d70();
+  TrialRoad_BlockLogs();
 }
 
-void Func_0200106c(void) { Func_02000e40(16, -1, 0, 0); }
+void TrialRoad_PushLog16West(void) { TrialRoad_PushLog(16, -1, 0, 0); }
 
-void Func_02001080(void) { Func_02000e40(16, 1, 0, 0); }
+void TrialRoad_PushLog16East(void) { TrialRoad_PushLog(16, 1, 0, 0); }
 
-void Func_02001090(void) { Func_02000e40(17, -1, 0, 0); }
+void TrialRoad_PushLog17West(void) { TrialRoad_PushLog(17, -1, 0, 0); }
 
-void Func_020010a4(void) { Func_02000e40(17, 1, 0, 0); }
+void TrialRoad_PushLog17East(void) { TrialRoad_PushLog(17, 1, 0, 0); }
 
-void Func_020010b4(void) { Func_02000e40(18, 0, -1, 1); }
+void TrialRoad_PushLog18North(void) { TrialRoad_PushLog(18, 0, -1, 1); }
 
-void Func_020010c8(void) { Func_02000e40(18, 0, 1, 1); }
+void TrialRoad_PushLog18South(void) { TrialRoad_PushLog(18, 0, 1, 1); }
 
-void Func_020010d8(void) {
+void TrialRoad_PushLog18SouthFromRow52(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->renderMode == 2)
     Func_020059c8();
   else
-    Func_02000e40(18, 0, 1, 1);
+    TrialRoad_PushLog(18, 0, 1, 1);
 }
 
-void Func_02001104(s32 id, s32 a, s32 frame) {
+void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
   if (frame == 30) {
     struct Actor *object = Actor_GetById(id);
     s32 height;
@@ -720,18 +728,24 @@ void Func_02001104(s32 id, s32 a, s32 frame) {
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->terrainHeight = height;
     object->y = height;
-    Func_0200078c(id);
+    TrialRoad_OpenSpoutCell(id);
     Event_SetFlag(id + 0x353);
   }
 }
 
-void Func_02001148(s32 a, s32 b) { Func_02001104(16, a, b); }
+void TrialRoad_UncoverSpout16(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(16, a, b);
+}
 
-void Func_02001158(s32 a, s32 b) { Func_02001104(17, a, b); }
+void TrialRoad_UncoverSpout17(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(17, a, b);
+}
 
-void Func_02001168(s32 a, s32 b) { Func_02001104(18, a, b); }
+void TrialRoad_UncoverSpout18(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(18, a, b);
+}
 
-void Func_02001178(void) {
+void TrialRoad_StandOnBlock(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *block = Actor_GetById(15);
 
@@ -743,15 +757,15 @@ void Func_02001178(void) {
   }
 }
 
-void Func_020011c0(void) {
+void TrialRoad_StartSand(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
 }
 
-void Func_020011dc(void) {
+void TrialRoad_EndSand(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-void Func_020011f8(void) {
+void TrialRoad_RevealVine(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
   Event_SetFlag(0x374);
 }

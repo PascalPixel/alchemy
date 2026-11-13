@@ -278,8 +278,8 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   s32 countdown = (s16)timer;
 
   if (timer == 0) {
-    actor->facing = Import_RandomNext();
-    countdown = Math_RemainderUnsigned(Import_RandomNext(), 20) + 20;
+    actor->facing = Random_Next();
+    countdown = Math_RemainderUnsigned(Random_Next(), 20) + 20;
     actor->timer = countdown;
   }
   actor->timer = countdown - 1;
@@ -603,7 +603,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_DORA);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       table = gValePrologue_SquashAndStretchScript;
       actor->userValue = 1;
       Actor_SetScript(ACTOR_DORA, table);
@@ -614,7 +614,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_JENNA_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       actor->userValue = 2;
       Actor_SetScript(ACTOR_JENNA_CHILD, table);
     }
@@ -624,7 +624,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_GARET_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       actor->userValue = 3;
       Actor_SetScript(ACTOR_GARET_CHILD, table);
     }
@@ -634,7 +634,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       actor->userValue = 4;
       Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, table);
     }
@@ -661,7 +661,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_KYLE);
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     }
     table = gValePrologue_SquashAndStretchScript;
     Actor_SetScript(ACTOR_KYLE, table);
@@ -672,7 +672,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_FATHER);
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     }
     Actor_SetScript(ACTOR_JENNAS_FATHER, table);
     Actor_SetPosition(ACTOR_JENNAS_MOTHER, 247, 1214);
@@ -682,7 +682,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     }
     Actor_SetScript(ACTOR_JENNAS_MOTHER, table);
     Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
@@ -1301,7 +1301,6 @@ static void ValePrologue_TalkToGaret(void) {
 /// Called by ValePrologue_GaretCallsAfterIsaac and ValePrologue_TalkToGaret.
 /// Sets FLAG_VALE_STORM_GARET_JOINED.
 static void ValePrologue_GaretLeavesHisChest(void) {
-  struct Actor *leader;
   s32 agreedToLeaveBelongings;
 
   Event_OpenMessage(ACTOR_GARET_CHILD, 0);
@@ -1329,14 +1328,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
     Event_SetMessageId(MsgValeRightDitchStuff);
   }
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-  Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_GARET_CHILD, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-  Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
   Event_AddPartyMember(GARET, 1);
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
@@ -1398,14 +1390,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     // "Everyone's gathering down south, in the town plaza."
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_SetSpeed(ACTOR_GARET_CHILD, 1);
-    Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
-      Actor_SetDestination(ACTOR_GARET_CHILD, actor->x.part.pixel,
-                           actor->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-    Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
     Event_AddPartyMember(GARET, 1);
     Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_ROPE_DROPPED);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
@@ -1419,7 +1404,6 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
 /// Reached by stepping on cell behavior 33, every time. Isaac is walked
 /// back south.
 static void ValePrologue_WarnAboutMtAleph(void) {
-  struct Actor *leader;
   struct Actor *initialLeader;
 
   Event_Start();
@@ -1442,14 +1426,7 @@ static void ValePrologue_WarnAboutMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 0);
   // "The plaza is over that way. We need to head south."
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-  Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_GARET_CHILD, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-  Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 517);
   Event_End();
 }
@@ -1461,7 +1438,6 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct Actor *leaderAtStart;
   s32 speed = px(1);
   s32 acceleration = (px(1) / 2);
-  struct Actor *leaderAtEnd;
 
   leaderAtStart = Actor_Get(ACTOR_PARTY_LEADER);
   if (leaderAtStart != 0) {
@@ -1482,14 +1458,7 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   // "We'll have to find another way."
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-  leaderAtEnd = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leaderAtEnd != 0) {
-    Actor_SetDestination(ACTOR_GARET_CHILD, leaderAtEnd->x.part.pixel,
-                         leaderAtEnd->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-  Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
 }
 
 /// The Boulder slips toward the village and the elders tell the boys to run.
@@ -1667,14 +1636,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-    movingActor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (movingActor != 0) {
-      Actor_SetDestination(ACTOR_GARET_CHILD, movingActor->x.part.pixel,
-                           movingActor->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-    Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
     Actor_ReleaseById(ACTOR_ELDER_WEST_STAND_IN);
     Actor_ReleaseById(ACTOR_ELDER_EAST_STAND_IN);
     Actor_ReleaseById(ACTOR_ELDER_FAR_EAST);
@@ -1753,7 +1715,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     pulseScript = gValePrologue_SquashAndStretchScript;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
@@ -1767,7 +1729,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_FATHER);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_FATHER, pulseScript);
   }
@@ -1778,7 +1740,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_MOTHER, pulseScript);
   }
@@ -1993,7 +1955,6 @@ static void ValePrologue_DoraGoesForHelp(void) {
   const s32 *script;
   s32 northMessage;
   s32 helpMessage;
-  struct Actor *leader;
 
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH_NORTHEAST, 0);
@@ -2026,13 +1987,13 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   villager = Actor_Get(ACTOR_KYLE);
-  random = Import_RandomNext();
+  random = Random_Next();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   villager = Actor_Get(ACTOR_JENNAS_FATHER);
-  random = Import_RandomNext();
+  random = Random_Next();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   villager = Actor_Get(ACTOR_JENNAS_MOTHER);
-  random = Import_RandomNext();
+  random = Random_Next();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   script = gValePrologue_SquashAndStretchScript;
   Actor_SetScript(ACTOR_KYLE, script);
@@ -2161,7 +2122,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
     struct Actor *villager;
     s32 pulseDelay;
     villager = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     pulseScript = gValePrologue_SquashAndStretchScript;
     villager->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
@@ -2922,13 +2883,13 @@ static void ValePrologue_RebuildRiverbank(void) {
 /// Reached by stepping on cell behavior 16 until
 /// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void ValePrologue_FightThirdMonster(void) {
-  struct FieldWork *state;
+  struct FieldWork *work;
 
   Event_Start();
-  state = gFieldWork;
-  state->transition =
+  work = gFieldWork;
+  work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  state->transitionFrames = 64;
+  work->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
   GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
@@ -2941,13 +2902,13 @@ static void ValePrologue_FightThirdMonster(void) {
 /// Reached by stepping on cell behavior 17 until
 /// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void ValePrologue_FightFourthMonster(void) {
-  struct FieldWork *state;
+  struct FieldWork *work;
 
   Event_Start();
-  state = gFieldWork;
-  state->transition =
+  work = gFieldWork;
+  work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  state->transitionFrames = 64;
+  work->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);
   GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
@@ -3069,18 +3030,30 @@ u8 gValePrologue_FrameModes[] = {7, 0, 0, 0};
 
 /// The stout man runs off toward the plaza after shoving Isaac.
 s32 gValePrologue_ShovingManScript[] = {
-    SC_ANIMATION(2), SC_MOVE(185, 0, 824),
-    SC_SYNC,         SC_MOVE(179, 0, 836),
-    SC_SYNC,         SC_MOVE(226, 0, 840),
-    SC_SYNC,         SC_MOVE(226, 0, 944),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(1), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(185, 0, 824),
+    SC_SYNC,
+    SC_MOVE(179, 0, 836),
+    SC_SYNC,
+    SC_MOVE(226, 0, 840),
+    SC_SYNC,
+    SC_MOVE(226, 0, 944),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Garet runs up to Isaac (ValePrologue_UnusedGaretJoinsIsaac).
 s32 gValePrologue_UnusedGaretRunsUpScript[] = {
-    SC_ANIMATION(2), SC_MOVE(345, 0, 612), SC_SYNC, SC_MOVE(311, 0, 638),
-    SC_SYNC,         SC_MOVE(256, 0, 608), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(345, 0, 612),
+    SC_SYNC,
+    SC_MOVE(311, 0, 638),
+    SC_SYNC,
+    SC_MOVE(256, 0, 608),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -3103,27 +3076,27 @@ s32 gValePrologue_UnusedGaretPantingScript[] = {
 
 /// The Boulder on the mountainside, in animation 2 until it slips.
 s32 gValePrologue_BoulderWaits[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_END,
 };
 
 /// Isaac and Garet run to where they see the elders hold the Boulder
 /// (ValePrologue_WatchBoulderFall), and face each other.
 s32 gValePrologue_BoulderFallLeaderPath[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(94, 0, 564),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(30),
     SC_END,
 };
 
 s32 gValePrologue_BoulderFallGaretPath[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(76, 0, 564),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(30),
     SC_END,
@@ -3134,21 +3107,32 @@ s32 gValePrologue_BoulderFallGaretPath[] = {
 // the plaza and Dora north.
 
 s32 gValePrologue_DoraRunsIntoRiversideHouse[] = {
-    SC_ANIMATION(2), SC_MOVE(178, 0, 1190), SC_SYNC, SC_MOVE(149, 0, 1194),
-    SC_SYNC,         SC_ANIMATION(1),       SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(178, 0, 1190),
+    SC_SYNC,
+    SC_MOVE(149, 0, 1194),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 s32 gValePrologue_JennaRunsIntoRiversideHouse[] = {
-    SC_ANIMATION(2), SC_MOVE(198, 0, 1176),
-    SC_SYNC,         SC_MOVE(170, 0, 1195),
-    SC_SYNC,         SC_MOVE(149, 0, 1194),
-    SC_SYNC,         SC_MOVE(149, 0, 1175),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(1), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(198, 0, 1176),
+    SC_SYNC,
+    SC_MOVE(170, 0, 1195),
+    SC_SYNC,
+    SC_MOVE(149, 0, 1194),
+    SC_SYNC,
+    SC_MOVE(149, 0, 1175),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 s32 gValePrologue_DoraComesOutOfRiversideHouse[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
     SC_POSITION(102, 0, 1189),
@@ -3157,13 +3141,13 @@ s32 gValePrologue_DoraComesOutOfRiversideHouse[] = {
     SC_SYNC,
     SC_MOVE(84, 0, 1228),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_EAST),
     SC_END,
 };
 
 s32 gValePrologue_JennaComesOutOfRiversideHouse[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
     SC_POSITION(102, 0, 1189),
@@ -3172,49 +3156,83 @@ s32 gValePrologue_JennaComesOutOfRiversideHouse[] = {
     SC_SYNC,
     SC_MOVE(120, 0, 1228),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_END,
 };
 
 s32 gValePrologue_DoraHeadsNorth[] = {
-    SC_ANIMATION(2), SC_MOVE(50, 0, 1214), SC_SYNC, SC_MOVE(46, 0, 1130),
-    SC_SYNC,         SC_MOVE(67, 0, 1100), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(50, 0, 1214),
+    SC_SYNC,
+    SC_MOVE(46, 0, 1130),
+    SC_SYNC,
+    SC_MOVE(67, 0, 1100),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePrologue_JennaHeadsForPlaza[] = {
-    SC_ANIMATION(2), SC_MOVE(153, 0, 1251),
-    SC_SYNC,         SC_MOVE(177, 0, 1357),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(1), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(153, 0, 1251),
+    SC_SYNC,
+    SC_MOVE(177, 0, 1357),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Dora leaves to the west once she has asked the boys to help.
 s32 gValePrologue_DoraLeavesForHelp[] = {
-    SC_ANIMATION(2), SC_MOVE(123, 0, 1078),
-    SC_SYNC,         SC_MOVE(148, 0, 1078),
-    SC_SYNC,         SC_MOVE(148, 0, 1064),
-    SC_SYNC,         SC_MOVE(35, 0, 1064),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(1), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(123, 0, 1078),
+    SC_SYNC,
+    SC_MOVE(148, 0, 1078),
+    SC_SYNC,
+    SC_MOVE(148, 0, 1064),
+    SC_SYNC,
+    SC_MOVE(35, 0, 1064),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Dora runs down to the river when Jenna comes back
 /// (ValePrologue_BoulderSweepsThemAway).
 s32 gValePrologue_DoraRunsToRiver[] = {
-    SC_ANIMATION(2), SC_MOVE(102, 0, 1236), SC_SYNC, SC_MOVE(148, 0, 1256),
-    SC_SYNC,         SC_MOVE(177, 0, 1303), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(102, 0, 1236),
+    SC_SYNC,
+    SC_MOVE(148, 0, 1256),
+    SC_SYNC,
+    SC_MOVE(177, 0, 1303),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// The way down to the riverbank that each of the party and the strongman
 /// takes in turn as the Boulder comes, then each one's place there.
 s32 gValePrologue_ToRiverbankPath[] = {
-    SC_ANIMATION(2), SC_MOVE(137, 0, 1379), SC_SYNC, SC_MOVE(114, 0, 1416),
-    SC_SYNC,         SC_MOVE(95, 0, 1416),  SC_SYNC, SC_MOVE(83, 0, 1427),
-    SC_SYNC,         SC_MOVE(154, 0, 1430), SC_SYNC, SC_MOVE(179, 0, 1398),
-    SC_SYNC,         SC_MOVE(179, 0, 1361), SC_SYNC, SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(137, 0, 1379),
+    SC_SYNC,
+    SC_MOVE(114, 0, 1416),
+    SC_SYNC,
+    SC_MOVE(95, 0, 1416),
+    SC_SYNC,
+    SC_MOVE(83, 0, 1427),
+    SC_SYNC,
+    SC_MOVE(154, 0, 1430),
+    SC_SYNC,
+    SC_MOVE(179, 0, 1398),
+    SC_SYNC,
+    SC_MOVE(179, 0, 1361),
+    SC_SYNC,
+    SC_END,
 };
 
 // Where each one stops on the bank to hear the Boulder coming.
@@ -3222,7 +3240,7 @@ s32 gValePrologue_ToRiverbankPath[] = {
 s32 gValePrologue_ExhaustedStrongmanGatherPath[] = {
     SC_MOVE(184, 0, 1309),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_END,
 };
@@ -3230,7 +3248,7 @@ s32 gValePrologue_ExhaustedStrongmanGatherPath[] = {
 s32 gValePrologue_JennaGatherPath[] = {
     SC_MOVE(165, 0, 1306),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_END,
 };
@@ -3238,7 +3256,7 @@ s32 gValePrologue_JennaGatherPath[] = {
 s32 gValePrologue_LeaderGatherPath[] = {
     SC_MOVE(183, 0, 1325),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_END,
 };
@@ -3246,7 +3264,7 @@ s32 gValePrologue_LeaderGatherPath[] = {
 s32 gValePrologue_GaretGatherPath[] = {
     SC_MOVE(166, 0, 1325),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_END,
 };
@@ -3270,7 +3288,7 @@ s32 gValePrologue_SquashAndStretchScript[] = {
 /// ValePrologue_ShowBoulderSweepingDownriver waits on, and two of its
 /// landings start a shake countdown in SW_TIMER.
 s32 gValePrologue_BoulderRollsDownriver[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(3),
     SC_ACCELERATION(1),
     SC_SET(SW_TIMER, 0),

@@ -497,13 +497,15 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
 ///
 /// After the party has left, she says Kraden has not come back.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
+  s32 asked = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
+
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeKradenHasntComeBack);
     // "I guess Kraden still hasn't come back."
     Event_ShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
-  } else if (GameFlag_Get(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN) == 0) {
-    GameFlag_Set(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
+  } else if (GameFlag_Get(asked) == 0) {
+    GameFlag_Set(asked);
     Event_SetMessageId(MsgValeDoYouNeedToGo);
     Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
                         4);
@@ -1701,10 +1703,9 @@ s32 Vale_Initialize(void) {
       }
       {
         s32 priority;
-        s32 actorId = ACTOR_DORA;
 
         priority = ((u32)(u8)set >> 8) + 2;
-        Actor_SetSpritePriority(actorId, priority);
+        Actor_SetSpritePriority(ACTOR_DORA, priority);
       }
 #endif
     }
@@ -1815,13 +1816,7 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_VALE_GARET_MET_SISTER);
   Event_End();
 }
@@ -1914,13 +1909,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY);
   Event_End();
 }
@@ -2039,26 +2028,26 @@ static void Vale_ClimbDownRoofLadder(s32 actorId, s32 approachAnimationId,
 /// Mode 0 sets count boards from first on the roof by the hole, still and
 /// without shadows. Any other mode puts them out of sight.
 static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
-  s32 selector = first;
+  s32 actorId = first;
   u32 i;
 
   if (mode == 0) {
     for (i = 0; i < count; i++) {
-      struct Actor *actor = Actor_Get(selector);
+      struct Actor *actor = Actor_Get(actorId);
 
       actor->motionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
       actor->x.fixed = px(390);
       actor->y.fixed = px(160);
       actor->z.fixed = px(842);
-      selector++;
+      actorId++;
     }
     return;
   }
 
   for (i = 0; i < count; i++) {
-    Actor_SetPosition(selector, 0, 0);
-    selector++;
+    Actor_SetPosition(actorId, 0, 0);
+    actorId++;
   }
 }
 
@@ -3040,9 +3029,9 @@ static void Vale_CycleThirdBoardPalette(void) {
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
 static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
-  s32 dx = (first[0] - second[0]) >> 16;
-  s32 dy = (first[1] - second[1]) >> 16;
-  s32 dz = (first[2] - second[2]) >> 16;
+  s32 dx = (*first++ - *second++) >> 16;
+  s32 dy = (*first++ - *second++) >> 16;
+  s32 dz = (*first - *second) >> 16;
 
   return Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
 }
@@ -3116,11 +3105,9 @@ static void Vale_TrailSparkles(struct Actor *source) {
   s32 randomDistance;
   struct Actor *particle;
   SET_VECTOR(spawnPosition, source->x.fixed,
-             source->y.fixed - (Import_RandomNext() << 4) - px(8),
-             source->z.fixed);
-  randomDistance = Import_RandomNext();
-  Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
-                        Import_RandomNext(), spawnPosition);
+             source->y.fixed - (Random_Next() << 4) - px(8), source->z.fixed);
+  randomDistance = Random_Next();
+  Vector_AddPolarOffset(randomDistance * 48, Random_Next(), spawnPosition);
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
@@ -3138,19 +3125,19 @@ static void Vale_TrailSparkles(struct Actor *source) {
 /// The Move hand rises, spins and shrinks for 31 frames, bursts into eight
 /// sparkles with SE_PSYNERGY_SPARKLE, and is put out of sight.
 static void Vale_VanishMoveHand(struct Actor *emitter) {
-  s32 frameCountdown;
+  s32 frame;
 
   Sound_Play(SE_CAST);
 
-  for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
+  for (frame = 0; frame < 31; frame++) {
     emitter->y.fixed += px(1);
     emitter->facing = (u16)(emitter->facing + TRIG_TURN / 8);
-    emitter->scaleX -= 2048;
-    emitter->scaleY -= 2048;
+    emitter->scaleX -= Q16_ONE / 32;
+    emitter->scaleY -= Q16_ONE / 32;
     wait(1);
   }
 
-  for (frameCountdown = 7; frameCountdown >= 0; frameCountdown--) {
+  for (frame = 0; frame < 8; frame++) {
     struct Actor *particle = FieldActor_Create(
         SPRITE_SPARKLE, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
 
@@ -3160,17 +3147,16 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
       Actor_SetSpriteFlags(particle, 0);
       Actor_StartScript(particle, (const void *)&gVale_SparkleScript[1]);
 
-      verticalSpeed = Import_RandomNext() + px(1);
+      verticalSpeed = Random_Next() + px(1);
       particle->acceleration = Q16_ONE;
       particle->speedLimit = verticalSpeed;
       particle->motionFlags = ACTOR_FALLS;
       particle->gravity = px(1) / 25;
 
-      particle->velocityY = Import_RandomNext() - Import_RandomNext();
+      particle->velocityY = Random_Next() - Random_Next();
 
       Actor_SetTargetPositionFromMagnitudeAngle(
-          particle, ((Import_RandomNext() * 3) << 3) + px(8),
-          Import_RandomNext());
+          particle, ((Random_Next() * 3) << 3) + px(8), Random_Next());
     }
   }
 
@@ -3289,7 +3275,6 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
 /// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE (7) for two
 /// frames in four, with the World Map's attached sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
-
   if ((gFrameCount & 2) != 0)
     Actor_SetColorMode(actor, 7);
   else
@@ -3330,13 +3315,13 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_ACCELERATION(0.25),
     SC_SET(SW_TIMER, 2),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(296, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 3),
     SC_MOVE(296, 0, 420),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
@@ -3350,34 +3335,34 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(296, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 2),
     SC_MOVE(256, 0, 456),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(15),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(60),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 1),
     SC_MOVE(212, 0, 388),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(40),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 429),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_WAIT(5),
@@ -3391,13 +3376,13 @@ s32 gVale_AlephGuardPatrol[] = {
     SC_WAIT(5),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(5),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 456),
     SC_SYNC,
     SC_SET(SW_TIMER, 2),
     SC_MOVE(256, 0, 456),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(5),
@@ -3429,23 +3414,23 @@ s32 gVale_LeaderHammers[] = {
 // Garet and Jenna walk to the front of Isaac's house to watch him on the roof.
 
 s32 gVale_GaretWalksToTheHouse[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(300, 0, 880),
     SC_SYNC,
     SC_MOVE(300, 0, 904),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 s32 gVale_JennaWalksToTheHouse[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(300, 0, 904),
     SC_SYNC,
     SC_MOVE(321, 0, 904),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
@@ -3453,7 +3438,7 @@ s32 gVale_JennaWalksToTheHouse[] = {
 /// A spout of water grows from a tenth of its size north of the strongman by
 /// the river and vanishes (Vale_UnusedWaterBurstsByTheRiver).
 s32 gVale_UnusedWaterGrows[] = {
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION(266, 0, 1230),
     SC_SET(SW_SCALE_X, Q16_ONE / 10),
     SC_SET(SW_SCALE_Y, Q16_ONE / 10),
@@ -3474,7 +3459,7 @@ s32 gVale_SparkleScript[] = {
     SC_RELEASE,
     SC_SYNC,
     SC_SPEED(0.0625),
-    SC_ANIMATION(0),
+    SC_ANIMATION(ANIM_STILL),
     SC_WAIT(10),
     SC_RELEASE,
 };
@@ -3836,14 +3821,26 @@ u16 gVale_WestHouseDoorOpens[] = {
 // or from either of the guard's pauses (Vale_AskAboutSneakingToAleph).
 
 s32 gVale_FirstWarningLeaderPath[] = {
-    SC_ANIMATION(5), SC_MOVE(199, 0, 446), SC_SYNC, SC_MOVE(215, 0, 472),
-    SC_SYNC,         SC_MOVE(239, 0, 461), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_LEADER_RUN),
+    SC_MOVE(199, 0, 446),
+    SC_SYNC,
+    SC_MOVE(215, 0, 472),
+    SC_SYNC,
+    SC_MOVE(239, 0, 461),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gVale_FirstWarningGuardPath[] = {
-    SC_ANIMATION(2), SC_MOVE(199, 0, 446), SC_SYNC, SC_MOVE(215, 0, 472),
-    SC_SYNC,         SC_MOVE(239, 0, 461), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(199, 0, 446),
+    SC_SYNC,
+    SC_MOVE(215, 0, 472),
+    SC_SYNC,
+    SC_MOVE(239, 0, 461),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -3852,19 +3849,25 @@ s32 gVale_LeaderFromWestPath[] = {
     SC_ANIMATION(5), SC_MOVE(224, 0, 458),
     SC_SYNC,         SC_MOVE(256, 0, 458),
     SC_SYNC,         SC_MOVE(256, 0, 474),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_SYNC,         SC_ANIMATION(ANIM_STAND),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTH),
     SC_END,
 };
 
 s32 gVale_GuardFromFirstPausePath[] = {
-    SC_SPEED(1.5),   SC_ACCELERATION(1),
-    SC_ANIMATION(2), SC_MOVE(216, 0, 458),
-    SC_SYNC,         SC_MOVE(256, 0, 456),
-    SC_SYNC,         SC_ANIMATION(1),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTH),
+    SC_SPEED(1.5),
+    SC_ACCELERATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(216, 0, 458),
+    SC_SYNC,
+    SC_MOVE(256, 0, 456),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTH),
     SC_END,
 };
 
@@ -3872,17 +3875,22 @@ s32 gVale_LeaderPushedBackPath[] = {
     SC_SPEED(2),     SC_ACCELERATION(2),
     SC_ANIMATION(5), SC_MOVE(256, 0, 458),
     SC_SYNC,         SC_MOVE(256, 0, 474),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_SYNC,         SC_ANIMATION(ANIM_STAND),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTH),
     SC_END,
 };
 
 s32 gVale_GuardFromSecondPausePath[] = {
-    SC_SPEED(1.5),   SC_ACCELERATION(1),
-    SC_ANIMATION(2), SC_MOVE(256, 0, 456),
-    SC_SYNC,         SC_ANIMATION(1),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_SOUTH),
+    SC_SPEED(1.5),
+    SC_ACCELERATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(256, 0, 456),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTH),
     SC_END,
 };

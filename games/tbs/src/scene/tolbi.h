@@ -11,8 +11,6 @@
 #include "scene.h"
 #include "heap.h"
 
-#define NULL ((void *)0)
-
 #include "shared/colosso_story_flags.h"
 #include "flags.h"
 

@@ -102,7 +102,6 @@
 #include "io_write.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "heap_release.h"
 #include "types.h"
@@ -174,7 +173,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
-static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
+static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *actor) {
   Sound_Play(SE_FOOTSTEP);
   return 0;
 }
@@ -322,9 +321,9 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       options.type = SPRITE_GLINT;
       options.script = gGlint_TwinkleScript;
       Sound_Play(SE_GLITTER);
-      sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
-      sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
-      speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
+      sparkX = 208 - ((u32)Random_Next() * 16 >> 16);
+      sparkZ = 560 - ((u32)Random_Next() * 16 >> 16);
+      speedRoll = ((u32)Random_Next() * 4 >> 16);
       velocityY = Math_Divide(px((speedRoll << 4) - speedRoll) + px(60), 100);
       FieldEffect_Spawn(px(sparkX), 0, px(sparkZ), 0, velocityY, 0,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
@@ -780,11 +779,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(136, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -792,11 +791,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepWest[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(120, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -804,11 +803,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepEast[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(152, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

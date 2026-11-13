@@ -193,18 +193,20 @@ enum TolbiShipMastCellBehavior {
 /// Keeps the effect actor relative to the saved camera origin and rotates it.
 static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *actor) {
   s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  s32 cameraX = *camera++;
+  s32 cameraY = *camera;
 
   actor->x.fixed = gTolbiShipMast_CameraCenter[0] +
-                   (camera[0] - gTolbiShipMast_CameraOrigin[0]);
+                   (cameraX - gTolbiShipMast_CameraOrigin[0]);
   actor->y.fixed = gTolbiShipMast_CameraCenter[1] +
-                   (camera[1] - gTolbiShipMast_CameraOrigin[1]) / 2;
+                   (cameraY - gTolbiShipMast_CameraOrigin[1]) / 2;
   actor->sprite->rotation += TRIG_TURN * 3 / 128;
   return 0;
 }
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
 static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
-  u32 sample = (u32)(Import_RandomNext() << 6) >> 16;
+  u32 sample = (u32)Random_Next() * 64 >> 16;
 
   if (sample == 6) {
     actor->facing = FACING_NORTH_NORTHEAST;
@@ -237,12 +239,12 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   if (actor->timer == SWAY_HELD) {
     actor->riseBaseY = 0;
   } else if (actor->timer != SWAY_INCREASING) {
-    actor->riseBaseY -= (u32)(Import_RandomNext() << 11) >> 16;
+    actor->riseBaseY -= (u32)Random_Next() * 2048 >> 16;
     if (actor->riseBaseY < -px(3) / 4) {
       actor->timer = SWAY_INCREASING;
     }
   } else {
-    actor->riseBaseY += (u32)(Import_RandomNext() << 11) >> 16;
+    actor->riseBaseY += (u32)Random_Next() * 2048 >> 16;
     if (actor->riseBaseY > px(3) / 4) {
       actor->timer = SWAY_DECREASING;
     }
@@ -255,12 +257,12 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   if ((s16)actor->userValue == SWAY_HELD) {
     actor->y.fixed = 0;
   } else if ((s16)actor->userValue != SWAY_INCREASING) {
-    actor->y.fixed -= ((u32)Import_RandomNext() * 3 << 14) >> 16;
+    actor->y.fixed -= ((u32)Random_Next() * 3 << 14) >> 16;
     if (actor->y.fixed < 0) {
       actor->userValue = SWAY_INCREASING;
     }
   } else {
-    actor->y.fixed += ((u32)Import_RandomNext() * 3 << 14) >> 16;
+    actor->y.fixed += ((u32)Random_Next() * 3 << 14) >> 16;
     if (actor->y.fixed > px(16)) {
       actor->userValue = SWAY_DECREASING;
     }
@@ -346,8 +348,8 @@ s32 TolbiShipMast_Initialize(void) {
        GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
       GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
-    gTolbiShipMast_SwayX = (u16)Import_RandomNext();
-    gTolbiShipMast_SwayY = (u16)Import_RandomNext();
+    gTolbiShipMast_SwayX = (u16)Random_Next();
+    gTolbiShipMast_SwayY = (u16)Random_Next();
     Task_AddFrame(TolbiShipMast_UpdateSway, TASK_PASS_FRAME);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
@@ -462,6 +464,11 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 static void TolbiShipMast_RunAvastEvent(void) {
   s32 *cameraOrigin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   struct Actor *actor;
+  struct FieldWork **field;
+  s32 sparkleX;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 8 of
+   * 207 instructions differ in tbs-en. */
+  s32 zero = 0;
 
   Event_Start();
   Event_AppendActorPlacements(gTolbiShipMast_FirstAttackActorPlacements);
@@ -469,18 +476,21 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  gFieldWork->transition =
+  field =
+      (struct FieldWork **)&gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
+  (*field)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // Save the camera origin before the sparkle begins to turn.
   Event_Wait(20);
-  gTolbiShipMast_CameraOrigin[0] = cameraOrigin[0];
-  gTolbiShipMast_CameraOrigin[1] = cameraOrigin[1];
+  gTolbiShipMast_CameraOrigin[0] = *cameraOrigin++;
+  gTolbiShipMast_CameraOrigin[1] = *cameraOrigin;
   Actor_SetPosition(ACTOR_SPARKLE, 80, 210);
-  Actor_Get(ACTOR_SPARKLE)->motionFlags = 0;
-  gTolbiShipMast_CameraCenter[0] = px(80);
-  gTolbiShipMast_CameraCenter[1] = 0;
+  sparkleX = px(80);
+  Actor_Get(ACTOR_SPARKLE)->motionFlags = zero;
+  gTolbiShipMast_CameraCenter[0] = sparkleX;
+  gTolbiShipMast_CameraCenter[1] = zero;
   Actor_SetScript(ACTOR_SPARKLE, gTolbiShipMast_FollowCameraActions);
   Event_Wait(20);
   Sound_Play(MUS_CONFRONTATION);
@@ -493,9 +503,9 @@ static void TolbiShipMast_RunAvastEvent(void) {
   // "Avast!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   // The three monsters appear where the sparkle turned.
-  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER, 80, 210);
-  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 1, 80, 210);
-  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 2, 80, 210);
+  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER, sparkleX, px(210));
+  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 1, sparkleX, px(210));
+  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 2, sparkleX, px(210));
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
@@ -504,13 +514,16 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 2, SPRITE_COLOR_BGR);
   // Grow the three monsters from half size as they close in on the lookout.
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER);
-  actor->scaleY = actor->scaleX = Q16_ONE / 2;
+  actor->scaleY = Q16_ONE / 2;
+  actor->scaleX = Q16_ONE / 2;
   actor->update = TolbiShipMast_GrowActorScale;
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER + 1);
-  actor->scaleY = actor->scaleX = Q16_ONE / 2;
+  actor->scaleY = Q16_ONE / 2;
+  actor->scaleX = Q16_ONE / 2;
   actor->update = TolbiShipMast_GrowActorScale;
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER + 2);
-  actor->scaleY = actor->scaleX = Q16_ONE / 2;
+  actor->scaleY = Q16_ONE / 2;
+  actor->scaleX = Q16_ONE / 2;
   actor->update = TolbiShipMast_GrowActorScale;
   wait(1);
   Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER, 0.52);
@@ -527,7 +540,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
   // "Monsters sighted!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
-  gFieldWork->transition =
+  (*field)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -664,15 +677,15 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   actor = Actor_Get(actorId);
   Actor_SetSpritePriority(actorId, 1);
   actor->motionFlags = 0;
-  actor->timer = (u32)Import_RandomNext() >> 15;
-  actor->userValue = (u32)Import_RandomNext() >> 15;
-  randomValue = Import_RandomNext();
+  actor->timer = (u32)Random_Next() >> 15;
+  actor->userValue = (u32)Random_Next() >> 15;
+  randomValue = Random_Next();
   randomValue <<= 2;
   randomValue >>= 16;
   randomValue <<= 16;
   randomValue += px(6);
   actor->y.fixed = randomValue;
-  randomValue = Import_RandomNext();
+  randomValue = Random_Next();
   actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - px(3) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
@@ -846,14 +859,15 @@ static void TolbiShipMast_AnnounceLand(void) {
 static void TolbiShipMast_UpdateSway(void) {
   s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   s32 swayX = Trig_Cos(gTolbiShipMast_SwayX);
-  s32 swayY = Trig_Sin(gTolbiShipMast_SwayY) * 4;
+  s32 swayY = Trig_Sin(gTolbiShipMast_SwayY);
 
-  camera[0] += swayX;
-  camera[1] += swayY;
+  *camera++ += swayX;
+  swayY *= 4;
+  *camera += swayY;
   gTolbiShipMast_DriftX += swayX;
   gTolbiShipMast_DriftY += swayY;
-  gTolbiShipMast_SwayX += (u32)(Import_RandomNext() * 3 << 7) >> 16;
-  gTolbiShipMast_SwayY += (u32)(Import_RandomNext() << 9) >> 16;
+  gTolbiShipMast_SwayX += (u32)(Random_Next() * 3 << 7) >> 16;
+  gTolbiShipMast_SwayY += (u32)Random_Next() * 512 >> 16;
   gTolbiShipMast_SwayX &= 0xffff;
   gTolbiShipMast_SwayY &= 0xffff;
 }

@@ -149,6 +149,8 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 // 26 pixels), the child being talked to stops whatever the direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
+  struct FieldWork *field =
+      (struct FieldWork *)gWindowWork[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;
@@ -165,7 +167,7 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if (gFieldWork->talk != 0 || window->mindRead != 0) {
+  if ((s16)field->talk != 0 || window->mindRead != 0) {
     range = 26;
     if ((updated->timer & KID_TALKING) != 0) {
       force = 1;
@@ -194,7 +196,7 @@ static void Tolbi_GrowSprout(void) {
   struct Actor *sprout;
 
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
-  if ((s32)sprout != 0) {
+  if (sprout != 0) {
     sprout->collisionFlags = 0;
   }
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
@@ -570,7 +572,6 @@ static void Tolbi_EnterSpring(void) {
 
 /// Leaves by the exit numbered as the cell behavior the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
-
   Import_EventSetExitRequest(gFieldWork->stepTrigger);
 }
 
@@ -718,51 +719,31 @@ s32 gTolbiMirroredActor[] = {
 /// The older brother runs a loop of eight points, 32 pixels across, south-east
 /// of the fountain.
 s32 gTolbiOlderBrotherRun[] = {
-    SC_ANIMATION(2),
-    SC_SPEED(0.8),
-    SC_ACCELERATION(0.2),
-    SC_LABEL(1),
-    SC_MOVE(352, 0, 352),
-    SC_SYNC,
-    SC_MOVE(368, 0, 352),
-    SC_SYNC,
-    SC_MOVE(376, 0, 344),
-    SC_SYNC,
-    SC_MOVE(376, 0, 328),
-    SC_SYNC,
-    SC_MOVE(368, 0, 320),
-    SC_SYNC,
-    SC_MOVE(352, 0, 320),
-    SC_SYNC,
-    SC_MOVE(344, 0, 328),
-    SC_SYNC,
-    SC_MOVE(344, 0, 344),
-    SC_SYNC,
+    SC_ANIMATION(ANIM_WALK),       SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),          SC_LABEL(1),
+    SC_MOVE(352, 0, 352),          SC_SYNC,
+    SC_MOVE(368, 0, 352),          SC_SYNC,
+    SC_MOVE(376, 0, 344),          SC_SYNC,
+    SC_MOVE(376, 0, 328),          SC_SYNC,
+    SC_MOVE(368, 0, 320),          SC_SYNC,
+    SC_MOVE(352, 0, 320),          SC_SYNC,
+    SC_MOVE(344, 0, 328),          SC_SYNC,
+    SC_MOVE(344, 0, 344),          SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
 /// The younger sister runs the same loop half a lap ahead.
 s32 gTolbiYoungerSisterRun[] = {
-    SC_ANIMATION(2),
-    SC_SPEED(0.8),
-    SC_ACCELERATION(0.2),
-    SC_LABEL(1),
-    SC_MOVE(368, 0, 320),
-    SC_SYNC,
-    SC_MOVE(352, 0, 320),
-    SC_SYNC,
-    SC_MOVE(344, 0, 328),
-    SC_SYNC,
-    SC_MOVE(344, 0, 344),
-    SC_SYNC,
-    SC_MOVE(352, 0, 352),
-    SC_SYNC,
-    SC_MOVE(368, 0, 352),
-    SC_SYNC,
-    SC_MOVE(376, 0, 344),
-    SC_SYNC,
-    SC_MOVE(376, 0, 328),
-    SC_SYNC,
+    SC_ANIMATION(ANIM_WALK),       SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),          SC_LABEL(1),
+    SC_MOVE(368, 0, 320),          SC_SYNC,
+    SC_MOVE(352, 0, 320),          SC_SYNC,
+    SC_MOVE(344, 0, 328),          SC_SYNC,
+    SC_MOVE(344, 0, 344),          SC_SYNC,
+    SC_MOVE(352, 0, 352),          SC_SYNC,
+    SC_MOVE(368, 0, 352),          SC_SYNC,
+    SC_MOVE(376, 0, 344),          SC_SYNC,
+    SC_MOVE(376, 0, 328),          SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 

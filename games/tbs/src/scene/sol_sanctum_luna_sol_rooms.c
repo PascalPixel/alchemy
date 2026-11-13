@@ -111,7 +111,7 @@
 /// Set once Isaac and Garet's arrival after the Wise One's rescue has played.
 /// ★ Named from the game: "Did that floating eye thing save us?"
 /// (MsgSolSanctumFloatingEyeThing)
-#define FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN 0x309
+#define FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN FLAG_AREA_TEMP_09
 
 /// The blue tint the rooms fade to (PaletteTint's TINT form).
 #define SOL_SANCTUM_BLUE_TINT (PALETTE_TINT_CUSTOM | RGB(12, 14, 20))
@@ -325,8 +325,10 @@ static void SolSanctumLunaSolRooms_TintPassageBetweenRooms(void) {
 /// CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP turns the backdrop
 /// black.
 static void SolSanctumLunaSolRooms_ClearBackdropColor(void) {
+  s32 black = RGB(0, 0, 0);
   u16 *backdropColor = (u16 *)&PLTT_BACKDROP;
-  *backdropColor = 0;
+
+  *backdropColor = black;
 }
 
 /// Draws the light of each lit quarter of the Luna room's picture, from four
@@ -549,30 +551,9 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_SetSpeed(ACTOR_GARET, 1);
     Actor_SetSpeed(ACTOR_JENNA, 1);
     Actor_SetSpeed(ACTOR_KRADEN, 2);
-    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_KRADEN);
-    Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, 0, 0);
-    Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_JENNA);
-    Actor_SetPosition(ACTOR_JENNA, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_KRADEN);
+    Scene_WalkIntoLeader(ACTOR_GARET);
+    Scene_WalkIntoLeader(ACTOR_JENNA);
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     GameFlag_Set(FLAG_SOL_SANCTUM_FOUND);
     Event_End();
@@ -673,7 +654,6 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
 static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
   struct Actor *kraden;
   struct Actor *leader;
-  struct Actor *destinationActor;
 
   kraden = Actor_Get(ACTOR_KRADEN);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) == 0) {
@@ -718,14 +698,7 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
-    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-    destinationActor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (destinationActor != 0) {
-      Actor_SetDestination(ACTOR_KRADEN, destinationActor->x.part.pixel,
-                           destinationActor->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_KRADEN);
-    Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_KRADEN);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 232);
   } else {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 248);
@@ -778,107 +751,55 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
   }
 }
 
-/// Animates the second falling light with its own random restart delay, as
-/// the first.
-static void SolSanctumLunaSolRooms_UpdateSecondFallingLight(void) {
-  if ((Import_RandomNext() & 3) != 0) {
-    switch (gSolSanctumLunaSolRooms_Light2Timer) {
-    case 0:
-      Sound_Play(SE_FALLING_LIGHT);
-      DRAW_LIGHT(47, 42, 33);
-      break;
-    case 1:
-      MOVE_LIGHT_DOWN(47, 42, 34);
-      break;
-    case 2:
-      MOVE_LIGHT_DOWN(47, 42, 35);
-      break;
-    case 3:
-      MOVE_LIGHT_DOWN(47, 42, 36);
-      break;
-    case 4:
-      gSolSanctumLunaSolRooms_FlashState = 2;
-      MOVE_LIGHT_DOWN(47, 42, 37);
-      break;
-    case 90:
-      CLEAR_LIGHT_PATH(47, 42, 33);
-      break;
-    }
-    gSolSanctumLunaSolRooms_Light2Timer++;
-    if (gSolSanctumLunaSolRooms_Light2Timer >
-        ((u32)(Import_RandomNext() * 40) >> 16) + 100) {
-      gSolSanctumLunaSolRooms_Light2Timer = 0;
-    }
+/// Defines `name`, the task of one more falling light in the Luna room, with
+/// its own random restart delay, as the first.
+///
+/// Three frames in four it advances its timer: the light appears at (column,
+/// top) from its staging column, falls four rows and flashes, and on frame
+/// `cleared` its path is put back. It starts again after `restart` frames and
+/// up to 40 more.
+#define SOL_SANCTUM_FALLING_LIGHT(name, timer, staging, column, top, cleared,  \
+                                  restart)                                     \
+  static void name(void) {                                                     \
+    if ((Random_Next() & 3) != 0) {                                            \
+      switch (timer) {                                                         \
+      case 0:                                                                  \
+        Sound_Play(SE_FALLING_LIGHT);                                          \
+        DRAW_LIGHT(staging, column, top);                                      \
+        break;                                                                 \
+      case 1:                                                                  \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 1);                           \
+        break;                                                                 \
+      case 2:                                                                  \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 2);                           \
+        break;                                                                 \
+      case 3:                                                                  \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 3);                           \
+        break;                                                                 \
+      case 4:                                                                  \
+        gSolSanctumLunaSolRooms_FlashState = 2;                                \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 4);                           \
+        break;                                                                 \
+      case cleared:                                                            \
+        CLEAR_LIGHT_PATH(staging, column, top);                                \
+        break;                                                                 \
+      }                                                                        \
+      timer++;                                                                 \
+      if (timer > ((u32)(Random_Next() * 40) >> 16) + (restart)) {             \
+        timer = 0;                                                             \
+      }                                                                        \
+    }                                                                          \
   }
-}
 
-/// Animates the third falling light with its own random restart delay, as the
-/// first.
-static void SolSanctumLunaSolRooms_UpdateThirdFallingLight(void) {
-  if ((Import_RandomNext() & 3) != 0) {
-    switch (gSolSanctumLunaSolRooms_Light3Timer) {
-    case 0:
-      Sound_Play(SE_FALLING_LIGHT);
-      DRAW_LIGHT(48, 31, 36);
-      break;
-    case 1:
-      MOVE_LIGHT_DOWN(48, 31, 37);
-      break;
-    case 2:
-      MOVE_LIGHT_DOWN(48, 31, 38);
-      break;
-    case 3:
-      MOVE_LIGHT_DOWN(48, 31, 39);
-      break;
-    case 4:
-      gSolSanctumLunaSolRooms_FlashState = 2;
-      MOVE_LIGHT_DOWN(48, 31, 40);
-      break;
-    case 95:
-      CLEAR_LIGHT_PATH(48, 31, 36);
-      break;
-    }
-    gSolSanctumLunaSolRooms_Light3Timer++;
-    if (gSolSanctumLunaSolRooms_Light3Timer >
-        ((u32)(Import_RandomNext() * 40) >> 16) + 105) {
-      gSolSanctumLunaSolRooms_Light3Timer = 0;
-    }
-  }
-}
-
-/// Animates the fourth falling light with its own random restart delay, as
-/// the first.
-static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
-  if ((Import_RandomNext() & 3) != 0) {
-    switch (gSolSanctumLunaSolRooms_Light4Timer) {
-    case 0:
-      Sound_Play(SE_FALLING_LIGHT);
-      DRAW_LIGHT(46, 41, 36);
-      break;
-    case 1:
-      MOVE_LIGHT_DOWN(46, 41, 37);
-      break;
-    case 2:
-      MOVE_LIGHT_DOWN(46, 41, 38);
-      break;
-    case 3:
-      MOVE_LIGHT_DOWN(46, 41, 39);
-      break;
-    case 4:
-      gSolSanctumLunaSolRooms_FlashState = 2;
-      MOVE_LIGHT_DOWN(46, 41, 40);
-      break;
-    case 85:
-      CLEAR_LIGHT_PATH(46, 41, 36);
-      break;
-    }
-    gSolSanctumLunaSolRooms_Light4Timer++;
-    if (gSolSanctumLunaSolRooms_Light4Timer >
-        ((u32)(Import_RandomNext() * 40) >> 16) + 95) {
-      gSolSanctumLunaSolRooms_Light4Timer = 0;
-    }
-  }
-}
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
+                          gSolSanctumLunaSolRooms_Light2Timer, 47, 42, 33, 90,
+                          100)
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateThirdFallingLight,
+                          gSolSanctumLunaSolRooms_Light3Timer, 48, 31, 36, 95,
+                          105)
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateFourthFallingLight,
+                          gSolSanctumLunaSolRooms_Light4Timer, 46, 41, 36, 85,
+                          95)
 
 /// Opens on Kraden in the Luna room in SOL_SANCTUM_BLUE_TINT, as a flash
 /// crosses it.
@@ -1018,14 +939,10 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             6);
   // Each light starts falling after 20 to 79 frames.
-  gSolSanctumLunaSolRooms_Light1Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
-  gSolSanctumLunaSolRooms_Light2Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
-  gSolSanctumLunaSolRooms_Light3Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
-  gSolSanctumLunaSolRooms_Light4Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
+  gSolSanctumLunaSolRooms_Light1Timer = (((u32)Random_Next() * 60) >> 16) + 20;
+  gSolSanctumLunaSolRooms_Light2Timer = (((u32)Random_Next() * 60) >> 16) + 20;
+  gSolSanctumLunaSolRooms_Light3Timer = (((u32)Random_Next() * 60) >> 16) + 20;
+  gSolSanctumLunaSolRooms_Light4Timer = (((u32)Random_Next() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_FlashState = 0;
   // Run the falling lights independently while the quarters keep flashing.
   Task_AddFrame(SolSanctumLunaSolRooms_UpdateFirstFallingLight,
@@ -1174,8 +1091,6 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
 ///
 /// Until FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED is set, which it sets.
 static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
-  struct Actor *leader;
-
   if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) == 0) {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       Event_Start();
@@ -1220,14 +1135,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Event_Wait(6);
       Actor_SetSpeed(ACTOR_KRADEN, 0.5);
-      Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
-        Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                             leader->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_KRADEN);
-      Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_KRADEN);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED);
       Event_End();
     }
@@ -1380,9 +1288,10 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     // Repeat the ascent for Kraden before closing the room transition.
     Actor_SetSpeed(ACTOR_KRADEN, 0.3);
     actor = Actor_Get(ACTOR_KRADEN);
-    // The mask is built in a variable and frame is reused for the zero;
-    // clearing ACTOR_FACES_MOTION in place differs.
     {
+      /* FAKEMATCH(temporary): the mask built in steeringFlags and frame reused
+       * for the zero; as actor->steeringFlags &= ~ACTOR_FACES_MOTION and a 0,
+       * 57 of 442 instructions differ in tbs-en. */
       s32 steeringFlags = 254;
 
       steeringFlags &= actor->steeringFlags;
@@ -1638,7 +1547,6 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED and clears the other two tint
 /// flags.
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
-  struct Actor *leader;
   struct PaletteFade *palette;
 
   Event_Start();
@@ -1652,7 +1560,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   wait(1);
   Actor_SetPosition(ACTOR_GARET, 280, 134);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  gFieldWork->transitionFrames = 1;
+  // The heap slots are read from one address, the palette fade's from the
+  // field's.
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
@@ -1715,7 +1625,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Scene_WalkIntoLeader(ACTOR_GARET);
-  palette = gPaletteFadeWork;
+  palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;
@@ -1724,9 +1634,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  gFieldWork->transition =
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gFieldWork->transitionFrames = 16;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   Event_End();
 }
 

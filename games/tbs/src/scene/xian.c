@@ -62,7 +62,6 @@
 #include "module/system/system.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "types.h"
 #include "event.h"
@@ -194,19 +193,25 @@ static void Xian_RotateTrainingTree(void) {
 
 /// Emits particles beside the student every fourth frame.
 static void Xian_SpawnTrainingParticles(void) {
-  struct Actor *student = Actor_Get(ACTOR_KUNG_FU_STUDENT);
+  /* FAKEMATCH(temporary): the student read through a byte pointer, which
+   * lets the z load go ahead of the options' script store; as the actor's
+   * fields, 1 of 37 instructions differ in tbs-en. */
+  u8 *student = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {
-    struct EffectOptions config;
-    config.priority = 1;
-    config.palette = 9;
-    config.type = SPRITE_GIRL_IN_PINK;
-    config.script = gXian_TrainingParticleScript;
-    FieldEffect_Spawn(student->x.fixed, student->y.fixed,
-                      student->z.fixed - px(1), 0, -px(1), -px(1),
+    struct EffectOptions options;
+
+    options.priority = 1;
+    options.palette = 9;
+    options.type = SPRITE_GIRL_IN_PINK;
+    options.script = gXian_TrainingParticleScript;
+    FieldEffect_Spawn(*(s32 *)(student + offsetof(struct Actor, x)),
+                      *(s32 *)(student + offsetof(struct Actor, y)),
+                      *(s32 *)(student + offsetof(struct Actor, z)) - px(1), 0,
+                      -px(1), -px(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
-                      &config);
+                      &options);
   }
 }
 
@@ -734,11 +739,12 @@ static void Xian_OpenDoorAndLeave(void) {
 /// The first time she says "Wha-Wha-What happened? The tree jumped on its
 /// own!", and the next time "...It jumped again... I am too tired...".
 static void Xian_StrikeTrainingTreeWithForce(void) {
-  TaskFunc rotationFunc;
+  TaskFunc rotate;
 
   Event_Start();
   Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
-  Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
+  rotate = Xian_RotateTrainingTree;
+  Task_AddFrame(rotate, TASK_PASS_FRAME);
   Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
   Sound_Play(SE_CHEST_OPEN);
   FieldEffect_Spawn(px(168), px(8), px(312), 0, 0, 0,
@@ -747,7 +753,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   FieldEffect_Spawn(px(168), px(8), px(312), -px(1) / 5, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  Task_Remove(rotationFunc);
+  Task_Remove(rotate);
   Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
   Actor_SetPosition(ACTOR_FORCE_TARGET, 168, 312);
   Event_Wait(20);
@@ -902,11 +908,11 @@ s32 gXian_WaterCarrierRoute[] = {
     SC_ACCELERATION(0.1),
     SC_WAIT(60),
     SC_LABEL(1),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(60),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(180),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(424, 0, 232),
     SC_SYNC,
     SC_MOVE(424, 0, 216),
@@ -914,11 +920,11 @@ s32 gXian_WaterCarrierRoute[] = {
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_EAST_SOUTHEAST),
     SC_WAIT(10),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(60),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(120),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(424, 0, 232),
     SC_SYNC,
     SC_MOVE(280, 0, 232),

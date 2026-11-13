@@ -32,7 +32,7 @@
 ///
 /// From TBS_PATCH_3 on, a patch of ivy (SPRITE_IVY) stands at (132, 388), over
 /// a dark opening at the foot of the cliff on the grounds' south edge. The
-/// earlier editions show the opening bare (renders of tbs-en and tbs-fr). No
+/// earlier editions leave the opening bare. No
 /// exit or trigger answers that opening, so the ivy only hides a way in that
 /// leads nowhere.
 
@@ -298,6 +298,11 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       McCoyPalaceGrounds_OpenGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
+      /* FAKEMATCH(dead): an empty once-only loop keeps r0 last among the call
+       * above's arguments; without it, 1 of 233 instructions differ in
+       * tbs-en. */
+      do {
+      } while (0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
     guard:
       FieldActor_WatchAndStartScript(
@@ -386,7 +391,6 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
 /// stop the party, ask whether they broke the curse of the holy tree until
 /// they answer yes, and march them into the palace to McCoy.
 static void McCoyPalaceGrounds_GuardsArrestParty(void) {
-
   // Bring the leader into view before the guards interrupt.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);

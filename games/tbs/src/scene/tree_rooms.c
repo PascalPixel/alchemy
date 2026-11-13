@@ -825,19 +825,15 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
 
   wait(1);
   if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
-    s32 openingColumn = 10;
-    MapGrid_CopyCells(121, 34, 3, 1, 93, openingColumn);
+    MapGrid_CopyCells(121, 34, 3, 1, 93, 10);
     {
-      s32 passageColumn = 30;
-      MapGrid_CopyCells(46, 38, 1, 1, passageColumn, 43);
-      MapGrid_CopyCellAttributes(0, 0, 1, 2, passageColumn, 9);
+      MapGrid_CopyCells(46, 38, 1, 1, 30, 43);
+      MapGrid_CopyCellAttributes(0, 0, 1, 2, 30, 9);
     }
-    MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
-    MapGrid_CopyCells(26, 35, 1, 4, openingColumn, 40);
+    MapGrid_CopyCellAttributes(26, 3, 1, 2, 10, 8);
+    MapGrid_CopyCells(26, 35, 1, 4, 10, 40);
   } else {
-    s32 openingColumn = 10;
-    s32 passageColumn = 8;
-    MapGrid_CopyCellAttributes(11, 8, 1, 2, openingColumn, passageColumn);
+    MapGrid_CopyCellAttributes(11, 8, 1, 2, 10, 8);
   }
 }
 
@@ -856,7 +852,7 @@ s32 TreeRooms_EnterRoom(void) {
   struct FieldWork *work;
   s32 entrance;
   s32 leaderActorId;
-  struct Actor *tretSpeaker;
+  struct Actor *secondTret;
 
   tret = Actor_Get(ACTOR_TRET);
   // Point the cocoon latch at the scene state and save the palette first.
@@ -864,10 +860,10 @@ s32 TreeRooms_EnterRoom(void) {
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -px(10);
-  tretSpeaker = Actor_Get(ACTOR_SECOND_TRET);
+  secondTret = Actor_Get(ACTOR_SECOND_TRET);
 
-  tretSpeaker->motionFlags = 0;
-  tretSpeaker->y.fixed = -px(10);
+  secondTret->motionFlags = 0;
+  secondTret->y.fixed = -px(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
@@ -893,7 +889,7 @@ s32 TreeRooms_EnterRoom(void) {
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN);
   wait(1);
   TreeRooms_ApplyPostBattleState(0);
-  work = gFieldWork;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   entrance = gMainRoutineWork.entrance;
@@ -954,8 +950,8 @@ static void TretPalette_UpdateMapTint(void) {
   struct FieldWork *work;
   struct PaletteFade *paletteWork;
 
-  work = gFieldWork;
-  paletteWork = gPaletteFadeWork;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)
     return;
@@ -963,8 +959,8 @@ static void TretPalette_UpdateMapTint(void) {
     return;
   sourceColors += 16;
   destinationColors = (u16 *)&BG_PLTT_COLOR(1, 0);
-  colorIndex = 0;
-  for (; colorIndex < TRET_TINT_COLOR_COUNT; colorIndex++, sourceColors++) {
+  for (colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT;
+       colorIndex++, sourceColors++) {
     redStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex];
     greenStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 1];
     blueStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 2];
@@ -982,9 +978,9 @@ static void TretPalette_UpdateMapTint(void) {
       blueStep -= blueStep / 4 + blueStep / 5;
     }
     color = *sourceColors;
-    red = color & 31;
-    green = (color >> 5) & 31;
-    blue = (color >> 10) & 31;
+    red = RGB_RED(color);
+    green = RGB_GREEN(color);
+    blue = RGB_BLUE(color);
     red += redStep;
     green += greenStep;
     blue += blueStep;
@@ -1000,9 +996,9 @@ static void TretPalette_UpdateMapTint(void) {
       green = 0;
     if (blue < 0)
       blue = 0;
-    *destinationColors++ = (blue << 10) | (green << 5) | red;
+    *destinationColors++ = RGB(red, green, blue);
   }
-  gTreeRooms_TintIndex += (Import_RandomNext() & 7) * 3;
+  gTreeRooms_TintIndex += (Random_Next() & 7) * 3;
   if (gTreeRooms_TintSteps[gTreeRooms_TintIndex] == TRET_TINT_END)
     gTreeRooms_TintIndex = 0;
 }
@@ -1283,34 +1279,34 @@ const s32 *gFieldEffect_DurationScripts[] = {
 /// The party gathers in front of Tret before the battle (TreeRooms_FightTret),
 /// each walking to its own place.
 s32 gTreeRooms_LeaderGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_GaretGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(148, 0, 90),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_IvanGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(182, 0, 90),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_MiaGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 104),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -1333,7 +1329,7 @@ s32 gTreeRooms_FaceSinksActions[] = {
 
 /// Garet, Ivan and Mia walk back to the leader and are put away.
 s32 gTreeRooms_RejoinLeaderActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

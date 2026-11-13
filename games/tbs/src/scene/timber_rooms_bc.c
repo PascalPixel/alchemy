@@ -244,7 +244,7 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_AREA_TEMP_00 };
 
 /// TimberRoomsC: the inn worker sighs between chores.
-static s32 InnWorker_Sigh(struct Actor *interpreter) {
+static s32 InnWorker_Sigh(struct Actor *actor) {
   Actor_SetAttachedEffect(ACTOR_INN_WORKER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -432,7 +432,6 @@ static void TimberRoomsBC_TalkToInnWorker(void) {
 ///
 /// It plays at step trigger 51 in Faran's house after the report.
 static void TimberRoomsBC_IodemCallsOut(void) {
-
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_Start();
   Field_EndBusyAndReveal();
@@ -454,7 +453,6 @@ static void TimberRoomsBC_IodemCallsOut(void) {
 /// In Lalivero (TimberRoomsC), Iodem, talked to before he has given the
 /// Black Orb, repeats his request.
 static void TimberRoomsBC_TalkToIodem(void) {
-
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
   // "Please wait for me outside Faran's house. I wish to speak..."
@@ -488,8 +486,6 @@ const struct Trigger *TimberRoomsBC_GetTriggers(void) {
 /// - What an Adept is.
 /// - A farewell as the party sets out to search for Jenna.
 static void TimberRoomsBC_ReportToFaran(void) {
-  struct Actor *leader;
-
   Event_Start();
   Party_RestoreHpPp(1);
   // The party walks in to Faran and Iodem, and the others step out.
@@ -812,13 +808,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Scene_WalkIntoLeader(ACTOR_GARET);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Scene_WalkIntoLeader(ACTOR_IVAN);
   Event_Wait(10);
   Event_End();
@@ -967,31 +957,31 @@ s32 gTimberRoomsBC_InnWorkerChores[] = {
     SC_SPEED(2.4),
     SC_ACCELERATION(1.2),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(128, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(30),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(50),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(128, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(20),
     SC_CALL(InnWorker_Sigh),
     SC_WAIT(30),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 300),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
-    SC_ANIMATION(3),
+    SC_ANIMATION(ANIM_NOD),
     SC_WAIT(30),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };

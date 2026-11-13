@@ -140,12 +140,12 @@
 // Vale's area flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a young man has welcomed Isaac home.
 /// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
-#define FLAG_VALE_WELCOMED_HOME 0x302
+#define FLAG_VALE_WELCOMED_HOME FLAG_AREA_TEMP_02
 /// Back from Kalay, the old man searching for the Psynergy Stone has told
 /// Isaac it is gone.
 /// ★ Named from the game: "Where'd that Psynergy Stone go? It's gone!"
 /// (MsgValeThePsynergyStoneIsGone)
-#define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD 0x306
+#define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD FLAG_AREA_TEMP_06
 
 /// Each actor placement table numbers its own rows from ACTOR_FIRST_PLACED,
 /// Garet keeping his own party slot. The same people stand in several tables
@@ -1553,7 +1553,6 @@ static void ValePlaza_DepartForQuest(void) {
   const s32 *faceActions;
   const s32 *chaseActions;
   const s32 *departureActions;
-  u8 value;
 
   // The village gathers at the gate to see Isaac and Garet off; the camera
   // starts on the two children up the path.
@@ -1912,9 +1911,12 @@ static void ValePlaza_DepartForQuest(void) {
   priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   Event_Wait(80);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= priorityFlags;
-  value = (priorityFlags | actor->priorityFlags);
+  {
+    struct Actor *garet = Actor_GetById(ACTOR_GARET);
+    u8 flags = priorityFlags | garet->priorityFlags;
 
-  actor->priorityFlags = value;
+    garet->priorityFlags = flags;
+  }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
@@ -2143,18 +2145,18 @@ u8 gValePlaza_UnusedPaletteSteps[] = {
 };
 
 s32 gValePlaza_ChargedUpStrongmanActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(214, 0, 721),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(40),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_MOTION, 3),
     SC_SET(SW_VELOCITY_Y, px(8)),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(214, 0, 763),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -2296,7 +2298,7 @@ s32 gValePlaza_FarewellChaseActions[] = {
 };
 
 s32 gValePlaza_FarewellFirstChildActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(137, 0, 639),
     SC_SYNC,
     SC_MOVE(122, 0, 692),
@@ -2307,12 +2309,12 @@ s32 gValePlaza_FarewellFirstChildActions[] = {
     SC_ACCELERATION(0.6),
     SC_MOVE(148, 0, 770),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_FarewellSecondChildActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(137, 0, 639),
     SC_SYNC,
     SC_MOVE(122, 0, 692),
@@ -2323,12 +2325,12 @@ s32 gValePlaza_FarewellSecondChildActions[] = {
     SC_ACCELERATION(0.6),
     SC_MOVE(164, 0, 758),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_PartyDepartureActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(216, 0, 854),
     SC_SYNC,
     SC_MOVE(215, 0, 921),
@@ -2342,51 +2344,51 @@ s32 gValePlaza_HutOwnerSearchActions[] = {
     SC_ACCELERATION(0.05),
     SC_SET(SW_COLLISION, 3),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
 };
 
 s32 gValePlaza_AideRunActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(148, 0, 758),
     SC_SYNC,
     SC_MOVE(128, 0, 709),
     SC_SYNC,
     SC_MOVE(129, 0, 647),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValePlaza_LeaderStepActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 774),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_StormGaretStepActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 790),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

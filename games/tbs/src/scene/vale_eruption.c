@@ -333,7 +333,6 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // "You're safe!"
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(40);
-  // The mayor: "Come over here, both of you!"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   // "Come over here, both of you!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
@@ -514,22 +513,41 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
 /// Isaac walks down from the path to the villagers before the sanctum.
 s32 gValeEruption_LeaderWalksDown[] = {
-    SC_ANIMATION(2), SC_MOVE(128, 0, 378), SC_SYNC, SC_MOVE(203, 0, 378),
-    SC_SYNC,         SC_MOVE(212, 0, 472), SC_SYNC, SC_MOVE(214, 0, 472),
-    SC_SYNC,         SC_ANIMATION(1),      SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(128, 0, 378),
+    SC_SYNC,
+    SC_MOVE(203, 0, 378),
+    SC_SYNC,
+    SC_MOVE(212, 0, 472),
+    SC_SYNC,
+    SC_MOVE(214, 0, 472),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Garet follows him, stopping a little above.
 s32 gValeEruption_GaretWalksDown[] = {
-    SC_ANIMATION(2), SC_MOVE(128, 0, 378), SC_SYNC, SC_MOVE(203, 0, 378),
-    SC_SYNC,         SC_MOVE(214, 0, 455), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(128, 0, 378),
+    SC_SYNC,
+    SC_MOVE(203, 0, 378),
+    SC_SYNC,
+    SC_MOVE(214, 0, 455),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// Isaac, then Garet, walk through the sanctum's door.
 s32 gValeEruption_EnterSanctum[] = {
-    SC_ANIMATION(2), SC_MOVE(255, 0, 452), SC_SYNC, SC_MOVE(255, 0, 390),
-    SC_SYNC,         SC_ANIMATION(1),      SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(255, 0, 452),
+    SC_SYNC,
+    SC_MOVE(255, 0, 390),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 struct SceneEntrance gValeEruption_Entrances[] = {

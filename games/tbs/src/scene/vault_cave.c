@@ -660,18 +660,16 @@ static void VaultCave_UseUnderfootFrostPriorities(void) {
   }
 }
 
-/// Restores automatic draw ACTOR_PRIORITY_AUTOMATIC for the same six puddles.
+/// Restores automatic draw priority for the same six puddles.
 static void VaultCave_UseAutomaticFrostPriorities(void) {
-  s32 actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-  s32 remaining = 5;
+  s32 targetIndex;
+  s32 actorSlot;
 
-  do {
-    struct Actor *target = Actor_Get(actorSlot);
-
-    remaining--;
-    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+  actorSlot = ACTOR_WEST_UPPER_PUDDLE;
+  for (targetIndex = 0; targetIndex < 6; targetIndex++) {
+    Actor_Get(actorSlot)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     actorSlot++;
-  } while (remaining >= 0);
+  }
 }
 
 /// Moves the third layer of the map grid through its phases, then fades the
@@ -696,8 +694,8 @@ static void VaultCave_RunRumble(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Sound_Play(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
-  for (frame = 479; frame >= 0; frame--) {
-    u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
+  for (frame = 0; frame < 480; frame++) {
+    u32 scrollDrift = (u32)Random_Next() * 2048 >> 16;
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
     Event_Wait(1);
@@ -840,7 +838,6 @@ static void VaultCave_UpdateTimedFallingActors(void) {
 /// Drops a random actor every 64 frames, with reset height set by its puddle
 /// (frozen or not).
 static void VaultCave_UpdateFrostControlledFallingActors(void) {
-
   s32 fallingIndex;
   struct Actor *fallingActor;
   s32 stateValue;
@@ -851,7 +848,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
     // Preserve one random selection per 64 frames.
     if ((++gVaultCave_DropFrames & 63) == 0) {
       selectedIndex = &gVaultCave_SelectedDrop;
-      stateValue = Import_RandomNext();
+      stateValue = Random_Next();
       stateValue = Math_RemainderUnsigned(stateValue, 6);
       *selectedIndex = stateValue;
       fallingActor = Actor_Get((stateValue + ACTOR_FIRST_WATER_DROP));
@@ -915,9 +912,9 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
     puff->scaleX = 11 * Q16_ONE / 20;
     puff->motionFlags = ACTOR_FALLS;
     puff->velocityY = -px(1);
-    puff->speedLimit = Import_RandomNext() + px(4) / 5;
+    puff->speedLimit = Random_Next() + px(4) / 5;
     puff->collisionFlags = ACTOR_SOLID;
-    VaultCave_OffsetActorRadially(puff, px(32), Import_RandomNext());
+    VaultCave_OffsetActorRadially(puff, px(32), Random_Next());
     puff->wait = 8;
     Actor_StartScript(puff, gVaultCave_PuffScript);
   }
@@ -1100,7 +1097,9 @@ s32 Scene_Initialize(void) {
 }
 
 // clang-format off
-const s32 gVaultCave_DirectionSteps[] = {
+// Not const, and placed in read-only data by its section: the pushes read the
+// step again after each call, as a const table is not.
+s32 gVaultCave_DirectionSteps[] __attribute__((section(".rodata"))) = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),

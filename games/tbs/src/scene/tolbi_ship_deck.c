@@ -98,17 +98,7 @@
 #include "map_grid_scroll.h"
 #include "heap.h"
 #include "fixed_math.h"
-
-// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
-// party enters another area, and other areas use the numbers for
-// their own.
-
-/// The deck shakes until the Kraken is defeated (set in ship_rooms.c).
-///
-/// The line is "There's a huge sea monster on the ship!"
-/// ★ Named from the game: "there's a huge sea monster on the ship!"
-/// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
-#define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
+#include "tolbi_ship.h"
 
 // The scene's routines, defined below.
 static void TolbiShipDeck_ConfrontCrewman(void);
@@ -147,14 +137,6 @@ static void TolbiShipDeck_Turn(s32 actorId, s32 facing);
 static void TolbiShipDeck_SightIsland(void);
 static void TolbiShipDeck_ReturnFromIsland(void);
 static void TolbiShipDeck_PlaceLeaderOnDeck(void);
-
-// The append service registers these borrowed crew tables for later talk
-// lookups, but does not write them. Its mutable API therefore needs a cast
-// at each call; the tables themselves remain const.
-
-/// A speaker, which is the actor with the speaker bits for where its message
-/// window and portrait open.
-#define SPEAKER(actorId, bits) ((bits) | (actorId))
 
 /// Who is who on deck, numbering each actor placement table's rows from
 /// ACTOR_FIRST_PLACED.
@@ -401,191 +383,113 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
 // the bob direction. Using the actor's fields keeps one layout for the
 // whole slot.
 
-/// The update of a sea monster hovering by Ouranos's side of the deck while the
-/// monsters attack.
+/// Defines `name`, the update of a sea monster hovering by one warrior's side
+/// of the deck while the monsters attack.
 ///
-/// It drifts and bobs at random. One frame in a hundred it dives at Ouranos,
-/// who turns and jumps (sometimes with an emote). Then it returns to its
-/// side. riseEnabled picks which side it returns to.
+/// It drifts between minX and maxX and bobs, at random. One frame in a hundred
+/// it dives at the warrior to (diveX, diveZ), 20 pixels up, and the warrior
+/// turns and jumps (sometimes with an emote). Then it returns to its side,
+/// (eastX, eastZ) or (westX, westZ) as riseEnabled picks.
 ///
 /// Returns 1 to keep running.
-static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *actor) {
-  if (actor->riseCounter != 0) {
-    switch (actor->riseCounter) {
-    case 1:
-      actor->speedLimit = px(4);
-      actor->acceleration = px(2);
-      FieldActor_SetMoveTarget(actor, 268, 20, 692);
-      actor->riseCounter++;
-      break;
-    case 2:
-      actor->riseCounter++;
-      break;
-    case 3:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->riseCounter++;
-        Sound_Play(SE_ENEMY_CRY);
-        if (actor->riseEnabled != 0)
-          Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST, 0);
-        else
-          Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 0);
-        if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-          Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(2);
-        } else {
-          Actor_ShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
-                          0);
-          Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(6);
-        }
-      }
-      break;
-    case 4:
-      actor->riseCounter++;
-      break;
-    case 5:
-      if (actor->riseEnabled != 0)
-        FieldActor_SetMoveTarget(actor, 282, 0, 658);
-      else
-        FieldActor_SetMoveTarget(actor, 254, 0, 668);
-      actor->riseCounter++;
-      break;
-    case 6:
-      actor->riseCounter++;
-      break;
-    case 7:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->speedLimit = px(2);
-        actor->acceleration = px(1);
-        actor->timer = 0;
-        actor->userValue = 0;
-        actor->riseCounter++;
-        actor->riseBaseY = 0;
-      }
-      break;
-    case 8:
-      actor->riseCounter = 0;
-      break;
-    }
-  } else {
-    if (actor->timer != 0) {
-      actor->riseBaseY -= ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY < -px(1) / 4)
-        actor->timer = 0;
-    } else {
-      actor->riseBaseY += ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY > px(1) / 4)
-        actor->timer = 1;
-    }
-    if (actor->x.fixed > px(248) && actor->x.fixed < px(292))
-      actor->x.fixed += actor->riseBaseY;
-    if ((s16)actor->userValue != 0) {
-      actor->y.fixed =
-          actor->y.fixed - (((u32)Import_RandomNext() << 15) >> 16) - px(1) / 2;
-      if (actor->y.fixed < 0)
-        actor->userValue = 0;
-    } else {
-      actor->y.fixed =
-          actor->y.fixed + (((u32)Import_RandomNext() << 15) >> 16) + px(1) / 2;
-      if (actor->y.fixed > px(8))
-        actor->userValue = 1;
-    }
+#define TOLBI_SHIP_DECK_HOVER_AND_DIVE(name, warrior, diveX, diveZ, eastX,     \
+                                       eastZ, westX, westZ, minX, maxX)        \
+  static s32 name(struct Actor *actor) {                                       \
+    if (actor->riseCounter != 0) {                                             \
+      switch (actor->riseCounter) {                                            \
+      case 1:                                                                  \
+        actor->speedLimit = px(4);                                             \
+        actor->acceleration = px(2);                                           \
+        FieldActor_SetMoveTarget(actor, diveX, 20, diveZ);                     \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 2:                                                                  \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 3:                                                                  \
+        if (actor->targetX == ACTOR_NO_TARGET &&                               \
+            actor->targetY == actor->targetX &&                                \
+            actor->targetZ == actor->targetY) {                                \
+          actor->riseCounter++;                                                \
+          Sound_Play(SE_ENEMY_CRY);                                            \
+          if (actor->riseEnabled != 0)                                         \
+            Actor_FaceDirection(warrior, FACING_NORTH_NORTHEAST, 0);           \
+          else                                                                 \
+            Actor_FaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);           \
+          if ((u32)Random_Next() * 4 >> 16 != 0) {                             \
+            Actor_Get(warrior)->velocityY = px(2);                             \
+          } else {                                                             \
+            Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);    \
+            Actor_Get(warrior)->velocityY = px(6);                             \
+          }                                                                    \
+        }                                                                      \
+        break;                                                                 \
+      case 4:                                                                  \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 5:                                                                  \
+        if (actor->riseEnabled != 0)                                           \
+          FieldActor_SetMoveTarget(actor, eastX, 0, eastZ);                    \
+        else                                                                   \
+          FieldActor_SetMoveTarget(actor, westX, 0, westZ);                    \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 6:                                                                  \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 7:                                                                  \
+        if (actor->targetX == ACTOR_NO_TARGET &&                               \
+            actor->targetY == actor->targetX &&                                \
+            actor->targetZ == actor->targetY) {                                \
+          actor->speedLimit = px(2);                                           \
+          actor->acceleration = px(1);                                         \
+          actor->timer = 0;                                                    \
+          actor->userValue = 0;                                                \
+          actor->riseCounter++;                                                \
+          actor->riseBaseY = 0;                                                \
+        }                                                                      \
+        break;                                                                 \
+      case 8:                                                                  \
+        actor->riseCounter = 0;                                                \
+        break;                                                                 \
+      }                                                                        \
+    } else {                                                                   \
+      if (actor->timer != 0) {                                                 \
+        actor->riseBaseY -= (u32)Random_Next() * 4096 >> 16;                   \
+        if (actor->riseBaseY < -px(1) / 4)                                     \
+          actor->timer = 0;                                                    \
+      } else {                                                                 \
+        actor->riseBaseY += (u32)Random_Next() * 4096 >> 16;                   \
+        if (actor->riseBaseY > px(1) / 4)                                      \
+          actor->timer = 1;                                                    \
+      }                                                                        \
+      if (actor->x.fixed > px(minX) && actor->x.fixed < px(maxX))              \
+        actor->x.fixed += actor->riseBaseY;                                    \
+      if ((s16)actor->userValue != 0) {                                        \
+        actor->y.fixed =                                                       \
+            actor->y.fixed - ((u32)Random_Next() * 32768 >> 16) - px(1) / 2;   \
+        if (actor->y.fixed < 0)                                                \
+          actor->userValue = 0;                                                \
+      } else {                                                                 \
+        actor->y.fixed =                                                       \
+            actor->y.fixed + ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;   \
+        if (actor->y.fixed > px(8))                                            \
+          actor->userValue = 1;                                                \
+      }                                                                        \
+    }                                                                          \
+    if (((u32)Random_Next() * 100) >> 16 == 0)                                 \
+      actor->riseCounter = 1;                                                  \
+    return 1;                                                                  \
   }
-  if (((u32)Import_RandomNext() * 100) >> 16 == 0)
-    actor->riseCounter = 1;
-  return 1;
-}
 
-/// The same for the monster that dives at Sean.
-static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *actor) {
-  if (actor->riseCounter != 0) {
-    switch (actor->riseCounter) {
-    case 1:
-      actor->speedLimit = px(4);
-      actor->acceleration = px(2);
-      FieldActor_SetMoveTarget(actor, 256, 20, 640);
-      actor->riseCounter++;
-      break;
-    case 2:
-      actor->riseCounter++;
-      break;
-    case 3:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->riseCounter++;
-        Sound_Play(SE_ENEMY_CRY);
-        if (actor->riseEnabled != 0)
-          Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST, 0);
-        else
-          Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHWEST, 0);
-        if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-          Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(2);
-        } else {
-          Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-          Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(6);
-        }
-      }
-      break;
-    case 4:
-      actor->riseCounter++;
-      break;
-    case 5:
-      if (actor->riseEnabled != 0)
-        FieldActor_SetMoveTarget(actor, 264, 0, 600);
-      else
-        FieldActor_SetMoveTarget(actor, 242, 0, 604);
-      actor->riseCounter++;
-      break;
-    case 6:
-      actor->riseCounter++;
-      break;
-    case 7:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->speedLimit = px(2);
-        actor->acceleration = px(1);
-        actor->timer = 0;
-        actor->userValue = 0;
-        actor->riseCounter++;
-        actor->riseBaseY = 0;
-      }
-      break;
-    case 8:
-      actor->riseCounter = 0;
-      break;
-    }
-  } else {
-    if (actor->timer != 0) {
-      actor->riseBaseY -= ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY < -px(1) / 4)
-        actor->timer = 0;
-    } else {
-      actor->riseBaseY += ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY > px(1) / 4)
-        actor->timer = 1;
-    }
-    if (actor->x.fixed > px(232) && actor->x.fixed < px(272))
-      actor->x.fixed += actor->riseBaseY;
-    if ((s16)actor->userValue != 0) {
-      actor->y.fixed =
-          actor->y.fixed - (((u32)Import_RandomNext() << 15) >> 16) - px(1) / 2;
-      if (actor->y.fixed < 0)
-        actor->userValue = 0;
-    } else {
-      actor->y.fixed =
-          actor->y.fixed + (((u32)Import_RandomNext() << 15) >> 16) + px(1) / 2;
-      if (actor->y.fixed > px(8))
-        actor->userValue = 1;
-    }
-  }
-  if (((u32)Import_RandomNext() * 100) >> 16 == 0)
-    actor->riseCounter = 1;
-  return 1;
-}
+/// A monster hovering on Ouranos's side, diving at him.
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtOuranos,
+                               ACTOR_SEA_OURANOS, 268, 692, 282, 658, 254, 668,
+                               248, 292)
+
+/// A monster hovering on Sean's side, diving at him.
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
+                               256, 640, 264, 600, 242, 604, 232, 272)
 
 static u16 sStrokePhase[4];
 
@@ -613,12 +517,12 @@ static s32 sOarDepth[8];
 /// Returns 1.
 static s32 TolbiShipDeck_Bob(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
-    actor->y.fixed -= ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    actor->y.fixed -= ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
     if (actor->y.fixed < px(4)) {
       actor->userValue = 0;
     }
   } else {
-    actor->y.fixed += ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    actor->y.fixed += ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
     if (actor->y.fixed > px(12)) {
       actor->userValue = 1;
     }
@@ -631,7 +535,7 @@ static s32 TolbiShipDeck_Bob(struct Actor *actor) {
 ///
 /// Returns 1.
 static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
-  u32 roll = ((u32)(Import_RandomNext() << 5)) >> 16;
+  u32 roll = (u32)Random_Next() * 32 >> 16;
 
   if (roll == 6)
     actor->facing = FACING_NORTH_NORTHEAST;
@@ -640,155 +544,97 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
   return 1;
 }
 
-/// The update of a monster on deck that, at random, leaps at Ouranos.
+/// Defines `name`, the update of a monster on deck that, at random, leaps at
+/// a warrior.
 ///
-/// It jumps to him, he turns and jumps back (sometimes with an emote), and it
-/// lands on one of two spots chosen by riseEnabled.
+/// It jumps to him at (atX, atZ), he turns and jumps back (sometimes with
+/// an emote), and it lands. While riseEnabled is set he turns to setFacing and
+/// it lands on (setX, setZ), else clearFacing and (clearX, clearZ).
 ///
 /// The actor's timer holds the step. Returns 1.
-static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *actor) {
-  switch (actor->timer) {
-  case 0:
-    if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
-      actor->timer++;
-    }
-    break;
-  case 1:
-    actor->timer++;
-    break;
-  case 2:
-    actor->velocityY = px(4);
-    actor->speedLimit = px(4);
-    actor->acceleration = px(2);
-    FieldActor_SetMoveTarget(actor, 264, 0, 662);
-    actor->timer++;
-    break;
-  case 3:
-    actor->timer++;
-    break;
-  case 4:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-      Sound_Play(SE_JUMP);
-      if (actor->riseEnabled != 0) {
-        Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 0);
-      } else {
-        Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_SOUTH_SOUTHWEST, 0);
-      }
-      if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-        Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(2);
-      } else {
-        Actor_ShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
-                        0);
-        Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(6);
-      }
-    }
-    break;
-  case 5:
-    actor->timer++;
-    break;
-  case 6:
-    actor->timer++;
-    actor->velocityY = px(4);
-    actor->speedLimit = px(2);
-    actor->acceleration = px(1);
-    if (actor->riseEnabled != 0) {
-      FieldActor_SetMoveTarget(actor, 252, 0, 646);
-    } else {
-      FieldActor_SetMoveTarget(actor, 256, 0, 686);
-    }
-    break;
-  case 7:
-    actor->timer++;
-    break;
-  case 8:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-    }
-    break;
-  case 9:
-    actor->timer = 0;
-    break;
+#define TOLBI_SHIP_DECK_LEAP_AT(name, warrior, atX, atZ, setFacing,            \
+                                clearFacing, setX, setZ, clearX, clearZ)       \
+  static s32 name(struct Actor *actor) {                                       \
+    switch (actor->timer) {                                                    \
+    case 0:                                                                    \
+      if ((((u32)Random_Next() * 40) >> 16) == 0) {                            \
+        actor->timer++;                                                        \
+      }                                                                        \
+      break;                                                                   \
+    case 1:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 2:                                                                    \
+      actor->velocityY = px(4);                                                \
+      actor->speedLimit = px(4);                                               \
+      actor->acceleration = px(2);                                             \
+      FieldActor_SetMoveTarget(actor, atX, 0, atZ);                            \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 3:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 4:                                                                    \
+      if (actor->targetX == ACTOR_NO_TARGET &&                                 \
+          actor->targetY == actor->targetX &&                                  \
+          actor->targetZ == actor->targetY) {                                  \
+        actor->timer++;                                                        \
+        Sound_Play(SE_JUMP);                                                   \
+        if (actor->riseEnabled != 0) {                                         \
+          Actor_FaceDirection(warrior, setFacing, 0);                          \
+        } else {                                                               \
+          Actor_FaceDirection(warrior, clearFacing, 0);                        \
+        }                                                                      \
+        if ((u32)Random_Next() * 4 >> 16 != 0) {                               \
+          Actor_Get(warrior)->velocityY = px(2);                               \
+        } else {                                                               \
+          Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);      \
+          Actor_Get(warrior)->velocityY = px(6);                               \
+        }                                                                      \
+      }                                                                        \
+      break;                                                                   \
+    case 5:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 6:                                                                    \
+      actor->timer++;                                                          \
+      actor->velocityY = px(4);                                                \
+      actor->speedLimit = px(2);                                               \
+      actor->acceleration = px(1);                                             \
+      if (actor->riseEnabled != 0) {                                           \
+        FieldActor_SetMoveTarget(actor, setX, 0, setZ);                        \
+      } else {                                                                 \
+        FieldActor_SetMoveTarget(actor, clearX, 0, clearZ);                    \
+      }                                                                        \
+      break;                                                                   \
+    case 7:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 8:                                                                    \
+      if (actor->targetX == ACTOR_NO_TARGET &&                                 \
+          actor->targetY == actor->targetX &&                                  \
+          actor->targetZ == actor->targetY) {                                  \
+        actor->timer++;                                                        \
+      }                                                                        \
+      break;                                                                   \
+    case 9:                                                                    \
+      actor->timer = 0;                                                        \
+      break;                                                                   \
+    }                                                                          \
+    return 1;                                                                  \
   }
-  return 1;
-}
 
-/// The same for the monster that leaps at Sean.
-static s32 TolbiShipDeck_LeapAtSean(struct Actor *actor) {
-  switch (actor->timer) {
-  case 0:
-    if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
-      actor->timer++;
-    }
-    break;
-  case 1:
-    actor->timer++;
-    break;
-  case 2:
-    actor->velocityY = px(4);
-    actor->speedLimit = px(4);
-    actor->acceleration = px(2);
-    FieldActor_SetMoveTarget(actor, 176, 0, 696);
-    actor->timer++;
-    break;
-  case 3:
-    actor->timer++;
-    break;
-  case 4:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-      Sound_Play(SE_JUMP);
-      if (actor->riseEnabled != 0) {
-        Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST, 0);
-      } else {
-        Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_EAST, 0);
-      }
-      if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-        Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(2);
-      } else {
-        Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-        Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(6);
-      }
-    }
-    break;
-  case 5:
-    actor->timer++;
-    break;
-  case 6:
-    actor->timer++;
-    actor->velocityY = px(4);
-    actor->speedLimit = px(2);
-    actor->acceleration = px(1);
-    if (actor->riseEnabled != 0) {
-      FieldActor_SetMoveTarget(actor, 184, 0, 672);
-    } else {
-      FieldActor_SetMoveTarget(actor, 202, 0, 692);
-    }
-    break;
-  case 7:
-    actor->timer++;
-    break;
-  case 8:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-    }
-    break;
-  case 9:
-    actor->timer = 0;
-    break;
-  }
-  return 1;
-}
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtOuranos, ACTOR_SEA_OURANOS, 264,
+                        662, FACING_NORTH_NORTHWEST, FACING_SOUTH_SOUTHWEST,
+                        252, 646, 256, 686)
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtSean, ACTOR_SEA_SEAN, 176, 696,
+                        FACING_NORTH_NORTHEAST, FACING_EAST, 184, 672, 202, 692)
 
 /// Makes the actor hop at random, one frame in 40 on average.
 ///
 /// Returns 1.
 static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *actor) {
-  if ((((u32)(Import_RandomNext() * 40)) >> 16) == 0)
+  if ((((u32)(Random_Next() * 40)) >> 16) == 0)
     actor->velocityY = px(4);
   return 1;
 }
@@ -810,7 +656,7 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {
-    u32 roll = (u32)(Import_RandomNext() * 300) >> 16;
+    u32 roll = (u32)(Random_Next() * 300) >> 16;
 
     if (roll > 200) {
       actor->facing = FACING_NORTH_NORTHEAST;
@@ -819,7 +665,7 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
     } else {
       actor->facing = FACING_EAST;
     }
-    actor->riseCounter = ((u32)(Import_RandomNext() * 80) >> 16) + 80;
+    actor->riseCounter = ((u32)(Random_Next() * 80) >> 16) + 80;
   }
   return 1;
 }
@@ -842,23 +688,23 @@ const u32 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
           .talkFacing)
 
 const struct ActorPlacement *TolbiShipDeck_GetActorPlacements(void) {
-  s32 afterFirstAttack;
-
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckActorPlacementsArrived;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING))
     return gTolbiShipDeckActorPlacementsRowing;
-  afterFirstAttack = GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF);
-  if (afterFirstAttack != 0)
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
     return gTolbiShipDeckActorPlacementsAtSea;
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
-      KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER) = afterFirstAttack;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = 2;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = 2;
+      KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER) = TALK_FACING_PARTY;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = TALK_FACING_KEEP;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) =
+          TALK_FACING_KEEP;
     } else if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = 1;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = 1;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) =
+          TALK_FACING_PARTY_AND_BACK;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) =
+          TALK_FACING_PARTY_AND_BACK;
     }
     return gTolbiShipDeckActorPlacementsWaiting;
   }
@@ -996,7 +842,6 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
 ///
 /// Leaves by the exit numbered as the cell behavior.
 static void TolbiShipDeck_GoBelow(void) {
-
   s32 throughDoor;
   struct FieldWork *work;
 
@@ -1030,7 +875,8 @@ static void TolbiShipDeck_GoBelow(void) {
 /// The leader goes below only while facing west, after walking onto the
 /// hatch.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe) {
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <
+      FACING_NORTHWEST - (FACING_SOUTHWEST + 1)) {
     Event_Start();
     Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1175,7 +1021,6 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 ///
 /// Runs until the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
-
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Event_Start();
@@ -1209,7 +1054,6 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
 /// The same, approaching from the west side
 /// (CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR).
 static void TolbiShipDeck_CatchCrewmanFromWest(void) {
-
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Event_Start();
@@ -1274,14 +1118,17 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
 /// at a random angle and stops the sea's scroll. Then it redraws the map grid
 /// and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
-  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridLayerScroll *sea =
+      &((struct MapGridScrollWork *)gMapGridWork[0])
+           ->layers[MAPGRID_LAYER_GROUND];
 
   GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
-  gFieldWork->transition =
+  ((struct FieldWork *)gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])
+      ->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  map->layers[MAPGRID_LAYER_GROUND].speedY = 0;
-  sSwayAngleX = (u16)Import_RandomNext();
-  sSwayAngleY = (u16)Import_RandomNext();
+  sea->speedY = 0;
+  sSwayAngleX = (u16)Random_Next();
+  sSwayAngleY = (u16)Random_Next();
   sSeaScroll[0] = 0;
   sSeaScroll[1] = 0;
   sSeaSpeed[0] = 0;
@@ -1411,12 +1258,12 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
     Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 264, 702);
     Actor_Get(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHWEST;
     actor = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
-    actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_TOUR_GUIDE, 248, 680);
     actor = Actor_Get(ACTOR_KALAY_TOUR_GUIDE);
-    actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_CAPTAIN, 0, 0);
@@ -1723,7 +1570,12 @@ static void TolbiShipDeck_MonstersBoard(void) {
     wait(1);
   } while (Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
   TolbiShipDeck_OpenFirstDoor();
-  Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
+  /* FAKEMATCH(dead): the walk in a once-only block loads its actor id straight
+   * after the call above; as the plain call, 1 of 163 instructions differ in
+   * tbs-en. */
+  do {
+    Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
+  } while (0);
   Actor_WaitForScriptEndById(ACTOR_SEA_FIRST_ATTACK_MONSTER);
   Event_Wait(10);
   Event_FinishScreenTransition();
@@ -1740,7 +1592,6 @@ static void TolbiShipDeck_MonstersBoard(void) {
 ///
 /// It plays at TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK.
 static void TolbiShipDeck_MonstersAttackCrew(void) {
-
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
@@ -2165,8 +2016,15 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetPosition(ACTOR_SEA_OURANOS, 184, 632);
   actor = Actor_Get(ACTOR_SEA_OURANOS);
   actor->facing = FACING_NORTH_NORTHWEST;
+  // UB: the field work's pointer is read through a u32 lvalue, which keeps
+  // the facing store ahead of its load; UBFIX reads it as declared.
+#ifdef UBFIX
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+#else
+  ((struct FieldWork *)*(u32 *)&gFieldWork)->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+#endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -2197,20 +2055,20 @@ enum TolbiShipDeckRowerReply {
   ROWER_REPLY_OLD_MAN = 20        ///< MsgTolbiShipMakeOldMan
 };
 
-/// The passengers (from ACTOR_ARRIVED_FIRST_PASSENGER) in the order they come
-/// up at Tolbi, and the reply of each, or -1 for those who answer by how many
-/// came up before them.
-static const s8 sDisembarkOrder[][2] = {
-    {0, -1},
-    {1, -1},
-    {2, -1},
-    {4, -1},
-    {5, -1},
-    {6, -1},
-    {3, ROWER_REPLY_ROWING_MORE},
-    {7, ROWER_REPLY_LOST_AT_SEA},
-    {8, ROWER_REPLY_OLD_MAN},
-};
+/// Takes `passenger` as the next to come up, with `reply`, when one of the
+/// four seats holds them.
+#define TOLBI_SHIP_DECK_TAKE_ROWER(passenger, reply)                           \
+  do {                                                                         \
+    member = (passenger);                                                      \
+    for (index = 0; index <= 3; index++) {                                     \
+      if (roster[index] == member) {                                           \
+        matched[found] = member;                                               \
+        category[found] = (reply);                                             \
+        found++;                                                               \
+        break;                                                                 \
+      }                                                                        \
+    }                                                                          \
+  } while (0)
 
 /// At Tolbi, the four passengers who rowed come up from below in turn and
 /// each says something.
@@ -2226,32 +2084,36 @@ static void TolbiShipDeck_RowersDisembark(void) {
   s32 matched[4];
   s32 category[4];
   u32 index;
-  u32 turn;
   s32 found;
   s32 actorId;
   s32 member;
   struct Actor *actor;
 
+  found = 0;
   for (index = 0; index <= 3; index++) {
     roster[index] = TolbiShipDeck_GetRowerAtSeat(index);
     category[index] = 0;
   }
 
-  found = 0;
-  for (turn = 0; turn < sizeof(sDisembarkOrder) / sizeof(sDisembarkOrder[0]) &&
-                 found != 4;
-       turn++) {
-    member = ACTOR_ARRIVED_FIRST_PASSENGER + sDisembarkOrder[turn][0];
-    for (index = 0; index <= 3; index++) {
-      if (roster[index] == member) {
-        matched[found] = member;
-        category[found] =
-            sDisembarkOrder[turn][1] < 0 ? found : sDisembarkOrder[turn][1];
-        found++;
-        break;
-      }
-    }
-  }
+  // The first four in this order take the first four replies; three others
+  // have their own, for when fewer than four of the first rowed.
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER, found);
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 1, found);
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 2, found);
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 4, found);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 5, found);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 6, found);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 3,
+                               ROWER_REPLY_ROWING_MORE);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 7,
+                               ROWER_REPLY_LOST_AT_SEA);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 8,
+                               ROWER_REPLY_OLD_MAN);
 
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -2399,14 +2261,15 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 /// pattern, wrapping at 32 pixels.
 static void TolbiShipDeck_RockDeck(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
+  s32 *origin = grid->origin;
   s32 dx = Trig_Cos(sSwayAngleX);
   s32 dy = Trig_Sin(sSwayAngleY);
   struct MapGridLayerScroll *layer;
 
-  grid->origin[0] += dx >> 1;
-  grid->origin[1] += dy;
-  sSwayAngleX += (u32)(Import_RandomNext() * 3 << 7) >> 16;
-  sSwayAngleY += (u32)(Import_RandomNext() << 9) >> 16;
+  *origin++ += dx >> 1;
+  *origin += dy;
+  sSwayAngleX += (u32)(Random_Next() * 3 << 7) >> 16;
+  sSwayAngleY += (u32)Random_Next() * 512 >> 16;
   sSwayAngleX &= 0xffff;
   sSwayAngleY &= 0xffff;
   layer = &grid->layers[MAPGRID_LAYER_GROUND];
@@ -3006,14 +2869,14 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void) {
 /// At Kalay, as the crew's talk of the delay ends, Kaja walks off and is
 /// hidden.
 const s32 gTolbiShipDeck_KajaLeavesActions[] = {
-    SC_ANIMATION(2), SC_MOVE(202, 0, 600), SC_SYNC,
-    SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
+    SC_ANIMATION(ANIM_WALK),  SC_MOVE(202, 0, 600), SC_SYNC,
+    SC_ANIMATION(ANIM_STAND), SC_POSITION(0, 0, 0), SC_END,
 };
 
 /// At the same moment the captain steps aside and turns west.
 const s32 gTolbiShipDeck_CaptainStepsAsideActions[] = {
-    SC_WAIT(20), SC_ANIMATION(2), SC_MOVE(162, 0, 666),
-    SC_SYNC,     SC_ANIMATION(1), SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(20), SC_ANIMATION(ANIM_WALK),  SC_MOVE(162, 0, 666),
+    SC_SYNC,     SC_ANIMATION(ANIM_STAND), SC_SET(SW_FACING, FACING_WEST),
     SC_END,
 };
 
@@ -3030,7 +2893,7 @@ const s32 gTolbiShipDeck_SquashAndStretchActions[] = {
 ///
 /// It is used at TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD.
 const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(140, 0, 586),
     SC_SYNC,
     SC_SE(SE_HIGH_JUMP),
@@ -3051,21 +2914,21 @@ const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
 /// Sean on guard at sea, pacing between two spots on the deck and looking
 /// out at each.
 const s32 gTolbiShipDeck_SeanPacesActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(228, 0, 521),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(40),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(40),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(204, 0, 521),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(40),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -3073,34 +2936,34 @@ const s32 gTolbiShipDeck_SeanPacesActions[] = {
 /// Ouranos on guard at sea, walking the four corners of a square on the deck
 /// and looking out at each.
 const s32 gTolbiShipDeck_OuranosPatrolsActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 672),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(50),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 672),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(70),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 636),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
     SC_WAIT(30),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 636),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
@@ -3145,7 +3008,7 @@ const s32 gTolbiShipDeck_LookAroundActions[] = {
 /// ACTOR_SEA_SPLASH swells from 7/10 of its size for 24 frames, then is
 /// hidden.
 const s32 gTolbiShipDeck_SwellActions[] = {
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_SCALE_X, 7 * Q16_ONE / 10),
     SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 10),
     SC_WAIT(1),
@@ -3189,21 +3052,21 @@ const s32 gTolbiShipDeck_HopActions[] = {
 /// At Tolbi, a passenger who rowed walks away once they have spoken, and is
 /// hidden.
 const s32 gTolbiShipDeck_RowerLeavesActions[] = {
-    SC_ANIMATION(2), SC_MOVE(82, 0, 656),  SC_SYNC,
-    SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
+    SC_ANIMATION(ANIM_WALK),  SC_MOVE(82, 0, 656),  SC_SYNC,
+    SC_ANIMATION(ANIM_STAND), SC_POSITION(0, 0, 0), SC_END,
 };
 
 /// Back from the island, Sean, Ouranos and the tour guide go below by the
 /// first door, one after another.
 const s32 gTolbiShipDeck_GoBelowActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(186, 0, 604),
     SC_SYNC,
     SC_MOVE(216, 0, 604),
     SC_SYNC,
     SC_MOVE(216, 0, 586),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,

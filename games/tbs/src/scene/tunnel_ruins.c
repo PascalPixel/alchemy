@@ -387,8 +387,8 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   options.startScaleX = 3 * Q16_ONE / 10;
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
-  x = actor->x.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
-  z = actor->z.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
+  x = actor->x.fixed + ((((u32)(Random_Next() * 7) >> 16) - 3) << 16);
+  z = actor->z.fixed + ((((u32)(Random_Next() * 7) >> 16) - 3) << 16);
   FieldEffect_Spawn(x, actor->y.fixed + px(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
@@ -475,12 +475,11 @@ static void TunnelRuins_HopDownStep(void) {
     leader->targetY = leader->y.fixed;
     wait(1);
     if (i & 1) {
-      s32 horizontalRoll = (u32)Import_RandomNext() % 10 - 5;
+      s32 horizontalRoll = (u32)Random_Next() % 10 - 5;
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
-      velocityZ =
-          (u32)Import_RandomNext() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
+      velocityZ = (u32)Random_Next() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
@@ -652,19 +651,13 @@ static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
 ///
 /// Reached by Whirlwind on ivy A until FLAG_SCENE_TEMP_00 is set. Sets it.
 static void TunnelRuins_BlowAwayIvyA(void) {
-  u8 *flags;
-  u8 value;
-
   GameFlag_Set(FLAG_SCENE_TEMP_00);
   if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
-    value = 8;
-    value |= *flags;
-    *flags = value;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
 
@@ -672,19 +665,13 @@ static void TunnelRuins_BlowAwayIvyA(void) {
 ///
 /// Reached by Whirlwind on ivy B until FLAG_SCENE_TEMP_01 is set. Sets it.
 static void TunnelRuins_BlowAwayIvyB(void) {
-  u8 *flags;
-  u8 value;
-
   GameFlag_Set(FLAG_SCENE_TEMP_01);
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
-    value = 8;
-    value |= *flags;
-    *flags = value;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
 
@@ -761,7 +748,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= px(1);
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + px(736));
-      randomZ = Import_RandomNext();
+      randomZ = Random_Next();
       FieldEffect_Spawn(
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(128)), 0,
@@ -800,16 +787,14 @@ static void TunnelRuins_PushNorthwestSinkingPillar(void) {
 ///
 /// Reached by Frost on that target until FLAG_SCENE_TEMP_00 is set. Sets it.
 static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
-  u8 *flags;
-
   Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_FREEZE);
-  flags = &Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags;
-  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
@@ -844,9 +829,9 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       for (i = 0; i < 16; i++) {
         wait(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= px(1);
-        randomX = Import_RandomNext();
+        randomX = Random_Next();
         effectX = ((((u32)(randomX << 4) >> 16) << 16) + px(768));
-        randomZ = Import_RandomNext();
+        randomZ = Random_Next();
         effectZ =
             ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(224));
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
@@ -907,16 +892,14 @@ static void TunnelRuins_DouseSoutheastPillar(void) {
 ///
 /// Reached by Frost on that target until FLAG_SCENE_TEMP_01 is set. Sets it.
 static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
-  u8 *flags;
-
   Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_FREEZE);
-  flags = &Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags;
-  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
@@ -993,10 +976,8 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, PUDDLE_ANIMATION_FREEZE);
 
-  {
-    u8 *flag = &Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags;
-    *flag &= ~ACTOR_PRIORITY_UNDERFOOT;
-  }
+  Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
 
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN);
 
@@ -1430,18 +1411,19 @@ const struct Trigger *TunnelRuins_GetTriggers(void) {
 /// TunnelRuins_PushFirstPillars.
 static void TunnelRuins_UpdateFirstPillarCells(void) {
   s32 row;
-  s32 column;
+  s32 columnA;
+  s32 columnB;
 
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   Actor_SwapPositionsByDepth(ACTOR_FIRST_PILLAR_B, ACTOR_FIRST_PILLAR_A);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed);
+  columnA = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnA, row);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed);
+  columnB = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
 /// After the second pillars move, does the same for their room.
@@ -1450,18 +1432,19 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
 /// TunnelRuins_PushSecondPillars.
 static void TunnelRuins_UpdateSecondPillarCells(void) {
   s32 row;
-  s32 column;
+  s32 columnA;
+  s32 columnB;
 
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   Actor_SwapPositionsByDepth(ACTOR_SECOND_PILLAR_B, ACTOR_SECOND_PILLAR_A);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed);
+  columnA = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnA, row);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed);
+  columnB = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
 /// After the small pillars move, redraws their room's cells and marks the cells
@@ -1870,9 +1853,12 @@ s32 gTunnelRuins_StretchScript[] = {
 
 /// Douse splashes on the pillar from frame 35 for 130 frames.
 s32 gTunnelRuins_DouseSplashScript[] = {
-    SC_WAIT(35),     SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
-    SC_WAIT(130),    SC_SET(SW_HOOK, 0),
-    SC_ANIMATION(2), SC_END,
+    SC_WAIT(35),
+    SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
+    SC_WAIT(130),
+    SC_SET(SW_HOOK, 0),
+    SC_ANIMATION(ANIM_WALK),
+    SC_END,
 };
 
 u16 gTunnelRuins_DoorOpenSteps[] = {

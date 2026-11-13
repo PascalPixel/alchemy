@@ -85,6 +85,8 @@
 #include "djinn_ids.h"
 #include "character_ids.h"
 #include "sounds.h"
+#include "heap.h"
+#include "shared/walk_into_leader.h"
 
 enum { VAULT_DRIFT_RATE = px(1) / 10 };
 
@@ -166,21 +168,24 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // The woman wanting the roof fixed walks about looking for the man who should
 // be fixing it and stops to face the leader when near, or while a conversation
 // holds the field.
-static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *entity) {
+static UNREAD_RESULT
+Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  s32 flag = 0;
-  s32 selector = 18;
+  struct FieldWork *field =
+      (struct FieldWork *)gWindowWork[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
+  s32 force = 0;
+  s32 range = 18;
   struct Actor *leader;
 
-  if (entity->targetX == ACTOR_NO_TARGET)
+  if (complainer->targetX == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (gFieldWork->talk != 0 || window->mindRead != 0) {
-    selector = 26;
-    flag = 1;
+  if ((s16)field->talk != 0 || window->mindRead != 0) {
+    range = 26;
+    force = 1;
   }
-  Vault_StopIfFacingNear(entity, leader, selector, flag);
+  Vault_StopIfFacingNear(complainer, leader, range, force);
   RETURN_UNREAD(0);
 }
 
@@ -309,7 +314,6 @@ static void Vault_AskAboutEruption(void) {
 /// - Yes: two women and four men, the girl and old man unhappy to be there.
 /// - No: maybe they left earlier.
 static void Vault_AskAboutFleeingTravelers(void) {
-
   Event_Start();
   Event_SetMessageId(MsgVaultThoseTravelersLeftInBig);
   Actor_SetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIM_STAND);
@@ -323,7 +327,6 @@ static void Vault_AskAboutFleeingTravelers(void) {
 /// accuses them. Either answer gets a denial.
 /// "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
 static void Vault_ThiefDeniesTheft(void) {
-
   Event_Start();
   Event_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
   Vault_FaceActorAndWait(ACTOR_THIEF_IN_TOWN, ACTOR_PARTY_LEADER, 2);
@@ -339,7 +342,6 @@ static void Vault_ThiefDeniesTheft(void) {
 /// - Yes: impressive for youngsters.
 /// - No: see the Sanctum while you're here.
 static void Vault_AskAboutAdventure(void) {
-
   Event_Start();
   Event_SetMessageId(MsgVaultOffOnAdventure);
   Vault_FaceActorAndWait(ACTOR_STRANDED_TRAVELER, ACTOR_PARTY_LEADER, 2);
@@ -914,14 +916,7 @@ s32 Scene_Initialize(void) {
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, 0.8);
-          Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-          actor = Actor_Get(ACTOR_PARTY_LEADER);
-          if (actor != 0) {
-            Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
-                                 actor->z.part.pixel);
-          }
-          Actor_WaitForMoveById(ACTOR_IVAN);
-          Actor_SetPosition(ACTOR_IVAN, 0, 0);
+          Scene_WalkIntoLeader(ACTOR_IVAN);
           Event_AddPartyMember(IVAN, 0);
           Event_End();
         }
@@ -948,14 +943,7 @@ s32 Scene_Initialize(void) {
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, 0.8);
-          Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-          actor = Actor_Get(ACTOR_PARTY_LEADER);
-          if (actor != 0) {
-            Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
-                                 actor->z.part.pixel);
-          }
-          Actor_WaitForMoveById(ACTOR_IVAN);
-          Actor_SetPosition(ACTOR_IVAN, 0, 0);
+          Scene_WalkIntoLeader(ACTOR_IVAN);
           Event_AddPartyMember(IVAN, 0);
           Event_End();
         }
@@ -1024,8 +1012,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   if (anchor == NULL)
     return;
   // Pick a small offset around the anchor and create the drifting sprite there.
-  x = Import_RandomNext();
-  z = Import_RandomNext();
+  x = Random_Next();
+  z = Random_Next();
   x <<= 3;
   x = (u32)x >> 16;
   z <<= 3;
@@ -1049,7 +1037,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   if (sprite == NULL)
     return;
 #endif
-  switch (Import_RandomNext() & 1) {
+  switch (Random_Next() & 1) {
   case 1:
     Actor_SelectAnimation(effect, 3);
     Actor_StartScript(effect, gVault_DriftScriptA);
@@ -1065,7 +1053,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     s32 driftMultiplier;
     s32 directionBias;
 
-    driftMultiplier = (u32)Import_RandomNext() % 10 + 5;
+    driftMultiplier = (u32)Random_Next() % 10 + 5;
     // x, done with once the effect is placed, carries the 1.
     x = 1;
     flags &= x;
@@ -1074,22 +1062,34 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     driftMultiplier += directionBias;
     effect->acceleration =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
-    driftMultiplier = (u32)Import_RandomNext() % 15 - 7;
+    driftMultiplier = (u32)Random_Next() % 15 - 7;
     effect->speedLimit = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 0;
   } else {
     s32 driftMultiplier;
 
-    driftMultiplier = (u32)Import_RandomNext() % 10 + 8;
+    driftMultiplier = (u32)Random_Next() % 10 + 8;
     effect->speedLimit =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
-    driftMultiplier = (u32)Import_RandomNext() % 14 + 1;
+    driftMultiplier = (u32)Random_Next() % 14 + 1;
     effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 1;
   }
   // Install the custom motion and share the anchor's drawing priority.
-  effect->update = Vault_UpdateDriftingEffect;
-  sprite->flags = 0;
+  {
+    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
+     * sprite->flags, 2 of 141 instructions differ in tbs-en. */
+    u8 *spriteFlags = &sprite->flags;
+
+    effect->update = Vault_UpdateDriftingEffect;
+    /* FAKEMATCH(dead): the flags store in both arms of a test, which ends the
+     * scheduling block after the update store; as one store, 2 of 141
+     * instructions differ in tbs-en. */
+    if (flags < 0)
+      *spriteFlags = 0;
+    else
+      *spriteFlags = 0;
+  }
   sprite->image.priority = anchor->sprite->image.priority;
 }
 
@@ -1109,10 +1109,10 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_ACCELERATION(0.2),
     SC_LABEL(1),
     SC_SET(SW_FACING, FACING_WEST),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 312),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(20),
@@ -1124,13 +1124,13 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(10),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(240),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(200, 0, 312),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(20),
@@ -1142,7 +1142,7 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(10),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(240),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
@@ -1151,10 +1151,10 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_SET(SW_COLLISION, 129),
     SC_SET(SW_RADIUS, px(40)),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(8, 16, 24),
     SC_SYNC,
-    SC_ANIMATION(0),
+    SC_ANIMATION(ANIM_STILL),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,

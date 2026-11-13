@@ -323,7 +323,6 @@ static void Sanctum_TalkAboutGoldenStatue(void) {
 /// He thinks about the stolen statue or, once it is back, about Isaac awakening
 /// to the Sanctum's teachings. On the later visit, the statue is cleaned up.
 static void Sanctum_ReadMindAboutGoldenStatue(void) {
-
   Event_Start();
 
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -431,7 +430,6 @@ static void Sanctum_AskAboutNewAdepts(void) {
   } else {
     gFieldWork->message++;
     // "......"
-    // "......"
     FieldEvent_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1,
                                       3, 7, 16, 1, 14, 0);
     // "Your friend seems angered by your words, Isaac... That..."
@@ -443,7 +441,6 @@ static void Sanctum_AskAboutNewAdepts(void) {
 /// Vale Sanctum, once the party has left Vale: talking to ACTOR_EAST_HEALER,
 /// who asks whether Isaac feels any change in his Psynergy.
 static void Sanctum_AskAboutPsynergyChanges(void) {
-
   Event_Start();
   Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
@@ -559,7 +556,7 @@ static void Sanctum_LeaveAfterRefusing(void) {
   paletteWork->page = 0;
   paletteWork->duration = 1;
   paletteWork->step = 1;
-  // Nothing reads this byte, so the store changes nothing.
+  // DEAD: a byte nothing reads set to 1; the ROM keeps its store.
   paletteWork->padding2a03 = 1;
   Event_Wait(1);
   FieldMessage_ShowCentered(MsgSanctumWorldBeganDrifting, 1, 0);
@@ -1193,7 +1190,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
 /// accepts the two, and the healer relays its guidance. They are to leave the
 /// next day.
 static void Sanctum_ReceiveWiseOnesMission(void) {
-
   u32 sparkIndex;
   struct Actor *wiseOne;
 
@@ -1743,7 +1739,6 @@ static s32 Sanctum_ChooseRestartOption(void) {
 /// Vale Sanctum, the quest's account: Isaac and Garet act out, in sepia, what
 /// happened in Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
-
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
   Actor_SetSpeed(ACTOR_GARET, 1.5);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
@@ -2010,7 +2005,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
 static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   s32 scale;
-  s32 timer;
+  s32 framesLeft;
 
   // The timer stores the upward step in sixteenths of a pixel.
   spark->y.fixed += spark->timer << 12;
@@ -2030,9 +2025,9 @@ static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   }
   spark->scaleX = scale;
   spark->scaleY = scale;
-  timer = spark->userValue - 1;
-  spark->userValue = timer;
-  if ((s16)timer <= 0)
+  framesLeft = spark->userValue - 1;
+  spark->userValue = framesLeft;
+  if ((s16)framesLeft <= 0)
     Actor_StartScript(spark, gSanctum_SparkEndScript);
 }
 
@@ -2047,20 +2042,19 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   actor = Actor_Get(id);
   if (actor == 0)
     return;
-  randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
+  randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
   x = actor->x.fixed;
   x += randomOffset << 16;
   x -= px(10);
-  spark = FieldActor_Create(SPRITE_GLINT, x,
-                            actor->y.fixed +
-                                ((Import_RandomNext() & 15) << 16) + -px(8),
-                            actor->z.fixed);
+  spark = FieldActor_Create(
+      SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) - px(8),
+      actor->z.fixed);
   if (spark == 0)
     return;
   sprite = spark->sprite;
   spark->motionFlags = 0;
-  spark->timer = Math_RemainderUnsigned(Import_RandomNext(), 10) + 5;
-  spark->userValue = Math_RemainderUnsigned(Import_RandomNext(), 60) + 30;
+  spark->timer = Math_RemainderUnsigned(Random_Next(), 10) + 5;
+  spark->userValue = Math_RemainderUnsigned(Random_Next(), 60) + 30;
   spark->update = Sanctum_UpdateRisingSpark;
   sprite->flags = 0;
   sprite->image.priority = actor->sprite->image.priority;
@@ -2074,10 +2068,13 @@ static void Sanctum_RestoreQuestFloor(void) {
   wait(1);
 }
 
+/// Returns 1 when the leader faces between north-west and north-east, toward
+/// the Great Healer, else 0.
 static s32 Sanctum_IsLeaderFacingHealer(void) {
-  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((u32)((actor->facing + 0x5fff) << 16) <= 0x3ffe0000) {
+  if ((u16)(leader->facing - (FACING_NORTHWEST + 1)) <
+      FACING_NORTHEAST - (FACING_NORTHWEST + 1)) {
     return 1;
   }
   return 0;
@@ -2208,7 +2205,7 @@ static void Sanctum_TalkAboutJourneyFromXian(void) {
 
 // clang-format off
 u32 gSanctum_LeaderCircleScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(2.5),
     SC_ACCELERATION(0.5),
     SC_LABEL(1),
@@ -2229,12 +2226,12 @@ u32 gSanctum_LeaderCircleScript[] = {
     SC_MOVE(192, 0, 168),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 u32 gSanctum_GaretCircleScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(2.5),
     SC_ACCELERATION(0.5),
     SC_LABEL(1),
@@ -2255,7 +2252,7 @@ u32 gSanctum_GaretCircleScript[] = {
     SC_MOVE(208, 0, 168),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

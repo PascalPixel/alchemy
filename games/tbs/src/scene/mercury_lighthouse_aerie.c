@@ -180,8 +180,6 @@ static void MercuryLighthouseAerie_LowerLift(void);
 static void MercuryLighthouseAerie_RaiseLift(void);
 static void MercuryLighthouseAerie_FlickerBeacon(void);
 
-#define NULL ((void *)0)
-
 #include "shared/field_effect_create.h"
 
 #include "shared/field_effect_spawn.h"
@@ -631,7 +629,6 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_HEAD_BOWED);
   // "I have failed in the one duty placed upon me... This is..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 60);
-  // Jenna calls out: "Isaac! Garet!"
   Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_SetPosition(ACTOR_JENNA, 216, 200);
   // "Isaac! Garet!"
@@ -992,7 +989,6 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// Sets FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED and
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
-
   Event_Start();
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, 344, 224);
@@ -1656,31 +1652,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   for (i = 0; i <= 31; i++) {
     Event_Wait(1);
     if (i & 1) {
-      r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
+      r = ((((u32)Random_Next() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        left->y.fixed +
-                            ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            -px(16),
-                        left->z.fixed, 0, px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) - px(16),
+          left->z.fixed, 0, px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     } else {
-      r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
+      r = ((((u32)Random_Next() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        right->y.fixed +
-                            ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            -px(16),
-                        right->z.fixed, 0, px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) - px(16),
+          right->z.fixed, 0, px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     }
   }
   Actor_SetPosition(ACTOR_SATUROS, 0, 0);
@@ -1709,31 +1701,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   for (i = 0; i <= 31; i++) {
     Event_Wait(1);
     if (i & 1) {
-      r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
+      r = ((((u32)Random_Next() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        left->y.fixed +
-                            ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            px(32),
-                        left->z.fixed, 0, -px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          left->z.fixed, 0, -px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     } else {
-      r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
+      r = ((((u32)Random_Next() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        right->y.fixed +
-                            ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            px(32),
-                        right->z.fixed, 0, -px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          right->z.fixed, 0, -px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     }
     if (i == 20) {
       Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
@@ -1783,8 +1771,13 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
-  // the lift goes as a third argument, as the bytes show: the cast keeps it
+  // UB: the lift's layer is passed as a third argument to a routine that
+  // takes two; UBFIX passes the two.
+#ifdef UBFIX
+  MercuryLighthouseAerie_FindLiftRiders(ids, lift->offsetY);
+#else
   ((void (*)())MercuryLighthouseAerie_FindLiftRiders)(ids, lift->offsetY, lift);
+#endif
   for (i = 0; i <= 4; i++) {
     if (ids[i] == 66)
       break;
@@ -1855,8 +1848,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// Nothing calls it. In the game, Alex and Saturos exit over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
-  // XXX (no evidence): what this was for; nothing calls it, so neither the
-  // ROM nor a render shows it in an event.
+  // XXX (no evidence): what this was for; no event plays it.
   FieldPsynergy_LoadResources(ABILITY_PLY, 1);
   FieldPsynergy_SetupActorPair(ACTOR_ALEX, ACTOR_LIFT_STATUE);
   FieldPsynergy_StartCast();
@@ -1898,7 +1890,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
 
   beacon = Actor_Get(ACTOR_BEACON);
   grid = gMapGridWork[0];
-  height = ((u32)(Import_RandomNext() * 48) >> 16) << 16;
+  height = ((u32)(Random_Next() * 48) >> 16) << 16;
   if (((union FieldCoordinate *)&grid->view[1])->part.pixel <= 129) {
     if (gFrameCount & 1) {
       Import_ActorSetPosition(ACTOR_BEACON, px(304), px(144));
@@ -1931,7 +1923,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   Actor_StartScript(spark, gMercuryLighthouseAerie_SparkScript);
   Actor_SetSpriteColor(spark, SPRITE_COLOR_BGR);
   spark->motionFlags = cycleFrame;
-  angle = Import_RandomNext() & 0x0ffff000;
+  angle = Random_Next() & 0x0ffff000;
   spark->timer = angle;
   spark->userValue = cycleFrame;
   spark->watchedActor = beacon;
@@ -2042,7 +2034,7 @@ s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;
 s32 gMercuryLighthouseAerie_SparkScript[] = {
     SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
     SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(30),
     SC_RELEASE,
 };

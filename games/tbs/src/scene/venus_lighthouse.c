@@ -90,8 +90,8 @@
 #include "io_write.h"
 #include "ground_mask.h"
 #include "macros.h"
+#include "shared/walk_into_leader.h"
 
-#define NULL ((void *)0)
 #include "heap_slots.h"
 #include "types.h"
 #include "sprite.h"
@@ -131,42 +131,42 @@
 /// The second floor's pink floor switch has slid the wall beside it aside.
 /// ★ Named from what the player sees: the pink floor switch on the second
 /// floor and the stone wall it moves (its render)
-#define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
+#define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED FLAG_AREA_TEMP_00
 /// ★ Named from what the player sees: the pink floor switch on the west side
 /// of the fourth floor (its render)
-#define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
+#define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED FLAG_AREA_TEMP_06
 /// ★ Named from what the player sees: the floor switch on the east side of
 /// the fourth floor (its render)
-#define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
+#define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED FLAG_AREA_TEMP_07
 // The gates the sunken pillars opened: one pillar, three pillars (and which of
 // two sets of sockets they sank into) and the pillar room's four.
 /// The light from the second floor's lady statue has opened the gate at the
 /// end of its track.
 /// ★ Named from what the player sees: the glowing arch at the end of the gold
 /// track on the second floor (its render)
-#define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
+#define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN FLAG_AREA_TEMP_01
 /// The pillars stand in every socket of gVenusThirdFloorSockets but the
 /// southeast one.
 /// ★ Named from what the player sees: the square sockets in the third floor
 /// that the pillars sink into (its render)
-#define FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY 0x302
+#define FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY FLAG_AREA_TEMP_02
 /// The pillars stand in every socket of gVenusThirdFloorSockets but the
 /// northwest one.
 /// ★ Named from what the player sees: the square sockets in the third floor
 /// that the pillars sink into (its render)
-#define FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY 0x303
+#define FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY FLAG_AREA_TEMP_03
 /// ★ Named from what the player sees: the gate the gold track leads to in the
 /// third floor's room of three pillars and four sockets (its render)
-#define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
+#define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN FLAG_AREA_TEMP_04
 /// ★ Named from what the player sees: the glowing arch over the fourth floor's
 /// room of gold track and four pillars (its render)
-#define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
+#define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN FLAG_AREA_TEMP_08
 /// The first floor's Psynergy Stone, taken until the party leaves the climb.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE 0x350
+#define FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE FLAG_AREA_TEMP_50
 /// The fourth floor's Psynergy Stone, as the first floor's.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE 0x351
+#define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE FLAG_AREA_TEMP_51
 
 /// The cell behaviors the floors' events answer, by floor. A number means
 /// one thing on one floor and another on the next.
@@ -657,8 +657,7 @@ static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
 }
 
 // Pulse the child effect and play its timed sound.
-static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *updated) {
-  void *actor = (void *)updated;
+static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *actor) {
   if ((gFrameCount & 3) == 0)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
@@ -675,16 +674,15 @@ static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
   s32 framePhase, particleX, particleY, riseSpeed;
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
-    options.priority = 3 - ((u32)(Import_RandomNext() * 2) >> 16);
+    options.priority = 3 - ((u32)(Random_Next() * 2) >> 16);
     options.startScaleX = 2 * Q16_ONE / 5;
     options.startScaleY = 2 * Q16_ONE / 5;
     options.palette = 14;
-    particleX =
-        actor->x.fixed + ((((u32)(Import_RandomNext() * 9) >> 16) - 4) << 16);
+    particleX = actor->x.fixed + ((((u32)(Random_Next() * 9) >> 16) - 4) << 16);
     particleY =
-        actor->y.fixed + ((32 - ((u32)(Import_RandomNext() * 32) >> 16)) << 16);
+        actor->y.fixed + ((32 - ((u32)(Random_Next() * 32) >> 16)) << 16);
     riseSpeed =
-        Math_Divide((((u32)(Import_RandomNext() * 5) >> 16) << 16) + px(5), 10);
+        Math_Divide((((u32)(Random_Next() * 5) >> 16) << 16) + px(5), 10);
     FieldEffect_Spawn(
         particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
         EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
@@ -694,8 +692,7 @@ static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
 }
 
 /// Clears the scripted actor's sprite flags and advances its script.
-static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *interpreter) {
-  void *actor = (void *)interpreter;
+static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -711,7 +708,7 @@ VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
   options.startScaleY = 4 * Q16_ONE / 5;
   options.priority = 0;
 
-  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * (px(1) / 5);
+  fallSpeed = ((u32)(Random_Next() * 8) >> 16) * (px(1) / 5);
   framePhase = gFrameCount & 15;
 
   FieldEffect_Spawn(actor->x.fixed +
@@ -724,7 +721,7 @@ VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
     options.startScaleX = Q16_ONE / 2;
     options.startScaleY = Q16_ONE / 2;
     FieldEffect_Spawn(actor->x.fixed +
-                          ((((u32)(Import_RandomNext() * 9) >> 16) - 4) << 16),
+                          ((((u32)(Random_Next() * 9) >> 16) - 4) << 16),
                       actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
   }
@@ -884,7 +881,7 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   if ((gFrameCount & 3) != 0) {
     RETURN_UNREAD(0);
   }
-  if ((u32)(Import_RandomNext() * 6) >> 16 == 0) {
+  if ((u32)(Random_Next() * 6) >> 16 == 0) {
     if (actor->targetX != ACTOR_NO_TARGET ||
         actor->targetZ != ACTOR_NO_TARGET) {
       Sound_Play(SE_GLITTER);
@@ -895,9 +892,9 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   options.startScaleY = Q16_ONE;
   options.targetScaleX = -327;
   options.targetScaleY = -327;
-  random = Import_RandomNext();
+  random = Random_Next();
   velocityX = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
-  random = Import_RandomNext();
+  random = Random_Next();
   velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - px(1),
                     velocityX, 0, velocityZ,
@@ -990,7 +987,8 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
       leader->speedLimit = px(3);
       leader->acceleration = px(2);
       leader->velocityY = px(4);
-      leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      // Off the ground for the jump; the mask also clears bit 7, unnamed.
+      leader->motionFlags &= 0x7e;
       Actor_SetSpriteFlags(leader, 0);
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landing.x >> 16, landing.z >> 16);
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
@@ -1352,7 +1350,7 @@ static void VenusLighthouse_SearchStatue(void) {
 /// what Carry then does.
 static void VenusLighthouse_MovePillarTowardWall(void) {
   struct Actor *actor;
-  struct Actor *leader;
+  s32 talked = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
   s32 walkSpeed;
   s32 walkAcceleration;
   s32 emote;
@@ -1362,10 +1360,10 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
   Event_Start();
   actor = Actor_Get(ACTOR_WALL_PILLAR);
   if (FIELD_CELL(actor->x.fixed) == 53) {
-    if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL) == 0) {
+    if (GameFlag_Get(talked) == 0) {
       // Record the one-time conversation before bringing Garet out to inspect
       // the pillar.
-      GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL);
+      GameFlag_Set(talked);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
         Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
@@ -1392,14 +1390,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
       Event_Wait(30);
       Actor_WalkToAndWait(ACTOR_GARET, 824, 88);
-      Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
-        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                             leader->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_GARET);
-      Actor_SetPosition(ACTOR_GARET, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_GARET);
       Event_End();
     }
   }
@@ -1408,7 +1399,6 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
 /// In VenusLighthouseGroundFloor, pushing the pillar by the wall (cell
 /// behavior 50) works as Move does, with Garet's remark at the wall.
 static void VenusLighthouse_PushPillarTowardWall(void) {
-
   Event_Start();
   VenusLighthouse_PushAdjacentPillar();
   Event_Wait(20);
@@ -1549,7 +1539,6 @@ static void VenusLighthouse_FallThroughFloor(void) {
 /// The floor under each pillar is solid again and the nearer pillar draws in
 /// front.
 static void VenusLighthouse_MoveCappedPillar(void) {
-
   u32 pillarIndex;
   struct Actor *pillar;
   s32 destinationColumn;
@@ -1580,7 +1569,6 @@ static void VenusLighthouse_MoveCappedPillar(void) {
 
 /// In VenusLighthouseFirstFloor, pushing one of the three capped pillars.
 static void VenusLighthouse_PushCappedPillar(void) {
-
   Event_Start();
   MapGrid_CopyCellAttributes(19, 44, 4, 1, 12, 44);
   VenusLighthouse_PushAdjacentPillar();
@@ -1622,7 +1610,6 @@ static void VenusLighthouse_MoveCarryPillar(void) {
 /// In VenusLighthouseFirstFloor, the leader walks into a gap or a pillar by
 /// it. He jumps the gap, else pushes the pillar.
 static void VenusLighthouse_JumpOrPushCarryPillar(void) {
-
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     VenusLighthouse_LiftCarryPillar();
@@ -1734,12 +1721,10 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
         dustX -= px(1) / 5;
         options.priority = 2;
         options.startScaleX =
-            ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
-            4 * Q16_ONE / 5;
+            ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
         options.startScaleY =
-            ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
-            4 * Q16_ONE / 5;
-        options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+            ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) + 4 * Q16_ONE / 5;
+        options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
         FieldEffect_Spawn(dustX, 0, px(528), 0, -px((gFrameCount & 1) * 3), 0,
                           EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                               EFFECT_USE_SPIN,
@@ -1785,9 +1770,9 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
 static void VenusLighthouse_MoveGatePillar(void) {
   s32 row;
   s32 column;
+  struct Actor *occlusionEffect = 0;
   struct Actor *pillar = Actor_Get(ACTOR_GATE_PILLAR);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  struct Actor *occlusionEffect = 0;
 
   Event_Start();
   MapGrid_CopyCellAttributes(109, 43, 7, 5, 45, 43);
@@ -1847,7 +1832,6 @@ static void VenusLighthouse_MoveGatePillar(void) {
 /// before the gate. He jumps the gap, else pushes the pillar, which may sink
 /// into its socket.
 static void VenusLighthouse_JumpOrPushGatePillar(void) {
-
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     MapGrid_CopyCellAttributes(109, 43, 7, 5, 45, 43);
@@ -2045,7 +2029,6 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
 
 /// Moves a floating pillar atop the highest support in its map cell.
 static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
-
   struct Actor *candidate;
   s32 supportHeight = -px(80);
   struct Actor *pillar = 0;
@@ -2206,7 +2189,6 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
 /// In VenusLighthouseFourthFloor, pushing a floating pillar
 /// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS and the gaps beside it).
 static void VenusLighthouse_PushPuzzlePillar(void) {
-
   Event_Start();
   VenusLighthouse_PushAdjacentPillar();
   Event_End();
@@ -2257,12 +2239,12 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
           dustX -= px(1) / 5;
           options.priority = 2;
           options.startScaleX =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
           options.startScaleY =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
-          options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+          options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
           FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
                             EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                                 EFFECT_USE_SPIN,
@@ -2333,12 +2315,12 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
         if (dustX >= px(712) && dustX < px(752)) {
           options.priority = 2;
           options.startScaleX =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
           options.startScaleY =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
-          options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+          options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
           FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
                             EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                                 EFFECT_USE_SPIN,
@@ -2524,7 +2506,6 @@ static void VenusLighthouse_MoveSocketPillar(void) {
 /// pillar-room pillar. He jumps the gap, else pushes the pillar, which may
 /// sink into a socket.
 static void VenusLighthouse_JumpOrPushSocketPillar(void) {
-
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     MapGrid_CopyCellAttributes(69, 48, 4, 2, 5, 48);
@@ -2582,25 +2563,18 @@ const struct Trigger *VenusLighthouse_GetTriggers(void) {
 }
 
 /// Lays one of the scholars or soldiers the wanderers hurt on the ground
-/// (ANIM_HURT_LYING), drawn behind the backgrounds' fronts, still and
-/// without the lower two bits of its collision.
+/// (ANIM_HURT_LYING), drawn behind the backgrounds' fronts, still, and neither
+/// solid nor pushable.
 static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   struct Actor *actor;
-  s32 collisionFlags;
 
   actor = Actor_Get(actorId);
   actor->motionFlags = 0;
-  collisionFlags = 252;
-  collisionFlags &= actor->collisionFlags;
-  actor->collisionFlags = collisionFlags;
+  actor->collisionFlags &= ~(ACTOR_SOLID | ACTOR_PUSHABLE);
   Actor_SetSpriteFlags(actor, 0);
   Actor_SelectAnimation(actor, ANIM_HURT_LYING);
   Actor_SetSpritePriority(actorId, 3);
-  {
-    s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    priorityFlags |= actor->priorityFlags;
-    actor->priorityFlags = priorityFlags;
-  }
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Visits the four pillar actors through the actor lookup.
@@ -3179,16 +3153,15 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   collision = FieldActor_CheckMovementCollision(actor, &nextPosition);
   framePhase = gFrameCount & 4;
   if (framePhase == 0) {
-    options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    particleX = actor->x.fixed +
-                (((u32)(Import_RandomNext() * 12) >> 16) << 16) - px(6);
+    options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
+    particleX =
+        actor->x.fixed + (((u32)(Random_Next() * 12) >> 16) << 16) - px(6);
     FieldEffect_Spawn(
         particleX, actor->y.fixed, actor->z.fixed,
-        (((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10) +
-         5 * (px(1) / 10)) *
+        (((u32)(Random_Next() * 5) >> 16) * (px(1) / 10) + 5 * (px(1) / 10)) *
             direction->x,
         framePhase,
-        direction->z * (((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10) +
+        direction->z * (((u32)(Random_Next() * 5) >> 16) * (px(1) / 10) +
                         5 * (px(1) / 10)),
         EFFECT_USE_SPIN, &options);
   }
@@ -3249,10 +3222,10 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
 static __inline__ void
 VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX =
-      ((u32)(Import_RandomNext() << 1) >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
+      ((u32)Random_Next() * 2 >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
   options->startScaleY =
-      ((u32)(Import_RandomNext() << 1) >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
-  options->spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+      ((u32)Random_Next() * 2 >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
+  options->spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
 }
 
 /// Animates the two tile waves VenusLighthouse_StepOnWallSwitch sets off in
@@ -3280,10 +3253,10 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     VenusLighthouse_RubbleSetScaleAndSpin(&options);
     for (;;) {
       for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
-        FieldEffect_Spawn(
-            (((u32)(Import_RandomNext() * 7) >> 16) << 19) + px(864), 0,
-            px(48) + row * px(16) + particleIndex * px(4), 0, 0, 0,
-            EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+        FieldEffect_Spawn((((u32)(Random_Next() * 7) >> 16) << 19) + px(864), 0,
+                          px(48) + row * px(16) + particleIndex * px(4), 0, 0,
+                          0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
+                          &options);
       }
       wait(3);
       if (row != 3 || extraBursts >= 3) {
@@ -3300,10 +3273,9 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   for (row = 0; row < 10; row++) {
     VenusLighthouse_RubbleSetScaleAndSpin(&options);
     for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
-      FieldEffect_Spawn((((u32)(Import_RandomNext() * 7) >> 16) << 19) +
-                            px(768),
-                        0, px(48) + row * px(16) + particleIndex * px(4), 0, 0,
-                        0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+      FieldEffect_Spawn((((u32)(Random_Next() * 7) >> 16) << 19) + px(768), 0,
+                        px(48) + row * px(16) + particleIndex * px(4), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
     wait(3);
     MapGrid_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
@@ -3321,16 +3293,15 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
 
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
-  options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+  options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
   if ((gFrameCount & 3) == 0) {
-    if (((u32)(Import_RandomNext() << 1) >> 16) != 0) {
+    if (((u32)Random_Next() * 2 >> 16) != 0) {
       FieldEffect_Spawn(
-          (x + (((u32)(Import_RandomNext() << 1) >> 16) << 4)) << 16, 0,
-          z << 19, 0, 0,
-          (s32)((((u32)(Import_RandomNext() * 5) >> 16) << 16) + px(7)) / 10,
+          (x + (((u32)Random_Next() * 2 >> 16) << 4)) << 16, 0, z << 19, 0, 0,
+          (s32)((((u32)(Random_Next() * 5) >> 16) << 16) + px(7)) / 10,
           EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     } else {
-      FieldEffect_Spawn((x + ((u32)(Import_RandomNext() * 17) >> 16)) << 16, 0,
+      FieldEffect_Spawn((x + ((u32)(Random_Next() * 17) >> 16)) << 16, 0,
                         (x << 19) - px(4), 0, 0, 0,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
@@ -3345,29 +3316,19 @@ static void VenusLighthouse_EmitEastPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(560, 44);
 }
 
-/// Throws up one burst of the tile wave's rubble: four particles down the row
-/// at z, each over a random one of seven 8-pixel columns from x. Then waits 3
-/// frames.
-static void VenusLighthouse_ThrowUpRubble(s32 x, s32 z,
-                                          struct EffectOptions *options) {
-  u32 particleIndex;
-
-  for (particleIndex = 0; particleIndex <= 3; particleIndex++) {
-    FieldEffect_Spawn((((u32)(Import_RandomNext() * 7) >> 16) << 19) + x, 0,
-                      z + particleIndex * px(4), 0, 0, 0,
-                      EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
-  }
-  wait(3);
-}
-
 /// Animates the western tile wave VenusLighthouse_StepOnWestWallSwitch sets off
 /// and starts its lingering particle task, then takes the party back to
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST.
 static void VenusLighthouse_AnimateWestTileWave(void) {
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
   u32 extraBursts;
+  s32 zero;
   u32 row;
+  s32 rowOffset;
+  s32 particleZ;
+  u32 particleIndex;
+  struct EffectOptions *options;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
@@ -3382,18 +3343,41 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   FieldCamera_MoveTo(440, CAMERA_KEEP, 360, 1);
   // The wave holds on its fourth row for three more bursts, and the passage
   // it opens starts to smoke.
-  for (row = 0; row <= 12; row++) {
-    VenusLighthouse_RubbleSetScaleAndSpin(&options);
-    VenusLighthouse_ThrowUpRubble(px(416), px(192) + row * px(16), &options);
+  extraBursts = 0;
+  row = 0;
+  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
+   * at the spawn, 10 of 179 instructions differ in tbs-en. */
+  options = &optionsStorage;
+  rowOffset = 0;
+  do {
+    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
+    // One burst of rubble: four bits down the row, each over a random one of
+    // seven 8-pixel columns.
+  burst:
+    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each
+     * burst starts; as 0 in both, 2 of 179 instructions differ in tbs-en. */
+    particleZ = px(192);
+    for (particleIndex = 0, zero = 0, particleZ += rowOffset;
+         particleIndex <= 3; particleIndex++) {
+      FieldEffect_Spawn((((u32)(Random_Next() * 7) >> 16) << 19) + px(416), 0,
+                        particleZ, 0, zero, zero,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
+      particleZ += px(4);
+    }
+    wait(3);
     if (row == 3) {
-      for (extraBursts = 0; extraBursts < 3; extraBursts++) {
-        VenusLighthouse_ThrowUpRubble(px(416), px(192) + row * px(16),
-                                      &options);
+      if (extraBursts <= 2) {
+        extraBursts++;
+        goto burst;
       }
-      Task_AddFrame(VenusLighthouse_EmitWestPassageParticles, TASK_PASS_FRAME);
+      if (extraBursts == 3)
+        Task_AddFrame(VenusLighthouse_EmitWestPassageParticles,
+                      TASK_PASS_FRAME);
     }
     MapGrid_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
-  }
+    rowOffset += px(16);
+    row++;
+  } while (row <= 12);
   MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
   FieldCamera_WaitForMove();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -3409,9 +3393,14 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST.
 static void VenusLighthouse_AnimateEastTileWave(void) {
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
   u32 extraBursts;
+  s32 zero;
   u32 row;
+  s32 rowOffset;
+  s32 particleZ;
+  u32 particleIndex;
+  struct EffectOptions *options;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
@@ -3425,18 +3414,37 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(568, CAMERA_KEEP, 360, 1);
   // As the western wave, but its smoke task is added again on every row.
-  for (row = 0; row <= 12; row++) {
-    VenusLighthouse_RubbleSetScaleAndSpin(&options);
-    VenusLighthouse_ThrowUpRubble(px(544), px(192) + row * px(16), &options);
-    if (row == 3) {
-      for (extraBursts = 0; extraBursts < 3; extraBursts++) {
-        VenusLighthouse_ThrowUpRubble(px(544), px(192) + row * px(16),
-                                      &options);
-      }
+  extraBursts = 0;
+  row = 0;
+  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
+   * at the spawn, 10 of 179 instructions differ in tbs-en. */
+  options = &optionsStorage;
+  rowOffset = 0;
+  do {
+    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
+    // One burst of rubble: four bits down the row, each over a random one of
+    // seven 8-pixel columns.
+  burst:
+    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each
+     * burst starts; as 0 in both, 2 of 179 instructions differ in tbs-en. */
+    particleZ = px(192);
+    for (particleIndex = 0, zero = 0, particleZ += rowOffset;
+         particleIndex <= 3; particleIndex++) {
+      FieldEffect_Spawn((((u32)(Random_Next() * 7) >> 16) << 19) + px(544), 0,
+                        particleZ, 0, zero, zero,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
+      particleZ += px(4);
+    }
+    wait(3);
+    if (row == 3 && extraBursts <= 2) {
+      extraBursts++;
+      goto burst;
     }
     Task_AddFrame(VenusLighthouse_EmitEastPassageParticles, TASK_PASS_FRAME);
     MapGrid_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
-  }
+    rowOffset += px(16);
+    row++;
+  } while (row <= 12);
   MapGrid_CopyCellsTo(86, 41, 97, 14, 5, 2);
   FieldCamera_WaitForMove();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -3463,12 +3471,12 @@ static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
       Sound_Play(SE_GLITTER);
     }
     particleX =
-        actor->x.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
+        actor->x.fixed + ((((u32)(Random_Next() * 49) >> 16) - 24) << 16);
     particleY =
-        actor->y.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
+        actor->y.fixed + ((((u32)(Random_Next() * 49) >> 16) - 24) << 16);
     particleZ =
-        actor->z.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
-    riseSpeed = (((u32)(Import_RandomNext() * 4) >> 16) << 15) + px(1) / 2;
+        actor->z.fixed + ((((u32)(Random_Next() * 49) >> 16) - 24) << 16);
+    riseSpeed = (((u32)(Random_Next() * 4) >> 16) << 15) + px(1) / 2;
     FieldEffect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,

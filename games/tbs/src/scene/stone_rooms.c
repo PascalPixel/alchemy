@@ -1,4 +1,3 @@
-
 /// @file
 /// Stone rooms (SceneId_StoneRooms), a sheet of rooms drawn in stone.
 ///

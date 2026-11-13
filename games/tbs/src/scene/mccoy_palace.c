@@ -232,13 +232,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     Scene_AssignViewFlags(placements);
 
     if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-      placements[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_KEEP;
-      placements[ACTOR_OLD_MAN_PRAISING_THE_WARRIORS - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_OLD_MAN_PRAISING_THE_WARRIORS -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
-      placements[ACTOR_SOLDIER_WATCHING_KOLIMA - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_WATCHING_KOLIMA -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_THEN_WATCH;
-      placements[ACTOR_SOLDIER_SHOWING_THE_REWARD - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_SHOWING_THE_REWARD -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
     }
 
@@ -1608,14 +1612,14 @@ s32 gPalace_FacingActions[] = {
 };
 
 s32 gPalace_PacingActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(842, 0, 696),
     SC_SYNC,
     SC_MOVE(842, 0, 636),
     SC_SYNC,
     SC_MOVE(876, 0, 634),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(1),
     SC_END,

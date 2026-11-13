@@ -189,8 +189,6 @@ enum SolSanctumElementalStarRoomCellBehavior {
   (MapGrid_CopyCellsTo(83, 40, RISEN_PILLAR_LEFT(column), row, 3, 4),          \
    OPEN_RISEN_PILLAR(column, row))
 
-#define NULL ((void *)0)
-
 struct Actor;
 
 #include "shared/field_effect_create.h"
@@ -591,6 +589,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   struct Actor *felix;
   struct Actor *shadow;
   s32 i;
+  struct Sprite *sprite;
 
   Sound_Play(MUS_OMINOUS);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -618,7 +617,8 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   felix = Actor_Get(ACTOR_FELIX_MASKED);
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
-  felix->sprite->flags = 0;
+  sprite = felix->sprite;
+  sprite->flags = 0;
   felix->scaleX = Q16_ONE / 10;
   felix->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
@@ -657,17 +657,10 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   }
   felix->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(30);
-  felix->sprite->flags = 1;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Actor_SetSpritePriority(ACTOR_FELIX_MASKED, 1);
-  {
-    u8 *flags = &Actor_Get(ACTOR_FELIX_MASKED)->priorityFlags;
-
-    // i is reused for the flags; *flags |= ACTOR_PRIORITY_AUTOMATIC differs.
-    i = ACTOR_PRIORITY_AUTOMATIC;
-    i |= *flags;
-    *flags = i;
-  }
+  Actor_Get(ACTOR_FELIX_MASKED)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpriteColorById(ACTOR_FELIX_MASKED, SPRITE_COLOR_NORMAL);
   Actor_SetSpeed(ACTOR_FELIX_MASKED, 0.5);
   Actor_WalkToAndWait(ACTOR_FELIX_MASKED, 471, 306);
@@ -1047,7 +1040,6 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct Actor *actor;
   struct Actor *alex;
-  struct Actor *leader;
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
@@ -1210,15 +1202,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   PartyInventory_Discard(ITEM_VENUS_STAR);
   PartyInventory_Discard(ITEM_MERCURY_STAR);
   PartyInventory_Discard(ITEM_JUPITER_STAR);
@@ -1479,6 +1463,7 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
   struct Actor *rising;
+  struct Sprite *sprite;
   struct Actor *shadow;
   struct Actor *leader;
 
@@ -1492,7 +1477,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
   rising = Actor_Get(ACTOR_PARTY_LEADER);
-  rising->sprite->flags = 0;
+  sprite = rising->sprite;
+  sprite->flags = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
@@ -1530,7 +1516,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   // Finish Isaac's arrival and let the companions inspect the room.
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  rising->sprite->flags = SPRITE_FLAG_SHADOW;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -1611,7 +1597,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 60);
   // Materialize Kraden after the companions have explored the chamber.
   rising = Actor_Get(ACTOR_KRADEN);
-  rising->sprite->flags = 0;
+  sprite = rising->sprite;
+  sprite->flags = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
@@ -1655,7 +1642,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetSpritePriority(ACTOR_KRADEN, 1);
   Actor_Get(ACTOR_KRADEN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_NORMAL);
-  rising->sprite->flags = SPRITE_FLAG_SHADOW;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
@@ -2253,18 +2240,16 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   for (frame = 0; frame <= 31; frame++) {
     Event_Wait(1);
     if (!(frame & 1)) {
-      xOffset = (((u32)Import_RandomNext() * 24) >> 16) << 16;
+      xOffset = (((u32)Random_Next() * 24) >> 16) << 16;
       x = alex->x.fixed;
       x += xOffset;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        alex->y.fixed +
-                            ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            px(32),
-                        alex->z.fixed, 0, -px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, alex->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          alex->z.fixed, 0, -px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     }
     if (frame == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);

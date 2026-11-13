@@ -173,7 +173,7 @@
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_SCENE_TEMP_F8
 
-static s32 WorldMap_AlignToMap(struct Actor *interpreter);
+static s32 WorldMap_AlignToMap(struct Actor *actor);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_ShowHammetsCaravan(void);
 static void WorldMap_ShakeCameraOverCaravan(void);
@@ -467,7 +467,7 @@ static void WorldMap_MeetVine(void) {
 
   if (gMainRoutineWork.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
-    if ((u32)Import_RandomNext() < 32768) {
+    if ((u32)Random_Next() < 32768) {
       Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_VENUS_DJINNI, DJINNI_VINE);
       work->encounterBias = 0;
     } else {
@@ -482,8 +482,8 @@ static void WorldMap_MeetVine(void) {
 /// Reached by talking to ACTOR_CORONA, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_CORONA until Corona is caught.
 static void WorldMap_MeetCorona(void) {
-  struct MainRoutineWork *state = &gMainRoutineWork;
-  s32 *steps = &state->encounterSteps;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
+  s32 *steps = &routine->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
@@ -498,8 +498,8 @@ static void WorldMap_MeetCorona(void) {
 /// Reached by talking to ACTOR_HAIL, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_HAIL until Hail is caught.
 static void WorldMap_MeetHail(void) {
-  struct MainRoutineWork *state = &gMainRoutineWork;
-  s32 *steps = &state->encounterSteps;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
+  s32 *steps = &routine->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
@@ -556,20 +556,17 @@ static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *actor) {
 /// pixels up and down, facing the way he goes. WorldMap_MeetFlint stops him
 /// by setting his work to 1.
 static void WorldMap_CircleFlint(struct Actor *actor) {
-  s16 *angle;
-
   if (gFrameCount & 2)
     Actor_SetColorMode(actor, SPRITE_COLOR_RED_TINT);
   else
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   if ((s16)actor->userValue == 0) {
-    angle = (s16 *)&actor->timer;
     actor->x.fixed = px(5584);
-    actor->y.fixed = Iwram_MulQ16(Trig_Sin(*angle << 3), px(4)) + px(16);
+    actor->y.fixed = Iwram_MulQ16(Trig_Sin(actor->timer << 3), px(4)) + px(16);
     actor->z.fixed = px(1328);
-    Vector_AddPolarOffset(px(16), *angle, &actor->x);
-    actor->facing = *angle + FACING_SOUTH;
-    *angle += TRIG_TURN / 64;
+    Vector_AddPolarOffset(px(16), actor->timer, &actor->x);
+    actor->facing = actor->timer + FACING_SOUTH;
+    actor->timer += TRIG_TURN / 64;
   }
 }
 
@@ -707,13 +704,13 @@ const struct ActorPlacement *WorldMap_GetActorPlacements(void) {
 /// approaches.
 static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
-  struct Actor *subject;
-  struct Actor *other;
+  struct Actor *area;
+  struct Actor *leader;
 
-  subject = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
-  other = Actor_Get(gMainRoutineWork.leaderActorId);
+  area = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  if (other->x.fixed < subject->x.fixed) {
+  if (leader->x.fixed < area->x.fixed) {
     work->exit = exitBefore;
   } else {
     work->exit = exitAfter;
@@ -724,13 +721,13 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
 /// Chooses a passage exit from the leader's north-south approach.
 static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
-  struct Actor *subject;
-  struct Actor *other;
+  struct Actor *area;
+  struct Actor *leader;
 
-  subject = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
-  other = Actor_Get(gMainRoutineWork.leaderActorId);
+  area = Actor_Get(trigger - STEP_TRIGGER_AREA_BASE);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  if (other->z.fixed < subject->z.fixed) {
+  if (leader->z.fixed < area->z.fixed) {
     work->exit = exitBefore;
   } else {
     work->exit = exitAfter;
@@ -781,7 +778,6 @@ static void WorldMap_EnterGondowanPassage(void) {
 /// As WorldMap_EnterKolimaBridge, for Lalivero. From the north the exit is
 /// WORLD_MAP_TO_LALIVERO_WEST, and from the south WORLD_MAP_TO_LALIVERO_EAST.
 static void WorldMap_EnterLalivero(void) {
-
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_LALIVERO),
                          WORLD_MAP_TO_LALIVERO_WEST,
                          WORLD_MAP_TO_LALIVERO_EAST);
@@ -878,7 +874,6 @@ static void WorldMap_EnterVault(void) {
 /// Reached by walking east into CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP while the
 /// ship lies at anchor off the island (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void WorldMap_ReturnToTolbiShip(void) {
-
   Event_Start();
   Import_EventSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
@@ -902,23 +897,22 @@ static void WorldMap_ReturnToTolbiShip(void) {
 /// WORLD_MAP_FROM_DEBUG turns encounters off. Leaving Vale the first time sets
 /// FLAG_VALE_PARTY_LEFT and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
-  struct MainRoutineWork *state = &gMainRoutineWork;
-  s16 *entrance = &state->entrance;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
 
-  if (*entrance == WORLD_MAP_FROM_DEBUG) {
+  if (routine->entrance == WORLD_MAP_FROM_DEBUG) {
     GameFlag_Set(FLAG_NO_ENCOUNTERS);
     GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
   }
-  if (*entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
+  if (routine->entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
     Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
                          MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
+  } else if (routine->entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
     Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
+  } else if (routine->entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     Event_Start();
     PartyInventory_Discard(ITEM_BLACK_ORB);
     Import_EventSetExitRequest(WORLD_MAP_TO_ROCK_ROOMS);
@@ -934,7 +928,7 @@ s32 WorldMap_Initialize(void) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
     // Each special entrance resumes its journey or story event.
-    switch (*entrance) {
+    switch (routine->entrance) {
     case WORLD_MAP_FROM_VALE_PLAZA:
       if (Event_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
         GameFlag_Set(FLAG_VALE_PARTY_LEFT);
@@ -1385,14 +1379,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (spriteActor != 0) {
-    Actor_SetDestination(ACTOR_GARET, spriteActor->x.part.pixel,
-                         spriteActor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(5848, CAMERA_KEEP, 1608, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -1728,7 +1715,7 @@ static void WorldMap_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Sound_Play(SE_PSYNERGY_SPARKLE);
     FieldPsynergy_LoadResources(ABILITY_MOVE, 0);
-    for (i = 59; i >= 0; i--) {
+    for (i = 0; i < 60; i++) {
       if (gFrameCount & 2)
         Actor_SetColorMode(djinni, SPRITE_COLOR_WHITE);
       else
@@ -1769,7 +1756,7 @@ static void WorldMap_MeetFlint(void) {
     djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
-    for (i = 7; i >= 0; i--) {
+    for (i = 0; i < 8; i++) {
       djinni->facing += FACING_STEP;
       wait(1);
     }
@@ -2141,7 +2128,6 @@ static void WorldMap_IodemCallsIsaacBack(void) {
 ///
 /// Reached by searching CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK.
 static void WorldMap_SearchShipwreck(void) {
-
   Event_Start();
 #if !TBS_PATCH_3
   WorldMap_Freeze();
@@ -2211,6 +2197,10 @@ static void WorldMap_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
+    /* FAKEMATCH(dead): clearing the motion flags again through a pointer
+     * keeps the zero and the address in the original's registers; without
+     * it, 11 of 363 instructions differ in tbs-en. */
+    *(u8 *)&orb->motionFlags = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 1024);
@@ -2278,7 +2268,15 @@ static void WorldMap_UseBlackOrb(void) {
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_NOD);
-  Scene_WalkIntoLeader(gWorldMapIodem);
+  // Iodem walks into Isaac and is taken off the map.
+  Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetDestination(gWorldMapIodem, actor->x.part.pixel,
+                         actor->z.part.pixel);
+  }
+  Actor_WaitForMoveById(gWorldMapIodem);
+  Actor_SetPosition(gWorldMapIodem, 0, 0);
   WorldMap_Unfreeze();
   WorldMap_StartZoom(Q16_ONE, 6);
   Event_Wait(20);
@@ -2490,15 +2488,15 @@ static void WorldMap_ShakeVenusLighthouse(void) {
 /// spot in the QUAKE_DUST box, and every third frame moves the camera a pixel
 /// to one of four points around the lighthouse.
 static void WorldMap_UpdateLighthouseQuake(void) {
-  u32 x = (u32)Import_RandomNext() * QUAKE_DUST_WIDTH >> 16;
-  u32 z = (u32)Import_RandomNext() * QUAKE_DUST_DEPTH >> 16;
+  u32 x = (u32)Random_Next() * QUAKE_DUST_WIDTH >> 16;
+  u32 z = (u32)Random_Next() * QUAKE_DUST_DEPTH >> 16;
   struct Actor *actor;
 
   actor = FieldActor_Create(SPRITE_DUST_PUFF, px(x) + px(QUAKE_DUST_LEFT), 0,
                             px(z) + px(QUAKE_DUST_TOP));
   if (actor != NULL) {
     struct Sprite *sprite = actor->sprite;
-    s32 scale = (((u32)Import_RandomNext() << 15) >> 16) + 6 * Q16_ONE / 5;
+    s32 scale = ((u32)Random_Next() * 32768 >> 16) + 6 * Q16_ONE / 5;
 
     sprite->flags = 0;
     sprite->image.priority = 2;
@@ -2509,7 +2507,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
     Actor_StartScript(actor, gQuakeDustScript);
   }
   if (gFrameCount % 3 == 0) {
-    switch (((u32)Import_RandomNext() << 2) >> 16) {
+    switch ((u32)Random_Next() * 4 >> 16) {
     case 0:
       FieldCamera_MoveTo(6087, CAMERA_KEEP, 3177, 1);
       break;
@@ -2535,7 +2533,6 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 ///
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS.
 static void WorldMap_SailTolbiShipToIsland(void) {
-
   struct Actor *actor;
 
   Event_Start();
@@ -2614,6 +2611,7 @@ static s32 WorldMap_GetSeatRowValue(u32 seat) {
 static void WorldMap_SpawnIslandWake(void) {
   struct Actor *island;
   struct Actor *puff;
+  struct Sprite *sprite;
   s32 distance;
 
   if ((gFrameCount & 15) != 0)
@@ -2625,18 +2623,21 @@ static void WorldMap_SpawnIslandWake(void) {
     return;
   puff->scaleX = Q16_ONE / 2;
   puff->scaleY = Q16_ONE / 2;
+  sprite = puff->sprite;
   // Up to 48 pixels behind the island, or up to 32 to the side.
-  if (((u32)Import_RandomNext() * 2 >> 16) != 0) {
-    distance = px(((u32)Import_RandomNext() * 48) >> 16);
-    puff->x.fixed -= distance / 2;
-    puff->z.fixed -= distance;
+  if (((u32)Random_Next() * 2 >> 16) != 0) {
+    s32 behind = px(((u32)Random_Next() * 48) >> 16);
+
+    puff->x.fixed -= behind / 2;
+    puff->z.fixed -= behind;
   } else {
-    distance = px(((u32)Import_RandomNext() << 5) >> 16);
+    distance = px((u32)Random_Next() * 32 >> 16);
     puff->x.fixed += distance;
-    puff->z.fixed += distance / 2;
+    distance /= 2;
+    puff->z.fixed += distance;
   }
-  puff->sprite->flags = 0;
-  puff->sprite->image.priority = island->sprite->image.priority;
+  sprite->flags = 0;
+  sprite->image.priority = island->sprite->image.priority;
   puff->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   puff->motionFlags = island->motionFlags;
   Actor_SetSpriteColor(puff, SPRITE_COLOR_BLUE_TINT);
@@ -2691,7 +2692,6 @@ static void WorldMap_ShowIslandDrifting(void) {
 /// FLAG_WORLD_MAP_STORM_FRAMES_LEFT. The count is paused while a menu is
 /// open. At the last frame it raises RAISED_STORM_TIME_UP.
 static void WorldMap_UpdateStormTimer(void) {
-
   struct Actor *actor;
   struct FieldWork *work;
   s32 progress;
@@ -2774,7 +2774,7 @@ static void WorldMap_StartDousingStorm(void) {
 /// the air. It clears FLAG_WORLD_MAP_CAUGHT_IN_STORM, sets
 /// FLAG_WORLD_MAP_STORM_GONE and empties the timer.
 static void WorldMap_DouseMapStorm(void) {
-  struct Actor *selectedActor;
+  struct Actor *leader;
 
   if (gFieldWork->raisedTrigger == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedTrigger = 0;
@@ -2785,8 +2785,8 @@ static void WorldMap_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
-  selectedActor->motionFlags = ACTOR_FALLS;
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader->motionFlags = ACTOR_FALLS;
 }
 
 /// The storm drops the party outside Suhalla when its time in the air runs out.
@@ -2797,22 +2797,22 @@ static void WorldMap_DouseMapStorm(void) {
 /// Reached by RAISED_STORM_TIME_UP, raised as the timer runs out. It sets
 /// FLAG_ARRIVE_FALLING and sends the party to WORLD_MAP_FROM_SUHALLA.
 static void WorldMap_StormDropsParty(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *other = Actor_Get(ACTOR_STORM);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *storm = Actor_Get(ACTOR_STORM);
   s32 frames;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_GUSH);
-  Actor_SetSpriteFlags(actor, 0);
-  other->motionFlags = 0;
-  actor->motionFlags = 0;
-  actor->velocityY = 0;
-  actor->frozen = 1;
-  other->frozen = 1;
-  for (frames = 59; frames >= 0; --frames) {
-    actor->velocityY += px(1) / 5;
-    other->velocityY += px(1) / 5;
+  Actor_SetSpriteFlags(leader, 0);
+  storm->motionFlags = 0;
+  leader->motionFlags = 0;
+  leader->velocityY = 0;
+  leader->frozen = 1;
+  storm->frozen = 1;
+  for (frames = 0; frames < 60; frames++) {
+    leader->velocityY += px(1) / 5;
+    storm->velocityY += px(1) / 5;
     wait(1);
   }
   Event_FinishScreenTransition();
@@ -2826,7 +2826,6 @@ static void WorldMap_StormDropsParty(void) {
 /// transition is drawn, over everything. BG0's own weight flickers between 12
 /// and 16 every two frames, and the rest's comes from gWorldMapBlend.
 static void WorldMap_UpdateTransitionBlend(void) {
-
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if ((gFrameCount & 2) != 0) {
@@ -2841,7 +2840,6 @@ static void WorldMap_UpdateTransitionBlend(void) {
 /// Run each frame at the end of the lighthouse transition. Every third frame
 /// it moves the camera a pixel diagonally from the leader.
 static void WorldMap_JitterTransitionCamera(void) {
-
   struct Actor *actor;
   s32 sx;
   s32 sy;
@@ -2851,7 +2849,7 @@ static void WorldMap_JitterTransitionCamera(void) {
   sx = actor->x.part.pixel;
   sy = actor->z.part.pixel;
   if (gFrameCount % 3 == 0) {
-    mode = (u32)(Random_Next() << 2) >> 16;
+    mode = (u32)Random_Next() * 4 >> 16;
     switch (mode) {
     case 0:
       FieldCamera_MoveToFixed(px(sx) - px(1), CAMERA_KEEP, px(sy) + px(1), 1);
@@ -3151,8 +3149,13 @@ s32 gCaravanFourthWagonDeparts[] = {
 };
 
 s32 gCaravanFourthWagonReturns[] = {
-    SC_ANIMATION(3), SC_MOVE(5672, 0, 1795), SC_SYNC, SC_MOVE(5800, 0, 1800),
-    SC_SYNC,         SC_POSITION(0, 0, 0),   SC_END,
+    SC_ANIMATION(ANIM_NOD),
+    SC_MOVE(5672, 0, 1795),
+    SC_SYNC,
+    SC_MOVE(5800, 0, 1800),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_END,
 };
 
 /// The invisible guide of the rock that falls beside the caravan: it grows

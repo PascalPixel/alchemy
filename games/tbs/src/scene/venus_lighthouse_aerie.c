@@ -73,7 +73,6 @@
 #include "module/system/system.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "types.h"
 #include "sprite.h"
@@ -121,7 +120,7 @@
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle. A defeat gives it back.
 /// ★ Named from the game: "Shaman's Rod" (MsgItemName)
-#define FLAG_SHAMANS_ROD_HOLDER 0x345
+#define FLAG_SHAMANS_ROD_HOLDER FLAG_AREA_TEMP_45
 
 /// Area flags that choose the aerie's field music after each battle.
 ///
@@ -212,7 +211,6 @@ enum {
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
 static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
-
   switch (actor->timer) {
   case 6:
     actor->scaleX -= Q16_ONE / 8;
@@ -229,7 +227,7 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
   case 0:
     actor->scaleX += Q16_ONE / 32;
     actor->scaleY -= Q16_ONE / 64;
-    actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 80) + 80;
+    actor->timer = Math_RemainderUnsigned(Random_Next(), 80) + 80;
     break;
   }
   {
@@ -401,7 +399,6 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
 /// bobbing, as they do until the leader lands on one
 /// (VenusLighthouseAerie_LandOnPlatform).
 static void VenusLighthouseAerie_FloatPlatforms(void) {
-
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;
@@ -563,8 +560,14 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  leader->y.fixed = -px(32);
-  leader->facing = FACING_SOUTH;
+  {
+    /* FAKEMATCH(temporary): south holds the facing; as FACING_SOUTH at the
+     * store, 4 of 923 instructions differ in tbs-en. */
+    u16 south = FACING_SOUTH;
+
+    leader->y.fixed = -px(32);
+    leader->facing = south;
+  }
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
   Actor_MoveToAndWait(ACTOR_RISING_PLATFORM, 524, 191);
@@ -1235,12 +1238,12 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
 /// Flashes the actor white two frames in four, with Psynergy rings every 15
 /// frames.
 static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor) {
-  if (*(s32 *)&gFrameCount & 2) {
+  if (gFrameCount & 2) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
-  if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
+  if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
     Scene_SpawnPsynergyRings(actor);
   }
 }
@@ -1906,12 +1909,12 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   center = Actor_Get(ACTOR_BEAM_BOTTOM);
   if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
+                               (s32)((u32)Random_Next() * 256 >> 16 << 16) +
                                    center->y.fixed - px(28),
                                center->z.fixed);
   } else {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)(Random_Next() << 6) >> 16 << 16) +
+                               (s32)((u32)Random_Next() * 64 >> 16 << 16) +
                                    center->y.fixed - px(28),
                                center->z.fixed);
   }
@@ -1969,7 +1972,7 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
         menardi->scaleY += Q16_ONE / 128;
       }
     } else {
-      if ((*(s32 *)&gFrameCount & 2) != 0) {
+      if ((gFrameCount & 2) != 0) {
         Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
         Actor_SetSpriteColorById(ACTOR_MENARDI, SPRITE_COLOR_NORMAL);
       } else {
@@ -2948,14 +2951,15 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
   Event_Wait(80);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = 16;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(80);
   ActorSystem_SuspendProjectionAndShowSprites();
-  ((struct WindowWork *)gWindowWork[0])->voiceSound = 0;
-  ((struct WindowWork *)gWindowWork[0])->voiceCountdown = 0;
+  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceSound = 0;
+  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceCountdown = 0;
   FieldMessage_ShowCentered(MsgVenusDespiteLongTiring, 0, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
   Event_Wait(80);
@@ -3065,7 +3069,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   if (spawnParticles) {
     randomHeight = ((u32)(Random_Next() * 80) >> 16) << 16;
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               center->y.fixed - randomHeight + -px(8),
+                               center->y.fixed - randomHeight - px(8),
                                center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
@@ -3252,7 +3256,7 @@ s32 gVenusLighthouseAerie_BeamEndAction[] = {
 s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_ADD(SW_Y, px(1)),
     SC_WAIT(1),
@@ -3265,7 +3269,7 @@ s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
 s32 gVenusLighthouseAerie_RiseParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_ADD(SW_Y, -px(1)),
     SC_WAIT(1),
@@ -3429,7 +3433,7 @@ struct Trigger gVenusLighthouseAerieTriggers[] = {
 s32 gVenusLighthouseAerie_BesideParticleScript[] = {
     SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
     SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(30),
     SC_RELEASE,
 };

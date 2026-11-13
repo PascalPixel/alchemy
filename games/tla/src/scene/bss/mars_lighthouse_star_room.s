@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global Data_02004cec
-Data_02004cec:
+	.global gMarsLighthouseStarRoom_MarsStar
+gMarsLighthouseStarRoom_MarsStar:
 	.space 0x00000004
 	.global gData_02004cf0
 gData_02004cf0:

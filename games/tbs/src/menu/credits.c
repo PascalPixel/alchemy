@@ -1084,6 +1084,10 @@ void Credits_InitTextSprites(void) {
     Credits_DrawLine(gCredits_Lines[0], row * CREDITS_LINE_TILES, 1);
 }
 
+/// Row `row` (4 bytes, 8 pixels) of sprite tile `tile` in OBJ VRAM.
+#define OBJ_TILE_ROW(tile, row)                                                \
+  (*(u32 *)(OBJ_VRAM0 + (row) * 4 + (tile) * TILE_SIZE_4BPP))
+
 /// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
 /// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
 /// beginning at firstTile. Called by the line-rendering task and, for the blank
@@ -1198,18 +1202,17 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   // Transpose raster rows into the tile ring used by the scrolling sprites.
   for (row = 0; row < tileCount; row++) {
     s32 tileIndex = firstTile + row;
-    u32 *tile = (u32 *)(OBJ_VRAM0 + tileIndex * TILE_SIZE_4BPP);
     u32 *words = (u32 *)linePixels + row;
 
     // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
-    tile[0] = words[0];
-    tile[1] = words[64];
-    tile[2] = words[128];
-    tile[3] = words[192];
-    tile[4] = words[256];
-    tile[5] = words[320];
-    tile[6] = words[384];
-    tile[7] = words[448];
+    OBJ_TILE_ROW(tileIndex, 0) = words[0];
+    OBJ_TILE_ROW(tileIndex, 1) = words[64];
+    OBJ_TILE_ROW(tileIndex, 2) = words[128];
+    OBJ_TILE_ROW(tileIndex, 3) = words[192];
+    OBJ_TILE_ROW(tileIndex, 4) = words[256];
+    OBJ_TILE_ROW(tileIndex, 5) = words[320];
+    OBJ_TILE_ROW(tileIndex, 6) = words[384];
+    OBJ_TILE_ROW(tileIndex, 7) = words[448];
   }
   Heap_Release(linePixels);
   return 0;

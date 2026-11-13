@@ -322,8 +322,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    // One pointer serves both slot reads: two separate reads of gHeapSlots
-    // make the function 3656 bytes long, where tbs-en's is 3640.
     void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
     struct BattleBackgroundWork *view = slots[0];
 
@@ -341,7 +339,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     work->frame = 0;
     frame = 0;
     do {
-      s32 angle = frame << 8;
+      // The sprite's scale grows 1/256 a frame.
+      s32 growth = frame << 8;
       s32 count = work->frame;
       u8 *sheet = work->sheet;
       s32 dividend;
@@ -439,7 +438,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       position.groundHeight = 0;
       position.height = px(255);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        size = angle + Q16_ONE * 5 / 8;
+        size = growth + Q16_ONE * 5 / 8;
         scale.x = size;
         scale.y = size;
         position.x = px(x) + px(80);
@@ -449,7 +448,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale,
                                          0);
       } else {
-        size = angle + Q16_ONE;
+        size = growth + Q16_ONE;
         scale.x = size;
         scale.y = size;
         position.x = px(x) + px(96);

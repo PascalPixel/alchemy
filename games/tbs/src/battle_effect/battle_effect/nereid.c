@@ -4,10 +4,9 @@
 
 #include "../battle_effect_internal.h"
 
-// Nereid's drops burst up from the targets, fall back under gravity, and from
-// frame 80 rise away; one that falls back into the waves goes out and its slot
-// is free for a new drop. The Titan Blade (titan_blade.c) throws its dust the
-// same way.
+// Nereid's drops burst up from the targets, fall back and later rise away; one
+// that falls back into the waves frees its slot. The Titan Blade throws its
+// dust the same way.
 
 #define NEREID_FRAMES 124
 
@@ -37,8 +36,6 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
 
-  // The waves along the bottom from WaterSpray, the columns from FirePillarA
-  // (at sheet + 1764).
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -48,7 +45,6 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   Decompress_TaggedLz(palette, work->sheet + NEREID_COLUMN_PICTURE);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
-  // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
@@ -59,15 +55,14 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     struct Particle *point;
     struct Particle *drop;
 
-    // Nereid comes in from (256, 88), heading left at 16 pixels a frame and up
-    // at 4.
+    // Nereid rides in from the right.
     rise = 0;
     focus.x = px(256);
     focus.y = px(88);
     velocity.x = -px(16);
     velocity.y = -px(4);
-    // work->particles 24 to 39 are given a place and a delay that nothing in
-    // the effect reads again.
+    // Particles 24 to 39 are given a place and a delay that nothing reads
+    // again.
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
@@ -85,12 +80,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         frame = 98;
       if (frame == 120)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      // The waves rise 2 pixels a frame for the first 16 frames.
+      // The waves rise.
       if (frame <= 15)
         rise += 2;
 
-      // Nereid keeps 58/64 of her speed across and 56/64 of her speed up each
-      // frame, and is pushed back right when left of x 120.
       if (frame <= 99) {
         focus.x += velocity.x;
         focus.y += velocity.y;
@@ -102,10 +95,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
 
-      // Drops burst up from an oval around (32, 96), among the targets, twice
-      // as tall as wide on the canvas and so round on the doubled-width screen,
-      // with a random spread: every idle one of the first 256 on frame 28, then
-      // up to 16 a frame over frames 32 to 79.
+      // Drops burst up among the targets.
       if (frame == 28) {
         for (k = 0; k != 256; k++) {
           drop = &PARTICLES[k];
@@ -148,8 +138,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       if (frame == 80)
         Sound_PlayFar(SE_CLATTER);
 
-      // The columns: a 104-pixel image scrolling up 16 pixels a frame,
-      // drawn twice to wrap round.
+      // The columns of water scroll up.
       if (frame >= 32 && frame < 80) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
@@ -163,16 +152,14 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         }
       }
 
-      // The waves along the bottom: five 32x32 images that rise 32 pixels
-      // over the first 16 frames and drift right.
+      // The waves along the bottom.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
           draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
                   120 - rise, 32, 32);
       }
 
-      // Drops: 2 to 4 pixels by index, 2 more while falling, swelling to 10
-      // over frames 69 to 77 as they clear.
+      // Drops swell as they clear.
       for (k = 0; k != NEREID_DROPS; k++) {
         drop = &PARTICLES[k];
         if (drop->variant >= 0) {
@@ -195,8 +182,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         }
       }
 
-      // The targets bounce and flash white on frames 36, 48, 60 and 72, getting
-      // their colours back 6 frames later.
+      // The targets bounce and flash white.
       if (frame <= 79) {
         EFFECT_FOR_EACH_TARGET(k, work->args) {
           if (frame > 29) {
@@ -222,7 +208,6 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(work);
     }
 
-    // The impact burst builds its own blitters and transfer.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);

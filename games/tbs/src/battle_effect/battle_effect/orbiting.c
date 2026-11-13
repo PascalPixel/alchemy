@@ -4,19 +4,14 @@
 
 #include "../battle_effect_internal.h"
 
-// None of the three effects here is called, and no table or other data in
-// the ROM holds the address of any of them: they are in the ROM but
-// unreachable.
+// None of the three effects here is called or named by any table: they are in
+// the ROM but unreachable.
 
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64 ///< stars that swirl
 
-/// Swirling stars: 64 stars scattered around a point 80 pixels up spin
-/// about it, each on its own axis, appearing four a frame; 30 frames after
-/// it appears, each star is drawn back towards the centre. Stars are drawn
-/// smaller the further away they are. The effect runs for 160 frames. All
-/// 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
-/// though only 64 are drawn.
+/// Swirling stars: stars spin about a point above the field, each on its own
+/// axis, then are drawn back towards it.
 UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -42,7 +37,6 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     star->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  // The stars turn about a point 80 pixels up.
   SET_VECTOR(center, 0, 160 << 15, 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -50,13 +44,10 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     Transform_ApplyPosition(center);
     star = PARTICLES;
-    // Star i appears after frame i / 4; variant stays 0, so none is retired.
     for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 
-        // Turn the star about one of four axes, picked by its index, faster
-        // for later stars.
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
@@ -76,8 +67,6 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         Projection_Point(star, &screen);
         screen.x >>= 1;
         Transform_Pop();
-        // Size 9 to 3 over depths 250 to 634, from the star's own mote set
-        // (i & 3).
         CLAMP(screen.depth, 250, 634);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
@@ -85,9 +74,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
                                gBattleEffect_MotePictures[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(star, 60, 0);
-        // From 30 frames after it appears, it accelerates towards the centre
-        // by 1/256 of its distance a frame, a spring that the 60/64 damping
-        // above slows.
+        // After 30 frames a star springs back towards the centre.
         if (frame > i / 4 + 30) {
           s32 dx = -star->x >> 8;
           s32 dy = -star->y >> 8;
@@ -104,10 +91,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Orbiting skulls: three skulls circle each target in turn, 16 frames
-/// apart, for 64 frames each, a third of a turn apart on a circle of 8
-/// pixels around the target. Runs with the effect already in
-/// gBattleEffectWork.
+/// Orbiting skulls: three skulls circle each target in turn.
 UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -138,12 +122,10 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   Decompress_TaggedLz(skulls + 128, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  // The first transfer mode is overwritten at once.
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  // Put the canvas on the targets' side of the screen.
   if (work->args->side == EFFECT_SIDE_ENEMIES)
     xOffset = 0;
   else
@@ -154,8 +136,6 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     REG_BG2X = xOffset << 8;
   } while (0);
   i = 0;
-  // velocityX holds each skull's angle on its orbit; x, y and z are set but
-  // never read.
   for (i = 0; i != 64; i++) {
     struct Particle *step = &work->particles[i];
 
@@ -173,12 +153,10 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
       Projection_ScaledUnit(work->args->targets[member], &screen);
       memberFrame = frame - member * 16;
       screen.x += xOffset;
-      // Unsigned, so the frames before this target's turn are skipped too.
       if (memberFrame < 64) {
         // Default: NULL until it is pointed at the point below.
         s32 *rec = NULL;
 
-        // The actor's projection is computed, but nothing reads it.
         EFFECT_VIEW_FROM_CAMERA(camera);
         rec = point;
         SET_VECTOR(rec, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -188,8 +166,6 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
          * instructions differ in tbs-en. */
         do {
         } while (0);
-        // Three skulls a third of a turn apart, each turning 1/128 of a turn a
-        // frame.
         for (i = 0; i != 3; i++) {
           struct Particle *spark = &work->particles[member * 3 + i];
           s32 x;
@@ -214,9 +190,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 
 #define TARGET_BURSTS_FRAMES 96
 
-/// Target bursts: on each target in turn, 8 frames apart, a burst flares up
-/// in the middle while five puffs of smoke scatter around it, for 40
-/// frames.
+/// Target bursts: on each target in turn a burst flares while puffs of smoke
+/// scatter around it.
 UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -245,7 +220,6 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   drawSmoke = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
 
-  // Six puffs for each target.
   for (i = 0; i != 64; i++) {
     s32 angle;
     s32 speed;
@@ -276,14 +250,11 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
       args = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      // Centred 20 pixels above the target's feet.
       SET_VECTOR(point, args->x.fixed, 160 << 13, args->z.fixed);
       Transform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct Particle *puff;
 
-        // The target's five puffs and its burst, each through six pictures
-        // of six frames, holding the last; the burst rises faster.
         for (i = 0; i != 6; i++) {
           s32 picture;
 

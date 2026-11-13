@@ -70,7 +70,6 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // The flashes.
   for (i = 0; i != TITAN_BLADE_FLASHES; i++) {
     struct Particle *flash = &work->particles[i];
 
@@ -82,15 +81,11 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     flash->variant = i / 2 + 25;
   }
 
-  // All the dust starts free (variant -1).
   for (i = 0; i != TITAN_BLADE_DUST; i++) {
     PARTICLES[i].variant = -1;
   }
 
   i = 0;
-  // The sparks start at canvas y 88 below the target, thrown at 1 to 17
-  // pixels a frame across and half that up or down (twice as fast across as
-  // Ragnarok's and half as fast up), and live 32 to 39 frames.
   sparkOriginX = px(canvasCenterX);
   do {
     struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
@@ -109,9 +104,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   } while (i != TITAN_BLADE_SPARKS);
 
   for (frame = 0; frame != TITAN_BLADE_FRAMES; frame++) {
-    // The palette fades towards the blast colours over frames 25 to 47,
-    // then towards the lightning colours from frame 57: the dust and sparks
-    // turn from gold to pink and violet.
+    // The palette fades: the dust and sparks turn from gold to pink and violet.
     if (frame >= 25 && frame <= 47) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
@@ -119,7 +112,6 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_LightningBoltSheet);
     }
 
-    // Shakes of 8 frames from frames 8 and 48, and of 16 from the strike.
     if (frame == 8) {
       work->shakeFrames = 8;
     }
@@ -164,7 +156,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       }
     }
 
-    // Dust at the target's feet.
+    // Dust rises at the target's feet.
     if (frame == 28) {
       for (i = 0; i != TITAN_BLADE_FIRST_DUST; i++) {
         struct Particle *dust = &PARTICLES[i];
@@ -223,8 +215,6 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       blit(canvas, work->sheet, x, 108 - size, width, size);
     }
 
-    // Until frame 71, move and draw the first 342 dust motes; they swell from
-    // frame 69, and one goes out once it falls below y 108.
     if (frame <= 71) {
       for (i = 0; i != TITAN_BLADE_DRAWN_DUST; i++) {
         struct Particle *dust = &PARTICLES[i];
@@ -254,8 +244,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       }
     }
 
-    // The 36x120 sword, until frame 95: it drops in over 10 frames, holds,
-    // sinks slowly from frame 33 and plunges after frame 60.
+    // The sword drops in, holds, sinks and plunges.
     if (frame <= 95) {
       s32 x;
       s32 high;
@@ -281,9 +270,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 60 the sparks fly, falling by 1/8 pixel a frame each frame
-    // with no damping and bouncing at half speed below y 108; a spark
-    // shrinks from 8 pixels wide to 1 as its life runs out.
+    // Sparks fly and bounce.
     if (frame > 59) {
       for (i = 0; i != TITAN_BLADE_SPARKS; i++) {
         struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
@@ -325,8 +312,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       }
     }
 
-    // The canvas flashes, filled at its brightest, as the sword lands and as
-    // it strikes.
+    // The canvas flashes as the sword lands and as it strikes.
     if (frame == 9) {
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));

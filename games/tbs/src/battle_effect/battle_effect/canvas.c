@@ -4,19 +4,11 @@
 
 #include "../battle_effect_internal.h"
 
-// The canvas layer's functions: opening and closing it, its transfers and
-// palette fades, clipping and the target flash timers. README.md describes
-// the canvas, its transfer modes and the two BG1 paths.
-//
-// A reaction may start one of the eight actor timers in the effect's work
-// block; BattleEffect_CountDownBattlerTints counts them down each frame and
-// gives the unit its own palette back when one runs out. The timers are indexed
-// like args->targets, so timer n belongs to target n.
+// The canvas layer: opening and closing it, its transfers and palette fades,
+// and the targets' flash timers, which count down each frame and give a unit
+// its own palette back.
 
-/// Wipes the whole canvas to one colour with a ragged edge: each row (or
-/// column) lags a random 0 to 63 pixels behind the front, which speeds up as
-/// it goes. Returns when the wipe is done, a frame at a time: 23 frames
-/// across, 15 down.
+/// Wipes the whole canvas to one colour with a ragged edge, a frame at a time.
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -30,8 +22,6 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;
 
-  // The canvas is 16x16 tiles of 8x8 pixels; (x, y) is byte ((y / 8 * 16 + x /
-  // 8) * 8 + y % 8) * 8 + x % 8.
   if (direction == CANVAS_WIPE_ACROSS) {
     s32 front;
     s32 speed;
@@ -79,10 +69,8 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   }
 }
 
-/// Copies the canvas to VRAM once the effect has finished drawing a frame
-/// (transferPending): the 128x128 canvas into BG2's character block 1, the
-/// way transferMode says, leaving the canvas cleared, faded, darkened or
-/// brightened for the next frame.
+/// Copies the canvas to VRAM once the effect has finished a frame, then clears,
+/// fades, darkens or brightens it as transferMode says.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   void *source;
@@ -100,7 +88,6 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
       Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
     case CANVAS_COPY_AND_FADE:
-      // Any value but CANVAS_FADE_HALF keeps three quarters.
       if (work->transferValue == CANVAS_FADE_HALF) {
         PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1),
                                    CANVAS_BYTES);
@@ -128,10 +115,8 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   *counter = nextCounter;
 }
 
-/// Copies a full-screen picture to VRAM once the effect has finished drawing
-/// a frame: the BATTLE_BACKGROUND_BYTES of Ram_MapGridCellBuffer into BG
-/// character block 2 (0x06008000), the way transferMode says (every mode but
-/// CANVAS_COPY_AND_BRIGHTEN).
+/// Copies a full-screen picture to VRAM once the effect has finished a frame,
+/// as transferMode says.
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
   struct BattleEffectWork *work;
   void *source;
@@ -170,8 +155,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
   work->transferPending = 0;
 }
 
-/// One step of the background palette fade, in 1/65536ths of full
-/// brightness: 24 steps take it from full to 60%.
+/// One step of the background palette fade.
 #define CANVAS_FADE_STEP 1092
 
 /// Writes the window, display and blend registers the effect keeps in its
@@ -190,8 +174,7 @@ void BattleEffect_ApplyWindowBlendRegisters(void) {
   REG_BLDALPHA = work->bldalpha;
 }
 
-/// Writes the effect's BG2 reference point (work->bg2x, work->bg2y) to BG2X
-/// and BG2Y.
+/// Writes the effect's BG2 reference point to BG2X and BG2Y.
 void Display_ApplyBg2Reference(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
@@ -199,9 +182,8 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
-/// Darkens the battle background while the canvas is open: for fadeFrames
-/// frames, writes the battle background's colours one CANVAS_FADE_STEP darker
-/// each frame into background palettes 6 to 13, so the effect stands out.
+/// Darkens the battle background a step each frame while the canvas is open, so
+/// the effect stands out.
 void Palette_StepFadeTransfer(void) {
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -216,16 +198,14 @@ void Palette_StepFadeTransfer(void) {
   }
 }
 
-/// Clears every target's flash timer (work->actorTimers).
 void BattleEffect_ClearActorTimers(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
   Iwram_ClearWords(work->actorTimers, sizeof work->actorTimers);
 }
 
-/// Counts down each target's flash timer, which BattleEffect_TintBattler
-/// starts; when one runs out, the target gets its own palette back. Timer n
-/// belongs to args->targets[n].
+/// Counts down each target's flash timer and gives it its own palette back when
+/// one runs out.
 void BattleEffect_CountDownBattlerTints(void) {
   struct BattleEffectWork *work;
   s32 actorIndex;
@@ -244,15 +224,8 @@ void BattleEffect_CountDownBattlerTints(void) {
   } while (actorIndex != 8);
 }
 
-// The canvas layer: BG2 shows the effect's 128x128 8bpp canvas (CANVAS_BYTES
-// bytes), its tiles from character block 1, stretched to twice the width
-// so it spans 256 pixels. Opening and closing it hide BG2 while its
-// settings change, through DISPCNT values queued two frames ahead.
-
-/// Opens the canvas layer: starts the background palette fade, makes BG2 the
-/// canvas, alpha-blended over the battle, inside the effect windows, and
-/// clears the canvas. It also stops any shake and saves BG1's scroll, which
-/// BattleEffect_EndCanvasLayer restores.
+/// Opens the canvas layer over the battle, darkening the battle background
+/// behind it.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
@@ -262,8 +235,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   s32 row;
   s32 column;
 
-  // The background view's secondMode, which also sets BG1's scroll while it
-  // is BATTLE_BACKGROUND_FIXED, holds for the frames BG2 is being changed.
   BattleEffect_ClearActorTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
@@ -272,14 +243,12 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   gBgScroll[1].y = 32;
   wait(1);
 
-  // Start the background palette fade.
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
 
-  // Change BG2's settings while it is hidden (each queued DISPCNT lands two
-  // frames later).
+  // Change BG2's settings while it is hidden.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -296,7 +265,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
-  // Show it: 14/16 of the canvas over all below, inside both windows.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   EFFECT_SET_CANVAS_AFFINE();
@@ -306,7 +274,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   REG_WINOUT = EFFECT_WINOUT;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
 
-  // The screen map: the 16x16 tiles in order.
   {
     s32 offset = 0;
 
@@ -323,10 +290,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   }
 }
 
-/// Opens the canvas layer as BattleEffect_StartCanvasLayer does, but with the
-/// windows off until the end, the battle background palette starting half
-/// faded, and a 24-frame fade. It neither saves BG1's scroll nor resets the
-/// shake.
+/// Opens the canvas layer as BattleEffect_StartCanvasLayer does, with the
+/// windows off and a half-faded background.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
@@ -389,9 +354,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   }
 }
 
-/// Opens the canvas layer with BG2 a wrapping 256x256 map: each row of the
-/// map is the canvas's 16 tiles followed by 16 of tile 0, so the canvas
-/// repeats across the screen with gaps.
+/// Opens the canvas layer with the canvas repeated across a wrapping map.
 void BattleEffect_StartTiledCanvas(s32 bgControl) {
   s32 row;
   s32 column;
@@ -409,10 +372,7 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
   }
 }
 
-/// Closes the canvas layer: plays the closing sound, restores BG1's scroll
-/// and the projection centre, clears the canvas tiles, stops the palette
-/// fade and brings the battle background's palette back from level 21 to 0 over
-/// 8 frames, then shows BG2 again and hides BG1.
+/// Closes the canvas layer and brings the battle background's colours back.
 void BattleEffect_EndCanvasLayer(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
@@ -421,15 +381,13 @@ void BattleEffect_EndCanvasLayer(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  // The battle's projection centre, which BattleCamera_Shake moves.
   gProjection.centerX = 120;
   gProjection.centerY = 120;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Task_Remove(Palette_StepFadeTransfer);
-  // This overwrites the saved y restored above before any frame passes, so
-  // BG1 is always left at y 32.
+  // This overwrites the saved y restored above, so BG1 is always left at y 32.
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -455,7 +413,7 @@ void BattleEffect_EndCanvasLayer(void) {
 }
 
 /// Hides BG1 and the windows and starts bringing the battle background's
-/// palette back.
+/// colours back.
 void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
@@ -473,13 +431,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   wait(1);
 }
 
-/// Shows the canvas on BG1 instead of BG2, at its own size: BG1 becomes a
-/// 256-colour layer whose map points 16 rows of 16 tiles at the canvas
-/// (tiles 256 onwards, which at 64 bytes a tile start at character block
-/// 1, where the canvas lives), with blank tile 255 to the right, blended over
-/// the rest inside the effect windows. Also clears the canvas. The
-/// full-screen Ram_MapGridCellBuffer effects use
-/// BattleEffect_FlushPendingGraphicsTransfer instead.
+/// Shows the canvas on BG1 instead of BG2, at its own size.
 void BattleEffect_SetupCanvasTileMap(void) {
   // UB: indexing past gBattleWork reaches the heap slots after it.
 #ifdef UBFIX
@@ -501,14 +453,10 @@ void BattleEffect_SetupCanvasTileMap(void) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = BATTLE_BACKGROUND_NONE;
-  // Blank tile 255, then map rows 4 to 11 filled with 0xffff, which show
-  // nothing: the entry names tile 1023 (the flips and palette bits change
-  // nothing in a blank 256-colour tile), whose 64 bytes from character base 0
-  // are this map's own row 31.
+  // Blank tile 255, then rows that show nothing.
   Iwram_ClearWords(BG_CHAR_BLOCK(0) + 255 * 64, 64);
   Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 8 * 64, -1);
-  // Rows 12 to 27: the canvas's 16 tiles from tile 256, then blank tile
-  // 255 across the rest of the 32-tile row.
+  // The canvas's tiles, then blank tile 255 across the rest of each row.
   byteOffset = 0;
   for (row = 0; row != 16; row++) {
     for (column = 0; column != 32; column++, byteOffset += 2) {
@@ -533,11 +481,8 @@ void BattleEffect_SetupCanvasTileMap(void) {
   wait(1);
 }
 
-/// Draws a line on the 128x128 8bpp canvas (16 tiles across), keeping the
-/// brighter colour where it crosses what is already drawn. The ends' y is
-/// kept on the canvas; x is not. The line steps a pixel at a time along its
-/// longer axis, following the other in 8-bit fixed point, and leaves out its
-/// last pixel on that axis.
+/// Draws a line on the canvas, keeping the brighter colour where it crosses
+/// what is drawn.
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color) {
   s32 dx = x1 - x0;
@@ -555,7 +500,6 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
   CLAMP(y1, 0, 127);
 
   if (ABS(dx) < ABS(dy)) {
-    // Steep: step y a pixel at a time and follow x in fixed point.
     if (dy < 0) {
       tmp = x0;
       x0 = x1;
@@ -588,7 +532,6 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
       }
     }
   } else {
-    // Shallow: step x a pixel at a time and follow y in fixed point.
     if (dx < 0) {
       tmp = x0;
       x0 = x1;

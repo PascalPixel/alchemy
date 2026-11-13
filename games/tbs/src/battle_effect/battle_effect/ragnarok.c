@@ -42,8 +42,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
-  // The user takes its leap pose and animates fast until the end: an
-  // effect step of 48, three times the usual 16.
+  // The user takes its leap pose and animates fast until the end.
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
 
@@ -53,10 +52,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                              work->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
-  // Prepare 16 flashes and 340 sparks a column, for three columns although
-  // only two strike: the third's random draws are still taken.
+  // Flashes and sparks for three columns, though only two strike: the third's
+  // random draws are still taken.
   for (col = 0; col != RAGNAROK_SEEDED; col++) {
-    // Flashes: i * 2 pixels from the center, lifetime 25-32.
     for (i = 0; i != RAGNAROK_FLASHES; i++) {
       struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
 
@@ -68,7 +66,6 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       flash->variant = i / 2 + 25;
     }
 
-    // Sparks: random direction and speed from column y = 88, lifetime 32-39.
     for (i = 0; i != RAGNAROK_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
 
@@ -85,11 +82,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     }
   }
 
-  // Each transfer keeps 3/4 of every canvas level, for an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != RAGNAROK_FRAMES; frame++) {
-    // Sounds and the first shake; the battle shows the damage on frame 40.
     if (frame == 4) {
       Sound_PlayFar(SE_POWER_UP);
     }
@@ -103,7 +98,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
-    // Frames 0 to 39, the blade.
+    // The blade.
     if (frame <= 39) {
       s32 height;
       s32 x;
@@ -141,13 +136,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 17 the palette fades towards the blast colours.
     if (frame > 16) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
 
-    // The two columns, from frames 16 and 24: a 12-frame shake and the
-    // flashes at their start, the sparks from 6 frames later.
+    // The two columns of light strike, with flashes and then sparks.
     for (col = 0; col != RAGNAROK_COLUMNS; col++) {
       s32 start = col * 8 + 16;
 
@@ -155,8 +148,6 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         work->shakeFrames = 12;
       }
       if (frame >= start) {
-        // Large flash (picture 0) for the first two frames, then 12 small
-        // flashes.
         if (frame < start + 2) {
           blit[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
                   gRagnarok_StrikeColumns[work->args->side][col] - 16, 56, 32,
@@ -185,8 +176,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         }
       }
 
-      // Sparks gain 1/16 pixel a frame of downward speed each frame, undamped,
-      // and bounce below y = 108 at half speed.
+      // Sparks fall and bounce.
       if (frame > start + 5) {
         for (i = 0; i != RAGNAROK_DRAWN_SPARKS; i++) {
           struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
@@ -209,8 +199,6 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                 s32 drawY = y >> 16;
                 s32 drawX = x >> 16;
 
-                // Size follows lifetime, 1 to 8 pixels; alternate sparks take
-                // the brighter pixel or add.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
                 picture = sheet + gBattleEffect_MotePictures[size - 1];
@@ -223,8 +211,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         }
       }
 
-      // As the column's sparks start to fly, every target flashes and
-      // recoils.
+      // Every target flashes and recoils.
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         if (frame == start + 6) {
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,

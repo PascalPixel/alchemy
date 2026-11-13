@@ -9,8 +9,7 @@
 /// The shard pictures in the sheet, after the boulder.
 #define SPIRE_SHARD_PICTURES (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
 #define SPIRE_SHARDS 21 ///< shards per rock
-/// Frames a boulder falls, from its drop frame (gSpire_DropFrames) until it
-/// lands, shakes the screen and strikes the targets.
+/// Frames a boulder falls before it lands and strikes the targets.
 #define SPIRE_FALL_FRAMES 18
 
 /// Boulders drop along the row of targets, centred on it, and shatter into
@@ -42,22 +41,18 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   blit = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  // BG2 is scrolled so that canvas column 64 is the middle of the row of
-  // targets.
   Projection_ScaledUnit(work->args->targets[0], &first);
   Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  // The rocks wait 64 pixels above the canvas until they drop.
   rockCount = gSpire_RockCounts[work->args->variant];
   for (i = 0; i != rockCount; i++) {
     rock = &work->particles[i];
     rock->y = -px(64);
     rock->velocityY = 0;
   }
-  // Each rock breaks into 21 shards, thrown up from where it lands.
   for (i = 0; i != rockCount; i++) {
     for (j = 0; j != SPIRE_SHARDS; j++) {
       struct Particle *shard = &PARTICLES[i * SPIRE_SHARDS + j];
@@ -70,8 +65,6 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       shard->variant = 0;
     }
   }
-  // The effect lasts until 80 frames after the last rock drops; the damage
-  // shows 30 frames after that rock lands.
   for (frame = 0; frame != gSpire_DropFrames[rockCount - 1] + 80; frame++) {
     if (frame == gSpire_DropFrames[rockCount - 1] + 48)
       EFFECT_SHOW_DAMAGE(SE_WATER);
@@ -81,12 +74,9 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
       }
-      // From its landing on, the rock is gone and its shards fly.
       if (frame >= gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         for (j = 0; j != SPIRE_SHARDS; j++) {
           shard = &PARTICLES[i * SPIRE_SHARDS + j];
-          // Five shard shapes, each tumbling through three pictures; z is the
-          // tumbling speed, slowing by one every other frame down to 1.
           picture = (j % 5) * 3 + shard->variant / 96 % 3;
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
@@ -113,8 +103,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
             shard->z--;
         }
       }
-      // The rock falls from its drop frame, a pixel a frame faster each
-      // frame, never lower than y 50; it is drawn centred over its column.
+      // The boulder falls over its column.
       if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
           blit(canvas, work->sheet, gSpire_RockX[i] + 64 - SPIRE_ROCK_WIDTH / 2,

@@ -23,11 +23,6 @@
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
-// Declared here without const, as Camelot's code read it: with const,
-// alchemy-gcc compiles DebugParameterSet_Load differently.
-// debug_parameter_sets.c defines it, const, in ROM.
-extern struct DebugParameterSetRow gDebug_ParameterSets[];
-
 /// The last row of gDebug_ParameterSets; the scan reports a missing parameter
 /// set past it.
 #define DEBUG_PARAMETER_SET_LAST_ROW 332

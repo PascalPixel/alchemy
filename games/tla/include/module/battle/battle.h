@@ -53,7 +53,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan);
 void BattleUnit_ProcessActionEnd(struct BattlePlan *plan);
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 value);
 void BattleBackground_RestorePalette(void);
-s32 Func_0811d79c(s32 kind);
+s32 BattleUnit_GetPartyAttackEffect(s32 kind);
 s32 EnemySprite_LoadIntoSlots(s32 unit);
 void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
 void BattleUnit_ListAllAndSubmit(void);

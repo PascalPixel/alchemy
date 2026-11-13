@@ -2153,7 +2153,12 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
 #define AI_BATTLE ((struct AIBattleWork *)Ram_HeapSlots->battleWork)
 
-s32 Func_08122514(struct BattleActionRecord *request, s32 retry) {
+/// Chooses an enemy's action, as The Broken Seal's BattleAI_ChooseAction does:
+/// one of the eight in its definition, picked by its action strategy, with an
+/// item instead where its item mask says so, and a target worth the ability.
+/// Called with retry 0 for each enemy as the turn is built and with retry 1
+/// when it acts (BattleStaging_DispatchAction).
+s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   struct BattleUnit *unit;
   u32 selection;
   struct AIState *selectionMemory;
@@ -2181,7 +2186,9 @@ s32 Func_08122514(struct BattleActionRecord *request, s32 retry) {
   s32 element;
   const struct SummonDefinition *summon;
 
-  s32 Func_081224d8(u8 *weights) {
+  /// Picks a place in the action list from a 0-255 roll and eight weights:
+  /// the first place whose running total passes the roll, else place 0.
+  s32 BattleEnemy_SelectWeightedAction(u8 *weights) {
     s32 roll;
     s32 total;
     s32 selectedAction;
@@ -2261,8 +2268,8 @@ s32 Func_08122514(struct BattleActionRecord *request, s32 retry) {
 
   if (retry != 0 && request->command != COMMAND_ABILITY) {
     switch (enemy->actionStrategy) {
-    case 3:
-    case 4:
+    case ACTION_STRATEGY_RANDOM_START:
+    case ACTION_STRATEGY_IN_ORDER:
       selectionMemory->selection = selectionMemory->selection + 1;
       break;
     }
@@ -2276,29 +2283,33 @@ s32 Func_08122514(struct BattleActionRecord *request, s32 retry) {
 select_again:
   strategyKind = *actionStrategy;
   switch (strategyKind) {
-  case 0:
-    selection = Func_081224d8(Data_0812cc5c);
+  case ACTION_STRATEGY_EVEN:
+    selection = BattleEnemy_SelectWeightedAction(
+        gBattleAI_ActionWeights[ACTION_STRATEGY_EVEN]);
     break;
-  case 1:
-    selection = Func_081224d8(Data_0812cc64);
+  case ACTION_STRATEGY_FALLING:
+    selection = BattleEnemy_SelectWeightedAction(
+        gBattleAI_ActionWeights[ACTION_STRATEGY_FALLING]);
     break;
-  case 2:
-    selection = Func_081224d8(Data_0812cc6c);
+  case ACTION_STRATEGY_FIRST_FAVOURED:
+    selection = BattleEnemy_SelectWeightedAction(
+        gBattleAI_ActionWeights[ACTION_STRATEGY_FIRST_FAVOURED]);
     break;
-  case 3:
+  case ACTION_STRATEGY_RANDOM_START:
     if (selectionMemory->initialized == 0) {
       selectionMemory->selection = Battle_RandomFar();
       selectionMemory->initialized = 1;
     }
-  case 4:
+    // fall through
+  case ACTION_STRATEGY_IN_ORDER:
     selection = selectionMemory->selection;
     if (retry != 0)
       selectionMemory->selection = selection + 1;
     break;
-  case 5:
+  case ACTION_STRATEGY_NEXT_PICK:
     selection++;
     break;
-  case 6:
+  case ACTION_STRATEGY_SAME:
     break;
   }
 

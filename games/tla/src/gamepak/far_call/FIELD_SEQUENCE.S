@@ -99,7 +99,7 @@ Resource_FarCall006:
 	export Func_080c82e8, Func_080d50f8
 	export Func_080c82f0, Func_080d53b8
 	export Leader_StopMovingFar, Leader_StopMoving
-	export Func_080c8300, Func_080d690c
+	export GroundParticles_StartFar, GroundParticles_Start
 	export Weather_StartLightningFar, Weather_StartLightning
 	export Weather_StopLightningFar, Weather_StopLightning
 	export Weather_LastLightningFar, Weather_LastLightning
@@ -317,7 +317,7 @@ Func_080c88e8:
 	export Exit_StartStairsDownFar, Exit_StartStairsDown
 	export FieldMotes_StartFar, FieldMotes_Start
 	export Weather_StartRainFar, Weather_StartRain
-	export Func_080c8920, Func_080d7024
+	export Weather_StopRainFar, Weather_StopRain
 	export Func_080c8928, Func_080ea14c
 	export Func_080c8930, Func_080d2d70
 	export Func_080c8938, Func_080ca368

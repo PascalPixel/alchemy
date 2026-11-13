@@ -84,7 +84,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   s32 selectedTargetId;
   s32 abilityId;
 
-  s32 Func_08123648(s32 abilityId) {
+  s32 BattleActionRun_SetTargets(s32 abilityId) {
     struct BattleAct *ability = Ability_Get(abilityId);
     s32 mode = ability->targetMode;
     s32 includeDowned = 0;
@@ -268,7 +268,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
   case COMMAND_ATTACK:
     abilityId = RollWeaponUnleashFar(actor);
-    if (Func_08123648(abilityId) == -1)
+    if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
     if (abilityId != 1) {
       MessageArgument_PushFar(request->unitId, 1);
@@ -298,7 +298,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
     abilityId = request->parameter;
     ability = Ability_Get(abilityId);
-    if (Func_08123648(abilityId) == -1)
+    if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
     MessageArgument_PushFar(request->unitId, 1);
     MessageArgument_PushFar(abilityId, 4);
@@ -349,7 +349,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         actor->guardLevel = 1;
       return -1;
     }
-    if (Func_08123648(abilityId) == -1)
+    if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
     MessageArgument_PushFar(request->unitId, 1);
     MessageArgument_PushFar(actor->inventory[request->parameter], 2);
@@ -384,7 +384,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     s32 message;
 
     abilityId = request->parameter;
-    if (Func_08123648(abilityId) == -1)
+    if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
     MessageArgument_PushFar(request->unitId, 1);
     MessageArgument_PushFar(abilityId, 4);
@@ -494,7 +494,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     {
       struct BattleAct *ability;
 
-      if (Func_08123648(abilityId) == -1)
+      if (BattleActionRun_SetTargets(abilityId) == -1)
         return -1;
       DjinnRecovery_AddStandbyFar(request->unitId,
                                   (request->parameter >> 8) & 15,
@@ -531,7 +531,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
          index++)
       counts[index] = summon->djinnRequired[index];
     abilityId = summon->nameMessageId;
-    if (Func_08123648(abilityId) == -1)
+    if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
     if (index != 4) {
       MessageArgument_PushFar(request->unitId, 1);
@@ -570,7 +570,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
           BattleSprite_GetAttackEffect(actor->enemyId) | 0x4000;
     } else {
       plan->presentationFlags = 0;
-      plan->presentationFlags = Func_0811d79c(actor->enemyId);
+      plan->presentationFlags = BattleUnit_GetPartyAttackEffect(actor->enemyId);
     }
     MessageArgument_PushFar(request->unitId, 1);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);

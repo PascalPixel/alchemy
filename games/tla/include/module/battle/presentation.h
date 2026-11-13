@@ -37,7 +37,7 @@ s32 DjinnRecovery_CountDownSide(s32 side);
 
 void BattleBackground_SetMode(s32 mode, s32 background, s32 value);
 
-s32 Func_08122514(struct BattleActionRecord *request, s32 retry);
+s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry);
 
 u32 BattleSprite_GetAttackEffect(u32 index);
 u32 BattleSprite_GetDefeatSound(s32 index);
@@ -354,9 +354,7 @@ s32 Unit_TryLevelUpFar(s32 unitId, s16 *gains);
 
 extern u8 gBattleMessage_AdvanceArrowTiles[];
 
-extern u8 Data_0812cc5c[];
-extern u8 Data_0812cc64[];
-extern u8 Data_0812cc6c[];
+extern u8 gBattleAI_ActionWeights[3][8];
 
 extern u16 Data_08128960[];
 

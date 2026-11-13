@@ -21,10 +21,12 @@ struct GroundParticleWork__ground_particles {
   s32 unk810;
 };
 
-/// Starts the ground particles: 64 sprites placed at the leader's position on
+/// Unused: nothing calls GroundParticles_StartFar. The Broken Seal's
+/// Weather_StartRain, kept whole: 64 sprites placed at the leader's position on
 /// the terrain, their tiles decoded into VRAM, the blend set, and
-/// Func_080d64f0 scheduled at priority 0x480 to move them.
-void Func_080d690c(void) {
+/// GroundParticles_Update scheduled to move them. The Lost Age's rain is
+/// Weather_StartRain.
+void GroundParticles_Start(void) {
   struct GroundParticleWork__ground_particles *work;
   s32 *leader;
   struct GroundParticle__visual_attributes *particle;
@@ -64,7 +66,7 @@ void Func_080d690c(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Task_Add(Func_080d64f0, TASK_PASS_VBLANK);
+  Task_Add(GroundParticles_Update, TASK_PASS_VBLANK);
 }
 
 /* VIEW(visual_attributes): routine Camera_WorldToScreen as void

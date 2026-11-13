@@ -82,7 +82,7 @@ void BattlePlayback_Run(void) {
       (struct PlaybackBattleWork *)Ram_HeapSlots->battleWork;
   struct PlaybackEvents *events = &battle->events;
 
-  void Func_08122cd0(struct AnimationRecord * record, s32 unused) {
+  void BattleSprite_ClearTiles(struct AnimationRecord * record, s32 unused) {
     u8 *tiles = (u8 *)OBJ_VRAM + gResourceTableEntries[record->slot].offset;
 
     Iwram_ClearWordsEntry(tiles, record->width * record->height);
@@ -368,7 +368,7 @@ void BattlePlayback_Run(void) {
           s32 recordIndex;
 
           for (recordIndex = 0; recordIndex < count; recordIndex++)
-            Func_08122cd0(records[recordIndex], 0);
+            BattleSprite_ClearTiles(records[recordIndex], 0);
           BattleObject_MarkForRelease(events->actorId);
           events->phase = BATTLE_PLAYBACK_DISPATCH;
           events->timer = 0;

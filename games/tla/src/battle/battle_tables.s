@@ -222,14 +222,12 @@ Data_0812cc28:
 	.4byte 140, 140, 150, 200, 200, 150, 100, 100
 	.4byte 100, 300
 	.4byte 0, 20, 38
-	.global Data_0812cc5c
-Data_0812cc5c:
+@ BattleAI_ChooseAction's rolls for the first three action strategies, a row
+@ each: the chance in 256 of each place in the enemy's actions.
+	.global gBattleAI_ActionWeights
+gBattleAI_ActionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32
-	.global Data_0812cc64
-Data_0812cc64:
 	.byte 53, 47, 41, 35, 29, 23, 17, 11
-	.global Data_0812cc6c
-Data_0812cc6c:
 	.byte 113, 56, 31, 20, 14, 10, 7, 5
 @ A copy of The Broken Seal's gBattleTransition_CurtainVariants
 	.global gBattleTransition_CurtainVariants

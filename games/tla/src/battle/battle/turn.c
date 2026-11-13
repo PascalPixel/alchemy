@@ -184,7 +184,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
         entry->parameter = 0;
         entry->target = 0x100;
       } else {
-        Func_08122514(entry, 0);
+        BattleAI_ChooseAction(entry, 0);
       }
 
       entryCount++;

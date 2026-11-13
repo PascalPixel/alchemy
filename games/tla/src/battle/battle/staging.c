@@ -8,25 +8,30 @@
 #include "gamepak/far_call/battle_effect.h"
 #include "module/battle/presentation.h"
 
-s32 Func_0811d79c(s32 kind) {
-  s32 value = kind;
+/// A party member's attack effect, staged by id range (0x4000): effect 1 for
+/// Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and Sheba, any other
+/// none. The Broken Seal writes the same choice inline in
+/// BattleActionRun_Build.
+s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
+  s32 id = characterId;
 
-  kind = 0;
-  switch (value) {
-  case 0:
-  case 1:
-  case 4:
-  case 5:
-  case 7:
-    kind = 0x4001;
+  // characterId carries the effect from here on, in the register it came in.
+  characterId = 0;
+  switch (id) {
+  case ISAAC:
+  case GARET:
+  case FELIX:
+  case JENNA:
+  case PIERS:
+    characterId = 0x4001;
     break;
-  case 2:
-  case 3:
-  case 6:
-    kind = 0x4004;
+  case IVAN:
+  case MIA:
+  case SHEBA:
+    characterId = 0x4004;
     break;
   }
-  return kind;
+  return characterId;
 }
 
 void Func_0811d7e4(void) {}
@@ -152,7 +157,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     return -1;
   battle->actorMode = 3;
   if (unit->classIndex == 0)
-    Func_08122514(request, 1);
+    BattleAI_ChooseAction(request, 1);
 
   view = Ram_HeapSlots->transitionWork;
   view->frames = 60;
@@ -242,7 +247,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       swap = battle->plan.actorId;
       battle->plan.actorId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
-      battle->plan.presentationFlags = Func_0811d79c(
+      battle->plan.presentationFlags = BattleUnit_GetPartyAttackEffect(
           ((struct BattleUnit *)Unit_Get(battle->plan.actorId))->enemyId);
       if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
         MessageArgument_PushFar(battle->plan.actorId, 1);

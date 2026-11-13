@@ -137,7 +137,7 @@ struct WorkA4Slot *Func_080dae70(s32 id);
 
 void BattleEffect_DrawSceneSprite(void);
 
-void Func_080d64f0(void);
+void GroundParticles_Update(void);
 
 void FieldEffect_ShrinkActorAndDestroyFast(void *obj);
 void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect);

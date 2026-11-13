@@ -164,8 +164,9 @@ tables:
 - The [entry table](../../glossary.md#entry-table-and-import-table) at the
   overlay's start: six functions the field calls to ask the scene about
   itself ([Scenes](../scene/README.md#the-entry-table) explains each).
-- The import table at its end: one line for each main-image function the
-  overlay calls.
+- The import table after its code: one line for each main-image function
+  the overlay calls, which the build writes from one list of them,
+  `imports.inc`.
 
 Scenes share overlays, 96 for 201 scenes, and one scene can stand for
 several places: the Sanctums of five towns are one scene that looks at

@@ -102,8 +102,9 @@ name, and why the guide at the top of the `.c` file is the place to start.
 
 A place's code is an [overlay](../glossary.md#overlay), loaded when the
 party arrives ([System](../system.md#overlays)). Each is one `.c` file in
-`scene/` or `debug/`, with its entry and import tables beside it as small
-assembly files.
+`scene/` or `debug/`. Most scenes share one entry table, `scene/entry.s`;
+the build writes each overlay's import table from one list,
+`system/overlay/imports.inc`.
 
 ### Headers
 

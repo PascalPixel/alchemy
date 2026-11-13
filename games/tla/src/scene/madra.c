@@ -1,7 +1,12 @@
 /// @file
-/// The scene code of overlay 0x658, in ROM order.
-
-// ---- games/tla/src/scene/madra.c ----
+/// Madra, the walled port town of eastern Gondowan where Felix first arrives
+/// after the plateaus: guards inspect the party at the gate after Champa's
+/// pirates raided the town for Briggs, Piers sits in its jail, and its elder
+/// grants passage over the drawbridge to Osenia. A hole in the north-east
+/// corner, kept by a worker until the inspection is over, leads down into the
+/// catacombs. When Felix returns with Piers the hole is sealed, Karst and
+/// Agatio arrive (Madra_MeetKarst), and the town takes other placements and
+/// triggers.
 
 #include "shared/actors.h"
 #include "battle.h"
@@ -29,6 +34,7 @@
 #include "scene_call.h"
 #include "text/msg_ids.h"
 #include "module/window/window.h"
+#include "field_sprite.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -274,13 +280,6 @@ void Madra_AskComingThroughSealedHole(void) {
   }
   Event_ShowMessage(26, 0);
 }
-
-// ---- games/tla/src/scene/madra/s051c.c ----
-// Scene code of overlay 0x658, in ROM order, from s051c's offset up to the next
-// object the overlay links.
-
-#include "event_work.h"
-#include "field_sprite.h"
 
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
@@ -1465,12 +1464,6 @@ void Madra_MeetKarst(void) {
 }
 #undef SET_MODE
 
-// ---- games/tla/src/scene/madra/events_d.c ----
-#include "text/msg_ids.h"
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-
 void Madra_SkipGateInspection(void) { GameFlag_SetBit(0x910); }
 
 void Madra_SkipRaidQuestioning(void) { GameFlag_SetBit(0x914); }
@@ -1500,7 +1493,9 @@ void Madra_ClimbDownLadder(void) {
   Event_End();
 }
 
-void Madra_StepOntoLadderFacingEast(void) {
+/// Unused: the leader steps up to a ladder top from its west side and climbs
+/// down; no trigger runs it.
+UNUSED void Madra_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
@@ -1508,7 +1503,9 @@ void Madra_StepOntoLadderFacingEast(void) {
   Madra_ClimbDownLadder();
 }
 
-void Madra_StepOntoLadderFacingWest(void) {
+/// Unused: the leader steps up to a ladder top from its east side and climbs
+/// down; no trigger runs it.
+UNUSED void Madra_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
@@ -1516,9 +1513,12 @@ void Madra_StepOntoLadderFacingWest(void) {
   Madra_ClimbDownLadder();
 }
 
-DEFINE_SCENE_TURN_ACTOR_AND_RUN(Func_02002ab0, Madra_ClimbDownLadder)
+/// Unused: the leader turns north on the spot and climbs down; no trigger runs
+/// it.
+UNUSED DEFINE_SCENE_TURN_ACTOR_AND_RUN(Madra_TurnAndClimbDownLadder,
+                                       Madra_ClimbDownLadder)
 
-void Madra_EnterDoor(void);
+    void Madra_EnterDoor(void);
 void Madra_KarstAsksAboutMenardi(void);
 void Madra_WorkerBlocksHole(void);
 void Madra_AskAboutJenna(void);
@@ -1615,21 +1615,28 @@ struct ActorPlacement gMadra_PlacementsOnReturn[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_020032f0[] = {
+/// A door opening: the one cell animation step of most of the town's doors.
+s16 gMadra_DoorOpening[] = {
     1, 39, 1, 2, 6, -1,
 };
 
-s16 gData_020032fc[] = {
+/// The door opening of the left cavern home's two doors, from other cells.
+s16 gMadra_CavernHomeDoorOpening[] = {
     3, 39, 1, 2, 6, -1,
 };
 // clang-format on
 
 struct MadraPlacement gMadra_Doors[] = {
-    {gData_020032fc, 20, 3},  {gData_020032f0, 13, 23},
-    {gData_020032f0, 17, 17}, {gData_020032f0, 23, 18},
-    {gData_020032f0, 28, 10}, {gData_020032f0, 28, 6},
-    {gData_020032f0, 9, 6},   {gData_020032f0, 19, 24},
-    {gData_020032f0, 0, 0},   {gData_020032fc, 17, 3},
+    {gMadra_CavernHomeDoorOpening, 20, 3},
+    {gMadra_DoorOpening, 13, 23},
+    {gMadra_DoorOpening, 17, 17},
+    {gMadra_DoorOpening, 23, 18},
+    {gMadra_DoorOpening, 28, 10},
+    {gMadra_DoorOpening, 28, 6},
+    {gMadra_DoorOpening, 9, 6},
+    {gMadra_DoorOpening, 19, 24},
+    {gMadra_DoorOpening, 0, 0},
+    {gMadra_CavernHomeDoorOpening, 17, 3},
 };
 
 struct Trigger gMadra_TriggersBeforeRaid[] = {

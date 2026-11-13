@@ -35,4 +35,7 @@
 /// their truth values so; the name is ours. `v` is read twice.
 #define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
 
+/// Data aligned as the ROM places it, where its own type would not.
+#define ALIGNED(n) __attribute__((aligned(n)))
+
 #endif

@@ -60,6 +60,7 @@
 #include "display_transition.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
+#include "macros.h"
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), is the only placed actor. Its
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.
@@ -68,7 +69,7 @@ enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED };
 /// Starts the scanline-dependent BG3 scroll tasks.
 static void TretTreeBranch_StartBg3Split(void);
 
-static u16 sTransferHeader[16];
+static u16 sTransferHeader[16] ALIGNED(16);
 static u8 sTransferData[96];
 static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;

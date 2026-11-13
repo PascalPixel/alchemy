@@ -76,6 +76,7 @@
 #include "ground_mask.h"
 #include "flags.h"
 #include "sound_driver_symbols.h"
+#include "macros.h"
 
 /// A chest searched while facing the given way.
 #define EXAMINE_CHEST_FACING(facing)                                           \
@@ -674,7 +675,7 @@ struct PillarSlot {
   s32 flag;
 };
 
-static struct PillarSlot sPillarSlots[4];
+static struct PillarSlot sPillarSlots[4] ALIGNED(16);
 static struct FieldPosition sProbePosition;
 static u8 sShakenScroll[12];
 static s32 sShakeChance;

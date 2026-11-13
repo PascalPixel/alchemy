@@ -86,6 +86,7 @@
 #include "module/scene/tree_rooms.h"
 #include "shared/walk_into_leader.h"
 #include "module/scene/shared/field_effect_spawn.h"
+#include "macros.h"
 
 #include "create_configured_actor.h"
 #include "battle.h"
@@ -156,7 +157,7 @@ static void TreeRooms_SpawnSwirlSparks(void);
 static void TreeRooms_ApplyFlaggedMapPatches(void);
 static void TreeRooms_RunLandingDustEvent(void);
 
-static struct FieldPosition sSparkOrigin;
+static struct FieldPosition sSparkOrigin ALIGNED(8);
 static s32 sSparkFrame;
 static s16 *sLastCocoon;
 

@@ -15,8 +15,7 @@
 
 /* Most scenes are one overlay of one shape: the entry table, the scene's
    code, its import table and libgcc's register calls, then its globals.
-   SCENE_WITH_TABLE links the scene's own entry table,
-   SCENE_WITH_ALIGNED_BSS starts the globals on 16 bytes, and SCENE_WITH_BSS
+   SCENE_WITH_TABLE links the scene's own entry table, and SCENE_WITH_BSS
    places the globals its bss/NAME.s defines. A scene of another shape
    writes its block out. */
 #define SCENE_TEXT(name) \
@@ -56,15 +55,6 @@ SECTIONS \
 { \
     SCENE_TEXT(name) \
     .bss : \
-    { \
-        */games/tbs/src/scene/name.o(.bss COMMON) \
-    } \
-}
-#define SCENE_WITH_ALIGNED_BSS(name) \
-SECTIONS \
-{ \
-    SCENE_TEXT(name) \
-    .bss ALIGN(16) : \
     { \
         */games/tbs/src/scene/name.o(.bss COMMON) \
     } \
@@ -186,7 +176,7 @@ SECTIONS
         "*/imports.o"(.data .overlays)
         "*/games/tbs/src/graphics/sol_sanctum_statue/rows.o"(.data .overlays)
     }
-    .bss ALIGN(16) :
+    .bss :
     {
         "*/games/tbs/src/scene/sol_sanctum_statue.o"(.bss COMMON)
     }
@@ -236,9 +226,9 @@ SCENE(log_rooms_c)
 #elif OVERLAY == 0x391
 SCENE(kolima_forest_entrance)
 #elif OVERLAY == 0x392
-SCENE_WITH_ALIGNED_BSS(kolima_forest_glade)
+SCENE(kolima_forest_glade)
 #elif OVERLAY == 0x393
-SCENE_WITH_ALIGNED_BSS(kolima_forest_cliff)
+SCENE(kolima_forest_cliff)
 #elif OVERLAY == 0x394
 SCENE_WITH_BSS(kolima_forest_floodgate)
 #elif OVERLAY == 0x395
@@ -256,34 +246,16 @@ SECTIONS
         "*/games/tbs/src/scene/kolima_forest_tree.o"(.data .overlays)
         "*/imports.o"(.data .overlays)
     }
-    .bss ALIGN(16) :
+    .bss :
     {
         "*/games/tbs/src/scene/kolima_forest_tree.o"(.bss)
         "*/games/tbs/src/scene/bss/kolima_forest_tree.o"(.bss)
     }
 }
 #elif OVERLAY == 0x396
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry/tree_rooms.o"(.text .padding)
-        "*/games/tbs/src/scene/tree_rooms.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/entry/tree_rooms.o"(.rodata)
-        "*/games/tbs/src/scene/tree_rooms.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/entry/tree_rooms.o"(.data .overlays)
-        "*/games/tbs/src/scene/tree_rooms.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-    }
-    .bss ALIGN(8) :
-    {
-        "*/games/tbs/src/scene/tree_rooms.o"(.bss)
-    }
-}
+SCENE_WITH_TABLE(tree_rooms)
 #elif OVERLAY == 0x397
-SCENE_WITH_ALIGNED_BSS(tret_tree_branch)
+SCENE(tret_tree_branch)
 #elif OVERLAY == 0x398
 SCENE(bilibin_cave)
 #elif OVERLAY == 0x399
@@ -331,7 +303,7 @@ SECTIONS
         "*libgcc.a:_call_via_rX.o"(.data .overlays)
         "*/games/tbs/src/graphics/lamakan_desert/heat_gauge.o"(.data .overlays)
     }
-    .bss ALIGN(16) :
+    .bss :
     {
         "*/games/tbs/src/scene/bss/lamakan_desert.o"(.bss)
     }
@@ -376,25 +348,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x3a8
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/kalay.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/kalay.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/kalay.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-    }
-    .bss ALIGN(8) :
-    {
-        "*/games/tbs/src/scene/bss/kalay.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(kalay)
 #elif OVERLAY == 0x3a9
 SCENE(stucco_rooms_a)
 #elif OVERLAY == 0x3aa
@@ -408,15 +362,15 @@ SCENE(west_lunpa_cave)
 #elif OVERLAY == 0x3ae
 SCENE(kalay_tolbi_docks)
 #elif OVERLAY == 0x3af
-SCENE_WITH_ALIGNED_BSS(tolbi_ship_deck)
+SCENE(tolbi_ship_deck)
 #elif OVERLAY == 0x3b0
-SCENE_WITH_ALIGNED_BSS(tolbi_ship_mast)
+SCENE(tolbi_ship_mast)
 #elif OVERLAY == 0x3b1
 SCENE_WITH_TABLE(ship_rooms)
 #elif OVERLAY == 0x3b2
 SCENE(crossbone_isle)
 #elif OVERLAY == 0x3b3
-SCENE_WITH_ALIGNED_BSS(crossbone_isle_stepping_stones)
+SCENE(crossbone_isle_stepping_stones)
 #elif OVERLAY == 0x3b4
 SCENE(crossbone_isle_keys)
 #elif OVERLAY == 0x3b5
@@ -424,7 +378,7 @@ SCENE_WITH_TABLE(tolbi)
 #elif OVERLAY == 0x3b6
 SCENE_WITH_TABLE(stucco_rooms_b)
 #elif OVERLAY == 0x3b7
-SCENE_WITH_ALIGNED_BSS(tolbi_games)
+SCENE(tolbi_games)
 #elif OVERLAY == 0x3b8
 SCENE_WITH_TABLE(babi_palace)
 #elif OVERLAY == 0x3b9

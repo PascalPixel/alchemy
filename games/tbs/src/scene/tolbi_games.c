@@ -66,6 +66,7 @@
 #include "item_ids.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
+#include "macros.h"
 
 /// The spring has risen and faded into view this visit.
 #define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00
@@ -955,7 +956,7 @@ static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   }
 }
 
-static struct SpringTossMotion sToss;
+static struct SpringTossMotion sToss ALIGNED(16);
 
 static s32 sTossKind;
 

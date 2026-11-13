@@ -38,6 +38,7 @@
 #include "io_reg.h"
 #include "ability_ids.h"
 #include "item_ids.h"
+#include "macros.h"
 
 /// Kolima Forest's actors, numbering the rows of
 /// gKolimaForestGlade_ActorPlacements.
@@ -161,5 +162,5 @@ struct Trigger gKolimaForestGlade_Triggers[] = {
 };
 
 // The .bss order follows the first declarations (externs in field.h).
-u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss")));
+u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss"))) ALIGNED(16);
 u8 gKolimaPalette_Cursed[896] __attribute__((section(".bss")));

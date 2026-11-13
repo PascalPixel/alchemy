@@ -91,7 +91,7 @@ static void TolbiShipMast_UpdateSway(void);
 static s32 TolbiShipMast_GetRowingBalance(void);
 static s32 TolbiShipMast_GetSeatRowValue(u32 seat);
 
-s32 gTolbiShipMast_DriftY __attribute__((section(".bss")));
+s32 gTolbiShipMast_DriftY __attribute__((section(".bss"))) ALIGNED(16);
 s32 gTolbiShipMast_DriftX __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayY __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayUnused __attribute__((section(".bss")));

@@ -129,7 +129,8 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture);
 static void KolimaForestTree_SpawnOrbitSparks(void);
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
 
-s32 gKolimaForestTreeSparkOrigin[3] __attribute__((section(".bss")));
+s32 gKolimaForestTreeSparkOrigin[3]
+    __attribute__((section(".bss"))) ALIGNED(16);
 s32 gKolimaForestTreeSparkFrame __attribute__((section(".bss")));
 s32 gKolimaForestTreePlaySparkSound __attribute__((section(".bss")));
 s32 gKolimaForestTreePaletteFrame __attribute__((section(".bss")));

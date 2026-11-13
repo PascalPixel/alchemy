@@ -208,7 +208,7 @@ enum SolSanctumStatueActorId {
 /// The scene's bss, in this order.
 ///
 /// As commons of one object the linker would sort them itself.
-static struct SealOpening sSealOpening;
+static struct SealOpening sSealOpening ALIGNED(16);
 /// Initialization writes each three-word OAM packet, and drawing updates its
 /// fields.
 static union {

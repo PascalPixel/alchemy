@@ -66,6 +66,7 @@
 #include "shared/walk_into_leader.h"
 #include "module/system/main_routine.h"
 #include "io_write.h"
+#include "macros.h"
 
 #include "battle.h"
 #include "debug.h"
@@ -245,7 +246,7 @@ enum {
 };
 
 struct LightWheel gAltmillerCave_LightWheelState
-    __attribute__((nocommon, aligned(4)));
+    __attribute__((nocommon)) ALIGNED(4);
 
 #include "shared/staged_actor.c"
 

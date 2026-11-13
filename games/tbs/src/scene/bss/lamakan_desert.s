@@ -1,4 +1,5 @@
 	.section .bss,"aw",%nobits
+	.balign 16
 	.global gHeatGauge_VramSlot
 gHeatGauge_VramSlot:
 	.space 16

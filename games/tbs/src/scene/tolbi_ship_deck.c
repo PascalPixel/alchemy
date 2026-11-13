@@ -86,6 +86,7 @@
 #include "actor_script.h"
 #include "map_grid_scroll.h"
 #include "tolbi_ship.h"
+#include "macros.h"
 
 static void TolbiShipDeck_ConfrontCrewman(void);
 static void TolbiShipDeck_ApplyEntryState(void);
@@ -416,7 +417,7 @@ TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtOuranos,
 TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
                                256, 640, 264, 600, 242, 604, 232, 272)
 
-static u16 sStrokePhase[4];
+static u16 sStrokePhase[4] ALIGNED(16);
 
 static s32 sSwayAngleY;
 UNUSED static s32 sUnused0; ///< never used; keeps the statics' layout

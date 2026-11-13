@@ -1,5 +1,10 @@
 /// @file
-/// The scene code of overlay 0x664, in ROM order.
+/// Air's Rock's inside, the rooms of this overlay within the rock in Osenia:
+/// halls of tightropes, pillars to Move and twisters to Whirlwind. At its heart
+/// Sheba
+/// reads the tablet and learns Reveal (AirsRockInside_ReadRevealTablet, walked
+/// to by AirsRockInside_WalkToRevealTablet), and a Psynergy Stone restores the
+/// party's PP (AirsRockInside_CheckPsynergyStone).
 
 #include "shared/map_cells.h"
 #include "shared/actors.h"
@@ -231,14 +236,14 @@ void Func_02003cac(void);
 void Func_02003d40(void);
 void Func_02003dd4(void);
 void Func_02003e28(void);
-void Func_02004740(void);
+void AirsRockInside_WalkToRevealTablet(void);
 void Func_020047b0(void);
 void Func_02004818(void);
 void Func_02004884(void);
 void Func_020048bc(void);
 void Func_020048c4(void);
 void Func_02004ab8(void);
-void Func_02004bb4(void);
+void AirsRockInside_CheckPsynergyStone(void);
 void Func_02004880(void);
 
 extern u32 gData_02005fd8[];
@@ -2719,7 +2724,7 @@ void AirsRockInside_ReadRevealTablet(void) {
   }
 }
 
-void Func_02004740(void) {
+void AirsRockInside_WalkToRevealTablet(void) {
   if (GameFlag_Get(0x8d4)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -2906,7 +2911,7 @@ void Func_02004ab8(void) {
   Event_End();
 }
 
-void Func_02004bb4(void) {
+void AirsRockInside_CheckPsynergyStone(void) {
   const u8 *message;
 
   Event_Start();
@@ -3848,7 +3853,7 @@ struct Trigger gAirsRockInside_Room5Triggers[] = {
     {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Func_02003d40)},
     {0x8602, 12, CONDITION_ALWAYS, EVENT(Func_02004880)},
     {0xc403, 30, CONDITION_ALWAYS, EVENT(AirsRockInside_ReadRevealTablet)},
-    {0x4403, 30, CONDITION_ALWAYS, EVENT(Func_02004740)},
+    {0x4403, 30, CONDITION_ALWAYS, EVENT(AirsRockInside_WalkToRevealTablet)},
     {0x8403, 30, CONDITION_ALWAYS, EVENT(Func_020047b0)},
     {0x403, 30, CONDITION_ALWAYS, EVENT(Func_02004818)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02003e28)},
@@ -3945,7 +3950,7 @@ struct Trigger gAirsRockInside_Room9Triggers[] = {
 struct Trigger gAirsRockInside_Room10Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_02004bb4)},
+    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(AirsRockInside_CheckPsynergyStone)},
     {TRIGGER_TABLE_END},
 };
 

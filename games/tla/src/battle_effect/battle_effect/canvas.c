@@ -17,7 +17,7 @@ struct Model;
 /* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c;
  * render_model.h has another definition; tried with the definition the rest of
  * the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions,
- * Func_08142944 moves: 1 of 730 instructions in tla-ja. */
+ * BattleEffect_RunFormChange moves: 1 of 730 instructions in tla-ja. */
 struct ModelTexture__f14153c {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -60,8 +60,8 @@ extern u8 gMapCellBuffer[];
  * undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 
-struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
-                                   u32 attributes);
+struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
+                                                  u32 shape, u32 attributes);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)->slot].offset)
@@ -118,7 +118,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   battle = (u8 *)Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   scroll = -80;
@@ -144,7 +144,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Decompress_TaggedLz(cells, gMapCellBuffer);
       tiles = gMapCellBuffer;
       for (i = 0; i != 31; i++) {
-        obj = Func_0815b290(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
@@ -154,7 +154,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Decompress_TaggedLz(cells, gMapCellBuffer);
-      obj = Func_0815b290(32, 32, 0x80002000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
       work->objects[31] = obj;
       obj->priority = 2;
       Iwram_CopyWords((void *)OBJ_TILES(obj), gMapCellBuffer, 0x400);
@@ -276,12 +276,13 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           work->particles[16].variant = 4;
           work->particles[16].x = 0;
           work->particles[16].z = 0;
-          Func_0815b434(work->sheet, work->particles[16].variant * 2, 0x10000);
+          BattleEffect_DrawShadedCircles(
+              work->sheet, work->particles[16].variant * 2, 0x10000);
         }
         if (frame > 171) {
           if (frame == 172) {
             work->particles[16].variant = 64;
-            Func_0815b434(work->sheet, 128, 0x10000);
+            BattleEffect_DrawShadedCircles(work->sheet, 128, 0x10000);
             velX = 0x30000;
             velY = -0x30000;
           }
@@ -290,26 +291,26 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             if (work->particles[16].variant <= 1) {
               work->particles[16].variant = 2;
             }
-            Func_0815b434(work->sheet, work->particles[16].variant * 2,
-                          0x10000);
+            BattleEffect_DrawShadedCircles(
+                work->sheet, work->particles[16].variant * 2, 0x10000);
           }
         } else if (frame > 135) {
           velX += -0x800;
           velY += 0x800;
           if (++work->particles[16].variant <= 32) {
-            Func_0815b434(work->sheet, work->particles[16].variant * 2,
-                          0x10000);
+            BattleEffect_DrawShadedCircles(
+                work->sheet, work->particles[16].variant * 2, 0x10000);
           } else {
             work->particles[16].variant = 32;
           }
         }
         {
           /* FAKEMATCH(temporary): the variant copied into size in a block of
-           * its own; as Func_0818caa8(..., work->particles[16].variant * 2), 50
-           * of 2159 instructions differ in tla-en. */
+           * its own; as Canvas_BlitAtFoot(..., work->particles[16].variant *
+           * 2), 50 of 2159 instructions differ in tla-en. */
           s32 size = work->particles[16].variant;
 
-          Func_0818caa8(work->sheet, cx >> 16, cy >> 16, size * 2);
+          Canvas_BlitAtFoot(work->sheet, cx >> 16, cy >> 16, size * 2);
         }
       }
       if (frame > 47) {
@@ -351,7 +352,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             {
               s32 x = ((i & 3) << 17) + 0x20000;
               s32 o = -0x400000;
-              Func_08015160(cx + x + o, cy - (((i & 3) + 2) << 16) + o, 0);
+              SceneTransform_ApplyPosition3(cx + x + o,
+                                            cy - (((i & 3) + 2) << 16) + o, 0);
             }
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
             Transform_ApplyRoll(work->particles[i].x);
@@ -378,7 +380,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           model->mesh = gData_08199340;
           model->vertices = verts;
           Transform_Reset();
-          Func_08015160(cx + -0x3e0000, cy + -0x420000, 0);
+          SceneTransform_ApplyPosition3(cx + -0x3e0000, cy + -0x420000, 0);
           SceneTransform_ApplyScale3(s >> 1, s, s);
           Transform_ApplyPitch(0x2000);
           Transform_ApplyRoll(0x2800);
@@ -388,7 +390,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
         if (frame >= 172 && frame <= 220) {
           Transform_Reset();
-          Func_08015160(cx + -0x3e0000, cy + -0x420000, 0);
+          SceneTransform_ApplyPosition3(cx + -0x3e0000, cy + -0x420000, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           Transform_ApplyRoll(0x2800);
           if (frame > 203) {
@@ -531,11 +533,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
         if (frame <= 27) {
           cells = work->sheet + 0x38c0;
-          Func_0815b434(cells, 96, 0x10000);
-          Func_0818caa8(cells, q->x >> 16, q->y >> 16, 96);
+          BattleEffect_DrawShadedCircles(cells, 96, 0x10000);
+          Canvas_BlitAtFoot(cells, q->x >> 16, q->y >> 16, 96);
         }
         Transform_Reset();
-        Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
+        SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(0xdc500, 0x29c40, 0x8000);
@@ -564,7 +566,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   count = -1;
   transition[4] = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-  Func_08164b2c(31, 31, 31);
+  Palette_BrightenSavedBattleBg(31, 31, 31);
   gBgScroll[1].x = 0;
   gCameraSceneParameters[4] = 240;
   wait(1);
@@ -608,10 +610,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         if (c <= 3) {
           c = 4;
         }
-        Func_08164b2c(a, b, c);
+        Palette_BrightenSavedBattleBg(a, b, c);
       }
       if (frame > 17 || count > 0) {
-        Func_08164abc(4, 4, 4);
+        Palette_BrightenBattleBg(4, 4, 4);
         if (--count == 0) {
           break;
         }
@@ -668,7 +670,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         model->kind = 6;
         model->texture = &texture3;
         Transform_Reset();
-        Func_08015160(-0x20000, 0x100000, 0);
+        SceneTransform_ApplyPosition3(-0x20000, 0x100000, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(s, 0x20000, 0x8000);
@@ -677,7 +679,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
       if (frame == 0) {
         Sound_PlayFar(208);
-        Func_0818de3c(Data_02011000, 16, 8, 8, 8);
+        Mesh_BuildGrid(Data_02011000, 16, 8, 8, 8);
         {
           s32 ringAngle = 0;
           for (ring = 0, offset = 0; ring != 8;
@@ -696,7 +698,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             }
           }
         }
-        Func_081885f0(Data_02012000, Data_02012800, 32);
+        Mesh_BuildCylinderBand(Data_02012000, Data_02012800, 32);
       }
       texture3.logWidth = 5;
       texture3.logHeight = 5;
@@ -716,10 +718,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           s = 0x10000;
         }
         Transform_Reset();
-        Func_08015160(-0x20000, 0xc0000, 0);
+        SceneTransform_ApplyPosition3(-0x20000, 0xc0000, 0);
         Transform_ApplyPitch(0x2000);
         Transform_ApplyYaw(-frame << 10);
-        Func_0801521c(s);
+        SceneTransform_ApplyUniformScale(s);
         Render_TransformVertices(Data_02010800, vertices, 128);
         Render_DrawModelList(model);
       }
@@ -749,12 +751,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             }
             model->shade = shade;
             Transform_Reset();
-            Func_08015160(-0x20000, 0x200000, 0);
+            SceneTransform_ApplyPosition3(-0x20000, 0x200000, 0);
             SceneTransform_ApplyScale3(s / 4, s / 4, s / 4);
             Transform_ApplyPitch(10000);
             Transform_ApplyYaw((frame + i * 8) << 10);
             SceneTransform_ApplyScale3(0x10000, 0x60000, 0x10000);
-            Func_08015160(0, Data_081977e8[i] << 16, 0);
+            SceneTransform_ApplyPosition3(0, Data_081977e8[i] << 16, 0);
             Render_TransformVertices(Data_02012000, vertices, 64);
             Render_DrawModelList(model);
           }
@@ -785,10 +787,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
-void Func_0814293c(void) {}
+/// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
+void BattleEffect_ReservedNoOpA(void) {}
 
-void Func_08142940(void) {}
+void BattleEffect_ReservedNoOpB(void) {}
 
 struct Model;
 
@@ -823,17 +825,14 @@ struct ModelDraw__f14153c {
   u8 unk1a[2];
 };
 
-// Rings and crystals gather on the user, for the scenes.
-
-// A glow on the canvas map widens over the user for 56 frames while 16
-// spinning rings rise around it, four abreast. From frame 48 the screen
-// shakes, flashes burst upward and four crystals grow out of the ground one
-// after another, spinning. The user flashes at frames 32 to 68. Kinds 78
-// and 79 stand to either side and hand over to the battle (Func_08118150)
-// at frame 62; kind 80 runs 100 frames, fades to white and restores the
-// scene's view itself.
-
-void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
+/// A glow on the canvas map widens over the user for 56 frames while 16
+/// spinning rings rise around it, four abreast. From frame 48 the screen
+/// shakes, flashes burst upward and four crystals grow out of the ground one
+/// after another, spinning. The user flashes at frames 32 to 68. Kinds 78
+/// and 79 stand to either side and hand over to the battle
+/// (Battle_ChangeEnemyFormFar) at frame 62; kind 80 runs 100 frames, fades to
+/// white and restores the scene's view itself.
+void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   struct EffectPosition center;
   struct ModelTexture__f14153c texture;
   struct BattleEffectWork *work;
@@ -913,7 +912,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         Palette_BrightenBgEntries(2, 2, 2);
       }
     } else if (frame == 62) {
-      Func_08118150(kind);
+      Battle_ChangeEnemyFormFar(kind);
     }
 
     // From frame 48: shake, clear the canvas, and for 8 frames burst two
@@ -984,9 +983,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
 
         if (width <= 64) {
           size = width * 2;
-          Func_0815b434(Ram_MapCellBuffer, size, 0x10000);
+          BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, 0x10000);
         }
-        Func_0818caa8(Ram_MapCellBuffer, cx >> 16, cy >> 16, size);
+        Canvas_BlitAtFoot(Ram_MapCellBuffer, cx >> 16, cy >> 16, size);
       }
 
       // Each ring has an angle (x), a spin (y) and an age (variant), the
@@ -1026,8 +1025,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           {
             s32 column = i & 3;
 
-            Func_08015160(cx + ((column * 2 + 2) << 16) - 0x400000,
-                          cy - ((column + 2) << 16) - 0x400000, 0);
+            SceneTransform_ApplyPosition3(
+                cx + ((column * 2 + 2) << 16) - 0x400000,
+                cy - ((column + 2) << 16) - 0x400000, 0);
           }
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           Transform_ApplyRoll(ring->x);
@@ -1059,7 +1059,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
 
             model->depthBias = bias;
             Transform_Reset();
-            Func_08015160((center.x / 2 - 60) << 16, 0x200000, 0);
+            SceneTransform_ApplyPosition3((center.x / 2 - 60) << 16, 0x200000,
+                                          0);
             SceneTransform_ApplyScale3(
                 growth * 2, Data_081977f4[i] * growth + 0x40000, growth / 4);
             Transform_ApplyPitch(1000);
@@ -1239,7 +1240,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
   }
 }
 
-void Func_08143354(void) {
+void BattleEffect_BuildCanvasTilemap(void) {
   u32 *map = (u32 *)0x0600f800;
   u32 tiles;
   s32 row;
@@ -1381,7 +1382,7 @@ void BattleEffect_CountDownBattlerTints(void) {
   } while (i != 8);
 }
 
-void Func_0814355c(void) {
+void BattleEffect_SetupCanvasWindows(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BG2X = 0;
@@ -1401,8 +1402,8 @@ void Func_0814355c(void) {
 
 // Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
 // changes: BattleEffect_ConfigureEffectDisplay for the display set-up, DISPCNT
-// 0x1741, Palette_StepFadeTransfer at 0x480, Func_0814355c for the display
-// registers and one more work word cleared.
+// 0x1741, Palette_StepFadeTransfer at 0x480, BattleEffect_SetupCanvasWindows
+// for the display registers and one more work word cleared.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -1447,7 +1448,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   display->secondMode = 0;
   wait(1);
 
-  Func_0814355c();
+  BattleEffect_SetupCanvasWindows();
   REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
               WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
@@ -1520,7 +1521,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   display->secondMode = 0;
   wait(1);
 
-  Func_0814355c();
+  BattleEffect_SetupCanvasWindows();
   REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
               WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;

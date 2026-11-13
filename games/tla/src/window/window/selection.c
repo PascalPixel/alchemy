@@ -319,7 +319,6 @@ struct EffectPosition {
 extern u32 gVBlankCount;
 extern s8 gMenu_CursorBobOffsets[];
 
-s32 GameFlag_Test(s32 flag);
 struct MenuSelection;
 
 void SelectionMenu_Draw(void) {
@@ -914,8 +913,6 @@ void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {
   wait(1);
 }
 
-void wait(s32 frames);
-
 /// Moves the cursor one entry right, scrolling the row at its edge and
 /// wrapping from the last entry to the first.
 void SelectionMenu_StepRight(struct SelectionScreen *state) {
@@ -1023,8 +1020,6 @@ struct StepMenu {
   u8 unk3a0[2];
   u16 status;
 };
-
-void wait(s32 frames);
 
 /// Moves the cursor one entry left, scrolling the row at its edge and
 /// wrapping from the first entry to the last.
@@ -1173,8 +1168,6 @@ void Menu_ClearBattleHighlight(u8 *arg0) {
   data[count] = 0xff;
   BattleHighlight_SetModesFar(data, 0);
 }
-
-void wait(s32 frames);
 
 /// Scrolls the row one entry: forward brings an icon in from the right as the
 /// leftmost shrinks away, and back the reverse; waits until it has moved.

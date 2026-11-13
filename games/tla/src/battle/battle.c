@@ -7,7 +7,7 @@
 /// the order their code has in the ROM. Camelot's own files are not
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
 /// The Broken Seal's are. The bank's code after them is in objects of its
-/// own, from presentation.c on: its Func_0811e3ac calls
+/// own, from presentation.c on: its BattleMotion_CallBeast calls
 /// BattleObject_Reset (placement.c) with the object alone, leaving the second
 /// argument register as BattleObject_Get left it, a call this object's
 /// prototype of the routine cannot compile.

@@ -169,7 +169,7 @@ void Unit_RefreshPsynergyFar(s32 unit);
 #endif
 void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target);
 #if TLA_PATCH_2
-void Func_08104484(void);
+void ItemMenu_HideTradedIcons(void);
 #endif
 
 /// Runs the item menu: choose a party member, one of their items and a command
@@ -222,9 +222,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins((s32)menu->infoWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
-        /* FAKEMATCH(dead): command cleared with selection, though neither is
-         * read again once done is set; as selection = 0;, 104 of 1355
-         * instructions differ in tla-en. */
+        // DEAD: selection and command cleared though the menu ends before
+        // reading either; the ROM keeps the 0 and its store to selection.
         selection = command = 0;
         ret = -1;
         done = 1;
@@ -605,7 +604,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_SetMessageWindowHeight5();
 #if TLA_PATCH_2
         ItemMenu_SetMessageWindowHeight6();
-        Func_08104484();
+        ItemMenu_HideTradedIcons();
 #endif
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
         menu->sideMember[0] = menu->sideMember[1];
@@ -849,7 +848,7 @@ void ItemMenu_HideAllIcons(void) {
 
 #if TLA_PATCH_2
 /// Hides the item icons in every fifth slot, 0 to 30, after a trade.
-void Func_08104484(void) {
+void ItemMenu_HideTradedIcons(void) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   s32 slot;
 
@@ -1620,10 +1619,10 @@ s32 Inventory_RemoveFirstUnflagged(s32 owner) {
 // the even 40-pixel spacing the other releases compute, the second gives y.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
     (LANGUAGE == LANGUAGE_SPANISH)
-s32 Func_08106b80(s32 column, s32 row);
-s32 Func_08106ba8(s32 column, s32 row);
-#define COMMAND_CURSOR_X(column, row) Func_08106b80(column, row)
-#define COMMAND_CURSOR_Y(column, row) Func_08106ba8(column, row)
+s32 ItemMenu_GetCommandCursorX(s32 column, s32 row);
+s32 ItemMenu_GetCommandCursorY(s32 column, s32 row);
+#define COMMAND_CURSOR_X(column, row) ItemMenu_GetCommandCursorX(column, row)
+#define COMMAND_CURSOR_Y(column, row) ItemMenu_GetCommandCursorY(column, row)
 #else
 #define COMMAND_CURSOR_X(column, row) ((column) * 40 + 86)
 #define COMMAND_CURSOR_Y(column, row) ((row) * 8 + 30)
@@ -3215,14 +3214,14 @@ extern s32 gItemMenu_CommandColumnXTable[6];
 
 /// The cursor's x at the item command in column and row, from the table; 0
 /// outside three columns and three rows.
-s32 Func_08106b80(s32 column, s32 row) {
+s32 ItemMenu_GetCommandCursorX(s32 column, s32 row) {
   if (column > 2 || row > 2 || column < 0 || row < 0)
     return 0;
   return gItemMenu_CommandColumnXTable[row * 3 + column];
 }
 
 /// The cursor's y at the item command in row: 30 in the first row, 38 below.
-s32 Func_08106ba8(s32 column, s32 row) {
+s32 ItemMenu_GetCommandCursorY(s32 column, s32 row) {
   s32 y = 30;
 
   if (row != 0)

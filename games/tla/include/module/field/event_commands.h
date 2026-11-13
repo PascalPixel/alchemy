@@ -90,7 +90,7 @@ struct ParticleTimer {
   u16 timer;
 };
 
-// ⚓️'s composite sprite (as worka0/f0daecc.c's CompositeAnimation).
+// ⚓️'s composite sprite (as field.h's CompositeAnimation).
 struct CloakSprite {
   u8 unk00[0x19];
   u8 dirty; // redraw the parts
@@ -205,8 +205,7 @@ void FieldPsynergy_WatchLeaderDistance(void);
 
 void FieldEffect_SpawnBurstParticleField(void);
 
-// Far call to the target classifier Func_080237c8.
-s32 Func_08020330(struct Actor *object);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
 
 extern const s32 gFieldEffect_SourceHoldScript[];
 
@@ -224,7 +223,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
 void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
                                          s32 height, s32 fromX, s32 fromZ);
 
-void Func_080e2c38(void);
+void ParticleBurst_Update(void);
 
 extern char ResourceId_Leaves;
 
@@ -247,10 +246,10 @@ void FieldPsynergy_EndSand(void);
 
 extern char ResourceId_SparkleFade;
 
-s32 Func_080eab70(struct Actor *object);
-s32 Func_080eab98(s32 unused, s32 key, s32 value);
+s32 Actor_GetCellIndex(struct Actor *object);
+s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
-void Func_080ec1d0(s32 *screenX, s32 *screenY);
+void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY);
 
 extern s16 gData_0202a642;
 
@@ -283,18 +282,18 @@ void EventObject_Initialize(void);
 
 void Djinn_ResolvePending(s32 shown);
 
-void Func_080e2718(void);
+void TileCopies_Restore(void);
 
 void Djinn_RestoreActorAfterBattle(void);
 
 void FieldPsynergy_ResumeCloakCheck(void);
 
-void Func_080e7804(void);
-void Func_080e7238(void);
+void Teleport_PlaySparksAndFade(void);
+void Teleport_PlayWhirl(void);
 
 void Field_StartEncounterTransition(s32 unused);
 
-void Func_080ea14c(s32 targetId);
+void SummonTablet_PlayRunes(s32 targetId);
 
 void FieldPsynergy_ResumeHaltedActor(s32 id);
 

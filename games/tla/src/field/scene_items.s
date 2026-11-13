@@ -1,5 +1,5 @@
 	.section .rodata
-@ Scene item rows: Func_080ceba8 finds the scene ID header (bit 14).
+@ Scene item rows: SceneItem_GetRows finds the scene ID header (bit 14).
 @ Header: scene and flag (-1 always). Rows: type, ID, flag, item (0x8000+n is a non-item quantity). 0 terminates.
 	.macro scene id:req, flag:req
 	.2byte 0x4000 | \id, \flag

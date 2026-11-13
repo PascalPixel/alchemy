@@ -30,21 +30,23 @@ struct PlayerSprite__f0298c0 {
 extern const s16 gWorldMap_KeyHeadings[16];
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f0298c0): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f0298c0 *, s32); s28534 has
  * s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
 extern s32 Animation_ApplyChildArgument__f0298c0(
     struct PlayerSprite__f0298c0 *,
     s32) __asm__("Animation_ApplyChildArgument");
-/* VIEW(f0298c0): routine Func_08029810 as void Func_08029810(void); the
- * definition has void Func_08029810(struct Actor *object). */
-extern void Func_08029810__f0298c0(void) __asm__("Func_08029810");
-/* VIEW(f0298c0): routine Func_08029838 as s32 Func_08029838(struct Actor
- * *actor); the definition has s32 Func_08029838(s32 arg). */
-extern s32 Func_08029838__f0298c0(struct Actor *actor) __asm__("Func_08029838");
+/* VIEW(f0298c0): routine Sand_JitterGrain as void Sand_JitterGrain(void); the
+ * definition has void Sand_JitterGrain(struct Actor *object). */
+extern void Func_08029810__f0298c0(void) __asm__("Sand_JitterGrain");
+/* VIEW(f0298c0): routine Sand_CheckEndKeys as s32 Sand_CheckEndKeys(struct
+ * Actor *actor); the definition has s32 Sand_CheckEndKeys(s32 arg). */
+extern s32
+Func_08029838__f0298c0(struct Actor *actor) __asm__("Sand_CheckEndKeys");
 
-s32 Func_080298c0(struct Actor *actor) {
+/// Script command 0x1e (control mode 5): the leader turned to sand by the Sand
+/// Psynergy, moved by the direction pad on a field map.
+s32 Actor_MoveAsSand(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   s16 angleOffsets[10];
@@ -321,7 +323,7 @@ s32 Func_080298c0(struct Actor *actor) {
     cellX = (position.x & 0xfff00000) + 0x80000;
     cellZ = (position.z & 0xfff00000) + 0xfff80000;
 
-    if (Func_080c8770(cellX, cellZ, 2)) {
+    if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
       actor->y += 0x10000;
       actor->unk66 = 1;
@@ -338,7 +340,7 @@ s32 Func_080298c0(struct Actor *actor) {
     cellZ = (actor->z & 0xfff00000) + 0x180000;
 
     if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
-        Func_080c8770(cellX, cellZ, 2)) {
+        MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
       Actor_SetMoveTarget(actor, actor->x, groundHere + 0xfffe0000, cellZ);
       actor->timer = 1;
@@ -432,12 +434,13 @@ done:
 
 s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 
-/// Script command 0x22: moves the object on the world map by the direction pad
+/// Script command 0x22 (control mode 9): the leader as sand on the world map
+/// (the Sand Psynergy). Moves the object on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
 /// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
 /// the event work and leaves an object of kind 0x164 behind it every fifth
 /// step.
-s32 Func_0802a124(struct Actor *object) {
+s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
   struct FieldPosition rightPosition;

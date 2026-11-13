@@ -5,7 +5,7 @@
 
 #include "../menu_internal.h"
 
-void Func_08104e38(s32 first, s32 second);
+void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
 s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
@@ -45,7 +45,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   Party_ListMembersFar(owners);
   first = owners[menu->selectedColumn[0]];
   second = owners[menu->selectedColumn[1]];
-  Func_08104e38(first, second);
+  Menu_CreatePairEntryObjects(first, second);
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
     menu->memberY[memberIndex] = 200;
   menu->memberX[0] = 16;
@@ -177,15 +177,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     row = 1;
   if ((entry0 & 0x8000) == 0)
     Text_SetColorFar(2);
-  Func_08101a54(help, 40, row * 8, entry0);
+  DjinnMenu_DrawEntry(help, 40, row * 8, entry0);
   if (mode == 0) {
     if ((entry1 & 0x8000) == 0)
       Text_SetColorFar(2);
-    Func_08101a54(help, 40, 16, entry1);
+    DjinnMenu_DrawEntry(help, 40, 16, entry1);
   } else if (mode - 2 <= 1) {
     if ((entry0 & 0x8000) != 0)
       Text_SetColorFar(2);
-    Func_08101a54(help, 40, 16, entry0);
+    DjinnMenu_DrawEntry(help, 40, 16, entry0);
     Window_SetTilemapEntryFar(help, 0xf296, 7, 1, 0);
   }
 

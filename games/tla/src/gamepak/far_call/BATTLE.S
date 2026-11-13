@@ -45,5 +45,5 @@ Resource_FarCall009:
 	export BattleParty_PrepareReserveOwnersFar, BattleParty_PrepareReserveOwners
 	export BattleUnit_ListIdsFar, BattleUnit_ListIds
 	export BattleObject_SpawnObjectsForListFar, BattleObject_SpawnObjectsForList
-	export Func_08118150, Func_08119734
+	export Battle_ChangeEnemyFormFar, Battle_ChangeEnemyForm
 	export BattleSummon_UpdateAvailabilityFar, BattleSummon_UpdateAvailability

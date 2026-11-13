@@ -29,16 +29,15 @@ void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -66,7 +65,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
  * `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -180,7 +178,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   offset = 0;
   size = 2;
   for (i = 0; i != 32; i++) {
-    Func_0815b434((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -415,7 +413,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         }
         model->shade = shade;
         Transform_Reset();
-        Func_08015160(x, z, 0);
+        SceneTransform_ApplyPosition3(x, z, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         Render_TransformVertices(Data_081991e0, vertices, 4);
         Render_DrawModelList(model);
@@ -436,22 +434,22 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode);
+void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect, u32 mode);
 
 /// Abilities: Whorl (kind 232).
-void BattleEffect_RunWhorl(s32 a0) { Func_08171bb0(a0, 0); }
+void BattleEffect_RunWhorl(s32 a0) { BattleEffect_RunWaterColumn(a0, 0); }
 
 /// Abilities: Gale (kind 233).
-void BattleEffect_RunGale(s32 a0) { Func_08171bb0(a0, 1); }
+void BattleEffect_RunGale(s32 a0) { BattleEffect_RunWaterColumn(a0, 1); }
 
 /// Abilities: Lethe Albion (kind 107).
-void BattleEffect_RunLetheAlbion(s32 a0) { Func_08171bb0(a0, 2); }
+void BattleEffect_RunLetheAlbion(s32 a0) { BattleEffect_RunWaterColumn(a0, 2); }
 
 /// Abilities: Poison Flow (kind 81).
-void BattleEffect_RunPoisonFlow(s32 a0) { Func_08171bb0(a0, 3); }
+void BattleEffect_RunPoisonFlow(s32 a0) { BattleEffect_RunWaterColumn(a0, 3); }
 
 /// Abilities: Raging Flood (kind 392).
-void BattleEffect_RunRagingFlood(s32 a0) { Func_08171bb0(a0, 4); }
+void BattleEffect_RunRagingFlood(s32 a0) { BattleEffect_RunWaterColumn(a0, 4); }
 #undef SLOT_BLITTER
 #undef BLITTER
 #undef HI

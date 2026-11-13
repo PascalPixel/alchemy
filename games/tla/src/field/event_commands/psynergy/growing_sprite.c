@@ -30,11 +30,12 @@ struct EffectSprite__psynergy_effects_11 {
   u8 unk20[8];
 };
 
-/* VIEW(psynergy_effects_11): routine Func_080eb01c as void Func_080eb01c(struct
- * EffectSprite__psynergy_effects_11 *sprite); effect_sprite.h has void
- * Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__psynergy_effects_11(
-    struct EffectSprite__psynergy_effects_11 *sprite) __asm__("Func_080eb01c");
+/* VIEW(psynergy_effects_11): routine EffectSprite_Draw as void
+ * EffectSprite_Draw(struct EffectSprite__psynergy_effects_11 *sprite);
+ * effect_sprite.h has void EffectSprite_Draw(struct EffectSprite *sprite). */
+extern void EffectSprite_Draw__psynergy_effects_11(
+    struct EffectSprite__psynergy_effects_11
+        *sprite) __asm__("EffectSprite_Draw");
 void Camera_WorldToScreen(s32 *position);
 /* VIEW(psynergy_effects_11): routine BattleEffect_IntegrateVector3 as void
  * BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
@@ -44,7 +45,6 @@ extern void BattleEffect_IntegrateVector3__psynergy_effects_11(
     struct EffectParticle *particle, s32 frames,
     s32 flags) __asm__("BattleEffect_IntegrateVector3");
 struct Actor *Actor_GetById(u32 objectId);
-void wait(s32 frames);
 
 /// Animates a particle's sprite through 8 tiles (4 frames each), grows its
 /// scale by 0.1 a frame up to 1.0, draws it at the particle's projected
@@ -66,6 +66,6 @@ void BattleEffect_UpdateGrowingParticleSprite(
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
-  Func_080eb01c__psynergy_effects_11(sprite);
+  EffectSprite_Draw__psynergy_effects_11(sprite);
   BattleEffect_IntegrateVector3__psynergy_effects_11(particle, 60, 0);
 }

@@ -3,8 +3,6 @@
 /// by level, the enemies' element presets, the power and resistance curve, and
 /// the classes two ability effects look for.
 
-// ---- games/tla/src/game/element_table.c ----
-
 #include "game.h"
 
 /// The class series by a character's strongest and second element, read as
@@ -528,7 +526,6 @@ const u16 gBattle_Effect91Classes[29] = {
     172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 330, 331, 332, 348,
 };
 
-// ---- games/tla/src/game/djinn_table.c ----
 // The 80 Djinn, 20 of each element in element order. Each name is the
 // English release's (MsgDjinnName plus the Djinni's place).
 

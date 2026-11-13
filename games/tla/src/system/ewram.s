@@ -297,8 +297,8 @@ gFlashTimerReg:
 	.global gFlashSavedIme
 gFlashSavedIme:
 	.space 0x000000d4
-	.global Data_02007500
-Data_02007500:
+	.global gCredits_PendingSlides
+gCredits_PendingSlides:
 	.space 0x00000004
 	.global gDisplayScroll_Position
 gDisplayScroll_Position:
@@ -312,32 +312,32 @@ gDisplayScroll_LastPosition:
 	.global gDisplayScroll_Objects
 gDisplayScroll_Objects:
 	.space 0x00000004
-	.global Data_02007514
-Data_02007514:
+	.global gEndingPicture_Block
+gEndingPicture_Block:
 	.space 0x00000002
-	.global Data_02007516
-Data_02007516:
+	.global gEndingPicture_FadeFrames
+gEndingPicture_FadeFrames:
 	.space 0x00000002
-	.global Data_02007518
-Data_02007518:
+	.global gEndingPicture_MapScroll
+gEndingPicture_MapScroll:
 	.space 0x00000004
-	.global gData_0200751c
-gData_0200751c:
+	.global gEndingPicture_Scroll
+gEndingPicture_Scroll:
 	.space 0x00000004
-	.global gData_02007520
-gData_02007520:
+	.global gEndingPicture_Row
+gEndingPicture_Row:
 	.space 0x00000002
 	.global gScrollTarget
 gScrollTarget:
 	.space 0x00000002
-	.global Data_02007524
-Data_02007524:
+	.global gEndingPicture_Speed
+gEndingPicture_Speed:
 	.space 0x00000004
-	.global Data_02007528
-Data_02007528:
+	.global gEndingPicture_Map
+gEndingPicture_Map:
 	.space 0x00000004
-	.global gData_0200752c
-gData_0200752c:
+	.global gEndingPicture_Strips
+gEndingPicture_Strips:
 	.space 0x00000ad4
 	.global gOverlayArea
 gOverlayArea:

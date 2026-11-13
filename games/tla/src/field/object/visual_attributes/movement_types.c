@@ -108,8 +108,6 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   }
 }
 
-s32 __divsi3(s32, s32);
-
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
   Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   obj->collisionFlags = 0;
@@ -190,13 +188,13 @@ s32 Actor_TurnTowardWatchedActor(struct FacingObject *obj) {
 }
 
 /// Makes the object watch target and keeps it facing it.
-void Func_080d4aa8(struct Actor *object, struct Actor *target) {
+void Actor_WatchActor(struct Actor *object, struct Actor *target) {
   object->watchedObject = target;
   object->update = Actor_TurnTowardWatchedActor;
 }
 
 /// Gives the object the party leader's display layer.
-s32 Func_080d4ab4(struct Actor *object) {
+s32 Actor_TakeLeaderLayer(struct Actor *object) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   s32 layer = ((struct ObjectLayerAnimation *)leader->sprite)->layer;
 
@@ -319,7 +317,9 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   return found;
 }
 
-s32 Func_080d4ccc(struct Actor *object, s32 *position) {
+/// Whether the ground at position stops a jump: terrain kind above 2 on a
+/// layered map; never on the world map or with no map.
+s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s8 *event = Ram_HeapSlots->eventWork;
 
@@ -333,10 +333,10 @@ s32 Func_080d4ccc(struct Actor *object, s32 *position) {
 extern struct MapCell gMapCellBuffer[];
 
 /// The leader jumps two tiles forward, over the tile in
-/// front, when it faces a quarter turn, the map allows it (Func_080d4ccc and
-/// the step check) or a platform object (flag 0x80) waits 16 pixels below the
-/// landing, and no solid object stands there. A platform underfoot (sprite 258
-/// or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
+/// front, when it faces a quarter turn, the map allows it (MapGrid_BlocksJump
+/// and the step check) or a platform object (flag 0x80) waits 16 pixels below
+/// the landing, and no solid object stands there. A platform underfoot (sprite
+/// 258 or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
 /// walking distance, and the leader keeps jumping while it lands on a jump spot
 /// (collision 254). Returns 0 after a jump, -1 when the leader cannot jump.
 s32 Field_TryJumpForward(void) {
@@ -375,7 +375,7 @@ again:
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   Vector_AddPolarOffset(0x200000, angle, position);
   canJump = 0;
-  if (Func_080d4ccc(leader, position) == 0 &&
+  if (MapGrid_BlocksJump(leader, position) == 0 &&
       MapGrid_CheckCollisionFar(leader, position) == 0)
     canJump = 1;
 
@@ -470,7 +470,7 @@ again:
         cells = map->layers[leader->terrainId & 3].cells;
       cells += cellX + (cellZ << 7);
       if (cells->attributeB & 16)
-        Func_080203a0(leader, (u32)(attr << 28) >> 30);
+        Actor_SpawnWaterSplashFar(leader, (u32)(attr << 28) >> 30);
     }
 
     // A platform underfoot dips 2 pixels with the leader and comes back up.
@@ -512,7 +512,9 @@ again:
 
 void Actor_WaitForMoveById(s32 id);
 
-s32 Func_080d50f8(void) {
+/// Climbs down onto the wall below the leader, as The Broken Seal's
+/// Field_ClimbDown does, or lets go and falls when it cannot.
+s32 Field_ClimbDown(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 gridX;
@@ -609,7 +611,9 @@ failure:
   return -1;
 }
 
-s32 Func_080d53b8(void) {
+/// Climbs up the wall in front of the leader, as The Broken Seal's
+/// Field_ClimbUp does.
+s32 Field_ClimbUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 spriteFlags = 1;
@@ -712,7 +716,8 @@ failure:
   return -1;
 }
 
-struct Work9cItem *Func_080d5670(s32 *position) {
+/// Returns the nearest tied rope node within reach of position, or NULL.
+struct Work9cItem *Rope_FindNodeNear(s32 *position) {
   struct Work9cItem *found;
   struct Work9c *work;
   struct Work9cItem *item;
@@ -748,10 +753,12 @@ struct Work9cItem *Func_080d5670(s32 *position) {
   return found;
 }
 
-s32 Func_080d5720(void) {
+/// Hops the leader onto the nearest tied rope node, to cross the rope (render
+/// mode 3); returns 0 when none is in reach.
+s32 Leader_StepOntoRope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
-  struct Work9cItemPosition *item = Func_080d5670(&leader->x);
+  struct Work9cItemPosition *item = Rope_FindNodeNear(&leader->x);
   u8 *flags;
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
@@ -776,7 +783,9 @@ s32 Func_080d5720(void) {
   return 1;
 }
 
-s32 Field_ClimbDown(void) {
+/// Hops the leader off a tied rope a cell in the direction the pad holds,
+/// when that cell is open; returns 0 otherwise.
+s32 Leader_StepOffRope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];
@@ -815,7 +824,8 @@ s32 Field_ClimbDown(void) {
   return 1;
 }
 
-struct WorkA0Node *Func_080d5930(s32 *position) {
+/// Returns the nearest tightrope node within reach of position, or NULL.
+struct WorkA0Node *Tightrope_FindNodeNear(s32 *position) {
   struct WorkA0Node *found;
   struct WorkA0 *work;
   struct WorkA0Node *item;
@@ -850,11 +860,13 @@ struct WorkA0Node *Func_080d5930(s32 *position) {
   return found;
 }
 
-s32 Func_080d59dc(void) {
+/// Hops the leader onto the nearest tightrope node (render mode 4); returns 0
+/// when none is in reach.
+s32 Leader_StepOntoTightrope(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   struct Actor *leader = ObjectTable_Get(work->currentOwner);
   struct FieldSprite *sprite = leader->sprite;
-  struct Work9cItemPosition *item = Func_080d5930(&leader->x);
+  struct Work9cItemPosition *item = Tightrope_FindNodeNear(&leader->x);
   u8 *flags;
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
@@ -879,7 +891,9 @@ s32 Func_080d59dc(void) {
   return 1;
 }
 
-s32 Func_080d5aa0(void) {
+/// Hops the leader off a tightrope a cell in the direction the pad holds, when
+/// that cell is open; returns 0 otherwise.
+s32 Leader_StepOffTightrope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];

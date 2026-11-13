@@ -111,7 +111,7 @@ typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
 s32 ActorScript_Wait();
 s32 Script_WaitForArrival();
 s32 ActorScript_SetPositionAndResetMotion();
-s32 Func_08025038();
+s32 ActorScript_ResetToOrigin();
 s32 ActorScript_ApplyAbsolutePosition();
 s32 ActorScript_ApplyRelativePosition();
 s32 ActorScript_StoreAngleToWatchedActor();
@@ -136,15 +136,15 @@ s32 ActorScript_ApplyOperandCompare();
 s32 Actor_UpdatePlayerControl();
 s32 Actor_MoveOnWorldMap();
 s32 Actor_MoveByKeys();
-s32 Func_080292fc();
-s32 Func_08029570();
-s32 Func_080298c0();
-s32 Func_08027e20();
-s32 Func_08028534();
-s32 Func_08028aac();
-s32 Func_0802a124();
-s32 Func_0802632c();
-s32 Func_080267bc();
+s32 Actor_CrossRope();
+s32 Actor_CrossTightrope();
+s32 Actor_MoveAsSand();
+s32 Actor_SailOnMap();
+s32 Actor_SailOnWorldMap();
+s32 Actor_FlyOnWorldMap();
+s32 Actor_MoveAsSandOnWorldMap();
+s32 Actor_UpdateHoverControl();
+s32 Actor_UpdateWalkingControl();
 s32 Field_CheckConfiguredKeysAndCount();
 s32 Actor_ReleaseAndClear();
 s32 ActorScript_SetAnimation();
@@ -152,84 +152,84 @@ s32 ActorScript_Nop();
 s32 Script_PlaySound();
 s32 Script_CallWithOperand();
 s32 ActorScript_InvokeCallback();
-s32 Func_08025428();
-s32 Func_0802509c();
+s32 FieldCamera_FollowWatchedInBounds();
+s32 ActorScript_SetMoveTargetXZ();
 
 /// Each runs one control command every frame: the command, SC_WAIT(1),
 /// SC_LOOP(SC_FOREVER, SC_TOP).
-const s32 gData_0802f098[] = {
+const s32 gActor_KeyCheckScript[] = {
     SC_CMD_25,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f0b0[] = {
+const s32 gActor_KeysScript[] = {
     SC_CMD_1B,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f0c8[] = {
+const s32 gActor_RopeScript[] = {
     SC_CMD_1C,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f0e0[] = {
+const s32 gActor_TightropeScript[] = {
     SC_CMD_1D,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f0f8[] = {
+const s32 gActor_SandScript[] = {
     SC_CMD_1E,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f110[] = {
+const s32 gActor_HoverScript[] = {
     SC_CMD_23,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f128[] = {
+const s32 gActor_WalkingScript[] = {
     SC_CMD_24,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f140[] = {
+const s32 gActor_PlayerScript[] = {
     SC_PLAYER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f158[] = {
+const s32 gActor_WorldMapScript[] = {
     SC_CMD_1A,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gActor_KeyCheckScript[] = {
+const s32 gActor_SailOnMapScript[] = {
     SC_CMD_1F,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gActor_KeysScript[] = {
+const s32 gActor_SailScript[] = {
     SC_CMD_20,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gActor_PlayerScript[] = {
+const s32 gActor_FlyScript[] = {
     SC_CMD_21,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gActor_WorldMapScript[] = {
+const s32 gActor_SandOnWorldMapScript[] = {
     SC_CMD_22,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -241,7 +241,7 @@ const s32 gActor_CameraScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f1e8[] = {
+const s32 gActor_ApproachWatchedScript[] = {
     SC_APPROACH_WATCHED,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -256,7 +256,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     ActorScript_Wait,                         // 0x00 SC_WAIT
     Script_WaitForArrival,                    // 0x01 SC_SYNC
     ActorScript_SetPositionAndResetMotion,    // 0x02 SC_POSITION
-    Func_08025038,                            // 0x03 SC_CMD_03
+    ActorScript_ResetToOrigin,                // 0x03 SC_CMD_03
     ActorScript_ApplyAbsolutePosition,        // 0x04 SC_MOVE
     ActorScript_ApplyRelativePosition,        // 0x05 SC_MOVE_BY
     ActorScript_StoreAngleToWatchedActor,     // 0x06 SC_FACE_WATCHED
@@ -281,15 +281,15 @@ const ScriptCommandFn gData_0802f204[54] = {
     Actor_UpdatePlayerControl,                // 0x19 SC_PLAYER
     Actor_MoveOnWorldMap,                     // 0x1a SC_CMD_1A
     Actor_MoveByKeys,                         // 0x1b SC_KEYS
-    Func_080292fc,                            // 0x1c SC_CMD_1C
-    Func_08029570,                            // 0x1d SC_CMD_1D
-    Func_080298c0,                            // 0x1e SC_CMD_1E
-    Func_08027e20,                            // 0x1f SC_CMD_1F
-    Func_08028534,                            // 0x20 SC_CMD_20
-    Func_08028aac,                            // 0x21 SC_CMD_21
-    Func_0802a124,                            // 0x22 SC_CMD_22
-    Func_0802632c,                            // 0x23 SC_CMD_23
-    Func_080267bc,                            // 0x24 SC_CMD_24
+    Actor_CrossRope,                          // 0x1c SC_CMD_1C
+    Actor_CrossTightrope,                     // 0x1d SC_CMD_1D
+    Actor_MoveAsSand,                         // 0x1e SC_CMD_1E
+    Actor_SailOnMap,                          // 0x1f SC_CMD_1F
+    Actor_SailOnWorldMap,                     // 0x20 SC_CMD_20
+    Actor_FlyOnWorldMap,                      // 0x21 SC_CMD_21
+    Actor_MoveAsSandOnWorldMap,               // 0x22 SC_CMD_22
+    Actor_UpdateHoverControl,                 // 0x23 SC_CMD_23
+    Actor_UpdateWalkingControl,               // 0x24 SC_CMD_24
     Field_CheckConfiguredKeysAndCount,        // 0x25 SC_CMD_25
     Actor_ReleaseAndClear,                    // 0x26 SC_FREE
     ActorScript_SetAnimation,                 // 0x27 SC_ARG
@@ -300,8 +300,8 @@ const ScriptCommandFn gData_0802f204[54] = {
     ActorScript_HideSprites,                  // 0x2c SC_B54_OFF
     ActorScript_ShowSprite,                   // 0x2d SC_B54_ON
     ActorScript_InvokeCallback,               // 0x2e SC_CALL
-    Func_08025428,                            // 0x2f SC_CMD_2F
-    Func_0802509c,                            // 0x30 SC_MOVE_XZ
+    FieldCamera_FollowWatchedInBounds,        // 0x2f SC_CMD_2F
+    ActorScript_SetMoveTargetXZ,              // 0x30 SC_MOVE_XZ
     ActorScript_End,                          // 0x31
     ActorScript_End,                          // 0x32
     ActorScript_End,                          // 0x33

@@ -199,7 +199,9 @@ struct GlyphSprite {
 
 s32 Text_DrawGlyphPair(s32 code, u32 *tiles);
 
-s32 Func_0803c068(struct Window *window, s32 character, s32 x, s32 y) {
+/// Draws character as a glyph sprite on the window at x, y and returns its
+/// width, or 0 when no window sprite is free.
+s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   struct WindowWork *work = Ram_HeapSlots->windowTiles;
   u32 tiles[32];
   u32 spacingX = work->glyphSpacing;
@@ -233,7 +235,9 @@ s32 Func_0803c068(struct Window *window, s32 character, s32 x, s32 y) {
   return width;
 }
 
-void Func_0803c170(const void *source, void *destination) {
+/// Draws the character source names into a 16x16 tile pair and copies it to
+/// destination.
+void Glyph_DrawToTiles(const void *source, void *destination) {
   u8 buffer[128];
 
   Text_DrawGlyphPair((s32)source, (u32 *)buffer);
@@ -241,7 +245,7 @@ void Func_0803c170(const void *source, void *destination) {
 }
 
 // Where the glyph's sprite sits against the text position, in pixels, as in
-// Func_0803c068: the Japanese font's glyphs are drawn into their tiles
+// Glyph_DrawAsSprite: the Japanese font's glyphs are drawn into their tiles
 // differently (see Text_DrawGlyphPair).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define GLYPH_SPRITE_OFFSET_X 1
@@ -251,7 +255,10 @@ void Func_0803c170(const void *source, void *destination) {
 #define GLYPH_SPRITE_OFFSET_Y (-2)
 #endif
 
-void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
+/// Places a glyph sprite on the window at x, y as Glyph_DrawAsSprite does, but
+/// draws nothing, and returns the VRAM address of its tiles for the caller to
+/// fill, or NULL when no window sprite is free.
+void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   struct WindowWork *work = Ram_HeapSlots->windowTiles;
   // Unused: gives the stack frame its 128 bytes.
   u32 tiles[32];
@@ -292,7 +299,7 @@ void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
 
 // Where the next-page arrow sits on the interior's last tile, in pixels right
 // and down from its corner. It moves with the text: the Japanese glyph sprites
-// also sit 1 pixel further left and 2 lower (Func_0803c068).
+// also sit 1 pixel further left and 2 lower (Glyph_DrawAsSprite).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PAGE_ARROW_OFFSET_X 3
 #define PAGE_ARROW_OFFSET_Y 1
@@ -460,8 +467,6 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     return;
   }
 }
-
-s32 OamMatrix_AllocFromTransform(struct AffineTransform *transform);
 
 struct OutputSprite {
   u32 link;

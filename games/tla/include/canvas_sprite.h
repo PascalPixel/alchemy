@@ -7,9 +7,9 @@
 
 // The canvas sprite of the field Psynergy scenes: a 64x64 sprite whose
 // pixels an effect draws into a 4 KB canvas (battle_fx_work[1]).
-// Func_080eb824 starts it, Func_080eb6a0 draws the sprite each frame,
-// Func_080eb594 copies the canvas into its tiles on command, and
-// BattleEffect_EndCanvasSprite ends it.
+// BattleEffect_StartCanvasSprite starts it, BattleEffect_DrawCanvasSprite draws
+// the sprite each frame, BattleEffect_UploadCanvas copies the canvas into its
+// tiles on command, and BattleEffect_EndCanvasSprite ends it.
 
 /// The heap slots (byte offsets into Ram_HeapSlots) it takes.
 #define HEAP_SLOT_CANVAS_SPRITE 240
@@ -25,7 +25,7 @@
 #define CANVAS_SPRITE_256_COLORS 2 ///< rebuilt each frame, in 256 colours
 #define CANVAS_SPRITE_KEPT 3       ///< drawn as the effect left it
 
-/// What Func_080eb594 does with the canvas in the next frame.
+/// What BattleEffect_UploadCanvas does with the canvas in the next frame.
 #define CANVAS_UPLOAD_AND_CLEAR 1
 #define CANVAS_UPLOAD 2
 #define CANVAS_UPLOAD_AND_FADE1 3
@@ -55,9 +55,9 @@ STATIC_ASSERT(sizeof(struct CanvasSpriteWork) == 0xc4);
 STATIC_ASSERT(offsetof(struct CanvasSpriteWork, frame) == 0xa4);
 STATIC_ASSERT(offsetof(struct CanvasSpriteWork, tile) == 0xbc);
 
-void Func_080eb594(void);
-void Func_080eb6a0(void);
-void Func_080eb824(void);
+void BattleEffect_UploadCanvas(void);
+void BattleEffect_DrawCanvasSprite(void);
+void BattleEffect_StartCanvasSprite(void);
 void BattleEffect_EndCanvasSprite(void);
 
 #endif

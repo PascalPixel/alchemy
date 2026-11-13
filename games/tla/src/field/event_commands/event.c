@@ -85,7 +85,7 @@ void Event_EmptyObjectHook(void) {}
 
 struct Actor *Event_RunObjectHookAndWait(s32 object) {
   Event_EmptyObjectHook();
-  Func_080caa4c(object);
+  Actor_ResetForLeader(object);
   wait(1);
   return ObjectTable_Get(Party_GetLeaderActor());
 }
@@ -205,8 +205,6 @@ s32 Party_CheckItemLimit(s32 item) {
 #else
 #define ITEM_GIVEN_MODE 3
 #endif
-
-s32 Inventory_GetQuantityFar(s32 member, s32 slot);
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -375,7 +373,7 @@ s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 /// Gives the party item from actor: with no room it shows the item, says it
 /// was found and left behind and returns -1; otherwise it adds the item, sets
 /// flag (unless -1) and returns 0.
-s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
+s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
   if (PartyInventory_FindRoomFar(item) < 0) {
     Actor_GetById(actor)->scaleX = 0;
     ItemDisplay_ShowItem(item, 3);

@@ -53,7 +53,7 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
 /// for ids 0 to 7, else the enemies), other than unitId itself; unitId when no
 /// other lives.
 // No ☀️ twin found.
-s32 Func_0811f5a4(u32 unitId) {
+s32 BattleUnit_FindStrongestAlly(u32 unitId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u32 best = unitId;
   s32 bestAttack = Unit_Get__strongest_unit(unitId)->atk;

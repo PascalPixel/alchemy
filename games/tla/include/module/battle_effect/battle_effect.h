@@ -85,11 +85,11 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale);
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *, s32, s32, s32);
+void Canvas_BlitAtFoot(void *, s32, s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
@@ -121,17 +121,17 @@ extern const u8 Data_081991c0[];
 extern const u8 gData_08199210[]; // a quad's four corners, x y z for each
 extern const u8 Data_08199220[];
 extern const u8 gData_08199340[]; // the quad's face
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
-void Func_08164abc(s32 r, s32 g, s32 b);
-void Func_08164b2c(s32 red, s32 green, s32 blue);
-void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
-                   s32 segments);
+void Palette_BrightenBattleBg(s32 r, s32 g, s32 b);
+void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
+void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
+                            struct MeshTriangle *triangles, s32 segments);
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight);
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight);
 // The models: the rings' quad (Data_08199220), its corners, the crystal and its
 // corners.
 extern const u8 gData_081990d0[];
@@ -142,11 +142,11 @@ void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
-void Func_0814355c(void); // the BG2 canvas's registers
+void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
 extern u8 gData_02014000[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_08199364[];
-void Func_0815b510(u8 *map, s32 size, s32 scale);
+void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void BattleEffect_RunRamses(struct BattleEffectArgument *effect);
 void BattleEffect_RunNereid(struct BattleEffectArgument *effect);
 void BattleEffect_RunKirin(struct BattleEffectArgument *effect);
@@ -189,7 +189,7 @@ void SummonEffect_RunCanvasMode3(void *action);
 void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                                      s32 mode);
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
-void Func_0815b634(void);                // mode 3 only
+void Palette_MirrorBgColors(void);       // mode 3 only
 extern s32 gData_08197834[];             // ☀️ gPrism_ShardOffsets
 extern u8 gPrism_ShardWidths[];
 extern u8 gData_08197826[];     // ☀️ gPrism_ShardHeights
@@ -205,7 +205,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
 void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
                                   s32 mode);
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
-void Func_0815e22c(struct EffectPosition *midpoint);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
 void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                                   s32 mode);
@@ -213,7 +213,7 @@ void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 extern char ResourceId_StarCrossSheet;
 extern char ResourceId_CrossedDaggersSheet;
-void Func_08191530(struct BattleEffectArgument *effect);
+void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect);
 void BattleCamera_ApplyPhasedDelta(void);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 typedef struct {
@@ -325,7 +325,7 @@ extern const u8 Data_08199eb4[];
 extern const u8 Data_08199ebc[];
 extern const u8 Data_08199ea4[];
 extern const u8 Data_08199ec5[];
-void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode);
 extern u8 gCybele_ObjectPoses[];
 extern u16 gCybele_ThornPictures[]; // ☀️ gCybele_ThornOffsets
 extern u8 Data_0819820c[];          // ☀️ gCybele_ThornWidths

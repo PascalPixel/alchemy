@@ -1,8 +1,8 @@
 /// @file
 /// Field effects that event commands start, in ROM order: the 96-particle
 /// burst, an actor carried from one point to another as it circles, a whirl of
-/// rings, an actor spinning away and back (Func_080e3698, Func_080e37e0) and a
-/// spray of drops and smoke puffs.
+/// rings, an actor spinning away and back (Actor_DepartInRing,
+/// Actor_ArriveInRing) and a spray of drops and smoke puffs.
 // Part of psynergy.c.
 
 #include "../psynergy_internal.h"
@@ -43,12 +43,12 @@ void Camera_WorldToScreen(s32 *position);
 #include "effect_sprite.h"
 
 /// The 96-particle burst's task (heap slot 0x5c work, started by
-/// Func_080e2acc). Each particle whose delay counter is between 0 and 63 shows
-/// the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along its
-/// heading, then turns by its spin, rises by its speed and spins eight units
-/// faster; every counter advances. The work's flash flag is set on frame 30
-/// only, and the burst stops being active on frame 112.
-void Func_080e2c38(void) {
+/// ParticleBurst_Start). Each particle whose delay counter is between 0 and 63
+/// shows the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along
+/// its heading, then turns by its spin, rises by its speed and spins eight
+/// units faster; every counter advances. The work's flash flag is set on frame
+/// 30 only, and the burst stops being active on frame 112.
+void ParticleBurst_Update(void) {
   struct BurstWork *work;
   struct BurstParticle *particle;
   struct BurstSprite *sprite;
@@ -69,7 +69,7 @@ void Func_080e2c38(void) {
       Camera_WorldToScreen(position);
       sprite->x = position[0];
       sprite->y = position[2];
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
       particle->heading += particle->spin;
       particle->y += particle->speed;
       particle->spin =
@@ -91,7 +91,7 @@ void Func_080e2c38(void) {
 void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
-  Task_Remove((u32)Func_080e2c38);
+  Task_Remove((u32)ParticleBurst_Update);
   VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
 }
 
@@ -109,7 +109,10 @@ struct CarryWork {
   s32 to[3];
 };
 
-void Func_080e2d64(void) {
+/// Task of the Cyclone: the whirlwind carries the leader over 128 frames from
+/// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling
+/// and arcing up and down on the way, its follower with it.
+void Cyclone_CarryLeader(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *owner = *(struct Actor **)(effect + 16);
@@ -143,7 +146,9 @@ void Func_080e2d64(void) {
   work->follower->z = owner->z;
 }
 
-void Func_080e2ec0(void) {
+/// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
+/// pixels up, circling, without the arc.
+void Cyclone_LiftLeader(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *owner = *(struct Actor **)(effect + 16);
@@ -233,12 +238,12 @@ struct WhirlWork {
   s8 kind;
 };
 
-void Func_080e2264(void);
+void FieldPsynergy_GatherNearbyCells(void);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
-void Func_080e2acc(void);
-void Func_080e249c(void);
+void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
+void ParticleBurst_Start(void);
+void FieldPsynergy_RunTouchedEvents(void);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void FieldPsynergy_Cyclone(void) {
@@ -262,7 +267,7 @@ void FieldPsynergy_Cyclone(void) {
   s32 point;
 
   FieldPsynergy_FadeToCastColor();
-  Func_080e2264();
+  FieldPsynergy_GatherNearbyCells();
   BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
@@ -280,7 +285,7 @@ void FieldPsynergy_Cyclone(void) {
      * instructions differ in tla-en. */
     asm("");
   }
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   pos[0] = (*(struct Actor **)(effect + 16))->x;
   pos[1] = (*(struct Actor **)(effect + 16))->y;
@@ -293,7 +298,7 @@ void FieldPsynergy_Cyclone(void) {
   canvas->mode = CANVAS_SPRITE_KEPT;
   canvas->scaleX = 0x18000;
   canvas->scaleY = 0x18000;
-  Func_080eaf98(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
+  EffectSprite_Init(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
   canvas->sprite.oam.palette256 = 1;
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
@@ -310,8 +315,8 @@ void FieldPsynergy_Cyclone(void) {
   }
   for (i = 0; i < 60; i++) {
     for (j = 0; j < 4; j++)
-      Func_080e2a68((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
-                    Random16(), offsets, pixels);
+      Cyclone_PlotArc((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
+                      Random16(), offsets, pixels);
     spread += step;
     if (spread > 0x1c0000)
       spread = 0x1c0000;
@@ -343,7 +348,7 @@ void FieldPsynergy_Cyclone(void) {
 
   if (mode == 3) {
     if (work->kind)
-      Func_080e2acc();
+      ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
@@ -359,18 +364,18 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = *(s16 *)(event + 0xd40) << 16;
     work->to[1] = owner->y + 0x200000;
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
-    Task_Add(Func_080e2ec0, 0x480);
+    Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
        * 999's copy to r8 ahead of the state's address; without it, 2 of 713
        * instructions differ in tla-en. */
       asm("");
       if (frame == 30)
-        Func_080e249c();
+        FieldPsynergy_RunTouchedEvents();
       wait(1);
       frame++;
     }
-    Task_Remove(Func_080e2ec0);
+    Task_Remove(Cyclone_LiftLeader);
     if (*(s8 *)(effect + 52) == 0)
       owner->scaleX = 0;
     ring->scaleX = 0;
@@ -378,7 +383,7 @@ void FieldPsynergy_Cyclone(void) {
       BattleEffect_EndX();
   } else if (mode == 2) {
     if (work->kind)
-      Func_080e2acc();
+      ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
@@ -392,7 +397,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = *(s16 *)(event + 0xd3c) << 16;
     work->to[1] = owner->y;
     work->to[2] = *(s16 *)(event + 0xd3e) << 16;
-    Task_Add(Func_080e2d64, 0x480);
+    Task_Add(Cyclone_CarryLeader, 0x480);
     frame = 0;
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
@@ -400,11 +405,11 @@ void FieldPsynergy_Cyclone(void) {
        * instructions differ in tla-en. */
       asm("");
       if (frame == 30)
-        Func_080e249c();
+        FieldPsynergy_RunTouchedEvents();
       wait(1);
       frame++;
     }
-    Task_Remove(Func_080e2d64);
+    Task_Remove(Cyclone_CarryLeader);
     for (i = 0; i < 16; i++) {
       owner->scaleX += -0x800;
       owner->scaleY = owner->scaleX;
@@ -423,7 +428,7 @@ void FieldPsynergy_Cyclone(void) {
     Sound_PlayFar(136);
     Actor_SelectAnimationFar(ring, 6);
     if (work->kind)
-      Func_080e2acc();
+      ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
@@ -434,7 +439,7 @@ void FieldPsynergy_Cyclone(void) {
     frame = 0;
     while (work->count != 0) {
       if (frame == 30)
-        Func_080e249c();
+        FieldPsynergy_RunTouchedEvents();
       wait(1);
       frame++;
     }
@@ -464,7 +469,7 @@ void Event_ResolvePendingActions(s32 skip);
 void Event_StartScreenTransition(void);
 void Event_Wait(s32 frames);
 
-void Func_080e3698(s32 actor) {
+void Actor_DepartInRing(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
   s32 angle = object->facing;
   u8 motionFlags = object->motionFlags;
@@ -516,13 +521,13 @@ void Func_080e3698(s32 actor) {
 
 void Event_WaitTransitionFrames(void);
 
-/// An event command, the arrival counterpart of Func_080e3698. The actor
+/// An event command, the arrival counterpart of Actor_DepartInRing. The actor
 /// spins (BattleEffect_SpinObject) at zero width and its sprite is hidden while
 /// object 280 grows on it for 32 frames; object 280 then snaps to 1.5 by 1
 /// (cue 136, mode 6) while the actor widens back from half size over 16 frames
 /// and shows again. Object 280 is destroyed and the actor's update and facing
 /// are restored.
-void Func_080e37e0(s32 actor) {
+void Actor_ArriveInRing(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
   s32 angle = object->facing;
   struct Actor *ring;
@@ -613,7 +618,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SprayParticle *particle);
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
 /// it is emitting, a free one of sixteen drops starts at the origin with the
@@ -624,7 +629,7 @@ s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 /// something solid; an odd drop that dies leaves one of sixteen puffs of smoke
 /// that rise for 32 frames. The angle then turns toward the scene's facing by
 /// at most 0x400 a frame.
-void Func_080e38c8(void) {
+void Blaze_UpdateSpray(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
   struct SprayEvent *event = Ram_HeapSlots->eventWork;
@@ -689,7 +694,8 @@ void Func_080e38c8(void) {
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject &&
           other != scene->otherObject &&
-          Func_080dbe80(&particle->x, 2, &other->x, other->radius - 2) >= 0) {
+          FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x,
+                                     other->radius - 2) >= 0) {
         work->hit = 1;
         work->hitObject = j;
         particle->timer = -1;
@@ -732,7 +738,7 @@ void Func_080e38c8(void) {
       Camera_WorldToScreen(pos);
       sprite->x = pos[0];
       sprite->y = pos[2];
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
       particle->y += 0xcccc;
       if (++particle->timer == 32)
         particle->timer = -1;
@@ -765,7 +771,7 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
+void Teleport_PlaySparks(void);
 s32 Party_GetLeaderActor(void);
 
 /// Effect 26 cast on a target: runs the effect, ignoring the target.

@@ -64,7 +64,7 @@ void WorldPicture_Initialize(void) {
     work->x = 264 << 16;
     work->z = 16 << 16;
   } else {
-    Func_080ec1d0(&screenX, &screenY);
+    WorldPicture_GetLeaderPoint(&screenX, &screenY);
     work->x = screenX << 16;
     work->z = screenY << 16;
   }
@@ -116,9 +116,10 @@ void WorldPicture_Release(void) {
 
 #include "actor.h"
 
-/// Moves the controlled object to (x, z) converted by fixed scale factors
-/// (x / 853, z / 640 after offsets) and puts the camera on it.
-void Func_080ec16c(s32 x, s32 z) {
+/// Unused: nothing calls it. Puts the leader at the world map position of
+/// picture point (x, z), the inverse of WorldPicture_GetLeaderPoint's scale,
+/// and the camera on it.
+void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
   s32 owner = Party_GetLeaderActor();
   s32 *camera = *(s32 **)Ram_HeapSlots->mapWork;
   struct Actor *object = ObjectTable_Get(owner);
@@ -136,7 +137,11 @@ void Func_080ec16c(s32 x, s32 z) {
 
 #include "version.h"
 
-void Func_080ec1d0(s32 *screenX, s32 *screenY) {
+/// The leader's point on the world map picture: its world map position scaled
+/// by 853 and 640 in 16384, a far corner of the map folded in (flag 286 set
+/// while the leader is there); off the world map, the picture's fixed point
+/// (264, 16).
+void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
   u8 *state = Ram_HeapSlots->eventWork;
   u8 *object;

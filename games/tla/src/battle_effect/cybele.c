@@ -1157,28 +1157,29 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 void BattleEffect_RunDrain(u8 *effect) {
   s32 value = *(s32 *)(effect + 24);
 
-  Func_0814ea58(effect, (u32)(-value | value) >> 31);
+  BattleEffect_RunDrainMotes(effect, (u32)(-value | value) >> 31);
 }
 
 /// Abilities: True Collide (kind 451).
-void BattleEffect_RunTrueCollide(u8 *effect) { Func_0814ea58(effect, 2); }
+void BattleEffect_RunTrueCollide(u8 *effect) {
+  BattleEffect_RunDrainMotes(effect, 2);
+}
 
 #include "battle_display.h"
 
 #define MOTES_PER_MEMBER 128
 #define MOTES ((struct EffectStep *)Ram_MapCellBuffer)
 
-// Motes of light burst out of each target in turn, 20 frames apart, and
-// are drawn into the user.
-
-// Setup: each target's 128 motes start at the middle of its body with
-// random velocities; the canvas darkens by 4 a transfer (in mode 2 it
-// trails instead). Frame loop: a target flashes as its motes leave; ten
-// frames after leaving (one frame later for each mote) a mote accelerates
-// toward the middle of the user by 1/256 of the distance a frame and goes
-// out within 16 pixels of it across. The user glows from frame 40 until 20
-// frames before the end.
-void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
+/// Motes of light burst out of each target in turn, 20 frames apart, and
+/// are drawn into the user, as The Broken Seal's BattleEffect_RunDrain.
+/// Setup: each target's 128 motes start at the middle of its body with
+/// random velocities; the canvas darkens by 4 a transfer (in mode 2 it
+/// trails instead). Frame loop: a target flashes as its motes leave; ten
+/// frames after leaving (one frame later for each mote) a mote accelerates
+/// toward the middle of the user by 1/256 of the distance a frame and goes
+/// out within 16 pixels of it across. The user glows from frame 40 until 20
+/// frames before the end.
+void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -1196,7 +1197,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 2)
-    Func_0815b510(sheet, 10, 0x10000);
+    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, 0x10000);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   if (mode == 0)
@@ -3189,7 +3190,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     else
       REG_BG2X = 0x1000;
   } else {
-    Func_0815e22c(&midpoint);
+    BattleEffect_GetTargetsMidpoint(&midpoint);
     midpoint.x -= 64;
     if (midpoint.x < 0) {
       xOffset = midpoint.x;
@@ -4599,7 +4600,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
    } *)Ram_HeapSlots)                                                          \
        ->draw)
 
-// A sprite object as Func_0815b290 returns it.
+// A sprite object as EffectSprite_CreateWithTiles returns it.
 struct SpriteObject {
   u8 unk00[9];
   u8 tileHigh : 2;
@@ -4609,8 +4610,8 @@ struct SpriteObject {
   u8 slot; // its row of gResourceTableEntries
 };
 
-struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
-                                   u32 attributes);
+struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
+                                                  u32 shape, u32 attributes);
 
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
@@ -4675,7 +4676,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   picture += 256;
   Decompress_TaggedLz(picture, tiles);
   for (i = 0; i != GIANT_PIECES; i++) {
-    struct SpriteObject *piece = Func_0815b290(32, 32, 0x80002000, 0);
+    struct SpriteObject *piece =
+        EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
     piece->priority = 1;
     work->objects[i] = piece;

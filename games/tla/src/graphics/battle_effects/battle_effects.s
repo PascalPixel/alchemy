@@ -380,7 +380,7 @@ Resource_Data0FC:
 	.incbin "games/tla/src/graphics/battle_effects/sheet_0fc.bitmap.lz"
 	.byte 0x6b, 0x06	@ PACKER: left in the buffer by Resource_Data0FB+0x34a
 @ Fifteen cels of a glowing oval shrinking from 16x32 to 3x4, with no palette of
-@ their own: the sizes and offsets of Func_08182898's cel tables. That effect
+@ their own: the sizes and offsets of BattleEffect_RunBubbleColumn's cel tables. That effect
 @ loads BattleEffect_BlueBeamSheet's palette to colour them
 	.global Resource_Data0FD
 Resource_Data0FD:

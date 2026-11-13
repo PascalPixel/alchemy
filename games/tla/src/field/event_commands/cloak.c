@@ -148,7 +148,7 @@ void FieldPsynergy_Douse(void) {
   to->z = work->z;
   if ((s8)work->variant != 0)
     to->y = y + (80 << 16);
-  if (Func_08020330(anchor) == 380) {
+  if (Actor_GetSpriteIdFar(anchor) == 380) {
     to->y += 32 << 16;
     raised = 1;
   }
@@ -214,7 +214,8 @@ void FieldPsynergy_Douse(void) {
       Sound_PlayFar(132);
       wait(6);
       if (n == 12) {
-        ev = Scene_FindPsynergyTrigger(0x50000005, 5, Func_080ce31c(5));
+        ev = Scene_FindPsynergyTrigger(0x50000005, 5,
+                                       Scene_SelectPsynergyTarget(5));
         if (ev != 0)
           Field_RunPsynergyEvent(ev, work->firstObjectId, work->secondObjectId);
       }

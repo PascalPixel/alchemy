@@ -58,7 +58,7 @@ void BattleSpoils_Clear(void) {
 #define FIRST_DIGIT_COUNT 9
 #endif
 
-s32 Func_08128228(u8 *s) {
+s32 String_FindFirstDigit(u8 *s) {
   s32 i;
 
   for (i = 0; i <= 13; i++) {
@@ -102,9 +102,9 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
 
 /// Counts a fallen enemy and adds its spoils, The Broken Seal's
 /// BattleEnemy_RecordDefeat with the battle work from its heap slot. This game
-/// also keeps the last two defeated enemies (their ids and Func_08128228's
-/// first digit of their names, alternating slots, with a count up to 2) and
-/// sets the seen flag only for enemy ids below 0x200.
+/// also keeps the last two defeated enemies (their ids and
+/// String_FindFirstDigit's first digit of their names, alternating slots, with
+/// a count up to 2) and sets the seen flag only for enemy ids below 0x200.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
@@ -128,7 +128,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     return -2;
   slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
   spoils->lastEnemyIds[slot] = unit->enemyId;
-  spoils->lastDigits[slot] = Func_08128228((u8 *)unit);
+  spoils->lastDigits[slot] = String_FindFirstDigit((u8 *)unit);
   if (spoils->lastCount <= 1)
     spoils->lastCount++;
   classSlot = 0;

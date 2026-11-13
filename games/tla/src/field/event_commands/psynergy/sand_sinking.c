@@ -1,5 +1,6 @@
 /// @file
-/// Routines not yet understood.
+/// The Sand sinking the leader into the ground: its picture, its sprite and
+/// the grains it throws up.
 // Part of psynergy.c.
 
 #include "../psynergy_internal.h"
@@ -46,21 +47,22 @@ struct EffectParticle {
   s32 timer;
 };
 
-/* VIEW(f0e446c): routine Func_080eaf98 as void Func_080eaf98(struct
+/* VIEW(f0e446c): routine EffectSprite_Init as void EffectSprite_Init(struct
  * EffectSprite__f0e446c *sprite, s32 width, s32 height, u32 shape, s32 tiles);
- * effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32
+ * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
  * pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void Func_080eaf98__f0e446c(struct EffectSprite__f0e446c *sprite,
-                                   s32 width, s32 height, u32 shape,
-                                   s32 tiles) __asm__("Func_080eaf98");
+extern void EffectSprite_Init__f0e446c(struct EffectSprite__f0e446c *sprite,
+                                       s32 width, s32 height, u32 shape,
+                                       s32 tiles) __asm__("EffectSprite_Init");
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
 
-void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
+/// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:
+/// each column's pixels below a wave line move down by phase (1.3 pixels a
+/// step), those above it stay.
+void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
   s32 height = 32;
   s32 column;
@@ -88,12 +90,14 @@ void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
 
 #include "event_work.h"
 
-void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
+/// Sets up the sprite the Sand draws the sinking leader as: the leader's
+/// depth, priority, scale (three quarters on the world map) and place.
+void Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 position[3];
 
-  Func_080eaf98__f0e446c(sprite, 16, 30, 0x80000000, tiles);
+  EffectSprite_Init__f0e446c(sprite, 16, 30, 0x80000000, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
   sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   sprite->color = 1;
@@ -113,12 +117,15 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   sprite->y = position[2];
 }
 
-/// Forwards to Func_080eb01c, which draws an effect sprite.
-void Func_080e45a0(void *sprite) { Func_080eb01c(sprite); }
+/// Draws Sand_InitLeaderSprite's sprite.
+void Sand_DrawLeaderSprite(void *sprite) { EffectSprite_Draw(sprite); }
 
-void Func_080e45a8(struct EffectSprite__f0e446c *sprite,
-                   struct EffectParticle *particle, s32 unused, s32 tiles,
-                   s32 high) {
+/// One grain of sand thrown up round the leader as it sinks: placed 2 pixels
+/// up and 2 out when the leader stands (high), else 4 out, drifting outward,
+/// drawn small just in front of the leader.
+void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite,
+                     struct EffectParticle *particle, s32 unused, s32 tiles,
+                     s32 high) {
   struct Actor *mainObject =
       ((struct EffectScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 position[3];
@@ -145,7 +152,7 @@ void Func_080e45a8(struct EffectSprite__f0e446c *sprite,
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
-  Func_080eaf98__f0e446c(sprite, 8, 8, 0x40000000, tiles);
+  EffectSprite_Init__f0e446c(sprite, 8, 8, 0x40000000, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
   sprite->priority = BattleEffect_GetObjectPriority(mainObject);

@@ -17,7 +17,7 @@ Resource_FarCall008:
 	export Shop_SaveAndTintFieldPaletteFar, Shop_SaveAndTintFieldPalette
 	export Shop_RestoreFieldPaletteFar, Shop_RestoreFieldPalette
 	export ItemPicker_RunToDropFar, ItemPicker_RunToDrop
-	export Func_08108070, Func_0810b79c
+	export Func_08108070, ItemPicker_RunMode1
 	export Sound_WaitForJingleFar, Sound_WaitForJingle
 	export Inn_PlaySleepFar, Inn_PlaySleep
 	export VramBlock_LoadResourceFar, VramBlock_LoadResource

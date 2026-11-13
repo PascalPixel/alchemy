@@ -155,7 +155,9 @@ struct ChainWork {
 
 #define CHAIN_WORK (*(struct ChainWork **)&Ram_HeapSlots->unk84[6])
 
-s32 Func_080292fc(struct Actor *object) {
+/// Script command 0x1c, the leader's control on a tied rope (render mode 3):
+/// the pad moves it from node to node along the rope, a half cell a step.
+s32 Actor_CrossRope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct SpriteAngle *sprite;
@@ -291,7 +293,8 @@ static inline void TurnToward(struct Actor *object, u16 angle) {
   object->facing += delta;
 }
 
-s32 Func_08029570(struct Actor *object) {
+/// Script command 0x1d, Actor_CrossRope on a tightrope (render mode 4).
+s32 Actor_CrossTightrope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct ObjectAnimationState *sprite;
@@ -414,9 +417,9 @@ s32 Func_08029570(struct Actor *object) {
 
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 
-u32 Random16(void);
-
-void Func_08029810(struct Actor *object) {
+/// Update of a grain the Sand leaves as the leader moves: it turns and
+/// jitters sideways at random.
+void Sand_JitterGrain(struct Actor *object) {
   u32 first;
   u32 second;
   s32 x;
@@ -434,7 +437,7 @@ void Func_08029810(struct Actor *object) {
 /// When one of three party key sets is pressed: plays cue 113 if the far call
 /// accepts the argument, else posts event request 0x208b and returns 1 while
 /// flag 0x146 is clear.
-s32 Func_08029838(s32 arg) {
+s32 Sand_CheckEndKeys(s32 arg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   /* FAKEMATCH(pin): pressed held in r0, the register the early zero is
    * returned in, so the argument moves to r6; as a plain local, which takes r6
@@ -448,7 +451,7 @@ s32 Func_08029838(s32 arg) {
       (gInput.pressed & gMainRoutineWork.keys236))
     pressed = 1;
   if (pressed) {
-    if (Func_080c8828(arg)) {
+    if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(113);
     } else if (!GameFlag_Test(0x146)) {
       work->unk166 = 0x208b;

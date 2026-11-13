@@ -94,7 +94,7 @@ struct DescriptorEntry *Field_GetPsynergyTargetRule(s32 id) {
 
 /// Returns how far the ground at position lies above or below the actor's,
 /// made positive, when that is within the id's table range (pixels), else -1.
-s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position) {
+s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   struct DescriptorEntry *entry = Field_GetPsynergyTargetRule(id);
   s32 height = MapGrid_GetTerrainHeightAboveFar__field_sequence(
       position[0], position[2], actor->terrainId, actor->terrainHeight);
@@ -110,7 +110,7 @@ s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position) {
 // How far object otherId stands from object selfId, in pixels over the
 // ground, when it lies within the animation's reach in front of selfId;
 // -1 when it does not.
-s32 Func_080cdac0(s32 animation, s32 selfId, s32 otherId) {
+s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   struct Actor *self;
   struct Actor *other;
   struct NearbyRule *rule;
@@ -176,7 +176,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
 
   for (i = 0; i <= 80; i++) {
     if (i != self) {
-      s32 distance = Func_080cdac0(effect, self, i);
+      s32 distance = Field_MeasurePsynergyReach(effect, self, i);
 
       if (distance != -1 && nearest > distance) {
         found = i;
@@ -208,12 +208,12 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
 /// Whether the object 16 pixels in front of the current owner, along its
 /// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
 /// nothing solid stands on the cell beyond it or above it and its terrain
-/// test passes there, else 0. Func_080cdd80, after it, makes the push.
+/// test passes there, else 0. Leader_PushObjectAhead, after it, makes the push.
 // The test against the paused object comes from patch 1. The Japanese release
 // has none and stays on its scaffold: with the branch below it differs by one
 // reordered row (the angle's argument copy issued after the next position
 // load, differ 4).
-s32 Func_080cdc74(void) {
+s32 Leader_CanPushObjectAhead(void) {
   s32 position[3];
   s32 above[3];
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -231,7 +231,7 @@ s32 Func_080cdc74(void) {
   position[1] = (owner->y + (half << 11)) & 0xfff80000;
   position[2] = owner->z;
   Vector_AddPolarOffset(0x100000, angle, position);
-  target = Func_080eaf28(position, 1);
+  target = Actor_FindAtCell(position, 1);
   if (target == 0)
     return 0;
   if (BYTE_AT(target, 98) != 0)
@@ -245,13 +245,13 @@ s32 Func_080cdc74(void) {
   position[1] = target->y;
   position[2] = target->z;
   Vector_AddPolarOffset(0x100000, angle, position);
-  hit = Func_080eaf28(position, 1);
+  hit = Actor_FindAtCell(position, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
   above[0] = target->x;
   above[1] = target->y + 0x100000;
   above[2] = target->z;
-  hit = Func_080eaf28(above, 1);
+  hit = Actor_FindAtCell(above, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
   terrain = target->terrainId;
@@ -265,7 +265,9 @@ s32 Func_080cdc74(void) {
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
-void Func_080cdd80(void) {
+/// Pushes the object ahead of the current owner on by 16 pixels, as
+/// Leader_CanPushObjectAhead allowed.
+void Leader_PushObjectAhead(void) {
   s32 position[3];
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *target;
@@ -280,7 +282,7 @@ void Func_080cdd80(void) {
   position[1] = (owner->y + 0x40000) & 0xfff80000;
   position[2] = owner->z;
   Vector_AddPolarOffset(0x100000, angle, position);
-  target = Func_080eaf28(position, 1);
+  target = Actor_FindAtCell(position, 1);
   position[0] = target->x;
   position[1] = target->y;
   position[2] = target->z;

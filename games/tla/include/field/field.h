@@ -80,7 +80,7 @@ s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
 void Actor_ReleaseAtIndex(u32 actorIndex);
 void Actor_SetSquareSprite(u32 objectId);
 void BattleEffect_DropObjectAtAnchor(u32 objectId);
-void Func_081b83c4(void);
+void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
 void Map_CenterOnFollowedPointFar(void);
 s32 MapGrid_GetTerrainHeightFar(u8, s32, s32);
@@ -105,8 +105,6 @@ s32 Party_AddMemberFar(s32 event_id);
 void Party_RemoveMemberFar(s32 owner);
 void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale,
                                     u16 angle);
-void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale,
-                                 s32 angle, s32 layer);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Scene_SetArrivalFlags(s32 unused);
 s32 Message_OpenWindowFar(s32, s32, s32, s32);

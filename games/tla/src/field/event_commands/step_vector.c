@@ -195,7 +195,7 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
 /// the effect left for it, copying the canvas into the sprite's tiles (or to
 /// the start of BG VRAM), and clearing or fading it after the copy. Case 2
 /// comes before case 1: its body comes first in the ROM.
-void Func_080eb594(void) {
+void BattleEffect_UploadCanvas(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->unkec[1];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *tiles = OBJ_TILES + work->tile * TILE_SIZE;
@@ -245,7 +245,7 @@ void Func_080eb594(void) {
 // The canvas sprite's frame callback: places the sprite at the work's
 // position (whole pixels), scale and angle, and draws it. A sprite scaled to
 // nothing is not drawn.
-void Func_080eb6a0(void) {
+void BattleEffect_DrawCanvasSprite(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->unkec[1];
   s32 x = work->x << 16;
   s32 y = work->y << 16;
@@ -254,7 +254,7 @@ void Func_080eb6a0(void) {
 
   if (scaleX != 0 && scaleY != 0) {
     if (work->mode == CANVAS_SPRITE_16_COLORS) {
-      Func_080eaf98(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
+      EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
       work->sprite.oam.palette256 = 0;
       work->sprite.oam.palette = 14;
       work->sprite.oam.priority = work->priority;
@@ -264,10 +264,10 @@ void Func_080eb6a0(void) {
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
       work->sprite.angle = work->angle;
-      Func_080eb01c(&work->sprite);
+      EffectSprite_Draw(&work->sprite);
     }
     if (work->mode == CANVAS_SPRITE_256_COLORS) {
-      Func_080eaf98(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
+      EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
       work->sprite.oam.palette256 = 1;
       work->sprite.oam.palette = 0;
       work->sprite.oam.priority = work->priority;
@@ -277,7 +277,7 @@ void Func_080eb6a0(void) {
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
       work->sprite.angle = work->angle;
-      Func_080eb01c(&work->sprite);
+      EffectSprite_Draw(&work->sprite);
     }
     if (work->mode == CANVAS_SPRITE_KEPT) {
       work->sprite.oam.priority = work->priority;
@@ -287,7 +287,7 @@ void Func_080eb6a0(void) {
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
       work->sprite.angle = work->angle;
-      Func_080eb01c(&work->sprite);
+      EffectSprite_Draw(&work->sprite);
     }
   }
   work->drawnFrames++;
@@ -301,10 +301,10 @@ void Func_080eb6a0(void) {
 
 /// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
 /// 64x64 canvas copied into the sprite's tiles, and a map from each canvas
-/// pixel (row by row) to its place in the tiles. Func_080eb6a0 draws the
-/// sprite and Func_080eb594 uploads the canvas each frame;
-/// BattleEffect_EndCanvasSprite ends it.
-void Func_080eb824(void) {
+/// pixel (row by row) to its place in the tiles. BattleEffect_DrawCanvasSprite
+/// draws the sprite and BattleEffect_UploadCanvas uploads the canvas each
+/// frame; BattleEffect_EndCanvasSprite ends it.
+void BattleEffect_StartCanvasSprite(void) {
   struct WindowWork *windowWork =
       (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct CanvasSpriteWork *work =
@@ -341,15 +341,15 @@ void Func_080eb824(void) {
     }
   }
 
-  Task_Add(Func_080eb6a0, TASK_PASS_VBLANK);
-  Task_Add(Func_080eb594, TASK_PASS_FRAME - 20);
+  Task_Add(BattleEffect_DrawCanvasSprite, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_UploadCanvas, TASK_PASS_FRAME - 20);
 }
 
 /// Ends the canvas sprite: stops its draw and upload callbacks, waits a
 /// frame and frees its sprite work, canvas and pixel map.
 void BattleEffect_EndCanvasSprite(void) {
-  Task_Remove(Func_080eb6a0);
-  Task_Remove(Func_080eb594);
+  Task_Remove(BattleEffect_DrawCanvasSprite);
+  Task_Remove(BattleEffect_UploadCanvas);
   wait(1);
   HeapSlot_Release(180);
   HeapSlot_Release(96);
@@ -388,7 +388,7 @@ struct SparkWork {
 /// the sparks stop coming and the object spins and widens from nothing back to
 /// full width over 64 frames, when its sprite and its child flags come back;
 /// 74 frames later it ends.
-void Func_080eb960(s32 objectId) {
+void Actor_VanishInSparks(s32 objectId) {
   struct SparkWork *work =
       HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
   s32 phase;
@@ -414,7 +414,7 @@ void Func_080eb960(s32 objectId) {
   spark = work->sparks;
   for (; i < 64; i++, spark++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(object);
@@ -475,7 +475,7 @@ void Func_080eb960(s32 objectId) {
           drawn->x = pos[0];
           drawn->y = pos[2];
           drawn->oam.index = tiles + (spark->age & 3) * 2;
-          Func_080eb01c(drawn);
+          EffectSprite_Draw(drawn);
           spark->angle += 0x800;
           spark->radius -= 0x3333;
           spark->centre[1] -= 0x4000;

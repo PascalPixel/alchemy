@@ -16,15 +16,14 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -60,7 +59,7 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void Func_0815e22c(
+void BattleEffect_GetTargetsMidpoint(
     struct EffectPosition *position); // the targets' centre on screen
 void BattleEffect_StepPaletteToResource(s32 palette);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
@@ -172,7 +171,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   offset = 0x2400;
   // Twelve shaded droplets, 2 to 24 wide.
   for (i = 0; i != 12; i++) {
-    Func_0815b434((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -192,7 +191,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     p->y = -(Trig_Cos(angle) * radius);
     p->variant = i / 2 + 25;
   }
-  Func_0815e22c(center);
+  BattleEffect_GetTargetsMidpoint(center);
   centerX = center[0] / 2;
 
   for (frame = 0; frame != 104; frame++) {
@@ -280,8 +279,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           if (frame > 39) {
             u8 *pool = work->sheet + 0x4c86;
 
-            Func_0815b434(pool, grow, 0x10000);
-            Func_0818caa8(pool, centerX, 100, grow);
+            BattleEffect_DrawShadedCircles(pool, grow, 0x10000);
+            Canvas_BlitAtFoot(pool, centerX, 100, grow);
           }
           continue;
         }
@@ -310,7 +309,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             s32 tier = index >> 1;
 
             BattleEffectKernels_IntegrateVector2(p, 64, 0);
-            Func_0818caa8((u8 *)(circles[tier] + cells), dropX, dropY, drop);
+            Canvas_BlitAtFoot((u8 *)(circles[tier] + cells), dropX, dropY,
+                              drop);
           }
         }
       }
@@ -350,7 +350,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         model->shade = shade;
         Transform_Reset();
-        Func_08015160((centerX - 64) << 16, Data_08199ddb[i] << 16, 0);
+        SceneTransform_ApplyPosition3((centerX - 64) << 16,
+                                      Data_08199ddb[i] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
@@ -397,7 +398,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           }
           texture.pixels = work->sheet + (x << 12) + 0xc56;
           Transform_Reset();
-          Func_08015160((centerX - 64) << 16, 0x200000, 0);
+          SceneTransform_ApplyPosition3((centerX - 64) << 16, 0x200000, 0);
           Transform_ApplyRoll(spinner->z);
           if (i & 1) {
             Transform_ApplyYaw(0x8000);
@@ -749,7 +750,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
         model->shade = shade;
         if (frame <= 45) {
           Transform_Reset();
-          Func_08015160((pos.x - 60) << 16, (pos.y - 80) << 16, 0);
+          SceneTransform_ApplyPosition3((pos.x - 60) << 16, (pos.y - 80) << 16,
+                                        0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 0) {
             Transform_ApplyRoll(-0x3388);
@@ -757,7 +759,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
             Transform_ApplyYaw(0x8000);
             Transform_ApplyRoll(-0x3388);
           }
-          Func_0801521c(0x286a0);
+          SceneTransform_ApplyUniformScale(0x286a0);
           Render_TransformVertices(Data_081991e0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -785,7 +787,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
               model->shade = shade;
               Transform_Reset();
               model->scrollV = (frame * 8 + i * 16) & 63;
-              Func_08015160((pos.x - 60) << 16, Data_08199e60[i] << 16, 0);
+              SceneTransform_ApplyPosition3((pos.x - 60) << 16,
+                                            Data_08199e60[i] << 16, 0);
               SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
@@ -830,7 +833,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
               scroll &= frame + i * 5;
               model->scrollU = scroll << 4;
               Transform_Reset();
-              Func_08015160((base->x - 60) << 16, Data_08199e6c[i] << 16, 0);
+              SceneTransform_ApplyPosition3((base->x - 60) << 16,
+                                            Data_08199e6c[i] << 16, 0);
               SceneTransform_ApplyScale3(scale, scale * 2, scale);
               Transform_ApplyPitch(2000);
               Render_TransformVertices(Data_08198cac, projected, 32);
@@ -903,8 +907,8 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void) {
 /// Fills a grid of columns by rows vertices with two triangles a cell, each
 /// cell cellWidth by cellHeight texels of the texture, and ends the list with
 /// an all-zero triangle.
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight) {
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight) {
   s32 row;
   s32 column;
   struct MeshTriangle *second;

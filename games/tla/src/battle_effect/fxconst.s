@@ -37,7 +37,7 @@ Data_08196e2c:
 	.global Data_08196e44
 Data_08196e44:
 	.4byte 0x10000, 0x10000
-@ read by Func_0815b68c
+@ read by Ulysses_MoveLastParticle
 	.global gData_08196e4c
 gData_08196e4c:
 	.4byte 0x10000, 0x10000
@@ -149,7 +149,7 @@ Data_08196f20:
 	.global Data_08196f28
 Data_08196f28:
 	.byte 2, 3, 5, 8, 7, 6, 4, 0
-@ read by Func_0819273c
+@ read by Iris_DrawPillar
 	.global Data_08196f30
 Data_08196f30:
 	.4byte 0xf0f0, 0xf010, 3312, 3088

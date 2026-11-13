@@ -63,9 +63,6 @@ struct PendingEvent__f0e92b4 {
 
 extern char ResourceId_WaterSplash;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-s32 Func_080ce31c(s32 kind);
 /* VIEW(f0e92b4): routine Scene_FindPsynergyTrigger as struct
  * PendingEvent__f0e92b4 *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
  * arg); f0e5d5c has void *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
@@ -74,19 +71,8 @@ extern struct PendingEvent__f0e92b4 *
 Func_080ce458__f0e92b4(u32 kind, s32 entry,
                        s32 arg) __asm__("Scene_FindPsynergyTrigger");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Func_08020330(struct Actor *object);
-void FieldPsynergy_FadeToCastColor(void);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-void Func_080e89e4(s32 direction);
-void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
-void Func_080e8c9c(void);
-void wait(s32 frames);
-u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 /* VIEW(f0e92b4): routine EffectSprite_DrawAtWorldPosition as void
@@ -99,7 +85,6 @@ extern void EffectSprite_DrawAtWorldPosition__f0e92b4(
     struct SplashParticle
         *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
-void FieldPsynergy_FadeFromCastColor(void);
 
 void FieldPsynergy_GrindOnTarget(void) {
   struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
@@ -136,7 +121,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   spraying = 0;
   next = 0;
   mode = 0;
-  selector = Func_080ce31c(scene->fieldKind);
+  selector = Scene_SelectPsynergyTarget(scene->fieldKind);
   pending = Func_080ce458__f0e92b4(0x50000005, scene->fieldKind, selector);
   if (child != NULL) {
     if (animation != NULL) {
@@ -151,7 +136,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     Vector_AddPolarOffset(0x200000, scene->facing, &scene->x);
   }
   isWaterObject = 0;
-  if (Func_08020330(child) == 424) {
+  if (Actor_GetSpriteIdFar(child) == 424) {
     isWaterObject = 1;
     mode = 1;
   }
@@ -171,7 +156,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -181,10 +166,10 @@ void FieldPsynergy_GrindOnTarget(void) {
   }
   if (child != NULL && animation != NULL && isWaterObject == 1) {
     Animation_ApplyChildValueFar(animation, 0);
-    Func_080e43a4(animation->tiles, picture,
-                  animation->width * animation->height);
+    FieldPsynergy_DecodePicture(animation->tiles, picture,
+                                animation->width * animation->height);
   }
-  Func_080e89e4(2);
+  ViewMove_Start(2);
   wait(1);
   Sound_PlayFar(238);
   counter = 0;
@@ -251,7 +236,7 @@ void FieldPsynergy_GrindOnTarget(void) {
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           picture, animation->width, animation->height, dst);
     }
-    Func_080e8b44(2, counter++, amplitude);
+    ViewMove_Swing(2, counter++, amplitude);
     switch (phase) {
     case 0:
       if (timer == 40 && mode != 0)
@@ -299,7 +284,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     timer++;
   } while (phase != 999);
   Sound_PlayFar(390);
-  Func_080e8c9c();
+  ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
   VramCache_FreeEntry(entry);
 end:
@@ -330,7 +315,7 @@ void FieldPsynergy_Grind(void) {
   scene = Ram_HeapSlots->effectWork;
   FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
-  Func_080e89e4(VIEW_MOVE_Z);
+  ViewMove_Start(VIEW_MOVE_Z);
   wait(10);
 
   phase = 0;
@@ -338,7 +323,7 @@ void FieldPsynergy_Grind(void) {
   state = SWAY_GROW;
   frames = 0;
   do {
-    Func_080e8b44(VIEW_MOVE_Z, phase++, amplitude);
+    ViewMove_Swing(VIEW_MOVE_Z, phase++, amplitude);
     switch (state) {
     case SWAY_GROW:
       amplitude += SWAY_RAMP;
@@ -370,7 +355,7 @@ void FieldPsynergy_Grind(void) {
     frames++;
   } while (state != SWAY_DONE);
 
-  Func_080e8c9c();
+  ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }
@@ -379,12 +364,12 @@ void FieldPsynergy_Grind(void) {
 /// read a third of a turn apart for red, green and blue.
 extern const u8 gData_080f0fe0[];
 
-/// The colour of field Psynergy kind 24's glow (Func_080e9940) for a step of
+/// The colour of field Psynergy kind 24's glow (HoverGlow_Update) for a step of
 /// its 24-step cycle and a brightness level (7 is neutral): three channels of
 /// the wave, each raised or lowered by the level and held to 0..31, packed as
 /// RGB555.
 // ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
-s32 Func_080e989c(s32 counter, s32 level) {
+s32 HoverGlow_GetColor(s32 counter, s32 level) {
   s16 phase;
   s16 bias;
   s16 red;
@@ -449,17 +434,16 @@ struct GlowEvent {
   s16 glowHeld;
 };
 
-s32 Party_GetLeaderActor(void);
-s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 
 // Kind 24's frame callback: keeps the glow's strength full while the player
-// stands where Func_080dbcc0 allows, and runs it down otherwise (once it is
-// fading, the glow shrinks with it and the event takes its cue when it is
-// spent). It cycles OBJ palette 14 through Func_080e989c's colours, flickers
-// between two pictures every other frame, and draws the glow under the
+// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it
+// is fading, the glow shrinks with it and the event takes its cue when it is
+// spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
+// flickers between two pictures every other frame, and draws the glow under the
 // player, flattened to three quarters of its height.
-void Func_080e9940(void) {
+void HoverGlow_Update(void) {
   struct GlowWork__f0e92b4 *work = Ram_HeapSlots->battleFxWork[0];
   struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
@@ -472,7 +456,7 @@ void Func_080e9940(void) {
   struct EffectSprite *sprite;
 
   // The glow's strength.
-  if (Func_080dbcc0(player->x, player->z, player->terrainId) == 0) {
+  if (MapGrid_IsHoverCell(player->x, player->z, player->terrainId) == 0) {
     if (event->glowHeld != 0)
       event->glow--;
   } else {
@@ -497,8 +481,8 @@ void Func_080e9940(void) {
     // region there; as the plain store, 2 of 194 instructions differ in
     // tla-en.
     do {
-      *palette++ = Func_080e989c((((s16)work->phase >> 2) + i / 2) % 24,
-                                 i == 15 ? 14 : i);
+      *palette++ = HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
+                                      i == 15 ? 14 : i);
     } while (0);
   }
   work->phase++;
@@ -518,7 +502,7 @@ void Func_080e9940(void) {
   sprite->y = position[2];
   sprite->scaleX = scaleX;
   sprite->scaleY = scaleY;
-  Func_080eb01c(sprite);
+  EffectSprite_Draw(sprite);
 }
 
 void FieldPsynergy_Blaze(void);
@@ -528,7 +512,7 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
+void Teleport_PlaySparks(void);
 
 /// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
 void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }

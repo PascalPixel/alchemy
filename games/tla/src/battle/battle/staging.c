@@ -8,35 +8,46 @@
 #include "gamepak/far_call/battle_effect.h"
 #include "module/battle/presentation.h"
 
-s32 Func_0811d79c(s32 kind) {
-  s32 value = kind;
+/// A party member's attack effect, staged by id range (0x4000): effect 1 for
+/// Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and Sheba, any other
+/// none. The Broken Seal writes the same choice inline in
+/// BattleActionRun_Build.
+s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
+  s32 id = characterId;
 
-  kind = 0;
-  switch (value) {
-  case 0:
-  case 1:
-  case 4:
-  case 5:
-  case 7:
-    kind = 0x4001;
+  // characterId carries the effect from here on, in the register it came in.
+  characterId = 0;
+  switch (id) {
+  case ISAAC:
+  case GARET:
+  case FELIX:
+  case JENNA:
+  case PIERS:
+    characterId = 0x4001;
     break;
-  case 2:
-  case 3:
-  case 6:
-    kind = 0x4004;
+  case IVAN:
+  case MIA:
+  case SHEBA:
+    characterId = 0x4004;
     break;
   }
-  return kind;
+  return characterId;
 }
 
-void Func_0811d7e4(void) {}
+/// Called by Battle_Run at the start of every turn; does nothing, as in The
+/// Broken Seal.
+void Battle_TurnStartNoOp(void) {}
 
 /* VIEW(battle): routine BattleAI_ChooseRandomTarget as s32
  * BattleAI_ChooseRandomTarget(); module/battle/presentation.h has s32
  * BattleAI_ChooseRandomTarget(s32 party). */
 extern s32 Func_0811f4d4__battle() __asm__("BattleAI_ChooseRandomTarget");
 
-void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
+/// The plan of an extra action queued for the turn's end (command 10): ability
+/// 403, Daedalus, from a random unit of the queuing side against every unit
+/// of the other, staged as a summon (0x8000 | 26).
+/// ★ Named from the game: "Daedalus" (MsgAbilityName + 403)
+void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
   s32 i;
@@ -58,7 +69,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
     u16 *value;
 
     value = &targets->value4a;
-    targets->side = own;
+    targets->actorId = own;
     *value = half;
   }
   for (i = 0; i < count; i++) {
@@ -69,17 +80,20 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
     targets->stateD[i] = 1;
   }
   targets->count = count;
-  targets->message = 403;
-  targets->cue = 0x801a;
+  targets->abilityId = 403;
+  targets->presentationFlags = 0x801a;
 }
 
-void Func_0811d89c(struct ActionTargets *targets) {
+/// The plan of command 12: ability 103, High Impact, from the acting unit
+/// on every living unit of its own side.
+/// ★ Named from the game: "High Impact" (MsgAbilityName + 103)
+void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
   s32 i;
   s32 side = 1;
 
-  if (targets->side > 7)
+  if (targets->actorId > 7)
     side = 2;
   count = BattleUnit_ListIds(side, ids);
   for (i = 0; i < count; i++) {
@@ -90,16 +104,19 @@ void Func_0811d89c(struct ActionTargets *targets) {
     targets->stateD[i] = 1;
   }
   targets->count = count;
-  targets->message = 103;
-  targets->cue = 0x10b5;
+  targets->abilityId = 103;
+  targets->presentationFlags = 0x10b5;
 }
 
-void Func_0811d914(struct ActionTargets *targets) {
+/// The plan of command 13: ability 298, Aurora Field, over the acting unit's
+/// whole side, reserves included for the party.
+/// ★ Named from the game: "Aurora Field" (MsgAbilityName + 298)
+void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
   s32 i;
 
-  if (targets->side <= 7) {
+  if (targets->actorId <= 7) {
     count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
@@ -117,14 +134,15 @@ void Func_0811d914(struct ActionTargets *targets) {
     // constants; as a plain 0, 18 of 69 instructions differ in tla-en.
     s32 zero = 0;
 
-    targets->message = 298;
+    targets->abilityId = 298;
     targets->count = count;
-    targets->cue = 0x120b6;
+    targets->presentationFlags = 0x120b6;
     targets->extra = zero;
   }
 }
 
-void Func_0811d9a4(void) {
+/// Sends every battler back to its spot.
+void BattleParty_ReturnAllToSpots(void) {
   u16 ids[14];
   s32 count = BattleParty_ListActorIds(3, ids);
   s32 i;
@@ -133,7 +151,12 @@ void Func_0811d9a4(void) {
     BattleMotion_ReturnToSpot(ids[i]);
 }
 
-s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
+/// Plays one action of the turn after delay frames, as The Broken Seal's
+/// BattleStaging_DispatchAction does: an enemy picks its ability now, the
+/// action is built and staged, and every unit returns to its spot. Returns 1
+/// when the party got away, 0 otherwise, and -1 when the unit is already down.
+s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
+                                 s32 delay) {
   struct BattlePresentationTransition *view;
   struct DispatchBattleWork *battle;
   struct BattleCamera *camera;
@@ -151,7 +174,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     return -1;
   battle->actorMode = 3;
   if (unit->classIndex == 0)
-    Func_08122514(request, 1);
+    BattleAI_ChooseAction(request, 1);
 
   view = Ram_HeapSlots->transitionWork;
   view->frames = 60;
@@ -180,7 +203,8 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     wait(delay);
   }
   if (request->command == 10) {
-    Func_0811d7e8((u16 *)request, (struct ActionTargets *)&battle->plan);
+    BattleStaging_PlanDaedalus((u16 *)request,
+                               (struct ActionTargets *)&battle->plan);
     /* FAKEMATCH(dead): an empty once-only block after the call, so the plan's
      * address is finished before request is copied to r0; without it, 2 of 421
      * instructions differ in tla-en. */
@@ -241,7 +265,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       swap = battle->plan.actorId;
       battle->plan.actorId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
-      battle->plan.presentationFlags = Func_0811d79c(
+      battle->plan.presentationFlags = BattleUnit_GetPartyAttackEffect(
           ((struct BattleUnit *)Unit_Get(battle->plan.actorId))->enemyId);
       if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
         MessageArgument_PushFar(battle->plan.actorId, 1);
@@ -264,7 +288,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       battle->skipPlayback = 0;
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnRecoverFaster);
-      kept = Func_08124cc4(battle->plan.targetIds[0] > 7);
+      kept = DjinnRecovery_CountDownSide(battle->plan.targetIds[0] > 7);
       if (kept == 0)
         BattleMessage_ShowAndWaitFar((s32)(MsgDjinnRecoverFaster + 1));
       if (kept <= 1)
@@ -277,12 +301,12 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
         break;
       if (BattleParty_ListLivingUnits(2, 0) == 0)
         break;
-      Func_0811d89c((struct ActionTargets *)&battle->plan);
+      BattleStaging_PlanHighImpact((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 13:
       BattleStaging_HideField(&battle->plan, 1);
-      Func_0811d914((struct ActionTargets *)&battle->plan);
+      BattleStaging_PlanAuroraField((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 7:
@@ -304,7 +328,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   BattleUnit_ProcessActionEnd(&battle->plan);
   BattleObject_Put();
   Enemy_Update();
-  Func_0811d9a4();
+  BattleParty_ReturnAllToSpots();
   request->unitId = 255;
 finish:
   BattleBackground_SetMode(

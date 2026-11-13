@@ -471,7 +471,9 @@ s32 ActorScript_SetPositionAndResetMotion(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Func_08025038(struct ActorScriptView *object) {
+/// Script command 0x03: puts the object at x and z 0, keeping its height,
+/// with no destination or speed; with flag 1 it then follows the ground there.
+s32 ActorScript_ResetToOrigin(struct ActorScriptView *object) {
   s32 height;
 
   Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y,
@@ -497,7 +499,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Func_0802509c(struct ActorScriptView *object) {
+s32 ActorScript_SetMoveTargetXZ(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
   s32 x = *argument++;
   s32 z = *argument;
@@ -655,7 +657,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   return 1;
 }
 
-s32 Func_08025428(struct Actor *cameraObject) {
+s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
   struct Actor *leader;
   struct MapWork *bounds;
   s32 minX;
@@ -1688,7 +1690,9 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *object,
                                 struct FieldPosition *position);
 void *Unit_Get(s32 owner);
 
-s32 Func_0802632c(struct Actor *object) {
+/// Script command 0x23 (control mode 10): the leader hovering (the Hover
+/// Psynergy), moved by the direction pad over what lies below.
+s32 Actor_UpdateHoverControl(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;

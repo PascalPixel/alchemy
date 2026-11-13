@@ -81,7 +81,11 @@ void Field_StartEncounterTransition(s32 unused) {
 
 void *ResourceMetadata_RegisterFar(void *, s32);
 
-void Func_080d5d70(s32 id, s32 side) {
+/// The Broken Seal's Exit_PrepareAnimation for any actor: centres actor id on
+/// its cell at the cell's south edge, stops it, hides its shadow and plays
+/// animation 25 (side 1) or 26 over 18 frames, its sprite gaining the doorway
+/// part (metadata 267).
+void Exit_PrepareActorAnimation(s32 id, s32 side) {
   u32 zero;
   u8 kind;
   struct Actor *object;

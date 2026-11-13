@@ -272,13 +272,15 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08166b10(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
+                                  s32 mode);
 
 /// Abilities: Titan Blade (kind 61).
-DEFINE_EFFECT_KIND(BattleEffect_RunTitanBlade, Func_08166b10, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunTitanBlade, BattleEffect_RunFallingSword, 0)
 
 /// Abilities: Acheron's Grief (kind 104).
-DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, Func_08166b10, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
+                   1)
 
 #undef FLASH_SHEET
 
@@ -298,7 +300,7 @@ extern char ResourceId_SwordSheet;
 extern u8 gTitanBlade_FlashPictures[]; // ☀️ gPlasma_FlashCells
 extern s32 gTitanBlade_DustGravity[];  // the dust's four gravities
 
-void Func_0815b634(void);
+void Palette_MirrorBgColors(void);
 
 // A great sword falls from the sky onto the target, a pillar of fire and dust
 // spouting under it, and drives into the ground in a burst of flashes and
@@ -312,7 +314,8 @@ void Func_0815b634(void);
 // to 63, while the pillar rises; the flashes from 56 and the sparks from 60,
 // bouncing on the ground; the canvas floods at frames 9 and 60; every target
 // is struck at frame 68.
-void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -417,7 +420,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
         Iwram_CopyWordsEntry(
             (void *)0x05000000,
             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
-        Func_0815b634();
+        Palette_MirrorBgColors();
       }
     }
 
@@ -654,16 +657,15 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
 struct Model;
 struct StripQuad;
 
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -723,13 +725,14 @@ extern const u16 gJudgment_ShardPictures[];
 extern const u8 gData_08199364[];
 extern const u8 gData_08199210[];
 
-/* VIEW(actor_move_random): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
- * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
- * attributes, s32 flags). */
-extern struct SpriteObject *
-Func_0815b290__actor_move_random(s32 width, s32 height, u32 shape,
-                                 u32 attributes) __asm__("Func_0815b290");
+/* VIEW(actor_move_random): routine EffectSprite_CreateWithTiles as struct
+ * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
+ * u32 attributes); the definition has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags). */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__actor_move_random(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 
 void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);

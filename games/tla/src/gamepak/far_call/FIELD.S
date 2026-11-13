@@ -6,8 +6,8 @@ Resource_FarCall003:
 	export Resource_GetMetadataRecordFarFar, Resource_GetMetadataRecordFar
 	export ActorSystem_ConfigureFar, ActorSystem_Configure
 	export Render_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
-	export Func_08020018, Func_08022318
-	export Func_08020020, Func_0802254c
+	export Render_ApplyProjectedPlacementAtDepthFar, Render_ApplyProjectedPlacementAtDepth
+	export Render_PlaceProjectedSpriteFar, Render_PlaceProjectedSprite
 	export InitializeAnimationObjectsFar, InitializeAnimationObjects
 	export Animation_ApplyChildArgumentFar, Animation_ApplyChildArgument
 	export Sprite_SetAnimationTimersFar, Sprite_SetAnimationTimers
@@ -25,7 +25,7 @@ Resource_FarCall003:
 	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
 	export Actor_StartScriptFar, Actor_StartScript
-	export Func_080200b0, Func_08023524
+	export Func_080200b0, Actor_StartRenderModeScript
 	export Actor_FindFreeFar, Actor_FindFree
 	export Actor_CreateFar, Actor_Create
 	export Actor_ReleaseFar, Actor_Release
@@ -62,11 +62,11 @@ Resource_FarCall003:
 	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
 	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
 	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
-	export Func_080201d8, Func_0802d530
+	export Func_080201d8, MapGrid_GetCellAttributeLowNibbleOrBump
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
 	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
-	export Func_080201f8, Func_0802b590
+	export Func_080201f8, Map_CopyRawCellsRect
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
 	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
@@ -98,25 +98,25 @@ Resource_FarCall003:
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
 	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
 	export MapGrid_GetTerrainKindFar, MapGrid_GetTerrainKind
-	export Func_080202f8, Func_08023f94
+	export Func_080202f8, Actor_HasArrived
 	export Actor_SetItemIconFar, Actor_SetItemIcon
 	export MapGrid_CheckCollisionAtFar, MapGrid_CheckCollisionAt
 	export MapGrid_GetTerrainHeightAboveFar, MapGrid_GetTerrainHeightAbove
 	export WorldMap_IsWalkableFar, WorldMap_IsWalkable
-	export Func_08020320, Func_0802db88
+	export WorldMap_IsSailableFar, WorldMap_IsSailable
 	export Map_GetHeaderSizeFar, Map_GetHeaderSize
-	export Func_08020330, Func_080237c8
+	export Actor_GetSpriteIdFar, Actor_GetSpriteId
 	export Animation_WaitForTrackEndFar, Animation_WaitForTrackEnd
-	export Func_08020340, Func_080237e8
+	export Actor_WaitForTrackEndFar, Actor_WaitForTrackEnd
 	export Field_CheckSpheresOverlapFar, Field_CheckSpheresOverlap
-	export Func_08020350, Func_0802da88
+	export Func_08020350, WorldMap_GetBlockPlace
 	export WorldMap_GetCollisionFar, WorldMap_GetCollision
-	export Func_08020360, Func_0802d600
-	export Func_08020368, Func_0802d644
-	export Func_08020370, Func_080219cc
+	export Func_08020360, MapGrid_SetCellHeight
+	export Func_08020368, MapGrid_GetCellHeight
+	export Animation_SkipToStopFar, Animation_SkipToStop
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export VramBlock_Reset93Far, VramBlock_Reset93
 	export VramBlock_Load93Far, VramBlock_Load93
 	export TileMap_ConvertBufferFar, TileMap_ConvertBuffer
 	export SpriteViewer_RunFar, SpriteViewer_Run
-	export Func_080203a0, Func_08026fc8
+	export Actor_SpawnWaterSplashFar, Actor_SpawnWaterSplash

@@ -56,7 +56,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Decompress_TaggedLz(pal, cells);
   for (i = 0; i != 16; i++) {
     struct JudgmentObject *obj =
-        Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
+        EffectSprite_CreateWithTiles__actor_move_random(32, 32, 0x80002000, 0);
 
     obj->priority = 2;
     work->objects[i] = obj;
@@ -211,9 +211,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       if (n > 80) {
         n = 80;
       } else {
-        Func_0815b434(work->sheet + 0x1256, n, 0x10000);
+        BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, 0x10000);
       }
-      Func_0818caa8(work->sheet + 0x1256, 60, 80, n);
+      Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
       /* FAKEMATCH(dead): the test of the block it stands in, made again; as a
        * plain block, 8 of 2680 instructions differ in tla-en. */
       if ((u32)(frame - 116) <= 27) {
@@ -319,8 +319,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       model->shade = shade;
       Transform_Reset();
-      Func_08015160(-0x40000, 0x180000, 0);
-      Func_0801521c(s);
+      SceneTransform_ApplyPosition3(-0x40000, 0x180000, 0);
+      SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(3000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);
@@ -597,8 +597,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       model->shade = shade;
       Transform_Reset();
-      Func_08015160(-0x40000, 0x80000, 0);
-      Func_0801521c(s);
+      SceneTransform_ApplyPosition3(-0x40000, 0x80000, 0);
+      SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(5000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);

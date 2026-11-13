@@ -358,7 +358,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   }
 
   // Centre the canvas on the targets; what BG2 cannot reach moves the sheep.
-  Func_0815e22c(&middle);
+  BattleEffect_GetTargetsMidpoint(&middle);
   middle.x -= 64;
   if (middle.x < 0) {
     scroll = middle.x;

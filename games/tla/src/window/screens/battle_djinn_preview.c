@@ -192,7 +192,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
   s32 rising;
   s32 i;
 
-  void Func_08046414(s32 x, s32 y, s32 up) {
+  void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 up) {
     struct WindowSprite *output = WindowSprite_AcquireFree();
     struct ArrowSprite *entry;
 
@@ -357,7 +357,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->hp > oldHp)
         rising = 1;
-      Func_08046414(80, 14, rising);
+      DjinnMenu_DrawStatArrow(80, 14, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->pp);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 2);
@@ -365,7 +365,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->pp > oldPp)
         rising = 1;
-      Func_08046414(80, 22, rising);
+      DjinnMenu_DrawStatArrow(80, 22, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->atk);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 3);
@@ -373,7 +373,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->atk > oldAtk)
         rising = 1;
-      Func_08046414(80, 30, rising);
+      DjinnMenu_DrawStatArrow(80, 30, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->def);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 4);
@@ -381,7 +381,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->def > oldDef)
         rising = 1;
-      Func_08046414(80, 38, rising);
+      DjinnMenu_DrawStatArrow(80, 38, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->agi);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 5);
@@ -389,7 +389,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->agi > oldAgi)
         rising = 1;
-      Func_08046414(80, 46, rising);
+      DjinnMenu_DrawStatArrow(80, 46, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->luck);
     Text_DrawWideStringInWindow(numberText + 8, window, 12, 6);
@@ -397,7 +397,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->luck > savedUnit->luck)
         rising = 1;
-      Func_08046414(80, 54, rising);
+      DjinnMenu_DrawStatArrow(80, 54, rising);
     }
   }
 

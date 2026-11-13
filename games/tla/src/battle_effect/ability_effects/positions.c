@@ -110,8 +110,6 @@ extern u8 gBeam_PictureHeights[];
 // gLuckyWheels_SparkCellOffsets).
 extern u16 gBattleEffect_FlarePictures[];
 
-void *Resource_GetTableEntry(s32 id);
-
 s32 BattleSprite_HasHeavyImpactFar(s32 enemyId);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);

@@ -13,7 +13,7 @@
 
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.
-void Func_08042dc4(s32 step) {
+void SaveProgress_Advance(s32 step) {
   u8 *save = Ram_HeapSlots->serialWork;
   u32 row;
   const u8 *src;
@@ -91,10 +91,10 @@ struct Window *SaveProgress_Close(struct Window *window) {
   } while (0)
 
 /// Runs Save_WritePart with interrupts masked and all four DMA channels
-/// stopped, queueing Func_08042dc4 as the serial command around it, then
-/// restores IE and IME. Func_08042ff0 does the same around
+/// stopped, queueing SaveProgress_Advance as the serial command around it, then
+/// restores IE and IME. Save_DeletePartMasked does the same around
 /// Save_DeletePart.
-s32 Func_08042f10(s32 partId, void *buffer) {
+s32 Save_WritePartMasked(s32 partId, void *buffer) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
@@ -116,7 +116,7 @@ s32 Func_08042f10(s32 partId, void *buffer) {
   DMA_STOP(2);
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
-  Serial_QueueCommand((u32)Func_08042dc4);
+  Serial_QueueCommand((u32)SaveProgress_Advance);
   result = Save_WritePart(partId, buffer);
   Serial_QueueCommand(0);
   IRQ_LOCK(ime);
@@ -128,9 +128,9 @@ s32 Func_08042f10(s32 partId, void *buffer) {
 s32 Save_DeletePart(s32 partId);
 
 /// Deletes a part of a save file (Save_DeletePart) with interrupts masked and
-/// all four DMA channels stopped, queueing Func_08042dc4 as the serial command
-/// around it, as Func_08042f10 does around Save_WritePart.
-s32 Func_08042ff0(s32 partId) {
+/// all four DMA channels stopped, queueing SaveProgress_Advance as the serial
+/// command around it, as Save_WritePartMasked does around Save_WritePart.
+s32 Save_DeletePartMasked(s32 partId) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
@@ -152,7 +152,7 @@ s32 Func_08042ff0(s32 partId) {
   DMA_STOP(2);
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
-  Serial_QueueCommand((u32)Func_08042dc4);
+  Serial_QueueCommand((u32)SaveProgress_Advance);
   result = Save_DeletePart(partId);
   Serial_QueueCommand(0);
   IRQ_LOCK(ime);
@@ -167,12 +167,13 @@ s32 Func_08042ff0(s32 partId) {
 // Each field comes from String_FormatNumber; a two-digit field is formatted
 // with 100 added, which gives it a leading zero in its last two digits.
 
-// XXX: what shows this clock; the overlays that call Func_08038400 would
-// settle it.
+// XXX: what shows this clock; the overlays that call String_FormatStopwatchFar
+// would settle it.
 
 /// Writes frames (60 a second) as "HHH:MM:SS:CC" into out and returns out.
-/// Reached only through the far call Func_08038400.
-u8 *Func_080430c4(u32 frames, u8 *out) {
+/// Reached only through the far call String_FormatStopwatchFar, which nothing
+/// calls.
+u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   u8 digits[16];
   u8 *digitsCursor;
   u8 *textCursor;
@@ -418,7 +419,6 @@ s32 Save_BuildFileSummary(void) {
 }
 
 s32 Save_ReadPart(s32 partId, void *buffer);
-void FieldMessage_Show(s32 message, s32 position);
 
 s32 Save_WriteFile(s32 file) {
   s32 result = 0;
@@ -426,7 +426,7 @@ s32 Save_WriteFile(s32 file) {
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
-  } else if (Func_08042f10(file, gSaveBuffer) != 0) {
+  } else if (Save_WritePartMasked(file, gSaveBuffer) != 0) {
     FieldMessage_Show((s32)&MsgSaveFailed, 1);
     result = -3;
   }
@@ -461,7 +461,7 @@ s32 Save_ProcessSelectedFile(void) {
       dst -= (s32)gSaveBuffer;
       Iwram_CopyWordsEntry(dst, gData_02000504, 16);
       token = (s32)SaveProgress_Open(0);
-      found = Func_08042f10(gSaveSlot, buffer);
+      found = Save_WritePartMasked(gSaveSlot, buffer);
       SaveProgress_Close((struct Window *)token);
       if (found != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, 1);
@@ -492,7 +492,7 @@ s32 Save_ToFile(u32 slot) {
     FieldMessage_Show((s32)&MsgSaving, 13);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
-    found = Func_08042f10(slot, gSaveBuffer);
+    found = Save_WritePartMasked(slot, gSaveBuffer);
     while (Message_AllTyped() == 0)
       wait(1);
     Message_CloseFinishedWindows();
@@ -540,7 +540,7 @@ s32 Save_ToChosenFile(void) {
       token = (s32)SaveProgress_Open(0);
       Save_BuildFileSummary();
       ObjectTable_SnapshotFar();
-      found = Func_08042f10(slot, gSaveBuffer);
+      found = Save_WritePartMasked(slot, gSaveBuffer);
       SaveProgress_Close((struct Window *)token);
       Message_CloseFinishedWindows();
       if (found != 0) {
@@ -611,7 +611,7 @@ s32 Save_CopyFile(void) {
           result = -5;
         } else {
           token = (s32)SaveProgress_Open(2);
-          value = Func_08042f10(value, buffer);
+          value = Save_WritePartMasked(value, buffer);
           SaveProgress_Close((struct Window *)token);
           if (value != 0) {
             FieldMessage_Show((s32)&MsgEraseFailed, 1);
@@ -657,7 +657,7 @@ s32 Save_EraseSelectedFile(void) {
       } else {
         Message_CloseFinishedWindows();
         token = (s32)SaveProgress_Open(1);
-        found = Func_08042ff0(value);
+        found = Save_DeletePartMasked(value);
         SaveProgress_Close((struct Window *)token);
         if (found != 0) {
           FieldMessage_Show((s32)&MsgEraseFailed, 1);

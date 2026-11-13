@@ -106,7 +106,7 @@ struct Point2D {
 /// ember grows as it falls (the brighter blitter once it falls) and grows
 /// again toward the end; the targets flash and jump every 12 frames from 30 to
 /// 79. At the end the formation bursts and its objects are released.
-UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
+UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   void *canvas;
   struct BattleEffectWork *work;
@@ -603,7 +603,7 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
 
 /// As Palette_BrightenBgEntries over BG palette entries 96 to 223, the deltas
 /// red first.
-void Func_08164abc(s32 red_delta, s32 green_delta, s32 blue_delta) {
+void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
   u16 *color = (u16 *)0x050000c0;
   s32 i;
 
@@ -631,9 +631,10 @@ void Func_08164abc(s32 red_delta, s32 green_delta, s32 blue_delta) {
   }
 }
 
-/// As Func_08164abc, from the battle work's saved palette into BG palette
-/// entries 96 to 223.
-void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta) {
+/// As Palette_BrightenBattleBg, from the battle work's saved palette into BG
+/// palette entries 96 to 223.
+void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
+                                   s32 blueDelta) {
   u16 *color = (u16 *)0x050000c0;
   u16 *source = Ram_HeapSlots->battleWork->palette;
   s32 i;
@@ -762,7 +763,6 @@ void Transform_ApplyYaw(s32 yaw);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleObject_PutFar(void);
 
-void Transform_SetLookAt(s32 *eye, s32 *position);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);

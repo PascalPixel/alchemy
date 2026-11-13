@@ -11,7 +11,7 @@
 
 /// If the scene's sprite is active, stops its update callback
 /// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
-void Func_080dbb40(void) {
+void FieldPsynergy_ReleaseSceneSprite(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
 
   if (scene->active != 0) {
@@ -21,11 +21,9 @@ void Func_080dbb40(void) {
   }
 }
 
-// Finds a map cell by position.
-
 /// Returns the map cell at position x, z in the given layer, read from the
 /// world map's blocks or the cell buffer by the event work's mode.
-struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer) {
+struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cells;
@@ -43,30 +41,41 @@ struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer) {
   return cells;
 }
 
-s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
+/// Whether the Scoop can dig at (x, z): on the world map, sand; elsewhere not
+/// on a Cyclone cell, water or raised ground, and then on sand, or where
+/// attribute bit 1 is set (clear, when the event work's byte 0xd36 is set).
+s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   if (*(s8 *)(event + 394) == 3)
-    return Func_080dbcd8(x, z, layer);
-  if (Func_080dbda8(x, z, layer) != 0 || Func_080dbd5c(x, z, layer) != 0 ||
+    return MapGrid_IsSandCell(x, z, layer);
+  if (MapGrid_GetCycloneCellKind(x, z, layer) != 0 ||
+      MapGrid_IsWaterCell(x, z, layer) != 0 ||
       MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
-  if (Func_080dbcd8(x, z, layer) != 0)
+  if (MapGrid_IsSandCell(x, z, layer) != 0)
     return 1;
   if (*(s8 *)(event + 0xd36) == 0)
-    return Func_080dbb78(x, z, layer)->attributeB & 1;
-  return ~Func_080dbb78(x, z, layer)->attributeB & 1;
+    return MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
+  return ~MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
 }
 
-s32 Func_080dbca8(s32 x, s32 z) {
-  return Func_080dbb78(x, z, 2)->collisionCode == 231;
+/// Whether Cloak can hide the leader on the cell at (x, z): layer 2's
+/// collision code 231.
+s32 MapGrid_IsCloakCell(s32 x, s32 z) {
+  return MapGrid_GetCellAt(x, z, 2)->collisionCode == 231;
 }
 
-s32 Func_080dbcc0(s32 x, s32 z) {
-  return Func_080dbb78(x, z, 2)->collisionCode == 236;
+/// Whether Hover holds up over the cell at (x, z): layer 2's collision code
+/// 236.
+s32 MapGrid_IsHoverCell(s32 x, s32 z) {
+  return MapGrid_GetCellAt(x, z, 2)->collisionCode == 236;
 }
 
-s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
+/// Whether the leader can move as sand on the cell at (x, z): layer 2's
+/// collision code 232, or on the world map collision 5 or 6; the event work's
+/// byte 0xd37 turns the answer round.
+s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 column = x;
   if (*(s8 *)(event + 394) == 3) {
@@ -75,7 +84,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
     SET_VECTOR(position, column, 0, z);
     column = (u32)(WorldMap_GetCollisionFar(position) - 5) <= 1;
   } else {
-    s32 code = Func_080dbb78(column, z, 2)->collisionCode;
+    s32 code = MapGrid_GetCellAt(column, z, 2)->collisionCode;
 
     code ^= 232;
     column = (u32)(-code | code) >> 31;
@@ -86,11 +95,15 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
   return column;
 }
 
-u8 Func_080dbd48(s32 x, s32 z, s32 layer) {
-  return Func_080dbb78(x, z, layer)->attributeB & 0x40;
+/// Whether the cell at (x, z) can be climbed (attribute bit 0x40), as the
+/// climbing control (mode 2) and the Sand's climb test read it.
+u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
+  return MapGrid_GetCellAt(x, z, layer)->attributeB & 0x40;
 }
 
-s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {
+/// Whether the cell at (x, z) is water: attribute bit 16, or on the world map
+/// collision 2 to 4.
+s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   if (*(s8 *)(event + 394) == 3) {
@@ -103,11 +116,14 @@ s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {
     collision = WorldMap_GetCollisionFar(position);
     return (u32)(collision - 2) <= 2;
   }
-  return (u8)(Func_080dbb78(x, z, layer)->attributeB & 16);
+  return (u8)(MapGrid_GetCellAt(x, z, layer)->attributeB & 16);
 }
 
-s32 Func_080dbda8(s32 x, s32 z, s32 layer) {
-  u8 code = Func_080dbb78(x, z, 2)->collisionCode;
+/// The Cyclone's kind of the cell at (x, z), from layer 2's collision code:
+/// 1 for 233, 2 for 234 (a teleporter it carries the leader to), 3 for 235,
+/// else 0. FieldPsynergy_GatherNearbyCells lists them.
+s32 MapGrid_GetCycloneCellKind(s32 x, s32 z, s32 layer) {
+  u8 code = MapGrid_GetCellAt(x, z, 2)->collisionCode;
 
   if (code == 233)
     return 1;
@@ -118,43 +134,51 @@ s32 Func_080dbda8(s32 x, s32 z, s32 layer) {
   return 0;
 }
 
-u8 Func_080dbdc8(s32 x, s32 z, s32 layer) {
-  return Func_080dbb78(x, z, layer)->collisionCode;
+/// Returns the behaviour (collision code) of the map cell at x, z in layer.
+u8 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer) {
+  return MapGrid_GetCellAt(x, z, layer)->collisionCode;
 }
 
 u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
-  Func_080dbb78(x, z, layer)->collisionCode = value;
+  MapGrid_GetCellAt(x, z, layer)->collisionCode = value;
   return value;
 }
 
-s32 Func_080dbde8(s32 x, s32 z, s32 layer) {
-  return Func_080dbb78(x, z, layer)->attributeB;
+/// Returns the attribute byte of the map cell at x, z in layer.
+s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer) {
+  return MapGrid_GetCellAt(x, z, layer)->attributeB;
 }
 
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value) {
-  Func_080dbb78(x, z, layer)->attributeB = value;
+/// Sets the attribute byte of the map cell at x, z in layer.
+u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value) {
+  MapGrid_GetCellAt(x, z, layer)->attributeB = value;
   return value;
 }
 
-u8 Func_080dbe08(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = Func_080dbde8(x, z, layer);
-  u8 *cell = (u8 *)Func_080dbb78(x, z, layer);
+/// Sets bits in the attribute byte of the map cell at x, z in layer.
+u8 MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
+  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
+  u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
 
   flags |= bits;
   cell[3] = flags;
   return flags;
 }
 
-u8 Func_080dbe44(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = Func_080dbde8(x, z, layer);
-  u8 *cell = (u8 *)Func_080dbb78(x, z, layer);
+/// Clears bits in the attribute byte of the map cell at x, z in layer.
+u8 MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
+  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
+  u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
 
   flags &= ~bits;
   cell[3] = flags;
   return flags;
 }
 
-s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
+/// Returns 1 when two upright cylinders overlap: their centres closer on the
+/// ground than the sum of radius_a and radius_b, and their heights within it;
+/// else -1.
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dx = (*a++ - *b++) >> 16;
   s32 dy = (*a++ - *b++) >> 16;
   s32 dz = (*a - *b) >> 16;
@@ -169,11 +193,9 @@ s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   return -1;
 }
 
-// Moves an object into place while growing it.
-
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
+void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   struct MoveScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *mainObject = scene->mainObject;
   s32 start[3];
@@ -196,7 +218,9 @@ void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
 
 struct MapCell;
 
-void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z) {
+/// FieldPsynergy_GrowFromCaster backwards: moves the object from (x, y, z) to
+/// 16 pixels above the effect's main object, shrinking it from 1 to 0.25.
+void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   struct Actor *mainObject =
       ((struct MoveScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 start[3];

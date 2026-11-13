@@ -18,7 +18,7 @@ s32 Actor_ClearChildFlags();
 s32 Actor_SetPriorityBit5();
 s32 Actor_MoveTowardTarget();
 s32 Actor_TurnTowardWatchedActor();
-s32 Func_080d4ab4();
+s32 Actor_TakeLeaderLayer();
 
 /// ScreenTransition_ShapesTail
 // clang-format off
@@ -29,14 +29,14 @@ const u8 ScreenTransition_ShapesTail[12] = {
 };
 
 /// {key, value} rows ended by a key of -1; this list has only the end.
-const s32 gData_080f3228[2] = {
+const s32 gPairTable[2] = {
     -1, -1,
 };
 
 /// The cells of an 8x8 grid, one diagonal at a time from the top left
 /// corner, each diagonal ended by -1; -4 follows the longest diagonal and
 /// -9 the last.
-const s16 gData_080f3230[80] = {
+const s16 gHeading_WipeSteps[80] = {
     0, -1,
     1, 8, -1,
     2, 9, 16, -1,
@@ -248,7 +248,7 @@ const s32 gMovementType_FaceLeaderScript[] = {
 // The Spanish and Italian scaffolds name the function by the far-call slot
 // that reaches it in the other editions.
 const s32 gData_080f3764[] = {
-    SC_CALL(Func_080d4ab4),
+    SC_CALL(Actor_TakeLeaderLayer),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

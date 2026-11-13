@@ -17,7 +17,7 @@ void Actor_SnapToTerrain(void *object) {
 /// The current scene's rows of the scene item table (Data_080f2204): those
 /// after the first header for this scene whose flag is -1 or not yet set, or
 /// NULL.
-s16 *Func_080ceba8(void) {
+s16 *SceneItem_GetRows(void) {
   s32 scene = gMainRoutineWork.scene;
   s16 *p = Data_080f2204;
   s16 *found = NULL;
@@ -41,17 +41,17 @@ s16 *Func_080ceba8(void) {
   return found;
 }
 
-/// Clears out[0..2], then fills it from Func_080ca9cc's table entry for
-/// value; returns that lookup's result (0 found, -1 not).
-s32 Func_080cec24(s32 value, s32 *out) {
+/// Clears out[0..2], then fills it from ScenePoint_GetPosition's table entry
+/// for value; returns that lookup's result (0 found, -1 not).
+s32 SceneItem_FindPosition(s32 value, s32 *out) {
   SET_VECTOR(out, 0, 0, 0);
-  return Func_080ca9cc(value, out);
+  return ScenePoint_GetPosition(value, out);
 }
 
 void Actor_ShowItemIconById(s32 id, s32 item);
 
 void Field_PlaceTreasureSpots(void) {
-  s16 *rows = Func_080ceba8();
+  s16 *rows = SceneItem_GetRows();
   struct SceneItemWork *work = Ram_HeapSlots->eventWork;
   s32 i;
   s16 type;
@@ -75,7 +75,7 @@ void Field_PlaceTreasureSpots(void) {
     item = rows[2];
     rows += 3;
     if ((type == 128 || flag == -1 || !GameFlag_Test(flag)) &&
-        !Func_080cec24(id, position)) {
+        !SceneItem_FindPosition(id, position)) {
       buried = 0;
       if ((u16)(type - 128) <= 1)
         kind = 487;

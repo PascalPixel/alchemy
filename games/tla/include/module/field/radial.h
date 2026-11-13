@@ -283,7 +283,7 @@ struct ArcObject {
 
 extern const u8 gFieldEffect_ArcSparkTiles[];
 
-void Func_08020340(struct Actor *object);
+void Actor_WaitForTrackEndFar(struct Actor *object);
 
 extern const s32 Data_080f0f34[8];
 extern const s32 Data_080f0f54[4];

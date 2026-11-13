@@ -18,7 +18,7 @@ Resource_FarCall006:
 	export PartyInventory_GiveItemFar, PartyInventory_GiveItem
 	export Inventory_TryAddAndReturnMemberFar, Inventory_TryAddAndReturnMember
 	export Event_AskYesNoWithActorAnimationFar, Event_AskYesNoWithActorAnimation
-	export Func_080c8078, Func_080d296c
+	export Func_080c8078, Event_PickUpItem
 	export Party_LearnAbilityFar, Party_LearnAbility
 	export Actor_GetByIdFar, Actor_GetById
 	export ObjectTable_DestroyByIdFar, ObjectTable_DestroyById
@@ -53,7 +53,7 @@ Resource_FarCall006:
 	export Actor_WatchAndStartScriptFar, Actor_WatchAndStartScript
 	export Event_SetMessageIdFar, Event_SetMessageId
 	export FieldMessage_ShowAtActorFar, FieldMessage_ShowAtActor
-	export Func_080c8190, Func_080d3fb0
+	export FieldMessage_ShowAtActorAndWaitFar, FieldMessage_ShowAtActorAndWait
 	export Event_ShowMessageThenWaitFar, Event_ShowMessageThenWait
 	export Event_ShowMessageAndWaitFar, Event_ShowMessageAndWait
 	export Event_AskYesNoAndShowResponseFar, Event_AskYesNoAndShowResponse
@@ -68,7 +68,7 @@ Resource_FarCall006:
 	export Event_ShowTwoMessagesAndWaitFar, Event_ShowTwoMessagesAndWait
 	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor
 	export Actor_SetSpritePriorityFar, Actor_SetSpritePriority
-	export Func_080c8208, Func_080d390c
+	export Func_080c8208, Actor_DisableById
 	export Actor_ShowEmoteByIdFar, Actor_ShowEmoteById
 	export FieldEffect_SetAttachedFar, FieldEffect_SetAttached
 	export Actor_CopyGraphicsFar, Actor_CopyGraphics
@@ -96,16 +96,16 @@ Resource_FarCall006:
 	export FieldPsynergy_StartCloakFar, FieldPsynergy_StartCloak
 	export Field_FindNearbyPsynergyTargetFar, Field_FindNearbyPsynergyTarget
 	export Field_TryJumpForwardFar, Field_TryJumpForward
-	export Func_080c82e8, Func_080d50f8
-	export Func_080c82f0, Func_080d53b8
+	export Func_080c82e8, Field_ClimbDown
+	export Field_ClimbUpFar, Field_ClimbUp
 	export Leader_StopMovingFar, Leader_StopMoving
-	export Func_080c8300, Func_080d690c
+	export GroundParticles_StartFar, GroundParticles_Start
 	export Weather_StartLightningFar, Weather_StartLightning
 	export Weather_StopLightningFar, Weather_StopLightning
 	export Weather_LastLightningFar, Weather_LastLightning
 	export Weather_ResumeLightningFar, Weather_ResumeLightning
 	export Weather_StartLightningFlashFar, Weather_StartLightningFlash
-	export Func_080c8330, Func_080d6b90
+	export Func_080c8330, RisingParticles_Start
 	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
 	export ScreenTransition_InitializeBattleEffectStateFar, ScreenTransition_InitializeBattleEffectState
 	export ScreenTransition_InitializeStateFar, ScreenTransition_InitializeState
@@ -134,22 +134,22 @@ Resource_FarCall006:
 	export ObjectEvent_SetMode2Far, ObjectEvent_SetMode2
 	export ObjectEvent_PlaceOnGroundFar, ObjectEvent_PlaceOnGround
 	export ObjectEvent_RemoveFar, ObjectEvent_Remove
-	export Func_080c8418, Func_080cf050
+	export Leader_StepAwayFromNearbyActorFar, Leader_StepAwayFromNearbyActor
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
 	export Actor_ReturnHomeFar, Actor_ReturnHome
 	export WorldMap_FreezeFar, WorldMap_Freeze
-	export Func_080c8438, Func_080cb8a4
-	export Func_080c8440, Func_080caa4c
+	export Func_080c8438, WorldMap_ReloadPendingAreaGraphics
+	export Actor_ResetForLeaderFar, Actor_ResetForLeader
 	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
 	export Actor_ReleaseAtIndexFar, Actor_ReleaseAtIndex
 	export ObjectTable_GetFar, ObjectTable_Get
-	export Func_080c8460, Func_080ca9cc
+	export ScenePoint_GetPositionFar, ScenePoint_GetPosition
 	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay
 	export FadeOverlay_SuspendFar, FadeOverlay_Suspend
 	export FadeOverlay_ResumeFar, FadeOverlay_Resume
-	export Func_080c8480, Func_080d1cc0
-	export Func_080c8488, Func_080d1d34
-	export Func_080c8490, Func_080d1d44
+	export Func_080c8480, FieldEffect_StartBlankOverlay
+	export Func_080c8488, BlankOverlay_Suspend
+	export Func_080c8490, BlankOverlay_Resume
 	export FieldPsynergy_RunHandlerFar, FieldPsynergy_RunHandler
 	export BattleEffect_LoadActionEffectResourcesFar, BattleEffect_LoadActionEffectResources
 	export FieldPsynergy_SetupActorPairFar, FieldPsynergy_SetupActorPair
@@ -205,54 +205,54 @@ Resource_FarCall006:
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
 	export Area_GetNameIndexFar, Area_GetNameIndex
-	export Func_080c8650, Func_080d1ee8
-	export Func_080c8658, Func_080d1f0c
-	export Func_080c8660, Func_080d1f18
-	export Func_080c8668, Func_080d1f20
+	export PairTable_FindFar, PairTable_Find
+	export PairTable_FindAndIgnoreFar, PairTable_FindAndIgnore
+	export PairTable_FindCopyFar, PairTable_FindCopy
+	export Heading_ShowFar, Heading_Show
 	export Event_WaitTwoSecondsOrPressFar, Event_WaitTwoSecondsOrPress
-	export Func_080c8678, Func_080d20fc
+	export Heading_CloseFar, Heading_Close
 	export Actor_SetActionCallbackFar, Actor_SetActionCallback
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Event_NoOpFar, Event_NoOp
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
-	export Func_080c86a0, Func_080ca6e4
-	export Func_080c86a8, Func_080d897c
-	export Func_080c86b0, Func_080d8d68
-	export Func_080c86b8, Func_080d9104
-	export Func_080c86c0, Func_080d92d4
-	export Func_080c86c8, Func_080d9710
-	export Func_080c86d0, Func_080d9b08
-	export Func_080c86d8, Func_080d9e98
-	export Func_080c86e0, Func_080d9ab0
-	export Func_080c86e8, Func_080d9ad0
+	export Actor_ReservedNoOpFar, Actor_ReservedNoOp
+	export Func_080c86a8, Rope_Initialize
+	export Func_080c86b0, Rope_Tie
+	export Func_080c86b8, Rope_Coil
+	export Func_080c86c0, Rope_Lash
+	export Rope_UntieFar, Rope_Untie
+	export Func_080c86d0, Tightrope_Initialize
+	export Func_080c86d8, Tightrope_Place
+	export Func_080c86e0, Rope_GetState
+	export Func_080c86e8, Rope_Place
 	export FlagEntries_GetTableFar, FlagEntries_GetTable
-	export Func_080c86f8, Func_080ea7c0
-	export Func_080c8700, Func_080ea8d4
-	export Func_080c8708, Func_080eaa14
-	export Func_080c8710, Func_080eab70
-	export Func_080c8718, Func_080eabd0
-	export Func_080c8720, Func_080eace8
-	export Func_080c8728, Func_080eadfc
-	export Func_080c8730, Func_080eab98
-	export Func_080c8738, Func_080eaf28
-	export Func_080c8740, Func_080cdc74
-	export Func_080c8748, Func_080cdd80
-	export Func_080c8750, Func_080eaeb4
+	export Func_080c86f8, FlagBlock_PlaceAll
+	export Func_080c8700, FlagBlock_PlaceAllMarkingEdges
+	export Func_080c8708, FlagBlock_ApplyFlags
+	export Func_080c8710, Actor_GetCellIndex
+	export Func_080c8718, Actor_PlaceBlocks
+	export Func_080c8720, Actor_LiftTargetBlock
+	export Func_080c8728, Actor_PlaceMovedBlock
+	export Func_080c8730, MapCollision_FindOrAddTag
+	export Func_080c8738, Actor_FindAtCell
+	export Func_080c8740, Leader_CanPushObjectAhead
+	export Func_080c8748, Leader_PushObjectAhead
+	export Func_080c8750, Leader_FindActorAhead
 	export Actor_SpawnFar, Actor_Spawn
-	export Func_080c8760, Func_080e25e8
-	export Func_080c8768, Func_080dbcd8
-	export Func_080c8770, Func_080dbd48
+	export Func_080c8760, TileCopies_CopyTouchedCells
+	export MapGrid_IsSandCellFar, MapGrid_IsSandCell
+	export MapGrid_IsClimbableCellFar, MapGrid_IsClimbableCell
 	export Party_GetLeaderActorFar, Party_GetLeaderActor
-	export Func_080c8780, Func_080db444
-	export Func_080c8788, Func_080daecc
-	export Func_080c8790, Func_080db0b0
-	export Func_080c8798, Func_080d5d70
-	export Func_080c87a0, Func_080eb960
+	export Func_080c8780, HangingVine_Place
+	export HangingVine_HangFar, HangingVine_Hang
+	export HangingVine_SwingFar, HangingVine_Swing
+	export Func_080c8798, Exit_PrepareActorAnimation
+	export Func_080c87a0, Actor_VanishInSparks
 	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
-	export Func_080c87b0, Func_080d3940
-	export Func_080c87b8, Func_080d3a10
-	export Func_080c87c0, Func_080eaf98
-	export Func_080c87c8, Func_080eb01c
+	export Func_080c87b0, Actor_FallOverById
+	export Func_080c87b8, Actor_FallOverWithAnimationById
+	export Func_080c87c0, EffectSprite_Init
+	export Func_080c87c8, EffectSprite_Draw
 	export EffectSprite_DrawAtWorldPositionFar, EffectSprite_DrawAtWorldPosition
 	export BattleEffect_StepVector2Far, BattleEffect_StepVector2
 	export BattleEffect_StepVector3Far, BattleEffect_StepVector3
@@ -265,30 +265,30 @@ Resource_FarCall006:
 	export BattleEffect_WaitForArcGroupsFar, BattleEffect_WaitForArcGroups
 	export BattleEffect_SetObjectUpdateModeFar, BattleEffect_SetObjectUpdateMode
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
-	export Func_080c8828, Func_080e4244
-	export Func_080c8830, Func_080dbdc8
-	export Func_080c8838, Func_080dbde8
+	export Actor_CheckBlockedFar, Actor_CheckBlocked
+	export Func_080c8830, MapGrid_GetCellBehavior
+	export Func_080c8838, MapGrid_GetAttributeBAt
 	export MapGrid_SetCellBehaviorFar, MapGrid_SetCellBehavior
-	export Func_080c8848, Func_080dbdf4
-	export Func_080c8850, Func_080dbe08
-	export Func_080c8858, Func_080dbe44
+	export Func_080c8848, MapGrid_SetAttributeBAt
+	export Func_080c8850, MapGrid_SetAttributeBBitsAt
+	export Func_080c8858, MapGrid_ClearAttributeBBitsAt
 	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
-	export Func_080c8868, Func_080da908
-	export Func_080c8870, Func_080da938
-	export Func_080c8878, Func_080d4ab4
-	export Func_080c8880, Func_080e3698
-	export Func_080c8888, Func_080e37e0
+	export Func_080c8868, Tightrope_Release
+	export Func_080c8870, Tightrope_Settle
+	export Func_080c8878, Actor_TakeLeaderLayer
+	export Func_080c8880, Actor_DepartInRing
+	export Func_080c8888, Actor_ArriveInRing
 	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
 	export Func_080c8898, Func_080d2cc4
 	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
-	export Func_080c88a8, Func_080d1dac
+	export Func_080c88a8, EffectSprite_InitFromSlot94
 	export BattleEffect_DrawSpriteAtWorldPositionFar, BattleEffect_DrawSpriteAtWorldPosition
 	.global Func_080c88b8
 	.thumb_func
 Func_080c88b8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080d1e18
+	.4byte EffectSprite_InitFromSlot94Blended
 	export Actor_ApplyRandomChildValuesFar, Actor_ApplyRandomChildValues
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
 	.global Func_080c88c8
@@ -296,35 +296,35 @@ Func_080c88b8:
 Func_080c88c8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080d2d08
-	export Func_080c88d0, Func_080e2774
+	.4byte Event_PlayCueNearFocus
+	export Func_080c88d0, Cyclone_CopyTouchedCells
 	.global Func_080c88d8
 	.thumb_func
 Func_080c88d8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080e7238
-	export Func_080c88e0, Func_080e7804
+	.4byte Teleport_PlayWhirl
+	export Func_080c88e0, Teleport_PlaySparksAndFade
 	.global Func_080c88e8
 	.thumb_func
 Func_080c88e8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080e74d8
-	export Func_080c88f0, Func_080d4aa8
+	.4byte Teleport_PlaySparks
+	export Func_080c88f0, Actor_WatchActor
 	export Actor_ResetTargetsAndVelocityFar, Actor_ResetTargetsAndVelocity
 	export Exit_StartStairsUpFar, Exit_StartStairsUp
 	export Exit_StartStairsDownFar, Exit_StartStairsDown
 	export FieldMotes_StartFar, FieldMotes_Start
 	export Weather_StartRainFar, Weather_StartRain
-	export Func_080c8920, Func_080d7024
-	export Func_080c8928, Func_080ea14c
+	export Weather_StopRainFar, Weather_StopRain
+	export Func_080c8928, SummonTablet_PlayRunes
 	export Func_080c8930, Func_080d2d70
-	export Func_080c8938, Func_080ca368
-	export Func_080c8940, Func_080ca3f4
-	export Func_080c8948, Func_080e28d4
-	export Func_080c8950, Func_080d072c
+	export WorldMap_SetReturnForSceneFar, WorldMap_SetReturnForScene
+	export Func_080c8940, WorldMap_SetReturnLeavingScene
+	export Func_080c8948, FieldItem_JumpToLeader
+	export ScreenTransition_IsScanlineActiveFar, ScreenTransition_IsScanlineActive
 	export Party_CheckItemLimitFar, Party_CheckItemLimit
 	export Scene_FindTriggerFar, Scene_FindTrigger
-	export Func_080c8968, Func_080d1760
+	export Func_080c8968, BattleEffect_PackTargetBuffer
 	export BattleEffect_LoadBufferPaletteFar, BattleEffect_LoadBufferPalette

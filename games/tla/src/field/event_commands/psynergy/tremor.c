@@ -73,10 +73,7 @@ struct EffectScene__f0e8db0 {
 // needs a name in directory.s before this adopts.
 extern char ResourceId_ShakeTiles;
 
-void FieldPsynergy_FadeToCastColor(void);
-void FieldPsynergy_FadeFromCastColor(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-void wait(s32 frames);
 
 // Sways the view from side to side around the chosen object, as kind 19 does
 // with no object: the swing grows from 2 to 12 pixels, holds 40 frames,
@@ -116,7 +113,7 @@ void FieldPsynergy_TremorOnTarget(void) {
        i++, particle++) {
     struct EffectSprite *sprite = &work->sprites[i];
 
-    Func_080eaf98(sprite, 4, 4, 0, tile + (i & 1));
+    EffectSprite_Init(sprite, 4, 4, 0, tile + (i & 1));
     sprite->oam.palette256 = 0;
     sprite->oam.palette = 14;
     sprite->oam.priority = 0;
@@ -126,10 +123,10 @@ void FieldPsynergy_TremorOnTarget(void) {
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
-    Func_080e43a4(targetSprite->pictures, work->picture,
-                  targetSprite->width * targetSprite->height);
+    FieldPsynergy_DecodePicture(targetSprite->pictures, work->picture,
+                                targetSprite->width * targetSprite->height);
   }
-  Func_080e89e4(VIEW_MOVE_X);
+  ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);
 
@@ -160,7 +157,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       }
     }
 
-    Func_080e8b44(VIEW_MOVE_X, phase++, amplitude);
+    ViewMove_Swing(VIEW_MOVE_X, phase++, amplitude);
     switch (state) {
     case SWAY_GROW:
       if (frames == 40)
@@ -208,7 +205,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     Animation_ApplyChildValueFar(targetSprite, 16);
     ((struct ObjectSprite *)target->sprite)->unk19 = 1;
   }
-  Func_080e8c9c();
+  ViewMove_End();
   ViewMove_RestoreNearbySprites();
   VramCache_FreeEntry(tiles);
   FieldPsynergy_FadeFromCastColor();
@@ -249,7 +246,7 @@ void FieldPsynergy_Tremor(void) {
 
   FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
-  Func_080e89e4(VIEW_MOVE_X);
+  ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);
 
@@ -276,7 +273,7 @@ void FieldPsynergy_Tremor(void) {
       }
     }
 
-    Func_080e8b44(VIEW_MOVE_X, phase++, amplitude);
+    ViewMove_Swing(VIEW_MOVE_X, phase++, amplitude);
     switch (state) {
     case SWAY_GROW:
       amplitude += SWAY_RAMP;
@@ -314,7 +311,7 @@ void FieldPsynergy_Tremor(void) {
     frameCount++;
   } while (state != SWAY_DONE);
 
-  Func_080e8c9c();
+  ViewMove_End();
   ViewMove_RestoreNearbySprites();
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);

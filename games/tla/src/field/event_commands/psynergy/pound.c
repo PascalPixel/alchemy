@@ -61,33 +61,18 @@ struct FxScene__f0e5d5c {
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void FieldPsynergy_FadeToCastColor(void);
+s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_ReleaseFar(struct Actor *object);
 void Func_080dba5c(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void wait(s32 frames);
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void BattleEffect_SinkAndShrinkObject(void);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-s32 Func_080ce31c(s32 kind);
-void FieldPsynergy_FadeFromCastColor(void);
-void Func_080e5a64(void);
+void FieldPsynergy_UpdatePound(void);
 
 void FieldPsynergy_Pound(void) {
   struct ShineWork__f0e5d5c *work = HeapSlot_Alloc(92, 0x18b4);
@@ -135,14 +120,15 @@ void FieldPsynergy_Pound(void) {
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.
-    spot = ~Func_080cda84(scene->fieldKind, caster, &scene->x);
+    spot = ~Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x);
     inReach = (u32)(-spot | spot) >> 31;
     if (inReach == 1) {
       for (j = 0; j < 80; j++) {
         object = event->objects[j];
         if (object != NULL && object->script != NULL &&
             (object->collisionFlags & 1) &&
-            Func_080dbe80(&scene->x, 4, &object->x, object->radius - 2) >= 0)
+            FieldPsynergy_CheckOverlap(&scene->x, 4, &object->x,
+                                       object->radius - 2) >= 0)
           goto outOfReach;
       }
     }
@@ -174,7 +160,7 @@ void FieldPsynergy_Pound(void) {
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
     Func_080dba5c();
 
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   canvas->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   canvas->depth = 1;
@@ -199,7 +185,7 @@ void FieldPsynergy_Pound(void) {
   glowEntry = VramCache_FindFreeEntry();
   glowTile = VramCache_Load(glowEntry, size, work);
   glow = &work->glow;
-  Func_080eaf98(glow, 32, 32, 0xc0000000, glowTile);
+  EffectSprite_Init(glow, 32, 32, 0xc0000000, glowTile);
   glow->oam.priority = 0;
   glow->oam.palette256 = 0;
   glow->oam.palette = 0;
@@ -230,7 +216,7 @@ void FieldPsynergy_Pound(void) {
     particle->velocityX = Iwram_MulQ16(Trig_Cos(angle), speed);
     particle->velocityY = Iwram_MulQ16(Trig_Sin(angle), speed);
     particle->timer = -j;
-    Func_080eaf98(sprite, 8, 8, 0x40000000, starTile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, starTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -238,7 +224,7 @@ void FieldPsynergy_Pound(void) {
     sprite->scaleY = sprite->scaleX = 0xcccc;
   }
   wait(1);
-  Func_080dbed0(shine, scene->x, scene->y + lift, scene->z);
+  FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
   Actor_SelectAnimationFar(shine, 1);
   wait(15);
   rise = 24;
@@ -261,9 +247,10 @@ void FieldPsynergy_Pound(void) {
     Sound_PlayFar(114);
     wait(1);
   } else {
-    pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
-                                        Func_080ce31c(scene->fieldKind));
-    Task_Add(Func_080e5a64, 0x480);
+    pending =
+        Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
+                                  Scene_SelectPsynergyTarget(scene->fieldKind));
+    Task_Add(FieldPsynergy_UpdatePound, 0x480);
     frame = 0;
     while (work->state != 999) {
       wait(1);
@@ -271,14 +258,14 @@ void FieldPsynergy_Pound(void) {
       scene->frame = frame;
       if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1)) {
         glow = &work->glow;
-        Func_080eb01c(glow);
+        EffectSprite_Draw(glow);
       }
       Field_RunPsynergyEvent(pending, work->fading, frame++);
     }
-    Task_Remove(Func_080e5a64);
+    Task_Remove(FieldPsynergy_UpdatePound);
     wait(10);
     Sound_PlayFar(114);
-    Func_080dbf94(shine, shine->x, shine->y, shine->z);
+    FieldPsynergy_ShrinkToCaster(shine, shine->x, shine->y, shine->z);
   }
   Actor_ReleaseFar(shine);
   VramCache_FreeEntry(starEntry);
@@ -289,7 +276,12 @@ end:
   HeapSlot_Release(92);
 }
 
-void Func_080e62f4(u8 *source, u8 *destination, s32 phase) {
+/// Copies a 32 by 32 byte picture into a cleared one stretched down, its rows
+/// four pixels apart, each column slid down by phase (1.6 pixels a step, from
+/// 124 pixels up) less a sine wave across the columns; what falls outside is
+/// dropped. The
+/// Scoop draws its rising picture with it.
+void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
   s32 height;
   s32 column;

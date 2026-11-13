@@ -41,15 +41,14 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -69,8 +68,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -151,25 +148,26 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
-/* VIEW(f179f18): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); f175f74 has
- * struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32). */
-extern struct SpriteObject *
-Func_0815b290__f179f18(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32
- * width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject
- * *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct
- * EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object
- * already declares, it does not compile in tla-ja:
+/* VIEW(f179f18): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); f175f74 has struct SpriteObject__f175f74
+ * *EffectSprite_CreateWithTiles(s32, s32, u32, u32). */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__f179f18(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+/* VIEW(f179f18): routine EffectSprite_Acquire as struct FloraObject
+ * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f175f74
+ * has struct SpriteObject *EffectSprite_Acquire(s32, s32, u32, u32); tried as
+ * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
+ * s32 value), which the object already declares, it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:26593: too many arguments to
- * function `Func_0815b3b0'. */
+ * function `EffectSprite_Acquire'. */
 extern struct FloraObject *
-Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape,
-                       s32 mode) __asm__("Func_0815b3b0");
+EffectSprite_Acquire__f179f18(s32 width, s32 height, u32 shape,
+                              s32 mode) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
@@ -243,7 +241,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   scroll = -80;
@@ -267,7 +265,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
         struct FloraObject *obj =
-            Func_0815b290__f179f18(16, 16, 0x40000000, 0xf000);
+            EffectSprite_CreateWithTiles__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
@@ -275,7 +273,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != 17; i++) {
         struct FloraObject *obj =
-            Func_0815b3b0__f179f18(16, 16, 0x40000000, 0xf000);
+            EffectSprite_Acquire__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[27 + i] = obj;
         Iwram_CopyWordsEntry(obj, work->objects[12], 24);
       }
@@ -291,7 +289,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
-        struct FloraObject *obj = Func_0815b290__f179f18(32, 32, 0x80002000, 0);
+        struct FloraObject *obj =
+            EffectSprite_CreateWithTiles__f179f18(32, 32, 0x80002000, 0);
         obj->flags = 2;
         work->objects[i] = obj;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
@@ -368,16 +367,16 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     if (frame == 108) {
       REG_BG2PA = 0x80;
       REG_BG2X = 0;
-      Func_0815b434(source, 8, 0x10000);
-      Func_0815b434(Data_02010020, 16, 0xc000);
-      Func_0815b434(Data_020100a0, 32, 0xc000);
-      Func_0815b434(Data_020102a0, 48, 0xc000);
+      BattleEffect_DrawShadedCircles(source, 8, 0x10000);
+      BattleEffect_DrawShadedCircles(Data_02010020, 16, 0xc000);
+      BattleEffect_DrawShadedCircles(Data_020100a0, 32, 0xc000);
+      BattleEffect_DrawShadedCircles(Data_020102a0, 48, 0xc000);
     }
     if ((u32)(frame - 223) <= 29) {
       s32 k = Random16() & 3;
       s32 n = Data_08199421[k] * 2;
 
-      Func_0818caa8(source + Data_08199426[k], 44, 78, n);
+      Canvas_BlitAtFoot(source + Data_08199426[k], 44, 78, n);
     }
     u = frame - 112;
     if (u <= 31) {
@@ -675,11 +674,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         model->shade = sh;
         if (sh > -64) {
           Transform_Reset();
-          Func_08015160(Data_08199446[i] << 16, Data_0819944a[i] << 16, 0);
+          SceneTransform_ApplyPosition3(Data_08199446[i] << 16,
+                                        Data_0819944a[i] << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Transform_ApplyRoll(Data_08199436[i]);
           Transform_ApplyPitch(Data_0819943e[i]);
-          Func_0801521c(scale);
+          SceneTransform_ApplyUniformScale(scale);
           Transform_ApplyYaw(frame << 11);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
@@ -1125,8 +1125,9 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         dagger->velocityZ = 0;
       }
       Transform_Reset();
-      Func_08015160(dagger->x - (64 << 16), dagger->y - (64 << 16), 0);
-      Func_0801521c(0x8000);
+      SceneTransform_ApplyPosition3(dagger->x - (64 << 16),
+                                    dagger->y - (64 << 16), 0);
+      SceneTransform_ApplyUniformScale(0x8000);
       Transform_ApplyRoll(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
       Render_DrawModelList(quad);

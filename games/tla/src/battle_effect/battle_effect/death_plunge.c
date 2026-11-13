@@ -674,7 +674,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
   wait(1);
-  Func_0814355c();
+  BattleEffect_SetupCanvasWindows();
   REG_BG2PA = 0x100;
   REG_WININ = 0x3537;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
@@ -775,9 +775,10 @@ extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
 extern char ResourceId_SunbeamCloudsBackdrop, ResourceId_VioletSkyBackdrop;
 extern u8 gMapCellBuffer[];
 
-struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
-                                   u32 attributes);
-struct RuinObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
+struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
+                                                  u32 shape, u32 attributes);
+struct RuinObject *EffectSprite_Acquire(s32 width, s32 height, u32 shape,
+                                        s32 mode);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])
@@ -854,8 +855,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     if (size > 96) {
       size = 96;
     }
-    Func_0815b434(work->sheet, size, 0x10000);
-    Func_0818caa8(work->sheet, pos.x / 2, pos.y - 16, size);
+    BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
+    Canvas_BlitAtFoot(work->sheet, pos.x / 2, pos.y - 16, size);
     if (frame > 15) {
       actor[3] += 0x100000;
     }
@@ -878,7 +879,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, work->sheet, 1,
                              0);
-  Func_0816ae40(work->sheet, gData_02014000, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2648, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3648, 0,
@@ -888,7 +889,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   for (i = 0; i != 10; i++) {
     s32 size = i * 2 + 2;
 
-    Func_0815b510(work->sheet + 0x3a48 + Data_08197438[i], size, 0x10000);
+    BattleEffect_DrawShadedCirclesMirrored(
+        work->sheet + 0x3a48 + Data_08197438[i], size, 0x10000);
   }
   Graphics_LoadGreyRamp();
   work->transferMode = 2;
@@ -955,7 +957,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           work->shakeFrames = 16;
         }
         if (frame == 0) {
-          Func_08164b2c(0, 0, 0);
+          Palette_BrightenSavedBattleBg(0, 0, 0);
         }
         if (frame == 32) {
           fr = 0;
@@ -998,7 +1000,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           fr += dr;
           fg += dg;
           fb += db;
-          Func_08164b2c(fr >> 16, fg >> 16, fb >> 16);
+          Palette_BrightenSavedBattleBg(fr >> 16, fg >> 16, fb >> 16);
         }
         if (frame == 124) {
           Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -1030,8 +1032,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           if (frame > 67) {
             size += (frame - 68) / 6;
           }
-          Func_0815b434(work->sheet, size, scale);
-          Func_0818caa8(work->sheet, 60, y, size);
+          BattleEffect_DrawShadedCircles(work->sheet, size, scale);
+          Canvas_BlitAtFoot(work->sheet, 60, y, size);
         }
         if (frame > 127) {
           for (i = 0; i != 31; i++) {
@@ -1068,7 +1070,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               s32 sc = 0x80000 - s;
 
               Transform_Reset();
-              Func_08015160(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(sc / 2, sc, sc);
               Transform_ApplyYaw(gSpiderWeb_PictureBiasY[i]);
               Transform_ApplyPitch(Data_081976f0[i]);
@@ -1087,7 +1089,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           }
           model->shade = shade;
           Transform_Reset();
-          Func_08015160(-0x40000, -0x2c0000, 0);
+          SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
           SceneTransform_ApplyScale3(sc >> 1, sc, sc);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
@@ -1112,7 +1114,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             texture.pixels = gData_02014000;
             t <<= 9;
             Transform_Reset();
-            Func_08015160(-0x40000, -0x2c0000, 0);
+            SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
             SceneTransform_ApplyScale3(sc, sc / 3, sc >> 1);
             Transform_ApplyRoll(t);
             if (shade > -64) {
@@ -1130,7 +1132,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               }
               model->shade = shade;
               Transform_Reset();
-              Func_08015160(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(sc, sc >> 1, sc >> 1);
               Transform_ApplyRoll(t);
               Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1156,7 +1158,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
                 sy = 80000;
               }
               Transform_Reset();
-              Func_08015160(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               Transform_ApplyRoll(p->z);
               SceneTransform_ApplyScale3(30384, sy, 0x8000);
@@ -1184,15 +1186,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             if (frame <= 171) {
               q->x += -0x80000;
               q->y += 0x100000;
-              Func_0815b434(work->sheet, r, 0x10000);
-              Func_0818caa8(work->sheet, HI(q->x), HI(q->y), r);
+              BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
+              Canvas_BlitAtFoot(work->sheet, HI(q->x), HI(q->y), r);
             }
             model->kind = 6;
             shade = 0;
             model->shade = shade;
             texture.pixels = work->sheet + 0x3688;
             Transform_Reset();
-            Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
+            SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000,
+                                          0);
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
             Transform_ApplyRoll(0xa000);
             SceneTransform_ApplyScale3(r * 9400, 0x20000, 0x8000);
@@ -1261,7 +1264,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     Iwram_FillWords(canvas, 0x4000, 0);
     REG_BG2CNT = 0x786;
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-    Func_08164abc(31, 31, 31);
+    Palette_BrightenBattleBg(31, 31, 31);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3648,
                                0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data104, work->sheet + 0x36c8,
@@ -1282,7 +1285,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         i = 0;
         src = work->sheet + q * 0x1000;
         for (; i != 8; i++) {
-          obj = Func_0815b290(32, 32, 0x80000000, 0xf000);
+          obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xf000);
           work->objects[q * 9 + i] = obj;
           {
             s32 b = ((u8 *)obj)[9];
@@ -1293,7 +1296,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Iwram_CopyWords((void *)OBJ_TILES(obj), src, 512);
           src += 512;
         }
-        obj = Func_0815b3b0(32, 32, 0x80000000, 0xf000);
+        obj = EffectSprite_Acquire(32, 32, 0x80000000, 0xf000);
         work->objects[q * 9 + 8] = obj;
         Iwram_CopyWords(obj, work->objects[q * 9], 24);
         for (i = 0; i != 8; i++) {
@@ -1327,7 +1330,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         if (b < -18) {
           b = -18;
         }
-        Func_08164b2c(r, g, b);
+        Palette_BrightenSavedBattleBg(r, g, b);
         if (frame <= 16) {
           u16 *e = Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);
           u16 *dst = (u16 *)&OBJ_PLTT_COLOR(15, 0);
@@ -1395,7 +1398,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               s32 y = gProcne_Pictures[i];
               s32 half;
 
-              Func_0815b434(work->sheet, r, 0x10000);
+              BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
               /* FAKEMATCH(dead): a test that is always true here (the block is
                * entered only when r > 1); its two arms end common subexpression
                * elimination's path at their join, so the circle's work->sheet
@@ -1444,15 +1447,15 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Transform_Reset();
           px = p->x + -0x400000;
           py = p->y + -0x400000;
-          Func_08015160(px, py, 0);
+          SceneTransform_ApplyPosition3(px, py, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           angle = Data_08197734[i];
           Transform_ApplyRoll(angle);
           scale = size * 9400;
           SceneTransform_ApplyScale3(scale, 0x20000, 0x8000);
           Render_TransformVertices(Data_081976e0, verts, 4);
-          Func_0815b434(work->sheet, size, 0x10000);
-          Func_0818caa8(work->sheet, HI(p->x) - 1, HI(p->y), size);
+          BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
+          Canvas_BlitAtFoot(work->sheet, HI(p->x) - 1, HI(p->y), size);
           Render_DrawModelList(model);
         }
       }
@@ -1515,7 +1518,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             } else if (t > 15) {
               x += (t * 7 - 112) << 16;
             }
-            Func_08015160(x, -0x100000, 0);
+            SceneTransform_ApplyPosition3(x, -0x100000, 0);
             SceneTransform_ApplyScale3(45536, 0x10000, 0x8000);
             if (i == 0) {
               Transform_ApplyRoll(-0xbe8);
@@ -1684,7 +1687,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       if (frame > 107) {
         work->transferMode = 3;
         work->transferValue = 0x02020202;
-        Func_08164b2c(0, 0, 0);
+        Palette_BrightenSavedBattleBg(0, 0, 0);
       }
       if (frame == 32) {
         Sound_PlayFar(140);
@@ -1707,7 +1710,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           if (frame > 47) {
             b = (frame - 48) / 2;
           }
-          Func_08164abc(a, a / 2, b);
+          Palette_BrightenBattleBg(a, a / 2, b);
         }
         if ((u32)(frame - 80) <= 31) {
           u32 c;
@@ -1751,11 +1754,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           if (frame <= 43) {
             q->x += -0x80000;
             q->y += 0x100000;
-            Func_0815b434(work->sheet + 0x38c0, r, 0x10000);
-            Func_0818caa8(work->sheet + 0x38c0, HI(q->x), HI(q->y), r);
+            BattleEffect_DrawShadedCircles(work->sheet + 0x38c0, r, 0x10000);
+            Canvas_BlitAtFoot(work->sheet + 0x38c0, HI(q->x), HI(q->y), r);
           }
           Transform_Reset();
-          Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
+          SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Transform_ApplyRoll(0xa000);
           SceneTransform_ApplyScale3(r * 9400, 0x20000, 0x8000);

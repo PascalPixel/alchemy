@@ -1,4 +1,3 @@
-// ---- games/tla/src/field/map/terrain.c ----
 #include "battle.h"
 #include "task.h"
 #include "field.h"
@@ -606,7 +605,6 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 #undef FIELD_AT_OFFSET
 #undef HELD
 
-// ---- games/tla/src/field/grid.c ----
 #include "sprite_metadata.h"
 
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {

@@ -464,7 +464,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           mirrorX = ((Trig_Sin(angle) * (radius + 8)) >> 16) + 72;
           moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
         }
-        Func_0818caa8(work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 24);
+        Canvas_BlitAtFoot(work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 24);
         spawned = 0;
         for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
              i++, spark++) {

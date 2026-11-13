@@ -191,7 +191,6 @@ extern void Vector_AddPolarOffset__mars_join(
     s32 magnitude, s32 angle,
     struct EffectVector *position) __asm__("Vector_AddPolarOffset");
 
-void Actor_Jump(s32 id, s32 height, s32 frames);
 /* VIEW(mars_join): routine Actor_SetSpriteColorModeFar as void
  * Actor_SetSpriteColorModeFar(struct CaptureObject *object, s32 value); motes
  * has void Actor_SetSpriteColorModeFar(struct Actor *object, u32 value). */

@@ -124,7 +124,7 @@ void Scene_TakeExit(s32 exitKind) {
 }
 
 /// The Broken Seal's Scene_ReturnFromSequence, without the childhood healing,
-/// ending a defeat with Func_080ca3f4.
+/// ending a defeat with WorldMap_SetReturnLeavingScene.
 void Scene_ReturnFromSequence(s32 result) {
   struct BattleUnit *unit;
   s16 scene;
@@ -152,7 +152,8 @@ void Scene_ReturnFromSequence(s32 result) {
       gMainRoutineWork.scene = gMainRoutineWork.savedScene;
       gMainRoutineWork.entrance = gMainRoutineWork.savedEntrance;
     }
-    Func_080ca3f4(gMainRoutineWork.scene, gMainRoutineWork.entrance);
+    WorldMap_SetReturnLeavingScene(gMainRoutineWork.scene,
+                                   gMainRoutineWork.entrance);
   } else {
     scene = gMainRoutineWork.pair1ee[0];
     entrance = gMainRoutineWork.pair1ee[1];
@@ -289,8 +290,8 @@ void Scene_LoadOverlay(s32 unused) {
 
 #define SCENE_RECORD(id) (&gScenes[id])
 
-/// As The Broken Seal's, with this game's flags, and Func_080c9de0 in place of
-/// the area's visited flag.
+/// As The Broken Seal's, with this game's flags, and WorldMap_MarkPlaceVisited
+/// in place of the area's visited flag.
 void Scene_Arrive(s32 unused, s32 keep) {
   s32 group = SCENE_RECORD(gMainRoutineWork.scene)->group;
   s32 flag;
@@ -329,7 +330,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
     gMainRoutineWork.returnCue = -1;
   }
   gMainRoutineWork.sceneGroup = group;
-  Func_080c9de0(gMainRoutineWork.scene, gMainRoutineWork.entrance);
+  WorldMap_MarkPlaceVisited(gMainRoutineWork.scene, gMainRoutineWork.entrance);
   gMainRoutineWork.sceneVariant = SCENE_RECORD(gMainRoutineWork.scene)->variant;
   if (gMainRoutineWork.sceneVariant == 2)
     GameFlag_SetBit(0x123);

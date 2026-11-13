@@ -305,7 +305,10 @@ static __inline__ void CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap,
   *(u16 *)(screenTile + 64) = *cellPictureEntry;
 }
 
-void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
+/// Draws a column of 11 cell pictures of a layer's cells, one tile wide, into
+/// its BG map from tile (tileX, tileY), as The Broken Seal's routine of the
+/// same name; tileX's low bit picks the picture's left or right half.
+void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
@@ -344,8 +347,6 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
 }
 
 #include "bg_scroll.h"
-
-u32 Random16(void);
 
 void MapGrid_UpdateLayerScroll(void) {
   struct MapWork *work;
@@ -426,9 +427,9 @@ void MapGrid_UpdateLayerScroll(void) {
     y = (u32)baseY >> 19;
     if ((layer->x ^ baseX) & 0x80000) {
       if (layer->x < baseX)
-        Func_0802ac90(layerIndex, x + 30, y);
+        MapGrid_RenderCellPictureColumn(layerIndex, x + 30, y);
       else
-        Func_0802ac90(layerIndex, x, y);
+        MapGrid_RenderCellPictureColumn(layerIndex, x, y);
     }
     if ((layer->y ^ baseY) & 0x100000) {
       if (layer->y < baseY)
@@ -608,8 +609,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
     dst += 128 - width;
   }
 }
-
-void wait(s32 frames);
 
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)steps;
@@ -810,8 +809,8 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
 
 /// Copies a rectangle of map cells as they are, with their shape grid bytes,
 /// from (srcX, srcY) to (dstX, dstY), width by height cells.
-void Func_0802b590(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                   s32 dstY) {
+void Map_CopyRawCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
+                          s32 dstY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   s32 dst = (dstY << 7) + dstX;
   u8 *dstShapes = gMapShapeGrid + dst;

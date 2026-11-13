@@ -15,16 +15,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -44,8 +43,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -90,7 +87,7 @@ extern const u8 Data_081991c0[];       // and (Earth Force)
 // light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
 // target, trailed by 40 spinning bolts, and grows; when it arrives the
 // target is hit, and in Thunder Mine 128 sparks scatter and bounce.
-void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -258,7 +255,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       if (radius > largest) {
         radius = largest;
       } else {
-        Func_0815b434(buffer, radius, 85536);
+        BattleEffect_DrawShadedCircles(buffer, radius, 85536);
         if (mode == 1) {
           for (i = 0; i != radius * radius / 2; i++) {
             if (buffer[i] != 0) {
@@ -267,7 +264,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      Func_0818caa8(buffer, x, y, radius);
+      Canvas_BlitAtFoot(buffer, x, y, radius);
       for (i = 0; i != 4; i++) {
         // DEAD: i runs 0 to 3, so the mask changes nothing; the source keeps
         // it.
@@ -349,7 +346,8 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet + 0x1456 + (bolt->variant << 12);
         model->shade = shade;
         Transform_Reset();
-        Func_08015160(ball->x / 2 - 0x400000, ball->y - 0x400000, 0);
+        SceneTransform_ApplyPosition3(ball->x / 2 - 0x400000,
+                                      ball->y - 0x400000, 0);
         Transform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == 0) {

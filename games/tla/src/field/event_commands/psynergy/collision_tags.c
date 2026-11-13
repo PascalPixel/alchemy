@@ -1,22 +1,23 @@
 /// @file
-/// The map collision's tags, with routines not yet understood.
+/// The map collision's tags and the flag blocks.
 // Part of psynergy.c.
 
 #include "../psynergy_internal.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-s32 Func_080eab70(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_080eaa14(struct ActorFlag *list);
-s32 Party_GetLeaderActor(void);
-/* VIEW(f0ea8d4): routine Func_080ea8a8 as void Func_080ea8a8(s32 x, s32 z, s32
- * layer, s32 height); the definition has void Func_080ea8a8(s32 x, s32 z, s32
- * layer); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/psynergy.c:6493: too many
- * arguments to function `Func_080ea8a8'. */
-extern void Func_080ea8a8__f0ea8d4(s32 x, s32 z, s32 layer,
-                                   s32 height) __asm__("Func_080ea8a8");
+void FlagBlock_ApplyFlags(struct ActorFlag *list);
+/* VIEW(f0ea8d4): routine MapGrid_MarkRaisedIfOpen as void
+ * MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer, s32 height); the definition
+ * has void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer); tried as the rest
+ * of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:6493: too many arguments to
+ * function `MapGrid_MarkRaisedIfOpen'. */
+extern void
+Func_080ea8a8__f0ea8d4(s32 x, s32 z, s32 layer,
+                       s32 height) __asm__("MapGrid_MarkRaisedIfOpen");
 /* VIEW(f0ea8d4): routine MapGrid_GetTerrainHeightAboveFar as s32
  * MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
  * f0ea14c has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
@@ -28,7 +29,10 @@ extern s32
 Func_08020310__f0ea8d4(s32 x, s32 z, s32 layer,
                        s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
 
-void Func_080ea8d4(struct ActorFlag *list) {
+/// FlagBlock_PlaceAll that also marks the four cells beside each block raised
+/// where they are open (MapGrid_MarkRaisedIfOpen), as Alhafra and its cave
+/// need.
+void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct ActorFlag *first = list;
   struct Actor *owner;
@@ -36,7 +40,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
   for (; list->actor != 0xffff; list++) {
     struct Actor *object = Actor_GetById(list->actor);
     u16 flag = list->flag;
-    s32 slot = Func_080eab70(object);
+    s32 slot = Actor_GetCellIndex(object);
     struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
 
     object->motionFlags = 0;
@@ -58,7 +62,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
       Actor_SelectAnimationFar(object, 1);
     }
   }
-  Func_080eaa14(first);
+  FlagBlock_ApplyFlags(first);
   owner = Actor_GetById(Party_GetLeaderActor());
   if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->terrainId,
                              owner->terrainHeight))
@@ -88,9 +92,12 @@ extern u8 gMapShapeGrid[];
 
 void GameFlag_SetBit(s32 flag);
 u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
-s32 Func_080eab98(s32 unused, s32 key, s32 value);
+s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
-void Func_080eaa14(struct ActorFlag *list) {
+/// For each flag block whose picture disagrees with its flag: with the flag
+/// set its cell is lowered 32 pixels and the flag cleared, with it clear the
+/// cell is raised and the flag set; the event work remembers the block.
+void FlagBlock_ApplyFlags(struct ActorFlag *list) {
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *grid = gMapShapeGrid;
 
@@ -118,7 +125,7 @@ void Func_080eaa14(struct ActorFlag *list) {
       s32 height;
 
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
-      slot = Func_080eab70(object);
+      slot = Actor_GetCellIndex(object);
       key = MapGrid_GetTerrainKindFar(object->terrainId, object->x, object->z);
       height = MapGrid_GetTerrainHeightFar(object->terrainId, object->x,
                                            object->z) >>
@@ -136,7 +143,7 @@ void Func_080eaa14(struct ActorFlag *list) {
 
         cells += slot;
         shapes += slot;
-        *shapes = Func_080eab98(object->terrainId, key, height);
+        *shapes = MapCollision_FindOrAddTag(object->terrainId, key, height);
         if (GameFlag_Test(flag)) {
           s32 bits;
 
@@ -153,14 +160,15 @@ void Func_080eaa14(struct ActorFlag *list) {
   }
 }
 
-s32 Func_080eab70(struct Actor *object) {
+/// Returns the index of object's cell in a 128-cell-wide map layer.
+s32 Actor_GetCellIndex(struct Actor *object) {
   return object->x / 0x100000 + (object->z / 0x100000) * 128;
 }
 
 /// Finds the tag (key, value) in the 4-byte entries at gMapCollision, or adds
-/// it at the first free entry (key 0xff), and returns its index. Func_080eabd0
-/// gives a raised cell's shape this index.
-s32 Func_080eab98(s32 unused, s32 key, s32 value) {
+/// it at the first free entry (key 0xff), and returns its index.
+/// Actor_PlaceBlocks gives a raised cell's shape this index.
+s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value) {
   u8 *entry = Ram_MapCollision;
   s8 tagValue;
   s32 i = 0;

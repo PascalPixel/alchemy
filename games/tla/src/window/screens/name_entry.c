@@ -35,7 +35,7 @@ s32 NameEntry_AcceptsMark(s32 letter, s32 previous) {
 }
 
 /// Returns how many letters `name` has, not counting its voicing marks.
-s32 Func_080444c4(const u8 *name) {
+s32 NameEntry_CountLetters(const u8 *name) {
   s32 count;
 
   count = 0;
@@ -344,7 +344,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     nameCaret.sprite = output;
     output->sentinel = 255;
     output->sprite.oam.priority = 0;
-    x = 72 + Func_080444c4(editedName) * 10;
+    x = 72 + NameEntry_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
   palette = (u16 *)0x050001c0;
@@ -372,7 +372,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     }
     if (textDirty) {
       textDirty = 0;
-      x = 72 + Func_080444c4(editedName) * 10;
+      x = 72 + NameEntry_CountLetters(editedName) * 10;
       MenuCursor_SetFar(&nameCaret.cursor, x, 22, 3);
     }
     MenuCursor_AdvanceFar(keyMotion);

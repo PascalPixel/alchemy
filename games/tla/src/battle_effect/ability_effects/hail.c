@@ -459,7 +459,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
 void BattleEffect_PlaceFormationObjects(s32 group, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 group, s32 x, s32 y);
 
-void Func_0818caa8(void *source, s32 x, s32 y, s32 size); // four motes
+void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size); // four motes
 void SceneTransform_ApplyScale(s32 *scale);
 
 void Projection_Set(s32 a, s32 b, s32 c);

@@ -163,16 +163,11 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   }
 
   if (found < 0) {
-    /* FAKEMATCH(temporary): each slot's address walked as a byte offset of its
-     * own, which keeps the halfword operands and the four-byte-longer free-slot
-     * loop; as state->actionSlots[index].encodedAction, 20 of 77 instructions
-     * differ in tla-en. */
     for (index = 0; index <= 30; index++) {
-      s32 offset = index * (s32)sizeof(state->actionSlots[0]) +
-                   (s32)&((struct OwnerActionState *)0)->actionSlots;
+      s32 action = state->actionSlots[index].encodedAction;
 
-      if (*(u16 *)((u8 *)state + offset) == 0) {
-        *(u16 *)((u8 *)state + offset) = key;
+      if (action == 0) {
+        state->actionSlots[index].encodedAction = key;
         found = index;
         break;
       }

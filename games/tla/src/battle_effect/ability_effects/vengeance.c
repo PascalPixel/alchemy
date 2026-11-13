@@ -18,16 +18,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -47,8 +46,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -573,13 +570,13 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         model->vertices = vertices;
         model->texture = &texture;
         Transform_Reset();
-        Func_08015160(work->particles[0].x + (shift << 16),
-                      work->particles[0].y, 0);
+        SceneTransform_ApplyPosition3(work->particles[0].x + (shift << 16),
+                                      work->particles[0].y, 0);
         if (effect->side == 1) {
           Transform_ApplyYaw(0x8000);
         }
         Transform_ApplyRoll(work->particles[0].z);
-        Func_0801521c(scale);
+        SceneTransform_ApplyUniformScale(scale);
         texture.logHeight = 5;
         texture.pixels = Data_0201476b;
         texture.logWidth = width;
@@ -606,9 +603,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         scale = 0x78e20 - (frame << 13);
         Transform_Reset();
         if (effect->side == 0) {
-          Func_08015160(0xfff00000, 0, 0);
+          SceneTransform_ApplyPosition3(0xfff00000, 0, 0);
         } else {
-          Func_08015160(0x100000, 0, 0);
+          SceneTransform_ApplyPosition3(0x100000, 0, 0);
         }
         SceneTransform_ApplyScale3(scale, scale, scale);
         if (effect->side == 1) {
@@ -623,7 +620,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
           Transform_Push();
           Transform_ApplyRoll(i * 0x4000 + 0x5650);
           SceneTransform_ApplyScale3(0x4000, ((i & 1) << 15) + 0xc000, 0x8000);
-          Func_0801521c(0x10000);
+          SceneTransform_ApplyUniformScale(0x10000);
           Render_TransformVertices(gData_081991f0, vertices, 4);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -642,7 +639,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Purgatory (kind 114).
 /* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
@@ -650,13 +647,13 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode);
  * of the object has, it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:32640: structure has no member
  * named `size'. */
-DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, Func_08181ed4, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, BattleEffect_RunGeyser, 0)
 
 /// Abilities: Djinn Blast (kind 461).
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, Func_08181ed4, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, BattleEffect_RunGeyser, 2)
 
 /// Abilities: Djinn Storm (kind 462).
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, Func_08181ed4, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, BattleEffect_RunGeyser, 1)
 
 #define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
 #define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
@@ -717,24 +714,25 @@ extern const u8 Data_08198df8[];
 
 static inline void CopyPalette(const void *palette) {
   // Both palette copies go through this helper; as direct calls to
-  // Iwram_CopyWords, 4 of 513 instructions of Func_08181ed4 differ in tla-en.
+  // Iwram_CopyWords, 4 of 513 instructions of BattleEffect_RunGeyser differ in
+  // tla-en.
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 }
 
-void Func_0815e22c(struct EffectPosition *midpoint);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
 void BattleEffect_StepPaletteToResource(s32 resourceId);
 
-// A geyser between the targets. A textured column, its texture scrolling
-// upward, stands on the floor at the targets' midpoint, and drops burst
-// from its foot, fall back under gravity and bounce once on the floor.
-// Mode 0 (kind 114): the cross texture in orange; the column rises and
-// falls on a sine and 200 drops burst at once. Mode 1 (kind 462): the
-// column keeps widening and fades from frame 32, with 200 drops and 16 more
-// each frame to frame 23. Mode 2 (kind 461): a thin column with 100 drops
-// and 2 more each frame. In modes 1 and 2 the palette also steps through
-// the Mercury, Mars and Jupiter Djinn's. At frame 20 the target is knocked
-// back and the result phase starts.
-void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
+/// A geyser between the targets. A textured column, its texture scrolling
+/// upward, stands on the floor at the targets' midpoint, and drops burst
+/// from its foot, fall back under gravity and bounce once on the floor.
+/// Mode 0 (kind 114): the cross texture in orange; the column rises and
+/// falls on a sine and 200 drops burst at once. Mode 1 (kind 462): the
+/// column keeps widening and fades from frame 32, with 200 drops and 16 more
+/// each frame to frame 23. Mode 2 (kind 461): a thin column with 100 drops
+/// and 2 more each frame. In modes 1 and 2 the palette also steps through
+/// the Mercury, Mars and Jupiter Djinn's. At frame 20 the target is knocked
+/// back and the result phase starts.
+void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
   struct Texture__f1811d4 texture;
   DrawRectangle draw[2];
   struct EffectPosition midpoint;
@@ -776,7 +774,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     for (frame = 0; frame != GEYSER_FRAMES; frame++) {
       // The geyser follows the targets' midpoint while it rises.
       if (frame < GEYSER_PEAK_FRAME)
-        Func_0815e22c(&midpoint);
+        BattleEffect_GetTargetsMidpoint(&midpoint);
       if (frame == 0) {
         Sound_PlayFar(144);
         // An empty once-only loop after the call, so work reloads before the
@@ -891,7 +889,8 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         column->scrollU = (frame << 2) & 31;
         column->scrollV = (frame << 1) & 31;
         Transform_Reset();
-        Func_08015160((midpoint.x / 2 - 64) << 16, -16 << 16, 0);
+        SceneTransform_ApplyPosition3((midpoint.x / 2 - 64) << 16, -16 << 16,
+                                      0);
         Transform_ApplyPitch(2000);
         if (mode == 0) {
           // Up on a sine in 16 frames, held, and down again from frame 24.
@@ -938,13 +937,13 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_081823a8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Djinn Stun (kind 465).
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, Func_081823a8, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, BattleEffect_RunStarSwarm, 0)
 
 /// Abilities: Mystic Call (kind 466).
-DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, Func_081823a8, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 
 // The Lost Age's blitter modes run the other way from The Broken Seal's:
 // additive 0, max 1, transparent 2, copy 3.
@@ -953,20 +952,18 @@ DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, Func_081823a8, 1)
 #define STARS_PER_TARGET 64 // each target's slice of the star buffer
 #define STAR_TOTAL 384
 
-s32 __divsi3(s32 dividend, s32 divisor);
-
 void SceneTransform_ApplyPosition(const s32 *position);
 
-// Swarms of stars over the targets. Each target gets a swarm, eight frames
-// after the one before: its stars burst from a point that rises out of it,
-// each turning about the point on one of four axes and drawn smaller the
-// deeper it is, and from frame 24 they are pulled back into the point,
-// each one gone once it has arrived. The palette steps through the
-// Mercury, Mars and Jupiter Djinn's. Mode 0: 16 stars a target, the
-// target flashes as its swarm starts, and the effect lasts eight frames
-// a target more than 38. Mode 1: 48 stars, a flash at the start and 55
-// frames later, 72 frames in all.
-void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
+/// Swarms of stars over the targets. Each target gets a swarm, eight frames
+/// after the one before: its stars burst from a point that rises out of it,
+/// each turning about the point on one of four axes and drawn smaller the
+/// deeper it is, and from frame 24 they are pulled back into the point,
+/// each one gone once it has arrived. The palette steps through the
+/// Mercury, Mars and Jupiter Djinn's. Mode 0: 16 stars a target, the
+/// target flashes as its swarm starts, and the effect lasts eight frames
+/// a target more than 38. Mode 1: 48 stars, a flash at the start and 55
+/// frames later, 72 frames in all.
+void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -1145,12 +1142,12 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08182898(struct BattleEffectArgument *effect);
+void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect);
 
-/// Opens the canvas layer, sets alpha blending and a 24-frame palette fade
-/// counter (read by Palette_StepFadeTransfer), then runs the effect body
-/// Func_08182898.
-void Func_0818284c(s32 arg) {
+/// Unused: nothing calls it. Opens the canvas layer, sets alpha blending and a
+/// 24-frame palette fade counter (read by Palette_StepFadeTransfer), then runs
+/// the effect body BattleEffect_RunBubbleColumn.
+void BattleEffect_StartBubbleColumn(s32 arg) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
   BattleEffect_StartCanvasLayer(0);
@@ -1158,7 +1155,7 @@ void Func_0818284c(s32 arg) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   *(s32 *)(work + 0x77b4) = 24;
   *(s32 *)(work + 0x77b8) = 0;
-  Func_08182898(arg);
+  BattleEffect_RunBubbleColumn(arg);
 }
 
 // The blitter heap slots, by byte offset into Ram_HeapSlots.
@@ -1184,12 +1181,12 @@ extern u8 gData_0819966f[];
 extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
 
-// A column of bubbles. On the first frame 256 glowing ovals of random size
-// appear over the bottom left of the canvas; for 60 frames they float up
-// and drift sideways, drawn with the max blitter in the blue beam's palette,
-// and each one is gone once it has risen past the top. From frame 18 the
-// targets flash one by one, eight frames apart, each with the hit sound.
-void Func_08182898(struct BattleEffectArgument *effect) {
+/// A column of bubbles. On the first frame 256 glowing ovals of random size
+/// appear over the bottom left of the canvas; for 60 frames they float up
+/// and drift sideways, drawn with the max blitter in the blue beam's palette,
+/// and each one is gone once it has risen past the top. From frame 18 the
+/// targets flash one by one, eight frames apart, each with the hit sound.
+void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect) {
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -1280,7 +1277,8 @@ void Func_08182898(struct BattleEffectArgument *effect) {
 struct MeshTriangle;
 struct MeshVertex;
 
-/// The effect sprite Func_0815b290 returns, as far as this function reads it.
+/// The effect sprite EffectSprite_CreateWithTiles returns, as far as this
+/// function reads it.
 struct SpriteView {
   s32 unk00;
   s32 attributes;
@@ -1333,35 +1331,38 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data0FB;
 extern char ResourceId_Data0FC;
 
-/* VIEW(f1811d4): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
- * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
- * attributes, s32 flags); tried as the definition's struct EffectSprite
- * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the
- * object already declares, BattleEffect_RunCoatlicue moves: 1 of 2768
- * instructions in tla-ja. */
-extern struct SpriteObject *
-Func_0815b290__f1811d4(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f1811d4): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); the definition has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags); tried as the definition's struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags), which the object already declares, BattleEffect_RunCoatlicue moves: 1
+ * of 2768 instructions in tla-ja. */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__f1811d4(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex
- * *vertices, struct MeshTriangle *triangles, s32 segments); the definition has
- * void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle
- * *triangles, s32 segments); tried as the definition's void
- * Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
- * s32 segments), which the object already declares, BattleEffect_RunCoatlicue
- * moves: 3 of 2768 instructions in tla-ja. */
-extern void Func_081885f0__f1811d4(struct MeshVertex *vertices,
-                                   struct MeshTriangle *triangles,
-                                   s32 segments) __asm__("Func_081885f0");
+/* VIEW(f1811d4): routine Mesh_BuildCylinderBand as void
+ * Mesh_BuildCylinderBand(struct MeshVertex *vertices, struct MeshTriangle
+ * *triangles, s32 segments); the definition has void
+ * Mesh_BuildCylinderBand(struct MeshVertex__f186dfc *vertices, struct
+ * MeshTriangle *triangles, s32 segments); tried as the definition's void
+ * Mesh_BuildCylinderBand(struct MeshVertex *vertices, struct MeshTriangle
+ * *triangles, s32 segments), which the object already declares,
+ * BattleEffect_RunCoatlicue moves: 3 of 2768 instructions in tla-ja. */
+extern void
+Mesh_BuildCylinderBand__f1811d4(struct MeshVertex *vertices,
+                                struct MeshTriangle *triangles,
+                                s32 segments) __asm__("Mesh_BuildCylinderBand");
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 
 void Palette_LoadBasicSpriteColors(void);
 void Graphics_LoadGreyRamp(void);
 void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
-void Func_08164b2c(s32 r, s32 g, s32 b);
+void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
 
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries__f1811d4[(obj)->vramEntry].tile)
@@ -1471,7 +1472,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   y = -80;
@@ -1496,7 +1497,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 3326);
   skip = 0;
-  Func_081885f0__f1811d4(Data_02014400, coilMesh, 32);
+  Mesh_BuildCylinderBand__f1811d4(Data_02014400, coilMesh, 32);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
@@ -1510,7 +1511,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       i = 0;
       cells = gMapCellBuffer;
       for (; i != 12; cells += 1024, i++) {
-        obj = Func_0815b290__f1811d4(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles__f1811d4(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
@@ -1519,7 +1520,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   }
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);
-  Func_0816ae40(cellBuffer, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(cellBuffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FC, work->sheet + 0x4000, 0,
                              0);
   {
@@ -1827,7 +1828,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     } else {
       Transform_Reset();
-      Func_08015160(0, 0, 0x1000000);
+      SceneTransform_ApplyPosition3(0, 0, 0x1000000);
       if (frame > 539) {
         SceneTransform_ApplyScale3(frame * 1500 - 0xc4c10, 0x10000, 0x10000);
       } else if (frame > 517) {
@@ -2012,9 +2013,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
         model->shade = sh;
         Transform_Reset();
-        Func_08015160(0, ty, 0);
+        SceneTransform_ApplyPosition3(0, ty, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-        Func_0801521c(s);
+        SceneTransform_ApplyUniformScale(s);
         if (frame <= 273) {
           Transform_ApplyRoll(spin - 0x12400);
         }
@@ -2048,8 +2049,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
         model->shade = sh;
         Transform_Reset();
-        Func_08015160(0, 0x1c0000, 0);
-        Func_0801521c(s);
+        SceneTransform_ApplyPosition3(0, 0x1c0000, 0);
+        SceneTransform_ApplyUniformScale(s);
         Transform_ApplyPitch(4000);
         Transform_ApplyYaw(frame << 9);
         Render_TransformVertices(gData_08199210, verts, 64);
@@ -2075,7 +2076,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
               if (frame > 539) {
                 ty += (frame - 539) << 20;
               }
-              Func_08015160(-0x40000, ty, 0);
+              SceneTransform_ApplyPosition3(-0x40000, ty, 0);
               SceneTransform_ApplyScale3(s, s, s);
             } else {
               SceneTransform_ApplyScale3(s, d << 14, s);
@@ -2103,7 +2104,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             }
             model->shade = sh;
             Transform_Reset();
-            Func_08015160(-0x40000, -0x2c0000, 0);
+            SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
             SceneTransform_ApplyScale3(s, s << 1, s);
             Transform_ApplyRoll((i << 14) + 0x2000);
             Transform_ApplyPitch(-0x1000);
@@ -2131,7 +2132,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             if (frame > 539) {
               ty = ((frame - 539) << 20) + -0x2c0000;
             }
-            Func_08015160(-0x40000, ty, 0);
+            SceneTransform_ApplyPosition3(-0x40000, ty, 0);
             SceneTransform_ApplyScale3(s, s / 2, s);
             Transform_ApplyPitch(0x4000);
             Transform_ApplyYaw(frame << 11);
@@ -2165,7 +2166,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (frame > 273) {
             s = s + (frame << 13) + -0x224000;
           }
-          Func_0801521c(s);
+          SceneTransform_ApplyUniformScale(s);
           if (i == 0) {
             if (frame > 209) {
               s32 v = t;
@@ -2173,7 +2174,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
               if (v > 48) {
                 v = 48;
               }
-              Func_08015160(0, v << 16, 0);
+              SceneTransform_ApplyPosition3(0, v << 16, 0);
             }
             Transform_ApplyRoll(Data_0819975c[i] - (frame << 8));
             sh = -16;
@@ -2186,7 +2187,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             if (x > -16) {
               x = -16;
             }
-            Func_08015160(x << 16, 0, 0);
+            SceneTransform_ApplyPosition3(x << 16, 0, 0);
             Transform_ApplyRoll(Data_0819975c[i] + (frame << 8));
             if (frame > 209) {
               Transform_ApplyRoll((frame << 8) + -0xd200);
@@ -2215,8 +2216,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           }
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160(0, 0x200000, 0);
-          Func_0801521c(s);
+          SceneTransform_ApplyPosition3(0, 0x200000, 0);
+          SceneTransform_ApplyUniformScale(s);
         }
         if (sh > -64) {
           model->shade = sh;
@@ -2252,7 +2253,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-  Func_08164b2c(0, 0, 11);
+  Palette_BrightenSavedBattleBg(0, 0, 11);
   frame = 0;
   for (; frame != 60; frame++) {
     s32 s;
@@ -2271,7 +2272,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     if (frame > 48) {
       s32 fade = frame - 48;
 
-      Func_08164b2c(-fade, -fade, 11 - fade * 2);
+      Palette_BrightenSavedBattleBg(-fade, -fade, 11 - fade * 2);
     }
     if (frame == 0) {
       work->transferMode = 3;
@@ -2331,9 +2332,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         model2->shade = sh2;
         if (sh2 > -64) {
           Transform_Reset();
-          Func_08015160(0, (112 - lift) << 16, 0);
+          SceneTransform_ApplyPosition3(0, (112 - lift) << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_0801521c(s);
+          SceneTransform_ApplyUniformScale(s);
           Transform_ApplyRoll((i << 14) + 0x2000);
           Transform_ApplyPitch(-0x1000);
           Transform_ApplyYaw(frame << 10);

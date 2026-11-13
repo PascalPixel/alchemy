@@ -38,23 +38,28 @@ struct ChainSlot__f0daecc {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the
- * definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
-extern void *Func_080da9a8__f0daecc(s32 kind) __asm__("Func_080da9a8");
-/* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc
- * *Func_080dae3c(void); the definition has struct WorkA4Slot
- * *Func_080dae3c(void). */
+/* VIEW(f0daecc): routine HangingVine_Initialize as void
+ * *HangingVine_Initialize(s32 kind); the definition has struct TileEffectWork
+ * *HangingVine_Initialize(s32 kind). */
+extern void *
+HangingVine_Initialize__f0daecc(s32 kind) __asm__("HangingVine_Initialize");
+/* VIEW(f0daecc): routine HangingVine_FindFreeSlot as struct ChainSlot__f0daecc
+ * *HangingVine_FindFreeSlot(void); the definition has struct WorkA4Slot
+ * *HangingVine_FindFreeSlot(void). */
 extern struct ChainSlot__f0daecc *
-Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
-/* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc
- * *Func_080daea8(void); the definition has struct WorkA4Item
- * *Func_080daea8(void). */
+HangingVine_FindFreeSlot__f0daecc(void) __asm__("HangingVine_FindFreeSlot");
+/* VIEW(f0daecc): routine HangingVine_AllocLink as struct ChainLink__f0daecc
+ * *HangingVine_AllocLink(void); the definition has struct WorkA4Item
+ * *HangingVine_AllocLink(void). */
 extern struct ChainLink__f0daecc *
-Func_080daea8__f0daecc(void) __asm__("Func_080daea8");
+HangingVine_AllocLink__f0daecc(void) __asm__("HangingVine_AllocLink");
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
-void Func_080daecc(s32 objectId, s32 grow) {
+/// Hangs a vine of seven links from the anchor object objectId, clearing the
+/// five cells it hangs over, starting the vines first if they are not running;
+/// with grow set, the vine drops into place over 28 frames.
+void HangingVine_Hang(s32 objectId, s32 grow) {
   struct ChainObject *object;
   struct MapWork *map;
   struct ChainSlot__f0daecc *slot;
@@ -79,11 +84,11 @@ void Func_080daecc(s32 objectId, s32 grow) {
   if (running == 0) {
     if (object->sprite != 0 && object->sprite->entries[0] != 0)
       kind = *object->sprite->entries[0];
-    Func_080da9a8__f0daecc(kind);
+    HangingVine_Initialize__f0daecc(kind);
   }
-  if (Func_080dae70(objectId) != 0)
+  if (HangingVine_FindSlot(objectId) != 0)
     return;
-  slot = Func_080dae3c__f0daecc();
+  slot = HangingVine_FindFreeSlot__f0daecc();
   if (slot == 0)
     return;
 
@@ -112,7 +117,8 @@ void Func_080daecc(s32 objectId, s32 grow) {
   // Hang the links.
   last = 6;
   tail = &slot->root;
-  for (i = 0; i <= last && (link = Func_080daea8__f0daecc()) != 0; i++) {
+  for (i = 0; i <= last && (link = HangingVine_AllocLink__f0daecc()) != 0;
+       i++) {
     link->x = x;
     link->y = y + (15 << 16) - i * (14 << 16);
     link->z = z;
@@ -161,7 +167,8 @@ void Func_080daecc(s32 objectId, s32 grow) {
 // left.
 #define SIDE_TURN(side) ((side) * (TRIG_TURN / 2))
 
-void Func_080db0b0(s32 id) {
+/// Swings the leader across on the vine hanging from object id.
+void HangingVine_Swing(s32 id) {
   s32 rootX, rootY;
   s32 motionFlags;
   struct Unk_080db0b0Sprite *heldSprite;
@@ -191,7 +198,7 @@ void Func_080db0b0(s32 id) {
   heldSprite = leader->sprite;
   if (leader->x < anchor->x)
     side = 1;
-  slot = (void *)Func_080dae70(id);
+  slot = (void *)HangingVine_FindSlot(id);
   if (slot == NULL)
     return;
 
@@ -315,10 +322,10 @@ void Func_080db0b0(s32 id) {
   slot->s.active = 1;
 }
 
-/// Starts an object's chain (Func_080daecc). An object with no motion flags is
-/// first moved -16 pixels in z and 64 pixels in y; one with motion
+/// Hangs a vine from object id (HangingVine_Hang). An object with no motion
+/// flags is first moved -16 pixels in z and 64 pixels in y; one with motion
 /// flags starts it only when force is set.
-void Func_080db444(s32 id, s32 force) {
+void HangingVine_Place(s32 id, s32 force) {
   struct Actor *object = Actor_GetById(id);
   s32 y;
   s32 zero;
@@ -329,9 +336,9 @@ void Func_080db444(s32 id, s32 force) {
       object->z += 0xfff00000;
       y = object->y;
       object->y = y + 0x400000;
-      Func_080daecc(id, zero);
+      HangingVine_Hang(id, zero);
     } else if (force) {
-      Func_080daecc(id, 0);
+      HangingVine_Hang(id, 0);
     }
   }
 }
@@ -646,13 +653,16 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
   }
 }
 
-/* VIEW(visual_attributes): routine Func_080eb01c as void Func_080eb01c(void
- * *work); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite).
+/* VIEW(visual_attributes): routine EffectSprite_Draw as void
+ * EffectSprite_Draw(void *work); effect_sprite.h has void
+ * EffectSprite_Draw(struct EffectSprite *sprite).
  */
 extern void
-Func_080eb01c__visual_attributes(void *work) __asm__("Func_080eb01c");
+EffectSprite_Draw__visual_attributes(void *work) __asm__("EffectSprite_Draw");
 
-s32 Func_080db9a8(struct Actor *object, s32 kind) {
+/// The OBJ priority a Psynergy's canvas takes: the caster's own when it
+/// casts facing away (0xc000), else 0, in front of everything.
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 kind) {
   if (kind == 0xc000)
     return ((struct DepthPart *)object->sprite)->priority;
   return 0;
@@ -693,16 +703,17 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
 
 /// Per-frame callback: draws the effect scene's sprite (effect work +0x7c8).
 void BattleEffect_DrawSceneSprite(void) {
-  Func_080eb01c__visual_attributes((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
+  EffectSprite_Draw__visual_attributes((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
 }
 
-/* VIEW(visual_attributes): routine Func_080eaf98 as void Func_080eaf98(struct
- * DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles); effect_sprite.h has
- * void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32
- * attributes, s32 tile). */
+/* VIEW(visual_attributes): routine EffectSprite_Init as void
+ * EffectSprite_Init(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32
+ * tiles); effect_sprite.h has void EffectSprite_Init(struct EffectSprite
+ * *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
 extern void
-Func_080eaf98__visual_attributes(struct DepthSprite *sprite, s32 a, s32 b,
-                                 u32 c, s32 tiles) __asm__("Func_080eaf98");
+EffectSprite_Init__visual_attributes(struct DepthSprite *sprite, s32 a, s32 b,
+                                     u32 c,
+                                     s32 tiles) __asm__("EffectSprite_Init");
 /* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
  * *position); ground_particles has void Camera_WorldToScreen(union
  * FieldCoordinate *position). */
@@ -732,7 +743,7 @@ void Func_080dba5c(void) {
     scene->vramSlot = slot;
     Heap_Release(buffer);
     sprite = &scene->sprite;
-    Func_080eaf98__visual_attributes(sprite, 16, 31, 0x80000000, tiles);
+    EffectSprite_Init__visual_attributes(sprite, 16, 31, 0x80000000, tiles);
     sprite->frame = 0;
     sprite->priority = 0;
     sprite->hidden = 0;

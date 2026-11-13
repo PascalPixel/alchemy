@@ -10,7 +10,7 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void);
  * Animation_ApplyChildArgumentFar(void *, s32); ability_effects has void
  * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the 4
  * declarations' void Animation_ApplyChildArgumentFar(void *, s32),
- * Func_0815b3b0 moves: 1 of 46 instructions in tla-ja. */
+ * EffectSprite_Acquire moves: 1 of 46 instructions in tla-ja. */
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
     "Animation_ApplyChildArgumentFar");
 
@@ -39,7 +39,7 @@ struct EffectSprite__f15b3b0 {
 };
 
 // Takes the first free effect sprite of the 64 with a new animation entry.
-struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value) {
+struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value) {
   struct EffectSprite__f15b3b0 *sprite = Ram_HeapSlots->unk0c[1];
   struct EffectSprite__f15b3b0 *found = NULL;
   s32 i = 0;
@@ -83,11 +83,7 @@ next:
     goto next;
 }
 
-// Shaded circles of growing radius, drawn into a half-width byte map.
-
-/// Fills a size by size/2 byte map with circles of growing radius, each
-/// shaded by the cosine of its radius (0 to 63).
-void Func_0815b434(u8 *map, s32 size, s32 scale) {
+void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
   s32 half = size / 2;
   s32 center = half - 1;
   s32 last = size - 1;
@@ -121,12 +117,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale) {
   }
 }
 
-// Shaded circles of growing radius, mirrored into all four quarters of a
-// byte map.
-
-/// Func_0815b434 for a size by size map: each circle is drawn in all four
-/// quarters, mirrored about the centre row and column.
-void Func_0815b510(u8 *map, s32 size, s32 scale) {
+void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
   s32 center = size / 2 - 1;
   s32 last = size - 1;
   s32 radius;
@@ -167,8 +158,8 @@ void Func_0815b510(u8 *map, s32 size, s32 scale) {
   }
 }
 
-// Mirrors the first 64 background colours, keeping the backdrop colour.
-void Func_0815b634(void) {
+/// Mirrors the first 64 background colours, keeping the backdrop colour.
+void Palette_MirrorBgColors(void) {
   u16 saved[64];
   u16 flipped[64];
   s32 i;
@@ -190,7 +181,7 @@ extern const struct SpriteScale gData_08196e4c;
 // grows for 20 frames, then shrinks, and its sideways speed grows from frame
 // 12), and steps the object's animation through cels 7 to 14, seven frames
 // each.
-void Func_0815b68c(void) {
+void Ulysses_MoveLastParticle(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct SpriteScale scale = gData_08196e4c;
@@ -261,15 +252,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 // Flashes an actor in a palette for some frames.
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -747,10 +738,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             // Offset first, as the listing adds it.
             texture.pixels = (u8 *)((u << 12) + (s32)portraits);
             Transform_Reset();
-            Func_08015160(mx, my, 0);
+            SceneTransform_ApplyPosition3(mx, my, 0);
             Transform_ApplyPitch(0xc000);
             Transform_ApplyYaw(step->z);
-            Func_0801521c(s);
+            SceneTransform_ApplyUniformScale(s);
             Render_TransformVertices(gData_08199210, verts, 4);
             Render_DrawModelList(model);
           }
@@ -841,7 +832,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           s32 sc;
 
           Transform_Reset();
-          Func_08015160(0x80000, 0, 0);
+          SceneTransform_ApplyPosition3(0x80000, 0, 0);
           Transform_ApplyPitch(0x4000);
           if (j == 0) {
             sc = t * 3072 - 0x12000;
@@ -851,12 +842,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
                 sc = 0xc000;
               }
             }
-            Func_0801521c(sc);
+            SceneTransform_ApplyUniformScale(sc);
             Transform_ApplyYaw(-t * 512);
           } else {
             if (t > 23) {
               sc = 0x1c000 - (t << 11);
-              Func_0801521c(sc);
+              SceneTransform_ApplyUniformScale(sc);
             } else {
               Transform_ApplyPitch(0x3ff0 - t * 682);
               Transform_ApplyRoll(t * 169 + 0xf028);
@@ -916,7 +907,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 288) {
-      Task_Add(Func_0815b68c, 1152);
+      Task_Add(Ulysses_MoveLastParticle, 1152);
       work->particles[63].x = 0xbc0000;
       work->particles[63].y = 0x600000;
       work->particles[63].velocityX = 0;
@@ -1012,7 +1003,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   if (dmaArmed == 1) {
-    Task_Remove(Func_0815b68c);
+    Task_Remove(Ulysses_MoveLastParticle);
   }
   for (i = 0; i != 8; i++) {
     Sprite_DestroyFar(work->objects[i]);
@@ -1155,7 +1146,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 extern char ResourceId_SpiderWebSheet;
 
 // The middle between the first and the last target.
-void Func_0815e22c(struct EffectPosition *middle);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *middle);
 
 void SummonEffect_RunCanvasMode1(void *action);
 
@@ -1183,7 +1174,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(2);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1000;
-  Func_0815e22c(&middle);
+  BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
                              1);

@@ -680,7 +680,6 @@ extern const u8 gMenu_ShortcutRColonString[];
 #if LANGUAGE == LANGUAGE_JAPANESE
 
 #else
-void MessageArgument_PushFar(s32 item, s32 digits);
 #endif
 
 /// Draws the two packed values of gMainRoutineWork (owner << 10 | ability), the

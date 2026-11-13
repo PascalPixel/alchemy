@@ -19,9 +19,9 @@ Resource_FarCall010:
 	export Sound_UpdateCommandMaskFar, Sound_UpdateCommandMask
 	export Sound_GetCurrentBgmFar, Sound_GetCurrentBgm
 	export Sound_WaitForBgmRestoreFar, Sound_WaitForBgmRestore
-	export m4aSoundVSyncOffFar, Sound_SuspendDirectSound
+	export Sound_SuspendDirectSoundFar, Sound_SuspendDirectSound
 	export Sound_UpdateBgmRampsFar, Sound_UpdateBgmRamps
 	export SoundFlag_TestFar, SoundFlag_Test
 	export SoundFlag_SetFar, SoundFlag_Set
 	export SoundFlag_ClearFar, SoundFlag_Clear
-	export Func_081c00a8, Func_081c0c18
+	export Sound_NoOpFar, Sound_NoOp

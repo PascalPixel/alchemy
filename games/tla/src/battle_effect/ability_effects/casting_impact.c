@@ -204,12 +204,9 @@ extern const u8 gData_08199268[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
-s32 Trig_Cos(s32);
-s32 Trig_Sin(s32);
-
-void Func_08015160(s32, s32, s32);
+void SceneTransform_ApplyPosition3(s32, s32, s32);
 void SceneTransform_ApplyScale3(s32, s32, s32);
-void Func_0801521c(s32);
+void SceneTransform_ApplyUniformScale(s32);
 
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
@@ -219,12 +216,10 @@ void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_RunMysticFlame(struct BattleEffectArgument *);
-void BattleEffect_TintBattler(s32, s32, s32, s32, s32);
 void SummonEffect_RunCanvasMode3(void *action);
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode2(void *action);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void Func_0815b434(u8 *map, s32 size, s32 scale);
 
 /* VIEW(fxdisp): routine BattleEffect_PackTileRows as void
  * BattleEffect_PackTileRows(void *, void *, s32, s32); the definition has void
@@ -235,7 +230,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 extern void
 Graphics_PackTileRows__fxdisp(void *, void *, s32,
                               s32) __asm__("BattleEffect_PackTileRows");
-void Func_0818caa8(void *, s32, s32, s32);
+void Canvas_BlitAtFoot(void *, s32, s32, s32);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -406,7 +401,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     s32 i;
     s32 k;
 
-    Func_0815b434(buffer, 48, 0x10000);
+    BattleEffect_DrawShadedCircles(buffer, 48, 0x10000);
     for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
         buffer[0x800 + i * 48 + k] = buffer[i * 24 + k];
@@ -1960,8 +1955,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 p->life = (life + 1) & 3;
               }
               Transform_Reset();
-              Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16,
-                            0);
+              SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
+                                            (target[1] - 64) << 16, 0);
               Transform_ApplyRoll(p->z);
               p->z += p->vz;
               SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
@@ -1992,7 +1987,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         model->matrix = matrix;
         model->fade = fade;
         Transform_Reset();
-        Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
+        SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
+                                      (target[1] - 64) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (frame == 8)
           Sound_PlayFar(104);
@@ -2006,12 +2002,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             Transform_ApplyPitch(-0x1000);
             Transform_ApplyYaw(frame << 11);
           }
-          Func_0801521c(fade);
+          SceneTransform_ApplyUniformScale(fade);
           Render_TransformVertices(gData_08199210, matrix, 4);
           Render_DrawModelList(model);
           if (kind != 82) {
             Transform_ApplyYaw(-frame << 12);
-            Func_0801521c(0x8000);
+            SceneTransform_ApplyUniformScale(0x8000);
             Render_TransformVertices(gData_08199210, matrix, 4);
             Render_DrawModelList(model);
           }
@@ -2027,9 +2023,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (frame > 39)
             fade = 0x38000 - (frame << 12);
           if (two > 1 && fade > 0) {
-            Func_0815b434(work->frames, m * 4, fade);
+            BattleEffect_DrawShadedCircles(work->frames, m * 4, fade);
             HeapSlot_Release(188);
-            Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);
+            Canvas_BlitAtFoot(work->frames, target[0] / 2, target[1], m * 4);
             BattleEffect_LoadBlitter(188, 15);
           }
         }
@@ -2057,12 +2053,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               model->fade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                Func_08015160((target[0] / 2 - 64) << 16,
-                              (target[1] - 64) << 16, 0);
+                SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
+                                              (target[1] - 64) << 16, 0);
                 SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
                 Transform_ApplyRoll((i << 14) + 0x2000);
                 Transform_ApplyPitch(-0x1000);
-                Func_0801521c(angle >> 1);
+                SceneTransform_ApplyUniformScale(angle >> 1);
                 Render_TransformVertices(gData_08199210, matrix, 4);
                 Render_DrawModelList(model);
               }
@@ -2080,11 +2076,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             model->fade = fade;
             if (fade >= -63) {
               Transform_Reset();
-              Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16,
-                            0);
+              SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
+                                            (target[1] - 64) << 16, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               Transform_ApplyPitch(0x4000);
-              Func_0801521c(angle);
+              SceneTransform_ApplyUniformScale(angle);
               Render_TransformVertices(gData_08199210, matrix, 4);
               Render_DrawModelList(model);
             }
@@ -2100,12 +2096,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               model->fade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                Func_08015160((target[0] / 2 - 64) << 16,
-                              (target[1] - 64) << 16, 0);
+                SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
+                                              (target[1] - 64) << 16, 0);
                 SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
                 Transform_ApplyRoll((i << 14) + 0x2000);
                 Transform_ApplyPitch(-0x1000);
-                Func_0801521c(t * 3 << 12);
+                SceneTransform_ApplyUniformScale(t * 3 << 12);
                 Render_TransformVertices(gData_08199210, matrix, 4);
                 Render_DrawModelList(model);
               }
@@ -2170,10 +2166,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           model->fade = fade;
           if (fade >= -63) {
             Transform_Reset();
-            Func_08015160((target[0] / 2 - 64) << 16, 0x280000, 0);
+            SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16, 0x280000,
+                                          0);
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
             Transform_ApplyPitch(1000);
-            Func_0801521c(angle);
+            SceneTransform_ApplyUniformScale(angle);
             Render_TransformVertices(gData_08199210, matrix, 4);
             Render_DrawModelList(model);
           }
@@ -2193,8 +2190,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               scale = (frame - start) * gData_08198956[i] * 1500 + 0x4180;
               model->fade = fade;
               Transform_Reset();
-              Func_08015160((target[0] / 2 - 60) << 16, gData_0819895a[i] << 16,
-                            0);
+              SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
+                                            gData_0819895a[i] << 16, 0);
               SceneTransform_ApplyScale3(scale * 2, scale * 4, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
@@ -2238,7 +2235,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               scale = (frame - start) * gData_08198962[i] * 2000 + 0x4000;
               model->fade = fade;
               Transform_Reset();
-              Func_08015160((target[0] / 2 - 60) << 16, 0x280000, 0);
+              SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
+                                            0x280000, 0);
               SceneTransform_ApplyScale3(scale, gData_08198966[i] * scale * 2,
                                          scale / 4);
               Transform_ApplyPitch(1000);

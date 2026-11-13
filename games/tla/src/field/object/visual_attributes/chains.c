@@ -11,7 +11,7 @@
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
  * ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y),
- * which the object already declares, Func_080d8ff8 moves: 1 of 120 instructions
+ * which the object already declares, Rope_LayBowed moves: 1 of 120 instructions
  * in tla-ja. */
 extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");
 
@@ -50,7 +50,7 @@ struct ChainWork__f0d8ff8 {
 
 /// Lays a slot's chain of nodes along the line between two points, bowed
 /// sideways by a half sine of the given height.
-s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
+s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                   s32 height) {
   struct ChainWork__f0d8ff8 *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
@@ -78,8 +78,9 @@ s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   return 0;
 }
 
-// Link two objects.
-void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
+/// Coils rope index at post firstId, its length reaching post secondId: the
+/// rope as it waits to be lashed.
+void Rope_Coil(s32 slot, s32 firstId, s32 secondId) {
   struct LinkEntry *entries = Ram_HeapSlots->unk84[6];
   s32 layer = 2;
   struct Actor *first = ObjectTable_Get(firstId);
@@ -101,8 +102,8 @@ void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
      * 69 instructions differ in tla-en. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
-    Func_080d9194(slot, first->x, first->y + lift, first->z, second->x,
-                  second->y + lift, second->z);
+    Rope_LayCoil(slot, first->x, first->y + lift, first->z, second->x,
+                 second->y + lift, second->z);
   }
 }
 
@@ -139,15 +140,15 @@ struct ChainWork__f0d9194 {
   struct ChainSlot__f0d9194 slots[8];
 };
 
-/* VIEW(f0d9194): routine Func_080d8d40 as struct ChainNode__f0d9194
- * *Func_080d8d40(void); the definition has struct Work9cItem
- * *Func_080d8d40(void). */
+/* VIEW(f0d9194): routine Rope_AllocNode as struct ChainNode__f0d9194
+ * *Rope_AllocNode(void); the definition has struct Work9cItem
+ * *Rope_AllocNode(void). */
 extern struct ChainNode__f0d9194 *
-Func_080d8d40__f0d9194(void) __asm__("Func_080d8d40");
+Rope_AllocNode__f0d9194(void) __asm__("Rope_AllocNode");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point.
-s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
+s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct ChainWork__f0d9194 *work = Ram_HeapSlots->unk84[6];
   s32 result = 0;
   s32 dx = (toX - x) >> 8;
@@ -165,7 +166,7 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
   slot->segments = segments;
   for (i = 0; i <= segments; i++) {
-    struct ChainNode__f0d9194 *node = Func_080d8d40__f0d9194();
+    struct ChainNode__f0d9194 *node = Rope_AllocNode__f0d9194();
     u16 step;
 
     if (node == NULL) {
@@ -186,7 +187,8 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   return result;
 }
 
-void Func_080d92a4(s32 index, s32 *position) {
+/// Writes the position of the node at rope index's depth into position.
+void Rope_GetEndNodePosition(s32 index, s32 *position) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot = &work->slots[index];
   struct Work9cNode *node = slot->head;
@@ -224,22 +226,25 @@ struct ChainWork__f0d92d4 {
   struct ChainSlot__f0d92d4 slots[8];
 };
 
-extern s32 gData_080f393c;
+extern s32 gRope_LashPhase;
 
-/* VIEW(f0d92d4): routine Func_080d9498 as void Func_080d9498(s32 index, s32 x,
+/* VIEW(f0d92d4): routine Rope_Throw as void Rope_Throw(s32 index, s32 x,
  * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
- * Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
-extern void Func_080d9498__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                   s32 toY, s32 toZ,
-                                   s32 wobble) __asm__("Func_080d9498");
-/* VIEW(f0d92d4): routine Func_080d9790 as void Func_080d9790(s32 index, s32 x,
+ * Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
+extern void Rope_Throw__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
+                                s32 toY, s32 toZ,
+                                s32 wobble) __asm__("Rope_Throw");
+/* VIEW(f0d92d4): routine Rope_Recoil as void Rope_Recoil(s32 index, s32 x,
  * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
- * Func_080d9790(s32 index, s32 x, s32 y, s32 z). */
-extern void Func_080d9790__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                   s32 toY, s32 toZ,
-                                   s32 wobble) __asm__("Func_080d9790");
+ * Rope_Recoil(s32 index, s32 x, s32 y, s32 z). */
+extern void Rope_Recoil__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
+                                 s32 toY, s32 toZ,
+                                 s32 wobble) __asm__("Rope_Recoil");
 
-void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
+/// Lash: throws rope index from post fromId to post toId and ties it (both
+/// posts take animation 2). A rope coiled too short to reach falls back to its
+/// post.
+void Rope_Lash(s32 index, s32 fromId, s32 toId) {
   struct ChainWork__f0d92d4 *work = Ram_HeapSlots->unk84[6];
   struct Actor *from = ObjectTable_Get(fromId);
   struct Actor *to = ObjectTable_Get(toId);
@@ -270,17 +275,17 @@ void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
       y = toY;
       z = from->z + (toZ - from->z) * count / segments;
 
-      Func_080d9498__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
-                             y + 0x80000, z, Trig_Sin(gData_080f393c) << 2);
+      Rope_Throw__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
+                          y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
       slot->unk18 = 0;
       wait(1);
-      Func_080d9790__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
-                             y + 0x80000, z, Trig_Sin(gData_080f393c) << 2);
+      Rope_Recoil__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
+                           y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
     } else {
-      Func_080d9498__f0d92d4(index, from->x, from->y + 0x80000, from->z, to->x,
-                             to->y + 0x80000, to->z,
-                             Trig_Sin(gData_080f393c) << 2);
-      gData_080f393c += 0x1000;
+      Rope_Throw__f0d92d4(index, from->x, from->y + 0x80000, from->z, to->x,
+                          to->y + 0x80000, to->z,
+                          Trig_Sin(gRope_LashPhase) << 2);
+      gRope_LashPhase += 0x1000;
       wait(6);
       Actor_SelectAnimationFar(from, 2);
       Actor_SelectAnimationFar(to, 2);
@@ -330,7 +335,11 @@ struct ChainWork__f0d9498 {
   struct ChainSlot__f0d9498 slots[8];
 };
 
-s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
+/// Throws rope index from one point to another over twice its node count in
+/// frames: the end flies on an arc and each node follows its neighbour at 6
+/// pixels; then the rope swings and its flag is set. Does nothing to a rope
+/// already thrown.
+s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct ChainWork__f0d9498 *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
   s32 ex = dx >> 8;
@@ -418,16 +427,17 @@ struct ChainWork__f0d9710 {
   struct Actor *to;
 };
 
-extern s32 gData_080f3940;
+extern s32 gRope_UntiePhase;
 
-/* VIEW(f0d9710): routine Func_080d9790 as void Func_080d9790(s32 index, s32 x,
+/* VIEW(f0d9710): routine Rope_Recoil as void Rope_Recoil(s32 index, s32 x,
  * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
- * Func_080d9790(s32 index, s32 x, s32 y, s32 z). */
-extern void Func_080d9790__f0d9710(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                   s32 toY, s32 toZ,
-                                   s32 wobble) __asm__("Func_080d9790");
+ * Rope_Recoil(s32 index, s32 x, s32 y, s32 z). */
+extern void Rope_Recoil__f0d9710(s32 index, s32 x, s32 y, s32 z, s32 toX,
+                                 s32 toY, s32 toZ,
+                                 s32 wobble) __asm__("Rope_Recoil");
 
-void Func_080d9710(s32 index, s32 fromId, s32 toId) {
+/// Unties rope index between posts fromId and toId (Rope_Recoil).
+void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   struct ChainWork__f0d9710 *work;
   struct Actor *from;
   struct Actor *to;
@@ -439,10 +449,10 @@ void Func_080d9710(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->from = from;
     work->to = to;
-    Func_080d9790__f0d9710(index, from->x, from->y + 0x80000, from->z, to->x,
-                           to->y + 0x80000, to->z,
-                           Trig_Sin(gData_080f3940) * 4);
-    gData_080f3940 += 0x1000;
+    Rope_Recoil__f0d9710(index, from->x, from->y + 0x80000, from->z, to->x,
+                         to->y + 0x80000, to->z,
+                         Trig_Sin(gRope_UntiePhase) * 4);
+    gRope_UntiePhase += 0x1000;
   }
 }
 
@@ -493,7 +503,9 @@ struct ChainWork__f0d9790 {
   struct ChainSlot__f0d9790 slots[8];
 };
 
-s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
+/// Pulls a thrown rope back into its coil at the first point, one node a frame,
+/// clearing its flag; both posts take animation 3 first.
+s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   struct ChainWork__f0d9790 *work = Ram_HeapSlots->unk84[6];
   s32 zero = 0;
   struct ChainSlot__f0d9790 *slot = &work->slots[index];
@@ -576,24 +588,29 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
   return 0;
 }
 
-void Func_080d9974(void) {}
+/// Does nothing; nothing calls it.
+void Rope_ReservedNoOp(void) {}
 
-extern s32 gData_080f3944;
+extern s32 gRope_DebugSwinging;
 
-void Func_080d9978(struct Actor *object) {
+/// Unused: nothing refers to it. An actor hook that, once R is pressed, swings
+/// rope 0 between actors 12 and 13 every frame.
+void Rope_DebugSwing(struct Actor *object) {
   u8 *parts = object->sprite;
 
   parts[22] = 253;
   parts[23] = 12;
   if (gInput.repeat & 0x200)
-    gData_080f3944 = 1;
-  if (gData_080f3944 != 0)
-    Func_080d8fa8(0, 12, 13, 0);
+    gRope_DebugSwinging = 1;
+  if (gRope_DebugSwinging != 0)
+    Rope_SwingBetween(0, 12, 13, 0);
 }
 
 struct Actor *Actor_GetById(u32 objectId);
 
-s32 Func_080d99b8(s32 firstId, s32 secondId) {
+/// Returns 1 when the leader stands on the cell of post firstId or secondId, or
+/// a cell beside it along an axis, at the same height.
+s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
@@ -628,7 +645,9 @@ s32 Func_080d99b8(s32 firstId, s32 secondId) {
   return 0;
 }
 
-s32 Func_080d9a74(s32 id, s32 *value, s32 *index) {
+/// Finds the rope whose first post is id: writes its other post and its index
+/// and returns 0, or returns -1.
+s32 Rope_FindById(s32 id, s32 *value, s32 *index) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot = work->slots;
   s32 i;
@@ -644,9 +663,9 @@ s32 Func_080d9a74(s32 id, s32 *value, s32 *index) {
   return -1;
 }
 
-/// Returns the state of slot index of the heap slot 0x9c work, or -1 while the
-/// work is not allocated.
-s32 Func_080d9ab0(s32 index) {
+/// Returns rope index's state (1 once tied), or -1 while the ropes have no
+/// work.
+s32 Rope_GetState(s32 index) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot;
 
@@ -656,31 +675,37 @@ s32 Func_080d9ab0(s32 index) {
   return slot->state;
 }
 
-void Func_080d9ad0(s32 index, s32 flag, s32 a2, s32 a3) {
+/// Gives rope index its flag and places it between posts a2 and a3: tied when
+/// the flag is set, else coiled. A scene places each of its ropes with it.
+void Rope_Place(s32 index, s32 flag, s32 a2, s32 a3) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot;
 
   slot = &work->slots[index];
   slot->flag = flag;
   if (!GameFlag_Test(flag))
-    Func_080d9104(index, a2, a3);
+    Rope_Coil(index, a2, a3);
   else
-    Func_080d8d68(index, a2, a3);
+    Rope_Tie(index, a2, a3);
 }
 
-// XXX: what the work block in heap slot 40 holds, and what this family does;
-// its callers and the block's readers would settle it.
+// The tightropes (heap slot 160): ropes laid straight between two posts that
+// the party walks (render mode 4) and that wobble underfoot. The family copies
+// the ropes' routines. XXX: Telago's walkthrough calls them tightropes (Trial
+// Road, Gondowan Cliffs); a render would confirm the name.
 
-void Func_080d9b08(void) {
+/// Allocates the tightropes' work, loads their node picture and starts
+/// Tightrope_Draw and Tightrope_Update.
+void Tightrope_Initialize(void) {
   struct WorkA0 *work = HeapSlot_AllocEwram(160, sizeof(struct WorkA0));
   void *buffer = Heap_Alloc(0x900);
 
   Dma_Fill32(0, work, sizeof(struct WorkA0));
   work->vramEntry = VramCache_FindFreeEntry();
-  Decompress_TaggedLz(gData_080f0c04, buffer);
+  Decompress_TaggedLz(gRope_Tiles, buffer);
   VramCache_Load(work->vramEntry, 64, buffer);
-  Task_Add(Func_080d9b80, TASK_PASS_VBLANK);
-  Task_Add(Func_080d9d40, TASK_PASS_VBLANK + 15);
+  Task_Add(Tightrope_Draw, TASK_PASS_VBLANK);
+  Task_Add(Tightrope_Update, TASK_PASS_VBLANK + 15);
   Heap_Release(buffer);
 }
 
@@ -728,7 +753,7 @@ extern void
 Func_080140d8__f0d9b80(void *entry,
                        s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
 
-void Func_080d9b80(void) {
+void Tightrope_Draw(void) {
   struct ChainWork__f0d9b80 *work = Ram_HeapSlots->unk84[7];
   s32 i;
   s32 prevX = 0;
@@ -800,14 +825,14 @@ void Func_080d9b80(void) {
   }
 }
 
-/// The heap slot 0xa0 work's per-frame callback (Func_080d9b08 adds it).
+/// The tightropes' per-frame task (Tightrope_Initialize adds it).
 /// Unless flag 260 is set, once the event work's counter passes 12 it picks
 /// the event work's cue: with render mode 0 the slot linking the leader's
-/// nearby talk target sets 0xfc83 when Func_080d99b8 accepts its two ends, and
-/// render mode 4 sets 0xfc84. Then every active slot wobbles: the amplitude
-/// decays by 0.95 a frame until it drops to 0x1998, and Func_080da060 redraws
-/// the slot with the sine of its angle times it.
-void Func_080d9d40(void) {
+/// nearby talk target sets 0xfc83 when Rope_IsLeaderAtEnd accepts its two ends,
+/// and render mode 4 sets 0xfc84. Then every active slot wobbles: the amplitude
+/// decays by 0.95 a frame until it drops to 0x1998, and Tightrope_WobbleBetween
+/// redraws the slot with the sine of its angle times it.
+void Tightrope_Update(void) {
   struct WobbleEvent *event = Ram_HeapSlots->eventWork;
   struct WorkA0 *work = WORK_A0;
   struct WorkA0Slot *slot;
@@ -824,7 +849,8 @@ void Func_080d9d40(void) {
           if (work->slots[i].first == target || work->slots[i].second == target)
             break;
         }
-        if (i < 8 && Func_080d99b8(work->slots[i].first, work->slots[i].second))
+        if (i < 8 &&
+            Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->cue = 0xfc83;
       }
     } else if (party->renderMode == 4) {
@@ -843,12 +869,13 @@ void Func_080d9d40(void) {
         slot->amplitude = 0;
         slot->tail = NULL;
       }
-      Func_080da060(i, slot->first, slot->second, wobble);
+      Tightrope_WobbleBetween(i, slot->first, slot->second, wobble);
     }
   }
 }
 
-struct WorkA0Node *Func_080d9e74(void) {
+/// Returns the first unused of the tightropes' 128 nodes, or NULL.
+struct WorkA0Node *Tightrope_AllocNode(void) {
   struct WorkA0 *work = WORK_A0;
   struct WorkA0Node *item = work->items;
   s32 index;
@@ -861,7 +888,9 @@ struct WorkA0Node *Func_080d9e74(void) {
   return NULL;
 }
 
-void Func_080d9e98(s32 slotNo, s32 firstId, s32 secondId) {
+/// Lays tightrope slotNo straight between posts firstId and secondId, and
+/// shows both posts with it (animation 4).
+void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
   struct WorkA0 *work = WORK_A0;
   struct Actor *first = ObjectTable_Get(firstId);
   struct Actor *second = ObjectTable_Get(secondId);
@@ -871,14 +900,16 @@ void Func_080d9e98(s32 slotNo, s32 firstId, s32 secondId) {
 
     slot->first = firstId;
     slot->second = secondId;
-    Func_080d9f1c(slotNo, first->x, first->y + 0x80000, first->z, second->x,
+    Tightrope_Lay(slotNo, first->x, first->y + 0x80000, first->z, second->x,
                   second->y + 0x80000, second->z);
     Actor_SelectAnimationFar(first, 4);
     Actor_SelectAnimationFar(second, 4);
   }
 }
 
-s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
+/// Builds tightrope index's nodes on the straight line between two points,
+/// one for each 6 pixels.
+s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct LineWork *work = Ram_HeapSlots->unk84[7];
   s32 result = 0;
   s32 dx = toX - x;
@@ -896,7 +927,7 @@ s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
   work->slots[index].direction = (u16)ArcTan2(sz, sx);
   for (i = 0; i <= segments; i++) {
-    struct LineNode *node = Func_080d9e74();
+    struct LineNode *node = Tightrope_AllocNode();
 
     if (node == NULL) {
       result = -1;
@@ -918,19 +949,20 @@ s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   return result;
 }
 
-void Func_080da060(s32 index, s32 from, s32 to, s32 mode) {
+/// Redraws tightrope index between posts from and to, sagging by mode.
+void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *a = ObjectTable_Get(from);
   struct Actor *b = ObjectTable_Get(to);
 
   if (a != NULL && b != NULL)
-    Func_080da0b0(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000, b->z,
-                  mode);
+    Tightrope_LayBowed(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000,
+                       b->z, mode);
 }
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 
-s32 Func_080da0b0(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
-                  s32 height) {
+s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
+                       s32 toZ, s32 height) {
   struct LineWork *work = Ram_HeapSlots->unk84[7];
   s32 dx = toX - x;
   s32 sx = dx >> 8;
@@ -958,7 +990,8 @@ s32 Func_080da0b0(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   return 0;
 }
 
-void Func_080da1b8(s32 index, s32 from, s32 to) {
+/// Unused: nothing refers to it. Rope_Coil for a tightrope.
+void Tightrope_Coil(s32 index, s32 from, s32 to) {
   struct WorkA0 *work = WORK_A0;
   struct Actor *a = ObjectTable_Get(from);
   struct Actor *b = ObjectTable_Get(to);
@@ -968,21 +1001,23 @@ void Func_080da1b8(s32 index, s32 from, s32 to) {
 
     slot->first = from;
     slot->second = to;
-    Func_080da22c(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000,
-                  b->z);
+    Tightrope_LayCoil(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000,
+                      b->z);
   }
 }
 
 // Builds a chain of nodes around a point.
 
-/* VIEW(f0d9b80): routine Func_080d8d40 as struct LineNode *Func_080d8d40(void);
- * f0d9194 has struct ChainNode__f0d9194 *Func_080d8d40(void). */
-extern struct LineNode *Func_080d8d40__f0d9b80(void) __asm__("Func_080d8d40");
+/* VIEW(f0d9b80): routine Rope_AllocNode as struct LineNode
+ * *Rope_AllocNode(void); f0d9194 has struct ChainNode__f0d9194
+ * *Rope_AllocNode(void). */
+extern struct LineNode *Rope_AllocNode__f0d9b80(void) __asm__("Rope_AllocNode");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point, every node of
 /// kind 2.
-s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
+s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
+                      s32 toZ) {
   struct LineWork *work = Ram_HeapSlots->unk84[7];
   s32 result = 0;
   s32 dx = (toX - x) >> 8;
@@ -998,7 +1033,7 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 kind = 2; // One constant for its whole life.
 
   for (i = 0; i <= segments; i++) {
-    struct LineNode *node = Func_080d8d40__f0d9b80();
+    struct LineNode *node = Rope_AllocNode__f0d9b80();
     u16 step;
 
     if (node == NULL) {
@@ -1019,23 +1054,26 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   return result;
 }
 
-extern s32 gData_080f3948;
-/* VIEW(f0d9b80): routine Func_080da3bc as void Func_080da3bc(s32 arg, s32 x1,
- * s32 y1, s32 z1, s32 x2, s32 y2, s32 z2, s32 wave); the definition has s32
- * Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
-extern void Func_080da3bc__f0d9b80(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2,
-                                   s32 y2, s32 z2,
-                                   s32 wave) __asm__("Func_080da3bc");
+extern s32 gTightrope_LashPhase;
+/* VIEW(f0d9b80): routine Tightrope_Throw as void Tightrope_Throw(s32 arg, s32
+ * x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2, s32 wave); the definition has s32
+ * Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ).
+ */
+extern void Tightrope_Throw__f0d9b80(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2,
+                                     s32 y2, s32 z2,
+                                     s32 wave) __asm__("Tightrope_Throw");
 
-void Func_080da334(s32 arg, s32 firstId, s32 secondId) {
+/// Unused: nothing refers to it. Rope_Lash for a tightrope, without the
+/// short rope's fall.
+void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *first = ObjectTable_Get(firstId);
   struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    Func_080da3bc__f0d9b80(arg, first->x, first->y + 0x80000, first->z,
-                           second->x, second->y + 0x80000, second->z,
-                           Trig_Sin(gData_080f3948) << 2);
-    gData_080f3948 += 0x1000;
+    Tightrope_Throw__f0d9b80(arg, first->x, first->y + 0x80000, first->z,
+                             second->x, second->y + 0x80000, second->z,
+                             Trig_Sin(gTightrope_LashPhase) << 2);
+    gTightrope_LashPhase += 0x1000;
     wait(6);
     Actor_SelectAnimationFar(first, 2);
     Actor_SelectAnimationFar(second, 2);
@@ -1047,7 +1085,8 @@ void Func_080da334(s32 arg, s32 firstId, s32 secondId) {
 #include "module/field/object.h"
 #include "module/system/system.h"
 
-s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
+/// Rope_Throw for a tightrope.
+s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct WorkA0 *work = WORK_A0;
   s32 dx = toX - x;
   s32 ex = dx >> 8;
@@ -1121,7 +1160,7 @@ s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     wait(1);
   }
   slot = &work->slots[index];
-  // XXX: the field worka0.h calls tail is tested as a flag by Func_080d9d40;
+  // XXX: the field worka0.h calls tail is tested as a flag by Tightrope_Update;
   // a pointer here only because the adopted header types it so.
   slot->tail = (struct WorkA0Node *)1;
   slot->amplitude = 0x40000;
@@ -1130,9 +1169,10 @@ s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   return 0;
 }
 
-extern s32 gData_080f394c;
+extern s32 gTightrope_UntiePhase;
 
-void Func_080da660(s32 arg, s32 firstId, s32 secondId) {
+/// Unused: nothing refers to it. Rope_Untie for a tightrope.
+void Tightrope_Untie(s32 arg, s32 firstId, s32 secondId) {
   struct Actor **work;
   struct Actor *first;
   struct Actor *second;
@@ -1144,15 +1184,16 @@ void Func_080da660(s32 arg, s32 firstId, s32 secondId) {
   if (first != NULL && second != NULL) {
     work[0] = first;
     work[1] = second;
-    Func_080da6e0(arg, first->x, first->y + 0x80000, first->z, second->x,
-                  second->y + 0x80000, second->z,
-                  Trig_Sin(gData_080f394c) << 2);
-    gData_080f394c += 0x1000;
+    Tightrope_Recoil(arg, first->x, first->y + 0x80000, first->z, second->x,
+                     second->y + 0x80000, second->z,
+                     Trig_Sin(gTightrope_UntiePhase) << 2);
+    gTightrope_UntiePhase += 0x1000;
   }
 }
 
-s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
-                  s32 wave) {
+/// Rope_Recoil for a tightrope.
+s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
+                     s32 wave) {
   struct WorkA0 *work = WORK_A0;
   struct WorkA0Node *tail = NULL;
   struct WorkA0Node *node;
@@ -1228,9 +1269,10 @@ s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   return 0;
 }
 
-extern s32 gData_080f3950;
+extern s32 gTightrope_DebugSwinging;
 
-void Func_080da908(s32 index) {
+/// Frees tightrope index's nodes; it is no longer drawn.
+void Tightrope_Release(s32 index) {
   struct WorkA0 *work = WORK_A0;
   struct WorkA0Node *node;
 
@@ -1239,7 +1281,8 @@ void Func_080da908(s32 index) {
   work->slots[index].head = NULL;
 }
 
-void Func_080da938(s32 index) {
+/// Stops tightrope index's wobble.
+void Tightrope_Settle(s32 index) {
   struct WorkA0 *work = WORK_A0;
   struct WorkA0Node *node;
 
@@ -1248,15 +1291,16 @@ void Func_080da938(s32 index) {
   work->slots[index].tail = NULL;
 }
 
-void Func_080da968(struct Actor *object) {
+/// Unused: nothing refers to it. Rope_DebugSwing for a tightrope.
+void Tightrope_DebugSwing(struct Actor *object) {
   u8 *parts = object->sprite;
 
   parts[22] = 253;
   parts[23] = 12;
   if (gInput.repeat & 0x200)
-    gData_080f3950 = 1;
-  if (gData_080f3950 != 0)
-    Func_080da060(0, 12, 13, 0);
+    gTightrope_DebugSwinging = 1;
+  if (gTightrope_DebugSwinging != 0)
+    Tightrope_WobbleBetween(0, 12, 13, 0);
 }
 
 // The four 256-byte pictures of each set (type-01 compressed).
@@ -1267,13 +1311,20 @@ extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
 #define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first picture set
 #define PICTURE_SIZE 0x100
 
-/// Starts a field effect that animates sixteen tiles of its own: takes a
+// The hanging vines (heap slot 164): eight slots, each seven links hung below
+// an anchor object, which sway, swing less while the leader stands under
+// them, and carry the leader across a gap. XXX: Telago's walkthrough has
+// Felix swing on a vine hanging over a gap once Whirlwind moves it (Gaia
+// Rock); a render would confirm the name and the swing.
+
+/// Starts the hanging vines, a field effect that animates sixteen tiles of its
+/// own: takes a
 /// 0x10e4-byte work block at heap offset 164 (worka0.h's WorkA4 lies there),
 /// clears it, decodes four 256-byte tile pictures into a scratch buffer (one
 /// set for kind 372, another for the rest; the second set repeats one
 /// picture), loads them into a VRAM slot and schedules the two per-frame
-/// routines Func_080daab0 and Func_080dacb8.
-struct TileEffectWork *Func_080da9a8(s32 kind) {
+/// routines HangingVine_Draw and HangingVine_Update.
+struct TileEffectWork *HangingVine_Initialize(s32 kind) {
   struct TileEffectWork *work;
   u8 *pictures;
   s32 size;
@@ -1303,9 +1354,9 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_080daab0, priority);
+    Task_Add(HangingVine_Draw, priority);
   }
-  Task_Add(Func_080dacb8, 0x48f);
+  Task_Add(HangingVine_Update, 0x48f);
   Heap_Release(pictures);
   return work;
 }
@@ -1340,7 +1391,8 @@ struct ChainWork__f0da3bc {
   struct ChainSlot__f0da3bc slots[8];
 };
 
-void Func_080daab0(void) {
+/// The vines' first per-frame task: draws each link turned along its vine.
+void HangingVine_Draw(void) {
   struct ChainWork__f0da3bc *work = Ram_HeapSlots->unk84[8];
   s32 i;
   u32 angle;
@@ -1434,7 +1486,8 @@ struct ChainSlot__f0dacb8 {
 
 /* VIEW(f0dacb8): tag struct ChainWork as struct ChainWork__f0dacb8;
  * visual_attributes.c has another definition; tried with the definition the
- * rest of the object has, Func_080dacb8 moves: 1 of 173 instructions in tla-ja.
+ * rest of the object has, HangingVine_Update moves: 1 of 173 instructions in
+ * tla-ja.
  */
 struct ChainWork__f0dacb8 {
   u8 unk00[4];
@@ -1445,7 +1498,9 @@ struct Actor *Actor_GetById(u32 objectId);
 
 #define CHAIN_WORK ((struct ChainWork__f0dacb8 *)Ram_HeapSlots->unk84[8])
 
-void Func_080dacb8(void) {
+/// The vines' second per-frame task: sways each active vine's links below
+/// its anchor.
+void HangingVine_Update(void) {
   struct ChainWork__f0dacb8 *work = CHAIN_WORK;
   struct ChainSlot__f0dacb8 *slot;
   struct Actor *leader;
@@ -1504,7 +1559,7 @@ void Func_080dacb8(void) {
 }
 
 /// Returns the first of WORK_A4's eight slots with no chain, or NULL.
-struct WorkA4Slot *Func_080dae3c(void) {
+struct WorkA4Slot *HangingVine_FindFreeSlot(void) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Slot *found = NULL;
   s32 index;
@@ -1522,8 +1577,8 @@ struct WorkA4Slot *Func_080dae3c(void) {
   return found;
 }
 
-/// Returns the slot among WORK_A4's eight that holds id, or NULL.
-struct WorkA4Slot *Func_080dae70(s32 id) {
+/// Returns the vine slot among WORK_A4's eight that holds actor id, or NULL.
+struct WorkA4Slot *HangingVine_FindSlot(s32 id) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Slot *found = NULL;
   s32 index;
@@ -1541,7 +1596,7 @@ struct WorkA4Slot *Func_080dae70(s32 id) {
   return found;
 }
 
-struct WorkA4Item *Func_080daea8(void) {
+struct WorkA4Item *HangingVine_AllocLink(void) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Item *item = work->items;
   s32 index;

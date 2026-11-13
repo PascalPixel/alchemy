@@ -62,7 +62,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-void *Resource_GetTableEntry(s32 id);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void BattlePlayback_StartFar(s32 phase);
@@ -70,10 +69,10 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
                               s32 frames);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyRoll(s32 angle);
 void Transform_ApplyPitch(s32 angle);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18b868): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model__f18b868 *model); f18ad40 has void
@@ -82,7 +81,6 @@ extern void Render_DrawModelList__f18b868(struct Model__f18b868 *model) __asm__(
     "Render_DrawModelList");
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -200,11 +198,11 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           model->alpha = alpha;
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160((BITE_ANCHOR(i)->x - 128) << 16,
-                        (BITE_ANCHOR(i)->y - 64) << 16, 0);
+          SceneTransform_ApplyPosition3((BITE_ANCHOR(i)->x - 128) << 16,
+                                        (BITE_ANCHOR(i)->y - 64) << 16, 0);
           Transform_ApplyRoll((i << 14) + 0x2000);
           Transform_ApplyPitch(-0x1000);
-          Func_0801521c(scale);
+          SceneTransform_ApplyUniformScale(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList__f18b868(model);
         }
@@ -243,25 +241,25 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Beam, Cycle Beam, Searing Beam (kind 73).
-DEFINE_EFFECT_KIND(BattleEffect_RunBeam, Func_0818bc98, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunBeam, BattleEffect_RunBreaths, 0)
 
 /// Abilities: Rolling Flame (kind 434).
 void BattleEffect_RunRollingFlame(struct BattleEffectArgument *effect) {
   effect->variant = 2;
-  Func_0818bc98(effect, 1);
+  BattleEffect_RunBreaths(effect, 1);
 }
 
 /// Abilities: Ghost Soldier, Pike Assault (kind 449).
 void BattleEffect_RunGhostSoldier(struct BattleEffectArgument *effect) {
   effect->variant = 2;
-  Func_0818bc98(effect, 2);
+  BattleEffect_RunBreaths(effect, 2);
 }
 
 /// Abilities: Blast Breath (kind 414).
-DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, Func_0818bc98, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, BattleEffect_RunBreaths, 3)
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef SPARKS

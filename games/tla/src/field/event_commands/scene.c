@@ -300,7 +300,7 @@ void BattleEffect_CleanupSceneObjects(void) {
     }
   }
   event->unkcb7 = 0;
-  Func_080dbb40();
+  FieldPsynergy_ReleaseSceneSprite();
   Task_Remove(BattleEffect_UpdateAllEffectSlots);
   map->shakeX = work->savedShakeX;
   map->shakeY = work->savedShakeY;
@@ -416,8 +416,6 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   *p = GREY28;
   Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
 }
-
-void WindowColor_ApplyFar(s32 first, s32 second);
 
 /// Stops line scrolling and restores background palette 15.
 void FieldPsynergy_RestoreMindReadPalette(void) {

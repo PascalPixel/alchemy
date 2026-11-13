@@ -50,18 +50,18 @@ gData_080f0ef8:
 gBattleEffect_RandomChildValues:
 	.byte 0, 0, 1, 2, 3, 4, 5, 6
 
-@ Read by Func_080e1678: eight offsets in 16.16 fixed point
+@ Read by FieldPsynergy_UpdateUnnamed29: eight offsets in 16.16 fixed point
 	.global Data_080f0f34
 Data_080f0f34:
 	.4byte 0x1000, 0, -0x1000, -0x2000
 	.4byte -0x3000, -0x2000, -0x1000, 0
 
-@ Read by Func_080e1678: four values in 16.16 fixed point
+@ Read by FieldPsynergy_UpdateUnnamed29: four values in 16.16 fixed point
 	.global Data_080f0f54
 Data_080f0f54:
 	.4byte 0xd000, 0x9000, 0x5000, 0x3000
 
-@ Read by Func_080e2264: 21 {x, y} cell offsets within two of a centre,
+@ Read by FieldPsynergy_GatherNearbyCells: 21 {x, y} cell offsets within two of a centre,
 @ the corners left out
 	.global Data_080f0f64
 Data_080f0f64:
@@ -78,18 +78,18 @@ Data_080f0f64:
 Data_080f0f90:
 	.4byte 0x1090, 0x304c, 0x098c, 0x2942
 
-@ The 16 colours Func_080e4d9c writes to OBJ palettes 14 and 15
+@ The 16 colours FieldPsynergy_UpdateBurst writes to OBJ palettes 14 and 15
 	.global Data_080f0fa0
 Data_080f0fa0:
 	.incbin "games/tla/src/field/event_commands/fxpal.gbapal"
 
-@ Item ids; Func_080e716c picks one of the 16 at random
+@ Item ids; Scoop_DigUpItem picks one of the 16 at random
 	.global gData_080f0fc0
 gData_080f0fc0:
 	.2byte 0xb4, 0xb4, 0xb4, 0xb4, 0xbb, 0xbb, 0xbb, 0xe2
 	.2byte 0xe2, 0xe3, 0xe3, 0xe4, 0xe4, 0xe4, 0xb5, 0xb5
 
-@ Read by Func_080e989c: 32 steps down from 31, 32 zeros and 32 steps up
+@ Read by HoverGlow_GetColor: 32 steps down from 31, 32 zeros and 32 steps up
 	.global gData_080f0fe0
 gData_080f0fe0:
 	.byte 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16
@@ -99,7 +99,7 @@ gData_080f0fe0:
 	.byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	.byte 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
 
-@ Read by Func_080ea14c: an object script that sets the scale to 1 and
+@ Read by SummonTablet_PlayRunes: an object script that sets the scale to 1 and
 @ then squashes and stretches it for ever, as the variant motion scripts
 @ (gActor_VariantScripts) do; work 9 is the x scale, 10 the y
 	.global Data_080f1040

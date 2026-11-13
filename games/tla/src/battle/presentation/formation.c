@@ -7,8 +7,6 @@
 #include "flag_call.h"
 #include "module/battle/presentation.h"
 
-u8 GameFlag_GetByte(s32 flag);
-
 /// Keeps up to thirty-two eligible formations near the party's adjusted
 /// average level, chooses one randomly and returns its level adjustment
 /// through outMargin. It first sets flags from others, clears the enemy flags
@@ -229,7 +227,7 @@ struct UnitBaseStats__presentation {
 /// least 7/10 of the old values, at most 16383 and 999), from a copy of its
 /// base block, then recalculates its stats.
 // No ☀️ twin found.
-void Func_08127a0c(s32 unitId) {
+void BattleUnit_Strengthen(s32 unitId) {
   struct UnitBaseStats__presentation *saved = Heap_AllocEwram(36);
   struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
   s32 value;
@@ -262,7 +260,7 @@ void Func_08127a0c(s32 unitId) {
 }
 
 // The letters cycle through CH_CNT values: 26 in the Japanese release, 9
-// elsewhere, as Func_08128228 reads them back.
+// elsewhere, as String_FindFirstDigit reads them back.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define CH_CNT 26
 #else
@@ -580,7 +578,7 @@ assign_enemy:
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + 128, levelAdjustment);
     else if (!GameFlag_Test(0x173) && GameFlag_Test(0x2e))
-      Func_08127a0c(memberOrEnemyIndex + 128);
+      BattleUnit_Strengthen(memberOrEnemyIndex + 128);
     battle->unk868 = 0;
     enemyId = unit->enemyId;
     switch (enemyId) {

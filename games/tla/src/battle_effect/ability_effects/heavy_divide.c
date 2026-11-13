@@ -17,16 +17,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -45,7 +44,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -79,7 +77,7 @@ extern const u8 Data_08198b9a[];  // a chip's two pixels
 // Data_08198b96[0]. Strong Hit: an axe is thrown, spinning, from the caster
 // to the target. Either way chips of stone fly from the target and bounce
 // on the ground.
-void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: blit[1] gives the stack frame its 4 bytes.
@@ -214,14 +212,15 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
           }
           texture.pixels = work->sheet + i * 0x1000;
           Transform_Reset();
-          Func_08015160((source.x / 2 - 64) << 16, (source.y - 88) << 16, 0);
+          SceneTransform_ApplyPosition3((source.x / 2 - 64) << 16,
+                                        (source.y - 88) << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 0) {
             Transform_ApplyRoll(0x8000 - step->variant);
           } else {
             Transform_ApplyRoll(step->variant + 0x8000);
           }
-          Func_08015160(0, 0xfff00000, 0);
+          SceneTransform_ApplyPosition3(0, 0xfff00000, 0);
           SceneTransform_ApplyScale3(size << 15, size * 13192, size << 13);
           if (effect->side == 0) {
             Transform_ApplyYaw(0x8000);
@@ -253,8 +252,8 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
 
         texture.pixels = work->sheet;
         Transform_Reset();
-        Func_08015160(work->particles[0].x - 0x400000,
-                      work->particles[0].y - 0x400000, 0);
+        SceneTransform_ApplyPosition3(work->particles[0].x - 0x400000,
+                                      work->particles[0].y - 0x400000, 0);
         SceneTransform_ApplyScale3(scale >> 1, scale, 0x8000);
         Transform_ApplyRoll(work->particles[0].z);
         if (effect->side == 0) {
@@ -603,7 +602,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     size = width / 2;
     half = size / 2;
     clear(work->sheet + 0x1000, 0x800);
-    Func_0815b434(work->sheet, size, 0x10000);
+    BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
     y = 0;
     offset = 0;
   nextRow:
@@ -732,7 +731,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         last->variant = level - 24;
       }
       Transform_Reset();
-      Func_08015160(last->x - 0x400000, last->y - 0x400000, 0);
+      SceneTransform_ApplyPosition3(last->x - 0x400000, last->y - 0x400000, 0);
       SceneTransform_ApplyScale3(scale * 2, scale, scale * 2);
       Transform_ApplyPitch(-0x2000);
       Render_TransformVertices(gData_08199210, vertices, 4);
@@ -759,7 +758,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       model->shade = zero;
       texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
       Transform_Reset();
-      Func_08015160(drop->x - 0x400000, drop->y - 0x300000, 0);
+      SceneTransform_ApplyPosition3(drop->x - 0x400000, drop->y - 0x300000, 0);
       SceneTransform_ApplyScale3(splash >> 1, splash, splash >> 1);
       Transform_ApplyPitch(-0x4000);
       Render_TransformVertices(gData_08199210, vertices, 4);
@@ -872,7 +871,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
   cells = (s32)Ram_MapCellBuffer;
   discs = (s16 *)work->sheet;
   for (i = 0; i != FLAMES; i++) {
-    Func_0815b434((void *)(offset + cells), size, 0x14e20);
+    BattleEffect_DrawShadedCircles((void *)(offset + cells), size, 0x14e20);
     discs[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -940,8 +939,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
               ((Trig_Sin(burst->variant << 10) * burst->velocityX) >> 16) * 2;
           index = diameter - 2;
           if ((u32)index <= 61)
-            Func_0818caa8((void *)(*(s16 *)(index + (s32)discs) + cells),
-                          burst->x, burst->y, diameter);
+            Canvas_BlitAtFoot((void *)(*(s16 *)(index + (s32)discs) + cells),
+                              burst->x, burst->y, diameter);
         }
       }
 
@@ -967,10 +966,11 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
             brightness = (16 - square->variant) * 8;
           model->shade = brightness;
           Transform_Reset();
-          Func_08015160((square->x - 64) << 16, (square->y - 64) << 16, 0);
+          SceneTransform_ApplyPosition3((square->x - 64) << 16,
+                                        (square->y - 64) << 16, 0);
           Transform_ApplyRoll(square->velocityZ);
           Transform_ApplyPitch(square->velocityY);
-          Func_0801521c(roll);
+          SceneTransform_ApplyUniformScale(roll);
           Render_TransformVertices(Data_081991e0, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -1169,13 +1169,13 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   SummonEffect_RunCanvasMode3(effect);
 }
 
-void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Earth Force (kind 459).
-void BattleEffect_RunEarthForce(s32 a0) { Func_0816fca8(a0, 1); }
+void BattleEffect_RunEarthForce(s32 a0) { BattleEffect_RunBoltTrail(a0, 1); }
 
 /// Abilities: Thunder Mine (kind 86).
-void BattleEffect_RunThunderMine(s32 a0) { Func_0816fca8(a0, 0); }
+void BattleEffect_RunThunderMine(s32 a0) { BattleEffect_RunBoltTrail(a0, 0); }
 #undef SLOT_BLITTER
 #undef BLITTER
 #undef HI

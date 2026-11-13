@@ -78,8 +78,8 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
                               s32 frames);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -173,8 +173,8 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
         quad->unk14 = gData_081994e0[mode];
         quad->vertices = vertices;
         Transform_Reset();
-        Func_08015160(0, (target.y - 58) << 16, 0);
-        Func_0801521c(gData_081994d0[mode] << 1);
+        SceneTransform_ApplyPosition3(0, (target.y - 58) << 16, 0);
+        SceneTransform_ApplyUniformScale(gData_081994d0[mode] << 1);
         Render_TransformVertices(gData_081991f0, vertices, 4);
         Render_DrawModelList(quad);
         Heap_Release(quad);
@@ -390,31 +390,32 @@ extern const u8 gData_08199210[];
 extern const u8 gData_08199364[];
 
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
-/* VIEW(f17e698): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
- * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
- * attributes, s32 flags); tried as the definition's struct EffectSprite
- * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the
- * object already declares, BattleEffect_RunDaedalus moves: 4 of 3898
- * instructions in tla-ja. */
-extern struct SpriteObject *
-Func_0815b290__f17e698(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f17e698): routine Func_0815b3b0 as Sprite *Func_0815b3b0(s32, s32, u32,
- * s32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32
- * kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0
- * *Func_0815b3b0(s32 kind, s32 value), which the object already declares,
- * BattleEffect_RunDaedalus moves: 3 of 3898 instructions in tla-ja. */
-extern Sprite *Func_0815b3b0__f17e698(s32, s32, u32,
-                                      s32) __asm__("Func_0815b3b0");
+/* VIEW(f17e698): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); the definition has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags); tried as the definition's struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags), which the object already declares, BattleEffect_RunDaedalus moves: 4
+ * of 3898 instructions in tla-ja. */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__f17e698(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+/* VIEW(f17e698): routine EffectSprite_Acquire as Sprite
+ * *EffectSprite_Acquire(s32, s32, u32, s32); the definition has struct
+ * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
+ * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
+ * s32 value), which the object already declares, BattleEffect_RunDaedalus
+ * moves: 3 of 3898 instructions in tla-ja. */
+extern Sprite *
+EffectSprite_Acquire__f17e698(s32, s32, u32,
+                              s32) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_FetchRectangleBlitters(s32, void **);
-s32 Trig_Cos(s32);
-s32 Trig_Sin(s32);
 void BattleEffect_StepPaletteToResource(s32);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
@@ -472,7 +473,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   bank = SYSTEM->bank;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   BattleEffect_LoadBlitter(104, 3);
   blit[0] = SYSTEM->blit;
   work->transferMode = 0;
@@ -561,13 +562,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 8; i++) {
-          obj = Func_0815b290__f17e698(32, 32, 0x80000000, 0xf000);
+          obj =
+              EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80000000, 0xf000);
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                           &work->frames[(j << 12) + i * 0x200], 0x200);
         }
-        obj = Func_0815b3b0__f17e698(32, 32, 0x80000000, 0xf000);
+        obj = EffectSprite_Acquire__f17e698(32, 32, 0x80000000, 0xf000);
         work->sprites[j * 9 + 8] = obj;
         Iwram_CopyWords(obj, work->sprites[j * 9], 24);
         for (i = 0; i != 8; i++)
@@ -579,13 +581,13 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       src += 0x1c0;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       for (i = 0; i != 21; i++) {
-        obj = Func_0815b290__f17e698(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80002000, 0);
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                         DECODE_BUFFER + i * 0x400, 0x400);
       }
-      obj = Func_0815b290__f17e698(32, 64, 0xc000a000, 0);
+      obj = EffectSprite_CreateWithTiles__f17e698(32, 64, 0xc000a000, 0);
       // Once-only: the store alone in its block.
       do {
         work->sprites[i + 18] = obj;
@@ -601,7 +603,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Iwram_CopyWords((void *)0x050003c0, src, 32);
       src += 32;
       Decompress_TaggedLz(src, DECODE_BUFFER);
-      obj = Func_0815b290__f17e698(16, 8, 0x4000, 0xe000);
+      obj = EffectSprite_CreateWithTiles__f17e698(16, 8, 0x4000, 0xe000);
       obj->priority = 1;
       work->sprites[41] = obj;
       Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
@@ -611,7 +613,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
        */
       __asm__("");
       for (i = 0; i != 15; i++) {
-        work->sprites[42 + i] = Func_0815b3b0__f17e698(16, 8, 0x4000, 0xf000);
+        work->sprites[42 + i] =
+            EffectSprite_Acquire__f17e698(16, 8, 0x4000, 0xf000);
         Iwram_CopyWords(work->sprites[42 + i], work->sprites[41], 24);
         work->sprites[42 + i]->tile = work->sprites[41]->tile;
         if (i > 6)
@@ -1149,10 +1152,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         if (z >= -63) {
           beam[5] = z;
           Transform_Reset();
-          Func_08015160(camera + 0x20000, 0x80000, 0);
+          SceneTransform_ApplyPosition3(camera + 0x20000, 0x80000, 0);
           Transform_ApplyRoll(0x4300);
           Transform_ApplyPitch(-0x800);
-          Func_0801521c((v << 14) + 0x4180);
+          SceneTransform_ApplyUniformScale((v << 14) + 0x4180);
           Render_TransformVertices(gData_08199210, buffer, 4);
           Render_DrawModelList(beam);
         }
@@ -1375,7 +1378,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     BattleActor_SpawnObjectsForListFar(arg->actors, 0);
     BattleEffect_SpawnObjects(1, 663, 1);
     for (i = 0; i != 15; i++) {
-      work->sprites[1 + i] = Func_0815b3b0__f17e698(32, 16, 0x80006000, 0);
+      work->sprites[1 + i] =
+          EffectSprite_Acquire__f17e698(32, 16, 0x80006000, 0);
       IWRAM_COPY_WORDS_LINKED(work->sprites[1 + i], work->sprites[0], 24);
       work->sprites[1 + i]->unk16 = 32;
       work->sprites[1 + i]->unk17 = 8;
@@ -1540,11 +1544,10 @@ struct RenderModel__f17e698 {
   u8 scrollV;
 };
 
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 
 void Transform_ApplyYaw(s32 angle);
 
@@ -1776,10 +1779,10 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       if (grow <= 64) {
         size = grow * 2;
         cells = gMapCellBuffer;
-        Func_0815b434(cells, size, 0x10000);
+        BattleEffect_DrawShadedCircles(cells, size, 0x10000);
       }
       cells = gMapCellBuffer;
-      Func_0818caa8(cells, i >> 16, discY >> 16, size);
+      Canvas_BlitAtFoot(cells, i >> 16, discY >> 16, size);
       if (frame == 56) {
         s32 delay;
 
@@ -1817,8 +1820,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
 
           Transform_Reset();
           k = i & 3;
-          Func_08015160((k << 17) + ringX + ringOffset,
-                        discY - ((k + 2) << 16) + ringOffset, 0);
+          SceneTransform_ApplyPosition3((k << 17) + ringX + ringOffset,
+                                        discY - ((k + 2) << 16) + ringOffset,
+                                        0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           Transform_ApplyRoll(ring->x);
           SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + 0x10000,

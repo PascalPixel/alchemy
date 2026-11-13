@@ -171,8 +171,8 @@ Data_08129830:
 	.2byte 69, 76
 	.2byte -1, -1
 	.section .rodata.a
-	.global Data_0812a16c
-Data_0812a16c:
+	.global gScriptedBattle_Units
+gScriptedBattle_Units:
 	.byte 4, 7, 5, 0x80, 0x81
 	.balign 4, 0
 @ Debug party members (separated by owner -1).
@@ -185,8 +185,8 @@ gDebug_ParameterSets:
 gBattleObject_EmptyScript:
 	.4byte 17
 @ Resource ID | slot << 9, terminated by 0xffff.
-	.global gResource_SlotAssignments
-gResource_SlotAssignments:
+	.global gBattleUnit_WeaponKinds
+gBattleUnit_WeaponKinds:
 	.2byte 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008
 	.2byte 0x0009, 0x000a, 0x000b, 0x020f, 0x0210, 0x0211, 0x0212, 0x0213
 	.2byte 0x0214, 0x0215, 0x0216, 0x0217, 0x0218, 0x0219, 0x021a, 0x021b
@@ -222,14 +222,12 @@ Data_0812cc28:
 	.4byte 140, 140, 150, 200, 200, 150, 100, 100
 	.4byte 100, 300
 	.4byte 0, 20, 38
-	.global Data_0812cc5c
-Data_0812cc5c:
+@ BattleAI_ChooseAction's rolls for the first three action strategies, a row
+@ each: the chance in 256 of each place in the enemy's actions.
+	.global gBattleAI_ActionWeights
+gBattleAI_ActionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32
-	.global Data_0812cc64
-Data_0812cc64:
 	.byte 53, 47, 41, 35, 29, 23, 17, 11
-	.global Data_0812cc6c
-Data_0812cc6c:
 	.byte 113, 56, 31, 20, 14, 10, 7, 5
 @ A copy of The Broken Seal's gBattleTransition_CurtainVariants
 	.global gBattleTransition_CurtainVariants

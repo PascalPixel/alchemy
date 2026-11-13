@@ -1,5 +1,6 @@
 /// @file
-/// Field Psynergy kind 30, an object dropped at the effect's anchor, and the
+/// Scoop, Teleport (field Psynergy kind 30) and its whirl and sparks, an object
+/// dropped at the effect's anchor, and the
 /// canvas circle and image copies, with routines not yet understood.
 // Part of psynergy.c.
 
@@ -20,7 +21,7 @@ struct Work080e6400 {
   s16 mode;
 };
 
-void Func_080e62f4(u8 *source, u8 *destination, s32 phase);
+void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase);
 /* VIEW(f0e6400): routine BattleEffect_UpdateGrowingParticleSprite as void
  * BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct
  * EffectParticle *particle, s32 tiles); the definition has void
@@ -37,11 +38,11 @@ extern void BattleEffect_UpdateGrowingParticleSprite__f0e6400(
 extern void EffectSprite_DrawAtWorldPosition__f0e6400(
     struct ScreenSprite *sprite,
     s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
-u32 Random16(void);
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-void Func_080e6400(void) {
+/// Task of the Scoop: plays the dig on the anchor phase by phase.
+void Scoop_Update(void) {
   struct Work080e6400 *work;
   struct Actor *anchor;
   struct EffectSprite *sprite;
@@ -81,14 +82,14 @@ void Func_080e6400(void) {
     if (*phase == 2) {
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
-      Func_080e62f4(work->tiles, picture, work->timer + 14);
+      Picture_ShiftColumnsByWave(work->tiles, picture, work->timer + 14);
       // The heap copy of Render_CopyStrided called as returning the source
       // pointer it leaves in r0, which moves picture to r0 after the width's
       // 32; called as void, 2 of 596 instructions differ in tla-en.
       ((const u8 *(*)(const u8 *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           picture, 32, 32, vram);
       sprite = &work->pictureSprite;
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
     }
     if (*phase == 2) {
       for (i = 0, particle = work->particles; i < 18; i++, particle++) {
@@ -191,10 +192,6 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
-void FieldPsynergy_FadeFromCastColor(void);
-void wait(s32 frames);
-s32 Party_GetLeaderActor(void);
 
 /// Effect 20 cast on a target: runs the effect, ignoring the target.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
@@ -277,29 +274,21 @@ STATIC_ASSERT(offsetof(struct FxEvent__f0e6400, unkd4c) == 0xd4c);
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_ReleaseFar(struct Actor *object);
 void Func_080dba5c(void);
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
-s32 Func_08020330(struct Actor *object);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
-s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
-s32 Func_080dbc04(s32 x, s32 z, s32 layer);
+void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
+s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
+s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-s32 Func_080ce31c(s32 kind);
-void Func_080e716c(void);
+void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {
   struct RiseWork__f0e6400 *work = HeapSlot_Alloc(92, 0x193c);
@@ -363,7 +352,7 @@ void FieldPsynergy_Scoop(void) {
   if (!(event->unkd4c & 1))
     Func_080dba5c();
   Sound_PlayFar(138);
-  Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
+  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000, scene->z);
   wait(10);
   Actor_SelectAnimationFar(object, 1);
   wait(15);
@@ -378,18 +367,19 @@ void FieldPsynergy_Scoop(void) {
   for (i = 0; i < 80; i++) {
     target = event->work.objects[i];
     if (target != NULL && target->script != NULL &&
-        (Func_08020330(target) == 406 || (target->collisionFlags & 1)) &&
+        (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
         target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
-        Func_080dbe80(&scene->x, 4, &target->x, target->radius - 2) >= 0) {
+        FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x,
+                                   target->radius - 2) >= 0) {
       failed = 1;
       break;
     }
   }
-  if (Func_080dbdc8(scene->x, scene->z, caster->terrainId) == 255)
+  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->terrainId) == 255)
     failed = 4;
-  if (Func_080cda84(scene->fieldKind, caster, &scene->x) == -1)
+  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x) == -1)
     failed = 2;
-  if (Func_080dbc04(scene->x, scene->z, caster->terrainId) == 0)
+  if (MapGrid_CanScoop(scene->x, scene->z, caster->terrainId) == 0)
     failed = 3;
   if (failed) {
     wait(2);
@@ -421,7 +411,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -450,7 +440,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -475,7 +465,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     sprite = work->sprites;
     for (; i < 64; i++) {
-      Func_080eaf98(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
+      EffectSprite_Init(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
@@ -496,7 +486,7 @@ void FieldPsynergy_Scoop(void) {
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
-    Func_080eaf98(sprite, 16, 0, 0x80000000, pictureTile);
+    EffectSprite_Init(sprite, 16, 0, 0x80000000, pictureTile);
     sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
     sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
     sprite->oam.palette256 = 1;
@@ -522,19 +512,20 @@ void FieldPsynergy_Scoop(void) {
     // A local holding one constant: keeps 0x480's load where the native has it.
     s32 order = 0x480;
 
-    Task_Add(Func_080e6400, order);
+    Task_Add(Scoop_Update, order);
   }
   if (work->mode == 1) {
     frame = 0;
     while (work->phase != 999) {
       if (frame == 24)
-        Func_080e716c();
+        Scoop_DigUpItem();
       wait(1);
       frame++;
     }
   } else {
-    pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
-                                        Func_080ce31c(scene->fieldKind));
+    pending =
+        Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
+                                  Scene_SelectPsynergyTarget(scene->fieldKind));
     frame = 0;
     while (work->phase != 999) {
       stage = 0;
@@ -559,9 +550,9 @@ void FieldPsynergy_Scoop(void) {
     }
     Field_RunPsynergyEvent(pending, 999, frame);
   }
-  Task_Remove(Func_080e6400);
+  Task_Remove(Scoop_Update);
   Sound_PlayFar(114);
-  Func_080dbf94(object, object->x, object->y, object->z);
+  FieldPsynergy_ShrinkToCaster(object, object->x, object->y, object->z);
   if (particleEntry != 96)
     VramCache_FreeEntry(particleEntry);
   if (pictureEntry != 96)
@@ -615,7 +606,7 @@ extern const u16 gData_080f0fc0[];
 /// id from gData_080f0fc0's sixteen (0x8001 when PartyInventory_FindRoomFar
 /// finds no room) or, past 0xc000 of the roll, a 0x8000-flagged value scaled
 /// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
-void Func_080e716c(void) {
+void Scoop_DigUpItem(void) {
   struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *anchor;
   struct EventWork *event;
@@ -678,7 +669,12 @@ extern char ResourceId_ColouredOrbs;
 
 void Func_080dc954(void);
 
-void Func_080e7238(void) {
+/// A whirl of coloured orbs (ResourceId_ColouredOrbs) round the leader, with
+/// sound 200. The scenes with Teleport circles call it (Mars Lighthouse, the
+/// Anemos Inner Sanctum, the Yampi Desert and Islet caves, Contigo).
+// XXX: whether the whirl is the leaving or the arriving half of a teleport;
+// a render of a Teleport circle would settle it.
+void Teleport_PlayWhirl(void) {
   s32 position[3];
   struct WhirlWork__f0e6400 *work = HeapSlot_Alloc(92, sizeof(*work));
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
@@ -700,7 +696,7 @@ void Func_080e7238(void) {
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -751,7 +747,7 @@ void Func_080e7238(void) {
           Camera_WorldToScreen(position);
           sprite->x = position[0];
           sprite->y = position[2];
-          Func_080eb01c(sprite);
+          EffectSprite_Draw(sprite);
           spark->angle += 0x800;
           spark->radius += -0x40000;
         }
@@ -825,7 +821,9 @@ struct SparkWork {
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_ApplyRandomChildValues(void);
 
-void Func_080e74d8(void) {
+/// Sparks burst from the leader, Teleport_PlayWhirl's companion in the same
+/// scenes.
+void Teleport_PlaySparks(void) {
   struct SparkWork *work = HeapSlot_Alloc(92, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
@@ -851,7 +849,7 @@ void Func_080e74d8(void) {
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -963,10 +961,10 @@ void Func_080e74d8(void) {
   HeapSlot_Release(92);
 }
 
-/// Runs Func_080e74d8, fades the palettes back to the saved ones and waits
-/// 10 frames.
-void Func_080e7804(void) {
-  Func_080e74d8();
+/// Runs Teleport_PlaySparks, fades the palettes back to the saved ones and
+/// waits 10 frames.
+void Teleport_PlaySparksAndFade(void) {
+  Teleport_PlaySparks();
   FieldPsynergy_FadeFromCastColor();
   wait(10);
 }
@@ -1021,8 +1019,8 @@ struct ObjectAnimation__f0e6400 {
 
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
-s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
-s32 Func_080db9a8(struct Actor *object, s32 facing);
+s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 void BattleEffect_ApplyColorToTargetBuffer(s32 packed, s32 mode);
 void MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
@@ -1087,21 +1085,22 @@ void FieldPsynergy_Parch(void) {
     animation = object->sprite;
     if (object->script != NULL && animation->definition[0] == kind &&
         animation->unk18 == 1 &&
-        Func_080dbe80(pos, 4, &object->x, object->radius - 2) >= 0) {
+        FieldPsynergy_CheckOverlap(pos, 4, &object->x, object->radius - 2) >=
+            0) {
       result = 2;
       found = i;
       Actor_GetById(i)->priorityFlags |= 2;
       goto loaded;
     }
   }
-  if (Func_080cda84(scene->fieldKind, caster, pos) == -1) {
+  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, pos) == -1) {
     result = 0;
     // DEAD: pending is already NULL; the ROM stores it again.
     pending = NULL;
-  } else if (Func_080dbd5c(pos[0], pos[2], caster->terrainId) != 0) {
+  } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->terrainId) != 0) {
     pending = Scene_FindPsynergyTrigger(
         0x50000005, scene->fieldKind,
-        Func_080dbdc8(pos[0], pos[2], caster->terrainId));
+        MapGrid_GetCellBehavior(pos[0], pos[2], caster->terrainId));
     result = 2;
     if (pending == NULL)
       result = 1;
@@ -1129,7 +1128,7 @@ loaded:
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     fresh = &work->sprites[i];
-    Func_080eaf98(fresh, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(fresh, 8, 15, 0x40000000, tile);
     fresh->depth = 250;
     fresh->oam.priority = 0;
     fresh->oam.palette256 = 1;
@@ -1185,7 +1184,7 @@ loaded:
         sprite->x =
             screen[0] + (Trig_Sin(particle->sway * particle->swayRate) << 3);
         sprite->y = screen[2];
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
         particle->sway++;
         particle->y += particle->rise;
         if (++particle->timer == 32)
@@ -1227,16 +1226,17 @@ loaded:
     scaleY = work->discScaleY;
     packed = vramWork->glyphTiles + 128;
     sprite = &work->disc;
-    Func_080eaf98(sprite, 31, 31, 0xc0000000, packed);
+    EffectSprite_Init(sprite, 31, 31, 0xc0000000, packed);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    sprite->oam.priority = Func_080db9a8(scene->mainObject, scene->facing);
+    sprite->oam.priority =
+        FieldPsynergy_GetCanvasPriority(scene->mainObject, scene->facing);
     sprite->depth = 1;
     sprite->x = x;
     sprite->y = y;
     sprite->scaleX = scaleX;
     sprite->scaleY = scaleY;
-    Func_080eb01c(sprite);
+    EffectSprite_Draw(sprite);
 
     if (result == 0) {
       switch (phase) {
@@ -1357,7 +1357,7 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// Plots one pixel of the 128x64 canvas on a circle around its bottom middle
 /// (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
 /// upward.
-void Func_080e7f94(s32 unused, s32 radius, s32 angle, s32 color) {
+void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
   /* FAKEMATCH(pin): the angle pinned to r8, which leaves the multiply's entry
    * to r10; as angle itself, 12 of 39 instructions differ in tla-en. */
   register s32 turn asm("r8") = angle;
@@ -1372,7 +1372,7 @@ extern const u16 gData_080f39c4[];
 
 /// Copy a 16x16 image to the BG map, clipping cells outside the 30x20-tile
 /// screen.
-void Func_080e7fec(s32 x, s32 y) {
+void BgMap_DrawClipped16x16(s32 x, s32 y) {
   const u16 *tiles = gData_080f39c4;
   s32 row;
   s32 column;
@@ -1442,7 +1442,9 @@ struct Unk_080e807cEvent {
   s16 count;
 };
 
-void Func_080e807c(void) {
+/// Task of field Psynergy 28 (its name is question marks): its motes and
+/// colours each frame.
+void FieldPsynergy_UpdateUnnamed28(void) {
   struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
   struct Unk_080e807cEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1468,7 +1470,7 @@ void Func_080e807c(void) {
   gBgScroll[0].x = 64 - x;
   y = pos[2] >> 16;
   gBgScroll[0].y = 64 - y;
-  Func_080e7fec(x - 64, y - 64);
+  BgMap_DrawClipped16x16(x - 64, y - 64);
 
   if (work->unk2986 != 0) {
     i = 0;

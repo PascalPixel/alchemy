@@ -42,16 +42,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 
@@ -63,7 +62,6 @@ void Transform_ApplyYaw(s32 angle);
  * `BattleObject_GetFar'. */
 extern struct BattleObjectPosition **
 GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 extern char ResourceId_Data0FB;
 extern char ResourceId_VenusDjinnSmallSheet;
@@ -107,12 +105,12 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   cells = (s32)gMapCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
-    Func_0815b434((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
-  Func_0816ae40(work->sheet, gData_02014000, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(effect, ((effect->side ^ 1) << 4) | 32, center,
                                  other);
@@ -198,8 +196,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
                 x += (Random16() & 7) - 4;
                 y += (Random16() & 7) - 4;
               }
-              Func_0818caa8((u8 *)((s16)discOffsets[cell] + cells), x, y,
-                            width);
+              Canvas_BlitAtFoot((u8 *)((s16)discOffsets[cell] + cells), x, y,
+                                width);
             }
             shard->y += shard->velocityY;
           }
@@ -235,8 +233,9 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
           }
           model->shade = 0;
           Transform_ApplyPitch(-0xbb8);
-          Func_08015160((center[0] / 2 - 64) << 16, 0x280000, 0);
-          Func_0801521c(scale >> 1);
+          SceneTransform_ApplyPosition3((center[0] / 2 - 64) << 16, 0x280000,
+                                        0);
+          SceneTransform_ApplyUniformScale(scale >> 1);
           Transform_ApplyYaw(frame << 9);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);

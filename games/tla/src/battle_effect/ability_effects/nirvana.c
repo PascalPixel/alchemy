@@ -21,7 +21,7 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
                               s32 frames);
 void Transform_Pop(void);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32);
 void Transform_ApplyRoll(s32 angle);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -90,13 +90,13 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
         struct EffectPosition out;
 
         Transform_Push();
-        Func_08015160(orb->x, orb->y, orb->z);
+        SceneTransform_ApplyPosition3(orb->x, orb->y, orb->z);
         if (i <= 11)
           Transform_ApplyPitch(frame << 9);
         else
           Transform_ApplyPitch((frame << 9) + 0x4000);
         Transform_ApplyRoll(i * 5461 + (frame << 10));
-        Func_08015160(0, Trig_Sin(frame * 409) << 6, 0);
+        SceneTransform_ApplyPosition3(0, Trig_Sin(frame * 409) << 6, 0);
         point[0] = 0;
         point[1] = 0;
         point[2] = 0;
@@ -611,16 +611,15 @@ struct RenderModel__f16d130 {
   u8 scrollV;
 };
 
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyYaw(s32 angle);
 
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -987,10 +986,10 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             model->shade = color;
             BattleEffectKernels_IntegrateVector3(p, 62, 0x400);
             Transform_Push();
-            Func_08015160(p->x, p->y, p->z);
+            SceneTransform_ApplyPosition3(p->x, p->y, p->z);
             Transform_ApplyPitch(angle);
             Transform_ApplyRoll(angle);
-            Func_0801521c(0x10000);
+            SceneTransform_ApplyUniformScale(0x10000);
             Render_ProjectVertices(Data_081991a4, vertices, 3);
             Render_DrawModelList(model);
             Transform_Pop();
@@ -1026,7 +1025,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             scale = 60000;
           }
           model->shade = (const void *)spireShade;
-          Func_08015160(target->x, -0x40000, target->z);
+          SceneTransform_ApplyPosition3(target->x, -0x40000, target->z);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapCellBuffer, vertices, 64);
           Render_DrawModelList(model);
@@ -1068,7 +1067,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             }
             Transform_Push();
             model->shade = (const void *)shade;
-            Func_08015160(target->x, Data_08198b92[i] << 16, target->z);
+            SceneTransform_ApplyPosition3(target->x, Data_08198b92[i] << 16,
+                                          target->z);
             SceneTransform_ApplyScale3(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(Data_08198cac, vertices, 32);
@@ -1093,13 +1093,13 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Heavy Divide (kind 101).
-void BattleEffect_RunHeavyDivide(s32 a0) { Func_0816e65c(a0, 0); }
+void BattleEffect_RunHeavyDivide(s32 a0) { BattleEffect_RunHeavyBlow(a0, 0); }
 
 /// Abilities: Strong Hit (kind 469).
-void BattleEffect_RunStrongHit(s32 a0) { Func_0816e65c(a0, 1); }
+void BattleEffect_RunStrongHit(s32 a0) { BattleEffect_RunHeavyBlow(a0, 1); }
 #undef HI
 #undef BLITTER
 #undef ROCKS

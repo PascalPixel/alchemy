@@ -24,10 +24,10 @@
 /// Each test reloads the address; using the symbol combines the two loads.
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
-/// The world map screen's scroll (x, then y, 16.16 pixels). Func_080ed0a0
-/// reads it at constant addresses: the y word loads from its own literal, or
-/// as the x word's address plus 4 where that is live, which only constants
-/// give.
+/// The world map screen's scroll (x, then y, 16.16 pixels).
+/// WorldMapPicture_UpdateScroll reads it at constant addresses: the y word
+/// loads from its own literal, or as the x word's address plus 4 where that is
+/// live, which only constants give.
 #define Ram_WorldMapScroll FIXED_ADDRESS((s32 *), 0x0202a630, Data_0202a630)
 
 /// The world map screen's work. Its setup (WorldPicture_Initialize) reaches it
@@ -35,8 +35,8 @@
 /// screen values whose addresses it passes out, which only a constant gives.
 #define Ram_WorldMapWork                                                       \
   FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
-/// Where Func_080ed0a0 reads the cursor from (x, then y, 16.16 pixels): the
-/// setup points it at the work's cursor.
+/// Where WorldMapPicture_UpdateScroll reads the cursor from (x, then y, 16.16
+/// pixels): the setup points it at the work's cursor.
 #define Ram_WorldMapCursor FIXED_ADDRESS((s32 **), 0x0202a62c, Data_0202a62c)
 /// The shown place name's box on the world map screen (x, y, width, height,
 /// pixels). WorldPicture_UpdateMarkers reaches the four halfwords from one

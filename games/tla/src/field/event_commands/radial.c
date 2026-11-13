@@ -299,7 +299,7 @@ void FieldPsynergy_Whirlwind(void) {
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
     Sound_PlayFar(SE_ORB_FADES);
-    Func_08020340(orb);
+    Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_ORBITING) {
     // Sixteen motes, one every six frames, 4 pixels above the orb and 0.8
@@ -331,7 +331,7 @@ void FieldPsynergy_Whirlwind(void) {
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
     Sound_PlayFar(SE_ORB_FADES);
-    Func_08020340(orb);
+    Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_WANDER || kind == ORB_HANDOFF) {
     wait(5);
@@ -363,8 +363,8 @@ void FieldPsynergy_Whirlwind(void) {
     FieldPsynergy_FadeFromCastColor();
     ((struct OrbitEffect__f0dfd00 *)orb)->timer = 0;
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty__f0dfd00;
-    Func_080db0b0(scene->secondObjectId);
-    Func_08020340(orb);
+    HangingVine_Swing(scene->secondObjectId);
+    Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   }
   FieldPsynergy_FadeFromCastColor();
@@ -675,9 +675,10 @@ void FieldPsynergy_Catch(void) {
 
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct ScatterParticle *p);
-void Func_080d92a4(s32 target, struct Vector3 *position);
+void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
-void Func_080e0618(void) {
+/// Task of the Lash: its scattering particles along the rope.
+void FieldPsynergy_UpdateLash(void) {
   struct ScatterWork *work =
       (struct ScatterWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
@@ -754,7 +755,7 @@ void Func_080e0618(void) {
   case 2:
     if (work->timer == 0)
       work->flash = 1;
-    Func_080d92a4(event->target, &position);
+    Rope_GetEndNodePosition(event->target, &position);
     object->x = position.x;
     object->y = position.y - 0x40000;
     object->z = position.z;
@@ -793,7 +794,7 @@ struct EffectSceneWork__radial {
   u8 failed;
 };
 
-/// Effect 17 on a target: asks Func_080d9a74 for two results; on failure
+/// Effect 17 on a target: asks Rope_FindById for two results; on failure
 /// marks the effect failed, else stores the target and both in the event work.
 /// Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
@@ -802,7 +803,7 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   s32 second;
   s32 first;
 
-  if (Func_080d9a74(value, &first, &second)) {
+  if (Rope_FindById(value, &first, &second)) {
     work->failed = 1;
   } else {
     state->valueD32 = value;
@@ -857,7 +858,7 @@ void FieldPsynergy_Lash(void) {
     particle = work->particles;
     sprite = work->sprites;
     for (i = 63; i >= 0; i--) {
-      Func_080eaf98(sprite, 4, 4, 0, tileA);
+      EffectSprite_Init(sprite, 4, 4, 0, tileA);
       sprite->depth = 250;
       sprite->oam.priority = 0;
       sprite->oam.palette256 = 1;
@@ -871,7 +872,8 @@ void FieldPsynergy_Lash(void) {
       particle++;
     }
 
-    Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
+    FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000,
+                                 scene->z);
     Actor_SelectAnimationFar(object, 1);
     wait(10);
     for (i = 15; i >= 0; i--) {
@@ -891,17 +893,17 @@ void FieldPsynergy_Lash(void) {
       work->next = 0;
       work->spawnCount = 1;
       work->hit = 0;
-      Task_Add(Func_080e0618, 0x480);
+      Task_Add(FieldPsynergy_UpdateLash, 0x480);
       while (work->phase != 999) {
         if (work->flash == 1) {
           Sound_PlayFar(0x200);
-          Func_080d92d4(event->target, event->targetY, event->targetZ);
+          Rope_Lash(event->target, event->targetY, event->targetZ);
           work->hit = 1;
           Sound_PlayFar(395);
         }
         wait(1);
       }
-      Task_Remove(Func_080e0618);
+      Task_Remove(FieldPsynergy_UpdateLash);
     }
     VramCache_FreeEntry(slotA);
     VramCache_FreeEntry(slotB);
@@ -1251,7 +1253,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
     MessageArgument_PushFar(236, 2);
     FieldMessage_ShowFar((s32)&MsgItemWoreOff, 1);
   }
-  Func_080cb8a4();
+  WorldMap_ReloadPendingAreaGraphics();
 }
 
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
@@ -1393,7 +1395,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 
   for (i = 0; i < 2; i++) {
     sprite = &work->sprites[group][i];
-    Func_080eaf98(sprite, 16, 16, 0x80004000, tiles);
+    EffectSprite_Init(sprite, 16, 16, 0x80004000, tiles);
     sprite->oam.palette256 = 0;
     sprite->oam.palette = 0;
     sprite->oam.priority = BattleEffect_GetObjectPriority(target);
@@ -1475,7 +1477,7 @@ void BattleEffect_UpdateArcEffect(void) {
           sprite->y += 0xffff0000;
           sprite->scaleY = -sprite->scaleY;
         }
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
       }
       work->age[group]++;
     }
@@ -1512,7 +1514,9 @@ Vector_AddPolarOffset__f0e150c(s32 distance, s32 angle,
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-void Func_080e1678(void) {
+/// Task of field Psynergy 29 (its name is question marks): the bow and the
+/// flaming arrow.
+void FieldPsynergy_UpdateUnnamed29(void) {
   struct BowScene *scene = Ram_HeapSlots->effectWork;
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleFxWork[0];
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
@@ -1609,7 +1613,8 @@ again:
       object = event->objects[objectIndex];
       if (object != NULL && object->script != NULL &&
           (object->collisionFlags & 1) && object != scene->mainObject &&
-          Func_080dbe80(&motion->x, 2, &object->x, object->radius - 2) >= 0)
+          FieldPsynergy_CheckOverlap(&motion->x, 2, &object->x,
+                                     object->radius - 2) >= 0)
         goto hit;
     }
     break;
@@ -1727,7 +1732,7 @@ again:
   Camera_WorldToScreen__f0e150c(pos);
   sprite->x = pos[0];
   sprite->y = pos[2];
-  Func_080eb01c(sprite);
+  EffectSprite_Draw(sprite);
   motion = &work->arrowMotion;
   pos[0] = motion->x;
   pos[1] = motion->y;
@@ -1736,7 +1741,7 @@ again:
   sprite = &work->arrow;
   sprite->x = pos[0];
   sprite->y = pos[2];
-  Func_080eb01c(sprite);
+  EffectSprite_Draw(sprite);
   if (work->arrowMoving != 0)
     BattleEffect_IntegrateVector3(&motion->x, 64, 0);
 
@@ -1824,7 +1829,7 @@ void FieldPsynergy_Unnamed29(void) {
   tile = VramCache_Load(bowSlot, 0x1800, work->tiles);
   work->bowTile = tile;
   sprite = &work->bow;
-  Func_080eaf98(sprite, 16, 16, 0x80000000, tile);
+  EffectSprite_Init(sprite, 16, 16, 0x80000000, tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
@@ -1847,7 +1852,7 @@ void FieldPsynergy_Unnamed29(void) {
   arrowSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(arrowSlot, 0x100, work->tiles);
   sprite = &work->arrow;
-  Func_080eaf98(sprite, 12, 8, 0x40000000, tile);
+  EffectSprite_Init(sprite, 12, 8, 0x40000000, tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
@@ -1865,7 +1870,7 @@ void FieldPsynergy_Unnamed29(void) {
   motion->z = pos[2];
   HeapSlot_Release(96);
 
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   canvas->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   canvas->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 3;
@@ -1899,10 +1904,10 @@ void FieldPsynergy_Unnamed29(void) {
   work->result = -1;
   work->phase = 0;
   work->timer = 0;
-  Task_Add(Func_080e1678, TASK_PASS_VBLANK);
+  Task_Add(FieldPsynergy_UpdateUnnamed29, TASK_PASS_VBLANK);
   while (work->phase != 999)
     wait(1);
-  Task_Remove(Func_080e1678);
+  Task_Remove(FieldPsynergy_UpdateUnnamed29);
   if (work->done != 0 && work->result != -1)
     event[0xd30] = work->result;
   VramCache_FreeEntry(arrowSlot);
@@ -1914,12 +1919,12 @@ void FieldPsynergy_Unnamed29(void) {
 
 /// Looks at 21 map cells around the effect owner, at the tile offsets of
 /// Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell of
-/// kind 1, 2 or 3 that Func_080cda84 accepts for the effect's id is listed as a
-/// tile in the event work's point list at 0xcc0, which ends with -1, -1; a
-/// kind-1 cell also stores its kind in the heap slot 0x5c work's byte 0x1b34,
-/// and the last kind-2 and kind-3 cells are kept in pixels, centred on their
-/// tile, at 0xd3c and 0xd40.
-void Func_080e2264(void) {
+/// kind 1, 2 or 3 that Field_MeasurePsynergyHeight accepts for the effect's id
+/// is listed as a tile in the event work's point list at 0xcc0, which ends with
+/// -1, -1; a kind-1 cell also stores its kind in the heap slot 0x5c work's byte
+/// 0x1b34, and the last kind-2 and kind-3 cells are kept in pixels, centred on
+/// their tile, at 0xd3c and 0xd40.
+void FieldPsynergy_GatherNearbyCells(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   struct PointWork *event = Ram_HeapSlots->eventWork;
   u8 *work = Ram_HeapSlots->battleFxWork[0];
@@ -1939,19 +1944,19 @@ void Func_080e2264(void) {
   for (i = 0; i <= 20; i++) {
     x = owner->x + (Data_080f0f64[i * 2] << 20);
     z = owner->z + (Data_080f0f64[i * 2 + 1] << 20);
-    kind = Func_080dbda8(x, z, owner->terrainId);
-    // position[1] is never set: only x and z reach Func_080cda84.
+    kind = MapGrid_GetCycloneCellKind(x, z, owner->terrainId);
+    // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;
     position[2] = z;
-    if (kind == 1 &&
-        Func_080cda84(*(s16 *)(effect + 30), owner, position) != -1) {
+    if (kind == 1 && Field_MeasurePsynergyHeight(*(s16 *)(effect + 30), owner,
+                                                 position) != -1) {
       points[count * 2] = x / 0x100000;
       points[count * 2 + 1] = z / 0x100000;
       count++;
       work[0x1b34] = kind;
     }
-    if (kind == 2 &&
-        Func_080cda84(*(s16 *)(effect + 30), owner, position) != -1) {
+    if (kind == 2 && Field_MeasurePsynergyHeight(*(s16 *)(effect + 30), owner,
+                                                 position) != -1) {
       event->unk_d3c = x >> 16;
       event->unk_d3e = z >> 16;
       event->unk_d3c = (event->unk_d3c & 0xfff0) + 8;
@@ -1960,8 +1965,8 @@ void Func_080e2264(void) {
       points[count * 2 + 1] = z / 0x100000;
       count++;
     }
-    if (kind == 3 &&
-        Func_080cda84(*(s16 *)(effect + 30), owner, position) != -1) {
+    if (kind == 3 && Field_MeasurePsynergyHeight(*(s16 *)(effect + 30), owner,
+                                                 position) != -1) {
       event->unk_d40 = x >> 16;
       event->unk_d42 = z >> 16;
       event->unk_d40 = (event->unk_d40 & 0xfff0) + 8;
@@ -1977,7 +1982,7 @@ void Func_080e2264(void) {
 
 // Runs the field events an effect touched.
 
-s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 /* VIEW(f0e150c): routine Field_RunPsynergyEvent as void
  * Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1); event_work.h
  * has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32
@@ -1985,13 +1990,14 @@ s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
 extern void Field_RunPsynergyEvent__f0e150c(
     s32 event, s32 argument0, s32 argument1) __asm__("Field_RunPsynergyEvent");
 
-// Only for the compiler: see the FAKEMATCH tag in Func_080e249c.
+// Only for the compiler: see the FAKEMATCH tag in
+// FieldPsynergy_RunTouchedEvents.
 static inline s32 Index(s32 i) { return i; }
 
 /// Resolves each cell in the event work's touched list to an event id at the
 /// owner's layer, sorts the distinct ids and runs each one's event for the
 /// effect's kind.
-void Func_080e249c(void) {
+void FieldPsynergy_RunTouchedEvents(void) {
   struct TouchWork *work = Ram_HeapSlots->effectWork;
   struct TouchCell *cells =
       (struct TouchCell *)((u8 *)Ram_HeapSlots->eventWork + 0xcc0);
@@ -2001,7 +2007,8 @@ void Func_080e249c(void) {
   s32 i, j;
 
   for (i = 0; cells[i].x != -1; i++) {
-    s16 id = Func_080dbdc8(cells[i].x << 20, cells[i].z << 20, owner->layer);
+    s16 id = MapGrid_GetCellBehavior(cells[i].x << 20, cells[i].z << 20,
+                                     owner->layer);
 
     for (j = 0; j < count; j++) {
       if (ids[j] == id)
@@ -2048,10 +2055,10 @@ struct MapCell__f0e150c {
 
 extern struct TouchCopies gData_02001000;
 
-struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer);
+struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
-void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
-                   s16 originZ, s32 layerIndex) {
+void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
+                                 s32 originX, s16 originZ, s32 layerIndex) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
@@ -2072,7 +2079,7 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
 
       MapGrid_CopyCellPictureCellsRectFar(toX + x, toZ + z, 1, 1, originX + x,
                                           originZ + z);
-      Func_080dbb78(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
+      MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
       n = gData_02001000.count;
       if (n < 64) {
         gData_02001000.copies[n].toX = toX + x;
@@ -2095,19 +2102,20 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
  * games/tla/src/field/event_commands/radial.c:2361: incompatible types in
  * initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
-/* VIEW(f0e2718): routine Func_080dbb78 as struct MapCell *Func_080dbb78(s32 x,
- * s32 z, s32 layer); f0e150c has struct MapCell__f0e150c *Func_080dbb78(s32 x,
- * s32 z, s32 layer); tried as the definition's struct MapCell
- * *Func_080dbb78(s32 x, s32 z, s32 layer), it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:2357: conflicting types for
- * `Func_080dbb78'. */
+/* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
+ * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); f0e150c has struct
+ * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
+ * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
+ * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2357:
+ * conflicting types for `MapGrid_GetCellAt'. */
 extern struct MapCell *
-Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("Func_080dbb78");
+MapGrid_GetCellAt__f0e2718(s32 x, s32 z,
+                           s32 layer) __asm__("MapGrid_GetCellAt");
 
 /// For each entry of the event work's list at 0x174c, calls
 /// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
 /// code of the cell at its position.
-void Func_080e2718(void) {
+void TileCopies_Restore(void) {
   u8 *base = gData_02001000__f0e2718;
   s32 i;
 
@@ -2116,7 +2124,7 @@ void Func_080e2718(void) {
 
     MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],
                                         entry[3]);
-    Func_080dbb78__f0e2718(entry[4] << 20, entry[5] << 20, 2)->collisionCode =
-        0;
+    MapGrid_GetCellAt__f0e2718(entry[4] << 20, entry[5] << 20, 2)
+        ->collisionCode = 0;
   }
 }

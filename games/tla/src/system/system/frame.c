@@ -82,7 +82,7 @@ static __inline__ void System_Reset(void) {
    * plain local, 83 of 326 instructions of wait differ in tla-en. */
   register u32 entry __asm__("r4");
   gCartridgeResetMarker = 0x19670704;
-  m4aSoundVSyncOffFar();
+  Sound_SuspendDirectSoundFar();
   entry = Cart_Restart;
   Io_Write16(0, &REG_IME);
   CAMELOT_ASM("the cartridge restart transfers control without returning.")

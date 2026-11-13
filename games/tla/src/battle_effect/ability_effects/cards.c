@@ -34,7 +34,8 @@ enum {
 // pixels.
 /* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40;
  * render_model.h has another definition; tried with the definition the rest of
- * the object has, Func_0818ad40 moves: 1 of 1232 instructions in tla-ja. */
+ * the object has, BattleEffect_RunCards moves: 1 of 1232 instructions in
+ * tla-ja. */
 struct ModelTexture__f18ad40 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -89,7 +90,7 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void Func_0815e22c(struct EffectPosition *middle);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *middle);
 void BattleEffect_StepPaletteToResource(s32 resource);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -99,18 +100,17 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18ad40): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model__f18ad40 *model); f188714 has void
  * Render_DrawModelList(struct Model__f188714 *model). */
 extern void Render_DrawModelList__f18ad40(struct Model__f18ad40 *model) __asm__(
     "Render_DrawModelList");
-void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -123,7 +123,7 @@ void BattleEffect_EndCanvasLayer(void);
 // card dissolves into the background's colours while a skeleton reaps the
 // target or a dagger strikes it and breaks into shards. The screen fades in
 // the last eight frames.
-void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *graphics;
@@ -233,7 +233,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 0) {
       Sound_PlayFar(190);
       EffectPosition_ProjectSprite(effect->actor, &card);
-      Func_0815e22c(&middle);
+      BattleEffect_GetTargetsMidpoint(&middle);
       if (mode == CARD_DEATH) {
         if (effect->side == 0)
           middle.x += 32;
@@ -347,7 +347,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       model->mesh = Data_081992b0;
       Transform_Reset();
       SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
-      Func_08015160(overflow << 16, (card.y << 16) - (64 << 16), 0);
+      SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - (64 << 16),
+                                    0);
       if (frame <= 47) {
         if (effect->side == 0)
           Transform_ApplyRoll((frame << 10) - 0xd000);
@@ -362,7 +363,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyPitch(0x1000);
       }
       Transform_ApplyYaw(0x1770);
-      Func_0801521c(scale);
+      SceneTransform_ApplyUniformScale(scale);
       SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList__f18ad40(model);

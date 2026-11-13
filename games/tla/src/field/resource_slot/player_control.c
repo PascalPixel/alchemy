@@ -36,7 +36,9 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
-s32 Func_080267bc(struct Actor *object) {
+/// Script command 0x24 (control mode 11): the player control at one pace,
+/// a pixel a frame whatever the keys. Unused: no code sets control mode 11.
+s32 Actor_UpdateWalkingControl(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;
@@ -410,7 +412,10 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   return -1;
 }
 
-void Func_08026fc8(struct Actor *object, s32 mode) {
+/// A splash at the feet of an actor wading through water (cell attribute 16):
+/// sprite 14 started on its splash script, its sound every other step; mode is
+/// the map's ground effect kind, and kind 2 takes another picture.
+void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   struct Actor *created;
   struct Child *sprite;
 
@@ -466,7 +471,6 @@ s32 MapGrid_CheckCollision(struct Actor *object,
  * in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f027064): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite *, s32); the definition has
  * s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags). */
@@ -803,7 +807,7 @@ counted:
         sprite->flags = ((u8)oldFlags | 4) & ~1;
       }
       if (object->timer == 0 && collision == 0 && !onObject) {
-        Func_08026fc8(object, (u32)(map->groundEffects << 28) >> 30);
+        Actor_SpawnWaterSplash(object, (u32)(map->groundEffects << 28) >> 30);
         if (movementAnimation == 5)
           object->timer = 8;
         else

@@ -92,12 +92,9 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
     Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
     if (mark != NULL) {
-      /* FAKEMATCH(dead): the loop's start stored before the mark's colour
-       * pass, a store the loop overwrites; as no store, 6 of 204 instructions
-       * differ in tla-ja. */
       pixel = pixels + 7;
-      Iwram_ExpandBitRuns(mark, pixels + 7, colour);
-      Iwram_ExpandBitRuns(mark, pixels + 8, colour);
+      Iwram_ExpandBitRuns(mark, pixel, colour);
+      Iwram_ExpandBitRuns(mark, pixel + 1, colour);
       width++;
     }
     width++;
@@ -107,11 +104,8 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
       Iwram_ExpandBitRuns(mark, pixels + 24, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
     if (mark != NULL) {
-      /* FAKEMATCH(dead): the loop's start stored before the mark's colour
-       * pass, a store the loop overwrites; as no store, 6 of 204 instructions
-       * differ in tla-ja. */
       pixel = pixels + 7;
-      Iwram_ExpandBitRuns(mark, pixels + 7, colour);
+      Iwram_ExpandBitRuns(mark, pixel, colour);
       width++;
     }
   }

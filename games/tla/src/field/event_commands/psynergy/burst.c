@@ -27,24 +27,10 @@ struct FxScene__f0e572c {
 extern const u8 Data_080f3984[];
 extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void FieldPsynergy_FadeToCastColor(void);
 void Camera_WorldToScreen(s32 *position);
-s32 Func_080db9a8(struct Actor *object, s32 facing);
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-s32 VramCache_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void wait(s32 frames);
-s32 Func_080ce31c(s32 kind);
-void FieldPsynergy_FadeFromCastColor(void);
-void Func_080e4d9c(void);
+void FieldPsynergy_UpdateBurst(void);
 
 void FieldPsynergy_Burst(void) {
   struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
@@ -68,7 +54,7 @@ void FieldPsynergy_Burst(void) {
 
   scene->y += 0xa0000;
   FieldPsynergy_FadeToCastColor();
-  Func_080eb824();
+  BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->unkec[1];
   pos[0] = scene->x;
   pos[1] = scene->y;
@@ -76,7 +62,8 @@ void FieldPsynergy_Burst(void) {
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
-  canvas->priority = Func_080db9a8(scene->mainObject, scene->facing);
+  canvas->priority =
+      FieldPsynergy_GetCanvasPriority(scene->mainObject, scene->facing);
   canvas->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 2;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;
@@ -89,7 +76,7 @@ void FieldPsynergy_Burst(void) {
   for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
       sprite = work->sparkSprites;
        i < 32;) {
-    Func_080eaf98(sprite, 4, 4, 0, sparkTile);
+    EffectSprite_Init(sprite, 4, 4, 0, sparkTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
@@ -117,7 +104,7 @@ void FieldPsynergy_Burst(void) {
   particle = work->bursts;
   burstSprite = work->burstSprites;
   for (i = 0; i < 32; i++) {
-    Func_080eaf98(burstSprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(burstSprite, 8, 8, 0x40000000, tile);
     burstSprite->depth = canvas->depth + 1;
     burstSprite->oam.priority = canvas->priority;
     burstSprite->oam.palette256 = 0;
@@ -136,9 +123,10 @@ void FieldPsynergy_Burst(void) {
   work->paletteMode = 1;
   work->nextBurst = 0;
   work->newBursts = 0;
-  Task_Add(Func_080e4d9c, 0x480);
+  Task_Add(FieldPsynergy_UpdateBurst, 0x480);
   kind = scene->fieldKind;
-  pending = Scene_FindPsynergyTrigger(0x50000005, kind, Func_080ce31c(kind));
+  pending = Scene_FindPsynergyTrigger(0x50000005, kind,
+                                      Scene_SelectPsynergyTarget(kind));
   frame = 0;
   while (work->phase != 999) {
     wait(1);
@@ -147,7 +135,7 @@ void FieldPsynergy_Burst(void) {
     Field_RunPsynergyEvent(pending, work->shake, frame);
     frame++;
   }
-  Task_Remove(Func_080e4d9c);
+  Task_Remove(FieldPsynergy_UpdateBurst);
   VramCache_FreeEntry(sparkEntry);
   VramCache_FreeEntry(burstEntry);
   FieldPsynergy_FadeFromCastColor();
@@ -201,7 +189,8 @@ extern void BattleEffect_IntegrateVector2__f0e572c(
     s32 flags) __asm__("BattleEffect_IntegrateVector2");
 void MapGrid_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
-void Func_080e5a64(void) {
+/// Task of the Pound: its shine's colours and particles, each frame.
+void FieldPsynergy_UpdatePound(void) {
   struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
   struct BlendWork *blend = Ram_HeapSlots->unkec[1];
   struct ShineParticle *particle;
@@ -248,7 +237,7 @@ void Func_080e5a64(void) {
       if (particle->timer >= 0 && particle->timer < 16) {
         sprite->x = particle->x;
         sprite->y = particle->y;
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2__f0e572c(particle, 64, 0);
       }
       particle->timer++;

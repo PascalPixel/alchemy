@@ -19,7 +19,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -34,7 +34,6 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
  * conflicting types for `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
@@ -44,9 +43,9 @@ void *Resource_GetTableEntry(s32 resource);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight); // builds a grid's mesh
-void Func_08143354(void);
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight); // builds a grid's mesh
+void BattleEffect_BuildCanvasTilemap(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 void Display_ApplyBg2Affine(void);
 void BattleEffect_ProcessPendingBlock2Transfer(void);
@@ -162,7 +161,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
                        128);
   IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
   Actor_SetAnimationSpeedFar(caster, 48);
-  Func_0818de3c(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
+  Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
   for (frame = 0; frame != 74; frame++) {
     EffectPosition_ProjectBattler(effect->actor, &source);
@@ -201,7 +200,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     }
     if (frame == 1) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-      Func_08143354();
+      BattleEffect_BuildCanvasTilemap();
     }
     if (frame == 34) {
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -382,7 +381,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         }
         rings->shade = shade;
         Transform_Reset();
-        Func_08015160((target.x / 2 - 64) << 16, Data_08198b5a[i] << 16, 0);
+        SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
+                                      Data_08198b5a[i] << 16, 0);
         SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale >> 1);
         Transform_ApplyPitch(1000);
         if (i & 1) {

@@ -45,16 +45,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -74,8 +73,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -132,9 +129,9 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_StepPaletteToResource(s32 palette);
-void Func_08164abc(s32 red, s32 green, s32 blue);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight);
+void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void SceneTransform_ApplyPosition(const s32 *pos);
@@ -241,7 +238,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   z = 0;
   size = 0;
   scale = 0x10000;
-  Func_0818de3c(triangles, 2, 16, 32, 2);
+  Mesh_BuildGrid(triangles, 2, 16, 32, 2);
   for (offset = 0, frame = 0, angle0 = 0; frame != 16;
        angle0 += 1092, offset += 8, frame++) {
     s32 y = (-Trig_Cos(angle0) * 48) >> 16;
@@ -407,7 +404,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       for (; i != 5; i++) {
         model->scrollV = ~scroll & 127;
         Transform_Reset();
-        Func_08015160(-0x20000, -0x400000, 0);
+        SceneTransform_ApplyPosition3(-0x20000, -0x400000, 0);
         SceneTransform_ApplyScale3(42000, 0x24650, 0x10000);
         SceneTransform_ApplyScale3(scale, scale, scale);
         Transform_ApplyRoll(0x8000);
@@ -549,7 +546,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       *q = 0;
     }
   }
-  Func_08164abc(5, -4, -12);
+  Palette_BrightenBattleBg(5, -4, -12);
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {
@@ -649,7 +646,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
           model->shade = shade;
           Transform_Reset();
-          Func_08015160(x0 << 16, 0x280000, 0);
+          SceneTransform_ApplyPosition3(x0 << 16, 0x280000, 0);
           SceneTransform_ApplyScale3(s, s * Data_08199e94[i], s / 4);
           Transform_ApplyPitch(1000);
           if (i & 1) {
@@ -684,7 +681,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          Func_08015160(half << 16, Data_08199ea0[i] << 16, 0);
+          SceneTransform_ApplyPosition3(half << 16, Data_08199ea0[i] << 16, 0);
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(2000);
           Render_TransformVertices(Data_08198cac, verts, 32);

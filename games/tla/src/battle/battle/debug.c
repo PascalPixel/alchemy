@@ -10,17 +10,23 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 
-void Func_08118430(void) {
+/// Unused: nothing refers to it. Runs random encounters one after another,
+/// forever.
+UNUSED void DebugBattle_RunForever(void) {
   for (;;)
     Battle_RunEncounter(0);
 }
 
-void Func_0811843c(void) {
+/// After the scripted battles of enemy groups 74 and 75, snapshots the five
+/// units of gScriptedBattle_Units that fought (units 4, 7 and 5, and enemies
+/// 128 and 129) for ScriptedBattle_RestoreUnits to bring back when groups 75
+/// and 76 begin.
+void ScriptedBattle_SaveUnits(void) {
   s32 j;
   struct Snapshot *snap = &Data_0200ff58;
   // Set here, between snap and ids: the native sets i before it loads ids.
   s32 i = 0;
-  u8 *ids = Data_0812a16c;
+  u8 *ids = gScriptedBattle_Units;
   struct SnapshotCopy *copies = Data_0200ff6c;
 
   for (; i <= 4; i++, copies++) {
@@ -88,21 +94,21 @@ void Func_0811843c(void) {
   }
 }
 
-/// Restores the five units Func_0811843c snapshotted: for each one still in
-/// the battle party and listed, the first three's four tag bytes and each
-/// one's 25 snapshot bytes, and the last two's HP and PP through
+/// Restores the five units ScriptedBattle_SaveUnits snapshotted: for each one
+/// still in the battle party and listed, the first three's four tag bytes and
+/// each one's 25 snapshot bytes, and the last two's HP and PP through
 /// Unit_SetHpFar and Unit_SetPpFar. PP is read through the global, which
 /// reloads the base as the native does.
-void Func_081185c4(void) {
+void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;
   struct Snapshot *snap = &Data_0200ff58;
   struct SnapshotCopy *copies = Data_0200ff6c;
 
   for (i = 0; i <= 4; i++, copies++) {
-    struct SnapshotUnit *unit = Unit_Get(Data_0812a16c[i]);
+    struct SnapshotUnit *unit = Unit_Get(gScriptedBattle_Units[i]);
 
-    if (BattleUnit_IsListed(Data_0812a16c[i]) && snap->listed[i] != 0) {
+    if (BattleUnit_IsListed(gScriptedBattle_Units[i]) && snap->listed[i] != 0) {
       if (i <= 2) {
         for (j = 0; j < 4; j++)
           unit->tags[j] = snap->tags[i][j];
@@ -223,11 +229,11 @@ s32 DebugParty_LoadPreset(s32 preset) {
   return done;
 }
 
-void Func_08118954(void) {}
+/// Does nothing; the debug battle menu calls it when Start is pressed, as The
+/// Broken Seal's calls Battle_DebugSelectNoOp on Select.
+void Battle_DebugStartNoOp(void) {}
 
 extern u8 gDebugTextEnabled;
-
-void MainRoutineWork_InitializeDefaultsFar(void);
 
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
@@ -275,7 +281,7 @@ restart:
         if (input->repeat & 1)
           break;
         if (input->repeat & 8)
-          Func_08118954();
+          Battle_DebugStartNoOp();
         // DEAD: once startModeSet is set, setting it again changes nothing;
         // the ROM keeps the test.
         if ((input->repeat & 2) || startModeSet)

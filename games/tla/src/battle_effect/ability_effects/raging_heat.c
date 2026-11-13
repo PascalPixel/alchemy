@@ -15,15 +15,14 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -43,8 +42,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -125,7 +122,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   centerX = targets[0].x + (targets[effect->count - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, buffer, 1, 1);
-  Func_0816ae40(buffer, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(buffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x4000, 1, 0);
@@ -252,11 +249,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         Transform_Reset();
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (i == 0) {
-          Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000,
-                        0);
+          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
+                                        (baseY << 16) - 0x400000, 0);
         } else {
-          Func_08015160((centerX << 16) - 0x800000,
-                        ((baseY + 8) << 16) - 0x400000, 0);
+          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
+                                        ((baseY + 8) << 16) - 0x400000, 0);
         }
         Transform_ApplyPitch(2000);
         if (frame <= 47) {
@@ -283,7 +280,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           texture.pixels = TEXTURE_PIXELS;
         }
         if (scale > 0 && shade > -64) {
-          Func_0801521c(scale);
+          SceneTransform_ApplyUniformScale(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -334,7 +331,7 @@ extern s32 Data_02010018[];
 extern u8 Data_0819940c[][7];
 
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void Func_0815e22c(struct EffectPosition *midpoint);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
 
 // A ring of small flames. The flames circle the caster in a ring that rises
 // over its head from frame 8, each turning its own way through four cels.
@@ -405,7 +402,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       // The throw: z and velocityZ hold the pull toward the midpoint, and
       // the ring keeps three quarters of its speed each frame.
       if (frame == RING_THROW_FRAME) {
-        Func_0815e22c(&midpoint);
+        BattleEffect_GetTargetsMidpoint(&midpoint);
         ring->x = caster.x << 16;
         ring->y = (caster.y - lift - 32) << 16;
         ring->velocityX = 0;
@@ -430,7 +427,8 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       s32 y;
 
       Transform_Reset();
-      Func_08015160(ring->x - (128 << 16), ring->y - (64 << 16), 0);
+      SceneTransform_ApplyPosition3(ring->x - (128 << 16), ring->y - (64 << 16),
+                                    0);
       Transform_ApplyRoll(frame * 256);
       Transform_ApplyPitch(frame * 256 + 500);
       if (i > 7)
@@ -504,7 +502,9 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
 void Graphics_LoadGreyRamp(void);
 
-void Func_08179e6c(void) {
+/// Loads the grey ramp and fills the 128x128 canvas with a vertical gradient
+/// that rises over the top 32 rows and falls over the bottom 32.
+void RagingHeat_FillGradientCanvas(void) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   s32 y;
   s32 x;

@@ -210,7 +210,7 @@ void BattleTransition_DrawRows(void) {
   }
 }
 
-void Func_08125d68(void) {
+void BattleTransition_ResetBg0Scroll(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
@@ -303,7 +303,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     *timer = zero;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
     Task_Add(BattleTransition_DrawRows, TASK_PASS_FRAME);
-    Irq_SetHandler(2, 32, Func_08125d68);
+    Irq_SetHandler(2, 32, BattleTransition_ResetBg0Scroll);
     gBgScroll[0].y = y;
     wait(1);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
@@ -349,7 +349,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     BattleEffect_RunShatteringOpeningFar(&work);
     BattleCamera_SetView(0, 0, 0, 100);
     *timer = zero;
-    Irq_SetHandler(2, 32, Func_08125d68);
+    Irq_SetHandler(2, 32, BattleTransition_ResetBg0Scroll);
     wait(1);
     wait(20);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);

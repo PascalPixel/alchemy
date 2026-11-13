@@ -105,7 +105,7 @@ struct Vec2 {
   s32 y;
 };
 
-struct Actor *Func_080eaf28(s32 *position, s32 check_y);
+struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
 void Func_0200189c(void);
 
@@ -120,9 +120,9 @@ extern u8 gData_0203c000[];
 extern u8 gData_0203e000[];
 extern u8 gMapCollision[];
 
-void Func_0802d088(s32 region, s32 gradual);
+void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 
-s32 Func_080c8950(void);
+s32 ScreenTransition_IsScanlineActiveFar(void);
 
 extern u8 gDecodeBuffer[];
 

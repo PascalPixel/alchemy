@@ -10,9 +10,9 @@ gFieldEffect_ArcSparkTiles:
 	.section .rodata.a
 @ A 64x64 disc of 256 colours, shaded in colours 224 to 255: the 4,096
 @ bytes of the shared effect scene's sprite canvas (battle_fx_work[1]),
-@ which Func_080eb824 copies to OBJ video memory. FieldPsynergy_Burst, 080e5d5c,
+@ which BattleEffect_StartCanvasSprite copies to OBJ video memory. FieldPsynergy_Burst, 080e5d5c,
 @ 080e7844 and overlay 685 unpack it there. In FieldPsynergy_Burst the callback
-@ Func_080e4d9c writes 32 colours it computes from the sine table to OBJ
+@ FieldPsynergy_UpdateBurst writes 32 colours it computes from the sine table to OBJ
 @ palettes 14 and 15 each frame, from a counter the scene starts at 0; the
 @ picture carries the shared OBJ palette and those colours of the first
 @ frame.
@@ -22,7 +22,7 @@ FieldEffect_GlowDisc:
 @ Four pictures of a 32x32 sprite of 256 colours, one under another: two of an
 @ orb of rings in colours 224 to 234, then two filled with colour 2.
 @ FieldPsynergy_Hover unpacks them into one block of OBJ video memory and makes a
-@ 32x32 sprite that shows the first two in turn. Its callback Func_080e9940
+@ 32x32 sprite that shows the first two in turn. Its callback HoverGlow_Update
 @ writes sixteen colours it computes from the table gData_080f0fe0 to OBJ
 @ palette 14 each frame, from a counter that starts at 0. The picture
 @ carries the shared OBJ palette, those colours of the first frame, and black
@@ -33,7 +33,7 @@ FieldEffect_RingOrb:
 @ Two quarters of a ring, 64x64 each, one under the other: 128 background
 @ tiles of 256 colours, drawn in colours 243 to 255. FieldPsynergy_Unnamed28 unpacks
 @ them and copies all 8,192 bytes to background tiles 0 to 127. Its
-@ callback Func_080e807c writes sixteen colours it computes to background
+@ callback FieldPsynergy_UpdateUnnamed28 writes sixteen colours it computes to background
 @ and OBJ palette 15 each frame, from a counter that starts at 0: the picture
 @ carries the colours of the first frame, and black for the 240 it does not
 @ use.
@@ -91,7 +91,7 @@ FieldEffect_BowDraw:
 @ Eight pictures of a 16x16 explosion of 16 colours, one under another.
 @ FieldPsynergy_Burst unpacks them into one block of OBJ video memory and makes 32
 @ sprites of them, each with the 256-colour bit cleared and OBJ palette 15;
-@ its callback Func_080e4d9c copies the 16 colours of Data_080f0fa0 to OBJ
+@ its callback FieldPsynergy_UpdateBurst copies the 16 colours of Data_080f0fa0 to OBJ
 @ palette 15, and the picture carries them. Overlays 685, 6a6 and 6a7 load
 @ the sheet too.
 	.global FieldEffect_Explosion
@@ -100,7 +100,7 @@ FieldEffect_Explosion:
 @ A bitmap of 32 x 32 pixels, one byte a pixel in rows of 32, not tiles.
 @ FieldPsynergy_Scoop unpacks its 1,024 bytes into its work buffer and makes one
 @ 32x32 sprite of 256 colours over an empty block of OBJ video memory. Each
-@ frame its callback has Func_080e62f4 clear a second 32 x 32 bitmap and plot
+@ frame its callback has Picture_ShiftColumnsByWave clear a second 32 x 32 bitmap and plot
 @ the first into it column by column, the rows four pixels apart and moved by
 @ the frame count and by a sine of the column; the second bitmap is what goes
 @ to the sprite's video memory.
@@ -115,7 +115,7 @@ FieldEffect_SparkleFade:
 @ Four pictures of one 16x16 sprite of 16 colours, 512 bytes. FieldPsynergy_Unnamed28
 @ unpacks them, loads them as one block of OBJ video memory and makes 32
 @ sprites of them, each with the 256-colour bit cleared and OBJ palette 15.
-@ Its callback Func_080e807c steps every sprite through the four pictures, four
+@ Its callback FieldPsynergy_UpdateUnnamed28 steps every sprite through the four pictures, four
 @ frames a picture, and each frame writes sixteen colours it computes to OBJ
 @ palette 15. The game stores no palette for this sheet: r1ed.png carries the
 @ first row of the shared OBJ palette, which the 256-colour sheets of this

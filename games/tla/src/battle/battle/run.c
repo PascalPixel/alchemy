@@ -14,7 +14,9 @@
 #include "module/system/system.h"
 #include "range_falloff.h"
 
-void Func_081195ec(void) {
+/// With the front line down and someone living, sends the reserve members in
+/// to take the fallen ones' places, as many as there are of both.
+void BattleParty_SwapInReserves(void) {
   u16 actors[6];
   u16 reserves[6];
   s32 actorCount;
@@ -69,7 +71,10 @@ void BattleCamera_Create(void) {
   camera->distance = 0x1000000;
 }
 
-void Func_08119734(s32 id) {
+/// Replaces enemy 128 with the next form of the three-part battle of enemy
+/// groups 78 to 80: unit 373 after group 78, else 376. The form change's
+/// battle effect calls it through its far call.
+void Battle_ChangeEnemyForm(s32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 unit;
   s32 *object;
@@ -91,7 +96,8 @@ void Func_08119734(s32 id) {
   BattleObject_Put();
 }
 
-void Func_081197a8(s32 value) {
+/// Plays the form change effect of enemy group value (78 to 80) on enemy 128.
+void Battle_PlayFormChange(s32 value) {
   struct BattleFxRequest request;
 
   request.field10 = 0;
@@ -102,7 +108,7 @@ void Func_081197a8(s32 value) {
   request.field04 = 0;
   request.field00 = 0;
   request.field18 = 0;
-  Func_08138050(&request, value);
+  BattleEffect_RunFormChangeFar(&request, value);
 }
 
 s32 Tutorial_GetDjinnGiveMessage(void) {
@@ -282,7 +288,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   else
     battle->partyStatus = 1;
   if (enemyGroup == 75 || enemyGroup == 76)
-    Func_081185c4();
+    ScriptedBattle_RestoreUnits();
   PartyStatus_CreateWindowFar(9);
   Camera_InitializeDefaultTransform();
   BattleObject_Put();
@@ -309,12 +315,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Task_Add(Func_0811b9fc, 0x480);
+  Task_Add(BattleObject_UpdateSpritePriorities, 0x480);
 
   for (round = 1;; round++) {
     if (BattleUnit_ListIds(1, 0) == 0)
-      Func_081195ec();
-    Func_0811d7e4();
+      BattleParty_SwapInReserves();
+    Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
     if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
       battle->partyStatus = 3;
@@ -341,7 +347,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       battle->pendingUnit = -1;
       battle->actionEnded = 0;
       if (GameFlag_Test(0x16a) == 0) {
-        if (Func_0811d9cc(&battle->actions[i], i == 0 ? 10 : 0) == 1)
+        if (BattleStaging_DispatchAction(&battle->actions[i],
+                                         i == 0 ? 10 : 0) == 1)
           goto fled;
       } else {
         if (AutoBattle_RunAction((s16 *)&battle->actions[i]) == 1)
@@ -355,11 +362,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         break;
       if (BattleParty_ListLivingUnits(2, 0) == 0) {
         if (enemyGroup == 78 || enemyGroup == 79) {
-          Func_081197a8(enemyGroup++);
+          Battle_PlayFormChange(enemyGroup++);
           break;
         }
         if (enemyGroup == 80)
-          Func_081197a8(80);
+          Battle_PlayFormChange(80);
         if (actingUnit <= 7 && battle->defeated == 1) {
           /* FAKEMATCH(barrier): an empty asm before the defeatState store,
            * so battle's copy (mov r5, r9) comes before the 3; without it, 2
@@ -397,7 +404,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         break;
     }
 
-    Func_08118e64();
+    BattleParty_ClearGuards();
     battle->extraQueue = battle->nextExtraQueue;
 #if TLA_PATCH_1
     // Japanese leaves the next turn's queue in place.
@@ -406,7 +413,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     battle->extraCount = battle->nextExtraCount;
     battle->nextExtraCount = 0;
     battle->encounterMode = 0;
-    Func_08124cc0();
+    Battle_TurnEndNoOp();
     Battle_ProcessTurnEnd();
     BattleMotion_DestroyAllSlotObjects();
     scripted = enemyGroup - 74;
@@ -500,12 +507,12 @@ fled:
 
 finished:
   if ((u32)scripted <= 1)
-    Func_0811843c();
+    ScriptedBattle_SaveUnits();
   BattleParty_ResetActiveRuntimeFields();
-  Func_08124cc0();
+  Battle_TurnEndNoOp();
   DjinnRecovery_CountDown();
   gMainRoutineWork.battleRule24b = 0;
-  Task_Remove(Func_0811b9fc);
+  Task_Remove(BattleObject_UpdateSpritePriorities);
   BattleBackground_Free();
   return result;
 }

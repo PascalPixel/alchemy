@@ -10,7 +10,8 @@ struct StripQuad;
 
 /* VIEW(f173aac): tag struct RenderModel as struct RenderModel__f173aac;
  * render_model.h has another definition; tried with the definition the rest of
- * the object has, Func_08173aac moves: 13 of 4112 instructions in tla-ja. */
+ * the object has, BattleEffect_RunGaspFamily moves: 13 of 4112 instructions in
+ * tla-ja. */
 struct RenderModel__f173aac {
   s32 kind;
   s32 unk04;
@@ -29,16 +30,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -67,7 +67,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
  * `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f173aac(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -127,14 +126,13 @@ extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_MercuryDjinnSheet;
 
 void BattleEffect_StepPaletteToResource(s32 resource);
-void Func_08164b2c(s32 red, s32 green, s32 blue);
+void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 
 void Graphics_LoadGreyRamp(void);
-void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Palette_LoadBasicSpriteColors(void);
 
 // The user's figure: a 20 x 40 cell drawn over the canvas.
@@ -152,7 +150,7 @@ void Palette_LoadBasicSpriteColors(void);
 #define PLACE_PARTICLE(p)                                                      \
   do {                                                                         \
     Transform_Reset();                                                         \
-    Func_08015160((p)->x - 0x400000, (p)->y - 0x400000, 0);                    \
+    SceneTransform_ApplyPosition3((p)->x - 0x400000, (p)->y - 0x400000, 0);    \
     SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);                      \
     Transform_ApplyRoll((p)->z);                                               \
   } while (0)
@@ -162,14 +160,14 @@ void Palette_LoadBasicSpriteColors(void);
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
-// The shared body of sixteen abilities' effects (its wrappers are in
-// f173588.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold and Meld (4),
-// Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and its kind's four
-// other abilities (9), Call Dullahan and Formina Sage (10), Beat Dance (11),
-// Element Swap (12), Cage (13), Clarion Cry (14) and Psy Boost (15). Mode 1 has
-// no caller. Each mode loads its own sheets, then draws a canvas layer and a
-// model layer every frame for the mode's length.
-void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
+/// The shared body of sixteen abilities' effects, named for the first (its
+/// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
+/// and Meld (4), Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and
+/// its kind's four other abilities (9), Call Dullahan and Formina Sage (10),
+/// Beat Dance (11), Element Swap (12), Cage (13), Clarion Cry (14) and Psy
+/// Boost (15). Mode 1 has no caller. Each mode loads its own sheets, then draws
+/// a canvas layer and a model layer every frame for the mode's length.
+void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -250,7 +248,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
                                work->sheet + 0x4000, 1, 1);
-    Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
+    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
     work->fadeFrames = 24;
     work->fadeStep = 0;
     frames = 48;
@@ -258,7 +256,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
                                work->sheet + 0x4000, 1, 1);
-    Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
+    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
     work->fadeFrames = 24;
     work->fadeStep = 0;
     frames = 48;
@@ -295,7 +293,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   } else if (mode == 8) {
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
                                work->sheet + 0x4000, 1, 1);
-    Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
+    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
     REG_BG2CNT = 0x785;
     frames = 16;
   } else if (mode == 9) {
@@ -637,8 +635,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Transform_Reset();
           p->y += p->velocityY;
           p->x += p->velocityX;
-          Func_08015160((Trig_Sin(p->x) << 4) + ((screen[0] / 2 - 64) << 16),
-                        p->y, 0);
+          SceneTransform_ApplyPosition3(
+              (Trig_Sin(p->x) << 4) + ((screen[0] / 2 - 64) << 16), p->y, 0);
           SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
           Transform_ApplyPitch(-0x4000);
           Render_TransformVertices(gData_08199210, verts, 4);
@@ -679,7 +677,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             texture.pixels = work->sheet + (i % 3 << 10);
             Transform_Push();
             Transform_ApplyRoll(frame * 356 + i * 5461);
-            Func_08015160(0, 0x740000, 0);
+            SceneTransform_ApplyPosition3(0, 0x740000, 0);
             SceneTransform_ApplyScale3(half, half, half);
             Render_TransformVertices(gData_08199210, verts, 4);
             Transform_Pop();
@@ -699,7 +697,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
         EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
         Transform_Reset();
-        Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
+        SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
+                                      (pos.y - 48) << 16, 0);
         Transform_ApplyPitch(0x4000);
         Transform_ApplyYaw((frame << 9) - 0x1000);
         SceneTransform_ApplyScale3(frame * 2596 >> 1, frame * 2596 >> 1,
@@ -740,8 +739,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           model->scrollV = (twist + i * 7) & 31;
           if ((u32)p->variant <= 31) {
             Transform_Reset();
-            Func_08015160((ball->x << 16) - 0x400000,
-                          (ball->y << 16) - 0x400000, 0);
+            SceneTransform_ApplyPosition3((ball->x << 16) - 0x400000,
+                                          (ball->y << 16) - 0x400000, 0);
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
             Transform_ApplyRoll(p->x);
             SceneTransform_ApplyScale3(Trig_Sin(p->variant * 682) * 3 + 0xc000,
@@ -774,11 +773,12 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             model->shade = shade;
             if (shade > -64) {
               Transform_Reset();
-              Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 64) << 16, 0);
+              SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
+                                            (pos.y - 64) << 16, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               Transform_ApplyRoll((i << 14) + 0x2000);
               Transform_ApplyPitch(-0x1000);
-              Func_0801521c(scale);
+              SceneTransform_ApplyUniformScale(scale);
               Render_TransformVertices(gData_08199210, verts, 4);
               Render_DrawModelList(model);
             }
@@ -809,7 +809,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
               shade = 0;
             model->shade = shade;
             Transform_Reset();
-            Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
+            SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
+                                          (pos.y - 48) << 16, 0);
             Transform_ApplyPitch(0xc000);
             SceneTransform_ApplyScale3(scale, scale, scale);
             Render_TransformVertices(gData_08199210, verts, 4);
@@ -919,7 +920,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           model->kind = 7;
           texture.pixels = work->sheet + 0x3080;
           Transform_Reset();
-          Func_08015160((ball->x / 2 - 64) << 16, (ball->y - 48) << 16, 0);
+          SceneTransform_ApplyPosition3((ball->x / 2 - 64) << 16,
+                                        (ball->y - 48) << 16, 0);
           SceneTransform_ApplyScale3(scale / 4, scale, scale / 2);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
@@ -977,7 +979,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
-          Func_0801521c(0x8000);
+          SceneTransform_ApplyUniformScale(0x8000);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
@@ -1027,7 +1029,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
-          Func_0801521c(0x8000);
+          SceneTransform_ApplyUniformScale(0x8000);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
@@ -1105,9 +1107,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       Transform_Reset();
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
       if (effect->side == 0)
-        Func_08015160((pos.x - 136) << 16, (pos.y - 48) << 16, 0);
+        SceneTransform_ApplyPosition3((pos.x - 136) << 16, (pos.y - 48) << 16,
+                                      0);
       else
-        Func_08015160((pos.x - 108) << 16, (pos.y - 56) << 16, 0);
+        SceneTransform_ApplyPosition3((pos.x - 108) << 16, (pos.y - 56) << 16,
+                                      0);
       for (i = 0; i != 4; i++) {
         s32 scale;
 
@@ -1124,9 +1128,9 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           if (d > 80)
             d = 80;
           if (effect->side == 0)
-            Func_08015160(d * 3 << 13, d * 7 << 11, 0);
+            SceneTransform_ApplyPosition3(d * 3 << 13, d * 7 << 11, 0);
           else
-            Func_08015160(-(d * 3 << 13), d * 7 << 11, 0);
+            SceneTransform_ApplyPosition3(-(d * 3 << 13), d * 7 << 11, 0);
           angle = d * 48152 / 80 + 0x6000;
           if (effect->side == 0)
             angle = -angle;
@@ -1170,8 +1174,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           if (scale > 0) {
             model->shade = 0;
             Transform_Reset();
-            Func_08015160((pos.x / 2 + i * 16 - 72) << 16, (pos.y - 64) << 16,
-                          0);
+            SceneTransform_ApplyPosition3((pos.x / 2 + i * 16 - 72) << 16,
+                                          (pos.y - 64) << 16, 0);
             SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
             Transform_ApplyRoll(0x2000);
             Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1218,7 +1222,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         if (scale > 0x8000) {
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          Func_08015160((pos.x / 2 - 60) << 16, 0x80000, 0);
+          SceneTransform_ApplyPosition3((pos.x / 2 - 60) << 16, 0x80000, 0);
           SceneTransform_ApplyScale3(scale >> 1, scale, 0x10000);
           Transform_ApplyPitch((i << 13) + 4000);
           Transform_ApplyYaw(frame << 9);
@@ -1239,7 +1243,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       model->kind = 6;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       Transform_Reset();
-      Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
+      SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16, (pos.y - 48) << 16,
+                                    0);
       if (frame <= 15) {
         s32 scale = 0x30000 - (frame * 3 << 12);
 
@@ -1249,7 +1254,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Render_DrawModelList(model);
       }
       Transform_Reset();
-      Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
+      SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16, (pos.y - 48) << 16,
+                                    0);
       if ((u32)(frame - 12) <= 31) {
         s32 scale = Trig_Sin((frame << 10) - 0x3000) * 3;
 
@@ -1316,7 +1322,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         s32 t = frame - i * 8;
 
         Transform_Reset();
-        Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
+        SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
+                                      (pos.y - 48) << 16, 0);
         if ((u32)t <= 15) {
           s32 scale = 0x40000 - (t << 14);
           s32 shade = 0;
@@ -1332,7 +1339,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       Transform_Reset();
-      Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
+      SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16, (pos.y - 48) << 16,
+                                    0);
       if ((u32)(frame - 12) <= 31) {
         s32 scale = Trig_Sin((frame << 10) - 0x3000) * 2;
 
@@ -1382,7 +1390,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         else
           EffectPosition_ProjectScaledBattler(effect->actor, &pos);
         Transform_Reset();
-        Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
+        SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
+                                      (pos.y - 48) << 16, 0);
         Transform_ApplyPitch(0x4000);
         SceneTransform_ApplyScale3(scale / 3, scale, scale);
         if (mode == 2)

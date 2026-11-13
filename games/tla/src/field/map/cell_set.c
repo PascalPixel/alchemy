@@ -1,4 +1,3 @@
-// ---- games/tla/src/field/map/cell_set.c ----
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -28,7 +27,6 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   return old;
 }
 
-// ---- games/tla/src/scene/tundaria_tower.c ----
 #include "../../scene/tundaria_tower/tundaria_tower.h"
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);

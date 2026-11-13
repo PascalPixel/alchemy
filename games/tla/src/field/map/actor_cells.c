@@ -46,7 +46,12 @@ extern u8 gMapShapeGrid[];
 struct Actor *Actor_GetById(u32 objectId);
 #include "field.h"
 
-void Func_080eabd0(u16 *actors) {
+/// Makes each listed actor (ids, ended by 0xffff) a block in the map: its
+/// cell's shape is tagged 32 pixels above the ground, so the party can stand
+/// on it, its cell is marked raised (the old mark kept in the actor) and layer
+/// 2 blocks it. A leader below the new ground is lifted onto it. Scenes call it
+/// as they start, for the blocks Move pushes.
+void Actor_PlaceBlocks(u16 *actors) {
   struct RestoreMap__f0eabd0 *map =
       (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
   struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
@@ -61,7 +66,7 @@ void Func_080eabd0(u16 *actors) {
     s32 level =
         MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
         19;
-    s32 slot = Func_080eab70(object);
+    s32 slot = Actor_GetCellIndex(object);
     struct SwitchCell__f0eabd0 *cells = map->layers[object->terrainId].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
     // grid first.
@@ -75,7 +80,7 @@ void Func_080eabd0(u16 *actors) {
     object->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(object, 0);
     shapes += slot;
-    tag = Func_080eab98(object->terrainId, key, level + 4);
+    tag = MapCollision_FindOrAddTag(object->terrainId, key, level + 4);
     cell = &cells[slot];
     flags = cell->flags;
     object->unk4c = flags;
@@ -96,9 +101,13 @@ struct ShapeCell {
   u8 shape;
 };
 
-struct Actor *Func_080eaeb4(void);
+struct Actor *Leader_FindActorAhead(void);
 
-void Func_080eace8(u16 *actors) {
+/// Takes the block about to move out of the map: the field effect's target
+/// while one runs, else the actor ahead of the leader, if it is one of the
+/// listed actors. Its cell goes back to the ground and its old mark, and the
+/// event work remembers it for Actor_PlaceMovedBlock.
+void Actor_LiftTargetBlock(u16 *actors) {
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *effect = Ram_HeapSlots->effectWork;
   struct Actor *target;
@@ -106,7 +115,7 @@ void Func_080eace8(u16 *actors) {
   if (effect != NULL && *(s16 *)(event + 358) != 0)
     target = *(struct Actor **)(effect + 20);
   else
-    target = Func_080eaeb4();
+    target = Leader_FindActorAhead();
   *(struct Actor **)(event + 0xcbc) = NULL;
 
   for (; *actors != 0xffff; actors++) {
@@ -122,11 +131,12 @@ void Func_080eace8(u16 *actors) {
           MapGrid_GetTerrainKindFar(target->terrainId, target->x, target->z);
       s32 level =
           MapGrid_GetTerrainHeightFar(target->terrainId, target->x, target->z);
-      s32 slot = Func_080eab70(target);
+      s32 slot = Actor_GetCellIndex(target);
       s32 tag;
 
       shapes += slot;
-      tag = Func_080eab98(target->terrainId, key, (level >> 19) - 4);
+      tag =
+          MapCollision_FindOrAddTag(target->terrainId, key, (level >> 19) - 4);
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
@@ -139,10 +149,12 @@ void Func_080eace8(u16 *actors) {
 
 #include "stddef.h"
 
-// Only for the compiler: see the FAKEMATCH tag in Func_080eadfc.
+// Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
 static inline s32 ActorX(struct Actor *actor) { return actor->x; }
 
-void Func_080eadfc(void) {
+/// Puts the block Actor_LiftTargetBlock remembered back into the map at the
+/// cell it has moved to, as Actor_PlaceBlocks places each.
+void Actor_PlaceMovedBlock(void) {
   struct Actor *target =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
 
@@ -178,9 +190,9 @@ void Func_080eadfc(void) {
      * target->x, 12 of 84 instructions differ in tla-en. */
     level = MapGrid_GetTerrainHeightFar(target->terrainId, ActorX(target),
                                         target->z);
-    slot = Func_080eab70(target);
+    slot = Actor_GetCellIndex(target);
     shapes += slot;
-    tag = Func_080eab98(target->terrainId, key, (level >> 19) + 4);
+    tag = MapCollision_FindOrAddTag(target->terrainId, key, (level >> 19) + 4);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
     flags = cells->flags;
@@ -191,9 +203,11 @@ void Func_080eadfc(void) {
   }
 }
 
-struct Actor *Func_080eaf28(s32 *position, s32 check_y);
+struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
-struct Actor *Func_080eaeb4(void) {
+/// Returns the actor one cell, or failing that two cells, ahead of the leader
+/// at the leader's height, or NULL.
+struct Actor *Leader_FindActorAhead(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 angle = ((leader->facing >> 12) + 2) & 12;
@@ -203,14 +217,14 @@ struct Actor *Func_080eaeb4(void) {
   position[1] = leader->y;
   position[2] = leader->z;
   Vector_AddPolarOffset(0x100000, angle << 12, position);
-  found = Func_080eaf28(position, 1);
+  found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
   Vector_AddPolarOffset(0x200000, angle << 12, position);
-  found = Func_080eaf28(position, 1);
+  found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
   return NULL;
@@ -228,7 +242,9 @@ struct EventWork__f0eabd0 {
   struct Actor *objects[64];
 };
 
-struct Actor *Func_080eaf28(s32 *position, s32 checkY) {
+/// Returns the first of event objects 8 to 63 on position's cell, at its
+/// height too when checkY is set, or NULL.
+struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
   u32 i;
 
   for (i = 8; i < 64; i++) {
@@ -258,8 +274,8 @@ extern const u8 gData_080f3bc4[][2];
 /// Fills an effect sprite: OAM attributes 0 and 1 as given (no affine matrix,
 /// 256 colours), the tiles, unscaled and unrotated at depth 255, and the
 /// picture's size from its shape, pivoted at (pivotX, pivotY).
-void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
-                   u32 attributes, s32 tile) {
+void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
+                       u32 attributes, s32 tile) {
   u32 *words;
   s32 shape;
 
@@ -286,12 +302,12 @@ void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 #define Q16_ONE 0x10000
 
-// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
-// affine matrix; any other takes one, and one scaled past 1 is drawn in a
-// double-size box. The picture's pivot is turned and scaled with it, so the
-// pivot stays on the sprite's position. A sprite wholly off screen is not
-// queued; the rest join the OAM bucket of their depth.
-void Func_080eb01c(struct EffectSprite *sprite) {
+/// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
+/// affine matrix; any other takes one, and one scaled past 1 is drawn in a
+/// double-size box. The picture's pivot is turned and scaled with it, so the
+/// pivot stays on the sprite's position. A sprite wholly off screen is not
+/// queued; the rest join the OAM bucket of their depth.
+void EffectSprite_Draw(struct EffectSprite *sprite) {
   s32 affineMode;
   s32 matrix;
   s32 x = sprite->x;
@@ -399,6 +415,6 @@ void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,
     Camera_WorldToScreen(arg);
     sprite->x = screen[0];
     sprite->y = screen[2];
-    Func_080eb01c(sprite);
+    EffectSprite_Draw(sprite);
   }
 }

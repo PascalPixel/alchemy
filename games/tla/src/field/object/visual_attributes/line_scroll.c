@@ -378,7 +378,10 @@ extern void Func_080140d8__visual_attributes(
     struct GroundParticle__visual_attributes *sprite,
     s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
 
-void Func_080d64f0(void) {
+/// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept
+/// whole. Each particle plays its 16 frames of gFieldEffect_GroundParticleFrames
+/// on a random spot near the leader, held while flag 358 is set.
+void GroundParticles_Update(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
   s32 *origin = (s32 *)(map + 228);

@@ -17,16 +17,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -54,7 +53,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
  * `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f15cde8(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -125,21 +123,22 @@ extern const u8 Data_081991e0[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
-/* VIEW(f15cde8): routine Func_0815b3b0 as struct AzulObject *Func_0815b3b0(s32
- * width, s32 height, u32 shape, s32 mode); the definition has struct
- * EffectSprite *Func_0815b3b0(s32 kind, s32 value); tried as the definition's
- * struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the
- * object already declares, it does not compile in tla-ja:
+/* VIEW(f15cde8): routine EffectSprite_Acquire as struct AzulObject
+ * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); the
+ * definition has struct EffectSprite *EffectSprite_Acquire(s32 kind, s32
+ * value); tried as the definition's struct EffectSprite__f15b3b0
+ * *EffectSprite_Acquire(s32 kind, s32 value), which the object already
+ * declares, it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:5655: too many arguments to
- * function `Func_0815b3b0'. */
+ * function `EffectSprite_Acquire'. */
 extern struct AzulObject *
-Func_0815b3b0__f15cde8(s32 width, s32 height, u32 shape,
-                       s32 mode) __asm__("Func_0815b3b0");
+EffectSprite_Acquire__f15cde8(s32 width, s32 height, u32 shape,
+                              s32 mode) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight);
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
@@ -243,7 +242,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   wait(1);
   BattleEffect_SpawnObjects(12, 0x28c, 1);
   for (i = 0; i != 16; i++) {
-    obj = Func_0815b3b0__f15cde8(32, 32, 0x80002000, 0);
+    obj = EffectSprite_Acquire__f15cde8(32, 32, 0x80002000, 0);
     work->objects[i + 12] = obj;
     Iwram_CopyWordsEntry(obj, work->objects[5 + (i & 3)], 24);
     ((struct AzulObject *)work->objects[i])->priority = 1;
@@ -604,7 +603,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         p = &work->particles[i];
         model->mesh = &faces[i * 3];
         Transform_Reset();
-        Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
+        SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         switch (i & 3) {
         case 0:
@@ -638,7 +637,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       s32 angle;
       s32 offset;
 
-      Func_0818de3c(grid, 16, 16, 8, 8);
+      Mesh_BuildGrid(grid, 16, 16, 8, 8);
       k = 0;
       angle = 0;
       offset = 0;
@@ -668,7 +667,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
       Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
                                  gData_02014000, 1, 0);
-      Func_0816ae40(gData_02014000, gMapCellBuffer, 64, 64);
+      Picture_MirrorIntoQuadrants(gData_02014000, gMapCellBuffer, 64, 64);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
                                  0);
       work->transferMode = 2;
@@ -726,9 +725,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model->scrollU = shade;
       model->scrollV = shade;
       Transform_Reset();
-      Func_08015160(pos.x / 2 + -0x440000, pos.y + -0x500000, 0);
+      SceneTransform_ApplyPosition3(pos.x / 2 + -0x440000, pos.y + -0x500000,
+                                    0);
       SceneTransform_ApplyScale3(scale, scale * 2, scale);
-      Func_08015160(-0x280000, 0, 0);
+      SceneTransform_ApplyPosition3(-0x280000, 0, 0);
       Transform_ApplyPitch(frame << 10);
       Transform_ApplyYaw(frame << 10);
       Render_TransformVertices(sphere, verts, 256);
@@ -751,9 +751,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           } while (0);
           model->shade = shade;
           Transform_Reset();
-          Func_08015160(0x2c0000, 0, 0);
+          SceneTransform_ApplyPosition3(0x2c0000, 0, 0);
           Transform_ApplyYaw(0x3448);
-          Func_0801521c(size);
+          SceneTransform_ApplyUniformScale(size);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
         }
@@ -768,7 +768,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         model->shade = shade;
         model->mesh = gData_08199340;
         Transform_Reset();
-        Func_08015160(-0x100000, pos.y + -0x500000, 0);
+        SceneTransform_ApplyPosition3(-0x100000, pos.y + -0x500000, 0);
         SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
         Transform_ApplyRoll(frame << 11);
         Render_TransformVertices(Data_081991e0, verts, 4);
@@ -901,7 +901,7 @@ struct BattleFxWorkTail {
 };
 
 // Midpoint between the first and last targets.
-void Func_0815e22c(struct EffectPosition *position) {
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *position) {
   struct BattleFxWorkTail *work;
   struct EffectPosition first;
   struct EffectPosition last;

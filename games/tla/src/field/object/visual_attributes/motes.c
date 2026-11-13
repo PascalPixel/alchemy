@@ -164,7 +164,9 @@ void Weather_StartRain(s32 withCue) {
     Scene_QueueMusic(137);
 }
 
-void Func_080d7024(void) { Task_Remove(Weather_UpdateRain); }
+/// Stops Weather_StartRain's particles. Unused: nothing calls
+/// Weather_StopRainFar.
+void Weather_StopRain(void) { Task_Remove(Weather_UpdateRain); }
 
 struct SparkleWork {
   u8 padding00[4];

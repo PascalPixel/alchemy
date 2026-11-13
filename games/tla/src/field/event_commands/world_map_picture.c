@@ -2,7 +2,6 @@
 /// The world map screen's picture: drawing it, scrolling it with the cursor,
 /// its area markers, and zooming the view out while L is held.
 
-// ---- games/tla/src/field/event_commands/world_map_picture.c ----
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -23,7 +22,10 @@ u32 Func_080ec298(struct WorldMapPlace *place);
 #define PLACE_SCREEN_X(place) ((place)->x * 853 / 16384 - 269)
 #define PLACE_SCREEN_Y(place) ((place)->z * 640 / 16384 - 112)
 
-void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
+/// R (step 1) and L (step -1) on the world map screen: the cursor jumps to the
+/// next or the previous marked place round from the one nearest it, and its
+/// point on the picture is written to screenX and screenY.
+void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   struct WorldMapPlace *places;
   struct WorldMapPlace *place;
   struct WorldMapPlace *next;
@@ -69,7 +71,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
     }
   }
   if (best == -1) {
-    Func_080ec1d0(screenX, screenY);
+    WorldPicture_GetLeaderPoint(screenX, screenY);
     return;
   }
   place = &places[best];
@@ -107,7 +109,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
 
 /// Moves every window sprite of a list by dx, dy: the output's position and its
 /// queued sprite's OAM x and y.
-void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy) {
+void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
   struct WindowSprite *output;
   struct QueuedSprite *sprite;
 
@@ -126,7 +128,6 @@ void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #undef PLACE_SCREEN_X
 #undef PLACE_SCREEN_Y
 
-// ---- games/tla/src/field/event_commands/f0ec4d4.c ----
 #include "input.h"
 #include "main_routine_work.h"
 #include "io_write_queue.h"
@@ -323,7 +324,7 @@ void WorldPicture_UpdateMarkers(void) {
       name = -1;
       tile = 0;
       always = 0;
-      Func_080ec1d0(&placeX, &placeY);
+      WorldPicture_GetLeaderPoint(&placeX, &placeY);
     } else {
       name = place->name;
       entrance = place->nameEntrance;
@@ -502,7 +503,7 @@ void WorldPicture_UpdateMarkers(void) {
        load may alias width's store to the stack and stays after it; as
        NAME_BOX_Y, 10 of 1044 instructions differ in tla-en. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
-    Func_080ec484(work->window, width, height);
+    WindowSpriteList_Move(work->window, width, height);
     NAME_BOX_X = cursorX;
     NAME_BOX_Y = cursorY;
   }
@@ -520,7 +521,6 @@ void WorldPicture_UpdateMarkers(void) {
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 
-// ---- games/tla/src/field/event_commands/f0ece20.c ----
 #include "dma.h"
 #include "resource.h"
 #include "bg_scroll.h"
@@ -532,7 +532,7 @@ extern char ResourceId_Data023, ResourceId_Data024;
 /// (resource 36, or 35 at the origin when the halfword at 0x640 is set): the
 /// palette, then 21 rows of 31 tiles from the decoded rows, wrapping the 24-row
 /// buffer and the 32-column screen.
-void Func_080ece20(void) {
+void WorldMapPicture_Draw(void) {
   struct WorldMapWork *work = &gWorldMapWork;
   u8 *buffer;
   s32 resource = (s32)&ResourceId_Data024;
@@ -627,7 +627,7 @@ extern s16 Data_0202a640;
 /// scrolling: decodes the picture's row into the cell buffer, which holds 24
 /// rows and wraps, and copies its cells into the 32-column screen from tile
 /// 256, wrapping at column 32.
-void Func_080ecf74(u32 column, s32 row) {
+void WorldMapPicture_DrawRow(u32 column, s32 row) {
   s32 resource = (s32)&ResourceId_Data024;
   u32 *graphics;
   s32 unwrapped;
@@ -672,8 +672,8 @@ static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
 /// Draws one column of the world map picture on BG1, 21 rows down from a
 /// row, for scrolling: copies the column's cells from the decoded rows in the
 /// cell buffer, which wraps after 24 rows, into the 32-column screen from
-/// tile 256; the column twin of Func_080ecf74.
-void Func_080ed030(s32 column, s32 row) {
+/// tile 256; the column twin of WorldMapPicture_DrawRow.
+void WorldMapPicture_DrawColumn(s32 column, s32 row) {
   u32 i;
 
   for (i = 0; i <= 20; i++) {
@@ -699,8 +699,6 @@ void Func_080ed030(s32 column, s32 row) {
 /// The world map cursor's position (x, then y, 16.16 pixels).
 extern s32 *Data_0202a62c;
 
-s32 FixedSqrt(s32 value);
-
 #define SCROLL_X Ram_WorldMapScroll[0]
 #define SCROLL_Y Ram_WorldMapScroll[1]
 
@@ -708,10 +706,10 @@ s32 FixedSqrt(s32 value);
 /// cursor 120 by 80 pixels in (clamped to the map); unless the map is held the
 /// scroll moves a quarter of the way there each frame, at most 8 pixels, and
 /// stops when nearer than a quarter pixel. Each time the scroll crosses an
-/// 8-pixel column or row, the new column (Func_080ed030) or row
-/// (Func_080ecf74) of the picture is drawn; BG1 scrolls with it. All values
-/// are 16.16 pixels.
-void Func_080ed0a0(void) {
+/// 8-pixel column or row, the new column (WorldMapPicture_DrawColumn) or row
+/// (WorldMapPicture_DrawRow) of the picture is drawn; BG1 scrolls with it. All
+/// values are 16.16 pixels.
+void WorldMapPicture_UpdateScroll(void) {
   s32 *cursor = Data_0202a62c;
   s32 x = *cursor++ - (120 << 16);
   s32 y = *cursor - (80 << 16);
@@ -765,15 +763,15 @@ void Func_080ed0a0(void) {
     row = (u32)y >> 19;
     if ((SCROLL_X ^ x) & 0x80000) {
       if (SCROLL_X < x)
-        Func_080ed030(column + 30, row);
+        WorldMapPicture_DrawColumn(column + 30, row);
       else
-        Func_080ed030(column, row);
+        WorldMapPicture_DrawColumn(column, row);
     }
     if ((SCROLL_Y ^ y) & 0x80000) {
       if (SCROLL_Y < y)
-        Func_080ecf74(column, row + 20);
+        WorldMapPicture_DrawRow(column, row + 20);
       else
-        Func_080ecf74(column, row);
+        WorldMapPicture_DrawRow(column, row);
     }
     gBgScroll[1].x = x >> 16;
     gBgScroll[1].y = y >> 16;
@@ -799,16 +797,12 @@ extern s32 Data_0202a630;
 extern s32 Data_0202a634;
 
 void ObjectTable_Snapshot(void);
-void WindowSystem_InitFieldFar(void);
 void Task_ResetAll(void);
 void wait(s32 frames);
 void WorldPicture_Initialize(void);
 void WorldPicture_UpdateMarkers(void);
-void Func_080ec1d0(s32 *screenX, s32 *screenY);
-void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step);
-void FieldMessage_ShowFar(s32 message, s32 mode);
-void WindowSprite_PrepareForRedrawFar(void *window);
-void Func_080ca368(s32 scene, s32 entrance);
+void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step);
+void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 void WorldPicture_Release(void);
 void WorldMap_LoadAreaGraphicsFar(void);
 
@@ -918,7 +912,7 @@ s32 WorldPicture_Show(s32 mode) {
   WorldPicture_Initialize();
   for (;;) {
     Data_0202a640 = zoomed;
-    Func_080ece20();
+    WorldMapPicture_Draw();
     wait(1);
     Io_Write16(0x8682, &REG_BG1CNT);
     Io_Write16(0x1340, &REG_DISPCNT);
@@ -931,12 +925,12 @@ s32 WorldPicture_Show(s32 mode) {
     cursorX = &Data_0202a644;
     cursorZ = &Data_0202a648;
     for (;;) {
-      Func_080ed0a0();
+      WorldMapPicture_UpdateScroll();
       WorldPicture_UpdateMarkers();
       input = keys;
       wait(1);
       if ((input->repeat & 8) && gliding == 0) {
-        Func_080ec1d0(&screenX, &screenY);
+        WorldPicture_GetLeaderPoint(&screenX, &screenY);
         *cursorX = screenX << 16;
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
         // the reload.
@@ -953,7 +947,7 @@ s32 WorldPicture_Show(s32 mode) {
         gliding = 0;
       }
       if (keys->repeat & 0x100) {
-        Func_080ec2b8(&screenX, &screenY, 1);
+        WorldPicture_StepToPlace(&screenX, &screenY, 1);
         *cursorX = screenX << 16;
         // wayZ only ever holds &Data_0202a650, set where it is used.
         wayZ = &Data_0202a650;
@@ -962,7 +956,7 @@ s32 WorldPicture_Show(s32 mode) {
         *wayZ = *cursorZ;
       }
       if (input->repeat & 0x200) {
-        Func_080ec2b8(&screenX, &screenY, -1);
+        WorldPicture_StepToPlace(&screenX, &screenY, -1);
         *cursorX = screenX << 16;
         wayZ = &Data_0202a650;
         *cursorZ = screenY << 16;
@@ -1010,7 +1004,7 @@ s32 WorldPicture_Show(s32 mode) {
         place += world->shown;
         routine->unk2be = (s32)&SceneId_WorldMap;
         choice->flag = place->flag;
-        Func_080ca368(place->scene, place->entrance);
+        WorldMap_SetReturnForScene(place->scene, place->entrance);
         goto done;
       }
       if (input->repeat & 2) {

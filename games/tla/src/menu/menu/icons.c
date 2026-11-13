@@ -252,7 +252,8 @@ void Menu_UpdateEntryObjectTransforms(void) {
         transform[1] = top;
         transform[2] = (menu->y[i] << 16) + top;
         transform[3] = 0;
-        Func_08020018(menu->objects[i], transform, scale, 0x4000, 250);
+        Render_ApplyProjectedPlacementAtDepthFar(menu->objects[i], transform,
+                                                 scale, 0x4000, 250);
       }
     }
   }
@@ -278,7 +279,10 @@ struct FigureMenuState {
 
 s32 Party_GetCharacterSpriteFar(s32 id);
 
-void Func_08104e38(s32 first, s32 second) {
+/// Menu_CreateOwnerEntryObjects for two characters (-1 for none): their
+/// figures in entries 0 and 1, as the Djinn preview shows the pair a Djinni
+/// passes between.
+void Menu_CreatePairEntryObjects(s32 first, s32 second) {
   struct FigureMenuState *menu =
       (struct FigureMenuState *)Ram_HeapSlots->menuRuntime;
   struct AnimationObject *figure;
@@ -414,7 +418,8 @@ void MenuIcon_UpdateTransforms(void) {
       position.height = placeY;
       position.y = (menu->tabY[i] << 16) + placeY;
       position.groundHeight = 0;
-      Func_08020018(figure, &position, &scale, menu->depths[i], 250);
+      Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
+                                               menu->depths[i], 250);
     }
   }
 }
@@ -543,7 +548,7 @@ extern u16 gData_08105a50[5];
 /// Loads the five menu icons of gData_08105a50 into free VRAM entries, gives
 /// each slot its sprite attributes and tile, keeps the entries for
 /// MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
-void Func_081053a8(void) {
+void MenuIcon_LoadSlots(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   struct MenuSlotEntry *slot = menu->slots;
   u16 *ids = gData_08105a50;
@@ -617,8 +622,10 @@ struct MenuPanel {
   s16 y;
 };
 
-// Lists usable entries with icons and names, or "none" when no entries qualify.
-void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
+/// Lists usable entries with icons and names, or "none" when no entries
+/// qualify.
+void MenuPanel_DrawEntryList(struct MenuPanel *panel, s32 x, s32 y,
+                             const u8 *enabled) {
   s32 count = 0;
   s32 icon_x = panel->x * 8 + x + 8;
   s32 icon_y = panel->y * 8 + y + 8;

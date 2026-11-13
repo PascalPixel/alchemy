@@ -289,7 +289,6 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void MessageArgument_ClearAll(void);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 struct BattleUnit *Unit_Get(s32 unitId);
-s32 Area_GetNameIndexFar(s32 scene, s32 entrance);
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 

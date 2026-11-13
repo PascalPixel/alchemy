@@ -200,7 +200,8 @@ void TrialRoad_Idle(void);
 
 s32 TrialRoad_RivalIsAhead(s32 fallback);
 
-/// Func_080af0e4 through its far call: empties an inventory slot and returns 2.
+/// Inventory_ClearSlot through its far call: empties an inventory slot and
+/// returns 2.
 s32 Func_02005870(s32 owner, s32 slot);
 
 extern s16 gTrialRoad_CrumblingPillars[];

@@ -1,6 +1,6 @@
 /// @file
-/// Two tables Func_081a6b50, which places the title logo, reads beside the
-/// logo's pieces. Their meaning is not yet known; their shape is.
+/// Two tables TitleIntro_UpdateLogo, which places the title logo, reads beside
+/// the logo's pieces. Their meaning is not yet known; their shape is.
 
 #include "types.h"
 

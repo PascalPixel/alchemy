@@ -59,9 +59,10 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   }
   block = (struct Data02020000 *)Ram_MapBlocks +
           (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
-  Func_0802d088(block->region, 1);
-  // One local holds the region, then Func_080c8950's result: set twice, it
-  // reads the region into r3 for the divide, as the original does.
+  WorldMap_UpdateRegionTint(block->region, 1);
+  // One local holds the region, then ScreenTransition_IsScanlineActiveFar's
+  // result: set twice, it reads the region into r3 for the divide, as the
+  // original does.
   value = block->region;
   switch (value / 10) {
   case 3:
@@ -82,7 +83,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     window->resources = resources;
     window->reloadSteps = 12;
   }
-  value = Func_080c8950();
+  value = ScreenTransition_IsScanlineActiveFar();
   if (window->reloadSteps == 0)
     return;
   if (value != 0)
@@ -240,7 +241,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Task_ResumeAll(TilesetAnim_Update);
   state->picturePending = 0;
   state->pictureShown = 0;
-  Func_0802d088(state->area, 0);
+  WorldMap_UpdateRegionTint(state->area, 0);
   wait(1);
 }
 
@@ -517,7 +518,11 @@ void PaletteCycle_Step(void) {
 #include "io_write_queue.h"
 #include "flag_call.h"
 
-void Func_0802d088(s32 region, s32 gradual) {
+/// Tints the world map for the encounter region under the party: region 9
+/// brightens it by 12 steps, region 18 darkens it by 6 until flag 0x8ef is
+/// set, any other clears the tint. Gradually, the tint moves one step every 16
+/// frames; at once, it jumps there. Flag 0x106 holds the tint as it is.
+void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
   struct WorldTint *work = (struct WorldTint *)Ram_HeapSlots->mapWork;
 
   if (work->region != region) {
@@ -861,7 +866,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
 
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
 /// samples differ (a real bump or hollow, not a flat cell) reads as 99.
-s32 Func_0802d530(s32 layer, s32 x, s32 z) {
+s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *grid;
   u8 *code;
@@ -902,18 +907,21 @@ s32 MapGrid_GetHighestTerrainHeightAround(s32 layer, s32 x, s32 z, s32 reach) {
   return best;
 }
 
-void Func_0802d600(s32 x, s32 z, s32 layer, s32 value) {
+/// Gives the cell at (x, z) of layer the ground height `height`, in 8-pixel
+/// steps, by tagging its shape with terrain kind 0 at that height.
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *shape;
 
   shape = gMapShapeGrid +
           (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (x >> 20) + ((z >> 20) << 7);
-  *shape = Func_080c8730(layer, 0, value);
+  *shape = Func_080c8730(layer, 0, height);
 }
 
-s32 Func_0802d644(s32 a, s32 b, s32 c) {
-  return MapGrid_GetTerrainHeight(c, a, b) >> 19;
+/// The ground height at (x, z) of layer, in 8-pixel steps.
+s32 MapGrid_GetCellHeight(s32 x, s32 z, s32 layer) {
+  return MapGrid_GetTerrainHeight(layer, x, z) >> 19;
 }
 
 /// As MapGrid_GetCellAttributeLowNibble, a second copy.
@@ -1120,9 +1128,12 @@ s32 MapGrid_IsWallAt(s32 *position) {
  * something not a structure or union. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 
-/// Reads byte 2 of the world map block under position: blocks are 32 pixels
-/// square on a 32 by 32 grid, positions are Q16 pixels.
-s32 Func_0802da88(struct WorldPosition *position) {
+/// Byte 2 of the world map block under position (blocks 32 pixels square on a
+/// 32 by 32 grid): the place the world map's searches look for among the
+/// scene's events of kind 2, and 255 where the ship may not go.
+// XXX: what the byte numbers besides 255; the world map scene's events of
+// kind 2 against the blocks in gMapBlocks would settle it.
+s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;
 
@@ -1174,15 +1185,16 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
 }
 
 s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
-  if (Func_0802da88(position) != 255) {
+  if (WorldMap_GetBlockPlace(position) != 255) {
     if ((u32)(WorldMap_GetCollision(position) - 5) <= 7)
       return 0;
   }
   return -1;
 }
 
-s32 Func_0802db88(void *object, struct WorldPosition *position) {
-  if (Func_0802da88(position) != 255) {
+/// Returns 0 where the ship can sail (collision 1 to 4, or 6), else -1.
+s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
+  if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
     u8 *work = Ram_HeapSlots->eventWork;
     s32 mode;
@@ -1202,8 +1214,11 @@ s32 Func_0802db88(void *object, struct WorldPosition *position) {
   return -1;
 }
 
-s32 Func_0802dbd0(struct WorldMover *mover, struct WorldPosition *position) {
-  if (Func_0802da88(position) != 255) {
+/// Returns 0 where the winged ship can go, else -1: low down, where it can
+/// sail; higher, more of the ground by the kind it last flew over.
+s32 WorldMap_IsFlyable(struct WorldMover *mover,
+                       struct WorldPosition *position) {
+  if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
     u8 *work = Ram_HeapSlots->eventWork;
 

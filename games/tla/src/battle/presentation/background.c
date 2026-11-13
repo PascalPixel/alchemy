@@ -421,7 +421,7 @@ void BattleBackground_FadeAlphaIn(void) {
 
 void Func_081269ac(void) { REG_BLDCNT = 0xbf; }
 
-s32 Func_081269bc(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
+s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 
 struct BattleTransitionEntry {
   u32 value;
@@ -460,11 +460,9 @@ extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
-void Func_0814ea58(void *effect, s32 mode);
-void PartyStatus_CreateWindow(s32 flags);
-s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
-s32 Func_080dbde8(s32 x, s32 z, s32 layer);
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
+void BattleEffect_RunDrainMotes(void *effect, s32 mode);
+s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
+u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
@@ -863,9 +861,8 @@ extern char ResourceId_BlueRingSheet;
 extern char ResourceId_RedPaletteC;
 extern char ResourceId_VioletPaletteD;
 
-s32 Decompress_TaggedLz(const void *source, void *destination);
 s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
-// The Broken Seal's five-argument blitter loader, named but never called.
+// The five-argument blitter builder's far call, never called.
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
                                  s32 flags, s32 mode);
 
@@ -992,7 +989,8 @@ s32 ElementGlow_End(s32 unused) {
   return Task_Remove(ElementGlow_UpdateStarField);
 }
 
-void Func_08127304(void) {}
+/// Does nothing; nothing calls it.
+void ElementGlow_ReservedNoOp(void) {}
 
 // The parts of the battle work this effect uses.
 struct ElementSession {
@@ -1003,7 +1001,6 @@ struct ElementSession {
 };
 
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
-void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *launch);
 void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
 void BattleEffect_StartElementStreaksFar(s32 mode);
 void BattleEffect_EndElementStreaksFar(void);

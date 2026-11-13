@@ -43,7 +43,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// previewing each choice in place: left and right cycle through the reserve,
 /// A confirms and swaps the two in gMainRoutineWork.activeOwners, and B puts
 /// the slot's member back.
-s32 Func_0804b8b8(s32 slot) {
+s32 BattleParty_ChooseReserve(s32 slot) {
   u16 owners[6];
   u16 selected[2];
   struct BattleWork *battle;
@@ -149,10 +149,14 @@ s32 Func_0804b8b8(s32 slot) {
 }
 
 s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
-void *Unit_Get(s32 owner);
 
-s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
-                  s32 *forcedCount) {
+/// The first half of The Broken Seal's Battle_BuildPartyActions: each action
+/// of a living party member who is asleep, confused, charmed or stunned is lost
+/// (COMMAND_NONE) and written at *cursor, which moves past them, their count
+/// going to *forcedCount; every other member's actions are listed in ready to
+/// be chosen. Returns how many are listed.
+s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
+                              s32 *forcedCount) {
   u16 *unitIds = Heap_AllocEwram(9);
   struct BattleActionRecord *entries = *cursor;
   s32 count = BattleParty_ListLivingUnitsFar(1, unitIds);

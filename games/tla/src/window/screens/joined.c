@@ -6,7 +6,8 @@
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
-s32 Func_08044a54(void) { return 0; }
+/// Returns 0; only the far-call table refers to it.
+s32 Screens_ReturnZero(void) { return 0; }
 
 // The window that announces a Djinni, wider in French and Italian.
 #if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -243,7 +244,11 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
 extern u8 MsgCanNowSummon[], MsgToSummon[];
 
-void Func_08044dc8(s32 summon) {
+/// Announces a summon the party can now use: "... can now summon ..."
+/// (MsgCanNowSummon) until the jingle ends or a button is pressed, then
+/// "To summon" (MsgToSummon) with its two largest Djinn counts, until a button
+/// is pressed.
+void Summon_ShowLearnedMessage(s32 summon) {
   struct WindowWork *work = Ram_HeapSlots->windowTiles;
   struct Window *window;
   s32 entries;
@@ -300,10 +305,10 @@ void Func_08044dc8(s32 summon) {
     // MsgSummonVenus is the first of four Djinn counts (Venus, Mercury, Mars,
     // Jupiter); the message four past it ends their line.
     MessageArgument_Push(most, 5);
-    Func_0803cf6c((s32)MsgSummonVenus + best);
+    Message_DecodeAppend((s32)MsgSummonVenus + best);
     counts[best] = 0;
   }
-  Func_0803cf6c((s32)MsgSummonVenus + 4);
+  Message_DecodeAppend((s32)MsgSummonVenus + 4);
 #ifdef UBFIX
   Message_Start(window, entries, 4, 2, NULL, 0);
 #else

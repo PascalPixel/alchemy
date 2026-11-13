@@ -52,7 +52,10 @@ extern void
 Vector_AddPolarOffset__f0cf050(s32 distance, u16 angle,
                                s32 *position) __asm__("Vector_AddPolarOffset");
 
-void Func_080cf050(void) {
+/// Unused: only the far-call table refers to it. Finds the first of actors 64
+/// to 79 within 16 pixels of the leader on both axes and puts the leader 20
+/// pixels from it, on the line from it to the leader, with no destination.
+void Leader_StepAwayFromNearbyActor(void) {
   struct Actor *leader;
   struct Actor *other;
   s32 dx;
@@ -248,8 +251,8 @@ void Actor_ReleaseIfPresent(struct Actor *object) {
     Actor_ReleaseFar(object);
 }
 
-/// Nothing in the image calls it.
-void Func_080cf34c(void) {}
+/// Does nothing; nothing in the image calls it.
+void ScreenTransition_ReservedNoOp(void) {}
 
 /* VIEW(rising): routine ItemDisplay_EmitSparkles as void
  * ItemDisplay_EmitSparkles(void); the definition has void
@@ -417,7 +420,7 @@ extern const s32
 void FieldEffect_SpawnRevealMarkers(void) {
   // The row type is s16, as the rows are: with it the copied head test stays
   // apart from the bottom one.
-  s16 *entry = Func_080ceba8();
+  s16 *entry = SceneItem_GetRows();
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *origin = (s32 *)(map + 228);
   s32 originX = origin[0] & 0xffff0000;
@@ -448,7 +451,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     entry += 3;
     if (type != 128 && flag != -1 && GameFlag_Test(flag))
       continue;
-    if (Func_080cec24(id, result))
+    if (SceneItem_FindPosition(id, result))
       continue;
     object = ObjectEvent_GetObject(i + 64);
     if (object == NULL)
@@ -1098,7 +1101,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
   }
 }
 
-s32 Func_080d072c(void) {
+/// Returns 1 while ScreenTransition_UpdateScanline is the VCount handler.
+s32 ScreenTransition_IsScanlineActive(void) {
   s32 other = (s32)gIrqHandlers[1] ^ (s32)ScreenTransition_UpdateScanline;
 
   return 1 - ((u32)(-other | other) >> 31);
@@ -1782,7 +1786,7 @@ void BattleEffect_SetPrimaryBufferValue(u32 value) {
 
 /// Packs the 448 target colours, three channels each, back into the effect's
 /// palette as RGB555.
-void Func_080d1760(void) {
+void BattleEffect_PackTargetBuffer(void) {
   struct BattleEffectBuffers *work = Ram_HeapSlots->block32;
   u16 *packed = work->palette;
   s32 blue = 0x7c00;
@@ -1940,10 +1944,11 @@ void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 /// Resumes the fade overlay's drawing callback.
 void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
 
-/// The blank overlay's task, which Func_080d1cc0 starts: each frame it draws
-/// a 16-pixel mark beside the actor where the map's third layer flags a cell
-/// two rows up (left or right of the actor), and another for the row one up.
-void Func_080d1ae4(void) {
+/// The blank overlay's task, which FieldEffect_StartBlankOverlay starts: each
+/// frame it draws a 16-pixel mark beside the actor where the map's third layer
+/// flags a cell two rows up (left or right of the actor), and another for the
+/// row one up.
+void BlankOverlay_DrawMarks(void) {
   struct AnimationSpritePart *mark = Ram_HeapSlots->unk84[3];
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 *camera = (s16 *)&map->viewX;
@@ -1990,26 +1995,26 @@ void Func_080d1ae4(void) {
 }
 
 /// Like FieldEffect_StartFadeOverlay with blank tiles and no blending:
-/// loads 0x200 zeroed tiles to VRAM slot 94 and starts Func_080d1ae4 on
-/// object (the controlled owner's when 0).
-void Func_080d1cc0(s32 object) {
+/// loads 0x200 zeroed tiles to VRAM slot 94 and starts BlankOverlay_DrawMarks
+/// on object (the controlled owner's when 0).
+void FieldEffect_StartBlankOverlay(s32 object) {
   u8 *work = HeapSlot_AllocEwram(144, 28);
   void *buffer = HeapSlot_Alloc(56, 0x400);
 
   Dma_Fill32(0, buffer, 0x200);
   VramCache_Load(94, 0x200, buffer);
-  Task_Add(Func_080d1ae4, 0x480);
+  Task_Add(BlankOverlay_DrawMarks, 0x480);
   HeapSlot_Release(56);
   if (object == 0)
     object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   *(s32 *)(work + 24) = object;
 }
 
-/// Suspends the Func_080d1ae4 overlay task.
-void Func_080d1d34(void) { Task_SuspendAll(Func_080d1ae4); }
+/// Suspends the BlankOverlay_DrawMarks overlay task.
+void BlankOverlay_Suspend(void) { Task_SuspendAll(BlankOverlay_DrawMarks); }
 
-/// Resumes the Func_080d1ae4 overlay task.
-void Func_080d1d44(void) { Task_ResumeAll(Func_080d1ae4); }
+/// Resumes the BlankOverlay_DrawMarks overlay task.
+void BlankOverlay_Resume(void) { Task_ResumeAll(BlankOverlay_DrawMarks); }
 
 /// Fills the overlay's 512 bytes of sprite tiles (VRAM cache slot 94) with
 /// colour 1 when solid is set, else clears them.
@@ -2043,16 +2048,17 @@ struct EffectSprite__f0cf050 {
   u16 depth;
 };
 
-/* VIEW(f0cf050): routine Func_080eaf98 as void Func_080eaf98(); effect_sprite.h
- * has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
- * u32 attributes, s32 tile). */
-extern void Func_080eaf98__f0cf050() __asm__("Func_080eaf98");
+/* VIEW(f0cf050): routine EffectSprite_Init as void EffectSprite_Init();
+ * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
+ * pivotX, s32 pivotY, u32 attributes, s32 tile). */
+extern void EffectSprite_Init__f0cf050() __asm__("EffectSprite_Init");
 
-/// Sets up sprite through Func_080eaf98 with resource 94's tiles, at
+/// Sets up sprite through EffectSprite_Init with resource 94's tiles, at
 /// priority 1 in palette 0.
-void Func_080d1dac(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
-  Func_080eaf98__f0cf050(sprite, a, b, c,
-                         gResourceTableEntries[94].offset >> 5);
+void EffectSprite_InitFromSlot94(struct EffectSprite__f0cf050 *sprite, s32 a,
+                                 s32 b, s32 c) {
+  EffectSprite_Init__f0cf050(sprite, a, b, c,
+                             gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 1;
   sprite->palette256 = 0;
@@ -2064,9 +2070,11 @@ void Func_080d1dac(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
  * Camera_WorldToScreen(struct EffectVector *position). */
 extern void
 Camera_WorldToScreen__f0cf050(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(f0cf050): routine Func_080eb01c as void Func_080eb01c(void *sprite);
- * effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__f0cf050(void *sprite) __asm__("Func_080eb01c");
+/* VIEW(f0cf050): routine EffectSprite_Draw as void EffectSprite_Draw(void
+ * *sprite); effect_sprite.h has void EffectSprite_Draw(struct EffectSprite
+ * *sprite). */
+extern void
+EffectSprite_Draw__f0cf050(void *sprite) __asm__("EffectSprite_Draw");
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
 /// effect sprite's position and draws the sprite.
@@ -2077,13 +2085,14 @@ void BattleEffect_DrawSpriteAtWorldPosition(s32 *sprite, s32 x, s32 y, s32 z) {
   Camera_WorldToScreen__f0cf050(position);
   sprite[3] = position[0];
   sprite[4] = position[2];
-  Func_080eb01c__f0cf050(sprite);
+  EffectSprite_Draw__f0cf050(sprite);
 }
 
-/// The twin of Func_080d1dac with object mode 1 and priority 0.
-void Func_080d1e18(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
-  Func_080eaf98__f0cf050(sprite, a, b, c,
-                         gResourceTableEntries[94].offset >> 5);
+/// The twin of EffectSprite_InitFromSlot94 with object mode 1 and priority 0.
+void EffectSprite_InitFromSlot94Blended(struct EffectSprite__f0cf050 *sprite,
+                                        s32 a, s32 b, s32 c) {
+  EffectSprite_Init__f0cf050(sprite, a, b, c,
+                             gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 0;
   sprite->palette256 = 0;
@@ -2152,11 +2161,11 @@ u8 BattleEffect_GetFlags(void) {
       ->flags;
 }
 
-extern const s32 gData_080f3228[];
+extern const s32 gPairTable[];
 
-/// Looks key up in gData_080f3228's pairs and returns its value, or -1.
-s32 Func_080d1ee8(s32 key) {
-  const s32 *entry = gData_080f3228;
+/// Looks key up in gPairTable's pairs and returns its value, or -1.
+s32 PairTable_Find(s32 key) {
+  const s32 *entry = gPairTable;
   s32 value;
 
   while (1) {
@@ -2169,17 +2178,20 @@ s32 Func_080d1ee8(s32 key) {
   }
 }
 
-s32 Func_080d1f0c(s32 key) {
-  Func_080d1ee8(key);
+/// Looks key up as PairTable_Find does and returns 0.
+s32 PairTable_FindAndIgnore(s32 key) {
+  PairTable_Find(key);
   return 0;
 }
 
-s32 Func_080d1f18(s32 key) { return Func_080d1ee8(key); }
+/// PairTable_Find again.
+s32 PairTable_FindCopy(s32 key) { return PairTable_Find(key); }
 
-/// Draws heading picture `heading` of the headings resource into a 26 by 5 cell
+/// Unused: only the far-call table refers to it. Draws heading picture
+/// `heading` of the headings resource into a 26 by 5 cell
 /// window and opens the window from the centre, 5 pixels a side each frame
 /// for 24 frames.
-void Func_080d1f20(s32 heading) {
+void Heading_Show(s32 heading) {
   u16 tile;
   s32 *headings = Resource_GetTableEntry((s32)&ResourceId_Headings);
   u8 *tiles;
@@ -2265,16 +2277,17 @@ void Tile_ClearLeftPixels(s32 x, s32 y, u32 corner) {
   }
 }
 
-extern s16 gData_080f3230[];
+extern s16 gHeading_WipeSteps[];
 
 #define DMA3 REG_DMA3
 
-/// Closes Func_080d1f20's picture window: fades the palette out while wiping
-/// the picture's 26 by 5 tiles from the left by the steps in gData_080f3230
+/// Unused: only the far-call table refers to it. Closes Heading_Show's
+/// picture window: fades the palette out while wiping
+/// the picture's 26 by 5 tiles from the left by the steps in gHeading_WipeSteps
 /// (runs of widths, each run ended by a negative entry and the whole by -9),
 /// then turns BG0 and the window off, clears the screen block, reloads the
 /// window tiles and turns BG0 back on.
-void Func_080d20fc(void) {
+void Heading_Close(void) {
   s32 step = 0;
   u32 x;
   u32 y;
@@ -2283,14 +2296,14 @@ void Func_080d20fc(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(24);
   for (;;) {
-    for (; gData_080f3230[step] >= 0; step++) {
+    for (; gHeading_WipeSteps[step] >= 0; step++) {
       for (x = 0; x < 26; x++) {
         for (y = 0; y < 5; y++)
-          Tile_ClearLeftPixels(x, y, gData_080f3230[step]);
+          Tile_ClearLeftPixels(x, y, gHeading_WipeSteps[step]);
       }
     }
     wait(2);
-    if (gData_080f3230[step] == -9)
+    if (gHeading_WipeSteps[step] == -9)
       break;
     step++;
   }

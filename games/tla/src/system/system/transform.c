@@ -139,7 +139,7 @@ void Transform_ApplyYaw(s32 ang) {
 }
 
 /// Makes the current matrix a rotation about the Y axis.
-void Func_080150ac(s32 ang) {
+void Transform_SetYaw(s32 ang) {
   s32 *m = gTransform;
   s32 sin, cos;
 
@@ -182,7 +182,7 @@ void SceneTransform_ApplyPosition(const s32 *pos) {
 }
 
 /// Applies a translation by x, y and z in Q16.
-void Func_08015160(s32 x, s32 y, s32 z) {
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z) {
   s32 m[12];
 
   CAMELOT_ASM("the fixed-register identity store above")
@@ -225,7 +225,7 @@ void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z) {
 }
 
 /// Applies the same scale on all three axes.
-void Func_0801521c(s32 scale) {
+void SceneTransform_ApplyUniformScale(s32 scale) {
   s32 m[12];
 
   CAMELOT_ASM("the fixed-register identity store above")

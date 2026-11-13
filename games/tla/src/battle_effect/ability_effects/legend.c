@@ -58,7 +58,7 @@ extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void BattlePlayback_StartFar(s32 phase);
@@ -69,18 +69,17 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f189b14): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model__f189b14 *model); f188714 has void
  * Render_DrawModelList(struct Model *model). */
 extern void Render_DrawModelList__f189b14(struct Model__f189b14 *model) __asm__(
     "Render_DrawModelList");
-void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -126,7 +125,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
                 BLIT_ADDITIVE));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, cells, 1, 1);
-  Func_0816ae40(cells, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(cells, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet, work->sheet + 0x4000,
                              1, 1);
@@ -261,14 +260,14 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         model->alpha = alpha;
         Transform_Reset();
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-        Func_08015160((start.x - 128) << 16, height << 16, 0);
+        SceneTransform_ApplyPosition3((start.x - 128) << 16, height << 16, 0);
         Transform_ApplyPitch(0x5900);
         if (effect->side == 0)
           Transform_ApplyYaw(0x1900);
         else
           Transform_ApplyYaw(-0x1900);
         Transform_ApplyRoll(frame << 9);
-        Func_0801521c(scale);
+        SceneTransform_ApplyUniformScale(scale);
         SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
         Render_DrawModelList__f189b14(model);
@@ -288,14 +287,14 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             model->alpha = alpha;
             Transform_Reset();
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-            Func_08015160((start.x - 128) << 16, -48 << 16, 0);
+            SceneTransform_ApplyPosition3((start.x - 128) << 16, -48 << 16, 0);
             Transform_ApplyPitch(0x5900);
             if (effect->side == 0)
               Transform_ApplyYaw(0x1900);
             else
               Transform_ApplyYaw(-0x1900);
             Transform_ApplyRoll(frame << 9);
-            Func_0801521c(scale);
+            SceneTransform_ApplyUniformScale(scale);
             Render_TransformVertices(Data_081991e0, vertices, 4);
             Render_DrawModelList__f189b14(model);
           }
@@ -312,7 +311,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           model->alpha = 0;
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160((start.x - 128) << 16, -80 << 16, 0);
+          SceneTransform_ApplyPosition3((start.x - 128) << 16, -80 << 16, 0);
           Transform_ApplyPitch(0x47d0);
           Transform_ApplyRoll((frame + i * 16) << 9);
           scale = (frame << 12) - 0x4000;
@@ -341,19 +340,20 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818a220(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
+                                  s32 mode);
 
 /// Abilities: Bramble Card (kind 88).
-DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, Func_0818a220, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, BattleEffect_RunElementCards, 0)
 
 /// Abilities: Frost Card (kind 87).
-DEFINE_EFFECT_KIND(BattleEffect_RunFrostCard, Func_0818a220, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunFrostCard, BattleEffect_RunElementCards, 1)
 
 /// Abilities: Flame Card (kind 79).
-DEFINE_EFFECT_KIND(BattleEffect_RunFlameCard, Func_0818a220, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunFlameCard, BattleEffect_RunElementCards, 2)
 
 /// Abilities: Thunder Card (kind 89).
-DEFINE_EFFECT_KIND(BattleEffect_RunThunderCard, Func_0818a220, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunThunderCard, BattleEffect_RunElementCards, 3)
 
 // The four cards, as the wrappers pass them.
 enum {
@@ -405,7 +405,8 @@ void BattleEffect_StepPaletteToResource(s32 resource);
 // Thunder cards spread four pictures over the field. Each target is struck
 // every five frames for a while, reeling, flashing and throwing up sparks.
 // From frame 96 the card shrinks away.
-void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -665,23 +666,23 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       // The card: it swings from side to side as it rises, tilted back.
       Transform_Reset();
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-      Func_08015160((card.x << 16) - (128 << 16), (card.y << 16) - (64 << 16),
-                    0);
+      SceneTransform_ApplyPosition3((card.x << 16) - (128 << 16),
+                                    (card.y << 16) - (64 << 16), 0);
       if (frame <= 47) {
         Transform_ApplyPitch((48 - frame) << 10);
         if (effect->side == 0)
-          Func_08015160(-Trig_Sin(frame * 682) << 7, 0, 0);
+          SceneTransform_ApplyPosition3(-Trig_Sin(frame * 682) << 7, 0, 0);
         else
-          Func_08015160(Trig_Sin(frame * 682) << 7, 0, 0);
+          SceneTransform_ApplyPosition3(Trig_Sin(frame * 682) << 7, 0, 0);
       }
       Transform_ApplyYaw(0x1770);
       Transform_ApplyRoll(frame << 10);
-      Func_0801521c(scale);
+      SceneTransform_ApplyUniformScale(scale);
       SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList__f189b14(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
-        Func_0801521c(0x4000);
+        SceneTransform_ApplyUniformScale(0x4000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
       }
     }
@@ -742,7 +743,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
 
         texture.pixels = work->sheet + step->z;
         Transform_Reset();
-        Func_08015160((step->x - 60) << 16, (step->y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3((step->x - 60) << 16,
+                                      (step->y - 64) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (effect->side == 1)
           Transform_ApplyYaw(0x8000);
@@ -801,19 +803,19 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Sleep Card (kind 92).
-DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, Func_0818ad40, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, BattleEffect_RunCards, 0)
 
 /// Abilities: Baffle Card (kind 90).
-DEFINE_EFFECT_KIND(BattleEffect_RunBaffleCard, Func_0818ad40, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunBaffleCard, BattleEffect_RunCards, 1)
 
 /// Abilities: Death Card (kind 93).
-DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, Func_0818ad40, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, BattleEffect_RunCards, 2)
 
 /// Abilities: Sword Card (kind 91).
-DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, Func_0818ad40, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, BattleEffect_RunCards, 3)
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef HI

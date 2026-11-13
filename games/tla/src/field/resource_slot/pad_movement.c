@@ -40,7 +40,6 @@ extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f0279b0): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f0279b0 *, s32); f027064
  * has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
@@ -243,7 +242,10 @@ s32 MapGrid_CheckCollision(struct Actor *object,
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
-s32 Func_08027e20(struct Actor *interpreter) {
+/// Script command 0x1f (control mode 6): the ship moved by the direction pad
+/// on a field map, as the party's actor (gMainRoutineWork.ownerOverride), as at
+/// Lemuria's entrance.
+s32 Actor_SailOnMap(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct FieldPosition position;
@@ -598,22 +600,22 @@ struct PartyKeys__s28534 {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 Func_0802db88(struct Actor *object, struct FieldPosition *position);
+s32 WorldMap_IsSailable(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(s28534): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__s28534 *, s32); f027064 has
  * s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
 extern s32 Animation_ApplyChildArgument__s28534(
     struct PlayerSprite__s28534 *, s32) __asm__("Animation_ApplyChildArgument");
 
-/// Script command 0x20, a sibling of Actor_MoveOnWorldMap in The Broken Seal's
+/// Script command 0x20 (control mode 7): the ship sailing the world map, a
+/// sibling of Actor_MoveOnWorldMap in The Broken Seal's
 /// later Actor_MoveOnWorldMap layout (one probe ahead, then four probes 22.5
 /// and 45 degrees off it; six retry headings). Records the kind of ground under
 /// the object in the event work (byte 0xd3a), moves at a run, and lets the
 /// shortcut keys post requests 252 and, while byte 0xd39 is set, clear flag
 /// 0x147 and post 253; turns at most 0x400 a step while moving.
-s32 Func_08028534(struct Actor *object) {
+s32 Actor_SailOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   s16 angleOffsets[28];
@@ -659,31 +661,31 @@ s32 Func_08028534(struct Actor *object) {
     position.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
     if (gDebugMode == 0 || (gInput.held & 0x200) == 0) {
-      if (Func_0802db88(object, &position) == 0) {
+      if (WorldMap_IsSailable(object, &position) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
                                              &testPosition);
-        if (Func_0802db88(object, &testPosition) == 0) {
+        if (WorldMap_IsSailable(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
                                                &testPosition);
-          if (Func_0802db88(object, &testPosition) == 0) {
+          if (WorldMap_IsSailable(object, &testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
             Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
                                                  &testPosition);
-            if (Func_0802db88(object, &testPosition) == 0) {
+            if (WorldMap_IsSailable(object, &testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
                                                    &testPosition);
-              if (Func_0802db88(object, &testPosition) == 0)
+              if (WorldMap_IsSailable(object, &testPosition) == 0)
                 goto update_object;
             }
           }
@@ -701,35 +703,35 @@ s32 Func_08028534(struct Actor *object) {
         position.y = object->y;
         position.z = object->z;
         Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
-        if (Func_0802db88(object, &position) != 0)
+        if (WorldMap_IsSailable(object, &position) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
                                              &testPosition);
-        if (Func_0802db88(object, &testPosition) != 0)
+        if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
                                              &testPosition);
-        if (Func_0802db88(object, &testPosition) != 0)
+        if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
                                              &testPosition);
-        if (Func_0802db88(object, &testPosition) != 0)
+        if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
                                              &testPosition);
-        if (Func_0802db88(object, &testPosition) != 0)
+        if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         angle = (s16)direction;
         goto update_object;
@@ -874,9 +876,8 @@ struct WorldEventWork__f028aac {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 Func_0802dbd0(struct Actor *object, struct FieldPosition *position);
+s32 WorldMap_IsFlyable(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f028aac): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f028aac *, s32); f027064
  * has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
@@ -884,7 +885,9 @@ extern s32 Animation_ApplyChildArgument__f028aac(
     struct PlayerSprite__f028aac *,
     s32) __asm__("Animation_ApplyChildArgument");
 
-s32 Func_08028aac(struct Actor *object) {
+/// Script command 0x21 (control mode 8): the ship with its wings on the world
+/// map, flying over the ground the sea alone would stop (WorldMap_IsFlyable).
+s32 Actor_FlyOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   s16 angleOffsets[28];
@@ -935,31 +938,31 @@ s32 Func_08028aac(struct Actor *object) {
   Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
   if (gDebugMode != 0 && (gInput.held & 0x200) != 0)
     goto update_object;
-  if (Func_0802dbd0(object, &position) == 0) {
+  if (WorldMap_IsFlyable(object, &position) == 0) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
                                          &testPosition);
-    if (Func_0802dbd0(object, &testPosition) == 0) {
+    if (WorldMap_IsFlyable(object, &testPosition) == 0) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
       Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
                                            &testPosition);
-      if (Func_0802dbd0(object, &testPosition) == 0) {
+      if (WorldMap_IsFlyable(object, &testPosition) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
                                              &testPosition);
-        if (Func_0802dbd0(object, &testPosition) == 0) {
+        if (WorldMap_IsFlyable(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
                                                &testPosition);
-          if (Func_0802dbd0(object, &testPosition) == 0)
+          if (WorldMap_IsFlyable(object, &testPosition) == 0)
             goto check_objects;
         }
       }
@@ -977,35 +980,35 @@ s32 Func_08028aac(struct Actor *object) {
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
-    if (Func_0802dbd0(object, &position) != 0)
+    if (WorldMap_IsFlyable(object, &position) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
                                          &testPosition);
-    if (Func_0802dbd0(object, &testPosition) != 0)
+    if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
                                          &testPosition);
-    if (Func_0802dbd0(object, &testPosition) != 0)
+    if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
                                          &testPosition);
-    if (Func_0802dbd0(object, &testPosition) != 0)
+    if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
                                          &testPosition);
-    if (Func_0802dbd0(object, &testPosition) != 0)
+    if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     angle = (s16)direction;
     goto check_objects;

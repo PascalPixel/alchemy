@@ -7,22 +7,21 @@
 
 // Added in patch 1; the Japanese release has no such function.
 #if TLA_PATCH_1
-s32 Func_080b106c(s32 id) {
+/// Returns 1 for the six items that raise a stat for good: Power Bread,
+/// Cookie, Apple, Hard Nut, Mint and Lucky Pepper (items 191 to 196; an
+/// inventory entry may be passed).
+s32 Item_RaisesStat(s32 id) {
   switch (id & 0x1ff) {
-  case 191:
-  case 192:
-  case 193:
-  case 194:
-  case 195:
-  case 196:
+  case 191: // Power Bread
+  case 192: // Cookie
+  case 193: // Apple
+  case 194: // Hard Nut
+  case 195: // Mint
+  case 196: // Lucky Pepper
     return 1;
   }
   return 0;
 }
-#endif
-
-#if TLA_PATCH_1
-s32 Func_080b106c(s32 item);
 #endif
 
 /* VIEW(game): variable gInventorySnapshot as u16 gInventorySnapshot[];
@@ -56,7 +55,7 @@ void InventorySnapshot_Save(void) {
           unit->inventory[i] = 0;
 #if TLA_PATCH_1
         // Added in patch 1; the Japanese release has no such check.
-        if (Func_080b106c(unit->inventory[i]))
+        if (Item_RaisesStat(unit->inventory[i]))
           unit->inventory[i] = 0;
 #endif
       }

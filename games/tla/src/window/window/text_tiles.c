@@ -5,7 +5,6 @@
 #include "../window_internal.h"
 
 extern char ResourceId_WindowTiles;
-void *Resource_GetTableEntry(s32 id);
 
 void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                u8 *remap) {
@@ -96,7 +95,6 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 
 extern char ResourceId_WindowTiles;
 extern const u8 gText_ColourPens[];
-void *Resource_GetTableEntry(s32 id);
 
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   // Unused: gives the stack frame its 32 extra bytes.

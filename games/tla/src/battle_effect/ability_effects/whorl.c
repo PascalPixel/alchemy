@@ -13,7 +13,8 @@ struct StripQuad;
 
 /* VIEW(f171bb0): tag struct ModelTexture as struct ModelTexture__f171bb0;
  * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, Func_08171bb0 moves: 1 of 1741 instructions in tla-ja. */
+ * of the object has, BattleEffect_RunWaterColumn moves: 1 of 1741 instructions
+ * in tla-ja. */
 struct ModelTexture__f171bb0 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -41,16 +42,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -78,7 +78,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
  * `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f171bb0(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -114,7 +113,8 @@ void SceneTransform_ApplyPosition(const s32 *pos);
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 // Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 // rises around the target, with spray, bubbles and a burst.
-void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
+void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
+                                 u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
   // Unused: the second of The Broken Seal's blitter pair gives the stack frame
@@ -504,7 +504,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           s32 y = 64 - ((Trig_Sin(frame * 630) << 6) >> 16);
 
           Transform_Push();
-          Func_08015160(0, ((y - i * 8) << 16) + 0x300000, 0);
+          SceneTransform_ApplyPosition3(0, ((y - i * 8) << 16) + 0x300000, 0);
           if (effect->side == 1) {
             Transform_ApplyYaw(0x8000);
           }
@@ -536,12 +536,13 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             model->shade = shade;
             if (shade > -64) {
               Transform_Reset();
-              Func_08015160((apos.x / 2 - 64) << 16, (apos.y - 64) << 16, 0);
+              SceneTransform_ApplyPosition3((apos.x / 2 - 64) << 16,
+                                            (apos.y - 64) << 16, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               Transform_ApplyRoll((i << 14) + 0x2000);
               Transform_ApplyPitch(-0x1000);
               Transform_ApplyYaw(frame << 12);
-              Func_0801521c(s);
+              SceneTransform_ApplyUniformScale(s);
               Render_TransformVertices(gData_08199210, vertices, 4);
               Render_DrawModelList(model);
             }
@@ -575,7 +576,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           scroll &= 127;
           model->scrollU = scroll;
           Transform_Reset();
-          Func_08015160((spos.x / 2 - 64) << 16, (spos.y << 16) - 0x340000, 0);
+          SceneTransform_ApplyPosition3((spos.x / 2 - 64) << 16,
+                                        (spos.y << 16) - 0x340000, 0);
           if (effect->side == 1) {
             Transform_ApplyYaw(0x8000);
           }
@@ -605,7 +607,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
           model->scrollV = 0;
           SceneTransform_ApplyPosition(pos);
-          Func_08015160(0, 0x100000, 0);
+          SceneTransform_ApplyPosition3(0, 0x100000, 0);
           for (i = 0; i != 3; i++) {
             Transform_Push();
             if (effect->side == 1) {

@@ -107,7 +107,7 @@ Resource_FarCall004:
 	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage
-	export Func_08038340, Func_08044dc8
+	export Func_08038340, Summon_ShowLearnedMessage
 	export WindowColor_ApplyFar, WindowColor_Apply
 	export SettingsMenu_RunFar, SettingsMenu_Run
 	export PauseMenu_RunFar, PauseMenu_Run
@@ -116,7 +116,7 @@ Resource_FarCall004:
 	export Menu_SelectSanctumServiceFar, Menu_SelectSanctumService
 	export YesNoMenu_RunFar, YesNoMenu_Run
 	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
-	export Func_08038388, Func_08044a54
+	export Screens_ReturnZeroFar, Screens_ReturnZero
 	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
 	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage
@@ -131,10 +131,10 @@ Resource_FarCall004:
 	export Window_DrawBorderFar, Window_DrawBorder
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
 	export Link_DrawPageArrowsFar, Link_DrawPageArrows
-	export Func_08038400, Func_080430c4
+	export String_FormatStopwatchFar, String_FormatStopwatch
 	export Save_ToFileFar, Save_ToFile
 	export Icon_CopyResourceToSlotFar, Icon_CopyResourceToSlot
-	export Func_08038418, Func_0803d020
-	export Func_08038420, Func_0803c068
-	export Func_08038428, Func_0803c170
-	export Func_08038430, Func_0803c198
+	export Text_DrawMessageToCanvasFar, Text_DrawMessageToCanvas
+	export Glyph_DrawAsSpriteFar, Glyph_DrawAsSprite
+	export Func_08038428, Glyph_DrawToTiles
+	export Func_08038430, Glyph_AddBlankSprite

@@ -57,6 +57,21 @@ struct DjinnDefinition {
 
 STATIC_ASSERT(sizeof(struct DjinnDefinition) == 12);
 
+/// EnemyDefinition.actionStrategy: how BattleAI_ChooseAction picks a
+/// place in the enemy's eight actions. The first three roll against
+/// gBattleAI_ActionWeights; the next two remember the place in the unit's
+/// AI state.
+enum EnemyActionStrategy {
+  ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
+  ACTION_STRATEGY_FALLING,        ///< from 53 in 256 down to 11
+  ACTION_STRATEGY_FIRST_FAVOURED, ///< the first 113 in 256, down to 5
+  /// A random place the first time, then each in turn at the enemy's turn.
+  ACTION_STRATEGY_RANDOM_START,
+  ACTION_STRATEGY_IN_ORDER,  ///< each in turn from the remembered place
+  ACTION_STRATEGY_NEXT_PICK, ///< the next place at each new pick, from 0
+  ACTION_STRATEGY_SAME       ///< the place last picked
+};
+
 /// An enemy's definition: its level and stats, items, element preset, the
 /// actions it chooses from and its rewards.
 struct EnemyDefinition {

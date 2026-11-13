@@ -1,5 +1,5 @@
 	.section .rodata
-@ Three 8x8 glints that Func_080e1678 draws into its 64x64 canvas, the
+@ Three 8x8 glints that FieldPsynergy_UpdateUnnamed29 draws into its 64x64 canvas, the
 @ first two in turn; drawn in the basic colour palette and the ramp from
 @ blue to white that FieldPsynergy_Unnamed29 writes to OBJ colours 0xe0 to 0xef
 	.global Data_080eda0c
@@ -171,12 +171,12 @@ gFieldEffect_SparklePictures:
 gData_080f0bfc:
 	.4byte 0x10000, 0xf851
 
-@ A rope tile Func_080d897c and Func_080d9b08 unpack into VRAM
-	.global gData_080f0c04
-gData_080f0c04:
+@ A rope tile Rope_Initialize and Tightrope_Initialize unpack into VRAM
+	.global gRope_Tiles
+gRope_Tiles:
 	.incbin "games/tla/src/field/event_commands/rope.8bpp.lz"
 
-@ Func_080da9a8 unpacks four 16x16 sprites, top first, into one VRAM block:
+@ HangingVine_Initialize unpacks four 16x16 sprites, top first, into one VRAM block:
 @ the vine's when its argument is 372, else the chain's, whose middle
 @ sprite it unpacks twice
 	.global Data_080f0c1c
@@ -245,7 +245,7 @@ gBattleEffect_CyclePatternWords:
 	.section .rodata.c
 @ An 8x8 dot of 256 colours, shaded from its rim (colour 0xe9) to its centre
 @ (0xef), that FieldPsynergy_Burst loads into VRAM for its 32 particles. Its
-@ callback Func_080e4d9c writes OBJ colours 0xe0 to 0xff, computed from the
+@ callback FieldPsynergy_UpdateBurst writes OBJ colours 0xe0 to 0xff, computed from the
 @ sine table, each frame; the picture carries the shared OBJ palette and
 @ those colours of the first frame.
 	.global Data_080f3984

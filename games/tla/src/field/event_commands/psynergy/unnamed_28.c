@@ -39,23 +39,15 @@ struct RingEvent {
 
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void FieldPsynergy_FadeToCastColor(void);
 void Camera_WorldToScreen(s32 *position);
-void wait(s32 frames);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
-void Func_080e807c(void);
-/* VIEW(f0e82cc): routine Func_080e7f94 as void Func_080e7f94(u8 *canvas, s32
- * radius, s32 angle, s32 color); the definition has void Func_080e7f94(s32
- * unused, s32 radius, s32 angle, s32 color). */
-extern void Func_080e7f94__f0e82cc(u8 *canvas, s32 radius, s32 angle,
-                                   s32 color) __asm__("Func_080e7f94");
+void FieldPsynergy_UpdateUnnamed28(void);
+/* VIEW(f0e82cc): routine Canvas_PlotPolarPixel as void Canvas_PlotPolarPixel(u8
+ * *canvas, s32 radius, s32 angle, s32 color); the definition has void
+ * Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color). */
+extern void
+Canvas_PlotPolarPixel__f0e82cc(u8 *canvas, s32 radius, s32 angle,
+                               s32 color) __asm__("Canvas_PlotPolarPixel");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-u32 Random16(void);
-void FieldPsynergy_FadeFromCastColor(void);
 
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
@@ -87,7 +79,7 @@ void FieldPsynergy_Unnamed28(void) {
   if (event->up == 0) {
     FieldPsynergy_FadeToCastColor();
     gCpuLoadDisplayEnabled = angle;
-    Func_080eb824();
+    BattleEffect_StartCanvasSprite();
     canvas = Ram_HeapSlots->unkec[1];
     canvas->mode = angle;
     pos = position;
@@ -143,7 +135,7 @@ void FieldPsynergy_Unnamed28(void) {
     tile = VramCache_Load(entry, 0x100, work);
     for (i = 0, mote = work->sparks; i < 64; i++, mote++) {
       sprite = &work->sparkSprites[i];
-      Func_080eaf98(sprite, 4, 4, 0, tile);
+      EffectSprite_Init(sprite, 4, 4, 0, tile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = 0;
@@ -158,7 +150,7 @@ void FieldPsynergy_Unnamed28(void) {
     event->unkcad = 1;
     event->timer = 999;
     off = 0;
-    Task_Add(Func_080e807c, 0x480);
+    Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
     wait(1);
     work->cycling = off;
     phase = 0;
@@ -167,10 +159,10 @@ void FieldPsynergy_Unnamed28(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Func_080e7f94__f0e82cc(picture, 0x340000, radius, 243);
-          Func_080e7f94__f0e82cc(picture, 0x350000, radius, 247);
-          Func_080e7f94__f0e82cc(picture, 0x360000, radius, 251);
-          Func_080e7f94__f0e82cc(picture, 0x370000, radius, 255);
+          Canvas_PlotPolarPixel__f0e82cc(picture, 0x340000, radius, 243);
+          Canvas_PlotPolarPixel__f0e82cc(picture, 0x350000, radius, 247);
+          Canvas_PlotPolarPixel__f0e82cc(picture, 0x360000, radius, 251);
+          Canvas_PlotPolarPixel__f0e82cc(picture, 0x370000, radius, 255);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
@@ -244,7 +236,7 @@ void FieldPsynergy_Unnamed28(void) {
       for (i = 0, mote = work->motes; i < 32; i++) {
         heading = Random16();
         sprite = &work->sprites[i];
-        Func_080eaf98(sprite, 8, 8, 0x40000000, moteTile);
+        EffectSprite_Init(sprite, 8, 8, 0x40000000, moteTile);
         sprite->depth = 240;
         sprite->oam.priority = 0;
         sprite->oam.palette256 = 0;
@@ -269,7 +261,7 @@ void FieldPsynergy_Unnamed28(void) {
   event->up = 1;
   event->unkcad = 1;
   event->timer = 600;
-  Task_Add(Func_080e807c, 0x480);
+  Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
 }
 
 // One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
@@ -308,13 +300,12 @@ struct Actor *Actor_GetById(u32 objectId);
 void Window_LoadGraphics(void);
 extern char ResourceId_SparkleFade;
 
-/// The burst of 64 sparkles that Func_080e807c's effect ends with: once the
-/// event work asks for it, it plays sound 167, fills the tiles at 0x06002000,
-/// reloads the window graphics, loads
-/// the sparkle picture (FieldEffect_SparkleFade) and scatters the sparkles
-/// around the current owner, starting a quarter of them a frame later than
-/// the last, then moves and animates them for 40 frames before releasing the
-/// effect.
+/// The burst of 64 sparkles that FieldPsynergy_UpdateUnnamed28's effect ends
+/// with: once the event work asks for it, it plays sound 167, fills the tiles
+/// at 0x06002000, reloads the window graphics, loads the sparkle picture
+/// (FieldEffect_SparkleFade) and scatters the sparkles around the current
+/// owner, starting a quarter of them a frame later than the last, then moves
+/// and animates them for 40 frames before releasing the effect.
 void FieldPsynergy_EndUnnamed28(void) {
   struct BurstWork__f0e82cc *work = Ram_HeapSlots->battleFxWork[0];
   struct BurstEvent *event = Ram_HeapSlots->eventWork;
@@ -332,7 +323,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   event->pending = 0;
   event->unkcad = 0;
   event->unkcae = 0;
-  Task_Remove(Func_080e807c);
+  Task_Remove(FieldPsynergy_UpdateUnnamed28);
   wait(1);
   // A once-only block: its end holds the order around it (as plain
   // statements, 6 of 226 differ in tla-en).
@@ -379,7 +370,7 @@ void FieldPsynergy_EndUnnamed28(void) {
     mote->vz = 0;
     Vector_AddPolarOffset(Random16() * 3 + 0x20000, angle, &mote->vx);
     mote->timer = -i / 4;
-    Func_080eaf98(sprite, 4, 4, 0, tile);
+    EffectSprite_Init(sprite, 4, 4, 0, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -430,11 +421,11 @@ void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
 void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 
 // Opens the whole map to the view: keeps the view centre's position and the
-// map's view bounds for Func_080e8c9c to restore, notes which edges the view
+// map's view bounds for ViewMove_End to restore, notes which edges the view
 // is beside, and sets the bounds to the map's own. Where the view may not
 // move (the view is held, or the field is in control mode 3), it shakes the
 // screen along the asked direction instead.
-void Func_080e89e4(s32 direction) {
+void ViewMove_Start(s32 direction) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct Actor *center = event->viewCenter;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -523,14 +514,14 @@ void Func_080e89e4(s32 direction) {
 
 /* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another
  * definition; tried with the definition the rest of the object has,
- * Func_080e8b44 moves: 8 of 117 instructions in tla-ja. */
+ * ViewMove_Swing moves: 8 of 117 instructions in tla-ja. */
 #define ABS__f0e82cc(x) ((x) >= 0 ? (x) : -(x))
 
-/// Swings the view centre away from where Func_080e89e4 found it, along the
+/// Swings the view centre away from where ViewMove_Start found it, along the
 /// asked directions, by amplitude times the sine of the phase. The swing goes
 /// into the room: away from the edge the view is beside, or forward when it is
 /// beside neither. A held view does not move.
-void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
+void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
   struct Actor *center = event->viewCenter;
@@ -591,12 +582,10 @@ struct EffectScene__f0e82cc {
   s16 firstObjectId;
 };
 
-void FieldCamera_FollowActor(s32 id, s32 mode);
-
-// Ends a view move: gives the map back the view bounds Func_080e89e4 kept
+// Ends a view move: gives the map back the view bounds ViewMove_Start kept
 // and lets the view follow the scene's first object again. Where the view
 // was held, it only stops the screen shake.
-void Func_080e8c9c(void) {
+void ViewMove_End(void) {
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
   struct EffectScene__f0e82cc *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -629,11 +618,9 @@ union FxSprite {
   u32 words[5];
 };
 
-s32 Func_080cdac0(s32 effect, s32 from, s32 to);
-
 /// Gathers up to eight live objects, other than the scene's main object, for
-/// which Func_080cdac0 measures a distance from the first object, with each
-/// one's sprite value.
+/// which Field_MeasurePsynergyReach measures a distance from the first object,
+/// with each one's sprite value.
 void ViewMove_SaveNearbySprites(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -648,8 +635,8 @@ void ViewMove_SaveNearbySprites(void) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainObject)
       continue;
-    if (Func_080cdac0((s16)(scene->fieldKind | 0x100), scene->firstObjectId,
-                      i) == -1)
+    if (Field_MeasurePsynergyReach((s16)(scene->fieldKind | 0x100),
+                                   scene->firstObjectId, i) == -1)
       continue;
     group->objects[group->count] = obj;
     group->values[group->count] = ((union FxSprite *)obj->sprite)->halves[9];

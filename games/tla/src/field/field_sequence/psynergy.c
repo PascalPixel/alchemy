@@ -80,7 +80,7 @@ s32 Field_UsePsynergy(u32 code) {
     retreat = 1;
   }
 
-  selector = Func_080ce31c(group);
+  selector = Scene_SelectPsynergyTarget(group);
   pending = Scene_FindPsynergyTrigger(0x80000005, group, selector);
   if (pending != NULL) {
     target = -1;
@@ -91,7 +91,7 @@ s32 Field_UsePsynergy(u32 code) {
   if (code & 0x2000)
     return Field_RunPsynergyEndEvents(code);
 
-  selector = Func_080ce31c(group);
+  selector = Scene_SelectPsynergyTarget(group);
   before = Scene_FindPsynergyTrigger(0x10000005, group, selector);
   after = Scene_FindPsynergyTrigger(5, group, selector);
   during = Scene_FindPsynergyTrigger(0x50000005, group, selector);
@@ -116,7 +116,7 @@ s32 Field_UsePsynergy(u32 code) {
   }
   if (group == 23) {
     object = ObjectTable_Get(Party_GetLeaderActor());
-    if (Func_080dbcd8(object->x, object->z, object->terrainId) == 0) {
+    if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0) {
       before = NULL;
       after = NULL;
       during = NULL;
@@ -205,8 +205,8 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
 
 s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
   u16 kind = effectId;
-  s32 result =
-      (s32)Scene_FindPsynergyTrigger(0xf0000005, kind, Func_080ce31c(kind));
+  s32 result = (s32)Scene_FindPsynergyTrigger(0xf0000005, kind,
+                                              Scene_SelectPsynergyTarget(kind));
 
   return (u32)((-result) | result) >> 31;
 }

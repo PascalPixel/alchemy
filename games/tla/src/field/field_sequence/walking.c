@@ -42,8 +42,9 @@ s32 Field_CountRequests(void) {
 }
 
 /// Sets event work byte 0xd39 when flag 0x8df is set and a party member
-/// has action 153; clears it otherwise.
-void Func_080cb05c(void) {
+/// knows Hover (ABILITY_HOVER); clears it otherwise. The world map's pad
+/// movement reads it.
+void Field_UpdateHoverReady(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   if (GameFlag_Test(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
@@ -83,7 +84,9 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   return cell[2];
 }
 
-s32 Func_080cb144(void) {
+/// The collision code of the cell under the leader (on the world map, of its
+/// block), or 0 with no leader. Teleport's triggers match it.
+s32 Field_GetCollisionUnderLeader(void) {
   struct DisplayBlock *block = Ram_HeapSlots->eventWork;
   struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -411,7 +414,9 @@ void WorldMap_Freeze(void) {
   }
 }
 
-void Func_080cb8a4(void) {
+/// On the world map (display mode 3), loads the area graphics a change left
+/// pending.
+void WorldMap_ReloadPendingAreaGraphics(void) {
   struct DisplayBlock *block = HeapSlot_AllocEwram(108, 0xd50);
 
   if (block->mode == 3 && block->pending != 0) {

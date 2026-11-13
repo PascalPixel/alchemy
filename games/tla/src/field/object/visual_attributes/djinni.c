@@ -44,7 +44,6 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 #endif
 
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_Jump(s32 id, s32 speed, s32 frames);
 /* VIEW(motes): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
  * kind, s32 x, s32 y, s32 z); visual_attributes has struct
  * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
@@ -200,7 +199,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   }
   WorldMap_Freeze();
   Djinn_ShowJoinedMessageFar(owner, element, djinni);
-  Func_080cb8a4();
+  WorldMap_ReloadPendingAreaGraphics();
 #if TLA_PATCH_1
   ((struct EventActors *)Ram_HeapSlots->eventWork)->actors[actor] = NULL;
 #endif

@@ -18,16 +18,15 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -54,7 +53,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
  * `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -71,8 +69,8 @@ void Transform_Pop(void);
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight); // builds a grid's mesh
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight); // builds a grid's mesh
 void Render_ProjectVertices(struct ModelVertex *vertices,
                             struct ProjectedVertex *screen, s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
@@ -410,7 +408,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           s32 row;
           s32 angle;
 
-          Func_0818de3c(mesh, 8, 8, 8, 8);
+          Mesh_BuildGrid(mesh, 8, 8, 8, 8);
           for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
             s32 y = (-Trig_Cos(angle) * 48) >> 16;
             s32 radius = (Trig_Sin(angle) * 48) >> 16;
@@ -432,7 +430,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
-        Func_08015160(0, 0x100000, 0);
+        SceneTransform_ApplyPosition3(0, 0x100000, 0);
         if (effect->side == 0) {
           Transform_ApplyRoll(20576);
         } else {
@@ -442,7 +440,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         if (frame > 31) {
           scale = (frame << 10) + 0x2000;
         }
-        Func_0801521c(scale);
+        SceneTransform_ApplyUniformScale(scale);
         if (frame > 3) {
           s32 shade = frame * 4 - 80;
 
@@ -478,12 +476,12 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08173588(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Rime (kind 240).
-void BattleEffect_RunRime(s32 a0) { Func_08173588(a0, 0); }
+void BattleEffect_RunRime(s32 a0) { BattleEffect_RunDjinniSign(a0, 0); }
 
 /// Abilities: Haze (kind 238).
-void BattleEffect_RunHaze(s32 a0) { Func_08173588(a0, 1); }
+void BattleEffect_RunHaze(s32 a0) { BattleEffect_RunDjinniSign(a0, 1); }
 #undef SLOT_BLITTER
 #undef BLITTER

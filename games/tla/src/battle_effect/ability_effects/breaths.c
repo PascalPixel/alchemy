@@ -32,7 +32,8 @@ enum {
 // pixels.
 /* VIEW(f18bc98): tag struct ModelTexture as struct ModelTexture__f18bc98;
  * render_model.h has another definition; tried with the definition the rest of
- * the object has, Func_0818bc98 moves: 1 of 1241 instructions in tla-ja. */
+ * the object has, BattleEffect_RunBreaths moves: 1 of 1241 instructions in
+ * tla-ja. */
 struct ModelTexture__f18bc98 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -92,18 +93,16 @@ extern const u8 Data_081991c0[];
 extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Func_0815b510(u8 *map, s32 size, s32 scale);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
@@ -113,7 +112,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
  * Render_DrawModelList(struct Model__f18ad40 *model). */
 extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__(
     "Render_DrawModelList");
-void Heap_Release(void *block);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
                               s32 frames);
@@ -133,7 +131,7 @@ void BattleEffect_EndCanvasLayer(void);
 /// The breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and Blast
 /// Breath): motes gather at the user's mouth and burst out of it, then each
 /// breath fires its own way.
-void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -270,7 +268,8 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
         if (size > Data_08199d9f[effect->variant])
           size = Data_08199d9f[effect->variant];
         if (size > 0) {
-          Func_0815b510(work->sheet + 0x4000, size, 0x10000);
+          BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
+                                                 0x10000);
           draw[1](canvas, work->sheet + 0x4000, mouthX - size / 2,
                   mouthY - size, size, size * 2);
         }
@@ -285,7 +284,8 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           size = 104 - frame * 2;
         half = size >> 1;
         size = half * 2;
-        Func_0815b510(work->sheet + 0x4000, size, 0x10000);
+        BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
+                                               0x10000);
         draw[1](canvas, work->sheet + 0x4000, mouthX - (size >> 1),
                 mouthY - size, size, half * 4);
       }
@@ -408,15 +408,18 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
             for (i = 0; i != count; i++) {
               Transform_Reset();
               if (mode == BREATH_BLAST) {
-                Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
+                SceneTransform_ApplyPosition3((mouthX - 64) << 16,
+                                              (mouthY - 64) << 16, 0);
                 SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
                 Transform_ApplyRoll((i << 14) + 0x2000);
                 Transform_ApplyPitch(-0x1000);
               } else {
                 if (effect->side == 0)
-                  Func_08015160((mouthX - 72) << 16, (mouthY - 64) << 16, 0);
+                  SceneTransform_ApplyPosition3((mouthX - 72) << 16,
+                                                (mouthY - 64) << 16, 0);
                 else
-                  Func_08015160((mouthX - 56) << 16, (mouthY - 64) << 16, 0);
+                  SceneTransform_ApplyPosition3((mouthX - 56) << 16,
+                                                (mouthY - 64) << 16, 0);
                 Transform_ApplyYaw(0x32c8);
                 Transform_ApplyPitch(0x4000);
               }
@@ -450,22 +453,22 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
                   if (effect->side == 0)
-                    Func_08015160((mouthX + Data_08199dbb[mode * 4 + i] - 48)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX + Data_08199dbb[mode * 4 + i] - 48) << 16,
+                        (mouthY - 64) << 16, 0);
                   else
-                    Func_08015160((mouthX - Data_08199dbb[mode * 4 + i] - 80)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX - Data_08199dbb[mode * 4 + i] - 80) << 16,
+                        (mouthY - 64) << 16, 0);
                 } else {
                   if (effect->side == 0)
-                    Func_08015160((mouthX + Data_08199dbb[mode * 4 + i] - 64)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX + Data_08199dbb[mode * 4 + i] - 64) << 16,
+                        (mouthY - 64) << 16, 0);
                   else
-                    Func_08015160((mouthX - Data_08199dbb[mode * 4 + i] - 64)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX - Data_08199dbb[mode * 4 + i] - 64) << 16,
+                        (mouthY - 64) << 16, 0);
                 }
                 SceneTransform_ApplyScale3(scale, scale, scale);
                 Transform_ApplyYaw(0x36b0);
@@ -493,7 +496,8 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           model->mesh = Data_08199220;
           texture.pixels = work->sheet;
           Transform_Reset();
-          Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
+          SceneTransform_ApplyPosition3((mouthX - 64) << 16,
+                                        (mouthY - 64) << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
@@ -562,13 +566,14 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
+                                   s32 mode);
 
 /// Abilities: Human Hunt (kind 437).
-DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, Func_0818c7b8, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, BattleEffect_RunCrescentSlash, 0)
 
 /// Abilities: Echo Cut (kind 390).
-DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, Func_0818c7b8, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, BattleEffect_RunCrescentSlash, 1)
 
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.
@@ -592,7 +597,8 @@ void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
 // cuts it upside down and higher, and throws the target into the air at
 // frame 12. Human Hunt loads the Mars Djinn's colours into the background
 // palette and blends its slash more faintly.
-void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -726,7 +732,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
 typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width,
                               s32 height);
 
-void Func_0818caa8(void *source, s32 x, s32 y, s32 size) {
+void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   s32 half;
 

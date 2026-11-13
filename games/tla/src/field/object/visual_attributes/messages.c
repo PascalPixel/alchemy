@@ -187,12 +187,12 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
 
 /// The held keys, read again at each test through a volatile pointer; as
 /// plain reads, combined into one test of 0x305, 62 of 82 instructions of
-/// Func_080d3fb0 differ in tla-en.
+/// FieldMessage_ShowAtActorAndWait differ in tla-en.
 #define HELD (*(volatile u32 *)&gInput.held)
 
 /// Opens the message at the object and waits for its window; after ten
 /// seconds, or with Select, R, L and A held, the text is finished at once.
-void Func_080d3fb0(s32 object, s32 message) {
+void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
   s32 masked;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   void *window = FieldMessage_ShowAtActor(object, message);
@@ -224,12 +224,12 @@ void Func_080d3fb0(s32 object, s32 message) {
 }
 
 void Event_ShowMessageThenWait(s32 object, s32 message, s32 frames) {
-  Func_080d3fb0(object, message);
+  FieldMessage_ShowAtActorAndWait(object, message);
   Event_Wait(frames);
 }
 
 void Event_ShowMessageAndWait(s32 object, s32 message) {
-  Func_080d3fb0(object, message);
+  FieldMessage_ShowAtActorAndWait(object, message);
 }
 
 s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
@@ -238,11 +238,11 @@ s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
   FieldMessage_ShowAtActor(object, message);
   result = Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0);
   if (result == 0) {
-    Func_080d3fb0(object, message);
+    FieldMessage_ShowAtActorAndWait(object, message);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    Func_080d3fb0(object, message);
+    FieldMessage_ShowAtActorAndWait(object, message);
   }
   return result;
 }

@@ -650,8 +650,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         s32 scale = Trig_Sin(((frame - 8) << 11) + 0x3000) * 612 >> 8;
 
         Transform_Reset();
-        Func_08015160((targetPosition.x / 2 - 64) << 16,
-                      (targetPosition.y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3((targetPosition.x / 2 - 64) << 16,
+                                      (targetPosition.y - 64) << 16, 0);
         Transform_ApplyPitch(0x4000);
         Transform_ApplyYaw(0x2000);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
@@ -966,9 +966,9 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
 
 #define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
 
-// Shows the battle background fading in, until A (unused).
-
-void Func_0813e7e0(struct BattleEffectArgument *effect) {
+/// Unused: nothing refers to it. Shows the cloud swirl
+/// (BattleEffect_RunCloudSwirl), then the battle background fading in, until A.
+void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   struct BattleWork *battle;
@@ -984,7 +984,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
   work->vblanksSinceTransfer = 1;
-  Func_08191530(effect);
+  BattleEffect_RunCloudSwirl(effect);
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();
@@ -1038,7 +1038,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
-  Func_08164b2c(-31, -31, -31);
+  Palette_BrightenSavedBattleBg(-31, -31, -31);
   BattleEffect_TintBattler(effect->actors[0], 7, 3, 0, 30);
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
@@ -1051,7 +1051,8 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
     if (*(volatile u32 *)&gInput.held & 1)
       break;
     if (frame <= 63)
-      Func_08164b2c(frame / 2 - 31, frame / 2 - 31, frame / 2 - 31);
+      Palette_BrightenSavedBattleBg(frame / 2 - 31, frame / 2 - 31,
+                                    frame / 2 - 31);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

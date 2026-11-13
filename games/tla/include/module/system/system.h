@@ -27,7 +27,7 @@ typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 /// SEQUENCE_ values: the sequences other than the field sequence.
 enum {
   // XXX: what sequence Resource_FarCall00F runs here, where The Broken
-  // Seal's SEQUENCE_NONE runs nothing; Func_081b83c4
+  // Seal's SEQUENCE_NONE runs nothing; SuperLuckyDice_Run
   // (field/dice_game.c) and a scene that leaves for it would
   // settle it.
   SEQUENCE_UNK_1FB = 0x1fb,
@@ -65,12 +65,12 @@ s32 ArcTan2(s32 x, s32 y);
 void ScreenFade_ToBlack(s32 vblanks);
 void ScreenFade_Wait(void);
 
-void Func_080150ac(s32 ang);
+void Transform_SetYaw(s32 ang);
 void Transform_ApplyPitch(s32 ang);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
-void Func_08015160(s32 x, s32 y, s32 z); // translate
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z); // translate
+void SceneTransform_ApplyUniformScale(s32 scale);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyRoll(s32 ang);
 void Transform_Pop(void);

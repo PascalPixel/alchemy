@@ -85,15 +85,15 @@ void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 extern void Link_DrawShiftedTilePair__battle_party_commands(
     u32 address) __asm__("Link_DrawPageArrows");
 void Menu_BuildLocalizedPatternTiles(void);
-/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16
- * *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has
- * s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct
- * BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...;
- * tried as the rest of the object declares it, Battle_CollectPartyCommands
- * moves: 1 of 1909 instructions in tla-ja. */
-extern s32
-Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction **cursor,
-                                     s32 *forcedCount) __asm__("Func_0804babc");
+/* VIEW(battle_party_commands): routine BattleParty_SplitChoosers as s32
+ * BattleParty_SplitChoosers(u16 *actors, struct BattleAction **cursor, s32
+ * *forcedCount); the definition has s32 BattleParty_ChooseReserve(s32 slot) {
+ * u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count =
+ * BattleParty_PrepareReserveOwners...; tried as the rest of the object declares
+ * it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
+extern s32 Func_0804babc__battle_party_commands(
+    u16 *actors, struct BattleAction **cursor,
+    s32 *forcedCount) __asm__("BattleParty_SplitChoosers");
 /* VIEW(battle_party_commands): routine PartyStatus_HighlightMembers as void
  * PartyStatus_HighlightMembers(u16 *units); countdown has s32
  * PartyStatus_HighlightMembers(u16 *ids); tried as the definition's s32
@@ -117,7 +117,6 @@ extern s32 BattleParty_ListActorIdsFar__battle_party_commands(
  * in tla-ja. */
 extern void Message_DecodeRaw__battle_party_commands(
     s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
-void *Unit_Get(s32 owner);
 /* VIEW(battle_party_commands): routine Window_Create as struct Window
  * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); menus has
  * struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32
@@ -206,10 +205,11 @@ extern void Text_DrawWideStringAtOffset__battle_party_commands(
 /// the `commandCount` units in `actors`, with two nested functions: the party
 /// panels' clear and the link wait's message (Link_DrawWaitingForOpponent).
 /// Unlike The Broken Seal's, each round first appends the forced actions of
-/// statused members (Func_0804babc), whose count is added to the result; B on
-/// the party's row undoes a reserve swap; command 49 swaps a reserve member in
-/// (Func_0804b8b8 after choosing the slot); Status lists the reserve as well;
-/// Flee is command 99; and the Djinn tutorial's hint follows an unleash.
+/// statused members (BattleParty_SplitChoosers), whose count is added to the
+/// result; B on the party's row undoes a reserve swap; command 49 swaps a
+/// reserve member in (BattleParty_ChooseReserve after choosing the slot);
+/// Status lists the reserve as well; Flee is command 99; and the Djinn
+/// tutorial's hint follows an unleash.
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   u16 signatureHeader[2];
@@ -372,7 +372,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       mode = BattleTarget_RunSelection(0, 2, 1, 8);
       if (mode == -1)
         continue;
-      mode = Func_0804b8b8(mode);
+      mode = BattleParty_ChooseReserve(mode);
       if (mode == -1)
         goto choose_place;
       BattleSummon_UpdateAvailabilityFar();
@@ -737,7 +737,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
                                            Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
-            void *hint = Message_ShowAndWait(Func_0804519c() + 14, 15, 8);
+            void *hint =
+                Message_ShowAndWait(Djinn_GetGiveTutorialMessage() + 14, 15, 8);
 
             while (Message_AllTyped() == 0)
               wait(1);

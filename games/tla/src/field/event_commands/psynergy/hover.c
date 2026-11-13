@@ -5,7 +5,7 @@
 
 #include "../psynergy_internal.h"
 
-// Kind 24's work (battle_fx_work[0]), as Func_080e9940's draft has it.
+// Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
 /* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
@@ -47,10 +47,9 @@ struct GlowEvent__f0e9af4 {
 
 extern char ResourceId_RingOrb;
 
-void wait(s32 frames);
-s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void Func_080e9940(void);
+s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+void HoverGlow_Update(void);
 
 void FieldPsynergy_Hover(void) {
   struct GlowWork__f0e9af4 *work = HeapSlot_Alloc(92, 0x1038);
@@ -69,7 +68,7 @@ void FieldPsynergy_Hover(void) {
   s32 n;
 
   pending = Scene_FindPsynergyTrigger(0x50000005, scene->kind,
-                                      Func_080ce31c(scene->kind));
+                                      Scene_SelectPsynergyTarget(scene->kind));
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
   slot = VramCache_FindFreeEntry();
   tile = VramCache_Load(slot, 0x800, work);
@@ -77,7 +76,7 @@ void FieldPsynergy_Hover(void) {
   work->tile = tile;
   work->scale = 0;
   sprite = &work->sprite;
-  Func_080eaf98(sprite, 15, 15, 0x80000000, (s16)work->tile);
+  EffectSprite_Init(sprite, 15, 15, 0x80000000, (s16)work->tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
@@ -88,10 +87,10 @@ void FieldPsynergy_Hover(void) {
   work->unk1030 = 0;
   work->phase = 0;
   work->fading = 0;
-  Task_Add(Func_080e9940, TASK_PASS_VBLANK);
+  Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
 
   found = 0;
-  if (Func_080dbcc0(player->x, player->z, player->terrainId) == 0) {
+  if (MapGrid_IsHoverCell(player->x, player->z, player->terrainId) == 0) {
     found = 1;
   } else {
     for (n = 0; n < 80; n++) {
@@ -101,8 +100,8 @@ void FieldPsynergy_Hover(void) {
         position[0] = other->x;
         position[1] = other->terrainHeight;
         position[2] = other->z;
-        if (Func_080dbe80(&player->x, player->radius, &other->x,
-                          other->radius - 2) >= 0) {
+        if (FieldPsynergy_CheckOverlap(&player->x, player->radius, &other->x,
+                                       other->radius - 2) >= 0) {
           found = 1;
           break;
         }
@@ -125,7 +124,7 @@ void FieldPsynergy_Hover(void) {
       wait(1);
     }
     wait(5);
-    Task_Remove(Func_080e9940);
+    Task_Remove(HoverGlow_Update);
     VramCache_FreeEntry(work->resource);
     HeapSlot_Release(92);
   } else {
@@ -161,7 +160,7 @@ void FieldPsynergy_EndHover(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 
-  Task_Remove(Func_080e9940);
+  Task_Remove(HoverGlow_Update);
   Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
   gMainRoutineWork.renderMode = 0;
@@ -209,10 +208,11 @@ struct AnimatedSprite {
   struct SpritePictures *pictures;
 };
 
-/// Steps the sprite through a four-picture cycle on the actor's timer, as
+/// The summon tablet's update while its runes fly: steps the sprite through
+/// a four-picture cycle on the actor's timer, as
 /// overlay 68c's Func_02001398 does, but leaves the next picture alone on the
 /// fourth step.
-void Func_080e9e8c(struct Actor *object) {
+void SummonTablet_CyclePictures(struct Actor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
   struct SpritePictures *pictures = sprite->pictures;
 
@@ -248,8 +248,6 @@ struct Chase {
 };
 
 s32 ArcTan2(s32 y, s32 x);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 
 /// Moves toward the target by speed, stopping on it on overshoot.
 void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
@@ -309,7 +307,8 @@ extern void EffectSprite_DrawAtWorldPosition__f0e9af4(
     struct EffectSprite *sprite,
     struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");
 
-void Func_080e9f68(void) {
+/// Task of SummonTablet_PlayRunes: moves and draws the motes.
+void SummonTablet_UpdateMotes(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
   s32 position[3];
   struct Mote *mote;
@@ -347,20 +346,20 @@ void Func_080e9f68(void) {
         Motion_StepTowardTarget(mote, 0x40000);
         sprite->x = mote->x;
         sprite->y = mote->z;
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
       }
       mote->timer++;
     } else if (work->state == 2) {
       Motion_StepTowardTarget(mote, 0x60000);
       sprite->x = mote->x;
       sprite->y = mote->z;
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
     } else if (work->state == 3) {
       if (mote->x != work->targetX || mote->z != work->targetZ) {
         Motion_StepTowardTarget(mote, 0x60000);
         sprite->x = mote->x;
         sprite->y = mote->z;
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
       }
     }
   }

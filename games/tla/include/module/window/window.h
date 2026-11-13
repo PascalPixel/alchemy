@@ -41,13 +41,13 @@ s32 SettingsMenu_Run(void);
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse);
 
-s32 Func_0804b8b8(s32 slot);
+s32 BattleParty_ChooseReserve(s32 slot);
 
 void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts);
 
 void Window_MarkVisibleTextTiles(void);
 
-s32 Func_0804519c(void);
+s32 Djinn_GetGiveTutorialMessage(void);
 
 void WindowSprite_PrepareForRedraw(struct Window *);
 
@@ -62,7 +62,7 @@ void Text_UseExtraTiles(s32 alt);
 
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 s32 Message_DecodeMode1(s32 message);
-void Func_0803cf6c(s32 message);
+void Message_DecodeAppend(s32 message);
 
 void MenuCursor_AdvanceFar(struct NameCursorMotion *cursor);
 void MenuCursor_MoveTowardTargetFar(struct NameCursorMotion *cursor);

@@ -46,24 +46,15 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
     ResourceId_YellowFlameBurst, ResourceId_BlueFlameBurst,
     ResourceId_DustPuffA;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-s32 Func_08020330(struct Actor *object);
+s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
-s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_ReleaseFar(struct Actor *object);
-void wait(s32 frames);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void FieldPsynergy_FadeFromCastColor(void);
-void Func_080e38c8(void);
+void Blaze_UpdateSpray(void);
 
 #define OBJECT_DEFINITION(object)                                              \
   (((struct ObjectAnimation *)(object)->sprite)->definition)
@@ -102,7 +93,7 @@ void FieldPsynergy_Blaze(void) {
   caster = scene->mainObject;
   look = 0;
   object = scene->child;
-  if (Func_08020330(object) == 418) {
+  if (Actor_GetSpriteIdFar(object) == 418) {
     kind = ((u8 *)OBJECT_DEFINITION(object))[5];
     if (kind == 4)
       look = 1;
@@ -123,7 +114,8 @@ void FieldPsynergy_Blaze(void) {
       id = OBJECT_DEFINITION(cursor.object)[0];
       if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
-        distance = Func_080cdac0(scene->fieldKind, scene->firstObjectId, i);
+        distance = Field_MeasurePsynergyReach(scene->fieldKind,
+                                              scene->firstObjectId, i);
         if (distance != -1 && best > distance) {
           height = Resource_GetMetadataRecordFarFar(
                        OBJECT_DEFINITION(cursor.object)[0])
@@ -219,7 +211,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->drops[j];
 
-    Func_080eaf98(sprite, 15, 24, 0x80000000, tile);
+    EffectSprite_Init(sprite, 15, 24, 0x80000000, tile);
     sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
     sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
     sprite->oam.palette256 = 1;
@@ -235,7 +227,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->puffs[j];
 
-    Func_080eaf98(sprite, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 15, 0x40000000, tile);
     sprite->scaleY = sprite->scaleX = 0xc000;
     sprite->depth = 250;
     sprite->oam.priority = 0;
@@ -246,7 +238,7 @@ void FieldPsynergy_Blaze(void) {
   }
   wait(1);
   work->emitting = 1;
-  Task_Add(Func_080e38c8, 0x480);
+  Task_Add(Blaze_UpdateSpray, 0x480);
   for (k = 0; k < 80; k++) {
     wait(1);
     if (work->hit != 0) {
@@ -273,7 +265,7 @@ void FieldPsynergy_Blaze(void) {
       break;
     wait(1);
   }
-  Task_Remove(Func_080e38c8);
+  Task_Remove(Blaze_UpdateSpray);
   VramCache_FreeEntry(dropSlot);
   VramCache_FreeEntry(puffSlot);
 end:
@@ -295,7 +287,7 @@ s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 /// Says whether object is blocked: 1 when, outside event mode 3,
 /// MapGrid_CheckCollisionAtFar reports its cell, ORed with 2 when it overlaps
 /// any other collidable script object (each radius less 2 pixels).
-s32 Func_080e4244(struct Actor *object) {
+s32 Actor_CheckBlocked(struct Actor *object) {
   s32 result;
   struct Actor *other;
   s32 i;
@@ -336,10 +328,13 @@ struct CueEvent {
  * for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
 
-s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
-s32 Func_080dbd48(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
-void Func_080e42d4(void) {
+/// Task of the Sand: ends it (cue 0x208b) when the leader, not blocked, stands
+/// off sand or gMainRoutineWork's byte 707 is set, or while it climbs as sand
+/// it leaves a climbable cell or faces one that is not.
+void FieldPsynergy_WatchSandGround(void) {
   struct CueEvent *event = Ram_HeapSlots->eventWork;
   u8 *party = gMainRoutineWork__f0e3d04;
   struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
@@ -347,7 +342,7 @@ void Func_080e42d4(void) {
 
   if (*(s8 *)(party + 707) != 0)
     reason = 1;
-  if (Func_080dbcd8(object->x, object->z, object->terrainId) == 0)
+  if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
     reason = 2;
   if (party[530] == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
@@ -355,7 +350,7 @@ void Func_080e42d4(void) {
     s32 z;
     s32 back;
 
-    if (Func_080dbd48(object->x, object->z, 2) == 0)
+    if (MapGrid_IsClimbableCell(object->x, object->z, 2) == 0)
       reason = 3;
     x = object->x & 0xfff00000;
     z = object->z & 0xfff00000;
@@ -369,10 +364,10 @@ void Func_080e42d4(void) {
      */
     do {
     } while (0);
-    if (Func_080dbd48(x + 0x80000, z + back, 2) == 0)
+    if (MapGrid_IsClimbableCell(x + 0x80000, z + back, 2) == 0)
       reason = 4;
   }
-  if (reason != 0 && (Func_080e4244(object) & 2) == 0)
+  if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
     event->cue = 0x208b;
 }
 
@@ -406,7 +401,8 @@ extern u8 BattleEffect_DecodePictureBlockSize[];
 /// Draws the current picture into a cleared buffer of the given
 /// size. The ARM picture decoder runs from RAM: when no copy is loaded yet,
 /// this loads one for the call and releases it afterwards.
-void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
+void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
+                                 s32 size) {
   s32 decoderLoaded = 1;
   PictureDecoder decode = Ram_HeapSlots->unk4c[1];
 

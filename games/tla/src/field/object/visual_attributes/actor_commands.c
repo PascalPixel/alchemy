@@ -69,7 +69,8 @@ void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
   sprite->tile = tile;
 }
 
-void Func_080d390c(u32 id) {
+/// Stops actor id moving and colliding and hides it.
+void Actor_DisableById(u32 id) {
   struct Actor *object = Actor_GetById(id);
 
   object->motionFlags = 0;
@@ -92,7 +93,10 @@ extern void
 Func_08038248__visual_attributes(s32 resource,
                                  u8 *buffer) __asm__("Icon_DrawItemFar");
 
-void Func_080d3940(u32 id, u32 angle) {
+/// Lays actor id down along angle, a quarter turn rounded: shows its first
+/// frame turned, shifted by the side it falls to, and blocks its cell and the
+/// cell beyond it.
+void Actor_FallOverById(u32 id, u32 angle) {
   s32 position[3];
   struct Actor *object = Actor_GetById(id);
   struct ObjectSprite *sprite = object->sprite;
@@ -130,7 +134,9 @@ void Func_080d3940(u32 id, u32 angle) {
   }
 }
 
-void Func_080d3a10(s32 id, u32 angle, s32 mode) {
+/// Actor_FallOverById with an animation (mode, -1 for none) and the fall
+/// moving the actor itself half a cell the way it falls.
+void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
   s32 position[3];

@@ -40,8 +40,8 @@ extern s32
 VramCache_Reload__menus(s32 entry,
                         const void *tiles) __asm__("VramCache_Reload");
 /* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the
- * definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2];
- * struct BattleWork *battle; s32 count; count =
+ * definition has s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16
+ * selected[2]; struct BattleWork *battle; s32 count; count =
  * BattleParty_PrepareReserveOwners...; tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
  * in tla-ja: games/tla/src/window/menus.c:328: invalid type argument of `->'.

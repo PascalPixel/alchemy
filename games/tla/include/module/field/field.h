@@ -43,15 +43,15 @@ struct ReelSprite {
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
 // for a bet of ten coins a level. A pair, two pairs, a triple or four of a kind
-// (Func_081b834c, banners Slots_OnePairBanner to Slots_PerfectBanner) pays 1,
-// 2, 3 or 8 times the bet; a win offers a double-up round (state 5,
-// Slots_DoubleUpBanner and Slots_CashOutBanner): guess whether the next total
-// is higher or lower than this one (state 1, Slots_HigherBanner and
-// Slots_LowerBanner) for twice the winnings, up to five rounds, the last the
-// final game; a miss loses everything. Winnings are counted into the coins a
-// coin a frame (state 4). The dice bounce off the dome's round wall, settle to
-// a face and are drawn back to front with their shadows; palettes of the
-// banners pulse with Func_081b810c.
+// (SuperLuckyDice_ScoreDice, banners Slots_OnePairBanner to
+// Slots_PerfectBanner) pays 1, 2, 3 or 8 times the bet; a win offers a
+// double-up round (state 5, Slots_DoubleUpBanner and Slots_CashOutBanner):
+// guess whether the next total is higher or lower than this one (state 1,
+// Slots_HigherBanner and Slots_LowerBanner) for twice the winnings, up to five
+// rounds, the last the final game; a miss loses everything. Winnings are
+// counted into the coins a coin a frame (state 4). The dice bounce off the
+// dome's round wall, settle to a face and are drawn back to front with their
+// shadows; palettes of the banners pulse with SuperLuckyDice_BrightenColors.
 struct DiceParticle {
   s32 x;
   s32 y;
@@ -188,8 +188,8 @@ struct ReelSave {
 /// One word of the table at Ram_MapBlocks, 32 words to a row.
 struct Data02020000 {
   u32 unk0 : 24;
-  /// Passed to Func_0802d088; region / 10 picks the set. The Broken Seal's
-  /// WorldMapCell keeps the encounter region at these bits.
+  /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the set. The Broken
+  /// Seal's WorldMapCell keeps the encounter region at these bits.
   u32 region : 6;
   u32 unk1e : 2;
 };
@@ -921,12 +921,15 @@ struct AnimationGroup {
 extern const u8 gData_081ba30c[];
 s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
-void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle);
-s32 Func_081b834c(s32 *dice);
-s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
-s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
+void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
+                                   s32 angle);
+s32 SuperLuckyDice_ScoreDice(s32 *dice);
+s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
+                              s32 digits);
+s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
+                                   s32 palette, s32 digits);
 
-void Func_080caa4c(s32 table);
+void Actor_ResetForLeader(s32 table);
 
 void Portrait_CloseWindowFar(s32 sprite);
 
@@ -940,12 +943,12 @@ s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
-s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position);
+s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position);
 
 u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 
 void WorldMap_Freeze(void);
-void Func_080cb8a4(void);
+void WorldMap_ReloadPendingAreaGraphics(void);
 
 void Event_NoOp(void);
 
@@ -981,7 +984,7 @@ void Party_ClearUnusableShortcuts(void);
 
 void BattleBackground_SelectForMap(void);
 
-s32 Func_080ca9cc(s32 id, s32 *position);
+s32 ScenePoint_GetPosition(s32 id, s32 *position);
 void ObjectTable_Clear(void);
 
 void Party_AddPp(s32 amount, s32 unused);
@@ -1003,12 +1006,12 @@ s32 Scene_RunStepTriggerOrExit(s32 value);
 s32 Field_RunPushCell(s32 keys);
 s32 Field_ExamineCell(s32 id);
 
-s32 Func_080cdc74(void);
-void Func_080cdd80(void);
+s32 Leader_CanPushObjectAhead(void);
+void Leader_PushObjectAhead(void);
 
 s32 Field_UsePsynergy(u32 code);
 
-s16 *Func_080ceba8(void);
+s16 *SceneItem_GetRows(void);
 void Field_PlaceTreasureSpots(void);
 s32 Actor_GetSpriteShape(u32 objectId);
 void ObjectEvent_SetMode5WithCue(u32 objectId);
@@ -1140,7 +1143,7 @@ void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
 
 void Icon_DrawItemFar(s32 item);
 
-s32 Func_080cec24(s32 value, s32 *out);
+s32 SceneItem_FindPosition(s32 value, s32 *out);
 
 void MapGrid_SetCellBehaviorAtFar(s32 terrain, s32 x, s32 z, s32 value);
 
@@ -1148,7 +1151,7 @@ void SpriteAnimation_ClearFar(void *record);
 
 void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
-extern const u8 gData_080f0c04[];
+extern const u8 gRope_Tiles[];
 extern const u8 Data_080f0e00[];
 
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
@@ -1173,7 +1176,7 @@ extern const struct SparklePicture gFieldEffect_SparklePictures[];
 
 extern const u8 gFieldEffect_SparkleTiles[];
 
-void Func_080203a0(struct Actor *object, s32 kind);
+void Actor_SpawnWaterSplashFar(struct Actor *object, s32 kind);
 
 s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 z);
 
@@ -1188,24 +1191,24 @@ extern const s16 Data_080f0b50[];
 void Actor_UpdateAllMotion(void);
 
 void Actor_UpdateAllThumb(void);
-void Func_080246b8(void);
+void Actor_MoveWithCarriers(void);
 
 void ActorSystem_PlaceSprites(void);
 
-extern const s32 gData_0802f098[];
-extern const s32 gData_0802f0b0[];
-extern const s32 gData_0802f0c8[];
-extern const s32 gData_0802f0e0[];
-extern const s32 gData_0802f0f8[];
-extern const s32 gData_0802f110[];
-extern const s32 gData_0802f128[];
-extern const s32 gData_0802f140[];
-extern const s32 gData_0802f158[];
 extern const s32 gActor_KeyCheckScript[];
 extern const s32 gActor_KeysScript[];
+extern const s32 gActor_RopeScript[];
+extern const s32 gActor_TightropeScript[];
+extern const s32 gActor_SandScript[];
+extern const s32 gActor_HoverScript[];
+extern const s32 gActor_WalkingScript[];
 extern const s32 gActor_PlayerScript[];
 extern const s32 gActor_WorldMapScript[];
-extern const s32 gData_0802f1e8[];
+extern const s32 gActor_SailOnMapScript[];
+extern const s32 gActor_SailScript[];
+extern const s32 gActor_FlyScript[];
+extern const s32 gActor_SandOnWorldMapScript[];
+extern const s32 gActor_ApproachWatchedScript[];
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -1214,7 +1217,7 @@ s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 struct Actor *Actor_Create(s32 kind, s32 x, s32 y, s32 z);
 
-void Func_08026fc8(struct Actor *object, s32 kind);
+void Actor_SpawnWaterSplash(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
 void TileMap_DecodeStagedBuffer(s32 size);
@@ -1240,7 +1243,7 @@ void Actor_ResetTargetsAndVelocity(u32 objectId);
 void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index);
 
 void Scene_ChooseMusic(void);
-void Func_080c9de0(s32 id, s32 variant);
-void Func_080ca3f4(s32 scene, s32 entrance);
+void WorldMap_MarkPlaceVisited(s32 id, s32 variant);
+void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance);
 
 #endif

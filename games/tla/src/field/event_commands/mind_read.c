@@ -48,7 +48,6 @@
  * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode). */
 extern void BattleEffect_ApplyColorToTargetBuffer__f0dcb44(
     u32 color, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
-struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(f0dcb44): routine Scene_FindActorPlacement as struct WaveFxDescriptor
  * *Scene_FindActorPlacement(s32 id); battle.h has struct ActionDescriptor
  * *Scene_FindActorPlacement(s32 id). */
@@ -391,7 +390,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   }
 
   event = Func_080ce458__f0dd054(0x50000005, scene->fieldKind,
-                                 Func_080ce31c(scene->fieldKind));
+                                 Scene_SelectPsynergyTarget(scene->fieldKind));
   pusher->watchedObject = target;
   position.x = target->x;
   position.y = target->y + (16 << 16);
@@ -824,8 +823,9 @@ void FieldPsynergy_Reveal(void) {
   event->active = 0;
   wait(1);
 
-  pending = Scene_FindPsynergyTrigger(REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
-                                      Func_080ce31c(FIELD_PSYNERGY_REVEAL));
+  pending = Scene_FindPsynergyTrigger(
+      REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
+      Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
                            scene->secondObjectId);
@@ -871,8 +871,9 @@ void FieldPsynergy_EndReveal(void) {
     BattleEffect_ApplyColorToTargetBuffer__f0dcb44(0x10000, 0);
     PaletteFade_StartInterpolation(30);
     wait(1);
-    pending = Scene_FindPsynergyTrigger(0x40000005, FIELD_PSYNERGY_REVEAL,
-                                        Func_080ce31c(FIELD_PSYNERGY_REVEAL));
+    pending = Scene_FindPsynergyTrigger(
+        0x40000005, FIELD_PSYNERGY_REVEAL,
+        Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->firstObjectId,
                              scene->secondObjectId);
@@ -901,7 +902,7 @@ extern struct Actor *Actor_Spawn__f0dd820(s32 kind, s32 x, s32 y,
 
 #define BURST_FALL_OBJECT 281 ///< the object that falls round the target
 
-// The two kinds of target that do not sink into the ground.
+// The two sprites of target that do not sink into the ground.
 #define TARGET_KIND_SCATTERS 372 ///< scatters five falling pieces instead
 #define TARGET_KIND_STAYS 394
 
@@ -917,9 +918,9 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     return;
 
   FieldEffect_SpawnBurstParticleField();
-  if (Func_08020330(target) == TARGET_KIND_SCATTERS)
+  if (Actor_GetSpriteIdFar(target) == TARGET_KIND_SCATTERS)
     kind = 1;
-  if (Func_08020330(target) == TARGET_KIND_STAYS)
+  if (Actor_GetSpriteIdFar(target) == TARGET_KIND_STAYS)
     kind = 2;
 
   if (kind == 0) {
@@ -953,7 +954,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
       wait((((u32)Random16() * 2) >> 16) + 2);
       n--;
     } while (n >= 0);
-    Func_080daecc(scene->secondObjectId, 1);
+    HangingVine_Hang(scene->secondObjectId, 1);
   } else {
     wait(10);
     Sound_PlayFar(126);
@@ -1485,7 +1486,8 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  event = Scene_FindPsynergyTrigger(0x50000005, 4, Func_080ce31c(4));
+  event =
+      Scene_FindPsynergyTrigger(0x50000005, 4, Scene_SelectPsynergyTarget(4));
   if (event != NULL)
     Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
   wait(10);
@@ -1652,7 +1654,8 @@ void FieldPsynergy_Frost(void) {
     }
 
     target->update = (void (*)(void))FieldEffect_UpdateFrostGlint;
-    ev = Scene_FindPsynergyTrigger(0x50000005, 6, Func_080ce31c(6));
+    ev =
+        Scene_FindPsynergyTrigger(0x50000005, 6, Scene_SelectPsynergyTarget(6));
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, scene->firstObjectId, scene->secondObjectId);
     wait(20);
@@ -1844,7 +1847,7 @@ struct EventWork__f0de21c {
   u16 state;
 };
 
-s32 Func_080dbca8(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsCloakCell(s32 x, s32 z, s32 layer);
 
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
@@ -1852,7 +1855,7 @@ void FieldEffect_CheckCloakTile(void) {
   struct EventWork__f0de21c *event = Ram_HeapSlots->eventWork;
   struct OwnerObject *owner = ObjectTable_Get(Party_GetLeaderActor());
 
-  if (Func_080dbca8(owner->x, owner->z, owner->layer) == 0)
+  if (MapGrid_IsCloakCell(owner->x, owner->z, owner->layer) == 0)
     event->state = 0x2092;
 }
 

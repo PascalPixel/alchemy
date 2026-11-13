@@ -310,9 +310,6 @@ void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 /// actors 15 to 24 by flags 0x8a7, 0x8ab and 0x8bd, and actor 8 stepping in
 /// at entrance 9 until flag 0x109 is set.
 void Func_0200051c(void) {
-  /* FAKEMATCH(temporary): the data address held in a local, so it loads before
-   * BattleEffect_FillOverlayTiles and is kept across it, as the ROM does; as
-   * loaded at its call, 31 of 257 instructions differ in tla-en. */
   const void *data;
   struct AlhafranCaveEventWork *work;
 

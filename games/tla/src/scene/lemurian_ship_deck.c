@@ -343,6 +343,17 @@ static inline void RunToActor4(s32 id) {
 /// spot, two callbacks start the bobbing, and after the exchange of looks and
 /// emotes the four actors run to actor 4.
 void LemurianShipDeck_HoldOnToTiller(void) {
+#if !TLA_PATCH_2
+  /* FAKEMATCH(dead): a call that never runs, kept for its routine address,
+   * the first constant the function puts in its pool: the message id's pool
+   * label is then numbered one later, and reload's hard-register CSE, whose
+   * lookup of the second -16 finds r1's only through that label's hash in
+   * this object, builds -16 twice, as Japanese and English do; from patch 2
+   * the ROM copies it from r1, as the plain form does here. As nothing, 15 of
+   * 459 instructions differ in tla-en. */
+  if (0)
+    Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
+#endif
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -351,19 +362,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldEvent_SetMessageId(MsgHoldOnTo);
   Actor_SetPositionAndFacing(4, PIXELS(470), PIXELS(392), FACING_EAST);
   FieldActor_LaunchFromLeader(6, 0, -24, FACING_SOUTH);
-#if !TLA_PATCH_2
   FieldActor_LaunchFromLeader(5, -16, -16, FACING_SOUTHEAST);
-#else
-  {
-    /* FAKEMATCH(pin): offset fixed to r1, so from patch 2 -16 is built once
-     * in r1 and copied to r2; as two constants it is built twice, and as one
-     * plain variable (copied, chained or in an array) it takes r2 and is
-     * copied to r1, 6 of 458 instructions differ in tla-de. */
-    register s32 offset asm("r1") = -16;
-
-    FieldActor_LaunchFromLeader(5, offset, offset, FACING_SOUTHEAST);
-  }
-#endif
   FieldActor_LaunchFromLeader(9, -24, 8, FACING_NORTHEAST + FACING_STEP);
   FieldActor_LaunchFromLeader(7, -4, 24, FACING_NORTHEAST);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);

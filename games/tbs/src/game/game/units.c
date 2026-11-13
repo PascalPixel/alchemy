@@ -72,16 +72,30 @@ u32 Party_GetAverageLevel(void) {
 /// enemies of the current battle. Anything else, or an enemy outside a battle,
 /// is NULL. Nearly every bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {
+  struct Unit *states;
+  struct Unit *unit;
   // DEAD: the return address, read and never used; the ROM keeps its copy of
   // lr into r3.
   UNUSED void *caller = __builtin_return_address(0);
 
-  struct Unit *units = gMainRoutineWork.units;
-
-  if (unitId <= PIERS)
-    return &units[unitId];
-  if (unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE && gEnemyUnits != NULL)
-    return &((struct Unit *)gEnemyUnits)[unitId - FIRST_ENEMY_UNIT];
+  states = gMainRoutineWork.units;
+  /* FAKEMATCH(dead): the party return repeated under a test of the return
+   * address keeps the read alive until the merged test; as one return, 7 of 28
+   * instructions differ in tbs-en. */
+  if (caller == NULL) {
+    if (unitId <= PIERS) {
+      unit = &states[unitId];
+      return unit;
+    }
+  }
+  if (unitId <= PIERS) {
+    unit = &states[unitId];
+    return unit;
+  }
+  if (unitId - FIRST_ENEMY_UNIT < 6 && gEnemyUnits != NULL) {
+    unit = &((struct Unit *)gEnemyUnits)[unitId - FIRST_ENEMY_UNIT];
+    return unit;
+  }
   return NULL;
 }
 

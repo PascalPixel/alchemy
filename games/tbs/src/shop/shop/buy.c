@@ -311,19 +311,34 @@ void Shop_DrawMoney(void) {
 /// repair lists.
 void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
                         s32 priceKind) {
+  s32 labelMessage;
+
   if (window == 0)
     return;
+  goto draw;
+cannot_buy:
+  Text_DrawMessageAsTilesFar(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X, 8);
+  return;
+show_price:
+  labelMessage = MsgPrice;
+  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
+  labelMessage -= 3;
+  Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
+  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
+  return;
+draw:
   WindowSprite_RedrawSavedRectFar(window);
   Text_DrawMessageAsTilesFar(itemId + MsgItemName, window, 0, 0);
-  if (price == 0 && priceKind == SHOP_PRICE_KIND_SELL) {
-    Text_DrawMessageAsTilesFar(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X, 8);
-  } else if (price == 0 && priceKind == SHOP_PRICE_KIND_REPAIR) {
+  if (price != 0)
+    goto show_price;
+  switch (priceKind) {
+  case SHOP_PRICE_KIND_SELL:
+    goto cannot_buy;
+  case SHOP_PRICE_KIND_REPAIR:
     Text_DrawMessageAsTilesFar(MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
-  } else {
-    // "Price:", the number, then its unit, three messages before.
-    Text_DrawMessageAsTilesFar(MsgPrice, window, SHOP_ITEM_NOTE_X, 8);
-    Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-    Text_DrawMessageAsTilesFar(MsgPrice - 3, window, SHOP_PRICE_LABEL_X, 8);
+    break;
+  default:
+    goto show_price;
   }
 }
 

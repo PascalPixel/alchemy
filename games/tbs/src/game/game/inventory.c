@@ -136,18 +136,25 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
       // A stack holds 30 at most.
       if (count > 29)
         return -1;
-      unit->inventory[slot] =
-          (INVENTORY_ENTRY_MASK & entry) | (count << INVENTORY_QUANTITY_SHIFT);
+      {
+        s32 value = INVENTORY_ENTRY_MASK;
+
+        value &= entry;
+        value |= count << INVENTORY_QUANTITY_SHIFT;
+        unit->inventory[slot] = value;
+      }
       return slot;
     }
   }
 
-  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+  slot = 0;
+  do {
     if (unit->inventory[slot] == 0) {
       unit->inventory[slot] = itemId;
       return slot;
     }
-  }
+    slot++;
+  } while (slot < INVENTORY_SLOTS);
   return -1;
 }
 

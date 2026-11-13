@@ -75,24 +75,39 @@ void InventorySnapshot_Restore(void) {
   struct InventorySnapshot *snapshot =
       (struct InventorySnapshot *)gInventorySnapshot;
   s32 unitId;
-  s32 slot;
+  u16 *source = gInventorySnapshot;
 
-  if (snapshot->sentinel != INVENTORY_SNAPSHOT_SENTINEL)
-    return;
-  for (unitId = 0; unitId < 4; unitId++) {
-    struct Unit *unit = Unit_Get(unitId);
+  if (*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
+    unitId = 0;
+    do {
+      u16 *inventory = Unit_Get(unitId)->inventory;
+      s32 remaining = 14;
 
-    for (slot = 0; slot < INVENTORY_SLOTS; slot++)
-      unit->inventory[slot] = snapshot->inventories[unitId][slot];
-    Unit_UpdateClass(unitId);
-    Unit_Calculate(unitId);
+      do {
+        *inventory++ = *source++;
+        remaining--;
+      } while (remaining >= 0);
+      Unit_UpdateClass(unitId);
+      Unit_Calculate(unitId);
+      unitId++;
+    } while (unitId <= 3);
+
+    gMainRoutineWork.firstShortcut = *source++;
+    gMainRoutineWork.secondShortcut = *source++;
+#ifdef UBFIX
+    gMainRoutineWork.party[0] = source[0];
+    gMainRoutineWork.party[1] = source[0] >> 8;
+    gMainRoutineWork.party[2] = source[1];
+    gMainRoutineWork.party[3] = source[1] >> 8;
+    source++;
+#else
+    *(u16 *)gMainRoutineWork.party = *source++;
+    *(u16 *)((u8 *)gMainRoutineWork.party + 2) = *source;
+#endif
+    source = gInventorySnapshot;
+    *source = 0;
+    GameFlag_Clear(FLAG_COLOSSO_HOLDS_EQUIPMENT);
   }
-  gMainRoutineWork.firstShortcut = snapshot->firstShortcut;
-  gMainRoutineWork.secondShortcut = snapshot->secondShortcut;
-  for (slot = 0; slot < 4; slot++)
-    gMainRoutineWork.party[slot] = snapshot->party[slot];
-  snapshot->sentinel = 0;
-  GameFlag_Clear(FLAG_COLOSSO_HOLDS_EQUIPMENT);
 }
 
 #undef INVENTORY_SNAPSHOT_SENTINEL

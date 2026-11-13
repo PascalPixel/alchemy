@@ -48,7 +48,26 @@
 /// returns from another area.
 
 #include "main_routine_work.h"
-#include "module/scene/suhalla_gate.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gSuhallaGateWoundedNoCollision[];
+extern s32 gSuhallaGateWounded[];
+extern s32 gSuhallaGateWoundedFlippedNoCollision[];
+extern s32 gSuhallaGateWoundedFlipped[];
+extern struct SceneEntrance gSuhallaGateEntrancesOther[];
+extern struct SceneEntrance gSuhallaGateDewEntrances[];
+extern struct SceneEntrance gGatewayCaveEntrances[];
+extern u32 gSuhallaGateExits[];
+extern struct ActorPlacement gSuhallaGateActorPlacementsOther[];
+extern struct ActorPlacement gSuhallaGateDewActorPlacements[];
+extern struct ActorPlacement gSuhallaGateCheckpointActorPlacements[];
+extern struct ActorPlacement
+    gSuhallaGateCheckpointActorPlacementsAfterAudience[];
+extern struct Trigger gSuhallaGateTriggersOther[];
+extern struct Trigger gSuhallaGateDewTriggers[];
+extern struct Trigger gGatewayCaveTriggers[];
+
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -58,7 +77,9 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "suhalla_gate.h"
+#include "types.h"
+#include "event.h"
+
 #include "djinn_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

@@ -65,7 +65,24 @@
 #include "main_routine_work.h"
 #include "map_grid_scroll.h"
 #include "system_call.h"
-#include "module/scene/suhalla_desert.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gSuhallaDesertStormScript[];
+extern s32 gSuhallaDesertFourthStormScript[];
+extern struct SceneEntrance gSuhallaDesertEntrancesOther[];
+extern struct SceneEntrance gSuhallaDesertNorthEntrances[];
+extern struct SceneEntrance gSuhallaDesertSouthEntrances[];
+extern struct SceneEntrance gSuhallaDesertCavesEntrances[];
+extern u32 gSuhallaDesertExits[];
+extern struct ActorPlacement gSuhallaDesertActorPlacementsOther[];
+extern struct ActorPlacement gSuhallaDesertNorthActorPlacements[];
+extern struct ActorPlacement gSuhallaDesertSouthActorPlacements[];
+extern struct ActorPlacement gSuhallaDesertCavesActorPlacements[];
+extern s32 gSuhallaDesertChaseScript[];
+extern struct Trigger gSuhallaDesertTriggersOther[];
+extern struct Trigger gSuhallaDesertCavesTriggers[];
+
 #include "module/scene/shared/field_effect_spawn.h"
 #include "actor.h"
 #include "event.h"

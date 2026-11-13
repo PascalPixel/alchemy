@@ -7,7 +7,19 @@
 #include "input.h"
 #include "game.h"
 #include "system.h"
-#include "level.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
+#include "playback_queue.h"
+#include "battle_action_run.h"
+
+#include "window.h"
+
+#include "field_work.h"
+#include "heap_slots.h"
+
+void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
+
 #include "event_inline.h"
 #include "dma.h"
 #include "text/msg_ids.h"

@@ -59,7 +59,25 @@
 ///     - LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
 ///       Temple.
 #include "main_routine_work.h"
-#include "module/scene/fuchin_temple.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gFuchinTemple_JumpingStudentScript[];
+extern s32 gFuchinTemple_HiddenSpriteScript[];
+extern u16 gFuchinTemple_TempleDoorOpens[];
+extern u16 gFuchinTemple_FehsDoorOpens[];
+extern u16 gFuchinTemple_FehsDoorCloses[];
+extern struct SceneEntrance gFuchinTempleGroundsEntrances[];
+extern struct SceneEntrance gFuchinTempleEntrancesOther[];
+extern u32 gFuchinTempleExits[];
+extern struct ActorPlacement gFuchinTempleGroundsActorPlacements[];
+extern struct ActorPlacement gFuchinTempleActorPlacements[];
+extern struct ActorPlacement gFuchinTempleActorPlacementsFromLamaTemple[];
+extern struct Trigger gFuchinTempleGroundsTriggers[];
+extern struct Trigger gFuchinTempleTriggers[];
+extern struct Trigger gFuchinTempleTriggersFromLamaTemple[];
+extern s32 gFuchinTemple_ShotScript[];
+
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"

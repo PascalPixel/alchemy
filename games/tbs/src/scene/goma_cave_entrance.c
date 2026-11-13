@@ -37,7 +37,15 @@
 /// GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma Cave
 /// (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// World Map.
-#include "module/scene/goma_cave_entrance.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gGomaCaveEntranceTallIvyScript[];
+extern struct SceneEntrance gGomaCaveEntranceEntrances[];
+extern u32 gGomaCaveEntranceExits[];
+extern struct ActorPlacement gGomaCaveEntranceActorPlacements[];
+extern struct Trigger gGomaCaveEntranceTriggers[];
+
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"

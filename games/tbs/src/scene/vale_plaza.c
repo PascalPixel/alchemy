@@ -97,7 +97,47 @@
 #include "character_ids.h"
 #include "scene_ids.h"
 #include "vram_cache.h"
-#include "module/scene/vale_plaza.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern u8 gValePlaza_UnusedPaletteSteps[];
+extern s32 gValePlaza_ChargedUpStrongmanActions[];
+extern s32 gValePlaza_SecondTravelerLeapActions[];
+extern s32 gValePlaza_FirstTravelerLeapActions[];
+extern s32 gValePlaza_LeaderActions[];
+extern s32 gValePlaza_StormGaretLeapActions[];
+extern s32 gValePlaza_FirstTravelerBounceActions[];
+extern s32 gValePlaza_SecondTravelerBounceActions[];
+extern s32 gValePlaza_FaceTargetActions[];
+extern s32 gValePlaza_FarewellDogActions[];
+extern s32 gValePlaza_FarewellChaseActions[];
+extern s32 gValePlaza_FarewellFirstChildActions[];
+extern s32 gValePlaza_FarewellSecondChildActions[];
+extern s32 gValePlaza_PartyDepartureActions[];
+extern s32 gValePlaza_HutOwnerSearchActions[];
+extern s32 gValePlaza_AideRunActions[];
+extern s32 gValePlaza_LeaderStepActions[];
+extern s32 gValePlaza_StormGaretStepActions[];
+extern struct SceneEntrance gValePlaza_Entrances[];
+extern u32 gValePlaza_Exits[];
+extern u32 gValePlaza_StormExits[];
+extern struct ActorPlacement gValePlaza_ActorPlacements[];
+extern struct ActorPlacement gValePlaza_StormActorPlacements[];
+extern struct ActorPlacement gValePlaza_DepartureActorPlacements[];
+extern struct ActorPlacement gValePlaza_ActorPlacementsAfterKalay[];
+extern struct Trigger gValePlaza_Triggers[];
+extern struct Trigger gValePlaza_StormTriggers[];
+extern struct Trigger gValePlaza_DepartureTriggers[];
+extern struct Trigger gValePlaza_TriggersAfterLeaving[];
+extern struct Trigger gValePlaza_TriggersAfterKalay[];
+extern u16 gValePlaza_DoorOpens[];
+
 #include "module/scene/shared/event_psynergy.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -114,7 +154,22 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "vale_plaza.h"
+#include "battle_sprite_id.h"
+
+#include "types.h"
+#include "sprite.h"
+#include "vram_cache.h"
+#include "task.h"
+
+#include "event.h"
+#include "scene_tables.h"
+#include "field_effect.h"
+
+#include "speaker.h"
+#include "field_psynergy_work.h"
+
+#include "heap_slots.h"
+
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"

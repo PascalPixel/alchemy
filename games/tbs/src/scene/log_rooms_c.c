@@ -43,7 +43,20 @@
 
 #include "main_routine_work.h"
 #include "flags.h"
-#include "module/scene/log_rooms_c.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gLogRoomsC_Entrances[];
+extern u32 gLogRoomsC_Exits[];
+extern struct ActorPlacement gLogRoomsC_ActorPlacements[];
+extern struct Trigger gLogRoomsC_Triggers[];
+
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"

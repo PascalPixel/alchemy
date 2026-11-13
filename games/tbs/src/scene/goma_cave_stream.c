@@ -36,7 +36,17 @@
 ///   into SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 #include "main_routine_work.h"
-#include "module/scene/goma_cave_stream.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct SceneEntrance gGomaCaveStreamEntrances[];
+extern struct SceneEntrance gGomaCaveBridgeEntrances[];
+extern u32 gGomaCaveStreamAndBridgeExits[];
+extern struct ActorPlacement gGomaCaveStreamActorPlacements[];
+extern struct ActorPlacement gGomaCaveBridgeActorPlacements[];
+extern struct Trigger gGomaCaveStreamTriggers[];
+extern struct Trigger gGomaCaveBridgeTriggers[];
+
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"

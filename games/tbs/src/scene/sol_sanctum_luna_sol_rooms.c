@@ -56,7 +56,20 @@
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights).
 
 #include "main_routine_work.h"
-#include "module/scene/sol_sanctum_luna_sol_rooms.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
+extern u32 gSolSanctumLunaSolRoomsExits[];
+extern struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[];
+extern struct Trigger gSolSanctumLunaSolRoomsTriggers[];
+
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "battle.h"
@@ -67,7 +80,26 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "sol_sanctum_luna_sol_rooms.h"
+#include "types.h"
+#include "event.h"
+#include "scene_tables.h"
+
+/// The placed actors, numbered in the order of
+/// gSolSanctumLunaSolRoomsActorPlacements; Jenna and Garet, its last rows,
+/// keep their characters' ids.
+enum SolSanctumLunaSolRoomsActorId {
+  /// Eight statues, four in each room, with the sprite of
+  /// SceneId_SolSanctumStatue's statues (sol_sanctum_statue.c).
+  ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
+  ACTOR_KRADEN = ACTOR_FIRST_STATUE + 8
+};
+
+extern u16 gSolSanctumLunaSolRooms_Light1Timer;
+extern s32 gSolSanctumLunaSolRooms_FlashState;
+extern u16 gSolSanctumLunaSolRooms_Light2Timer;
+extern u16 gSolSanctumLunaSolRooms_Light3Timer;
+extern u16 gSolSanctumLunaSolRooms_Light4Timer;
+
 #include "event_inline.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"

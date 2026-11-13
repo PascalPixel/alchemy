@@ -47,7 +47,20 @@
 /// him behind the middle layer (`BG2`, priority 2 in this map). The fixed
 /// priority 2 draws him in front of it, as the other diners are.
 
-#include "module/scene/cottage_rooms_c.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gCottageRoomsCEntrances[];
+extern u32 gCottageRoomsCExits[];
+extern struct ActorPlacement gCottageRoomsCActorPlacements[];
+extern struct Trigger gCottageRoomsCTriggers[];
+
 #include "flags.h"
 #include "module/field/event_commands.h"
 #include "battle.h"

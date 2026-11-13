@@ -106,7 +106,51 @@
 #include "input.h"
 #include "scene_ids.h"
 #include "module/import.h"
-#include "module/scene/imil_fuchin_falls.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "field_effect.h"
+
+extern s32 gImilFuchinFalls_TrackLeader;
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
+                               s32 velocityY, s32 velocityZ, u32 flags,
+                               const struct EffectOptions *extra);
+extern s16 gImilFuchinFalls_KeyHeadings[];
+extern s16 gImilFuchinFalls_SlideHeadings[];
+extern struct Actor *gImilFuchinFalls_DragonsEye;
+extern struct SceneEntrance gImilFuchinFalls_NoEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_ImilFallsCaveEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_EntranceEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_ZephyrRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_DragonsEyeRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_ArcticBladeRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_KiRoomEntrances[];
+extern struct SceneEntrance gImilFuchinFalls_DragonRoomEntrances[];
+extern u32 gImilFuchinFalls_Exits[];
+extern struct ActorPlacement gImilFuchinFalls_NoActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ImilFallsCaveActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_EntranceActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ZephyrRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_DragonsEyeRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ArcticBladeRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_DragonRoomActorPlacements[];
+extern struct Trigger gImilFuchinFalls_NoTriggers[];
+extern struct Trigger gImilFuchinFalls_ImilFallsCaveTriggers[];
+extern struct Trigger gImilFuchinFalls_EntranceTriggers[];
+extern struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_ArcticBladeRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_KiRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_DragonRoomTriggers[];
+extern s32 gImilFuchinFalls_ShortDustScript[];
+extern s32 gImilFuchinFalls_MediumDustScript[];
+extern s32 gImilFuchinFalls_LongDustScript[];
+
 #include "module/system/main_routine.h"
 #include "battle.h"
 #include "event_inline.h"
@@ -117,7 +161,14 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "imil_fuchin_falls.h"
+#include "types.h"
+#include "input.h"
+#include "event.h"
+#include "scene_tables.h"
+#include "item_ids.h"
+
+extern void *gHeapSlots[];
+
 #include "djinn_ids.h"
 #include "battle_side.h"
 #include "display_transition.h"

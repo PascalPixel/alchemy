@@ -49,7 +49,18 @@
 /// `Business and You` and `The Good Host`. A chest holds a Water Jacket and a
 /// barrel a Nut.
 #include "main_routine_work.h"
-#include "module/scene/hammet_palace.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gHammetPalace_PartyActions[];
+extern struct SceneEntrance gHammetPalaceEntrancesOther[];
+extern struct SceneEntrance gHammetPalaceEntrances[];
+extern u32 gHammetPalaceExits[];
+extern struct ActorPlacement gHammetPalaceActorPlacementsOther[];
+extern struct ActorPlacement gHammetPalaceActorPlacements[];
+extern struct Trigger gHammetPalaceTriggersOther[];
+extern struct Trigger gHammetPalaceTriggers[];
+
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "battle.h"

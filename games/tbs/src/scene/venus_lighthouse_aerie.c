@@ -60,7 +60,39 @@
 #include "main_routine_work.h"
 #include "vram_cache.h"
 #include "module/import.h"
-#include "module/scene/venus_lighthouse_aerie.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
+extern s32 gVenusLighthouseAerie_StepBackWestAction[];
+extern s32 gVenusLighthouseAerie_StepBackEastAction[];
+extern s32 gVenusLighthouseAerie_ScaleStepAction[];
+extern s32 gVenusLighthouseAerie_BeamOpenAction[];
+extern s32 gVenusLighthouseAerie_BeamNarrowAction[];
+extern s32 gVenusLighthouseAerie_BeamRiseAction[];
+extern s32 gVenusLighthouseAerie_BeamCloseAction[];
+extern s32 gVenusLighthouseAerie_BeamEndAction[];
+extern s32 gVenusLighthouseAerie_OrbitParticleScript[];
+extern s32 gVenusLighthouseAerie_RiseParticleScript[];
+extern s32 gVenusLighthouseAerie_WalkOutAction[];
+extern s32 gVenusLighthouseAerie_RiseActionScript[];
+extern s32 gVenusLighthouseAerie_StepBackAction[];
+extern s32 gVenusLighthouseAerie_LeapAction[];
+extern s32 gVenusLighthouseAerie_PartyExitAction[];
+extern s32 gVenusLighthouseAerie_PartyHeadingAction[];
+extern struct SceneEntrance gVenusLighthouseAerieEntrances[];
+extern u32 gVenusLighthouseAerieExits[];
+extern struct ActorPlacement gVenusLighthouseAerieActorPlacements[];
+extern s32 gVenusLighthouseAerie_LandedPlatform;
+extern struct Trigger gVenusLighthouseAerieTriggers[];
+extern s32 gVenusLighthouseAerie_BesideParticleScript[];
+
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/scene/shared/actor_nearest.h"
 #include "module/scene/shared/event_psynergy.h"
@@ -72,7 +104,49 @@
 #include "macros.h"
 
 #include "actor.h"
-#include "venus_lighthouse_aerie.h"
+/// The Lighthouse Aerie's actors; its entrances and exits are in
+/// scene_exits.h.
+
+#include "scene_tables.h"
+#include "types.h"
+
+/// The aerie's actors, in the order of its actor placements;
+/// Garet, Ivan, Mia and Sheba keep their character numbers.
+enum {
+  /// The four statues around the beacon (SPRITE_STATUE_WITH_WREATH), the east
+  /// two drawn mirrored. When the beacon erupts and splits the aerie, the west
+  /// two move west with their half and the east two east.
+  ACTOR_BEACON_STATUE_SOUTHWEST = 8,
+  ACTOR_BEACON_STATUE_NORTHWEST = 9,
+  ACTOR_BEACON_STATUE_NORTHEAST = 10,
+  ACTOR_BEACON_STATUE_SOUTHEAST = 11,
+  /// Six round platforms (SPRITE_FLOATING_PLATFORM) the leader jumps across,
+  /// each dipping under him as he lands, and the one that carries him up to
+  /// the aerie.
+  ACTOR_FIRST_PLATFORM = 12,
+  ACTOR_LAST_PLATFORM = 17,
+  ACTOR_RISING_PLATFORM = 18,
+  ACTOR_MENARDI = 19,
+  ACTOR_SATUROS = 20,
+  ACTOR_FELIX = 21,
+  /// A blank actor (SPRITE_BLANK) that runs across the floor under the
+  /// Venus
+  /// Star as Saturos throws it into the beacon, so that only its shadow shows,
+  /// the star's shadow.
+  ACTOR_VENUS_STAR_SHADOW = 22,
+  /// The orb the rising particles circle as the party is lifted away:
+  /// SPRITE_BLUE_ORB drawn in SPRITE_COLOR_GBR, which turns its blue to green,
+  /// and later solid white (SPRITE_COLOR_WHITE).
+  ACTOR_BEACON_ORB = 23,
+  /// The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the
+  /// bottom up; particles circle the lowest.
+  ACTOR_BEAM_BOTTOM = 24,
+  ACTOR_BEAM_LOWER = 25,
+  ACTOR_BEAM_MIDDLE = 26,
+  ACTOR_BEAM_UPPER = 27,
+  ACTOR_BEAM_TOP = 28
+};
+
 #include "field_effect.h"
 #include "sound_driver_symbols.h"
 #include "create_configured_actor.h"

@@ -6,7 +6,32 @@
 /// link or as a password.
 
 #include "scene_ids.h"
-#include "module/scene/file_screen.h"
+#include "types.h"
+#include "scene_tables.h"
+
+u8 *FileScreen_GetEntrances(void);
+u8 *FileScreen_GetExits(void);
+u8 *FileScreen_GetActorPlacements(void);
+u8 *FileScreen_GetTriggers(void);
+extern const u16 gFileScreen_ButtonCode[];
+extern const u16 gFileScreen_ExtraButtonCode[];
+s32 FileScreen_Run(void);
+extern struct SceneEntrance gFileScreen_Entrances[];
+extern u32 gFileScreen_Exits[];
+extern struct ActorPlacement gFileScreen_ActorPlacements[];
+extern struct Trigger gFileScreen_Triggers[];
+extern s16 gFileScreen_BlendFrame;
+extern s16 gFileScreen_CodeUnlocked;
+extern s16 gFileScreen_ExtraCodeUnlocked;
+extern s16 gFileScreen_CodeProgress;
+extern s16 gFileScreen_ExtraCodeProgress;
+extern s16 gFileScreen_CodeHeld;
+extern s32 gFileScreen_ExtraCodeHeld;
+extern u32 gFileScreen_PasswordMembers[];
+extern u32 gFileScreen_PasswordFlags[];
+extern u32 gFileScreen_PasswordKeyItems[];
+extern u16 gFileScreen_PasswordStackItems[];
+
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "module/window/window.h"

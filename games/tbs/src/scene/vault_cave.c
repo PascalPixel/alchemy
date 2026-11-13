@@ -74,7 +74,35 @@
 #include "main_routine_work.h"
 #include "module/field/field.h"
 #include "system_call.h"
-#include "module/scene/vault_cave.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "scene.h"
+
+extern s32 gVaultCave_DirectionSteps[];
+extern const s32 gVaultCave_PuffScript[];
+extern struct SceneEntrance gVaultCave_FallbackEntrances[];
+extern struct SceneEntrance gVaultCavePassage_Entrances[];
+extern struct SceneEntrance gVaultCaveVambrace_Entrances[];
+extern struct SceneEntrance gVaultCaveMouth_Entrances[];
+extern struct SceneExitRegion gVaultCave_Regions[];
+extern u32 gVaultCave_FallbackExits[];
+extern u32 gVaultCavePassage_Exits[];
+extern u32 gVaultCaveVambrace_Exits[];
+extern u32 gVaultCaveMouth_Exits[];
+extern struct ActorPlacement gVaultCave_FallbackActorPlacements[];
+extern struct ActorPlacement gVaultCavePassage_ActorPlacements[];
+extern struct ActorPlacement gVaultCaveVambrace_ActorPlacements[];
+extern struct ActorPlacement gVaultCaveMouth_ActorPlacements[];
+extern struct Trigger gVaultCave_FallbackTriggers[];
+extern struct Trigger gVaultCavePassage_Triggers[];
+extern struct Trigger gVaultCaveVambrace_Triggers[];
+extern struct Trigger gVaultCaveMouth_Triggers[];
+extern u32 gVaultCave_ScheduleFrames[];
+extern s32 gVaultCave_ScheduleTimer;
+extern s32 gVaultCave_ScheduleIndex;
+extern s32 gVaultCave_DropFrames;
+extern s32 gVaultCave_SelectedDrop;
+
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

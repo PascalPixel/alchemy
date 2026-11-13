@@ -45,7 +45,18 @@
 #include "main_routine_work.h"
 #include "event.h"
 #include "module/import.h"
-#include "module/scene/timber_rooms_a.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "scene.h"
+
+extern struct SceneEntrance gTimberRoomsAEntrances[];
+extern struct SceneExitRegion gTimberRoomsARegions[];
+extern u32 gTimberRoomsAExits[];
+extern struct ActorPlacement gTimberRoomsAActorPlacements[];
+extern struct ActorPlacement gTimberRoomsAActorPlacementsAfterAudience[];
+extern struct Trigger gTimberRoomsATriggers[];
+extern struct Trigger gTimberRoomsATriggersAfterAudience[];
+
 #include "module/system/main_routine.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"

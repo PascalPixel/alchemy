@@ -21,7 +21,20 @@
 #include "flags.h"
 #include "heap_slots.h"
 #include "module/import.h"
-#include "module/scene/kolima_forest_glade.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gKolimaForestGlade_Entrances[];
+extern u32 gKolimaForestGlade_Exits[];
+extern struct ActorPlacement gKolimaForestGlade_ActorPlacements[];
+extern struct Trigger gKolimaForestGlade_Triggers[];
+
 #include "module/scene/shared/actor_orbit.h"
 #include "module/scene/shared/kolima_palette.h"
 #include "module/field/event_commands.h"

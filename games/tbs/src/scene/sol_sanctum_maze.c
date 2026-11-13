@@ -21,7 +21,14 @@
 /// behind it, to SE_STAIRS_DOWN. He comes out walking down from a doorway in
 /// the room of steps (render probe maze-exit).
 
-#include "module/scene/sol_sanctum_maze.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct SceneEntrance gSolSanctumMazeEntrances[];
+extern u32 gSolSanctumMazeExits[];
+extern struct ActorPlacement gSolSanctumMazeActorPlacements[];
+extern struct Trigger gSolSanctumMazeTriggers[];
+
 #include "module/scene/shared/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"

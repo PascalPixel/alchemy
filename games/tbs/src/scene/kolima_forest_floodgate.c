@@ -30,7 +30,47 @@
 #include "speaker.h"
 #include "flags.h"
 #include "module/import.h"
-#include "module/scene/kolima_forest_floodgate.h"
+#include "types.h"
+#include "scene_tables.h"
+
+struct Actor;
+
+/// A log's saved record: its sprite, first map cell and orientation, then its
+/// actor once created.
+struct FloodgateLog {
+  s16 sprite;          ///< sprite number; -1 ends the list
+  s16 x;               ///< map cells
+  s16 z;               ///< map cells
+  s16 vertical;        ///< nonzero runs north to south; zero west to east
+  struct Actor *actor; ///< created for this row; NULL in the defaults
+};
+
+STATIC_ASSERT(sizeof(struct FloodgateLog) == 12);
+STATIC_ASSERT(offsetof(struct FloodgateLog, x) == 2);
+STATIC_ASSERT(offsetof(struct FloodgateLog, vertical) == 6);
+STATIC_ASSERT(offsetof(struct FloodgateLog, actor) == 8);
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+// UB: the scene calls this before its definition with no prototype, so as a
+// function returning int.
+#ifdef UBFIX
+void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
+                                         s32 value);
+#endif
+extern struct FloodgateLog gKolimaForestFloodgate_DefaultRecords[];
+extern u8 gKolimaForestFloodgate_PushAnimations[];
+extern s8 gKolimaForestFloodgate_PushStepX[];
+extern s8 gKolimaForestFloodgate_PushStepZ[];
+extern struct SceneEntrance gKolimaForestFloodgateEntrances[];
+extern u32 gKolimaForestFloodgateExits[];
+extern struct ActorPlacement gKolimaForestFloodgateActorPlacements[];
+extern struct Trigger gKolimaForestFloodgateTriggers[];
+
 #include "module/scene/shared/kolima_palette.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"

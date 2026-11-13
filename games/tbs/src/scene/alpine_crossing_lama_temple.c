@@ -75,7 +75,23 @@
 
 #include "script_operands.h"
 #include "main_routine_work.h"
-#include "module/scene/alpine_crossing_lama_temple.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gAlpineCrossing_WorkerActorPlacementScript[];
+extern s32 gAlpineCrossing_FeizhiPath[];
+extern s32 gAlpineCrossing_LeaderPath[];
+extern s32 gAlpineCrossing_HsuStruggle[];
+extern u16 gLamaTemple_DoorOpenCells[];
+extern u16 gLamaTemple_DoorCloseCells[];
+extern struct SceneEntrance gLamaTemple_Entrances[];
+extern struct SceneEntrance gAlpineCrossing_Entrances[];
+extern u32 gAlpineCrossingLamaTemple_Exits[];
+extern struct ActorPlacement gLamaTemple_ActorPlacements[];
+extern struct ActorPlacement gAlpineCrossing_ActorPlacements[];
+extern struct Trigger gLamaTemple_Triggers[];
+extern struct Trigger gAlpineCrossing_Triggers[];
+
 #include "module/field/event_commands.h"
 #include "module/system/system.h"
 #include "battle.h"

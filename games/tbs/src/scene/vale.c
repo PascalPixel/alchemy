@@ -90,7 +90,39 @@
 #include "main_routine_work.h"
 #include "vram_cache.h"
 #include "module/import.h"
-#include "module/scene/vale.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern s32 gVale_AlephGuardPatrol[];
+extern s32 gVale_LeaderHammers[];
+extern s32 gVale_GaretWalksToTheHouse[];
+extern s32 gVale_UnusedWaterGrows[];
+extern s32 gVale_SparkleScript[];
+extern struct SceneEntrance gVale_Entrances[];
+extern u32 gVale_Exits[];
+extern struct ActorPlacement gVale_ActorPlacements[];
+extern struct ActorPlacement gVale_ActorPlacementsAfterLeaving[];
+extern struct ActorPlacement gVale_ActorPlacementsAfterKalay[];
+extern struct ActorPlacement gVale_RepairActorPlacements[];
+extern struct Trigger gVale_Triggers[];
+extern struct Trigger gVale_TriggersAfterLeaving[];
+extern u16 gVale_SanctumDoorOpens[];
+extern u16 gVale_IsaacsDoorOpens[];
+extern u16 gVale_GrandparentsDoorOpens[];
+extern u16 gVale_WestHouseDoorOpens[];
+extern s32 gVale_FirstWarningLeaderPath[];
+extern s32 gVale_FirstWarningGuardPath[];
+extern s32 gVale_LeaderFromWestPath[];
+extern s32 gVale_GuardFromFirstPausePath[];
+extern s32 gVale_LeaderPushedBackPath[];
+extern s32 gVale_GuardFromSecondPausePath[];
+
 #include "module/scene/shared/actor_orbit.h"
 #include "module/scene/shared/event_psynergy.h"
 #include "module/scene/shared/world_map_attached_effects.h"
@@ -109,7 +141,21 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "vale.h"
+#include "heap_release.h"
+
+#include "types.h"
+#include "task.h"
+
+#include "pushed_actor.h"
+#include "event.h"
+#include "scene_tables.h"
+#include "item_ids.h"
+
+extern struct Trigger gVale_TriggersAfterKalay[];
+extern s32 gVale_JennaWalksToTheHouse[];
+
+#include "heap_slots.h"
+
 #include "event_inline.h"
 #include "iwram_call.h"
 #include "text/msg_ids.h"

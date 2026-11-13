@@ -32,7 +32,19 @@
 ///   keeps the party's position, as after a battle, draws it grown again.
 
 #include "main_routine_work.h"
-#include "module/scene/suhalla.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct SceneEntrance gSuhallaEntrances[];
+extern u32 gSuhallaExits[];
+extern struct ActorPlacement gSuhallaActorPlacements[];
+extern struct ActorPlacement gSuhallaActorPlacementsLater[];
+extern s16 gSuhallaDoorCells[][2];
+extern u16 gSuhallaDoorOpenSteps[];
+extern u16 gSuhallaWideDoorOpenSteps[];
+extern struct Trigger gSuhallaTriggers[];
+extern struct Trigger gSuhallaTriggersLater[];
+
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"

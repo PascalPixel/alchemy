@@ -61,7 +61,22 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "module/import.h"
-#include "module/scene/mercury_lighthouse_aerie.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gMercuryLighthouseAerieEntrances[];
+extern u32 gMercuryLighthouseAerieExits[];
+extern struct ActorPlacement gMercuryLighthouseAerieActorPlacements[];
+extern struct Trigger gMercuryLighthouseAerieTriggers[];
+extern s32 gMercuryLighthouseAerie_PlatformUnderfoot;
+extern s32 gMercuryLighthouseAerie_SparkScript[];
+
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/scene/shared/actor_nearest.h"
 #include "module/field/field_sequence.h"

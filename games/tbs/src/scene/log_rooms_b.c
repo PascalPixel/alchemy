@@ -52,7 +52,14 @@
 /// the party took then stays taken. Two bookcases can be read.
 
 #include "main_routine_work.h"
-#include "module/scene/log_rooms_b.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct SceneEntrance gLogRoomsB_Entrances[];
+extern u32 gLogRoomsB_Exits[];
+extern struct ActorPlacement gLogRoomsB_ActorPlacements[];
+extern struct Trigger gLogRoomsB_Triggers[];
+
 #include "log_rooms_a.h"
 #include "module/scene/shared/vault_item_icon.h"
 #include "module/field/event_commands.h"

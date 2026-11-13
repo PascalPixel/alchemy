@@ -35,7 +35,31 @@
 #include "main_routine_work.h"
 #include "heap_slots.h"
 #include "module/import.h"
-#include "module/scene/kolima_forest_entrance.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern s32 gKolimaForestEntrance_GaretAction[];
+extern s32 gKolimaForestEntrance_IvanAction[];
+extern s32 gKolimaForestEntrance_MiaAction[];
+extern s32 gKolima_PartySquashActions[];
+extern s32 gKolima_PartyRestoreScaleActions[];
+extern s32 gKolimaForestEntrance_PsynergyFieldGrowAction[];
+extern s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[];
+extern s32 gKolimaForestEntrance_GroundSparkleAction[];
+extern struct SceneEntrance gKolimaForestEntrance_Entrances[];
+extern u32 gKolimaForestEntrance_Exits[];
+extern struct ActorPlacement gKolimaForestEntrance_ActorPlacements[];
+extern struct Trigger gKolimaForestEntrance_Triggers[];
+extern s32 gKolimaForestEntrance_SparkleScript[];
+extern s32 gKolimaForestEntrance_SparkleBurstScript[];
+extern s32 gFallingEffectScript[];
+
 #include "module/scene/shared/kolima_forest_bridge_falling_effect.h"
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"

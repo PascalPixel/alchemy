@@ -38,7 +38,29 @@
 
 #include "script_operands.h"
 #include "main_routine_work.h"
-#include "module/scene/sol_sanctum_eruption.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern s32 gEruption_ArcOriginsHead[];
+extern s32 gEruption_ArcOrigins[];
+extern struct SceneEntrance gSolSanctumEruption_Entrances[];
+extern u32 gSolSanctumEruption_Exits[];
+extern struct ActorPlacement gSolSanctumEruption_ActorPlacements[];
+extern struct Trigger gSolSanctumEruption_Triggers[];
+extern u16 gSolSanctumEruption_UnusedStarCells[];
+extern s32 gEruption_EmberScript[];
+extern u8 gSolSanctum_RingDrift[][3];
+extern u8 gSolSanctum_RingSwing[][3];
+extern s8 gSolSanctum_RingDirection[][3];
+extern s32 gSolSanctum_RingMaxScales[];
+extern s32 gSolSanctum_RingScaleSteps[];
+
 #include "module/scene/shared/event_psynergy.h"
 #include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
 #include "module/field/event_commands.h"
@@ -52,7 +74,35 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "sol_sanctum_eruption.h"
+#include "types.h"
+#include "event.h"
+#include "scene_tables.h"
+
+enum CollapseActorId {
+  /// The shadow on the platform under each who leaves with Saturos: a
+  /// blank actor, whose sprite draws only its shadow, shrunk with
+  /// the departing actor, whose own shadow is turned off
+  /// (SolSanctumEruption_RaiseAndShrinkActor).
+  ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
+  ACTOR_KRADEN,
+  ACTOR_SATUROS,
+  ACTOR_MENARDI,
+  /// Felix in his mask, before the star room unmasks him.
+  ACTOR_FELIX_MASKED,
+  ACTOR_FELIX,
+  ACTOR_ALEX
+};
+
+#include "ground_mask.h"
+
+extern s32 gEmberState[16];
+extern s32 gEmberTimer;
+extern s32 gArcEffectTimers[10];
+extern struct Actor *gArcEffects[];
+extern s32 gEmberMask;
+extern s32 gEmberLevel;
+extern s32 gEmberLevelTimer;
+
 #include "event_inline.h"
 #include "iwram_call.h"
 #include "field_effect.h"

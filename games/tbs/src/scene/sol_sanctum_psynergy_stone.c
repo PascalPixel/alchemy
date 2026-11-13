@@ -13,7 +13,14 @@
 /// Retreat does not work here. Once Mt. Aleph has erupted, the room rumbles and
 /// shakes, as the rest of the sanctum does.
 
-#include "module/scene/sol_sanctum_psynergy_stone.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct SceneEntrance gSolSanctumPsynergyStoneEntrances[];
+extern u32 gSolSanctumPsynergyStoneExits[];
+extern struct ActorPlacement gSolSanctumPsynergyStoneActorPlacements[];
+extern struct Trigger gSolSanctumPsynergyStoneTriggers[];
+
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

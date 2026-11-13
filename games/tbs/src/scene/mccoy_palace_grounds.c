@@ -37,7 +37,18 @@
 /// leads nowhere.
 
 #include "main_routine_work.h"
-#include "module/scene/mccoy_palace_grounds.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern u16 gPalaceGateOpenSteps[];
+extern s32 gGuardWatchesParty[];
+extern struct SceneEntrance gMcCoyPalaceGroundsEntrances[];
+extern u32 gMcCoyPalaceGroundsExits[];
+extern struct ActorPlacement gMcCoyPalaceGroundsNoActorPlacements[];
+extern struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[];
+extern struct Trigger gMcCoyPalaceGroundsNoTriggers[];
+extern struct Trigger gMcCoyPalaceGroundsTriggers[];
+
 #include "module/scene/shared/actor_orbit.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"
@@ -49,7 +60,12 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "mccoy_palace_grounds.h"
+#include "types.h"
+#include "event.h"
+#include "scene_tables.h"
+
+#include "item_ids.h"
+
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

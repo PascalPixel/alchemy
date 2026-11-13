@@ -49,7 +49,18 @@
 /// McCoy speaks with his portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
 
 #include "main_routine_work.h"
-#include "module/scene/mccoy_palace.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gPalace_FacingActions[];
+extern s32 gPalace_PacingActions[];
+extern struct SceneEntrance gMcCoyPalaceEntrances[];
+extern u32 gMcCoyPalaceExits[];
+extern struct ActorPlacement gMcCoyPalaceNoActorPlacements[];
+extern struct ActorPlacement gMcCoyPalaceActorPlacements[];
+extern struct Trigger gMcCoyPalaceNoTriggers[];
+extern struct Trigger gMcCoyPalaceTriggers[];
+
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"

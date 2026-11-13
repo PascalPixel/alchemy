@@ -53,7 +53,20 @@
 #include "script_operands.h"
 #include "heap_slots.h"
 #include "module/import.h"
-#include "module/scene/goma_cave_pillar.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "field_effect.h"
+
+extern s32 gGomaCavePillar_WitnessFrames;
+extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;
+extern s32 gGomaCavePillar_FragmentScriptShort[];
+extern s32 gGomaCavePillar_FragmentScriptMedium[];
+extern s32 gGomaCavePillar_FragmentScriptLong[];
+extern struct SceneEntrance gGomaCavePillar_Entrances[];
+extern u32 gGomaCavePillar_Exits[];
+extern struct ActorPlacement gGomaCavePillar_ActorPlacements[];
+extern struct Trigger gGomaCavePillar_Triggers[];
+
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

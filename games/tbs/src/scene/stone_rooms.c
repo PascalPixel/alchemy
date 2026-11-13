@@ -27,7 +27,16 @@
 ///   trigger table as the thieves' talk and the Vault door.
 
 #include "main_routine_work.h"
-#include "module/scene/stone_rooms.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern const struct SceneEntrance gStoneRooms_Entrances[];
+extern const u32 gStoneRooms_Exits[];
+extern const struct ActorPlacement gStoneRooms_ThiefActorPlacements[];
+extern const struct ActorPlacement gStoneRooms_PrisonerActorPlacements[];
+extern const struct Trigger gStoneRooms_ThiefTriggers[];
+extern const struct Trigger gStoneRooms_PrisonerTriggers[];
+
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"

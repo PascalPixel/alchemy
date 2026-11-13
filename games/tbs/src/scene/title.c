@@ -7,7 +7,20 @@
 
 #include "main_routine_work.h"
 #include "vram_cache.h"
-#include "module/scene/title.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Title_GetEntrances(void);
+const u32 *Title_GetExits(void);
+const struct ActorPlacement *Title_GetActorPlacements(void);
+const struct Trigger *Title_GetTriggers(void);
+s32 Title_Run(void);
+extern struct SceneEntrance gTitleEntrances[];
+extern u32 gTitleExits[];
+extern struct ActorPlacement gTitleActorPlacements[];
+extern struct Trigger gTitleTriggers[];
+extern s16 gTitleVramBlock;
+
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "module/menu/title_intro.h"

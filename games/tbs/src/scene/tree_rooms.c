@@ -83,7 +83,26 @@
 
 #include "speaker.h"
 #include "main_routine_work.h"
-#include "module/scene/tree_rooms.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "scene.h"
+
+s32 TreeRooms_EnterRoom(void);
+extern s16 gTreeRooms_MapPatches[];
+extern s32 gTreeRooms_LeaderGathersActions[];
+extern s32 gTreeRooms_GaretGathersActions[];
+extern s32 gTreeRooms_IvanGathersActions[];
+extern s32 gTreeRooms_MiaGathersActions[];
+extern s32 gTreeRooms_FaceSinksActions[];
+extern s32 gTreeRooms_RejoinLeaderActions[];
+extern u32 gTreeRooms_TintSteps[];
+extern struct SceneEntrance gTreeRoomsEntrances[];
+extern struct SceneExitRegion gTreeRoomsRegions[];
+extern u32 gTreeRoomsExits[];
+extern struct ActorPlacement gTreeRoomsActorPlacements[];
+extern struct Trigger gTreeRoomsTriggers[];
+extern s32 gTreeRooms_TintIndex;
+
 #include "shared/walk_into_leader.h"
 #include "module/scene/shared/field_effect_spawn.h"
 #include "macros.h"

@@ -51,7 +51,35 @@
 #include "map_grid_scroll.h"
 #include "scene_ids.h"
 #include "module/import.h"
-#include "module/scene/crossbone_isle_stepping_stones.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern s32 gCrossboneIsleSteppingStones_ActionTable[];
+extern u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[];
+extern u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[];
+extern u16 gCrossboneIsleSteppingStones_FloodgateCloseSteps[];
+extern u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[];
+extern u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[];
+extern struct SceneEntrance gCrossboneIsleSteppingStonesEntrancesOther[];
+extern struct SceneEntrance gCrossboneIsleSteppingStonesEntrances[];
+extern struct SceneEntrance gCrossboneIsleIcePillarsEntrances[];
+extern struct SceneEntrance gCrossboneIsleFloodgateEntrances[];
+extern struct SceneEntrance gCrossboneIsleStackedPillarsEntrances[];
+extern struct SceneEntrance gCrossboneIsleDragonStatueEntrances[];
+extern u32 gCrossboneIsleSteppingStonesExits[];
+extern struct ActorPlacement gCrossboneIsleSteppingStonesNoActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleSteppingStonesActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleIcePillarsActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleFloodgateActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleSteppingStonesActorPlacementsOther[];
+extern struct ActorPlacement gCrossboneIsleDragonStatueActorPlacements[];
+extern struct Trigger gCrossboneIsleSteppingStonesTriggersOther[];
+extern struct Trigger gCrossboneIsleSteppingStonesTriggers[];
+extern struct Trigger gCrossboneIsleIcePillarsTriggers[];
+extern struct Trigger gCrossboneIsleFloodgateTriggers[];
+extern struct Trigger gCrossboneIsleStackedPillarsTriggers[];
+extern struct Trigger gCrossboneIsleDragonStatueTriggers[];
+
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"

@@ -11,7 +11,14 @@
 /// the one SceneId_SolSanctumMaze shares. Once Mt. Aleph has erupted
 /// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
 
-#include "module/scene/sol_sanctum_corridor.h"
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct SceneEntrance gSolSanctumCorridorEntrances[];
+extern u32 gSolSanctumCorridorExits[];
+extern struct ActorPlacement gSolSanctumCorridorActorPlacements[];
+extern struct Trigger gSolSanctumCorridorTriggers[];
+
 #include "module/scene/shared/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"

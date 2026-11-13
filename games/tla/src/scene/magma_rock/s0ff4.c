@@ -654,7 +654,7 @@ first:
   i++;
   if (i != 8)
     goto first;
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   gMainRoutineWork.renderMode = 0;
   leader->motionFlags = 3;
   leader->gravity = 0xcccc;
@@ -679,8 +679,8 @@ second:
   Event_PlaySound(188);
   Actor_SetSingleChildFlags(leader, 1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
-  Call3((void (*)())Map_SetScreenShake, 0x50000, 0x80000, 0x10000);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x80000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Map_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();

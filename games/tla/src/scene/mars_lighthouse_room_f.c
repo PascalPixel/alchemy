@@ -1007,10 +1007,10 @@ void Func_02001bcc(void) {
   struct PositionedActor *actor23 = Actor_GetById(23);
   struct FieldSprite *sprite = actor23->animation;
 
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 24, 0x2000000, 0xf80000);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 23, 0x2000000, 0xf80000);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0x1d80000, 0x1000000);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x2280000, 0x1000000);
+  Actor_SetPosition(24, 0x2000000, 0xf80000);
+  Actor_SetPosition(23, 0x2000000, 0xf80000);
+  Actor_SetPosition(9, 0x1d80000, 0x1000000);
+  Actor_SetPosition(10, 0x2280000, 0x1000000);
   Actor_GetById(24)->scaleX = 0;
   actor23->motionFlags = 0;
   actor23->y.fixed = actor23->terrainHeight;
@@ -1030,7 +1030,7 @@ void Func_02001bcc(void) {
     Animation_ApplyChildValues(Actor_GetById(9), 4);
     Animation_ApplyChildValues(Actor_GetById(11), 4);
   }
-  if (Value1((s32 (*)())GameFlag_Test, 0xa0b)) {
+  if (Event_GetFlag(0xa0b)) {
     actor10->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;

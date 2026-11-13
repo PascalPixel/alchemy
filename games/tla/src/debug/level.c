@@ -25,10 +25,26 @@
 #include "battle_unit.h"
 #include "character_ids.h"
 
+extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_SecondNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_ThirdNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_FourthNamePlacements[];
+extern struct Trigger gIncreaseItemAndLevel_NameTriggers[];
+extern struct Trigger gIncreaseItemAndLevel_Triggers[];
+extern char gIncreaseItemAndLevel_LvLabel[];
+extern char gIncreaseItemAndLevel_ItemPrompt[];
+extern char gIncreaseItemAndLevel_ItemHelp[];
+extern char gIncreaseItemAndLevel_ItemFull[];
+void IncreaseItemAndLevel_RunMotionTest(void);
+void IncreaseItemAndLevel_EnableEffectChildMode(void);
+void IncreaseItemAndLevel_OpenIconBrowser(void);
+void IncreaseItemAndLevel_OpenPortraitBrowser(void);
+
 #include "edition.h"
 #include "event_work.h"
 #include "module/debug/debug.h"
-#include "module/debug/level.h"
+#include "scene_tables.h"
 #include "module/game/game.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
@@ -237,7 +253,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
         messageOrDefinitionId = selectedItemId & ITEM_ID_MASK;
         Item_GetDirect(messageOrDefinitionId);
         Text_DrawMessageAsTiles(messageOrDefinitionId + (s32)MsgItemName,
-                                   window, 120, 0);
+                                window, 120, 0);
         Text_DrawMessage(messageOrDefinitionId + (s32)MsgItemPlainName, window,
                          0, 16);
         WindowSprite_RedrawSavedRect(details);

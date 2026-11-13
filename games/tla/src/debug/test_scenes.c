@@ -13,8 +13,11 @@
 #include "types.h"
 #include "scene_tables.h"
 
+void Test_ReceiveFizz(void);
+
+void Test_ReceiveForge(void);
+
 #include "event_inline.h"
-#include "module/debug/test_scenes.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

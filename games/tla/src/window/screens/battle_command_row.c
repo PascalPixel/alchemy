@@ -3,8 +3,9 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
-#include "module/window/scales.h"
 #include "module/window/screens.h"
+
+extern const u16 gWindowSprite_BounceScales[32];
 
 struct WindowTiles {
   u8 unk00[3];

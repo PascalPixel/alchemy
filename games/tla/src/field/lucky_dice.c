@@ -33,13 +33,17 @@
 #include "gamepak/far_call/window.h"
 #include "heap_release.h"
 #include "module/field/field.h"
-#include "module/field/lucky_dice.h"
 #include "module/system/system.h"
 #include "resource.h"
 #include "resource_ids.h"
 #include "task.h"
 #include "text/msg_ids.h"
 #include "transform.h"
+
+extern const u8 gLuckyDice_LabelCounts[];
+extern const u8 gLuckyDice_LabelTiles[];
+extern const u8 gLuckyDice_FaceTiles[];
+extern const s16 gLuckyDice_FaceHeights[];
 
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;

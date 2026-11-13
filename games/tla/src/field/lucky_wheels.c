@@ -25,10 +25,14 @@
 #include "gamepak/far_call/window.h"
 #include "lucky_wheels_title.h"
 #include "module/field/field.h"
-#include "module/field/lucky_wheels.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
 #include "graphics.h"
+
+void LuckyWheels_Run(void);
+extern const u8 gLuckyWheels_SymbolPrizes[];
+extern const u8 gLuckyWheels_MachineSpriteX[];
+extern const u8 gLuckyWheels_MachineSpriteY[];
 
 /// Blanks the display but for 1D objects, seeds the random state from the
 /// play time, plays sound 709 and runs Lucky Wheels.

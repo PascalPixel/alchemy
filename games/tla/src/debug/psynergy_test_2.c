@@ -19,12 +19,24 @@
 #include "call.h"
 #include "item_icon.h"
 #include "module/debug/debug.h"
-#include "module/debug/psynergy_test_2.h"
 #include "module/scene/kibombo.h"
 #include "module/tla.h"
 #include "particle.h"
 #include "resource.h"
 #include "gamepak/far_call/system.h"
+
+struct Particle;
+
+void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
+
+void Func_0200029c(void);
+void Func_02000358(void);
+
+void Func_020005e8(s32 a, s32 b, s32 c);
+
+void Func_02000600(struct Particle *particle, s32 unk1, s32 step);
+
+void Func_02000560(void *entry, void *destination);
 
 void Func_020005d8(s32 a, s32 b);
 

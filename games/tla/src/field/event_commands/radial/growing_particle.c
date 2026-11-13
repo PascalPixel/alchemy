@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 void Camera_WorldToScreen(s32 *position);
 
@@ -164,7 +165,7 @@ void FieldPsynergy_EndSand(void) {
   pictureOffset = sprite * 32;
   for (; frame < 78; frame++) {
     if (frame == 0)
-      Sound_PlayFar(544);
+      Sound_PlayFar(SE_544);
     if (frame <= 64) {
       Picture_SinkColumnsByWave(work, rippled, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
@@ -176,7 +177,7 @@ void FieldPsynergy_EndSand(void) {
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
       Actor_SetSpriteFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
       FieldCamera_FollowActor(*(s16 *)(effect + 24), 1);
-      Sound_PlayFar(539);
+      Sound_PlayFar(SE_539);
       if (*(s8 *)(event + 394) == 3) {
         Data_02000452 = 1;
         *motionFlags = 2;

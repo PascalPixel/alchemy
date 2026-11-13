@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 /* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
@@ -115,7 +116,7 @@ void FieldPsynergy_Burst(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
                       Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
   work->phase = 0;
   work->timer = 0;
@@ -242,7 +243,7 @@ void FieldPsynergy_UpdatePound(void) {
       blend->scaleX = 0x2000;
       blend->scaleY = 0x2000;
       MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
-      Sound_PlayFar(567);
+      Sound_PlayFar(SE_567);
       work->sparkles = 1;
       work->fading = 1;
     }

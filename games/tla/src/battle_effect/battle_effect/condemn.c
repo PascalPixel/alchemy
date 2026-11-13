@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
@@ -194,7 +195,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     // The strike: a cue at 68; at 72 the target is thrown, the screen
     // shakes and the results begin.
     if (frame == 68)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 72) {
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       work->shakeFrames = 8;

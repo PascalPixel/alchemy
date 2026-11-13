@@ -5,6 +5,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 /// @file
 /// The pieces the menu screens share: windows, the status panel, numbers,
@@ -929,7 +930,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     pageForward = gInput.repeat & KEY_RIGHT;
   }
   if (horizontal) {
-    Sound_PlayFar(111);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     if (--*page < 0)
       *page = pages - 1;
     if (*cursor + *page * pageSize > count - 1) {
@@ -942,7 +943,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     goto done;
   }
   if (pageForward) {
-    Sound_PlayFar(111);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     if (++*page > pages - 1)
       *page = 0;
     if (*cursor + *page * pageSize > count - 1) {
@@ -955,7 +956,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     goto done;
   }
   if (previous) {
-    Sound_PlayFar(111);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     if (--*cursor < 0) {
       *cursor = pageSize - 1;
       *cursor = count - *page * pageSize - 1;
@@ -968,7 +969,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   if (next == 0)
     goto done;
   {
-    Sound_PlayFar(111);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     result = 0;
     if (++*cursor == count - *page * pageSize)
       *cursor = result;
@@ -1154,7 +1155,7 @@ void Menu_UpdateCancelSound(void) {
   input = &gInput;
   mask = 8;
   if (input->pressed & mask) {
-    Sound_PlayFar(113);
+    Sound_PlayFar(SE_MENU_CANCEL);
     GameFlag_Set(0x150);
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }

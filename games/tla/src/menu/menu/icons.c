@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 struct ItemMenuBlocks {
   u8 unk000[0x4ee];
@@ -155,7 +156,7 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
       pos = count - 1;
   }
   if (old != pos) {
-    Sound_PlayFar(111);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     result = 1;
   }
   if (old / columns * columns != pos / columns * columns)

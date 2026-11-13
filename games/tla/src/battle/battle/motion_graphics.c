@@ -5,6 +5,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/field.h"
@@ -165,7 +166,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   Actor_SelectAnimationFar(actor, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
   IoWriteQueue_Store16(0x04000050, 0x3f40);
-  Sound_PlayFar(154);
+  Sound_PlayFar(SE_CAST);
   wait(10);
   if (single) {
     BattleHighlight_SetSpriteMode(saved->unitId, 1);
@@ -720,7 +721,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar(object, ((u8 *)heap->battleWork)[0x869]);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
-  Sound_PlayFar(154);
+  Sound_PlayFar(SE_CAST);
   if (mode & 2)
     ElementGlow_Play(work.actor, plan->element, 1, 0);
   else if (!isDjinni)

@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -510,21 +511,21 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       pos.x = pos.x + d;
     }
     if (frame == 78) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 138) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 152) {
-      Sound_PlayFar(163);
+      Sound_PlayFar(SE_163);
     }
     if (frame == 7) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 10) {
       const u8 *piece;
 
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       i = 0;
       p = work->particles;
       piece = Data_081986f2[0];
@@ -805,7 +806,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
       }
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;
     }
     if (frame == 214) {

@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 #include "gamepak/far_call/field.h"
@@ -261,7 +262,7 @@ void BattlePlayback_Run(void) {
       // differ in tla-en.
       if ((gInput.held & 2) || (gInput.pendingPressed & 0x303) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;
       } else {

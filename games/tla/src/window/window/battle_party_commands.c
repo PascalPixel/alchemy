@@ -4,6 +4,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "battle/motobj.h"
 
@@ -68,7 +69,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
       return -1;
     slot &= 0xff;
     current = battle->partyUnits[slot];
-    Sound_PlayFar(112);
+    Sound_PlayFar(SE_MENU_CONFIRM);
     // Once-only block: the native's code order after the first sound.
     do {
       goto test;
@@ -81,10 +82,10 @@ s32 BattleParty_ChooseReserve(s32 slot) {
         if (INPUT->pressed & 1) {
 #endif
           if (BattleUnit_ListIdsFar(1, 0) == 0) {
-            Sound_PlayFar(114);
+            Sound_PlayFar(SE_MENU_ERROR);
             goto test;
           }
-          Sound_PlayFar(110);
+          Sound_PlayFar(SE_CHIME);
           reserve[65] = current;
           reserve[66] = slot;
           for (i = 0; i < 8; i++) {
@@ -97,11 +98,11 @@ s32 BattleParty_ChooseReserve(s32 slot) {
         }
         if (INPUT->repeat & 0x20) {
           sel = (sel + count - 1) % count;
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           redraw = 1;
         } else if (INPUT->repeat & 0x10) {
           sel = (sel + 1) % count;
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           redraw = 1;
         }
         if (redraw) {
@@ -135,7 +136,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
       }
       battle->partyUnits[slot] = current;
       result = -1;
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
     done:
       selected[0] = 0xff;
       BattleHighlight_SetModesFar(selected, 0);

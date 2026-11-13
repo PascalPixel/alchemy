@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #include "debug.h"
 #include "field/field.h"
@@ -348,7 +349,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       point[2] = object->z;
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)
-        Sound_PlayFar(126);
+        Sound_PlayFar(SE_RECOVERY);
       if (mode == 8) {
         if (frame == start + 41)
           BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 32);

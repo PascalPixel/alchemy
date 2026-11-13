@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "sounds.h"
 #include "actor.h"
 
 void Serial_QueueCommand(u32 command) {
@@ -592,7 +593,7 @@ void SerialTest_Run(void) {
   // tla-en.
   volatile u32 *held;
 
-  Sound_PlayFar(3);
+  Sound_PlayFar(MUS_003);
   Serial_Initialize();
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;

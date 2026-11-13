@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 struct SplashParticle {
   s32 x;
@@ -150,7 +151,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   }
   ViewMove_Start(2);
   wait(1);
-  Sound_PlayFar(238);
+  Sound_PlayFar(SE_PUSH_STEP);
   counter = 0;
   amplitude = 0x20000;
   phase = 0;
@@ -262,7 +263,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     wait(1);
     timer++;
   } while (phase != 999);
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
   VramCache_FreeEntry(entry);

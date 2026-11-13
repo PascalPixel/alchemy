@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 
 u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
   s32 r = rgb[0] * scale_r >> 16;
@@ -514,7 +515,7 @@ s32 SettingsMenu_Run(void) {
     wait(1);
 
     if (PRESSED & 4) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
       if (work->preset > 5)
@@ -525,30 +526,30 @@ s32 SettingsMenu_Run(void) {
     }
     if (PRESSED & 9) {
       result = 0;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (PRESSED & 2) {
       result = -1;
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if (gInput.repeat & 64) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption--;
       redraw = 1;
     } else if (gInput.repeat & 128) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption++;
       redraw = 1;
     } else {
       if (gInput.repeat & 32) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]--;
         redraw = 1;
       }
       if (gInput.repeat & 16) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]++;
         redraw = 1;
       }
@@ -793,22 +794,22 @@ s32 PauseMenu_Choose(s32 initial) {
     wait(1);
     if (KEYS_PRESSED & 1) {
       result = selected;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (KEYS_PRESSED & 10) {
       result = -1;
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if (gInput.repeat & 64) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selected--;
       redraw = 1;
       continue;
     }
     if (gInput.repeat & 128) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selected++;
       redraw = 1;
       continue;
@@ -816,12 +817,12 @@ s32 PauseMenu_Choose(s32 initial) {
     if (gDebugMode != 0) {
       if (KEYS_PRESSED & 0x100) {
         result = 20;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
       if (KEYS_PRESSED & 0x200) {
         result = 21;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
     }

@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 #include "field/field_psynergy_work.h"
 #include "system/main_routine_work.h"
@@ -94,7 +95,7 @@ void FieldPsynergy_Sand(void) {
     if (frame > 0)
       owner->y += 0x3999;
     if (frame & 31)
-      Sound_PlayFar(566);
+      Sound_PlayFar(SE_566);
     owner->facing += 0x2000;
     wait(1);
   }
@@ -122,7 +123,7 @@ void FieldPsynergy_Sand(void) {
     if (frame == 16)
       Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
     if (frame == 45)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     if (frame == 60) {
       Actor_SetFirstSpriteAnimationFar(owner, 251);
       ((u8 *)owner->sprite)[5] &= 63;
@@ -299,7 +300,7 @@ void FieldPsynergy_UpdateBurst(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 0)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
         GLOW_NEXT_PHASE(work);
       break;
@@ -319,7 +320,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0)
         work->paletteMode = 2;
       if (work->timer == 0)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
         MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
         work->newBursts = 1;
@@ -331,7 +332,7 @@ void FieldPsynergy_UpdateBurst(void) {
       break;
     case 4:
       if ((work->timer & 15) == 0)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
         MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
         work->newBursts = 1;
@@ -351,7 +352,7 @@ void FieldPsynergy_UpdateBurst(void) {
         work->newBursts = 10;
       if (work->timer == 0) {
         MapGrid_SetScreenShakeFar(0xc0000, 0xc0000, 0xe666);
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         if (work->timer == 0)
           work->shake = 3;
       }
@@ -420,7 +421,7 @@ void FieldPsynergy_UpdateBurst(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 0)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
         GLOW_NEXT_PHASE(work);
       break;
@@ -442,7 +443,7 @@ void FieldPsynergy_UpdateBurst(void) {
         if (work->timer == 0) {
           MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
           work->newBursts = 1;
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
       }
       canvas->command = CANVAS_UPLOAD_AND_FADE3;

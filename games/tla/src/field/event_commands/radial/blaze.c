@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 #include "system/input.h"
 
@@ -176,7 +177,7 @@ void FieldPsynergy_Blaze(void) {
     object->scaleX = 0x14000;
     object->scaleY = 0x14000;
     Actor_SelectAnimationFar(object, 2);
-    Sound_PlayFar(186);
+    Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(50);
     Actor_ReleaseFar(object);
     wait(10);
@@ -191,14 +192,14 @@ void FieldPsynergy_Blaze(void) {
       goto end;
     ((u8 *)object)[85] = mode;
     Actor_SelectAnimationFar(object, 2);
-    Sound_PlayFar(186);
+    Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(45);
     Actor_ReleaseFar(object);
     wait(10);
     goto end;
   }
 
-  Sound_PlayFar(207);
+  Sound_PlayFar(SE_RUSH);
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   work->angle = scene->angle;
   work->targetAngle = scene->angle;
@@ -271,7 +272,7 @@ void FieldPsynergy_Blaze(void) {
     if (gInput.pressed & 2)
       break;
   }
-  Sound_PlayFar(395);
+  Sound_PlayFar(SOUND_FADE_OUT_SE5);
   work->emitting = 0;
   for (k = 0; k < 60; k++) {
     cursor.particle = work->dropMotion;

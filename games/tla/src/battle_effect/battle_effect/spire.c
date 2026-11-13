@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #undef BLITTER
 
@@ -98,7 +99,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
         if (i == 0)
           BattlePlayback_StartFar(134);
         else
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
       }
       // The shards fly, each tumbling through its kind's three cels more

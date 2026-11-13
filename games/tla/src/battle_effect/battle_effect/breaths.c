@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -509,20 +510,20 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
 
       if (mode == BREATH_BEAM) {
         if (frame == 0)
-          Sound_PlayFar(140);
+          Sound_PlayFar(SE_SPIN);
       } else if (mode == BREATH_PIKE) {
         if (frame == 2)
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
       }
 
       if (mode == BREATH_BLAST) {
         // Blast Breath strikes each target in turn, every fourth frame.
         if (frame == 0) {
           work->shakeFrames = 8;
-          Sound_PlayFar(221);
+          Sound_PlayFar(SE_RISE_WITH_SPARKS);
         }
         if (frame == 16) {
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           BattlePlayback_StartFar(134);
         }
         for (i = 0; i != effect->count; i++) {
@@ -651,7 +652,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
       EffectPosition_ProjectBattler(effect->actors[0],
                                     (struct EffectPosition *)position);
     if (frame == 8)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
 
     // Frame 12: the hit. Echo Cut throws the target up.
     if (frame == 12) {

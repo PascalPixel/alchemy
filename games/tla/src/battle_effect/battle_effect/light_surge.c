@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -354,7 +355,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         flash->velocityX = (Random16() & 7) + 24;
         flash->variant = 0;
         work->shakeFrames = 4;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
       }

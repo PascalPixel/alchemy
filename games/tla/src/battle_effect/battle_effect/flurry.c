@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 void BattleEffect_RunRansack(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 0);
@@ -219,7 +220,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     for (i = 0; i != 160; i++)
       *lines++ = (0x60000 - Trig_Sin((frame + i) * 0x800) * 6) >> 10;
     if (variant == 10 && frame == 8)
-      Sound_PlayFar(221);
+      Sound_PlayFar(SE_RISE_WITH_SPARKS);
     blows = RECORD(RECORD_BLOWS);
     EffectPosition_ProjectScaledBattler(effect->actor, &actorPos);
     actorPos.x /= 2;
@@ -286,7 +287,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           if (i & 1)
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 7);
           work->shakeFrames = 4;
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         }
         for (j = 0; j != RECORD(RECORD_MOTES); j++)
           MOTES[i * 32 + j].variant = (Random16() & 7) + 15;

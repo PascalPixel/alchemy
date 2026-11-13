@@ -4,6 +4,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 
 struct ScreenWork {
   u8 unk000[0x5a4];
@@ -121,8 +122,8 @@ UNUSED s32 DebugSoundTest_Run(void) {
         Sound_PlayFar(test.values[cursor]);
     }
     if (gInput.pressed & 8) {
-      Sound_PlayFar(390);
-      Sound_PlayFar(0);
+      Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
+      Sound_PlayFar(MUS_000);
     }
     if (gInput.repeat & 0x100) {
       test.values[cursor] += 10;
@@ -231,23 +232,23 @@ UNUSED s32 DebugMenu_Run(s32 index) {
     }
     wait(1);
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       index = -1;
       goto done;
     }
     if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       goto done;
     }
     if (gInput.repeat & 64) {
       index--;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 128) {
       index++;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   } while (1);
 done:
@@ -449,18 +450,18 @@ UNUSED s32 DebugWarp_Run(s32 index) {
     }
     wait(1);
     if (gInput.pressed & KEY_B) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       index = -1;
       goto done;
     }
     if (gInput.pressed & KEY_A) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       goto done;
     }
     if (gInput.repeat & KEY_UP) {
       index--;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     // down holds the Down mask; as gInput.repeat & KEY_DOWN, 32 of 115
     // instructions differ in tla-en.
@@ -468,7 +469,7 @@ UNUSED s32 DebugWarp_Run(s32 index) {
     if (gInput.repeat & down) {
       index++;
       moved = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   } while (1);
 done:
@@ -594,44 +595,44 @@ UNUSED s32 DebugShortcut_Run(void) {
     }
     wait(1);
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       goto done;
     }
     if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 0;
       goto done;
     }
     if (gInput.pressed & 0x200) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       goto done;
     }
     if (gInput.pressed & 0x100) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 2;
       goto done;
     }
     if (gInput.repeat & 0x20) {
       column--;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x10) {
       column++;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x40) {
       row--;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x80) {
       row++;
       result = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   } while (1);
 done:

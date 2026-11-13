@@ -4,6 +4,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "module/shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/game.h"
@@ -150,11 +151,11 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
     wait(1);
     if (gInput.pressed & 1) {
       if (Inventory_CountFar(unitId) == 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       slot = ItemPicker_SelectItem(unitId);
       if (slot == -1) {
         shop->cursor.anchor->active = 4;
@@ -167,7 +168,7 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       result = 0;
       break;
     } else if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       *outUnit = -1;
       *outSlot = -1;
       result = -1;
@@ -253,7 +254,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       else
         flags = Inventory_CheckUnequipFar(unitId, slot);
       if (flags == 0) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = slot;
         break;
       }
@@ -261,14 +262,14 @@ s32 ItemPicker_SelectItem(s32 unitId) {
         Message_OpenWindowFar((s32)MsgCannotRemoveIt, 8, 1, 0);
       else if (flags & 2)
         Message_OpenWindowFar((s32)MsgCannotDropIt, 8, 1, 0);
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       while (Message_AllTypedFar() == 0)
         wait(1);
       Message_CloseFinishedWindowsFar();
       continue;
     }
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -276,7 +277,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       u32 item = unit->inventory[slot];
       void *details;
 
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
       details = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
       ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
@@ -298,13 +299,13 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       continue;
     }
     if (gInput.repeat & 32) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot--;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
     if (gInput.repeat & 16) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot++;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
@@ -315,7 +316,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
         slot += 15;
       while (slot >= inventoryCount)
         slot -= 5;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
     if (gInput.repeat & 128) {
@@ -324,7 +325,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
         slot -= 15;
       while (slot < 0)
         slot += 5;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
   }

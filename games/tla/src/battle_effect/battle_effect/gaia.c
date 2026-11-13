@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #undef ROCK_COUNT
 
@@ -211,11 +212,11 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 192; frame++) {
     if (frame == 0)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 40)
-      Sound_PlayFar(141);
+      Sound_PlayFar(SE_RUMBLE);
     if (frame == 96)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     // The battle resumes and resolves the targets, hit cue 134.
     if (frame == 120)
       BattlePlayback_StartFar(134);

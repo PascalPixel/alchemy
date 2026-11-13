@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -221,7 +222,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
     frames = 80;
-    Sound_PlayFar(84);
+    Sound_PlayFar(MUS_084);
   } else if (mode == 11) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
     LOAD_BG_PALETTE(ResourceId_MarsDjinnSmallSheet);
@@ -478,9 +479,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           draw[0](canvas, FIGURE(work), x, y, 20, 40);
       }
       if (frame == 0)
-        Sound_PlayFar(142);
+        Sound_PlayFar(SE_SWIRL);
       if (frame == 62)
-        Sound_PlayFar(139);
+        Sound_PlayFar(SE_139);
       if (frame == 0) {
         for (i = 0; i != 63; i++) {
           struct EffectStep *p = &work->particles[i];
@@ -554,7 +555,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       ball->y = y;
       draw[0](canvas, FIGURE(work), x - 10, y - 20, 20, 40);
       if (frame == 0)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       if (frame == 55) {
         struct EffectStep *flash = &work->particles[61];
 
@@ -601,7 +602,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 4)
-        Sound_PlayFar(147);
+        Sound_PlayFar(SE_BEAST_CRY);
       if (frame == 48)
         BattlePlayback_StartFar(-1);
       texture.logWidth = 5;
@@ -811,7 +812,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 14) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 24) {
         BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 12);
@@ -946,7 +947,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           p->y = (pos.y - (Random16() & 31) + 16) << 16;
           p->z = Random16();
         }
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 16;
         BattleEffect_TintBattler(effect->actors[0], 10, -1, 0, 32);
       }
@@ -998,7 +999,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           p->y = (pos.y - (Random16() & 31) - 16) << 16;
           p->z = Random16();
         }
-        Sound_PlayFar(619);
+        Sound_PlayFar(SE_619);
       }
       texture.logWidth = 5;
       texture.logHeight = 5;
@@ -1036,13 +1037,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         Actor_SelectAnimationFar(user, 0);
         Actor_SelectAnimationFar(user, 2);
         Actor_SetAnimationSpeedFar(user, 0);
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 14)
         Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object,
                                    16);
       if (frame == 22)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 26) {
         BattlePlayback_StartFar(144);
         work->shakeFrames = 8;
@@ -1176,7 +1177,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 8) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 8;
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         for (i = 0; i != effect->count; i++)
@@ -1188,7 +1189,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       s32 shade;
 
       if (frame == 0)
-        Sound_PlayFar(104);
+        Sound_PlayFar(SE_104);
       EffectPosition_ProjectBattler(effect->actors[0], &pos);
       shade = frame * 4 - 64;
       if (shade >= -16)
@@ -1296,7 +1297,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 16) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)
@@ -1345,7 +1346,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 0)
         Graphics_LoadGreyRamp();
       if (frame == 16) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)

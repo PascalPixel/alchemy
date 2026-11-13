@@ -3,6 +3,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "module/field/field.h"
 #include "module/field/resource_slot.h"
@@ -1834,7 +1835,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
       (gInput.pressed & gMainRoutineWork.keys23a))
     pressed = 1;
   if (pressed) {
-    Sound_PlayFar(113);
+    Sound_PlayFar(SE_MENU_CANCEL);
   } else {
     object->terrainHeight =
         MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);

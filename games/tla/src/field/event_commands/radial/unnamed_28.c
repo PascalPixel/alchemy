@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 struct RingMote {
   s32 x;
@@ -322,7 +323,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   // A once-only block: its end holds the order around it (as plain
   // statements, 6 of 226 differ in tla-en).
   do {
-    Sound_PlayFar(167);
+    Sound_PlayFar(SE_MAP_TRANSITION);
     {
       s32 (*fill)(void *, s32, u32);
       // A once-only block: the fill's entry loads ahead of the size (as a

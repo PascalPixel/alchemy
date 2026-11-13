@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
 #include "gamepak/far_call/window.h"
@@ -274,11 +275,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_Get(0x16c) != 0) {
-      Sound_PlayFar(55);
+      Sound_PlayFar(MUS_055);
       Sound_LoadReverbCode(4);
     }
   } else {
-    Sound_PlayFar(50);
+    Sound_PlayFar(MUS_050);
   }
 
   BattleUnit_Collect();
@@ -449,9 +450,9 @@ won_scripted:
   if ((u32)scripted > 1) {
     if (enemyGroup != 80 && GameFlag_Get(0x16e) == 0) {
       if (battle->twoSided != 0)
-        Sound_PlayFar(58);
+        Sound_PlayFar(MUS_058);
       if (battle->defeated != 0) {
-        Sound_PlayFar(58);
+        Sound_PlayFar(MUS_058);
         if (battle->defeatState <= 1) {
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                             26);
@@ -463,7 +464,7 @@ won_scripted:
       }
       Battle_AwardSpoils();
     }
-    Sound_PlayFar(78);
+    Sound_PlayFar(SOUND_FADE_OUT_BGM);
   }
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
@@ -485,7 +486,7 @@ party_lost:
   scripted = enemyGroup - 74;
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
-      Sound_PlayFar(59);
+      Sound_PlayFar(MUS_059);
       MessageArgument_ClearAllFar();
       if (BattleParty_PrepareMembers(0) == 1)
         BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
@@ -493,7 +494,7 @@ party_lost:
         BattleMessage_ShowAndWaitFar((s32)MsgPartyDefeated);
       BattleMessage_WaitForAdvance();
     }
-    Sound_PlayFar(78);
+    Sound_PlayFar(SOUND_FADE_OUT_BGM);
   }
   ScreenFade_ToBlack(30);
   result = -1;
@@ -501,7 +502,7 @@ party_lost:
   goto finished;
 
 fled:
-  Sound_PlayFar(78);
+  Sound_PlayFar(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   result = 999;

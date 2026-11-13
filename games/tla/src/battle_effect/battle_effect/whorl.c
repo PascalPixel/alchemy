@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -209,10 +210,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
   if (frames != 0) {
     do {
       if (frame == 0) {
-        Sound_PlayFar(199);
+        Sound_PlayFar(SE_199);
       }
       if (frame == 32) {
-        Sound_PlayFar(206);
+        Sound_PlayFar(SE_CURSE_FALL);
       }
       if (frame == 0) {
         target[2] = work->particles[63].x;
@@ -531,14 +532,14 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
       } else if (mode == 3) {
         EffectPosition_ProjectScaledBattler(effect->actor, &spos);
         if (frame == 8) {
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
         if (frame == 16) {
           BattlePlayback_StartFar(134);
         }
         for (i = 0; i != effect->count; i++) {
           if (frame == i * 4 + 16) {
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x70000,
                                           100);
             BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);

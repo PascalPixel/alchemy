@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "module/system/system.h"
 #include "version.h"
 #include "gamepak/far_call/game.h"
@@ -141,7 +142,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     Window_Close(navigation->timerWindow, 1);
     navigation->timerWindow = (void *)page;
   }
-  Sound_PlayFar(112);
+  Sound_PlayFar(SE_MENU_CONFIRM);
 
   for (i = 4; i >= 0; i--)
     cursor.groupPositions[i] = 0;
@@ -239,7 +240,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       else
         cursor.helpEntry = page;
       redraw = 1;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
     }
 
     if (statusCount != 0) {
@@ -247,7 +248,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         groupPosition = cursor.groupPositions[cursor.group];
         if (keys & 0x80) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             groupPosition = 0;
@@ -258,7 +259,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           }
         } else if (keys & 0x40) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition--;
           if (groupPosition < 0) {
             groupPosition = cursor.groupSize - 1;
@@ -269,7 +270,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           }
         } else if (keys & 0x30) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           cursor.group ^= 2;
           if (gInput.repeat & 0x20)
             groupPosition = statusCount - 1;
@@ -291,7 +292,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             cursor.group = 0;
             groupPosition = cursor.groupPositions[0];
           }
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if (keys & 0x20) {
           keys = 0;
           groupPosition--;
@@ -299,12 +300,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             cursor.group = 0;
             groupPosition = cursor.groupPositions[0];
           }
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if (keys & 0xc0) {
           keys = 0;
           cursor.group = 0;
           groupPosition = cursor.groupPositions[0];
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         cursor.groupPositions[cursor.group] = groupPosition;
       } else if (cursor.group == 3 || cursor.group == 5) {
@@ -312,21 +313,21 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         groupPosition = cursor.groupPositions[cursor.group];
         if (keys & 0x80) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition++;
           if (groupPosition >= cursor.groupSize)
             groupPosition = 0;
         } else if (keys & 0x40) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition--;
           if (groupPosition < 0)
             groupPosition = cursor.groupSize - 1;
         } else if (keys & 0x10) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition += 4;
           if (groupPosition >= cursor.groupSize) {
@@ -337,7 +338,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           }
         } else if (keys & 0x20) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           groupPosition -= 4;
           if (groupPosition < 0)
@@ -354,28 +355,28 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
         if (keys & 0x80) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition++;
           if (djinnPosition >= cursor.groupSize)
             djinnPosition = 0;
         } else if (keys & 0x40) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition--;
           if (djinnPosition < 0)
             djinnPosition = cursor.groupSize - 1;
         } else if (keys & 0x10) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition += 3;
           if (djinnPosition >= cursor.groupSize)
             djinnPosition = djinnPosition % 3;
         } else if (keys & 0x20) {
           keys = 0;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw |= 2;
           djinnPosition -= 3;
           if (djinnPosition < 0)
@@ -1122,14 +1123,14 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           memberIndex = 0;
         member = list[memberIndex];
         redraw = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       } else if (keys & 0x200) {
         memberIndex--;
         if (memberIndex < 0)
           memberIndex = listCount - 1;
         member = list[memberIndex];
         redraw = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
     wait(1);

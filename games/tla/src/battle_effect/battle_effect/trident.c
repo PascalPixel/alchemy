@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -226,16 +227,16 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 0) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 4) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     }
     if (frame == 16) {
-      Sound_PlayFar(164);
+      Sound_PlayFar(SE_SCATTER);
     }
     if (frame == 64) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
 
     // Poseidon rises.
@@ -659,7 +660,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
         caster->velocityX = -caster->velocityX;
       Actor_SelectAnimationFar(caster, 2);
       work->shakeFrames = 4;
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     }
 
     // Frame 16: down at the target's depth, then sliding to it over 16
@@ -715,7 +716,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
           } else {
-            Sound_PlayFar(145);
+            Sound_PlayFar(SE_CRASH);
             for (i = 0; i != effect->count; i++) {
               BattleMotion_ApplyKnockbackFar(effect->actors[i], 3);
               BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);

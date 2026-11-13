@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -127,7 +128,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
               shard->variant = 0;
             }
             work->shakeFrames = 8;
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
             for (j = 0; j != effect->count; j++)
               BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 4);
           }

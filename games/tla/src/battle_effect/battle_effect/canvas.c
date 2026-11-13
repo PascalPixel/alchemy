@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/field.h"
@@ -207,13 +208,13 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 48) {
-        Sound_PlayFar(139);
+        Sound_PlayFar(SE_139);
       }
       if (frame == 136) {
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       }
       if (frame == 172) {
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       }
       for (i = 0; i != 17; i++) {
         if (frame == Data_0819774f[i]) {
@@ -492,11 +493,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       work->transferValue = 0x04040404;
     }
     if (frame == 16) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 18) {
       work->shakeFrames = 90;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 4);
@@ -675,7 +676,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Render_DrawModelList(model);
       }
       if (frame == 0) {
-        Sound_PlayFar(208);
+        Sound_PlayFar(SE_BANE_ESCAPE);
         Mesh_BuildGrid(Data_02011000, 16, 8, 8, 8);
         {
           s32 ringAngle = 0;
@@ -891,12 +892,12 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
             (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_EffectPalette03), 128);
       if (frame == 0)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
     }
     if (frame == 48)
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     if (frame == 56)
-      Sound_PlayFar(148);
+      Sound_PlayFar(SE_BOSS_ROAR);
     if (frame == 32)
       BattleEffect_TintBattler(effect->actor, 7, -1, -1, -1);
     if (frame == 68)
@@ -1084,7 +1085,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   HeapSlot_Release(SLOT_BLITTER);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
-    Sound_PlayFar(390);
+    Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
     gCameraSceneParameters[3] = 120;
@@ -1590,7 +1591,7 @@ void BattleEffect_EndCanvasLayer(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;

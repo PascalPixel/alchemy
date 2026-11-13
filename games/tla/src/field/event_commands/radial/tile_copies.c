@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
@@ -107,12 +108,12 @@ void FieldItem_JumpToLeader(s32 sprite, s32 x, s32 z) {
   Event_Wait(32);
   object->gravity = 0x10000;
   object->velocityY = 0x60000;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Event_Wait(15);
   object->velocityY = 0x60000;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Event_Wait(23);
-  Sound_PlayFar(146);
+  Sound_PlayFar(SE_ENEMY_CRY);
 
   from[0] = object->x;
   from[1] = object->y;
@@ -189,6 +190,6 @@ void ParticleBurst_Start(void) {
       particle->spin = -particle->spin;
     particle->delay = -i / 2;
   }
-  Sound_PlayFar(220);
+  Sound_PlayFar(SE_SHIMMER);
   Task_Add(ParticleBurst_Update, TASK_PASS_VBLANK);
 }

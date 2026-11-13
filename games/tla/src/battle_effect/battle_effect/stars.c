@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 
@@ -172,7 +173,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           if (i == 2) {
             BattlePlayback_StartFar(134);
           } else {
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
           }
           work->shakeFrames = 4;
@@ -314,7 +315,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
           star->velocityX /= 2;
           star->velocityZ /= 2;
           work->shakeFrames = 4;
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           for (j = 0; j != effect->count; j++)
             BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
         }

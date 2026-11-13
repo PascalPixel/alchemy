@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // The packed preparer word: kind | side << 4 | anchor << 5.
 #define PREPARE_KIND(packed) ((packed) & 7)
@@ -236,7 +237,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     if (anchor == ANCHOR_BRIGHTEN && frame > 23)
       Palette_BrightenBattleBg(2, 2, 2);
     if (frame == 8)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 6 && frame <= 45) {

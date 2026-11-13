@@ -1,4 +1,5 @@
 #include "types.h"
+#include "sounds.h"
 #include "field/event.h"
 #include "module/sound/sound.h"
 #include "system/system.h"
@@ -80,11 +81,11 @@ void SoundTest_Run(void) {
     if (gInput.repeat & KEY_A)
       Sound_Play(cues.cue[row]);
     if (gInput.repeat & KEY_B)
-      Sound_Play(0);
+      Sound_Play(MUS_000);
     if (gInput.repeat & KEY_START)
-      Sound_Play(78);
+      Sound_Play(SOUND_FADE_OUT_BGM);
     if (gInput.repeat & KEY_SELECT)
-      Sound_Play(390);
+      Sound_Play(SOUND_FADE_OUT_ACTION_SE);
 
     wait(1);
   }

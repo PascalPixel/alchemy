@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 
 /* VIEW(cloak): routine BattleEffect_GetCycledTableWord as s32
  * BattleEffect_GetCycledTableWord(), called with no declaration in scope; the
@@ -30,8 +31,6 @@ s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
 #include "system/system.h"
 #include "module/field/object.h"
 
-#define SE_CLOAK 130
-
 // The caster's palette while it flickers.
 #define CLOAK_FLICKER_PALETTE 7
 
@@ -52,7 +51,7 @@ void FieldPsynergy_StartCloak(void) {
   void (*check)(void);
   s32 order;
 
-  Sound_PlayFar(SE_CLOAK);
+  Sound_PlayFar(SE_PSYNERGY_START);
   Actor_SelectAnimationFar((struct Actor *)caster, 0);
   caster->hook = 0;
 
@@ -146,7 +145,7 @@ void FieldPsynergy_Douse(void) {
   if (orb == 0)
     return;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   if (work->anchor == 0) {
     work->x = target->x;
     work->z = target->z;
@@ -227,7 +226,7 @@ void FieldPsynergy_Douse(void) {
         mote->motionFlags = 2;
         mote->priorityFlags = 5;
       }
-      Sound_PlayFar(132);
+      Sound_PlayFar(SE_WATER);
       wait(6);
       if (n == 12) {
         ev = Scene_FindPsynergyTrigger(0x50000005, 5,
@@ -408,7 +407,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   right->velocityX = 0;
   target->callback = Actor_ApplyRandomChildValues;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   target->flag = 4;
   Actor_SetSpriteFlagsFar((struct Actor *)target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
@@ -469,7 +468,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[0], 4);
       Actor_SelectAnimationFar(anchors[1], 4);
       if ((gFrameCount & 15) == 0)
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
     {
@@ -477,7 +476,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       s32 x;
       s32 z;
 
-      Sound_PlayFar(175);
+      Sound_PlayFar(SE_NOTE_HIGH);
       x = p->x;
       z = p->z;
       Actor_SelectAnimationFar(anchors[0], 4);
@@ -506,9 +505,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SelectAnimationFar(anchors[0], 4);
   Actor_SelectAnimationFar(anchors[1], 4);
   Task_Remove((u32)FieldEffect_SpawnFallingParticles);
-  Sound_PlayFar(135);
+  Sound_PlayFar(SE_CLICK);
   wait(15);
-  Sound_PlayFar(135);
+  Sound_PlayFar(SE_CLICK);
   wait(15);
   p->x = target->x;
   p->y = target->y + 0x100000;
@@ -534,7 +533,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       }
     }
   }
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(anchors[0]);
   Actor_ReleaseFar(anchors[1]);
   Actor_SetSpriteColorModeFar((struct Actor *)target, work->palette);

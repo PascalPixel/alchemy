@@ -5,6 +5,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 #include "module/field/event_commands.h"
 
@@ -132,8 +133,6 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
-#define SE_ORB_ARRIVES 207
-#define SE_ORB_FADES 136
 
 // The two targets ⚓️ treats apart, by their first animation.
 #define TARGET_ANIMATION_A 372
@@ -196,12 +195,12 @@ void FieldPsynergy_Whirlwind(void) {
   } while (step < frames);
   orb->scaleX = 0x1b333; // 1.7 wide
   orb->scaleY = 0x14ccc; // 1.3 high
-  Sound_PlayFar(SE_ORB_ARRIVES);
+  Sound_PlayFar(SE_RUSH);
 
   if (kind == ORB_PLAIN) {
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
-    Sound_PlayFar(SE_ORB_FADES);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_ORBITING) {
@@ -233,7 +232,7 @@ void FieldPsynergy_Whirlwind(void) {
     wait(120);
     Actor_SelectAnimationFar(orb, 1);
     wait(30);
-    Sound_PlayFar(SE_ORB_FADES);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_WANDER || kind == ORB_HANDOFF) {
@@ -274,15 +273,13 @@ void FieldPsynergy_Whirlwind(void) {
 }
 #undef ORB_OBJECT
 #undef MOTE_OBJECT
-#undef SE_ORB_ARRIVES
-#undef SE_ORB_FADES
 #undef TARGET_ANIMATION_A
 #undef TARGET_ANIMATION_B
 
 void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   if (object->age == 80) {
     object->update = 0;
-    Sound_PlayFar(136);
+    Sound_PlayFar(SE_WHOOSH);
   }
   object->age++;
 }
@@ -383,13 +380,13 @@ void FieldPsynergy_Halt(void) {
 
   wait(5);
   Actor_SelectAnimationFar(obj, 1);
-  Sound_PlayFar(108);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   wait(10);
-  Sound_PlayFar(108);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   wait(10);
-  Sound_PlayFar(108);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   wait(10);
-  Sound_PlayFar(109);
+  Sound_PlayFar(SE_TRIPLE_TONE_HIGH);
 
   slot = &((struct FallbackScene *)scene)->slots[0];
   for (i = 0; i < 16; i++) {
@@ -509,7 +506,7 @@ void FieldPsynergy_Catch(void) {
   if (object == 0)
     return;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   object->facing = mainObject->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
@@ -536,7 +533,7 @@ void FieldPsynergy_Catch(void) {
     wait(1);
   }
   Actor_SelectAnimationFar(object, 5);
-  Sound_PlayFar(132);
+  Sound_PlayFar(SE_WATER);
   if (secondary != 0)
     Actor_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
                                        -0x90000);
@@ -546,7 +543,7 @@ void FieldPsynergy_Catch(void) {
     wait(1);
   }
   wait(10);
-  Sound_PlayFar(114);
+  Sound_PlayFar(SE_MENU_ERROR);
   step = 0;
   do {
     s32 scale;
@@ -737,7 +734,7 @@ void FieldPsynergy_Lash(void) {
     if (caster->priorityFlags & 0x20)
       object->priorityFlags |= 0x20;
     Actor_SelectAnimationFar(object, 0);
-    Sound_PlayFar(138);
+    Sound_PlayFar(SE_ITEM_BREAK);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
                         work);
     slotA = VramCache_FindFreeEntry();
@@ -773,7 +770,7 @@ void FieldPsynergy_Lash(void) {
       object->y += -0x20000;
       wait(1);
     }
-    Sound_PlayFar(132);
+    Sound_PlayFar(SE_WATER);
     if (scene->enabled != 0) {
       for (i = 15; i >= 0; i--)
         BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
@@ -789,10 +786,10 @@ void FieldPsynergy_Lash(void) {
       Task_Add(FieldPsynergy_UpdateLash, 0x480);
       while (work->phase != 999) {
         if (work->flash == 1) {
-          Sound_PlayFar(0x200);
+          Sound_PlayFar(SE_512);
           Rope_Lash(event->target, event->targetY, event->targetZ);
           work->hit = 1;
-          Sound_PlayFar(395);
+          Sound_PlayFar(SOUND_FADE_OUT_SE5);
         }
         wait(1);
       }
@@ -868,7 +865,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
     slot->state++;
 
     if ((gFrameCount & 2) != 0)
-      Sound_PlayFar(246);
+      Sound_PlayFar(SE_GLITTER);
   } else if (state == 1) {
     if (FieldParticle_HasPendingTarget(slot) == 0)
       slot->state--;
@@ -910,11 +907,11 @@ void FieldPsynergy_Retreat(void) {
   Actor_ArmCallback(scene->firstObjectId, 0x4000, 0);
   wait(30);
   obj->update = Actor_ApplyRandomChildValues;
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_SelectAnimationFar(obj, 28);
   wait(40);
 
-  Sound_PlayFar(220);
+  Sound_PlayFar(SE_SHIMMER);
   Actor_SetSpriteColorModeFar(obj, 0);
   Actor_SelectAnimationFar(obj, 3);
   obj->update = FieldEffect_UpdateSpinAngle;
@@ -1144,7 +1141,7 @@ void FieldPsynergy_Avoid(void) {
   object->callback = FieldEffect_UpdateAvoidCaster;
   object->phase = 0;
   object->step = 0;
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   wait(15);
   object->phase = 1;
   wait(10);
@@ -1172,7 +1169,7 @@ void FieldPsynergy_Avoid(void) {
       entry->param = 0;
     }
     if (count == 15)
-      Sound_PlayFar(174);
+      Sound_PlayFar(SE_NOTE_MID);
     wait(1);
   }
   {
@@ -1722,7 +1719,7 @@ void FieldPsynergy_Unnamed29(void) {
     palette++;
   }
 
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
   work->bowGrowing = 0;
   work->bowShrinking = 0;

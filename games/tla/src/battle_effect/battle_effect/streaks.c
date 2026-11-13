@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -168,13 +169,13 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
         // Each target's streaks set out with the mode's cry.
         if (frame == k * 32) {
           if (mode == 1)
-            Sound_PlayFar(192);
+            Sound_PlayFar(SE_192);
           if (mode == 2)
-            Sound_PlayFar(189);
+            Sound_PlayFar(SE_STONE_GRIND);
           if (mode == 3)
-            Sound_PlayFar(148);
+            Sound_PlayFar(SE_BOSS_ROAR);
           if (mode == 4)
-            Sound_PlayFar(138);
+            Sound_PlayFar(SE_ITEM_BREAK);
         }
         if (frame >= k * 32) {
           for (j = 0; j != streaks; j++) {
@@ -228,7 +229,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
           // hit lets the battle show its results.
           if (RECORD(mode, RECORD_HIT)) {
             if (frame == k * 32 + 24) {
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
               if (k == 0)
                 BattlePlayback_StartFar(-1);
               BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 8);
@@ -382,7 +383,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (mode == MODE_SLAVER && frame == 0)
-      Sound_PlayFar(103);
+      Sound_PlayFar(SE_CURSE);
 
     for (i = 0; i != 128; i++) {
       mote = &EFFECT_STEPS[i];
@@ -434,7 +435,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     } else if (mode == MODE_SOOTHING_STAR) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 8 + 48) {
-          Sound_PlayFar(126);
+          Sound_PlayFar(SE_RECOVERY);
           BattlePlayback_StartFar(-1);
           BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
         }

@@ -3,6 +3,7 @@
 /// order it has in the ROM.
 
 #include "battle/battle.h"
+#include "sounds.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -621,7 +622,7 @@ void SuperLuckyDice_Run(void) {
     bet = gMainRoutineWork.coins;
 #endif
   Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
-  Sound_PlayFar(1);
+  Sound_PlayFar(MUS_001);
 
   frame = 0;
   for (;;) {
@@ -643,14 +644,14 @@ void SuperLuckyDice_Run(void) {
           break;
         }
         if (gInput.repeat & 2) {
-          Sound_PlayFar(113);
+          Sound_PlayFar(SE_MENU_CANCEL);
           Window_CloseFar(sprites->helpWindow, 1);
           break;
         }
         if (gInput.repeat & 1) {
-          Sound_PlayFar(302);
+          Sound_PlayFar(SE_LUCKY_DICE_THROW);
           Window_CloseFar(sprites->helpWindow, 1);
-          Sound_PlayFar(302);
+          Sound_PlayFar(SE_LUCKY_DICE_THROW);
           DICE_GAME_THROW(dice, spinRate);
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
@@ -673,13 +674,13 @@ void SuperLuckyDice_Run(void) {
         slide++;
       } else if (timer > 0) {
         if (++timer == 16) {
-          Sound_PlayFar(302);
+          Sound_PlayFar(SE_LUCKY_DICE_THROW);
           DICE_GAME_THROW(dice, spinRate);
           state = 2;
         }
       } else if (gInput.repeat & 2) {
         if (CANNOT_QUIT(round)) {
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         } else {
           Window_CloseFar(sprites->helpWindow, 1);
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
@@ -687,11 +688,11 @@ void SuperLuckyDice_Run(void) {
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
                                      sprites->helpWindow, 0, 8);
-          Sound_PlayFar(113);
+          Sound_PlayFar(SE_MENU_CANCEL);
           state = 0;
         }
       } else if (gInput.repeat & state) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         timer = 1;
         Window_CloseFar(sprites->helpWindow, 1);
         if (round == 0) {
@@ -714,18 +715,18 @@ void SuperLuckyDice_Run(void) {
             message = (s32)&MsgDiceGameHigher;
           else
             message = (s32)&MsgDiceGameHigherAgain;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           lower = 0;
         } else if ((gInput.repeat & 0x80) && lower == 0) {
           if (target == 4) {
           refuse:
-            Sound_PlayFar(113);
+            Sound_PlayFar(SE_MENU_CANCEL);
           } else {
             if (round == 0)
               message = (s32)&MsgDiceGameLower;
             else
               message = (s32)&MsgDiceGameLowerAgain;
-            Sound_PlayFar(111);
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
             lower = 1;
           }
         }
@@ -863,12 +864,12 @@ void SuperLuckyDice_Run(void) {
     } else if (state == 3) {
       timer++;
       if (timer == 24)
-        Sound_PlayFar(152);
+        Sound_PlayFar(SE_JUMP);
       if (timer == 70)
-        Sound_PlayFar(103);
+        Sound_PlayFar(SE_CURSE);
       if (timer == 40) {
         if ((u32)resultKind > 1)
-          Sound_PlayFar(55);
+          Sound_PlayFar(MUS_055);
         else if (jingle != -1)
           Sound_PlayFar(jingle);
         jingle = -1;
@@ -943,7 +944,7 @@ void SuperLuckyDice_Run(void) {
           Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
                                      BET_TEXT_X, 5);
           multiplier = 0;
-          Sound_PlayFar(1);
+          Sound_PlayFar(MUS_001);
           state = 0;
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
@@ -980,8 +981,8 @@ void SuperLuckyDice_Run(void) {
       if (timer > 19) {
         if (gInput.repeat & 1) {
           Window_CloseFar(sprites->helpWindow, 1);
-          Sound_PlayFar(1);
-          Sound_PlayFar(112);
+          Sound_PlayFar(MUS_001);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           state = 0;
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
@@ -995,14 +996,14 @@ void SuperLuckyDice_Run(void) {
           Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
                                      BET_TEXT_X, 5);
           if (winnings > 0) {
-            Sound_PlayFar(105);
+            Sound_PlayFar(SE_105);
             Party_AdjustCoinsFar(winnings);
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        (s32)sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
-            Sound_PlayFar(105);
+            Sound_PlayFar(SE_105);
           Party_AdjustCoinsFar(1);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, 0);
@@ -1013,7 +1014,7 @@ void SuperLuckyDice_Run(void) {
       }
     } else if (state == 5) {
       if (slide == 4)
-        Sound_PlayFar(175);
+        Sound_PlayFar(SE_NOTE_HIGH);
       if (slide <= 7) {
         slide++;
       } else if (timer > 0) {
@@ -1049,12 +1050,12 @@ void SuperLuckyDice_Run(void) {
         }
       } else if (gInput.repeat & 1) {
         timer = 1;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       } else if ((gInput.repeat & 0x40) && cashOut == 1) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         cashOut = 0;
       } else if ((gInput.repeat & 0x80) && cashOut == 0) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         cashOut = 1;
       }
       if (cashOut == 0) {

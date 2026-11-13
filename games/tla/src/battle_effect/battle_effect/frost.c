@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -69,9 +70,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     Transform_Reset();
     SceneTransform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-      Sound_PlayFar(115);
+      Sound_PlayFar(SE_ICE);
     if (frame == 85)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 4 + 40)
         BattleEffect_TintBattler(effect->actors[i], 9, 5, -1, 0);

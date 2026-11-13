@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
@@ -149,11 +150,11 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        Sound_PlayFar(164);
+        Sound_PlayFar(SE_SCATTER);
       if (frame == 32)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       if (frame == 80)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
 
       // Three columns of fire scroll up while the sparks burst.
       if (frame >= 32 && frame < 80) {

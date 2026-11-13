@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
@@ -483,7 +484,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         BattlePlayback_Push(BATTLE_EVENT_DRAW_STATUS, 0);
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
@@ -493,7 +494,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       }
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(abilityId, 4);
-      Sound_PlayFar(114);
+      Sound_PlayFar(SE_MENU_ERROR);
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnInRecovery);
       wait(60);
       return -1;

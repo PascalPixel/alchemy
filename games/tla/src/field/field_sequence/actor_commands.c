@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "sounds.h"
 #include "system/frame.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
@@ -493,9 +494,9 @@ void Actor_Jump(u32 objectId, s32 speed, s32 eventId) {
     *objectFlags = updatedFlags;
     object->velocityY = verticalVelocity;
     if (speed > 5) {
-      Sound_PlayFar(0x99);
+      Sound_PlayFar(SE_HIGH_JUMP);
     } else {
-      Sound_PlayFar(0x98);
+      Sound_PlayFar(SE_JUMP);
     }
     Event_Wait(eventId);
   }
@@ -620,7 +621,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   object->velocityY = 0x40000;
   Actor_SetMoveTargetFar(object, x, object->y, z + 0xc0000);
   wait(6);
-  Sound_PlayFar(217);
+  Sound_PlayFar(SE_FLOOR_SWITCH);
   Actor_ArmCallback(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {

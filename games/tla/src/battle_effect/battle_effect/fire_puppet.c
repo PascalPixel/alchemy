@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -173,14 +174,14 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       BattleEffect_TintBattler(effect->actor, 6, 4, 0, -1);
     }
     if (frame == 8) {
-      Sound_PlayFar(103);
+      Sound_PlayFar(SE_CURSE);
     }
     if (frame == 100) {
       BattleEffect_TintBattler(effect->actor, 0, 0, 0, -1);
     }
     if (frame == 54) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       BattlePlayback_StartFar(212);
       work->shakeFrames = 8;
       for (i = 0; i != effect->count; i++) {

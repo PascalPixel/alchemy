@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -152,7 +153,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
           shard->y += 64;
         } else {
           if ((i & 3) == 0)
-            Sound_PlayFar(115);
+            Sound_PlayFar(SE_ICE);
           work->shakeFrames = 2;
           shard->variant = 0;
           for (k = 0; k != effect->count; k++)
@@ -372,7 +373,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
             splash->variant = (Random16() & 15) + 16;
           }
           if ((i & 3) == 0)
-            Sound_PlayFar(132);
+            Sound_PlayFar(SE_WATER);
           for (k = 0; k != effect->count; k++)
             BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 2);
         }

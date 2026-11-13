@@ -152,13 +152,13 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 24)
-      Sound_PlayFar(SE_RISE);
+      Sound_PlayFar(SE_162);
     if (frame == 76)
-      Sound_PlayFar(SE_SPRAY);
+      Sound_PlayFar(SE_SCATTER);
     if (frame == 154)
-      Sound_PlayFar(SE_GATHER);
+      Sound_PlayFar(SE_SWIRL);
     if (frame == 222)
-      Sound_PlayFar(SE_BREATH);
+      Sound_PlayFar(SE_CRASH);
 
     // The window opens: each column's edge from its own noise, the edge
     // moving faster each frame.
@@ -435,7 +435,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
-  Sound_PlayFar(SE_PILLARS);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
 
@@ -447,7 +447,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != 5; i++) {
       pillar = &work->particles[i];
       if (frame == i * 16 + 7)
-        Sound_PlayFar(SE_PILLAR);
+        Sound_PlayFar(SE_CAST);
       if (frame >= i * 16 && pillar->variant <= 31) {
         s32 wobble = frame * 16 % 104;
 

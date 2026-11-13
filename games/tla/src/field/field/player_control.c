@@ -4,6 +4,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
 #include "module/field/field.h"
@@ -412,7 +413,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   created = Actor_Create(14, object->x, object->y + 0x40000, object->z);
   sprite = object->sprite;
   if (!(object->unk66 & 1))
-    Sound_PlayFar(623);
+    Sound_PlayFar(SE_623);
   if (created != NULL) {
     struct Child *child = created->sprite;
 

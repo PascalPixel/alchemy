@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -139,17 +140,17 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
 
       if (frame == 16)
-        Sound_PlayFar(141);
+        Sound_PlayFar(SE_RUMBLE);
       if (frame == 256)
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       if (frame == 334)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 347)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 359)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 372)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
 
       // The enemies, one every 16 frames, spiral in toward the centre and
       // rise, spinning faster; each comet strike knocks them down.
@@ -770,9 +771,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 48)
-        Sound_PlayFar(141);
+        Sound_PlayFar(SE_RUMBLE);
       if (frame == 128)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
 
       // Flashes fly out sideways, one a frame from 129.
       if (frame >= 129 && frame <= 175) {
@@ -930,7 +931,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             streak->x -= dir * 6;
             streak->y += 6;
             if (frame <= 47 && streak->y > 55)
-              Sound_PlayFar(136);
+              Sound_PlayFar(SE_WHOOSH);
             draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                     streak->x - size / 2, streak->y + 30, size, size * 2);
           } else {

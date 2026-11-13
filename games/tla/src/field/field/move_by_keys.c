@@ -3,6 +3,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/field/field.h"
 #include "module/field/resource_slot.h"
@@ -419,7 +420,7 @@ s32 Sand_CheckEndKeys(s32 arg) {
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
     } else if (!GameFlag_Get(0x146)) {
       work->unk166 = 0x208b;
       return 1;

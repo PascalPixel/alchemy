@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -211,19 +212,19 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 188; frame++) {
     if (frame == 4) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 28) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 84) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 143) {
-      Sound_PlayFar(191);
+      Sound_PlayFar(SE_191);
     }
     if (frame == 171) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
     if ((gInput.repeat & 3) && frame > 3 && frame <= 142) {
       frame = 143;
@@ -414,7 +415,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 171) {
       work->shakeFrames = 8;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);

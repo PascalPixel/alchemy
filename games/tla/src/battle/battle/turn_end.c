@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
@@ -476,7 +477,7 @@ void Battle_ProcessTurnEnd(void) {
             BattlePlayback_Push(10, 0);
             BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
             BattlePlayback_Push(11, unitId);
-            Sound_PlayFar(212);
+            Sound_PlayFar(SE_POWER_UP);
             if (BattleUnit_IsListed(unitId)) {
               Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
               Actor_SetAnimationSpeedFar(
@@ -551,7 +552,7 @@ void Battle_ProcessTurnEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar((s32)&MsgHpRecover);
             }
-            Sound_PlayFar(175);
+            Sound_PlayFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->maxPp) {
@@ -567,7 +568,7 @@ void Battle_ProcessTurnEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar((s32)&MsgPpRecover);
             }
-            Sound_PlayFar(175);
+            Sound_PlayFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
         }
@@ -807,7 +808,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         // all but MsgGoesDown still need their names in the PO catalogs.
         BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(unitId)->object, 32);

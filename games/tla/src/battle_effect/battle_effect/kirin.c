@@ -3,22 +3,14 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
-#undef SE_FADE
 #undef FORMATION
-#undef SE_HIT
 
 // The map cell buffer holds the hit bursts, 32 for each target.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 #define FORMATION 644
-
-#define SE_GALLOP 136
-#define SE_EMBERS 141
-#define SE_FLAMES 154
-#define SE_CHARGE 145
-#define SE_FADE 137
-#define SE_HIT 134
 
 struct FxPair {
   s32 a;
@@ -131,15 +123,15 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
     if (frame == 0)
-      Sound_PlayFar(SE_GALLOP);
+      Sound_PlayFar(SE_WHOOSH);
     if (frame == 26)
-      Sound_PlayFar(SE_EMBERS);
+      Sound_PlayFar(SE_RUMBLE);
     if (frame == 40)
-      Sound_PlayFar(SE_FLAMES);
+      Sound_PlayFar(SE_CAST);
     if (frame == 72)
-      Sound_PlayFar(SE_FLAMES);
+      Sound_PlayFar(SE_CAST);
     if (frame == 104)
-      Sound_PlayFar(SE_FLAMES);
+      Sound_PlayFar(SE_CAST);
     if ((gInput.repeat & 3) != 0 && frame > 16)
       break;
 
@@ -343,12 +335,12 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
       if (frame == 8) {
         work->shakeFrames = frame;
-        Sound_PlayFar(SE_CHARGE);
+        Sound_PlayFar(SE_CRASH);
       }
       if (frame == 11)
-        Sound_PlayFar(SE_CHARGE);
+        Sound_PlayFar(SE_CRASH);
       if (frame == 46)
-        Sound_PlayFar(SE_FADE);
+        Sound_PlayFar(SE_137);
 
       // Each target the row passes is struck once, in a burst of sparks.
       for (i = 0; i != effect->count; i++) {
@@ -374,7 +366,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
               k++;
             } while (k != 32);
             BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
-            Sound_PlayFar(SE_HIT);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
           }
         }
       }
@@ -396,7 +388,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       } while (i != 192);
 
       if (frame == 48)
-        Sound_PlayFar(SE_GALLOP);
+        Sound_PlayFar(SE_WHOOSH);
 
       // The wall of flame slides across after the row.
       if (frame > 40) {
@@ -446,7 +438,6 @@ void BattleEffect_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 /// BG2 at half a texel per pixel across: twice as wide.
 void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
-#undef SE_RISE
 #undef SCENE_FRAMES
 #undef RESULTS_FRAME
 #undef SPARK_COUNT
@@ -468,12 +459,6 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #define BREATH_FRAME 222  // and it breathes
 #define PILLAR_FRAMES 144 // act two
 #define RESULTS_FRAME 96
-
-#define SE_RISE 162
-#define SE_GATHER 142
-#define SE_BREATH 145
-#define SE_PILLARS 390
-#define SE_PILLAR 154
 
 /* VIEW(ability_effects): tag struct SpriteObject as struct
  * SpriteObject__ability_effects; battle_effect/cybele has another definition;

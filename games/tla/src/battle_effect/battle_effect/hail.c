@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // The canvas preparer's packed arguments.
 #define PREPARE(kind, side, anchor) ((kind) | (side) << 4 | (anchor) << 5)
@@ -361,7 +362,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             if (rock->y < 0x140000) {
               work->shakeFrames = 8;
               rock->variant = 0;
-              Sound_PlayFar(134);
+              Sound_PlayFar(SE_HEAVY_IMPACT);
               BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
               BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             }

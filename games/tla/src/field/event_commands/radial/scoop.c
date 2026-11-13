@@ -5,6 +5,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 struct Work080e6400 {
   u8 tiles[0x400];
@@ -332,7 +333,7 @@ void FieldPsynergy_Scoop(void) {
   other->scaleX = 0;
   if (!(event->unkd4c & 1))
     Func_080dba5c();
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000, scene->z);
   wait(10);
   Actor_SelectAnimationFar(object, 1);
@@ -342,7 +343,7 @@ void FieldPsynergy_Scoop(void) {
     wait(1);
   }
   Actor_SelectAnimationFar(object, 2);
-  Sound_PlayFar(132);
+  Sound_PlayFar(SE_WATER);
 
   failed = 0;
   for (i = 0; i < 80; i++) {
@@ -366,7 +367,7 @@ void FieldPsynergy_Scoop(void) {
     wait(2);
     for (i = 15; i >= 0; i--)
       BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     wait(1);
     goto end;
   }
@@ -532,7 +533,7 @@ void FieldPsynergy_Scoop(void) {
     Field_RunPsynergyEvent(pending, 999, frame);
   }
   Task_Remove(Scoop_Update);
-  Sound_PlayFar(114);
+  Sound_PlayFar(SE_MENU_ERROR);
   FieldPsynergy_ShrinkToCaster(object, object->x, object->y, object->z);
   if (particleEntry != 96)
     VramCache_FreeEntry(particleEntry);
@@ -695,7 +696,7 @@ void Teleport_PlayWhirl(void) {
     sprite->depth = 240;
     spark->age = -1;
   }
-  Sound_PlayFar(200);
+  Sound_PlayFar(SE_SPARKLE_FALL);
   wait(20);
   object->scaleX = 0;
   object->scaleY = 0;
@@ -858,9 +859,9 @@ void Teleport_PlaySparks(void) {
   wait(20);
   Actor_SelectAnimationFar(object, 28);
   object->update = Actor_ApplyRandomChildValues;
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(30);
-  Sound_PlayFar(220);
+  Sound_PlayFar(SE_SHIMMER);
   Actor_SelectAnimationFar(object, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
     object->facing += spin + 0x1000;
@@ -921,7 +922,7 @@ void Teleport_PlaySparks(void) {
     switch (state) {
     case 0:
       if (frame == 10)
-        Sound_PlayFar(198);
+        Sound_PlayFar(SE_KOLIMA_BRIDGE_POST);
       object->facing += 0x2000;
       if (frame == 40)
         count = 3;
@@ -1132,7 +1133,7 @@ loaded:
     particle->timer = -1;
     particle++;
   }
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
   next = 0;
   spawn = 0;
@@ -1238,7 +1239,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 10)
-          Sound_PlayFar(542);
+          Sound_PlayFar(SE_542);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0x3fff) {
@@ -1265,7 +1266,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 30)
-          Sound_PlayFar(140);
+          Sound_PlayFar(SE_SPIN);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0xbfff) {
@@ -1300,7 +1301,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 40)
-          Sound_PlayFar(140);
+          Sound_PlayFar(SE_SPIN);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0xbfff) {

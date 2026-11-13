@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #include "battle/battle_effect_argument.h"
 
@@ -98,7 +99,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 2)
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
       BattlePlayback_StartFar(133);
 

@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "item_icon.h"
@@ -472,7 +473,7 @@ void BattleMessage_WaitForAdvance(void) {
       break;
     wait(1);
   }
-  Sound_PlayFar(111);
+  Sound_PlayFar(SE_MENU_CURSOR_MOVE);
   VramCache_FreeEntry(tileSlot);
   wait(1);
 }

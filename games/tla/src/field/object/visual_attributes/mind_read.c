@@ -5,6 +5,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 
 #include "system/io_reg.h"
 #include "game/game.h"
@@ -114,7 +115,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 
   if (work->counter != 99) {
     if (work->counter == 0)
-      Sound_PlayFar(130);
+      Sound_PlayFar(SE_PSYNERGY_START);
     if (++work->counter > 60)
       work->counter = 0;
   }
@@ -407,7 +408,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     if (MapGrid_CheckCollisionFar(target, &position) > 0) {
       Actor_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
     hit = ActorScript_FindOverlappingEntryFar(target, &position);
@@ -415,7 +416,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
       if (hit != user) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
       cellX = user->x & MOVE_CELL_MASK;
@@ -424,7 +425,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
           cellZ == (position.z & MOVE_CELL_MASK)) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
@@ -433,14 +434,14 @@ void FieldPsynergy_SteerPushedTarget(void) {
             0) {
           Actor_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
-            Sound_PlayFar(114);
+            Sound_PlayFar(SE_MENU_ERROR);
           continue;
         }
         moved = 1;
       }
     }
 
-    Sound_PlayFar(175);
+    Sound_PlayFar(SE_NOTE_HIGH);
     pushed = 1;
     x = position.x;
     z = position.z;
@@ -568,8 +569,6 @@ void FieldPsynergy_Move(void) {
 
 extern const s32 gFieldEffect_FragmentScript[];
 
-#define SE_ITEM_BREAK 138
-
 /// The Broken Seal's FieldEffect_SpawnMoveHand with this game's objects
 /// 278 and 673: spawns the breaking item above object and eight fragments
 /// that scatter from it.
@@ -648,7 +647,7 @@ void UpdateRisingParticleBurst(void *object) {
   s32 dist;
   u32 spread;
 
-  Sound_PlayFar(154);
+  Sound_PlayFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
     src->facing += 0x2000; // 1/8 turn
@@ -677,7 +676,7 @@ void UpdateRisingParticleBurst(void *object) {
       Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(src);
 }
 
@@ -720,7 +719,6 @@ void FieldPsynergy_WatchLeaderDistance(void) {
     *slot = request;
   }
 }
-#undef SE_ITEM_BREAK
 #include "field/event.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
@@ -737,7 +735,6 @@ extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
 
 #define REVEAL_EVENT_START 0x50000005 // the Reveal event, stage 5
 #define REVEAL_FRAMES 600
-#define SE_REVEAL 131
 
 // Reveal: open a circle of the transition on the caster, wash the screen
 // plain, run the Reveal event that matches, then show the markers nearby
@@ -775,7 +772,7 @@ void FieldPsynergy_Reveal(void) {
   // before the centre's reload; as plain statements, 4 of 137 instructions
   // differ in tla-en.
   do {
-    Sound_PlayFar(SE_REVEAL);
+    Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     event->active = 1;
   } while (0);
   event->centreX = transition->centreX / Q16_ONE;
@@ -800,7 +797,7 @@ void FieldPsynergy_EndReveal(void) {
   void *pending;
 
   if (event->active != 0) {
-    Sound_PlayFar(167);
+    Sound_PlayFar(SE_MAP_TRANSITION);
     Task_Remove(FieldPsynergy_WatchLeaderDistance);
     event->active = 0;
     event->frames = 0;
@@ -857,7 +854,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     target->collisionFlags = 0;
     target->priorityFlags |= 2;
     wait(10);
-    Sound_PlayFar(126);
+    Sound_PlayFar(SE_RECOVERY);
     wait(40);
   } else if (kind == 1) {
     struct BurstParticleVector position;
@@ -885,7 +882,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     HangingVine_Hang(scene->secondObjectId, 1);
   } else {
     wait(10);
-    Sound_PlayFar(126);
+    Sound_PlayFar(SE_RECOVERY);
   }
   FieldPsynergy_FadeFromCastColor();
 }
@@ -897,7 +894,7 @@ void FieldPsynergy_Growth(void) {
   s32 entryCount;
 
   FieldEffect_SpawnBurstParticleField();
-  Sound_PlayFar(134);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   p = &position;
   entryCount = 4;
   do {
@@ -984,7 +981,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Vector_AddPolarOffset(dist, Random16(), p);
       Actor_SetMoveTargetFar(obj, p[0], p[1], p[2]);
     }
-    Sound_PlayFar(131);
+    Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     wait(2);
   }
   wait(8);
@@ -1034,7 +1031,7 @@ void FieldPsynergy_LiftOnTarget(void) {
 
   Actor_WaitForMoveFar(anchors[0]);
   ((struct EffectChild *)child)->callback = Actor_ApplyRandomChildValues;
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   ((struct EffectChild *)child)->flag = 4;
 
   startY = ((struct EffectChild *)child)->y;
@@ -1080,7 +1077,7 @@ void FieldPsynergy_Lift(void) {
   }
 
   Actor_WaitForMoveFar(pair[0]);
-  Sound_PlayFar(134);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
     pos.x = work->x;
     pos.y = work->y + 0x100000;
@@ -1107,7 +1104,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *object;
   s32 scale;
 
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(278, x, y, z);
   if (object != NULL) {
     object->scaleX = object->scaleY = 0x4000;
@@ -1211,7 +1208,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   struct Actor *frag;
   s32 i;
 
-  Sound_PlayFar(134);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   pos.x = src->x;
   pos.y = src->y;
   pos.z = src->z;
@@ -1279,7 +1276,7 @@ void FieldPsynergy_Force(void) {
   scene = Ram_HeapSlots->effectWork;
   target = scene->child;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   slot = scene->slots;
 
   for (i = 0; i <= 11; i++) {
@@ -1494,7 +1491,7 @@ void FieldPsynergy_Frost(void) {
   scene = Ram_HeapSlots->effectWork;
   target = scene->child;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(115);
+  Sound_PlayFar(SE_ICE);
 
   p = &pos;
   cnt = 15;
@@ -1532,11 +1529,11 @@ void FieldPsynergy_Frost(void) {
   } while (cnt >= 0);
 
   wait(10);
-  Sound_PlayFar(115);
+  Sound_PlayFar(SE_ICE);
   wait(50);
 
   if (target != NULL && scene->enabled == 0) {
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
 
     cnt = 7;
     do {
@@ -1548,7 +1545,7 @@ void FieldPsynergy_Frost(void) {
     } while (cnt >= 0);
 
     if (scene->childOption == 0) {
-      Sound_PlayFar(220);
+      Sound_PlayFar(SE_SHIMMER);
       Actor_SelectAnimationFar(target, 2);
     }
 
@@ -1678,7 +1675,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   marker = last->vramBlock;
-  Sound_PlayFar(130);
+  Sound_PlayFar(SE_PSYNERGY_START);
   wait(110);
 
   target = Actor_Spawn(296, 0, 0, 0);
@@ -1691,7 +1688,7 @@ void FieldPsynergy_Ply(void) {
     Actor_SetSpriteColorModeFar(target, 7);
   }
 
-  Sound_PlayFar(131);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(12);
   if (target != 0) {
     for (i = 0; i < 30; i++) {
@@ -1708,7 +1705,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   Actor_SetSpriteColorModeFar(object, 0);
-  Sound_PlayFar(84);
+  Sound_PlayFar(MUS_084);
   if (object != 0) {
     target->update = (void (*)(void))FieldEffect_RunSparkEmitter;
     target->timer = 0;
@@ -1764,8 +1761,6 @@ void FieldEffect_CheckCloakTile(void) {
     event->state = 0x2092;
 }
 
-#define SE_CLOAK_END 154
-
 // The caster's palette while it flickers.
 #define CLOAK_FLICKER_PALETTE 7
 
@@ -1779,7 +1774,7 @@ void FieldPsynergy_EndCloak(void) {
   struct AnimationEntry *entry = sprite->entries[0];
   u32 i;
 
-  Sound_PlayFar(SE_CLOAK_END);
+  Sound_PlayFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
   Actor_SelectAnimationFar((struct Actor *)caster, 0);
   caster->hook = 0;

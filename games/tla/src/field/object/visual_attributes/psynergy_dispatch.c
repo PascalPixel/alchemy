@@ -4,6 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
@@ -228,7 +229,7 @@ void HangingVine_Swing(s32 id) {
   slot->s.active = 0;
   Actor_SelectAnimationFar(leader, 6);
   wait(6);
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_SelectAnimationFar(leader, 7);
   leader->speedLimit = Q16_ONE * 3;
   leader->acceleration = Q16_ONE * 2;

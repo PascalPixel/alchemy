@@ -3,6 +3,7 @@
 /// in the ROM.
 
 #include "battle/battle.h"
+#include "sounds.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -47,7 +48,7 @@ extern const s16 gLuckyDice_FaceHeights[];
 
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Sound_PlayFar(2);
+  Sound_PlayFar(MUS_002);
   LuckyDice_Run();
   return 0;
 }
@@ -446,7 +447,7 @@ void LuckyDice_Run(void) {
     if (state == 2 || state == 3) {
       for (index = 0; index != 4; index++) {
         if (resultTimer == index * 5) {
-          Sound_PlayFar(303);
+          Sound_PlayFar(SE_LUCKY_DICE_NUMBER);
         }
         if (resultTimer >= index * 5) {
           sprites->oam[spriteCount].attr01 =
@@ -501,7 +502,7 @@ void LuckyDice_Run(void) {
         payoutTimer--;
       }
       if (resultTimer > 19 && (gInput.repeat & 1)) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = 3;
           payoutTimer = 0;
@@ -563,12 +564,12 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gInput.repeat & 2) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
       if (gInput.repeat & 1) {
-        Sound_PlayFar(302);
+        Sound_PlayFar(SE_LUCKY_DICE_THROW);
         Window_CloseFar(sprites->helpWindow, 1);
         state = 1;
         bet = Party_GetAverageLevelFar() * 10;
@@ -822,7 +823,7 @@ void LuckyDice_Run(void) {
           }
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, 0);
-          Sound_PlayFar(93);
+          Sound_PlayFar(MUS_093);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -845,7 +846,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            Sound_PlayFar(91);
+            Sound_PlayFar(MUS_091);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -853,7 +854,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            Sound_PlayFar(92);
+            Sound_PlayFar(MUS_092);
           }
         }
       }

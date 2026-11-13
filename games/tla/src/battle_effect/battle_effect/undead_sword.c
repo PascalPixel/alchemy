@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #define SPARK_COUNT 16
 #define SPARK_LIFE 28
@@ -232,7 +233,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       pillarY = position.y;
       BattleEffect_TintBattler(effect->actors[0], -1, 5, 0, -1);
       work->shakeFrames = 4;
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     }
 
     // Frame 32: the pillar bursts into 256 sparks, the target is knocked
@@ -553,7 +554,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else {
       if (frame == 17) {
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         for (i = 0; i != effect->count; i++) {
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
           BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
@@ -876,7 +877,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
           head[2] = (s32)vertices;
         }
       }
-      Sound_PlayFar(179);
+      Sound_PlayFar(SE_179);
     }
     if (frame > 19) {
       if (mode == 0) {
@@ -951,7 +952,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
       }
       for (k = 0; k != effect->count; k++) {
         if (frame == k * 4 + 12) {
-          Sound_PlayFar(126);
+          Sound_PlayFar(SE_RECOVERY);
           BattleEffect_TintBattler(effect->actors[k], 7, -1, k, 8);
         }
       }
@@ -1105,7 +1106,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 60);
     }
     if (frame == 2) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
 
     // The berg: it drops, then each blow drives it eight lines down.
@@ -1120,12 +1121,12 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         s32 beat = t - t / 8 * 8;
 
         if (beat == 4) {
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
         }
         if (beat == 7) {
           work->shakeFrames = 4;
           if (frame <= 79) {
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
             BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16,
                                            70);
           } else {
@@ -1161,7 +1162,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       struct EffectStep *shard;
 
       work->shakeFrames = 8;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       for (k = 0, shard = work->particles; k != 32; k++, shard++) {
         shard->y = 0x600000;
         shard->x = centerX << 16;

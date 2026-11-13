@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
 #include "gamepak/far_call/game.h"
@@ -255,7 +256,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       Unit_RefreshPsynergyFar(member);
       Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
-      Sound_PlayFar(83);
+      Sound_PlayFar(MUS_083);
       if (owner == gMainRoutineWork.currentOwner) {
         MessageArgument_PushFar(item, 2);
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
@@ -271,7 +272,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     work->messageId = saved;
     return owner;
   }
-  Sound_PlayFar(83);
+  Sound_PlayFar(MUS_083);
   MessageArgument_PushFar(item, 2);
   FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
   if (owner != gMainRoutineWork.currentOwner) {
@@ -412,7 +413,7 @@ Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without arguments, but unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar__event_commands();
-  Sound_PlayFar(83);
+  Sound_PlayFar(MUS_083);
   MessageArgument_PushFar(unit, 1);
   MessageArgument_PushFar(ability, 4);
   FieldMessage_ShowFar(MsgAbilityLearned, 3);

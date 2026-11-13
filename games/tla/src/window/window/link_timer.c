@@ -4,6 +4,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
@@ -109,7 +110,7 @@ void UpdateLinkSessionCountdown(void) {
 
     seconds = __divsi3(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-      Sound_PlayFar(108);
+      Sound_PlayFar(SE_TRIPLE_TONE_LOW);
 
     if (state->displayHandle != 0)
       Text_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);

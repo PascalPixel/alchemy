@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/window/screens.h"
 
@@ -325,18 +326,18 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
       break;
     }
     if (NAVIGATION->timer == 0 || (pressed & 2)) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (repeated & 0x80) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow++;
       if (selectedRow == 4 || firstEntry + selectedRow == count)
         selectedRow = 0;
       preferredRow = selectedRow;
     } else if (repeated & 0x40) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow--;
       if (selectedRow < 0) {
         if (firstEntry == (count - 1) / 4 * 4)
@@ -346,7 +347,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
       }
       preferredRow = selectedRow;
     } else if (repeated & 0x10) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry + 4 >= count) {
         if (firstEntry != 0) {
@@ -363,7 +364,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
     } else if (repeated & 0x20) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry != 0) {
         firstEntry -= 4;

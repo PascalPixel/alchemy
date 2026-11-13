@@ -3,6 +3,7 @@
 /// order.
 
 #include "battle/battle.h"
+#include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -582,7 +583,7 @@ void Func_02000ad0(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Event_PlaySound(0x256);
+      Event_PlaySound(SE_598);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }

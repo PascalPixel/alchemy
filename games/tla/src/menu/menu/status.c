@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
                              s32 unused3);
@@ -270,7 +271,7 @@ void DjinnMenu_ShowCurrentList(void) {
 
   page = 0;
   pages = 2;
-  Sound_PlayFar(112);
+  Sound_PlayFar(SE_MENU_CONFIRM);
   redraw = 1;
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Text_DrawMessageAsTilesFar(MsgButtonReturn, menu->helpWindow, 0, 16);
@@ -317,7 +318,7 @@ void DjinnMenu_ShowCurrentList(void) {
       else
         page--;
       page = (page + pages) % pages;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     }
@@ -331,7 +332,7 @@ void DjinnMenu_ShowCurrentList(void) {
   menu->cursor->active = 1;
   menu->selector->active = 1;
   MenuIcon_SetActive(1);
-  Sound_PlayFar(113);
+  Sound_PlayFar(SE_MENU_CANCEL);
 }
 
 // The pressed keys, read again at each test.
@@ -424,33 +425,33 @@ s32 PartyMemberChooser_RunRearrange(void) {
     MenuCursor_Position((ownerIndex % 4) * 24 - 10, 16);
     wait(1);
     if (KEYS_PRESSED & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (KEYS_PRESSED & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (gInput.repeat & 0x100) {
       if (PartyMemberChooser_MoveEntry(ownerIndex, 1)) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex++;
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
         Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       } else {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       }
       wait(1);
     } else if (gInput.repeat & 0x200) {
       if (PartyMemberChooser_MoveEntry(ownerIndex, 0)) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex--;
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
         Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       } else {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       }
       wait(1);
     } else if ((KEYS_PRESSED & 4) && GameFlag_Get(55)) {
@@ -529,12 +530,12 @@ s32 PsynergyMenu_ChooseMember(void) {
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
     if (((struct InputState *)&gInput)->pressed & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (((struct InputState *)&gInput)->pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -775,39 +776,39 @@ s32 StatusScreen_SelectCommand(void) {
       if (gInput.repeat & 0xf0)
         StatusScreen_DrawSelectionCursor(pane, selected, entries, 1);
       if (KEYS_PRESSED & 1) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         done = 1;
         result = 1;
         break;
       }
       if (KEYS_PRESSED & 2) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         done = 1;
         result = -1;
         break;
       }
       if (gInput.repeat & 0x40) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         selected--;
       }
       if (gInput.repeat & 0x80) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         selected++;
       }
       if (gInput.repeat & 0x10) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         pane++;
       }
       if (gInput.repeat & 0x20) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         pane--;
       }
       if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         member = menu->ownerIndex;
         if (gInput.repeat & 0x100)
           member++;
@@ -1570,17 +1571,17 @@ s32 PsynergyMenu_SelectAction(void) {
     if (navigation == -1)
       refresh = 0;
     if (KEYS_PRESSED & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (KEYS_PRESSED & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       ownerIndex = menu->tabIndex[0];
       menu->selectedIndexByOwner[menu->ownerIds[ownerIndex]] =
           state.selectedIndex;
@@ -1878,17 +1879,17 @@ s32 ItemMenu_SelectItem(void) {
     if (navigation == -1)
       refresh = 0;
     if (KEYS_PRESSED & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (KEYS_PRESSED & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       ownerIndex = menu->paneIndex;
       // Read unsigned (ldrh): the party's ids, as this routine's bytes load
       // them.

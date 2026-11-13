@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
 #include "scene_call.h"
@@ -422,7 +423,7 @@ again:
     Event_Start();
     Actor_SelectAnimationFar(leader, 6);
     wait(6);
-    Sound_PlayFar(152);
+    Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
@@ -741,7 +742,7 @@ s32 Leader_StepOntoRope(void) {
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
   if (node == NULL)
     return 0;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
@@ -789,7 +790,7 @@ s32 Leader_StepOffRope(void) {
   leader->scaleX = 0x10000;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
   leader->acceleration = 0x10000;
@@ -849,7 +850,7 @@ s32 Leader_StepOntoTightrope(void) {
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
   if (node == NULL)
     return 0;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
@@ -896,7 +897,7 @@ s32 Leader_StepOffTightrope(void) {
   leader->motionFlags = leader->timer;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;

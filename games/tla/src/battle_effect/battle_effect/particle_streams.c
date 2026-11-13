@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
 /// unless the unit is one of four enemies, the actor leaps back to 130-193% of
@@ -61,9 +62,6 @@ struct FxPartyList;
 #define RESULTS_FRAME 120
 
 #define PHASE_SUMMON_RESULTS 134
-#define SE_SUMMON 164
-#define SE_SPOUT 145
-#define SE_FADE 144
 
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
@@ -221,11 +219,11 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        Sound_PlayFar(SE_SUMMON);
+        Sound_PlayFar(SE_SCATTER);
       if (frame == SPOUT_FRAME)
-        Sound_PlayFar(SE_SPOUT);
+        Sound_PlayFar(SE_CRASH);
       if (frame == SPOUT_END_FRAME)
-        Sound_PlayFar(SE_FADE);
+        Sound_PlayFar(SE_CLATTER);
 
       // The pillars stream upward, each a 104-pixel picture drawn twice to
       // wrap.
@@ -486,9 +484,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   for (frame = 0; frame != 72; frame++) {
     if (frame == 4)
-      Sound_PlayFar(154);
+      Sound_PlayFar(SE_CAST);
     if (frame == 32)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
 
     if (frame <= 47) {
       s32 cell = (frame - 8) / 5;
@@ -714,10 +712,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 #define BLAST_FLASH_FRAME 16 // the flashes rise from here
 #define BLAST_HIT_FRAME 48
 
-#define SE_RISE 145
-#define SE_STREAMS 141
-#define SE_BLAST 156
-
 struct FxAnimObject {
   u8 unk00[9];
   u8 unk09_0 : 2;
@@ -837,7 +831,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     user->velocityY = 0xa0000;
     user->verticalMotionStrength = 0x91eb;
     BattleEffect_TintBattler(effect->actor, -1, 2, -1, 0);
-    Sound_PlayFar(SE_RISE);
+    Sound_PlayFar(SE_CRASH);
     direction = effect->side == 1 ? mode : -1;
   } else {
     direction = -1;
@@ -1019,7 +1013,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
          * without it, 336 of 1591 instructions differ in tla-en. */
         asm("" : : : "r6");
         if (frame == 0)
-          Sound_PlayFar(SE_STREAMS);
+          Sound_PlayFar(SE_RUMBLE);
         /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
          * hold, keep it live across the call; without them, 336 of 1591
          * instructions differ in tla-en. */
@@ -1224,9 +1218,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     if (elapsed > 19)
       Palette_BrightenBgEntries(2, 2, 2);
     if (frame == 0)
-      Sound_PlayFar(SE_BLAST);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == 40)
-      Sound_PlayFar(SE_RISE);
+      Sound_PlayFar(SE_CRASH);
     if (frame == BLAST_HIT_FRAME) {
       if (mode == 1) {
         Sprite_DestroyFar(work->objects[0]);

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -140,13 +141,13 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       for (i = 0; i != 256; i++) {
         EMBERS[i].variant = -1;
       }
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if ((u32)(frame - 40) <= 15) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if (frame == 56) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
     }
 
     // The pillar falls eight lines a frame and bursts where it lands.
@@ -385,7 +386,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != RING_FRAMES; frame++) {
     if (frame == RING_CUE_FRAME)
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     if (frame == 0)
       lift = 0;
 

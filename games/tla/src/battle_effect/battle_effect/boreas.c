@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Summon 10: a window opens over a violet sky on a field of rocks; a 3x3
 // block of ice rises, a great ice block falls into it and throws up debris
@@ -80,7 +81,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     pts[i][1] = gBoreas_Points[i][1];
   }
 
-  Sound_PlayFar(141);
+  Sound_PlayFar(SE_RUMBLE);
 
   // The first half: rocks, the great ice block and its spray.
   for (frame = 0; frame != 288; frame++) {
@@ -187,15 +188,15 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 32)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 64)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 104)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 176)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     if (frame == 226)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     Transform_Reset();
 
     // Each time rocks crumble, 32 pieces of debris fly up.
@@ -310,7 +311,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     Sprite_DestroyFar(work->objects[i]);
   BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = 0x1010;
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;
@@ -339,9 +340,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         count = 16;
     }
     if (frame >= 9 && frame < 72 && (frame & 3) == 0)
-      Sound_PlayFar(132);
+      Sound_PlayFar(SE_WATER);
     if (frame == 72)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     // A block (40x80) falls in from the upper right.
     if (frame > 64)
       draw(canvas, work->sheet + 0x14f9, (64 - frame) * 7 + 88,

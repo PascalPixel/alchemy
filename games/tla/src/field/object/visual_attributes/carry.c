@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 
 #include "types.h"
 #include "system/system.h"
@@ -42,7 +43,7 @@ void FieldPsynergy_Carry(void) {
   }
 
   Actor_WaitForMoveFar(pair[0]);
-  Sound_PlayFar(134);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
     pos.x = work->x;
     pos.y = work->y + 0x100000;
@@ -71,7 +72,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *object;
   s32 scale;
 
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(278, x, y, z);
   if (object != NULL) {
     object->scaleY = 0x4000;

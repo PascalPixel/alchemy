@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -187,14 +188,14 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 31) {
       work->shakeFrames = 8;
-      Sound_PlayFar(157);
+      Sound_PlayFar(SE_GATE_MOVE);
       for (i = 0; i != effect->count; i++)
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 6);
     }
     if (frame == 72)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     if (frame == 140)
-      Sound_PlayFar(156);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
 
     // Drop the formation's objects to 64 pixels up.
     speed += 0x4000;
@@ -452,7 +453,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       }
       if (frame == i * 5 + 302) {
         BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }
     }

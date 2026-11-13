@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 /* VIEW(cybele): routine EffectSprite_CreateWithTiles as struct SpriteObject
  * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
@@ -186,7 +187,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         s32 y = HI(slash->y);
 
         if (frame == i * 8 + 84)
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
@@ -326,7 +327,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
             slash->variant = 0;
             work->shakeFrames = 2;
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < effect->count) {
               BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 8);

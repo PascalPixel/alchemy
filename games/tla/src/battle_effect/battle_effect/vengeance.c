@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Vengeance: the avenger's blades.
 
@@ -280,7 +281,7 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
           } else {
             BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000,
                                           0x80000, 0x20000, i * 10 + 110);
-            Sound_PlayFar(133);
+            Sound_PlayFar(SE_IMPACT);
           }
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
           blade->variant = 1;
@@ -435,7 +436,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
 
     shift = 0;
     if (frame == 0) {
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
       if (effect->side == 0) {
         work->particles[0].x = 0x200000;
         work->particles[0].y = 0xffc00000;
@@ -514,7 +515,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         scythe->velocityY = -0x80000;
         work->shakeFrames = 4;
         speed = 0;
-        Sound_PlayFar(133);
+        Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       }
       if (scythe->timer == 35) {
@@ -545,7 +546,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     zero = 0;
     phase = frame - 50;
     if (phase == -4) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (phase == 0) {
       BattlePlayback_StartFar(134);
@@ -776,7 +777,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
       if (frame < GEYSER_PEAK_FRAME)
         BattleEffect_GetTargetsMidpoint(&midpoint);
       if (frame == 0) {
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
         // An empty once-only loop after the call, so work reloads before the
         // shake count's offset is built; without it, 2 of 513 instructions
         // differ in tla-en.
@@ -1562,38 +1563,38 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if (frame == 82) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
-      Sound_PlayFar(130);
+      Sound_PlayFar(SE_PSYNERGY_START);
     }
     if (frame == 210) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
-      Sound_PlayFar(130);
+      Sound_PlayFar(SE_PSYNERGY_START);
     }
     if (frame == 274) {
-      Sound_PlayFar(139);
+      Sound_PlayFar(SE_139);
     }
     if (frame == 310) {
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
     }
     if (frame == 316) {
-      Sound_PlayFar(154);
+      Sound_PlayFar(SE_CAST);
     }
     if (frame == 466) {
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 498) {
-      Sound_PlayFar(154);
+      Sound_PlayFar(SE_CAST);
     }
     if (frame == 503) {
-      Sound_PlayFar(154);
+      Sound_PlayFar(SE_CAST);
     }
     if (frame == 508) {
-      Sound_PlayFar(154);
+      Sound_PlayFar(SE_CAST);
     }
     if (frame == 520) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 540) {
-      Sound_PlayFar(186);
+      Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     }
     if (frame <= 1999999) {
       u16 *row = (u16 *)(work->unk7300 + 0x340);
@@ -2293,9 +2294,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         if (i == 0) {
           BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 16);
           BattlePlayback_StartFar(126);
-          Sound_PlayFar(126);
+          Sound_PlayFar(SE_RECOVERY);
         } else {
-          Sound_PlayFar(126);
+          Sound_PlayFar(SE_RECOVERY);
           BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 16);
         }
       }

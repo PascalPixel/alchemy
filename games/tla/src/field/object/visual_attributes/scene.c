@@ -5,6 +5,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 
 #include "types.h"
 #include "system/task.h"
@@ -239,7 +240,7 @@ void EventObject_Initialize(void) {
    * instructions differ in tla-en. */
   asm("" : "=r"(zero) : "0"(0));
   if (sound != 0) {
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
     BattleEffect_SetObjectUpdateMode(object, 1);
   }
   if (work->showQuantity != 0) {

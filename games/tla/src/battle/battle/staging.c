@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "sounds.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "module/battle/presentation.h"
@@ -329,7 +330,7 @@ finish:
   BattleBackground_SetMode(
       2, ((struct DispatchBattleWork *)Ram_HeapSlots->battleWork)->background,
       0);
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   return fled;
 }
 
@@ -483,7 +484,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     }
   }
   if (!(mode & 2)) {
-    Sound_PlayFar(154);
+    Sound_PlayFar(SE_CAST);
     ElementGlow_Play(work.actor, plan->element, 0, 0);
   }
   if (mode & 1)

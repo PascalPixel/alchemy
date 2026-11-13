@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -63,9 +64,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   dir = (leader->facing + 0x2000) & 0xc000;
   Event_Start();
   wait(10);
-  Sound_PlayFar(173);
+  Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlayFar(175);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   wait(10);
   back = dir + 0x8000;
@@ -77,19 +78,19 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->motionFlags = 2;
   djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
 #if TLA_PATCH_1
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
 #endif
   djinni->gravity = 0x4000;
   djinni->velocityY = 0x48000;
   wait(33);
   ((struct AnimationObject *)djinni->sprite)->image.priority = 0;
 #if TLA_PATCH_1
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
 #endif
   djinni->velocityY = 0x4cccc;
   wait(35);
 #if TLA_PATCH_1
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
 #endif
   djinni->velocityY = 0x4e666;
   wait(38);

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -83,7 +84,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(164);
+  Sound_PlayFar(SE_SCATTER);
 
   for (frame = 0; frame != gVortices_Counts[effect->variant * 2 + 1]; frame++) {
     // The camera turns between frames 17 and 63.
@@ -135,7 +136,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
                                    i % effect->count, 4);
           BattleMotion_ApplyKnockbackFar(effect->actors[i % effect->count], 0);
           work->shakeFrames = 4;
-          Sound_PlayFar(132);
+          Sound_PlayFar(SE_WATER);
         }
       }
 
@@ -213,7 +214,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BLDALPHA = 0x1000;
   wait(1);
-  Sound_PlayFar(141);
+  Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
     wave = Trig_Sin(frame << 10) << 4;

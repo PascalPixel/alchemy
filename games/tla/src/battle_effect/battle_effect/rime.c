@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct Model;
 
@@ -164,7 +165,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       BattlePlayback_StartFar(-1);
     if (mode == 0) {
       if (frame == 32)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
     } else {
       if (frame > 7)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
@@ -233,7 +234,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       texture.pixels = work->sheet;
       for (i = 0, star = work->particles; i != 16; i++, star++) {
         if (star->variant == 4 && (i & 3) == 0)
-          Sound_PlayFar(130);
+          Sound_PlayFar(SE_PSYNERGY_START);
         if (star->variant >= 0 && star->variant < 16) {
           s32 swell = Trig_Sin(star->variant << 11) * star->z;
           s32 size;

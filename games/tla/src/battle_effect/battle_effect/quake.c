@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Battle effect kind 1, the quake: rock pillars rise under the targets. The
 // Broken Seal's BattleEffect_RunQuake, call for call.
@@ -77,7 +78,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   heights = gRockWall_Heights;
   work->shakeFrames = 128;
-  Sound_PlayFar(141);
+  Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0; frame != gQuake_Timings[effect->variant][TIMING_FRAMES];
        frame++) {

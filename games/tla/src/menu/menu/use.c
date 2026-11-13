@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct InventoryMenuState *menu;
@@ -311,9 +312,9 @@ s32 Ability_PlayUseAnimation(s32 action) {
 
   switch (definition[1] & 15) {
   case 1:
-    Sound_PlayReturnOne(126);
+    Sound_PlayReturnOne(SE_RECOVERY);
   case 11:
-    Sound_PlayReturnOne(126);
+    Sound_PlayReturnOne(SE_RECOVERY);
     break;
   default:
     switch (definition[3]) {
@@ -323,13 +324,13 @@ s32 Ability_PlayUseAnimation(s32 action) {
     case 32:
       break;
     case 5:
-      Sound_PlayReturnOne(82);
+      Sound_PlayReturnOne(MUS_082);
       break;
     case 3:
-      Sound_PlayReturnOne(84);
+      Sound_PlayReturnOne(MUS_084);
       break;
     default:
-      Sound_PlayReturnOne(91);
+      Sound_PlayReturnOne(MUS_091);
       break;
     }
     break;

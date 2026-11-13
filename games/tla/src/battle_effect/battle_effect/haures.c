@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -386,19 +387,19 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                                       (frame - 360) / 8 - 12);
       }
       if (frame == 48) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 74) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 100) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 126) {
-        Sound_PlayFar(136);
+        Sound_PlayFar(SE_WHOOSH);
       }
       if (frame == 140) {
-        Sound_PlayFar(141);
+        Sound_PlayFar(SE_RUMBLE);
       }
       if (frame <= 266) {
         if (frame <= 639) {
@@ -592,10 +593,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 267) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 271) {
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       }
       if ((u32)cut <= 9) {
         struct RenderModel *model;
@@ -980,10 +981,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 10) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 14) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 150);
@@ -992,10 +993,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 30) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 34) {
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 50);
@@ -1004,7 +1005,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 58) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 200);

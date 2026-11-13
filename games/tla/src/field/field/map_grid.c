@@ -4,6 +4,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 #include "module/field/map.h"
 #include "module/field/object.h"
@@ -184,7 +185,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->update = Sand_JitterGrain;
         effect->motionFlags = 2;
         if (collision == 0)
-          Sound_PlayFar(596);
+          Sound_PlayFar(SE_596);
         effect->gravity = 0xa3d;
         effect->velocityY = 0;
         effect->scaleX = 0x4ccc;
@@ -386,7 +387,7 @@ counted:
       // stack read of collision after it.
       ((struct Unk_WakeActor *)effect)->unk63 = 100;
       effect->motionFlags = 0;
-      Sound_PlayFar(596);
+      Sound_PlayFar(SE_596);
       if (sprite != NULL) {
         struct Unk_ClimbEventWork *work = Ram_HeapSlots->eventWork;
 

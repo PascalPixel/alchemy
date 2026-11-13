@@ -4,6 +4,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
 #include "gamepak/far_call/field.h"
@@ -150,7 +151,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
         x < REGION_FIXED(maxX) && z >= REGION_FIXED(minZ) &&
         z < REGION_FIXED(maxZ)) {
       runtime->countdown = (u16)selectedValue;
-      Sound_PlayFar(123);
+      Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
@@ -244,7 +245,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       work->walkingDistance = distance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
-        Sound_PlayFar(139);
+        Sound_PlayFar(SE_139);
       Party_ClearUnusableShortcuts();
       partyHurt = Party_ApplyPoisonDamage();
     }
@@ -314,11 +315,11 @@ void Party_AddHp(s32 amount, s32 scaled) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
     PaletteFade_StartInterpolation(4);
     if (amount < -10)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     else
-      Sound_PlayFar(133);
+      Sound_PlayFar(SE_IMPACT);
   } else {
-    Sound_PlayFar(126);
+    Sound_PlayFar(SE_RECOVERY);
   }
   count = Party_CountMembersFar();
   for (i = 0; i < count; i++) {
@@ -383,7 +384,7 @@ s32 Party_ApplyPoisonDamage(void) {
   if (result != 0) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
     PaletteFade_StartInterpolation(4);
-    Sound_PlayFar(133);
+    Sound_PlayFar(SE_IMPACT);
   }
 
   return result;

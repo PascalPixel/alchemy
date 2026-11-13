@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/menu.h"
 #include "module/shop/shop.h"
@@ -46,11 +47,11 @@ s32 Shop_ChooseMember(void) {
     if (gInput.pressed & 1) {
       wait(1);
       if (Inventory_CountFar(unitId) == 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       if (shop->partyAction == 1) {
         Shop_SelectSell(unitId);
       } else if (shop->partyAction == 3) {
@@ -64,7 +65,7 @@ s32 Shop_ChooseMember(void) {
       shop->mode = 12;
       redraw = 2;
     } else if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     } else {
@@ -150,19 +151,19 @@ s32 Shop_SelectSell(s32 unitId) {
         Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
       }
       if (gInput.pressed & 1) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if (gInput.pressed & 2) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
       if (gInput.held & 4) {
         u32 item = unit->inventory[slot];
 
-        Sound_PlayFar(126);
+        Sound_PlayFar(SE_RECOVERY);
         window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
         // Through a byte pointer the store may alias any memory, so the
@@ -188,13 +189,13 @@ s32 Shop_SelectSell(s32 unitId) {
 #endif
       } else {
         if (gInput.repeat & 32) {
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           slot--;
           slot = (inventoryCount + slot) % inventoryCount;
           redraw = 1;
         }
         if (gInput.repeat & 16) {
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           slot++;
           slot = (inventoryCount + slot) % inventoryCount;
           redraw = 1;
@@ -205,7 +206,7 @@ s32 Shop_SelectSell(s32 unitId) {
             slot += 15;
           while (slot >= inventoryCount)
             slot -= 5;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
         }
         if (gInput.repeat & 128) {
@@ -214,7 +215,7 @@ s32 Shop_SelectSell(s32 unitId) {
             slot -= 15;
           while (slot < 0)
             slot += 5;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
         }
         wait(1);
@@ -359,7 +360,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
       Shop_ShowKeeperMessageHidingCursor(message);
       return;
     }
-    Sound_PlayFar(102);
+    Sound_PlayFar(SE_SHOP_SELL);
     for (i = 0; i < count; i++)
       Inventory_DiscardFar(unitId, slot);
     Unit_RefreshPsynergyFar(unitId);

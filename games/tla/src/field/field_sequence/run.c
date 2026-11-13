@@ -4,6 +4,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "sounds.h"
 #include "field/field_work.h"
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/sound.h"
@@ -282,7 +283,7 @@ s32 FieldSequence_Run(void) {
               Actor_SelectAnimationFar(leader, 36);
             else
               Actor_SelectAnimationFar(leader, 19);
-            Sound_PlayFar(59);
+            Sound_PlayFar(MUS_059);
             FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated, 1);
             unit = Unit_Get(*leaderId);
             unit->hp = 1;
@@ -400,7 +401,7 @@ s32 FieldSequence_Run(void) {
       } else if (work->menu != 0) {
         AreaNameWindow_HideFar();
         Leader_StopMoving();
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         WorldMap_Freeze();
         GameFlag_Set(262);
         if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
@@ -446,7 +447,7 @@ s32 FieldSequence_Run(void) {
         WorldMap_ReloadPendingAreaGraphics();
         work->item = 0;
       } else if (work->start != 0) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Leader_StopMoving();
         WorldMap_Freeze();
         GameFlag_Set(262);

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #define EMBERS ((struct EffectStep *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 // an ember's variant; 0 and up count its flare's frames
@@ -136,9 +137,9 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
           ember->x = screen.x;
           ember->y = screen.y;
           if (effect->variant == 2)
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
           else
-            Sound_PlayFar(136);
+            Sound_PlayFar(SE_WHOOSH);
           BattleEffect_TintBattler(effect->actors[i % effect->count], 10, 5,
                                    i % effect->count, 4);
           work->shakeFrames = 2;

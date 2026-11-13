@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
@@ -91,7 +92,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)

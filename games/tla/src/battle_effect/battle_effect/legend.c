@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -157,7 +158,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
     for (i = 0; i != effect->variant + 1; i++) {
       step = &work->particles[i];
       if (frame == i * 16 + 54)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
 
       // The strike: the target reels and flashes, and 128 sparks fly up
       // from it. The last sword ends the action.
@@ -165,7 +166,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         if (i == effect->variant)
           BattlePlayback_StartFar(144);
         else
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
@@ -462,7 +463,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     // Frame 0: clear the particles, give each member a strike countdown, and
     // find the user and every target.
     if (frame == 0) {
-      Sound_PlayFar(190);
+      Sound_PlayFar(SE_WARP);
       for (i = 0; i != 56; i++)
         work->particles[i].variant = -1;
       for (i = 0; i != effect->count; i++)
@@ -494,13 +495,13 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     // Frame 48: the card shows its picture.
     if (frame == 48) {
       if (mode == CARD_BRAMBLE)
-        Sound_PlayFar(148);
+        Sound_PlayFar(SE_BOSS_ROAR);
       if (mode == CARD_FROST)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
       if (mode == CARD_FLAME)
-        Sound_PlayFar(104);
+        Sound_PlayFar(SE_104);
       if (mode == CARD_THUNDER)
-        Sound_PlayFar(221);
+        Sound_PlayFar(SE_RISE_WITH_SPARKS);
       if (mode != CARD_BRAMBLE) {
         work->transferMode = 2;
         work->transferValue = 50;
@@ -609,11 +610,11 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
           step->variant = 5;
           work->shakeFrames = 4;
           if (mode == CARD_FROST)
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
           else if (mode == CARD_THUNDER)
-            Sound_PlayFar(177);
+            Sound_PlayFar(SE_177);
           else
-            Sound_PlayFar(133);
+            Sound_PlayFar(SE_IMPACT);
           if (i == 0)
             BattlePlayback_StartFar(134);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,

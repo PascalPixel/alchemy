@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
@@ -97,12 +98,12 @@ next_page:
     }
     if (key = gInput.pressed & 1) {
       selected = selectionIndex;
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       selectionResult = 0;
       break;
     }
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
@@ -121,7 +122,7 @@ next_page:
       heldItem = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(heldItem);
 #endif
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
       window = Window_CreateFar(HELD_WINDOW_X, 3, HELD_WINDOW_WIDTH, 10, 2);
 #if TLA_PATCH_1
       ItemMenu_DrawItemDetailsWithCountFar(window, stockCount, held);
@@ -190,7 +191,7 @@ next_page:
       WindowSprite_PrepareForRedrawFar(partyWindow);
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         MessageArgument_PushFar(unitId, 1);
         MessageArgument_PushFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
@@ -201,7 +202,7 @@ next_page:
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if ((u16)selectedDefinition->price > (u32)gMainRoutineWork.coins) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         Shop_ShowKeeperMessageHidingCursor((s32)MsgBuyNotEnoughMoney);
         purchaseResult = -1;
         break;
@@ -214,7 +215,7 @@ next_page:
           continue;
         }
       }
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       wait(1);
       quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
@@ -226,7 +227,7 @@ next_page:
       break;
     }
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       purchaseResult = -1;
       break;
     }
@@ -716,22 +717,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       sprite->tile += 4;
       for (;;) {
         if (gInput.pressed & 1) {
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           result = count + 1;
           break;
         }
         if (gInput.pressed & 2) {
-          Sound_PlayFar(113);
+          Sound_PlayFar(SE_MENU_CANCEL);
           result = -1;
           break;
         }
         if (gInput.repeat & 0x20) {
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           changed = 1;
           count--;
         }
         if (gInput.repeat & 0x10) {
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           changed = 1;
           count++;
         }
@@ -783,7 +784,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   item = Item_GetDirectFar(itemId);
   addedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
-  Sound_PlayFar(101);
+  Sound_PlayFar(SE_SHOP_PURCHASE);
   if (addedSlot < remaining) {
     do {
       addedSlot = Inventory_AddItemFar(unitId, itemId);
@@ -837,7 +838,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     Shop_DrawMemberItems(window, unitId);
 
   if (info->flags & 1) {
-    Sound_PlayFar(103);
+    Sound_PlayFar(SE_CURSE);
     Message_CloseFinishedWindowsFar();
     {
       s32 x = 8;

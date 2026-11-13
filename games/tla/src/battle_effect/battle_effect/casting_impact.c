@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Steps the 64 background colours one shade toward the resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource) {
@@ -614,7 +615,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     vec = base;
     EffectPosition_ProjectScaledBattler(action->actor, vec);
     vec[0] = vec[0] / 2;
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
 
     for (frame = 0; frame != 32; frame++) {
       struct Particle *p;
@@ -1075,7 +1076,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
 
         start = 12;
         if (frame == 12)
-          Sound_PlayFar(142);
+          Sound_PlayFar(SE_SWIRL);
         if (kind == 78)
           start = 0;
         if (frame == 50)
@@ -1153,7 +1154,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (frame == 4)
             work->unk77a8 = 12;
           if (frame == 8)
-            Sound_PlayFar(221);
+            Sound_PlayFar(SE_RISE_WITH_SPARKS);
         }
         if (kind == 6 || kind == 57) {
           if (frame >= 6 && frame < 20) {
@@ -1249,7 +1250,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
         }
         if (frame == 6)
-          Sound_PlayFar(221);
+          Sound_PlayFar(SE_RISE_WITH_SPARKS);
       } else if (kind == 44) {
         s32 count;
         HeapSlot_Release(188);
@@ -1557,12 +1558,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         work->unk7784 = 0;
         if (frame == 7) {
           work->unk77a8 = 16;
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         }
         if (frame == 11)
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         if (frame == 15)
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         HeapSlot_Release(188);
         HeapSlot_Release(104);
         if (action->side == 0)
@@ -1708,7 +1709,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                               point[0] - 4, point[1] - 4, 8, 8);
             p->x -= 6;
             if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
               BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
             }
           }
@@ -1757,7 +1758,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0x4000);
         }
         if (frame == 11) {
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
           work->unk77a8 = 16;
         }
       } else if (kind == 63 || kind == 64) {
@@ -1789,7 +1790,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
           drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
           if (frame == 13) {
-            Sound_PlayFar(134);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             work->unk77a8 = 8;
             BattleEffect_StartActorMotion(action->actors[0], 1, 0x20000,
                                           0x80000, 0x30000, 150);
@@ -1849,7 +1850,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 14) {
           BattleEffect_StartActorMotion(action->actors[0], 1, 0x20000, 0x80000,
                                         0x30000, 150);
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           work->unk77a8 = 8;
         }
         i = 0;
@@ -1903,9 +1904,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 4)
           work->unk77a8 = 8;
         if (frame == 6)
-          Sound_PlayFar(221);
+          Sound_PlayFar(SE_RISE_WITH_SPARKS);
         if (frame == 24)
-          Sound_PlayFar(390);
+          Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
         if (frame >= 8 && frame < 24) {
           s32 y;
           for (i = 0; i != 3; i++) {
@@ -1988,7 +1989,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                                       (target[1] - 64) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (frame == 8)
-          Sound_PlayFar(104);
+          Sound_PlayFar(SE_104);
         if (fade >= -63) {
           fade = frame << 12;
           if (kind == 82) {
@@ -2223,7 +2224,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           start = gData_0819895e[i] + 4;
           model->frame = (frame * 8 + i * 32) & 127;
           if (frame == start + 4)
-            Sound_PlayFar(104);
+            Sound_PlayFar(SE_104);
           if (frame > start) {
             fade = (start - frame) * 8 + 56;
             if (fade > -16)
@@ -2309,7 +2310,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 4)
           work->unk77a8 = 12;
         if (frame == 8)
-          Sound_PlayFar(103);
+          Sound_PlayFar(SE_CURSE);
       } else if (kind == 10) {
         if (frame == 0) {
           work->unk7780 = 1;
@@ -2334,7 +2335,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 4)
           work->unk77a8 = 12;
         if (frame == 8)
-          Sound_PlayFar(103);
+          Sound_PlayFar(SE_CURSE);
       } else if (kind == 42) {
         s32 m;
         if (frame > 47)
@@ -2351,16 +2352,16 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
       } else if (kind == 76) {
         if (frame == 18)
-          Sound_PlayFar(390);
+          Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
         for (i = 0; i != 3; i++) {
           if (frame == i * 3 + 3) {
-            Sound_PlayFar(212);
+            Sound_PlayFar(SE_POWER_UP);
             Iwram_FillWords(screen, 0x4000, 0x2f2f2f2f);
           }
         }
       } else if (kind == 74) {
         if (frame == 8)
-          Sound_PlayFar(103);
+          Sound_PlayFar(SE_CURSE);
         p = SPARKS;
         for (i = 0; i != 32; i++, p++) {
           if (frame >= i / 2 + 4) {
@@ -2450,7 +2451,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (frame == i * 4 + 8) {
             BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 2);
             work->unk77a8 = 2;
-            Sound_PlayFar(133);
+            Sound_PlayFar(SE_IMPACT);
           }
         }
       }
@@ -2467,11 +2468,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BattlePlayback_StartFar(-1);
       if (frame == 4) {
         if (kind == 91)
-          Sound_PlayFar(145);
+          Sound_PlayFar(SE_CRASH);
         else if (kind == 78 || kind == 81 || kind == 98)
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         else
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 6) {
         if (kind == 4 || kind == 5 || kind == 7 || kind == 43 || kind == 48 ||

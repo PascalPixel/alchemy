@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -44,14 +45,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   wait(30);
   Actor_ArmCallback(djinniId, 0x4000, 0);
   wait(20);
-  Sound_PlayFar(173);
+  Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlayFar(174);
+  Sound_PlayFar(SE_NOTE_MID);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlayFar(175);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   wait(20);
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   wait(80);
@@ -246,7 +247,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     effect->state++;
 
     if ((gVBlankCount & 1) != 0)
-      Sound_PlayFar(0x90);
+      Sound_PlayFar(SE_CLATTER);
   } else if (state == 1) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;

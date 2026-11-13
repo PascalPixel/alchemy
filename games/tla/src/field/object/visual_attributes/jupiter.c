@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -27,19 +28,19 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   FieldEffect_InitializeSlots();
   scene = Ram_HeapSlots->effectWork;
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
-  Sound_PlayFar(173);
+  Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(id, 1);
-  Sound_PlayFar(174);
+  Sound_PlayFar(SE_NOTE_MID);
   Motion_SetVarCbAndRefresh(id, 1);
-  Sound_PlayFar(175);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Motion_SetVarCbAndRefresh(id, 1);
   wait(20);
 
   // Spin, then leap high.
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   object->update = BattleEffect_AdvanceSpinAngle;
   wait(40);
-  Sound_PlayFar(153);
+  Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(id, 12, 22);
 
   // 24 sparks from the object's place on screen, one a frame.
@@ -48,7 +49,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   position.z = object->z;
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(object);
-  Sound_PlayFar(164);
+  Sound_PlayFar(SE_SCATTER);
   slot = scene->slots;
   count = 23;
   do {
@@ -70,7 +71,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(40);
-  Sound_PlayFar(164);
+  Sound_PlayFar(SE_SCATTER);
   wait(100);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ReleaseSlots();
@@ -156,7 +157,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->flags = 0;
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
   } else if (state == 1) {
     if ((s16)effect->age == 3) {
       ((struct AnimationObject *)effect->object)->image.priority = 0;
@@ -187,7 +188,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->targetZ = position.z;
     effect->state++;
     if ((gVBlankCount & 1) != 0)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
   } else if (state == 4) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;

@@ -6,6 +6,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 struct BurstSprite {
   u8 unk00[8];
@@ -302,7 +303,7 @@ void FieldPsynergy_Cyclone(void) {
   ring->scaleX = 0x18000;
   ring->scaleY = 0;
   wait(1);
-  Sound_PlayFar(207);
+  Sound_PlayFar(SE_RUSH);
   for (i = 0; i < 20; i++) {
     ring->scaleY = (i << 16) / 20;
     wait(1);
@@ -419,7 +420,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       BattleEffect_EndX();
   } else if (mode == 1) {
-    Sound_PlayFar(136);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     if (work->kind)
       ParticleBurst_Start();
@@ -440,7 +441,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       BattleEffect_EndX();
   } else {
-    Sound_PlayFar(136);
+    Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     for (i = 0; i < 16; i++) {
       owner->facing += 0x1000;
@@ -449,7 +450,7 @@ void FieldPsynergy_Cyclone(void) {
       wait(1);
     }
   }
-  Sound_PlayFar(136);
+  Sound_PlayFar(SE_WHOOSH);
   Actor_ReleaseFar(ring);
   owner->update = NULL;
   owner->facing = owner->timer;
@@ -502,7 +503,7 @@ void Actor_DepartInRing(s32 actor) {
     wait(1);
   }
   Actor_SetPositionAndResetMotionFar(object, x, y, z);
-  Sound_PlayFar(136);
+  Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
   Event_Wait(15);
   Actor_ReleaseFar(ring);
@@ -545,7 +546,7 @@ void Actor_ArriveInRing(s32 actor) {
   }
   ring->scaleX = 0x18000;
   ring->scaleY = Q16_ONE;
-  Sound_PlayFar(136);
+  Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
   object->scaleY = object->scaleX = 0x8000;
   for (i = 0; i < 16; i++) {

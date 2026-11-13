@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "system/io_write.h"
 #include "gamepak/far_call/game.h"
 #include "module/system/system.h"
@@ -67,7 +68,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   Text_DrawMessage(message, (s32)window, 40, 88);
   Text_DrawMessage(message + 1, (s32)window, 40, 104);
   Sound_SetBgmVolumeTargetFar(0, 30);
-  Sound_PlayFar(298);
+  Sound_PlayFar(SE_298);
   wait(10);
   Heap_Release(tiles);
   return window;
@@ -483,7 +484,7 @@ s32 Save_ToFile(u32 slot) {
   } else {
     Save_LoadFileSummaries();
     gSaveSlot = slot;
-    Sound_PlayFar(85);
+    Sound_PlayFar(MUS_085);
     FieldMessage_Show((s32)&MsgSaving, 13);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
@@ -1100,7 +1101,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     MenuTitle_Bob(modePicture);
     wait(1);
     if (gInput.repeat & 0x40) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
@@ -1112,7 +1113,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
     } else if (gInput.repeat & 0x80) {
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
@@ -1124,11 +1125,11 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
     } else if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     } else if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = selectedFile;
       break;
     }

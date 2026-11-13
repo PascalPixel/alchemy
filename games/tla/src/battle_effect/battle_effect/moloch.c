@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -109,7 +110,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     frame = 0;
     do {
       if ((gInput.repeat & 3) && frame <= 231 && frame > 15) {
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
         frame = SUMMON16_SKIP_TO;
       }
 
@@ -331,15 +332,15 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         work->shakeFrames = 2;
 
       if (frame == 32)
-        Sound_PlayFar(246);
+        Sound_PlayFar(SE_GLITTER);
       if (frame == 90)
-        Sound_PlayFar(225);
+        Sound_PlayFar(SE_225);
       if (frame == 140)
-        Sound_PlayFar(154);
+        Sound_PlayFar(SE_CAST);
       if (frame == 200)
-        Sound_PlayFar(208);
+        Sound_PlayFar(SE_BANE_ESCAPE);
       if (frame == 232)
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
 
       // Frames 256-271 brighten the whole screen to white; at 272 the battle
       // phase resumes and the canvas fades back.
@@ -1189,30 +1190,30 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       break;
 
     if (frame == 0)
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
     for (i = 0; i != 11; i++)
       if (frame == Data_08199fbc[i])
-        Sound_PlayFar(130);
+        Sound_PlayFar(SE_PSYNERGY_START);
     if (frame == 175)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != 5; i++)
       if (frame == Data_08199fc8[i])
-        Sound_PlayFar(209);
+        Sound_PlayFar(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
     for (i = 0; i != 6; i++)
       if (frame == Data_08199fd2[i])
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
     if (frame == 369)
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
     for (i = 0; i != 6; i++)
       if (frame == 644 + i * 12)
-        Sound_PlayFar(104);
+        Sound_PlayFar(SE_104);
     if (frame == 755)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != 6; i++)
       if (frame == 759 + i * 9)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
     if (frame == 820)
-      Sound_PlayFar(208);
+      Sound_PlayFar(SE_BANE_ESCAPE);
 
     // The opening: the circle and the streaks.
     if (frame == 0) {

@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Battle effects: sparks after approaching the target (type 4).
 
@@ -82,8 +83,6 @@ void BattleEffect_RunTwinShear(s32 a0) {
 #define FLOOD_FRAME 16 // the pictures end and the canvas floods
 #define RESULTS_FRAME 18
 #define HIT_FRAME 20
-
-#define SE_REVEAL 212
 
 extern char ResourceId_ArcFragmentsSheet;
 extern char ResourceId_RevealMaskA;
@@ -202,7 +201,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
                                                         COMPOSITE_FLIP_Y));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
-  Sound_PlayFar(SE_REVEAL);
+  Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != REVEAL_FRAMES; frame++) {
     if (variant == 5) {
       // Half the picture, then its reflection below it.

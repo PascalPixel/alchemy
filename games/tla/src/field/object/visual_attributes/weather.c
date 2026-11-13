@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 
 /* VIEW(f0d6674): tag struct GroundParticleWork as struct
@@ -89,9 +90,9 @@ void Weather_UpdateLightning(void) {
       u32 jitter = b * 100;
       work->timer = (((draw + a) << 4) >> 16) - (jitter >> 16) + 150;
       if (work->loud != 0)
-        Sound_PlayFar(172);
+        Sound_PlayFar(SE_THUNDER_LOUD);
       else
-        Sound_PlayFar(171);
+        Sound_PlayFar(SE_THUNDER);
     }
   case 5:
   case 10:

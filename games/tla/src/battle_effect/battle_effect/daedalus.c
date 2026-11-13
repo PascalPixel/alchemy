@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct Model;
 
@@ -126,10 +127,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
     work->shakeFrames = 0;
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
   } else if (mode == 1 || mode == 3) {
     work->shakeFrames = 8;
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
   } else {
     work->shakeFrames = 32;
   }
@@ -144,7 +145,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
     if (frame == 24)
       BattlePlayback_StartFar(0);
     if (frame == 8 && mode == 0)
-      Sound_PlayFar(126);
+      Sound_PlayFar(SE_RECOVERY);
 
     // Cels 0, 1 and 2 four frames each, then 1 and 2 by turns.
     if (frame < 32) {
@@ -897,17 +898,17 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       for (i = 0; i != 5; i++) {
         if (frame == Data_08199582[i]) {
           work->shake = 23;
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
       }
       if (frame == 510)
-        Sound_PlayFar(186);
+        Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
       if (frame == 568) {
         work->shake = 10;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
       if (frame == 578)
-        Sound_PlayFar(163);
+        Sound_PlayFar(SE_163);
       for (i = 0; i != 16; i++) {
         Particle *p;
 
@@ -932,7 +933,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           q->vy = 0;
         }
         if (work->particles[20].timer == (i & 7) * 6 + 10) {
-          Sound_PlayFar(138);
+          Sound_PlayFar(SE_ITEM_BREAK);
           p->timer = 1;
           p->x += swayX;
           p->y += swayY - (Data_081994f0[work->shake] << 16);
@@ -1452,7 +1453,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
               q->vy = Trig_Cos(angle) * speed >> 4;
               q->timer = 0;
             }
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
             for (j = 0; j != arg->count; j++) {
               BattleEffect_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000,
                                             100);
@@ -1660,7 +1661,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame == 56) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     for (i = 0; i != 7; i++) {
       if (frame == Data_081995ec[i]) {
@@ -1670,7 +1671,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 7);
         }
         work->shakeFrames = 4;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
     }
 

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -196,7 +197,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         drop->variant = (Random16() & 15) + 16;
       }
       BattlePlayback_StartFar(134);
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       BattleEffect_StartActorMotion(effect->actors[member], 1, 0x20000, 0x80000,
                                     0x20000, i * 5 + 110);
       BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
@@ -434,7 +435,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     if (frame == 4) {
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 8;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
     if (frame == 163) {
       REG_BG2CNT = 0x784;
@@ -514,7 +515,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       height = 220;
     }
     if (frame == 134) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame > 59) {

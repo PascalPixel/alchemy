@@ -4,6 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 
 /// Starts the leader's animation for leaving through an exit: centres it on
@@ -113,7 +114,7 @@ s32 Entrance_PlayArrival(void) {
         while (object->y + object->velocityY > object->terrainHeight) {
           wait(1);
         }
-        Sound_PlayFar(159);
+        Sound_PlayFar(SE_DOOR_CLOSE);
         object->y = object->terrainHeight;
         Actor_SelectAnimationFar(object, 22);
         Event_Wait(15);

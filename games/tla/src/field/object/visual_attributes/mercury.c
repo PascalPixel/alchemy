@@ -4,6 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -69,16 +70,16 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   Shop_SaveAndTintFieldPaletteFar(0x204084);
   wait(30);
   djinni->visible = 0;
-  Sound_PlayFar(173);
+  Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(arg, 1);
-  Sound_PlayFar(175);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Motion_SetVarCbAndRefresh(arg, 1);
   wait(20);
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 3, 14);
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 5, 16);
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 7, 18);
   wait(20);
 
@@ -107,7 +108,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   }
 
   resourceId = resource->id;
-  Sound_PlayFar(153);
+  Sound_PlayFar(SE_HIGH_JUMP);
   djinni->mode = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y += 0x80000;

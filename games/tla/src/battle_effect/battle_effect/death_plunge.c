@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -294,7 +295,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(145);
     }
     if (frame == 0) {
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
       // A once-only block: it keeps the shake after the sound.
       do {
         work->shakeFrames = 6;

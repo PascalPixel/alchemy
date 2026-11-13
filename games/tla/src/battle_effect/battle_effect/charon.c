@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // A pair of 16.16 scales; the game keeps each start value in the rodata.
 struct ScalePair {
@@ -398,37 +399,37 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       Palette_BrightenSavedBattleBg(0, -10, -20);
     }
     if (frame == 4) {
-      Sound_PlayFar(107);
+      Sound_PlayFar(SE_TREMOR);
     }
     if (frame == 55) {
-      Sound_PlayFar(208);
+      Sound_PlayFar(SE_BANE_ESCAPE);
     }
     if (frame == 78) {
-      Sound_PlayFar(219);
+      Sound_PlayFar(SE_GUSH);
     }
     if (frame == 127) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 131) {
-      Sound_PlayFar(149);
+      Sound_PlayFar(SE_MONSTER_ROAR);
     }
     if (frame == 206) {
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 244) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 302) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 308) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 312) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 350) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 0) {
       work->transferMode = 2;
@@ -1337,7 +1338,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     wait(1);
   }
 
-  Sound_PlayFar(162);
+  Sound_PlayFar(SE_162);
   if (frame < 132) {
     Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[0]);
   } else {
@@ -1441,7 +1442,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       frame = 120;
     }
     if (frame == 0) {
-      Sound_PlayFar(162);
+      Sound_PlayFar(SE_162);
       work->wave = 160;
       shake = 0;
       for (i = 0; i != arg->count; i++) {
@@ -1497,7 +1498,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
         Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                    SPRITE_BUFFER, 1, 0);
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
         REG_BG2CNT = 0x784;
         work->transferMode = 2;
@@ -1642,7 +1643,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             if (landed == 1) {
               member->timer = 0;
               EffectPosition_ProjectScaledBattler(arg->actors[i], member);
-              Sound_PlayFar(103);
+              Sound_PlayFar(SE_CURSE);
               for (j = 0; j != 16; j++) {
                 s32 angle = Random16() & 0x7fff;
                 s32 speed;

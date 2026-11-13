@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Nirvana's ring of sparks.
 
@@ -66,7 +67,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != 80; frame++) {
     struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
@@ -213,9 +214,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
     EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
     if (frame == 0)
-      Sound_PlayFar(157);
+      Sound_PlayFar(SE_GATE_MOVE);
     if (frame == 64)
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
 
     // Frame 0: the boulders stand in a column 2 pixels apart, on the
     // user's side of the canvas, and are thrown upward at random speeds.
@@ -297,7 +298,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     if (hit == 1) {
       if (cueTimer == 0) {
         cueTimer = 8;
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16,
                                     2 << 16, 150);
@@ -432,10 +433,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // The cues: the burst, the target thrown up 32 pixels, the user's
     // glow, the drain and the target's fall.
     if (frame == 4)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 10) {
       work->shakeFrames = 8;
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 80);
       target->verticalMotionStrength = 0;
       target->y = 32 << 16;
@@ -445,7 +446,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     if (frame == 24)
       BattleEffect_TintBattler(effect->actor, -1, 3, -1, 0);
     if (frame == 40)
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     if (frame == 32)
       BattlePlayback_StartFar(134);
     if (frame == 64)
@@ -890,16 +891,16 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
                     dropScreen.y - 30, 40, 40);
       }
       if (frame == 4) {
-        Sound_PlayFar(156);
+        Sound_PlayFar(SE_SWITCH_MECHANISM);
       }
       if (frame == 30) {
-        Sound_PlayFar(139);
+        Sound_PlayFar(SE_139);
       }
       if (frame == 60) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       }
       if (frame == 64) {
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         BattlePlayback_StartFar(-1);
       }
       if (frame == 30) {

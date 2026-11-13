@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
@@ -107,7 +108,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
 
   for (frame = 0; frame != QUAD_FRAMES; frame++) {
     if (frame == 8)
-      Sound_PlayFar(246);
+      Sound_PlayFar(SE_GLITTER);
 
     // The quads start above the screen (or at the target for mode 2), each
     // with its own heading, spin and size.
@@ -132,7 +133,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
 
     // Frame 56: the next phase, and every target flashes.
     if (frame == 56) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       BattlePlayback_StartFar(-1);
       for (i = 0; i != effect->count; i++)
         BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
@@ -351,10 +352,10 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       skip = 1;
     }
     if (frame == 0) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 32) {
-      Sound_PlayFar(191);
+      Sound_PlayFar(SE_191);
     }
     if ((u32)(frame - 78) <= 31) {
       REG_BLDALPHA = (16 - (frame - 78) / 2) | 0x1000;

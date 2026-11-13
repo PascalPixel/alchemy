@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
@@ -357,26 +358,26 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
                 RECORD(mode, RECORD_RATE) * 4 - 4 &&
             (RECORD(mode, RECORD_FLAGS) & FLAG_STAR))
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
 
         // The hit, on the strike's fifth picture.
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
             RECORD(mode, RECORD_RATE) * 4) {
           if (mode == 12) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 <= 2)
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
             else
               BattlePlayback_StartFar(133);
           } else if (mode == 7) {
             if (frame <= 8)
-              Sound_PlayFar(133);
+              Sound_PlayFar(SE_IMPACT);
             else
               BattlePlayback_StartFar(133);
           } else if (mode == 13) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 > 6)
               BattlePlayback_StartFar(134);
             else
-              Sound_PlayFar(134);
+              Sound_PlayFar(SE_HEAVY_IMPACT);
           } else if ((RECORD(mode, RECORD_FLAGS) & FLAG_STAR) ||
                      (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)) {
             BattlePlayback_StartFar(144);
@@ -469,7 +470,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                              RECORD(mode, RECORD_RATE))
           BattlePlayback_StartFar(133);
         else
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
           work->shakeFrames = 8;
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
@@ -745,7 +746,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
     dagger->velocityY = 8 << 16;
     dagger->x <<= 16;
   }
-  Sound_PlayFar(212);
+  Sound_PlayFar(SE_POWER_UP);
 
   for (frame = 0; frame != 120; frame++) {
     if (frame <= 16) {
@@ -793,7 +794,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
-        Sound_PlayFar(133);
+        Sound_PlayFar(SE_IMPACT);
     }
     BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
@@ -890,7 +891,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
     effect->variant = 1;
   if (effect->variant > 4)
     effect->variant = 4;
-  Sound_PlayFar(212);
+  Sound_PlayFar(SE_POWER_UP);
 
   for (frame = 0; frame != 56; frame++) {
     EffectPosition_ProjectBattler(effect->actor, &ground);

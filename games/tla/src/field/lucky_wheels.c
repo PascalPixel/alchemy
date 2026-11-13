@@ -3,6 +3,7 @@
 /// in the order it has in the ROM.
 
 #include "types.h"
+#include "sounds.h"
 #include "system/task.h"
 #include "system/io_reg.h"
 #include "system/main_routine_work.h"
@@ -35,14 +36,11 @@ extern const u8 gLuckyWheels_MachineSpriteX[];
 extern const u8 gLuckyWheels_MachineSpriteY[];
 
 /// Blanks the display but for 1D objects, seeds the random state from the
-/// play time, plays sound 709 and runs Lucky Wheels.
-// As The Broken Seal's.
-// XXX: sound 709's name; The Lost Age has no sounds.h yet, and The Broken
-// Seal plays MUS_DJINN_LESSON here.
+/// play time, starts Lucky Wheels' music and runs Lucky Wheels.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomState = gMainRoutineWork.playTime;
-  Sound_PlayFar(709);
+  Sound_PlayFar(MUS_709);
   LuckyWheels_Run();
   return 0;
 }
@@ -443,17 +441,17 @@ void LuckyWheels_Update(void) {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
             work->bet++;
-            Sound_PlayFar(111);
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            Sound_PlayFar(113);
+            Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
         if (work->pressed & KEY_DOWN) {
           if (work->bet > 1) {
             work->bet--;
-            Sound_PlayFar(111);
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            Sound_PlayFar(113);
+            Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
         REG_BLDCNT = 0x3fd0;
@@ -465,7 +463,7 @@ void LuckyWheels_Update(void) {
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(228);
           Window_CloseFar(work->subWindow, 1);
-          Sound_PlayFar(304);
+          Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
     } else if (work->state == 5) {
@@ -487,26 +485,26 @@ void LuckyWheels_Update(void) {
             work->reels[i].stop = -1;
           }
         } else if (work->cursor <= 4) {
-          Sound_PlayFar(305);
+          Sound_PlayFar(SE_LUCKY_WHEELS_HOLD);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
-          Sound_PlayFar(304);
+          Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
           work->state = 1;
           work->cursor = 0;
           for (i = 0; i != 5; i++)
             work->reels[i].stop = -1;
           work->spins++;
         } else {
-          Sound_PlayFar(113);
+          Sound_PlayFar(SE_MENU_CANCEL);
         }
       } else {
         if (work->direction & KEY_RIGHT) {
           work->cursor = (work->cursor + 1) % 6;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         if (work->direction & KEY_LEFT) {
           work->cursor = (work->cursor + 5) % 6;
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
       }
 
@@ -586,7 +584,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = 3;
-        Sound_PlayFar(93);
+        Sound_PlayFar(MUS_093);
         work->timer = 0;
         REG_BLDCNT = 0x3f44;
         REG_BLDALPHA = 0x1010;
@@ -598,7 +596,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->pressed & KEY_A) {
         work->state = 10;
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       }
     } else if (work->state == 11) {
 #if TLA_PATCH_1
@@ -612,7 +610,7 @@ void LuckyWheels_Update(void) {
 #if TLA_PATCH_1
         work->phase = 0;
 #endif
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         Window_CloseFar(work->window, 1);
       }
     } else if (work->state == 20) {
@@ -626,14 +624,14 @@ void LuckyWheels_Update(void) {
         Text_DrawMessageAsTilesFar((s32)MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
-        Sound_PlayFar(306);
+        Sound_PlayFar(SE_LUCKY_WHEELS_STOP_PROMPT);
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != 5; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
-              Sound_PlayFar(307);
+              Sound_PlayFar(SE_LUCKY_WHEELS_STOP);
               break;
             }
           }
@@ -699,7 +697,7 @@ void LuckyWheels_Update(void) {
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
           work->state = 2;
-          Sound_PlayFar(171);
+          Sound_PlayFar(SE_THUNDER);
           fx->transferMode = 1;
           fx->transferValue = 0;
           REG_BLDCNT = 0;

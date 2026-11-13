@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -54,7 +55,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
   }
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != effect->count * 32 + 64; frame++) {
     s32 *row;
@@ -340,7 +341,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Sound_PlayFar(146);
+  Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0; frame != Data_08197864[mode * 2 + 1] + effect->count * 20;
        frame++) {
@@ -386,9 +387,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
       if (frame == k * 20 + 71) {
         if (mode == 0)
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         else if (mode != 3)
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
         BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 26);
@@ -439,7 +440,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                   BattleEffect_StartActorMotion(effect->actors[k], 1, 0x20000,
                                                 0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)
-                    Sound_PlayFar(134);
+                    Sound_PlayFar(SE_HEAVY_IMPACT);
                 }
               }
             }

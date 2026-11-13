@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -127,7 +128,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_AxeSheet, work->sheet, 1, 1);
     frames = 64;
   }
-  Sound_PlayFar(212);
+  Sound_PlayFar(SE_POWER_UP);
   zero = 0;
 
   for (frame = 0; frame != frames; frame++) {
@@ -435,7 +436,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 
             BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 3);
             BattleMotion_ApplyKnockbackFar(effect->actors[member], 0);
-            Sound_PlayFar(212);
+            Sound_PlayFar(SE_POWER_UP);
             work->shakeFrames = 3;
           }
 
@@ -774,7 +775,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     Heap_Release(vertices);
 
     if (frame == 64) {
-      Sound_PlayFar(147);
+      Sound_PlayFar(SE_BEAST_CRY);
     }
     for (i = 0; i != 6; i++) {
       if (frame == i * 4 + 80) {
@@ -784,7 +785,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         if (i == 0) {
           BattlePlayback_StartFar(134);
         } else {
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
         }
       }
     }
@@ -926,7 +927,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
       for (; i != 8; i++, burst++) {
         burst->variant++;
         if (burst->variant == 8) {
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
           work->shakeFrames = 8;
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
@@ -1067,7 +1068,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 68; frame++) {
     // Frame 0: the streaks wait above the screen, drifting with the wind.
     if (frame == 0) {
-      Sound_PlayFar(170);
+      Sound_PlayFar(SE_170);
       for (i = 0; i != 256; i++)
         PARTICLES[i].variant = -1;
       for (i = 0; i != STREAKS; i++) {
@@ -1109,7 +1110,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
     for (i = 0; i != 8; i++) {
       if (frame == i * 4 + 6) {
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 3);
-        Sound_PlayFar(132);
+        Sound_PlayFar(SE_WATER);
       }
     }
 

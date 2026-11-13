@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
@@ -109,7 +110,7 @@ void Scene_QueueMusic(s32 soundId) {
   event->cueState = state;
   if ((s16)state == -1)
     state = 0x186;
-  Sound_PlayFar(0x12a);
+  Sound_PlayFar(SE_298);
   Sound_PlayFar(state);
 }
 

@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 
 /// Writes the object's position on screen, in pixels, to position[0] and
@@ -54,8 +55,8 @@ void Field_StartEncounterTransition(s32 unused) {
 
   work = Ram_HeapSlots->eventWork;
   Sound_PlayFar(gMainRoutineWork.sceneCue);
-  Sound_PlayFar(298);
-  Sound_PlayFar(147);
+  Sound_PlayFar(SE_298);
+  Sound_PlayFar(SE_BEAST_CRY);
   if (work->controlMode == 3) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(0x401, 16);

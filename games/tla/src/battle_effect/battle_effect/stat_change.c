@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); Kindle (kind 223); kind 46 is used by no ability.
@@ -248,7 +249,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
     s32 prelude;
 
     if (frame == 0)
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     if (mode == 6 && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
     if (mode == 11 && (frame & 3) == 0)
@@ -286,7 +287,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           BattleUnit_GetEffectHeightFar(effect->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       // The lights turn about two thirds of the target's height.
@@ -610,7 +611,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
         }
         // frame - j * 4 is time; this spelling matches here and below.
         if (frame - j * 4 == 24)
-          Sound_PlayFar(143);
+          Sound_PlayFar(SE_CRACK);
 
         // The shards fly for 36 frames, a shade darker every four.
         if (time >= 24 && time <= 60) {

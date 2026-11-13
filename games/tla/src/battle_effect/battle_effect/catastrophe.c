@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -473,16 +474,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         cueTimer = Data_0819978c[cueIndex];
         switch (cueIndex & 3) {
         case 0:
-          Sound_PlayFar(227);
+          Sound_PlayFar(SE_TOPPLE);
           break;
         case 1:
-          Sound_PlayFar(171);
+          Sound_PlayFar(SE_THUNDER);
           break;
         case 2:
-          Sound_PlayFar(208);
+          Sound_PlayFar(SE_BANE_ESCAPE);
           break;
         case 3:
-          Sound_PlayFar(172);
+          Sound_PlayFar(SE_THUNDER_LOUD);
           break;
         }
       }
@@ -769,13 +770,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 324) {
-      Sound_PlayFar(206);
+      Sound_PlayFar(SE_CURSE_FALL);
     }
     if (frame == 560) {
-      Sound_PlayFar(220);
+      Sound_PlayFar(SE_SHIMMER);
     }
     if (frame == 602) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
     texture.logWidth = 5;
     texture.logHeight = 7;
@@ -836,13 +837,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           blit[0](canvas, src, x, y, w, h);
           switch (i) {
           case 0:
-            Sound_PlayFar(186);
+            Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
             break;
           case 1:
-            Sound_PlayFar(187);
+            Sound_PlayFar(SE_FALLING_LIGHT);
             break;
           case 2:
-            Sound_PlayFar(222);
+            Sound_PlayFar(SE_222);
             break;
           }
           {
@@ -1202,11 +1203,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
         if (frame == 82) {
           work->shakeFrames = 8;
-          Sound_PlayFar(208);
+          Sound_PlayFar(SE_BANE_ESCAPE);
           IWRAM_FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
         }
         if (frame == 96) {
-          Sound_PlayFar(104);
+          Sound_PlayFar(SE_104);
         }
         if (frame == 128) {
           u16 *c;
@@ -1387,7 +1388,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
         for (i = 0; i != 8; i++) {
           if (frame == 128 + i * 4) {
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
           }
         }
         p = work->particles;
@@ -1553,7 +1554,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
         }
         work->shakeFrames = 16;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
       if ((u32)(frame - 72) <= 15) {
         work->transferMode = 4;
@@ -1695,16 +1696,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 work->shakeFrames = 4;
                 switch (i & 3) {
                 case 0:
-                  Sound_PlayFar(227);
+                  Sound_PlayFar(SE_TOPPLE);
                   break;
                 case 1:
-                  Sound_PlayFar(171);
+                  Sound_PlayFar(SE_THUNDER);
                   break;
                 case 2:
-                  Sound_PlayFar(208);
+                  Sound_PlayFar(SE_BANE_ESCAPE);
                   break;
                 case 3:
-                  Sound_PlayFar(172);
+                  Sound_PlayFar(SE_THUNDER_LOUD);
                   break;
                 }
                 j = 0;

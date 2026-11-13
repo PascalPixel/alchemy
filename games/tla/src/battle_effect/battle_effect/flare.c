@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #define FLAME_COUNT 9
 
@@ -69,7 +70,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   else
     work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(136);
+  Sound_PlayFar(SE_WHOOSH);
   frame = 0;
   do {
     if (frame == 24)

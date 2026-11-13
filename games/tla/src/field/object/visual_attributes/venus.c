@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 
 struct BattleFxScene;
@@ -29,15 +30,15 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   Shop_SaveAndTintFieldPaletteFar(0x201204);
   wait(30);
   djinni->visible = 0;
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 4, 15);
-  Sound_PlayFar(152);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 4, 15);
   wait(30);
   djinni->callback = (void *)BattleEffect_AdvanceSpinAngle;
-  Sound_PlayFar(153);
+  Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(arg, 8, 22);
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar((struct Actor *)djinni, 3);
@@ -107,9 +108,9 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   }
 
   wait(100);
-  Sound_PlayFar(298);
+  Sound_PlayFar(SE_298);
   wait(1);
-  Sound_PlayFar(151);
+  Sound_PlayFar(SE_LIGHT_APPEAR);
   position[0] = leader->x;
   position[1] = leader->y + 0x120000;
   position[2] = leader->z;
@@ -193,7 +194,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->maxSpeed = Random16() + 0x23333;
       effect->scaleX = 0x8000;
       effect->scaleY = 0x8000;
-      Sound_PlayFar(143);
+      Sound_PlayFar(SE_CRACK);
 
       if (*statePointer == 1)
         (*statePointer)--;

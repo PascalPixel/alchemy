@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -210,7 +211,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           if (effect->variant == 0) {
             BattlePlayback_StartFar(144);
           } else {
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
           }
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
                                         0x40000, 150);
@@ -571,7 +572,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
     if (frame == FIGURE_SWING_FRAME) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       work->shakeFrames = 3;
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
     }
 

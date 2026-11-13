@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 // Field Psynergy kind 19 on a chosen object (FieldPsynergy_Dispatch's
 // case 19): FieldPsynergy_Tremor's sideways sway, stronger, with the object's
@@ -18,8 +19,6 @@
 #define SWAY_RAMP 0x1999   // 0.1 pixels a frame
 #define SWAY_SHAKE 0x40000 // sprites shake only past this
 #define SWAY_HOLD_FRAMES 40
-
-#define SE_SWAY 152
 
 enum {
   SWAY_GROW,
@@ -144,7 +143,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   frames = 0;
   do {
     if ((frameCount & 15) == 15)
-      Sound_PlayFar(SE_SWAY);
+      Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
@@ -261,7 +260,7 @@ void FieldPsynergy_Tremor(void) {
   frames = 0;
   do {
     if ((frameCount & 15) == 15)
-      Sound_PlayFar(SE_SWAY);
+      Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
@@ -343,6 +342,5 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
 #undef SWAY_RAMP
 #undef SWAY_SHAKE
 #undef SWAY_HOLD_FRAMES
-#undef SE_SWAY
 #undef VIEW_MOVE_WORK_SIZE
 #undef SWAY_SHAKE_FRAMES

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -117,7 +118,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
         }
         Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet,
                                    1, 0);
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         work->shakeFrames = 4;
         // Set once: reload rebuilds each of these at its use (see the header).
         halfWidth = 48;

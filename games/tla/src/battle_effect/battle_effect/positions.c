@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 void *GetMotionRecordFar(void *object, s32 index);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -505,7 +506,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, 0x480);
-    Sound_PlayFar(212);
+    Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
                                             130);

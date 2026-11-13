@@ -7,6 +7,7 @@
 /// palettes are the data objects logo.c and title_intro_tables.s.
 
 #include "types.h"
+#include "sounds.h"
 #include "graphics/graphics.h"
 #include "system/system.h"
 #include "edition.h"
@@ -1045,7 +1046,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   s32 blank;
   s32 resource;
 
-  Sound_PlayFar(110);
+  Sound_PlayFar(SE_CHIME);
   gRenderOamEnabled = 1;
   resource = (s32)&ResourceId_NintendoLogo;
   blank = 0x1ff;

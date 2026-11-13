@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -128,7 +129,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -371,7 +372,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
@@ -488,7 +489,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
       do {
         start = i * MARKER_STAGGER;
         if (frame == start) {
-          Sound_PlayFar(143);
+          Sound_PlayFar(SE_CRACK);
         }
         if (frame >= start && frame < start + MARKER_FRAMES) {
           // The marker at the target's feet, then the flame, six frames a cel.
@@ -590,9 +591,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 8)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 80)
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 30 && frame < 70) {
@@ -709,7 +710,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       position[2] = object->z;
       SceneTransform_ApplyPosition(position);
       if (frame == start + 30)
-        Sound_PlayFar(126);
+        Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
         BattleEffect_TintBattler(effect->actors[member], 7, -1, -1, 0);
       if (frame == start + 64)

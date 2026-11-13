@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Break's ice shards (effect kind 43).
 
@@ -104,7 +105,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
       offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
       // The target's cue: a chime and a flash.
       if (frame == member * 20) {
-        Sound_PlayFar(143);
+        Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.
@@ -242,7 +243,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
     work->transferValue = 0x04040404;
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     struct MotionObject *user;

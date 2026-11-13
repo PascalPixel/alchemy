@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #undef FORMATION
 #undef FORMATION_SIZE
@@ -29,9 +30,6 @@
 #define WIND_UP_FRAME 244 // the orb draws back, then flies left
 #define THROW_FRAME 252
 #define HIT_FRAME 260
-
-#define SE_DROP 156
-#define SE_HIT 145
 
 struct FxScale {
   s32 x;
@@ -153,13 +151,13 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != SCENE_FRAMES && !(gInput.repeat & 3); frame++) {
     if (frame == FIRST_DROP + 3)
-      Sound_PlayFar(SE_DROP);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == FIRST_DROP + 45)
-      Sound_PlayFar(SE_DROP);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == FIRST_DROP + 87)
-      Sound_PlayFar(SE_DROP);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == HIT_FRAME)
-      Sound_PlayFar(SE_HIT);
+      Sound_PlayFar(SE_CRASH);
     scale = gData_08196e6c;
     if (frame >= ROCKS_FALL && frame <= 251)
       work->shakeFrames = 1;

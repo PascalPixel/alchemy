@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
@@ -549,9 +550,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
       if (frame == 4) {
         if (mode == 9 || mode == 17)
-          Sound_PlayFar(92);
+          Sound_PlayFar(MUS_092);
         else
-          Sound_PlayFar(136);
+          Sound_PlayFar(SE_WHOOSH);
       }
       if (mode == 8) {
       } else if (mode == 6) {

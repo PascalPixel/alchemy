@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
@@ -47,7 +48,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
   gCameraSceneParameters[4] = 120;
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 
 struct FxGroup {

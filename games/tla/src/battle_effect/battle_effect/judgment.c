@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
 // then the sigil's beam strikes and the ground erupts in a ring of
@@ -112,10 +113,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     if (frame == 143) {
       FILL__actor_move_random(canvas, 0x4000, 0x2a2a2a2a);
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
     if (frame == 80) {
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 72) {
       work->fadeFrames = 24;
@@ -389,19 +390,19 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != 336; frame++) {
     if (frame == 66) {
-      Sound_PlayFar(208);
+      Sound_PlayFar(SE_BANE_ESCAPE);
     }
     if (frame == 88) {
-      Sound_PlayFar(230);
+      Sound_PlayFar(SE_230);
     }
     if (frame == 155) {
-      Sound_PlayFar(162);
+      Sound_PlayFar(SE_162);
     }
     if (frame == 217) {
-      Sound_PlayFar(156);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     }
     if (frame == 280) {
-      Sound_PlayFar(157);
+      Sound_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
       for (i = 0; i != effect->count; i++) {

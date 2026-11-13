@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 /* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c;
  * f0e2c38.c has another definition; tried with the definition the rest of the
@@ -140,7 +141,7 @@ void FieldPsynergy_Pound(void) {
   }
 
   FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(138);
+  Sound_PlayFar(SE_ITEM_BREAK);
   shine = Actor_Spawn(352, 0, 0, 0);
   work->object = shine;
   if (shine == NULL)
@@ -239,7 +240,7 @@ void FieldPsynergy_Pound(void) {
     Task_Remove(BattleEffect_SinkAndShrinkObject);
     for (j = 15; j >= 0; j--)
       BattleEffect_SpawnScatterParticle(shine->x, shine->y, shine->z);
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     wait(1);
   } else {
     pending =
@@ -259,7 +260,7 @@ void FieldPsynergy_Pound(void) {
     }
     Task_Remove(FieldPsynergy_UpdatePound);
     wait(10);
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     FieldPsynergy_ShrinkToCaster(shine, shine->x, shine->y, shine->z);
   }
   Actor_ReleaseFar(shine);

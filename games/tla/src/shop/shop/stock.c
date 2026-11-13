@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/shop/shop.h"
 #include "gamepak/far_call/menu.h"
@@ -48,7 +49,7 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
     if (gInput.pressed & 1) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         MessageArgument_PushFar(unitId, 1);
         MessageArgument_PushFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
@@ -58,7 +59,7 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
-      Sound_PlayFar(101);
+      Sound_PlayFar(SE_SHOP_PURCHASE);
       Shop_ShowKeeperMessageHidingCursor((s32)MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
@@ -66,7 +67,7 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
       break;
     } else if (gInput.pressed & 2) {
       Shop_ShowKeeperMessageHidingCursor((s32)MsgDontWantIt);
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     } else {
       redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);

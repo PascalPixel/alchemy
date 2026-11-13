@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct MeshTriangle;
 struct Model;
@@ -334,7 +335,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       Heap_Release(model);
     }
     if (frame == 48) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 64) {

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
 // dragon's head flies the path from frame 18, trailing fading copies of
@@ -138,9 +139,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(145);
     }
     if (frame == 0)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     if (frame == 50)
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
 
     // For 64 frames the camera turns away from the user's side.
     if (effect->side == 0) {

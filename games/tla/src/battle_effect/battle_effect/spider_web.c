@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct AnimationEntry *AnimationObject_AllocateEmpty(void);
 /* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32
@@ -626,10 +627,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
                                  0);
     }
     if (frame == 76) {
-      Sound_PlayFar(138);
+      Sound_PlayFar(SE_ITEM_BREAK);
     }
     if (frame == 266) {
-      Sound_PlayFar(138);
+      Sound_PlayFar(SE_ITEM_BREAK);
     }
 
     if ((u32)(frame - 133) <= 132) {
@@ -661,15 +662,15 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         s32 t;
 
         if (++step->variant == 0) {
-          Sound_PlayFar(138);
+          Sound_PlayFar(SE_ITEM_BREAK);
         }
         t = step->variant;
         if (t == 60) {
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
           t = step->variant;
         }
         if (t == 64) {
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           t = step->variant;
         }
         if ((u32)t <= 35) {
@@ -933,7 +934,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BLITTER);
   transition[4] = 0;
   battle = Ram_HeapSlots->battleWork;
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;
@@ -1097,7 +1098,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(0x85);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       } else {
-        Sound_PlayFar(0x86);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
       }
       work->shakeFrames = 8;
@@ -1166,7 +1167,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Sound_PlayFar(143);
+  Sound_PlayFar(SE_CRACK);
   blend = &REG_BLDALPHA;
 
   frame = 0;

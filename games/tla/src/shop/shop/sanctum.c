@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
@@ -305,7 +306,7 @@ loop:
     wait(1);
     price = Sanctum_ServicePrice(unitId, serviceKind);
     if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       goto loop;
     }
     WindowSprite_PrepareForRedrawFar(listWindow);
@@ -319,7 +320,7 @@ loop:
       goto loop;
     }
     if ((u32)price > gMainRoutineWork.coins) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
       chooseAgain = 1;
       goto loop;
@@ -340,7 +341,7 @@ loop:
     goto done;
   }
   if ((gInput.pressed & 2) != 0) {
-    Sound_PlayFar(113);
+    Sound_PlayFar(SE_MENU_CANCEL);
     goto done;
   }
   {
@@ -571,7 +572,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   wait(20);
-  Sound_PlayFar(126);
+  Sound_PlayFar(SE_RECOVERY);
   shop->burstMember = -1;
   Animation_ApplyChildValuesToRecordFar(shop->partyMemberIcons[member], 0);
   wait(20);

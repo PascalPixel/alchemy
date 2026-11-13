@@ -3,9 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #undef HIT_FRAME
-#undef SE_HIT
 
 #define SHARD_COUNT 64
 #define STREAK_PICTURE_BYTES (48 * 72)
@@ -19,7 +19,6 @@
 #define BURST_FRAME 16 // the burst on the target, until frame 47
 
 #define PHASE_RESULTS 134
-#define SE_HIT 212
 
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_FireBurstSheet;
@@ -96,7 +95,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == HIT_FRAME)
       BattlePlayback_StartFar(PHASE_RESULTS);
     if (effect->variant != 0 && frame == HIT_FRAME)
-      Sound_PlayFar(SE_HIT);
+      Sound_PlayFar(SE_POWER_UP);
 
     // The streak, drawn from the user toward the target.
     EffectPosition_ProjectScaledBattler(effect->actor, &user);

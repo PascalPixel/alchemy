@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "game/item.h"
 #include "actor.h"
 
@@ -300,7 +301,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           if (unusableReason == 0)
             break;
         }
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         if (unusableReason == 2)
           MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, REFUSAL_TEXT_LENGTH);
         else if (entries[result] & ITEM_BROKEN)
@@ -314,20 +315,20 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         break;
       }
     } else if (navigation->timer == 0 || (gInput.pressed & 2)) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
 
     if (count != 0) {
       if (gInput.repeat & 0x80) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == count)
           selectedRow = 0;
         preferredRow = selectedRow;
       } else if (gInput.repeat & 0x40) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / 5 * 5)
@@ -337,7 +338,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         }
         preferredRow = selectedRow;
       } else if (gInput.repeat & 0x10) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= count) {
           if (firstEntry != 0) {
@@ -354,7 +355,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           }
         }
       } else if (gInput.repeat & 0x20) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= 5;

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct Model;
@@ -184,7 +185,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         ball->velocityX = (((target.x - 32) << 16) - ball->x) / frames;
       }
       ball->velocityY = (((target.y - 32) << 16) - ball->y) / frames;
-      Sound_PlayFar(221);
+      Sound_PlayFar(SE_RISE_WITH_SPARKS);
       for (i = 0, bolt = &work->particles[1]; i != 63; i++, bolt++) {
         bolt->z = Random16();
         bolt->velocityZ = (Random16() & 255) + 128;
@@ -234,7 +235,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(145);
       } else {
         BattlePlayback_StartFar(-1);
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
     }
 
@@ -478,7 +479,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       frame = 107;
     }
     if (frame == 107) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
   skipped:
     if (frame == 148) {
@@ -598,14 +599,14 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 64) {
-      Sound_PlayFar(163);
+      Sound_PlayFar(SE_163);
     }
     {
       s32 crackle;
 
       for (i = 0, crackle = 75; i != 8; i++, crackle += 4) {
         if (frame == crackle) {
-          Sound_PlayFar(134);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         }
       }
     }
@@ -647,12 +648,12 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         s32 column = i * 32 + 24;
 
         if (frame == start + 5) {
-          Sound_PlayFar(212);
+          Sound_PlayFar(SE_POWER_UP);
         }
         if (frame == start + 9) {
           work->shakeFrames = 8;
           Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
         if (frame >= start) {
           s32 t = frame - start;
@@ -857,7 +858,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   size = 4;
 
   for (frame = 0; frame != VOID_BEAM_FRAMES; frame++) {

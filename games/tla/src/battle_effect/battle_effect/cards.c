@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -226,7 +227,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 0: find the user and the targets' middle (the Death Card's 32
     // pixels toward the user), and scroll the background to the user.
     if (frame == 0) {
-      Sound_PlayFar(190);
+      Sound_PlayFar(SE_WARP);
       EffectPosition_ProjectSprite(effect->actor, &card);
       BattleEffect_GetTargetsMidpoint(&middle);
       if (mode == CARD_DEATH) {
@@ -249,7 +250,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       REG_BLDALPHA = ((fade + 8) << 8) | (16 - fade * 2);
     }
     if (frame == 48 && mode == CARD_BAFFLE)
-      Sound_PlayFar(138);
+      Sound_PlayFar(SE_ITEM_BREAK);
 
     // Frames 0-47: the card flies to the middle, rising and growing; the
     // background follows it as far as it can scroll.
@@ -407,7 +408,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == CARD_SLEEP) {
       // Frame 48: a sheep a frame for 32 frames jumps from the card.
       if (frame == 48)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 64)
         BattlePlayback_StartFar(-1);
       if (frame >= 48 && frame <= 79) {
@@ -445,7 +446,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
 
       // Frame 72: it strikes; the screen flashes and 64 shards burst.
       if (time == 24) {
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
         BattlePlayback_StartFar(-1);
         work->shakeFrames = 4;
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
@@ -497,9 +498,9 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == CARD_DEATH) {
       // The reaper rises in seven panels and swings at frame 64.
       if (frame == 60)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == 64) {
-        Sound_PlayFar(144);
+        Sound_PlayFar(SE_CLATTER);
         BattlePlayback_StartFar(-1);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
                                       0x20000, 110);

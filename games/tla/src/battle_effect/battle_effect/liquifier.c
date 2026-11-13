@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -118,9 +119,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame == 0)
-      Sound_PlayFar(139);
+      Sound_PlayFar(SE_139);
     if (frame == 16)
-      Sound_PlayFar(134);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
 
     if (frame > 15) {
       // The burst: sparks fly out of the caster, upward and forward.
@@ -339,7 +340,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           if (i == 7)
             BattlePlayback_StartFar(144);
           else
-            Sound_PlayFar(144);
+            Sound_PlayFar(SE_CLATTER);
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 5);
           work->shakeFrames = 4;
@@ -511,7 +512,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     else
       EffectPosition_ProjectBattler(effect->actors[0], &to);
     if (mode == 0 && frame == 0)
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
 
     if (frame == 0) {
       if (mode == 0) {
@@ -711,7 +712,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     // fade off and the backgrounds on again.
     struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-    Sound_PlayFar(390);
+    Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
     REG_BG2CNT = 0x787;

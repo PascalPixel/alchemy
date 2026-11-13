@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -207,7 +208,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           work->particles[i].variant = -1;
         }
         if (mode == 1) {
-          Sound_PlayFar(145);
+          Sound_PlayFar(SE_CRASH);
         }
       }
       Transform_Reset();
@@ -244,7 +245,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           work->particles[63].y = work->particles[63].y * 56 / 64;
           work->particles[63].z = work->particles[63].z * 56 / 64;
           if (frame == 31) {
-            Sound_PlayFar(138);
+            Sound_PlayFar(SE_ITEM_BREAK);
           }
         } else if (frame <= 45) {
           // ...drive in...
@@ -265,7 +266,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             BattlePlayback_StartFar(134);
             work->shakeFrames = 8;
           } else {
-            Sound_PlayFar(138);
+            Sound_PlayFar(SE_ITEM_BREAK);
             work->shakeFrames = 2;
           }
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);

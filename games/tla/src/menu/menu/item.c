@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 // Defined below or in later parts of the menu object.
 struct OwnerInventoryState;
@@ -506,7 +507,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & 1) != 0) {
-            Sound_PlayFar(0x67);
+            Sound_PlayFar(SE_CURSE);
             WindowSprite_ClearListFar(menu->infoWindow);
             ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
                                  14);
@@ -622,7 +623,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & 1) != 0) {
-              Sound_PlayFar(0x67);
+              Sound_PlayFar(SE_CURSE);
               WindowSprite_ClearListFar(menu->infoWindow);
               ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
                                    14);
@@ -666,7 +667,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & 1) != 0) {
-        Sound_PlayFar(0x67);
+        Sound_PlayFar(SE_CURSE);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X, 8);
       }
@@ -741,7 +742,7 @@ s32 ItemMenu_Use(void) {
                     menu->sideMember[1]);
 
   if (result == -1) {
-    Sound_PlayFar(114);
+    Sound_PlayFar(SE_MENU_ERROR);
     WindowSprite_ClearListFar(menu->infoWindow);
     ItemMenu_ShowMessage(menu->messageOffset + (s32)MsgItemUseResult, result,
                          result);
@@ -1022,17 +1023,17 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
         ItemMenu_Sort(owner->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshMember(ownerIds[selection], 0);
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       } else if (ItemMenu_CountItems(ownerIds[selection])) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       } else {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       }
     }
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -1228,15 +1229,15 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     wait(1);
     if (gInput.pressed & 1) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = menu->ownerIds[selection];
       break;
     }
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = 255;
       break;
     }
@@ -1753,25 +1754,25 @@ s32 ItemMenu_ChooseCommand(void) {
 
     if ((gInput.pressed & 1) != 0) {
       if (commandStates[commandIndex] == -1) {
-        Sound_PlayFar(114);
+        Sound_PlayFar(SE_MENU_ERROR);
       } else {
         switch (commandIndex) {
         case ITEM_COMMAND_USE:
-          Sound_PlayFar(174);
+          Sound_PlayFar(SE_NOTE_MID);
           break;
         case ITEM_COMMAND_EQUIP:
-          Sound_PlayFar(175);
+          Sound_PlayFar(SE_NOTE_HIGH);
           break;
         case ITEM_COMMAND_INSPECT:
         case ITEM_COMMAND_GIVE:
         case ITEM_COMMAND_DROP:
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         case ITEM_COMMAND_REMOVE:
-          Sound_PlayFar(117);
+          Sound_PlayFar(SE_ITEM_REMOVE);
           break;
         default:
-          Sound_PlayFar(112);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         }
         menu->listMode = commandIndex;
@@ -1779,7 +1780,7 @@ s32 ItemMenu_ChooseCommand(void) {
       }
     }
     if ((gInput.pressed & 2) != 0) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       commandIndex = -1;
       menu->listMode = commandIndex;
       break;
@@ -1788,19 +1789,19 @@ s32 ItemMenu_ChooseCommand(void) {
     if ((gInput.repeat & 64) != 0) {
       row -= 1;
       redraw = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     } else if ((gInput.repeat & 128) != 0) {
       row += 1;
       redraw = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     } else if ((gInput.repeat & 16) != 0) {
       column += 1;
       redraw = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     } else if ((gInput.repeat & 32) != 0) {
       column -= 1;
       redraw = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   }
 
@@ -2007,7 +2008,7 @@ void ItemMenu_TryBreak(void) {
   mask &= item;
   if (((u8 *)Item_GetDirectFar(mask))[12] == 2 && Random16() < 0x2000) {
     Inventory_BreakFar(work[0x216], *(u16 *)(work + 0x168));
-    Sound_PlayFar(138);
+    Sound_PlayFar(SE_ITEM_BREAK);
     ItemMenu_ShowMessage((s32)MsgItBroke, 0, -1);
     WindowSprite_RedrawSavedRectFar(*(void **)(work + 0x30));
   }
@@ -2599,24 +2600,24 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                      16);
       }
       if (gInput.pressed & 1) {
-        Sound_PlayFar(112);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
       if (gInput.pressed & 2) {
         value = -1;
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         break;
       }
       MenuCursor_Position(CURSOR_X, 40);
       if (gInput.repeat & 32) {
         value--;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       if (gInput.repeat & 16) {
         value++;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       wait(1);
     }
@@ -2690,11 +2691,11 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
       selection = (selection + rows) % rows;
     }
     if (gInput.pressed & 1) {
-      Sound_PlayFar(112);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (gInput.pressed & 2) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       selection = 1;
       break;
     }
@@ -2702,12 +2703,12 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
     if (gInput.repeat & 0x40) {
       selection--;
       changed = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x80) {
       selection++;
       changed = 1;
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     wait(1);
   }
@@ -2801,11 +2802,11 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = (selection + rows) % rows;
       }
       if (gInput.pressed & KEY_A) {
-        Sound_PlayFar(175);
+        Sound_PlayFar(SE_NOTE_HIGH);
         break;
       }
       if (gInput.pressed & KEY_B) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         selection = 1;
         break;
       }
@@ -2813,12 +2814,12 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
       if (gInput.repeat & EQUIP_PREVIOUS_KEY) {
         selection--;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       if (gInput.repeat & EQUIP_NEXT_KEY) {
         selection++;
         changed = 1;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       wait(1);
     }
@@ -3140,23 +3141,23 @@ s32 ItemMenu_RunList(s32 pane) {
         changed = 0;
 
       if ((gInput.pressed & 1) != 0 && menu->items[state.selectedIndex] != 0) {
-        Sound_PlayFar(173);
+        Sound_PlayFar(SE_NOTE_LOW);
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
       if ((gInput.pressed & 2) != 0) {
-        Sound_PlayFar(113);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
       if ((gInput.repeat & 0x100) != 0 || (gInput.repeat & 0x200) != 0) {
         if (pane == 1) {
-          Sound_PlayFar(114);
+          Sound_PlayFar(SE_MENU_ERROR);
           wait(1);
         } else {
-          Sound_PlayFar(111);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           menu->selectedIndexByOwner[menu->paneOwner[pane]] =
               state.selectedIndex;
           member = menu->paneIndex[pane];

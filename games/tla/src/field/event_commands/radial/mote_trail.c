@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "sounds.h"
 
 extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
@@ -100,12 +101,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
     mote++;
   }
   wait(1);
-  Sound_PlayFar(139);
+  Sound_PlayFar(SE_139);
   Actor_SelectAnimationFar(target, 2);
   Event_Wait(60);
   target->timer = 0;
   target->update = SummonTablet_CyclePictures;
-  Sound_PlayFar(142);
+  Sound_PlayFar(SE_SWIRL);
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);
   work->moving = 0;
@@ -118,11 +119,11 @@ void SummonTablet_PlayRunes(s32 targetId) {
       work->state = 0;
       if (timer <= 39) {
         if ((timer & 7) == 0)
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
         sparks = 1;
       }
       if (timer == 40) {
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         sparks = 25;
         Actor_StartIdleFar(target);
         target->scaleX = 0;
@@ -152,7 +153,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
           rune->oam.index += -32;
       }
       if (timer == 0)
-        Sound_PlayFar(246);
+        Sound_PlayFar(SE_GLITTER);
       if (timer == 56) {
         state++;
         timer = -1;
@@ -198,11 +199,11 @@ void SummonTablet_PlayRunes(s32 targetId) {
         work->state = 2;
       }
       if (timer == 0)
-        Sound_PlayFar(187);
+        Sound_PlayFar(SE_FALLING_LIGHT);
       if (timer == 48)
-        Sound_PlayFar(187);
+        Sound_PlayFar(SE_FALLING_LIGHT);
       if (timer == 96)
-        Sound_PlayFar(187);
+        Sound_PlayFar(SE_FALLING_LIGHT);
       if (timer == 100) {
         state++;
         timer = -1;
@@ -230,7 +231,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       if (timer == 0)
         Actor_StartScriptFar(owner, gData_080f3614);
       if ((timer & 3) == 0)
-        Sound_PlayFar(167);
+        Sound_PlayFar(SE_MAP_TRANSITION);
       work->state = 3;
       if (timer == 60)
         state = 999;

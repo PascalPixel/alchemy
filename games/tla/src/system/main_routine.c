@@ -4,6 +4,7 @@
 /// in bank 04 it follows the field sequence's picture decoders.
 
 #include "battle/battle.h"
+#include "sounds.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -226,7 +227,7 @@ void MainRoutine_Run(s32 mode) {
     if (GameFlag_Get(0x101))
       GameFlag_Clear(0x101);
     else
-      Sound_PlayFar(0x120);
+      Sound_PlayFar(SE_288);
     record = &table[gMainRoutineWork.scene];
     entrance = gMainRoutineWork.entrance;
     {

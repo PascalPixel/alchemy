@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct FxPartyList;
 struct MeshTriangle;
@@ -292,10 +293,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       pitch = 0xd00;
       yaw = 0x2500;
       work->frame = 8;
-      Sound_PlayFar(162);
+      Sound_PlayFar(SE_162);
     }
     if (frame == 120) {
-      Sound_PlayFar(163);
+      Sound_PlayFar(SE_163);
     }
     fade = frame - 96;
     if ((u32)fade <= 16) {
@@ -598,7 +599,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         p->variant = (Random16() & 7) + 24;
       }
       work->shakeFrames = 4;
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
       for (i = 0; i != effect->count; i++) {
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);

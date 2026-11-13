@@ -3,6 +3,7 @@
 /// order.
 
 #include "battle/battle.h"
+#include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -620,18 +621,18 @@ void Func_02000748(void) {
     wait(1);
     if ((gInput.pressed & 8) || (gInput.pressed & 4)) {
       Func_02000704(5);
-      Sound_Play(93);
+      Sound_Play(MUS_093);
       redraw = 1;
     }
     if (gInput.pressed & 1) {
       Func_02000704(1);
-      Sound_Play(91);
+      Sound_Play(MUS_091);
       redraw = 1;
     }
     if (gInput.pressed & 2)
       break;
   }
-  Sound_Play(113);
+  Sound_Play(SE_MENU_CANCEL);
   Window_Close(window, 2);
 }
 
@@ -669,7 +670,7 @@ void Func_02000848(void) {
   details = Window_Create(0, 8, 13, 10, 2);
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
-  Sound_Play(112);
+  Sound_Play(SE_MENU_CONFIRM);
   wait(1);
   while (1) {
     if (redraw) {
@@ -690,50 +691,50 @@ void Func_02000848(void) {
     wait(1);
     if (gInput.pressed & 1) {
       if (PartyInventory_Add(item) == -1) {
-        Sound_Play(113);
+        Sound_Play(SE_MENU_CANCEL);
         break;
       }
-      Sound_Play(175);
+      Sound_Play(SE_NOTE_HIGH);
     }
     if (gInput.pressed & 2) {
-      Sound_Play(113);
+      Sound_Play(SE_MENU_CANCEL);
       break;
     }
     if (gInput.repeat & 0x80) {
       step = 1;
       item++;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x40) {
       step = -1;
       item--;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x10) {
       step = 1;
       item += 10;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x20) {
       step = -1;
       item -= 10;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x100) {
       step = 1;
       item += 30;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & 0x200) {
       step = -1;
       item -= 30;
       redraw = 1;
-      Sound_Play(111);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;

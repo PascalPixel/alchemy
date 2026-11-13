@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct Model;
 
@@ -184,7 +185,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 4 + 64) {
-          Sound_PlayFar(126);
+          Sound_PlayFar(SE_RECOVERY);
           BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 24);
         }
       }

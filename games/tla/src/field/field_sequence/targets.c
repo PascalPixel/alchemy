@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "sounds.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
 #include "module/field/map.h"
@@ -195,7 +196,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
   object = (s32)Actor_GetById(target);
   result = 0;
   if (object != 0) {
-    Sound_PlayFar(0x7C);
+    Sound_PlayFar(SE_CHEST_OPEN);
     Actor_SelectAnimationFar(object, 4);
     wait(0xC);
     result = (s32)BattleEffect_StartRandomParticleEmitter(effect, mode);
@@ -294,7 +295,7 @@ void Leader_PushObjectAhead(void) {
   if (result <= 0) {
     Actor_SelectAnimationFar(owner, 8);
     wait(15);
-    Sound_PlayFar(185);
+    Sound_PlayFar(SE_PUSH);
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
     Actor_SetMoveTargetFar(target, position[0], position[1], position[2]);

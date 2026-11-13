@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 // Flora, the blossom spirit's summon.
 
@@ -617,7 +618,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
                                         (s32 *)&req, 0);
     }
     if (frame == 114) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     verts = Heap_AllocEwram(512);
     model = Render_AllocateModelList(1);
@@ -664,13 +665,13 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     Transform_ApplyRoll(angle);
     if (frame == 156) {
-      Sound_PlayFar(142);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 223) {
-      Sound_PlayFar(104);
+      Sound_PlayFar(SE_104);
     }
     if (frame == 252) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     }
     if ((u32)(frame - 156) <= 74) {
       s32 r = 80 - (frame - 156) / 2;
@@ -914,7 +915,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         if (--s->variant == 0) {
           s->variant = 15;
           work->shakeFrames = 4;
-          Sound_PlayFar(133);
+          Sound_PlayFar(SE_IMPACT);
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
           BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
         }
@@ -1052,7 +1053,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     for (i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
       if (frame == strikeFrame) {
         work->shakeFrames = 4;
-        Sound_PlayFar(133);
+        Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
       }
@@ -1226,7 +1227,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
         step->velocityX = (Trig_Sin(angle) * speed) >> 5;
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;
       }
-      Sound_PlayFar(136);
+      Sound_PlayFar(SE_WHOOSH);
     }
 
     // The smoke rises through its six 24x48 cels, slowing; the caster

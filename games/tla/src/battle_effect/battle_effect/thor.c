@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -141,13 +142,13 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
-      Sound_PlayFar(140);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 132) {
-      Sound_PlayFar(131);
+      Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     }
     if (frame == 151) {
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     }
     if (gInput.repeat & 3) {
       break;
@@ -350,7 +351,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
     work->transferMode = 2;
     work->transferValue = 50;
-    Sound_PlayFar(145);
+    Sound_PlayFar(SE_CRASH);
 
     for (frame = 0; frame != STORM_LIGHTNING_FRAMES; frame++) {
       s32 stormFrame;
@@ -360,7 +361,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 120) {
         BattlePlayback_StartFar(134);

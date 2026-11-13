@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
@@ -166,20 +167,20 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = 0;
   IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
   Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
-  Sound_PlayFar(212);
+  Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(effect->actors[0], 7, 3, 0, 30);
 
   for (frame = 0; frame != 128; frame++) {
     if (frame == 2)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 3)
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 28)
       BattleEffect_TintBattler(effect->actors[0], -1, 3, -1, 0);
     if (frame == 32)
-      Sound_PlayFar(149);
+      Sound_PlayFar(SE_MONSTER_ROAR);
     if (frame == 5)
-      Sound_PlayFar(145);
+      Sound_PlayFar(SE_CRASH);
     if (frame == 5) {
       gBgScroll[1].x = work->savedBg1X;
       BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
@@ -473,7 +474,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(SLOT_BLITTER,
                            BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
 
   for (frame = 0; frame != 56; frame++) {
     EffectPosition_ProjectScaledBattler(effect->actor, &ground);
@@ -481,7 +482,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
     if (frame > 49)
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
     if (frame == 26) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 20);
     }
 
@@ -830,7 +831,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   actor = BattleObject_GetFar(effect->actor)->object;
   actor[18] = phase;
   Graphics_LoadGreyRamp();
-  Sound_PlayFar(140);
+  Sound_PlayFar(SE_SPIN);
   for (frame = 0; frame != 36; frame++) {
     s32 size;
 
@@ -915,33 +916,33 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           frame = 169;
         }
         if (frame == 4) {
-          Sound_PlayFar(220);
+          Sound_PlayFar(SE_SHIMMER);
         }
         if (frame == 40) {
-          Sound_PlayFar(154);
+          Sound_PlayFar(SE_CAST);
         }
         if (frame == 64) {
-          Sound_PlayFar(139);
+          Sound_PlayFar(SE_139);
         }
         if (frame == 74) {
-          Sound_PlayFar(139);
+          Sound_PlayFar(SE_139);
         }
         if (frame == 84) {
-          Sound_PlayFar(139);
+          Sound_PlayFar(SE_139);
         }
         if (frame == 94) {
-          Sound_PlayFar(139);
+          Sound_PlayFar(SE_139);
         }
         if (frame == 124) {
-          Sound_PlayFar(144);
+          Sound_PlayFar(SE_CLATTER);
         }
         for (i = 0; i != 6; i++) {
           if (frame == 140 + i * 4) {
-            Sound_PlayFar(104);
+            Sound_PlayFar(SE_104);
           }
         }
         if (frame == 169) {
-          Sound_PlayFar(145);
+          Sound_PlayFar(SE_CRASH);
           work->shakeFrames = 16;
         }
         if (frame == 0) {
@@ -1371,9 +1372,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
 
           if (d == 0) {
             if (i == 5) {
-              Sound_PlayFar(145);
+              Sound_PlayFar(SE_CRASH);
             } else {
-              Sound_PlayFar(144);
+              Sound_PlayFar(SE_CLATTER);
             }
             work->shakeFrames = 8;
             Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -1626,7 +1627,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   }
   wait(1);
   gCameraSceneParameters[4] = 120;
-  Sound_PlayFar(390);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   for (i = 0; i != 18; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }
@@ -1678,14 +1679,14 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         Palette_BrightenSavedBattleBg(0, 0, 0);
       }
       if (frame == 32) {
-        Sound_PlayFar(140);
+        Sound_PlayFar(SE_SPIN);
       }
       if (frame == 48) {
         work->shakeFrames = 90;
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       }
       if (frame == 72) {
-        Sound_PlayFar(208);
+        Sound_PlayFar(SE_BANE_ESCAPE);
       }
       if (frame <= 109) {
         struct RenderModel *model;

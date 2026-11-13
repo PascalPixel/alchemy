@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 #include "flag_call.h"
 #include "gamepak/far_call/battle.h"
 #include "item_icon.h"
@@ -679,7 +680,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetIndex = result;
     } else if (spread != 255) {
       if (repeated & 0x90) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex++;
           targetIndex %= candidateCount;
@@ -687,7 +688,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
       if (repeated & 0x60) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
@@ -696,7 +697,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
     }
     if (NAVIGATION->timer == 0 || (pressed & 2)) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
     }

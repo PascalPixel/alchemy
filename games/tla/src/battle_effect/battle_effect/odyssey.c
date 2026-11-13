@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 
 struct Model;
 
@@ -217,7 +218,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
-      Sound_PlayFar(212);
+      Sound_PlayFar(SE_POWER_UP);
       Actor_SelectAnimationFar(caster, 2);
       Actor_SetAnimationSpeedFar(caster, 48);
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
@@ -228,7 +229,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       struct EffectStep *shard;
 
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      Sound_PlayFar(144);
+      Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       shard = Data_02016000;
@@ -293,7 +294,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       s32 start = i * 16 + 24;
 
       if (frame == i * 16 + 28)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == i * 16 + 32) {
         for (k = 0; k != 16; k++) {
           struct EffectStep *spark;
@@ -315,7 +316,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           spark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           spark->variant = (Random16() & 7) + 17;
         }
-        Sound_PlayFar(133);
+        Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 64);
         work->shakeFrames = 4;
       }
@@ -370,7 +371,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       // Two flashes rise from the caster (frames 2 and 8).
       start = i * 6 + 2;
       if (frame == start)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame >= start && frame < i * 6 + 18) {
         s32 age = frame - start;
         s32 shade = 64 - age * 8;
@@ -394,7 +395,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       // Frames 64-82: the caster gathers itself, flashing.
       start = i * 8 + 64;
       if (frame == i * 8 + 68)
-        Sound_PlayFar(212);
+        Sound_PlayFar(SE_POWER_UP);
       if (frame == i * 8 + 72) {
         s32 none = 0;
 

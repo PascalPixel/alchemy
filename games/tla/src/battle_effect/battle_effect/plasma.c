@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -92,7 +93,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     for (i = 0; i != count; i++) {
       start = i * 8;
       if (frame == start) {
-        Sound_PlayFar(134);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
       }
       if (frame >= start && frame < start + 9) {
@@ -317,12 +318,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
 
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
       if (frame == 2) {
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
         BattlePlayback_StartFar(145);
       }
     } else {
       if (frame == 2)
-        Sound_PlayFar(145);
+        Sound_PlayFar(SE_CRASH);
       if (frame == 24)
         BattlePlayback_StartFar(134);
     }

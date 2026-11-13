@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "sounds.h"
 
 void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
@@ -407,36 +408,36 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         result = 1;
         break;
       }
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if ((pressed & 8) != 0) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -2;
       break;
     } else if ((pressed & 2) != 0) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     } else if ((pressed & 0x100) != 0) {
       if (mode <= 1) {
         page = (page + 1) % 3;
         redraw = 2;
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     } else if ((repeat & 0x20) != 0) {
       if (page <= 1) {
         selectedPages[page]--;
         selectedPages[page] =
             Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         redraw = 1;
       }
     } else if ((repeat & 0x10) != 0) {
       if (page <= 1) {
-        Sound_PlayFar(111);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         selectedPages[page]++;
         redraw = 1;
@@ -594,25 +595,25 @@ s32 DjinnMenu_ShowMemberStatus(void) {
         Iwram_FillWordsEntry((void *)0x060052c0, 32, 0x44444444);
     }
     if (pressedKeys & KEY_START) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -2;
       break;
     }
     if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
-      Sound_PlayFar(113);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (repeatedKeys & KEY_LEFT) {
       (*selectedPage)--;
       *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & KEY_RIGHT) {
       (*selectedPage)++;
       *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
-      Sound_PlayFar(111);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     }

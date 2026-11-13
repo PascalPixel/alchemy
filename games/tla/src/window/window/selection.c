@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "sounds.h"
 
 // The part's functions its code calls before their definitions, declared
 // once as they are defined.
@@ -813,10 +814,6 @@ s32 SelectionMenu_Run(s32 mode) {
   }
 }
 
-#define SOUND_MENU_CURSOR_MOVE 111
-#define SOUND_MENU_CONFIRM 112
-#define SOUND_MENU_CANCEL 113
-
 /// As SelectionMenu_Run, with the menu sounds.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
   struct SelectionScrollScreen *screen = Ram_HeapSlots->menuWork;
@@ -830,10 +827,10 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
 
     if (mode != SELECTION_FIXED) {
       if (gInput.repeat & KEY_RIGHT) {
-        Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         SelectionMenu_StepRight((struct SelectionScreen *)screen);
       } else if (gInput.repeat & KEY_LEFT) {
-        Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         SelectionMenu_StepLeft((struct StepMenu *)screen);
       }
 
@@ -841,18 +838,18 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
         result = screen->top + screen->cursor;
         if (screen->node->kind == NODE_KIND_YES_NO) {
           if (result == 0)
-            Sound_PlayFar(SOUND_MENU_CONFIRM);
+            Sound_PlayFar(SE_MENU_CONFIRM);
           else
-            Sound_PlayFar(SOUND_MENU_CANCEL);
+            Sound_PlayFar(SE_MENU_CANCEL);
         } else {
-          Sound_PlayFar(SOUND_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
         }
         return result;
       }
     }
 
     if (mode != 0 && (gInput.pressed & KEY_B)) {
-      Sound_PlayFar(SOUND_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
   }
@@ -1763,7 +1760,4 @@ u32 Menu_RunSelectionForValue(u32 value) {
 #undef NODE_KIND_YES_NO
 #undef SELECTION_ROWS
 #undef ARROW_SCROLL_FRAMES
-#undef SOUND_MENU_CURSOR_MOVE
-#undef SOUND_MENU_CONFIRM
-#undef SOUND_MENU_CANCEL
 #undef Resource_DecodeByteLzInRam

@@ -705,17 +705,11 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064
- * has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja: games/tla/src/field/field.c:8873:
- * `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
-extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
-
 void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 dstX, s32 dstY) {
   s32 y;
-  u32 *src = (u32 *)gMapCellBuffer__f02aa74 + (srcY * 128 + srcX);
-  u32 *dst = &((u32 *)gMapCellBuffer__f02aa74)[dstY * 128 + dstX];
+  u32 *src = (u32 *)gMapCellBuffer + (srcY * 128 + srcX);
+  u32 *dst = &((u32 *)gMapCellBuffer)[dstY * 128 + dstX];
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
   struct TilePos views[3];
   s32 i;

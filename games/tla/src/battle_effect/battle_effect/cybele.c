@@ -29,16 +29,6 @@ struct MenuFlagWork {
   u8 busy;
 };
 
-/* VIEW(cybele): tag struct FxGroup as struct FxGroup__cybele;
- * battle_effect/battle_effect has another definition; not tried: struct
- * FxGroup__cybele was not found. */
-struct FxGroup {
-  u8 unk00[32];
-  struct Actor *objects[8];
-  u16 values[8];
-  s32 count;
-};
-
 struct DescriptorEntry {
   s16 id;
   u8 unk02[6];

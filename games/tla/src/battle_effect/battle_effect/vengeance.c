@@ -1323,32 +1323,9 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data0FB;
 extern char ResourceId_Data0FC;
 
-/* VIEW(f1811d4): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); the definition has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags); tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, BattleEffect_RunCoatlicue moves: 1
- * of 2768 instructions in tla-ja. */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__f1811d4(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 void BattleEffect_ConfigureEffectDisplay(void);
 void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-/* VIEW(f1811d4): routine Mesh_BuildCylinderBand as void
- * Mesh_BuildCylinderBand(struct MeshVertex *vertices, struct MeshTriangle
- * *triangles, s32 segments); the definition has void
- * Mesh_BuildCylinderBand(struct MeshVertex__f186dfc *vertices, struct
- * MeshTriangle *triangles, s32 segments); tried as the definition's void
- * Mesh_BuildCylinderBand(struct MeshVertex *vertices, struct MeshTriangle
- * *triangles, s32 segments), which the object already declares,
- * BattleEffect_RunCoatlicue moves: 3 of 2768 instructions in tla-ja. */
-extern void
-Mesh_BuildCylinderBand__f1811d4(struct MeshVertex *vertices,
-                                struct MeshTriangle *triangles,
-                                s32 segments) __asm__("Mesh_BuildCylinderBand");
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 
 void Palette_LoadBasicSpriteColors(void);
@@ -1489,7 +1466,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 3326);
   skip = 0;
-  Mesh_BuildCylinderBand__f1811d4(Data_02014400, coilMesh, 32);
+  Mesh_BuildCylinderBand(Data_02014400, coilMesh, 32);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
@@ -1503,7 +1480,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       i = 0;
       cells = gMapCellBuffer;
       for (; i != 12; cells += 1024, i++) {
-        obj = EffectSprite_CreateWithTiles__f1811d4(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);

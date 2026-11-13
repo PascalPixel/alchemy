@@ -5,21 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/* VIEW(cybele): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); battle_effect/ability_effects has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags) {; tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, it does not compile in tla-ja
- * (make modern): games/tla/include/module/battle_effect/battle_effect.h:210:64:
- * note: expected 'struct BattleEffectArgument *' but argument is of type 'u8
- * *'. */
-struct SpriteObject *EffectSprite_CreateWithTiles__cybele(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
-#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles__cybele
-
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
 #define OBJ_VRAM ((u8 *)0x06010000)

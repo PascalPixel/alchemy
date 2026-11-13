@@ -346,12 +346,6 @@ struct SystemWork__f17e698 {
 
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
-/* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput;
- * input.h has extern struct InputState gInput; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:47927: `gInput__f17e698'
- * undeclared (first use in this function). */
-extern struct InputState gInput__f17e698 __asm__("gInput");
 
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_ForestCanopyTiles;
@@ -388,17 +382,6 @@ void RagingHeat_FillGradientCanvas(void);
 
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
-/* VIEW(f17e698): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); the definition has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags); tried as the definition's struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags), which the object already declares, BattleEffect_RunDaedalus moves: 4
- * of 3898 instructions in tla-ja. */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__f17e698(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 /* VIEW(f17e698): routine EffectSprite_Acquire as Sprite
  * *EffectSprite_Acquire(s32, s32, u32, s32); the definition has struct
  * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
@@ -555,8 +538,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 8; i++) {
-          obj =
-              EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80000000, 0xf000);
+          obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xf000);
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
@@ -575,14 +557,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       src += 0x1c0;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       for (i = 0; i != 21; i++) {
-        obj = EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords(
             (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
             DECODE_BUFFER + i * 0x400, 0x400);
       }
-      obj = EffectSprite_CreateWithTiles__f17e698(32, 64, 0xc000a000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 64, 0xc000a000, 0);
       // Once-only: the store alone in its block.
       do {
         work->sprites[i + 18] = obj;
@@ -598,7 +580,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Iwram_CopyWords((void *)0x050003c0, src, 32);
       src += 32;
       Decompress_TaggedLz(src, DECODE_BUFFER);
-      obj = EffectSprite_CreateWithTiles__f17e698(16, 8, 0x4000, 0xe000);
+      obj = EffectSprite_CreateWithTiles(16, 8, 0x4000, 0xe000);
       obj->priority = 1;
       work->sprites[41] = obj;
       Iwram_CopyWords(
@@ -717,7 +699,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       PARTICLES[i].timer = -1;
 
     frame = 0;
-    if (!(gInput__f17e698.held & 2) && !(gInput__f17e698.repeat & 1)) {
+    if (!(gInput.held & 2) && !(gInput.repeat & 1)) {
     phase2:
       if (frame == 0) {
         *(vu16 *)0x04000020 = 0x100;
@@ -1345,8 +1327,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->transferPending = 1;
       wait(1);
       frame++;
-      if (frame != 800 && !(gInput__f17e698.held & 2) &&
-          !(gInput__f17e698.repeat & 1))
+      if (frame != 800 && !(gInput.held & 2) && !(gInput.repeat & 1))
         goto phase2;
     }
 

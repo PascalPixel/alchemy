@@ -339,9 +339,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = divide(num, t) >> 15;
   scale = -scale;
-  // The normalization in a once-only block, so the axis is negated before the
-  // third product spills; as plain statements, 2 of 228 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the normalization in a once-only block. */
   do {
     dx = mul(dx, scale);
     dy = mul(dy, scale);

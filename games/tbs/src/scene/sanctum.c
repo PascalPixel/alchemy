@@ -556,7 +556,7 @@ static void Sanctum_LeaveAfterRefusing(void) {
   paletteWork->page = 0;
   paletteWork->duration = 1;
   paletteWork->step = 1;
-  // Nothing reads this byte, so the store changes nothing.
+  // DEAD: a byte nothing reads set to 1; the ROM keeps its store.
   paletteWork->padding2a03 = 1;
   Event_Wait(1);
   FieldMessage_ShowCentered(MsgSanctumWorldBeganDrifting, 1, 0);
@@ -2005,7 +2005,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
 static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   s32 scale;
-  s32 timer;
+  s32 framesLeft;
 
   // The timer stores the upward step in sixteenths of a pixel.
   spark->y.fixed += spark->timer << 12;
@@ -2025,9 +2025,9 @@ static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   }
   spark->scaleX = scale;
   spark->scaleY = scale;
-  timer = spark->userValue - 1;
-  spark->userValue = timer;
-  if ((s16)timer <= 0)
+  framesLeft = spark->userValue - 1;
+  spark->userValue = framesLeft;
+  if ((s16)framesLeft <= 0)
     Actor_StartScript(spark, gSanctum_SparkEndScript);
 }
 
@@ -2068,10 +2068,13 @@ static void Sanctum_RestoreQuestFloor(void) {
   wait(1);
 }
 
+/// Returns 1 when the leader faces between north-west and north-east, toward
+/// the Great Healer, else 0.
 static s32 Sanctum_IsLeaderFacingHealer(void) {
-  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((u32)((actor->facing + 0x5fff) << 16) <= 0x3ffe0000) {
+  if ((u16)(leader->facing - (FACING_NORTHWEST + 1)) <
+      FACING_NORTHEAST - (FACING_NORTHWEST + 1)) {
     return 1;
   }
   return 0;

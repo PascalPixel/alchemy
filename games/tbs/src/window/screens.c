@@ -8,10 +8,8 @@
 ///
 /// screens_internal.h holds what every part shares (includes, edition
 /// values, macros and the link turn state); the code is in the files under
-/// screens/, included here in the order it has in the ROM. Camelot's
-/// own files are not recoverable: the ROM shows one object, and these parts
-/// are ours, cut where one family ends and the next begins. README.md in this
-/// folder gives the words, prefixes and spellings the parts use. Where to
+/// screens/, included here in link order, one family to a part. README.md in
+/// this folder gives the words, prefixes and spellings the parts use. Where to
 /// start:
 ///
 ///   Party status    party_status.c: PartyStatus_CreateWindow,

@@ -150,7 +150,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// `position` takes the hand's spot, `margin` pixels left of the window and
 /// 20 below the row's top, and `sprite` becomes a plain 16x16 sprite, its
 /// position still to come. The Djinn, item, summon and Psynergy battle menus
-/// each place their cursor so; the name is ours.
+/// each place their cursor so.
 #define MENU_PLACE_CURSOR(position, window, row, margin, sprite)               \
   do {                                                                         \
     (position).x = (window)->x * 8 - (margin);                                 \

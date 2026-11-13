@@ -5,9 +5,8 @@
 /// maths, debug text, the heap, the 3D transform, saving and the link cable.
 ///
 /// system_internal.h holds what every part shares (its includes); the code
-/// is in the files under system/, included here in the order it has in the
-/// ROM. Camelot's own files are not recoverable: the ROM shows one object, and
-/// these parts are ours, cut where one family ends and the next begins.
+/// is in the files under system/, included here in link order, one family to a
+/// part.
 /// README.md in this folder gives the words and prefixes the parts use. Where
 /// to start:
 ///

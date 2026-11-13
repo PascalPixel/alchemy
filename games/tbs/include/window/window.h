@@ -86,8 +86,6 @@ STATIC_ASSERT(offsetof(struct Message, transition) == 0x1c);
 STATIC_ASSERT(offsetof(struct Message, flags) == 0x24);
 
 /// Requests transfer of the four-row tilemap band containing window row y.
-// A statement macro (10 sites): the dirty-row store stays where it
-// is written at every use; as a plain expression, tbs-en differs.
 #define Window_MarkTilemapRow(render, y)                                       \
   do {                                                                         \
     (render)->dirty |= 2 << ((u32)(y) >> 2);                                   \

@@ -242,8 +242,6 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 0x2b8);
 extern struct MainRoutineWork gMainRoutineWork;
 
 /// Sets the battle type.
-// A statement macro (34 sites): written as one, its store stays in
-// place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
     gMainRoutineWork.battleType = (mode);                                      \

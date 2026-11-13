@@ -3,9 +3,7 @@
 /// screens, the party member chooser that the Colosso scenes open, and the
 /// pieces they share. menu_internal.h holds what the parts share (includes,
 /// macros and types); the code is in the files under menu/, included here in
-/// the order it has in the ROM. Camelot's own files are not recoverable: the
-/// ROM shows one object, and these parts are ours, cut where one screen ends
-/// and the next begins.
+/// link order, one screen to a part.
 ///
 /// README.md in this folder gives the words, prefixes and spellings the parts
 /// use, and how to find a screen's code.

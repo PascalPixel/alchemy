@@ -344,8 +344,7 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 /// TEXT_COLOR_LOW_HP when it is below a quarter of maximum HP and in
 /// TEXT_COLOR_NO_HP at 0; then the colour goes back to TEXT_COLOR_NORMAL.
 void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
-  // Each figure in turn, as an s16. Read straight from unit, the figures
-  // compile differently.
+  // Each figure in turn, as an s16.
   s16 value;
 
 #if LANGUAGE != LANGUAGE_JAPANESE

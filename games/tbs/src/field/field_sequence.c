@@ -5,10 +5,10 @@
 /// spots, and the screen transitions and palette fade that the field and
 /// battles share. field_sequence_internal.h holds the includes and the few
 /// macros and types more than one part uses; the code is in the files under
-/// field_sequence/, included here in ROM order, each opening with what it holds
-/// (head -2 field_sequence/*.c). The ROM shows one object; the parts are ours,
-/// cut where one family ends and the next begins. The main routine, the first
-/// code of the same bank, is its own object linked just before this one
+/// field_sequence/, included here in link order, each opening with what it
+/// holds (head -2 field_sequence/*.c). One family to a part. The main routine,
+/// the first code of the same bank, is its own object linked just before this
+/// one
 /// (../system/main_routine.c).
 ///
 /// README.md in this folder gives the words, prefixes and spellings the parts

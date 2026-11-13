@@ -4,9 +4,7 @@
 /// runs their scripts, moves the player by the keys, loads, draws and scrolls
 /// the maps, and answers what the ground is like under a point.
 /// field_internal.h holds what the parts share; the parts under field/ are
-/// included here in the order their code has in the ROM. Camelot's own files
-/// are not recoverable: the ROM shows one object, and these parts are ours, cut
-/// where one family ends and the next begins.
+/// included here in link order, one family to a part.
 ///
 /// README.md in this folder gives the words, prefixes and spellings the parts
 /// use. Where to start:

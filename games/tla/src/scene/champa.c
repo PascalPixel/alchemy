@@ -1,5 +1,12 @@
 /// @file
-/// The scene code of overlay 0x682, in ROM order.
+/// Champa, the pirates' village on the coast of the Great Western Sea, whose
+/// people are fed once Briggs returns with the Ankohl jewels. Two of its
+/// sailors spot Felix and run to warn Briggs (Champa_SailorsSpotFelix); at the
+/// cliff where Obaba lives the party catches up with him
+/// (Champa_CatchUpWithBriggs), Jenna and Sheba glaring at each other on the way
+/// (Champa_JennaAndShebaGlare). In a game linked with The Broken Seal, Feizhi
+/// arrives with a gift (Champa_FeizhiArrives). The getters pick later tables
+/// once Briggs has sailed from Alhafra.
 
 #include "shared/tables.h"
 #include "battle.h"
@@ -19,9 +26,36 @@
 #include "field_event.h"
 #include "event_work.h"
 #include "module/field/object.h"
-#include "module/scene/champa.h"
 #include "module/scene/scene.h"
 #include "module/window/window.h"
+
+struct Actor;
+extern s16 gChampa_ActorPlacementsOnceBriggsSailed[];
+extern s32 gChampa_Doors[];
+s32 Func_02002a5c();
+extern struct Trigger gChampa_Triggers[];
+extern struct Trigger gChampa_TriggersOnceBriggsSailed[];
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
+extern s16 gChampa_NoDoorEdit[];
+extern s16 gChampa_DoorEdit[];
+s32 Func_02002bac();
+s32 Window_CloseMatchingId();
+
+/// Sends an actor walking to where another stands, if it is on the map.
+static inline void Actor_HeadToward(s32 id, s32 target) {
+  struct Actor *actor = Actor_Get(target);
+
+  if (actor != NULL)
+    Actor_SetDestination(id, ((s16 *)&actor->x)[1], ((s16 *)&actor->z)[1]);
+}
+
+// The town's own story, which no other scene reads.
+#define FLAG_NEAR_THE_CLIFF 0x970 ///< the party walked up to Obaba's cliff
+#define FLAG_CAUGHT_UP_WITH_BRIGGS 0x971 ///< Briggs ran from them inside
+#define FLAG_TOLD_OF_OBABA 0x972         ///< a villager told of Obaba
+#define FLAG_SAILORS_SPOTTED_FELIX 0x973 ///< two sailors ran to warn Briggs
+#define FLAG_FEIZHIS_GIFT_WAITING 0xa74  ///< Feizhi holds out her gift
+#define FLAG_FEIZHI_CAME 0xa75 ///< Feizhi came, taking Felix for a friend
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -29,24 +63,17 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern s16 gData_02002c5c[];
+extern s16 gChampa_ActorPlacements[];
 
 const s16 *Scene_GetPlacements(void) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
-    return gData_02002efc;
-  return gData_02002c5c;
+    return gChampa_ActorPlacementsOnceBriggsSailed;
+  return gChampa_ActorPlacements;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
-void Func_0200006c(s32 a0) {
-  FIELD_AT(a0, s32, 24) = (FIELD_AT(a0, s32, 24) + -1536);
-  FIELD_AT(a0, s32, 28) = (FIELD_AT(a0, s32, 28) + -1536);
+void Champa_ShrinkIntoDoorway(struct Actor *object) {
+  object->scaleX += -1536;
+  object->scaleY += -1536;
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -85,12 +112,12 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
 
 void Map_ClearLayerEntryFlag(s32 a);
 
-void Func_020000fc(s32 door) {
-  s32 *table = gData_020031fc;
+void Champa_EnterDoor(s32 door) {
+  s32 *table = gChampa_Doors;
 
   if ((u32)(door - 1) <= 1)
     *(void **)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 108) =
-        Func_0200006c;
+        Champa_ShrinkIntoDoorway;
   if (door == 7) {
     Map_ClearLayerEntryFlag(8);
     Champa_OpenDoorAndEnter(table, 7, 1);
@@ -99,21 +126,21 @@ void Func_020000fc(s32 door) {
   }
 }
 
-void Func_0200014c(void) {
+void Champa_RevealTreasureSpot(void) {
 
   TreasureSpot_SetPosition(0x40, 0x1880000, 0x2380000);
   Actor_Get(64)->motionFlags = 0;
   Actor_Get(64)->y = 0x200000;
 }
 
-void Func_02000178(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
+void Champa_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
 
 #include "text/msg_ids.h"
 #include "actor.h"
 
-void Func_02000188(void) {
+void Champa_SailorsSpotFelix(void) {
 
-  Event_SetFlag(0x973);
+  Event_SetFlag(FLAG_SAILORS_SPOTTED_FELIX);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampa49);
@@ -179,7 +206,7 @@ void Func_02000188(void) {
   Event_End();
 }
 
-void Func_02000430(s32 actor) {
+void Champa_TalkToPracticingBoy(s32 actor) {
   struct Actor *object = Actor_Get(actor);
 
   object->scaleY = 0x10000;
@@ -190,7 +217,7 @@ void Func_02000430(s32 actor) {
   Actor_SetActionCallback(object, 8);
 }
 
-void Func_02000468(s32 actor) {
+void Champa_TellOfBriggsTreasure(s32 actor) {
   s32 msg = (s32)&MsgChampa29;
 
   FieldEvent_SetMessageId(msg);
@@ -206,7 +233,7 @@ void Func_02000468(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Func_020004b4(s32 actor) {
+void Champa_AskAboutAnkohlRuins(s32 actor) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldEvent_SetMessageId((s32)MsgChampa30);
     Event_OpenMessage(actor, 0);
@@ -234,12 +261,12 @@ void Func_020004b4(s32 actor) {
   }
 }
 
-void Func_02000554(s32 a0) {
+void Champa_TellOfObaba(s32 a0) {
   s32 t0;
 
-  t0 = Event_GetFlag(0x972);
+  t0 = Event_GetFlag(FLAG_TOLD_OF_OBABA);
   if (t0 == 0) {
-    Event_SetFlag(0x972);
+    Event_SetFlag(FLAG_TOLD_OF_OBABA);
     FieldEvent_SetMessageId((s32)MsgChampa35);
   } else {
     FieldEvent_SetMessageId((s32)MsgChampa36);
@@ -247,7 +274,7 @@ void Func_02000554(s32 a0) {
   Event_ShowMessage(a0, 0);
 }
 
-void Func_02000590(s32 actor) {
+void Champa_SailorsNotWelcome(s32 actor) {
   s32 msg = (s32)&MsgChampa11;
 
   FieldEvent_SetMessageId(msg);
@@ -265,38 +292,37 @@ void Func_02000590(s32 actor) {
 
 #include "call.h"
 
-void Func_020005dc(s32 a0) {
+void Champa_TakeFeizhisGift(s32 a0) {
   s32 t2;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t2 = Value3(Func_02002a5c, a0, 0x19f, -1);
   if (t2 == 0) {
-    Event_ClearFlag(0xa74);
+    Event_ClearFlag(FLAG_FEIZHIS_GIFT_WAITING);
   }
   Event_End();
 }
 
-void Func_0200060c(void) {
+void Champa_FeizhiHoldsHerGift(void) {
   FieldActor_ShowItemIconById(31, 415);
   {
     s32 facing = FACING_NORTH;
 
     Actor_SetPositionAndFacing(31, PIXELS(312), PIXELS(593), facing);
   }
-  Event_SetFlag(0xa74);
+  Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
 
 #include "version.h"
 #include "frame.h"
 
-void Func_02000638(void) {
+void Champa_FeizhiArrives(void) {
   s32 t0;
 #if TLA_PATCH_1
   s32 t1;
 #endif
   s32 t17;
-  s32 t106;
 
   t0 = Event_GetFlag(0x822);
   if (t0 == 0) {
@@ -308,7 +334,7 @@ void Func_02000638(void) {
     } else
 #endif
     {
-      Event_SetFlag(0xa75);
+      Event_SetFlag(FLAG_FEIZHI_CAME);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgChampa52);
@@ -414,7 +440,7 @@ void Func_02000638(void) {
       Actor_RunRepeatedMotion(29, 2);
       FieldEvent_Wait(5);
       FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
-      Func_0200060c();
+      Champa_FeizhiHoldsHerGift();
       Actor_FaceEachOther(30, 4, 0);
       FieldEvent_Wait(40);
       Actor_FaceDirection(30, FACING_SOUTH, 0);
@@ -444,11 +470,7 @@ void Func_02000638(void) {
       Actor_SetAnimationAndWait(4, 3);
       FieldEvent_Wait(30);
       Actor_SetAnimation(30, 2);
-      t106 = ((s32)Actor_Get(4));
-      if (t106 != 0) {
-        Actor_SetDestination(30, FIELD_AT(t106, s16, 10),
-                             FIELD_AT(t106, s16, 18));
-      }
+      Actor_HeadToward(30, 4);
       FieldActor_WaitForMoveById(30);
       Actor_SetPosition(30, 0, 0);
       Actor_SetPosition(29, 0, 0);
@@ -459,11 +481,11 @@ void Func_02000638(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
-    return gData_0200b410;
-  return gData_0200320c;
+    return gChampa_TriggersOnceBriggsSailed;
+  return gChampa_Triggers;
 }
 
-void Func_02000a80(void) {
+void Champa_RotatePaletteColors(void) {
   if ((gFrameCount & 1) == 0) {
     volatile u16 *palette;
     s16 saved;
@@ -507,7 +529,7 @@ s32 Scene_Initialize(void) {
   s32 t23;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  Task_AddFrame((s32)Func_02000a80, 0xc80);
+  Task_AddFrame((s32)Champa_RotatePaletteColors, 0xc80);
   Map_SetLayerEntryFlag(8);
   Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);
@@ -524,16 +546,16 @@ s32 Scene_Initialize(void) {
     FieldActor_SetSpritePriority(22, 3);
     FieldActor_SetSpritePriority(19, 3);
     Actor_SetActionCallback(Actor_Get(18), 9);
-    t19 = Event_GetFlag(0x973);
+    t19 = Event_GetFlag(FLAG_SAILORS_SPOTTED_FELIX);
     if (t19 != 0) {
       Actor_SetPosition(32, 0, 0);
       Actor_SetPosition(33, 0, 0);
       Actor_SetPosition(34, 0, 0);
     }
   }
-  t23 = Event_GetFlag(0xa74);
+  t23 = Event_GetFlag(FLAG_FEIZHIS_GIFT_WAITING);
   if (t23 != 0) {
-    Func_0200060c();
+    Champa_FeizhiHoldsHerGift();
   }
   return 0;
 }
@@ -549,11 +571,11 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-extern u32 gData_02003620[];
+extern u32 gChampa_GlareSparkScript[];
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
-void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
+void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;
   struct Actor *object;
   struct FieldSprite *sprite;
@@ -562,7 +584,7 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   if (object != 0) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gData_02003620);
+    Actor_StartScript(object, gChampa_GlareSparkScript);
     object->motionFlags = 0;
     ((struct {
       u8 unk00[94];
@@ -575,24 +597,24 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   }
 }
 
-void Func_02000c90(s32 firstId, s32 secondId) {
+void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_Get(firstId);
   struct Actor *second = Actor_Get(secondId);
   s32 rise = 0x1c0000;
   s32 y;
 
   y = first->y;
-  Func_02000c40(first->x, y + rise, first->z, 0x1000, 15);
+  Champa_SpawnGlareSpark(first->x, y + rise, first->z, 0x1000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
   y = second->y;
-  Func_02000c40(second->x, y + rise, second->z, 0xf000, 15);
+  Champa_SpawnGlareSpark(second->x, y + rise, second->z, 0xf000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
-  Func_02000c40(first->x, first->y + rise, first->z, 0x1000, 15);
+  Champa_SpawnGlareSpark(first->x, first->y + rise, first->z, 0x1000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
-  Func_02000c40(second->x, second->y + rise, second->z, 0xf000, 15);
+  Champa_SpawnGlareSpark(second->x, second->y + rise, second->z, 0xf000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
 }
@@ -600,9 +622,10 @@ void Func_02000c90(s32 firstId, s32 secondId) {
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
 void Portrait_OpenWindow(s32 object, s32 a, s32 b, s32 c);
 
-void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
-                   s32 secondId, volatile s32 secondX, s32 secondY, s32 secondA,
-                   s32 secondB, volatile s32 frames) {
+void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
+                            s32 firstB, s32 secondId, volatile s32 secondX,
+                            s32 secondY, s32 secondA, s32 secondB,
+                            volatile s32 frames) {
   /* FAKEMATCH(volatile): the frames volatile, read from their stack slot at
    * each use; as s32 frames, 44 of 79 instructions differ in tla-en. */
   struct ChampaEventWork *work = Ram_HeapSlots->eventWork;
@@ -627,7 +650,7 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
   System_Wait(1);
 }
 
-void Func_02000e04(s32 a0, s32 a1) {
+void Champa_CloseTwoMessages(s32 a0, s32 a1) {
   s32 t0;
   s32 t1;
 
@@ -637,7 +660,7 @@ void Func_02000e04(s32 a0, s32 a1) {
   Window_CloseMatchingId(t1);
 }
 
-void Func_02000e24(void) { GameFlag_SetBit(0x970); }
+void Champa_ApproachTheCliff(void) { GameFlag_SetBit(FLAG_NEAR_THE_CLIFF); }
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -645,18 +668,14 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }
 
-void Func_02000e30(void) {
+void Champa_CatchUpWithBriggs(void) {
   s32 t0;
-  s32 t673;
-  s32 t679;
-  s32 t685;
-  s32 t691;
 
-  t0 = Event_GetFlag(0x970);
+  t0 = Event_GetFlag(FLAG_NEAR_THE_CLIFF);
   if (t0 == 0) {
     return;
   }
-  Event_SetFlag(0x971);
+  Event_SetFlag(FLAG_CAUGHT_UP_WITH_BRIGGS);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampa25);
@@ -1258,7 +1277,7 @@ void Func_02000e30(void) {
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirectionAndWait(6, 1);
   FieldEvent_Wait(25);
-  Call2(Func_02000c90, 5, 6);
+  Call2(Champa_JennaAndShebaGlare, 5, 6);
   Actor_ShowEmote(5, 0x101, 0);
   Actor_ShowEmote(6, 0x101, 0x28);
   Actor_FaceDirection(5, 0x8000, 0);
@@ -1277,17 +1296,17 @@ void Func_02000e30(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(5, 0x107, 0);
   Actor_ShowEmote(6, 0x107, 0x1e);
-  Call11(Func_02000d4c, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
+  Call11(Champa_ShowTwoMessages, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
   Actor_FaceDirectionAndWait(4, 0x6000);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Func_02000e04(5, 6);
+    Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(15);
     Actor_ShowEmote(0x1c, 0x102, 0x1e);
     Event_ShowMessage(0x1c, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   } else {
-    Func_02000e04(5, 6);
+    Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(35);
     Actor_ShowEmote(0x1c, 0x105, 0x1e);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
@@ -1345,34 +1364,22 @@ void Func_02000e30(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
-  t673 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t673 != 0) {
-    Actor_SetDestination(5, FIELD_AT(t673, s16, 10), FIELD_AT(t673, s16, 18));
-  }
+  Actor_HeadToward(5, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
-  t679 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t679 != 0) {
-    Actor_SetDestination(6, FIELD_AT(t679, s16, 10), FIELD_AT(t679, s16, 18));
-  }
+  Actor_HeadToward(6, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Actor_SetSpeed(7, 0x13333, 0x9999);
   Actor_SetAnimation(7, 2);
-  t685 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t685 != 0) {
-    Actor_SetDestination(7, FIELD_AT(t685, s16, 10), FIELD_AT(t685, s16, 18));
-  }
+  Actor_HeadToward(7, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
   Actor_SetSpeed(28, 0x13333, 0x9999);
   Actor_SetAnimation(28, 2);
-  t691 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t691 != 0) {
-    Actor_SetDestination(28, FIELD_AT(t691, s16, 10), FIELD_AT(t691, s16, 18));
-  }
+  Actor_HeadToward(28, gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(28);
   Actor_SetPosition(28, 0, 0);
   Event_End();
@@ -1400,7 +1407,7 @@ u32 gSceneExits[] = {
 };
 
 // clang-format off
-s16 gData_02002c5c[] = {
+s16 gChampa_ActorPlacements[] = {
     407, -1, 1, 0, 0, 200, 0, 0,
     0, 408, FACING_SOUTH, 2, 407, -1, 1, 0,
     0, 344, 0, 0, 0, 408, FACING_SOUTH, 258,
@@ -1445,7 +1452,7 @@ s16 gData_02002c5c[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-s16 gData_02002efc[] = {
+s16 gChampa_ActorPlacementsOnceBriggsSailed[] = {
     407, -1, 1, 0, 0, 200, 0, 0,
     0, 408, FACING_SOUTH, 2, 407, -1, 1, 0,
     0, 344, 0, 0, 0, 408, FACING_SOUTH, 258,
@@ -1495,48 +1502,49 @@ s16 gData_02002efc[] = {
     0, 0, 0, 0,
 };
 
-s16 gData_020031e4[] = {
+s16 gChampa_NoDoorEdit[] = {
     -1,
 };
 
-s16 gData_020031e6[] = {
+s16 gChampa_DoorEdit[] = {
     36, 2, 2, 2, 6, 36, 4, 2,
     2, 6, -1,
 };
 // clang-format on
 
-DEFINE_G_DATA_0200064C(gData_020031fc, gData_020031e6, 0x9001d, gData_020031e4,
-                       0)
+DEFINE_G_DATA_0200064C(gChampa_Doors, gChampa_DoorEdit, 0x9001d,
+                       gChampa_NoDoorEdit, 0)
 
-struct Trigger gData_0200320c[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+struct Trigger gChampa_Triggers[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 11, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 11, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
     {0xc403, 24, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgChampa53)},
-    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_0200014c)},
-    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_02000178)},
-    {TRIGGER_STEP, 100, 0xa75, EVENT(Func_02000638)},
-    {TRIGGER_STEP, 19, 0x970, EVENT(Func_02000e24)},
-    {TRIGGER_STEP, 20, 0x971, EVENT(Func_02000e30)},
+    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
+    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
+    {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
+    {TRIGGER_STEP, 19, FLAG_NEAR_THE_CLIFF, EVENT(Champa_ApproachTheCliff)},
+    {TRIGGER_STEP, 20, FLAG_CAUGHT_UP_WITH_BRIGGS,
+     EVENT(Champa_CatchUpWithBriggs)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampa01)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgChampa02)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgChampa03)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgChampa04)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_020004b4)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Champa_AskAboutAnkohlRuins)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgChampa06)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000430)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Champa_TalkToPracticingBoy)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgChampa08)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgChampa09)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgChampa10)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000590)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Champa_SailorsNotWelcome)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgChampa12)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
@@ -1562,39 +1570,41 @@ struct Trigger gData_0200320c[] = {
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgChampa23)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgChampa24)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_020005dc)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Champa_TakeFeizhisGift)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200b410[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0xc602, 11, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {0xc602, 11, CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
     {0xc403, 24, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgChampa53)},
-    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_0200014c)},
-    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_02000178)},
-    {TRIGGER_STEP, 100, 0xa75, EVENT(Func_02000638)},
-    {TRIGGER_STEP, 19, 0x970, EVENT(Func_02000e24)},
-    {TRIGGER_STEP, 20, 0x971, EVENT(Func_02000e30)},
-    {TRIGGER_STEP, 26, 0x973, EVENT(Func_02000188)},
+    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
+    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
+    {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
+    {TRIGGER_STEP, 19, FLAG_NEAR_THE_CLIFF, EVENT(Champa_ApproachTheCliff)},
+    {TRIGGER_STEP, 20, FLAG_CAUGHT_UP_WITH_BRIGGS,
+     EVENT(Champa_CatchUpWithBriggs)},
+    {TRIGGER_STEP, 26, FLAG_SAILORS_SPOTTED_FELIX,
+     EVENT(Champa_SailorsSpotFelix)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampa26)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgChampa27)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgChampa28)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000468)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_020004b4)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Champa_TellOfBriggsTreasure)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Champa_AskAboutAnkohlRuins)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgChampa31)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgChampa32)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgChampa33)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgChampa34)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_02000554)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Champa_TellOfObaba)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgChampa37)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgChampa38)},
@@ -1621,10 +1631,10 @@ struct Trigger gData_0200b410[] = {
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgChampa50)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgChampa51)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_020005dc)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Champa_TakeFeizhisGift)},
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_02003620[] = {
+u32 gChampa_GlareSparkScript[] = {
     38,
 };

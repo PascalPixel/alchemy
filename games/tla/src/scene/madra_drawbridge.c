@@ -37,12 +37,8 @@ void FieldCamera_WaitForArrival(void);
 /// The two guards, numbering the rows of gActorPlacements.
 enum MadraDrawbridgeActorId {
   /// The guard on the east side of the bridge.
-  /// ★ Named from the game: "If you wanna cross here, you'll need permission
-  /// from the town elder!" (MsgMadraNeedEldersPermission)
   ACTOR_EAST_GUARD = ACTOR_FIRST_PLACED,
   /// The guard on the west side of the bridge.
-  /// ★ Named from the game: "But try to cross illegally, and we'll throw you
-  /// in the hoosegow with Mr. Bluehair!" (MsgMadraCanCrossWithPermission)
   ACTOR_WEST_GUARD
 };
 

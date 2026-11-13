@@ -42,36 +42,17 @@ extern s32 gMikasalla_SheepPaces[];
 
 /// The village's actors, numbering the rows of gMikasalla_VillagePlacements.
 enum MikasallaActorId {
-  /// ★ Named from the game: "It's been a long time since we had any visitors
-  /// in Mikasalla." (MsgFieldItSBeenALong)
   ACTOR_VILLAGER_NO_VISITORS = ACTOR_FIRST_PLACED,
   /// Mikasalla_AskLookingForSomeone's villager.
-  /// ★ Named from the game: "Are you looking for someone?"
-  /// (MsgFieldAreYouLookingForSomeone)
   ACTOR_VILLAGER_LOOKING_FOR_SOMEONE,
-  /// ★ Named from the game: "I went out to investigate after the
-  /// earthquake..." (MsgFieldIWentOutToInvestigate)
   ACTOR_VILLAGER_AFTER_EARTHQUAKE,
-  /// ★ Named from the game: "If you're going deeper into Osenia, you'd better
-  /// be ready for trouble." (MsgFieldIfYouReGoingDeeper)
   ACTOR_VILLAGER_DEEPER_INTO_OSENIA,
-  /// ★ Named from the game: "In the heart of Osenia lies a sacred place, Air's
-  /// Rock..." (MsgFieldInTheHeartOfOsenia)
   ACTOR_VILLAGER_AIRS_ROCK,
-  /// ★ Named from the game: "If you want to go into the heart of Osenia, there
-  /// are two ways..." (MsgFieldIfYouWantToGo)
   ACTOR_VILLAGER_TWO_WAYS,
-  /// ★ Named from the game: "If you look across the ocean to the south, you
-  /// can see Tundaria." (MsgFieldIfYouLookAcrossThe)
   ACTOR_VILLAGER_TUNDARIA,
-  /// ★ Named from the game: "A town called Garoh lies to the east of us..."
-  /// (MsgFieldATownCalledGarohLies)
   ACTOR_VILLAGER_GAROH,
-  /// ★ Named from the game: "Buk buk buk..." (MsgFieldBukBukBuk)
   ACTOR_CHICKEN,
-  /// ★ Named from the game: "Bah! Baaaaaaa!" (MsgFieldBahBaaaaaaa)
   ACTOR_SHEEP,
-  /// ★ Named from the game: "Spark" (Mikasalla_MeetSpark's Djinni)
   ACTOR_SPARK
 };
 

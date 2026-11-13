@@ -67,7 +67,6 @@
 #define FLAG_BRIDGE_BLOCK_RAISED 0xa06
 
 /// The grey blocks, numbering the rows of gActorPlacements.
-/// ★ Named from what the player sees: grey stone blocks (balance_platform.png)
 enum JupiterLighthouseBlockId {
   /// The first of the six blocks that rise once the lighthouse is activated.
   ACTOR_FIRST_BLOCK = ACTOR_FIRST_PLACED,

@@ -1465,8 +1465,6 @@ void MagmaRockInside_PutOutFlames(void) {
   }
 }
 
-// ★ Named from the game: "There's something burning like an ember within the
-// stone." (MsgBlazeStoneEmber)
 void MagmaRockInside_ExamineEmberStone(void) {
   const u8 *message;
 

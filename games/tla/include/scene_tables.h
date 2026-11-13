@@ -129,13 +129,9 @@ struct TriggerView {
 /// party member's actor takes its character's number as its actor id, as in
 /// The Broken Seal.
 enum ActorId {
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX = 4,
-  /// ★ Named from the game: "Jenna" (MsgCharacterName)
   ACTOR_JENNA = 5,
-  /// ★ Named from the game: "Sheba" (MsgCharacterName)
   ACTOR_SHEBA = 6,
-  /// ★ Named from the game: "Piers" (MsgCharacterName)
   ACTOR_PIERS = 7,
   ACTOR_FIRST_PLACED = 8
 };

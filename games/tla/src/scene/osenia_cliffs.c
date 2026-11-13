@@ -41,14 +41,8 @@ void OseniaCliffs_CyclePalette(void);
 
 /// The actors, numbering the rows of gActorPlacements.
 enum OseniaCliffsActorId {
-  /// ★ Named from the game: "This is a Champa boat... You can see their mark
-  /// on the flag there." (MsgMadraChampaBoat)
   ACTOR_VILLAGER_CHAMPA_BOAT = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Wait, if this is the Champa ship, then that must
-  /// mean Piers isn't a Champa!" (MsgMadraSailorNotChampa)
   ACTOR_VILLAGER_NOT_CHAMPA,
-  /// ★ Named from the game: "Look at all the damage... That wave must have
-  /// been gigantic..." (MsgMadraWaveDamage)
   ACTOR_VILLAGER_WAVE_DAMAGE,
   /// The posts of the first rope, tied as the scene starts.
   ACTOR_FIRST_ROPE_POST,

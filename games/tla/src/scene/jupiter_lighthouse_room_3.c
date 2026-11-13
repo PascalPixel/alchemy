@@ -67,8 +67,6 @@ struct PushTarget {
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05
 
 /// The log the leader pushes off the ledge, one of four blue logs.
-/// ★ Named from what the player sees: a blue log
-/// (fallen_column_north_south.png)
 enum { ACTOR_LEDGE_LOG = ACTOR_FIRST_PLACED + 2 };
 
 void Scene_SetArrivalFlags(s32 a);

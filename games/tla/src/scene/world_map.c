@@ -558,7 +558,6 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   Actor_SetPosition(actor, 0, 0);
 }
 
-/// ★ Named from the game: "We shouldn't run from anymore, ." (MsgWeShouldnT)
 void WorldMap_RefuseToRunAway(void) {
   struct Actor *object;
   s32 x;
@@ -636,7 +635,6 @@ void WorldMap_RefuseToRunAway(void) {
   }
 }
 
-/// ★ Named from the game: " gazed into the pond..." (MsgGazedIntoThe)
 void WorldMap_GazeIntoPond(void) {
   u32 roll = (Random16() << 4) >> 16;
 
@@ -838,8 +836,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The djinn tutorial. With flag 0x175 set each message is offset by
 /// MsgDjinnGiveTutorialB less A.
 // As The Broken Seal's WorldMap_ShowDjinnTutorial.
-/// ★ Named from the game: "To give your Djinni to someone else, move it like
-/// this." (MsgDjinnGiveTutorialA)
 void WorldMap_ExplainGivingDjinn(void) {
   WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
@@ -885,7 +881,6 @@ void WorldMap_ExplainGivingDjinn(void) {
   } while (0)
 
 /// The bandit and the thieves from Vault, after a linked game, want Isaac.
-/// ★ Named from the game: "Hey! Wait a minute!" (MsgHeyWaitA)
 void WorldMap_FightBanditAndThieves(s32 entrance) {
   s32 east, west, east74, eastB, westB;
 
@@ -1209,8 +1204,6 @@ extern u32 gData_02004e38[];
 extern u32 gData_02004e58[];
 extern u32 gData_02004e88[];
 
-/// ★ Named from the game: "We got the cannon onto your ship with no problems."
-/// (MsgYouDonT)
 void WorldMap_DeliverLohoCannon(void) {
   s32 angle;
 
@@ -1278,8 +1271,6 @@ void WorldMap_DeliverLohoCannon(void) {
 #define TUTORIAL_MESSAGE(base) TUTORIAL_SET_MESSAGE(Event_GetFlag(0x175), base)
 
 /// The first Djinni, Echo, joins south of Daila, however often he is refused.
-/// ★ Named from the game: "The Venus Djinni has become 's pal."
-/// (MsgTheVenusDjinni)
 void WorldMap_MeetEcho(void) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -1593,8 +1584,6 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
   FieldWorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
 
-/// ★ Named from the game: "They've done it, ! They've lit the beacon!"
-/// (MsgTheyVeDone)
 void WorldMap_WatchVenusLighthouseCollapse(void) {
   Func_02003d44(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
@@ -1735,7 +1724,6 @@ void Func_020029a4(void) {
   FieldEvent_SetExitRequest(77);
 }
 
-/// ★ Named from the game: "We're saved!" (MsgWeReSaved)
 void WorldMap_DriftNorthOfContinent(void) {
   struct Actor *boat = Actor_Get(10);
   struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapWork;
@@ -1853,7 +1841,6 @@ void Func_02002e00(void) {
   Event_SetDestination((s32)&SceneId_Ov667, 80);
 }
 
-/// ★ Named from the game: "Take the tiller, !" (MsgTakeTheTiller)
 void WorldMap_TakeTheTiller(void) {
   s32 scale;
   s32 seen = Event_GetFlag(0x8de);
@@ -1938,8 +1925,6 @@ void Func_0200310c(void) {
 }
 
 /// The ship's first flight once it has wings (flag 0xa78).
-/// ★ Named from the game: "We did it! The ship took off without a hitch!"
-/// (MsgWeDidIt)
 void WorldMap_TakeOff(void) {
   s32 x, z, i;
 

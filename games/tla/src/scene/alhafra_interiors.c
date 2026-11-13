@@ -91,7 +91,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// Stepping into Alhafra's inn the first time: Felix walks up to Alex, who
 /// says he too is resting here while he looks for a boat
 /// (FLAG_ALHAFRA_MET_ALEX).
-/// ★ Named from the game: "So, you've finally come." (MsgAlhafraInteriors31)
 void AlhafraInteriors_MeetAlex(void) {
   Event_SetFlag(FLAG_ALHAFRA_MET_ALEX);
   Event_Start();
@@ -164,8 +163,6 @@ void AlhafraInteriors_TalkToHealer(s32 actor) {
 }
 
 /// The lady of the house, worn out by her houseguests.
-/// ★ Named from the game: "Augh! With all these demanding houseguests, I feel
-/// like I've lost control of my own house!" (MsgAlhafraInteriors06)
 void AlhafraInteriors_TalkToHostess(s32 a0) {
   Actor_ShowEmote(a0, 0x107, 0x1e);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors06);
@@ -174,8 +171,6 @@ void AlhafraInteriors_TalkToHostess(s32 a0) {
 
 /// The old couple who lost their house in the wave ask the lady of the house
 /// for tea, once (flag 0x8b1).
-/// ★ Named from the game: "Sorry to bother you, but we'd like some tea."
-/// (MsgAlhafraInteriors07)
 void AlhafraInteriors_GuestsAskForTea(void) {
   Event_SetFlag(0x8b1);
   Event_Start();

@@ -77,10 +77,7 @@ static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
 enum DailaSanctuaryActorId {
   /// An actor with no picture at the pillars' top that holds the Tear: the
   /// game shows the item on it (Actor_SetItemIcon) until it is taken.
-  /// ★ Named from the game: "Sea God's Tear" (MsgItemName)
   ACTOR_SEA_GODS_TEAR = ACTOR_FIRST_PLACED + 1,
-  /// ★ Named from what the player sees: a puddle that Frost turns into a
-  /// pillar of ice (puddle.png)
   ACTOR_FIRST_PILLAR,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,
@@ -370,8 +367,6 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   }
 }
 
-/// ★ Named from the game: "Are you going to Madra?"
-/// (MsgDailaInteriorsGoingToMadra)
 void DailaInteriors_AskGoingToMadra(void) {
   s32 msg;
 
@@ -391,8 +386,6 @@ void DailaInteriors_AskGoingToMadra(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Don't tell me you're all looking for a boat, too!"
-/// (MsgDailaInteriorsLookingForBoat)
 void DailaInteriors_TalkNoBoats(void) {
   s32 msg;
 
@@ -412,8 +405,6 @@ void DailaInteriors_TalkNoBoats(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Er... Aheh heh... You... weren't watching, were
-/// you?" (MsgDailaInteriorsWatchingPractice)
 void DailaInteriors_TalkCaughtPracticing(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

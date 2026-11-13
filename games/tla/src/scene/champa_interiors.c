@@ -38,55 +38,24 @@ void Scene_FadeInAndClearFlag(void);
 
 /// The houses' actors, numbering the rows of gChampaInteriors_ActorPlacements.
 enum ChampaInteriorsActorId {
-  /// ★ Named from the game: "We don't need to live off fish anymore, so we
-  /// don't need any fishermen, do we?" (MsgWeDonT)
   ACTOR_RAFT_FISHERMAN = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Everyone in Champa is poor, but the poorest of
-  /// us all live on rafts..." (MsgEveryoneInChampa)
   ACTOR_RAFT_DWELLER,
-  /// ★ Named from the game: "When my father heads out to sea, he takes our
-  /// home with him" (MsgWhenMyFather)
   ACTOR_FISHERMANS_CHILD,
-  /// ★ Named from the game: "My dad went out to fish, but there were no fish
-  /// to be caught" (MsgMyDadWent)
   ACTOR_FISHERMANS_YOUNGER_CHILD,
-  /// ★ Named from the game: "The tidal wave was terrible... It... It nearly
-  /// swallowed me whole!" (MsgTheTidalWave)
   ACTOR_WAVE_SURVIVOR,
-  /// ★ Named from the game: "It looked to me like the wave came from the Sea
-  /// of Time." (MsgItLookedTo)
   ACTOR_SEA_OF_TIME_SAILOR,
-  /// ★ Named from the game: "Most of the sailors here live in the cliff
-  /// dwellings, but I don't like those caves." (MsgMostOfThe)
   ACTOR_CAVE_SHUNNING_SAILOR,
-  /// ★ Named from the game: "I've been wondering about finding a chief for
-  /// Champa, since we don't have one." (MsgIVeBeenWondering)
   ACTOR_ELDER_SEEKING_A_CHIEF,
-  /// ★ Named from the game: "We village elders have guided Champa for so many
-  /// years..." (MsgWeVillageElders)
   ACTOR_ELDER,
-  /// ★ Named from the game: "The ocean has been a lot warmer lately, and the
-  /// fish population is decreasing." (MsgTheOceanHas)
   ACTOR_WARM_OCEAN_WATCHER,
-  /// ★ Named from the game: "I've heard rumors of a terrible tidal wave
-  /// striking the lands south of us." (MsgIVeHeardRumors)
   ACTOR_TIDAL_WAVE_RUMORMONGER,
-  /// ★ Named from the game: "I have some lovely artifacts, but it's only
-  /// because I've been to the Ankohl Ruins." (MsgIHaveSome)
   ACTOR_ARTIFACT_MERCHANT,
-  /// ★ Named from the game: "If you go to the Ankohl Ruins, you might find
-  /// some nice artifacts for yourself." (MsgIfYouGo)
   ACTOR_ANKOHL_ADVISER,
-  /// ★ Named from the game: "Listen, if you came to Champa looking for good
-  /// seafood, you came to the wrong place." (MsgListenIfYou)
   ACTOR_INNKEEPER,
-  /// ★ Named from the game: "We used to do good trade with an island east of
-  /// us." (MsgWeUsedTo)
   ACTOR_FISH_TRADER
 };
 
 /// The islet house's one actor.
-/// ★ Named from the game: "Did you know Indra moved?" (MsgDidYouKnow)
 enum ChampaIsletHouseActorId { ACTOR_INDRA_NEIGHBOR = ACTOR_FIRST_PLACED };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

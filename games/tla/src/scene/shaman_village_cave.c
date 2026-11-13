@@ -269,7 +269,6 @@ void ShamanVillageCave_PlaceGoldenShirt(void) {
 
 /// The fighters from Colosso, after a linked game, find the party and challenge
 /// it.
-/// ★ Named from the game: "I found !" (MsgIFound2)
 void ShamanVillageCave_MeetColossoFans(void) {
   s32 angle;
 
@@ -415,8 +414,6 @@ void Event_SetDestination();
     } *)Ram_HeapSlots->eventWork)                                              \
        ->message)
 
-/// ★ Named from the game: "Hey, these guys aren't very strong at all!"
-/// (MsgHeyTheseGuys)
 void ShamanVillageCave_LoseToColossoFans(void) {
   s32 angle = 0xa000;
 
@@ -473,7 +470,6 @@ void ShamanVillageCave_LoseToColossoFans(void) {
       ->value = 0;
 }
 
-/// ★ Named from the game: "These guys were phenomenal!" (MsgTheseGuysWere)
 void ShamanVillageCave_BeatColossoFans(void) {
   s16 *target;
   s32 angle = 0xe000;

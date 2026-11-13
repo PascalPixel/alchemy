@@ -361,8 +361,6 @@ const struct Trigger *Scene_GetEvents(void) {
 
 extern u32 gData_02003c10[];
 
-/// ★ Named from the game: "This statue looks a lot like the one in Daila's
-/// Sanctum." (MsgFieldStatueLikeDailaShrine)
 void ShrineOfTheSeaGod_ExamineStatue(void) {
   struct ShrineOfTheSeaGodEventWork *work = Ram_HeapSlots->eventWork;
 
@@ -373,7 +371,6 @@ void ShrineOfTheSeaGod_ExamineStatue(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Wah! You scared me!" (MsgFieldStartledCompanion)
 void ShrineOfTheSeaGod_StartleCompanion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -450,7 +447,6 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 /// The Sea God's Tear (item 458) used on the statue on the island, actor 10,
 /// makes the water rise.
-/// ★ Named from the game: "Sea God's Tear" (item 458's name)
 void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
   u32 i;
 
@@ -1208,8 +1204,6 @@ void Func_02001a0c(void) {
   ShrineOfTheSeaGod_BlendStart(14, 14, 1, 1, 15, 14);
 }
 
-// ★ Named from the game: "All right! I'm gonna throw the rope again!"
-// (MsgFieldRopeThrownAgain)
 void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   struct ShrineOfTheSeaGodObject *leader;
 
@@ -1293,7 +1287,6 @@ static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 
 // Lash ties the boys' rope, Tavi climbs down and both meet the party.
-// ★ Named from the game: "Excellent work, !" (MsgFieldPraiseRopeWork)
 void ShrineOfTheSeaGod_LashRope(void) {
   struct ShrineOfTheSeaGodObject *object;
   struct ShrineOfTheSeaGodObject *leader;

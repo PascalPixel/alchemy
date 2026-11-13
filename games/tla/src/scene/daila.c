@@ -50,29 +50,17 @@
 /// The people and puddles the events move, numbering the rows of
 /// gDaila2ActorPlacements (Daila1's rows to ACTOR_LAST_VILLAGER are alike).
 enum DailaActorId {
-  /// ★ Named from the game: "You don't look familiar. Have you been to Daila
-  /// before?" (MsgDailaBeenBefore)
   ACTOR_GREETER = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Didn't it feel like all of Indra moved when that
-  /// wave hit?" (MsgDailaIndraMoved)
   ACTOR_INDRA_MOVED_MAN,
-  /// ★ Named from the game: "I bet you thought it was the wave that knocked me
-  /// over and hurt my hip, huh?" (MsgDailaHurtHip)
   ACTOR_FALLEN_OLD_MAN = ACTOR_FIRST_PLACED + 4,
   /// The innkeeper, across the counter to the west.
-  /// ★ Named from the game: "I haven't seen Tavi and Riki around lately..."
-  /// (MsgDailaTaviRikiWorry)
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED + 13,
-  /// ★ Named from what the player sees: a puddle of seawater that Frost turns
-  /// into a pillar of ice (puddle.png)
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
   ACTOR_THIRD_PUDDLE,
   ACTOR_FOURTH_PUDDLE,
   ACTOR_FIFTH_PUDDLE,
-  /// ★ Named from the game: "Alex... Where did you go?" (MsgDailaFelixCall)
   ACTOR_ALEX,
-  /// ★ Named from the game: "That's what Kraden said..." (MsgDailaFelixCall)
   ACTOR_KRADEN,
   /// After Jenna's and Sheba's rows, which place the party's own actors.
   ACTOR_SIXTH_PUDDLE
@@ -279,8 +267,6 @@ static inline void Actor_JoinLeader(s32 actor) {
 
 /// Alex waits for the party in the street, says the mayor sent him to look for
 /// a boat in Madra, turns down their company and leaves.
-/// ★ Named from the game: "Well, well... Our happy little family is back
-/// together again." (MsgDailaFelixCall)
 void Daila_MeetAlex(void) {
   s32 msg;
 

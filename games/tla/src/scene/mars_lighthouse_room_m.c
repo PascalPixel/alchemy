@@ -799,8 +799,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// ★ Named from the game: "Mankind... With the power of wisdom, they ruled the
-/// earth." (MsgMankindWithThe)
 void MarsLighthouseRoomM_ReadEarthInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
@@ -819,8 +817,6 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Fish... With cold courage, they ruled the water."
-/// (MsgFishWithCold)
 void MarsLighthouseRoomM_ReadWaterInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
@@ -839,8 +835,6 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Dragons... Burning with might, they ruled the
-/// fires." (MsgDragonsBurningWith)
 void MarsLighthouseRoomM_ReadFireInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
@@ -859,8 +853,6 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Bird... On the wings of truth, they ruled the
-/// winds." (MsgBirdOnThe)
 void MarsLighthouseRoomM_ReadWindInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 

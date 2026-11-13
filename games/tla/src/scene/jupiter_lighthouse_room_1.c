@@ -64,7 +64,6 @@
 
 /// The pillar the party pushes onto the button by the gates, after the two
 /// angel statues in gActorPlacements.
-/// ★ Named from what the player sees: a grey stone pillar (spr_312.png)
 enum { ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2 };
 
 struct Actor;

@@ -438,7 +438,6 @@ extern s32 gData_020049a0[];
 extern s32 gData_020049dc[];
 
 /// After the Flame Dragons' battle, the two Adepts lie wounded.
-/// ★ Named from the game: "Why... Why am I lying here?" (MsgMarsStar01)
 void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   s32 t1, t2, t3, t8, t10, t12, t14, t28, t30, t32, t34, t50, t52, t87, v5, v6,
       v8;
@@ -606,7 +605,6 @@ extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
 /// The Mars Star (item 247's icon) as an actor on the floor, rising first when
 /// asked.
-/// ★ Named from the game: "Mars Star" (item 247's name)
 void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   struct Actor **slot = &gMarsLighthouseStarRoom_MarsStar;
   u8 *block;
@@ -650,8 +648,6 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
 void Event_Start(void);
 void Event_End(void);
 
-/// ★ Named from the game: "Your hand...so warm... People have such warm
-/// hands... I had forgotten..." (MsgMarsStar03)
 void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -671,7 +667,6 @@ void FieldCamera_WaitForArrival(void);
 
 /// Actor 13 hands over the Mars Star, which Felix puts in the Mythril Bag, and
 /// the voice of the statue speaks.
-/// ★ Named from the game: " got the Mars Star!" (MsgMarsStar08)
 void MarsLighthouseStarRoom_TakeMarsStar(void) {
   struct Actor *leader;
   struct Actor *object;
@@ -770,8 +765,6 @@ struct EventNote {
   u16 unk15a;
 };
 
-/// ★ Named from the game: "There's a space for you to place something."
-/// (MsgMarsStar07)
 void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -790,7 +783,6 @@ void Func_02001424(void);
 
 #if !TLA_PATCH_1
 
-/// ★ Named from the game: " used the Mars Star!" (MsgMarsStar09)
 void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot;
   struct Actor *object;

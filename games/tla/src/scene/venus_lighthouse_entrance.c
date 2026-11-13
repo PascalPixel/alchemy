@@ -1050,7 +1050,6 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   Event_End();
 }
 
-/// ★ Named from the game: " ... Are... Are you all right?" (MsgAreAreYou)
 void VenusLighthouseEntrance_WakeUp(void) {
   struct Actor *object;
 

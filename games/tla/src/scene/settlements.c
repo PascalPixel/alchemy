@@ -8,8 +8,6 @@
 /// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
-/// ★ Named from their area names: "Gondowan Settlement", "Hesperia
-/// Settlement", "Kalt Island", "SW Atteka Islet".
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -315,8 +313,6 @@ void Settlements_CatchApple(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Don't tell me, you're here to solve the riddle of
-/// the rock!" (MsgSettlements01)
 void Settlements_WarnOfRiddleOfRock(s32 actor) {
   s32 msg = (s32)MsgSettlements01;
 

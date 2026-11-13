@@ -64,12 +64,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// Actors the events move; the placement tables give each id its own person.
 enum AlhafraActorId {
   /// A Champa sailor watching the road before Briggs is caught.
-  /// ★ Named from the game: "That guy looked like the mayor of Madra... I'd
-  /// better go tell the others!" (MsgAlhafra28)
   ACTOR_LOOKOUT = ACTOR_FIRST_PLACED + 17,
   /// The boy too hungry to move, once Briggs is caught.
-  /// ★ Named from the game: "I'm so hungry I can't even move..."
-  /// (MsgAlhafra65)
   ACTOR_HUNGRY_BOY = ACTOR_FIRST_PLACED + 19
 };
 

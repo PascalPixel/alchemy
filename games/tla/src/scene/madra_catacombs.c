@@ -216,8 +216,6 @@ const struct Trigger *Scene_GetEvents(void) {
 void Actor_LiftTargetBlock(const void *data);
 void FlagBlock_ApplyFlags(const void *data);
 
-/// ★ Named from the game: "The door won't budge. ...Must be locked."
-/// (MsgFieldDoorWontBudge)
 void MadraCatacombs_TryLockedDoor(void) {
   struct EventWork15a *work = Ram_HeapSlots->eventWork;
 
@@ -271,7 +269,6 @@ void MadraCatacombs_LightFlames(void);
 
 /// The Ruin Key (item 459) opens the double door, which slides apart, and the
 /// room beyond lights up.
-/// ★ Named from the game: "Ruin Key" (item 459's name)
 void MadraCatacombs_UnlockWithRuinKey(void) {
   struct Actor *left = Actor_GetById(8);
   struct Actor *right = Actor_GetById(9);
@@ -356,8 +353,6 @@ void MadraCatacombs_HideButton(void) {
   Event_ClearFlag(0x203);
 }
 
-/// ★ Named from the game: "Look upon me with eyes of truth... Then the door
-/// will open..." (MsgFieldEyesOfTruth)
 void MadraCatacombs_HearEyesOfTruth(void) {
   if (Event_GetFlag(0x203) != 0 && Event_GetFlag(0x8cb) == 0) {
     Event_Start();

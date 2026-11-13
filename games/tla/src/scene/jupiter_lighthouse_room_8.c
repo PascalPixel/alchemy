@@ -67,14 +67,10 @@
 
 /// The room's statue, pillar and logs, numbering the rows of gActorPlacements.
 enum JupiterLighthouseLeftTowerActorId {
-  /// ★ Named from what the player sees: a stone archer (spr_340.png)
   ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a grey stone pillar (spr_312.png)
   ACTOR_PILLAR = ACTOR_FIRST_PLACED + 2,
   /// The first of five blue logs, two standing and three lying, that the
   /// leader pushes.
-  /// ★ Named from what the player sees: blue logs
-  /// (fallen_column_north_south.png, fallen_column_west_east.png)
   ACTOR_FIRST_LOG
 };
 

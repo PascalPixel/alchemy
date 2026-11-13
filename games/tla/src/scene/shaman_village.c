@@ -725,8 +725,6 @@ const struct Trigger *Scene_GetEvents(void) {
 
 DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(ShamanVillage_StopAtLockedEntrance)
 
-/// ★ Named from the game: "The entrance is closed. You probably shouldn't go
-/// in." (MsgShamanEntranceClosed)
 void ShamanVillage_StopAtClosedEntrance(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -734,8 +732,6 @@ void ShamanVillage_StopAtClosedEntrance(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Trial Road None may enter without permission from
-/// Moapa." (MsgShamanTrialRoadPermissionSign)
 void ShamanVillage_ReadTrialRoadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -744,8 +740,6 @@ void ShamanVillage_ReadTrialRoadSign(void) {
 }
 
 /// Moapa's guard, actor 17, offers his rules again.
-/// ★ Named from the game: "Do you need to hear Moapa's explanation again?"
-/// (MsgShamanGuardRepeatRulesBeforeTrial)
 void ShamanVillage_TalkToGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -771,8 +765,6 @@ void ShamanVillage_TalkToGuard(void) {
 }
 
 /// Moapa's other guard, actor 16, offers his rules again.
-/// ★ Named from the game: "Do you need to hear Moapa's explanation again?"
-/// (MsgShamanOtherGuardRepeatRulesBeforeTrial)
 void ShamanVillage_TalkToOtherGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -795,8 +787,6 @@ void ShamanVillage_TalkToOtherGuard(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Then what are you standing around for? Get out of
-/// town!" (MsgShamanOutsidersLeaveTown)
 void ShamanVillage_TellOutsidersToLeave(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -808,8 +798,6 @@ void ShamanVillage_TellOutsidersToLeave(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "If you anger Moapa, you'll be in for a little taste
-/// of his awesome and terrible power." (MsgShamanFearMoapaPower)
 void ShamanVillage_WarnOfMoapasPower(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -821,8 +809,6 @@ void ShamanVillage_WarnOfMoapasPower(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "If there's something you want to say, say it to
-/// Moapa, not to us." (MsgShamanSpeakToMoapa)
 void ShamanVillage_SendToMoapa(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -854,8 +840,6 @@ void Inn_PlaySleep(s32 roomPrice);
 
 /// Across the counter the inn's card asks for coins until Moapa is beaten, and
 /// the innkeeper serves after.
-/// ★ Named from the game: "The card reads "Put coins on the counter, and you
-/// can stay."" (MsgShamanInnPaymentPrompt)
 void ShamanVillage_TalkToInnkeeper(void) {
   if (Event_GetFlag(0x9fe)) {
     if (ShamanVillage_IsFacingCounter()) {
@@ -903,8 +887,6 @@ void ShamanVillage_TalkToInnkeeper(void) {
 
 /// Across the counter the sanctum; elsewhere the priest talks only once Moapa
 /// is beaten.
-/// ★ Named from the game: "Nothing personal, but nobody in town will talk to
-/// you." (MsgShamanTribeForbidsTalking)
 void ShamanVillage_TalkToPriest(void) {
   if (ShamanVillage_IsFacingCounter()) {
     Sanctum_Run(8);
@@ -920,8 +902,6 @@ void ShamanVillage_TalkToPriest(void) {
   }
 }
 
-/// ★ Named from the game: "After your battle, did you check on the other side
-/// of the mountain?" (MsgShamanCheckOtherMountainSide)
 void ShamanVillage_AskAboutOtherSide(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -931,8 +911,6 @@ void ShamanVillage_AskAboutOtherSide(void) {
 }
 
 /// After the battle Moapa asks the party's names once, and then remembers them.
-/// ★ Named from the game: "You have defeated me, and yet I still don't know
-/// your names..." (MsgShamanMoapaAsksVictorsNames)
 void ShamanVillage_TalkToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -955,8 +933,6 @@ void ShamanVillage_TalkToMoapa(void) {
 }
 
 /// Across the counter the shop; elsewhere a welcome for the hero.
-/// ★ Named from the game: "Everyone is depressed that Moapa lost his big
-/// fight." (MsgShamanWelcomeContigoHero)
 void ShamanVillage_TalkToShopkeeper(void) {
   if (ShamanVillage_IsFacingCounter()) {
     Shop_Run(29, 12);
@@ -979,8 +955,6 @@ void ShamanVillage_HopFortuneTeller(void) {
 }
 
 /// The fortune-teller, actor 17, reads the party's fortune once (flag 0x301).
-/// ★ Named from the game: "So, you'd like to hear your fortune, would you?"
-/// (MsgShamanFortuneOfferBeforeTrial)
 void ShamanVillage_TellFortune(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1029,8 +1003,6 @@ void ShamanVillage_TellFortune(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "The rules are simple."
-/// (MsgShamanTrialRulesAreSimple)
 void ShamanVillage_ExplainTrialRules(void) {
   if (Event_GetFlag(0x200)) {
     Event_SetMessageId((s32)MsgShamanTrialRulesAreSimple);
@@ -1101,8 +1073,6 @@ void ShamanVillage_ExplainTrialRules(void) {
   Import_EventSetExitRequest(10);
 }
 
-/// ★ Named from the game: "Have you decided to give up this foolishness once
-/// and for all?" (MsgShamanGiveUpTrialPrompt)
 void ShamanVillage_OfferToGiveUp(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1131,8 +1101,6 @@ void ShamanVillage_OfferToGiveUp(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Do you want to challenge me on Trial Road?"
-/// (MsgShamanChallengeTrialRoadPrompt)
 void ShamanVillage_ChallengeMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1170,8 +1138,6 @@ extern u32 gShamanVillage_WalkToLeftStartScript[];
 extern u32 gShamanVillage_WalkToRightStartScript[];
 
 /// The leader takes the left path and Moapa the right, after the countdown.
-/// ★ Named from the game: "If you have chosen, then we shall take the other
-/// path." (MsgShamanGuardsTakeOtherPath)
 void ShamanVillage_TakeLeftPath(void) {
   struct Actor *owner;
   struct Actor *shaman;
@@ -1238,8 +1204,6 @@ void ShamanVillage_TakeLeftPath(void) {
 }
 
 /// The leader takes the right path and Moapa the left, after the countdown.
-/// ★ Named from the game: "If you have chosen, then we shall take the other
-/// path." (MsgShamanGuardsTakeOtherPath)
 void ShamanVillage_TakeRightPath(void) {
   struct Actor *owner;
   struct Actor *shaman;
@@ -1327,8 +1291,6 @@ void ShamanVillage_DropPillar(void) {
   }
 }
 
-/// ★ Named from the game: "This is my house. If you're looking for Moapa, here
-/// I am. Back up. Give me some room." (MsgShamanMoapaGiveMeRoom)
 void ShamanVillage_MeetMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1433,8 +1395,6 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
 extern u32 gShamanVillage_JennaStandsByRodScript[];
 extern u32 gShamanVillage_GuardLeavesHouseScript[];
 
-/// ★ Named from the game: "That's the Shaman's Rod!"
-/// (MsgShamanRecognizeShamanRod)
 void ShamanVillage_ShowShamansRod(void) {
   struct Actor *rod;
   struct Actor *object;
@@ -1666,8 +1626,6 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "If you're here offering charity, I won't have it...
-/// Or did you want to show me something?" (MsgShamanShowMeSomething)
 void ShamanVillage_ShowItemToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1676,8 +1634,6 @@ void ShamanVillage_ShowItemToMoapa(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Did you want to sell it? Because I don't have any
-/// money." (MsgShamanCannotBuyGift)
 void ShamanVillage_ShowItemToGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1686,8 +1642,6 @@ void ShamanVillage_ShowItemToGuard(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Show it to Moapa if you must"
-/// (MsgShamanShowItToMoapa)
 void ShamanVillage_ShowItemToOtherGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1696,7 +1650,6 @@ void ShamanVillage_ShowItemToOtherGuard(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Hoolabaloo!" (MsgShamanFortuneGreeting)
 void ShamanVillage_GreetFortuneSeeker(void) {
   if (Event_GetFlag(0x9fe)) {
     Event_PlaySound(MUS_000);
@@ -1736,8 +1689,6 @@ void ShamanVillage_StepBackFromTrial(void) {
 // Forwards to Party_ListMembers; tagged where it is used.
 /// Moapa takes the challenge only from a party with the Shaman's Rod and eight
 /// pieces of equipment.
-/// ★ Named from the game: "But what's this? You no longer have the Shaman's
-/// Rod?" (MsgShamanMissingShamanRod)
 void ShamanVillage_CheckTrialEntry(void) {
   s16 owners[10];
   s32 count;
@@ -2098,7 +2049,6 @@ void ShamanVillage_CountDownToStart(void) {
 
 /// Moapa's first test: Sheba steps up and casts Whirlwind on the purple rock,
 /// and the sand is gone (flag 0x94c).
-/// ★ Named from the game: "You can do it, !" (MsgShamanCheerForCompanion)
 void ShamanVillage_ShebaClearsSand(void) {
   u8 *work = Ram_HeapSlots->effectWork;
   struct Actor *object = ((struct Actor *)Actor_GetById(16));
@@ -2489,8 +2439,6 @@ void ShamanVillage_EnterMoapasHouse(void) {
 }
 
 /// Back at Trial Road's foot, Moapa offers the trial again.
-/// ★ Named from the game: "In order to reach the battle at the summit, you
-/// cannot fail on Trial Road." (MsgShamanMustFinishTrialRoad)
 void ShamanVillage_RestartTrial(void) {
   s32 angle;
 
@@ -2558,8 +2506,6 @@ void ShamanVillage_RestartTrial(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "It would be wise of you to quit. Even if you reach
-/// the top, you cannot beat me." (MsgShamanMoapaAdvisesLeaving)
 void ShamanVillage_AdviseQuitting(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

@@ -106,8 +106,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gLemurianShipDeck_Triggers;
 }
 
-/// ★ Named from the game: "The door is held closed by a powerful force."
-/// (MsgTheDoorIsHeld)
 void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -654,8 +652,6 @@ void LemurianShipDeck_FreezePuddle(void) {
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-/// ★ Named from the game: "Well, there's no point in hanging around here all
-/// day." (MsgWellThereS)
 void LemurianShipDeck_LeaveToFindCrew(void) {
   struct Actor *object;
 
@@ -719,7 +715,6 @@ void LemurianShipDeck_EmitSparkle(void) {
 }
 
 /// The Black Crystal (item 242's icon) as an actor on the deck.
-/// ★ Named from the game: "Black Crystal" (item 242's name)
 struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   struct Actor *object =
       (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
@@ -1040,8 +1035,6 @@ void LemurianShipDeck_ReachPiersShip(void) {
 DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 7, Actor_SelectAnimation,
                         gLemurianShipDeck_SmokePuff)
 
-/// ★ Named from the game: "Then let's waste no time! We should set out for
-/// Madra at once!" (MsgThenLetS)
 void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(7)) {
     struct Actor *object;

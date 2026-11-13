@@ -400,7 +400,6 @@ extern u32 gData_02005ec4[];
 
 /// The party reaches the beacon in the storm, and the voice calls them
 /// betrayers before the Doom Dragon's battle.
-/// ★ Named from the game: "Betrayers, you have arrived!" (MsgBetrayersYouHave)
 void MarsLighthouseAerie_FaceDoomDragon(void) {
   u8 *unk85;
   u16 *dispcnt;
@@ -1177,7 +1176,6 @@ extern u32 gData_02006004[];
 extern u32 gData_0200602c[];
 extern u32 gData_02006070[];
 
-/// ★ Named from the game: "...Who are they?" (MsgWhoAreThey)
 void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   s32 lastArg, spill;
   s32 owner, actor, owner2, t1;
@@ -1872,7 +1870,6 @@ extern s32 gData_020060fc[];
 
 #define A(p) ((struct OverlayActor *)(p))
 
-/// ★ Named from the game: "The beacon is lit!" (MsgTheBeaconIs)
 void MarsLighthouseAerie_LightBeacon(void) {
   struct AerieEventWork *work, *later;
   struct OverlaySprite *sprite;
@@ -2171,7 +2168,6 @@ L_0200bcea:
        ->v)
 void Func_020004a4(void);
 
-/// ★ Named from the game: "What could he be doing?" (MsgWhatCouldHe)
 void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   s32 owner, i, ownerInLoop, ownerAfterLoop, quarterTurn;
   s32 threeSixteenthsTurn, actor, t2, t3;
@@ -2557,8 +2553,6 @@ L_0200c66c:
   return;
 }
 
-/// ★ Named from the game: "Do not let your sadness overwhelm you, ! Go!"
-/// (MsgDoNotLet)
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2571,8 +2565,6 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Do not let your sadness overwhelm you, ! Go!"
-/// (MsgDoNotLet)
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2585,7 +2577,6 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Will you cast in the Mars Star?" (MsgWillYouCast)
 void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2649,7 +2640,6 @@ void Func_02004d50(s32 id) {
 
 #endif
 
-/// ★ Named from the game: ", I understand your loss..." (MsgIUnderstandYour)
 void MarsLighthouseAerie_TalkToConsoler(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2668,8 +2658,6 @@ void MarsLighthouseAerie_TalkToConsoler(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "I...can't see you, but I sense that you're
-/// nearby..." (MsgUhhhhnnnICan)
 void MarsLighthouseAerie_TalkToBlindedParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2684,8 +2672,6 @@ void MarsLighthouseAerie_TalkToBlindedParent(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "Tell Dora...to live her life to the fullest...for
-/// me..." (MsgKoffKoffYou)
 void MarsLighthouseAerie_TalkToCoughingParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2700,8 +2686,6 @@ void MarsLighthouseAerie_TalkToCoughingParent(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "I am so happy...to have one last chance to see you
-/// again..." (MsgUnnnnIAm)
 void MarsLighthouseAerie_TalkToGladParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

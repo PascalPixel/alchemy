@@ -424,7 +424,6 @@ const u8 *Scene_GetEvents(void) {
 
 s32 Func_0200446c();
 
-/// ★ Named from the game: ", you like igloos, right?" (MsgProx33)
 void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -435,8 +434,6 @@ void Prox_AskAboutIgloos(void) {
 
 DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
-/// ★ Named from the game: ", your parents have gone away... They were very
-/// worried about you." (MsgProx56)
 void Prox_TalkAboutParents(void) {
 
   if (Leader_IsFacingNorth()) {
@@ -456,8 +453,6 @@ void Prox_TalkAboutParents(void) {
 
 s32 Shop_Run();
 
-/// ★ Named from the game: "You go away for a little while, and you come back a
-/// strong and mighty warrior!" (MsgProx53)
 void Prox_PraiseReturnedWarrior(void) {
 
   if (Leader_IsFacingNorth()) {
@@ -477,8 +472,6 @@ void Prox_PraiseReturnedWarrior(void) {
 
 s32 Sanctum_Run();
 
-/// ★ Named from the game: "Now that the lighthouse has been lit, I fear for
-/// what will happen to Weyard." (MsgProx139)
 void Prox_FearForWeyard(void) {
 
   if (Leader_IsFacingNorth()) {
@@ -505,8 +498,6 @@ struct TalkActor {
   u8 unk63; ///< Func_020002d8 reads it
 };
 
-/// ★ Named from the game: "Weeee! What fun! Now that it's stopped snowing, we
-/// can go outside and play." (MsgProx113)
 void Prox_TalkToPlayingChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(16));
@@ -528,7 +519,6 @@ void Prox_TalkToPlayingChild(void) {
   Func_0200446c();
 }
 
-/// ★ Named from the game: "I miss running around outside." (MsgProx114)
 void Prox_TalkToRestlessChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(17));
@@ -550,8 +540,6 @@ void Prox_TalkToRestlessChild(void) {
   Func_0200446c();
 }
 
-/// ★ Named from the game: "If I'm going to be a great warrior, like , I'm gonna
-/// have to train hard." (MsgProx115)
 void Prox_TalkToTrainingChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(18));
@@ -573,7 +561,6 @@ void Prox_TalkToTrainingChild(void) {
   Func_0200446c();
 }
 
-/// ★ Named from the game: "They're not here..." (MsgProx47)
 void Prox_SearchForParents(void) {
   s32 t0;
   s32 t8;
@@ -631,8 +618,6 @@ void Prox_SearchForParents(void) {
 
 void FieldCamera_WaitForArrival(void);
 
-/// ★ Named from the game: "We can't wait for Agatio and his men any longer..."
-/// (MsgProx62)
 void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -714,7 +699,6 @@ void Prox_DecideToGoToLighthouse(void) {
 s32 Actor_MoveToObject();
 extern u32 gData_020049c4[];
 
-/// ★ Named from the game: "You... , it's you..." (MsgProx75)
 void Prox_MeetPuelle(void) {
   u32 i;
   s32 result;
@@ -1193,7 +1177,6 @@ void Func_02001c24(s32 a0) {
 void FieldCamera_WaitForArrival(void);
 s32 Func_0200446c();
 
-/// ★ Named from the game: "Thank you, . And you, too, and Kraden." (MsgProx80)
 void Prox_GiveThanksForBeacon(void) {
   s32 t144;
   s32 t159;
@@ -1652,8 +1635,6 @@ extern u32 gData_02006088[];
 extern u32 gData_020060fc[];
 extern u32 gData_02006268[];
 
-/// ★ Named from the game: "What took you so long? Mom and Dad are tired of
-/// waiting for you..." (MsgProx153)
 void Prox_SayFarewell(void) {
   u32 i;
 

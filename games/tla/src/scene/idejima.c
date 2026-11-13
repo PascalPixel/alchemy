@@ -63,19 +63,12 @@ enum IdejimaEntrance { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
 /// The scene's placed actors, numbering the rows of gIdejimaPlacements; its
 /// rows of Jenna's and Sheba's sprites place ACTOR_JENNA and ACTOR_SHEBA.
 enum IdejimaActorId {
-  /// ★ Named from the game: "Kraden has joined your party." (MsgIdejimaGroan)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   /// Menardi's ship, beached at the tip of the peninsula.
-  /// ★ Named from the game: "Hm... Menardi said a ship would be here..."
-  /// (MsgIdejimaIsThisThePlace)
   ACTOR_SHIP,
-  /// ★ Named from the game: "By the way... Where has Alex gone?"
-  /// (MsgIdejimaWhereHasAlexGone)
   ACTOR_ALEX,
   /// An actor with no picture that speaks the lines no one says, above Felix
   /// as he wakes.
-  /// ★ Named from the game: "Do you want to check yourself for injuries?"
-  /// (MsgIdejimaCheckForInjuries)
   ACTOR_NARRATOR
 };
 
@@ -166,7 +159,6 @@ void Idejima_GetUp(s32 id) {
 
 /// Felix looks at the sleeping Kraden, who groans awake, marvels that the wave
 /// carried them to the continent and joins the party.
-/// ★ Named from the game: "Oooog..." (MsgIdejimaGroan)
 void Idejima_WakeKraden(void) {
   s32 message;
   struct Actor *actor;
@@ -225,8 +217,6 @@ void Idejima_WakeKraden(void) {
 
 /// Felix looks at the sleeping Jenna, who wakes, asks whether he has checked on
 /// the others and joins the party.
-/// ★ Named from the game: "What am I doing down here?"
-/// (MsgIdejimaAwakeningExclamation)
 void Idejima_WakeJenna(void) {
   struct Actor *actor;
   struct Actor *leader;
@@ -289,8 +279,6 @@ void Idejima_WakeJenna(void) {
 
 /// Felix looks at the sleeping Sheba, who wakes, wonders where they are and
 /// joins the party.
-/// ★ Named from the game: "What happened to the tidal wave?"
-/// (MsgIdejimaSecondGroan)
 void Idejima_WakeSheba(void) {
   struct Actor *leader;
 
@@ -362,8 +350,6 @@ void Idejima_WalkLeaderBack(void) {
 
 /// Felix heading off the shore without the others: each one still asleep wakes
 /// in turn, runs after him, scolds him for leaving them and joins the party.
-/// ★ Named from the game: "You weren't planning on leaving me, were you?"
-/// (MsgIdejimaHeyFelix)
 void Idejima_CatchUpWithFelix(void) {
   struct Actor *leader;
 
@@ -536,8 +522,6 @@ void Idejima_CatchUpWithFelix(void) {
 
 /// With all four together, the party wonders where Alex has gone, decides he
 /// has set out to find a ship, and goes after him.
-/// ★ Named from the game: "By the way... Where has Alex gone?"
-/// (MsgIdejimaWhereHasAlexGone)
 void Idejima_RunAlexDeparture(void) {
   const u8 *script;
 
@@ -815,8 +799,6 @@ void DriftScene_Prepare(void) {
 /// Jenna and Kraden reach Idejima and find Menardi's ship, which cannot sail
 /// without the orb that moved it. Alex joins them, the beacon is lit and the
 /// tremor tears Idejima away from Gondowan.
-/// ★ Named from the game: "Idejima... It's drifting away from the mainland!"
-/// (MsgIdejimaIsThisThePlace)
 void Idejima_BreakAwayFromGondowan(void) {
   /* FAKEMATCH(temporary): the facing in a local set before its first use, which
    * the native keeps in r10 for the later arms; as the constant, 2 of 829
@@ -1029,8 +1011,6 @@ void Idejima_BreakAwayFromGondowan(void) {
 
 /// Adrift, Alex leads Jenna and Kraden to Felix and Sheba, washed up on the
 /// island.
-/// ★ Named from the game: "They're really alive!"
-/// (MsgIdejimaHowLongWillWeDrift)
 void Idejima_FindFelixAndSheba(void) {
   struct Actor *actor = Actor_Get(ACTOR_JENNA);
 
@@ -1139,8 +1119,6 @@ void Idejima_FindFelixAndSheba(void) {
 
 /// Sheba wakes and tells what happened at the lighthouse, a new continent comes
 /// in sight, and a tidal wave sweeps the island towards it.
-/// ★ Named from the game: "It's...a tidal wave."
-/// (MsgIdejimaThoughtTheyWereInsideLighthouse)
 void Idejima_RideTheTidalWave(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 a3000, aD000, a4000, a8000;
@@ -1396,8 +1374,6 @@ wait:
 
 /// Felix wakes on the shore, a step at each button, and is asked whether he
 /// wants to check himself for injuries.
-/// ★ Named from the game: "Do you want to check yourself for injuries?"
-/// (MsgIdejimaCheckForInjuries)
 void Idejima_FelixWakes(void) {
   s32 answer;
   s32 leader;

@@ -361,7 +361,6 @@ step:
   FieldEvent_SetExitRequest(20);
 }
 
-/// ★ Named from the game: " checked the ice." (MsgCheckedTheIce)
 void MarsLighthouseEntrance_CheckIce(void) {
   FieldMessage_Show((s32)MsgCheckedTheIce, 1);
   FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);

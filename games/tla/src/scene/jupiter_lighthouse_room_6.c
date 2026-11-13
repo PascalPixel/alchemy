@@ -61,7 +61,6 @@
 
 /// The pillar the party pushes onto the button by the door, after the four
 /// angel statues in gActorPlacements.
-/// ★ Named from what the player sees: a grey stone pillar (spr_312.png)
 enum { ACTOR_SHORTCUT_PILLAR = ACTOR_FIRST_PLACED + 4 };
 
 void JupiterLighthouse_OpenDoor(s32 value);

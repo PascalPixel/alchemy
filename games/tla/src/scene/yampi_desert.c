@@ -384,8 +384,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gYampiDesert_Triggers;
 }
 
-/// ★ Named from the game: "We followed the pirates here from Madra... Are you
-/// going to Alhafra, too?" (MsgWeFollowedThe)
 void YampiDesert_TalkToTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -408,8 +406,6 @@ void YampiDesert_ElderRefusesToQuit(void) {
   Event_ShowMessageAndWait(13, 0);
 }
 
-/// ★ Named from the game: "As you can see, the elder is quite insistent on
-/// finding a way through." (MsgAsYouCan)
 void YampiDesert_TalkToElderAboutWay(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -422,8 +418,6 @@ void YampiDesert_TalkToElderAboutWay(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "This is where my son must prove himself as mayor..."
-/// (MsgThisIsWhere)
 void YampiDesert_TalkToElder(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -436,8 +430,6 @@ void YampiDesert_TalkToElder(void) {
   Event_End();
 }
 
-/// ★ Named from the game: "North: Alhafra South: Air's Rock Warning: Beyond
-/// this point, there is no route back." (MsgNorthAlhafraSouth)
 void YampiDesert_ReadSignpost(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1087,7 +1079,6 @@ extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
 #define gYampiDesert_TravelersFollow gYampiDesert_TravelersFollow__yampi_desert
 extern u32 gYampiDesert_LastTravelersFollow[];
 
-// ★ Named from the game: "Hey! Look! Up there!" (MsgHeyLookUp)
 void YampiDesert_SeeTravelersAbove(s32 p0) {
   s32 *owner;
   s32 angle;
@@ -1253,7 +1244,6 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
 
 // The Scoop Gem (item 209's icon) as an actor, after the King Scorpion's
 // battle (flag 0x88c).
-// ★ Named from the game: "Scoop Gem" (item 209's name)
 struct Actor *YampiDesert_CreateScoopGem(void) {
   struct Actor *object =
       Import_ActorCreate(489, 232 << 16, 32 << 16, 200 << 16);

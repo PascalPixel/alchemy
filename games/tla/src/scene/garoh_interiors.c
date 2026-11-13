@@ -34,41 +34,21 @@
 enum GarohInnActorId {
   /// The father of the young werewolf who led the party to Maha. His event is
   /// GarohInteriors_AskWhatTheWanderersSeek.
-  /// ★ Named from the game: "Thanks for looking out for our son last night!"
-  /// (MsgGarohInteriors35)
   ACTOR_PUPS_FATHER = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Our oldest son is always scampering off late at
-  /// night... Where is he?" (MsgGarohInteriors02)
   ACTOR_PUPS_MOTHER,
-  /// ★ Named from the game: "No fair! My brother always gets to go out late!"
-  /// (MsgGarohInteriors03)
   ACTOR_PUPS_BROTHER,
   /// A werewolf who climbed Air's Rock for Maha's powers and did not gain
   /// them. His event is GarohInteriors_AskAboutReveal.
-  /// ★ Named from the game: "I thought I could become a leader if I learned
-  /// Reveal. How foolish of me." (MsgGarohInteriors50)
   ACTOR_REVEAL_SEEKER,
-  /// ★ Named from the game: "My mate is close to obtaining the power he's
-  /// been seeking..." (MsgGarohInteriors14)
   ACTOR_REVEAL_SEEKERS_MATE,
-  /// ★ Named from the game: "I'll bet these weapons suit you better than any
-  /// fangs would!" (MsgGarohInteriors52)
   ACTOR_WEAPON_MERCHANT,
-  /// ★ Named from the game: "But when you're human, armor always comes in
-  /// handy." (MsgGarohInteriors54)
   ACTOR_ARMOR_MERCHANT,
   ACTOR_INNKEEPER, ///< GarohInteriors_TalkToInnkeeper checks the party in
   /// The one who greets the party the morning after.
-  /// ★ Named from the game: "You folks didn't sleep much last night..."
-  /// (MsgGarohInteriors34)
   ACTOR_INN_ATTENDANT,
   /// A traveler who climbed Air's Rock and found nothing, asleep at night.
-  /// ★ Named from the game: "...Climbed all over that stupid rock, and for
-  /// what? Nothing!" (MsgGarohInteriors29)
   ACTOR_DISAPPOINTED_TRAVELER,
   /// His companion, still puzzling over the rock that would not spin.
-  /// ★ Named from the game: "Maybe we should stay and try climbing Air's Rock
-  /// one more time." (MsgGarohInteriors61)
   ACTOR_STUBBORN_TRAVELER,
   /// Placed beside the two travelers at night and taken away in the morning;
   /// talking to them wakes the travelers.
@@ -81,17 +61,9 @@ enum GarohInnActorId {
 /// The item merchant's house's actors, numbering the rows of
 /// gGarohInteriors_HouseActorPlacements.
 enum GarohHouseActorId {
-  /// ★ Named from the game: "Garoh exists to protect Air's Rock."
-  /// (MsgGarohInteriors07)
   ACTOR_AIRS_ROCK_GUARDIAN = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "So you've heard of Whirlwind? Most people
-  /// haven't..." (MsgGarohInteriors08)
   ACTOR_WHIRLWIND_TALKER,
-  /// ★ Named from the game: "I've heard about the Wind Stone..."
-  /// (MsgGarohInteriors09)
   ACTOR_WIND_STONE_TALKER,
-  /// ★ Named from the game: "I never change my stock, unlike the weapons and
-  /// armor shopkeeps..." (MsgGarohInteriors22)
   ACTOR_ITEM_MERCHANT
 };
 

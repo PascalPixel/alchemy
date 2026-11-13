@@ -433,7 +433,6 @@ DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
        ->v)
 
 /// A step at a stage's foot asks; giving up takes the party back to the start.
-/// ★ Named from the game: "Do you want to give up?" (MsgTrialRoadGiveUpPrompt)
 s32 TrialRoad_OfferToGiveUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -548,8 +547,6 @@ struct EventWork15a__s0218 {
   u16 value;
 };
 
-/// ★ Named from the game: "Place this item in the chest?"
-/// (MsgTrialRoadPlaceItemPrompt)
 void TrialRoad_ExamineChest(s32 id) {
   s32 flag;
 
@@ -2226,8 +2223,6 @@ void TrialRoad_PlaceMoapaAtPeak(void) {
 
 void Actor_MoveToObject(s32 actor, s32 value);
 
-// ★ Named from the game: "You were quite swift! You may prove a challenge
-// yet!" (MsgTrialRoadSwiftChallenge)
 void TrialRoad_ReachPeakFirst(void) {
   struct Actor *object;
 
@@ -2336,8 +2331,6 @@ void TrialRoad_ReachPeakFirst(void) {
   Event_Wait(6);
 }
 
-// ★ Named from the game: "You may have been slow, but you made it through
-// Trial Road to the mountain's peak!" (MsgTrialRoadSlowArrival)
 void TrialRoad_ReachPeakSecond(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2398,8 +2391,6 @@ void TrialRoad_ReachPeakSecond(void) {
 
 void PartyInventory_Discard(s32 cue);
 
-// ★ Named from the game: "All right, all right. You've proven your strength,
-// and you are heroes indeed." (MsgTrialRoadHeroesProven)
 void TrialRoad_BeatMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2488,8 +2479,6 @@ void TrialRoad_BeatMoapa(void) {
   wait(30);
 }
 
-// ★ Named from the game: "You've lost. Now leave Shaman village."
-// (MsgTrialRoadLeaveVillage)
 void TrialRoad_LoseToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2529,8 +2518,6 @@ void TrialRoad_LoseToMoapa(void) {
 
 extern u32 gTrialRoad_LeftKnightLeavesScript[];
 
-// ★ Named from the game: "The room is filled with traps and snares. Use the
-// power of Contigo to avoid them." (MsgTrialRoadTrapInstructions)
 void TrialRoad_ShowTraps(void) {
   s32 i;
 

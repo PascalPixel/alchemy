@@ -54,14 +54,9 @@ extern s32 gAlhafranCave_ClearedWord;
 
 /// The jail's people, numbering the rows of gAlhafranCave_JailActorPlacements.
 enum AlhafraJailActorId {
-  /// ★ Named from the game: "Chaucha... It's good to see you." (MsgYouHereTo)
   ACTOR_BRIGGS = ACTOR_FIRST_PLACED + 10,
-  /// ★ Named from the game: "And you, too, Eoleo." (MsgYouHereTo)
   ACTOR_EOLEO = ACTOR_FIRST_PLACED + 13,
-  /// ★ Named from the game: "I'm fine, Chaucha." (MsgYouHereTo)
   ACTOR_CHAUCHA,
-  /// ★ Named from the game: "Did the mean old guard frighten you?"
-  /// (MsgYouHereTo)
   ACTOR_JAILER = ACTOR_FIRST_PLACED + 16
 };
 

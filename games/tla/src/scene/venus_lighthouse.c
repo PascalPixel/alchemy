@@ -639,8 +639,6 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetPosition(4, 0, 0);
 }
 
-// ★ Named from the game: "Are you sure we should be leaving like this?"
-// (MsgVenusLighthouseAreYouSureWeShouldBeLeaving)
 void VenusLighthouse_DoubtLeaving(void) {
   struct VenusActor *actor;
   struct EventWork *work;

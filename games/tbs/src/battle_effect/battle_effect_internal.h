@@ -55,6 +55,7 @@
 #include "battle_action.h"
 #include "sprite.h"
 #include "battle_unit.h"
+#include "battle_side.h"
 #include "fixed_point_position.h"
 #include "irq.h"
 #include "module/battle_effect/blitter_operands.h"

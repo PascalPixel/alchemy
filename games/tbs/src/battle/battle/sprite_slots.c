@@ -11,7 +11,7 @@
 /// the auto battle and BattleAbility_ApplyToTarget after a call for help, and
 /// through the far stub BattleObject_PutFar by BattleEffect_RunParticleStreams.
 void BattleObject_Put(void) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
 
   BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   BattleObject_SpawnObjectsForList(unitIds, 1);
@@ -21,7 +21,7 @@ void BattleObject_Put(void) {
 /// that left), keeping their modes and motions. Called by
 /// BattleStaging_RunAttack.
 void BattleUnit_ListAllAndSubmit(void) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
 
   BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   BattleObject_SpawnObjectsForList(unitIds, 0);

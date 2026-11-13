@@ -122,11 +122,11 @@ struct BattleWork {
   s16 partyUnits[7];                       ///< ends with BATTLE_UNIT_LIST_END
   s16 enemyIds[BATTLE_ENEMY_CAPACITY + 1]; ///< ends with BATTLE_UNIT_LIST_END
   /// The units' battle objects, reached through placement (BattleObject_Get).
-  struct BattleObject objects[14];
+  struct BattleObject objects[UNIT_MAX];
   /// Each unit's index in slots, indexed by party unit id (0 to 7), or 8 + n
   /// for enemy unit FIRST_ENEMY_UNIT + n: a party unit's place in the active
   /// party, an enemy's own 8 + n; 0xff for a party unit with no battle object.
-  u8 objectIndex[14];
+  u8 objectIndex[UNIT_MAX];
   u8 unusedAfterPlacement[2]; ///< no code names it
   /// The actions chosen for the turn.
   struct BattleAction actions[BATTLE_ACTION_CAPACITY];

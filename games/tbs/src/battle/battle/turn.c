@@ -115,7 +115,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
 /// Called by Battle_GatherActions as each turn begins. Clears
 /// every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 count;
   s32 unitIndex;
 
@@ -140,7 +140,7 @@ void BattleUnit_ResetGuardLevels(void) {
 s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
   u8 *failedAttempts;
-  s16 livingUnits[14];
+  s16 livingUnits[UNIT_MAX];
   s32 livingCount;
   s32 levelTotal;
   s32 unitIndex;
@@ -242,7 +242,7 @@ s32 Battle_BuildPartyActions(struct BattleAction *entries) {
 /// actions there are. Called by Battle_GatherActions outside a
 /// link battle. Fills entries.
 s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
   struct BattleWork *battle = gBattleWork;
   s32 unitCount;

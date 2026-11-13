@@ -187,25 +187,25 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 /// as they open. Spawns the
 /// actors through BattleObject_SpawnObjectsForListFar.
 void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 count;
   s32 i;
 
   count = 0;
   if (args->targets[0] >= FIRST_ENEMY_UNIT) {
-    for (i = 0; i != 6; i++) {
-      s32 id = i + 128;
+    for (i = 0; i != BATTLE_ENEMY_CAPACITY; i++) {
+      s32 id = i + FIRST_ENEMY_UNIT;
 
       if (Unit_GetFar(id)->hp > 0)
         list[count++] = id;
     }
   } else {
-    for (i = 0; i != 8; i++) {
+    for (i = 0; i != PARTY_UNIT_COUNT; i++) {
       if (Unit_GetFar(i)->hp > 0)
         list[count++] = i;
     }
   }
-  list[count] = 0xff; // the end of the list
+  list[count] = BATTLE_UNIT_LIST_END;
   BattleObject_SpawnObjectsForListFar(list, 0);
 }
 

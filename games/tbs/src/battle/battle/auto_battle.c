@@ -13,7 +13,7 @@
 /// FLAG_AUTO_BATTLE; fills entries.
 s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   struct BattleAction swap;
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 partyCount;
   s32 count = 0;
   s32 enemyCount;
@@ -159,7 +159,7 @@ s32 BattleObject_IsValidId(u32 unitId) {
 /// living party member running off in turn. Returns 1 when they got away; else
 /// shows MsgCannotEscape and returns 0. Called by AutoBattle_RunAction.
 s32 BattleFlee_PlayRun(struct BattleAction *action) {
-  s16 partyMembers[14];
+  s16 partyMembers[UNIT_MAX];
   s32 partySize;
   s32 animated;
   s32 memberSlot;
@@ -216,7 +216,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
 /// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
 /// battle objects readied again.
 s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
-  u16 visibleUnits[14];
+  u16 visibleUnits[UNIT_MAX];
   struct BattleStagingWork context;
   s32 unitId;
   s32 targetId;
@@ -557,7 +557,7 @@ void BattleMotion_PlayFall(s32 unitId) {
 /// the target is down; TARGET_SIDE_DEFEATED when none is left. Called by
 /// AutoBattle_RunAction.
 s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action) {
-  u16 livingUnits[14];
+  u16 livingUnits[UNIT_MAX];
   s32 targetId;
   s32 livingCount;
 

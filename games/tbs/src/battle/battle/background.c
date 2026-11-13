@@ -574,7 +574,7 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
 /// Makes every unit's sprites semi-transparent but selectedUnitId's, which are
 /// left as they are; nothing calls it.
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
@@ -588,7 +588,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
 /// Returns every unit's sprites to SPRITE_OPAQUE; called by
 /// BattleHighlight_SetModes when the highlight stops.
 void BattleHighlight_ClearAllSpriteModes(void) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
@@ -633,7 +633,7 @@ void BattleBackground_StepHighlightBlend(void) {
 /// selection.c), and with 0 when either is done. Sets BattleWork.highlightMode
 /// and highlightStep, and adds or removes the task.
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
   struct BattleWork *battle = gBattleWork;
   u32 unitCount;
   u32 unitIndex;

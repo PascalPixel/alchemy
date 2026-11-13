@@ -384,7 +384,7 @@ s32 Battle_ProcessTurnEnd(void) {
   {
     s32 *groupList;
     struct BattleSideOrder order = gBattleParty_TurnEndSideOrder;
-    u16 unitIds[14];
+    u16 unitIds[UNIT_MAX];
     s32 group;
     s32 unitIndex;
 

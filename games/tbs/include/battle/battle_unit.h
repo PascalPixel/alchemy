@@ -237,6 +237,13 @@ enum AbilityUse {
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
 
+/// Party unit ids run from 0 to 7, one for each character who can join.
+#define PARTY_UNIT_COUNT 8
+
+/// The most units in a battle, the eight party units and up to six enemies:
+/// the length of a unit list such as BattleUnit_ListIds fills.
+#define UNIT_MAX 14
+
 /// A full HP or PP gauge (Unit.hpGauge, Unit.ppGauge): the gauge is the
 /// current value over the maximum in 2.14 fixed point, as Unit_Calculate
 /// multiplies a maximum by it and divides by this, and the cap

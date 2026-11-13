@@ -5,8 +5,6 @@
 
 #include "../battle_internal.h"
 
-#define UNIT_MAX 14 ///< the party's and the enemies' units together
-
 /// Runs each frame of a battle: advances every unit's status icon, gives an
 /// airborne unit's shadow (SPRITE_BATTLE_SHADOW) priority
 /// 9 and a grounded one's 0, and draws whichever side is nearer the camera in

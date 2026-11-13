@@ -344,7 +344,7 @@ void BattlePlacement_RelayoutEnemies(void) {
 s32 BattlePlacement_RelayoutEnemies(void) {
 #endif
   struct BattleWork *battle = gBattleWork;
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 xPositions[6];
   s32 zPositions[6];
   s32 enemyCount;
@@ -374,7 +374,7 @@ s32 BattlePlacement_RelayoutEnemies(void) {
 /// filled. Writes gBattleWork->placement and every unit's battle object.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 xPositions[6];
   s32 zPositions[6];
   s32 count;

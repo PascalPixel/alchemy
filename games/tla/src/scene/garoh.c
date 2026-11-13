@@ -94,10 +94,12 @@ void Func_020002a4(void) {
   }
 }
 
-/* VIEW(first): routine gData_020054ee as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020054ee as this part declared it; the joined file
+ * has another. */
 extern const u16 gData_020054ee__first[] __asm__("gData_020054ee");
 #define gData_020054ee gData_020054ee__first
-/* VIEW(first): routine gData_020054b8 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020054b8 as this part declared it; the joined file
+ * has another. */
 extern const u16 gData_020054b8__first[] __asm__("gData_020054b8");
 #define gData_020054b8 gData_020054b8__first
 
@@ -153,27 +155,35 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "main_routine_work.h"
 
-/* VIEW(first): routine gData_020056dc as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020056dc as this part declared it; the joined file
+ * has another. */
 extern u32 gData_020056dc__first[] __asm__("gData_020056dc");
 #define gData_020056dc gData_020056dc__first
-/* VIEW(first): routine gData_020056f4 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020056f4 as this part declared it; the joined file
+ * has another. */
 extern u32 gData_020056f4__first[] __asm__("gData_020056f4");
 #define gData_020056f4 gData_020056f4__first
-/* VIEW(first): routine gData_020059dc as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020059dc as this part declared it; the joined file
+ * has another. */
 extern u32 gData_020059dc__first[] __asm__("gData_020059dc");
 #define gData_020059dc gData_020059dc__first
-/* VIEW(first): routine gData_02005a54 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005a54 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_02005a54__first[] __asm__("gData_02005a54");
 #define gData_02005a54 gData_02005a54__first
-/* VIEW(first): routine gData_02005b5c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005b5c as this part declared it; the joined file
+ * has another. */
 extern u32 gData_02005b5c__first[] __asm__("gData_02005b5c");
 #define gData_02005b5c gData_02005b5c__first
-/* VIEW(first): routine gData_02005c1c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005c1c as this part declared it; the joined file
+ * has another. */
 extern s32 gData_02005c1c__first[] __asm__("gData_02005c1c");
 #define gData_02005c1c gData_02005c1c__first
 
-/* VIEW(first): routine gData_02005de0 as this part declared it; the joined file has another. */
-extern const struct GarohPicture gData_02005de0__first[] __asm__("gData_02005de0");
+/* VIEW(first): routine gData_02005de0 as this part declared it; the joined file
+ * has another. */
+extern const struct GarohPicture
+    gData_02005de0__first[] __asm__("gData_02005de0");
 #define gData_02005de0 gData_02005de0__first
 
 /// Return the table for the current room.
@@ -415,26 +425,33 @@ void Func_02000808(void) {
   }
 }
 
-/* VIEW(first): routine gData_02005e10 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005e10 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_02005e10__first[] __asm__("gData_02005e10");
 #define gData_02005e10 gData_02005e10__first
-/* VIEW(first): routine gData_02005e34 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005e34 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_02005e34__first[] __asm__("gData_02005e34");
 #define gData_02005e34 gData_02005e34__first
-/* VIEW(first): routine gData_02005f78 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005f78 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_02005f78__first[] __asm__("gData_02005f78");
 #define gData_02005f78 gData_02005f78__first
-/* VIEW(first): routine gData_020060d4 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020060d4 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_020060d4__first[] __asm__("gData_020060d4");
 #define gData_020060d4 gData_020060d4__first
-/* VIEW(first): routine gData_020061d0 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020061d0 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_020061d0__first[] __asm__("gData_020061d0");
 #define gData_020061d0 gData_020061d0__first
-/* VIEW(first): routine gData_02006278 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02006278 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_02006278__first[] __asm__("gData_02006278");
 #define gData_02006278 gData_02006278__first
 
-/* VIEW(first): routine gData_0200632c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200632c as this part declared it; the joined file
+ * has another. */
 extern s32 gData_0200632c__first __asm__("gData_0200632c");
 #define gData_0200632c gData_0200632c__first
 
@@ -604,7 +621,8 @@ L_02008da6:
 L_02008dea:
 }
 
-/* VIEW(first): routine gData_02005450 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005450 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02005450__first[] __asm__("gData_02005450");
 #define gData_02005450 gData_02005450__first
 
@@ -3092,22 +3110,28 @@ L_0200d0fa:;
 
 #include "objcmd.h"
 
-/* VIEW(push): routine Func_02000420 as this part declared it; the joined file has another. */
+/* VIEW(push): routine Func_02000420 as this part declared it; the joined file
+ * has another. */
 void Func_02000420__push(void) __asm__("Func_02000420");
 #define Func_02000420 Func_02000420__push
-/* VIEW(push): routine Func_02000580 as this part declared it; the joined file has another. */
+/* VIEW(push): routine Func_02000580 as this part declared it; the joined file
+ * has another. */
 void Func_02000580__push(void) __asm__("Func_02000580");
 #define Func_02000580 Func_02000580__push
-/* VIEW(push): routine Func_020005cc as this part declared it; the joined file has another. */
+/* VIEW(push): routine Func_020005cc as this part declared it; the joined file
+ * has another. */
 void Func_020005cc__push(void) __asm__("Func_020005cc");
 #define Func_020005cc Func_020005cc__push
-/* VIEW(push): routine Func_02000618 as this part declared it; the joined file has another. */
+/* VIEW(push): routine Func_02000618 as this part declared it; the joined file
+ * has another. */
 void Func_02000618__push(void) __asm__("Func_02000618");
 #define Func_02000618 Func_02000618__push
-/* VIEW(push): routine Func_02000664 as this part declared it; the joined file has another. */
+/* VIEW(push): routine Func_02000664 as this part declared it; the joined file
+ * has another. */
 void Func_02000664__push(void) __asm__("Func_02000664");
 #define Func_02000664 Func_02000664__push
-/* VIEW(push): routine Func_02000698 as this part declared it; the joined file has another. */
+/* VIEW(push): routine Func_02000698 as this part declared it; the joined file
+ * has another. */
 void Func_02000698__push(void) __asm__("Func_02000698");
 #define Func_02000698 Func_02000698__push
 void Func_020006ec(void);
@@ -3115,7 +3139,8 @@ void Func_02000e58(void);
 void Func_02000e68(void);
 void Func_02000fbc(void);
 void Func_0200101c(void);
-/* VIEW(push): routine Func_0200108c as this part declared it; the joined file has another. */
+/* VIEW(push): routine Func_0200108c as this part declared it; the joined file
+ * has another. */
 void Func_0200108c__push(void) __asm__("Func_0200108c");
 #define Func_0200108c Func_0200108c__push
 

@@ -71,32 +71,49 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "io_reg.h"
 #include "version.h"
 
-/* VIEW(first): routine gSettlements_Placements as this part declared it; the joined file has another. */
+/* VIEW(first): routine gSettlements_Placements as this part declared it; the
+ * joined file has another. */
 extern u8 gSettlements_Placements__first[] __asm__("gSettlements_Placements");
 #define gSettlements_Placements gSettlements_Placements__first
-/* VIEW(first): routine gSettlements_Room1Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room1Placements__first[] __asm__("gSettlements_Room1Placements");
+/* VIEW(first): routine gSettlements_Room1Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room1Placements__first[] __asm__(
+    "gSettlements_Room1Placements");
 #define gSettlements_Room1Placements gSettlements_Room1Placements__first
-/* VIEW(first): routine gSettlements_Room2Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room2Placements__first[] __asm__("gSettlements_Room2Placements");
+/* VIEW(first): routine gSettlements_Room2Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room2Placements__first[] __asm__(
+    "gSettlements_Room2Placements");
 #define gSettlements_Room2Placements gSettlements_Room2Placements__first
-/* VIEW(first): routine gSettlements_Room4Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room4Placements__first[] __asm__("gSettlements_Room4Placements");
+/* VIEW(first): routine gSettlements_Room4Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room4Placements__first[] __asm__(
+    "gSettlements_Room4Placements");
 #define gSettlements_Room4Placements gSettlements_Room4Placements__first
-/* VIEW(first): routine gSettlements_Room5Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room5Placements__first[] __asm__("gSettlements_Room5Placements");
+/* VIEW(first): routine gSettlements_Room5Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room5Placements__first[] __asm__(
+    "gSettlements_Room5Placements");
 #define gSettlements_Room5Placements gSettlements_Room5Placements__first
-/* VIEW(first): routine gSettlements_Room9Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room9Placements__first[] __asm__("gSettlements_Room9Placements");
+/* VIEW(first): routine gSettlements_Room9Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room9Placements__first[] __asm__(
+    "gSettlements_Room9Placements");
 #define gSettlements_Room9Placements gSettlements_Room9Placements__first
-/* VIEW(first): routine gSettlements_Room10Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room10Placements__first[] __asm__("gSettlements_Room10Placements");
+/* VIEW(first): routine gSettlements_Room10Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room10Placements__first[] __asm__(
+    "gSettlements_Room10Placements");
 #define gSettlements_Room10Placements gSettlements_Room10Placements__first
-/* VIEW(first): routine gSettlements_Room7Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room7Placements__first[] __asm__("gSettlements_Room7Placements");
+/* VIEW(first): routine gSettlements_Room7Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room7Placements__first[] __asm__(
+    "gSettlements_Room7Placements");
 #define gSettlements_Room7Placements gSettlements_Room7Placements__first
-/* VIEW(first): routine gSettlements_Room8Placements as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room8Placements__first[] __asm__("gSettlements_Room8Placements");
+/* VIEW(first): routine gSettlements_Room8Placements as this part declared it;
+ * the joined file has another. */
+extern u8 gSettlements_Room8Placements__first[] __asm__(
+    "gSettlements_Room8Placements");
 #define gSettlements_Room8Placements gSettlements_Room8Placements__first
 
 u8 *Scene_GetPlacements(void) {
@@ -217,32 +234,49 @@ void Settlements_GrowVine(void) {
   Event_SetFlag(0x230);
 }
 
-/* VIEW(first): routine gSettlements_Triggers as this part declared it; the joined file has another. */
+/* VIEW(first): routine gSettlements_Triggers as this part declared it; the
+ * joined file has another. */
 extern u8 gSettlements_Triggers__first[] __asm__("gSettlements_Triggers");
 #define gSettlements_Triggers gSettlements_Triggers__first
-/* VIEW(first): routine gSettlements_Room1Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room1Triggers__first[] __asm__("gSettlements_Room1Triggers");
+/* VIEW(first): routine gSettlements_Room1Triggers as this part declared it; the
+ * joined file has another. */
+extern u8
+    gSettlements_Room1Triggers__first[] __asm__("gSettlements_Room1Triggers");
 #define gSettlements_Room1Triggers gSettlements_Room1Triggers__first
-/* VIEW(first): routine gSettlements_Room2Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room2Triggers__first[] __asm__("gSettlements_Room2Triggers");
+/* VIEW(first): routine gSettlements_Room2Triggers as this part declared it; the
+ * joined file has another. */
+extern u8
+    gSettlements_Room2Triggers__first[] __asm__("gSettlements_Room2Triggers");
 #define gSettlements_Room2Triggers gSettlements_Room2Triggers__first
-/* VIEW(first): routine gSettlements_Room4Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room4Triggers__first[] __asm__("gSettlements_Room4Triggers");
+/* VIEW(first): routine gSettlements_Room4Triggers as this part declared it; the
+ * joined file has another. */
+extern u8
+    gSettlements_Room4Triggers__first[] __asm__("gSettlements_Room4Triggers");
 #define gSettlements_Room4Triggers gSettlements_Room4Triggers__first
-/* VIEW(first): routine gSettlements_Room5Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room5Triggers__first[] __asm__("gSettlements_Room5Triggers");
+/* VIEW(first): routine gSettlements_Room5Triggers as this part declared it; the
+ * joined file has another. */
+extern u8
+    gSettlements_Room5Triggers__first[] __asm__("gSettlements_Room5Triggers");
 #define gSettlements_Room5Triggers gSettlements_Room5Triggers__first
-/* VIEW(first): routine gSettlements_Room7Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room7Triggers__first[] __asm__("gSettlements_Room7Triggers");
+/* VIEW(first): routine gSettlements_Room7Triggers as this part declared it; the
+ * joined file has another. */
+extern u8
+    gSettlements_Room7Triggers__first[] __asm__("gSettlements_Room7Triggers");
 #define gSettlements_Room7Triggers gSettlements_Room7Triggers__first
-/* VIEW(first): routine gSettlements_Room8Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room8Triggers__first[] __asm__("gSettlements_Room8Triggers");
+/* VIEW(first): routine gSettlements_Room8Triggers as this part declared it; the
+ * joined file has another. */
+extern u8
+    gSettlements_Room8Triggers__first[] __asm__("gSettlements_Room8Triggers");
 #define gSettlements_Room8Triggers gSettlements_Room8Triggers__first
-/* VIEW(first): routine gSettlements_Room9Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room9Triggers__first[] __asm__("gSettlements_Room9Triggers");
+/* VIEW(first): routine gSettlements_Room9Triggers as this part declared it; the
+ * joined file has another. */
+extern u8
+    gSettlements_Room9Triggers__first[] __asm__("gSettlements_Room9Triggers");
 #define gSettlements_Room9Triggers gSettlements_Room9Triggers__first
-/* VIEW(first): routine gSettlements_Room10Triggers as this part declared it; the joined file has another. */
-extern u8 gSettlements_Room10Triggers__first[] __asm__("gSettlements_Room10Triggers");
+/* VIEW(first): routine gSettlements_Room10Triggers as this part declared it;
+ * the joined file has another. */
+extern u8
+    gSettlements_Room10Triggers__first[] __asm__("gSettlements_Room10Triggers");
 #define gSettlements_Room10Triggers gSettlements_Room10Triggers__first
 
 u8 *Scene_GetEvents(void) {
@@ -387,8 +421,10 @@ void Settlements_SetUpKaltIsland(void) {
   actor->state = 0;
 }
 
-/* VIEW(first): routine gSettlements_WallCrate as this part declared it; the joined file has another. */
-extern const u8 gSettlements_WallCrate__first[] __asm__("gSettlements_WallCrate");
+/* VIEW(first): routine gSettlements_WallCrate as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gSettlements_WallCrate__first[] __asm__("gSettlements_WallCrate");
 #define gSettlements_WallCrate gSettlements_WallCrate__first
 
 void Settlements_StartWaterfall(void);
@@ -515,8 +551,10 @@ void Settlements_LashRope(void) {
   Event_SetFlag(0x203);
 }
 
-/* VIEW(first): routine gSettlements_WaterColorFrame as this part declared it; the joined file has another. */
-extern s32 gSettlements_WaterColorFrame__first __asm__("gSettlements_WaterColorFrame");
+/* VIEW(first): routine gSettlements_WaterColorFrame as this part declared it;
+ * the joined file has another. */
+extern s32
+    gSettlements_WaterColorFrame__first __asm__("gSettlements_WaterColorFrame");
 #define gSettlements_WaterColorFrame gSettlements_WaterColorFrame__first
 
 void Settlements_CycleWaterColors(void) {
@@ -751,8 +789,10 @@ void Settlements_UnblockCrate(void) {
   }
 }
 
-/* VIEW(first): routine gSettlements_CrateDropScript as this part declared it; the joined file has another. */
-extern const u8 gSettlements_CrateDropScript__first[] __asm__("gSettlements_CrateDropScript");
+/* VIEW(first): routine gSettlements_CrateDropScript as this part declared it;
+ * the joined file has another. */
+extern const u8 gSettlements_CrateDropScript__first[] __asm__(
+    "gSettlements_CrateDropScript");
 #define gSettlements_CrateDropScript gSettlements_CrateDropScript__first
 
 #define SINK(frames)                                                           \
@@ -821,8 +861,10 @@ void Settlements_BlockCrate(void) {
   Settlements_DropCrate();
 }
 
-/* VIEW(first): routine gSettlements_SmokeScript as this part declared it; the joined file has another. */
-extern const u8 gSettlements_SmokeScript__first[] __asm__("gSettlements_SmokeScript");
+/* VIEW(first): routine gSettlements_SmokeScript as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gSettlements_SmokeScript__first[] __asm__("gSettlements_SmokeScript");
 #define gSettlements_SmokeScript gSettlements_SmokeScript__first
 
 void Settlements_SplashCrate(s32 id) {
@@ -1601,14 +1643,19 @@ end:
 
 void Settlements_MeetGel(void);
 void Settlements_MeetLostJupiterDjinni(void);
-/* VIEW(s1d30): routine Settlements_ClearSpriteFlags as this part declared it; the joined file has another. */
-void Settlements_ClearSpriteFlags__s1d30(void) __asm__("Settlements_ClearSpriteFlags");
+/* VIEW(s1d30): routine Settlements_ClearSpriteFlags as this part declared it;
+ * the joined file has another. */
+void Settlements_ClearSpriteFlags__s1d30(void) __asm__(
+    "Settlements_ClearSpriteFlags");
 #define Settlements_ClearSpriteFlags Settlements_ClearSpriteFlags__s1d30
-/* VIEW(s1d30): routine Actor_Bob as this part declared it; the joined file has another. */
+/* VIEW(s1d30): routine Actor_Bob as this part declared it; the joined file has
+ * another. */
 void Actor_Bob__s1d30(void) __asm__("Actor_Bob");
 #define Actor_Bob Actor_Bob__s1d30
-/* VIEW(s1d30): routine Settlements_WarnOfRiddleOfRock as this part declared it; the joined file has another. */
-void Settlements_WarnOfRiddleOfRock__s1d30(void) __asm__("Settlements_WarnOfRiddleOfRock");
+/* VIEW(s1d30): routine Settlements_WarnOfRiddleOfRock as this part declared it;
+ * the joined file has another. */
+void Settlements_WarnOfRiddleOfRock__s1d30(void) __asm__(
+    "Settlements_WarnOfRiddleOfRock");
 #define Settlements_WarnOfRiddleOfRock Settlements_WarnOfRiddleOfRock__s1d30
 void Settlements_EnterDoor4(void);
 void Settlements_GrowVine(void);

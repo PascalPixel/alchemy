@@ -51,10 +51,12 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-/* VIEW(first): routine gData_020022e8 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020022e8 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020022e8__first[] __asm__("gData_020022e8");
 #define gData_020022e8 gData_020022e8__first
-/* VIEW(first): routine gData_0200236c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200236c as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_0200236c__first[] __asm__("gData_0200236c");
 #define gData_0200236c gData_0200236c__first
 
@@ -225,15 +227,18 @@ s32 Scene_PrepareMap(void) {
 #include "io_reg.h"
 #include "field_event.h"
 
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it; the joined file has another. */
-extern s32 gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
+/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
+ * the joined file has another. */
+extern s32
+    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined file has another. */
+/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
+ * file has another. */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
 
@@ -260,7 +265,8 @@ DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined file has another. */
+/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
+ * file has another. */
 extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
 #define gWhirlwindEndScript gWhirlwindEndScript__first
 
@@ -325,8 +331,10 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
  * dereferencing pointer to incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
-/* VIEW(s098c): routine Oam_AddSpriteAtDepthClamped as this part declared it; the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__s098c(struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
+/* VIEW(s098c): routine Oam_AddSpriteAtDepthClamped as this part declared it;
+ * the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s098c(
+    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
 #define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__s098c
 
 void LightSprites_Draw(void) {
@@ -454,8 +462,10 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s1094): routine Actor_StartScript as this part declared it; the joined file has another. */
-void Actor_StartScript__s1094(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+/* VIEW(s1094): routine Actor_StartScript as this part declared it; the joined
+ * file has another. */
+void Actor_StartScript__s1094(struct FieldEffect *effect,
+                              const s32 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__s1094
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -545,7 +555,6 @@ DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
 #include "frame.h"
 #include "field_sprite.h"
 #include "scene_tables.h"
-
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);

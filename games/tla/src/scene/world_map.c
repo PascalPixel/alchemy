@@ -200,19 +200,24 @@ s32 Func_020003b4(struct Actor *object) {
   return 0;
 }
 
-/* VIEW(first): routine gData_02006338 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02006338 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02006338__first[] __asm__("gData_02006338");
 #define gData_02006338 gData_02006338__first
-/* VIEW(first): routine gData_02006500 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02006500 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02006500__first[] __asm__("gData_02006500");
 #define gData_02006500 gData_02006500__first
-/* VIEW(first): routine gData_02006598 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02006598 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02006598__first[] __asm__("gData_02006598");
 #define gData_02006598 gData_02006598__first
-/* VIEW(first): routine gData_02006700 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02006700 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02006700__first[] __asm__("gData_02006700");
 #define gData_02006700 gData_02006700__first
-/* VIEW(first): routine gData_02006790 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02006790 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02006790__first[] __asm__("gData_02006790");
 #define gData_02006790 gData_02006790__first
 
@@ -632,7 +637,8 @@ void Func_02000db0(s32 id) { Func_02003654(id, 3, 2); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(first): routine gData_0200632c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200632c as this part declared it; the joined file
+ * has another. */
 extern u8 gData_0200632c__first[] __asm__("gData_0200632c");
 #define gData_0200632c gData_0200632c__first
 
@@ -1449,7 +1455,8 @@ refused:
   Event_ClearFlag(0x171);
 }
 
-/* VIEW(first): routine gData_02006bc8 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02006bc8 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02006bc8__first[] __asm__("gData_02006bc8");
 #define gData_02006bc8 gData_02006bc8__first
 
@@ -2089,7 +2096,8 @@ extern u8 gData_02006e0c[];
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
-/* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file has another. */
+/* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 
@@ -2526,33 +2534,42 @@ u32 gData_02004fc8[] = {
 #include "module/scene/world_map.h"
 
 void Func_02000038(void);
-/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined file has another. */
+/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
+ * file has another. */
 void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
 #define TileSprite_Reset TileSprite_Reset__data
-/* VIEW(data): routine Func_02000388 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000388 as this part declared it; the joined file
+ * has another. */
 void Func_02000388__data(void) __asm__("Func_02000388");
 #define Func_02000388 Func_02000388__data
-/* VIEW(data): routine Func_020003a8 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020003a8 as this part declared it; the joined file
+ * has another. */
 void Func_020003a8__data(void) __asm__("Func_020003a8");
 #define Func_020003a8 Func_020003a8__data
-/* VIEW(data): routine Func_020003b4 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020003b4 as this part declared it; the joined file
+ * has another. */
 void Func_020003b4__data(void) __asm__("Func_020003b4");
 #define Func_020003b4 Func_020003b4__data
 void WorldMap_BoardShip(void);
 void WorldMap_LeaveShip(void);
-/* VIEW(data): routine Func_02000d98 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000d98 as this part declared it; the joined file
+ * has another. */
 void Func_02000d98__data(void) __asm__("Func_02000d98");
 #define Func_02000d98 Func_02000d98__data
-/* VIEW(data): routine Func_02000da4 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000da4 as this part declared it; the joined file
+ * has another. */
 void Func_02000da4__data(void) __asm__("Func_02000da4");
 #define Func_02000da4 Func_02000da4__data
-/* VIEW(data): routine Func_02000db0 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000db0 as this part declared it; the joined file
+ * has another. */
 void Func_02000db0__data(void) __asm__("Func_02000db0");
 #define Func_02000db0 Func_02000db0__data
-/* VIEW(data): routine Func_020035e0 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020035e0 as this part declared it; the joined file
+ * has another. */
 void Func_020035e0__data(void) __asm__("Func_020035e0");
 #define Func_020035e0 Func_020035e0__data
-/* VIEW(data): routine StoryActor_Initialize as this part declared it; the joined file has another. */
+/* VIEW(data): routine StoryActor_Initialize as this part declared it; the
+ * joined file has another. */
 void StoryActor_Initialize__data(void) __asm__("StoryActor_Initialize");
 #define StoryActor_Initialize StoryActor_Initialize__data
 
@@ -2933,8 +2950,8 @@ LATE_DATA u32 gData_02006bc8[] = {
 
 LATE_DATA DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0)
 
-LATE_DATA u32 gData_02006be4[] = {
-    0,
+    LATE_DATA u32 gData_02006be4[] = {
+        0,
 };
 #undef TileSprite_Reset
 #undef Func_02000388

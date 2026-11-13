@@ -90,9 +90,11 @@ void Func_02000328(void) {
 #include "../field/field_effect/move.c"
 
 // ---- from scene/contigo/contigo.c ----
-/* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has another. */
+/* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
+ * another. */
 #define TalkActor TalkActor__contigo
-/* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined file has another. */
+/* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined
+ * file has another. */
 #define ContigoEventWork ContigoEventWork__contigo
 // @file
 // Scene code of overlay 0x694, in ROM order.
@@ -1937,8 +1939,10 @@ void Func_020036f0(void) {
   }
 }
 
-/* VIEW(contigo): routine Palette_SetColors as this part declared it; the joined file has another. */
-void Palette_SetColors__contigo(const u8 *a, const u8 *b, const u8 *c, const u8 *d) __asm__("Palette_SetColors");
+/* VIEW(contigo): routine Palette_SetColors as this part declared it; the joined
+ * file has another. */
+void Palette_SetColors__contigo(const u8 *a, const u8 *b, const u8 *c,
+                                const u8 *d) __asm__("Palette_SetColors");
 #define Palette_SetColors Palette_SetColors__contigo
 void Map_CenterOnFollowedPoint(void);
 

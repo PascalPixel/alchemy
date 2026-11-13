@@ -26,20 +26,29 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gTrialRoad_Placements as this part declared it; the joined file has another. */
+/* VIEW(first): routine gTrialRoad_Placements as this part declared it; the
+ * joined file has another. */
 extern const u8 gTrialRoad_Placements__first[] __asm__("gTrialRoad_Placements");
 #define gTrialRoad_Placements gTrialRoad_Placements__first
-/* VIEW(first): routine gTrialRoad_Room3Placements as this part declared it; the joined file has another. */
-extern const u8 gTrialRoad_Room3Placements__first[] __asm__("gTrialRoad_Room3Placements");
+/* VIEW(first): routine gTrialRoad_Room3Placements as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTrialRoad_Room3Placements__first[] __asm__("gTrialRoad_Room3Placements");
 #define gTrialRoad_Room3Placements gTrialRoad_Room3Placements__first
-/* VIEW(first): routine gTrialRoad_Room4Placements as this part declared it; the joined file has another. */
-extern const u8 gTrialRoad_Room4Placements__first[] __asm__("gTrialRoad_Room4Placements");
+/* VIEW(first): routine gTrialRoad_Room4Placements as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTrialRoad_Room4Placements__first[] __asm__("gTrialRoad_Room4Placements");
 #define gTrialRoad_Room4Placements gTrialRoad_Room4Placements__first
-/* VIEW(first): routine gTrialRoad_Room2Placements as this part declared it; the joined file has another. */
-extern const u8 gTrialRoad_Room2Placements__first[] __asm__("gTrialRoad_Room2Placements");
+/* VIEW(first): routine gTrialRoad_Room2Placements as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTrialRoad_Room2Placements__first[] __asm__("gTrialRoad_Room2Placements");
 #define gTrialRoad_Room2Placements gTrialRoad_Room2Placements__first
-/* VIEW(first): routine gTrialRoad_Room1Placements as this part declared it; the joined file has another. */
-extern const u8 *const gTrialRoad_Room1Placements__first[] __asm__("gTrialRoad_Room1Placements");
+/* VIEW(first): routine gTrialRoad_Room1Placements as this part declared it; the
+ * joined file has another. */
+extern const u8 *const
+    gTrialRoad_Room1Placements__first[] __asm__("gTrialRoad_Room1Placements");
 #define gTrialRoad_Room1Placements gTrialRoad_Room1Placements__first
 
 s32 TrialRoad_SettleOnGround(struct Actor *object) {
@@ -340,8 +349,10 @@ s32 TrialRoad_FollowPillar(struct Actor *object) {
   return 1;
 }
 
-/* VIEW(s0218): routine gTrialRoad_PillarTopScript as this part declared it; the joined file has another. */
-extern const u8 gTrialRoad_PillarTopScript__s0218[] __asm__("gTrialRoad_PillarTopScript");
+/* VIEW(s0218): routine gTrialRoad_PillarTopScript as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTrialRoad_PillarTopScript__s0218[] __asm__("gTrialRoad_PillarTopScript");
 #define gTrialRoad_PillarTopScript gTrialRoad_PillarTopScript__s0218
 
 void TrialRoad_AddPillarTop(s32 id) {
@@ -507,8 +518,10 @@ void TrialRoad_BlowBushOffPoundPillar(void) {
   Event_SetFlag(0x339);
 }
 
-/* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the joined file has another. */
-extern const s8 gTrialRoad_PoundPartners__s0218[4] __asm__("gTrialRoad_PoundPartners");
+/* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the
+ * joined file has another. */
+extern const s8
+    gTrialRoad_PoundPartners__s0218[4] __asm__("gTrialRoad_PoundPartners");
 #define gTrialRoad_PoundPartners gTrialRoad_PoundPartners__s0218
 
 void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
@@ -1127,20 +1140,29 @@ void TrialRoad_SetSummitPillar(s32 a, s32 id) {
 #include "dma.h"
 #include "io_reg.h"
 
-/* VIEW(s15a8): routine gTrialRoad_Triggers as this part declared it; the joined file has another. */
+/* VIEW(s15a8): routine gTrialRoad_Triggers as this part declared it; the joined
+ * file has another. */
 extern const u8 gTrialRoad_Triggers__s15a8[] __asm__("gTrialRoad_Triggers");
 #define gTrialRoad_Triggers gTrialRoad_Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room3Triggers as this part declared it; the joined file has another. */
-extern const u8 gTrialRoad_Room3Triggers__s15a8[] __asm__("gTrialRoad_Room3Triggers");
+/* VIEW(s15a8): routine gTrialRoad_Room3Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTrialRoad_Room3Triggers__s15a8[] __asm__("gTrialRoad_Room3Triggers");
 #define gTrialRoad_Room3Triggers gTrialRoad_Room3Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room4Triggers as this part declared it; the joined file has another. */
-extern const u8 gTrialRoad_Room4Triggers__s15a8[] __asm__("gTrialRoad_Room4Triggers");
+/* VIEW(s15a8): routine gTrialRoad_Room4Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTrialRoad_Room4Triggers__s15a8[] __asm__("gTrialRoad_Room4Triggers");
 #define gTrialRoad_Room4Triggers gTrialRoad_Room4Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room2Triggers as this part declared it; the joined file has another. */
-extern const u8 gTrialRoad_Room2Triggers__s15a8[] __asm__("gTrialRoad_Room2Triggers");
+/* VIEW(s15a8): routine gTrialRoad_Room2Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTrialRoad_Room2Triggers__s15a8[] __asm__("gTrialRoad_Room2Triggers");
 #define gTrialRoad_Room2Triggers gTrialRoad_Room2Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room1Triggers as this part declared it; the joined file has another. */
-extern const u8 *const gTrialRoad_Room1Triggers__s15a8[] __asm__("gTrialRoad_Room1Triggers");
+/* VIEW(s15a8): routine gTrialRoad_Room1Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8 *const
+    gTrialRoad_Room1Triggers__s15a8[] __asm__("gTrialRoad_Room1Triggers");
 #define gTrialRoad_Room1Triggers gTrialRoad_Room1Triggers__s15a8
 
 const u8 *Scene_GetEvents(void) {
@@ -1413,8 +1435,10 @@ void TrialRoad_GaspFlees(void) {
   Event_SetFlag(648);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it; the joined file has another. */
-extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__("gTrialRoad_PaletteCycleRunning");
+/* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it;
+ * the joined file has another. */
+extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
+    "gTrialRoad_PaletteCycleRunning");
 #define gTrialRoad_PaletteCycleRunning gTrialRoad_PaletteCycleRunning__s15a8
 
 // Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
@@ -1441,8 +1465,10 @@ void TrialRoad_SetPaletteCycleRunning(s32 value) {
   gTrialRoad_PaletteCycleRunning = value;
 }
 
-/* VIEW(s15a8): routine gTrialRoad_PaletteCycleFrame as this part declared it; the joined file has another. */
-extern s32 gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
+/* VIEW(s15a8): routine gTrialRoad_PaletteCycleFrame as this part declared it;
+ * the joined file has another. */
+extern s32
+    gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
 #define gTrialRoad_PaletteCycleFrame gTrialRoad_PaletteCycleFrame__s15a8
 
 DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gTrialRoad_PaletteCycleFrame,
@@ -2896,8 +2922,10 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
 
 #include "field_sprite.h"
 
-/* VIEW(s15a8): routine gTrialRoad_RubbleScript as this part declared it; the joined file has another. */
-extern const s32 gTrialRoad_RubbleScript__s15a8[] __asm__("gTrialRoad_RubbleScript");
+/* VIEW(s15a8): routine gTrialRoad_RubbleScript as this part declared it; the
+ * joined file has another. */
+extern const s32
+    gTrialRoad_RubbleScript__s15a8[] __asm__("gTrialRoad_RubbleScript");
 #define gTrialRoad_RubbleScript gTrialRoad_RubbleScript__s15a8
 
 void TrialRoad_SpawnRubble(s32 spread) {
@@ -2941,8 +2969,10 @@ void TrialRoad_SpawnRubble(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_DustScript as this part declared it; the joined file has another. */
-extern const s32 gTrialRoad_DustScript__s15a8[] __asm__("gTrialRoad_DustScript");
+/* VIEW(s15a8): routine gTrialRoad_DustScript as this part declared it; the
+ * joined file has another. */
+extern const s32
+    gTrialRoad_DustScript__s15a8[] __asm__("gTrialRoad_DustScript");
 #define gTrialRoad_DustScript gTrialRoad_DustScript__s15a8
 
 void TrialRoad_SpawnDustRing(void) {
@@ -2989,7 +3019,8 @@ void TrialRoad_SetLeaderCellShape(s32 a, s32 b) {
   TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_HexDigits as this part declared it; the joined file has another. */
+/* VIEW(s15a8): routine gTrialRoad_HexDigits as this part declared it; the
+ * joined file has another. */
 extern const u8 gTrialRoad_HexDigits__s15a8[] __asm__("gTrialRoad_HexDigits");
 #define gTrialRoad_HexDigits gTrialRoad_HexDigits__s15a8
 
@@ -3425,10 +3456,12 @@ s32 TrialRoad_RivalIsWaiting(void) {
 
 void TrialRoad_DoNothing(void) {}
 
-/* VIEW(s15a8): routine TrialRoad_SettleOnGround as this part declared it; the joined file has another. */
+/* VIEW(s15a8): routine TrialRoad_SettleOnGround as this part declared it; the
+ * joined file has another. */
 void TrialRoad_SettleOnGround__s15a8(void) __asm__("TrialRoad_SettleOnGround");
 #define TrialRoad_SettleOnGround TrialRoad_SettleOnGround__s15a8
-/* VIEW(s15a8): routine TrialRoad_FollowPillar as this part declared it; the joined file has another. */
+/* VIEW(s15a8): routine TrialRoad_FollowPillar as this part declared it; the
+ * joined file has another. */
 void TrialRoad_FollowPillar__s15a8(void) __asm__("TrialRoad_FollowPillar");
 #define TrialRoad_FollowPillar TrialRoad_FollowPillar__s15a8
 
@@ -3611,83 +3644,116 @@ LATE_DATA u32 gTrialRoad_DustScript[] = {
 #include "module/scene/trial_road.h"
 
 void TrialRoad_FightGasp(void);
-/* VIEW(data_2): routine TrialRoad_TakeStairs as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_TakeStairs as this part declared it; the
+ * joined file has another. */
 void TrialRoad_TakeStairs__data_2(void) __asm__("TrialRoad_TakeStairs");
 #define TrialRoad_TakeStairs TrialRoad_TakeStairs__data_2
-/* VIEW(data_2): routine TrialRoad_OfferToGiveUp as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_OfferToGiveUp as this part declared it; the
+ * joined file has another. */
 void TrialRoad_OfferToGiveUp__data_2(void) __asm__("TrialRoad_OfferToGiveUp");
 #define TrialRoad_OfferToGiveUp TrialRoad_OfferToGiveUp__data_2
 void TrialRoad_OpenChests(void);
-/* VIEW(data_2): routine TrialRoad_PutItemInChest as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_PutItemInChest as this part declared it; the
+ * joined file has another. */
 void TrialRoad_PutItemInChest__data_2(void) __asm__("TrialRoad_PutItemInChest");
 #define TrialRoad_PutItemInChest TrialRoad_PutItemInChest__data_2
-/* VIEW(data_2): routine TrialRoad_ExamineChest as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_ExamineChest as this part declared it; the
+ * joined file has another. */
 void TrialRoad_ExamineChest__data_2(void) __asm__("TrialRoad_ExamineChest");
 #define TrialRoad_ExamineChest TrialRoad_ExamineChest__data_2
-/* VIEW(data_2): routine TrialRoad_UnblockMovedPillar as this part declared it; the joined file has another. */
-void TrialRoad_UnblockMovedPillar__data_2(void) __asm__("TrialRoad_UnblockMovedPillar");
+/* VIEW(data_2): routine TrialRoad_UnblockMovedPillar as this part declared it;
+ * the joined file has another. */
+void TrialRoad_UnblockMovedPillar__data_2(void) __asm__(
+    "TrialRoad_UnblockMovedPillar");
 #define TrialRoad_UnblockMovedPillar TrialRoad_UnblockMovedPillar__data_2
-/* VIEW(data_2): routine TrialRoad_BlockMovedPillar as this part declared it; the joined file has another. */
-void TrialRoad_BlockMovedPillar__data_2(void) __asm__("TrialRoad_BlockMovedPillar");
+/* VIEW(data_2): routine TrialRoad_BlockMovedPillar as this part declared it;
+ * the joined file has another. */
+void TrialRoad_BlockMovedPillar__data_2(void) __asm__(
+    "TrialRoad_BlockMovedPillar");
 #define TrialRoad_BlockMovedPillar TrialRoad_BlockMovedPillar__data_2
 void TrialRoad_JumpForward(void);
-/* VIEW(data_2): routine TrialRoad_UnblockTorch as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_UnblockTorch as this part declared it; the
+ * joined file has another. */
 void TrialRoad_UnblockTorch__data_2(void) __asm__("TrialRoad_UnblockTorch");
 #define TrialRoad_UnblockTorch TrialRoad_UnblockTorch__data_2
-/* VIEW(data_2): routine TrialRoad_MeltIceBesideTorch as this part declared it; the joined file has another. */
-void TrialRoad_MeltIceBesideTorch__data_2(void) __asm__("TrialRoad_MeltIceBesideTorch");
+/* VIEW(data_2): routine TrialRoad_MeltIceBesideTorch as this part declared it;
+ * the joined file has another. */
+void TrialRoad_MeltIceBesideTorch__data_2(void) __asm__(
+    "TrialRoad_MeltIceBesideTorch");
 #define TrialRoad_MeltIceBesideTorch TrialRoad_MeltIceBesideTorch__data_2
-/* VIEW(data_2): routine TrialRoad_FreezePuddle as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_FreezePuddle as this part declared it; the
+ * joined file has another. */
 void TrialRoad_FreezePuddle__data_2(void) __asm__("TrialRoad_FreezePuddle");
 #define TrialRoad_FreezePuddle TrialRoad_FreezePuddle__data_2
-/* VIEW(data_2): routine TrialRoad_BlowBushOffPillar as this part declared it; the joined file has another. */
-void TrialRoad_BlowBushOffPillar__data_2(void) __asm__("TrialRoad_BlowBushOffPillar");
+/* VIEW(data_2): routine TrialRoad_BlowBushOffPillar as this part declared it;
+ * the joined file has another. */
+void TrialRoad_BlowBushOffPillar__data_2(void) __asm__(
+    "TrialRoad_BlowBushOffPillar");
 #define TrialRoad_BlowBushOffPillar TrialRoad_BlowBushOffPillar__data_2
 void TrialRoad_BlowBushOffPoundPillar(void);
-/* VIEW(data_2): routine TrialRoad_PoundPillar18 as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_PoundPillar18 as this part declared it; the
+ * joined file has another. */
 void TrialRoad_PoundPillar18__data_2(void) __asm__("TrialRoad_PoundPillar18");
 #define TrialRoad_PoundPillar18 TrialRoad_PoundPillar18__data_2
-/* VIEW(data_2): routine TrialRoad_PoundPillar19 as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_PoundPillar19 as this part declared it; the
+ * joined file has another. */
 void TrialRoad_PoundPillar19__data_2(void) __asm__("TrialRoad_PoundPillar19");
 #define TrialRoad_PoundPillar19 TrialRoad_PoundPillar19__data_2
-/* VIEW(data_2): routine TrialRoad_PoundPillar20 as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_PoundPillar20 as this part declared it; the
+ * joined file has another. */
 void TrialRoad_PoundPillar20__data_2(void) __asm__("TrialRoad_PoundPillar20");
 #define TrialRoad_PoundPillar20 TrialRoad_PoundPillar20__data_2
-/* VIEW(data_2): routine TrialRoad_PoundPillar21 as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_PoundPillar21 as this part declared it; the
+ * joined file has another. */
 void TrialRoad_PoundPillar21__data_2(void) __asm__("TrialRoad_PoundPillar21");
 #define TrialRoad_PoundPillar21 TrialRoad_PoundPillar21__data_2
-/* VIEW(data_2): routine TrialRoad_CrumblePillar15 as this part declared it; the joined file has another. */
-void TrialRoad_CrumblePillar15__data_2(void) __asm__("TrialRoad_CrumblePillar15");
+/* VIEW(data_2): routine TrialRoad_CrumblePillar15 as this part declared it; the
+ * joined file has another. */
+void TrialRoad_CrumblePillar15__data_2(void) __asm__(
+    "TrialRoad_CrumblePillar15");
 #define TrialRoad_CrumblePillar15 TrialRoad_CrumblePillar15__data_2
-/* VIEW(data_2): routine TrialRoad_CrumblePillar16 as this part declared it; the joined file has another. */
-void TrialRoad_CrumblePillar16__data_2(void) __asm__("TrialRoad_CrumblePillar16");
+/* VIEW(data_2): routine TrialRoad_CrumblePillar16 as this part declared it; the
+ * joined file has another. */
+void TrialRoad_CrumblePillar16__data_2(void) __asm__(
+    "TrialRoad_CrumblePillar16");
 #define TrialRoad_CrumblePillar16 TrialRoad_CrumblePillar16__data_2
-/* VIEW(data_2): routine TrialRoad_UncoverSpout16 as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_UncoverSpout16 as this part declared it; the
+ * joined file has another. */
 void TrialRoad_UncoverSpout16__data_2(void) __asm__("TrialRoad_UncoverSpout16");
 #define TrialRoad_UncoverSpout16 TrialRoad_UncoverSpout16__data_2
-/* VIEW(data_2): routine TrialRoad_UncoverSpout17 as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_UncoverSpout17 as this part declared it; the
+ * joined file has another. */
 void TrialRoad_UncoverSpout17__data_2(void) __asm__("TrialRoad_UncoverSpout17");
 #define TrialRoad_UncoverSpout17 TrialRoad_UncoverSpout17__data_2
-/* VIEW(data_2): routine TrialRoad_UncoverSpout18 as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine TrialRoad_UncoverSpout18 as this part declared it; the
+ * joined file has another. */
 void TrialRoad_UncoverSpout18__data_2(void) __asm__("TrialRoad_UncoverSpout18");
 #define TrialRoad_UncoverSpout18 TrialRoad_UncoverSpout18__data_2
 void TrialRoad_StandOnBlock(void);
 void TrialRoad_OpenSummitGate(s32 sound);
-/* VIEW(data_2): routine TrialRoad_SetSummitPillar as this part declared it; the joined file has another. */
-void TrialRoad_SetSummitPillar__data_2(void) __asm__("TrialRoad_SetSummitPillar");
+/* VIEW(data_2): routine TrialRoad_SetSummitPillar as this part declared it; the
+ * joined file has another. */
+void TrialRoad_SetSummitPillar__data_2(void) __asm__(
+    "TrialRoad_SetSummitPillar");
 #define TrialRoad_SetSummitPillar TrialRoad_SetSummitPillar__data_2
 void TrialRoad_StepPastChests(void);
 
-/* VIEW(data_2): routine gTrialRoad_SettleScript as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine gTrialRoad_SettleScript as this part declared it; the
+ * joined file has another. */
 extern u8 gTrialRoad_SettleScript__data_2[] __asm__("gTrialRoad_SettleScript");
 #define gTrialRoad_SettleScript gTrialRoad_SettleScript__data_2
-/* VIEW(data_2): routine gFieldEffect_ShortScript as this part declared it; the joined file has another. */
-extern u8 gFieldEffect_ShortScript__data_2[] __asm__("gFieldEffect_ShortScript");
+/* VIEW(data_2): routine gFieldEffect_ShortScript as this part declared it; the
+ * joined file has another. */
+extern u8
+    gFieldEffect_ShortScript__data_2[] __asm__("gFieldEffect_ShortScript");
 #define gFieldEffect_ShortScript gFieldEffect_ShortScript__data_2
-/* VIEW(data_2): routine gFieldEffect_MediumScript as this part declared it; the joined file has another. */
-extern u8 gFieldEffect_MediumScript__data_2[] __asm__("gFieldEffect_MediumScript");
+/* VIEW(data_2): routine gFieldEffect_MediumScript as this part declared it; the
+ * joined file has another. */
+extern u8
+    gFieldEffect_MediumScript__data_2[] __asm__("gFieldEffect_MediumScript");
 #define gFieldEffect_MediumScript gFieldEffect_MediumScript__data_2
-/* VIEW(data_2): routine gFieldEffect_LongScript as this part declared it; the joined file has another. */
+/* VIEW(data_2): routine gFieldEffect_LongScript as this part declared it; the
+ * joined file has another. */
 extern u8 gFieldEffect_LongScript__data_2[] __asm__("gFieldEffect_LongScript");
 #define gFieldEffect_LongScript gFieldEffect_LongScript__data_2
 

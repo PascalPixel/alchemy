@@ -110,7 +110,8 @@ extern struct ActorPlacement gData_0200675c[];
 extern struct ActorPlacement gData_020068f4[];
 extern struct ActorPlacement gData_020069e4[];
 extern struct ActorPlacement gData_02006aec[];
-/* VIEW(first): variable gData_02006bac as this part declared it; the joined file has another. */
+/* VIEW(first): variable gData_02006bac as this part declared it; the joined
+ * file has another. */
 extern u32 gData_02006bac__first[] __asm__("gData_02006bac");
 #define gData_02006bac gData_02006bac__first
 
@@ -525,10 +526,12 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 #include "iwram_call.h"
 #include "field/event_work.h"
 
-/* VIEW(airs_rock_inside): routine gData_020061ac as this part declared it; the joined file has another. */
+/* VIEW(airs_rock_inside): routine gData_020061ac as this part declared it; the
+ * joined file has another. */
 extern u8 gData_020061ac__airs_rock_inside[] __asm__("gData_020061ac");
 #define gData_020061ac gData_020061ac__airs_rock_inside
-/* VIEW(airs_rock_inside): routine gData_02006194 as this part declared it; the joined file has another. */
+/* VIEW(airs_rock_inside): routine gData_02006194 as this part declared it; the
+ * joined file has another. */
 extern u8 gData_02006194__airs_rock_inside[] __asm__("gData_02006194");
 #define gData_02006194 gData_02006194__airs_rock_inside
 
@@ -664,7 +667,8 @@ void Func_02001084(struct Actor *object, s16 timer, u8 value) {
   }
 }
 
-/* VIEW(airs_rock_inside): routine gData_020061cc as this part declared it; the joined file has another. */
+/* VIEW(airs_rock_inside): routine gData_020061cc as this part declared it; the
+ * joined file has another. */
 extern u8 gData_020061cc__airs_rock_inside[] __asm__("gData_020061cc");
 #define gData_020061cc gData_020061cc__airs_rock_inside
 
@@ -1319,7 +1323,8 @@ shrink:
 }
 
 extern struct ActorPlacement gData_02006238[];
-/* VIEW(airs_rock_inside): routine gData_02006268 as this part declared it; the joined file has another. */
+/* VIEW(airs_rock_inside): routine gData_02006268 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02006268__airs_rock_inside[] __asm__("gData_02006268");
 #define gData_02006268 gData_02006268__airs_rock_inside
 
@@ -2192,7 +2197,8 @@ void Func_02003d40(void) {
   }
 }
 
-/* VIEW(s2cf0): routine gData_02006084 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_02006084 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02006084__s2cf0[] __asm__("gData_02006084");
 #define gData_02006084 gData_02006084__s2cf0
 
@@ -2281,25 +2287,32 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 
-/* VIEW(s2cf0): routine gData_020060e0 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_020060e0 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020060e0__s2cf0[] __asm__("gData_020060e0");
 #define gData_020060e0 gData_020060e0__s2cf0
-/* VIEW(s2cf0): routine gData_02006094 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_02006094 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02006094__s2cf0[] __asm__("gData_02006094");
 #define gData_02006094 gData_02006094__s2cf0
-/* VIEW(s2cf0): routine gData_020060b0 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_020060b0 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020060b0__s2cf0[] __asm__("gData_020060b0");
 #define gData_020060b0 gData_020060b0__s2cf0
-/* VIEW(s2cf0): routine gData_02006104 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_02006104 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02006104__s2cf0[] __asm__("gData_02006104");
 #define gData_02006104 gData_02006104__s2cf0
-/* VIEW(s2cf0): routine gData_020060c0 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_020060c0 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020060c0__s2cf0[] __asm__("gData_020060c0");
 #define gData_020060c0 gData_020060c0__s2cf0
-/* VIEW(s2cf0): routine gData_02006128 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_02006128 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02006128__s2cf0[] __asm__("gData_02006128");
 #define gData_02006128 gData_02006128__s2cf0
-/* VIEW(s2cf0): routine gData_02006158 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_02006158 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02006158__s2cf0[] __asm__("gData_02006158");
 #define gData_02006158 gData_02006158__s2cf0
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
@@ -2880,7 +2893,8 @@ void Func_02004eb0(void) {
   } while (i != 8);
 }
 
-/* VIEW(s2cf0): routine gData_020073d8 as this part declared it; the joined file has another. */
+/* VIEW(s2cf0): routine gData_020073d8 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_020073d8__s2cf0 __asm__("gData_020073d8");
 #define gData_020073d8 gData_020073d8__s2cf0
 
@@ -3042,27 +3056,37 @@ void Func_0200505c(void) {
 #include "scene_tables.h"
 #include "system/io_reg.h"
 
-/* VIEW(s505c): routine gData_0200621c as this part declared it; the joined file has another. */
+/* VIEW(s505c): routine gData_0200621c as this part declared it; the joined file
+ * has another. */
 extern s16 gData_02006050[], gData_02006054[], gData_0200605a[],
     gData_02006064[], gData_02006068[], gData_02006072[], gData_0200607e[],
     gData_0200621c__s505c[] __asm__("gData_0200621c");
 #define gData_0200621c gData_0200621c__s505c
 void Func_02001690(void);
-/* VIEW(s505c): routine Actor_SetHorizontalPositionWithTerrain as this part declared it; the joined file has another. */
-void Actor_SetHorizontalPositionWithTerrain__s505c(s32 id, s32 x, s32 z) __asm__("Actor_SetHorizontalPositionWithTerrain");
-#define Actor_SetHorizontalPositionWithTerrain Actor_SetHorizontalPositionWithTerrain__s505c
-/* VIEW(s505c): routine Func_02001084 as this part declared it; the joined file has another. */
-void Func_02001084__s505c(struct Actor *object, s32 a, s32 b) __asm__("Func_02001084");
+/* VIEW(s505c): routine Actor_SetHorizontalPositionWithTerrain as this part
+ * declared it; the joined file has another. */
+void Actor_SetHorizontalPositionWithTerrain__s505c(
+    s32 id, s32 x, s32 z) __asm__("Actor_SetHorizontalPositionWithTerrain");
+#define Actor_SetHorizontalPositionWithTerrain                                 \
+  Actor_SetHorizontalPositionWithTerrain__s505c
+/* VIEW(s505c): routine Func_02001084 as this part declared it; the joined file
+ * has another. */
+void Func_02001084__s505c(struct Actor *object, s32 a,
+                          s32 b) __asm__("Func_02001084");
 #define Func_02001084 Func_02001084__s505c
-/* VIEW(s505c): routine Func_02001420 as this part declared it; the joined file has another. */
-void Func_02001420__s505c(struct Actor *object, s32 a, s32 b) __asm__("Func_02001420");
+/* VIEW(s505c): routine Func_02001420 as this part declared it; the joined file
+ * has another. */
+void Func_02001420__s505c(struct Actor *object, s32 a,
+                          s32 b) __asm__("Func_02001420");
 #define Func_02001420 Func_02001420__s505c
 void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height,
                                s32 destX, s32 destZ);
-/* VIEW(s505c): routine Func_0200062c as this part declared it; the joined file has another. */
-s32 Func_0200062c__s505c(s32 layer, s32 x, s32 z, s32 cell) __asm__("Func_0200062c");
+/* VIEW(s505c): routine Func_0200062c as this part declared it; the joined file
+ * has another. */
+s32 Func_0200062c__s505c(s32 layer, s32 x, s32 z,
+                         s32 cell) __asm__("Func_0200062c");
 #define Func_0200062c Func_0200062c__s505c
 
 s32 Scene_Initialize(void) {
@@ -3337,16 +3361,20 @@ s32 Scene_PrepareMap(void) {
 }
 
 void Func_02000610(void);
-/* VIEW(s505c): routine Func_02003ed4 as this part declared it; the joined file has another. */
+/* VIEW(s505c): routine Func_02003ed4 as this part declared it; the joined file
+ * has another. */
 void Func_02003ed4__s505c(void) __asm__("Func_02003ed4");
 #define Func_02003ed4 Func_02003ed4__s505c
-/* VIEW(s505c): routine Orbit_Update as this part declared it; the joined file has another. */
+/* VIEW(s505c): routine Orbit_Update as this part declared it; the joined file
+ * has another. */
 void Orbit_Update__s505c(void) __asm__("Orbit_Update");
 #define Orbit_Update Orbit_Update__s505c
-/* VIEW(s505c): routine Actor_AimAtWatched as this part declared it; the joined file has another. */
+/* VIEW(s505c): routine Actor_AimAtWatched as this part declared it; the joined
+ * file has another. */
 void Actor_AimAtWatched__s505c(void) __asm__("Actor_AimAtWatched");
 #define Actor_AimAtWatched Actor_AimAtWatched__s505c
-/* VIEW(s505c): routine Actor_StepToWatched as this part declared it; the joined file has another. */
+/* VIEW(s505c): routine Actor_StepToWatched as this part declared it; the joined
+ * file has another. */
 void Actor_StepToWatched__s505c(void) __asm__("Actor_StepToWatched");
 #define Actor_StepToWatched Actor_StepToWatched__s505c
 

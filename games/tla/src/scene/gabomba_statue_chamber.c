@@ -84,19 +84,24 @@ void Func_02000100(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-/* VIEW(first): routine gData_02002058 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02002058 as this part declared it; the joined file
+ * has another. */
 extern struct Actor *gData_02002058__first __asm__("gData_02002058");
 #define gData_02002058 gData_02002058__first
-/* VIEW(first): routine gData_02001f78 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02001f78 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02001f78__first[] __asm__("gData_02001f78");
 #define gData_02001f78 gData_02001f78__first
-/* VIEW(first): routine gData_02001f9c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02001f9c as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02001f9c__first[] __asm__("gData_02001f9c");
 #define gData_02001f9c gData_02001f9c__first
-/* VIEW(first): routine gData_02001fe4 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02001fe4 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02001fe4__first[] __asm__("gData_02001fe4");
 #define gData_02001fe4 gData_02001fe4__first
-/* VIEW(first): routine gData_0200200c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200200c as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_0200200c__first[] __asm__("gData_0200200c");
 #define gData_0200200c gData_0200200c__first
 #define OBJECT(id) (Actor_Get((id)))
@@ -605,7 +610,8 @@ void Func_02001094(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-/* VIEW(first): routine gData_02001f18 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02001f18 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02001f18__first[] __asm__("gData_02001f18");
 #define gData_02001f18 gData_02001f18__first
 
@@ -791,7 +797,8 @@ void Func_020010d4(void) {
   Import_EventSetExitRequest(2);
 }
 
-/* VIEW(first): routine gData_02001f4c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02001f4c as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02001f4c__first[] __asm__("gData_02001f4c");
 #define gData_02001f4c gData_02001f4c__first
 
@@ -1195,7 +1202,8 @@ struct ActorPlacement gData_02002458__data[] __asm__("gData_02002458") = {
 };
 // clang-format on
 
-/* VIEW(data): variable gData_02002470 as this part defines it; a header the joined file includes has another. */
+/* VIEW(data): variable gData_02002470 as this part defines it; a header the
+ * joined file includes has another. */
 struct Trigger gData_02002470__data[] __asm__("gData_02002470") = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000b60)},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1203,7 +1211,8 @@ struct Trigger gData_02002470__data[] __asm__("gData_02002470") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020024a0 as this part defines it; a header the joined file includes has another. */
+/* VIEW(data): variable gData_020024a0 as this part defines it; a header the
+ * joined file includes has another. */
 struct Trigger gData_020024a0__data[] __asm__("gData_020024a0") = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1212,7 +1221,8 @@ struct Trigger gData_020024a0__data[] __asm__("gData_020024a0") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020024dc as this part defines it; a header the joined file includes has another. */
+/* VIEW(data): variable gData_020024dc as this part defines it; a header the
+ * joined file includes has another. */
 struct Trigger gData_020024dc__data[] __asm__("gData_020024dc") = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02000b70)},
@@ -1224,7 +1234,8 @@ struct Trigger gData_020024dc__data[] __asm__("gData_020024dc") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02002530 as this part defines it; a header the joined file includes has another. */
+/* VIEW(data): variable gData_02002530 as this part defines it; a header the
+ * joined file includes has another. */
 struct Trigger gData_02002530__data[] __asm__("gData_02002530") = {
     {TRIGGER_TABLE_END},
 };

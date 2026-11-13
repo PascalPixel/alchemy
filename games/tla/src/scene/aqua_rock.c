@@ -227,16 +227,20 @@ void Func_02000580(void) {
   }
 }
 
-/* VIEW(aqua_rock): routine gData_02003204 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock): routine gData_02003204 as this part declared it; the joined
+ * file has another. */
 extern s32 gData_02003204__aqua_rock __asm__("gData_02003204");
 #define gData_02003204 gData_02003204__aqua_rock
-/* VIEW(aqua_rock): routine gData_02003208 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock): routine gData_02003208 as this part declared it; the joined
+ * file has another. */
 extern s32 gData_02003208__aqua_rock __asm__("gData_02003208");
 #define gData_02003208 gData_02003208__aqua_rock
-/* VIEW(aqua_rock): routine gData_0200320c as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock): routine gData_0200320c as this part declared it; the joined
+ * file has another. */
 extern s32 gData_0200320c__aqua_rock __asm__("gData_0200320c");
 #define gData_0200320c gData_0200320c__aqua_rock
-/* VIEW(aqua_rock): routine gData_02003210 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock): routine gData_02003210 as this part declared it; the joined
+ * file has another. */
 extern s32 gData_02003210__aqua_rock __asm__("gData_02003210");
 #define gData_02003210 gData_02003210__aqua_rock
 
@@ -1575,50 +1579,65 @@ u32 gWaterDropScript[] = {
 #include "scene_tables.h"
 #include "module/scene/aqua_rock.h"
 
-/* VIEW(data): routine Func_02000b68 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000b68 as this part declared it; the joined file
+ * has another. */
 void Func_02000b68__data(void) __asm__("Func_02000b68");
 #define Func_02000b68 Func_02000b68__data
-/* VIEW(data): routine Func_02000cd8 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000cd8 as this part declared it; the joined file
+ * has another. */
 void Func_02000cd8__data(void) __asm__("Func_02000cd8");
 #define Func_02000cd8 Func_02000cd8__data
-/* VIEW(data): routine Func_020010f4 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020010f4 as this part declared it; the joined file
+ * has another. */
 void Func_020010f4__data(void) __asm__("Func_020010f4");
 #define Func_020010f4 Func_020010f4__data
-/* VIEW(data): routine Func_0200112c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200112c as this part declared it; the joined file
+ * has another. */
 void Func_0200112c__data(void) __asm__("Func_0200112c");
 #define Func_0200112c Func_0200112c__data
-/* VIEW(data): routine Func_02001164 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02001164 as this part declared it; the joined file
+ * has another. */
 void Func_02001164__data(void) __asm__("Func_02001164");
 #define Func_02001164 Func_02001164__data
-/* VIEW(data): routine Func_0200119c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200119c as this part declared it; the joined file
+ * has another. */
 void Func_0200119c__data(void) __asm__("Func_0200119c");
 #define Func_0200119c Func_0200119c__data
-/* VIEW(data): routine Func_020011e0 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020011e0 as this part declared it; the joined file
+ * has another. */
 void Func_020011e0__data(void) __asm__("Func_020011e0");
 #define Func_020011e0 Func_020011e0__data
-/* VIEW(data): routine Func_02001224 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02001224 as this part declared it; the joined file
+ * has another. */
 void Func_02001224__data(void) __asm__("Func_02001224");
 #define Func_02001224 Func_02001224__data
-/* VIEW(data): routine Func_02001f90 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02001f90 as this part declared it; the joined file
+ * has another. */
 void Func_02001f90__data(void) __asm__("Func_02001f90");
 #define Func_02001f90 Func_02001f90__data
-/* VIEW(data): routine Func_020020bc as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020020bc as this part declared it; the joined file
+ * has another. */
 void Func_020020bc__data(void) __asm__("Func_020020bc");
 #define Func_020020bc Func_020020bc__data
 
-/* VIEW(data): routine gData_02002a78 as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02002a78 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02002a78__data[] __asm__("gData_02002a78");
 #define gData_02002a78 gData_02002a78__data
-/* VIEW(data): routine gData_02002ab4 as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02002ab4 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02002ab4__data[] __asm__("gData_02002ab4");
 #define gData_02002ab4 gData_02002ab4__data
-/* VIEW(data): routine gData_02002af0 as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02002af0 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02002af0__data[] __asm__("gData_02002af0");
 #define gData_02002af0 gData_02002af0__data
-/* VIEW(data): routine gData_02002b2c as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02002b2c as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02002b2c__data[] __asm__("gData_02002b2c");
 #define gData_02002b2c gData_02002b2c__data
-/* VIEW(data): routine gData_02002bb4 as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02002bb4 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02002bb4__data[] __asm__("gData_02002bb4");
 #define gData_02002bb4 gData_02002bb4__data
 

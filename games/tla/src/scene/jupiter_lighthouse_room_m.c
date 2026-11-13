@@ -502,16 +502,20 @@ s32 Func_02000b38(u8 *object) {
   return 0;
 }
 
-/* VIEW(first): routine gData_0200558c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200558c as this part declared it; the joined file
+ * has another. */
 extern u32 gData_0200558c__first[] __asm__("gData_0200558c");
 #define gData_0200558c gData_0200558c__first
-/* VIEW(first): routine gData_020055ec as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020055ec as this part declared it; the joined file
+ * has another. */
 extern u32 gData_020055ec__first[] __asm__("gData_020055ec");
 #define gData_020055ec gData_020055ec__first
-/* VIEW(first): routine gData_02005644 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005644 as this part declared it; the joined file
+ * has another. */
 extern u32 gData_02005644__first[] __asm__("gData_02005644");
 #define gData_02005644 gData_02005644__first
-/* VIEW(first): routine gData_0200569c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200569c as this part declared it; the joined file
+ * has another. */
 extern u32 gData_0200569c__first[] __asm__("gData_0200569c");
 #define gData_0200569c gData_0200569c__first
 
@@ -558,12 +562,14 @@ void Func_02000c08(void) {
 }
 
 extern u32 gData_02005748[];
-/* VIEW(first): routine gData_0200578c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200578c as this part declared it; the joined file
+ * has another. */
 extern u32 gData_0200578c__first[] __asm__("gData_0200578c");
 #define gData_0200578c gData_0200578c__first
 extern u32 gData_02005860[];
 extern u32 gData_02005890[];
-/* VIEW(first): routine gData_02005950 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02005950 as this part declared it; the joined file
+ * has another. */
 extern u32 gData_02005950__first[] __asm__("gData_02005950");
 #define gData_02005950 gData_02005950__first
 extern u32 gData_020049dc[];
@@ -1666,15 +1672,18 @@ s32 Scene_PrepareMap(void) {
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it; the joined file has another. */
-extern s32 gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
+/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
+ * the joined file has another. */
+extern s32
+    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined file has another. */
+/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
+ * file has another. */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
 
@@ -1700,7 +1709,8 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined file has another. */
+/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
+ * file has another. */
 extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
 #define gWhirlwindEndScript gWhirlwindEndScript__first
 
@@ -1725,9 +1735,11 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
-/* VIEW(s3474): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
-void FieldEffect_Spawn__s3474(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+/* VIEW(s3474): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another. */
+void FieldEffect_Spawn__s3474(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__s3474
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
@@ -1810,8 +1822,10 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s3b7c): routine Actor_StartScript as this part declared it; the joined file has another. */
-void Actor_StartScript__s3b7c(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+/* VIEW(s3b7c): routine Actor_StartScript as this part declared it; the joined
+ * file has another. */
+void Actor_StartScript__s3b7c(struct FieldEffect *effect,
+                              const s32 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__s3b7c
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -1979,9 +1993,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
 #include "module/scene/jupiter_lighthouse_room_m.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s4344): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
-void FieldEffect_Spawn__s4344(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+/* VIEW(s4344): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another. */
+void FieldEffect_Spawn__s4344(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__s4344
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
@@ -2080,22 +2096,28 @@ DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
 #include "objcmd.h"
 #include "module/scene/jupiter_lighthouse_room_m.h"
 
-/* VIEW(data): routine Func_02000038 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000038 as this part declared it; the joined file
+ * has another. */
 void Func_02000038__data(void) __asm__("Func_02000038");
 #define Func_02000038 Func_02000038__data
-/* VIEW(data): routine Func_0200039c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200039c as this part declared it; the joined file
+ * has another. */
 void Func_0200039c__data(void) __asm__("Func_0200039c");
 #define Func_0200039c Func_0200039c__data
-/* VIEW(data): routine Func_020003b8 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020003b8 as this part declared it; the joined file
+ * has another. */
 void Func_020003b8__data(void) __asm__("Func_020003b8");
 #define Func_020003b8 Func_020003b8__data
-/* VIEW(data): routine Func_02000970 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000970 as this part declared it; the joined file
+ * has another. */
 void Func_02000970__data(void) __asm__("Func_02000970");
 #define Func_02000970 Func_02000970__data
-/* VIEW(data): routine Func_02000ad0 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000ad0 as this part declared it; the joined file
+ * has another. */
 void Func_02000ad0__data(void) __asm__("Func_02000ad0");
 #define Func_02000ad0 Func_02000ad0__data
-/* VIEW(data): routine Func_02000b38 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000b38 as this part declared it; the joined file
+ * has another. */
 void Func_02000b38__data(void) __asm__("Func_02000b38");
 #define Func_02000b38 Func_02000b38__data
 

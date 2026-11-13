@@ -425,12 +425,16 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Leader_SetCellShapeAt(s32 a, s32 b);
 u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
-/* VIEW(rubble): routine gIzumoRuins_RubbleSprayScript as this part declared it; the joined file has another. */
-extern const s32 gIzumoRuins_RubbleSprayScript__rubble[] __asm__("gIzumoRuins_RubbleSprayScript");
+/* VIEW(rubble): routine gIzumoRuins_RubbleSprayScript as this part declared it;
+ * the joined file has another. */
+extern const s32 gIzumoRuins_RubbleSprayScript__rubble[] __asm__(
+    "gIzumoRuins_RubbleSprayScript");
 #define gIzumoRuins_RubbleSprayScript gIzumoRuins_RubbleSprayScript__rubble
 
-/* VIEW(rubble): routine Actor_StartScript as this part declared it; the joined file has another. */
-void Actor_StartScript__rubble(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+/* VIEW(rubble): routine Actor_StartScript as this part declared it; the joined
+ * file has another. */
+void Actor_StartScript__rubble(struct FieldEffect *effect,
+                               const s32 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__rubble
 
 void Rubble_Spray(s32 spread) {
@@ -474,8 +478,10 @@ void Rubble_Spray(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(rubble): routine gIzumoRuins_RubbleBurstScript as this part declared it; the joined file has another. */
-extern const s32 gIzumoRuins_RubbleBurstScript__rubble[] __asm__("gIzumoRuins_RubbleBurstScript");
+/* VIEW(rubble): routine gIzumoRuins_RubbleBurstScript as this part declared it;
+ * the joined file has another. */
+extern const s32 gIzumoRuins_RubbleBurstScript__rubble[] __asm__(
+    "gIzumoRuins_RubbleBurstScript");
 #define gIzumoRuins_RubbleBurstScript gIzumoRuins_RubbleBurstScript__rubble
 
 void Rubble_Burst(void) {

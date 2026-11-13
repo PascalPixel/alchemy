@@ -77,7 +77,8 @@ DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
                           gPaletteCycleIndex, gPaletteSlots,
                           gPaletteCycleBright, gPaletteColors)
 
-/* VIEW(first): routine Func_020017b4 as this part declared it; the joined file has another. */
+/* VIEW(first): routine Func_020017b4 as this part declared it; the joined file
+ * has another. */
 void Func_020017b4__first(void) __asm__("Func_020017b4");
 #define Func_020017b4 Func_020017b4__first
 
@@ -139,7 +140,8 @@ void Func_02000328(void) {
 
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-/* VIEW(scene_tables): routine gData_02003840 as this part declared it; the joined file has another. */
+/* VIEW(scene_tables): routine gData_02003840 as this part declared it; the
+ * joined file has another. */
 extern const s32 *gData_02003840__scene_tables[] __asm__("gData_02003840");
 #define gData_02003840 gData_02003840__scene_tables
 
@@ -235,7 +237,8 @@ s32 Func_02000660(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-/* VIEW(scene_tables): routine gData_02003674 as this part declared it; the joined file has another. */
+/* VIEW(scene_tables): routine gData_02003674 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02003674__scene_tables[] __asm__("gData_02003674");
 #define gData_02003674 gData_02003674__scene_tables
 
@@ -317,7 +320,8 @@ extern struct ActorPlacement gData_02003b38[];
 extern struct ActorPlacement gData_02003b50[];
 extern struct ActorPlacement gData_02003b68[];
 extern struct ActorPlacement gData_02003bc8[];
-/* VIEW(scene_tables): routine gData_02003c88 as this part declared it; the joined file has another. */
+/* VIEW(scene_tables): routine gData_02003c88 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02003c88__scene_tables[] __asm__("gData_02003c88");
 #define gData_02003c88 gData_02003c88__scene_tables
 extern struct ActorPlacement gData_02003ce8[];
@@ -359,7 +363,8 @@ struct Work {
 };
 
 void Actor_StartScript();
-/* VIEW(scene_tables): routine gData_02003684 as this part declared it; the joined file has another. */
+/* VIEW(scene_tables): routine gData_02003684 as this part declared it; the
+ * joined file has another. */
 extern u8 gData_02003684__scene_tables[] __asm__("gData_02003684");
 #define gData_02003684 gData_02003684__scene_tables
 
@@ -474,13 +479,16 @@ void Func_020009b8__s0ac8() __asm__("Func_020009b8");
 void Func_02000a78__s0ac8() __asm__("Func_02000a78");
 #define Func_02000a78 Func_02000a78__s0ac8
 void BlendScript_Resume(void);
-/* VIEW(s0ac8): routine gData_020035cc as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_020035cc as this part declared it; the joined file
+ * has another. */
 extern u8 gData_020035cc__s0ac8[] __asm__("gData_020035cc");
 #define gData_020035cc gData_020035cc__s0ac8
-/* VIEW(s0ac8): routine gData_02003620 as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_02003620 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02003620__s0ac8[] __asm__("gData_02003620");
 #define gData_02003620 gData_02003620__s0ac8
-/* VIEW(s0ac8): routine gData_020036fc as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_020036fc as this part declared it; the joined file
+ * has another. */
 extern s32 gData_020036fc__s0ac8[][2] __asm__("gData_020036fc");
 #define gData_020036fc gData_020036fc__s0ac8
 
@@ -709,13 +717,16 @@ void Func_02000ac8(void) {
 
 void Func_02001090(void) { GameFlag_Clear(0x200); }
 
-/* VIEW(s0ac8): routine gData_020036e4 as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_020036e4 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_020036e4__s0ac8[] __asm__("gData_020036e4");
 #define gData_020036e4 gData_020036e4__s0ac8
-/* VIEW(s0ac8): routine gData_020036ea as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_020036ea as this part declared it; the joined file
+ * has another. */
 extern u8 gData_020036ea__s0ac8[] __asm__("gData_020036ea");
 #define gData_020036ea gData_020036ea__s0ac8
-/* VIEW(s0ac8): routine gData_020036f6 as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_020036f6 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_020036f6__s0ac8[] __asm__("gData_020036f6");
 #define gData_020036f6 gData_020036f6__s0ac8
 
@@ -809,7 +820,8 @@ void Func_02001160(void) {
 
 #include "field/event_work.h"
 
-/* VIEW(s0ac8): routine gData_02003574 as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_02003574 as this part declared it; the joined file
+ * has another. */
 extern const s32 gData_02003574__s0ac8[] __asm__("gData_02003574");
 #define gData_02003574 gData_02003574__s0ac8
 
@@ -977,7 +989,8 @@ DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_020017a0, 0xc)
 
 #include "frame.h"
 
-/* VIEW(s0ac8): routine gData_02003594 as this part declared it; the joined file has another. */
+/* VIEW(s0ac8): routine gData_02003594 as this part declared it; the joined file
+ * has another. */
 extern const s32 gData_02003594__s0ac8[] __asm__("gData_02003594");
 #define gData_02003594 gData_02003594__s0ac8
 
@@ -1234,11 +1247,14 @@ struct EventWork154__s1938 {
   s16 value;
 };
 
-/* VIEW(s1938): routine gData_020043e4 as this part declared it; the joined file has another. */
+/* VIEW(s1938): routine gData_020043e4 as this part declared it; the joined file
+ * has another. */
 extern const s16 gData_020043e4__s1938[] __asm__("gData_020043e4");
 #define gData_020043e4 gData_020043e4__s1938
-/* VIEW(s1938): routine gData_02004410 as this part declared it; the joined file has another. */
-extern const struct AnemosInnerSanctumPicture gData_02004410__s1938[] __asm__("gData_02004410");
+/* VIEW(s1938): routine gData_02004410 as this part declared it; the joined file
+ * has another. */
+extern const struct AnemosInnerSanctumPicture
+    gData_02004410__s1938[] __asm__("gData_02004410");
 #define gData_02004410 gData_02004410__s1938
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1330,23 +1346,30 @@ void Func_02001df4(void) {
 }
 
 #include "call.h"
-/* VIEW(s1938): routine Func_02000038 as this part declared it; the joined file has another. */
+/* VIEW(s1938): routine Func_02000038 as this part declared it; the joined file
+ * has another. */
 s32 Func_02000038__s1938() __asm__("Func_02000038");
 #define Func_02000038 Func_02000038__s1938
 s32 CrackedTiles_Find();
-/* VIEW(scene_tables): routine CrackedTile_PlaceLanding as this part declared it; the joined file has another. */
-s32 CrackedTile_PlaceLanding__scene_tables() __asm__("CrackedTile_PlaceLanding");
+/* VIEW(scene_tables): routine CrackedTile_PlaceLanding as this part declared
+ * it; the joined file has another. */
+s32 CrackedTile_PlaceLanding__scene_tables() __asm__(
+    "CrackedTile_PlaceLanding");
 #define CrackedTile_PlaceLanding CrackedTile_PlaceLanding__scene_tables
-/* VIEW(s1938): routine gData_0200384c as this part declared it; the joined file has another. */
+/* VIEW(s1938): routine gData_0200384c as this part declared it; the joined file
+ * has another. */
 extern u8 gData_0200384c__s1938[] __asm__("gData_0200384c");
 #define gData_0200384c gData_0200384c__s1938
-/* VIEW(s1938): routine gData_0200385c as this part declared it; the joined file has another. */
+/* VIEW(s1938): routine gData_0200385c as this part declared it; the joined file
+ * has another. */
 extern u8 gData_0200385c__s1938[] __asm__("gData_0200385c");
 #define gData_0200385c gData_0200385c__s1938
-/* VIEW(s1938): routine gData_02003888 as this part declared it; the joined file has another. */
+/* VIEW(s1938): routine gData_02003888 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02003888__s1938[] __asm__("gData_02003888");
 #define gData_02003888 gData_02003888__s1938
-/* VIEW(s1938): routine gData_020038b4 as this part declared it; the joined file has another. */
+/* VIEW(s1938): routine gData_020038b4 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_020038b4__s1938[] __asm__("gData_020038b4");
 #define gData_020038b4 gData_020038b4__s1938
 
@@ -1698,7 +1721,8 @@ void Effect_MoveLocal(union FieldObject *object) {
   sprite->rotation += object->effect.spin;
 }
 
-/* VIEW(move): routine gData_02004428 as this part declared it; the joined file has another. */
+/* VIEW(move): routine gData_02004428 as this part declared it; the joined file
+ * has another. */
 extern const s32 *gData_02004428__move[] __asm__("gData_02004428");
 #define gData_02004428 gData_02004428__move
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1920,10 +1944,11 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #include "module/scene/anemos_inner_sanctum.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s2f48): routine FieldEffect_SpawnLocal as this part declared it; the joined file has another. */
-void FieldEffect_SpawnLocal__s2f48(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                            s32 velocityZ, u32 flags,
-                            struct EffectOptions *options) __asm__("FieldEffect_SpawnLocal");
+/* VIEW(s2f48): routine FieldEffect_SpawnLocal as this part declared it; the
+ * joined file has another. */
+void FieldEffect_SpawnLocal__s2f48(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_SpawnLocal");
 #define FieldEffect_SpawnLocal FieldEffect_SpawnLocal__s2f48
 
 void CrackedTile_DropIn(void) {
@@ -1998,8 +2023,11 @@ loop:
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined file has another. */
-void CrackedTile_Fall__s2f48(struct CellTarget *work, struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+/* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined
+ * file has another. */
+void CrackedTile_Fall__s2f48(
+    struct CellTarget *work,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 #define CrackedTile_Fall CrackedTile_Fall__s2f48
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
@@ -2010,16 +2038,20 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
 
 #include "scene_tables.h"
 
-/* VIEW(s2f48): routine Func_02000654 as this part declared it; the joined file has another. */
+/* VIEW(s2f48): routine Func_02000654 as this part declared it; the joined file
+ * has another. */
 void Func_02000654__s2f48(void) __asm__("Func_02000654");
 #define Func_02000654 Func_02000654__s2f48
-/* VIEW(s2f48): routine Func_02000660 as this part declared it; the joined file has another. */
+/* VIEW(s2f48): routine Func_02000660 as this part declared it; the joined file
+ * has another. */
 void Func_02000660__s2f48(void) __asm__("Func_02000660");
 #define Func_02000660 Func_02000660__s2f48
-/* VIEW(s2f48): routine Func_020006f8 as this part declared it; the joined file has another. */
+/* VIEW(s2f48): routine Func_020006f8 as this part declared it; the joined file
+ * has another. */
 void Func_020006f8__s2f48(void) __asm__("Func_020006f8");
 #define Func_020006f8 Func_020006f8__s2f48
-/* VIEW(s2f48): routine Func_02000794 as this part declared it; the joined file has another. */
+/* VIEW(s2f48): routine Func_02000794 as this part declared it; the joined file
+ * has another. */
 void Func_02000794__s2f48(void) __asm__("Func_02000794");
 #define Func_02000794 Func_02000794__s2f48
 

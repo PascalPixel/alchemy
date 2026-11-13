@@ -128,10 +128,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 #include "scene_ids.h"
 
-/* VIEW(first): routine gData_020033d0 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020033d0 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020033d0__first[] __asm__("gData_020033d0");
 #define gData_020033d0 gData_020033d0__first
-/* VIEW(first): routine gData_020033f0 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020033f0 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020033f0__first[] __asm__("gData_020033f0");
 #define gData_020033f0 gData_020033f0__first
 
@@ -145,22 +147,28 @@ const struct ActorPlacement *Func_02000488(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gData_02003618 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02003618 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02003618__first[] __asm__("gData_02003618");
 #define gData_02003618 gData_02003618__first
-/* VIEW(first): routine gData_02003648 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02003648 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02003648__first[] __asm__("gData_02003648");
 #define gData_02003648 gData_02003648__first
-/* VIEW(first): routine gData_02003660 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02003660 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02003660__first[] __asm__("gData_02003660");
 #define gData_02003660 gData_02003660__first
-/* VIEW(first): routine gData_02003690 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02003690 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02003690__first[] __asm__("gData_02003690");
 #define gData_02003690 gData_02003690__first
-/* VIEW(first): routine gData_02003708 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02003708 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02003708__first[] __asm__("gData_02003708");
 #define gData_02003708 gData_02003708__first
-/* VIEW(first): routine gData_020037c8 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020037c8 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020037c8__first[] __asm__("gData_020037c8");
 #define gData_020037c8 gData_020037c8__first
 
@@ -388,7 +396,8 @@ void Func_02000920(void) {
 
 void Func_0200095c(void) { Func_0200189c(); }
 
-/* VIEW(first): routine gData_02003370 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02003370 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02003370__first[] __asm__("gData_02003370");
 #define gData_02003370 gData_02003370__first
 
@@ -2255,7 +2264,8 @@ void Func_020005d0(void);
 void Func_020008a8(void);
 void Func_02000b3c(void);
 void Func_02000bfc(void);
-/* VIEW(s29d0): routine Func_02000c64 as this part declared it; the joined file has another. */
+/* VIEW(s29d0): routine Func_02000c64 as this part declared it; the joined file
+ * has another. */
 void Func_02000c64__s29d0(void) __asm__("Func_02000c64");
 #define Func_02000c64 Func_02000c64__s29d0
 

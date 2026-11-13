@@ -418,8 +418,10 @@ void Func_02000930(void) {
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(jupiter_lighthouse_aerie): routine gData_0200331c as this part declared it; the joined file has another. */
-extern const s32 gData_0200331c__jupiter_lighthouse_aerie[] __asm__("gData_0200331c");
+/* VIEW(jupiter_lighthouse_aerie): routine gData_0200331c as this part declared
+ * it; the joined file has another. */
+extern const s32
+    gData_0200331c__jupiter_lighthouse_aerie[] __asm__("gData_0200331c");
 #define gData_0200331c gData_0200331c__jupiter_lighthouse_aerie
 extern s32 gData_0200333c;
 
@@ -963,8 +965,10 @@ void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s1e78): routine Actor_StartScript as this part declared it; the joined file has another. */
-void Actor_StartScript__s1e78(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+/* VIEW(s1e78): routine Actor_StartScript as this part declared it; the joined
+ * file has another. */
+void Actor_StartScript__s1e78(struct FieldEffect *effect,
+                              const s32 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__s1e78
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -1040,9 +1044,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #define CELL_TABLE gData_02003488
 #define CELL_SPRITE_DRAW CrackedTiles_Update
-/* VIEW(s1e78): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares it; the
- * joined file has another. */
-void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");
+/* VIEW(s1e78): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
+ * it; the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__(
+    "Oam_AddSpriteAtDepthClamped");
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1e78
 #include "../field/map/cell_sprite.c"
 
@@ -1102,7 +1107,9 @@ void Leader_CenterInCell(void);
 
 /* VIEW(s24a8): routine CrackedTile_Fall as this part defines it; the scene's
  * module header declares it with the joined file's CellTarget. */
-void CrackedTile_Fall__s24a8(struct CellTarget__s24a8 *table, struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+void CrackedTile_Fall__s24a8(
+    struct CellTarget__s24a8 *table,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
                          Leader_CenterInCell)
 
@@ -1176,10 +1183,12 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
 #include "scene_tables.h"
 #include "objcmd.h"
 
-/* VIEW(s2640): routine Func_02000314 as this part declared it; the joined file has another. */
+/* VIEW(s2640): routine Func_02000314 as this part declared it; the joined file
+ * has another. */
 void Func_02000314__s2640(void) __asm__("Func_02000314");
 #define Func_02000314 Func_02000314__s2640
-/* VIEW(s2640): routine Func_0200032c as this part declared it; the joined file has another. */
+/* VIEW(s2640): routine Func_0200032c as this part declared it; the joined file
+ * has another. */
 void Func_0200032c__s2640(void) __asm__("Func_0200032c");
 #define Func_0200032c Func_0200032c__s2640
 

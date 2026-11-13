@@ -22,13 +22,16 @@
 #include "module/tla.h"
 #include "particle.h"
 
-/* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the joined file has another. */
+/* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the
+ * joined file has another. */
 extern u8 gData_02004d0c__eastern_alhafra[] __asm__("gData_02004d0c");
 #define gData_02004d0c gData_02004d0c__eastern_alhafra
-/* VIEW(eastern_alhafra): routine gData_02004dbc as this part declared it; the joined file has another. */
+/* VIEW(eastern_alhafra): routine gData_02004dbc as this part declared it; the
+ * joined file has another. */
 extern u8 gData_02004dbc__eastern_alhafra[] __asm__("gData_02004dbc");
 #define gData_02004dbc gData_02004dbc__eastern_alhafra
-/* VIEW(eastern_alhafra): routine gData_02004fe4 as this part declared it; the joined file has another. */
+/* VIEW(eastern_alhafra): routine gData_02004fe4 as this part declared it; the
+ * joined file has another. */
 extern u8 gData_02004fe4__eastern_alhafra[] __asm__("gData_02004fe4");
 #define gData_02004fe4 gData_02004fe4__eastern_alhafra
 
@@ -119,7 +122,8 @@ void Func_02000190(s32 unused, s32 id) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-/* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the joined file has another. */
+/* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the
+ * joined file has another. */
 extern u8 gData_02005290__eastern_alhafra[] __asm__("gData_02005290");
 #define gData_02005290 gData_02005290__eastern_alhafra
 
@@ -451,7 +455,8 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "map.h"
 #include "frame.h"
 
-/* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file has another. */
+/* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_020054f0__s0514[] __asm__("gData_020054f0");
 #define gData_020054f0 gData_020054f0__s0514
 
@@ -1102,7 +1107,8 @@ L_02009b74:
   return;
 }
 
-/* VIEW(s0514): routine gData_020056d4 as this part declared it; the joined file has another. */
+/* VIEW(s0514): routine gData_020056d4 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020056d4__s0514[] __asm__("gData_020056d4");
 #define gData_020056d4 gData_020056d4__s0514
 
@@ -2204,7 +2210,8 @@ void Func_020040c0(void) {
 // layers there is filled with 255. Returns 1, or 0 for a shape with no
 // footprint.
 
-/* VIEW(s4004): routine gPushFootprints as this part declared it; the joined file has another. */
+/* VIEW(s4004): routine gPushFootprints as this part declared it; the joined
+ * file has another. */
 extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
 #define gPushFootprints gPushFootprints__s4004
 
@@ -2260,7 +2267,8 @@ s32 Func_020040ec(s32 id) {
 
 #include "system/vector3.h"
 
-/* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined file has another. */
+/* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined
+ * file has another. */
 extern s32 gPushDirectionSteps__s4004[] __asm__("gPushDirectionSteps");
 #define gPushDirectionSteps gPushDirectionSteps__s4004
 
@@ -2511,28 +2519,36 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #include "text/msg_ids.h"
 #include "module/scene/eastern_alhafra.h"
 
-/* VIEW(data): routine Func_0200006c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200006c as this part declared it; the joined file
+ * has another. */
 void Func_0200006c__data(void) __asm__("Func_0200006c");
 #define Func_0200006c Func_0200006c__data
-/* VIEW(data): routine Func_020000c8 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020000c8 as this part declared it; the joined file
+ * has another. */
 void Func_020000c8__data(void) __asm__("Func_020000c8");
 #define Func_020000c8 Func_020000c8__data
-/* VIEW(data): routine Func_02000190 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000190 as this part declared it; the joined file
+ * has another. */
 void Func_02000190__data(void) __asm__("Func_02000190");
 #define Func_02000190 Func_02000190__data
-/* VIEW(data): routine Func_02000200 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000200 as this part declared it; the joined file
+ * has another. */
 void Func_02000200__data(void) __asm__("Func_02000200");
 #define Func_02000200 Func_02000200__data
-/* VIEW(data): routine Func_02000394 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000394 as this part declared it; the joined file
+ * has another. */
 void Func_02000394__data(void) __asm__("Func_02000394");
 #define Func_02000394 Func_02000394__data
-/* VIEW(data): routine Func_0200042c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200042c as this part declared it; the joined file
+ * has another. */
 void Func_0200042c__data(void) __asm__("Func_0200042c");
 #define Func_0200042c Func_0200042c__data
-/* VIEW(data): routine Func_020006ec as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020006ec as this part declared it; the joined file
+ * has another. */
 void Func_020006ec__data(void) __asm__("Func_020006ec");
 #define Func_020006ec Func_020006ec__data
-/* VIEW(data): routine Func_02000940 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000940 as this part declared it; the joined file
+ * has another. */
 void Func_02000940__data(void) __asm__("Func_02000940");
 #define Func_02000940 Func_02000940__data
 void Func_02000958(void);

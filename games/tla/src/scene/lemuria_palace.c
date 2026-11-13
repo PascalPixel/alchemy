@@ -202,8 +202,10 @@ void LemuriaPalace_CastMapSparks(void) {
 }
 
 extern u8 gLemuriaPalace_MapMode[];
-/* VIEW(first): routine gLemuriaPalace_MapCrossfade as this part declared it; the joined file has another. */
-extern u8 gLemuriaPalace_MapCrossfade__first[] __asm__("gLemuriaPalace_MapCrossfade");
+/* VIEW(first): routine gLemuriaPalace_MapCrossfade as this part declared it;
+ * the joined file has another. */
+extern u8
+    gLemuriaPalace_MapCrossfade__first[] __asm__("gLemuriaPalace_MapCrossfade");
 #define gLemuriaPalace_MapCrossfade gLemuriaPalace_MapCrossfade__first
 s32 __modsi3();
 

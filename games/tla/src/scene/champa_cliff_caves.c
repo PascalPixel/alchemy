@@ -26,8 +26,10 @@ struct RiseObject {
   s32 update;
 };
 
-/* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it; the joined file has another. */
-extern const struct WarpTarget gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
+/* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
+ * the joined file has another. */
+extern const struct WarpTarget
+    gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
 #define gData_02003d10 gData_02003d10__champa_cliff_caves
 
 void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
@@ -91,10 +93,12 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gData_0200381c[];
 extern struct ActorPlacement gData_02003864[];
-/* VIEW(champa_cliff_caves): routine gData_020039cc as this part declared it; the joined file has another. */
+/* VIEW(champa_cliff_caves): routine gData_020039cc as this part declared it;
+ * the joined file has another. */
 extern u32 gData_020039cc__champa_cliff_caves[] __asm__("gData_020039cc");
 #define gData_020039cc gData_020039cc__champa_cliff_caves
-/* VIEW(champa_cliff_caves): routine gData_02003c84 as this part declared it; the joined file has another. */
+/* VIEW(champa_cliff_caves): routine gData_02003c84 as this part declared it;
+ * the joined file has another. */
 extern u32 gData_02003c84__champa_cliff_caves[] __asm__("gData_02003c84");
 #define gData_02003c84 gData_02003c84__champa_cliff_caves
 
@@ -166,8 +170,10 @@ void Func_020001f4(s32 door) {
   ChampaCliffCaves_OpenDoorAndEnter(&gData_02003d10, door, 0);
 }
 
-/* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it; the joined file has another. */
-extern const struct WarpTarget gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
+/* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
+ * the joined file has another. */
+extern const struct WarpTarget
+    gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
 #define gData_02003d18 gData_02003d18__champa_cliff_caves
 
 static __inline__ void Actor_CommitPositionAndActivate_(s32 actor, s32 dx,
@@ -987,16 +993,20 @@ void Func_02001774(void) {
                        (s16)gMainRoutineWork.savedEntrance);
 }
 
-/* VIEW(s0a34): routine gData_020041e8 as this part declared it; the joined file has another. */
+/* VIEW(s0a34): routine gData_020041e8 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020041e8__s0a34[] __asm__("gData_020041e8");
 #define gData_020041e8 gData_020041e8__s0a34
-/* VIEW(s0a34): routine gData_02004254 as this part declared it; the joined file has another. */
+/* VIEW(s0a34): routine gData_02004254 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02004254__s0a34[] __asm__("gData_02004254");
 #define gData_02004254 gData_02004254__s0a34
-/* VIEW(s0a34): routine gData_0200432c as this part declared it; the joined file has another. */
+/* VIEW(s0a34): routine gData_0200432c as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_0200432c__s0a34[] __asm__("gData_0200432c");
 #define gData_0200432c gData_0200432c__s0a34
-/* VIEW(s0a34): routine gData_020042d4 as this part declared it; the joined file has another. */
+/* VIEW(s0a34): routine gData_020042d4 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020042d4__s0a34[] __asm__("gData_020042d4");
 #define gData_020042d4 gData_020042d4__s0a34
 
@@ -2058,22 +2068,28 @@ u32 gData_02003634[] = {
 #include "text/msg_ids.h"
 #include "module/scene/champa_cliff_caves.h"
 
-/* VIEW(data): routine Func_020001f4 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020001f4 as this part declared it; the joined file
+ * has another. */
 void Func_020001f4__data(void) __asm__("Func_020001f4");
 #define Func_020001f4 Func_020001f4__data
-/* VIEW(data): routine Func_02000304 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000304 as this part declared it; the joined file
+ * has another. */
 void Func_02000304__data(void) __asm__("Func_02000304");
 #define Func_02000304 Func_02000304__data
-/* VIEW(data): routine Func_02000350 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000350 as this part declared it; the joined file
+ * has another. */
 void Func_02000350__data(void) __asm__("Func_02000350");
 #define Func_02000350 Func_02000350__data
-/* VIEW(data): routine Func_0200038c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200038c as this part declared it; the joined file
+ * has another. */
 void Func_0200038c__data(void) __asm__("Func_0200038c");
 #define Func_0200038c Func_0200038c__data
-/* VIEW(data): routine Func_02000464 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000464 as this part declared it; the joined file
+ * has another. */
 void Func_02000464__data(void) __asm__("Func_02000464");
 #define Func_02000464 Func_02000464__data
-/* VIEW(data): routine Func_02000f48 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000f48 as this part declared it; the joined file
+ * has another. */
 void Func_02000f48__data(void) __asm__("Func_02000f48");
 #define Func_02000f48 Func_02000f48__data
 

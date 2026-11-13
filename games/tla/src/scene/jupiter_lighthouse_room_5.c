@@ -44,7 +44,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02002fb8 as this part declared it; the joined file has another. */
+/* VIEW(jupiter_lighthouse_room_5): routine gData_02002fb8 as this part declared
+ * it; the joined file has another. */
 extern u8 gData_02002fb8__jupiter_lighthouse_room_5[] __asm__("gData_02002fb8");
 #define gData_02002fb8 gData_02002fb8__jupiter_lighthouse_room_5
 
@@ -125,10 +126,12 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// circling actor 23 at a random height above it.
 DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x201, gOrbScript, Orb_Update, 1)
 
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02003274 as this part declared it; the joined file has another. */
+/* VIEW(jupiter_lighthouse_room_5): routine gData_02003274 as this part declared
+ * it; the joined file has another. */
 extern s32 gData_02003274__jupiter_lighthouse_room_5 __asm__("gData_02003274");
 #define gData_02003274 gData_02003274__jupiter_lighthouse_room_5
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02003278 as this part declared it; the joined file has another. */
+/* VIEW(jupiter_lighthouse_room_5): routine gData_02003278 as this part declared
+ * it; the joined file has another. */
 extern s32 gData_02003278__jupiter_lighthouse_room_5 __asm__("gData_02003278");
 #define gData_02003278 gData_02003278__jupiter_lighthouse_room_5
 
@@ -140,11 +143,15 @@ void Func_02000294(void) {
   Func_02001650(gData_02003274);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02002f70 as this part declared it; the joined file has another. */
-extern const u8 gData_02002f70__jupiter_lighthouse_room_5[] __asm__("gData_02002f70");
+/* VIEW(jupiter_lighthouse_room_5): routine gData_02002f70 as this part declared
+ * it; the joined file has another. */
+extern const u8
+    gData_02002f70__jupiter_lighthouse_room_5[] __asm__("gData_02002f70");
 #define gData_02002f70 gData_02002f70__jupiter_lighthouse_room_5
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02002f94 as this part declared it; the joined file has another. */
-extern const u8 gData_02002f94__jupiter_lighthouse_room_5[] __asm__("gData_02002f94");
+/* VIEW(jupiter_lighthouse_room_5): routine gData_02002f94 as this part declared
+ * it; the joined file has another. */
+extern const u8
+    gData_02002f94__jupiter_lighthouse_room_5[] __asm__("gData_02002f94");
 #define gData_02002f94 gData_02002f94__jupiter_lighthouse_room_5
 
 void Func_0200185c(void);
@@ -288,13 +295,18 @@ struct SparkWork {
   s16 resource;
 };
 
-/* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this part declared it; the joined file has another. */
-extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5
+/* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this
+ * part declared it; the joined file has another. */
+extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
+    "gPaletteCyclePausesInEvents");
+#define gPaletteCyclePausesInEvents                                            \
+  gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5
 
-/* VIEW(jupiter_lighthouse_room_5): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
-void FieldEffect_Spawn__jupiter_lighthouse_room_5(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
-                       struct EffectParams *params) __asm__("FieldEffect_Spawn");
+/* VIEW(jupiter_lighthouse_room_5): routine FieldEffect_Spawn as this part
+ * declared it; the joined file has another. */
+void FieldEffect_Spawn__jupiter_lighthouse_room_5(
+    s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
+    struct EffectParams *params) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__jupiter_lighthouse_room_5
 
 void Func_020006ac(void) {
@@ -546,7 +558,8 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(s0cb8): routine gPaletteCycleFrame as this part declared it; the joined file has another. */
+/* VIEW(s0cb8): routine gPaletteCycleFrame as this part declared it; the joined
+ * file has another. */
 extern s32 gPaletteCycleFrame__s0cb8 __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__s0cb8
 
@@ -574,7 +587,8 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(s0cb8): routine gData_020033e0 as this part declared it; the joined file has another. */
+/* VIEW(s0cb8): routine gData_020033e0 as this part declared it; the joined file
+ * has another. */
 extern const s32 gData_020033e0__s0cb8[] __asm__("gData_020033e0");
 #define gData_020033e0 gData_020033e0__s0cb8
 extern s32 gData_02003400;
@@ -931,8 +945,10 @@ void Func_0200185c(void) {
 
 extern struct LightOam gLightSpriteOams[];
 
-/* VIEW(s1650): routine Oam_AddSpriteAtDepthClamped as this part declared it; the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__s1650(struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
+/* VIEW(s1650): routine Oam_AddSpriteAtDepthClamped as this part declared it;
+ * the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s1650(
+    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
 #define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__s1650
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
@@ -1000,8 +1016,10 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s1c88): routine Actor_StartScript as this part declared it; the joined file has another. */
-void Actor_StartScript__s1c88(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+/* VIEW(s1c88): routine Actor_StartScript as this part declared it; the joined
+ * file has another. */
+void Actor_StartScript__s1c88(struct FieldEffect *effect,
+                              const s32 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__s1c88
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -1153,16 +1171,21 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
 #include "module/scene/jupiter_lighthouse_room_5.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s2450): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
-void FieldEffect_Spawn__s2450(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+/* VIEW(s2450): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another. */
+void FieldEffect_Spawn__s2450(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__s2450
 
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s2450): routine CrackedTile_Fall as this part declared it; the joined file has another. */
-void CrackedTile_Fall__s2450(struct CellTarget *work, struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+/* VIEW(s2450): routine CrackedTile_Fall as this part declared it; the joined
+ * file has another. */
+void CrackedTile_Fall__s2450(
+    struct CellTarget *work,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 #define CrackedTile_Fall CrackedTile_Fall__s2450
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
@@ -1176,7 +1199,8 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
 #include "objcmd.h"
 
 void Func_02000054(void);
-/* VIEW(s2450): routine Func_02000064 as this part declared it; the joined file has another. */
+/* VIEW(s2450): routine Func_02000064 as this part declared it; the joined file
+ * has another. */
 void Func_02000064__s2450(void) __asm__("Func_02000064");
 #define Func_02000064 Func_02000064__s2450
 void Func_020002b8(void);

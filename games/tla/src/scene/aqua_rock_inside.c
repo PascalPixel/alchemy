@@ -65,37 +65,48 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(aqua_rock_inside): routine gData_02004688 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_02004688 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02004688__aqua_rock_inside[] __asm__("gData_02004688");
 #define gData_02004688 gData_02004688__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020046a0 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_020046a0 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_020046a0__aqua_rock_inside[] __asm__("gData_020046a0");
 #define gData_020046a0 gData_020046a0__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004748 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_02004748 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02004748__aqua_rock_inside[] __asm__("gData_02004748");
 #define gData_02004748 gData_02004748__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020047a8 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_020047a8 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_020047a8__aqua_rock_inside[] __asm__("gData_020047a8");
 #define gData_020047a8 gData_020047a8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004808 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_02004808 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02004808__aqua_rock_inside[] __asm__("gData_02004808");
 #define gData_02004808 gData_02004808__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020048c8 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_020048c8 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_020048c8__aqua_rock_inside[] __asm__("gData_020048c8");
 #define gData_020048c8 gData_020048c8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004910 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_02004910 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02004910__aqua_rock_inside[] __asm__("gData_02004910");
 #define gData_02004910 gData_02004910__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020049e8 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_020049e8 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_020049e8__aqua_rock_inside[] __asm__("gData_020049e8");
 #define gData_020049e8 gData_020049e8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004a00 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_02004a00 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02004a00__aqua_rock_inside[] __asm__("gData_02004a00");
 #define gData_02004a00 gData_02004a00__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004a48 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_02004a48 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02004a48__aqua_rock_inside[] __asm__("gData_02004a48");
 #define gData_02004a48 gData_02004a48__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004b98 as this part declared it; the joined file has another. */
+/* VIEW(aqua_rock_inside): routine gData_02004b98 as this part declared it; the
+ * joined file has another. */
 extern const u8 gData_02004b98__aqua_rock_inside[] __asm__("gData_02004b98");
 #define gData_02004b98 gData_02004b98__aqua_rock_inside
 
@@ -1199,37 +1210,48 @@ DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001cd8, 280)
 
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001d40, 248)
 
-/* VIEW(s1620): routine gData_02004c70 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_02004c70 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02004c70__s1620[] __asm__("gData_02004c70");
 #define gData_02004c70 gData_02004c70__s1620
-/* VIEW(s1620): routine gData_02004c7c as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_02004c7c as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02004c7c__s1620[] __asm__("gData_02004c7c");
 #define gData_02004c7c gData_02004c7c__s1620
-/* VIEW(s1620): routine gData_02004d88 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_02004d88 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02004d88__s1620[] __asm__("gData_02004d88");
 #define gData_02004d88 gData_02004d88__s1620
-/* VIEW(s1620): routine gData_02004e48 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_02004e48 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02004e48__s1620[] __asm__("gData_02004e48");
 #define gData_02004e48 gData_02004e48__s1620
-/* VIEW(s1620): routine gData_02004ed8 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_02004ed8 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02004ed8__s1620[] __asm__("gData_02004ed8");
 #define gData_02004ed8 gData_02004ed8__s1620
-/* VIEW(s1620): routine gData_02004fb0 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_02004fb0 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02004fb0__s1620[] __asm__("gData_02004fb0");
 #define gData_02004fb0 gData_02004fb0__s1620
-/* VIEW(s1620): routine gData_0200507c as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_0200507c as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_0200507c__s1620[] __asm__("gData_0200507c");
 #define gData_0200507c gData_0200507c__s1620
-/* VIEW(s1620): routine gData_020051b4 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_020051b4 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020051b4__s1620[] __asm__("gData_020051b4");
 #define gData_020051b4 gData_020051b4__s1620
-/* VIEW(s1620): routine gData_020051fc as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_020051fc as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020051fc__s1620[] __asm__("gData_020051fc");
 #define gData_020051fc gData_020051fc__s1620
-/* VIEW(s1620): routine gData_02005268 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_02005268 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_02005268__s1620[] __asm__("gData_02005268");
 #define gData_02005268 gData_02005268__s1620
-/* VIEW(s1620): routine gData_020052f8 as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_020052f8 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020052f8__s1620[] __asm__("gData_020052f8");
 #define gData_020052f8 gData_020052f8__s1620
 
@@ -2137,7 +2159,8 @@ s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
   entry->direction = kind;
 }
 
-/* VIEW(s1620): routine gData_0200534c as this part declared it; the joined file has another. */
+/* VIEW(s1620): routine gData_0200534c as this part declared it; the joined file
+ * has another. */
 extern const s8 gData_0200534c__s1620[] __asm__("gData_0200534c");
 #define gData_0200534c gData_0200534c__s1620
 
@@ -2525,59 +2548,76 @@ u32 gWaterDropScript[] = {
 #include "module/scene/aqua_rock_inside.h"
 
 void Func_0200033c(void);
-/* VIEW(data): routine Func_0200042c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200042c as this part declared it; the joined file
+ * has another. */
 void Func_0200042c__data(void) __asm__("Func_0200042c");
 #define Func_0200042c Func_0200042c__data
-/* VIEW(data): routine Func_020004bc as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020004bc as this part declared it; the joined file
+ * has another. */
 void Func_020004bc__data(void) __asm__("Func_020004bc");
 #define Func_020004bc Func_020004bc__data
-/* VIEW(data): routine Func_02000574 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000574 as this part declared it; the joined file
+ * has another. */
 void Func_02000574__data(void) __asm__("Func_02000574");
 #define Func_02000574 Func_02000574__data
 void Func_020005f8(void);
-/* VIEW(data): routine Func_02000644 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000644 as this part declared it; the joined file
+ * has another. */
 void Func_02000644__data(void) __asm__("Func_02000644");
 #define Func_02000644 Func_02000644__data
-/* VIEW(data): routine Func_02000958 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000958 as this part declared it; the joined file
+ * has another. */
 void Func_02000958__data(void) __asm__("Func_02000958");
 #define Func_02000958 Func_02000958__data
 void Func_02000b84(void);
-/* VIEW(data): routine Func_02000c28 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000c28 as this part declared it; the joined file
+ * has another. */
 void Func_02000c28__data(void) __asm__("Func_02000c28");
 #define Func_02000c28 Func_02000c28__data
-/* VIEW(data): routine Func_02000cc8 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000cc8 as this part declared it; the joined file
+ * has another. */
 void Func_02000cc8__data(void) __asm__("Func_02000cc8");
 #define Func_02000cc8 Func_02000cc8__data
-/* VIEW(data): routine Func_02000e18 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000e18 as this part declared it; the joined file
+ * has another. */
 void Func_02000e18__data(void) __asm__("Func_02000e18");
 #define Func_02000e18 Func_02000e18__data
-/* VIEW(data): routine Func_02000ecc as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02000ecc as this part declared it; the joined file
+ * has another. */
 void Func_02000ecc__data(void) __asm__("Func_02000ecc");
 #define Func_02000ecc Func_02000ecc__data
-/* VIEW(data): routine Func_0200101c as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_0200101c as this part declared it; the joined file
+ * has another. */
 void Func_0200101c__data(void) __asm__("Func_0200101c");
 #define Func_0200101c Func_0200101c__data
-/* VIEW(data): routine Func_02001138 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_02001138 as this part declared it; the joined file
+ * has another. */
 void Func_02001138__data(void) __asm__("Func_02001138");
 #define Func_02001138 Func_02001138__data
-/* VIEW(data): routine Func_020011d4 as this part declared it; the joined file has another. */
+/* VIEW(data): routine Func_020011d4 as this part declared it; the joined file
+ * has another. */
 void Func_020011d4__data(void) __asm__("Func_020011d4");
 #define Func_020011d4 Func_020011d4__data
 void Func_02001a1c(void);
-/* VIEW(data): routine Leader_SinkAway as this part declared it; the joined file has another. */
+/* VIEW(data): routine Leader_SinkAway as this part declared it; the joined file
+ * has another. */
 void Leader_SinkAway__data(void) __asm__("Leader_SinkAway");
 #define Leader_SinkAway Leader_SinkAway__data
 
-/* VIEW(data): variable Data_020005f4 as this part declared it; the scene defines it as a routine. */
+/* VIEW(data): variable Data_020005f4 as this part declared it; the scene
+ * defines it as a routine. */
 extern u8 Data_020005f4__data[] __asm__("Data_020005f4");
 #define Data_020005f4 Data_020005f4__data
-/* VIEW(data): routine gData_02003f04 as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02003f04 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02003f04__data[] __asm__("gData_02003f04");
 #define gData_02003f04 gData_02003f04__data
-/* VIEW(data): routine gData_02003f40 as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02003f40 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02003f40__data[] __asm__("gData_02003f40");
 #define gData_02003f40 gData_02003f40__data
-/* VIEW(data): routine gData_02003f7c as this part declared it; the joined file has another. */
+/* VIEW(data): routine gData_02003f7c as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02003f7c__data[] __asm__("gData_02003f7c");
 #define gData_02003f7c gData_02003f7c__data
 

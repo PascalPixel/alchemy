@@ -181,14 +181,19 @@ void MagmaRock_SettleBlocks(u16 *ids) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(magma_rock): routine gMagmaRock_Regions as this part declared it; the joined file has another. */
+/* VIEW(magma_rock): routine gMagmaRock_Regions as this part declared it; the
+ * joined file has another. */
 extern const u8 gMagmaRock_Regions__magma_rock[] __asm__("gMagmaRock_Regions");
 #define gMagmaRock_Regions gMagmaRock_Regions__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2Regions as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2Regions__magma_rock[] __asm__("gMagmaRock_Room2Regions");
+/* VIEW(magma_rock): routine gMagmaRock_Room2Regions as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gMagmaRock_Room2Regions__magma_rock[] __asm__("gMagmaRock_Room2Regions");
 #define gMagmaRock_Room2Regions gMagmaRock_Room2Regions__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room3Regions as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room3Regions__magma_rock[] __asm__("gMagmaRock_Room3Regions");
+/* VIEW(magma_rock): routine gMagmaRock_Room3Regions as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gMagmaRock_Room3Regions__magma_rock[] __asm__("gMagmaRock_Room3Regions");
 #define gMagmaRock_Room3Regions gMagmaRock_Room3Regions__magma_rock
 
 const struct SceneEntrance *Scene_GetRegions(void) {
@@ -201,23 +206,38 @@ const struct SceneEntrance *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(magma_rock): routine gMagmaRock_Placements as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Placements__magma_rock[] __asm__("gMagmaRock_Placements");
+/* VIEW(magma_rock): routine gMagmaRock_Placements as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gMagmaRock_Placements__magma_rock[] __asm__("gMagmaRock_Placements");
 #define gMagmaRock_Placements gMagmaRock_Placements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2LowerPlacements as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2LowerPlacements__magma_rock[] __asm__("gMagmaRock_Room2LowerPlacements");
-#define gMagmaRock_Room2LowerPlacements gMagmaRock_Room2LowerPlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2MiddlePlacements as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2MiddlePlacements__magma_rock[] __asm__("gMagmaRock_Room2MiddlePlacements");
-#define gMagmaRock_Room2MiddlePlacements gMagmaRock_Room2MiddlePlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2UpperPlacements as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2UpperPlacements__magma_rock[] __asm__("gMagmaRock_Room2UpperPlacements");
-#define gMagmaRock_Room2UpperPlacements gMagmaRock_Room2UpperPlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2TopPlacements as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2TopPlacements__magma_rock[] __asm__("gMagmaRock_Room2TopPlacements");
+/* VIEW(magma_rock): routine gMagmaRock_Room2LowerPlacements as this part
+ * declared it; the joined file has another. */
+extern const u8 gMagmaRock_Room2LowerPlacements__magma_rock[] __asm__(
+    "gMagmaRock_Room2LowerPlacements");
+#define gMagmaRock_Room2LowerPlacements                                        \
+  gMagmaRock_Room2LowerPlacements__magma_rock
+/* VIEW(magma_rock): routine gMagmaRock_Room2MiddlePlacements as this part
+ * declared it; the joined file has another. */
+extern const u8 gMagmaRock_Room2MiddlePlacements__magma_rock[] __asm__(
+    "gMagmaRock_Room2MiddlePlacements");
+#define gMagmaRock_Room2MiddlePlacements                                       \
+  gMagmaRock_Room2MiddlePlacements__magma_rock
+/* VIEW(magma_rock): routine gMagmaRock_Room2UpperPlacements as this part
+ * declared it; the joined file has another. */
+extern const u8 gMagmaRock_Room2UpperPlacements__magma_rock[] __asm__(
+    "gMagmaRock_Room2UpperPlacements");
+#define gMagmaRock_Room2UpperPlacements                                        \
+  gMagmaRock_Room2UpperPlacements__magma_rock
+/* VIEW(magma_rock): routine gMagmaRock_Room2TopPlacements as this part declared
+ * it; the joined file has another. */
+extern const u8 gMagmaRock_Room2TopPlacements__magma_rock[] __asm__(
+    "gMagmaRock_Room2TopPlacements");
 #define gMagmaRock_Room2TopPlacements gMagmaRock_Room2TopPlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room3Placements as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room3Placements__magma_rock[] __asm__("gMagmaRock_Room3Placements");
+/* VIEW(magma_rock): routine gMagmaRock_Room3Placements as this part declared
+ * it; the joined file has another. */
+extern const u8 gMagmaRock_Room3Placements__magma_rock[] __asm__(
+    "gMagmaRock_Room3Placements");
 #define gMagmaRock_Room3Placements gMagmaRock_Room3Placements__magma_rock
 
 const struct Trigger *Scene_GetPlacements(void) {
@@ -346,8 +366,10 @@ struct MagmaRockEffectParams {
   u8 unk20[8];
 };
 
-/* VIEW(magma_rock): routine gMagmaRock_FlameEmberScript as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_FlameEmberScript__magma_rock[] __asm__("gMagmaRock_FlameEmberScript");
+/* VIEW(magma_rock): routine gMagmaRock_FlameEmberScript as this part declared
+ * it; the joined file has another. */
+extern const u8 gMagmaRock_FlameEmberScript__magma_rock[] __asm__(
+    "gMagmaRock_FlameEmberScript");
 #define gMagmaRock_FlameEmberScript gMagmaRock_FlameEmberScript__magma_rock
 
 void MagmaRock_ThrowEmbers(struct Actor *object) {
@@ -1194,8 +1216,10 @@ void MagmaRock_SlideDown(void) {
   Event_SetFlag(0x2f8);
 }
 
-/* VIEW(s0ff4): routine MagmaRock_StepOnCrumblingPillar as this part declared it; the joined file has another. */
-void MagmaRock_StepOnCrumblingPillar__s0ff4(const u8 *data) __asm__("MagmaRock_StepOnCrumblingPillar");
+/* VIEW(s0ff4): routine MagmaRock_StepOnCrumblingPillar as this part declared
+ * it; the joined file has another. */
+void MagmaRock_StepOnCrumblingPillar__s0ff4(const u8 *data) __asm__(
+    "MagmaRock_StepOnCrumblingPillar");
 #define MagmaRock_StepOnCrumblingPillar MagmaRock_StepOnCrumblingPillar__s0ff4
 
 void MagmaRock_ResolveBeforeBurst(void) { Event_ResolvePendingActions(0); }
@@ -1459,23 +1483,34 @@ void MagmaRock_BlastOpenWall(s32 mode, s32 cue) {
     MagmaRock_EndFallingRocks();
 }
 
-/* VIEW(s0ff4): routine gMagmaRock_Triggers as this part declared it; the joined file has another. */
+/* VIEW(s0ff4): routine gMagmaRock_Triggers as this part declared it; the joined
+ * file has another. */
 extern const u8 gMagmaRock_Triggers__s0ff4[] __asm__("gMagmaRock_Triggers");
 #define gMagmaRock_Triggers gMagmaRock_Triggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2LowerTriggers as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2LowerTriggers__s0ff4[] __asm__("gMagmaRock_Room2LowerTriggers");
+/* VIEW(s0ff4): routine gMagmaRock_Room2LowerTriggers as this part declared it;
+ * the joined file has another. */
+extern const u8 gMagmaRock_Room2LowerTriggers__s0ff4[] __asm__(
+    "gMagmaRock_Room2LowerTriggers");
 #define gMagmaRock_Room2LowerTriggers gMagmaRock_Room2LowerTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2MiddleTriggers as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2MiddleTriggers__s0ff4[] __asm__("gMagmaRock_Room2MiddleTriggers");
+/* VIEW(s0ff4): routine gMagmaRock_Room2MiddleTriggers as this part declared it;
+ * the joined file has another. */
+extern const u8 gMagmaRock_Room2MiddleTriggers__s0ff4[] __asm__(
+    "gMagmaRock_Room2MiddleTriggers");
 #define gMagmaRock_Room2MiddleTriggers gMagmaRock_Room2MiddleTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2UpperTriggers as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2UpperTriggers__s0ff4[] __asm__("gMagmaRock_Room2UpperTriggers");
+/* VIEW(s0ff4): routine gMagmaRock_Room2UpperTriggers as this part declared it;
+ * the joined file has another. */
+extern const u8 gMagmaRock_Room2UpperTriggers__s0ff4[] __asm__(
+    "gMagmaRock_Room2UpperTriggers");
 #define gMagmaRock_Room2UpperTriggers gMagmaRock_Room2UpperTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2TopTriggers as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2TopTriggers__s0ff4[] __asm__("gMagmaRock_Room2TopTriggers");
+/* VIEW(s0ff4): routine gMagmaRock_Room2TopTriggers as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gMagmaRock_Room2TopTriggers__s0ff4[] __asm__("gMagmaRock_Room2TopTriggers");
 #define gMagmaRock_Room2TopTriggers gMagmaRock_Room2TopTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room3Triggers as this part declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room3Triggers__s0ff4[] __asm__("gMagmaRock_Room3Triggers");
+/* VIEW(s0ff4): routine gMagmaRock_Room3Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gMagmaRock_Room3Triggers__s0ff4[] __asm__("gMagmaRock_Room3Triggers");
 #define gMagmaRock_Room3Triggers gMagmaRock_Room3Triggers__s0ff4
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -1539,7 +1574,8 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef gMagmaRock_Room2TopTriggers
 #undef gMagmaRock_Room3Triggers
 // ---- from scene/magma_rock/s22ac.c ----
-/* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined file has another. */
+/* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined
+ * file has another. */
 #define MagmaRockEventWork MagmaRockEventWork__s22ac
 // @file
 // Magma Rock's rooms set up, the leader launched and landed, and the
@@ -1572,13 +1608,15 @@ struct MagmaRockEventWork {
 s32 Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
 void Map_CenterOnFollowedPoint(void);
-/* VIEW(s22ac): routine Func_02003af4 as this part declared it; the joined file has another. */
+/* VIEW(s22ac): routine Func_02003af4 as this part declared it; the joined file
+ * has another. */
 void Func_02003af4__s22ac(void) __asm__("Func_02003af4");
 #define Func_02003af4 Func_02003af4__s22ac
-/* VIEW(s22ac): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
-void FieldEffect_Spawn__s22ac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       struct MagmaRockEffectOptions *options) __asm__("FieldEffect_Spawn");
+/* VIEW(s22ac): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another. */
+void FieldEffect_Spawn__s22ac(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct MagmaRockEffectOptions *options) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__s22ac
 
 void MagmaRock_LaunchLeader(void) {
@@ -1678,10 +1716,12 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
-/* VIEW(s22ac): routine MagmaRock_RaiseFlameTop as this part declared it; the joined file has another. */
+/* VIEW(s22ac): routine MagmaRock_RaiseFlameTop as this part declared it; the
+ * joined file has another. */
 void MagmaRock_RaiseFlameTop__s22ac(void) __asm__("MagmaRock_RaiseFlameTop");
 #define MagmaRock_RaiseFlameTop MagmaRock_RaiseFlameTop__s22ac
-/* VIEW(s22ac): routine MagmaRock_RaiseFlamePart as this part declared it; the joined file has another. */
+/* VIEW(s22ac): routine MagmaRock_RaiseFlamePart as this part declared it; the
+ * joined file has another. */
 void MagmaRock_RaiseFlamePart__s22ac(void) __asm__("MagmaRock_RaiseFlamePart");
 #define MagmaRock_RaiseFlamePart MagmaRock_RaiseFlamePart__s22ac
 
@@ -1733,11 +1773,12 @@ void MagmaRock_RebuildFlameParts(u16 id) {
   BuildParts(Actor_Get(id)->watchedObject);
 }
 
-/* VIEW(s22ac): routine MagmaRock_RaiseActorCells as this part declared it; the joined file has another. */
+/* VIEW(s22ac): routine MagmaRock_RaiseActorCells as this part declared it; the
+ * joined file has another. */
 s32 MagmaRock_RaiseActorCells__s22ac() __asm__("MagmaRock_RaiseActorCells");
 #define MagmaRock_RaiseActorCells MagmaRock_RaiseActorCells__s22ac
-void MagmaRock_PlaceVolley();
-/* VIEW(s22ac): routine Blocks_MarkCells as this part declared it; the joined file has another. */
+/* VIEW(s22ac): routine Blocks_MarkCells as this part declared it; the joined
+ * file has another. */
 s32 Blocks_MarkCells__s22ac() __asm__("Blocks_MarkCells");
 #define Blocks_MarkCells Blocks_MarkCells__s22ac
 void MagmaRock_SettleBlocks();
@@ -1986,8 +2027,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 extern u8 gMapShapeGrid[];
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-/* VIEW(s22ac): routine MapCollision_FindOrAddTag as this part declared it; the joined file has another. */
-u8 MapCollision_FindOrAddTag__s22ac(s32 layer, s32 shape, s32 height) __asm__("MapCollision_FindOrAddTag");
+/* VIEW(s22ac): routine MapCollision_FindOrAddTag as this part declared it; the
+ * joined file has another. */
+u8 MapCollision_FindOrAddTag__s22ac(s32 layer, s32 shape, s32 height) __asm__(
+    "MapCollision_FindOrAddTag");
 #define MapCollision_FindOrAddTag MapCollision_FindOrAddTag__s22ac
 
 DEFINE_PILLARS_RESTORE_RAISED(MagmaRock_RestoreCrumblingPillars,
@@ -2441,9 +2484,11 @@ struct RockWork {
 };
 
 void Import_DecompressTaggedLz(void *entry, void *destination);
-/* VIEW(s34ac): routine EffectSprite_Init as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine EffectSprite_Init as this part declared it; the joined
+ * file has another. */
 void EffectSprite_Init__s34ac(struct RockSprite *sprite, s32 width, s32 height,
-                       u32 attributes, s32 tile) __asm__("EffectSprite_Init");
+                              u32 attributes,
+                              s32 tile) __asm__("EffectSprite_Init");
 #define EffectSprite_Init EffectSprite_Init__s34ac
 
 void MagmaRock_StartFallingRocks(void) {
@@ -2490,28 +2535,37 @@ void MagmaRock_EndFallingRocks(void) {
 #include "objcmd.h"
 
 void MagmaRock_UnblockMovedPillar(void);
-/* VIEW(s34ac): routine MagmaRock_BlockMovedPillar as this part declared it; the joined file has another. */
-void MagmaRock_BlockMovedPillar__s34ac(void) __asm__("MagmaRock_BlockMovedPillar");
+/* VIEW(s34ac): routine MagmaRock_BlockMovedPillar as this part declared it; the
+ * joined file has another. */
+void MagmaRock_BlockMovedPillar__s34ac(void) __asm__(
+    "MagmaRock_BlockMovedPillar");
 #define MagmaRock_BlockMovedPillar MagmaRock_BlockMovedPillar__s34ac
-/* VIEW(s34ac): routine MagmaRock_TargetStatue as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine MagmaRock_TargetStatue as this part declared it; the
+ * joined file has another. */
 void MagmaRock_TargetStatue__s34ac(void) __asm__("MagmaRock_TargetStatue");
 #define MagmaRock_TargetStatue MagmaRock_TargetStatue__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn1 as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine MagmaRock_BurstColumn1 as this part declared it; the
+ * joined file has another. */
 void MagmaRock_BurstColumn1__s34ac(void) __asm__("MagmaRock_BurstColumn1");
 #define MagmaRock_BurstColumn1 MagmaRock_BurstColumn1__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn2 as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine MagmaRock_BurstColumn2 as this part declared it; the
+ * joined file has another. */
 void MagmaRock_BurstColumn2__s34ac(void) __asm__("MagmaRock_BurstColumn2");
 #define MagmaRock_BurstColumn2 MagmaRock_BurstColumn2__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn3 as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine MagmaRock_BurstColumn3 as this part declared it; the
+ * joined file has another. */
 void MagmaRock_BurstColumn3__s34ac(void) __asm__("MagmaRock_BurstColumn3");
 #define MagmaRock_BurstColumn3 MagmaRock_BurstColumn3__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn4 as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine MagmaRock_BurstColumn4 as this part declared it; the
+ * joined file has another. */
 void MagmaRock_BurstColumn4__s34ac(void) __asm__("MagmaRock_BurstColumn4");
 #define MagmaRock_BurstColumn4 MagmaRock_BurstColumn4__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn5 as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine MagmaRock_BurstColumn5 as this part declared it; the
+ * joined file has another. */
 void MagmaRock_BurstColumn5__s34ac(void) __asm__("MagmaRock_BurstColumn5");
 #define MagmaRock_BurstColumn5 MagmaRock_BurstColumn5__s34ac
-/* VIEW(s34ac): routine MagmaRock_BlastOpenWall as this part declared it; the joined file has another. */
+/* VIEW(s34ac): routine MagmaRock_BlastOpenWall as this part declared it; the
+ * joined file has another. */
 void MagmaRock_BlastOpenWall__s34ac(void) __asm__("MagmaRock_BlastOpenWall");
 #define MagmaRock_BlastOpenWall MagmaRock_BlastOpenWall__s34ac
 

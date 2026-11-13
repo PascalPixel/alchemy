@@ -22,11 +22,14 @@
 #include "event_work.h"
 #include "module/field/field.h"
 
-/* VIEW(first): routine gData_020031c4 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020031c4 as this part declared it; the joined file
+ * has another. */
 extern const u8 gData_020031c4__first[] __asm__("gData_020031c4");
 #define gData_020031c4 gData_020031c4__first
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it; the joined file has another. */
-extern s32 gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
+/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
+ * the joined file has another. */
+extern s32
+    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 extern s16 gLightSpriteCount;
 extern u16 gLightSpritePriority;
@@ -687,7 +690,8 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined file has another. */
+/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
+ * file has another. */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
 
@@ -724,7 +728,8 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined file has another. */
+/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
+ * file has another. */
 extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
 #define gWhirlwindEndScript gWhirlwindEndScript__first
 extern s32 gWhirlwindRiding;
@@ -753,9 +758,11 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
-/* VIEW(s16d4): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
-void FieldEffect_Spawn__s16d4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+/* VIEW(s16d4): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another. */
+void FieldEffect_Spawn__s16d4(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__s16d4
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
@@ -879,11 +886,15 @@ void LightSprites_SetPriority(u16 value) {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s1f74): routine Actor_SelectAnimation as this part declared it; the joined file has another. */
-void Actor_SelectAnimation__s1f74(struct FieldEffect *effect, s32 mode) __asm__("Actor_SelectAnimation");
+/* VIEW(s1f74): routine Actor_SelectAnimation as this part declared it; the
+ * joined file has another. */
+void Actor_SelectAnimation__s1f74(struct FieldEffect *effect,
+                                  s32 mode) __asm__("Actor_SelectAnimation");
 #define Actor_SelectAnimation Actor_SelectAnimation__s1f74
-/* VIEW(s1f74): routine Actor_StartScript as this part declared it; the joined file has another. */
-void Actor_StartScript__s1f74(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+/* VIEW(s1f74): routine Actor_StartScript as this part declared it; the joined
+ * file has another. */
+void Actor_StartScript__s1f74(struct FieldEffect *effect,
+                              const s32 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__s1f74
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -961,9 +972,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // leader steps on.
 #define CELL_TABLE gCrackedTiles
 #define CELL_SPRITE_DRAW CrackedTiles_Update
-/* VIEW(s1f74): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares it; the
- * joined file has another. */
-void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");
+/* VIEW(s1f74): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
+ * it; the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__(
+    "Oam_AddSpriteAtDepthClamped");
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1f74
 #include "../field/map/cell_sprite.c"
 
@@ -1013,7 +1025,9 @@ struct CellTarget__s25a4 {
 
 /* VIEW(s25a4): routine CrackedTile_Fall as this part defines it; the scene's
  * module header declares it with the joined file's CellTarget. */
-void CrackedTile_Fall__s25a4(struct CellTarget__s25a4 *table, struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+void CrackedTile_Fall__s25a4(
+    struct CellTarget__s25a4 *table,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
                          Leader_CenterInCell)
 
@@ -1042,9 +1056,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
 #include "module/scene/jupiter_lighthouse_room_7.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
-void FieldEffect_Spawn__s273c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+/* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another. */
+void FieldEffect_Spawn__s273c(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__s273c
 
 void CrackedTile_DropIn(void) {
@@ -1143,13 +1159,16 @@ s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
 
 void Func_02000038(void);
 void JupiterLighthouse_StepOnButton(void);
-/* VIEW(data_7): routine Func_02000778 as this part declared it; the joined file has another. */
+/* VIEW(data_7): routine Func_02000778 as this part declared it; the joined file
+ * has another. */
 void Func_02000778__data_7(void) __asm__("Func_02000778");
 #define Func_02000778 Func_02000778__data_7
-/* VIEW(data_7): routine Func_020007a4 as this part declared it; the joined file has another. */
+/* VIEW(data_7): routine Func_020007a4 as this part declared it; the joined file
+ * has another. */
 void Func_020007a4__data_7(void) __asm__("Func_020007a4");
 #define Func_020007a4 Func_020007a4__data_7
-/* VIEW(data_7): routine Func_020009e4 as this part declared it; the joined file has another. */
+/* VIEW(data_7): routine Func_020009e4 as this part declared it; the joined file
+ * has another. */
 void Func_020009e4__data_7(void) __asm__("Func_020009e4");
 #define Func_020009e4 Func_020009e4__data_7
 void Func_02000e20(void);

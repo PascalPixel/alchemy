@@ -28,50 +28,68 @@ void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
 
-/* VIEW(first): routine gNaribwe_Placements as this part declared it; the joined file has another. */
+/* VIEW(first): routine gNaribwe_Placements as this part declared it; the joined
+ * file has another. */
 extern const u8 gNaribwe_Placements__first[] __asm__("gNaribwe_Placements");
 #define gNaribwe_Placements gNaribwe_Placements__first
-/* VIEW(first): routine gNaribwe_Entrance10Placements as this part declared it; the joined file has another. */
-extern const u8 gNaribwe_Entrance10Placements__first[] __asm__("gNaribwe_Entrance10Placements");
+/* VIEW(first): routine gNaribwe_Entrance10Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gNaribwe_Entrance10Placements__first[] __asm__(
+    "gNaribwe_Entrance10Placements");
 #define gNaribwe_Entrance10Placements gNaribwe_Entrance10Placements__first
-/* VIEW(first): routine gNaribwe_PlacementsOnReturn as this part declared it; the joined file has another. */
-extern const u8 gNaribwe_PlacementsOnReturn__first[] __asm__("gNaribwe_PlacementsOnReturn");
+/* VIEW(first): routine gNaribwe_PlacementsOnReturn as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gNaribwe_PlacementsOnReturn__first[] __asm__("gNaribwe_PlacementsOnReturn");
 #define gNaribwe_PlacementsOnReturn gNaribwe_PlacementsOnReturn__first
-/* VIEW(first): routine gNaribwe_Triggers as this part declared it; the joined file has another. */
+/* VIEW(first): routine gNaribwe_Triggers as this part declared it; the joined
+ * file has another. */
 extern const u8 gNaribwe_Triggers__first[] __asm__("gNaribwe_Triggers");
 #define gNaribwe_Triggers gNaribwe_Triggers__first
-/* VIEW(first): routine gNaribwe_TriggersOnReturn as this part declared it; the joined file has another. */
-extern const u8 gNaribwe_TriggersOnReturn__first[] __asm__("gNaribwe_TriggersOnReturn");
+/* VIEW(first): routine gNaribwe_TriggersOnReturn as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gNaribwe_TriggersOnReturn__first[] __asm__("gNaribwe_TriggersOnReturn");
 #define gNaribwe_TriggersOnReturn gNaribwe_TriggersOnReturn__first
-/* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file has another. */
+/* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
+ * has another. */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first
 
-/* VIEW(first): routine MsgNaribwe02 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe02 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe02__first __asm__("MsgNaribwe02");
 #define MsgNaribwe02 MsgNaribwe02__first
-/* VIEW(first): routine MsgNaribwe03 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe03 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe03__first __asm__("MsgNaribwe03");
 #define MsgNaribwe03 MsgNaribwe03__first
-/* VIEW(first): routine MsgNaribwe07 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe07 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe07__first __asm__("MsgNaribwe07");
 #define MsgNaribwe07 MsgNaribwe07__first
-/* VIEW(first): routine MsgNaribwe08 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe08 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe08__first __asm__("MsgNaribwe08");
 #define MsgNaribwe08 MsgNaribwe08__first
-/* VIEW(first): routine MsgNaribwe09 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe09 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe09__first __asm__("MsgNaribwe09");
 #define MsgNaribwe09 MsgNaribwe09__first
-/* VIEW(first): routine MsgNaribwe21 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe21 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe21__first __asm__("MsgNaribwe21");
 #define MsgNaribwe21 MsgNaribwe21__first
-/* VIEW(first): routine MsgNaribwe43 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe43 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe43__first __asm__("MsgNaribwe43");
 #define MsgNaribwe43 MsgNaribwe43__first
-/* VIEW(first): routine MsgNaribwe23 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe23 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
 #define MsgNaribwe23 MsgNaribwe23__first
-/* VIEW(first): routine MsgNaribwe45 as this part declared it; the joined file has another. */
+/* VIEW(first): routine MsgNaribwe45 as this part declared it; the joined file
+ * has another. */
 extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
 #define MsgNaribwe45 MsgNaribwe45__first
 #include "field.h"
@@ -335,17 +353,25 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "text/msg_ids.h"
 #include "module/scene/naribwe.h"
 
-/* VIEW(data): routine Naribwe_PraiseFortuneTeller as this part declared it; the joined file has another. */
-void Naribwe_PraiseFortuneTeller__data(void) __asm__("Naribwe_PraiseFortuneTeller");
+/* VIEW(data): routine Naribwe_PraiseFortuneTeller as this part declared it; the
+ * joined file has another. */
+void Naribwe_PraiseFortuneTeller__data(void) __asm__(
+    "Naribwe_PraiseFortuneTeller");
 #define Naribwe_PraiseFortuneTeller Naribwe_PraiseFortuneTeller__data
-/* VIEW(data): routine Naribwe_PraiseFortuneTellerOnReturn as this part declared it; the joined file has another. */
-void Naribwe_PraiseFortuneTellerOnReturn__data(void) __asm__("Naribwe_PraiseFortuneTellerOnReturn");
-#define Naribwe_PraiseFortuneTellerOnReturn Naribwe_PraiseFortuneTellerOnReturn__data
-/* VIEW(data): routine Naribwe_TalkToPilgrim as this part declared it; the joined file has another. */
+/* VIEW(data): routine Naribwe_PraiseFortuneTellerOnReturn as this part declared
+ * it; the joined file has another. */
+void Naribwe_PraiseFortuneTellerOnReturn__data(void) __asm__(
+    "Naribwe_PraiseFortuneTellerOnReturn");
+#define Naribwe_PraiseFortuneTellerOnReturn                                    \
+  Naribwe_PraiseFortuneTellerOnReturn__data
+/* VIEW(data): routine Naribwe_TalkToPilgrim as this part declared it; the
+ * joined file has another. */
 void Naribwe_TalkToPilgrim__data(void) __asm__("Naribwe_TalkToPilgrim");
 #define Naribwe_TalkToPilgrim Naribwe_TalkToPilgrim__data
-/* VIEW(data): routine Naribwe_TalkToPilgrimOnReturn as this part declared it; the joined file has another. */
-void Naribwe_TalkToPilgrimOnReturn__data(void) __asm__("Naribwe_TalkToPilgrimOnReturn");
+/* VIEW(data): routine Naribwe_TalkToPilgrimOnReturn as this part declared it;
+ * the joined file has another. */
+void Naribwe_TalkToPilgrimOnReturn__data(void) __asm__(
+    "Naribwe_TalkToPilgrimOnReturn");
 #define Naribwe_TalkToPilgrimOnReturn Naribwe_TalkToPilgrimOnReturn__data
 void Naribwe_HideStone(void);
 

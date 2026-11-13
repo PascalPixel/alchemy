@@ -520,23 +520,29 @@ s8 gData_02000eec[] = {
 #include "scene_tables.h"
 #include "module/scene/anemos_inner_sanctum_entrance.h"
 
-/* VIEW(data2): routine Func_0200033c as this part declared it; the joined file has another. */
+/* VIEW(data2): routine Func_0200033c as this part declared it; the joined file
+ * has another. */
 void Func_0200033c__data2(void) __asm__("Func_0200033c");
 #define Func_0200033c Func_0200033c__data2
-/* VIEW(data2): routine Func_020004e4 as this part declared it; the joined file has another. */
+/* VIEW(data2): routine Func_020004e4 as this part declared it; the joined file
+ * has another. */
 void Func_020004e4__data2(void) __asm__("Func_020004e4");
 #define Func_020004e4 Func_020004e4__data2
-/* VIEW(data2): routine Func_02000534 as this part declared it; the joined file has another. */
+/* VIEW(data2): routine Func_02000534 as this part declared it; the joined file
+ * has another. */
 void Func_02000534__data2(void) __asm__("Func_02000534");
 #define Func_02000534 Func_02000534__data2
 
-/* VIEW(data2): routine gData_02000d6c as this part declared it; the joined file has another. */
+/* VIEW(data2): routine gData_02000d6c as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02000d6c__data2[] __asm__("gData_02000d6c");
 #define gData_02000d6c gData_02000d6c__data2
-/* VIEW(data2): routine gData_02000da8 as this part declared it; the joined file has another. */
+/* VIEW(data2): routine gData_02000da8 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02000da8__data2[] __asm__("gData_02000da8");
 #define gData_02000da8 gData_02000da8__data2
-/* VIEW(data2): routine gData_02000de4 as this part declared it; the joined file has another. */
+/* VIEW(data2): routine gData_02000de4 as this part declared it; the joined file
+ * has another. */
 extern u8 gData_02000de4__data2[] __asm__("gData_02000de4");
 #define gData_02000de4 gData_02000de4__data2
 
@@ -559,8 +565,8 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
 
-LATE_DATA struct ActorPlacement gData_020019dc[] = {
-    {SCENE_TABLE_END},
+    LATE_DATA struct ActorPlacement gData_020019dc[] = {
+        {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gData_020019f4[] = {

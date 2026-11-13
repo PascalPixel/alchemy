@@ -1385,13 +1385,16 @@ next_column:
   Heap_Release(work);
 }
 
-/* VIEW(first): routine gData_020026a0 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020026a0 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_020026a0__first[] __asm__("gData_020026a0");
 #define gData_020026a0 gData_020026a0__first
-/* VIEW(first): routine gData_020026b0 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020026b0 as this part declared it; the joined file
+ * has another. */
 extern u16 gData_020026b0__first[] __asm__("gData_020026b0");
 #define gData_020026b0 gData_020026b0__first
-/* VIEW(first): routine gData_020026c0 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020026c0 as this part declared it; the joined file
+ * has another. */
 extern u16 gData_020026c0__first[] __asm__("gData_020026c0");
 #define gData_020026c0 gData_020026c0__first
 
@@ -1548,13 +1551,16 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 }
 
-/* VIEW(first): routine gData_02002700 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_02002700 as this part declared it; the joined file
+ * has another. */
 extern u16 gData_02002700__first[] __asm__("gData_02002700");
 #define gData_02002700 gData_02002700__first
-/* VIEW(first): routine gData_020026f0 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_020026f0 as this part declared it; the joined file
+ * has another. */
 extern s32 gData_020026f0__first[] __asm__("gData_020026f0");
 #define gData_020026f0 gData_020026f0__first
-/* VIEW(first): routine gData_0200270c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200270c as this part declared it; the joined file
+ * has another. */
 extern u16 gData_0200270c__first[] __asm__("gData_0200270c");
 #define gData_0200270c gData_0200270c__first
 

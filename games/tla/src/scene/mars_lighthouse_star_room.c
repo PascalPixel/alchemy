@@ -1,5 +1,11 @@
 /// @file
-/// The scene code of overlay 0x6ab, in ROM order.
+/// The Mars Lighthouse room of the Mars Star, in the rooms of this overlay:
+/// the statue the party examines (MarsLighthouseStarRoom_ExamineStatue), the
+/// Mars Star it makes and takes (MarsLighthouseStarRoom_CreateMarsStar,
+/// MarsLighthouseStarRoom_TakeMarsStar) and uses to burst the ice
+/// (MarsLighthouseStarRoom_UseMarsStar, MarsLighthouseStarRoom_BurstIce), the
+/// warm hand after the battle (MarsLighthouseStarRoom_HoldWarmHand), and its
+/// ice floors (MarsLighthouseStarRoom_SlideOnIce).
 
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"

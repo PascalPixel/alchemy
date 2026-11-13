@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x6ac, in ROM order.
+/// The Mars Lighthouse hall of the four inscriptions, in the rooms of this
+/// overlay: the party reads the inscriptions of earth, water, fire and wind
+/// (MarsLighthouseRoomM_ReadEarthInscription and its siblings) and hears the
+/// dragon statue (MarsLighthouseRoomM_HearDragonStatue), and slides on its
+/// ice (MarsLighthouseRoomM_SlideOnIce).
 
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"

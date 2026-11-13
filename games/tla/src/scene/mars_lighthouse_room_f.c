@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x6ad, in ROM order.
+/// The Mars Lighthouse rooms of this overlay below the aerie: floors of ice
+/// the leader slides across (MarsLighthouseRoomF_SlideOnIce), the platforms
+/// that carry the party (Ride_UpdateCarried), cracked floors it drops through
+/// (CrackedTile_Crack) and pushable statues (PushTarget_Push).
 
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"

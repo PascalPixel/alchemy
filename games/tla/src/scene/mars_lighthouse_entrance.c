@@ -1,5 +1,13 @@
 /// @file
-/// The scene code of overlay 0x6aa, in ROM order.
+/// Mars Lighthouse's lower floors, inside its gates, in the rooms of this
+/// overlay: ice cones Pound flattens (MarsLighthouseEntrance_PoundIceCone),
+/// ice sheets that burst and ice to Grind (MarsLighthouseEntrance_GrindIce),
+/// floors of ice the leader slides across (MarsLighthouseEntrance_SlideOnIce),
+/// the platforms that carry the party (Ride_UpdateCarried), a statue pushed
+/// into the flames (MarsLighthouseEntrance_PushStatueIntoFlames) and the
+/// teleporters on (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and
+/// the Mercury Djinni Balm fight here (MarsLighthouseEntrance_FightFugue,
+/// MarsLighthouseEntrance_FightBalm).
 
 #include "shared/map_cells.h"
 #include "field/event_inline.h"

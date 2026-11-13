@@ -843,22 +843,7 @@ DEFINE_FUNC_0200027C(Func_020014e8, gData_0200703c, gData_02007040,
 #include "ram_buffer.h"
 #include "field_event.h"
 
-void Func_020015a4(s32 mode) {
-  gData_02007040 = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gData_02007068, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWordsEntry(gData_02007088, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(0xa00) || mode == 1) {
-    s32 zero = 0;
-
-    gData_0200703c = zero;
-    Task_Add(Func_020014e8, 1152);
-  } else {
-    Dma_Set(gData_0200708c, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_FUNC_020004C0(Func_020015a4, gData_02007040, gData_02007068, gData_02007088, gData_0200703c, Func_020014e8, gData_0200708c)
 
 #include "event_inline.h"
 
@@ -1093,70 +1078,7 @@ struct RideWork {
   u16 direction;
 };
 
-void Func_02001e20(struct Actor *object) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  s32 direction;
-  s32 id;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->terrainHeight && Func_02001d5c(object, actor) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->value68 = 0;
-      {
-        u16 *cell = &work->direction;
-
-        if (object->unk4c > 0) {
-          direction = 1;
-          *cell = direction;
-        } else {
-          direction = 0xffff;
-          *cell = direction;
-        }
-      }
-    }
-    object->priorityFlags = 2;
-    {
-      s32 speed = object->unk4c;
-
-      object->unk4c = 0;
-      object->z -= speed;
-      object->gravity += speed >> 2;
-    }
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
-    actor = Actor_Get(id);
-
-    if (actor->y == actor->terrainHeight && Func_02001dc0(object, actor)) {
-      if (work->slots[i].blocked == 0) {
-        s32 speed;
-
-        object->priorityFlags = 2;
-        speed = object->unk4c;
-        object->unk4c = 0;
-        object->z -= speed;
-        object->gravity += speed >> 2;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_FUNC_020015EC(Func_02001e20, RideWork, Func_02001d5c, Func_02001dc0)
 
 extern const u8 gData_02005d8c[];
 

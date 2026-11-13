@@ -1213,18 +1213,7 @@ void Func_02001f90(struct Actor *object);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
-void Func_02001e1c(struct Actor *object, s32 part) {
-  s32 zero = 0;
-
-  object->motionFlags = zero;
-  object->collisionFlags = zero;
-  ((struct SpriteParts *)object->sprite)->part = part;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_020056a0);
-  object->timer = zero;
-  object->speedLimit = zero;
-  object->acceleration = zero;
-}
+DEFINE_FUNC_02001928(Func_02001e1c, gData_020056a0)
 
 DEFINE_FUNC_02001E60(Func_02001e60, Func_02004bd8_, Func_02001e1c,
     Func_02001ae0, Func_02004bc0)

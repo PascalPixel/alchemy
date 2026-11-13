@@ -1274,12 +1274,15 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
 /// at a random angle and stops the sea's scroll. Then it redraws the map grid
 /// and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
-  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridLayerScroll *sea =
+      &((struct MapGridScrollWork *)gMapGridWork[0])
+           ->layers[MAPGRID_LAYER_GROUND];
 
   GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
-  gFieldWork->transition =
+  ((struct FieldWork *)gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])
+      ->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  map->layers[MAPGRID_LAYER_GROUND].speedY = 0;
+  sea->speedY = 0;
   sSwayAngleX = (u16)Import_RandomNext();
   sSwayAngleY = (u16)Import_RandomNext();
   sSeaScroll[0] = 0;
@@ -2197,20 +2200,20 @@ enum TolbiShipDeckRowerReply {
   ROWER_REPLY_OLD_MAN = 20        ///< MsgTolbiShipMakeOldMan
 };
 
-/// The passengers (from ACTOR_ARRIVED_FIRST_PASSENGER) in the order they come
-/// up at Tolbi, and the reply of each, or -1 for those who answer by how many
-/// came up before them.
-static const s8 sDisembarkOrder[][2] = {
-    {0, -1},
-    {1, -1},
-    {2, -1},
-    {4, -1},
-    {5, -1},
-    {6, -1},
-    {3, ROWER_REPLY_ROWING_MORE},
-    {7, ROWER_REPLY_LOST_AT_SEA},
-    {8, ROWER_REPLY_OLD_MAN},
-};
+/// Takes `passenger` as the next to come up, with `reply`, when one of the
+/// four seats holds them.
+#define TOLBI_SHIP_DECK_TAKE_ROWER(passenger, reply)                           \
+  do {                                                                         \
+    member = (passenger);                                                      \
+    for (index = 0; index <= 3; index++) {                                     \
+      if (roster[index] == member) {                                           \
+        matched[found] = member;                                               \
+        category[found] = (reply);                                             \
+        found++;                                                               \
+        break;                                                                 \
+      }                                                                        \
+    }                                                                          \
+  } while (0)
 
 /// At Tolbi, the four passengers who rowed come up from below in turn and
 /// each says something.
@@ -2226,32 +2229,36 @@ static void TolbiShipDeck_RowersDisembark(void) {
   s32 matched[4];
   s32 category[4];
   u32 index;
-  u32 turn;
   s32 found;
   s32 actorId;
   s32 member;
   struct Actor *actor;
 
+  found = 0;
   for (index = 0; index <= 3; index++) {
     roster[index] = TolbiShipDeck_GetRowerAtSeat(index);
     category[index] = 0;
   }
 
-  found = 0;
-  for (turn = 0; turn < sizeof(sDisembarkOrder) / sizeof(sDisembarkOrder[0]) &&
-                 found != 4;
-       turn++) {
-    member = ACTOR_ARRIVED_FIRST_PASSENGER + sDisembarkOrder[turn][0];
-    for (index = 0; index <= 3; index++) {
-      if (roster[index] == member) {
-        matched[found] = member;
-        category[found] =
-            sDisembarkOrder[turn][1] < 0 ? found : sDisembarkOrder[turn][1];
-        found++;
-        break;
-      }
-    }
-  }
+  // The first four in this order take the first four replies; three others
+  // have their own, for when fewer than four of the first rowed.
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER, found);
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 1, found);
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 2, found);
+  TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 4, found);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 5, found);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 6, found);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 3,
+                               ROWER_REPLY_ROWING_MORE);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 7,
+                               ROWER_REPLY_LOST_AT_SEA);
+  if (found != 4)
+    TOLBI_SHIP_DECK_TAKE_ROWER(ACTOR_ARRIVED_FIRST_PASSENGER + 8,
+                               ROWER_REPLY_OLD_MAN);
 
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -2399,12 +2406,13 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 /// pattern, wrapping at 32 pixels.
 static void TolbiShipDeck_RockDeck(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
+  s32 *origin = grid->origin;
   s32 dx = Trig_Cos(sSwayAngleX);
   s32 dy = Trig_Sin(sSwayAngleY);
   struct MapGridLayerScroll *layer;
 
-  grid->origin[0] += dx >> 1;
-  grid->origin[1] += dy;
+  *origin++ += dx >> 1;
+  *origin += dy;
   sSwayAngleX += (u32)(Import_RandomNext() * 3 << 7) >> 16;
   sSwayAngleY += (u32)(Import_RandomNext() << 9) >> 16;
   sSwayAngleX &= 0xffff;

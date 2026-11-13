@@ -90,6 +90,15 @@
 /// attendant can tell the change when the party comes back.
 #define sLuckyDiceCoinsBefore (*(s32 *)gSceneLocalState)
 
+// UB: the coin prizes are read through a one-element view of their table;
+// UBFIX reads the table.
+#ifdef UBFIX
+#define TOLBI_SPRING_COIN_PRIZE(ring) gTolbiSpring_CoinPrizes[ring]
+#else
+#define TOLBI_SPRING_COIN_PRIZE(ring)                                          \
+  (((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)->coins[ring])
+#endif
+
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
 static s32 TolbiSpring_RunSpringGame(void);
@@ -584,12 +593,14 @@ static void TolbiSpring_RevealPrize(s32 item) {
 /// Raises the spring's displayed layer and blends it into view.
 static void TolbiSpring_RiseAndFadeIn(void) {
   struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridLayerScroll *spring;
   const u16 *alphaSteps;
   s32 stepIndex;
 
   Sound_Play(SE_BURST);
+  spring = &map->layers[MAPGRID_LAYER_OVERHEAD];
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
-    map->layers[MAPGRID_LAYER_OVERHEAD].offsetY -= px(1);
+    spring->offsetY -= px(1);
     wait(4);
   }
   alphaSteps = gTolbiSpring_AlphaSteps;
@@ -718,6 +729,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
 static s32 TolbiSpring_RunSpringGame(void) {
   s32 choice = 0;
   s32 text;
+  s32 cancel = -1; // what the menus answer when B is pressed
   s32 coins;
   s32 medals;
   struct Window *window;
@@ -748,7 +760,7 @@ prompt:
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
   Message_CloseFinishedWindows();
-  if (choice == (-1)) {
+  if (choice == cancel) {
     Event_End();
     return 0;
   }
@@ -819,7 +831,7 @@ prompt:
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
     Message_CloseFinishedWindows();
-    if (choice == (-1)) {
+    if (choice == cancel) {
       Event_End();
       return 0;
     }
@@ -874,7 +886,7 @@ prompt:
   }
 #endif
   // Charge the chosen token only after the player confirms the toss.
-  if (result != (-1)) {
+  if (result != cancel) {
     if (choice == SPRING_TOSS_COIN) {
       Party_AdjustCoins(-1);
     } else if (choice == SPRING_TOSS_MEDAL) {
@@ -883,9 +895,9 @@ prompt:
     result = TolbiSpring_RunToss(choice);
     if (choice == SPRING_TOSS_COIN) {
       if (result != 4) {
-        Party_AdjustCoins(gTolbiSpring_CoinPrizes[result]);
+        Party_AdjustCoins(TOLBI_SPRING_COIN_PRIZE(result));
         Sound_Play(MUS_JINGLE_SMALL);
-        MessageArgument_Push(gTolbiSpring_CoinPrizes[result],
+        MessageArgument_Push(TOLBI_SPRING_COIN_PRIZE(result),
                              MESSAGE_ARGUMENT_NUMBER);
         Event_SetMessageId(MsgTolbiWonNumberCoin);
         // "You won ... coin!"
@@ -897,8 +909,19 @@ prompt:
     } else {
       // The prize ring limits the weighted pool of medal rewards.
       totalWeight = 0;
-      for (prizeIndex = 0; prizeIndex < result * 3 + 3; prizeIndex++) {
-        totalWeight += state->prizeWeights[prizeIndex];
+      prizeIndex = 0;
+      if (prizeIndex < result * 3 + 3) {
+        do {
+          /* FAKEMATCH(dead): the weight read as a byte from state's start
+           * leaves the weights' address free for the halving below; read by
+           * name, 6 of 280 instructions differ in tbs-en. */
+          u8 weight =
+              ((u8 *)state)[prizeIndex +
+                            offsetof(struct MainRoutineWork, prizeWeights)];
+
+          totalWeight += (s8)weight;
+          prizeIndex++;
+        } while (prizeIndex < result * 3 + 3);
       }
       prizeRoll = (u32)(Random_Next() * totalWeight) >> 16;
       for (prizeIndex = 0; prizeIndex < 15; prizeIndex++) {
@@ -912,8 +935,25 @@ prompt:
       }
       // Reveal the selected item, then reduce its chance on later tosses.
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
-      if (state->prizeWeights[prizeIndex] > 1) {
-        state->prizeWeights[prizeIndex] /= 2;
+      /* FAKEMATCH(dead): stepping state away and back makes the weights'
+       * address be worked out again after the call; without it, 6 of 280
+       * instructions differ in tbs-en. */
+      state++;
+      state--;
+      {
+        s32 slot =
+            prizeIndex + offsetof(struct MainRoutineWork, prizeWeights) - 1;
+        s8 *weights = (s8 *)state + 1;
+
+        if (weights[slot] > 1) {
+          /* FAKEMATCH(dead): the halving in both arms of a test of slot puts
+           * slot and the address in the original's registers; as one halving,
+           * 10 of 280 instructions differ in tbs-en. */
+          if (slot)
+            weights[slot] /= 2;
+          else
+            weights[slot] /= 2;
+        }
       }
     }
   }
@@ -955,12 +995,12 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
                                            s32 childValue) {
   struct Actor *actor = Actor_Get(actorId);
   struct Sprite *sprite;
-  u32 i;
+  u32 count;
 
   if (actor != 0) {
-    actor->x.fixed = coordinate[0];
-    actor->y.fixed = coordinate[1];
-    actor->z.fixed = coordinate[2];
+    actor->x.fixed = *coordinate++;
+    actor->y.fixed = *coordinate++;
+    actor->z.fixed = *coordinate;
     actor->facing = facing;
     actor->motionFlags = 0;
     actor->sprite->flags = 0;
@@ -968,14 +1008,20 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   }
   // BUG: actor is read even when Actor_Get found none.
   sprite = actor->sprite;
-  for (i = 0; i < sprite->count; i++) {
-    struct SpriteAnimation *entry = sprite->entries[i];
+  count = sprite->count;
+  if (count != 0) {
+    struct SpriteAnimation **animation = sprite->entries;
+    u32 left = count;
 
-    if (entry->colorMode != colorVariant) {
-      entry->colorMode = colorVariant;
-      // No picture is cached in the new colours yet.
-      entry->picture |= SPRITE_PICTURE_NONE;
-    }
+    do {
+      struct SpriteAnimation *entry = *animation++;
+
+      if (entry->colorMode != colorVariant) {
+        entry->colorMode = colorVariant;
+        // No picture is cached in the new colours yet.
+        entry->picture |= SPRITE_PICTURE_NONE;
+      }
+    } while (--left != 0);
   }
 }
 

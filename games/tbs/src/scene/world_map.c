@@ -143,7 +143,6 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "shared/walk_into_leader.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
 /// ★ Named from the game: "being smashed by falling rocks here"
@@ -2211,6 +2210,10 @@ static void WorldMap_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
+    /* FAKEMATCH(dead): clearing the motion flags again through a pointer
+     * keeps the zero and the address in the original's registers; without
+     * it, 11 of 363 instructions differ in tbs-en. */
+    *(u8 *)&orb->motionFlags = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 1024);
@@ -2278,7 +2281,15 @@ static void WorldMap_UseBlackOrb(void) {
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_NOD);
-  Scene_WalkIntoLeader(gWorldMapIodem);
+  // Iodem walks into Isaac and is taken off the map.
+  Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetDestination(gWorldMapIodem, actor->x.part.pixel,
+                         actor->z.part.pixel);
+  }
+  Actor_WaitForMoveById(gWorldMapIodem);
+  Actor_SetPosition(gWorldMapIodem, 0, 0);
   WorldMap_Unfreeze();
   WorldMap_StartZoom(Q16_ONE, 6);
   Event_Wait(20);
@@ -2614,6 +2625,7 @@ static s32 WorldMap_GetSeatRowValue(u32 seat) {
 static void WorldMap_SpawnIslandWake(void) {
   struct Actor *island;
   struct Actor *puff;
+  struct Sprite *sprite;
   s32 distance;
 
   if ((gFrameCount & 15) != 0)
@@ -2625,18 +2637,21 @@ static void WorldMap_SpawnIslandWake(void) {
     return;
   puff->scaleX = Q16_ONE / 2;
   puff->scaleY = Q16_ONE / 2;
+  sprite = puff->sprite;
   // Up to 48 pixels behind the island, or up to 32 to the side.
   if (((u32)Import_RandomNext() * 2 >> 16) != 0) {
-    distance = px(((u32)Import_RandomNext() * 48) >> 16);
-    puff->x.fixed -= distance / 2;
-    puff->z.fixed -= distance;
+    s32 behind = px(((u32)Import_RandomNext() * 48) >> 16);
+
+    puff->x.fixed -= behind / 2;
+    puff->z.fixed -= behind;
   } else {
     distance = px(((u32)Import_RandomNext() << 5) >> 16);
     puff->x.fixed += distance;
-    puff->z.fixed += distance / 2;
+    distance /= 2;
+    puff->z.fixed += distance;
   }
-  puff->sprite->flags = 0;
-  puff->sprite->image.priority = island->sprite->image.priority;
+  sprite->flags = 0;
+  sprite->image.priority = island->sprite->image.priority;
   puff->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   puff->motionFlags = island->motionFlags;
   Actor_SetSpriteColor(puff, SPRITE_COLOR_BLUE_TINT);

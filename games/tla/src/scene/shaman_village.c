@@ -466,8 +466,8 @@ void ShamanVillage_BlowAwaySand(void) {
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                       buffer);
-  Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
-  Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
+  Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, DMA_COPY_WORDS(208), REG_DMA3);
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSpritePriority(14, 1);
@@ -496,7 +496,7 @@ mask:
   cell = buffer;
   i = 0;
 row:
-  Dma_Set(cell, (void *)(0x0600200f + (i << 6)), 0x84000008, REG_DMA3);
+  Dma_Set(cell, (void *)(0x0600200f + (i << 6)), DMA_COPY_WORDS(8), REG_DMA3);
   i++;
   cell += 16;
   if (i != 18)
@@ -576,7 +576,8 @@ swirl:
   /* FAKEMATCH(dead): the empty once-only block ends CSE's run here. */
   do {
   } while (0);
-  Dma_Set((void *)0x06002800, (void *)0x06003000, 0x84000200, REG_DMA3);
+  Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
+          REG_DMA3);
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0xa44;
   i = 0;
@@ -608,7 +609,8 @@ frame:
   j++;
   if (j != 64)
     goto frame;
-  Dma_Set((void *)0x06002800, (void *)0x06003000, 0x84000200, REG_DMA3);
+  Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
+          REG_DMA3);
   REG_BLDALPHA = 16;
   i++;
   if (i != 8)

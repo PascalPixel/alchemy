@@ -581,8 +581,9 @@ void Func_02001010(void) {
   REG_DISPCNT &= ~0x100;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                       buffer);
-  Dma_Set(buffer, (void *)0x600e800, 0x840000d0, REG_DMA3);
-  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0, REG_DMA3);
+  Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
+          REG_DMA3);
   Heap_Release(buffer);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   FieldActor_SetSpritePriority(8, 1);
@@ -608,7 +609,7 @@ offset:
   cell = buffer;
   i = 0;
 row:
-  Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008, REG_DMA3);
+  Dma_Set(cell, (void *)(0x600200f + (i << 6)), DMA_COPY_WORDS(8), REG_DMA3);
   i++;
   cell += 16;
   if (i != 18)
@@ -1363,8 +1364,9 @@ void Func_020026b8(void) {
   REG_DISPCNT &= ~0x100;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                       buffer);
-  Dma_Set(buffer, (void *)0x600e800, 0x840000d0, REG_DMA3);
-  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0, REG_DMA3);
+  Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
+          REG_DMA3);
   Heap_Release(buffer);
   {
     s32 control = 0x40e;
@@ -1386,7 +1388,7 @@ void Func_020026b8(void) {
   }
   cell = buffer;
   for (i = 0; i != 18; i++) {
-    Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008, REG_DMA3);
+    Dma_Set(cell, (void *)(0x600200f + (i << 6)), DMA_COPY_WORDS(8), REG_DMA3);
     cell += 16;
   }
   Heap_Release(buffer);

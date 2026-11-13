@@ -1528,7 +1528,8 @@ void Func_020029f8(s32 id, s32 mode) {
   wait(2);
   object->scaleX = 0;
   Actor_SetSpriteFlags(object, 0);
-  Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010, REG_DMA3);
+  Dma_Set(Field_Palette685, (void *)0x050003e0, DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
   Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
   slot = VramCache_FindFreeEntry();

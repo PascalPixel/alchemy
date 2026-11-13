@@ -1,3 +1,4 @@
+#include "system/io_reg.h"
 /// @file
 /// Particles, sparks and palette cycles several scenes copy.
 /// Each routine is a macro a scene expands where its copy sits, with the
@@ -644,7 +645,7 @@
     offset += 2;                                                               \
     if (i <= 4)                                                                \
       goto next;                                                               \
-    Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);                      \
+    Dma_Set(p, (void *)0x05000184, DMA_COPY_WORDS(2), REG_DMA3);               \
     data1++;                                                                   \
   }
 
@@ -682,7 +683,7 @@
     offset += 2;                                                               \
     if (i <= 4)                                                                \
       goto next;                                                               \
-    Dma_Set(p, (void *)n1, 0x84000002, REG_DMA3);                              \
+    Dma_Set(p, (void *)n1, DMA_COPY_WORDS(2), REG_DMA3);                       \
     data1++;                                                                   \
   }
 

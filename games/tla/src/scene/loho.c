@@ -5,6 +5,7 @@
 
 #include "shared/tables.h"
 #include "flags.h"
+#include "system/io_reg.h"
 #include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -246,8 +247,8 @@ seedSparks:
   p = (struct LohoSpark *)((s32)p + 16);
   if (i >= 0)
     goto seedSparks;
-  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
-          REG_DMA3);
+  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0,
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   i = 0;
   /* FAKEMATCH(dead): this test that never passes, with its edge into the loop.
    */

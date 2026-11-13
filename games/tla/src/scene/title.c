@@ -291,7 +291,7 @@ void Title_LoadBackground(void) {
   Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   encodedGraphics += 0x1c0;
   Decode_(encodedGraphics, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800,
+  Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
           DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
 
   // Fill the visible 30 columns and pad each 32-entry tilemap row.

@@ -111,7 +111,8 @@ void Epilogue_LoadNamePanel(void) {
   s32 priority;
   s32 value;
 
-  Dma_Set(gEpilogueNamePanelPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
+  Dma_Set(gEpilogueNamePanelPalette, (void *)0x050003c0, DMA_COPY_HALFWORDS(16),
+          REG_DMA3);
   sprite = &gEpilogueNamePanel;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
                       buffer);

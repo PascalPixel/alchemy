@@ -2754,7 +2754,8 @@ found:
   entry = &gResourceTableEntries[firstSprite->vramBlock];
   first->watchedObject = (void *)(entry->offset + 0x6010000);
   Dma_Fill32(busy, second->watchedObject, entry->size);
-  Dma_Set(first->watchedObject, second->watchedObject, 0x840000c0, REG_DMA3);
+  Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(192),
+          REG_DMA3);
   first->watchedObject = (void *)((u8 *)first->watchedObject + 0x300);
   second->watchedObject = (void *)((u8 *)second->watchedObject + 0x300);
   leader->motionFlags = busy;
@@ -2762,7 +2763,8 @@ found:
 step:
   if (i <= 4) {
     second->y += 0x53333;
-    Dma_Set(first->watchedObject, second->watchedObject, 0x84000030, REG_DMA3);
+    Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(48),
+            REG_DMA3);
     first->watchedObject = (void *)((u8 *)first->watchedObject + 0x100);
     second->watchedObject = (void *)((u8 *)second->watchedObject + 0x100);
   }

@@ -192,7 +192,7 @@ void Func_020000c4(void) {
   buffer = Heap_Alloc(0x800);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                       buffer);
-  Dma_Set(buffer, (void *)(0x06000000), 0x84000200, REG_DMA3);
+  Dma_Set(buffer, (void *)(0x06000000), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
   buffer = Heap_Alloc(128);
@@ -203,7 +203,7 @@ void Func_020000c4(void) {
     *p++ &= 0xfcff;
   p = buffer;
   for (i = 0; i != 16; i++) {
-    Dma_Set(p, (void *)(0x06002000 + (i << 6)), 0x84000002, REG_DMA3);
+    Dma_Set(p, (void *)(0x06002000 + (i << 6)), DMA_COPY_WORDS(2), REG_DMA3);
     p += 4;
   }
   Heap_Release(buffer);

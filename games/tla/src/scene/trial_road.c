@@ -3464,8 +3464,8 @@ void TrialRoad_DrawProgress(void) {
   } else if (work->fade <= 1) {
     if (++work->fade == 1) {
       void *buffer;
-      Dma_Set(gTrialRoad_ProgressPalette, (void *)0x050003c0, 0x80000010,
-              REG_DMA3);
+      Dma_Set(gTrialRoad_ProgressPalette, (void *)0x050003c0,
+              DMA_COPY_HALFWORDS(16), REG_DMA3);
       buffer = TrialRoadLink_AllocPicture();
       Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
       VramCache_Load(*vramEntry, 576, buffer);

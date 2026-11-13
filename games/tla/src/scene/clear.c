@@ -135,7 +135,7 @@ void Func_0200005c(void) {
   Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;
   Decode_(res, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800,
+  Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
           DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
 
   map = (u16 *)0x06003000;

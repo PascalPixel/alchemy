@@ -1771,12 +1771,6 @@ DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 
 DEFINE_ACTOR_PARK(Actor_Park, Actor_LaunchAhead)
 
-/* VIEW(s2708): routine Func_0200004c as void Func_0200004c(void);
- * scene/mars_lighthouse_room_m has s32 Func_0200004c(struct Actor *object) {;
- * tried as the definition's void *Func_0200004c(void), Actor_PopUpSlow (gone)
- * moves: 74 of 74 instructions in tla-ja. */
-void Func_0200004c__s2708(void) __asm__("Func_0200004c");
-#define Func_0200004c Func_0200004c__s2708
 void Func_0200030c(void);
 
 s32 gData_020032c8[] = {
@@ -1962,5 +1956,4 @@ u32 gData_02003900[] = {
 // clang-format on
 
 #undef Work020023c4
-#undef Func_0200004c
 #undef Party_TakeFallDamage

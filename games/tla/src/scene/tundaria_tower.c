@@ -1038,14 +1038,6 @@ void Func_02001868(void) {
   }
 }
 
-/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the
- * definition has void Func_020017dc(struct Actor *object); tried as the
- * definition's void Func_020017dc(struct Actor *object), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:1099: `Func_020017dc__events_e'
- * undeclared (first use in this function). */
-extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
-
 void Func_0200189c(void) {
   struct Actor *object;
   s32 startCell;
@@ -1115,7 +1107,7 @@ retry:
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   Actor_WaitForMove(object);
-  object->update = Func_020017dc__events_e;
+  object->update = Func_020017dc;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
@@ -1523,13 +1515,6 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
-/* VIEW(events_f): routine Func_020017dc as void Func_020017dc(void);
- * games/tla/src/scene/tundaria_tower/s11e0 has void Func_020017dc(struct Actor
- * *object) {; tried as the definition's void Func_020017dc(struct Actor
- * *object), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:1561: `Func_020017dc__events_f'
- * undeclared (first use in this function). */
-void Func_020017dc__events_f(void) __asm__("Func_020017dc");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void Func_02001e68(void) {
@@ -1586,7 +1571,7 @@ retry:
   object->timer = 0;
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  object->update = Func_020017dc__events_f;
+  object->update = Func_020017dc;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
@@ -2199,17 +2184,6 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 // The falling rocks' setup, and Func_02002ebc, which stops their task and
 // frees their picture and heap slot.
 
-/* VIEW(s29d0): routine EffectSprite_Init as void EffectSprite_Init(struct
- * RockSprite__s29d0 *sprite, s32 width, s32 height, u32 attr, s32 tile);
- * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
- * pivotX, s32 pivotY, u32 attributes, s32 tile); tried as the definition's void
- * EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32
- * attributes, s32 tile), which the object already declares, Rocks_Spawn (gone)
- * moves: 88 of 88 instructions in tla-ja. */
-void EffectSprite_Init__s29d0(struct RockSprite__s29d0 *sprite, s32 width,
-                              s32 height, u32 attr,
-                              s32 tile) __asm__("EffectSprite_Init");
-
 // The falling rocks' setup: loads their picture, sets up 64 small sprites,
 // marks each rock idle and starts the task that spawns them.
 void Func_02002e00(void) {
@@ -2229,7 +2203,7 @@ void Func_02002e00(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
-    EffectSprite_Init__s29d0(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->blend = 1;
     sprite->palette = 0;
     sprite->priority = 0;

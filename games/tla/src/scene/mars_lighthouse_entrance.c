@@ -2570,12 +2570,6 @@ void Func_020049dc(u16 *list, s32 mode, s32 count) {
 
 DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex, Func_02004bc0)
 
-/* VIEW(s42f8): routine Func_02000038 as this part declared it; the joined file
- * has another; tried as the definition's void Func_02000038(s16 *list),
- * Actor_SetCellOpen (gone) moves: 75 of 75 instructions in tla-ja. */
-void Func_02000038__s42f8(void) __asm__("Func_02000038");
-#define Func_02000038 Func_02000038__s42f8
-
 // clang-format off
 DEFINE_G_DATA_02004DE8(gData_02004de8, 200, 104)
 
@@ -3317,6 +3311,5 @@ s32 gFieldEffect_DurationScripts[] = {
 };
 #undef Func_02004160
 #undef Palette_SetColorsFade
-#undef Func_02000038
 #undef MarsLighthouseEntrance_BurstIceSheet
 #undef MarsLighthouseEntrance_PushStatueIntoFlames

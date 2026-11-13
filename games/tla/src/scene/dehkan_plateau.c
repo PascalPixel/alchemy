@@ -1545,12 +1545,6 @@ extern struct Actor *gData_02004420__s2698 __asm__("gDehkanPlateau_PoundCube");
 #define gDehkanPlateau_PoundCube gData_02004420__s2698
 
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s2698): routine FieldEffect_AdvanceMotion as void
- * FieldEffect_AdvanceMotion(struct Actor *object); module/field/field_effect.h
- * has void FieldEffect_AdvanceMotion(union FieldObject *object); not tried:
- * FieldEffect_AdvanceMotion's bound declaration was not found. */
-extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
-    "FieldEffect_AdvanceMotion");
 
 extern u32 gDehkanPlateau_DustScript[];
 
@@ -1597,7 +1591,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
       effect->spin = (((u32)Random16() << 9) >> 16) - 256;
       effect->scaleRateX = -(Q16_ONE / 32);
       effect->scaleRateY = -(Q16_ONE * 3 / 128);
-      effect->update = Effect_AdvanceMotion__s2698;
+      effect->update = FieldEffect_AdvanceMotion;
     }
   }
   GameFlag_Set(flag);
@@ -1738,12 +1732,6 @@ void Func_02001804(void);
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-/* VIEW(s2698): routine ItemDisplay_ShowPicture as void
- * ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
- * module/scene/airs_rock_inside.h has void ItemDisplay_ShowPicture(void); not
- * tried: ItemDisplay_ShowPicture's bound declaration was not found. */
-extern void Func_02003d40__s2698(struct Actor *object,
-                                 s32 mode) __asm__("ItemDisplay_ShowPicture");
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -1903,7 +1891,7 @@ void DehkanPlateau_TakePoundCube(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (gDehkanPlateau_PoundCube != 0)
-    Func_02003d40__s2698(gDehkanPlateau_PoundCube, 3);
+    ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube, 3);
   PartyInventory_GiveItem(199, 0);
   if (gDehkanPlateau_PoundCube != 0)
     Actor_Release(gDehkanPlateau_PoundCube);
@@ -2243,7 +2231,7 @@ void Func_02003764(void) {
   Event_Wait(24);
   opts = &options;
   opts->palette = 7;
-  opts->update = Effect_AdvanceMotion__s2698;
+  opts->update = FieldEffect_AdvanceMotion;
   opts->startScaleX = 0xa3d7;
   opts->startScaleY = 0xa3d7;
   opts = &options;

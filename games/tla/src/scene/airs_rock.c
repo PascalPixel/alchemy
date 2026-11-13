@@ -356,12 +356,6 @@ void Func_0200092c(struct Actor *object) {
 extern s16 gData_02004674__airs_rock[][4] __asm__("gData_02004674");
 #define gData_02004674 gData_02004674__airs_rock
 void Actor_StartScript(struct Actor *object, const s32 *script);
-/* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct
- * Actor *object); module/scene/scene.h has void Actor_HasArrived(struct Actor
- * *object, const void *script); not tried: Actor_HasArrived's bound declaration
- * was not found. */
-extern s32
-Func_02003ba8__airs_rock(struct Actor *object) __asm__("Actor_HasArrived");
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -458,7 +452,7 @@ void Func_0200095c(void) {
   Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
   FieldCamera_SetSpeed(0x50000, 0x50000);
   FieldCamera_MoveTo((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
-  while (Func_02003ba8__airs_rock(gust) == 0) {
+  while (Actor_HasArrived(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       leaves.priority = 1;
       leaves.type = 674;
@@ -482,7 +476,7 @@ void Func_0200095c(void) {
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
     Sound_Play(235);
     hit -= 30;
-    while (Func_02003ba8__airs_rock(gust) == 0) {
+    while (Actor_HasArrived(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;

@@ -312,13 +312,6 @@ extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
-/* VIEW(floor): routine Actor_RefreshSelectorById as void
- * Actor_RefreshSelectorById(s32 actor); actor.h has void
- * Actor_RefreshSelectorById(u32); tried as the definition's void
- * Actor_RefreshSelectorById(u32 objectId), VenusLighthouse_RepelLeader moves: 1
- * of 85 instructions in tla-ja. */
-extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__(
-    "Actor_RefreshSelectorById");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -334,17 +327,6 @@ void Actor_WaitForMove(struct Actor *actor);
 extern void
 Actor_ShowEmoteById__floor(s32 actor, s32 height,
                            s32 frames) __asm__("Actor_ShowEmoteById");
-/* VIEW(floor): routine VenusLighthouse_EmitRisingParticles as s32
- * VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
- * scene/venus_lighthouse has s32 VenusLighthouse_EmitRisingParticles(struct
- * SceneEffectSource *actor) {; tried as the definition's s32
- * VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:364:
- * `VenusLighthouse_EmitRisingParticles__floor' undeclared (first use in this
- * function). */
-s32 VenusLighthouse_EmitRisingParticles__floor(
-    struct VenusActor *object) __asm__("VenusLighthouse_EmitRisingParticles");
 
 // Until the statue has sunk (flag 0x200), stepping by it throws the leader
 // back in a flash of sparks.
@@ -356,7 +338,7 @@ void VenusLighthouse_RepelLeader(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
-  Actor_RefreshSelectorById__floor(leader);
+  Actor_RefreshSelectorById(leader);
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
   {
     /* FAKEMATCH(pin): the leader pinned to r0, so it is copied there before the
@@ -381,7 +363,7 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_GetById__floor(leader)->selectFlags |= 1;
   Event_Wait(20);
   Actor_SetSpriteColor(actor, 0);
-  actor->update = VenusLighthouse_EmitRisingParticles__floor;
+  actor->update = VenusLighthouse_EmitRisingParticles;
   Actor_ShowEmoteById__floor(leader, 258, 60);
   Motion_SetModeAndWaitAnimation(leader, 4);
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 0);

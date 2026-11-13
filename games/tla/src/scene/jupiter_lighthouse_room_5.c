@@ -160,12 +160,6 @@ void Func_02000120(struct Actor *object) {
     Actor_SetSpriteColorMode(object, (frameCount >> 1) % 6);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine Trig_Cos as s32 Trig_Cos(u32 angle);
- * module/scene/scene.h has s32 Trig_Cos(s32 angle); not tried: Trig_Cos's bound
- * declaration was not found. */
-extern s32
-Math_Cosine__jupiter_lighthouse_room_5(u32 angle) __asm__("Trig_Cos");
-
 /// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
 /// actor 31.
 void Orb_Update(struct Actor *self) {
@@ -175,8 +169,7 @@ void Orb_Update(struct Actor *self) {
   s32 x;
   s32 z;
 
-  self->x = centre->x + Math_Cosine__jupiter_lighthouse_room_5(angle) *
-                            (self->speedLimit + 3);
+  self->x = centre->x + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
@@ -459,20 +452,11 @@ void Func_02000734(void) {
   Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(22)), 1);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine BattleEffect_SetObjectUpdateMode as
- * void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value);
- * jupiter_lighthouse_aerie.h has void BattleEffect_SetObjectUpdateMode(void);
- * not tried: BattleEffect_SetObjectUpdateMode's bound declaration was not
- * found. */
-extern void Func_02002a18__jupiter_lighthouse_room_5(
-    struct Actor *object,
-    s32 value) __asm__("BattleEffect_SetObjectUpdateMode");
-
 void Func_02000810(s32 actor, s32 target) {
   s32 i;
 
   BattleEffect_StartArcEffect();
-  Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 2);
   Event_PlaySound(201);
   System_Wait(50);
   Event_PlaySound(82);
@@ -488,7 +472,7 @@ void Func_02000810(s32 actor, s32 target) {
   }
   Actor_Get(target)->facing = 0xc000;
   FieldActor_SetSpriteColor(Actor_Get(target), 0);
-  Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Actor_SetAnimation(target, 1);
@@ -673,14 +657,6 @@ extern s32 gData_020033e0[];
 extern s32 gData_02003400;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_room_5): routine Camera_WorldToScreen as void
- * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position); tried as the
- * definition's void Camera_WorldToScreen(struct EffectVector *position), which
- * the object already declares, Func_02001538 moves: 1 of 131 instructions in
- * tla-ja. */
-extern void Camera_WorldToScreen__jupiter_lighthouse_room_5(
-    s32 *position) __asm__("Camera_WorldToScreen");
 
 void Func_02001070(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -707,7 +683,7 @@ void Func_02001070(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__jupiter_lighthouse_room_5(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -737,7 +713,7 @@ void Func_02001070(struct Actor *self) {
       }
       {
         s32 (*multiply)(s32, s32);
-        s32 cosine = Math_Cosine__jupiter_lighthouse_room_5(self->facing);
+        s32 cosine = Trig_Cos(self->facing);
         s32 speed = self->speedLimit;
         /* FAKEMATCH(dead): the routine address taken inside a once-only
          * block, so the speed loads first; as a plain call, 2 of 197
@@ -772,9 +748,8 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(222);
-  position.x =
-      source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                         Math_Cosine__jupiter_lighthouse_room_5(source->angle));
+  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Trig_Cos(source->angle));
   position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
@@ -879,7 +854,7 @@ void Func_02001538(void) {
              sine * spark->dy;
       p[2] =
           work->from[2] + (work->to[2] - work->from[2]) * spark->age / duration;
-      Camera_WorldToScreen__jupiter_lighthouse_room_5(p);
+      Camera_WorldToScreen(p);
       sprite->x = p[0];
       sprite->z = p[2];
       Func_020029e8(sprite);
@@ -943,14 +918,6 @@ void Func_02001650(s32 count) {
   }
 }
 
-/* VIEW(s1650): routine BattleEffect_GetObjectPriority as s32
- * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
- * has void BattleEffect_GetObjectPriority(struct FieldEffect *effect, s32
- * mode); not tried: BattleEffect_GetObjectPriority's bound declaration was not
- * found. */
-extern s32 Func_020029f0__s1650(struct Actor *object) __asm__(
-    "BattleEffect_GetObjectPriority");
-
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork__s1650 *work =
       HeapSlot_Alloc(220, sizeof(struct SparkWork__s1650));
@@ -980,7 +947,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
     Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
     sprite->fullColor = 1;
     sprite->palette = 0;
-    sprite->priority = Func_020029f0__s1650(leader) & 3;
+    sprite->priority = BattleEffect_GetObjectPriority(leader) & 3;
     // Through a union, so this store may alias the age store after it.
     ((union {
        u16 v;
@@ -1014,7 +981,8 @@ extern struct LightOam gLightSpriteOams[];
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
                           gLightSpritesLarge, gLightSpritePriority,
-                          Func_020029f0__s1650, Oam_AddSpriteAtDepthClamped)
+                          BattleEffect_GetObjectPriority,
+                          Oam_AddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

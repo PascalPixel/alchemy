@@ -1530,21 +1530,6 @@ void Func_02001868(void) {
   Event_End();
 }
 
-/* VIEW(champa_cliff_caves): routine Decompress_TaggedLz as void
- * Decompress_TaggedLz(void *entry, void *destination); resource.h has s32
- * Decompress_TaggedLz(const void *source, void *destination); not tried:
- * Decompress_TaggedLz's bound declaration was not found. */
-extern void Resource_DecodeType01__champa_cliff_caves(
-    void *entry, void *destination) __asm__("Decompress_TaggedLz");
-/* VIEW(champa_cliff_caves): routine Camera_WorldToScreen as void
- * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position); tried as the
- * definition's void Camera_WorldToScreen(struct EffectVector *position), which
- * the object already declares, Func_02002de4 moves: 2 of 175 instructions in
- * tla-ja. */
-extern void Camera_WorldToScreen__champa_cliff_caves(s32 *position) __asm__(
-    "Camera_WorldToScreen");
-
 static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 181
    * instructions differ in tla-en. */
@@ -1574,7 +1559,7 @@ void Func_020029f8(s32 id, s32 mode) {
   Actor_SetSpriteFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
-  Resource_DecodeType01__champa_cliff_caves(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
   slot = VramCache_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
@@ -1587,7 +1572,7 @@ void Func_020029f8(s32 id, s32 mode) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Camera_WorldToScreen__champa_cliff_caves(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = z = position[2];
   if (mode == 1) {
@@ -1641,8 +1626,7 @@ void Func_02002c88(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01__champa_cliff_caves(
-      Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1703,8 +1687,8 @@ void Func_02002d34(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01__champa_cliff_caves(
-      Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FireColumn),
+                      work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1791,7 +1775,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[0];
-  Camera_WorldToScreen__champa_cliff_caves(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale;
@@ -1801,7 +1785,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[1];
-  Camera_WorldToScreen__champa_cliff_caves(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale2;

@@ -214,18 +214,7 @@ void Func_02000190(s32 unused, s32 id) {
 
 extern s32 gData_02005290[];
 
-/* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
- * Actor_SelectAnimation(); module/scene/scene.h has void
- * Actor_SelectAnimation(struct Actor *object, s32 mode); not tried:
- * Actor_SelectAnimation's bound declaration was not found. */
-extern s32 Func_02004a0c__eastern_alhafra() __asm__("Actor_SelectAnimation");
 s32 Party_FindOwnerWithAction();
-/* VIEW(eastern_alhafra): routine Field_FindNearbyTalkTarget as s32
- * Field_FindNearbyTalkTarget(); module/scene/airs_rock_inside.h has void
- * Field_FindNearbyTalkTarget(void); not tried: Field_FindNearbyTalkTarget's
- * bound declaration was not found. */
-extern s32
-Func_02004bb4__eastern_alhafra() __asm__("Field_FindNearbyTalkTarget");
 void Event_Start();
 void Event_End();
 
@@ -276,13 +265,13 @@ void Func_02000200(s32 mode, s32 id) {
     Event_PlaySound(240);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
-    Func_02004a0c__eastern_alhafra(object, 4);
+    Actor_SelectAnimation(object, 4);
     i = 0;
   create:
     spark = (FieldActor_Create(276, object->x, object->y, object->z));
     sparks[i] = spark;
     spark->scaleX = 0xa666;
-    Func_02004a0c__eastern_alhafra(spark, 1);
+    Actor_SelectAnimation(spark, 1);
     Actor_SetSpriteFlags(spark, 0);
     Event_PlaySound(154);
     System_Wait(5);
@@ -405,7 +394,7 @@ void Func_02000514(void) {
 void Func_020006ec(s32 mode) {
   s32 tile;
 
-  tile = Func_02004bb4__eastern_alhafra(gMainRoutineWork.currentOwner);
+  tile = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
   if (tile == 16) {
     Func_02000394(mode, 16);
     if (Leader_CanPushObjectAhead() != 0)
@@ -579,15 +568,7 @@ void Func_02000af8(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-/* VIEW(eastern_alhafra): routine Rope_Place as void Rope_Place();
- * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); not tried:
- * Rope_Place's bound declaration was not found. */
-extern void Func_02004c2c__eastern_alhafra() __asm__("Rope_Place");
 void Func_020047fc();
-/* VIEW(eastern_alhafra): routine Tightrope_Settle as void Tightrope_Settle();
- * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); not
- * tried: Tightrope_Settle's bound declaration was not found. */
-extern void Func_02004c94__eastern_alhafra() __asm__("Tightrope_Settle");
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -668,7 +649,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x8a6) == 0)
     Func_020040ec(15);
   Rope_Initialize();
-  Func_02004c2c__eastern_alhafra(0, 0x8a3, 8, 9);
+  Rope_Place(0, 0x8a3, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Tightrope_Initialize();
@@ -690,7 +671,7 @@ s32 Scene_Initialize(void) {
     object->motionFlags = flag;
     object->y = 0x100000;
     Tightrope_Place(1, 18, 19);
-    Func_02004c94__eastern_alhafra(1);
+    Tightrope_Settle(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
@@ -1192,7 +1173,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   object = ((struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z));
   if (object != 0) {
     sprite = object->sprite;
-    Func_02004a0c__eastern_alhafra(object, 1);
+    Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gData_020056d4);
     Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
@@ -2559,13 +2540,6 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #undef gPushFootprints
 #include "text/msg_ids.h"
 
-/* VIEW(data): routine Func_0200006c as this part declared it; the joined file
- * has another; tried as the definition's void Func_0200006c(s32 mode, s32 id),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:2530: conflicting types for
- * `gPushFootprints__s4004'. */
-void Func_0200006c__data(void) __asm__("Func_0200006c");
-#define Func_0200006c Func_0200006c__data
 void Func_02000958(void);
 
 // clang-format off
@@ -2794,4 +2768,3 @@ s32 gData_02005670[] = {
 u32 gData_020056d4[] = {
     38,
 };
-#undef Func_0200006c

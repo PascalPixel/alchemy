@@ -2399,18 +2399,6 @@ DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
 
 DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
 
-/* VIEW(s3b38): routine Animation_ApplyChildArgument as s32
- * Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
- * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
- * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
- * AnimationGroup *state, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2416: `Actor_GrowDown' undeclared (first use
- * in this function). */
-s32 Animation_ApplyChildArgument__s3b38(
-    struct AnimationGroup *state,
-    s32 flags) __asm__("Animation_ApplyChildArgument");
-#define Animation_ApplyChildArgument Animation_ApplyChildArgument__s3b38
-
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -2519,14 +2507,6 @@ DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38, gData_02006e0e__s3b38,
 DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38, gData_02006e0e__s3b38,
                  gData_02006e0c__s3b38, Func_020048f4)
 
-/* VIEW(s3b38): routine Func_02003418 as void Func_02003418(void);
- * scene/world_map has s32 Func_02003418(struct Actor *object) {; tried as the
- * definition's s32 Func_02003418(struct Actor *object), which the object
- * already declares, Func_020049bc (gone) moves: 26 of 26 instructions in
- * tla-ja. */
-void Func_02003418__s3b38(void) __asm__("Func_02003418");
-#define Func_02003418 Func_02003418__s3b38
-
 // clang-format off
 u32 gData_02004e38[] = {
     39, 2, 48, 0x23010000, 0x16cd0000, 1,
@@ -2584,8 +2564,6 @@ u32 gData_02004fc8[] = {
 };
 // clang-format on
 
-#undef Animation_ApplyChildArgument
-#undef Func_02003418
 #undef PUSH_PICTURE
 #undef WORLD_MAP_TRY_ENCOUNTER
 #undef ARM_WEST
@@ -2594,8 +2572,6 @@ u32 gData_02004fc8[] = {
 #undef Actor_SetSpriteColorMode
 #undef gData_02006c08
 #undef gData_02006be4
-#undef Animation_ApplyChildArgument
-#undef Func_02003418
 
 void Func_02000038(void);
 void WorldMap_BoardShip(void);

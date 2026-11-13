@@ -152,23 +152,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 extern s32 gWhirlwindRiding;
 
-/* VIEW(jupiter_lighthouse_room_m): routine Whirlwind_SpawnUpper as void
- * Whirlwind_SpawnUpper(); scene/jupiter_lighthouse_room_m/s3474 has
- * DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper,
- * Import_ActorSelectAnimation, Whirlwind_Update__s3474, FieldEffect_Spawn)
- * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
- * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
- * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
- * the one declaration struct GustObject *Whirlwind_SpawnUpper(), it does not
- * compile in tla-ja (make modern): games/tla/include/field/field.h:25:41: note:
- * expected 'struct Actor *' but argument is of type 's32' {aka 'int'}. */
-void Whirlwind_SpawnUpper__jupiter_lighthouse_room_m() __asm__(
-    "Whirlwind_SpawnUpper");
-#define Whirlwind_SpawnUpper Whirlwind_SpawnUpper__jupiter_lighthouse_room_m
+struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source);
 
 void Func_02000060(void) {
   if (gWhirlwindRiding == 0) {
-    Whirlwind_SpawnUpper(Actor_Get(24));
+    Whirlwind_SpawnUpper((struct GustObject *)Actor_Get(24));
     gWhirlwindRiding = 1;
   }
 }
@@ -183,7 +171,7 @@ void Func_02000080(void) {
       party->renderMode = 12;
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
-      Whirlwind_SpawnUpper(Actor_Get(25));
+      Whirlwind_SpawnUpper((struct GustObject *)Actor_Get(25));
       gWhirlwindRiding = 1;
     }
   }
@@ -1794,7 +1782,6 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
-#undef Whirlwind_SpawnUpper
 #undef Actor_EmitRisingSparks
 // ---- scene/jupiter_lighthouse_room_m/s3474.c ----
 
@@ -1864,7 +1851,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef PLACE
 #undef EVENT_WORK
 #undef ACTOR_SET_MODE_AND_WAIT
-#undef Whirlwind_SpawnUpper
 #undef Actor_EmitRisingSparks
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
@@ -2104,12 +2090,6 @@ DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
 // clang-format on
 
 #undef FieldEffect_Spawn
-
-/* VIEW(data): routine Func_02000038 as this part declared it; the joined file
- * has another; tried as the definition's void Func_02000038(s16 *list),
- * gData_02004ab4 (gone) moves: 0 of 0 instructions in tla-ja. */
-void Func_02000038__data(void) __asm__("Func_02000038");
-#define Func_02000038 Func_02000038__data
 
 extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02005078[];
@@ -2383,4 +2363,3 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_02000038

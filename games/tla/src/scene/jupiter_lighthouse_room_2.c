@@ -795,12 +795,6 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
-/* VIEW(s1e24): routine Func_020000d0 as this part declared it; the joined file
- * has another; tried as the definition's struct Actor *Func_020000d0(s32 x, s32
- * y, s32 z, s32 type), CrackedTiles_Step (gone) moves: 76 of 76 instructions in
- * tla-ja. */
-void Func_020000d0__s1e24(void) __asm__("Func_020000d0");
-#define Func_020000d0 Func_020000d0__s1e24
 void Func_0200042c(void);
 
 // clang-format off
@@ -883,4 +877,3 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 #undef FieldEffect_Spawn
-#undef Func_020000d0

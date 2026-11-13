@@ -95,10 +95,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern s32 gPaletteCyclePausesInEvents;
-/* VIEW(first): routine CrackedTiles_Step as this part declared it; the joined
- * file defines it otherwise. */
-s32 CrackedTiles_Step__first(s32 value) __asm__("CrackedTiles_Step");
-#define CrackedTiles_Step CrackedTiles_Step__first
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
@@ -145,11 +141,6 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 s32 __modsi3();
-/* VIEW(first): routine CrackedTiles_Find as this part declared it; the joined
- * file defines it otherwise. */
-void CrackedTiles_Find__first(s32 a, s32 b, s32 c, s32 d,
-                              s32 e) __asm__("CrackedTiles_Find");
-#define CrackedTiles_Find CrackedTiles_Find__first
 
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -377,8 +368,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #undef FLAG_DOOR_BUTTON_HELD
 #undef FieldEffect_Spawn
-#undef CrackedTiles_Find
-#undef CrackedTiles_Step
 // @file
 // The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
 // and the cracked tiles, found, cracked and fallen through.

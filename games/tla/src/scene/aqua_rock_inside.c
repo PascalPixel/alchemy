@@ -2549,20 +2549,6 @@ void Func_02003c00(s32 index, s32 value) {
 
 DEFINE_VENTS_SET_ID(Vents_SetId)
 
-/* VIEW(s3844): routine Orbiter_Spiral as void Orbiter_Spiral(void);
- * games/tla/src/scene/aqua_rock_inside/s13bc has
- * DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001364) // Moves around in a
- * circle. DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8
- * *)((u8 *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
- * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
- * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options); tried as the one declaration
- * DEFINE_VENTS_SET_ID(Vents_SetId) void Orbiter_Spiral(void), Vents_SetId
- * (gone) moves: 10 of 10 instructions in tla-ja. */
-void Orbiter_Spiral__s3844(void) __asm__("Orbiter_Spiral");
-#define Orbiter_Spiral Orbiter_Spiral__s3844
-
 // clang-format off
 u32 gData_02003f04[] = {
     0, 1, 13, 22, 0, 0,
@@ -2652,7 +2638,6 @@ u32 gWaterDropScript[] = {
 // clang-format on
 
 #undef Func_02003ab0
-#undef Orbiter_Spiral
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef EFFECT_SPAWN
@@ -2670,7 +2655,6 @@ u32 gWaterDropScript[] = {
 #undef gData_02004004
 #undef gData_02004014
 #undef Func_02003ab0
-#undef Orbiter_Spiral
 
 void AquaRockInside_FightSteam(void);
 void Func_020005f8(void);

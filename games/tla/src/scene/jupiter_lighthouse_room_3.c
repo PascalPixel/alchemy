@@ -12,14 +12,7 @@
 /// data/jupiter_lighthouse_room_3.c, which the overlay links after the field's
 /// cached pictures.
 
-/* VIEW(first): routine Random16 as this part calls it, undeclared (an int
- * routine); system.h, which a later part includes, has another; tried as the
- * definition's u32 Random16(void), which the object already declares, it does
- * not compile in tla-ja (make modern):
- * games/tla/src/scene/shared/jupiter_lighthouse.h:297:28: note: in definition
- * of macro 'DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO'. */
-int Random16__first() __asm__("Random16");
-#define Random16 Random16__first
+#include "system/system.h"
 #include "flags.h"
 #include "shared/whirlwind.h"
 #include "shared/tables.h"
@@ -520,7 +513,6 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #undef gPaletteCycleFrame
 #undef gPaletteCyclePausesInEvents
 #undef FieldEffect_Spawn
-#undef Random16
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.

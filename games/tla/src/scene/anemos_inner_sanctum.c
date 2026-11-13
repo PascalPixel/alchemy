@@ -224,13 +224,6 @@ DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
                           gPaletteCycleIndex, gPaletteSlots,
                           gPaletteCycleBright, gPaletteColors)
 
-/* VIEW(first): routine Func_020017b4 as this part declared it; the joined file
- * has another; tried as the definition's void Func_020017b4(struct Actor
- * *self), which the object already declares, Func_02000178 (gone) moves: 23 of
- * 23 instructions in tla-ja. */
-void Func_020017b4__first(void) __asm__("Func_020017b4");
-#define Func_020017b4 Func_020017b4__first
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003458_(s32 a, s32 b) {
@@ -270,7 +263,6 @@ void Func_02000328(void) {
 #include "../field/field_effect/move.c"
 
 #undef BG_PLTT_SET_RGB
-#undef Func_020017b4
 // @file
 // Scene code of overlay 0x6b0, in ROM order.
 
@@ -2052,13 +2044,6 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
-/* VIEW(s2f48): routine Func_02000654 as this part declared it; the joined file
- * has another; tried as the definition's s32 Func_02000654(s32 a0), which the
- * object already declares, CrackedTiles_Step (gone) moves: 76 of 76
- * instructions in tla-ja. */
-void Func_02000654__s2f48(void) __asm__("Func_02000654");
-#define Func_02000654 Func_02000654__s2f48
-
 extern u32 gData_0200378c[];
 extern u32 gData_020037c8[];
 
@@ -2495,5 +2480,4 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02003804,
 };
 #undef CrackedTile_Fall
-#undef Func_02000654
 #undef CrackedTile_PlaceLanding

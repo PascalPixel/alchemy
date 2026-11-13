@@ -60,13 +60,6 @@
 
 extern u8 Data_0202c001[];
 
-/* VIEW(gabomba_statue): routine Actor_SelectAnimation as void
- * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
- * module/scene/scene.h has void Actor_SelectAnimation(struct Actor *object, s32
- * mode); not tried: Actor_SelectAnimation's bound declaration was not found. */
-extern void
-Func_02005624__gabomba_statue(struct FieldEffect *effect,
-                              s32 mode) __asm__("Actor_SelectAnimation");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -88,7 +81,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02005624__gabomba_statue(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -131,7 +124,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02005624__gabomba_statue(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -460,10 +453,10 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
 
   Import_LeaderStopMoving(object);
   saved = *flags;
-  Func_02005624__gabomba_statue(object, 6);
+  Actor_SelectAnimation(object, 6);
   System_Wait(6);
   Event_PlaySound(152);
-  Func_02005624__gabomba_statue(object, 7);
+  Actor_SelectAnimation(object, 7);
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   object->velocityY = velocity;
@@ -472,7 +465,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
   FieldActor_WaitForMove(object);
   *flags = saved;
-  Func_02005624__gabomba_statue(object, 6);
+  Actor_SelectAnimation(object, 6);
   Actor_SetSpriteFlags(object, 1);
   System_Wait(3);
 }
@@ -1207,7 +1200,7 @@ void Func_02001a8c(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
   Event_PlaySound(214);
-  Func_02005624__gabomba_statue(object, 5);
+  Actor_SelectAnimation(object, 5);
   object->scaleY = 0x10000;
   Event_End();
 }
@@ -1409,7 +1402,7 @@ void Func_020020b0(s32 id, s32 direction, s32 value) {
   struct Actor *object = Actor_Get(id);
   void *animation = object->sprite;
 
-  Func_02005624__gabomba_statue(object, gData_02005940[(direction + 1) & 3]);
+  Actor_SelectAnimation(object, gData_02005940[(direction + 1) & 3]);
   object->unk5c[0] = 2;
   Sprite_SetAnimationTimers(animation, value);
 }
@@ -1474,7 +1467,7 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
   struct Orbiter__find_near *target =
       ((struct Orbiter__find_near *)Actor_Get(targetId));
 
-  Func_02005624__gabomba_statue(object, 0);
+  Actor_SelectAnimation(object, 0);
   Actor_StartScript(object, gData_0200e88c);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -1499,7 +1492,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
 #undef gData_02005af0
-#undef Func_02004380
 /* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
  * before has its own. */
 #define Wanderer Wanderer__s2394
@@ -2294,9 +2286,8 @@ void Func_02003974(void) {
 /* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32
  * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
  * tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction),
- * which the object already declares, it does not compile in tla-ja (make
- * modern): games/tla/include/field/field.h:25:41: note: expected 'struct Actor
- * *' but argument is of type 'struct FieldEffect *'. */
+ * Func_02003a64 moves: it narrows the result to a byte where the ROM keeps the
+ * whole register (tla-en, tla-ja). */
 extern s32 Func_02004380__s2394(s32 col, s32 row,
                                 s32 turn) __asm__("Func_02004380");
 

@@ -503,14 +503,6 @@ extern s32 gData_0200331c[];
 extern s32 gData_0200333c;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void
- * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position); tried as the
- * definition's void Camera_WorldToScreen(struct EffectVector *position), which
- * the object already declares, Func_02001080 moves: 1 of 856 instructions in
- * tla-ja. */
-extern void Camera_WorldToScreen__jupiter_lighthouse_aerie(
-    s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_Update(struct Actor *self) {
@@ -538,7 +530,7 @@ void Whirlwind_Update(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__jupiter_lighthouse_aerie(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -801,7 +793,7 @@ void Func_02001080(void) {
   pos[0] = work->carried[0];
   pos[1] = work->carried[1];
   pos[2] = work->carried[2];
-  Camera_WorldToScreen__jupiter_lighthouse_aerie(pos);
+  Camera_WorldToScreen(pos);
   large->x = pos[0];
   large->z = pos[2];
   Func_02002b38(large);

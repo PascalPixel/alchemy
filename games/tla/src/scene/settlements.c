@@ -1099,16 +1099,6 @@ void Settlements_StopLeader(void) {
   }
 }
 
-/* VIEW(s173c): routine Settlements_KeepSliding as void
- * Settlements_KeepSliding(void); the definition has void
- * Settlements_KeepSliding(struct Actor *object); tried as the definition's void
- * Settlements_KeepSliding(struct Actor *object), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:1159: `Settlements_KeepSliding__s173c'
- * undeclared (first use in this function). */
-extern void
-Settlements_KeepSliding__s173c(void) __asm__("Settlements_KeepSliding");
-
 void Settlements_SlideOnIce(void) {
   struct Actor *object;
   s32 startCell;
@@ -1178,7 +1168,7 @@ retry:
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   FieldActor_WaitForMove(object);
-  object->update = Settlements_KeepSliding__s173c;
+  object->update = Settlements_KeepSliding;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
@@ -1578,15 +1568,6 @@ void Settlements_SetSlideStopped(s32 value) {
   gSettlements_SlideStopped = value;
 }
 
-/* VIEW(s1d30): routine Settlements_KeepSliding as void
- * Settlements_KeepSliding(void); scene/settlements/settlements has void
- * Settlements_KeepSliding(struct Actor *object) {; tried as the definition's
- * void Settlements_KeepSliding(struct Actor *object), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:1612: `Settlements_KeepSliding__s1d30'
- * undeclared (first use in this function). */
-void Settlements_KeepSliding__s1d30(void) __asm__("Settlements_KeepSliding");
-
 void Settlements_SlideOnIceFacing(void) {
   struct Actor *object;
   s16 angle;
@@ -1641,7 +1622,7 @@ retry:
   object->timer = 0;
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  object->update = Settlements_KeepSliding__s1d30;
+  object->update = Settlements_KeepSliding;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)

@@ -671,15 +671,6 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32
- * Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has
- * void Field_RequestBattleFromEncounterTable(s32 row, s32 column); tried as the
- * definition's void Field_RequestBattleFromEncounterTable(s32 row, s32 column),
- * which the object already declares, Func_020010ac moves: 1 of 64 instructions
- * in tla-ja. */
-extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__(
-    "Field_RequestBattleFromEncounterTable");
-
 void Func_020010ac(void) {
   s32 t12, cue;
 
@@ -707,7 +698,7 @@ void Func_020010ac(void) {
    * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67,
    * 2), 2 of 64 instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(cue));
-  Field_RequestBattleFromEncounterTable__islet_cave(cue, 2);
+  Field_RequestBattleFromEncounterTable(cue, 2);
   Event_End();
 }
 

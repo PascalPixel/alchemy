@@ -280,14 +280,6 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void);
 void MarsLighthouseStarRoom_CreateMarsStar(s32 a);
 void Func_02000db8(s32 actor);
 void Func_02001d7c(void);
-/* VIEW(mars_lighthouse_star_room): routine Func_02001df0 as void
- * Func_02001df0(s32 a, s32 b, s32 c, s32 d);
- * scene/mars_lighthouse_star_room/ride_handle has void Func_02001df0(u16
- * *targets, u16 *stops, s32 a2, s32 a3) {; not tried: Func_02001df0's
- * declaration holds a FAKEMATCH tag. */
-void Func_02001df0__mars_lighthouse_star_room(s32 a, s32 b, s32 c,
-                                              s32 d) __asm__("Func_02001df0");
-#define Func_02001df0 Func_02001df0__mars_lighthouse_star_room
 void CrackedTile_DropIn(void);
 void Map_CenterOnFollowedPoint(void);
 void FieldEffect_StartBlankOverlay(s32 a);
@@ -1180,15 +1172,6 @@ void Func_02001424(void) {
 extern s32 gData_020044b8[];
 extern s32 gData_020045b8[];
 
-/* VIEW(mars_lighthouse_star_room): routine Func_02002a58 as s32
- * Func_02002a58(s32 id, s32 a, s32 b, s32 angle, const void *path);
- * scene/mars_lighthouse_star_room/s2148 has void Func_02002a58(s32 sourceId,
- * s32 id, s32 kind, s32 value, const void *script) {; not tried:
- * Func_02002a58's declaration holds a FAKEMATCH tag. */
-s32 Func_02002a58__mars_lighthouse_star_room(
-    s32 id, s32 a, s32 b, s32 angle, const void *path) __asm__("Func_02002a58");
-#define Func_02002a58 Func_02002a58__mars_lighthouse_star_room
-
 void Func_020014f4(void) {
   Func_02002a58(9, 18, 20, 0, gData_020044b8);
   Func_02002a58(9, 17, 19, 0x8000, gData_020045b8);
@@ -1504,9 +1487,7 @@ void Func_02001d7c(void) {
   animation->flag11 = 1;
 }
 
-#undef Func_02001df0
 #undef MarsLighthouseStarRoom_SlideOnIce
-#undef Func_02002a58
 
 // ---- scene/mars_lighthouse_star_room/ride_handle.c ----
 
@@ -2043,14 +2024,6 @@ DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Func_02002d90, gData_0200483c,
 extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
-/* VIEW(s3070): routine Field_CheckSpheresOverlap as s32
- * Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4
- * has s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
- * s32 radiusB); not tried: Field_CheckSpheresOverlap's bound declaration was
- * not found. */
-extern s32
-Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
-                     s32 bRadius) __asm__("Field_CheckSpheresOverlap");
 
 #define SHARED_F02003070_NAME Func_02003070
 #define SHARED_F02003070_ID2 gData_02004cf0__s3070
@@ -2059,7 +2032,7 @@ Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
 #define SHARED_F02003070_ID5 Actor_SelectAnimation
 #define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Actor_SteerByPad
-#define SHARED_F02003070_ID8 Func_0200428c__s3070
+#define SHARED_F02003070_ID8 Field_CheckSpheresOverlap
 #include "shared/func_02003070.c"
 #undef SHARED_F02003070_NAME
 #undef SHARED_F02003070_ID2
@@ -2130,8 +2103,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_02002d90,
 #undef SHARED_F02003070_ID7
 #undef SHARED_F02003070_ID8
 #undef gMarsLighthouseStarRoom_ScatterIceChipsScript
-#undef Func_02001df0
-#undef Func_02002a58
 #undef gData_02004744
 #undef gData_02004744
 #undef Unit_Get
@@ -2243,14 +2214,6 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
 
-/* VIEW(s3e04): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the rest of the object declares it,
- * CrackedTiles_Find (gone) moves: 267 of 267 instructions in tla-ja. */
-void Func_0200363c__s3e04(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn Func_0200363c__s3e04
-
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveTo(x, y, z, mode);
 }
@@ -2280,11 +2243,6 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gData_02004cf4,
 
 #include "text/msg_ids.h"
 
-/* VIEW(s3e04): routine Func_02000038 as this part declared it; the joined file
- * has another; tried as the definition's void Func_02000038(s16 *list),
- * CrackedTiles_Step (gone) moves: 76 of 76 instructions in tla-ja. */
-void Func_02000038__s3e04(void) __asm__("Func_02000038");
-#define Func_02000038 Func_02000038__s3e04
 void MarsLighthouseStarRoom_ExamineStatue(void);
 #define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
@@ -2602,7 +2560,5 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_MediumScript,
     (s32)gFieldEffect_LongScript,
 };
-#undef FieldEffect_Spawn
 #undef CrackedTile_FallEvent
-#undef Func_02000038
 #undef MarsLighthouseStarRoom_SlideOnIce

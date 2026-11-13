@@ -1073,12 +1073,6 @@ void YampiDesert_HideSlideActors(void) {
 
 DEFINE_ACTORS_SET_HIDDEN(YampiDesert_SetActorsHidden)
 
-/* VIEW(yampi_desert): routine Actor_Jump as this part declared it; the joined
- * file has another; tried as the definition's void Actor_Jump(u32 objectId, s32
- * speed, s32 eventId), YampiDesert_SetActorsHidden (gone) moves: 30 of 30
- * instructions in tla-ja. */
-s32 Actor_Jump__yampi_desert() __asm__("Actor_Jump");
-#define Actor_Jump Actor_Jump__yampi_desert
 #define Motion_SetModeAndWaitAnimation Motion_SetModeAndWaitAnimation
 
 #define Actor_SetMovementTypeAndWaitById Actor_SetMovementTypeAndWaitById
@@ -2658,7 +2652,6 @@ u32 gYampiDesert_SlideDust[] = {
 #undef MAIN_ROUTINE_WORK_U16
 #undef PIXELS__s3910
 #undef Statue_Sink
-#undef Actor_Jump
 #undef Motion_SetModeAndWaitAnimation
 #undef Actor_SetMovementTypeAndWaitById
 #undef gYampiDesert_FinderRunsAhead

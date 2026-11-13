@@ -2220,27 +2220,10 @@ void MagmaRock_SpawnDustRing(void) {
 
 s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-/* VIEW(s34ac): routine MapCollision_FindOrAddTag as s32
- * MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
- * scene/magma_rock/s22ac has u8 MapCollision_FindOrAddTag(s32 layer, s32 shape,
- * s32 height); tried as the definition's s32 MapCollision_FindOrAddTag(s32
- * unused, s32 key, s32 value), which the object already declares,
- * MagmaRock_SetActorCellShape moves: 1 of 60 instructions in tla-ja. */
-s32 MapCollision_FindOrAddTag__s34ac(
-    s32 terrainId, s32 value, s32 height) __asm__("MapCollision_FindOrAddTag");
 
 DEFINE_ACTOR_SET_CELL_SHAPE_AT(MagmaRock_SetActorCellShape,
                                MapGrid_GetTerrainKind,
-                               MapCollision_FindOrAddTag__s34ac)
-
-/* VIEW(s34ac): routine MagmaRock_StepOnCrumblingPillar as void
- * MagmaRock_StepOnCrumblingPillar(const u8 *data); scene/magma_rock/s22ac has
- * void MagmaRock_StepOnCrumblingPillar(u16 *list) {; tried as the definition's
- * void MagmaRock_StepOnCrumblingPillar(u16 *list), which the object already
- * declares, MagmaRock_SetActorCellShape (gone) moves: 60 of 60 instructions in
- * tla-ja. */
-void MagmaRock_StepOnCrumblingPillar__s34ac(const u8 *data) __asm__(
-    "MagmaRock_StepOnCrumblingPillar");
+                               MapCollision_FindOrAddTag)
 
 void MagmaRock_SetLeaderCellShape(s32 a, s32 b) {
   MagmaRock_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
@@ -2772,5 +2755,4 @@ struct Trigger gMagmaRock_Room3Triggers[] = {
 #undef MagmaRock_RaiseFlamePart
 #undef MagmaRock_RaiseActorCells
 #undef Blocks_MarkCells
-#undef MapCollision_FindOrAddTag
 #undef MagmaRockEventWork

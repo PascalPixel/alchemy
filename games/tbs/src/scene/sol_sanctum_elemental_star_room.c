@@ -2255,14 +2255,12 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
       x = alex->x.fixed;
       x += xOffset;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        alex->y.fixed +
-                            (((u32)Random_Next() * 32 >> 16) << 16) +
-                            px(32),
-                        alex->z.fixed, 0, -px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, alex->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          alex->z.fixed, 0, -px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     }
     if (frame == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);

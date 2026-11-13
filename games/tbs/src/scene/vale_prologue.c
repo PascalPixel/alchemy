@@ -3069,18 +3069,30 @@ u8 gValePrologue_FrameModes[] = {7, 0, 0, 0};
 
 /// The stout man runs off toward the plaza after shoving Isaac.
 s32 gValePrologue_ShovingManScript[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(185, 0, 824),
-    SC_SYNC,         SC_MOVE(179, 0, 836),
-    SC_SYNC,         SC_MOVE(226, 0, 840),
-    SC_SYNC,         SC_MOVE(226, 0, 944),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(ANIM_STAND), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(185, 0, 824),
+    SC_SYNC,
+    SC_MOVE(179, 0, 836),
+    SC_SYNC,
+    SC_MOVE(226, 0, 840),
+    SC_SYNC,
+    SC_MOVE(226, 0, 944),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Garet runs up to Isaac (ValePrologue_UnusedGaretJoinsIsaac).
 s32 gValePrologue_UnusedGaretRunsUpScript[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(345, 0, 612), SC_SYNC, SC_MOVE(311, 0, 638),
-    SC_SYNC,         SC_MOVE(256, 0, 608), SC_SYNC, SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(345, 0, 612),
+    SC_SYNC,
+    SC_MOVE(311, 0, 638),
+    SC_SYNC,
+    SC_MOVE(256, 0, 608),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -3134,17 +3146,28 @@ s32 gValePrologue_BoulderFallGaretPath[] = {
 // the plaza and Dora north.
 
 s32 gValePrologue_DoraRunsIntoRiversideHouse[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(178, 0, 1190), SC_SYNC, SC_MOVE(149, 0, 1194),
-    SC_SYNC,         SC_ANIMATION(ANIM_STAND),       SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(178, 0, 1190),
+    SC_SYNC,
+    SC_MOVE(149, 0, 1194),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 s32 gValePrologue_JennaRunsIntoRiversideHouse[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(198, 0, 1176),
-    SC_SYNC,         SC_MOVE(170, 0, 1195),
-    SC_SYNC,         SC_MOVE(149, 0, 1194),
-    SC_SYNC,         SC_MOVE(149, 0, 1175),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(ANIM_STAND), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(198, 0, 1176),
+    SC_SYNC,
+    SC_MOVE(170, 0, 1195),
+    SC_SYNC,
+    SC_MOVE(149, 0, 1194),
+    SC_SYNC,
+    SC_MOVE(149, 0, 1175),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 s32 gValePrologue_DoraComesOutOfRiversideHouse[] = {
@@ -3178,43 +3201,77 @@ s32 gValePrologue_JennaComesOutOfRiversideHouse[] = {
 };
 
 s32 gValePrologue_DoraHeadsNorth[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(50, 0, 1214), SC_SYNC, SC_MOVE(46, 0, 1130),
-    SC_SYNC,         SC_MOVE(67, 0, 1100), SC_SYNC, SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(50, 0, 1214),
+    SC_SYNC,
+    SC_MOVE(46, 0, 1130),
+    SC_SYNC,
+    SC_MOVE(67, 0, 1100),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePrologue_JennaHeadsForPlaza[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(153, 0, 1251),
-    SC_SYNC,         SC_MOVE(177, 0, 1357),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(ANIM_STAND), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(153, 0, 1251),
+    SC_SYNC,
+    SC_MOVE(177, 0, 1357),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Dora leaves to the west once she has asked the boys to help.
 s32 gValePrologue_DoraLeavesForHelp[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(123, 0, 1078),
-    SC_SYNC,         SC_MOVE(148, 0, 1078),
-    SC_SYNC,         SC_MOVE(148, 0, 1064),
-    SC_SYNC,         SC_MOVE(35, 0, 1064),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_ANIMATION(ANIM_STAND), SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(123, 0, 1078),
+    SC_SYNC,
+    SC_MOVE(148, 0, 1078),
+    SC_SYNC,
+    SC_MOVE(148, 0, 1064),
+    SC_SYNC,
+    SC_MOVE(35, 0, 1064),
+    SC_SYNC,
+    SC_POSITION(0, 0, 0),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
 };
 
 /// Dora runs down to the river when Jenna comes back
 /// (ValePrologue_BoulderSweepsThemAway).
 s32 gValePrologue_DoraRunsToRiver[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(102, 0, 1236), SC_SYNC, SC_MOVE(148, 0, 1256),
-    SC_SYNC,         SC_MOVE(177, 0, 1303), SC_SYNC, SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(102, 0, 1236),
+    SC_SYNC,
+    SC_MOVE(148, 0, 1256),
+    SC_SYNC,
+    SC_MOVE(177, 0, 1303),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// The way down to the riverbank that each of the party and the strongman
 /// takes in turn as the Boulder comes, then each one's place there.
 s32 gValePrologue_ToRiverbankPath[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(137, 0, 1379), SC_SYNC, SC_MOVE(114, 0, 1416),
-    SC_SYNC,         SC_MOVE(95, 0, 1416),  SC_SYNC, SC_MOVE(83, 0, 1427),
-    SC_SYNC,         SC_MOVE(154, 0, 1430), SC_SYNC, SC_MOVE(179, 0, 1398),
-    SC_SYNC,         SC_MOVE(179, 0, 1361), SC_SYNC, SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(137, 0, 1379),
+    SC_SYNC,
+    SC_MOVE(114, 0, 1416),
+    SC_SYNC,
+    SC_MOVE(95, 0, 1416),
+    SC_SYNC,
+    SC_MOVE(83, 0, 1427),
+    SC_SYNC,
+    SC_MOVE(154, 0, 1430),
+    SC_SYNC,
+    SC_MOVE(179, 0, 1398),
+    SC_SYNC,
+    SC_MOVE(179, 0, 1361),
+    SC_SYNC,
+    SC_END,
 };
 
 // Where each one stops on the bank to hear the Boulder coming.

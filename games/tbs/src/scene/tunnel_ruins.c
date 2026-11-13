@@ -479,8 +479,7 @@ static void TunnelRuins_HopDownStep(void) {
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
-      velocityZ =
-          (u32)Random_Next() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
+      velocityZ = (u32)Random_Next() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
@@ -1854,9 +1853,12 @@ s32 gTunnelRuins_StretchScript[] = {
 
 /// Douse splashes on the pillar from frame 35 for 130 frames.
 s32 gTunnelRuins_DouseSplashScript[] = {
-    SC_WAIT(35),     SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
-    SC_WAIT(130),    SC_SET(SW_HOOK, 0),
-    SC_ANIMATION(ANIM_WALK), SC_END,
+    SC_WAIT(35),
+    SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
+    SC_WAIT(130),
+    SC_SET(SW_HOOK, 0),
+    SC_ANIMATION(ANIM_WALK),
+    SC_END,
 };
 
 u16 gTunnelRuins_DoorOpenSteps[] = {

@@ -804,14 +804,12 @@ static void SolSanctumEruption_StepEmbers(void) {
       Actor_StartScript(ember, gEruption_EmberScript);
       ember->x.fixed =
           Iwram_MulQ16(Trig_Cos((u16)angle),
-                       (((u32)Random_Next() * 256 >> 16) << 16) +
-                           px(256)) +
+                       (((u32)Random_Next() * 256 >> 16) << 16) + px(256)) +
           px(325);
       ember->y.fixed = 0;
       ember->z.fixed =
           Iwram_MulQ16(Trig_Sin((u16)angle),
-                       (((u32)Random_Next() * 256 >> 16) << 16) +
-                           px(256)) +
+                       (((u32)Random_Next() * 256 >> 16) << 16) + px(256)) +
           px(302);
       x = Iwram_MulQ16(Trig_Cos((u16)angle),
                        ((Random_Next() & 63) << 16) + px(8));

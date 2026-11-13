@@ -980,9 +980,9 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
 
   previousVariant = gMainRoutineWork.wonPrizes[8 + category];
 
-  variant = (previousVariant +
-             (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4) %
-            3;
+  variant =
+      (previousVariant + (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4) %
+      3;
 
   gMainRoutineWork.wonPrizes[8 + category] = variant;
 

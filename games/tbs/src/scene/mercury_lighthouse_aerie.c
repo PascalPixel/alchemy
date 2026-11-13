@@ -1660,27 +1660,23 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x = left->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        left->y.fixed +
-                            (((u32)Random_Next() * 32 >> 16) << 16) +
-                            -px(16),
-                        left->z.fixed, 0, px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + -px(16),
+          left->z.fixed, 0, px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     } else {
       r = ((((u32)Random_Next() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        right->y.fixed +
-                            (((u32)Random_Next() * 32 >> 16) << 16) +
-                            -px(16),
-                        right->z.fixed, 0, px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + -px(16),
+          right->z.fixed, 0, px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     }
   }
   Actor_SetPosition(ACTOR_SATUROS, 0, 0);
@@ -1713,27 +1709,23 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       x = left->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        left->y.fixed +
-                            (((u32)Random_Next() * 32 >> 16) << 16) +
-                            px(32),
-                        left->z.fixed, 0, -px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          left->z.fixed, 0, -px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     } else {
       r = ((((u32)Random_Next() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(x,
-                        right->y.fixed +
-                            (((u32)Random_Next() * 32 >> 16) << 16) +
-                            px(32),
-                        right->z.fixed, 0, -px(4), 0,
-                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        &options);
+      FieldEffect_Spawn(
+          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          right->z.fixed, 0, -px(4), 0,
+          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+              EFFECT_USE_PALETTE,
+          &options);
     }
     if (i == 20) {
       Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);

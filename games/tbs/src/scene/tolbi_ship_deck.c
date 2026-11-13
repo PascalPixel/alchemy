@@ -434,7 +434,7 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHEAST, 0);           \
           else                                                                 \
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);           \
-          if ((u32)Random_Next() * 4 >> 16 != 0) {                    \
+          if ((u32)Random_Next() * 4 >> 16 != 0) {                             \
             Actor_Get(warrior)->velocityY = px(2);                             \
           } else {                                                             \
             Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);    \
@@ -473,29 +473,29 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
       }                                                                        \
     } else {                                                                   \
       if (actor->timer != 0) {                                                 \
-        actor->riseBaseY -= (u32)Random_Next() * 4096 >> 16;            \
+        actor->riseBaseY -= (u32)Random_Next() * 4096 >> 16;                   \
         if (actor->riseBaseY < -px(1) / 4)                                     \
           actor->timer = 0;                                                    \
       } else {                                                                 \
-        actor->riseBaseY += (u32)Random_Next() * 4096 >> 16;            \
+        actor->riseBaseY += (u32)Random_Next() * 4096 >> 16;                   \
         if (actor->riseBaseY > px(1) / 4)                                      \
           actor->timer = 1;                                                    \
       }                                                                        \
       if (actor->x.fixed > px(minX) && actor->x.fixed < px(maxX))              \
         actor->x.fixed += actor->riseBaseY;                                    \
       if ((s16)actor->userValue != 0) {                                        \
-        actor->y.fixed = actor->y.fixed -                                      \
-                         ((u32)Random_Next() * 32768 >> 16) - px(1) / 2; \
+        actor->y.fixed =                                                       \
+            actor->y.fixed - ((u32)Random_Next() * 32768 >> 16) - px(1) / 2;   \
         if (actor->y.fixed < 0)                                                \
           actor->userValue = 0;                                                \
       } else {                                                                 \
-        actor->y.fixed = actor->y.fixed +                                      \
-                         ((u32)Random_Next() * 32768 >> 16) + px(1) / 2; \
+        actor->y.fixed =                                                       \
+            actor->y.fixed + ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;   \
         if (actor->y.fixed > px(8))                                            \
           actor->userValue = 1;                                                \
       }                                                                        \
     }                                                                          \
-    if (((u32)Random_Next() * 100) >> 16 == 0)                           \
+    if (((u32)Random_Next() * 100) >> 16 == 0)                                 \
       actor->riseCounter = 1;                                                  \
     return 1;                                                                  \
   }
@@ -575,7 +575,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
   static s32 name(struct Actor *actor) {                                       \
     switch (actor->timer) {                                                    \
     case 0:                                                                    \
-      if ((((u32)Random_Next() * 40) >> 16) == 0) {                      \
+      if ((((u32)Random_Next() * 40) >> 16) == 0) {                            \
         actor->timer++;                                                        \
       }                                                                        \
       break;                                                                   \
@@ -603,7 +603,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
         } else {                                                               \
           Actor_FaceDirection(warrior, clearFacing, 0);                        \
         }                                                                      \
-        if ((u32)Random_Next() * 4 >> 16 != 0) {                      \
+        if ((u32)Random_Next() * 4 >> 16 != 0) {                               \
           Actor_Get(warrior)->velocityY = px(2);                               \
         } else {                                                               \
           Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);      \
@@ -2890,13 +2890,13 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void) {
 /// At Kalay, as the crew's talk of the delay ends, Kaja walks off and is
 /// hidden.
 const s32 gTolbiShipDeck_KajaLeavesActions[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(202, 0, 600), SC_SYNC,
+    SC_ANIMATION(ANIM_WALK),  SC_MOVE(202, 0, 600), SC_SYNC,
     SC_ANIMATION(ANIM_STAND), SC_POSITION(0, 0, 0), SC_END,
 };
 
 /// At the same moment the captain steps aside and turns west.
 const s32 gTolbiShipDeck_CaptainStepsAsideActions[] = {
-    SC_WAIT(20), SC_ANIMATION(ANIM_WALK), SC_MOVE(162, 0, 666),
+    SC_WAIT(20), SC_ANIMATION(ANIM_WALK),  SC_MOVE(162, 0, 666),
     SC_SYNC,     SC_ANIMATION(ANIM_STAND), SC_SET(SW_FACING, FACING_WEST),
     SC_END,
 };
@@ -3073,7 +3073,7 @@ const s32 gTolbiShipDeck_HopActions[] = {
 /// At Tolbi, a passenger who rowed walks away once they have spoken, and is
 /// hidden.
 const s32 gTolbiShipDeck_RowerLeavesActions[] = {
-    SC_ANIMATION(ANIM_WALK), SC_MOVE(82, 0, 656),  SC_SYNC,
+    SC_ANIMATION(ANIM_WALK),  SC_MOVE(82, 0, 656),  SC_SYNC,
     SC_ANIMATION(ANIM_STAND), SC_POSITION(0, 0, 0), SC_END,
 };
 

@@ -117,8 +117,8 @@ struct CellTargetEntry;
 
 /* VIEW(s156c): tag struct CellTarget as struct CellTarget__s156c; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
- * with cell_target.h included it compiles,
- * and the bytes move in tla-en, tla-es and tla-ja. */
+ * as struct CellTarget it compiles, and
+ * Teleporter_Sink schedules two instructions otherwise. */
 struct CellTarget__s156c {
   s16 firstFlag;
   s16 flagByte;

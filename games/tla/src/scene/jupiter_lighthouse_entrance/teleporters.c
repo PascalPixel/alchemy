@@ -1,20 +1,24 @@
 /// @file
-/// Scene code of overlay 0x698, in ROM order.
+/// The grounds before Jupiter Lighthouse's gates: its copy of the effect
+/// spawner, and the teleporter cells, found, uncovered and sunk into.
 
 #include "../shared/teleporter.h"
 #include "types.h"
+#include "cell_target.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
 #include "heap_release.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_entrance.h"
 #include "module/scene/scene.h"
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
 
 extern const s32 *gFieldEffect_LifeScripts[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -94,7 +98,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "ram_buffer.h"
 #include "actor.h"
 #include "iwram_call.h"
-#include "cell_target.h"
 
 DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,
                               Teleporters_Update)
@@ -110,3 +113,61 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 /// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
 DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
+
+struct CellTargetEntry;
+
+/* VIEW(s14dc): tag struct CellTarget as struct CellTarget__s14dc; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * Teleporter_Sink moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s14dc {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+void Teleporter_Sink(struct CellTarget__s14dc *table,
+                     struct CellTargetEntry *entry) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
+  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
+
+  Leader_CenterInCell();
+  Event_PlaySound(229);
+  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
+  leader->facing = 0x4000;
+  leader->motionFlags = 0;
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Io_Write16(0xf1f, &REG_WINOUT);
+  REG_DISPCNT |= 0x8000;
+  table->shown = 1;
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
+  for (x = 0; x < 40; x++) {
+    if (x == 5)
+      Event_PlaySound(204);
+    leader->scaleX += -0x400;
+    leader->scaleY += -0x300;
+    leader->y += -0x9999;
+    System_Wait(1);
+  }
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  do {
+    /* FAKEMATCH(dead): the flag cleared behind a loop-end note, so the
+     * table is copied out of r8 after the actor's byte store, as in the
+     * native; as table->shown = 0, 16 of 131 instructions differ in
+     * tla-en. */
+    table->shown = 0;
+  } while (0);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+}

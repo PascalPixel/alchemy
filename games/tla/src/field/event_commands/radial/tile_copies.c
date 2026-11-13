@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #include "module/system/system.h"
@@ -89,14 +90,14 @@ void FieldItem_JumpToLeader(s32 sprite, s32 x, s32 z) {
     return;
   Actor_SetSpriteFlagsFar(object, 0);
   object->gravity = 0x5999;
-  object->velocityY = 0x50000;
+  object->velocityY = px(5);
   object->scaleY = object->scaleX = 0x6666;
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
-    object->facing += 0x1000;
+    object->facing += TRIG_TURN / 16;
   } while (object->scaleX <= 0xffff);
-  object->scaleY = object->scaleX = 0x10000;
+  object->scaleY = object->scaleX = Q16_ONE;
   Actor_SelectAnimationFar(owner, 1);
   Actor_TurnPairToFaceEachOther(object, owner);
   owner->timer = owner->facing;
@@ -104,11 +105,11 @@ void FieldItem_JumpToLeader(s32 sprite, s32 x, s32 z) {
   Actor_StartRepeatedMotion(ownerId, 3);
   FieldEffect_SetAttached(ownerId, 258);
   Event_Wait(32);
-  object->gravity = 0x10000;
-  object->velocityY = 0x60000;
+  object->gravity = px(1);
+  object->velocityY = px(6);
   Sound_PlayFar(SE_JUMP);
   Event_Wait(15);
-  object->velocityY = 0x60000;
+  object->velocityY = px(6);
   Sound_PlayFar(SE_JUMP);
   Event_Wait(23);
   Sound_PlayFar(SE_ENEMY_CRY);

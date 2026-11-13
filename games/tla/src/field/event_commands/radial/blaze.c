@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #include "system/input.h"
@@ -174,8 +175,8 @@ void FieldPsynergy_Blaze(void) {
     if (object == NULL)
       goto end;
     ((u8 *)object)[85] = 0;
-    object->scaleX = 0x14000;
-    object->scaleY = 0x14000;
+    object->scaleX = Q16_ONE * 5 / 4;
+    object->scaleY = Q16_ONE * 5 / 4;
     Actor_SelectAnimationFar(object, 2);
     Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(50);
@@ -245,7 +246,7 @@ void FieldPsynergy_Blaze(void) {
     sprite = &work->puffs[j];
 
     EffectSprite_Init(sprite, 8, 15, 0x40000000, tile);
-    sprite->scaleY = sprite->scaleX = 0xc000;
+    sprite->scaleY = sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->depth = 250;
     sprite->oam.priority = 0;
     sprite->oam.palette256 = 1;
@@ -269,7 +270,7 @@ void FieldPsynergy_Blaze(void) {
         break;
       }
     }
-    if (gInput.pressed & 2)
+    if (gInput.pressed & KEY_B)
       break;
   }
   Sound_PlayFar(SOUND_FADE_OUT_SE5);

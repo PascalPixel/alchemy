@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "gamepak/far_call/window.h"
@@ -300,7 +301,7 @@ loop:
     redraw = 0;
   }
 
-  if ((gInput.pressed & 1) != 0) {
+  if ((gInput.pressed & KEY_A) != 0) {
     wait(1);
     price = Sanctum_ServicePrice(unitId, serviceKind);
     if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
@@ -338,7 +339,7 @@ loop:
     }
     goto done;
   }
-  if ((gInput.pressed & 2) != 0) {
+  if ((gInput.pressed & KEY_B) != 0) {
     Sound_PlayFar(SE_MENU_CANCEL);
     goto done;
   }
@@ -481,7 +482,7 @@ void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
     Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->x = position.x;
     effect->z = position.z;
-    effect->velocity = 0x20000;
+    effect->velocity = px(2);
     effect->acceleration = 0x6666;
     effect->flag = state;
     *statePointer = (u8)*statePointer + 1;

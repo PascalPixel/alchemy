@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -173,7 +174,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
 
           EMBERS[i].x = (centerX / 2) << 16;
           EMBERS[i].y = ((Random16() & 15) + y + 24) << 16;
-          angle = (Random16() & 0x7fff) + 0x4000;
+          angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           speed = (Random16() & 255) + 127;
           EMBERS[i].velocityX = (Trig_Sin(angle) * speed) >> 5;
           EMBERS[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -247,7 +248,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         s32 scale;
 
         Transform_Reset();
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (i == 0) {
           SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
                                         (baseY << 16) - 0x400000, 0);
@@ -274,7 +275,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           if (scale < 0) {
             continue;
           }
-          scale += 0x4000;
+          scale += Q16_ONE / 4;
           shade = 512 - frame * 8;
           model->shade = shade;
           texture.pixels = TEXTURE_PIXELS;
@@ -432,7 +433,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       Transform_ApplyRoll(frame * 256);
       Transform_ApplyPitch(frame * 256 + 500);
       if (i > 7)
-        Transform_ApplyPitch(0x4000);
+        Transform_ApplyPitch(TRIG_TURN / 4);
       Transform_ApplyYaw(
           (frame * 4 + i * Data_0819940c[effect->variant][RING_SPACING]) << 8);
       place = vector;

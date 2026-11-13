@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "system/io_write.h"
 #include "gamepak/far_call/game.h"
@@ -769,7 +770,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
     state->icons[i] = object;
     state->x[i] = (x + (s16)origin->x + i * 3) * 8 + 0x10;
     state->y[i] = (y + (s16)origin->y) * 8 + 0x10;
-    state->scale[i] = 0x10000;
+    state->scale[i] = Q16_ONE;
   }
 
   Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
@@ -1095,7 +1096,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     }
     MenuTitle_Bob(modePicture);
     wait(1);
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
@@ -1107,7 +1108,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
-    } else if (gInput.repeat & 0x80) {
+    } else if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
@@ -1119,11 +1120,11 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
-    } else if (gInput.pressed & 2) {
+    } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
-    } else if (gInput.pressed & 1) {
+    } else if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = selectedFile;
       break;

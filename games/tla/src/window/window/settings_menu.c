@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
@@ -61,7 +62,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   GLOW_COLOR_SET(7, Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa));
   GLOW_COLOR_SET(8, Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333));
   GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555));
-  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777));
+  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, Q16_ONE, 0x17777));
 }
 
 struct OptionMarkerOutput {
@@ -534,21 +535,21 @@ s32 SettingsMenu_Run(void) {
       Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
-    if (gInput.repeat & 64) {
+    if (gInput.repeat & KEY_UP) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption--;
       redraw = 1;
-    } else if (gInput.repeat & 128) {
+    } else if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption++;
       redraw = 1;
     } else {
-      if (gInput.repeat & 32) {
+      if (gInput.repeat & KEY_LEFT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]--;
         redraw = 1;
       }
-      if (gInput.repeat & 16) {
+      if (gInput.repeat & KEY_RIGHT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]++;
         redraw = 1;
@@ -802,13 +803,13 @@ s32 PauseMenu_Choose(s32 initial) {
       Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
-    if (gInput.repeat & 64) {
+    if (gInput.repeat & KEY_UP) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selected--;
       redraw = 1;
       continue;
     }
-    if (gInput.repeat & 128) {
+    if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selected++;
       redraw = 1;

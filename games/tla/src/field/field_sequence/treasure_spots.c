@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/field_sequence.h"
 
@@ -126,8 +127,8 @@ void Field_PlaceTreasureSpots(void) {
         if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
-        object->timer = object->x / 0x10000;
-        object->unk66 = object->z / 0x10000;
+        object->timer = object->x / Q16_ONE;
+        object->unk66 = object->z / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
         work->objects[i] = object;
@@ -265,7 +266,7 @@ void ObjectEvent_Spring(u32 objectId) {
   Actor_SelectAnimationFar(object, 7);
   Sound_PlayFar(SE_ENEMY_CRY);
   if (object != 0) {
-    object->velocityY = 0x80000;
+    object->velocityY = px(8);
     Actor_SetSpriteFlagsFar(object, 1);
   }
 }

@@ -4,6 +4,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
+#include "fixed_math.h"
 #include "actor_view.h"
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
@@ -24,7 +26,7 @@ s32 Party_GetCharacterSprite(s32 character) {
       sprite = 9;
       if (gMainRoutineWork.map != (s32)&SceneId_Ov64a)
         sprite = 11;
-      if (GameFlag_Get(0x8df))
+      if (GameFlag_Get(FLAG_SHIP_FLIES))
         sprite++;
     }
   }
@@ -126,8 +128,8 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       object->facing = entry->facing;
       object->collisionFlags = 1;
       Actor_SetActionCallback(object, entry->behavior);
-      ((struct SpawnActor *)object)->homeX = object->x / 0x10000;
-      ((struct SpawnActor *)object)->homeZ = object->z / 0x10000;
+      ((struct SpawnActor *)object)->homeX = object->x / Q16_ONE;
+      ((struct SpawnActor *)object)->homeZ = object->z / Q16_ONE;
       if (object->y != 0) {
         object->motionFlags = 4;
         object->y += 0x8000;
@@ -135,7 +137,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       if (work->mode == 3) {
         object->motionFlags &= 0xfe;
         if (!GameFlag_Get(33))
-          sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
+          sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
       } else {
         object->terrainHeight =
             MapGrid_GetTerrainHeightFar(0, object->x, object->z);

@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
@@ -303,8 +304,8 @@ void BattleEffect_StartCanvasSprite(void) {
   work->command = 0;
   work->x = 16;
   work->y = 0;
-  work->scaleX = 0x10000;
-  work->scaleY = 0x10000;
+  work->scaleX = Q16_ONE;
+  work->scaleY = Q16_ONE;
   work->priority = 1;
   work->depth = 250;
   Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
@@ -404,7 +405,7 @@ void Actor_VanishInSparks(s32 objectId) {
     spark->age = -1;
   }
   object->scaleX = 0;
-  object->scaleY = 0x10000;
+  object->scaleY = Q16_ONE;
   Actor_SetSpriteFlagsFar(object, 0);
   spawning = 1;
   phase = 0;
@@ -456,7 +457,7 @@ void Actor_VanishInSparks(s32 objectId) {
           drawn->y = pos[2];
           drawn->oam.index = tiles + (spark->age & 3) * 2;
           EffectSprite_Draw(drawn);
-          spark->angle += 0x800;
+          spark->angle += TRIG_TURN / 32;
           spark->radius -= 0x3333;
           spark->centre[1] -= 0x4000;
         }
@@ -473,10 +474,10 @@ void Actor_VanishInSparks(s32 objectId) {
       break;
     case 1:
       if (frame < 64) {
-        object->facing -= 0x1000;
+        object->facing -= TRIG_TURN / 16;
         object->scaleX = frame << 10;
-        if (object->scaleX > 0x10000)
-          object->scaleX = 0x10000;
+        if (object->scaleX > Q16_ONE)
+          object->scaleX = Q16_ONE;
       }
       if (frame == 64) {
         object->facing = angle;

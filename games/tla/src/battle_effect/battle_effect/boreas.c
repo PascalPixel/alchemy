@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Summon 10: a window opens over a violet sky on a field of rocks; a 3x3
@@ -86,7 +87,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   // The first half: rocks, the great ice block and its spray.
   for (frame = 0; frame != 288; frame++) {
     count = 16;
-    if ((gInput.repeat & 3) && frame > 16)
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
       break;
 
     // Open the window from the left: its right edge speeds up, and each
@@ -157,8 +158,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       Animation_ApplyChildArgumentFar(work->objects[2],
                                       gBoreas_Animations[(frame / 4) & 3]);
 
-    scale.x = 0x10000;
-    scale.y = 0x10000;
+    scale.x = Q16_ONE;
+    scale.y = Q16_ONE;
     pos[3] = 0;
     pos[1] = 255 << 16;
     for (row = 0; row != 3; row++) {
@@ -242,7 +243,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
                   gBoreas_DebrisWidths[n], gBoreas_DebrisHeights[n]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          PARTICLES[i].velocityY += 0x2000;
+          PARTICLES[i].velocityY += px(1) / 8;
         }
       }
     }

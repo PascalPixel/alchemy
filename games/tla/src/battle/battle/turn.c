@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/window.h"
 #include "module/battle/presentation.h"
@@ -526,7 +527,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 finish:
   GameFlag_Clear(363);
   Camera_InitializeDefaultTransform();
-  Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
+  Ram_HeapSlots->transitionWork->targetYaw = TRIG_TURN / 8;
   return cnt;
 }
 

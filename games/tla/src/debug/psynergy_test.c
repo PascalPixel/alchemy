@@ -3,6 +3,7 @@
 /// order.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -365,7 +366,7 @@ void Func_02000660(void) {
 }
 
 void Func_02000688(s32 actor) {
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_DAILA_PSY_CRYSTAL_DUG);
   Func_0200092c(actor, 36, 28, 1, 1, 10, 10);
 }
 
@@ -442,11 +443,11 @@ s32 Func_0200079c(void) {
   Call3((void (*)())Actor_FallOverWithAnimationById, 9, 0x8000, 0);
   Call2((void (*)())Actor_FallOverById, 10, 0x8000);
   Actor_FallOverById(12, 0);
-  if (Event_GetFlag(0x300))
+  if (Event_GetFlag(FLAG_DAILA_PSY_CRYSTAL_DUG))
     MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
   if (Event_GetFlag(0x301))
     Actor_SetPosition(18, 184 << 16, 184 << 16);
-  if (Event_GetFlag(0x302) && !Event_GetFlag(0x310))
+  if (Event_GetFlag(0x302) && !Event_GetFlag(FLAG_GAROH_NIGHT))
     Actor_SetPosition(19, 200 << 16, 200 << 16);
   Actor_SetItemIcon(Actor_Get(19), 50);
   {
@@ -538,7 +539,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
@@ -546,7 +547,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
         scale = object->scaleX + 0x51e;
         {
           /* FAKEMATCH(temporary): the turn is added as a word. */
-          s32 angle = object->facing + 0x1000;
+          s32 angle = object->facing + TRIG_TURN / 16;
 
           object->facing = angle;
         }
@@ -556,7 +557,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x8000;
+          Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }

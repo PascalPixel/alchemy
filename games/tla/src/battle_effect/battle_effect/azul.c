@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -239,7 +240,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   planes = gData_02014000;
   stripEnd = 0x3a08;
   for (frame = 0; frame != 228; frame++) {
-    if ((gInput.repeat & 3) && frame > 15 && frame <= 185) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
       wait(1);
@@ -593,7 +594,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         model->mesh = &faces[i * 3];
         Transform_Reset();
         SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         switch (i & 3) {
         case 0:
           Transform_ApplyPitch(p->z);
@@ -615,7 +616,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         Render_TransformVertices(&verts[i * 4], vertices, 4);
         BattleEffectKernels_IntegrateVector3(p, 62, 0);
         if (frame >= (8 - i) * 2 + 16) {
-          p->velocityY += -0x8000;
+          p->velocityY += -(px(1) / 2);
         }
         Render_DrawModelList(model);
       }
@@ -700,8 +701,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model = Render_AllocateModelList(1);
       scale = u * 3 << 8;
       shade = 0;
-      if (scale > 0x10000) {
-        scale = 0x10000;
+      if (scale > Q16_ONE) {
+        scale = Q16_ONE;
       }
       texture2.logWidth = 7;
       texture2.logHeight = 7;

@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "flags.h"
 
 #include "text/msg_ids.h"
 
@@ -890,7 +891,7 @@ s32 WorldPicture_Show(s32 mode) {
       WorldPicture_UpdateMarkers();
       input = keys;
       wait(1);
-      if ((input->repeat & 8) && gliding == 0) {
+      if ((input->repeat & KEY_START) && gliding == 0) {
         WorldPicture_GetLeaderPoint(&screenX, &screenY);
         *cursorX = screenX << 16;
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
@@ -916,7 +917,7 @@ s32 WorldPicture_Show(s32 mode) {
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }
-      if (input->repeat & 0x200) {
+      if (input->repeat & KEY_L) {
         WorldPicture_StepToPlace(&screenX, &screenY, -1);
         *cursorX = screenX << 16;
         wayZ = &Data_0202a650;
@@ -924,7 +925,7 @@ s32 WorldPicture_Show(s32 mode) {
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }
-      if (input->repeat & 4) {
+      if (input->repeat & KEY_SELECT) {
         world->shown = -1;
         WindowSprite_PrepareForRedrawFar(world->window);
         Io_Write16(64, &REG_DISPCNT);
@@ -956,7 +957,7 @@ s32 WorldPicture_Show(s32 mode) {
         }
         break;
       }
-      if (input->repeat & 1) {
+      if (input->repeat & KEY_A) {
         if (mode == 0)
           goto done;
         if (world->shown == -1)
@@ -968,7 +969,7 @@ s32 WorldPicture_Show(s32 mode) {
         WorldMap_SetReturnForScene(place->scene, place->entrance);
         goto done;
       }
-      if (input->repeat & 2) {
+      if (input->repeat & KEY_B) {
         if (mode != 0) {
           routine->unk2be = 0xffff;
           {
@@ -988,7 +989,7 @@ done:
   Io_Write16(64, &REG_DISPCNT);
   if (mode != 0 || event->controlMode != 3) {
     event->countdown = 999;
-    GameFlag_Set(265);
+    GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
     WorldMap_LoadAreaGraphicsFar();
     IO_WRITE_QUEUE_PUSH(0x04000052, (u16)blend, 0x20000);

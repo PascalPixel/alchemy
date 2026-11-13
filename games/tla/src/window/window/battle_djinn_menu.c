@@ -309,7 +309,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
       for (j = 0; j < (djinnCount + 4) / 5; j++) {
         s32 tile = j + 0xf301;
 
-        if ((gInput.held & 0x100) || (gFrameCount & 15) <= 11) {
+        if ((gInput.held & KEY_R) || (gFrameCount & 15) <= 11) {
           if (j == firstEntry / 5)
             tile = j + 0xf30b;
         }
@@ -317,7 +317,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                                listWindow->width - (djinnCount + 4) / 5 + j - 2,
                                -1, 0);
       }
-      if ((gInput.held & 0x100) == 0) {
+      if ((gInput.held & KEY_R) == 0) {
         Window_SetTilemapEntry(listWindow, 0xf334,
                                listWindow->width - (djinnCount + 4) / 5 - 3, -1,
                                0);

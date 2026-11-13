@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -150,7 +151,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     if (frame == 151) {
       Sound_PlayFar(SE_CRASH);
     }
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       break;
     }
     for (i = 0; i != 2; i++) {
@@ -184,22 +185,22 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         size = 8;
       }
       SceneTransform_ApplyPosition(position);
-      Transform_ApplyPitch(-0x1000);
-      Transform_ApplyRoll(0x8000);
-      Transform_ApplyPitch(0x8000);
+      Transform_ApplyPitch(-TRIG_TURN / 16);
+      Transform_ApplyRoll(TRIG_TURN / 2);
+      Transform_ApplyPitch(TRIG_TURN / 2);
       Transform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
         SET_VECTOR(scale, ((frame * 2 + frame) << 11) - 0xd9400, scale[0],
                    scale[0]);
         size = 5;
       } else {
-        SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
+        SET_VECTOR(scale, Q16_ONE - sinkFrame * 3 * 0x400, scale[0], scale[0]);
       }
       SceneTransform_ApplyScale(scale);
     } else {
       SET_VECTOR(position, 0, 0, 0x1000000);
       SceneTransform_ApplyPosition(position);
-      Transform_ApplyPitch(-0x1000);
+      Transform_ApplyPitch(-TRIG_TURN / 16);
       Transform_ApplyRoll(frame << 8);
       Transform_ApplyPitch(frame << 8);
     }
@@ -383,7 +384,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                 s32 speed = 0x3ff;
                 s32 angle;
                 speed &= Random16();
-                angle = (Random16() & 0x7fff) - 0x4000;
+                angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
                 spark->x = pillarX << 16;
                 spark->y = pillarY << 16;
                 speed += 32;

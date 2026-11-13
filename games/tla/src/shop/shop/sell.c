@@ -44,7 +44,7 @@ s32 Shop_ChooseMember(void) {
       Shop_DrawMemberItems(shop->itemWindow, unitId);
       redraw = 0;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       wait(1);
       if (Inventory_CountFar(unitId) == 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
@@ -64,7 +64,7 @@ s32 Shop_ChooseMember(void) {
       shop->cursor.anchor->active = 4;
       shop->mode = 12;
       redraw = 2;
-    } else if (gInput.pressed & 2) {
+    } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -148,17 +148,17 @@ s32 Shop_SelectSell(s32 unitId) {
                              Forge_GetMaterialChance(itemId), 3);
         Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
       }
-      if (gInput.pressed & 1) {
+      if (gInput.pressed & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
-      if (gInput.pressed & 2) {
+      if (gInput.pressed & KEY_B) {
         Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
-      if (gInput.held & 4) {
+      if (gInput.held & KEY_SELECT) {
         u32 item = unit->inventory[slot];
 
         Sound_PlayFar(SE_RECOVERY);
@@ -169,7 +169,7 @@ s32 Shop_SelectSell(s32 unitId) {
         // the native does; as shop->detailsHidden = 0, the restore moves
         // above it (6 of 374 instructions differ in tla-en).
         *(u8 *)&shop->detailsHidden = 0;
-        while (gInput.held & 4)
+        while (gInput.held & KEY_SELECT)
           wait(1);
         shop->detailsHidden = 1;
         Window_CloseFar(window, 2);
@@ -186,19 +186,19 @@ s32 Shop_SelectSell(s32 unitId) {
         continue;
 #endif
       } else {
-        if (gInput.repeat & 32) {
+        if (gInput.repeat & KEY_LEFT) {
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           slot--;
           slot = (inventoryCount + slot) % inventoryCount;
           redraw = 1;
         }
-        if (gInput.repeat & 16) {
+        if (gInput.repeat & KEY_RIGHT) {
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           slot++;
           slot = (inventoryCount + slot) % inventoryCount;
           redraw = 1;
         }
-        if (gInput.repeat & 64) {
+        if (gInput.repeat & KEY_UP) {
           slot -= 5;
           if (slot < 0)
             slot += 15;
@@ -207,7 +207,7 @@ s32 Shop_SelectSell(s32 unitId) {
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
         }
-        if (gInput.repeat & 128) {
+        if (gInput.repeat & KEY_DOWN) {
           slot += 5;
           if (slot >= inventoryCount)
             slot -= 15;

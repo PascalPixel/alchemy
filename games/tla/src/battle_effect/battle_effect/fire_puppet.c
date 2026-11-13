@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -250,11 +251,11 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       Transform_Reset();
       SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
                                     (pos.y << 16) + 0xffd60000, 0);
-      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (effect->side == 1) {
-        Transform_ApplyYaw(0x8000);
+        Transform_ApplyYaw(TRIG_TURN / 2);
       }
-      Transform_ApplyRoll(0x4000);
+      Transform_ApplyRoll(TRIG_TURN / 4);
       if (frame > 73) {
         SceneTransform_ApplyUniformScale((212 << 10) - (frame << 11));
       }
@@ -274,7 +275,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       model->shade = 0;
       SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
       Transform_ApplyRoll(22384 - (length << 5));
-      SceneTransform_ApplyUniformScale(length * 23 + 0x8000);
+      SceneTransform_ApplyUniformScale(length * 23 + Q16_ONE / 2);
       Render_TransformVertices(Data_081991e0, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -417,7 +418,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
         else
           spark->x = (caster.x / 2 + 48) << 16;
         spark->y = (caster.y - (Random16() & 7)) << 16;
-        angle = (Random16() & 0x7fff) + 0x4000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = Random16() & 255;
         if (effect->side == 0)
           spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - (8 << 16);

@@ -5,6 +5,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #include "types.h"
@@ -187,8 +188,9 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   scene->secondObjectId = targetId;
   scene->mainObject = user;
   target = ObjectTable_Get((s16)targetId);
-  scene->angle = (user->facing + 0x2000) & 0xc000; // Round to four directions.
-  scene->angle8 = (user->facing + 0x1000) & 0xe000;
+  scene->angle = (user->facing + TRIG_TURN / 8) &
+                 TRIG_TURN * 3 / 4; // Round to four directions.
+  scene->angle8 = (user->facing + TRIG_TURN / 16) & 0xe000;
   scene->child = target;
   if (user != NULL) {
     u8 terrain;

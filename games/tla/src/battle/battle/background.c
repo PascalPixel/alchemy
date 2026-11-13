@@ -5,6 +5,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"
 
@@ -210,8 +211,8 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->pb = 0;
   affine->pc = 0;
   affine->pd = step;
-  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - 0x10000));
-  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - 0x10000));
+  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - Q16_ONE));
+  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - Q16_ONE));
   affine->x = ((x + 0x7fff) >> 8) + offsetX + horizon;
   affine->y = ((y + 0x7fff) >> 8) + offsetY - 0x1000;
   groundEndLine =
@@ -458,35 +459,35 @@ struct DebugBattleWork {
 /// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
 /// unchanged.
 s32 Battle_AdjustDebugValue(s32 value) {
-  if (gInput.held & 8) {
+  if (gInput.held & KEY_START) {
     while (1) {
       struct DebugBattleWork *work =
           (struct DebugBattleWork *)Ram_HeapSlots->battleWork;
 
-      if (gInput.repeat & 0x20)
+      if (gInput.repeat & KEY_LEFT)
         work->debugValue--;
-      if (gInput.repeat & 0x10)
+      if (gInput.repeat & KEY_RIGHT)
         work->debugValue++;
-      if (gInput.repeat & 0x200)
+      if (gInput.repeat & KEY_L)
         work->debugValue -= 100;
-      if (gInput.repeat & 0x100)
+      if (gInput.repeat & KEY_R)
         work->debugValue += 100;
-      if (gInput.repeat & 0x40)
+      if (gInput.repeat & KEY_UP)
         work->debugValue -= 10;
-      if (gInput.repeat & 0x80)
+      if (gInput.repeat & KEY_DOWN)
         work->debugValue += 10;
-      if (gInput.pressed & 1) {
+      if (gInput.pressed & KEY_A) {
         value = work->debugValue;
         break;
       }
       wait(1);
     }
   }
-  if (gInput.held & 4)
+  if (gInput.held & KEY_SELECT)
     value = DEBUG_VALUE_SELECT;
   // The held keys reread through a volatile pointer, a load apart from the
   // Select test's; as gInput.held, 11 of 114 instructions differ in tla-en.
-  if (*(volatile u32 *)&gInput.held & 0x100)
+  if (*(volatile u32 *)&gInput.held & KEY_R)
     value = 399;
   return value;
 }
@@ -744,7 +745,7 @@ void ElementGlow_UpdateStarField(void) {
       if (dist <= 0xfff) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(dist, 0x10000);
+        scale = Iwram_RatioMulQ14(dist, Q16_ONE);
         spark->life--;
         // The multiply's entry held in a local keeps its address ahead of the
         // cursor and the axis count; called directly, 2 of 267 instructions
@@ -820,7 +821,8 @@ s32 ElementGlow_UploadStarField(void) {
 
     if (*active != 0) {
       *active = 0;
-      return ColorBuffer_ScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
+      return ColorBuffer_ScaleThreeQuarters(source, (void *)0x06004000,
+                                            Q16_ONE / 4);
     }
   }
   return (s32)source;

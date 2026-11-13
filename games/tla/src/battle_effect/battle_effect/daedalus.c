@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct Model;
@@ -699,14 +700,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       PARTICLES[i].timer = -1;
 
     frame = 0;
-    if (!(gInput.held & 2) && !(gInput.repeat & 1)) {
+    if (!(gInput.held & KEY_B) && !(gInput.repeat & KEY_A)) {
     phase2:
       if (frame == 0) {
         *(vu16 *)0x04000020 = 0x100;
         *pal = 0x190b;
         shipY = -0x1d0000;
         camera = 0;
-        work->sprites[39]->rotation = 0xc000;
+        work->sprites[39]->rotation = TRIG_TURN * 3 / 4;
         work->sprites[38]->rotation = 0;
         work->sprites[31]->rotation = 0;
         work->particles[20].x = 0;
@@ -1130,7 +1131,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(camera + 0x20000, 0x80000, 0);
           Transform_ApplyRoll(0x4300);
-          Transform_ApplyPitch(-0x800);
+          Transform_ApplyPitch(-TRIG_TURN / 32);
           SceneTransform_ApplyUniformScale((v << 14) + 0x4180);
           Render_TransformVertices(gData_08199210, buffer, 4);
           Render_DrawModelList(beam);
@@ -1163,8 +1164,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           }
         }
       }
-      scale2.x = 0x10000;
-      scale2.y = 0x10000;
+      scale2.x = Q16_ONE;
+      scale2.y = Q16_ONE;
       work->sprites[21]->priority = 2;
       work->sprites[22]->priority = 2;
       work->sprites[23]->priority = 2;
@@ -1327,7 +1328,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->transferPending = 1;
       wait(1);
       frame++;
-      if (frame != 800 && !(gInput.held & 2) && !(gInput.repeat & 1))
+      if (frame != 800 && !(gInput.held & KEY_B) && !(gInput.repeat & KEY_A))
         goto phase2;
     }
 
@@ -1421,7 +1422,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
               q = &PARTICLES[i * 8 + j];
               speed = (Random16() & 31) + 32;
-              angle = (Random16() & 0x7fff) + 0x4000;
+              angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
               q->x = p->x / 2;
               q->y = p->y;
               q->vx = Trig_Sin(angle) * speed >> 4;
@@ -1795,9 +1796,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3((k << 17) + ringX + ringOffset,
                                         discY - ((k + 2) << 16) + ringOffset,
                                         0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(ring->x);
-          SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + 0x10000,
+          SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + TRIG_TURN,
                                      0x20000, 0x10000);
           Render_TransformVertices(gData_081991b0, vertices, 4);
           Render_DrawModelList(model);

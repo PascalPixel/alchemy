@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -349,10 +350,10 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == 0) {
-          SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
           Render_TransformVertices(gData_081991b0, vertices, 4);
         } else {
-          SceneTransform_ApplyScale3(radius << 11, radius * 312, 0x10000);
+          SceneTransform_ApplyScale3(radius << 11, radius * 312, Q16_ONE);
           Render_TransformVertices(Data_081991c0, vertices, 4);
         }
         Render_DrawModelList(model);
@@ -469,7 +470,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   wait(1);
 
   for (frame = 0; frame != 170; frame++) {
-    if ((gInput.repeat & 3) && frame > 10) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 10) {
       if (frame > 107) {
         goto skipped;
       }
@@ -560,7 +561,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           s32 picture2 = (frame / 2) % 3;
           u8 *cells2;
 
-          sway = (Trig_Sin((frame << 12) + 0x8000) << 3) >> 16;
+          sway = (Trig_Sin((frame << 12) + TRIG_TURN / 2) << 3) >> 16;
           cells2 = work->sheet + picture2 * 3 * 0x800;
           (*draw)(canvas, cells2, sway, 0, 96, 64);
           (*draw)(canvas, cells2, sway, 64, 96, 52);
@@ -577,7 +578,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         }
         p->variant++;
         if (frame == 108) {
-          p->velocityX += 0x20000;
+          p->velocityX += px(2);
           p->velocityY /= 4;
         }
         if (frame <= 107) {
@@ -627,11 +628,11 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
                     gBattleEffect_PuffSizes[k], gBattleEffect_PuffSizes[k]);
         BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
-          p->velocityX += -0x800;
-          p->velocityY += 0x1000;
+          p->velocityX += -(px(1) / 32);
+          p->velocityY += px(1) / 16;
         } else {
-          p->velocityX += -0x1000;
-          p->velocityY += 0x800;
+          p->velocityX += -(px(1) / 16);
+          p->velocityY += px(1) / 32;
         }
         p->variant++;
       }
@@ -951,9 +952,9 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
         if (frame == 72) {
           work->particles[0].x = point[0];
           if (work->particles[0].x > 0) {
-            work->particles[0].velocityX = -0x200000;
+            work->particles[0].velocityX = -(px(32));
           } else {
-            work->particles[0].velocityX = 0x200000;
+            work->particles[0].velocityX = px(32);
           }
           REG_BG2CNT = 0x784;
         }

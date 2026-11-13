@@ -3,6 +3,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "fixed_math.h"
 
 #include "system/input.h"
 
@@ -105,17 +106,17 @@ next:
     } else {
       // DEAD: the repeated keys are read once and the value goes unused.
       (void)gInput.repeat;
-      if (gInput.repeat & 64)
+      if (gInput.repeat & KEY_UP)
         selectedLayer = (selectedLayer - 1) & 3;
-      if (gInput.repeat & 128)
+      if (gInput.repeat & KEY_DOWN)
         selectedLayer = (selectedLayer + 1) & 3;
-      if (gInput.repeat & 32)
+      if (gInput.repeat & KEY_LEFT)
         editMode = (editMode - 1) & 3;
-      if (gInput.repeat & 16)
+      if (gInput.repeat & KEY_RIGHT)
         editMode = (editMode + 1) & 3;
     }
 
-    if (gInput.pressed & 8) {
+    if (gInput.pressed & KEY_START) {
       struct ViewerSprite *sprites = Ram_HeapSlots->unk0c[1];
 
       shadowsEnabled ^= 1;
@@ -129,7 +130,7 @@ next:
     case 0:
       if (selectedLayer == 1)
         break;
-      if (gInput.repeat & 0x200) {
+      if (gInput.repeat & KEY_L) {
         layers[selectedLayer].animationIndex--;
         if (layers[selectedLayer].animationIndex < 0)
           layers[selectedLayer].animationIndex = 0;
@@ -137,7 +138,7 @@ next:
           layers[1].animationIndex = layers[0].animationIndex;
         goto next;
       }
-      if (!(gInput.repeat & 0x100))
+      if (!(gInput.repeat & KEY_R))
         break;
       layers[selectedLayer].animationIndex++;
       if (layers[selectedLayer].animationIndex > 99)
@@ -153,13 +154,13 @@ next:
       steps = 1;
       if (HELD & 8)
         steps = 10;
-      if (gInput.repeat & 0x200) {
+      if (gInput.repeat & KEY_L) {
         layers[selectedLayer].spriteId =
             SpriteViewer_FindNextSpriteWithPictures(
                 layers[selectedLayer].spriteId, -steps);
         changed = 1;
       }
-      if (gInput.repeat & 0x100) {
+      if (gInput.repeat & KEY_R) {
         layers[selectedLayer].spriteId =
             SpriteViewer_FindNextSpriteWithPictures(
                 layers[selectedLayer].spriteId, steps);
@@ -184,13 +185,13 @@ next:
 
     case 2:
       changed = 0;
-      if (gInput.repeat & 0x200) {
+      if (gInput.repeat & KEY_L) {
         layers[selectedLayer].priority--;
         if (layers[selectedLayer].priority < 0)
           layers[selectedLayer].priority = 3;
         changed = 1;
       }
-      if (gInput.repeat & 0x100) {
+      if (gInput.repeat & KEY_R) {
         layers[selectedLayer].priority++;
         if (layers[selectedLayer].priority > 3)
           layers[selectedLayer].priority = 0;
@@ -205,13 +206,13 @@ next:
 
     case 3:
       changed = 0;
-      if (gInput.repeat & 0x200) {
+      if (gInput.repeat & KEY_L) {
         layers[selectedLayer].colorMode--;
         if (layers[selectedLayer].colorMode < 0)
           layers[selectedLayer].colorMode = 15;
         changed = 1;
       }
-      if (gInput.repeat & 0x100) {
+      if (gInput.repeat & KEY_R) {
         layers[selectedLayer].colorMode++;
         if (layers[selectedLayer].colorMode > 15)
           layers[selectedLayer].colorMode = 0;
@@ -225,7 +226,7 @@ next:
       goto next;
     }
 
-    if (gInput.repeat & 1) {
+    if (gInput.repeat & KEY_A) {
       if (editMode == 0) {
         if (selectedLayer != 1) {
           if (layers[selectedLayer].enabled != 0) {
@@ -246,12 +247,12 @@ next:
         goto next;
       }
     }
-    if (gInput.repeat & 4) {
+    if (gInput.repeat & KEY_SELECT) {
       Task_ResetAll();
       Stub_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
       goto restart;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       volatile u16 *palette = (volatile u16 *)0x05000000;
       const u16 *colors = gData_0802f054;
       backdrop++;
@@ -331,7 +332,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 
   angle = 0;
   kind = ((struct ProbeObjects *)Ram_HeapSlots->unk0c[1])->shape->kind;
-  if ((gInput.held & 2) != 0)
+  if ((gInput.held & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
   switch ((u32)kind) {
   case 3:
@@ -360,7 +361,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions->y = centerY << 16;
       Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + 0x2000);
+      angle = (s16)(angle + TRIG_TURN / 8);
     }
     for (; i < 10; i++)
       positions++;
@@ -380,7 +381,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     break;
   case 20:
     turn = angle;
-    angle = (s16)(turn + 0x4000);
+    angle = (s16)(turn + TRIG_TURN / 4);
     i = 0;
     pair = positions;
     while (i < 2) {
@@ -397,7 +398,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
         pair[i * 2 + 1].y = centerY << 16;
         Vector_AddPolarOffset(0x280000, (u16)angle, point);
       }
-      angle = (angle + 0x8000) << 16;
+      angle = (angle + TRIG_TURN / 2) << 16;
       i++;
       positions += 2;
       angle >>= 16;
@@ -413,7 +414,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions->y = centerY << 16;
       Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + 0x4000);
+      angle = (s16)(angle + TRIG_TURN / 4);
     }
     for (i = 4; i < 10; i++)
       positions++;
@@ -546,7 +547,7 @@ void SpriteViewer_PlaceRing(void) {
     cnt = 4;
     break;
   default:
-    angle = 0x2000;
+    angle = TRIG_TURN / 8;
     step = 0x4000;
     cnt = 4;
     break;

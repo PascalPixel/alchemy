@@ -249,7 +249,7 @@ s32 Credits_Run(s32 mode) {
         } else
           REG_BLDALPHA = ((16 - step) << 8) | step;
         for (frame = 0; frame <= 3; frame++) {
-          if (gInput.held & 8)
+          if (gInput.held & KEY_START)
             goto done;
           wait(1);
         }
@@ -257,7 +257,7 @@ s32 Credits_Run(s32 mode) {
       if (*count == 0) {
         do {
           gInput.pressed;
-          if (gInput.held & 8)
+          if (gInput.held & KEY_START)
             goto done;
           if (gDisplayScroll_Busy == 2)
             goto done;
@@ -308,20 +308,20 @@ void Credits_UpdateCrawlSprites(void) {
   Dma_Set(gDisplayScroll_Objects, (void *)0x07000000, 0x84000100,
           (u32 *)0x040000d4);
 
-  if (gDisplayScroll_Busy == 1 && (gInput.held & 3)) {
+  if (gDisplayScroll_Busy == 1 && (gInput.held & (KEY_A | KEY_B))) {
     gDisplayScroll_Busy = 0;
     gCredits_PendingSlides++;
   }
 #if TLA_PATCH_1
   // From patch 1 a held button also releases state 3; the Japanese release
   // checks only state 1.
-  if (gDisplayScroll_Busy == 3 && (gInput.held & 3))
+  if (gDisplayScroll_Busy == 3 && (gInput.held & (KEY_A | KEY_B)))
     gDisplayScroll_Busy = 0;
 #endif
   if (gDisplayScroll_Busy == 0) {
     if ((gVBlankCount & 3) == 0)
       gDisplayScroll_Position++;
-    if ((gInput.held & 2) && (gVBlankCount & 3))
+    if ((gInput.held & KEY_B) && (gVBlankCount & 3))
       gDisplayScroll_Position++;
   }
 }

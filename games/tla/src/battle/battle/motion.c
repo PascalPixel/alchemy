@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/field.h"
 
@@ -22,8 +23,8 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   slot = BattleObject_Get(slotId);
   object = slot->object;
   zero = 0;
-  object->acceleration = 0x20000;
-  object->speedLimit = 0x80000;
+  object->acceleration = px(2);
+  object->speedLimit = px(8);
   object->verticalMotionStrength = 0xab85;
   object->velocityY = zero;
   object->verticalMotionPhase = zero;
@@ -34,7 +35,7 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   z = slot->anchorZ;
   if (z < 0)
     z += 7;
-  object->angle = (s16)(ArcTan2(z >> 3, slot->anchorX) - 0x8000);
+  object->angle = (s16)(ArcTan2(z >> 3, slot->anchorX) - TRIG_TURN / 2);
 }
 
 void BattleMotion_SetupEscapeObject(s32 objectId) {
@@ -43,9 +44,9 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
 
   slot = BattleObject_Get(objectId);
   object = slot->object;
-  object->acceleration = 0x20000;
-  object->speedLimit = 0x80000;
-  object->velocityY = 0x50000;
+  object->acceleration = px(2);
+  object->speedLimit = px(8);
+  object->velocityY = px(5);
   object->verticalMotionStrength = 0x7851;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
@@ -67,9 +68,9 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   x = start->x + (end->x - start->x) * progress / 100;
   z = start->z + (end->z - start->z) * progress / 100;
   REG_BLDCNT = 0;
-  start->acceleration = 0x20000;
-  start->speedLimit = 0x80000;
-  start->velocityY = 0x40000;
+  start->acceleration = px(2);
+  start->speedLimit = px(8);
+  start->velocityY = px(4);
   start->gravity = 0xab85;
   start->bounce = 0;
   start->actionFlags = 1;
@@ -80,8 +81,8 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
 void BattleMotion_ReturnObjectToSpot(struct BattleObj *slot) {
   struct MotionObject *object = slot->object;
 
-  object->acceleration = 0x20000;
-  object->speedLimit = 0x80000;
+  object->acceleration = px(2);
+  object->speedLimit = px(8);
   object->verticalMotionStrength = 0xab85;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
@@ -96,8 +97,8 @@ void BattleMotion_HopBack(s32 objectId) {
   slot = BattleObject_Get(objectId);
   object = slot->object;
   object->acceleration = Q16_ONE;
-  object->speedLimit = 0x40000;
-  object->velocityY = 0x30000;
+  object->speedLimit = px(4);
+  object->velocityY = px(3);
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
@@ -116,8 +117,8 @@ void BattleMotion_LeapBack(s32 objectId) {
   slot = BattleObject_Get(objectId);
   object = slot->object;
   object->acceleration = Q16_ONE;
-  object->speedLimit = 0x40000;
-  object->velocityY = 0x40000;
+  object->speedLimit = px(4);
+  object->velocityY = px(4);
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;

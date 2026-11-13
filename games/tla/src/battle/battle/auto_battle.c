@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/window.h"
@@ -73,12 +74,12 @@ void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *trans = Ram_HeapSlots->transitionWork;
 
-  if ((gInput.held & 512) != 0) {
+  if ((gInput.held & KEY_L) != 0) {
     cam->yaw += 512;
   }
   // The held keys reread through a volatile pointer, a load apart from the L
   // test's; as gInput.held, 18 of 41 instructions differ in tla-en.
-  if ((*(volatile u32 *)&gInput.held & 256) != 0) {
+  if ((*(volatile u32 *)&gInput.held & KEY_R) != 0) {
     cam->yaw -= 512;
   }
   if (trans->flag == 0) {
@@ -225,7 +226,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   {
     struct BattlePresentationTransition *transition =
         Ram_HeapSlots->transitionWork;
-    transition->targetYaw = action->unitId > 4 ? 0x5000 : 0x2000;
+    transition->targetYaw = action->unitId > 4 ? 0x5000 : TRIG_TURN / 8;
     transition->frames = 60;
   }
   wait(10);
@@ -304,11 +305,11 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
-  if (Ram_HeapSlots->transitionWork->targetYaw == 0x2000) {
-    Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
+  if (Ram_HeapSlots->transitionWork->targetYaw == TRIG_TURN / 8) {
+    Ram_HeapSlots->transitionWork->targetYaw = TRIG_TURN / 8;
     wait(10);
   } else {
-    Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
+    Ram_HeapSlots->transitionWork->targetYaw = TRIG_TURN / 8;
     wait(30);
   }
 
@@ -359,9 +360,9 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   s32 i;
 
   if (action->unitId > 4)
-    facing = -0x2000;
+    facing = -TRIG_TURN / 8;
   else
-    facing = 0x2000;
+    facing = TRIG_TURN / 8;
   if (transition->targetYaw == facing) {
     transition->frames = 40;
     wait(40);

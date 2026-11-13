@@ -203,8 +203,8 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   ((u8 *)visual)[9] = mask;
   picture->motionFlags = 2;
   picture->terrainHeight = position[1];
-  picture->velocityY = 0x20000;
-  picture->gravity = 0x4000;
+  picture->velocityY = px(2);
+  picture->gravity = px(1) / 4;
   buffer = HeapSlot_Alloc(68, 0x608);
   Icon_DrawItemFar(item);
   tile = VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
@@ -248,7 +248,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   {
     struct Actor *found = ObjectTable_Get(Party_GetLeaderActor());
     actor->acceleration = Q16_ONE;
-    actor->speedLimit = 0x20000;
+    actor->speedLimit = px(2);
     actor->motionFlags = 0;
     owner = found;
   }
@@ -257,7 +257,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   wait(3);
   Actor_SelectAnimationFar(owner, 28);
   Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
-  owner->facing = 0x4000;
+  owner->facing = TRIG_TURN / 4;
 }
 
 void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
@@ -268,8 +268,8 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
-      object->velocityY = 0x20000;
-      object->gravity = 0x4000;
+      object->velocityY = px(2);
+      object->gravity = px(1) / 4;
       object->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3)
@@ -695,8 +695,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewInverse[0] & 0xffff0000;
     cameraY = viewInverse[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
     value = state->value;
@@ -732,8 +732,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     viewRipple = &map->viewX;
     cameraX = viewRipple[0] & 0xffff0000;
     cameraY8 = viewRipple[1] & 0xffff0000;
-    centerX = (state->centreX - cameraX) / 0x10000;
-    centerY = (state->centreY - cameraY8) / 0x10000 - 16;
+    centerX = (state->centreX - cameraX) / Q16_ONE;
+    centerY = (state->centreY - cameraY8) / Q16_ONE - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -786,8 +786,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
@@ -824,8 +824,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeaderLow[0] & 0xffff0000;
     cameraY = viewLeaderLow[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 8;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;

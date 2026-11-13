@@ -3,6 +3,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "flags.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "module/field/event_commands.h"
@@ -13,7 +15,7 @@
 
 /// Per-frame update: spins an object 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
-  object->angle += 0x2000;
+  object->angle += TRIG_TURN / 8;
 }
 
 // Objects: follow a watched object.
@@ -61,7 +63,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni = Actor_GetById(djinniId);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  dir = (leader->facing + 0x2000) & 0xc000;
+  dir = (leader->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   Event_Start();
   wait(10);
   Sound_PlayFar(SE_NOTE_LOW);
@@ -80,8 +82,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 #if TLA_PATCH_1
   Sound_PlayFar(SE_JUMP);
 #endif
-  djinni->gravity = 0x4000;
-  djinni->velocityY = 0x48000;
+  djinni->gravity = px(1) / 4;
+  djinni->velocityY = px(9) / 2;
   wait(33);
   ((struct AnimationObject *)djinni->sprite)->image.priority = 0;
 #if TLA_PATCH_1
@@ -132,7 +134,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni->speedLimit = 0x4ccc;
   djinni->acceleration = 0x4ccc;
-  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000,
+                                            dir + TRIG_TURN / 2);
   Sound_PlayFar(LEAP_SOUND);
   Actor_Jump(djinniId, 6, 5);
   wait(24);
@@ -151,7 +154,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_SelectAnimationFar(djinni, 0);
   ((struct AnimationObject *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1
-  djinni->gravity = 0x10000;
+  djinni->gravity = px(1);
 #endif
   Event_End();
 }
@@ -219,7 +222,7 @@ void Djinn_RestoreActorAfterBattle(void) {
   s32 id;
 
   scene &= raw;
-  if (GameFlag_Get(0x109) != 0 && flags == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
     flags = scene & 0x800;
     scene &= 0x7ff;
     if (scene - 300 <= 80 && party->sequenceResult > 0) {
@@ -352,7 +355,7 @@ void FieldEffect_ReleaseSlots(void) {
 }
 
 void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
-  object->angle += 0x2000;
+  object->angle += TRIG_TURN / 8;
 }
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each

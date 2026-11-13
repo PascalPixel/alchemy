@@ -4,6 +4,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
@@ -49,7 +51,7 @@ s32 Field_CountRequests(void) {
 void Field_UpdateHoverReady(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  if (GameFlag_Get(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
+  if (GameFlag_Get(FLAG_SHIP_FLIES) && Party_FindOwnerWithActionFar(153) != -1)
     work[0xd39] = 1;
   else
     work[0xd39] = 0;
@@ -241,7 +243,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     distance = work->walkingDistance + step;
     work->walkingDistance = distance;
     if (distance > 0xffff) {
-      amount = distance / 0x10000;
+      amount = distance / Q16_ONE;
       work->walkingDistance = distance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
@@ -252,7 +254,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
 
     if (gPartyStep.hazardMode == 0 && (attributes & 8)) {
       if (work->previousCell->attributeB & 8)
-        gPartyStep.hazardSteps += leader->speedLimit / 0x10000;
+        gPartyStep.hazardSteps += leader->speedLimit / Q16_ONE;
       else
         gPartyStep.hazardSteps = gPartyStep.hazardLimit / 2;
     }

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -116,7 +117,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - 0x4000;
+              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
               spark->x = gPlasma_Columns[i + effect->side * 7] << 16;
               spark->y = PILLAR_BASE_Y << 16;

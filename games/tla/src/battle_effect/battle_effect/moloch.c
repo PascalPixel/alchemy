@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -109,7 +110,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
 
     frame = 0;
     do {
-      if ((gInput.repeat & 3) && frame <= 231 && frame > 15) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 231 && frame > 15) {
         Sound_PlayFar(SE_CLATTER);
         frame = SUMMON16_SKIP_TO;
       }
@@ -215,8 +216,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
 
           // Frames 217-245: the wind turns.
           if ((u32)(frame - 217) <= 28) {
-            mote->velocityX -= 0x2000;
-            mote->velocityY += 0x2000;
+            mote->velocityX -= px(1) / 8;
+            mote->velocityY += px(1) / 8;
           }
         }
       }
@@ -296,7 +297,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
 
           if (frame <= start)
             continue;
-          scale = (frame - start) * Data_08199f38[i] * 2000 + 0x8000;
+          scale = (frame - start) * Data_08199f38[i] * 2000 + Q16_ONE / 2;
           shade = (start - frame) * 8 + 56;
           if (shade > 0)
             shade = 0;
@@ -1036,7 +1037,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           place[1] = place[0] = work->particles[i].velocityZ;
           place[2] = 0;
           SceneTransform_ApplyScale(place);
-          work->particles[i].velocityZ += 0x2000;
+          work->particles[i].velocityZ += px(1) / 8;
           model->kind = 4;
           model->texture = &texture;
           model->mesh = Data_08199f98;
@@ -1126,11 +1127,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   work->transferValue = 75;
   savedZoom = camera[27];
   if (effect->side == 0) {
-    s32 yaw = 0x4000;
+    s32 yaw = TRIG_TURN / 4;
 
     camera[27] = yaw;
   } else {
-    s32 yaw = 0xc000;
+    s32 yaw = TRIG_TURN * 3 / 4;
 
     camera[27] = yaw;
   }
@@ -1152,7 +1153,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   for (;;) {
     motesMask = 31;
     // A or B: skips the opening, or the rest of the scene.
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       if (frame <= 175) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
@@ -2130,7 +2131,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           work->particles[n].z = frame;
           work->particles[n].velocityX = -((Random16() & 15) << 13);
           work->particles[n].velocityY = (Random16() & 15) << 14;
-          work->particles[n].velocityZ = 0x8000;
+          work->particles[n].velocityZ = px(1) / 2;
           work->particles[n].variant = ((Random16() & 3) + 1) | 0x110;
         }
       }

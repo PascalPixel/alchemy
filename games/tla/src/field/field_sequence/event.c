@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
@@ -34,7 +35,7 @@ void Event_Wait(s32 frames) {
 void Leader_StopMoving(void) {
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = Q16_ONE;
-  object->acceleration = 0x8000;
+  object->acceleration = px(1) / 2;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
   object->velocityX = 0;

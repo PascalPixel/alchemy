@@ -609,12 +609,12 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = menu->ownerIds[selection];
       break;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -1150,7 +1150,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       wait(1);
       previous = state.selectedIndex;
 
-      if ((gInput.held & 4) == 0)
+      if ((gInput.held & KEY_SELECT) == 0)
         moved = PagedList_HandleInput(0, state.entryCount, 5, &state.row,
                                       &state.page);
       else
@@ -1165,7 +1165,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         changed = 0;
 
       if (menu->mode == 0) {
-        if ((gInput.pressed & 4) && shortcutHelp == 0) {
+        if ((gInput.pressed & KEY_SELECT) && shortcutHelp == 0) {
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 OWNER_ACTION_ID_MASK);
           if (ability->unk04[2] == 0) {
@@ -1179,7 +1179,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           }
         }
         /* FAKEMATCH(volatile): held read afresh for this test. */
-        if ((*(volatile u32 *)&gInput.held & 4) == 0 && shortcutHelp == 1) {
+        if ((*(volatile u32 *)&gInput.held & KEY_SELECT) == 0 &&
+            shortcutHelp == 1) {
           shortcutHelp = 0;
           menu->flags &= ~2;
           Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
@@ -1188,7 +1189,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
       }
 
-      if (gInput.pressed & 1) {
+      if (gInput.pressed & KEY_A) {
         if (menu->mode != 0) {
           Sound_PlayFar(SE_PSYNERGY_START);
           result = menu->psynergies[state.selectedIndex];
@@ -1214,15 +1215,15 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
       }
 
-      if (gInput.pressed & 2) {
+      if (gInput.pressed & KEY_B) {
         Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
 
-      if (((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) &&
-          (gInput.held & 4) == 0) {
+      if (((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) &&
+          (gInput.held & KEY_SELECT) == 0) {
         member = menu->tabIndex[paneIndex];
         ownerCount = menu->memberCount;
         listMode = menu->mode != 0 ? 1 : 2;
@@ -1230,7 +1231,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         menu->selectedIndexByOwner[menu->memberIds[paneIndex]] =
             state.selectedIndex;
         do {
-          if (gInput.repeat & 0x100)
+          if (gInput.repeat & KEY_R)
             member++;
           else
             member--;
@@ -1251,7 +1252,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         break;
       }
 
-      if ((gInput.pressed & 0x200) && (gInput.held & 4)) {
+      if ((gInput.pressed & KEY_L) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
@@ -1267,7 +1268,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
       }
 
-      if ((gInput.pressed & 0x100) && (gInput.held & 4)) {
+      if ((gInput.pressed & KEY_R) && (gInput.held & KEY_SELECT)) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {

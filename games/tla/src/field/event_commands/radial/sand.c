@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #include "field/field_psynergy_work.h"
@@ -90,10 +91,10 @@ void FieldPsynergy_Sand(void) {
       owner->y += 0x3999;
     if (frame & 31)
       Sound_PlayFar(SE_566);
-    owner->facing += 0x2000;
+    owner->facing += TRIG_TURN / 8;
     wait(1);
   }
-  owner->facing = 0x4000;
+  owner->facing = TRIG_TURN / 4;
   wait(1);
   FieldPsynergy_DecodePicture(*(void **)((u8 *)owner->sprite + 40), work,
                               0x400);
@@ -301,7 +302,7 @@ void FieldPsynergy_UpdateBurst(void) {
     case 1:
       canvas->scaleX += 0x300;
       canvas->scaleY = canvas->scaleX;
-      if (canvas->scaleX >= 0x8000) {
+      if (canvas->scaleX >= Q16_ONE / 2) {
         work->phase++;
         work->timer = 0;
       }

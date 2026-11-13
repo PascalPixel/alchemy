@@ -3,6 +3,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "fixed_math.h"
 #include "module/field/resource_slot.h"
 #include "module/tla.h"
 
@@ -413,10 +414,10 @@ void Actor_UpdateAllThumb(void) {
 
         facingStep = (s16)(ArcTan2(z, x) - object->angle);
 
-        maximumFacingStep = 0x1000;
+        maximumFacingStep = TRIG_TURN / 16;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
-        maximumFacingStep = -0x1000;
+        maximumFacingStep = -TRIG_TURN / 16;
         if (facingStep < maximumFacingStep)
           facingStep = maximumFacingStep;
         object->angle += facingStep;

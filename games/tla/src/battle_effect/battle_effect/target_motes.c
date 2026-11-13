@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -409,7 +410,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
           drawB(canvas, work->sheet + (cel << 10) - 0x800,
                 scroll + (one->x >> 16) - 16, (one->y >> 16) - 16, 32, 32);
         one->y += one->velocityY;
-        one->velocityY += 0x2000;
+        one->velocityY += px(1) / 8;
         one->variant += one->z;
         if (one->y > GROUND_Y && one->velocityY == 0) {
           s32 speed = one->velocityY + 1;

@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct RingMote {
@@ -236,7 +237,7 @@ void FieldPsynergy_Unnamed28(void) {
         sprite->oam.priority = 0;
         sprite->oam.palette256 = 0;
         sprite->oam.palette = 15;
-        sprite->angle = heading + 0x4000;
+        sprite->angle = heading + TRIG_TURN / 4;
         place = position;
         place[0] = scene->mainObject->x;
         place[1] = scene->mainObject->y + 0x100000;

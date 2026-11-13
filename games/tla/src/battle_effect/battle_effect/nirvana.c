@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Nirvana's ring of sparks.
@@ -95,7 +96,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
         if (i <= 11)
           Transform_ApplyPitch(frame << 9);
         else
-          Transform_ApplyPitch((frame << 9) + 0x4000);
+          Transform_ApplyPitch((frame << 9) + TRIG_TURN / 4);
         Transform_ApplyRoll(i * 5461 + (frame << 10));
         SceneTransform_ApplyPosition3(0, Trig_Sin(frame * 409) << 6, 0);
         point[0] = 0;
@@ -281,9 +282,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
         if (effect->side == 0)
-          rock->velocityX -= 0x8000;
+          rock->velocityX -= px(1) / 2;
         else
-          rock->velocityX += 0x8000;
+          rock->velocityX += px(1) / 2;
         if (rock->z > 1)
           rock->z--;
       }
@@ -400,7 +401,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
 
         for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
           s32 speed = (Random16() & 0xff) + 256;
-          s32 angle = (Random16() & 0x7fff) + 0x4000;
+          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           spark->x = position.x << 16;
           spark->y = (96 - (Random16() & 31)) << 16;
@@ -758,7 +759,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
               height = Data_08198b7a[row] + (Random16() & 3);
               radius = Data_08198b82[row] + (Random16() & 3);
             }
-            angle = (column << 13) + 0x1000;
+            angle = (column << 13) + TRIG_TURN / 16;
             VERTICES[row * 8 + column].x = (Trig_Sin(angle) * radius) >> 16;
             VERTICES[row * 8 + column].y = -height;
             VERTICES[row * 8 + column].z = (Trig_Cos(angle) * radius) >> 16;
@@ -935,7 +936,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         caster->acceleration = speed;
         caster->speedLimit = speed;
         caster->snapToTarget = 1;
-        caster->velocityY = 0x60000;
+        caster->velocityY = px(6);
         caster->gravity = 0x13333;
         caster->bounce = 0;
         caster->actionFlags = 1;
@@ -983,7 +984,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3(p->x, p->y, p->z);
             Transform_ApplyPitch(angle);
             Transform_ApplyRoll(angle);
-            SceneTransform_ApplyUniformScale(0x10000);
+            SceneTransform_ApplyUniformScale(Q16_ONE);
             Render_ProjectVertices(Data_081991a4, vertices, 3);
             Render_DrawModelList(model);
             Transform_Pop();

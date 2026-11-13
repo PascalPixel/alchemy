@@ -278,7 +278,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       s32 side;
       s32 count;
 
-      if (gDebugMode != 0 && (gInput.held & 8))
+      if (gDebugMode != 0 && (gInput.held & KEY_START))
         side = 2;
       else
         side = 1;

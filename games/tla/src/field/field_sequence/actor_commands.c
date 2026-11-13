@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "system/frame.h"
 #include "module/field/event_commands.h"
@@ -618,7 +619,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Actor_SelectAnimationFar(object, 1);
   Actor_SetSpriteFlagsFar(object, 0);
   object->motionFlags |= 2;
-  object->velocityY = 0x40000;
+  object->velocityY = px(4);
   Actor_SetMoveTargetFar(object, x, object->y, z + 0xc0000);
   wait(6);
   Sound_PlayFar(SE_FLOOR_SWITCH);
@@ -632,7 +633,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
       FieldEffect_SpawnDustPuff(object, particle);
   }
   object->motionFlags = 3;
-  object->velocityY = 0x30000;
+  object->velocityY = px(3);
   Actor_SetMoveTargetFar(object, x, object->y, z + 0x100000);
   Actor_WaitForMoveFar(object);
   if (particle & 0x1000) {

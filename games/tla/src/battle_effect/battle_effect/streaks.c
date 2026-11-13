@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -347,7 +348,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     mote = &EFFECT_STEPS[i];
     if (mode == MODE_SLAVER) {
       if (effect->side == 0)
-        angle = (Random16() & 0x7fff) + 0x8000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
       else
         angle = Random16() & 0x7fff;
       speed = (Random16() & 0x3ff) + 0x800;
@@ -414,9 +415,9 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
         }
         if (mode == MODE_SLEEP_STAR) {
           if (source->x < 0)
-            mote->velocityX += 0x2000;
+            mote->velocityX += px(1) / 8;
           else
-            mote->velocityX -= 0x2000;
+            mote->velocityX -= px(1) / 8;
         }
         mote->variant--;
       }

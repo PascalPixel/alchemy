@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct MeshTriangle;
@@ -364,7 +365,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * Data_08198b56[i] * 125) << 4) + 0x8000;
+        scale = (((frame - start) * Data_08198b56[i] * 125) << 4) + Q16_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;

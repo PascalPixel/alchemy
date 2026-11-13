@@ -211,7 +211,7 @@ void Cyclone_LiftLeader(void) {
 #include "battle/motobj.h"
 
 void BattleEffect_SpinObject(struct MotionObject *object) {
-  object->angle += 0x1000;
+  object->angle += TRIG_TURN / 16;
 }
 
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
@@ -289,8 +289,8 @@ void FieldPsynergy_Cyclone(void) {
   canvas->priority = 1;
   canvas->depth = 240;
   canvas->mode = CANVAS_SPRITE_KEPT;
-  canvas->scaleX = 0x18000;
-  canvas->scaleY = 0x18000;
+  canvas->scaleX = Q16_ONE * 3 / 2;
+  canvas->scaleY = Q16_ONE * 3 / 2;
   EffectSprite_Init(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
   canvas->sprite.oam.palette256 = 1;
   canvas->sprite.oam.palette = 0;
@@ -298,7 +298,7 @@ void FieldPsynergy_Cyclone(void) {
   pixels = Ram_HeapSlots->battleFxWork[1];
   ring = Actor_Spawn(280, owner->x, owner->y - 0x60000, owner->z);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = 0x18000;
+  ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = 0;
   wait(1);
   Sound_PlayFar(SE_RUSH);
@@ -438,7 +438,7 @@ void FieldPsynergy_Cyclone(void) {
     Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     for (i = 0; i < 16; i++) {
-      owner->facing += 0x1000;
+      owner->facing += TRIG_TURN / 16;
       canvas->angle += 0x400;
       canvas->command = 3;
       wait(1);
@@ -473,7 +473,7 @@ void Actor_DepartInRing(s32 actor) {
   object->update = BattleEffect_SpinObject;
   ring = Actor_Spawn(280, object->x, object->y, object->z);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = 0x18000;
+  ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = Q16_ONE;
   x = object->x;
   y = object->y;
@@ -531,18 +531,18 @@ void Actor_ArriveInRing(s32 actor) {
   Event_WaitTransitionFrames();
   ring = Actor_Spawn(280, object->x, object->y, object->z);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = 0x8000;
-  ring->scaleY = 0xc000;
+  ring->scaleX = Q16_ONE / 2;
+  ring->scaleY = Q16_ONE * 3 / 4;
   for (i = 0; i < 32; i++) {
     ring->scaleX += 0x800;
     ring->scaleY += 0x200;
     wait(1);
   }
-  ring->scaleX = 0x18000;
+  ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = Q16_ONE;
   Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
-  object->scaleY = object->scaleX = 0x8000;
+  object->scaleY = object->scaleX = Q16_ONE / 2;
   for (i = 0; i < 16; i++) {
     object->scaleY = object->scaleX = object->scaleX + 0x800;
     wait(1);
@@ -642,11 +642,11 @@ void Blaze_UpdateSpray(void) {
         if (work->mode == 3) {
           work->speed = 0x26666;
           work->lifetime = 33;
-          work->gravity = 0x1800;
+          work->gravity = px(3) / 32;
         } else {
           work->speed = 0x1cccc;
           work->lifetime = 25;
-          work->gravity = 0x2000;
+          work->gravity = px(1) / 8;
         }
         particle->x = work->origin[0];
         particle->y = work->origin[1];
@@ -667,10 +667,10 @@ void Blaze_UpdateSpray(void) {
     if (particle->timer == -1)
       continue;
     sprite = &work->drops[i];
-    sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + 0x8000;
+    sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + Q16_ONE / 2;
     sprite->oam.index =
         work->dropTile + (((particle->timer >> 1) + i) & 3) * 32;
-    if (work->angle > 0x8000)
+    if (work->angle > TRIG_TURN / 2)
       sprite->depth--;
     else
       sprite->depth++;
@@ -702,7 +702,7 @@ void Blaze_UpdateSpray(void) {
       pos[0] = particle->x;
       pos[1] = particle->y - (Random16() << 2);
       pos[2] = particle->z;
-      Vector_AddPolarOffset(0xa0000, work->angle + 0x8000, pos);
+      Vector_AddPolarOffset(0xa0000, work->angle + TRIG_TURN / 2, pos);
       Vector_AddPolarOffset(0xc0000, Random16(), pos);
       puff = &work->puffMotion[i];
       puff->x = pos[0];
@@ -733,7 +733,7 @@ void Blaze_UpdateSpray(void) {
     }
   }
 
-  target = scene->angle - 0x4000;
+  target = scene->angle - TRIG_TURN / 4;
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
       0x8000) {

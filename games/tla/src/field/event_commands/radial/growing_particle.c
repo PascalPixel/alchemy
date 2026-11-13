@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 void Camera_WorldToScreen(s32 *position);
@@ -124,7 +125,7 @@ void FieldPsynergy_EndSand(void) {
   ((u8 *)owner->sprite)[7] = mask;
   if (*(s8 *)(event + 394) == 3)
     *(s32 *)((u8 *)owner->sprite + 12) = 0xc000;
-  owner->facing = 0x4000;
+  owner->facing = TRIG_TURN / 4;
   Actor_SelectAnimationFar(owner, 0);
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
   wait(1);

@@ -106,25 +106,25 @@ s32 DebugBrowser_Icons(void) {
   wait(1);
 
   while (1) {
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       page--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       redraw = 1;
       page++;
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       mode--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       redraw = 1;
       mode++;
     }
-    if (gInput.repeat & 1)
+    if (gInput.repeat & KEY_A)
       break;
-    if (gInput.repeat & 2)
+    if (gInput.repeat & KEY_B)
       break;
     if (redraw != 0) {
       redraw = 0;
@@ -204,23 +204,23 @@ s32 DebugBrowser_Portraits(void) {
   cancel = ((u32)(u16)count >> 16) | 2;
   slotOffset = offsetof(struct WindowWork, outputIds[1]);
   while (1) {
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       redraw = 1;
       index--;
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       redraw = 1;
       index++;
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       redraw = 1;
       index -= 10;
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       redraw = 1;
       index += 10;
     }
-    if (gInput.repeat & 1)
+    if (gInput.repeat & KEY_A)
       break;
     if (gInput.repeat & cancel)
       break;

@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 extern const s32 gFieldEffect_TargetColors[];
@@ -189,7 +190,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
           mote++;
         }
         work->radius = 60 * Q16_ONE;
-        work->angle = 0xc000;
+        work->angle = TRIG_TURN * 3 / 4;
         work->originX = startX;
         work->originZ = startZ;
         work->moving = 1;

@@ -308,10 +308,10 @@ void DjinnMenu_ShowCurrentList(void) {
     }
     Link_DrawPageArrowsFar((void *)0x06002500);
     wait(1);
-    if (gInput.pressed & 7)
+    if (gInput.pressed & (KEY_A | KEY_B | KEY_SELECT))
       break;
-    if (gInput.repeat & 0x30) {
-      if (gInput.repeat & 0x10)
+    if (gInput.repeat & KEYS_HORIZONTAL) {
+      if (gInput.repeat & KEY_RIGHT)
         page++;
       else
         page--;
@@ -432,7 +432,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       result = -1;
       break;
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       if (PartyMemberChooser_MoveEntry(ownerIndex, 1)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex++;
@@ -442,7 +442,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_ERROR);
       }
       wait(1);
-    } else if (gInput.repeat & 0x200) {
+    } else if (gInput.repeat & KEY_L) {
       if (PartyMemberChooser_MoveEntry(ownerIndex, 0)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex--;
@@ -771,7 +771,7 @@ s32 StatusScreen_SelectCommand(void) {
       else
         MenuCursor_Position(48, selected * 8 + 80);
       wait(1);
-      if (gInput.repeat & 0xf0)
+      if (gInput.repeat & KEYS_DPAD)
         StatusScreen_DrawSelectionCursor(pane, selected, entries, 1);
       if (KEYS_PRESSED & 1) {
         Sound_PlayFar(SE_MENU_CONFIRM);
@@ -785,30 +785,30 @@ s32 StatusScreen_SelectCommand(void) {
         result = -1;
         break;
       }
-      if (gInput.repeat & 0x40) {
+      if (gInput.repeat & KEY_UP) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         selected--;
       }
-      if (gInput.repeat & 0x80) {
+      if (gInput.repeat & KEY_DOWN) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         selected++;
       }
-      if (gInput.repeat & 0x10) {
+      if (gInput.repeat & KEY_RIGHT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         pane++;
       }
-      if (gInput.repeat & 0x20) {
+      if (gInput.repeat & KEY_LEFT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         pane--;
       }
-      if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
+      if ((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         member = menu->ownerIndex;
-        if (gInput.repeat & 0x100)
+        if (gInput.repeat & KEY_R)
           member++;
         else
           member--;
@@ -1578,12 +1578,12 @@ s32 PsynergyMenu_SelectAction(void) {
       result = -1;
       break;
     }
-    if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
+    if ((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       ownerIndex = menu->tabIndex[0];
       menu->selectedIndexByOwner[menu->ownerIds[ownerIndex]] =
           state.selectedIndex;
-      if (gInput.repeat & 0x100)
+      if (gInput.repeat & KEY_R)
         ownerIndex++;
       else
         ownerIndex--;
@@ -1886,14 +1886,14 @@ s32 ItemMenu_SelectItem(void) {
       result = -1;
       break;
     }
-    if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
+    if ((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       ownerIndex = menu->paneIndex;
       // Read unsigned (ldrh): the party's ids, as this routine's bytes load
       // them.
       menu->selectedIndexByOwner[(u16)menu->ownerIds[ownerIndex]] =
           state.selectedIndex;
-      if (gInput.repeat & 0x100)
+      if (gInput.repeat & KEY_R)
         ownerIndex++;
       else
         ownerIndex--;

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
@@ -110,7 +111,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   }
 
   // The eight puffs, on an arc over the user, each two frames after the last.
-  for (i = 0, angle = -0x4000; i != 8; angle += 0x1000, i++) {
+  for (i = 0, angle = -TRIG_TURN / 4; i != 8; angle += TRIG_TURN / 16, i++) {
     step = &work->particles[i];
     if (effect->side == 1)
       step->x = (Trig_Sin(angle) * 24 >> 16) + 88;
@@ -177,7 +178,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           step = &SPARKS[128 + i];
           step->x = 0x3c0000;
           step->y = 0x6c0000;
-          angle = (Random16() & 0x7fff) + 0x4000;
+          angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           force = (Random16() & 255) + 127;
           step->velocityX = (Trig_Sin(angle) * force) >> 7;
           step->velocityY = (Trig_Cos(angle) * force) >> 5;

@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
@@ -459,8 +460,10 @@ void BattleMessage_WaitForAdvance(void) {
     // The held keys reread through a volatile pointer for the last test, a
     // load apart from the B test's; as gInput.held, 14 of 146 instructions
     // differ in tla-en.
-    if ((gInput.held & 2) || (gInput.pressed & 0x303) ||
-        (frame > 15 && (*(volatile u32 *)&gInput.held & 0x303)))
+    if ((gInput.held & KEY_B) ||
+        (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
+        (frame > 15 &&
+         (*(volatile u32 *)&gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
       break;
     wait(1);
   }
@@ -495,7 +498,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
     Oam_AddSpriteAtDepth(prompt, 240);
-    if (gInput.pressed & 0x303)
+    if (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS))
       break;
     wait(1);
   }
@@ -975,8 +978,8 @@ power_end:
         struct BattleObj *obj;
 
         obj = BattleObject_Get(ent);
-        BattleObject_Make((struct BattleObj *)obj, ent, obj->anchorX / 0x10000,
-                          obj->anchorZ / 0x10000);
+        BattleObject_Make((struct BattleObj *)obj, ent, obj->anchorX / Q16_ONE,
+                          obj->anchorZ / Q16_ONE);
       }
       BattleObject_Put();
       {

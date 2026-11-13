@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "module/field/event_commands.h"
@@ -150,7 +151,7 @@ void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
   ((struct MotionObject *)obj)->scaleY = scaleY;
   angle = ((struct MotionObject *)obj)->angle;
   scale += step;
-  ((struct MotionObject *)obj)->angle = angle + 0x2000;
+  ((struct MotionObject *)obj)->angle = angle + TRIG_TURN / 8;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
     Actor_ReleaseFar(obj);

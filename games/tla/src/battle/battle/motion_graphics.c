@@ -5,6 +5,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
@@ -213,7 +214,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   ids[1] = 255;
   BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
   object->y = 0x280000;
-  object->angle = plan->targetIds[0] <= 7 ? 0 : 0x8000;
+  object->angle = plan->targetIds[0] <= 7 ? 0 : TRIG_TURN / 2;
   BattleHighlight_SetSpriteMode(saved->unitId, 1);
   for (i = 0; i <= 29; i++) {
     object->y = (29 - i) * 3 << 16;
@@ -262,7 +263,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
     s32 fade;
 
     object->y = i << 18;
-    object->angle += 0x2000;
+    object->angle += TRIG_TURN / 8;
     fade = i * 2 - 16;
     if (fade < 0)
       fade = 0;
@@ -343,12 +344,12 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     z = battleObject->anchorZ;
     battleObject->object->z = z;
     angle = (u16)ArcTan2(x, z);
-    adjusted = angle - 0x2000;
+    adjusted = angle - TRIG_TURN / 8;
     if (actorId > 7)
-      adjusted = angle + 0x6000;
+      adjusted = angle + TRIG_TURN * 3 / 8;
   }
   adjusted &= 0x7fff;
-  facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
+  facingAngle = (adjusted - TRIG_TURN / 8) / 2 + TRIG_TURN / 8;
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
     wait(1);
@@ -511,9 +512,9 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 targetYaw;
 
   if (plan->actorId > 4)
-    targetYaw = -0x2000;
+    targetYaw = -TRIG_TURN / 8;
   else
-    targetYaw = 0x2000;
+    targetYaw = TRIG_TURN / 8;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
   BattleStaging_BuildTargetList(plan, &work);
@@ -678,7 +679,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 
   if (plan->presentationFlags & 0x40000) {
     if (plan->actorId <= 7)
-      transition->targetYaw = -0x2000;
+      transition->targetYaw = -TRIG_TURN / 8;
     else
       transition->targetYaw = 0x5000;
     transition->frames = 60;
@@ -694,7 +695,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     else
       targetYaw = angle + 0x1800;
     targetYaw = (s16)targetYaw;
-    targetYaw += ((actorId <= 7 ? 0x2000 : -0x2000) - targetYaw) * 3 / 4;
+    targetYaw +=
+        ((actorId <= 7 ? TRIG_TURN / 8 : -TRIG_TURN / 8) - targetYaw) * 3 / 4;
     if (!((actorId <= 7) ^ (target <= 7)))
       targetYaw = actorId <= 7 ? 0x2400 : -0x2400;
     if (transition->targetYaw != targetYaw)
@@ -702,9 +704,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->presentationFlags & 0x80000) {
     if (plan->actorId <= 7)
-      transition->targetYaw = -0x2000;
+      transition->targetYaw = -TRIG_TURN / 8;
     else
-      transition->targetYaw = 0x2000;
+      transition->targetYaw = TRIG_TURN / 8;
     transition->frames = 60;
   }
 

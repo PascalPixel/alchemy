@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -129,7 +130,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     frame = 0;
     do {
-      if ((gInput.repeat & 3) != 0) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) != 0) {
         if (frame <= 159)
           frame = 160;
         else if (frame <= 394)
@@ -174,8 +175,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
           if (frame <= 490) {
             heading[index] += spin[index];
-            if (heading[index] > 0x10000)
-              heading[index] -= 0x10000;
+            if (heading[index] > TRIG_TURN)
+              heading[index] -= TRIG_TURN;
             object->angle += spin[index] / 4;
           }
 
@@ -242,7 +243,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               point[index].z -= 4;
             point[index].velocityY += point[index].velocityX * 2;
             if (point[index].velocityY > 0x10000)
-              point[index].velocityY -= 0x10000;
+              point[index].velocityY -= px(1);
             point[index].velocityX += 50;
             if (point[index].velocityX > 4096)
               point[index].velocityX = 4096;
@@ -318,8 +319,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         drift.x /= 2;
         drift.y /= 2;
 
-        scale.x = 0x10000;
-        scale.y = 0x10000;
+        scale.x = Q16_ONE;
+        scale.y = Q16_ONE;
         place[3] = 0;
         index = 0;
         do {
@@ -674,7 +675,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     for (frame = 0; frame != 208; frame++) {
-      if ((gInput.repeat & 3) && frame > 48 && frame <= 159) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
         if (mode == 0) {
           Animation_ApplyChildArgumentFar(work->objects[0], 8);
           Animation_ApplyChildArgumentFar(work->objects[1], 9);
@@ -834,7 +835,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
                   HI(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
-          spark->velocityY += -0x400;
+          spark->velocityY += -(px(1) / 64);
           spark->variant++;
           if (spark->variant == 48)
             spark->variant = -1;
@@ -857,11 +858,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             grain->y += grain->velocityY;
             if (frame > 128) {
               if (i & 1)
-                grain->velocityX += -0x8000;
+                grain->velocityX += -(px(1) / 2);
               else
-                grain->velocityX += -0x2000;
+                grain->velocityX += -(px(1) / 8);
             } else {
-              grain->velocityY += -0x400;
+              grain->velocityY += -(px(1) / 64);
             }
             grain->variant++;
             if (grain->variant == 256)

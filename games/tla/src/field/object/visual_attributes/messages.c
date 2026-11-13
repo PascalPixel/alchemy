@@ -364,7 +364,7 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
     wait(1);
 
   wait(1);
-  while (!(gInput.pressed & 0x303))
+  while (!(gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)))
     wait(1);
 
   wait(1);

@@ -4,6 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/field.h"
 
@@ -76,8 +77,8 @@ void Entrance_EndArrivalAnimation(s32 mode) {
     pinnedCtx->flags = 1;
     pinnedCtx->entries[1] = (void *)zero;
   }
-  obj->acceleration = 0x10000;
-  obj->speedLimit = 0x10000;
+  obj->acceleration = px(1);
+  obj->speedLimit = px(1);
   Actor_SetMoveTargetFar(obj, obj->x, obj->y, obj->z + 0x80000);
   Actor_WaitForMoveFar(obj);
 }
@@ -395,8 +396,8 @@ void GroundParticles_Update(void) {
     if (GameFlag_Get(358))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
-    x = (particle->posX - originX) / 0x10000 + *frame++;
-    y = (particle->posZ - particle->posY - originZ) / 0x10000 + *frame++;
+    x = (particle->posX - originX) / Q16_ONE + *frame++;
+    y = (particle->posZ - particle->posY - originZ) / Q16_ONE + *frame++;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       particle->priority = 1;
       particle->x = x;

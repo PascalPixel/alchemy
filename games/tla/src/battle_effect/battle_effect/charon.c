@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // A pair of 16.16 scales; the game keeps each start value in the rodata.
@@ -388,7 +389,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   posX = 0;
   posZ = 0;
 
-  for (frame = 0; frame != 394 && !(gInput.repeat & 3); frame++) {
+  for (frame = 0; frame != 394 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
     u8 *order = REVEAL_BUFFER + (frame - 244) * 2;
 
     t = frame - 32;
@@ -464,8 +465,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame >= 132 && frame < 240) {
       struct ScalePair scale168 = Data_08196ea8;
 
-      scale168.v[1] = 0x14000;
-      scale168.v[0] = 0x14000;
+      scale168.v[1] = Q16_ONE * 5 / 4;
+      scale168.v[0] = Q16_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
           PARTICLES[i].x = (Random16() % 160 + 40) << 16;
@@ -477,8 +478,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       for (i = 0; i != 48; i++) {
         if (i == 10) {
-          scale168.v[1] = 0x10000;
-          scale168.v[0] = 0x10000;
+          scale168.v[1] = Q16_ONE;
+          scale168.v[0] = Q16_ONE;
         }
         pos248[3] = 0;
         pos248[1] = 0xff0000;
@@ -503,7 +504,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (t56 >= 0 && t56 < 76) {
       struct ScalePair scale160 = Data_08196eb0;
 
-      scale160.v[0] = scale160.v[1] = Trig_Sin(t56 << 7) * 2 + 0x4000;
+      scale160.v[0] = scale160.v[1] = Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
       pos232[3] = 0;
       pos232[1] = 0xff0000;
       pos232[0] = 114 << 16;
@@ -770,15 +771,15 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         } else {
           posX += 0x2000;
         }
-        scale152[1] = 0x14000;
-        scale152[0] = 0x14000;
-        scale152[0] = scale152[1] = posZ / 48 + 0x4000;
+        scale152[1] = Q16_ONE * 5 / 4;
+        scale152[0] = Q16_ONE * 5 / 4;
+        scale152[0] = scale152[1] = posZ / 48 + Q16_ONE / 4;
         pos216[0] = posX + 0x400000;
         pos216[2] = 144 << 16;
         Render_ApplyProjectedPlacementFar(work->objects[12], pos216, scale152,
                                           0);
-        scale152[1] = 0x10000;
-        scale152[0] = 0x10000;
+        scale152[1] = Q16_ONE;
+        scale152[0] = Q16_ONE;
         for (i = 0; i != 12; i++) {
           pos216[0] = ((i % 4) << 21) + posX;
           pos216[2] = ((i / 4) << 21) + posZ;
@@ -823,7 +824,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale * 2);
           SceneTransform_ApplyPosition3(-0x100000, -0x80000, 0);
           Transform_ApplyPitch(0xe000);
-          Transform_ApplyRoll(0x4000 - t * 256);
+          Transform_ApplyRoll(TRIG_TURN / 4 - t * 256);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
@@ -849,7 +850,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(-0x80000, -0x80000, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
-          Transform_ApplyPitch(0xc000);
+          Transform_ApplyPitch(TRIG_TURN * 3 / 4);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
@@ -1004,11 +1005,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               if (k == 0) {
                 Transform_ApplyRoll(0xf000);
               } else if (k == 1) {
-                Transform_ApplyRoll(0x2000);
+                Transform_ApplyRoll(TRIG_TURN / 8);
               } else {
                 Transform_ApplyRoll(0xe000);
               }
-              Transform_ApplyPitch(0x800);
+              Transform_ApplyPitch(TRIG_TURN / 32);
               Render_TransformVertices(gData_08199210, texture, 4);
               Render_DrawModelList(model);
             }
@@ -1275,7 +1276,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x40000, 0, 0);
         SceneTransform_ApplyScale3(scale112, scale112, scale112);
-        Transform_ApplyPitch(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 8);
         if (frame > 55) {
           Transform_ApplyYaw(frame << 10);
         } else {
@@ -1292,7 +1293,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x40000, -0x100000, 0);
         SceneTransform_ApplyUniformScale(-0xa710);
-        Transform_ApplyPitch(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList(model);
@@ -1308,7 +1309,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(0x20000, -0x200000, 0);
         SceneTransform_ApplyUniformScale(0x58f0);
-        Transform_ApplyPitch(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList(model);
@@ -1321,7 +1322,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(0x20000, -0x300000, 0);
           SceneTransform_ApplyUniformScale(-0x31e0);
-          Transform_ApplyPitch(0x2000);
+          Transform_ApplyPitch(TRIG_TURN / 8);
           Transform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
@@ -1436,7 +1437,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   twenty = 20;
   frame = 0;
   do {
-    if ((gInput.repeat & 3) && frame < 120) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame < 120) {
       frame = 120;
     }
     if (frame == 0) {
@@ -1772,7 +1773,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             SceneTransform_ApplyPosition3((member->x / 2 - 56) << 16,
                                           (member->y - 56) << 16, 0);
             SceneTransform_ApplyScale3(size / 3, size, size);
-            Transform_ApplyPitch(0xc000);
+            Transform_ApplyPitch(TRIG_TURN * 3 / 4);
             Render_TransformVertices(gData_08199210, texture, 4);
             Render_DrawModelList(model);
           }

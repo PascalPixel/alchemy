@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Vengeance: the avenger's blades.
@@ -194,10 +195,10 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
         blade = &work->particles[i];
         if (effect->side == 0) {
           blade->x = 0xa00000;
-          blade->velocityX = 0xc0000;
+          blade->velocityX = px(12);
         } else {
           blade->x = 0x200000;
-          blade->velocityX = -0xc0000;
+          blade->velocityX = -(px(12));
         }
         blade->y = 0xc0000;
         strikes = Data_081995f3[effect->variant][i];
@@ -507,12 +508,12 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         scythe->velocityY = still;
       }
       if (scythe->timer == 24) {
-        scythe->velocityX = -0x40000;
-        scythe->velocityY = 0x80000;
+        scythe->velocityX = -(px(4));
+        scythe->velocityY = px(8);
       }
       if (scythe->timer == 33) {
-        scythe->velocityX = 0x40000;
-        scythe->velocityY = -0x80000;
+        scythe->velocityX = px(4);
+        scythe->velocityY = -(px(8));
         work->shakeFrames = 4;
         speed = 0;
         Sound_PlayFar(SE_IMPACT);
@@ -525,7 +526,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
       if (frame > 63) {
         s32 fall = (frame << 7) - 0x2000;
 
-        scythe->velocityY -= 0x4000;
+        scythe->velocityY -= px(1) / 4;
         if (fall > 0x400) {
           fall = 0x400;
         }
@@ -562,7 +563,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     if (timer >= 0) {
       scale = 0xb1e0;
       if (frame > 63) {
-        scale = scale - (frame << 9) + 0x8000;
+        scale = scale - (frame << 9) + Q16_ONE / 2;
       }
       width = 7;
       if (scale > 0) {
@@ -574,7 +575,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyPosition3(work->particles[0].x + (shift << 16),
                                       work->particles[0].y, 0);
         if (effect->side == 1) {
-          Transform_ApplyYaw(0x8000);
+          Transform_ApplyYaw(TRIG_TURN / 2);
         }
         Transform_ApplyRoll(work->particles[0].z);
         SceneTransform_ApplyUniformScale(scale);
@@ -584,7 +585,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         model->mesh = Data_0819962c;
         Transform_Push();
         Transform_ApplyRoll(
-            (Trig_Sin(work->particles[0].velocityZ << 11) >> 3) - 0x2000);
+            (Trig_Sin(work->particles[0].velocityZ << 11) >> 3) -
+            TRIG_TURN / 8);
         Render_TransformVertices(Data_08199650, vertices, 4);
         Render_DrawModelList(model);
         Transform_Pop();
@@ -593,8 +595,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         texture.logHeight = 6;
         texture.pixels = Data_0201276b;
         Transform_ApplyRoll(
-            0x2000 - (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
-        SceneTransform_ApplyScale3(0x10000, 0x15f90, 0x10000);
+            TRIG_TURN / 8 -
+            (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
+        SceneTransform_ApplyScale3(Q16_ONE, 0x15f90, Q16_ONE);
         Render_TransformVertices(Data_08199650, vertices, 4);
         Render_DrawModelList(model);
       }
@@ -610,7 +613,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         }
         SceneTransform_ApplyScale3(scale, scale, scale);
         if (effect->side == 1) {
-          Transform_ApplyYaw(0x8000);
+          Transform_ApplyYaw(TRIG_TURN / 2);
         }
         model->kind = 6;
         model->mesh = Data_08199244;
@@ -619,9 +622,10 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         texture.pixels = Data_0201576b;
         for (i = 0; i != 4; i++) {
           Transform_Push();
-          Transform_ApplyRoll(i * 0x4000 + 0x5650);
-          SceneTransform_ApplyScale3(0x4000, ((i & 1) << 15) + 0xc000, 0x8000);
-          SceneTransform_ApplyUniformScale(0x10000);
+          Transform_ApplyRoll(i * (TRIG_TURN / 4) + 0x5650);
+          SceneTransform_ApplyScale3(
+              Q16_ONE / 4, ((i & 1) << 15) + Q16_ONE * 3 / 4, Q16_ONE / 2);
+          SceneTransform_ApplyUniformScale(Q16_ONE);
           Render_TransformVertices(gData_081991f0, vertices, 4);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -844,7 +848,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
 
         drop = &((struct EffectStep *)Ram_MapCellBuffer)[spawned & 511];
         speed = (Random16() & 1023) + 32;
-        angle = (Random16() & 0x7fff) - 0x4000;
+        angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         drop->x = (midpoint.x / 2) << 16;
         drop->y = 108 << 16;
         if (mode == 2)
@@ -898,9 +902,9 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
           if (frame < 16)
             scale = Trig_Sin(frame << 10);
           else if (frame < 24)
-            scale = 0x10000;
+            scale = Q16_ONE;
           else
-            scale = Trig_Sin((frame << 10) - 0x2000);
+            scale = Trig_Sin((frame << 10) - TRIG_TURN / 8);
           brightness = -32;
         } else if (mode == 1) {
           // Wider every frame, fading from frame 32.
@@ -909,7 +913,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
           if (frame > 31)
             brightness = 224 - (frame << 3);
         } else {
-          scale = 0x4000;
+          scale = Q16_ONE / 4;
           brightness = -32;
           if (frame > 31)
             brightness = 224 - (frame << 3);
@@ -1008,7 +1012,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
         work->particles[i].z = object->z;
         if (mode == 1) {
           work->particles[i].velocityX = 0;
-          work->particles[i].velocityY = 0x8000;
+          work->particles[i].velocityY = px(1) / 2;
         } else {
           work->particles[i].velocityX = -object->x / 40;
           work->particles[i].velocityY = 3 << 16;
@@ -1509,7 +1513,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   for (frame = 0; frame != 602; frame++) {
     spin = ((frame - 1) << 9) + 512;
-    if ((gInput.repeat & 3) && frame <= 581 && skip == 0) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 581 && skip == 0) {
       skip = 1;
     }
     if (skip > 0) {
@@ -1797,19 +1801,19 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       Transform_Reset();
       SceneTransform_ApplyPosition3(0, 0, 0x1000000);
       if (frame > 539) {
-        SceneTransform_ApplyScale3(frame * 1500 - 0xc4c10, 0x10000, 0x10000);
+        SceneTransform_ApplyScale3(frame * 1500 - 0xc4c10, Q16_ONE, Q16_ONE);
       } else if (frame > 517) {
-        SceneTransform_ApplyScale3(0, 0, 0x10000);
+        SceneTransform_ApplyScale3(0, 0, Q16_ONE);
       } else if (frame > 485) {
         s32 s = 0x103000 - (frame << 11);
 
-        SceneTransform_ApplyScale3(s, s, 0x10000);
+        SceneTransform_ApplyScale3(s, s, Q16_ONE);
       }
       if (frame > 539) {
         Transform_ApplyYaw(frame << 10);
       } else if (frame > 517) {
-        Transform_ApplyYaw(0x10000);
-        Transform_ApplyPitch(0x8000);
+        Transform_ApplyYaw(TRIG_TURN);
+        Transform_ApplyPitch(TRIG_TURN / 2);
       } else if (frame > 453) {
         s32 a = (frame - 454) << 10;
 
@@ -1981,7 +1985,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         model->shade = sh;
         Transform_Reset();
         SceneTransform_ApplyPosition3(0, ty, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         SceneTransform_ApplyUniformScale(s);
         if (frame <= 273) {
           Transform_ApplyRoll(spin - 0x12400);
@@ -2048,7 +2052,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             } else {
               SceneTransform_ApplyScale3(s, d << 14, s);
             }
-            Transform_ApplyPitch(0x4000);
+            Transform_ApplyPitch(TRIG_TURN / 4);
             Transform_ApplyYaw(frame << 9);
             Render_TransformVertices(gData_08199210, verts, 64);
             Render_DrawModelList(model);
@@ -2073,8 +2077,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             Transform_Reset();
             SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
             SceneTransform_ApplyScale3(s, s << 1, s);
-            Transform_ApplyRoll((i << 14) + 0x2000);
-            Transform_ApplyPitch(-0x1000);
+            Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+            Transform_ApplyPitch(-TRIG_TURN / 16);
             Transform_ApplyYaw(frame << 9);
             Render_TransformVertices(gData_08199210, verts, 64);
             Render_DrawModelList(model);
@@ -2101,7 +2105,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             }
             SceneTransform_ApplyPosition3(-0x40000, ty, 0);
             SceneTransform_ApplyScale3(s, s / 2, s);
-            Transform_ApplyPitch(0x4000);
+            Transform_ApplyPitch(TRIG_TURN / 4);
             Transform_ApplyYaw(frame << 11);
             Render_TransformVertices(gData_08199210, verts, 64);
             Render_DrawModelList(model);
@@ -2129,7 +2133,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             s -= t * Data_08199760[i];
           }
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (frame > 273) {
             s = s + (frame << 13) + -0x224000;
           }
@@ -2182,7 +2186,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             continue;
           }
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3(0, 0x200000, 0);
           SceneTransform_ApplyUniformScale(s);
         }
@@ -2300,10 +2304,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         if (sh2 > -64) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(0, (112 - lift) << 16, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyUniformScale(s);
-          Transform_ApplyRoll((i << 14) + 0x2000);
-          Transform_ApplyPitch(-0x1000);
+          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyPitch(-TRIG_TURN / 16);
           Transform_ApplyYaw(frame << 10);
           Render_TransformVertices(gData_08199210, verts2, 4);
           Render_DrawModelList(model2);

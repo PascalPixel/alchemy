@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 /* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has
@@ -68,7 +69,7 @@ void FieldPsynergy_Burst(void) {
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;
   canvas->scaleY = 0;
-  if (scene->facing == 0xc000)
+  if (scene->facing == TRIG_TURN * 3 / 4)
     canvas->depth -= 4;
 
   sparkEntry = VramCache_FindFreeEntry();
@@ -81,13 +82,13 @@ void FieldPsynergy_Burst(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
     sprite->depth = canvas->depth + 1;
-    sprite->scaleY = sprite->scaleX = 0x10000;
+    sprite->scaleY = sprite->scaleX = Q16_ONE;
     radius = Random16() * 20 + 0x140000;
     angle = Random16();
     particle->x = mul(Trig_Cos(angle), radius);
     particle->y = mul(Trig_Sin(angle), radius);
     radius /= 12;
-    angle += 0x8000;
+    angle += TRIG_TURN / 2;
     particle->velocityX = mul(Trig_Cos(angle), radius);
     particle->velocityY = mul(Trig_Sin(angle), radius);
     particle->timer = -i * 2;
@@ -239,8 +240,8 @@ void FieldPsynergy_UpdatePound(void) {
   case 0:
     work->object->y -= 0x38000;
     if (work->timer == 8) {
-      blend->scaleX = 0x2000;
-      blend->scaleY = 0x2000;
+      blend->scaleX = Q16_ONE / 8;
+      blend->scaleY = Q16_ONE / 8;
       MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
       Sound_PlayFar(SE_567);
       work->sparkles = 1;
@@ -252,7 +253,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 1:
-    blend->scaleX += 0x1000;
+    blend->scaleX += Q16_ONE / 16;
     blend->scaleY = blend->scaleX;
     if (blend->scaleX > 0xcccb) {
       blend->scaleX = 0xcccc;

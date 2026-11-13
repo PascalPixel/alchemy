@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -311,7 +312,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             p->x = target[2];
             p->y = target[3] + 0xa0000;
             p->z = target[4];
-            angle = (Random16() & 0x7fff) - 0x4000;
+            angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
             // DEAD: both arms alike; the ROM keeps the test and both calls.
             if (i > 53) {
               speed = (Random16() & 511) + 256;
@@ -431,7 +432,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         texture.logWidth = 5;
         texture.logHeight = 5;
         texture.pixels = work->sheet;
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
         SceneTransform_ApplyPosition3(0, 0x100000, 0);
@@ -442,7 +443,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         }
         scale = 0xa000;
         if (frame > 31) {
-          scale = (frame << 10) + 0x2000;
+          scale = (frame << 10) + Q16_ONE / 8;
         }
         SceneTransform_ApplyUniformScale(scale);
         if (frame > 3) {

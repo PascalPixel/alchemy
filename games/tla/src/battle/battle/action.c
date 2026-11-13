@@ -198,7 +198,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   if (actor->hp == 0)
     return -2;
 
-  if (gDebugMode && GameFlag_Get(365) && (gInput.held & 0x100)) {
+  if (gDebugMode && GameFlag_Get(365) && (gInput.held & KEY_R)) {
     s32 enemy = 1;
     s32 index;
     s32 id;

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -313,7 +314,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   }
   BattleBackground_LoadFar(1, (s32)&ResourceId_MossCaveBackdrop, 0);
   frame = 0;
-  if (!(gInput.repeat & 3)) {
+  if (!(gInput.repeat & (KEY_A | KEY_B))) {
     do {
       s32 cut = frame - 267;
 
@@ -662,7 +663,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             model->mesh = Data_08199388;
             Transform_Reset();
             SceneTransform_ApplyPosition3(0, -0x40000, 0);
-            SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, 0x20000);
+            SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, Q16_ONE * 2);
             Render_TransformVertices(Data_081991e0, verts, 4);
             Render_DrawModelList(model);
           }
@@ -794,7 +795,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               Transform_Reset();
               SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000,
                                             0);
-              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               switch (i & 3) {
               case 0:
                 Transform_ApplyPitch(p->z);
@@ -830,7 +831,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
       wait(1);
       frame++;
-    } while (frame != 440 && !(gInput.repeat & 3));
+    } while (frame != 440 && !(gInput.repeat & (KEY_A | KEY_B)));
   }
   if (dived == 0) {
     Sprite_DestroyFar(work->objects[0]);
@@ -1034,12 +1035,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Transform_Reset();
           if (i == 0) {
             SceneTransform_ApplyPosition3(x << 16, y << 16, 0);
-            Transform_ApplyRoll(-0x2000);
+            Transform_ApplyRoll(-TRIG_TURN / 8);
           } else {
             SceneTransform_ApplyPosition3((x - 16) << 16, y << 16, 0);
             Transform_ApplyRoll(0x27d0);
           }
-          SceneTransform_ApplyScale3(0x30000, amp, 0x20000);
+          SceneTransform_ApplyScale3(Q16_ONE * 3, amp, Q16_ONE * 2);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
         }
@@ -1065,7 +1066,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if (frame <= 71) {
         v = Trig_Sin((frame << 10) + -0xe000) * 80 >> 16;
       } else if (frame > 79) {
-        v = Trig_Sin((frame << 10) + -0x10000) * 80 >> 16;
+        v = Trig_Sin((frame << 10) + -TRIG_TURN) * 80 >> 16;
       } else {
         v = 80;
       }
@@ -1127,10 +1128,10 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
     for (i = 0; i != segments; i++) {
       // The vertex: a point on the ring, 96 units out (3 * 0x10000 >> 11).
       vertices[ring * segments + i].x =
-          (u32)(Trig_Sin(i * (0x10000 / segments)) * 3) >> 11;
+          (u32)(Trig_Sin(i * (TRIG_TURN / segments)) * 3) >> 11;
       vertices[ring * segments + i].y = ring * RING_SPACING + FIRST_RING_Y;
       vertices[ring * segments + i].z =
-          (u32)(Trig_Cos(i * (0x10000 / segments)) * 3) >> 11;
+          (u32)(Trig_Cos(i * (TRIG_TURN / segments)) * 3) >> 11;
 
       // The side from this vertex to the next, as two triangles.
       if (ring < 1) {

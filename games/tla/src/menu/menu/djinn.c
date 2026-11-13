@@ -859,26 +859,26 @@ s32 DjinnMenu_ShowHelp(void) {
     for (;;) {
       MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
       wait(1);
-      if (gInput.repeat & 0x90) {
+      if (gInput.repeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       }
-      if (gInput.repeat & 0x60) {
+      if (gInput.repeat & (KEY_LEFT | KEY_UP)) {
         selection--;
         selection = Menu_GetModuloOfSum(selection, 7);
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
-      } else if (gInput.pressed & 8) {
+      } else if (gInput.pressed & KEY_START) {
         Sound_PlayFar(SE_MENU_CANCEL);
         result = -2;
         break;
-      } else if (gInput.pressed & 6) {
+      } else if (gInput.pressed & (KEY_B | KEY_SELECT)) {
         Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
-      } else if (gInput.pressed & 1) {
+      } else if (gInput.pressed & KEY_A) {
         if (Message_AllTypedFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
@@ -1205,7 +1205,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       redraw = 0;
     }
     wait(1);
-    if (!(gInput.held & 0x100) || (gInput.pendingPressed & 0x100)) {
+    if (!(gInput.held & KEY_R) || (gInput.pendingPressed & KEY_R)) {
       if (groupMode)
         redraw = 1;
       groupMode = 0;
@@ -1219,7 +1219,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       backdrop->tutorialTimer++;
       switch (backdrop->tutorialStep) {
       case 28:
-        while (!(gInput.pressed & 1)) {
+        while (!(gInput.pressed & KEY_A)) {
           MenuCursor_Position(150, 26);
           wait(1);
         }
@@ -1309,7 +1309,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           MenuCursor_Slide(2, 146);
           while (Message_AllTypedFar() == 0)
             wait(1);
-          while (!(gInput.pressed & 1)) {
+          while (!(gInput.pressed & KEY_A)) {
             MenuCursor_Position(2, 146);
             wait(1);
           }
@@ -1320,7 +1320,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 5, 9, 9, 1);
           while (Message_AllTypedFar() == 0)
             wait(1);
-          while (!(gInput.pressed & 1)) {
+          while (!(gInput.pressed & KEY_A)) {
             MenuCursor_Position(2, 146);
             wait(1);
           }
@@ -1331,7 +1331,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 6, 9, 9, 1);
           while (Message_AllTypedFar() == 0)
             wait(1);
-          while (!(gInput.pressed & 1)) {
+          while (!(gInput.pressed & KEY_A)) {
             MenuCursor_Position(2, 146);
             wait(1);
           }

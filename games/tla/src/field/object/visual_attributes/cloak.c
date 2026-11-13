@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 /* VIEW(cloak): routine BattleEffect_GetCycledTableWord as s32
@@ -189,7 +190,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z = t;
     }
-    scale = Lerp10(0x4000, 0x10000, i);
+    scale = Lerp10(Q16_ONE / 4, Q16_ONE, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -281,7 +282,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z = t;
     }
-    scale = Lerp10(0x10000, 0x4000, i);
+    scale = Lerp10(Q16_ONE, Q16_ONE / 4, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -417,9 +418,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       wait(1);
     }
   }
-  anchors[0]->speed = 0x40000;
+  anchors[0]->speed = px(4);
   anchors[0]->lift = 0x8000;
-  anchors[1]->speed = 0x40000;
+  anchors[1]->speed = px(4);
   anchors[1]->lift = 0x8000;
   target->speed = 0x6666;
   target->lift = 0x3333;
@@ -427,7 +428,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->mode = 2;
   for (;;) {
     wait(1);
-    if ((gInput.pressed & 0x303) != 0)
+    if ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
     angle = (u16)BattleEffect_GetCycledTableWord(gInput.held);
     if (angle == 0xffff) {
@@ -539,7 +540,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_StartScriptFar((struct Actor *)target, (u32)(work->script));
   target->callback = work->callback;
   target->flag = 3;
-  target->velocityY = 0xa0000;
+  target->velocityY = px(10);
   target->gravity = 0x3333;
   target->mode = 0;
   source->callback = NULL;

@@ -1016,8 +1016,8 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
     }
     MenuCursor_Position(selection % 4 * 24 - 10, 16);
     wait(1);
-    if (gInput.pressed & 1) {
-      if (gInput.held & 0x200) {
+    if (gInput.pressed & KEY_A) {
+      if (gInput.held & KEY_L) {
         sortMode = (sortMode + 4) % 4;
         ItemMenu_Sort(owner->inventory, sortMode);
         sortMode++;
@@ -1031,15 +1031,15 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
         Sound_PlayFar(SE_MENU_ERROR);
       }
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
-    if (gInput.pressed & 0x100) {
+    if (gInput.pressed & KEY_R) {
       showEquipment = 1;
       redraw = 1;
-    } else if (!(gInput.held & 0x100) && showEquipment == 1) {
+    } else if (!(gInput.held & KEY_R) && showEquipment == 1) {
       showEquipment = 0;
       redraw = 1;
     } else {
@@ -1221,7 +1221,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     }
     MenuCursor_Position(selection % 4 * 24 - 10, 16);
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
         Sound_PlayFar(SE_MENU_ERROR);
         continue;
@@ -1230,7 +1230,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       result = menu->ownerIds[selection];
       break;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = 255;
       break;
@@ -1746,7 +1746,7 @@ s32 ItemMenu_ChooseCommand(void) {
                         COMMAND_CURSOR_Y(column, row));
     wait(1);
 
-    if ((gInput.pressed & 1) != 0) {
+    if ((gInput.pressed & KEY_A) != 0) {
       if (commandStates[commandIndex] == -1) {
         Sound_PlayFar(SE_MENU_ERROR);
       } else {
@@ -1773,26 +1773,26 @@ s32 ItemMenu_ChooseCommand(void) {
         break;
       }
     }
-    if ((gInput.pressed & 2) != 0) {
+    if ((gInput.pressed & KEY_B) != 0) {
       Sound_PlayFar(SE_MENU_CANCEL);
       commandIndex = -1;
       menu->listMode = commandIndex;
       break;
     }
 
-    if ((gInput.repeat & 64) != 0) {
+    if ((gInput.repeat & KEY_UP) != 0) {
       row -= 1;
       redraw = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    } else if ((gInput.repeat & 128) != 0) {
+    } else if ((gInput.repeat & KEY_DOWN) != 0) {
       row += 1;
       redraw = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    } else if ((gInput.repeat & 16) != 0) {
+    } else if ((gInput.repeat & KEY_RIGHT) != 0) {
       column += 1;
       redraw = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    } else if ((gInput.repeat & 32) != 0) {
+    } else if ((gInput.repeat & KEY_LEFT) != 0) {
       column -= 1;
       redraw = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -2088,18 +2088,18 @@ s32 ItemMenu_ShowDetails(s32 value) {
       ItemMenu_DrawItemDetails(window, value);
     }
 
-    if (gInput.pressed & 1)
+    if (gInput.pressed & KEY_A)
       break;
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       counter = -1;
       break;
     }
 
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       counter -= 1;
       changed = 1;
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       counter += 1;
       changed = 1;
     }
@@ -2593,22 +2593,22 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
           Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[1]), window, 80,
                                      16);
       }
-      if (gInput.pressed & 1) {
+      if (gInput.pressed & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
-      if (gInput.pressed & 2) {
+      if (gInput.pressed & KEY_B) {
         value = -1;
         Sound_PlayFar(SE_MENU_CANCEL);
         break;
       }
       MenuCursor_Position(CURSOR_X, 40);
-      if (gInput.repeat & 32) {
+      if (gInput.repeat & KEY_LEFT) {
         value--;
         changed = 1;
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
-      if (gInput.repeat & 16) {
+      if (gInput.repeat & KEY_RIGHT) {
         value++;
         changed = 1;
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -2684,22 +2684,22 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
       changed = 0;
       selection = (selection + rows) % rows;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       selection = 1;
       break;
     }
     MenuCursor_Position(104, (selection << 4) + 70);
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       selection--;
       changed = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       selection++;
       changed = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -3134,19 +3134,20 @@ s32 ItemMenu_RunList(s32 pane) {
       if (moved == -1)
         changed = 0;
 
-      if ((gInput.pressed & 1) != 0 && menu->items[state.selectedIndex] != 0) {
+      if ((gInput.pressed & KEY_A) != 0 &&
+          menu->items[state.selectedIndex] != 0) {
         Sound_PlayFar(SE_NOTE_LOW);
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
-      if ((gInput.pressed & 2) != 0) {
+      if ((gInput.pressed & KEY_B) != 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
-      if ((gInput.repeat & 0x100) != 0 || (gInput.repeat & 0x200) != 0) {
+      if ((gInput.repeat & KEY_R) != 0 || (gInput.repeat & KEY_L) != 0) {
         if (pane == 1) {
           Sound_PlayFar(SE_MENU_ERROR);
           wait(1);
@@ -3157,7 +3158,7 @@ s32 ItemMenu_RunList(s32 pane) {
           member = menu->paneIndex[pane];
           count = menu->partyCount;
           do {
-            if ((gInput.repeat & 0x100) != 0)
+            if ((gInput.repeat & KEY_R) != 0)
               member++;
             else
               member--;

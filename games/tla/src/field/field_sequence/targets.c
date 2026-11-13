@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
@@ -146,8 +147,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   range = rule->range + 1;
   if ((other->collisionFlags & 0x10) != 0)
     range = range * 3 / 2;
-  dx = (other->x - self->x) / 0x10000;
-  dz = (other->z - self->z) / 0x10000;
+  dx = (other->x - self->x) / Q16_ONE;
+  dz = (other->z - self->z) / Q16_ONE;
   distance = Iwram_Sqrt(dx * dx + dz * dz);
   if (distance > range)
     return -1;
@@ -159,7 +160,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
     width = rule->width;
     if (distance > 19)
       width = width * 2 / 3;
-    facing = (self->facing + 0x2000) & 0xc000;
+    facing = (self->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
     angle = (u16)ArcTan2(other->z - self->z, other->x - self->x);
     diff = (s16)(angle - facing);
     if (diff < 0)

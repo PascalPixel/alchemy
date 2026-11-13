@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #define FLAME_COUNT 9
@@ -50,7 +51,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     org = 64;
     sign = -1;
   }
-  angle = -0x4000;
+  angle = -TRIG_TURN / 4;
   i = 0;
   stagger = 0;
   puff = work->particles;
@@ -58,7 +59,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     puff->x = ((sign * ((Trig_Sin(angle) << 5) >> 16)) + org) + 20;
     puff->y = ((Trig_Cos(angle) << 4) >> 16) + 40;
     puff->variant = stagger;
-    angle += 0x1000;
+    angle += TRIG_TURN / 16;
     stagger -= 4;
     i += 1;
     puff++;

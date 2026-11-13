@@ -4,6 +4,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "flags.h"
 #include "sounds.h"
 
 struct ScreenWork {
@@ -110,39 +111,39 @@ UNUSED s32 DebugSoundTest_Run(void) {
                         ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
     wait(1);
-    if (gInput.pressed & 2)
+    if (gInput.pressed & KEY_B)
       break;
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (cursor == 3)
         Sound_LoadReverbCode(test.values[3]);
       else
         Sound_PlayFar(test.values[cursor]);
     }
-    if (gInput.pressed & 8) {
+    if (gInput.pressed & KEY_START) {
       Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
       Sound_PlayFar(MUS_000);
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       test.values[cursor] += 10;
       redraw = 1;
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       test.values[cursor] -= 10;
       redraw = 1;
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       test.values[cursor]++;
       redraw = 1;
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       test.values[cursor]--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       cursor--;
       redraw = 1;
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       cursor++;
       redraw = 1;
     }
@@ -228,21 +229,21 @@ UNUSED s32 DebugMenu_Run(s32 index) {
       moved = 0;
     }
     wait(1);
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       index = -1;
       goto done;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       goto done;
     }
-    if (gInput.repeat & 64) {
+    if (gInput.repeat & KEY_UP) {
       index--;
       moved = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 128) {
+    if (gInput.repeat & KEY_DOWN) {
       index++;
       moved = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -290,8 +291,8 @@ void DebugWarp_Jupiter(void) {
 }
 
 void DebugWarp_Arafura2(void) {
-  GameFlag_Set(0x8ab);
-  GameFlag_Clear(0x8a7);
+  GameFlag_Set(FLAG_BRIGGS_CAUGHT);
+  GameFlag_Clear(FLAG_ALHAFRA_MAST_CLEARED);
   GameFlag_Set(0x8aa);
   Inventory_AddItemFar(4, 457);
   {
@@ -305,8 +306,8 @@ void DebugWarp_Arafura2(void) {
 void DebugWarp_EnergySample(void) {}
 
 void DebugWarp_Arafura3(void) {
-  GameFlag_Set(0x8ab);
-  GameFlag_Set(0x8a7);
+  GameFlag_Set(FLAG_BRIGGS_CAUGHT);
+  GameFlag_Set(FLAG_ALHAFRA_MAST_CLEARED);
   GameFlag_Set(0x8aa);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -320,7 +321,7 @@ void DebugWarp_Champa2(void) {
   PartyInventory_AddFar(439);
   PartyInventory_AddFar(440);
   PartyInventory_AddFar(441);
-  GameFlag_Set(0x97f);
+  GameFlag_Set(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -588,42 +589,42 @@ UNUSED s32 DebugShortcut_Run(void) {
       result = 0;
     }
     wait(1);
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       goto done;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 0;
       goto done;
     }
-    if (gInput.pressed & 0x200) {
+    if (gInput.pressed & KEY_L) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       goto done;
     }
-    if (gInput.pressed & 0x100) {
+    if (gInput.pressed & KEY_R) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 2;
       goto done;
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       column--;
       result = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       column++;
       result = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       row--;
       result = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       row++;
       result = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);

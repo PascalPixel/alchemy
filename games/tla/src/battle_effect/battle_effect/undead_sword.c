@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #define SPARK_COUNT 16
@@ -219,7 +220,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       for (i = 0; i != 64; i++) {
         s32 speed = (Random16() & 0x3ff) + 32;
-        s32 angle = (Random16() & 0x7fff) - 0x4000;
+        s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
         step = &work->particles[i];
         step->x = (position.x / 2) << 16;
@@ -641,7 +642,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     if (effect->side == 0) {
       Transform_ApplyYaw((s16)camera->yaw);
     } else {
-      Transform_ApplyYaw((s16)camera->yaw + 0x8000);
+      Transform_ApplyYaw((s16)camera->yaw + TRIG_TURN / 2);
     }
     {
       s32 shift = 128 - frame * 8;
@@ -727,9 +728,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         Transform_Reset();
         SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
                                       (target.y - 64) << 16, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-        Transform_ApplyRoll((i << 14) + 0x2000);
-        Transform_ApplyPitch(0x1000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+        Transform_ApplyPitch(TRIG_TURN / 16);
         Transform_ApplyYaw(angle);
         SceneTransform_ApplyUniformScale(t * 0x3000);
         Render_TransformVertices(gData_08199210, vertices, 4);
@@ -988,19 +989,19 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        SceneTransform_ApplyScale3(scale * 3 / 2, 0x10000, scale * 3 / 2);
+        SceneTransform_ApplyScale3(scale * 3 / 2, Q16_ONE, scale * 3 / 2);
       } else {
         s32 scale;
 
         SceneTransform_ApplyPosition3((screen.x / 2 - 64) << 16,
                                       (k << 20) + 0x100000, 0);
-        Transform_ApplyPitch((k << 12) - 0x800);
+        Transform_ApplyPitch((k << 12) - TRIG_TURN / 32);
         Transform_ApplyYaw(k * 21000 + yaw);
-        scale = 0x10000 - Trig_Sin(frame * 682) / 4;
+        scale = TRIG_TURN - Trig_Sin(frame * 682) / 4;
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        SceneTransform_ApplyScale3(scale * 2, 0x10000, scale * 2);
+        SceneTransform_ApplyScale3(scale * 2, Q16_ONE, scale * 2);
       }
       Render_TransformVertices(funnel, Data_02010108, 66);
       Render_DrawModelList(model);
@@ -1261,7 +1262,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         if (t < 0) {
           continue;
         }
-        scale = ((k << 11) + 0x2000) * t + 0x8000;
+        scale = ((k << 11) + Q16_ONE / 8) * t + Q16_ONE / 2;
         shade = 0;
         if (t > 3) {
           shade = (4 - t) * 16;
@@ -1273,8 +1274,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         Transform_Reset();
         SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
                                       (target.y - 80) << 16, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-        Transform_ApplyYaw((effect->side << 15) + 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyYaw((effect->side << 15) + TRIG_TURN / 2);
         Transform_ApplyRoll(Data_08198b32[k]);
         Transform_ApplyPitch(Data_08198b42[k]);
         SceneTransform_ApplyUniformScale(scale);

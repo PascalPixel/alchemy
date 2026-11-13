@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 
 #include "field/world_map.h"
 
@@ -78,7 +79,7 @@ void WorldPicture_Initialize(void) {
   tile = gResourceTableEntries[work->windowSlot].offset;
   work->window = Window_CreateFar(0, 0, 0, 0, 2);
   work->shown = -1;
-  work->speed = 0x10000;
+  work->speed = px(1);
   cursorAttributes = 0x40000000;
   *oam++ = 0;
   *oam++ = cursorAttributes;

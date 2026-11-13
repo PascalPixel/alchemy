@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
@@ -388,7 +389,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         if (mode != BREATH_ROLLING_FLAME) {
           s32 growth = 10192;
           s32 age = frame - Data_08199d9b[mode];
-          s32 scale = age * growth + 0x8000;
+          s32 scale = age * growth + Q16_ONE / 2;
           s32 alpha = 128 - age * 8;
 
           if (effect->variant == 0)
@@ -406,9 +407,9 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
               if (mode == BREATH_BLAST) {
                 SceneTransform_ApplyPosition3((mouthX - 64) << 16,
                                               (mouthY - 64) << 16, 0);
-                SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
-                Transform_ApplyRoll((i << 14) + 0x2000);
-                Transform_ApplyPitch(-0x1000);
+                SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
+                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
                 if (effect->side == 0)
                   SceneTransform_ApplyPosition3((mouthX - 72) << 16,
@@ -417,7 +418,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                   SceneTransform_ApplyPosition3((mouthX - 56) << 16,
                                                 (mouthY - 64) << 16, 0);
                 Transform_ApplyYaw(0x32c8);
-                Transform_ApplyPitch(0x4000);
+                Transform_ApplyPitch(TRIG_TURN / 4);
               }
               if (mode == BREATH_PIKE)
                 scale /= 2;
@@ -468,7 +469,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 }
                 SceneTransform_ApplyScale3(scale, scale, scale);
                 Transform_ApplyYaw(0x36b0);
-                Transform_ApplyPitch(0x4000);
+                Transform_ApplyPitch(TRIG_TURN / 4);
                 Transform_ApplyYaw(frame << 10);
                 Render_TransformVertices(Data_08198cac, vertices, 32);
                 Render_DrawModelList(model);
@@ -494,13 +495,13 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           Transform_Reset();
           SceneTransform_ApplyPosition3((mouthX - 64) << 16,
                                         (mouthY - 64) << 16, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
           if (effect->side == 1)
             angle = -angle;
           Transform_ApplyRoll(angle);
-          SceneTransform_ApplyScale3(0x40000, 0x20000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
           Render_TransformVertices(Data_081991c0, vertices, 4);
           Render_DrawModelList(model);
         }

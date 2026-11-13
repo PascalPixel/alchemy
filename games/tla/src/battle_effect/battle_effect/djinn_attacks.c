@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Tiles: copy a byte image rotated 90 degrees clockwise.
@@ -250,7 +251,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
 
   Sound_PlayFar(SE_THUNDER);
   frame = 0;
-  angle = 0x8000;
+  angle = TRIG_TURN / 2;
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
@@ -315,7 +316,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-    angle -= 0x800;
+    angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
 
@@ -402,7 +403,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
 
   Sound_PlayFar(SE_RUMBLE);
   frame = 0;
-  angle = 0x8000;
+  angle = TRIG_TURN / 2;
   do {
     // The Djinn swings on an arc that narrows by two pixels a frame.
     if (frame <= 79) {
@@ -466,7 +467,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-    angle -= 0x800;
+    angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
 

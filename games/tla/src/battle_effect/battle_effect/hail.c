@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // The canvas preparer's packed arguments.
@@ -50,7 +51,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     s32 angle;
     s32 speed;
 
-    angle = (Random16() & 0x7fff) + 0x4000;
+    angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
     speed = (Random16() & 0x1ff) + 0x80;
     CHIPS[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
     CHIPS[i].y = (spawn[1] + 8) << 16;

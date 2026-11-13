@@ -4,6 +4,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "fixed_math.h"
 #include "flag_call.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
@@ -61,12 +62,12 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   collision = 0;
   count = 0;
   if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->dashKeys) {
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x8000;
+    object->speedLimit = px(1);
+    object->acceleration = px(1) / 2;
     movementAnimation = 5;
   } else {
-    object->speedLimit = 0x8000;
-    object->acceleration = 0x4000;
+    object->speedLimit = px(1) / 2;
+    object->acceleration = px(1) / 4;
   }
 
   angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
@@ -80,7 +81,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     position.z = object->z;
     Vector_AddPolarOffset(0x80000, direction, &position);
     if (gDebugMode == 0 ||
-        ((gInput.held & 0x200) == 0 && GameFlag_Get(0x163) == 0)) {
+        ((gInput.held & KEY_L) == 0 && GameFlag_Get(0x163) == 0)) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
@@ -92,12 +93,12 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
            WorldMap_IsWalkable(object, &rightPosition)) != 0) {
-        angleOffsets[count++] = direction + 0x1000;
-        angleOffsets[count++] = direction - 0x1000;
-        angleOffsets[count++] = direction + 0x2000;
-        angleOffsets[count++] = direction - 0x2000;
-        angleOffsets[count++] = direction + 0x3000;
-        angleOffsets[count++] = direction - 0x3000;
+        angleOffsets[count++] = direction + TRIG_TURN / 16;
+        angleOffsets[count++] = direction - TRIG_TURN / 16;
+        angleOffsets[count++] = direction + TRIG_TURN / 8;
+        angleOffsets[count++] = direction - TRIG_TURN / 8;
+        angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
+        angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
         for (angleIndex = 0; angleIndex < count; angleIndex++) {
           direction = angleOffsets[angleIndex];
           position.x = object->x;
@@ -278,11 +279,11 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
         goto wait_d;
     }
   }
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x4000;
-  if (GameFlag_Get(0x17f) != 0 && (gInput.held & 2)) {
-    object->speedLimit = 0x40000;
-    object->acceleration = 0x10000;
+  object->speedLimit = px(1);
+  object->acceleration = px(1) / 4;
+  if (GameFlag_Get(0x17f) != 0 && (gInput.held & KEY_B)) {
+    object->speedLimit = px(4);
+    object->acceleration = px(1);
   }
 
   angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
@@ -324,7 +325,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
       goto counted;
     }
   }
-  if (gDebugMode != 0 && (gInput.held & 0x200)) {
+  if (gDebugMode != 0 && (gInput.held & KEY_L)) {
     collision = 0;
     heading = angle;
     goto counted;
@@ -333,22 +334,25 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)angle + 0x1000, &testPosition);
+    Vector_AddPolarOffset(0x130000, (u16)angle + TRIG_TURN / 16, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x130000, (u16)angle - 0x1000, &testPosition);
+      Vector_AddPolarOffset(0x130000, (u16)angle - TRIG_TURN / 16,
+                            &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x130000, (u16)angle + 0x2000, &testPosition);
+        Vector_AddPolarOffset(0x130000, (u16)angle + TRIG_TURN / 8,
+                              &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x130000, (u16)angle - 0x2000, &testPosition);
+          Vector_AddPolarOffset(0x130000, (u16)angle - TRIG_TURN / 8,
+                                &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
             goto push_objects;
@@ -359,12 +363,12 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   }
   direction = angle;
   headingCount = 0;
-  angleOffsets[headingCount++] = direction + 0x1000;
-  angleOffsets[headingCount++] = direction - 0x1000;
-  angleOffsets[headingCount++] = direction + 0x2000;
-  angleOffsets[headingCount++] = direction - 0x2000;
-  angleOffsets[headingCount++] = direction + 0x3000;
-  angleOffsets[headingCount++] = direction - 0x3000;
+  angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
+  angleOffsets[headingCount++] = direction - TRIG_TURN / 16;
+  angleOffsets[headingCount++] = direction + TRIG_TURN / 8;
+  angleOffsets[headingCount++] = direction - TRIG_TURN / 8;
+  angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
+  angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
   // An empty once-only loop keeps the last store before the counter and
   // places the first loop's exit block after this loop; without it, 243 of
   // 827 instructions differ in tla-en.
@@ -381,25 +385,29 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading + 0x1000, &testPosition);
+    Vector_AddPolarOffset(0x130000, (u16)heading + TRIG_TURN / 16,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading - 0x1000, &testPosition);
+    Vector_AddPolarOffset(0x130000, (u16)heading - TRIG_TURN / 16,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading + 0x2000, &testPosition);
+    Vector_AddPolarOffset(0x130000, (u16)heading + TRIG_TURN / 8,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading - 0x2000, &testPosition);
+    Vector_AddPolarOffset(0x130000, (u16)heading - TRIG_TURN / 8,
+                          &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition))
       goto push_objects;
   }
@@ -467,8 +475,8 @@ push_objects:
     collision |= 2;
   }
   if (collision == 0 && pushed != 0) {
-    object->speedLimit = 0x4000;
-    object->acceleration = 0x2000;
+    object->speedLimit = px(1) / 4;
+    object->acceleration = px(1) / 8;
   }
 
 counted:
@@ -612,8 +620,8 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
     worldWork->terrainKind = 3;
 
   collision = 0;
-  object->speedLimit = 0x14000;
-  object->acceleration = 0x8000;
+  object->speedLimit = px(5) / 4;
+  object->acceleration = px(1) / 2;
   angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
@@ -623,7 +631,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset(0x80000, direction, &position);
-    if (gDebugMode == 0 || (gInput.held & 0x200) == 0) {
+    if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
       if (WorldMap_IsSailable(object, &position) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
@@ -650,12 +658,12 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
           }
         }
       }
-      angleOffsets[count++] = direction + 0x1000;
-      angleOffsets[count++] = direction - 0x1000;
-      angleOffsets[count++] = direction + 0x2000;
-      angleOffsets[count++] = direction - 0x2000;
-      angleOffsets[count++] = direction + 0x3000;
-      angleOffsets[count++] = direction - 0x3000;
+      angleOffsets[count++] = direction + TRIG_TURN / 16;
+      angleOffsets[count++] = direction - TRIG_TURN / 16;
+      angleOffsets[count++] = direction + TRIG_TURN / 8;
+      angleOffsets[count++] = direction - TRIG_TURN / 8;
+      angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
+      angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
         position.x = object->x;
@@ -873,7 +881,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   object->motionFlags = 0;
   collision = 0;
   object->speedLimit = object->y / 16 + 0x14000;
-  object->acceleration = 0x8000;
+  object->acceleration = px(1) / 2;
   angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
@@ -884,7 +892,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   position.y = object->y;
   position.z = object->z;
   Vector_AddPolarOffset(0x80000, direction, &position);
-  if (gDebugMode != 0 && (gInput.held & 0x200) != 0)
+  if (gDebugMode != 0 && (gInput.held & KEY_L) != 0)
     goto update_object;
   if (WorldMap_IsFlyable(object, &position) == 0) {
     testPosition.x = object->x;
@@ -912,12 +920,12 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
       }
     }
   }
-  angleOffsets[count++] = direction + 0x1000;
-  angleOffsets[count++] = direction - 0x1000;
-  angleOffsets[count++] = direction + 0x2000;
-  angleOffsets[count++] = direction - 0x2000;
-  angleOffsets[count++] = direction + 0x3000;
-  angleOffsets[count++] = direction - 0x3000;
+  angleOffsets[count++] = direction + TRIG_TURN / 16;
+  angleOffsets[count++] = direction - TRIG_TURN / 16;
+  angleOffsets[count++] = direction + TRIG_TURN / 8;
+  angleOffsets[count++] = direction - TRIG_TURN / 8;
+  angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
+  angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
   for (angleIndex = 0; angleIndex < count; angleIndex++) {
     direction = angleOffsets[angleIndex];
     position.x = object->x;

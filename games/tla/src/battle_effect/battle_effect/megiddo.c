@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -185,7 +186,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   caster = BattleObject_GetFar(effect->actor)->object;
   x = 0;
   z = 0;
-  scale = 0x10000;
+  scale = Q16_ONE;
   Render_BuildQuadStrip(strip, 8, 16, 32);
   Render_BuildQuadStrip(meshB, 2, 32, 15);
   for (j = 0; j != 16; j++) {
@@ -226,7 +227,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     if (frame == 171) {
       Sound_PlayFar(SE_CRASH);
     }
-    if ((gInput.repeat & 3) && frame > 3 && frame <= 142) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 3 && frame <= 142) {
       frame = 143;
     }
     if (frame == 0) {
@@ -435,9 +436,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       if (frame > 142) {
         s32 n = frame - 143;
 
-        scale = n * 1236 + 0x4000;
-        if (scale > 0xc000) {
-          scale = 0xc000;
+        scale = n * 1236 + Q16_ONE / 4;
+        if (scale > Q16_ONE * 3 / 4) {
+          scale = Q16_ONE * 3 / 4;
         }
       }
       pair = (s32 *)req;
@@ -489,7 +490,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         /* FAKEMATCH(barrier): an empty asm on half. */
         asm("" : "+r"(half));
         Transform_Reset();
-        SceneTransform_ApplyScale3(half, 0x10000, half);
+        SceneTransform_ApplyScale3(half, Q16_ONE, half);
       }
       SceneTransform_ApplyPosition3(x - 0x7e0000, z - 0x4c0000, 0);
       SceneTransform_ApplyUniformScale(46536);
@@ -520,18 +521,18 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         i = 0;
         /* FAKEMATCH(temporary): twice, frame * 2 kept apart. */
         twice = frame * 2;
-        angle = -0x4000;
+        angle = -TRIG_TURN / 4;
         tilt = n * 384;
         scroll = twice + frame;
         for (; i != 10; i++) {
           model->scrollU = ~scroll & 127;
           Transform_Reset();
           SceneTransform_ApplyPosition3(-0x20000, -0x200000, 0);
-          SceneTransform_ApplyScale3(82000, 0x35208, 0x10000);
+          SceneTransform_ApplyScale3(82000, 0x35208, Q16_ONE);
           SceneTransform_ApplyUniformScale(scale);
-          Transform_ApplyRoll(0x8000);
+          Transform_ApplyRoll(TRIG_TURN / 2);
           scroll += 20;
-          Transform_ApplyPitch(tilt - 0x3000);
+          Transform_ApplyPitch(tilt - TRIG_TURN * 3 / 16);
           Transform_ApplyYaw(angle);
           Render_TransformVertices(meshA, transformed, 32);
           Render_DrawModelList(model);
@@ -585,7 +586,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
       }
       Transform_Reset();
-      Transform_ApplyPitch(n * 384 - 0x3000);
+      Transform_ApplyPitch(n * 384 - TRIG_TURN * 3 / 16);
       p = work->particles;
       for (i = 0; i != 64; i++, p++) {
         s32 size = 1;
@@ -668,7 +669,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
               (pos.x / 2 - Data_08199f1a[i] - 62) << 16,
               (Data_08199f22[i] + pos.y - 54) << 16, 0);
         }
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (!effect->side) {
           Transform_ApplyRoll(Data_08199f0a[i]);
         } else {

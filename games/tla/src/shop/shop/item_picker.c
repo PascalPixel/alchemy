@@ -147,7 +147,7 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       redraw = 0;
     }
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (Inventory_CountFar(unitId) == 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
         continue;
@@ -165,7 +165,7 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       *outSlot = slot;
       result = 0;
       break;
-    } else if (gInput.pressed & 2) {
+    } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       *outUnit = -1;
       *outSlot = -1;
@@ -245,7 +245,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
     }
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       wait(1);
       if (shop->itemMode == 0)
         flags = Inventory_CheckDiscardFar(unitId, slot);
@@ -266,12 +266,12 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       Message_CloseFinishedWindowsFar();
       continue;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
-    if (gInput.held & 4) {
+    if (gInput.held & KEY_SELECT) {
       u32 item = unit->inventory[slot];
       void *details;
 
@@ -279,7 +279,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       details = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
       ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
-      while (gInput.held & 4)
+      while (gInput.held & KEY_SELECT)
         wait(1);
       shop->detailsHidden = 1;
       Window_CloseFar(details, 2);
@@ -296,19 +296,19 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 #endif
       continue;
     }
-    if (gInput.repeat & 32) {
+    if (gInput.repeat & KEY_LEFT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot--;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
-    if (gInput.repeat & 16) {
+    if (gInput.repeat & KEY_RIGHT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot++;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
-    if (gInput.repeat & 64) {
+    if (gInput.repeat & KEY_UP) {
       slot -= 5;
       if (slot < 0)
         slot += 15;
@@ -317,7 +317,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
-    if (gInput.repeat & 128) {
+    if (gInput.repeat & KEY_DOWN) {
       slot += 5;
       if (slot >= inventoryCount)
         slot -= 15;

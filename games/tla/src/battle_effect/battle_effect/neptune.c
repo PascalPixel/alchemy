@@ -406,7 +406,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
               32);
     work->transferPending = 1;
     wait(1);
-  } while (++frame != 244 && (frame <= 16 || !(gInput.repeat & 3)));
+  } while (++frame != 244 &&
+           (frame <= 16 || !(gInput.repeat & (KEY_A | KEY_B))));
 
   // Act two: restore the display; a pillar waits above each target.
   gBgScroll[1].x = savedScrollX;

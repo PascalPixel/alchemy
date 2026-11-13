@@ -5,6 +5,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/field.h"
 
@@ -68,7 +69,7 @@ void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   effect->angle += 0xfff0;
   if (effect->pause != 0) {
     effect->pause--;
-    effect->angle += 0x800;
+    effect->angle += TRIG_TURN / 32;
   } else if ((Random16() << 5) >> 16 == 0) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
@@ -95,13 +96,13 @@ void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
   effect->x = anchor->x + dx;
   effect->z = anchor->z + dz;
-  effect->angle += 0x800;
+  effect->angle += TRIG_TURN / 32;
   if (++effect->timer == 121) {
     effect->update = FieldEffect_WanderAroundAnchor;
     effect->timer = 0;
     effect->pause = 0;
     effect->speed = 0x1999;
-    effect->scale = 0x30000;
+    effect->scale = Q16_ONE * 3;
     effect->angle = Random16();
   }
 }
@@ -115,7 +116,7 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
   scale = object->scaleX - 0x80;
   object->scaleY = scale;
   object->scaleX = scale;
-  if (scale < 0x8000) {
+  if (scale < Q16_ONE / 2) {
     Actor_SetPositionAndResetMotionFar(object, 0, 0, 0);
     object->update = 0;
   }
@@ -188,7 +189,7 @@ void FieldPsynergy_Whirlwind(void) {
     orb->x = from.x + (to.x - from.x) * step / 10;
     orb->y = from.y + (to.y - from.y) * step / 10;
     orb->z = from.z + (to.z - from.z) * step / 10;
-    scale = step * 0x10ccc / 10 + 0x4000; // from 0.25 to 1.3
+    scale = step * 0x10ccc / 10 + Q16_ONE / 4; // from 0.25 to 1.3
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -370,7 +371,7 @@ void FieldPsynergy_Halt(void) {
     obj->x = from.x + (to.x - from.x) * step / 10;
     obj->y = from.y + (to.y - from.y) * step / 10;
     obj->z = from.z + (to.z - from.z) * step / 10;
-    scale = BattleEffect_Interpolate(Q16_ONE, 0x4000, step);
+    scale = BattleEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
     obj->scaleX = scale;
     obj->scaleY = scale;
     wait(1);
@@ -520,7 +521,7 @@ void FieldPsynergy_Catch(void) {
     object->x = origin.x + (target.x - origin.x) * step / 10;
     object->y = origin.y + (target.y - origin.y) * step / 10;
     object->z = origin.z + (target.z - origin.z) * step / 10;
-    scale = Interpolate(0x4000, Q16_ONE, step);
+    scale = Interpolate(Q16_ONE / 4, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);
@@ -552,7 +553,7 @@ void FieldPsynergy_Catch(void) {
     object->x = target.x + (origin.x - target.x) * step / 10;
     object->y = target.y + (origin.y - target.y) * step / 10;
     object->z = target.z + (origin.z - target.z) * step / 10;
-    scale = Interpolate(Q16_ONE, 0x4000, step);
+    scale = Interpolate(Q16_ONE, Q16_ONE / 4, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);
@@ -808,7 +809,7 @@ void FieldEffect_UpdateSpinAngle(struct Actor *object) {
   u32 step;
 
   step = object->timer * 0x50;
-  object->facing += step + 0x1000;
+  object->facing += step + TRIG_TURN / 16;
   if (step < 0x1000)
     object->timer++;
 }
@@ -824,7 +825,7 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   obj->scaleY += step;
   scaleX = obj->scaleX;
   scale = scaleX + step;
-  obj->facing += 0x2000;
+  obj->facing += TRIG_TURN / 8;
   obj->y += 1 << 16;
   obj->scaleX = scale;
   if ((s32)scale < 0x3000) {
@@ -987,7 +988,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   particle->scaleY = scale;
   particle->x = source->x;
   particle->y = y - 0x20000;
-  particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
+  particle->z = source->z + ((Q16_ONE - scale) * 5) + 0x90000;
 }
 
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
@@ -1015,7 +1016,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->scaleY = -scale;
   particle->x = source->x;
   particle->y = y - 0x20000;
-  particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
+  particle->z = source->z - ((Q16_ONE - scale) * 5) + 0x100000;
 }
 
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
@@ -1365,10 +1366,10 @@ again:
   case 1:
     if (work->timer == 0) {
       sprite = &work->arrow;
-      sprite->scaleX = sprite->scaleY = 0x10000;
+      sprite->scaleX = sprite->scaleY = Q16_ONE;
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x2666, scene->angle + 0x8000, pos);
+      Vector_AddPolarOffset(0x2666, scene->angle + TRIG_TURN / 2, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -1457,7 +1458,7 @@ again:
         memcpy(wobble, Data_080f0f34, sizeof(wobble));
         memcpy(fade, Data_080f0f54, sizeof(fade));
         w = wobble[work->timer & 7];
-        sprite->angle = scene->angle + w * fade[work->timer / 8] / 0x10000;
+        sprite->angle = scene->angle + w * fade[work->timer / 8] / (TRIG_TURN);
       }
       if (work->timer == 32)
         work->bowShrinking = 1;
@@ -1486,9 +1487,9 @@ again:
     sprite = &work->bow;
     sprite->scaleX += 0x400;
     sprite->scaleY = sprite->scaleX;
-    sprite->angle += 0x2000;
-    if (sprite->scaleX >= 0x10000) {
-      sprite->scaleX = sprite->scaleY = 0x10000;
+    sprite->angle += TRIG_TURN / 8;
+    if (sprite->scaleX >= Q16_ONE) {
+      sprite->scaleX = sprite->scaleY = Q16_ONE;
       sprite->angle = scene->angle;
       work->bowGrowing = 0;
     }
@@ -1497,7 +1498,7 @@ again:
     sprite = &work->bow;
     sprite->scaleX += -0x400;
     sprite->scaleY = sprite->scaleX;
-    sprite->angle += 0x2000;
+    sprite->angle += TRIG_TURN / 8;
     if (sprite->scaleX <= 0x6665) {
       sprite->scaleX = sprite->scaleY = 0;
       work->bowShrinking = 0;

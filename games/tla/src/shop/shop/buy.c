@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
@@ -94,18 +95,18 @@ next_page:
       Shop_DrawItemPrice(priceWindow, itemId, (u16)stockDefinition->price, 0);
       redraw = 0;
     }
-    if (key = gInput.pressed & 1) {
+    if (key = gInput.pressed & KEY_A) {
       selected = selectionIndex;
       Sound_PlayFar(SE_MENU_CONFIRM);
       selectionResult = 0;
       break;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
-    if (gInput.held & 4) {
+    if (gInput.held & KEY_SELECT) {
       s32 held;
       void *window;
 #if !TLA_PATCH_1
@@ -127,7 +128,7 @@ next_page:
 #else
       ItemMenu_DrawItemDetailsWithCountFar(window, heldItem, held);
 #endif
-      while (gInput.held & 4)
+      while (gInput.held & KEY_SELECT)
         wait(1);
       Window_CloseFar(window, 2);
       Shop_DrawStock(stockWindow, selectionIndex);
@@ -184,7 +185,7 @@ next_page:
       else
         Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
     }
-    if (key = gInput.pressed & 1) {
+    if (key = gInput.pressed & KEY_A) {
       redraw = 2;
       WindowSprite_PrepareForRedrawFar(partyWindow);
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
@@ -224,7 +225,7 @@ next_page:
       purchaseResult = 0;
       break;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       purchaseResult = -1;
       break;
@@ -476,7 +477,7 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
           Animation_ApplyChildArgumentFar(figure, 30);
         else
           Animation_ApplyChildArgumentFar(figure, 1);
-        shop->partyMemberScale[i] = 0x10000;
+        shop->partyMemberScale[i] = Q16_ONE;
         if (!Item_IsCompatibleWithUnitFar(owner, itemId))
           shop->partyMemberScale[i] = 0xcccc;
       }
@@ -714,22 +715,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           slot, OUTPUT_SIZE_32X8, (struct RenderInput *)window, 32, 0);
       sprite->tile += 4;
       for (;;) {
-        if (gInput.pressed & 1) {
+        if (gInput.pressed & KEY_A) {
           Sound_PlayFar(SE_MENU_CONFIRM);
           result = count + 1;
           break;
         }
-        if (gInput.pressed & 2) {
+        if (gInput.pressed & KEY_B) {
           Sound_PlayFar(SE_MENU_CANCEL);
           result = -1;
           break;
         }
-        if (gInput.repeat & 0x20) {
+        if (gInput.repeat & KEY_LEFT) {
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           changed = 1;
           count--;
         }
-        if (gInput.repeat & 0x10) {
+        if (gInput.repeat & KEY_RIGHT) {
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           changed = 1;
           count++;

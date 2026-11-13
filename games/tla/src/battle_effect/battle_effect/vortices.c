@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -241,11 +242,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     for (i = 0; i != gVortices_Shapes[effect->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
       x = ((gVortices_Shapes[effect->variant * 3 + 1] *
-                Trig_Sin((frame << 11) + i * 0x4000) +
+                Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
             wave) >>
            16) +
           40;
-      y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
+      y = (Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2) >> 16;
       segment = (frame / 2) % 3;
       draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
       draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40,

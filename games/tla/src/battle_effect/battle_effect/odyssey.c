@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct Model;
@@ -236,7 +237,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 angle = Random16() & 0x7fff;
 
         if (effect->side == 1)
-          angle += 0x8000;
+          angle += TRIG_TURN / 2;
         shard->x = (to.x / 2) << 16;
         shard->y = to.y << 16;
         shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -301,11 +302,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
           if (effect->side == 0) {
             if (i != 0)
-              angle += 0x4000;
+              angle += TRIG_TURN / 4;
           } else if (i == 0) {
-            angle -= 0x4000;
+            angle -= TRIG_TURN / 4;
           } else {
-            angle += 0x8000;
+            angle += TRIG_TURN / 2;
           }
           spark = &work->particles[i * 32 + k];
           spark->x = (to.x / 2) << 16;
@@ -377,7 +378,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         if (shade > 0)
           shade = 0;
         if (shade > -64) {
-          s32 scale = (age << 14) + 0x4000;
+          s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;
           Transform_Reset();
@@ -401,7 +402,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       } else if (frame == i * 8 + 76)
         BattleEffect_TintBattler(effect->actor, 0, -1, 0, 0);
       if (frame >= start && frame < start + 11) {
-        s32 scale = 0x30000 - ((frame - start) << 14);
+        s32 scale = Q16_ONE * 3 - ((frame - start) << 14);
 
         model->look.shade = 0;
         Transform_Reset();
@@ -422,7 +423,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         if (shade > 0)
           shade = 0;
         if (shade > -64) {
-          s32 scale = (age << 14) + 0x4000;
+          s32 scale = (age << 14) + Q16_ONE / 4;
 
           model->look.shade = shade;
           Transform_Reset();
@@ -591,9 +592,9 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   wait(1);
 
   for (frame = 0; frame != SWIRL_MAX_FRAMES; frame++) {
-    if (gInput.repeat & 2)
+    if (gInput.repeat & KEY_B)
       frame = 0;
-    if (gInput.repeat & 1)
+    if (gInput.repeat & KEY_A)
       break;
 
     if (frame == 0)

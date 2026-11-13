@@ -4,6 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -678,7 +679,7 @@ void Func_080dba5c(void) {
     sprite->priority = 0;
     sprite->hidden = 0;
     sprite->layer = 0;
-    sprite->scale = 0x20000;
+    sprite->scale = Q16_ONE * 2;
     position[0] = scene->x;
     position[1] = mainObject->y + 0x1c0000;
     position[2] = mainObject->z;

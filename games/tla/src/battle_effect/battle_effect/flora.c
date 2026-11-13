@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Flora, the blossom spirit's summon.
@@ -310,7 +311,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   draw[0] = Ram_HeapSlots->unk64[1];
-  for (frame = 0; frame != 300 && (!(gInput.repeat & 3) || frame <= 16);
+  for (frame = 0;
+       frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
        frame++) {
     if (frame == 0) {
       Iwram_ClearWords((void *)0x06004000, 0x4000);
@@ -642,7 +644,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(Data_08199446[i] << 16,
                                         Data_0819944a[i] << 16, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyRoll(Data_08199436[i]);
           Transform_ApplyPitch(Data_0819943e[i]);
           SceneTransform_ApplyUniformScale(scale);
@@ -897,7 +899,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
                 HI(p->x) - 4, HI(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, 64, 0);
-        p->velocityX += -0x1000;
+        p->velocityX += -(px(1) / 16);
         p->variant++;
       }
     }
@@ -940,10 +942,10 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   object = slot->object;
   enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
-    object->acceleration = 0x20000;
-    object->speedLimit = 0x80000;
+    object->acceleration = px(2);
+    object->speedLimit = px(8);
     if (object->y < 0xa0000)
-      object->velocityY += 0x28000;
+      object->velocityY += px(5) / 2;
     Actor_StartIdleFar(object);
     if (slot->anchorX > 0)
       x = object->x + 0xf0000;
@@ -1091,7 +1093,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       Transform_Reset();
       SceneTransform_ApplyPosition3(dagger->x - (64 << 16),
                                     dagger->y - (64 << 16), 0);
-      SceneTransform_ApplyUniformScale(0x8000);
+      SceneTransform_ApplyUniformScale(Q16_ONE / 2);
       Transform_ApplyRoll(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
       Render_DrawModelList(quad);
@@ -1271,7 +1273,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
         step->variant = (Random16() & 15) + 16;
         step->x = (target.x / 2) << 16;
         step->y = (target.y - 8) << 16;
-        angle = (Random16() & 0x7fff) + 0x4000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * speed) >> 7;
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;

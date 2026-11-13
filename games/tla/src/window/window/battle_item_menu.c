@@ -287,7 +287,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       NAVIGATION->preferredRow = preferredRow;
     } while (0);
     navigation = NAVIGATION;
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (count != 0) {
         result = firstEntry + selectedRow;
         Item_GetDirectFar(entries[result]);
@@ -310,20 +310,20 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         result = -1;
         break;
       }
-    } else if (navigation->timer == 0 || (gInput.pressed & 2)) {
+    } else if (navigation->timer == 0 || (gInput.pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
 
     if (count != 0) {
-      if (gInput.repeat & 0x80) {
+      if (gInput.repeat & KEY_DOWN) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == count)
           selectedRow = 0;
         preferredRow = selectedRow;
-      } else if (gInput.repeat & 0x40) {
+      } else if (gInput.repeat & KEY_UP) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
@@ -333,7 +333,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             selectedRow = 4;
         }
         preferredRow = selectedRow;
-      } else if (gInput.repeat & 0x10) {
+      } else if (gInput.repeat & KEY_RIGHT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= count) {
@@ -350,7 +350,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
               selectedRow = preferredRow;
           }
         }
-      } else if (gInput.repeat & 0x20) {
+      } else if (gInput.repeat & KEY_LEFT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {

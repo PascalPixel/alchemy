@@ -214,7 +214,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
       facing = gAnimationFacing_SixPictures[(dir >> 10) & 63];
       break;
     case 8:
-      facing = gData_0802eb44[((dir + 0x1000) >> 13) & 7];
+      facing = gData_0802eb44[((dir + TRIG_TURN / 16) >> 13) & 7];
       break;
     default:
       facing = 0;
@@ -394,7 +394,7 @@ void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
 
   /* FAKEMATCH(temporary): the height read through HEIGHT_COPY, a u8 copy, at
    * both uses. */
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -479,7 +479,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -581,7 +581,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -671,7 +671,7 @@ void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
       halfHeight = sprite->height >> 1;
       offsetY = Iwram_MulQ16(sprite->offsetY - halfHeight, scaleY);
       halfWidth = sprite->width >> 1;
-      if (scaleX > 0x10000 || scaleY > 0x10000) {
+      if (scaleX > 0x10000 || scaleY > Q16_ONE) {
         affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;

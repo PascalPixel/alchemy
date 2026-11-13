@@ -232,7 +232,7 @@ extern u8 gDebugTextEnabled;
 
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
-  s32 down = gInput.held & 0x80;
+  s32 down = gInput.held & KEY_DOWN;
   s32 encounter;
   s32 preset;
   s32 loadedPreset;
@@ -261,25 +261,25 @@ restart:
       GameFlag_Clear(32);
       wait(1);
       for (;;) {
-        if (input->repeat & 0x10)
+        if (input->repeat & KEY_RIGHT)
           encounter++;
-        if (input->repeat & 0x20)
+        if (input->repeat & KEY_LEFT)
           encounter--;
-        if (input->repeat & 0x40)
+        if (input->repeat & KEY_UP)
           encounter -= 10;
-        if (input->repeat & 0x80)
+        if (input->repeat & KEY_DOWN)
           encounter += 10;
-        if (input->repeat & 0x100)
+        if (input->repeat & KEY_R)
           preset++;
-        if (input->repeat & 0x200)
+        if (input->repeat & KEY_L)
           preset--;
-        if (input->repeat & 1)
+        if (input->repeat & KEY_A)
           break;
-        if (input->repeat & 8)
+        if (input->repeat & KEY_START)
           Battle_DebugStartNoOp();
         // DEAD: once startModeSet is set, setting it again changes nothing;
         // the ROM keeps the test.
-        if ((input->repeat & 2) || startModeSet)
+        if ((input->repeat & KEY_B) || startModeSet)
           startModeSet = 1;
         wait(1);
       }
@@ -288,7 +288,7 @@ restart:
         DebugParty_LoadPreset(preset);
         loadedPreset = preset;
       }
-      if (input->held & 0x80)
+      if (input->held & KEY_DOWN)
         GameFlag_Set(364);
       Unit_CalculateFar(0);
       *backdropId = (s32)&ResourceId_ColossoBackdrop;

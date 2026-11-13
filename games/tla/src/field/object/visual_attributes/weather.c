@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/field.h"
 
@@ -43,8 +44,8 @@ void Weather_UpdateRain(void) {
     if (GameFlag_Get(358))
       particle->timer++;
     frame = &Data_080f0b50[2 * particle->timer];
-    x = (particle->posX - originX) / 0x10000 + *frame++;
-    y = (particle->posZ - particle->posY - originZ) / 0x10000 + *frame++;
+    x = (particle->posX - originX) / Q16_ONE + *frame++;
+    y = (particle->posZ - particle->posY - originZ) / Q16_ONE + *frame++;
     if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
       particle->priority = 1;
       particle->x = x;

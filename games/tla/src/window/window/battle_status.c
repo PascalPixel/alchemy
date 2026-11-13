@@ -228,7 +228,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                          statusWindow->height, 15);
 
     // A turns the page; each list page starts its own group at the top.
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       page = (page + 1) % 4;
       cursor.group = page + 3;
       cursor.groupPositions[page + 3] = 0;
@@ -270,7 +270,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           cursor.group ^= 2;
-          if (gInput.repeat & 0x20)
+          if (gInput.repeat & KEY_LEFT)
             groupPosition = statusCount - 1;
           else
             groupPosition = 0;
@@ -1099,7 +1099,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
       }
     }
-    if (NAVIGATION->timer == 0 || (gInput.pressed & 2))
+    if (NAVIGATION->timer == 0 || (gInput.pressed & KEY_B))
       break;
     if (listCount != 0) {
       if (keys & 0x100) {

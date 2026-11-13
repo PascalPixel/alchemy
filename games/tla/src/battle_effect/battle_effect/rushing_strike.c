@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -190,7 +191,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         drop = &DROPS[firstDrop + k];
         drop->x = pos.x << 16;
         drop->y = pos.y << 16;
-        angle = (Random16() & 0x7fff) + 0x4000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 255) + 127;
         drop->velocityX = (Trig_Sin(angle) * speed) >> 5;
         drop->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -425,7 +426,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         spawned->x = (source.x / 2) << 16;
         spawned->y = 240 << 15;
-        angle = (Random16() & 0x7fff) + 0x4000;
+        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 1023) + 32;
         spawned->velocityX = (Trig_Sin(angle) * speed) >> 6;
         spawned->velocityY = (Trig_Cos(angle) * speed) >> 6;
@@ -502,10 +503,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = 104;
       gCameraSceneParameters[4] = 240;
       if (effect->side == 0) {
-        yaw = 0x4000;
+        yaw = TRIG_TURN / 4;
         camera->yaw = yaw;
       } else {
-        yaw = 0xc000;
+        yaw = TRIG_TURN * 3 / 4;
         camera->yaw = yaw;
       }
       for (i = 0; i != 256; i++) {
@@ -597,11 +598,11 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       model->scrollU = 127 & ~u;
     }
     Transform_Reset();
-    SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+    SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();
     SceneTransform_ApplyPosition3((source.x - 128) << 16, height << 16, 0);
     if (effect->side == 1) {
-      Transform_ApplyYaw(0x8000);
+      Transform_ApplyYaw(TRIG_TURN / 2);
     }
     SceneTransform_ApplyUniformScale(0x21770);
     Render_TransformVertices(cells, vertices, 66);
@@ -616,8 +617,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       tex->pixels = work->sheet + 0x4000;
       SceneTransform_ApplyPosition3((target.x - 124) << 16,
                                     (height - 144) << 16, 0);
-      Transform_ApplyRoll(0x4000);
-      SceneTransform_ApplyScale3(0x19c40, 0x14e20, 0x10000);
+      Transform_ApplyRoll(TRIG_TURN / 4);
+      SceneTransform_ApplyScale3(0x19c40, 0x14e20, Q16_ONE);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(model);
     }
@@ -630,7 +631,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         scatter->x = (source.x / 2) << 16;
         scatter->y = 0;
-        angle = (Random16() & 0x7fff) - 0x4000;
+        angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         speed = (Random16() & 255) + 32;
         scatter->velocityX = (Trig_Sin(angle) * speed) >> 5;
         scatter->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -647,7 +648,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         burst->x = (source.x / 2) << 16;
         burst->y = 0;
-        angle = (Random16() & 0x7fff) - 0x4000;
+        angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         speed = (Random16() & 255) + 32;
         burst->velocityX = (Trig_Sin(angle) * speed) >> 5;
         burst->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -689,9 +690,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         trail->y = startY;
         trail->x = x << 16;
         random = Random16() & 0x7fff;
-        angle = random + 0x4000;
+        angle = random + TRIG_TURN / 4;
         if (frame > 59) {
-          angle = random + 0xc000;
+          angle = random + TRIG_TURN * 3 / 4;
         }
         speed = (Random16() & 255) + 32;
         trail->velocityX = (Trig_Sin(angle) * speed) >> 6;

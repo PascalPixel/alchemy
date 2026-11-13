@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
@@ -211,7 +212,7 @@ void FieldEffect_UpdateSparkles(void) {
       b = Random16();
       x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
-      sy = (sparkle->posZ - sparkle->height - cameraZ) / 0x10000 +
+      sy = (sparkle->posZ - sparkle->height - cameraZ) / Q16_ONE +
            *(const s16 *)frame;
       frame++;
       if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #undef BLITTER
@@ -125,7 +126,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
           blit(canvas, work->sheet, gSpire_RockX[i] + 47, HI(rock->y), 34, 62);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
-          rock->velocityY += 0x10000;
+          rock->velocityY += px(1);
         if (rock->y > 0x320000)
           rock->y = 0x320000;
       }

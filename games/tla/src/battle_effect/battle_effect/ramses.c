@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #undef FORMATION
@@ -149,7 +150,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
-  for (frame = 0; frame != SCENE_FRAMES && !(gInput.repeat & 3); frame++) {
+  for (frame = 0; frame != SCENE_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
+       frame++) {
     if (frame == FIRST_DROP + 3)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == FIRST_DROP + 45)
@@ -232,7 +234,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
         if (frame > ROCKS_FALL)
-          rock->velocityY += 0x4000;
+          rock->velocityY += px(1) / 4;
         if (rock->y > 0x780000) {
           rock->variant++;
           if (rock->variant == 1) {

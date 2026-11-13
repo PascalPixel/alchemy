@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
@@ -702,7 +703,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         shot->x += shot->velocityX;
         shot->y += shot->velocityY;
         if (mode == 10)
-          shot->velocityY -= 0x4000;
+          shot->velocityY -= px(1) / 4;
         shot->variant++;
         if (mode == 9 || mode == 17) {
           if (shot->variant == 32)

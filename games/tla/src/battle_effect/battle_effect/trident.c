@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -281,7 +282,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         if (p->variant == 0) {
           s32 angle = Random16() & 0x7fff;
-          s32 heading = angle + 0x4000;
+          s32 heading = angle + TRIG_TURN / 4;
           s32 speed = (Random16() & 511) + 512;
           s32 sine;
 
@@ -289,7 +290,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           x = centerX << 16;
           p->x = (sine >> 4) + x;
           p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
-          angle += 0xc000;
+          angle += TRIG_TURN * 3 / 4;
           p->velocityX = (Trig_Sin(angle) * speed) >> 9;
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;
           p->velocityZ = (Random16() & 7) + 4;
@@ -395,10 +396,10 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3((centerX - 64) << 16, 0x200000, 0);
           Transform_ApplyRoll(spinner->z);
           if (i & 1) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
           spinner->z += spinner->velocityZ;
-          SceneTransform_ApplyScale3(0x20000, 0x12710, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 2, 0x12710, Q16_ONE);
           Render_TransformVertices(Data_08199e24 + x * 16, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -433,7 +434,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         for (i = 0, p = (struct EffectStep *)Data_02012964; i != 128;
              i++, p++) {
-          s32 angle = (Random16() & 0x7fff) + 0x4000;
+          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           s32 speed = (Random16() & 511) + 512;
 
           p->x = x;
@@ -749,11 +750,11 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
           Transform_Reset();
           SceneTransform_ApplyPosition3((pos.x - 60) << 16, (pos.y - 80) << 16,
                                         0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (effect->side == 0) {
             Transform_ApplyRoll(-0x3388);
           } else {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
             Transform_ApplyRoll(-0x3388);
           }
           SceneTransform_ApplyUniformScale(0x286a0);
@@ -779,7 +780,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
               s32 scale;
 
               start = frame - start;
-              scale = start * Data_08199e5c[i] * 2000 + 0x8000;
+              scale = start * Data_08199e5c[i] * 2000 + Q16_ONE / 2;
 
               model->shade = shade;
               Transform_Reset();

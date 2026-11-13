@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -387,7 +388,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
       shot->z = source->z;
       aimZ = target->z + (((Random16() & 31) - 16) << 17);
       shot->velocityX = (target->x - source->x) >> 4;
-      shot->velocityY = 0x40000;
+      shot->velocityY = px(4);
       shot->velocityZ = (aimZ - source->z) >> 4;
       shot->variant = 0;
     }

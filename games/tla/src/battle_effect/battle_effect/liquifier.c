@@ -177,7 +177,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         struct EffectStep *step = work->particles;
 
         for (i = 0; i != 32; i++) {
-          s32 angle = (Random16() & 0x7fff) - 0x4000;
+          s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
           s32 speed = (Random16() & 0x1ff) + 0x200;
           s32 y;
 
@@ -243,12 +243,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = 0;
           age = frame - start;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3((from.x - 128) << 16,
                                         (from.y - 74) << 16, 0);
           Transform_ApplyRoll((i << 12) - 0x3800);
           SceneTransform_ApplyScale3(
-              0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2, 0x8000);
+              0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2,
+              TRIG_TURN / 2);
           Render_TransformVertices(Data_08199ea4, projected, 4);
           Render_DrawModelList(model);
         }
@@ -268,14 +269,14 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         if (frame >= start && frame < i * 2 + 70) {
           s32 scale;
 
-          scale = 0x20000 - ((frame - start) << 13);
+          scale = Q16_ONE * 2 - ((frame - start) << 13);
           model->shade = zero;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3(step->x - (128 << 16),
                                         step->y - (64 << 16), 0);
           Transform_ApplyRoll(step->z);
-          SceneTransform_ApplyScale3(scale, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(scale, Q16_ONE, Q16_ONE / 2);
           Render_TransformVertices(Data_081991c0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -302,7 +303,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           }
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3(step->x - (128 << 16),
                                         step->y - (64 << 16), 0);
           Transform_ApplyPitch(0x3c00);
@@ -317,18 +318,18 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         if (frame >= i * 4 && frame < i * 4 + 12) {
           s32 age = frame - i * 4;
           s32 shade = age * 8 - 64;
-          s32 scale = 0x18000 - (age << 13);
+          s32 scale = Q16_ONE * 3 / 2 - (age << 13);
 
           if (shade > 0)
             shade = 0;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3((from.x - 128) << 16,
                                         (from.y - 80) << 16, 0);
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
-          Transform_ApplyRoll(0x6000 - (i << 14));
-          Transform_ApplyPitch(-0x1000);
+          Transform_ApplyRoll(TRIG_TURN * 3 / 8 - (i << 14));
+          Transform_ApplyPitch(-TRIG_TURN / 16);
           Render_TransformVertices(gData_08199210, projected, 4);
           Render_DrawModelList(model);
         }

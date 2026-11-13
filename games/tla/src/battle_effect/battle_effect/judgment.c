@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
@@ -327,7 +328,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
     frame++;
-  } while (frame != 160 && (frame <= 4 || !(gInput.repeat & 3)));
+  } while (frame != 160 && (frame <= 4 || !(gInput.repeat & (KEY_A | KEY_B))));
 
   Iwram_FillWords(canvas, 0x4000, 0);
   for (i = 0; i != 16; i++) {
@@ -406,7 +407,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       BattlePlayback_StartFar(145);
     }
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
         frame = 150;
         IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
@@ -696,9 +697,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if ((u32)(frame - 86) <= 63) {
-      s32 angle = -0x4000;
+      s32 angle = -TRIG_TURN / 4;
 
-      for (i = 0; i != 9; i++, angle += 0x1000) {
+      for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
         s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
         s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
 

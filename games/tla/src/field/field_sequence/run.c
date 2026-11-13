@@ -4,6 +4,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
 #include "sounds.h"
 #include "field/field_work.h"
 #include "gamepak/far_call/field.h"
@@ -102,7 +103,7 @@ s32 FieldSequence_Run(void) {
     Encounter_SelectMapZones(1);
   }
   work->eventMode = mode;
-  if (!GameFlag_Get(265))
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     gData_02001000[0x194c] = 0;
   else
     TileCopies_Restore();
@@ -113,7 +114,7 @@ s32 FieldSequence_Run(void) {
   BattleMap_ApplySceneEntranceView();
   Actor_ResetForLeader(OVERLAY_CALL(7));
   Field_PlaceTreasureSpots();
-  if (GameFlag_Get(265))
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     Actor_Restore();
   if (gMainRoutineWork.pendingDjinnEvent != 0)
     Djinn_RestoreActorAfterBattle();
@@ -139,7 +140,7 @@ s32 FieldSequence_Run(void) {
     GameFlag_Set(324);
   }
   work->previousCell = gMapCellBuffer;
-  if (!GameFlag_Get(265)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
     HAZARD.limit = 16;
     HAZARD.mode = 0;
@@ -167,7 +168,7 @@ s32 FieldSequence_Run(void) {
     work->warp = 0;
     goto done;
   }
-  GameFlag_Clear(265);
+  GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   if (Field_CountRequests() == 0) {
     value = work->transitionActive;
     if (value == 0) {
@@ -401,8 +402,8 @@ s32 FieldSequence_Run(void) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         WorldMap_Freeze();
         GameFlag_Set(262);
-        if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
-            ((*(volatile u32 *)&gInput.held & 4) != 0)) {
+        if (gDebugMode && (*(volatile u32 *)&gInput.held & KEY_B) != 0 &&
+            ((*(volatile u32 *)&gInput.held & KEY_SELECT) != 0)) {
           DebugFlagEditor_RunFar();
         } else if (GameFlag_Get(263)) {
           work->raisedEvent = 250;
@@ -448,9 +449,9 @@ s32 FieldSequence_Run(void) {
         Leader_StopMoving();
         WorldMap_Freeze();
         GameFlag_Set(262);
-        if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
+        if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_B)) {
           DebugSceneSelect_RunFar();
-        } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
+        } else if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_L)) {
           PaletteEditor_Run();
         } else if (GameFlag_Get(263)) {
           work->raisedEvent = 250;
@@ -609,7 +610,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
       return 0;
   }
 
-  if (!GameFlag_Get(0x109)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     gMainRoutineWork.x = entry->x << 16;
     gMainRoutineWork.y = entry->y << 16;
     gMainRoutineWork.z = entry->z << 16;
@@ -681,7 +682,7 @@ s32 Field_PlaceAtEntrance(void) {
       height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
       base = (s32)gData_0202e000;
-      if (!GameFlag_Get(0x109)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         gMainRoutineWork.x = xFixed;
         gMainRoutineWork.z = zFixed;
         *angle = (flags & 15) << 12;

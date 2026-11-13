@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -650,13 +651,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       if (frame == 8)
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       if (frame >= 8 && frame <= 17) {
-        s32 scale = Trig_Sin(((frame - 8) << 11) + 0x3000) * 612 >> 8;
+        s32 scale =
+            Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
 
         Transform_Reset();
         SceneTransform_ApplyPosition3((targetPosition.x / 2 - 64) << 16,
                                       (targetPosition.y - 64) << 16, 0);
-        Transform_ApplyPitch(0x4000);
-        Transform_ApplyYaw(0x2000);
+        Transform_ApplyPitch(TRIG_TURN / 4);
+        Transform_ApplyYaw(TRIG_TURN / 8);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
         Render_TransformVertices(gData_08199210, corners, 4);
         Render_DrawModelList(model);
@@ -1049,9 +1051,9 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
     // The A test reads the held keys through a volatile pointer, a load apart
     // from the B test's; as gInput.held, 10 of 376 instructions differ in
     // tla-en.
-    if (gInput.held & 2)
+    if (gInput.held & KEY_B)
       frame = 0;
-    if (*(volatile u32 *)&gInput.held & 1)
+    if (*(volatile u32 *)&gInput.held & KEY_A)
       break;
     if (frame <= 63)
       Palette_BrightenSavedBattleBg(frame / 2 - 31, frame / 2 - 31,

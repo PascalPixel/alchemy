@@ -288,7 +288,8 @@ void Summon_ShowLearnedMessage(s32 summon) {
   Sound_PlayFar(MUS_081);
   do
     wait(1);
-  while (Sound_GetBgmRestoreDelayFar() != 0 && (gInput.pressed & 0x303) == 0);
+  while (Sound_GetBgmRestoreDelayFar() != 0 &&
+         (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
   Window_Close(window, 2);
   wait(1);
 
@@ -325,7 +326,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
 #endif
   do
     wait(1);
-  while ((gInput.pressed & 0x303) == 0);
+  while ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
   Window_Close(window, 2);
   wait(1);
   VramCache_FreeEntry(resource);

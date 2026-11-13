@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "fixed_math.h"
 #include "gamepak/far_call/window.h"
 #include "module/field/event_commands.h"
 #include "module/field/field_sequence.h"
@@ -68,7 +69,7 @@ s32 Field_FindItemTrigger(s32 source) {
 
   while (trigger->control != -1) {
     s32 highValue = (s16)(u16)trigger->subject & 0xf000;
-    s16 hasFacing = (u16)trigger->subject & 0x0800;
+    s16 hasFacing = (u16)trigger->subject & TRIG_TURN / 32;
     s32 lowValue = (u16)trigger->subject & 0xff;
 
     if ((trigger->control & 0x0f) == 4 &&
@@ -246,7 +247,7 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
   flags = event->control;
   while (flags != -1) {
     s32 high = event->trigger & 0xf000;
-    s16 hasFacing = (u16)event->trigger & 0x800;
+    s16 hasFacing = (u16)event->trigger & TRIG_TURN / 32;
     s32 target = (u16)event->trigger & 0xff;
     s32 eventKind =
         ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
@@ -308,7 +309,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
   flags = event->control;
   while (flags != -1) {
     s32 high = event->trigger & 0xf000;
-    s16 hasFacing = (u16)event->trigger & 0x800;
+    s16 hasFacing = (u16)event->trigger & TRIG_TURN / 32;
     s32 target = (u16)event->trigger & 0xff;
     s32 eventKind =
         ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;

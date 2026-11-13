@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct Model;
@@ -164,7 +165,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
             screen.x >>= 1;
             width = shard->velocityZ;
             width += Trig_Sin(shard->velocityX) * width / 2 >> 16;
-            shard->velocityX += 0x400;
+            shard->velocityX += px(1) / 64;
             width *= 2;
             if ((u32)(width - 2) <= 61) {
               s32 cell = (width - 2) / 2;
@@ -205,7 +206,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
         texture.logHeight = 7;
         texture.pixels = gData_02014000;
         if (frame > 15) {
-          s32 scale = (frame << 12) - 0x10000;
+          s32 scale = (frame << 12) - Q16_ONE;
 
           if (scale > 0x1bd50) {
             scale = 0x1bd50;

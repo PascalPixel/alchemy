@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -114,10 +115,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
 
           Transform_Push();
           Transform_ApplyRoll((frame - start) << 10);
-          Transform_ApplyYaw(0x4000);
-          scale[0] = ((frame - start) << 12) + 0x1000;
-          if (scale[0] > 0x10000)
-            scale[0] = 0x10000;
+          Transform_ApplyYaw(TRIG_TURN / 4);
+          scale[0] = ((frame - start) << 12) + Q16_ONE / 16;
+          if (scale[0] > Q16_ONE)
+            scale[0] = Q16_ONE;
           scale[1] = scale[0];
           scale[2] = scale[0];
           SceneTransform_ApplyScale(scale);
@@ -160,9 +161,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         // target is thrown back 40 pixels and up, and flashes; the third ring
         // begins the results instead.
         if (frame == start + i + 10) {
-          target->acceleration = 0x20000;
-          target->speedLimit = 0x80000;
-          target->velocityY = 0x50000;
+          target->acceleration = px(2);
+          target->speedLimit = px(8);
+          target->velocityY = px(5);
           target->gravity = 0xab85;
           target->actionFlags = 0;
           Actor_StartIdleFar(target);

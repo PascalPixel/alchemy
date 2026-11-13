@@ -46,7 +46,7 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
       Shop_DrawCarriedItem(itemWindow, unitId, shop->selectedItem);
       redraw = 0;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
@@ -65,7 +65,7 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
       Party_AdjustShopCreditFar(-creditCost);
       Party_AdjustShopGiftsFar(1);
       break;
-    } else if (gInput.pressed & 2) {
+    } else if (gInput.pressed & KEY_B) {
       Shop_ShowKeeperMessageHidingCursor((s32)MsgDontWantIt);
       Sound_PlayFar(SE_MENU_CANCEL);
       break;

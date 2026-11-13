@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
@@ -20,9 +21,9 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     s32 percent = (Random16() & 63) + 130;
 
-    object->acceleration = 0x80000;
-    object->speedLimit = 0xa0000;
-    object->velocityY = 0x18000;
+    object->acceleration = px(8);
+    object->speedLimit = px(10);
+    object->velocityY = px(3) / 2;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
                            slot->anchorZ);
@@ -161,7 +162,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
     BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
 
     for (frame = 0; frame != SCENE_FRAMES; frame++) {
-      if ((gInput.repeat & 3) && frame > SKIP_FROM_FRAME &&
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > SKIP_FROM_FRAME &&
           frame < SKIP_TO_FRAME)
         frame = SKIP_TO_FRAME;
       if (frame == RESULTS_FRAME)
@@ -273,7 +274,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           if (frame > SPOUT_END_FRAME)
-            ember->velocityY += -0x8000;
+            ember->velocityY += -(px(1) / 2);
           else
             ember->velocityY += gData_08198974[k & 3];
           ember->velocityX = ember->velocityX * 62 / 64;
@@ -295,7 +296,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
                   BattleObject_GetFar(effect->actors[k])->object;
 
               BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
-              target->velocityY = 0x48000;
+              target->velocityY = px(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
@@ -826,7 +827,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   if (direction == 1) {
     struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
 
-    user->velocityY = 0xa0000;
+    user->velocityY = px(10);
     user->verticalMotionStrength = 0x91eb;
     BattleEffect_TintBattler(effect->actor, -1, 2, -1, 0);
     Sound_PlayFar(SE_CRASH);
@@ -989,10 +990,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       line = HEAT_LINES(base);
 
       if (mode == 1) {
-        if ((gInput.repeat & 3) && frame > 16)
+        if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
           break;
       } else {
-        if ((gInput.repeat & 3) && frame > 4)
+        if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 4)
           break;
       }
       {
@@ -1062,7 +1063,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         Render_ApplyProjectedPlacementFar(work->objects[1], position, &scale,
                                           0);
       } else {
-        size = angle + 0x10000;
+        size = angle + TRIG_TURN;
         scale.x = size;
         scale.y = size;
         position[0] = (x << 16) + 0x600000;
@@ -1076,7 +1077,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         struct EffectStep *mote = &work->particles[i];
 
         if (mote->variant == -1) {
-          s32 angle = (Random16() & 0x7fff) + 0x4000;
+          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           mote->variant = 0;
           mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / 65536 * size;
@@ -1091,7 +1092,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       point.depth = 0x2000000;
       Transform_Reset();
       SceneTransform_ApplyPosition(&point.x);
-      Transform_ApplyRoll(0x800);
+      Transform_ApplyRoll(TRIG_TURN / 32);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
         vector[0] = (gParticleStreams_OrbitPoints[i][0] / 2) << 16;

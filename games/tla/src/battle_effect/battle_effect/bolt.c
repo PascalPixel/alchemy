@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 
 #define BOLT_INTERVAL 8
 
@@ -89,7 +90,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           for (j = 0; j != gBolt_Counts[effect->variant * 4]; j++) {
             struct EffectStep *spark = &SPARKS[i * SPARKS_PER_TARGET + j];
             s32 speed = (Random16() & 0x1ff) + 64;
-            s32 angle = (Random16() & 0x7fff) - 0x4000;
+            s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
             spark->x = pos.x << 16;
             spark->y = GROUND_Y << 16;

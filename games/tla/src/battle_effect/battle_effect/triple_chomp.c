@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
@@ -165,9 +166,9 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
           if (effect->side == 0)
-            spark->velocityX += -0x8000;
+            spark->velocityX += -(px(1) / 2);
           else
-            spark->velocityX += 0x8000;
+            spark->velocityX += px(1) / 2;
           BITE_ANCHOR(i)->x = position.x;
           BITE_ANCHOR(i)->y = position.y - 24;
           spark->variant = (Random16() & 7) + 16;
@@ -186,18 +187,18 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
       if (frame >= gData_08199d94[i] && frame < gData_08199d94[i] + 16) {
         s32 age = frame - gData_08199d94[i];
         s32 alpha = 64 - age * 8;
-        s32 scale = age * 10192 + 0x4000;
+        s32 scale = age * 10192 + Q16_ONE / 4;
 
         if (alpha > 0)
           alpha = 0;
         if (alpha > -64) {
           model->alpha = alpha;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3((BITE_ANCHOR(i)->x - 128) << 16,
                                         (BITE_ANCHOR(i)->y - 64) << 16, 0);
-          Transform_ApplyRoll((i << 14) + 0x2000);
-          Transform_ApplyPitch(-0x1000);
+          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyPitch(-TRIG_TURN / 16);
           SceneTransform_ApplyUniformScale(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);

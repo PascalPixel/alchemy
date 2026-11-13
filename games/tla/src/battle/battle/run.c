@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "flag_call.h"
 #include "system/frame.h"
@@ -208,7 +209,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   result = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->unkd0[2], 0x7c8);
   Task_ResetAll();
-  transition->targetYaw = 0x2000;
+  transition->targetYaw = TRIG_TURN / 8;
   transition->frames = 0;
   transition->flag = 1;
   transition->unk18 = 0;

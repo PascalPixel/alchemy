@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -93,7 +94,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION_RESOURCE, 2);
 
     for (frame = 0; frame != 124; frame++) {
-      if ((gInput.repeat & 3) && frame > 32 && frame <= 97)
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
         BattlePlayback_StartFar(134);
@@ -205,7 +206,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
-            spark->velocityY += -0x8000;
+            spark->velocityY += -(px(1) / 2);
           else
             spark->velocityY += Data_08197998[k & 3];
           spark->velocityX = spark->velocityX * 62 / 64;
@@ -228,7 +229,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
                   BattleObject_GetFar(effect->actors[k])->object;
 
               BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
-              target->velocityY = 0x48000;
+              target->velocityY = px(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)

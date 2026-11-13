@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
@@ -138,7 +139,7 @@ void FieldPsynergy_Hover(void) {
     }
     player->motionFlags = 4;
     player->y = player->terrainHeight + 0x248000;
-    player->gravity = 0x30000;
+    player->gravity = px(3);
     gMainRoutineWork.renderMode = 10;
     work->fading = 1;
     event->glowHeld = 1;
@@ -182,7 +183,7 @@ void FieldPsynergy_EndHover(void) {
   object->bounce = 0;
   object->velocityY = 0;
   object->y = object->terrainHeight;
-  object->gravity = 0x10000;
+  object->gravity = px(1);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(92);
 }

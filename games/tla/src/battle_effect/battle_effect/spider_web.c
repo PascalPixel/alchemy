@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct AnimationEntry *AnimationObject_AllocateEmpty(void);
@@ -99,7 +100,7 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
     s32 col;
 
     shade = (Trig_Cos((radius << 14) / last) * 63) >> 16;
-    shade = shade * scale / 0x10000;
+    shade = shade * scale / (Q16_ONE);
 
     if (shade > 63)
       shade = 63;
@@ -133,7 +134,7 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
     s32 row;
 
     shade = (Trig_Cos((radius << 14) / last) * 63) >> 16;
-    shade = shade * scale / 0x10000;
+    shade = shade * scale / (Q16_ONE);
     if (shade > 63)
       shade = 63;
     while (x >= y) {
@@ -198,11 +199,11 @@ void Ulysses_MoveLastParticle(void) {
   work->particles[63].x += work->particles[63].velocityX;
   work->particles[63].y += work->particles[63].velocityY;
   if (work->frame <= 19)
-    work->particles[63].velocityY += 0x1000;
+    work->particles[63].velocityY += px(1) / 16;
   else
-    work->particles[63].velocityY -= 0x1000;
+    work->particles[63].velocityY -= px(1) / 16;
   if (work->frame > 11)
-    work->particles[63].velocityX += 0x1000;
+    work->particles[63].velocityX += px(1) / 16;
   Animation_ApplyChildArgumentFar__f15b3b0(work->objects[7],
                                            work->frame / 7 % 8 + 7);
   work->frame++;
@@ -451,7 +452,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 326; frame++) {
     struct EffectStep *step;
     draw = 1;
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       skip = 1;
     }
     // The listing masks the frame with draw (still 1) here, not a literal 1.
@@ -521,7 +522,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 92) <= 39) {
       s32 t = frame - 92;
-      s32 z = Trig_Cos(t * 800) / 3 + 0x10000;
+      s32 z = Trig_Cos(t * 800) / 3 + TRIG_TURN;
       s32 q16;
       s32 level = -1;
 
@@ -713,9 +714,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             step->velocityX = vx + 0x8000;
           }
           if (step->y <= 0x3bffff) {
-            step->velocityY += 0x8000;
+            step->velocityY += px(1) / 2;
           } else {
-            step->velocityY -= 0x8000;
+            step->velocityY -= px(1) / 2;
           }
           if (step->z >= 0) {
             step->z += (Trig_Sin(step->velocityZ) * 3 << 8) >> 16;
@@ -728,7 +729,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             texture.pixels = (u8 *)((u << 12) + (s32)portraits);
             Transform_Reset();
             SceneTransform_ApplyPosition3(mx, my, 0);
-            Transform_ApplyPitch(0xc000);
+            Transform_ApplyPitch(TRIG_TURN * 3 / 4);
             Transform_ApplyYaw(step->z);
             SceneTransform_ApplyUniformScale(s);
             Render_TransformVertices(gData_08199210, verts, 4);
@@ -820,7 +821,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
 
           Transform_Reset();
           SceneTransform_ApplyPosition3(0x80000, 0, 0);
-          Transform_ApplyPitch(0x4000);
+          Transform_ApplyPitch(TRIG_TURN / 4);
           if (j == 0) {
             sc = t * 3072 - 0x12000;
             if (t <= 39) {
@@ -1103,7 +1104,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     // Mode 1 throws the target up at frame 13; it lands at frame 65.
     if (mode == 1) {
       if (frame == 13) {
-        object->velocityY = 0xc0000;
+        object->velocityY = px(12);
         object->verticalMotionStrength = 0x7851;
         object->verticalMotionPhase = 0x4000;
       }

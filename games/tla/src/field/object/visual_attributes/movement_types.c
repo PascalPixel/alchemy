@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
@@ -337,9 +338,9 @@ s32 Field_TryJumpForward(void) {
     return result;
   if (gMainRoutineWork.renderMode == 3)
     return result;
-  if ((angle + 0x1000) & 0x2000) // not facing a quarter turn
+  if ((angle + TRIG_TURN / 16) & TRIG_TURN / 8) // not facing a quarter turn
     return result;
-  angle = (angle + 0x2000) & 0xc000;
+  angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.
@@ -425,9 +426,9 @@ again:
     wait(6);
     Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, 7);
-    leader->speedLimit = 0x30000;
-    leader->acceleration = 0x20000;
-    leader->velocityY = 0x40000;
+    leader->speedLimit = px(3);
+    leader->acceleration = px(2);
+    leader->velocityY = px(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner,
@@ -554,7 +555,7 @@ s32 Field_ClimbDown(void) {
 
     // Step to the middle of the tile, face north and climb down a tile.
     Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, gridX, gridZ);
-    leader->speedLimit = 0x10000;
+    leader->speedLimit = px(1);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
     Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
     leader->actionFlags = 1;
@@ -571,14 +572,14 @@ s32 Field_ClimbDown(void) {
     // Let go of the wall and fall.
     Actor_SelectAnimationFar(leader, 10);
     leader->motionFlags = 3;
-    leader->velocityY = 0x40000;
+    leader->velocityY = px(4);
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(6);
     gMainRoutineWork.renderMode = 0;
     leader->actionFlags = 1;
-    leader->facing = 0xc000;
+    leader->facing = TRIG_TURN * 3 / 4;
     leader->timer = 0;
     leader->unk66 = 0;
   }
@@ -640,12 +641,12 @@ s32 Field_ClimbUp(void) {
     Actor_SelectAnimationFar(leader, 6);
     wait(4);
     Actor_SelectAnimationFar(leader, 7);
-    leader->velocityY = 0x40000;
+    leader->velocityY = px(4);
     wait(4);
     leader->motionFlags = result;
     spriteFlags &= 0xfe;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
-    leader->speedLimit = 0x10000;
+    leader->speedLimit = px(1);
     leader->velocityY = result;
     Actor_SelectAnimationFar(leader, 12);
     wait(4);
@@ -740,9 +741,9 @@ s32 Leader_StepOntoRope(void) {
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
-  leader->acceleration = 0x10000;
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
+  leader->acceleration = px(1);
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
   leader->watchedObject = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
@@ -784,13 +785,13 @@ s32 Leader_StepOffRope(void) {
   leader->facing = angle;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
-  leader->scaleX = 0x10000;
+  leader->scaleX = Q16_ONE;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
-  leader->acceleration = 0x10000;
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
+  leader->acceleration = px(1);
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
@@ -845,9 +846,9 @@ s32 Leader_StepOntoTightrope(void) {
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
-  leader->acceleration = 0x10000;
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
+  leader->acceleration = px(1);
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
   leader->watchedObject = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
@@ -892,9 +893,9 @@ s32 Leader_StepOffTightrope(void) {
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
-  leader->acceleration = 0x10000;
-  leader->speedLimit = 0x20000;
-  leader->velocityY = 0x40000;
+  leader->acceleration = px(1);
+  leader->speedLimit = px(2);
+  leader->velocityY = px(4);
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);

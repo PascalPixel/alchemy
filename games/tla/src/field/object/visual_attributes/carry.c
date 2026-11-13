@@ -52,7 +52,7 @@ void FieldPsynergy_Carry(void) {
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
       obj->speedLimit = Random16() + 0x20000;
-      obj->acceleration = 0x20000;
+      obj->acceleration = px(2);
       obj->motionFlags = 0;
       dist = Random16() * 24 + 0x80000;
       Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
@@ -75,10 +75,10 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(278, x, y, z);
   if (object != NULL) {
-    object->scaleY = 0x4000;
-    object->scaleX = 0x4000;
-    object->speedLimit = 0x30000;
-    object->acceleration = 0x30000;
+    object->scaleY = Q16_ONE / 4;
+    object->scaleX = Q16_ONE / 4;
+    object->speedLimit = px(3);
+    object->acceleration = px(3);
     object->actionFlags = 0;
     Actor_SelectAnimationFar(object, 1);
     scale = object->scaleX;
@@ -87,7 +87,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
         scale += 0x800;
         object->scaleY = scale;
         object->scaleX = scale;
-        object->facing += 0x2000;
+        object->facing += TRIG_TURN / 8;
         wait(1);
         scale = object->scaleX;
       } while (scale <= 0xffff);

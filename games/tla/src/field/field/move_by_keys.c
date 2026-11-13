@@ -3,6 +3,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/field/field.h"
@@ -37,7 +38,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   u32 keys;
   s32 half;
 
-  object->acceleration = 0x4000;
+  object->acceleration = px(1) / 4;
   animation = 12;
   half = 0x8000;
   object->speedLimit = half;
@@ -66,9 +67,9 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
-      object->facing = 0xc000;
+      object->facing = TRIG_TURN * 3 / 4;
     if (deltaZ > 0)
-      object->facing = 0x4000;
+      object->facing = TRIG_TURN / 4;
     position.y = object->y - position.z;
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
@@ -143,8 +144,8 @@ s32 Actor_CrossRope(struct Actor *object) {
   rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
   speed = 0x10000;
   collisionFlags = 0;
-  object->speedLimit = 0x8000;
-  object->acceleration = 0x8000;
+  object->speedLimit = px(1) / 2;
+  object->acceleration = px(1) / 2;
   object->motionFlags = 0;
   angle = gWorldMap_KeyHeadings[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
@@ -272,8 +273,8 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   sprite = object->sprite;
   argument = 1;
   collisionFlags = 0;
-  object->speedLimit = 0x8000;
-  object->acceleration = 0x8000;
+  object->speedLimit = px(1) / 2;
+  object->acceleration = px(1) / 2;
   object->motionFlags = 0;
   angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {

@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
@@ -164,7 +165,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
           lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
           lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;
           draws[0](canvas, work->sheet, lineX, lineY, 1, 128);
-          angle += 0x1000;
+          angle += TRIG_TURN / 16;
         }
       }
     }
@@ -218,8 +219,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(quad->velocityX);
           Transform_ApplyRoll(quad->velocityZ);
-          quad->velocityX += 0x400;
-          quad->velocityZ += 0x400;
+          quad->velocityX += px(1) / 64;
+          quad->velocityZ += px(1) / 64;
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(job);
         }
@@ -348,7 +349,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
 
   for (frame = 0; frame != 200; frame++) {
-    if (gInput.repeat & 3) {
+    if (gInput.repeat & (KEY_A | KEY_B)) {
       skip = 1;
     }
     if (frame == 0) {
@@ -589,7 +590,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * Data_08197a98[k] * 125) << 4) + 0x8000;
+        scale = (((frame - start) * Data_08197a98[k] * 125) << 4) + Q16_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;

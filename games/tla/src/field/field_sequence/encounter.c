@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "flags.h"
 #include "field/encounter_zone.h"
 #include "gamepak/far_call/game.h"
 #include "module/field/field_sequence.h"
@@ -463,7 +464,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     }
   }
   if (music == 0) {
-    if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Get(0x8df))
+    if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Get(FLAG_SHIP_FLIES))
       music = 56;
     else if (Party_IsInFrontRow(4))
       music = 50;

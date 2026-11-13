@@ -132,7 +132,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_CAST);
     if (frame == 104)
       Sound_PlayFar(SE_CAST);
-    if ((gInput.repeat & 3) != 0 && frame > 16)
+    if ((gInput.repeat & (KEY_A | KEY_B)) != 0 && frame > 16)
       break;
 
     // The forest scrolls ever faster.

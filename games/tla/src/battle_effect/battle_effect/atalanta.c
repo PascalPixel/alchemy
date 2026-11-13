@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -126,7 +127,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   REG_BG2CNT = 0x784;
 
-  for (frame = 0; frame != 220 && !(gInput.repeat & 3); frame++) {
+  for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
     // The giant walks its path: two absolute words, then a step a frame.
     if (frame <= 209) {
       if (frame == 0) {
@@ -176,8 +177,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
-          slash->velocityX -= 0x10000;
-          slash->velocityY += 0x20000;
+          slash->velocityX -= px(1);
+          slash->velocityY += px(2);
           draw[0](canvas, work->sheet + SLASH_TOP, x + 4, y - 40, 16, 21);
           draw[0](canvas, work->sheet + SLASH_MIDDLE, x - 16, y - 19, 29, 35);
           draw[0](canvas, work->sheet + SLASH_BOTTOM, x - 20, y + 16, 21, 24);

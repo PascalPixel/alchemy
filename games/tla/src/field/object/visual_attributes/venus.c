@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/field/field.h"
 
@@ -61,8 +62,8 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     FieldParticle_SetCallback(slot, (void *)FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(slot, 7);
     Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
-    ((struct FieldParticle *)slot)->scaleX = 0x8000;
-    ((struct FieldParticle *)slot)->scaleY = Random16() + 0x18000;
+    ((struct FieldParticle *)slot)->scaleX = Q16_ONE / 2;
+    ((struct FieldParticle *)slot)->scaleY = Random16() + Q16_ONE * 3 / 2;
     remaining--;
     wait(1);
     slot += 72;
@@ -95,7 +96,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
                                                  position[2]);
     if (djinni != NULL) {
-      scale = Random16() / 3 + 0x10000;
+      scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->timer = 100;
@@ -122,7 +123,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     djinni->scaleY = 0x9999;
     djinni->scaleX = 0x9999;
     djinni->mode = 2;
-    djinni->gravity = 0x50000;
+    djinni->gravity = px(5);
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
     Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
@@ -192,8 +193,8 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->speed = Q16_ONE;
       effect->acceleration = 0;
       effect->maxSpeed = Random16() + 0x23333;
-      effect->scaleX = 0x8000;
-      effect->scaleY = 0x8000;
+      effect->scaleX = Q16_ONE / 2;
+      effect->scaleY = Q16_ONE / 2;
       Sound_PlayFar(SE_CRACK);
 
       if (*statePointer == 1)

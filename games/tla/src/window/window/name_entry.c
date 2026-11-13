@@ -380,7 +380,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       output->sprite.oam.x = output->x + gNameEntry_CaretWave[frame];
       output->sprite.oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
@@ -396,7 +396,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow *= NAME_REMOVE_ROW;
       }
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
@@ -413,7 +413,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow = NAME_PAGE_ROW;
       }
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
@@ -427,7 +427,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyColumn--;
       }
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
@@ -443,13 +443,13 @@ s32 NameEntry_EditMemberName(s32 member) {
           keyColumn = 0;
       }
     }
-    if (gInput.pressed & 8) {
+    if (gInput.pressed & KEY_START) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = NAME_FINISH_ROW;
     }
-    if (gInput.pressed & 4) {
+    if (gInput.pressed & KEY_SELECT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     turn_page:
       page ^= 1;
@@ -462,7 +462,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       render->dirty = 1;
       continue;
     }
-    if (gInput.repeat & 2) {
+    if (gInput.repeat & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
@@ -485,7 +485,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       textDirty = 1;
       continue;
     }
-    if (!(gInput.repeat & 1))
+    if (!(gInput.repeat & KEY_A))
       continue;
     Sound_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
@@ -666,7 +666,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       output->sprite.oam.x = output->x + gNameEntry_CaretWave[frame];
       output->sprite.oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
@@ -678,7 +678,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow = 5 - keyRow;
       }
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
@@ -690,7 +690,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyRow += 4;
       }
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
@@ -703,7 +703,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         keyColumn--;
       }
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
@@ -714,13 +714,13 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (keyColumn == NAME_COMMAND_COLUMN && (keyRow < 4 || keyRow > 5))
         keyColumn = 0;
     }
-    if (gInput.pressed & 8) {
+    if (gInput.pressed & KEY_START) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 5;
     }
-    if (gInput.repeat & 2) {
+    if (gInput.repeat & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
@@ -734,7 +734,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       result = -1;
       break;
     }
-    if (!(gInput.repeat & 1))
+    if (!(gInput.repeat & KEY_A))
       continue;
     Sound_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {

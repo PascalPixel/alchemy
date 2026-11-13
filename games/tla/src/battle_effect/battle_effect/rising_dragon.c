@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -279,7 +280,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           if (width > 32) {
             width = 32;
           }
-          width = width * scale / 0x10000;
+          width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
             struct StripVertex *corner = strip0 + (j * 2 + i);
@@ -311,7 +312,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           if (width > 24) {
             width = 24;
           }
-          width = width * scale / 0x10000;
+          width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
             struct StripVertex *strip1 =
@@ -354,12 +355,12 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3((source.x / 2 - 52) << 16,
                                           (source.y << 16) - 0x600000, 0);
           }
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (effect->side == 1) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
-          Transform_ApplyRoll(i * 14192 - 0x1000);
-          SceneTransform_ApplyUniformScale(0x40000);
+          Transform_ApplyRoll(i * 14192 - TRIG_TURN / 16);
+          SceneTransform_ApplyUniformScale(Q16_ONE * 4);
           Render_TransformVertices(strip0 + i * 66, vertices, 66);
           Render_DrawModelList(model);
           if (frame < i * 16 + 40) {

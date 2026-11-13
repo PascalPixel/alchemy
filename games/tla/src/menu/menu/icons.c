@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "../menu_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct ItemMenuBlocks {
@@ -133,19 +134,19 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   s32 old = *cursor;
   s32 pos = old;
 
-  if (input->repeat & 0x20) {
+  if (input->repeat & KEY_LEFT) {
     pos--;
     pos = (pos + count) % count;
   }
-  if (input->repeat & 0x10) {
+  if (input->repeat & KEY_RIGHT) {
     pos++;
     pos = (pos + count) % count;
   }
-  if (input->repeat & 0x40) {
+  if (input->repeat & KEY_UP) {
     if (pos - columns >= 0)
       pos -= columns;
   }
-  if (input->repeat & 0x80) {
+  if (input->repeat & KEY_DOWN) {
     if (pos + columns < (columns + count - 1) / columns * columns)
       pos += columns;
     if (pos > count - 1)
@@ -250,7 +251,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
         transform[2] = (menu->y[i] << 16) + top;
         transform[3] = 0;
         Render_ApplyProjectedPlacementAtDepthFar(menu->objects[i], transform,
-                                                 scale, 0x4000, 250);
+                                                 scale, Q16_ONE / 4, 250);
       }
     }
   }
@@ -467,7 +468,7 @@ void DjinnFigures_InitializeTopRow(void) {
     menu->objects[i] = object;
     menu->x[i] = 16;
     menu->y[i] = 200;
-    menu->scale[i] = 0x10000;
+    menu->scale[i] = Q16_ONE;
     menu->frame[i] = 0x4000;
   }
   menu->transformsActive = 1;

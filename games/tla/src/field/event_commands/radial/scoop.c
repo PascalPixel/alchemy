@@ -5,6 +5,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct Work080e6400 {
@@ -482,7 +483,7 @@ void FieldPsynergy_Scoop(void) {
   }
   if (work->mode == 0 || work->mode == 3) {
     wait(6);
-    work->other->scaleX = 0x10000;
+    work->other->scaleX = Q16_ONE;
     wait(4);
   } else {
     wait(10);
@@ -738,7 +739,7 @@ void Teleport_PlayWhirl(void) {
           sprite->x = position[0];
           sprite->y = position[2];
           EffectSprite_Draw(sprite);
-          spark->angle += 0x800;
+          spark->angle += TRIG_TURN / 32;
           spark->radius += -0x40000;
         }
         if (++spark->age == 20)
@@ -757,10 +758,10 @@ void Teleport_PlayWhirl(void) {
       }
       break;
     case 1:
-      object->facing += 0x2000;
+      object->facing += TRIG_TURN / 8;
       object->scaleX = (frame << 16) / 30;
-      if (object->scaleX > 0x10000)
-        object->scaleX = 0x10000;
+      if (object->scaleX > Q16_ONE)
+        object->scaleX = Q16_ONE;
       object->scaleY = object->scaleX;
       if (frame == 40) {
         state = 2;
@@ -769,7 +770,7 @@ void Teleport_PlayWhirl(void) {
       break;
     case 2:
       if (frame == 0) {
-        object->facing = 0x4000;
+        object->facing = TRIG_TURN / 4;
         Actor_SetSpriteFlagsFar(object, 1);
         count = 3;
       }
@@ -861,7 +862,7 @@ void Teleport_PlaySparks(void) {
   Sound_PlayFar(SE_SHIMMER);
   Actor_SelectAnimationFar(object, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
-    object->facing += spin + 0x1000;
+    object->facing += spin + TRIG_TURN / 16;
     wait(1);
   }
 
@@ -880,13 +881,13 @@ void Teleport_PlaySparks(void) {
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;
-        particle->velocityY = -0x40000;
+        particle->velocityY = -(px(4));
         particle->velocityZ = zero;
         Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
                               &work->particles[next].velocityX);
       } else {
         particle->velocityX = 0;
-        particle->velocityY = 0x50000;
+        particle->velocityY = px(5);
         particle->velocityZ = 0;
         Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
                               &work->particles[next].velocityX);
@@ -920,7 +921,7 @@ void Teleport_PlaySparks(void) {
     case 0:
       if (frame == 10)
         Sound_PlayFar(SE_KOLIMA_BRIDGE_POST);
-      object->facing += 0x2000;
+      object->facing += TRIG_TURN / 8;
       if (frame == 40)
         count = 3;
       if (frame == 50)
@@ -932,8 +933,8 @@ void Teleport_PlaySparks(void) {
       }
       break;
     case 1:
-      object->facing += 0x2000;
-      object->scaleX = 0x10000 - (frame << 16) / 30;
+      object->facing += TRIG_TURN / 8;
+      object->scaleX = Q16_ONE - (frame << 16) / 30;
       if (object->scaleX < 0)
         object->scaleX = 0;
       object->scaleY = object->scaleX;
@@ -1502,7 +1503,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
         pos[2] = timer;
         pos[1] = timer;
         pos[0] = timer;
-        Vector_AddPolarOffset(0x360000, sprite->angle + 0x2000, pos);
+        Vector_AddPolarOffset(0x360000, sprite->angle + TRIG_TURN / 8, pos);
         entry->x = pos[0];
         entry->y = pos[1] + 0x100000;
         entry->z = pos[2];

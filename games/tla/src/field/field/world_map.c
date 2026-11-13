@@ -497,8 +497,8 @@ void WorldMap_UpdateView(void) {
   cameraPosition[1] = 0;
   cameraPosition[2] = view->viewY;
   if (view->flat != 0) {
-    gBgScroll[1].x = shakeOffsetX / 0x10000;
-    gBgScroll[1].y = shakeOffsetY / 0x10000;
+    gBgScroll[1].x = shakeOffsetX / Q16_ONE;
+    gBgScroll[1].y = shakeOffsetY / Q16_ONE;
     return;
   }
   gCameraSceneParameters[3] = 120;

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
@@ -276,8 +277,8 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       scroll = -x;
       card.y--;
       scale += 0x400;
-      if (scale > 0x8000)
-        scale = 0x8000;
+      if (scale > Q16_ONE / 2)
+        scale = Q16_ONE / 2;
     }
 
     if (mode != CARD_SLEEP) {
@@ -287,7 +288,8 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
 
         for (i = 0; i != 160; i++)
           *line++ =
-              scroll - ((Trig_Sin((frame << 12) + i * 0x1000) << 2) >> 10);
+              scroll -
+              ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 16)) << 2) >> 10);
       } else {
         // The background steps to the smoke's colours, then the picture's;
         // from frame 48 the card dissolves in 16 random steps.
@@ -340,7 +342,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       model->texture = &texture;
       model->mesh = Data_081992b0;
       Transform_Reset();
-      SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
+      SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
       SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - (64 << 16),
                                     0);
       if (frame <= 47) {
@@ -351,14 +353,14 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyPitch((52 - frame) << 10);
       } else {
         if (effect->side == 0)
-          Transform_ApplyRoll(-0x1000);
+          Transform_ApplyRoll(-TRIG_TURN / 16);
         else
-          Transform_ApplyRoll(0x1000);
-        Transform_ApplyPitch(0x1000);
+          Transform_ApplyRoll(TRIG_TURN / 16);
+        Transform_ApplyPitch(TRIG_TURN / 16);
       }
       Transform_ApplyYaw(0x1770);
       SceneTransform_ApplyUniformScale(scale);
-      SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
+      SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(model);
       Heap_Release(model);

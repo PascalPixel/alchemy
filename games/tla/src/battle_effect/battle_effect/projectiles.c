@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // The packed preparer word: kind | side << 4 | anchor << 5.
@@ -1247,9 +1248,9 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObj *context = BattleObject_GetFar(slot);
   struct Actor *object = context->object;
 
-  object->acceleration = 0x20000;
-  object->speedLimit = 0x80000;
-  object->velocityY = 0x40000;
+  object->acceleration = px(2);
+  object->speedLimit = px(8);
+  object->velocityY = px(4);
   object->gravity = 0xAB85;
   object->bounce = 0;
   object->actionFlags = 0;

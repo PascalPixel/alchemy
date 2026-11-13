@@ -3,6 +3,7 @@
 /// order.
 
 #include "battle/battle.h"
+#include "system/io_reg.h"
 #include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -78,9 +79,9 @@ wait:
     wait(1);
   }
   frames = 0;
-  if (input->held & 2)
+  if (input->held & KEY_B)
     goto done;
-  if (!(input->held & 1))
+  if (!(input->held & KEY_A))
     goto hold;
   goto next;
 hold:
@@ -89,9 +90,9 @@ hold:
   if (frames > 9)
     goto next;
   input = (volatile struct InputState *)&gInput;
-  if (input->held & 2)
+  if (input->held & KEY_B)
     goto done;
-  if (!(input->held & 1))
+  if (!(input->held & KEY_A))
     goto hold;
 next:
   message++;
@@ -616,17 +617,17 @@ void Func_02000748(void) {
       Text_DrawNumberInWindow(unit[15], 0, window, 72, 48);
     }
     wait(1);
-    if ((gInput.pressed & 8) || (gInput.pressed & 4)) {
+    if ((gInput.pressed & KEY_START) || (gInput.pressed & KEY_SELECT)) {
       Func_02000704(5);
       Sound_Play(MUS_093);
       redraw = 1;
     }
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       Func_02000704(1);
       Sound_Play(MUS_091);
       redraw = 1;
     }
-    if (gInput.pressed & 2)
+    if (gInput.pressed & KEY_B)
       break;
   }
   Sound_Play(SE_MENU_CANCEL);
@@ -686,48 +687,48 @@ void Func_02000848(void) {
       }
     }
     wait(1);
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       if (PartyInventory_Add(item) == -1) {
         Sound_Play(SE_MENU_CANCEL);
         break;
       }
       Sound_Play(SE_NOTE_HIGH);
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_Play(SE_MENU_CANCEL);
       break;
     }
-    if (gInput.repeat & 0x80) {
+    if (gInput.repeat & KEY_DOWN) {
       step = 1;
       item++;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x40) {
+    if (gInput.repeat & KEY_UP) {
       step = -1;
       item--;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       step = 1;
       item += 10;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       step = -1;
       item -= 10;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x100) {
+    if (gInput.repeat & KEY_R) {
       step = 1;
       item += 30;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    if (gInput.repeat & 0x200) {
+    if (gInput.repeat & KEY_L) {
       step = -1;
       item -= 30;
       redraw = 1;
@@ -818,7 +819,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
@@ -826,7 +827,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
         scale = object->scaleX + 0x51e;
         {
           /* FAKEMATCH(temporary): the turn is added as a word. */
-          s32 angle = object->facing + 0x1000;
+          s32 angle = object->facing + TRIG_TURN / 16;
 
           object->facing = angle;
         }
@@ -836,7 +837,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x8000;
+          Actor_GetById(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }

@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 
 /* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c;
  * effect_sprite.h has another definition; tried with the definition the rest of
@@ -96,8 +97,8 @@ void Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   sprite->color = 1;
   sprite->palette = 0;
   if (event->controlMode == 3) {
-    sprite->scaleX = 0xc000;
-    sprite->scaleY = 0xc000;
+    sprite->scaleX = Q16_ONE * 3 / 4;
+    sprite->scaleY = Q16_ONE * 3 / 4;
   } else {
     sprite->scaleX = scene->mainObject->scaleX;
     sprite->scaleY = scene->mainObject->scaleY;

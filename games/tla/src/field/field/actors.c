@@ -292,17 +292,17 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
   if (object != NULL) {
     Actor_SetPositionAndResetMotion(object, x, y, z);
     object->script = (s32 *)gActorScript_EndScript;
-    object->speedLimit = 0x20000;
+    object->speedLimit = px(2);
     object->step = 0;
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
-    object->acceleration = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
+    object->acceleration = px(1);
     object->motionFlags = 3;
-    object->gravity = 0x10000;
+    object->gravity = px(1);
     object->bounce = 0x4000;
     object->collisionFlags = 0;
     object->actionFlags = 1;
-    object->facing = 0x4000;
+    object->facing = TRIG_TURN / 4;
     object->unk4c = 0;
     object->timer = x / 65536;
     object->unk66 = z / 65536;
@@ -497,8 +497,8 @@ void Actor_StartIdle(struct Actor *object) {
 void Actor_StartCamera(struct Actor *object, struct Actor *watched) {
   Actor_StartScript(object, gActor_CameraScript);
   if (watched != NULL) {
-    object->acceleration = 0x8000;
-    object->speedLimit = 0x40000;
+    object->acceleration = px(1) / 2;
+    object->speedLimit = px(4);
     object->watchedObject = watched;
     object->timer = 0;
   }

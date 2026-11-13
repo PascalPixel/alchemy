@@ -168,7 +168,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // A or B skips the vines to the drop.
-    if ((gInput.repeat & 3) != 0 && frame > 190 && frame <= 285) {
+    if ((gInput.repeat & (KEY_A | KEY_B)) != 0 && frame > 190 && frame <= 285) {
       Iwram_ClearWordsEntry(canvas, 0x4000);
       frame = 286;
     }
@@ -313,7 +313,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
                   gCybele_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
-          chip->velocityY += 0x4000;
+          chip->velocityY += px(1) / 4;
           if ((chip->y < 0 || chip->y > 120 << 16) && frame <= 159) {
             chip->x = (Random16() % 96) << 16;
             chip->y = ((Random16() & 7) + 88) << 16;

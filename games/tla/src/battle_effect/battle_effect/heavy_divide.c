@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct FxPartyList;
@@ -190,9 +191,9 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (size > 0) {
         if (frame > 38) {
-          angle = 0x4000 - Trig_Sin((frame << 9) - 0x4e00) / 16;
+          angle = TRIG_TURN / 4 - Trig_Sin((frame << 9) - 0x4e00) / 16;
         } else if (frame > 15) {
-          angle = (0x10000 - Trig_Cos((frame << 9) - 0x2000)) / 2;
+          angle = (TRIG_TURN - Trig_Cos((frame << 9) - TRIG_TURN / 8)) / 2;
         } else {
           angle = 0;
         }
@@ -215,16 +216,16 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
           Transform_Reset();
           SceneTransform_ApplyPosition3((source.x / 2 - 64) << 16,
                                         (source.y - 88) << 16, 0);
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (effect->side == 0) {
-            Transform_ApplyRoll(0x8000 - step->variant);
+            Transform_ApplyRoll(TRIG_TURN / 2 - step->variant);
           } else {
-            Transform_ApplyRoll(step->variant + 0x8000);
+            Transform_ApplyRoll(step->variant + TRIG_TURN / 2);
           }
           SceneTransform_ApplyPosition3(0, 0xfff00000, 0);
           SceneTransform_ApplyScale3(size << 15, size * 13192, size << 13);
           if (effect->side == 0) {
-            Transform_ApplyYaw(0x8000);
+            Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Render_TransformVertices(Data_081991c0, vertices, 4);
           Render_DrawModelList(model);
@@ -242,9 +243,9 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
           work->particles[i].velocityY = (target.y - source.y) << 11;
           work->particles[i].z = zero;
           if (effect->side == 0) {
-            work->particles[i].velocityZ = -0x1000;
+            work->particles[i].velocityZ = -(px(1) / 16);
           } else {
-            work->particles[i].velocityZ = 0x1000;
+            work->particles[i].velocityZ = px(1) / 16;
           }
         }
       }
@@ -255,10 +256,10 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(work->particles[0].x - 0x400000,
                                       work->particles[0].y - 0x400000, 0);
-        SceneTransform_ApplyScale3(scale >> 1, scale, 0x8000);
+        SceneTransform_ApplyScale3(scale >> 1, scale, Q16_ONE / 2);
         Transform_ApplyRoll(work->particles[0].z);
         if (effect->side == 0) {
-          Transform_ApplyYaw(0x8000);
+          Transform_ApplyYaw(TRIG_TURN / 2);
         }
         Render_TransformVertices(Data_081991e0, vertices, 4);
         Render_DrawModelList(model);
@@ -734,7 +735,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       Transform_Reset();
       SceneTransform_ApplyPosition3(last->x - 0x400000, last->y - 0x400000, 0);
       SceneTransform_ApplyScale3(scale * 2, scale, scale * 2);
-      Transform_ApplyPitch(-0x2000);
+      Transform_ApplyPitch(-TRIG_TURN / 8);
       Render_TransformVertices(gData_08199210, vertices, 4);
       Render_DrawModelList(model);
     }
@@ -759,7 +760,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       Transform_Reset();
       SceneTransform_ApplyPosition3(drop->x - 0x400000, drop->y - 0x300000, 0);
       SceneTransform_ApplyScale3(splash >> 1, splash, splash >> 1);
-      Transform_ApplyPitch(-0x4000);
+      Transform_ApplyPitch(-TRIG_TURN / 4);
       Render_TransformVertices(gData_08199210, vertices, 4);
       Render_DrawModelList(model);
       BattleEffectKernels_IntegrateVector2(drop, 60, -0x8000);

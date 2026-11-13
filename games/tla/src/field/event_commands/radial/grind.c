@@ -3,6 +3,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 struct SplashParticle {
@@ -168,7 +169,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     for (i = 0; i < spraying; i++) {
       angle = Random16();
       if (mode == 2)
-        angle = ((Random16() * 10) >> 4) - 0x1000;
+        angle = ((Random16() * 10) >> 4) - TRIG_TURN / 16;
       sprite = &work->sprites[next];
       particle = &work->particles[next];
       if (child != NULL) {
@@ -446,7 +447,7 @@ void HoverGlow_Update(void) {
       level = GLOW_FULL;
     if (level < 0)
       level = 0;
-    work->scale = (level << 15) / GLOW_FULL + 0x8000;
+    work->scale = (level << 15) / GLOW_FULL + Q16_ONE / 2;
     if (level == 0)
       event->cue = GLOW_SPENT_CUE;
   }

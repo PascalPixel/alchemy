@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
@@ -177,7 +178,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
 
           spark->x = target.x << 15;
           spark->y = 96 << 16;
-          angle = Random16() % 0xc000 + 0x2000;
+          angle = Random16() % (TRIG_TURN * 3 / 4) + TRIG_TURN / 8;
           force = Random16() & 127;
           spark->velocityX = (Trig_Sin(angle) * force) >> 4;
           spark->velocityY = (Trig_Cos(angle) * force) >> 3;
@@ -244,18 +245,18 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         s32 height = frame * 2 - 96;
         s32 alpha = 0;
 
-        scale = (frame << 13) - 0x20000;
+        scale = (frame << 13) - Q16_ONE * 2;
         if (height > -48)
           height = -48;
         if (frame >= effect->variant * 16 + 60)
           // Spelled with + -240 so that the negation is not folded into 240 -
           // x.
           alpha = -((frame - effect->variant * 16) * 4 + -240);
-        if (scale > 0x20000)
-          scale = 0x20000;
+        if (scale > Q16_ONE * 2)
+          scale = Q16_ONE * 2;
         model->alpha = alpha;
         Transform_Reset();
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         SceneTransform_ApplyPosition3((start.x - 128) << 16, height << 16, 0);
         Transform_ApplyPitch(0x5900);
         if (effect->side == 0)
@@ -264,7 +265,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           Transform_ApplyYaw(-0x1900);
         Transform_ApplyRoll(frame << 9);
         SceneTransform_ApplyUniformScale(scale);
-        SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
+        SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
         Render_TransformVertices(Data_081991e0, vertices, 4);
         Render_DrawModelList(model);
       }
@@ -279,10 +280,10 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           if (alpha > 0)
             alpha = 0;
           if (alpha > -64) {
-            scale = age * 12384 + 0x8000;
+            scale = age * 12384 + Q16_ONE / 2;
             model->alpha = alpha;
             Transform_Reset();
-            SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+            SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             SceneTransform_ApplyPosition3((start.x - 128) << 16, -48 << 16, 0);
             Transform_ApplyPitch(0x5900);
             if (effect->side == 0)
@@ -306,15 +307,15 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         for (i = 0; i != 8; i++) {
           model->alpha = 0;
           Transform_Reset();
-          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3((start.x - 128) << 16, -80 << 16, 0);
           Transform_ApplyPitch(0x47d0);
           Transform_ApplyRoll((frame + i * 16) << 9);
-          scale = (frame << 12) - 0x4000;
-          if (scale > 0x10000)
-            scale = 0x10000;
+          scale = (frame << 12) - Q16_ONE / 4;
+          if (scale > Q16_ONE)
+            scale = Q16_ONE;
           if (frame > 31)
-            scale = 0x30000 - (frame << 12);
+            scale = Q16_ONE * 3 - (frame << 12);
           SceneTransform_ApplyScale3(
               0x8000, 0x10000,
               (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
@@ -476,7 +477,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       REG_BLDCNT = 0;
       work->transferMode = 1;
       work->transferValue = 0;
-      scale = 0x4000;
+      scale = Q16_ONE / 4;
     }
 
     // The card rises and grows for 48 frames, and from frame 96 rises
@@ -484,8 +485,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     if (frame <= 47) {
       card.y--;
       scale += 0x200;
-      if (scale > 0x8000)
-        scale = 0x8000;
+      if (scale > Q16_ONE / 2)
+        scale = Q16_ONE / 2;
     }
     if (frame > 95) {
       scale += -0x200;
@@ -631,7 +632,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
 
               spark->x = aim.x << 15;
               spark->y = (aim.y + 8) << 16;
-              angle = Random16() % 0xc000 + 0x2000;
+              angle = Random16() % (TRIG_TURN * 3 / 4) + TRIG_TURN / 8;
               force = Random16() & 127;
               spark->velocityX = (Trig_Sin(angle) * force) >> 5;
               spark->velocityY = (Trig_Cos(angle) * force) >> 4;
@@ -661,7 +662,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.
       Transform_Reset();
-      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       SceneTransform_ApplyPosition3((card.x << 16) - (128 << 16),
                                     (card.y << 16) - (64 << 16), 0);
       if (frame <= 47) {
@@ -674,11 +675,11 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       Transform_ApplyYaw(0x1770);
       Transform_ApplyRoll(frame << 10);
       SceneTransform_ApplyUniformScale(scale);
-      SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
+      SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
-        SceneTransform_ApplyUniformScale(0x4000);
+        SceneTransform_ApplyUniformScale(Q16_ONE / 4);
         Render_TransformVertices(Data_081991e0, vertices, 4);
       }
     }
@@ -741,9 +742,9 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
         Transform_Reset();
         SceneTransform_ApplyPosition3((step->x - 60) << 16,
                                       (step->y - 64) << 16, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (effect->side == 1)
-          Transform_ApplyYaw(0x8000);
+          Transform_ApplyYaw(TRIG_TURN / 2);
         Transform_ApplyRoll(step->velocityZ);
         if (mode == CARD_BRAMBLE) {
           s32 length = (frame << 13) - 0x60000;
@@ -752,9 +753,9 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
             length = 0x20000;
           if (frame > 95)
             length = length - (frame << 13) + 0xc0000;
-          SceneTransform_ApplyScale3(0x40000, length, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 4, length, Q16_ONE);
         } else {
-          SceneTransform_ApplyScale3(0x20000, 0x20000, 0x10000);
+          SceneTransform_ApplyScale3(Q16_ONE * 2, Q16_ONE * 2, Q16_ONE);
         }
         Render_TransformVertices(Data_081991c0, vertices, 4);
         Render_DrawModelList(model);

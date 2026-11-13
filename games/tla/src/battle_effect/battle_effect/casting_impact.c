@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // Steps the 64 background colours one shade toward the resource's palette.
@@ -1165,7 +1166,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           s32 x;
           for (i = 0; i != 4; i++) {
             s32 m;
-            angle = frame * 1848 + i * 0x4000;
+            angle = frame * 1848 + i * (TRIG_TURN / 4);
             m = ((frame + i * 3) / 2) & 3;
             x = target[0] / 2 + ((Trig_Sin(angle) << 5) >> 16);
             // DEAD: the cosine is computed and dropped; the source keeps the
@@ -1949,7 +1950,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                                             (target[1] - 64) << 16, 0);
               Transform_ApplyRoll(p->z);
               p->z += p->vz;
-              SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
+              SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
               Render_TransformVertices(gData_081991b0, matrix, 4);
               Render_DrawModelList(model);
             }
@@ -1979,17 +1980,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         Transform_Reset();
         SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                       (target[1] - 64) << 16, 0);
-        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (frame == 8)
           Sound_PlayFar(SE_104);
         if (fade >= -63) {
           fade = frame << 12;
           if (kind == 82) {
-            Transform_ApplyPitch(-0x800);
+            Transform_ApplyPitch(-TRIG_TURN / 32);
             Transform_ApplyYaw(-frame << 11);
             Transform_ApplyPitch(-frame << 4);
           } else {
-            Transform_ApplyPitch(-0x1000);
+            Transform_ApplyPitch(-TRIG_TURN / 16);
             Transform_ApplyYaw(frame << 11);
           }
           SceneTransform_ApplyUniformScale(fade);
@@ -1997,7 +1998,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Render_DrawModelList(model);
           if (kind != 82) {
             Transform_ApplyYaw(-frame << 12);
-            SceneTransform_ApplyUniformScale(0x8000);
+            SceneTransform_ApplyUniformScale(Q16_ONE / 2);
             Render_TransformVertices(gData_08199210, matrix, 4);
             Render_DrawModelList(model);
           }
@@ -2045,9 +2046,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 Transform_Reset();
                 SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                               (target[1] - 64) << 16, 0);
-                SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-                Transform_ApplyRoll((i << 14) + 0x2000);
-                Transform_ApplyPitch(-0x1000);
+                SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyPitch(-TRIG_TURN / 16);
                 SceneTransform_ApplyUniformScale(angle >> 1);
                 Render_TransformVertices(gData_08199210, matrix, 4);
                 Render_DrawModelList(model);
@@ -2068,8 +2069,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               Transform_Reset();
               SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                             (target[1] - 64) << 16, 0);
-              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-              Transform_ApplyPitch(0x4000);
+              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+              Transform_ApplyPitch(TRIG_TURN / 4);
               SceneTransform_ApplyUniformScale(angle);
               Render_TransformVertices(gData_08199210, matrix, 4);
               Render_DrawModelList(model);
@@ -2088,9 +2089,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 Transform_Reset();
                 SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
                                               (target[1] - 64) << 16, 0);
-                SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-                Transform_ApplyRoll((i << 14) + 0x2000);
-                Transform_ApplyPitch(-0x1000);
+                SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyPitch(-TRIG_TURN / 16);
                 SceneTransform_ApplyUniformScale(t * 3 << 12);
                 Render_TransformVertices(gData_08199210, matrix, 4);
                 Render_DrawModelList(model);
@@ -2158,7 +2159,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             Transform_Reset();
             SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16, 0x280000,
                                           0);
-            SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
+            SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyPitch(1000);
             SceneTransform_ApplyUniformScale(angle);
             Render_TransformVertices(gData_08199210, matrix, 4);
@@ -2221,7 +2222,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             if (fade > -16)
               fade = -16;
             if (fade > -64) {
-              scale = (frame - start) * gData_08198962[i] * 2000 + 0x4000;
+              scale = (frame - start) * gData_08198962[i] * 2000 + Q16_ONE / 4;
               model->fade = fade;
               Transform_Reset();
               SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
@@ -2407,7 +2408,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         drawFuncs.draw[1](screen, buffer + 0x3c56, point[0] - 10, point[1] - 4,
                           20, 40);
         if (frame == 23)
-          (BattleObject_GetFar(action->actor)->object)->velocityY = 0x30000;
+          (BattleObject_GetFar(action->actor)->object)->velocityY = px(3);
         if (frame > 19)
           origin[1] += 0x40000;
         if (frame == 23) {

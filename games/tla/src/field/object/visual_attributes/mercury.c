@@ -4,6 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/shop.h"
 #include "module/field/event_commands.h"
@@ -223,7 +224,8 @@ void Rope_Draw(void) {
         s32 depth;
         s32 screenY;
 
-        angle = ((u16)ArcTan2(prevX - x, (z - prevZ) + (prevY - y)) + 0x4000) &
+        angle = ((u16)ArcTan2(prevX - x, (z - prevZ) + (prevY - y)) +
+                 TRIG_TURN / 4) &
                 0xffff;
         screenX = (prevX + x) / 2 - viewX;
         // prevY is reused for the midpoint's height, then its depth key; a
@@ -392,7 +394,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
       result = -1;
       break;
     }
-    bow = Iwram_MulQ16(Trig_Sin((i << 16) / count), 0x10000);
+    bow = Iwram_MulQ16(Trig_Sin((i << 16) / count), TRIG_TURN);
     node->x = x1 + i * dx / count + Iwram_MulQ16(bow, cos);
     node->y = y1 + i * dy / count + Iwram_MulQ16(bow, sin);
     node->z = z1 + i * dz / count;

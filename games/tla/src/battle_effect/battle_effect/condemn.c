@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
@@ -136,7 +137,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     angle = frame << 11;
     for (; i != 160; i++) {
       *scanline++ = rowBase - ((Trig_Sin(angle) * amp) >> 10);
-      angle += 0x800;
+      angle += TRIG_TURN / 32;
     }
 
     // The image, then from frame 72 its panels, each shown for two frames.

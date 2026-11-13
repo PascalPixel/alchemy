@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
@@ -248,7 +249,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       vertices = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       if (frame > 55) {
-        s32 scale = ((frame - 56) << 13) + 0x4000;
+        s32 scale = ((frame - 56) << 13) + Q16_ONE / 4;
         s32 alpha = 0;
 
         if (frame > 63)
@@ -264,13 +265,14 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
           model->vertices = vertices;
           texture.pixels = pixels;
           model->alpha = alpha;
-          for (i = 0, angle = 0x2000; i != 2; angle += 0x4000, i++) {
+          for (i = 0, angle = TRIG_TURN / 8; i != 2;
+               angle += TRIG_TURN / 4, i++) {
             Transform_Reset();
             SceneTransform_ApplyPosition3((targetScreen.x / 2 - 64) << 16,
                                           32 << 16, 0);
             SceneTransform_ApplyScale3(scale, scale, scale);
             Transform_ApplyRoll(angle);
-            Transform_ApplyPitch(-0x1000);
+            Transform_ApplyPitch(-TRIG_TURN / 16);
             Render_TransformVertices(gData_08199210, vertices, 4);
             Render_DrawModelList(model);
           }

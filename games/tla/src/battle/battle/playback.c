@@ -258,7 +258,8 @@ void BattlePlayback_Run(void) {
       // The held keys reread through a volatile pointer for the last test, a
       // load apart from the B test's; as gInput.held, 16 of 844 instructions
       // differ in tla-en.
-      if ((gInput.held & 2) || (gInput.pendingPressed & 0x303) ||
+      if ((gInput.held & KEY_B) ||
+          (gInput.pendingPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;

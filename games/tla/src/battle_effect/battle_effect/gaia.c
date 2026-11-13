@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 
 #undef ROCK_COUNT
@@ -192,7 +193,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     rock->z = (Random16() & 15) + 2;
     rock->velocityX = i;
     rock->velocityY = 1;
-    rock->velocityZ = 0x8000;
+    rock->velocityZ = px(1) / 2;
     rock->variant = 44 - i * 4;
   }
   for (i = 0; i != 6; i++)
@@ -311,10 +312,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
         if (rock->variant == 0) {
           scale = Data_08196e44;
           if (frame > 71) {
-            scale.x = (k << 12) + 0x8000;
+            scale.x = (k << 12) + Q16_ONE / 2;
             scale.x += effect->variant << 14;
           } else {
-            scale.x = 0x8000;
+            scale.x = Q16_ONE / 2;
           }
           scale.y = scale.x;
           position[3] = 0;

@@ -390,7 +390,7 @@ void Rope_DebugSwing(struct Actor *object) {
 
   parts[22] = 253;
   parts[23] = 12;
-  if (gInput.repeat & 0x200)
+  if (gInput.repeat & KEY_L)
     gRope_DebugSwinging = 1;
   if (gRope_DebugSwinging != 0)
     Rope_SwingBetween(0, 12, 13, 0);
@@ -1029,7 +1029,7 @@ void Tightrope_DebugSwing(struct Actor *object) {
 
   parts[22] = 253;
   parts[23] = 12;
-  if (gInput.repeat & 0x200)
+  if (gInput.repeat & KEY_L)
     gTightrope_DebugSwinging = 1;
   if (gTightrope_DebugSwinging != 0)
     Tightrope_WobbleBetween(0, 12, 13, 0);

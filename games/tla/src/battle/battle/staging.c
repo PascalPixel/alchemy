@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
@@ -192,7 +193,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     Projection_Set(param, ratio, 0x7fff0000);
   }
   if (delay != 0) {
-    view->targetYaw = 0x2000;
+    view->targetYaw = TRIG_TURN / 8;
     wait(delay);
   }
   if (request->command == 10) {
@@ -380,7 +381,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 partyMode = 0;
 
   completed = 0;
-  presentation->targetYaw = 0x2000;
+  presentation->targetYaw = TRIG_TURN / 8;
   presentation->active = 1;
   BattleHighlight_SetModes(0, 0);
 
@@ -443,7 +444,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
 
     if (actor <= 7)
-      view->targetYaw = 0x2000;
+      view->targetYaw = TRIG_TURN / 8;
     else
       view->targetYaw = 0x5000;
     view->frames = 60;
@@ -451,9 +452,9 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
     s32 yaw;
 
-    yaw = -0x2000;
+    yaw = -TRIG_TURN / 8;
     if (actor <= 7)
-      yaw = 0x2000;
+      yaw = TRIG_TURN / 8;
     if (view->targetYaw != yaw)
       view->targetYaw = yaw;
   }

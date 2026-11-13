@@ -66,27 +66,6 @@
 /// and a passage. The switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
 ///
-/// Scene temp flags:
-/// - FLAG_LUNPA_FORTRESS_PARTY_SPOTTED: a guard has spotted the party.
-///   FLAG_SCENE_TEMP_15 is set beside it and never read.
-/// - FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY and
-///   FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY: LunpaFortressCave's first and
-///   second switches are still hidden by their ivy.
-/// - FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY and
-///   FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY: the entrance guard or the
-///   sentries have thrown the party out.
-/// - FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE and
-///   FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED: the startled old man has promised to
-///   keep quiet, and has been startled.
-/// - FLAG_LUNPA_FORTRESS_FINDING_HAMMET: LunpaFortress_FindHammet is under way.
-///
-/// Map-section temp flags:
-/// - FLAG_LUNPA_FORTRESS_DODONPA_JUDGED: Donpa has judged Dodonpa.
-/// - FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA: his attendant has told of
-///   him.
-/// - FLAG_LUNPA_FORTRESS_REWARD_SHOWN: she has shown his reward.
-/// - FLAG_AREA_TEMP_50 to FLAG_AREA_TEMP_5C: the opened cell doors.
-///
 /// Unused: four item pickups that set out an Arctic Blade, a Masamune, a Silver
 /// Blade and a Shamshir on LunpaFortressGroundFloor's first four rows, and
 /// copies of West Lunpa Cave's exits and actor placements, which these
@@ -335,7 +314,8 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 /// Donpa's attendant has shown the party his reward, Tonic, and stands beside
 /// it.
 #define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_AREA_TEMP_14
-/// A guard has spotted the party.
+/// A guard has spotted the party. FLAG_SCENE_TEMP_15 is set beside it and never
+/// read.
 #define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_SCENE_TEMP_14
 /// LunpaFortressCave's first switch is still hidden by its ivy.
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_SCENE_TEMP_17

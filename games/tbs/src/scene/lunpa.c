@@ -29,12 +29,6 @@
 /// Searching the switch opens the passage to the hidden room. The passage can
 /// be walked through only while Reveal shows it (Lunpa_EnterHiddenPassage).
 ///
-/// The town's scene temp flags:
-///
-/// - FLAG_LUNPA_PUDDLE_FROZEN: Frost has frozen the puddle.
-/// - FLAG_LUNPA_SECRETS_HIDDEN: the secrets are hidden, Reveal not shining.
-/// - FLAG_LUNPA_HIDDEN_PASSAGE_OPEN: the switch has opened the passage.
-///
 /// At the gates, stepping uncloaked on the ground before the guards
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND) brings them in front of
 /// the door. An uncloaked leader among them, or one still among them as Cloak
@@ -52,17 +46,6 @@
 /// Between Donpa's judgment and the reunion in West Lunpa Cave
 /// (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
-///
-/// The gates' scene temp flags:
-///
-/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR: the guards stand before the
-///   door.
-/// - FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST: Cloak has been cast at the gates.
-/// - FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS: the leader is going through
-///   the fortress door.
-/// - FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING: Garet's warning is under way.
-/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY: the guards are marching
-///   the party down.
 
 #include "main_routine_work.h"
 #include "module/scene/lunpa.h"

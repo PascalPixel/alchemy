@@ -121,7 +121,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_0200008c(void) {
+/// Sunshine the blacksmith thinks of the swamp he cannot reach without rain,
+/// and once the party has had him forge, of his joy at working (flag 0x301).
+s32 YallamInteriors_MindReadSunshine(void) {
   s32 t2;
 
   Event_Start();
@@ -137,7 +139,7 @@ s32 Func_0200008c(void) {
   return 0;
 }
 
-s32 Func_020000cc(void) {
+s32 YallamInteriors_MindReadSunshinesWife(void) {
   s32 t2;
 
   Event_Start();
@@ -153,7 +155,7 @@ s32 Func_020000cc(void) {
   return 0;
 }
 
-s32 Func_0200010c(void) {
+s32 YallamInteriors_MindReadSunshinesChild(void) {
   s32 t2;
 
   Event_Start();
@@ -169,7 +171,9 @@ s32 Func_0200010c(void) {
   return 0;
 }
 
-s32 Func_0200014c(void) {
+/// "Dad's not doing any work right now, but I'm making some basic things for
+/// the villagers."
+s32 YallamInteriors_TalkToSunshinesChild(void) {
   s32 t2;
 
   Event_Start();
@@ -185,7 +189,7 @@ s32 Func_0200014c(void) {
   return 0;
 }
 
-s32 Func_0200018c(void) {
+s32 YallamInteriors_MindReadWeaponMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors22);
@@ -194,7 +198,7 @@ s32 Func_0200018c(void) {
   return 0;
 }
 
-s32 Func_020001b4(void) {
+s32 YallamInteriors_MindReadArmorMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors24);
@@ -203,7 +207,7 @@ s32 Func_020001b4(void) {
   return 0;
 }
 
-s32 Func_020001dc(void) {
+s32 YallamInteriors_MindReadItemMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors26);
@@ -222,7 +226,8 @@ const struct Trigger *Scene_GetEvents(void) {
   return gData_02000e84;
 }
 
-void Func_02000244(void) {
+/// "Do you like children's songs?"
+void YallamInteriors_AskLikeChildrensSongs(void) {
   s32 msg;
 
   Event_Start();
@@ -241,7 +246,9 @@ void Func_02000244(void) {
   Event_End();
 }
 
-void Func_0200029c(s32 actor) {
+/// Yallam's weapon merchant sells across the counter, and otherwise wishes
+/// Sunshine would work.
+void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -255,7 +262,9 @@ void Func_0200029c(s32 actor) {
   }
 }
 
-void Func_020002fc(s32 actor) {
+/// Yallam's armor merchant sells across the counter, and otherwise sends the
+/// party to Sunshine for something special.
+void YallamInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -269,7 +278,9 @@ void Func_020002fc(s32 actor) {
   }
 }
 
-void Func_0200035c(s32 actor) {
+/// Yallam's item merchant sells across the counter, and otherwise points the
+/// way to Taopo Swamp.
+void YallamInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -283,7 +294,9 @@ void Func_0200035c(s32 actor) {
   }
 }
 
-void Func_020003bc(s32 actor) {
+/// Yallam's innkeeper takes the party in across the counter, and otherwise
+/// talks of the town that never gets tourists.
+void YallamInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -298,7 +311,7 @@ void Func_020003bc(s32 actor) {
   }
 }
 
-void Func_02000424(s32 actor) {
+void YallamInteriors_TalkToHealer(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -312,7 +325,8 @@ void Func_02000424(s32 actor) {
   }
 }
 
-void Func_02000480(void) {
+/// "Ah, so you want me to make you a little something special?"
+void YallamInteriors_OfferToForge(void) {
   s32 msg;
 
   Event_Start();
@@ -335,7 +349,9 @@ void Func_02000480(void) {
 s32 Func_02000a90(void);
 void Func_02000a60(s32 actor, s32 angle);
 
-s32 Func_020004e0(void) {
+/// Whether anyone in the party carries a material Sunshine can forge: items 417
+/// to 427 or 429 to 437.
+s32 YallamInteriors_PartyHasForgeMaterial(void) {
   s32 item;
 
   for (item = 429; item <= 437; item++) {
@@ -349,14 +365,14 @@ s32 Func_020004e0(void) {
   return 0;
 }
 
-/// Actor 14's talk. Flag 0x10f follows Func_020004e0's item check (it stays
+/// Actor 14's talk. Flag 0x10f follows YallamInteriors_PartyHasForgeMaterial's item check (it stays
 /// set while flag 0x301 or Func_02000a90 holds). Once 0x10f is set and
 /// neither holds, a yes moves actor 14 and the leader, and if Func_02000a90
 /// then holds, places actor 16 and sets flag 0x301.
-void Func_02000524(void) {
+void YallamInteriors_TalkToSunshine(void) {
   s32 message;
 
-  if (Func_020004e0())
+  if (YallamInteriors_PartyHasForgeMaterial())
     Event_SetFlag(0x10f);
   else if (!Event_GetFlag(0x301) && !Func_02000a90())
     Event_ClearFlag(0x10f);
@@ -432,7 +448,10 @@ void Func_02000524(void) {
 
 u16 *Func_02000988(s32 item);
 
-void Func_0200077c(s32 actor) {
+/// Sunshine's wife keeps the smithy: she explains the forge, hands over what
+/// Sunshine made and takes the payment.
+/// "This? This is the blacksmith Sunshine's smithy, the best forge in Weyard!"
+void YallamInteriors_TalkToSunshinesWife(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessage(actor, 0);
@@ -607,25 +626,25 @@ struct Trigger gData_02000ea8[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors09)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000244)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(YallamInteriors_AskLikeChildrensSongs)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors13)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors14)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020003bc)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors28)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000524)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200077c)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_0200014c)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000524)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshine)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshinesWife)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshinesChild)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshine)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors11)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors12)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors15)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors16)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors29)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors30)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_0200008c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Func_020000cc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Func_0200010c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_0200008c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshinesWife)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshinesChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshine)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
     {TRIGGERS_END},
 };
@@ -636,19 +655,19 @@ struct Trigger gData_02000fe0[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors17)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors18)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_0200029c)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_020002fc)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_0200035c)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200029c)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_020002fc)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200035c)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToArmorMerchant)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToItemMerchant)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToArmorMerchant)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors19)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors20)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors22)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors24)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_020001b4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Func_020001dc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadWeaponMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadArmorMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadItemMerchant)},
     {TRIGGERS_END},
 };

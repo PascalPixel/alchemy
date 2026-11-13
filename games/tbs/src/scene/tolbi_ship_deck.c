@@ -689,23 +689,20 @@ const u32 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
           .talkFacing)
 
 const struct ActorPlacement *TolbiShipDeck_GetActorPlacements(void) {
-  s32 afterFirstAttack;
-
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckActorPlacementsArrived;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING))
     return gTolbiShipDeckActorPlacementsRowing;
-  afterFirstAttack = GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF);
-  if (afterFirstAttack != 0)
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
     return gTolbiShipDeckActorPlacementsAtSea;
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
-      KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER) = afterFirstAttack;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = 2;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = 2;
+      KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER) = TALK_FACING_PARTY;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = TALK_FACING_KEEP;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = TALK_FACING_KEEP;
     } else if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = 1;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = 1;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = TALK_FACING_PARTY_AND_BACK;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = TALK_FACING_PARTY_AND_BACK;
     }
     return gTolbiShipDeckActorPlacementsWaiting;
   }

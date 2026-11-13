@@ -962,14 +962,14 @@ void ItemMenu_HideAllIcons(void) {
 void ItemMenu_HidePageIcons(void) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 slot = 0;
+  s32 hidden = ICON_HIDDEN;
   struct WindowSprite **iconSlot = menu->entryIcons;
 
   do {
     struct WindowSprite *icon = *iconSlot++;
 
-    if (icon != 0 && slot % MENU_ITEM_GRID_COLUMNS == 0) {
-      icon->motion = ICON_HIDDEN;
-    }
+    if (icon != NULL && slot % MENU_ITEM_GRID_COLUMNS == 0)
+      icon->motion = hidden;
     slot++;
   } while (slot <= 31);
 }
@@ -1384,11 +1384,11 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
 /// Returns how many of party member memberId's 15 inventory slots hold an item.
 s32 ItemMenu_CountItems(s32 memberId) {
-  u16 *inventory = Unit_GetFar(memberId)->inventory;
   s32 count = 0;
+  u16 *inventory = Unit_GetFar(memberId)->inventory;
   s32 slot;
 
-  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+  for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
     if ((*inventory++ & INVENTORY_ITEM_ID_MASK) != 0)
       count++;
   }

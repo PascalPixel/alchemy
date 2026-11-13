@@ -715,7 +715,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   if (width > 0 && height > 0) {
     do {
       tileCursor = &((u16 (*)[32])work->tilemap)[y][x];
-      for (column = 0; column < width; column++) {
+      for (column = width; column != 0; column--) {
         tile = *tileCursor;
         if (((tile >> 12) & 15) == 15) {
           masked = tile & 0xffff0fff;
@@ -779,10 +779,9 @@ s32 DjinnMenu_ShowHelp(void) {
   helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
   statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
-  listMessage = MsgDjinnInfoTopic;
-  for (helpIndex = 0; helpIndex <= 6; helpIndex++) {
+  for (helpIndex = 0, listMessage = MsgDjinnInfoTopic; helpIndex <= 6;
+       helpIndex++)
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, helpIndex * 8);
-  }
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);

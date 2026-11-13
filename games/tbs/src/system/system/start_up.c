@@ -203,9 +203,9 @@ UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
         firstMarker = first & secondMarker;
 
         if (firstMarker == highMarker) {
-          u32 offset = (((first & offsetBits) << 12) |
-                        ((second & offsetBits) * 2)) -
-                       i * 2;
+          u32 offset =
+              (((first & offsetBits) << 12) | ((second & offsetBits) * 2)) -
+              i * 2;
           u32 newFirst = ((offset >> 12) & offsetBits) | firstMarker;
           u32 newSecond = ((offset >> 1) & offsetBits) | secondMarker;
 

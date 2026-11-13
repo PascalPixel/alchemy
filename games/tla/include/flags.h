@@ -119,5 +119,13 @@
 /// Set once Scoop has dug up the Psy Crystal under Daila's puddle.
 /// ★ Named from the game: "Psy Crystal" (MsgItemName)
 #define FLAG_DAILA_PSY_CRYSTAL_DUG 0x300
+/// Set once the healer of Daila's Sanctum has sent the party to Master Poi;
+/// after that the Sanctum serves them across its counter.
+/// ★ Named from the game: "Then I suggest you visit the Kandorean Temple to
+/// see Master Poi." (MsgDailaInteriorsTravelersFreeTime)
+#define FLAG_DAILA_HEALER_SENT_TO_POI 0x847
+/// Set once the party has taken the Sea God's Tear from Daila's sanctuary.
+/// ★ Named from the game: "Sea God's Tear" (MsgItemName)
+#define FLAG_SEA_GODS_TEAR_TAKEN 0xa20
 
 #endif

@@ -197,7 +197,7 @@ extern struct Trigger gData_0200789c[];
 extern struct Trigger gData_02007a64[];
 extern struct Trigger gData_02007bcc[];
 
-void Func_02005868();
+void InventorySnapshot_Restore();
 
 void TrialRoad_Idle(void);
 
@@ -248,7 +248,7 @@ void Func_020055c4(s32 a, s32 b);
 
 void Func_02000218(s32 side, s32 phase);
 
-void Func_02005980(void);
+void Import_FieldCameraWaitForArrival(void);
 
 extern u32 gData_02005c88[];
 
@@ -259,9 +259,9 @@ extern u32 gData_02005e40[];
 
 extern u32 gData_02005ed4[];
 
-void Func_02005770(const void *source, void *destination);
+void Import_DecompressTaggedLz(const void *source, void *destination);
 s32 Func_02005a18(struct Actor *object);
-s32 Func_02005848(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Func_02005958(s32 id);
 s32 Func_02005a20(s32 layer, s32 shape, s32 height);
 struct Actor *Func_02005a28(s32 *position, s32 mode);
@@ -271,11 +271,11 @@ void Func_02004d6c(s32 offset, s32 layer);
 void Func_02004bc8(void);
 void Func_02004ce0(s32 a, s32 b, s32 c);
 
-u32 Func_020059f0(struct FieldSprite *sprite, u32 frame);
+u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
 void Func_02004a14(union FieldObject *object);
 
-void Func_020057f0(struct Actor *object);
+void Actor_StartIdle(struct Actor *object);
 
 extern const u16 Data_020062b4[];
 

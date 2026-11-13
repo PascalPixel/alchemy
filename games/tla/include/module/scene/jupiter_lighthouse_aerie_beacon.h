@@ -21,8 +21,8 @@ extern struct Actor *gData_02006a70[];
 extern struct LightOam Data_02006ab0[];
 extern s16 gLightSpritePriority;
 
-s32 Func_020059bc(struct Actor *actor);
-extern void Func_02005754(struct FieldEffect *effect, s32 mode);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+extern void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 
 /// The cells Teleporters_Step watches, and the cell it copies over the one the
 /// leader steps on.
@@ -104,7 +104,7 @@ extern s32 gData_02006a24;
 extern s32 gData_0200641c[];
 extern s32 gData_02006470[];
 
-void Func_02005924(void);
+void Import_FieldCameraWaitForArrival(void);
 
 void Func_02003a6c(s32 mode);
 void Func_02003c58(s32 mode);

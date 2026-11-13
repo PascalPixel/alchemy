@@ -434,14 +434,14 @@ void TrialRoad_SetUpPeak(void) {
     p3 = FIELD_AT(&gMainRoutineWork, s16, 482);
     goto L_0200a02e;
   }
-  Func_02005868();
+  InventorySnapshot_Restore();
   TrialRoad_BeatMoapa();
   Import_EventSetExitRequest(4);
   goto L_0200a07c;
 L_0200a02e:
   if (p3 != 5)
     goto L_0200a042;
-  Func_02005868();
+  InventorySnapshot_Restore();
   TrialRoad_LoseToMoapa();
   Import_EventSetExitRequest(5);
   goto L_0200a07c;
@@ -1012,7 +1012,7 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(6);
   Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   wait(20);
   Event_PlaySound(138);
   wait(20);
@@ -1119,7 +1119,7 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(6);
   Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
   FieldActor_ShowEmote(8, 256, 10);
   Event_ShowMessage(8, 0);
@@ -1315,17 +1315,17 @@ void TrialRoad_ShowTraps(void) {
   Event_Wait(20);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(184 << 16, -1, 600 << 16, 1);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   FieldCamera_MoveTo(120 << 16, -1, 552 << 16, 1);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   FieldCamera_MoveTo(120 << 16, -1, 408 << 16, 1);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   FieldCamera_MoveTo(120 << 16, -1, 120 << 16, 1);
   Event_SetMessageId((s32)MsgTrialRoadTrapInstructions);
   Event_ShowMessageAndWait(8, 0);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   FieldCamera_MoveTo(216 << 16, -1, 120 << 16, 1);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(4, 0);
   Actor_SetMovementTypeById(13, gData_02005d28);
@@ -1381,7 +1381,7 @@ void TrialRoad_ShowTraps(void) {
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gData_02005e40);
   FieldCamera_MoveTo(328 << 16, -1, 120 << 16, 1);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(14, FACING_NORTHEAST, 0);
@@ -1415,7 +1415,7 @@ void TrialRoad_ShowTraps(void) {
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
-  Func_02005980();
+  Import_FieldCameraWaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gData_02005ed4);
   Actor_RefreshSelectorById(14);
@@ -1686,7 +1686,7 @@ void Func_02004188(s32 a, s32 b) {
   if (!Event_GetFlag(0x109))
     Iwram_ClearWords(gauge, 0x1c8);
   buffer = Pool_Alloc(0x800);
-  Func_02005770(gField_Tiles64D, buffer);
+  Import_DecompressTaggedLz(gField_Tiles64D, buffer);
   gauge->handle = VramCache_FindFreeEntry();
   VramCache_Load((s16)gauge->handle, 0x800, buffer);
   Heap_Release(buffer);
@@ -1771,7 +1771,7 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20, Actor_SelectAnimation)
+DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18, MapGrid_GetTerrainKind, Func_02005958, Func_02005a20, Actor_SelectAnimation)
 
 DEFINE_TRAPS_CHECK(Func_02004418, Import_FieldTryJumpForward, Func_02005a28, Actor_SelectAnimation,
     Func_02004a94, Func_02004d6c, Func_02004bc8)
@@ -1824,7 +1824,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-DEFINE_PILLARS_RESTORE(Func_020046a4, Func_0200468c, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20)
+DEFINE_PILLARS_RESTORE(Func_020046a4, Func_0200468c, Func_02005a18, MapGrid_GetTerrainKind, Func_02005958, Func_02005a20)
 
 void Func_0200480c(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -1989,7 +1989,7 @@ void Func_02004a94(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_020059f0(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -2030,7 +2030,7 @@ void Func_02004bc8(void) {
     effect = (struct FieldEffect *)Import_ActorCreate(285, leader->x, leader->y,
                                                       leader->z);
     if (effect != 0) {
-      frame = Func_020059f0(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -2055,7 +2055,7 @@ void Func_02004bc8(void) {
 
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004ce0, Func_02005848, Func_02005a20)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004ce0, MapGrid_GetTerrainKind, Func_02005a20)
 
 void Func_02004d6c(s32 a, s32 b) {
   Func_02004ce0(a, b, gMainRoutineWork.currentOwner);
@@ -2183,7 +2183,7 @@ void Func_02004ddc(void) {
       rival->acceleration = 0x4000;
       rival->speedLimit = 0x10000;
       Actor_SetMoveTarget(rival, x, 0, z);
-      Func_020057f0(rival);
+      Actor_StartIdle(rival);
     } else {
       x <<= 16;
       z <<= 16;
@@ -2208,7 +2208,7 @@ void Func_02004ddc(void) {
     Actor_SelectAnimation(rival, ok);
   } else if (state->mode == 1) {
     if (state->resource != work->resource) {
-      Func_02005770(Resource_GetTableEntry(state->resource), work->path);
+      Import_DecompressTaggedLz(Resource_GetTableEntry(state->resource), work->path);
       work->resource = state->resource;
     }
     x = work->path[state->point];
@@ -2376,7 +2376,7 @@ void Func_020051a0(void) {
       void *buffer;
       Dma_Set(Data_020062b4, (void *)0x050003c0, 0x80000010, REG_DMA3);
       buffer = TrialRoadLink_AllocPicture();
-      Func_02005770(gData_020062d4, buffer);
+      Import_DecompressTaggedLz(gData_020062d4, buffer);
       VramCache_Load(*vramEntry, 576, buffer);
       Heap_Release(buffer);
     }
@@ -2460,7 +2460,7 @@ void Func_020055c4(s32 a, s32 b) {
   zero = 0;
   *unkda = zero;
   *unke0 = zero;
-  Func_02005770(gData_020062d4, buffer);
+  Import_DecompressTaggedLz(gData_020062d4, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
   Task_Add(Func_020051a0, 0x476);

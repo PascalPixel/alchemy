@@ -55,7 +55,7 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 void Func_02002aa8(s32 x, s32 z);
 void Func_02002b58(s32 x, s32 z);
 
-void Func_02005e04(s32 hue, s32 brightness);
+void WindowColor_Apply(s32 hue, s32 brightness);
 
 s32 Func_02000690(u32 layer, s32 x, s32 y);
 
@@ -87,8 +87,8 @@ extern struct Trigger gData_02007228[];
 extern struct Trigger gData_02007318[];
 extern struct Trigger gData_020073a8[];
 
-void Func_02005ec4(u32 id, s32 mode);
-void Func_02005dd4(void);
+void FieldEffect_SetAttached(u32 id, s32 mode);
+void MapGrid_WaitForShakeToSettle(void);
 
 void Func_02002770(void);
 void Func_02004f3c(void);
@@ -98,7 +98,7 @@ void Func_02005f6c(u16 *actors);
 
 void Func_02004cc8(void);
 
-void Func_02005f4c(s32 id);
+void Import_SceneQueueMusic(s32 id);
 void Func_02005f54(void);
 s32 Func_02005f5c(s32 slot, s32 a, s32 b);
 
@@ -135,7 +135,7 @@ extern u32 gData_02005fd8[];
 extern u32 gData_020061f8[];
 
 void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
-struct Actor *Func_02005ef4(void);
+struct Actor *FieldCamera_GetActor(void);
 void Func_02005f8c(struct Actor *object, s32 cue);
 s32 Func_02005dec(struct Actor *object);
 

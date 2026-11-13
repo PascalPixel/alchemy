@@ -10,8 +10,9 @@
 #include "module/field/object.h"
 #include "module/scene/anemos_inner_sanctum.h"
 #include "text/msg_ids.h"
-#include "module/scene/world_map.h"
 #include "scene_ids.h"
+
+void Func_02003490(void);
 
 void Func_02000178(void);
 void Func_020017b4(void);

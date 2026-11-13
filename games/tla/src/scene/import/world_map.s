@@ -62,9 +62,9 @@ VramCache_FindFreeEntry:
 	.thumb_func
 DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
-	.global Func_02004ad0
+	.global Import_OamAddSpriteAtDepthClamped
 	.thumb_func
-Func_02004ad0:
+Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Window_LoadGraphics
 	.thumb_func
@@ -98,9 +98,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Animation_ApplyChildArgument:
 	overlay_veneer Animation_ApplyChildArgumentFar
-	.global Func_02004b18
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_02004b18:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -114,9 +114,9 @@ Func_02004b28:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Func_02004b38
+	.global Actor_Release
 	.thumb_func
-Func_02004b38:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global WorldMap_UpdateCurrentTileBlock
 	.thumb_func

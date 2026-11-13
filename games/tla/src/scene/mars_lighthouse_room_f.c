@@ -22,7 +22,6 @@
 #include "module/scene/mars_lighthouse_room_f.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 #include "module/scene/scene.h"
-#include "module/scene/trial_road.h"
 #include "module/tla.h"
 #include "scene_ids.h"
 

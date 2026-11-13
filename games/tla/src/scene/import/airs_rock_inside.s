@@ -126,9 +126,9 @@ Actor_SetBlendMode:
 	.thumb_func
 MapGrid_SetScreenShake:
 	overlay_veneer MapGrid_SetScreenShakeFar
-	.global Func_02005dd4
+	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
-Func_02005dd4:
+MapGrid_WaitForShakeToSettle:
 	overlay_veneer MapGrid_WaitForShakeToSettleFar
 	.global TilesetAnim_SuspendAll
 	.thumb_func
@@ -150,9 +150,9 @@ Func_02005df4:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_02005e04
+	.global WindowColor_Apply
 	.thumb_func
-Func_02005e04:
+WindowColor_Apply:
 	overlay_veneer WindowColor_ApplyFar
 	.global FieldEvent_Wait
 	.thumb_func
@@ -246,9 +246,9 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02005ec4
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_02005ec4:
+FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
 	.global FieldCamera_FollowActor
 	.thumb_func
@@ -270,9 +270,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 FieldCamera_MoveToActorById:
 	overlay_veneer FieldCamera_MoveToActorByIdFar
-	.global Func_02005ef4
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_02005ef4:
+FieldCamera_GetActor:
 	overlay_veneer FieldCamera_GetActorFar
 	.global Event_SetExitRequest
 	.thumb_func
@@ -314,9 +314,9 @@ Scene_PlayMusic:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Func_02005f4c
+	.global Import_SceneQueueMusic
 	.thumb_func
-Func_02005f4c:
+Import_SceneQueueMusic:
 	overlay_veneer Scene_QueueMusicFar
 	.global Func_02005f54
 	.thumb_func

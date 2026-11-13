@@ -242,17 +242,17 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02003f74
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02003f74:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02003f84
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02003f84:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -278,13 +278,13 @@ FieldPsynergy_StartMindReadWave:
 	.thumb_func
 Import_FieldPsynergyStopMindReadWave:
 	overlay_veneer FieldPsynergy_StopMindReadWaveFar
-	.global Func_02003fbc
+	.global Import_FieldPsynergyGreyMindReadPalette
 	.thumb_func
-Func_02003fbc:
+Import_FieldPsynergyGreyMindReadPalette:
 	overlay_veneer FieldPsynergy_GreyMindReadPaletteFar
-	.global Func_02003fc4
+	.global Import_FieldPsynergyRestoreMindReadPalette
 	.thumb_func
-Func_02003fc4:
+Import_FieldPsynergyRestoreMindReadPalette:
 	overlay_veneer FieldPsynergy_RestoreMindReadPaletteFar
 	.global Actor_WatchAndSetScript
 	.thumb_func

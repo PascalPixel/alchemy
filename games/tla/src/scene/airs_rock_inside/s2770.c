@@ -377,7 +377,7 @@ fade:
   Func_02001084(Actor_GetById(10), 8, 0);
   Window_LoadGraphics();
   DebugText_Clear();
-  Func_02005e04(gMainRoutineWork.paletteGlow[0],
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -689,7 +689,7 @@ fade:
   Func_02001084(Actor_GetById(8), 8, 0);
   Window_LoadGraphics();
   DebugText_Clear();
-  Func_02005e04(gMainRoutineWork.paletteGlow[0],
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -1137,7 +1137,7 @@ void Func_02004534(void) {
     /* FAKEMATCH(wrapper): the call through Call0's pointer, which negates the
      * two -1s before it in this order; as a direct call, 2 of 202 instructions
      * differ in tla-en. */
-    Call0(Func_02005dd4);
+    Call0(MapGrid_WaitForShakeToSettle);
     Call2(Func_02004138, 8, 6);
     Party_LearnAbility(6, 0x90);
     GameFlag_SetBit(0x8d4);

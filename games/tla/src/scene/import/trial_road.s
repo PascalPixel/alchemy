@@ -54,9 +54,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Heap_ReleaseFar
-	.global Func_02005770
+	.global Import_DecompressTaggedLz
 	.thumb_func
-Func_02005770:
+Import_DecompressTaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_ReleaseVram
 	.thumb_func
@@ -118,9 +118,9 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_020057f0
+	.global Actor_StartIdle
 	.thumb_func
-Func_020057f0:
+Actor_StartIdle:
 	overlay_veneer Actor_StartIdleFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -162,9 +162,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02005848
+	.global MapGrid_GetTerrainKind
 	.thumb_func
-Func_02005848:
+MapGrid_GetTerrainKind:
 	overlay_veneer MapGrid_GetTerrainKindFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -178,9 +178,9 @@ MessageArgument_Push:
 	.thumb_func
 PartyInventory_Discard:
 	overlay_veneer PartyInventory_DiscardFar
-	.global Func_02005868
+	.global InventorySnapshot_Restore
 	.thumb_func
-Func_02005868:
+InventorySnapshot_Restore:
 	overlay_veneer InventorySnapshot_RestoreFar
 	.global Func_02005870
 	.thumb_func
@@ -318,9 +318,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02005980
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02005980:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
@@ -374,9 +374,9 @@ ObjectTable_Get:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_020059f0
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Func_020059f0:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Actor_WalkByById
 	.thumb_func

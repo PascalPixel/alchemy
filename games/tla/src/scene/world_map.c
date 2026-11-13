@@ -313,11 +313,11 @@ void WorldMap_BoardShip(void) {
   gMainRoutineWork.savedZ = ship->z;
   gMainRoutineWork.unk280 = ship->facing;
   Event_PlaySound(78);
-  Func_02004b18(leader, 6);
+  Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
   Event_PlaySound(152);
   Actor_SetSingleChildFlags(leader, 0);
-  Func_02004b18(leader, 7);
+  Import_ActorSelectAnimation(leader, 7);
   leader->speedLimit = 0x30000;
   leader->acceleration = 0x20000;
   leader->velocityY = 0x40000;
@@ -325,7 +325,7 @@ void WorldMap_BoardShip(void) {
   Actor_StartIdle(leader);
   FieldActor_SetMoveTarget(leader, ship->x, 0, ship->z);
   FieldActor_WaitForMove(leader);
-  Func_02004b18(leader, 6);
+  Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
   leader->terrainHeight = 0;
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
@@ -398,10 +398,10 @@ void WorldMap_LeaveShip(void) {
     leader->z = ship->z;
     leader->motionFlags = 0;
     Actor_SetSingleChildFlags(leader, 0);
-    Func_02004b18(leader, 6);
+    Import_ActorSelectAnimation(leader, 6);
     System_Wait(6);
     Event_PlaySound(152);
-    Func_02004b18(leader, 7);
+    Import_ActorSelectAnimation(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
@@ -409,7 +409,7 @@ void WorldMap_LeaveShip(void) {
     Actor_StartIdle(leader);
     FieldActor_SetMoveTarget(leader, position[0], 0, position[2]);
     FieldActor_WaitForMove(leader);
-    Func_02004b18(leader, 6);
+    Import_ActorSelectAnimation(leader, 6);
     System_Wait(6);
     Event_End();
     Scene_ChooseMusic();
@@ -1459,7 +1459,7 @@ void Func_02002594(void) {
     *motionFlags = 0;
     obj->scaleX = scale;
     obj->scaleY = scale;
-    Func_02004b18(obj, 1);
+    Import_ActorSelectAnimation(obj, 1);
     Actor_StartScript(obj, gData_02006bc8);
   }
 }
@@ -1593,7 +1593,7 @@ void Func_020028cc(void) {
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;
   FieldActor_SetSpriteColor(obj, 9);
-  Func_02004b18(obj, 2);
+  Import_ActorSelectAnimation(obj, 2);
   Actor_StartScript(obj, gData_02004f10);
 }
 
@@ -1965,7 +1965,7 @@ void Func_0200343c(struct Actor *parent) {
 
     if (object != NULL) {
       Actor_StartScript(object, gData_02004f70);
-      Func_02004b18(object, 1);
+      Import_ActorSelectAnimation(object, 1);
       Actor_SetSingleChildFlags(object, 0);
       object->motionFlags = 0;
       object->scaleX = 0x20000;

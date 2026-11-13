@@ -391,7 +391,7 @@ void Func_02000988(void) {
     *priority = 33;
     *motion = 3;
     Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
-    dust = Func_02005ef4();
+    dust = FieldCamera_GetActor();
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
     dust->motionFlags = noFlags;

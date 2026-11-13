@@ -138,7 +138,7 @@ void Func_02003620(void) {
 }
 
 void Func_0200367c(void) {
-  Func_02003f84();
+  Field_TryJumpForward();
   return;
 }
 

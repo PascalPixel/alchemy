@@ -75,7 +75,7 @@ s32 TrialRoad_OfferToGiveUp(void) {
   Event_Wait(10);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x109, 0);
   Event_Wait(30);
-  Func_02005868();
+  InventorySnapshot_Restore();
   Import_EventSetExitRequest(9);
   return 1;
 L_02008400:

@@ -31,7 +31,6 @@
 #include "module/game/game.h"
 #include "module/scene/jupiter_lighthouse_room_m.h"
 #include "module/scene/scene.h"
-#include "module/scene/world_map.h"
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "resource.h"

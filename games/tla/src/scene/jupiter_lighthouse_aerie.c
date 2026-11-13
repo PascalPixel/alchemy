@@ -106,7 +106,7 @@ void Func_020001b4(void) {
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
-  Func_02002af0();
+  Import_FieldCameraWaitForArrival();
   Event_End();
 }
 
@@ -130,7 +130,7 @@ void Func_02000264(void) {
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
-  Func_02002af0();
+  Import_FieldCameraWaitForArrival();
   Event_End();
 }
 
@@ -507,7 +507,7 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020029f0, Whirlwind_Update,
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation, Whirlwind_Update,
                        Func_02001e78)
 
 #include "field_coordinate.h"
@@ -742,7 +742,7 @@ void Func_02001080(void) {
     }
     if (spark->age <= 15) {
       sprite->tile = work->tile + (spark->age & 3) * 2;
-      Func_02002b40(sprite, spark);
+      EffectSprite_DrawAtWorldPosition(sprite, spark);
       spark->position[1] -= spark->drift;
     }
     spark->age++;

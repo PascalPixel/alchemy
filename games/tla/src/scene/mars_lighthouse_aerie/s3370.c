@@ -12,7 +12,6 @@
 #include "event_work.h"
 #include "field.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"

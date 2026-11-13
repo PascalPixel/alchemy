@@ -68,12 +68,12 @@ void Func_0200505c(void) {
         &options);
   }
   Sound_Play(188);
-  Func_02005ec4(gMainRoutineWork.currentOwner, 257);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 257);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
-  Func_02005dd4();
-  Func_02005ec4(gMainRoutineWork.currentOwner, 256);
+  MapGrid_WaitForShakeToSettle();
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 256);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
@@ -180,7 +180,7 @@ s32 Scene_Initialize(void) {
       Func_02004cc8();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();
-    Func_02005f4c(245);
+    Import_SceneQueueMusic(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
@@ -313,7 +313,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
-    Func_02005f4c(245);
+    Import_SceneQueueMusic(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);

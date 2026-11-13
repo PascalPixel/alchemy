@@ -38,7 +38,7 @@ extern struct LightOam Data_020033c4[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
-s32 Func_02002b48(struct Actor *actor);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 extern u32 gData_02003020[];
@@ -64,11 +64,12 @@ struct BeamSprite;
 struct FieldEffect;
 
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
-void Func_02002af0(void);
+void Import_FieldCameraWaitForArrival(void);
 extern u16 gData_02003360[];
 extern u16 gData_02003364[];
 void Func_02002b38(struct BeamSprite *sprite);
-void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
-void Func_020029f0(struct FieldEffect *effect, s32 mode);
+void EffectSprite_DrawAtWorldPosition(struct BeamSprite *sprite,
+                                      struct BeamSpark *spark);
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 #endif

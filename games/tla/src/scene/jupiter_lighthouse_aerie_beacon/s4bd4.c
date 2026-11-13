@@ -29,7 +29,7 @@ void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02005754(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_0200ea10[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -71,7 +71,7 @@ void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02005754(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

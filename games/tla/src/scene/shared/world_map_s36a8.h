@@ -35,8 +35,8 @@ extern s32 gData_02006bd4[];
 
 struct WorldMapPlacement *FlagEntries_GetTable(void);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-void Func_02004b18(struct Actor *object, s32 mode);
-void Func_02004b38(struct Actor *object);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_Release(struct Actor *object);
 
 void Func_020036a8(void) {
   struct WorldMapPlacement *placement = FlagEntries_GetTable();
@@ -108,7 +108,7 @@ void Func_020036a8(void) {
           object->motionFlags = 0;
           object->collisionFlags = 1;
           object->facing = placement->angle;
-          Func_02004b18(object, 1);
+          Import_ActorSelectAnimation(object, 1);
           sprite = object->sprite;
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
           *slot = object;
@@ -137,7 +137,7 @@ void Func_020036a8(void) {
       }
     }
     if (object != NULL) {
-      Func_02004b38(object);
+      Actor_Release(object);
       *slot = NULL;
     }
   next:

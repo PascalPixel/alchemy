@@ -30,7 +30,7 @@ void Func_020049bc(void);
 void Func_02003c3c(void);
 void Func_02004a1c(void);
 
-void Func_02004b18(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
 void WorldMap_FightBanditAndThieves(s32 entrance);
 
@@ -89,7 +89,7 @@ extern u8 gWorldMapPalettesB[];
 
 void Func_02004634(struct Actor *object);
 
-void Func_02004b38(struct Actor *object);
+void Actor_Release(struct Actor *object);
 
 extern u8 Data_02006e20[][32];
 extern s16 gData_02006e10;
@@ -97,7 +97,7 @@ extern u32 Data_02006e14[3];
 
 void Func_02004c08(s32 value);
 s32 Func_02004c10(void);
-void Func_02004ad0(u32 *oam, s32 priority);
+void Import_OamAddSpriteAtDepthClamped(u32 *oam, s32 priority);
 
 void WorldMap_WatchVenusLighthouseCollapse(void);
 

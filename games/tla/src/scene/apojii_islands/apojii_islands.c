@@ -24,7 +24,6 @@
 #include "ground_mask.h"
 #include "module/field/field.h"
 #include "module/scene/apojii_islands.h"
-#include "module/scene/jupiter_lighthouse_aerie.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "system.h"

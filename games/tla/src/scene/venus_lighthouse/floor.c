@@ -10,7 +10,6 @@
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
-#include "module/scene/islets.h"
 #include "module/scene/scene.h"
 #include "module/scene/venus_lighthouse.h"
 #include "system.h"

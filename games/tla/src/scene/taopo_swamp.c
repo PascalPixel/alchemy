@@ -169,7 +169,6 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
 #include "scene_tables.h"
 #include "field.h"
 #include "graphics.h"
-#include "module/scene/airs_rock_inside.h"
 #include "module/scene/scene.h"
 #include "module/scene/taopo_swamp.h"
 #include "module/tla.h"
@@ -227,6 +226,10 @@ void TaopoSwamp_GrowVine(void) {
   MapGrid_CopyCellAttributes(50, 16, 1, 2, 47, 16);
   Event_SetFlag(0x220);
 }
+
+struct AnimationGroup;
+struct ActorSpriteView;
+struct ChildGroup;
 
 extern u8 gData_02002ae8[];
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);

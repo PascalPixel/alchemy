@@ -252,9 +252,9 @@ DEFINE_ACTOR_ANIMATE_AND_EMIT(Func_02004538, Func_02004634)
 
 DEFINE_ACTOR_ANIMATE(Func_02004570)
 
-DEFINE_ACTOR_GROW_UP(Func_02004598, Func_02004b38)
+DEFINE_ACTOR_GROW_UP(Func_02004598, Actor_Release)
 
-DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Func_02004b38)
+DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Actor_Release)
 
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
 
@@ -361,7 +361,7 @@ void Func_020048f4(void) {
     *oam++ = (y | (x << 16)) | attributes;
   }
   *oam = tile | 0x400;
-  Func_02004ad0(Data_02006e14, 255);
+  Import_OamAddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
 DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38,

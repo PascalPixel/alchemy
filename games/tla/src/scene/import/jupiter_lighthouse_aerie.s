@@ -90,9 +90,9 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Func_020029f0
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_020029f0:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -218,9 +218,9 @@ FieldCamera_FollowActor:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02002af0
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02002af0:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global FieldCamera_GetActor
 	.thumb_func
@@ -258,13 +258,13 @@ Func_02002b30:
 	.thumb_func
 Func_02002b38:
 	overlay_veneer Func_080c87c8
-	.global Func_02002b40
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_02002b40:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer EffectSprite_DrawAtWorldPositionFar
-	.global Func_02002b48
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02002b48:
+BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_02002b50
 	.thumb_func

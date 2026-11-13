@@ -54,7 +54,7 @@ extern s16 gData_020046ba[];
 
 void Func_020034fc(void);
 
-void Func_02003f84();
+void Field_TryJumpForward();
 
 void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind);
@@ -74,9 +74,9 @@ struct IsletsMapWork {
 };
 
 void Import_ActorDestroy(struct Actor *object);
-void Func_02003fbc(void);
-void Func_02003fc4(void);
-void Func_02003f74(void);
+void Import_FieldPsynergyGreyMindReadPalette(void);
+void Import_FieldPsynergyRestoreMindReadPalette(void);
+void Import_FieldCameraWaitForArrival(void);
 void Func_02003fec();
 
 s32 Func_02003684(s32 id);

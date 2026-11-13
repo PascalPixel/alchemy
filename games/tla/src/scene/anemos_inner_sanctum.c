@@ -432,15 +432,7 @@ extern struct ActorPlacement gAnemosInnerSanctum_Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_Room1Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_Room2Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_Room3Placements[];
-/* VIEW(scene_tables): routine gAnemosInnerSanctum_Room4Placements as this part
- * declared it; the joined file has another; tried as the one declaration extern
- * const u8 gAnemosInnerSanctum_Room4Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:450:
- * `gAnemosInnerSanctum_Room4Placements' undeclared (first use in this
- * function). */
-extern const u8 gData_02003c88__scene_tables[] __asm__(
-    "gAnemosInnerSanctum_Room4Placements");
-#define gAnemosInnerSanctum_Room4Placements gData_02003c88__scene_tables
+extern s32 gAnemosInnerSanctum_Room4Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_Room5Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -1421,12 +1413,7 @@ s32 CrackedTiles_Find();
 extern s16 gData_0200384c[];
 extern s16 gData_0200385c[];
 extern s16 gData_02003888[];
-/* VIEW(s1938): routine gData_020038b4 as this part declared it; the joined file
- * has another; tried as the one declaration extern u8 gData_020038b4[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1419:
- * `gData_020038b4' undeclared (first use in this function). */
-extern u8 gData_020038b4__s1938[] __asm__("gData_020038b4");
-#define gData_020038b4 gData_020038b4__s1938
+extern u16 gData_020038b4[];
 
 s32 Scene_Initialize(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
@@ -1945,13 +1932,11 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef gAnemosInnerSanctum_Room4Placements
 #undef Func_0200088c
 #undef Func_020009b8
 #undef Func_02000a78
 #undef gData_020036fc
 #undef Func_02000038
-#undef gData_020038b4
 #undef CrackedTile_PlaceLanding
 // @file
 // Scene code of overlay 0x6b0, in ROM order.

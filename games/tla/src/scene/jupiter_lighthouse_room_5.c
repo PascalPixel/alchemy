@@ -218,14 +218,7 @@ void Func_02000294(void) {
 }
 
 extern u32 gData_02002f70[];
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02002f94 as this part declared
- * it; the joined file has another; tried as the one declaration extern const u8
- * gData_02002f94[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:317: `gData_02002f94'
- * undeclared (first use in this function). */
-extern const u8
-    gData_02002f94__jupiter_lighthouse_room_5[] __asm__("gData_02002f94");
-#define gData_02002f94 gData_02002f94__jupiter_lighthouse_room_5
+extern s32 gData_02002f94[];
 
 void Func_0200185c(void);
 
@@ -1015,7 +1008,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef EVENT_WORK
 #undef gData_02003274
 #undef gData_02003278
-#undef gData_02002f94
 #undef gPaletteCyclePausesInEvents
 #undef FieldEffect_Spawn
 #undef gPaletteCycleFrame

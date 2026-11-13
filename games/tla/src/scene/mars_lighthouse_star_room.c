@@ -144,15 +144,7 @@ extern s16 gData_020047fc[];
 
 #endif
 
-/* VIEW(first): routine gMarsLighthouseStarRoom_ScatterIceChipsScript as this
- * part declared it; the joined file has another; tried as the one declaration
- * extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript[], it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2222:
- * conflicting types for `gMarsLighthouseStarRoom_ScatterIceChipsScript'. */
-extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript__first[] __asm__(
-    "gMarsLighthouseStarRoom_ScatterIceChipsScript");
-#define gMarsLighthouseStarRoom_ScatterIceChipsScript                          \
-  gMarsLighthouseStarRoom_ScatterIceChipsScript__first
+extern u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[];
 
 /// Six chips of ice burst from an actor and bounce away.
 void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
@@ -1226,11 +1218,7 @@ extern u8 gInventorySnapshot[];
 DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork__s1424, Func_02001528,
                            Func_0200158c)
 
-/* VIEW(first): routine gData_02004744 as this part declared it; the joined file
- * has another; not tried: gData_02004744's declaration holds a FAKEMATCH tag.
- */
-extern const u8 gData_02004744__first[] __asm__("gData_02004744");
-#define gData_02004744 gData_02004744__first
+extern u32 gData_02004744[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -1347,11 +1335,7 @@ s32 Func_02001a44(struct Actor *a, struct Actor *b) {
 
 DEFINE_RIDE_UPDATE_DRIFT(Ride_UpdateDrift, Func_02001a44)
 
-/* VIEW(first): routine gData_02004744 as this part declared it; the joined file
- * has another; not tried: gData_02004744's declaration holds a FAKEMATCH tag.
- */
-extern const u8 gData_02004744__first[] __asm__("gData_02004744");
-#define gData_02004744 gData_02004744__first
+extern u32 gData_02004744[];
 
 DEFINE_ACTOR_SETUP_SCRIPTED(Actor_SetupScripted, Actor_SelectAnimation,
                             gData_02004744)
@@ -2102,9 +2086,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_02002d90,
 #undef SHARED_F02003070_ID6
 #undef SHARED_F02003070_ID7
 #undef SHARED_F02003070_ID8
-#undef gMarsLighthouseStarRoom_ScatterIceChipsScript
-#undef gData_02004744
-#undef gData_02004744
 #undef Unit_Get
 #undef Position
 #undef Position

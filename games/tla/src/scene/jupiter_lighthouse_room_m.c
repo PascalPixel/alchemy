@@ -274,22 +274,16 @@ void Func_020000c4(void) {
   MapGrid_SetShake(0, 0, 0);
 }
 
-/* VIEW(jupiter_lighthouse_room_m): routine MapGrid_SetCellHeight as void
- * MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
- * module/scene/eastern_alhafra.h has void MapGrid_SetCellHeight(struct Actor
- * *object); not tried: MapGrid_SetCellHeight's bound declaration was not found.
- */
-extern void Func_02004774__jupiter_lighthouse_room_m(
-    s32 x, s32 z, s32 a, s32 b) __asm__("MapGrid_SetCellHeight");
+extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
 void Func_0200039c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Call4(Func_02004774__jupiter_lighthouse_room_m, object->x, object->z, 0, -8);
+  Call4(MapGrid_SetCellHeight, object->x, object->z, 0, -8);
 }
 
 static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
-  Func_02004774__jupiter_lighthouse_room_m(x, z, a, b);
+  MapGrid_SetCellHeight(x, z, a, b);
 }
 
 static __inline__ void Func_020048b4_(s32 id, s32 angle) {
@@ -1724,7 +1718,7 @@ s32 Scene_PrepareMap(void) {
     /* FAKEMATCH(barrier): the last call's zero is built before the position
      * loads; as a plain 0 argument, 2 of 62 instructions differ in tla-en. */
     __asm__("" : : "r"(zero));
-    Func_02004774__jupiter_lighthouse_room_m(object->x, object->z, zero, -6);
+    MapGrid_SetCellHeight(object->x, object->z, zero, -6);
   }
   return 0;
 }
@@ -1766,8 +1760,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_Step,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell,
-                             Func_02004774__jupiter_lighthouse_room_m,
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)

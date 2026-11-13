@@ -509,14 +509,7 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Leader_SetCellShapeAt(s32 a, s32 b);
 u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
-/* VIEW(rubble): routine gIzumoRuins_RubbleSprayScript as this part declared it;
- * the joined file has another; tried as the one declaration extern const s32
- * gIzumoRuins_RubbleSprayScript[], it does not compile in tla-ja:
- * games/tla/src/scene/izumo_ruins.c:534: `gIzumoRuins_RubbleSprayScript'
- * undeclared (first use in this function). */
-extern const s32 gIzumoRuins_RubbleSprayScript__rubble[] __asm__(
-    "gIzumoRuins_RubbleSprayScript");
-#define gIzumoRuins_RubbleSprayScript gIzumoRuins_RubbleSprayScript__rubble
+extern u32 gIzumoRuins_RubbleSprayScript[];
 
 void Rubble_Spray(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -559,14 +552,7 @@ void Rubble_Spray(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(rubble): routine gIzumoRuins_RubbleBurstScript as this part declared it;
- * the joined file has another; tried as the one declaration extern const s32
- * gIzumoRuins_RubbleBurstScript[], it does not compile in tla-ja:
- * games/tla/src/scene/izumo_ruins.c:578: `gIzumoRuins_RubbleBurstScript'
- * undeclared (first use in this function). */
-extern const s32 gIzumoRuins_RubbleBurstScript__rubble[] __asm__(
-    "gIzumoRuins_RubbleBurstScript");
-#define gIzumoRuins_RubbleBurstScript gIzumoRuins_RubbleBurstScript__rubble
+extern u32 gIzumoRuins_RubbleBurstScript[];
 
 void Rubble_Burst(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -618,8 +604,6 @@ void Leader_SetCellShapeAt(s32 a, s32 b) {
 
 #include "../field/field_effect/move.c"
 
-#undef gIzumoRuins_RubbleSprayScript
-#undef gIzumoRuins_RubbleBurstScript
 // @file
 // The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
 // this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).

@@ -1076,27 +1076,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/* VIEW(first): routine gData_02005c84 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02005c84[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1098: `gData_02005c84'
- * undeclared (first use in this function). */
-extern const u8 gData_02005c84__first[] __asm__("gData_02005c84");
-#define gData_02005c84 gData_02005c84__first
-/* VIEW(first): routine gData_02005ce0 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02005ce0[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1101: `gData_02005ce0'
- * undeclared (first use in this function). */
-extern const u8 gData_02005ce0__first[] __asm__("gData_02005ce0");
-#define gData_02005ce0 gData_02005ce0__first
-/* VIEW(first): routine gData_02005d3c as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02005d3c[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1105: `gData_02005d3c'
- * undeclared (first use in this function). */
-extern const u8 gData_02005d3c__first[] __asm__("gData_02005d3c");
-#define gData_02005d3c gData_02005d3c__first
+extern s32 gData_02005c84[];
+extern s32 gData_02005ce0[];
+extern s32 gData_02005d3c[];
 
 s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
@@ -1378,13 +1360,7 @@ struct RideWork {
 DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork, Actor_IsTouching,
                            Actor_IsBeside)
 
-/* VIEW(first): routine gData_02005d8c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02005d8c[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1352: `gData_02005d8c'
- * undeclared (first use in this function). */
-extern const u8 gData_02005d8c__first[] __asm__("gData_02005d8c");
-#define gData_02005d8c gData_02005d8c__first
+extern u32 gData_02005d8c[];
 
 DEFINE_ACTOR_RESET_SCRIPTED_FOR(Actor_ResetScriptedFor, gData_02005d8c)
 
@@ -2203,15 +2179,11 @@ DEFINE_ACTOR_PARK(Actor_Park, Func_02003304)
 #undef position
 #undef WORK
 #undef ABS
-#undef gData_02005c84
-#undef gData_02005ce0
-#undef gData_02005d3c
 #undef gData_02007040
 #undef gData_0200703c
 #undef MapLayer
 #undef SceneWork
 #undef Camera_SetBounds
-#undef gData_02005d8c
 #undef RideSlot
 #undef RideWork
 #undef Ride_SetEntry

@@ -24,14 +24,7 @@
 #include "macros.h"
 #include "objcmd.h"
 
-/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[];
- * the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, -
- * 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, -
- * 1, 168,...; tried as the definition's extern LATE_DATA struct ActorPlacement
- * gData_0200312c[], it does not compile in tla-ja:
- * games/tla/src/scene/lemurian_ship.c:1702: conflicting types for
- * `gData_0200312c'. */
-extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
+extern s16 gData_0200312c[];
 
 u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -39,7 +32,7 @@ u8 *Scene_GetEntrances(void) {
   if (scene == (s32)&SceneId_Ov656Room1)
     return gLemurianShip_Room1Entrances;
   if (scene == (s32)&SceneId_Ov656Room2)
-    return gData_0200312c__scene_tables;
+    return gData_0200312c;
   return gLemurianShip_Entrances;
 }
 

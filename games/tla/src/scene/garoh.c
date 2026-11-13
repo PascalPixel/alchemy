@@ -840,12 +840,7 @@ burst:
     goto burst;
 }
 
-/* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the
- * definition has u32 gData_02006330[] = { 38, }; tried as the definition's
- * extern u32 gData_02006330[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:863: `gData_02006330__s12a8' undeclared (first
- * use in this function). */
-extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
+extern u32 gData_02006330[];
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 
@@ -868,7 +863,7 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   if (object != 0) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gData_02006330__s12a8);
+    Actor_StartScript(object, gData_02006330);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm, so the stack argument is loaded before
      * the pooled zero for nextFrame; without it, 2 of 32 instructions differ in

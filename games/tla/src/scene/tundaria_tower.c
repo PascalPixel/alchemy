@@ -163,19 +163,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gData_02003618[];
 extern struct ActorPlacement gData_02003648[];
 extern struct ActorPlacement gData_02003660[];
-/* VIEW(first): routine gData_02003690 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02003690[],
- * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:179:
- * `gData_02003690' undeclared (first use in this function). */
-extern const u8 gData_02003690__first[] __asm__("gData_02003690");
-#define gData_02003690 gData_02003690__first
-/* VIEW(first): routine gData_02003708 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02003708[], it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:181: `gData_02003708' undeclared (first
- * use in this function). */
-extern const u8 gData_02003708__first[] __asm__("gData_02003708");
-#define gData_02003708 gData_02003708__first
+extern struct ActorPlacement gData_02003690[];
+extern struct ActorPlacement gData_02003708[];
 extern struct ActorPlacement gData_020037c8[];
 
 const struct Trigger *Func_020004c8(void) {
@@ -702,8 +691,6 @@ void Func_020010d4(struct Actor *object) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_02003690
-#undef gData_02003708
 // ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
 /* VIEW(events_f): routines Func_020010d4, Func_02000404, Func_020007dc,
  * Func_02000f0c and Func_02000fb8 as module/scene/tundaria_tower.h declares

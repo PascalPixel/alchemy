@@ -510,15 +510,7 @@ void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
   object->sprite->rotation += 0x1800;
 }
 
-/* VIEW(s00b8): variable gFieldEffect_MediumScript as const s32
- * gFieldEffect_MediumScript[]; scene/shaman_village/s1fec has u32
- * gFieldEffect_MediumScript[] = {; tried as the definition's extern u32
- * gFieldEffect_MediumScript[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/shaman_village.c:576:
- * `gFieldEffect_MediumScript' undeclared (first use in this function). */
-extern const s32
-    gFieldEffect_MediumScript__s00b8[] __asm__("gFieldEffect_MediumScript");
-#define gFieldEffect_MediumScript gFieldEffect_MediumScript__s00b8
+extern u32 gFieldEffect_MediumScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1470,7 +1462,6 @@ void ShamanVillage_MeetMoapa(void) {
   Event_End();
 }
 
-#undef gFieldEffect_MediumScript
 #undef gShamanVillage_WalkToLeftStartScript
 #undef gShamanVillage_WalkToRightStartScript
 #undef gShamanVillage_Room2Placements
@@ -3627,4 +3618,3 @@ u32 gDriftScene_SpawnScript[] = {
 #undef gShamanVillage_WalkToRightStartScript
 #undef Import_ActorSetMode
 #undef gShamanVillage_Room2Placements
-#undef gFieldEffect_MediumScript

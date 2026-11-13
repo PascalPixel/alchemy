@@ -978,29 +978,12 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 #undef TOSS_WINDOW_WIDTH
 #undef WEIGHT
 
-/* VIEW(ride): variable gLemuriaSpring_Toss as extern struct SpringRide
- * gLemuriaSpring_Toss; lemuria_spring has extern struct SpringTossMotion
- * gLemuriaSpring_Toss; tried as the one declaration extern struct SpringRide
- * gLemuriaSpring_Toss, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_spring.c:981: conflicting types for
- * `gLemuriaSpring_Toss'. */
-extern struct SpringRide
-    gLemuriaSpring_Toss__ride __asm__("gLemuriaSpring_Toss");
-/* VIEW(ride): variable gLemuriaSpring_Obstacles as extern struct
- * SpringObstacle__ride gLemuriaSpring_Obstacles[]; lemuria_spring has extern
- * struct SpringObstacle gLemuriaSpring_Obstacles[]; tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_spring.c:1001: `gLemuriaSpring_Obstacles__ride'
- * undeclared (first use in this function). */
-extern struct SpringObstacle
-    gLemuriaSpring_Obstacles__ride[] __asm__("gLemuriaSpring_Obstacles");
-
 void LemuriaSpring_UpdateTossSimulation(void);
 
 /// Places the four actors from their tables, resets the ride and installs
 /// its task.
 void LemuriaSpring_InitializeTossSimulation(void) {
-  struct SpringRide *ride = &gLemuriaSpring_Toss__ride;
+  struct SpringRide *ride = &gLemuriaSpring_Toss;
   s32 i = 0;
   u8 *xtbl;
   u16 *htbl;
@@ -1011,7 +994,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   htbl = gLemuriaSpring_ObstacleHeadings;
   ztbl = gLemuriaSpring_ObstacleStartZ;
   xtbl = gLemuriaSpring_ObstacleStartX;
-  rec = gLemuriaSpring_Obstacles__ride;
+  rec = gLemuriaSpring_Obstacles;
 
   do {
     zero = 0;
@@ -1053,7 +1036,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
 s32 LemuriaSpring_RunToss(s32 side) {
   struct SpringRide *ride;
 
-  ride = &gLemuriaSpring_Toss__ride;
+  ride = &gLemuriaSpring_Toss;
   ride->trail[0].y = 0;
   ride->trail[1].y = 0;
   ride->trail[2].y = 0;

@@ -1133,24 +1133,9 @@ union ActorView {
 };
 extern u32 gData_02004034[];
 extern u32 gData_02003fe8[];
-/* VIEW(s1620): variable gData_02004004 as const u8 gData_02004004[];
- * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02003584(gData_02004004,
- * Orbiter_Spiral, 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
- * Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] = {; tried as
- * the definition's extern u32 gData_02004004[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1215: `gData_02004004' undeclared
- * (first use in this function). */
-extern const u8 gData_02004004__s1620[] __asm__("gData_02004004");
-#define gData_02004004 gData_02004004__s1620
+extern s32 gData_02004004[];
 extern u32 gData_02004058[];
-/* VIEW(s1620): variable gData_02004014 as const u8 gData_02004014[];
- * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02004014(gData_02004014,
- * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] =
- * {; tried as the one declaration extern const u8 gData_02004014[], it does not
- * compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:1248:
- * `gData_02004014' undeclared (first use in this function). */
-extern const u8 gData_02004014__s1620[] __asm__("gData_02004014");
-#define gData_02004014 gData_02004014__s1620
+extern s32 gData_02004014[];
 extern s32 gData_0200407c[];
 extern s32 gData_020040ac[];
 
@@ -2422,8 +2407,6 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 
-#undef gData_02004004
-#undef gData_02004014
 // ---- scene/aqua_rock_inside/s3844.c ----
 
 // Scene code of overlay 0x67c, in ROM order.
@@ -2652,19 +2635,12 @@ u32 gWaterDropScript[] = {
 #undef LAYER_S32
 #undef BYTE_AT
 #undef gData_02003fb8
-#undef gData_02004004
-#undef gData_02004014
 #undef Func_02003ab0
 
 void AquaRockInside_FightSteam(void);
 void Func_020005f8(void);
 void Func_02000b84(void);
 void AquaRockInside_ReadParchTablet(void);
-
-/* VIEW(data): variable Data_020005f4 as this part declared it; the scene
- * defines it as a routine. */
-extern u8 Data_020005f4__data[] __asm__("Data_020005f4");
-#define Data_020005f4 Data_020005f4__data
 
 // clang-format off
 LATE_DATA u32 gData_020044c8[] = {
@@ -3053,4 +3029,3 @@ LATE_DATA s8 gData_0200534c[] = {
     8, 0, 8, 8, 8, 1, -1, 8,
 };
 // clang-format on
-#undef Data_020005f4

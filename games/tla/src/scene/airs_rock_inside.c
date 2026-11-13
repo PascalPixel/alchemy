@@ -336,13 +336,7 @@ extern struct ActorPlacement gAirsRockInside_Room4Placements[];
 extern struct ActorPlacement gAirsRockInside_Room6Placements[];
 extern struct ActorPlacement gAirsRockInside_Room7Placements[];
 extern struct ActorPlacement gAirsRockInside_Room8Placements[];
-/* VIEW(first): variable gAirsRockInside_Room9Placements as this part declared
- * it; the joined file has another; tried as the one declaration extern u32
- * gAirsRockInside_Room9Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/airs_rock_inside.c:1544:
- * `gAirsRockInside_Room9Placements' undeclared (first use in this function). */
-extern u32 gData_02006bac__first[] __asm__("gAirsRockInside_Room9Placements");
-#define gAirsRockInside_Room9Placements gData_02006bac__first
+extern s32 gAirsRockInside_Room9Placements[];
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -2461,19 +2455,9 @@ DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 
 extern u32 gData_020060e0[];
 extern u32 gData_02006094[];
-/* VIEW(s2cf0): routine gData_020060b0 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_020060b0[],
- * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2549:
- * `gData_020060b0' undeclared (first use in this function). */
-extern const u8 gData_020060b0__s2cf0[] __asm__("gData_020060b0");
-#define gData_020060b0 gData_020060b0__s2cf0
+extern s32 gData_020060b0[];
 extern u32 gData_02006104[];
-/* VIEW(s2cf0): routine gData_020060c0 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_020060c0[],
- * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2588:
- * `gData_020060c0' undeclared (first use in this function). */
-extern const u8 gData_020060c0__s2cf0[] __asm__("gData_020060c0");
-#define gData_020060c0 gData_020060c0__s2cf0
+extern s32 gData_020060c0[];
 extern s32 gData_02006128[];
 extern s32 gData_02006158[];
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
@@ -3112,9 +3096,6 @@ void Func_02004f3c(void) {
 #undef TARGET
 #undef PICK_UP
 #undef SHAKE
-#undef gAirsRockInside_Room9Placements
-#undef gData_020060b0
-#undef gData_020060c0
 #undef gData_020073d8
 // @file
 // Scene code of overlay 0x664, in ROM order.

@@ -1123,15 +1123,7 @@ void Func_020017f4(void) {
   Actor_SetModeById(33, 0);
 }
 
-/* VIEW(contigo): routine MessageArgument_Push as void MessageArgument_Push(s32
- * value, s32 digits); module/window/window.h has void MessageArgument_Push(u32
- * value, u32 kind); tried as the definition's void MessageArgument_Push(u32
- * value, u32 kind), which the object already declares, Func_02001938 moves: 2
- * of 105 instructions, Func_02001abc moves: 2 of 72 instructions,
- * Contigo_InitializeRoom3 moves: 5 of 220 instructions in tla-ja. */
-extern void
-MessageArgument_Push__contigo(s32 value,
-                              s32 digits) __asm__("MessageArgument_Push");
+extern void MessageArgument_Push(s32 value, s32 digits);
 void Event_LeaveFor(s32 scene, s32 entrance);
 
 // The lucky wheels attendant: checks the game tickets and free item slots,
@@ -1151,7 +1143,7 @@ void Func_02001938(s32 spoken) {
       return;
     }
     Event_SetMessageId(message + 2);
-    MessageArgument_Push__contigo(tickets, 5);
+    MessageArgument_Push(tickets, 5);
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         1) {
@@ -1238,7 +1230,7 @@ void Func_02001abc(void) {
     return;
   }
   Event_SetMessageId((s32)MsgContigo01);
-  MessageArgument_Push__contigo(price, 5);
+  MessageArgument_Push(price, 5);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
@@ -1338,42 +1330,11 @@ void Func_02001d38(void) {
   Import_EventSetExitRequest(24);
 }
 
-/* VIEW(contigo): variable gData_020048a0 as extern const u8 gData_020048a0[];
- * the definition has u32 gData_020048a0[] = { 39, 2, 4, 0xa40000, 0, 0x1680000,
- * 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as
- * the definition's extern DEFINE_G_DATA_02002634(gData_02004758, 0x1520000,
- * 0x34c0000, 0x13e0000, 0x1300000, 0x3680000, 0x1400000, 0x3740000, 0x1500000,
- * 0x1600..., it does not compile in tla-ja: games/tla/src/scene/contigo.c:1365:
- * `gData_020048a0__contigo' undeclared (first use in this function). */
-extern const u8 gData_020048a0__contigo[] __asm__("gData_020048a0");
-/* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[];
- * the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000,
- * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
- * extern u32 gData_020048f8[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1368: `gData_020048f8__contigo' undeclared
- * (first use in this function). */
-extern const u8 gData_020048f8__contigo[] __asm__("gData_020048f8");
-/* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[];
- * the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000,
- * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
- * extern u32 gData_0200493c[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1367: `gData_0200493c__contigo' undeclared
- * (first use in this function). */
-extern const u8 gData_0200493c__contigo[] __asm__("gData_0200493c");
-/* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[];
- * the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000,
- * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
- * extern u32 gData_02004980[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1366: `gData_02004980__contigo' undeclared
- * (first use in this function). */
-extern const u8 gData_02004980__contigo[] __asm__("gData_02004980");
-/* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[];
- * the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000,
- * 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }; tried as the
- * definition's extern u32 gData_020049c4[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1770: `gData_020049c4__contigo' undeclared
- * (first use in this function). */
-extern const u8 gData_020049c4__contigo[] __asm__("gData_020049c4");
+extern u32 gData_020048a0[];
+extern u32 gData_020048f8[];
+extern u32 gData_0200493c[];
+extern u32 gData_02004980[];
+extern u32 gData_020049c4[];
 extern const u8 gData_02006030[];
 
 // The reunion scene. It opens with "Glad you kept your promise".
@@ -1410,10 +1371,10 @@ void Func_02001d50(void) {
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
-  Actor_SetMovementTypeById(5, gData_020048a0__contigo);
-  Actor_SetMovementTypeById(9, gData_02004980__contigo);
-  Actor_SetMovementTypeById(6, gData_0200493c__contigo);
-  Actor_SetMovementTypeAndWaitById(7, gData_020048f8__contigo);
+  Actor_SetMovementTypeById(5, gData_020048a0);
+  Actor_SetMovementTypeById(9, gData_02004980);
+  Actor_SetMovementTypeById(6, gData_0200493c);
+  Actor_SetMovementTypeAndWaitById(7, gData_020048f8);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(1);
   Actor_Stop(3);
@@ -1815,14 +1776,14 @@ void Func_02001d50(void) {
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetMovementTypeById(0, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(1, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(3, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(2, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(9, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(5, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(6, gData_020049c4__contigo);
-  Actor_SetMovementTypeAndWaitById(7, gData_020049c4__contigo);
+  Actor_SetMovementTypeById(0, gData_020049c4);
+  Actor_SetMovementTypeById(1, gData_020049c4);
+  Actor_SetMovementTypeById(3, gData_020049c4);
+  Actor_SetMovementTypeById(2, gData_020049c4);
+  Actor_SetMovementTypeById(9, gData_020049c4);
+  Actor_SetMovementTypeById(5, gData_020049c4);
+  Actor_SetMovementTypeById(6, gData_020049c4);
+  Actor_SetMovementTypeAndWaitById(7, gData_020049c4);
   Party_AddIsaacsParty();
   GameFlag_Set(2512);
   Event_End();
@@ -2256,12 +2217,12 @@ void Contigo_InitializeRoom3(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push__contigo(diff, 5);
+      MessageArgument_Push(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push__contigo(-diff, 5);
+      MessageArgument_Push(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2280,12 +2241,12 @@ void Contigo_InitializeRoom3(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push__contigo(diff, 5);
+      MessageArgument_Push(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push__contigo(-diff, 5);
+      MessageArgument_Push(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2312,7 +2273,7 @@ void Contigo_InitializeRoom3(void) {
         else
           Event_SetMessageId(MSG_NEXT_PRIZE);
         item = Func_02001a60(*prize);
-        MessageArgument_Push__contigo(item, 2);
+        MessageArgument_Push(item, 2);
         Event_ShowMessageAndWait(18, 0);
         ItemDisplay_ShowItem(item, 3);
         PartyInventory_GiveItem(item, 0);

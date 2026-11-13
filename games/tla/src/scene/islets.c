@@ -203,12 +203,7 @@ extern s32 gData_02005190;
 extern s32 gData_02005194;
 extern s32 gData_02005198;
 extern s32 gData_0200519c;
-/* VIEW(first): routine gData_02004028 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02004028[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1604:
- * `gData_02004028' undeclared (first use in this function). */
-extern const u8 gData_02004028__first[] __asm__("gData_02004028");
-#define gData_02004028 gData_02004028__first
+extern s32 gData_02004028[];
 /* VIEW(first): routine gData_020046bc as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_020046bc[], it does
  * not compile in tla-ja: games/tla/src/scene/islets.c:1600: `gData_020046bc'
@@ -1108,18 +1103,8 @@ void Func_020014e0(void) {
   Event_End();
 }
 
-/* VIEW(first): routine gData_020045a4 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_020045a4[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1144:
- * `gData_020045a4' undeclared (first use in this function). */
-extern const u8 gData_020045a4__first[] __asm__("gData_020045a4");
-#define gData_020045a4 gData_020045a4__first
-/* VIEW(first): routine gData_020045f0 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_020045f0[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1147:
- * `gData_020045f0' undeclared (first use in this function). */
-extern const u8 gData_020045f0__first[] __asm__("gData_020045f0");
-#define gData_020045f0 gData_020045f0__first
+extern u32 gData_020045a4[];
+extern u32 gData_020045f0[];
 
 void Func_02001a68(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1208,17 +1193,12 @@ void Func_02001c4c(void) {
   }
 }
 
-/* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
- * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
- * extern s32 gData_02004f04[], it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:1201: `gData_02004f04__scene_tables' undeclared
- * (first use in this function). */
-extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
+extern u8 gData_02004f04;
 extern s16 gData_02004f10[2][160];
 
 /// Applies BG1 horizontal line scrolling with HBlank DMA.
 void Func_02001cac(void) {
-  s16 *lines = gData_02004f10[gData_02004f04__scene_tables];
+  s16 *lines = gData_02004f10[gData_02004f04];
   s32 first = lines[0];
   volatile u16 *scroll;
   volatile u16 *dma;
@@ -1241,7 +1221,7 @@ void Func_02001cac(void) {
 
 void Func_02001cfc(void) {
   s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[2];
-  s16 *lines = gData_02004f10[gData_02004f04__scene_tables ^ 1];
+  s16 *lines = gData_02004f10[gData_02004f04 ^ 1];
   s32 v[2];
   s32 *count = &v[1];
   s32 value;
@@ -1258,7 +1238,7 @@ void Func_02001cfc(void) {
     value += *count % 3;
     *lines++ = value - 1;
   }
-  gData_02004f04__scene_tables ^= 1;
+  gData_02004f04 ^= 1;
 }
 
 void Func_02001d90(void) {
@@ -1714,18 +1694,8 @@ void Func_02002830(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) ((struct Actor *)((s32)Actor_Get((id))))
 
-/* VIEW(first): routine gData_02004508 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02004508[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1733:
- * `gData_02004508' undeclared (first use in this function). */
-extern const u8 gData_02004508__first[] __asm__("gData_02004508");
-#define gData_02004508 gData_02004508__first
-/* VIEW(first): routine gData_02004554 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02004554[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:1734:
- * `gData_02004554' undeclared (first use in this function). */
-extern const u8 gData_02004554__first[] __asm__("gData_02004554");
-#define gData_02004554 gData_02004554__first
+extern u32 gData_02004508[];
+extern u32 gData_02004554[];
 
 /// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
 /// is placed, the screen fades in, both run their action scripts
@@ -2623,13 +2593,8 @@ void Actor_StopAtPushTarget(struct Actor *object) {
 #undef EVENT_S16
 #undef HI
 #undef ABS
-#undef gData_02004028
 #undef gData_020046bc
 #undef gData_02004004
-#undef gData_020045a4
-#undef gData_020045f0
-#undef gData_02004508
-#undef gData_02004554
 #undef gPushFootprints
 #include "text/msg_ids.h"
 

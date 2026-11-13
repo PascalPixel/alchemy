@@ -30,22 +30,9 @@ void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
 
-/* VIEW(first): routine gNaribwe_Placements as this part declared it; the joined
- * file has another; tried as the one declaration extern const u8
- * gNaribwe_Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:83: `gNaribwe_Placements' undeclared (first use
- * in this function). */
-extern const u8 gNaribwe_Placements__first[] __asm__("gNaribwe_Placements");
-#define gNaribwe_Placements gNaribwe_Placements__first
+extern struct ActorPlacement gNaribwe_Placements[];
 extern struct ActorPlacement gNaribwe_Entrance10Placements[];
-/* VIEW(first): routine gNaribwe_PlacementsOnReturn as this part declared it;
- * the joined file has another; tried as the one declaration extern const u8
- * gNaribwe_PlacementsOnReturn[], it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:81: `gNaribwe_PlacementsOnReturn' undeclared
- * (first use in this function). */
-extern const u8
-    gNaribwe_PlacementsOnReturn__first[] __asm__("gNaribwe_PlacementsOnReturn");
-#define gNaribwe_PlacementsOnReturn gNaribwe_PlacementsOnReturn__first
+extern struct ActorPlacement gNaribwe_PlacementsOnReturn[];
 extern struct Trigger gNaribwe_Triggers[];
 extern struct Trigger gNaribwe_TriggersOnReturn[];
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
@@ -343,8 +330,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef gNaribwe_Placements
-#undef gNaribwe_PlacementsOnReturn
 #undef gNaribwe_Doors
 #undef MsgNaribwe02
 #undef MsgNaribwe03

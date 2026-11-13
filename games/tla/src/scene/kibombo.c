@@ -875,30 +875,10 @@ extern s32 Task_Add__s1318(TaskFunc func, s32 order) __asm__("Task_Add");
 
 void Party_GivePiersDjinn(void);
 extern u32 gData_02005e88[];
-/* VIEW(s1318): routine gData_02005eec as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02005eec[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:844:
- * `gData_02005eec' undeclared (first use in this function). */
-extern const u8 gData_02005eec__s1318[] __asm__("gData_02005eec");
-#define gData_02005eec gData_02005eec__s1318
-/* VIEW(s1318): routine gData_02005f14 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02005f14[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:855:
- * `gData_02005f14' undeclared (first use in this function). */
-extern const u8 gData_02005f14__s1318[] __asm__("gData_02005f14");
-#define gData_02005f14 gData_02005f14__s1318
-/* VIEW(s1318): routine gData_02005f58 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02005f58[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:856:
- * `gData_02005f58' undeclared (first use in this function). */
-extern const u8 gData_02005f58__s1318[] __asm__("gData_02005f58");
-#define gData_02005f58 gData_02005f58__s1318
-/* VIEW(s1318): routine gData_02005f9c as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02005f9c[], it does
- * not compile in tla-ja: games/tla/src/scene/kibombo.c:857: `gData_02005f9c'
- * undeclared (first use in this function). */
-extern const u8 gData_02005f9c__s1318[] __asm__("gData_02005f9c");
-#define gData_02005f9c gData_02005f9c__s1318
+extern u32 gData_02005eec[];
+extern u32 gData_02005f14[];
+extern u32 gData_02005f58[];
+extern u32 gData_02005f9c[];
 extern u32 gData_02005fe0[];
 
 /// A scene in Kibombo: actor 7 speaks, the camera pans, actors 26, 5, 6 and 7
@@ -1217,32 +1197,10 @@ void Func_02001318(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-/* VIEW(s1318): routine gData_02006014 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02006014[], it does
- * not compile in tla-ja: games/tla/src/scene/kibombo.c:1174: `gData_02006014'
- * undeclared (first use in this function). */
-extern const u8 gData_02006014__s1318[] __asm__("gData_02006014");
-#define gData_02006014 gData_02006014__s1318
-/* VIEW(s1318): routine gData_02006058 as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_02006058[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1175:
- * `gData_02006058' undeclared (first use in this function). */
-extern const u8 gData_02006058__s1318[] __asm__("gData_02006058");
-#define gData_02006058 gData_02006058__s1318
-/* VIEW(s1318): routine gData_0200609c as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_0200609c[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1176:
- * `gData_0200609c' undeclared (first use in this function). */
-extern const u8 gData_0200609c__s1318[] __asm__("gData_0200609c");
-#define gData_0200609c gData_0200609c__s1318
-/* VIEW(s1318): routine gData_020060e0 as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_02003584(gData_020060b0, Func_02003ed4, 38, 17)
- * DEFINE_G_DATA_02004014(gData_020060c0, Orbit_Update, Actor_AimAtWatched...,
- * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1177:
- * `gData_020060e0' undeclared (first use in this function). */
-extern const u8 gData_020060e0__s1318[] __asm__("gData_020060e0");
-#define gData_020060e0 gData_020060e0__s1318
+extern u32 gData_02006014[];
+extern u32 gData_02006058[];
+extern u32 gData_0200609c[];
+extern u32 gData_020060e0[];
 extern u32 gData_02006108[];
 void Func_0200384c(void);
 
@@ -1672,14 +1630,6 @@ void Func_02002eb0(void) {
 #undef Import_ActorCreate
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
-#undef gData_02005eec
-#undef gData_02005f14
-#undef gData_02005f58
-#undef gData_02005f9c
-#undef gData_02006014
-#undef gData_02006058
-#undef gData_0200609c
-#undef gData_020060e0
 // @file
 // Scene code of overlay 0x670, in ROM order.
 

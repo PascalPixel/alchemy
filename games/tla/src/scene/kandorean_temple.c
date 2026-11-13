@@ -335,27 +335,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gKandoreanTemple_Placements[];
 #define gKandoreanTemple_Placements gKandoreanTemple_Placements
-/* VIEW(kandorean_temple): routine gKandoreanTemple_LiftRoomPlacements as this
- * part declared it; the joined file has another; tried as the one declaration
- * extern u32 gKandoreanTemple_LiftRoomPlacements[], it does not compile in
- * tla-ja: games/tla/src/scene/kandorean_temple.c:3260: conflicting types for
- * `gKandoreanTemple_LiftRoomPlacements'. */
-extern u32 gKandoreanTemple_LiftRoomPlacements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_LiftRoomPlacements");
-#define gKandoreanTemple_LiftRoomPlacements                                    \
-  gKandoreanTemple_LiftRoomPlacements__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_ChestbeaterRoomPlacements as
- * this part declared it; the joined file has another; tried as the definition's
- * extern DEFINE_G_DATA_020057C0(gKandoreanTemple_LiftRoomPlacements, 407, 1, 2,
- * 3, 4, 272, 5, 351) struct ActorPlacement gKandoreanTemple_Ches..., it does
- * not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:343:
- * conflicting types for
- * `gKandoreanTemple_LiftRoomPlacements__kandorean_temple'. */
-extern u32
-    gKandoreanTemple_ChestbeaterRoomPlacements__kandorean_temple[] __asm__(
-        "gKandoreanTemple_ChestbeaterRoomPlacements");
-#define gKandoreanTemple_ChestbeaterRoomPlacements                             \
-  gKandoreanTemple_ChestbeaterRoomPlacements__kandorean_temple
+extern struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[];
+extern struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[];
 extern struct ActorPlacement gKandoreanTemple_VentRoomPlacements[];
 #define gKandoreanTemple_VentRoomPlacements gKandoreanTemple_VentRoomPlacements
 extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
@@ -2016,8 +1997,6 @@ L_0200ae24:
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef gKandoreanTemple_Placements
-#undef gKandoreanTemple_LiftRoomPlacements
-#undef gKandoreanTemple_ChestbeaterRoomPlacements
 #undef gKandoreanTemple_VentRoomPlacements
 #undef gKandoreanTemple_FogRoomPlacements
 #undef gKandoreanTemple_LiftRoomEvents

@@ -1050,16 +1050,7 @@ void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
  * compile in tla-ja: games/tla/src/scene/settlements.c:1061: invalid operands
  * to binary >>. */
 extern u32 gInput__s1620 __asm__("gInput");
-/* VIEW(settlements): variable gSettlements_SlideAngles as const s16
- * gSettlements_SlideAngles[]; scene/settlements/s1d30 has
- * DEFINE_G_DATA_02002276(gSettlements_SlideAngles) s16
- * gSettlements_SlideAnglesByKey[] = {; tried as the one declaration extern
- * const s16 gSettlements_SlideAngles[], it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:1059: `gSettlements_SlideAngles' undeclared
- * (first use in this function). */
-extern const s16
-    gSettlements_SlideAngles__settlements[] __asm__("gSettlements_SlideAngles");
-#define gSettlements_SlideAngles gSettlements_SlideAngles__settlements
+extern s16 gSettlements_SlideAngles[];
 
 void Settlements_KeepSliding(struct Actor *object) {
   s32 angle;
@@ -1218,7 +1209,6 @@ end:
   Actor_SelectAnimation(object, 1);
 }
 
-#undef gSettlements_SlideAngles
 // ---- scene/settlements/s1a1c.c ----
 
 // The settlements' events, continued; settlements.c says which places these
@@ -2019,4 +2009,3 @@ struct Trigger gSettlements_Room10Triggers[] = {
 s32 gSettlements_WaterColorFrame[] = {
     -1,
 };
-#undef gSettlements_SlideAngles

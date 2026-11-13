@@ -114,13 +114,7 @@ extern struct Actor *gData_02002058__first __asm__("gData_02002058");
 extern u32 gData_02001f78[];
 extern s32 gData_02001f9c[];
 extern u32 gData_02001fe4[];
-/* VIEW(first): routine gData_0200200c as this part declared it; the joined file
- * has another; tried as the one declaration extern const u8 gData_0200200c[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue_chamber.c:360: `gData_0200200c' undeclared
- * (first use in this function). */
-extern const u8 gData_0200200c__first[] __asm__("gData_0200200c");
-#define gData_0200200c gData_0200200c__first
+extern u32 gData_0200200c[];
 #define OBJECT(id) (Actor_Get((id)))
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 
@@ -1061,7 +1055,6 @@ void GabombaStatueChamber_InitializeRoom3(void) {
 #undef OBJECT
 #undef DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM
 #undef gData_02002058
-#undef gData_0200200c
 #include "text/msg_ids.h"
 
 void Func_02000e50(void);

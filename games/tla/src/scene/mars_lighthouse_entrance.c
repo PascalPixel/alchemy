@@ -904,13 +904,7 @@ const struct Trigger *Scene_GetEvents(void) {
 DEFINE_ACTOR_FREEZE(Actor_Freeze)
 #undef SET_SPRITE_WINDOW_LAYERS
 
-/* VIEW(mars_lighthouse_entrance): routine gData_02006868 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_02006868[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:893: `gData_02006868'
- * undeclared (first use in this function). */
-extern s16 gData_02006868__mars_lighthouse_entrance __asm__("gData_02006868");
-#define gData_02006868 gData_02006868__mars_lighthouse_entrance
+extern u32 gData_02006868[];
 
 void Func_02001254(void) {
   s16 *state = &gData_02006868;
@@ -1315,47 +1309,12 @@ L_020098d0:
 }
 #undef FIELD_AT
 
-/* VIEW(mars_lighthouse_entrance): routine gData_0200547c as this part declared
- * it; the joined file has another; tried as the one declaration extern const u8
- * gData_0200547c[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1338: `gData_0200547c'
- * undeclared (first use in this function). */
-extern const u8
-    gData_0200547c__mars_lighthouse_entrance[] __asm__("gData_0200547c");
-#define gData_0200547c gData_0200547c__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020054cc as this part declared
- * it; the joined file has another; tried as the one declaration extern const u8
- * gData_020054cc[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1342: `gData_020054cc'
- * undeclared (first use in this function). */
-extern const u8
-    gData_020054cc__mars_lighthouse_entrance[] __asm__("gData_020054cc");
-#define gData_020054cc gData_020054cc__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_02005528 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_02005528[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1346: `gData_02005528'
- * undeclared (first use in this function). */
-extern const u8
-    gData_02005528__mars_lighthouse_entrance[] __asm__("gData_02005528");
-#define gData_02005528 gData_02005528__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_02005578 as this part declared
- * it; the joined file has another; tried as the one declaration extern const u8
- * gData_02005578[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1349: `gData_02005578'
- * undeclared (first use in this function). */
-extern const u8
-    gData_02005578__mars_lighthouse_entrance[] __asm__("gData_02005578");
-#define gData_02005578 gData_02005578__mars_lighthouse_entrance
+extern s32 gData_0200547c[];
+extern s32 gData_020054cc[];
+extern s32 gData_02005528[];
+extern s32 gData_02005578[];
 extern s32 gData_020055d4[];
-/* VIEW(mars_lighthouse_entrance): routine gData_02005644 as this part declared
- * it; the joined file has another; tried as the definition's extern LATE_DATA
- * u32 gData_02005644[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1356: `gData_02005644'
- * undeclared (first use in this function). */
-extern const u8
-    gData_02005644__mars_lighthouse_entrance[] __asm__("gData_02005644");
-#define gData_02005644 gData_02005644__mars_lighthouse_entrance
+extern s32 gData_02005644[];
 extern struct Trigger gMarsLighthouseEntrance_Triggers[];
 #define gMarsLighthouseEntrance_Triggers gMarsLighthouseEntrance_Triggers
 extern struct Trigger gMarsLighthouseEntrance_Room1Triggers[];
@@ -1456,15 +1415,7 @@ struct RideWork__s1930 {
 DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork__s1930,
                            Actor_IsTouching, Actor_IsBeside)
 
-/* VIEW(mars_lighthouse_entrance): routine gData_020056a0 as this part declared
- * it; the joined file has another; tried as the one declaration extern
- * DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork__s1930,
- * Actor_IsTouching, Actor_IsBeside) extern const u8 gData_020056a0[], it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1392:
- * `gData_020056a0' undeclared (first use in this function). */
-extern const u8
-    gData_020056a0__mars_lighthouse_entrance[] __asm__("gData_020056a0");
-#define gData_020056a0 gData_020056a0__mars_lighthouse_entrance
+extern u32 gData_020056a0[];
 
 void Ride_UpdateDrift(struct Actor *object);
 
@@ -1508,16 +1459,7 @@ struct RideWork__s1c44 {
 DEFINE_RIDE_UPDATE_LANDING(Ride_UpdateLanding, RideWork__s1c44,
                            Actor_IsTouching, Actor_IsBeside)
 
-/* VIEW(mars_lighthouse_entrance): routine gData_020056a0 as this part declared
- * it; the joined file has another; tried as the one declaration extern
- * DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork__s1930,
- * Actor_IsTouching, Actor_IsBeside) extern const u8 gData_020056a0[], it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1393:
- * `gData_020056a0__mars_lighthouse_entrance' undeclared (first use in this
- * function). */
-extern const u8
-    gData_020056a0__mars_lighthouse_entrance[] __asm__("gData_020056a0");
-#define gData_020056a0 gData_020056a0__mars_lighthouse_entrance
+extern u32 gData_020056a0[];
 
 void Ride_UpdateDrift(struct Actor *object);
 
@@ -2173,11 +2115,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef gMarsLighthouseEntrance_Room6Placements
 #undef gMarsLighthouseEntrance_Room7Placements
 #undef FieldEffect_Spawn
-#undef gData_0200547c
-#undef gData_020054cc
-#undef gData_02005528
-#undef gData_02005578
-#undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
 #undef gMarsLighthouseEntrance_Room2Triggers
@@ -2186,14 +2123,7 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef gMarsLighthouseEntrance_Room5Triggers
 #undef gMarsLighthouseEntrance_Room6Triggers
 #undef gMarsLighthouseEntrance_Room7Triggers
-#undef gData_02006868
 #undef Func_02002c2c
-#undef gData_02006868
-#undef gData_0200547c
-#undef gData_020054cc
-#undef gData_02005528
-#undef gData_02005578
-#undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
 #undef gMarsLighthouseEntrance_Room2Triggers
@@ -2202,14 +2132,8 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef gMarsLighthouseEntrance_Room5Triggers
 #undef gMarsLighthouseEntrance_Room6Triggers
 #undef gMarsLighthouseEntrance_Room7Triggers
-#undef gData_02006868
 #undef Func_020022e4
 #undef Func_0200248c
-#undef gData_0200547c
-#undef gData_020054cc
-#undef gData_02005528
-#undef gData_02005578
-#undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
 #undef gMarsLighthouseEntrance_Room2Triggers
@@ -2218,18 +2142,9 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef gMarsLighthouseEntrance_Room5Triggers
 #undef gMarsLighthouseEntrance_Room6Triggers
 #undef gMarsLighthouseEntrance_Room7Triggers
-#undef gData_02006868
-#undef gData_020056a0
-#undef gData_020056a0
-#undef gData_020056a0
 #undef Func_0200246c
 #undef Unit_Get
 #undef Func_02002614
-#undef gData_0200547c
-#undef gData_020054cc
-#undef gData_02005528
-#undef gData_02005578
-#undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
 #undef gMarsLighthouseEntrance_Room2Triggers
@@ -2238,7 +2153,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef gMarsLighthouseEntrance_Room5Triggers
 #undef gMarsLighthouseEntrance_Room6Triggers
 #undef gMarsLighthouseEntrance_Room7Triggers
-#undef gData_02006868
 #undef Position
 #undef Position
 #undef Palette_SetColorsFade

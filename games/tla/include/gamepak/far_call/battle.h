@@ -18,4 +18,10 @@ void *GetMotionRecordFar(void *object, s32 index);
 s32 BattleMotion_ProjectConditionalPositionFar(s32 unit,
                                                struct TargetPoint *point);
 
+void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
+
+void ReleaseBattleObjectRecordsFar(s32 actor);
+
+void BattleActor_CommitPlacementFar(void);
+
 #endif

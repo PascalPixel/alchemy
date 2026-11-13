@@ -6,7 +6,6 @@
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/menu.h"
 #include "module/shop/shop.h"
-#include "module/tla.h"
 
 // The Japanese money window is a tile narrower, as in Shop_SelectBuy.
 #if LANGUAGE == LANGUAGE_JAPANESE

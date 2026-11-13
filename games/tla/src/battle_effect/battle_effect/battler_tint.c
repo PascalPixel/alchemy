@@ -6,7 +6,7 @@
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
-#include "module/tla.h"
+#include "gamepak/far_call/field.h"
 
 /* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[];
  * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the

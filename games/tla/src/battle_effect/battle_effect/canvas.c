@@ -8,7 +8,6 @@
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
-#include "module/tla.h"
 #include "resource_ids.h"
 
 struct Model;

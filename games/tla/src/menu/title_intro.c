@@ -28,7 +28,6 @@
 #include "actor.h"
 #include "module/menu/menu.h"
 #include "module/system/system.h"
-#include "module/tla.h"
 #include "resource_ids.h"
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
@@ -767,8 +766,8 @@ s32 Func_081a71c8(void) {
 /// map numbered from tile 0x1a0, two blank columns a row) and, with prompt
 /// set, loads the five prompt sprites. After the fade from white it holds 660
 /// frames, or 5400 with the prompt; after the first 120 the prompt's three
-/// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it early,
-/// returning 1 (else 0).
+/// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it
+/// early, returning 1 (else 0).
 // As the end of The Broken Seal's Title_RunIntro.
 s32 Func_081a729c(s32 prompt) {
   s32 blankTile = 0x1ff;
@@ -1464,7 +1463,7 @@ void PaletteFade_Start(s32 value) {
     state->duration = value;
     state->step = 0;
     PaletteFade_CalculateSteps((s16 *)state->current, (s16 *)state->target,
-                             (s16 *)state->delta, value);
+                               (s16 *)state->delta, value);
   }
 }
 

@@ -4,7 +4,7 @@
 
 #include "../system_internal.h"
 #include "gamepak/far_call/sound.h"
-#include "module/tla.h"
+#include "ram_buffer.h"
 
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= 13) {
@@ -317,7 +317,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
             "three, so a 16-byte struct copy compiles to 12 and 4")
-static __inline__ void Copy16Bytes(const void *source, volatile void *destination) {
+static __inline__ void Copy16Bytes(const void *source,
+                                   volatile void *destination) {
   register const void *src __asm__("r0") = source;
   register volatile void *dst __asm__("r1") = destination;
   __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
@@ -339,8 +340,8 @@ void Func_0801399c(void) {
     dma0[5];
   }
   if (gSerialExchangeActive != 0) {
-    gLinkStatus = Serial_ExchangePayloads((void *)&gSerialTransfer,
-                                                 gSerialPeerPayloads);
+    gLinkStatus =
+        Serial_ExchangePayloads((void *)&gSerialTransfer, gSerialPeerPayloads);
     Serial_StepBlockTransfer();
   }
   SoundDriver_VSyncRefresh();

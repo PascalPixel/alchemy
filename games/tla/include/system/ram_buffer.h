@@ -94,4 +94,10 @@ struct HeapSlots {
 #define Ram_HeapSlots                                                          \
   FIXED_ADDRESS((struct HeapSlots *), 0x03000000, gHeapSlots)
 
+extern u8 gMapShapeGrid[];
+
+extern u32 gMapBlocks[];
+
+extern void (*gData_030011f8)(void);
+
 #endif

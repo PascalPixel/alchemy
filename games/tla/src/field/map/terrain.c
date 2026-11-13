@@ -20,9 +20,10 @@
 #include "module/field/field.h"
 #include "module/field/map.h"
 #include "module/system/system.h"
-#include "module/tla.h"
 #include "resource.h"
 #include "sprite_metadata.h"
+
+extern u32 Data_02018000[];
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                               s32 *terrainKind) {

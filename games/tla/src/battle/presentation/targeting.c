@@ -11,7 +11,7 @@
 #include "module/battle/battle.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
-#include "module/tla.h"
+#include "mul_q16.h"
 #include "resource.h"
 
 #define TARGET_MODE_NONE 0

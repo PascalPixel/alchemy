@@ -6,7 +6,6 @@
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/battle_effect/battle_effect.h"
-#include "module/tla.h"
 
 // Battle effects: repeat an empty effect.
 
@@ -24,8 +23,13 @@ void BattleEffect_CallDoNothing(s32 cnt) {
   }
 }
 
-/* VIEW(f14b9e8): routine BattleEffect_RunTiamat as void BattleEffect_RunTiamat(s32 *arg); the definition has DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1) DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0) void Func_08.... */
-extern void BattleEffect_RunTiamat__f14b9e8(s32 *arg) __asm__("BattleEffect_RunTiamat");
+/* VIEW(f14b9e8): routine BattleEffect_RunTiamat as void
+ * BattleEffect_RunTiamat(s32 *arg); the definition has
+ * DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1)
+ * DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0) void Func_08....
+ */
+extern void
+BattleEffect_RunTiamat__f14b9e8(s32 *arg) __asm__("BattleEffect_RunTiamat");
 
 extern u8 gMapCellBuffer[];
 

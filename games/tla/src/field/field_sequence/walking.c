@@ -6,7 +6,8 @@
 #include "../field_sequence_internal.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
-#include "module/tla.h"
+#include "gamepak/far_call/game.h"
+#include "ram_buffer.h"
 
 s32 Func_080caf6c(void) { return 0; }
 

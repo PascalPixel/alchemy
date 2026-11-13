@@ -35,8 +35,10 @@
 #include "text/msg_ids.h"
 #include "module/menu/menu.h"
 #include "module/system/system.h"
-#include "module/tla.h"
+#include "ram_buffer.h"
 #include "resource_ids.h"
+
+extern u8 gData_03001110;
 
 ///@}
 

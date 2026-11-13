@@ -331,4 +331,6 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
       (unit)->ppGauge = 1;                                                     \
   } while (0)
 
+extern struct BattleUnit gOwnerStates[];
+
 #endif

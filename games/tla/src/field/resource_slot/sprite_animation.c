@@ -8,8 +8,46 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 
-/* VIEW(resource_slot): routine AnimationObject_Allocate as s32 AnimationObject_Allocate(s32 id); the definition has struct AnimationEntry *AnimationObject_Allocate(s32 id); tried as the definition's struct AnimationEntry *AnimationObject_Allocate(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:482: conflicting types for `AnimationObject_Allocate'. */
-extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__("AnimationObject_Allocate");
+struct ChildObject {
+  u8 unk00[2];
+  u16 value;
+  u8 unk04[8];
+  s32 active;
+  u8 unk10[5];
+  u8 mode;
+};
+
+/// The sprite as ResourceObject_Create fills it: the image's three attribute
+/// words, its layout, then the shadow's three words.
+struct ResourceSprite {
+  u32 imageAttributes[3];
+  s32 scale;
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 useOwnScale : 1;
+  u8 unk11 : 6;
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
+  u8 flags;
+  u8 count;
+  u32 shadowAttributes[3];
+  struct AnimationEntry *entries[4];
+};
+
+/* VIEW(resource_slot): routine AnimationObject_Allocate as s32
+ * AnimationObject_Allocate(s32 id); the definition has struct AnimationEntry
+ * *AnimationObject_Allocate(s32 id); tried as the definition's struct
+ * AnimationEntry *AnimationObject_Allocate(s32 id), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:482: conflicting types for
+ * `AnimationObject_Allocate'. */
+extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__(
+    "AnimationObject_Allocate");
 #define AnimationObject_Allocate AnimationObject_Allocate__resource_slot
 #include "system.h"
 #undef AnimationObject_Allocate
@@ -98,7 +136,11 @@ s32 Animation_LookupValueByKey(s32 key) {
 // actor_view.h's ActorSpriteView, with the bytes this function writes named
 // from the projection draft's layout (field_sprite.h); its other members as
 // the tree has them.
-/* VIEW(resource_slot): tag struct ActorSpriteView as struct ActorSpriteView__resource_slot; actor_view.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:113: dereferencing pointer to incomplete type. */
+/* VIEW(resource_slot): tag struct ActorSpriteView as struct
+ * ActorSpriteView__resource_slot; actor_view.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/resource_slot.c:113: dereferencing pointer to
+ * incomplete type. */
 struct ActorSpriteView__resource_slot {
   u8 unk00[5];
   u8 unk05Low : 2;
@@ -507,8 +549,12 @@ typedef char
 
 #include "vram_tab.h"
 
-/* VIEW(vram_block_93): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id). */
-extern s32 ResourceMetadata_Register__vram_block_93(struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
+/* VIEW(vram_block_93): routine ResourceMetadata_Register as s32
+ * ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the
+ * definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state,
+ * s32 id). */
+extern s32 ResourceMetadata_Register__vram_block_93(
+    struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
 
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.

@@ -6,7 +6,8 @@
 #include "../presentation_internal.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
-#include "module/tla.h"
+#include "gamepak/far_call/field.h"
+#include "module/window/screens.h"
 
 void BattlePlayback_Start(s32 cue) {
   struct BattleEventState *ev;

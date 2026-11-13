@@ -4,7 +4,7 @@
 
 #include "../game_internal.h"
 #include "module/game/game.h"
-#include "module/tla.h"
+#include "mul_q16.h"
 
 struct OwnerGrowthRecord;
 
@@ -195,10 +195,9 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 void Unit_UpdateClass(s32 ownerId) {
   struct BattleUnit *owner = Unit_Get(ownerId);
 
-  owner->classIndex = Class_Determine(owner->enemyId, owner->djinnAvailable,
-                                      Inventory_GetEquippedItem(
-                                          (struct OwnerInventoryState *)owner,
-                                          10));
+  owner->classIndex = Class_Determine(
+      owner->enemyId, owner->djinnAvailable,
+      Inventory_GetEquippedItem((struct OwnerInventoryState *)owner, 10));
   Owner_UpdateClassActions(ownerId);
   Unit_CalculateBaseElements(ownerId, owner->baseElement);
 }

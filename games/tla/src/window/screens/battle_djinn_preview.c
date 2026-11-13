@@ -9,6 +9,21 @@
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
+struct PreviewUnit {
+  u8 unk000[0x38];
+  s16 hp;
+  s16 pp;
+  u16 atk;
+  u16 def;
+  u16 agi;
+  u8 luck;
+  u8 unk043[0x15];
+  u16 psynergy[1];
+  u8 unk05a[0xcf];
+  u8 classId;
+  u8 unk12a[0x22];
+};
+
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *dst;
   s32 n;
@@ -99,7 +114,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
 /// x, y: position within the window, in pixels.
 /// ability: ability index.
 s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
-                                    s32 ability) {
+                                   s32 ability) {
   s32 slot;
 
   slot = Resource_FindFreeEntry();
@@ -151,8 +166,9 @@ s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
 /// the unit recalculated (Unit_CalculateFar) only to measure: the unit is
 /// restored from a copy before it returns. BattleDjinnMenu_Run calls it as the
 /// cursor moves.
-struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 member,
-                             s32 encodedDjinn, s32 page, s32 *pageCount) {
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
+                                                 s32 member, s32 encodedDjinn,
+                                                 s32 page, s32 *pageCount) {
   struct PreviewUnit *unit;
   struct PreviewUnit *savedUnit;
   struct PreviewAbility *ability;
@@ -256,11 +272,11 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
     oldDef = savedUnit->def;
     String_FormatNumberToHalfwords(numberText, oldDef);
     Text_DrawWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
-                                  OLD_DEFENSE_AGILITY_X, 4);
+                                OLD_DEFENSE_AGILITY_X, 4);
     oldAgi = savedUnit->agi;
     String_FormatNumberToHalfwords(numberText, oldAgi);
     Text_DrawWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
-                                  OLD_DEFENSE_AGILITY_X, 5);
+                                OLD_DEFENSE_AGILITY_X, 5);
     String_FormatNumberToHalfwords(numberText, savedUnit->luck);
     Text_DrawWideStringInWindow(numberText + 8, window, OLD_VALUE_X + 1, 6);
 
@@ -290,8 +306,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
         rangePattern--;
       Window_DrawThreeTileColumn(window, 16, visibleRow * 2, rangePattern, 0);
       WindowSprite_CreateAbilityIcon((struct RenderInput *)window, 0,
-                                          visibleRow * 16 - 4,
-                                          changedAbilities[i] & 0x3fff);
+                                     visibleRow * 16 - 4,
+                                     changedAbilities[i] & 0x3fff);
       if (changedAbilities[i] & 0x8000)
         Text_SetColor(PREVIEW_YELLOW);
       else if (changedAbilities[i] & 0x4000)
@@ -299,8 +315,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
       else
         Text_SetColor(PREVIEW_WHITE);
       Text_DrawMessageAsTiles((changedAbilities[i] & 0x3fff) +
-                                     (s32)MsgAbilityNothing,
-                                 window, 16, visibleRow * 16);
+                                  (s32)MsgAbilityNothing,
+                              window, 16, visibleRow * 16);
       Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, 11, visibleRow * 2,
                              0);
       Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL_END, 12,
@@ -316,7 +332,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
     if (lost != 0) {
       Text_SetColor(PREVIEW_RED);
       Text_DrawMessageAsTiles((s32)MsgKey10d4, window, TOTAL_LABEL_X,
-                                 summaryRows * 8 + 80);
+                              summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
@@ -327,10 +343,9 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
   }
 
   if (page == 0) {
-    Text_DrawMessageAsTiles((s32)MsgClassName + savedUnit->classId, window,
-                               0, 0);
-    Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, window, 80,
-                               0);
+    Text_DrawMessageAsTiles((s32)MsgClassName + savedUnit->classId, window, 0,
+                            0);
+    Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, window, 80, 0);
     if (savedUnit->classId != unit->classId)
       Window_SetTilemapEntry(window, 0xf728, 9, 0, page);
     else

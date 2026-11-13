@@ -145,4 +145,12 @@ extern s8 gMenu_SaveSlotActionByPosition[];
 
 extern struct LinkCountdownState *gLinkCountdownWork;
 
+struct TargetWindow {
+  u8 unk00[8];
+  u16 width;
+  u16 height;
+  s16 x;
+  s16 y;
+};
+
 #endif

@@ -9,7 +9,6 @@
 #include "module/battle/battle.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
-#include "module/tla.h"
 
 // Battle: test whether a unit is in a battle formation.
 

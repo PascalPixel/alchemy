@@ -6,8 +6,68 @@
 #include "flag_call.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/game/game.h"
-#include "module/tla.h"
+#include "gamepak/far_call/window.h"
+#include "ram_buffer.h"
 #include "resource_ids.h"
+
+extern u16 gData_02003860;
+
+extern s16 gData_020036d0;
+
+struct OwnerStats {
+  u8 unk000[0x10];
+  s16 baseHp;
+  s16 basePp;
+  s16 hpRatio;
+  s16 ppRatio;
+  u16 baseAttack;
+  u16 baseDefense;
+  u16 baseAgility;
+  u8 baseLuck;
+  u8 baseTurns;
+  u8 base20;
+  u8 base21;
+  u8 unk022[2];
+  s16 baseElement[4][2];
+  s16 maxHp;
+  s16 maxPp;
+  s16 hp;
+  s16 pp;
+  s16 atk;
+  s16 def;
+  s16 agi;
+  u8 luck;
+  u8 turns;
+  u8 stat44;
+  u8 stat45;
+  u8 unk046[2];
+  s16 element[4][2];
+  u8 unk058[0x80];
+  u16 equipment[15];
+  u8 unk0f6[0x12];
+  u32 djinn[4];
+  u8 unk118[0x10];
+  u8 character;
+  u8 classId;
+  u8 unk12a[2];
+  s8 elementLevel[4];
+  s8 curse;
+  u8 unk131[2];
+  s8 attackLevel;
+  u8 unk134;
+  s8 defenseLevel;
+  u8 unk136;
+  s8 resistLevel;
+  u8 unk138[3];
+  u8 unk13b[7];
+  u8 bonus142;
+  u8 bonus143;
+  u8 extraTurn;
+  u8 unk145[2];
+  s8 agilityLevel;
+  u8 unk148[2];
+  u16 id;
+};
 
 /// Starts a new game: sets up a new game's state (Func_080addf0) and runs the
 /// main routine afresh from mode 0.
@@ -34,7 +94,8 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (i = 0; i < count; i++) {
-    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))->level;
+    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))
+                 ->level;
   }
   total = total / count;
   return total;
@@ -50,7 +111,7 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 }
 
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
-                                  s32 direction) {
+                                 s32 direction) {
   s32 index;
 
   if (direction != 0) {
@@ -129,8 +190,10 @@ void Unit_Calculate(s32 owner) {
       if (work->item->flags & 1)
         st->curse |= 3;
       work->atk += work->item->primaryBonus;
-/* FAKEMATCH(barrier): an empty asm after `work->atk += work->item->primaryBonus;`; as plain statements, 2 of 900 instructions differ in tla-en. */
-asm("");
+      /* FAKEMATCH(barrier): an empty asm after `work->atk +=
+       * work->item->primaryBonus;`; as plain statements, 2 of 900 instructions
+       * differ in tla-en. */
+      asm("");
       work->def += work->item->secondaryBonus;
       for (j = 0; j < 4; j++) {
         kind = work->item->effects[j].kind;
@@ -546,9 +609,11 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-/* VIEW(game): variable gData_02001000 as u8 gData_02001000[]; module/tla.h has s8 gData_02001000[]. */
+/* VIEW(game): variable gData_02001000 as u8 gData_02001000[]; module/tla.h has
+ * s8 gData_02001000[]. */
 extern u8 gData_02001000__game[] __asm__("gData_02001000");
-/* VIEW(game): variable gOwnerStates as u8 gOwnerStates[]; module/tla.h has struct BattleUnit gOwnerStates[]. */
+/* VIEW(game): variable gOwnerStates as u8 gOwnerStates[]; module/tla.h has
+ * struct BattleUnit gOwnerStates[]. */
 extern u8 gOwnerStates__game[] __asm__("gOwnerStates");
 #ifndef MODERN
 // A current GCC refuses the volatile redeclaration and reads frame.h's.

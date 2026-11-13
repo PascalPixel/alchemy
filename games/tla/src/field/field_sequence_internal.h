@@ -68,7 +68,7 @@
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
-#include "module/tla.h"
+#include "gamepak/far_call/field.h"
 
 // A row of the field Psynergy target table (gData_080eff28).
 struct DescriptorEntry {
@@ -83,7 +83,12 @@ struct DescriptorEntry {
 // Outside routines and data the parts had declared each in its own way, with
 // the one type they share.
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(field_sequence): routine MapGrid_GetTerrainHeightAboveFar as s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height); module/tla.h has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer). */
-extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(s32 x, s32 z, s32 layer, s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
+/* VIEW(field_sequence): routine MapGrid_GetTerrainHeightAboveFar as s32
+ * MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
+ * module/tla.h has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32
+ * layer). */
+extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
+    s32 x, s32 z, s32 layer,
+    s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
 
 #endif

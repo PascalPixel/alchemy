@@ -5,7 +5,6 @@
 /// What games/tla/src/menu/ declares for the files that use it, written once.
 
 #include "types.h"
-#include "module/tla.h"
 
 struct QueuedSprite;
 
@@ -67,6 +66,15 @@ struct TitleLogoState {
   s16 delay;
   s16 white;
   s16 back;
+};
+
+struct TitleSprite {
+  u32 next; ///< the render slot link
+  u8 y;
+  u8 attr0High; ///< shape and mode bits of attribute 0
+  u16 x : 9;
+  u16 attr1High : 7; ///< flip and size bits of attribute 1
+  s32 tile;
 };
 
 /// The title screen's state, in heap slot 172.

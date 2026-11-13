@@ -63,4 +63,6 @@ s32 Menu_SelectSanctumServiceFar(s32 prev);
 
 void Text_MeasureMessageFar(s32 message, s32 *width, s32 *height);
 
+void Func_08038348(s32 first, s32 second);
+
 #endif

@@ -139,6 +139,26 @@ struct ShopFxWork {
   u8 slots[24][72];
 };
 
+struct BurstSprite {
+  s32 object;
+  s32 x, z, targetX, targetZ, originX, originZ, speed, speedMax, acceleration;
+  s32 scaleX;
+  s32 scaleY;
+  u16 heading;
+  s16 turnStepMax;
+  void *callback;
+  u16 age;
+  s16 callbackDelay;
+  s16 orbitRadius;
+  s16 orbitAngle;
+  s8 state;
+  s8 stopAtTarget;
+  s8 turnStepLimited;
+  s8 updateMotion;
+  s8 render;
+  s8 active;
+};
+
 struct BurstShop {
   u8 unk000[0xf8];
   s32 partyMemberIcons[8];

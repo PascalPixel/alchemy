@@ -9,6 +9,23 @@
 #include "module/tla.h"
 #include "resource_ids.h"
 
+struct EventWorkView {
+  u8 unk000[0x15a];
+  s16 unk15a;
+  s16 unk15c;
+  s16 unk15e;
+  u8 unk160[4];
+  s16 unk164;
+  s16 unk166;
+  u8 unk168[0x1c];
+  s16 blockedSteps;
+  u16 pushKind;
+  u8 unk188[4];
+  u8 settings[8];
+  s32 unk194;
+  s32 unk198;
+};
+
 void Func_080c9de0(s32 id, s32 variant) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
 

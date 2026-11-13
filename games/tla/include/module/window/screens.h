@@ -670,4 +670,24 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
 
 s32 FileList_SelectAction(void);
 
+struct ArrowSprite {
+  u32 link;
+  union {
+    u32 word;
+    struct {
+      unsigned y : 8;
+      unsigned flags : 8;
+      unsigned x : 9;
+      unsigned high : 7;
+    } bits;
+  } attributes;
+  union {
+    u32 value;
+    struct {
+      unsigned index : 10;
+      unsigned high : 6;
+    } bits;
+  } tile;
+};
+
 #endif

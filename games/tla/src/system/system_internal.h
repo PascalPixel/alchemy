@@ -47,6 +47,7 @@
 #include "task.h"
 #include "transform.h"
 #include "vram_tab.h"
-#include "module/tla.h"
+
+extern u8 gData_03001110;
 
 #endif

@@ -6,7 +6,7 @@
 #include "module/system/system.h"
 #include "version.h"
 #include "gamepak/far_call/game.h"
-#include "module/tla.h"
+#include "gamepak/far_call/battle.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
 

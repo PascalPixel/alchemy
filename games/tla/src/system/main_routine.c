@@ -27,7 +27,8 @@
 #include "gamepak/far_call/lucky_dice.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
-#include "module/tla.h"
+#include "gamepak/far_call/game.h"
+#include "gamepak/far_call/window.h"
 #include "task.h"
 
 extern struct SceneEntries gOverlayArea;
@@ -46,7 +47,8 @@ s32 FieldSequence_Run(s32 entrance);
 #define EXIT_HAS_FLAG 0x10000000
 #define EXIT_TABLE_END 0x1ff
 #define EXIT_KIND_ANY 0xff
-#define EXIT_NONE 999 ///< FieldSequence_Run's result when the scene was not left
+#define EXIT_NONE                                                              \
+  999 ///< FieldSequence_Run's result when the scene was not left
 
 /// Chooses the scene and entrance to go to when the party leaves the current
 /// scene: exitKind is the kind of exit FieldSequence_Run ended on, and the
@@ -175,9 +177,7 @@ s8 BattleEffect_GetResourceGroup(s32 effectIndex) {
   return gScenes[effectIndex].group;
 }
 
-s16 Field_GetSceneAttributes(s32 scene) {
-  return gScenes[scene].attributes;
-}
+s16 Field_GetSceneAttributes(s32 scene) { return gScenes[scene].attributes; }
 
 #define RUN_SAVING_PALETTES(call)                                              \
   {                                                                            \
@@ -218,7 +218,8 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.scene = (s32)&SceneId_Title;
     gMainRoutineWork.entrance = 1;
   }
-  Func_08038348(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  Func_08038348(gMainRoutineWork.paletteGlow[0],
+                gMainRoutineWork.paletteGlow[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();

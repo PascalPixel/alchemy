@@ -15,7 +15,6 @@
 #include "module/field/field.h"
 #include "module/field/map.h"
 #include "module/field/object.h"
-#include "module/tla.h"
 
 extern u8 gWorldMapWork[];
 

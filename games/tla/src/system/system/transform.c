@@ -3,8 +3,13 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "module/tla.h"
 #include "projection.h"
+
+struct ProjectedPoint {
+  s32 x;
+  s32 y;
+  s32 z;
+};
 
 // gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.

@@ -11,7 +11,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
-#include "module/tla.h"
+#include "gamepak/far_call/field.h"
 
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
@@ -382,7 +382,6 @@ struct SparkWork {
 #define HEAP_SLOT_SPARKS 92
 #define SPARK_LIFE 50
 #define PHASE_DONE 999
-
 
 /// An object vanishes in a whirl of sparks: 64 sprites of picture 0x1ea circle
 /// out from it, each spark rising and closing in for 50 frames. Ten frames in

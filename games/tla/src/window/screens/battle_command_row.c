@@ -3,9 +3,15 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
-#include "module/tla.h"
 #include "module/window/scales.h"
 #include "module/window/screens.h"
+
+struct WindowTiles {
+  u8 unk00[3];
+  u8 dirty; ///< bits: one per four tile rows, from bit 1
+  u8 unk04[4];
+  u16 cells[32][32];
+};
 
 s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
   s32 result;
@@ -27,7 +33,8 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define NAVIGATION ((struct CommandRowNavigation *)Ram_HeapSlots->unke4[0])
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
-/* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[]; bg_scroll.h has struct BgScroll gBgScroll[]. */
+/* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[];
+ * bg_scroll.h has struct BgScroll gBgScroll[]. */
 extern struct BgScrollPair gBgScroll__screens[] __asm__("gBgScroll");
 #include "main_routine_work.h"
 
@@ -111,7 +118,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     if (selectionUi->commandKinds[entryIndex] == -1)
       break;
     BattleCommandRow_LoadIcon(selectionUi, entryIndex,
-                  selectionUi->commandKinds[entryIndex]);
+                              selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
   selectionUi->affine.scaleX = 320;
@@ -205,8 +212,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
               (s32)MsgCommandName,
           selectionUi->window, 0, 0);
       selectionUi->drawnIndex = selectionUi->selectedIndex;
-      BattleCommandRow_LoadIcon(selectionUi, selectionUi->selectedIndex,
-                    selectionUi->commandKinds[selectionUi->selectedIndex]);
+      BattleCommandRow_LoadIcon(
+          selectionUi, selectionUi->selectedIndex,
+          selectionUi->commandKinds[selectionUi->selectedIndex]);
     }
     selectionUi->affineIndex =
         AffineMatrix_BuildForEffect(&selectionUi->affine);

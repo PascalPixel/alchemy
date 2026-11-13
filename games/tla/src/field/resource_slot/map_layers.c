@@ -11,7 +11,7 @@
 #include "module/field/map.h"
 #include "module/field/resource_slot.h"
 #include "module/system/system.h"
-#include "module/tla.h"
+#include "ram_buffer.h"
 
 /* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry
  * gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */

@@ -5,7 +5,7 @@
 #include "../system_internal.h"
 #include "battle_unit.h"
 #include "owner_state.h"
-#include "module/tla.h"
+#include "ram_buffer.h"
 
 void *Unit_Get(s32 owner) {
   struct BattleUnit *states;

@@ -1559,11 +1559,6 @@ void Func_02004de4(u16 *script);
 void Func_02000aac(void);
 void Func_02000a60(void);
 
-static __inline__ void CopyWords_(void *destination, const void *source,
-                                  s32 size) {
-  Iwram_CopyWordsEntry(destination, source, size);
-}
-
 s32 Func_02004280(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room1) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -1632,11 +1627,7 @@ s32 Func_02004280(void) {
           FIELD_AT(layer, s32, 12);
       Func_02004dc4();
       System_Wait(1);
-      /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, so the
-         blend buffer's address is loaded straight into r0 at each call; as a
-         direct Iwram_CopyWords call, 17 of 229 instructions differ in
-         tla-en. */
-      CopyWords_(Ram_MapCollision + 0x1e00, gData_020053e4, 24);
+      Iwram_CopyWords(Ram_MapCollision + 0x1e00, gData_020053e4, 24);
       Func_02004de4((u16 *)(Ram_MapCollision + 0x1e00));
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2) {

@@ -134,7 +134,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
   }
   REG_BG2CNT = 0x784;
-  CopyWords((void *)BG_PLTT,
+  Iwram_CopyWords((void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
 
   for (frame = 0; frame != STORM_DUSK_FRAMES; frame++) {

@@ -215,7 +215,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
    * of 1556 instructions differ in tla-en. */
   // A once-only block: it closes the fill's block before the copy.
   do {
-    FillWords_(map, 0x8000, 0x01010101);
+    Iwram_FillWords(map, 0x8000, 0x01010101);
   } while (0);
   Iwram_CopyWordsEntry((void *)0x06008000, map, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
@@ -226,7 +226,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   REG_BG2CNT = 0x2787;
   // A once-only block, as for the map's fill.
   do {
-    FillWords_(canvas, 0x4000, 0);
+    Iwram_FillWords(canvas, 0x4000, 0);
   } while (0);
   Iwram_CopyWordsEntry((void *)0x06004000, canvas, 0x4000);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);

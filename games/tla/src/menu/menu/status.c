@@ -104,8 +104,8 @@ s32 Func_080fe274(void) {
    * inline, which keeps each call's own constants; as direct Iwram_CopyWords
    * calls, 48 of 216 instructions differ in tla-en, CSE keeping 0x05000000 in
    * a saved register. */
-  CopyWords_(palette, (void *)BG_PLTT, 64);
-  CopyWords_(tiles, (void *)0x06004000, 0x2800);
+  Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
+  Iwram_CopyWords(tiles, (void *)0x06004000, 0x2800);
   Palette_LightenHighlight(14);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
@@ -134,8 +134,8 @@ s32 Func_080fe274(void) {
   wait(1);
   Func_08038290();
   Text_UseExtraTilesFar(0);
-  CopyWords_((void *)BG_PLTT, palette, 64);
-  CopyWords_((void *)0x06004000, tiles, 0x2800);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 64);
+  Iwram_CopyWords((void *)0x06004000, tiles, 0x2800);
   Heap_Release(tiles);
   Heap_Release(palette);
   ((struct WindowWork *)heap->windowTiles)->menuBusy = 1;

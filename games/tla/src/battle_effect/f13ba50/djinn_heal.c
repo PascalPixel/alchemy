@@ -111,9 +111,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 0);
-    /* FAKEMATCH(wrapper): the palette copy through CopyWords_; as a direct
-     * Iwram_CopyWords call, 2 of 549 instructions differ in tla-en. */
-    CopyWords_((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   } else if (mode == QUADS_MARS) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 2, anchor, size);

@@ -759,15 +759,9 @@ void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 // The 128 background colours the scene fades (entries 96 to 223).
 #define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
-static inline void Iris_FillWords(void *d, s32 n, u32 v) {
-  /* FAKEMATCH(wrapper): every FILL_WORDS forwarded through this inline; as
-   * FILL_WORDS calling Iwram_FillWords directly, 42 of 4851 instructions of
-   * BattleEffect_RunIris differ in tla-en. */
-  Iwram_FillWordsEntry(d, n, v);
-}
-#define FILL_WORDS(dest, size, value)                                          \
+#define Iwram_FillWords(dest, size, value)                                          \
   do {                                                                         \
-    Iris_FillWords(dest, size, value);                                         \
+    Iwram_FillWords(dest, size, value);                                         \
   } while (0)
 
 #define DECODE_01(src, dest)                                                   \
@@ -1146,7 +1140,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
   Func_08191958(0, 4, Func_0819253c);
-  FILL_WORDS(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, 0x4000, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;
@@ -1190,7 +1184,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
         REG_BLDALPHA = 0x1010;
-        FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         work->transferPending = 1;
         wait(1);
         if (frame <= 386) {
@@ -1346,8 +1340,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       if (frame == 175) {
         REG_BG2CNT = 0x785;
-        FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
-        FILL_WORDS(FADE_PLTT, 0x100, 0x7fff7fff);
+        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWords(FADE_PLTT, 0x100, 0x7fff7fff);
       }
     }
 
@@ -1375,7 +1369,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
                 REG_DMA3);
       }
       colors = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      FILL_WORDS((void *)(PLTT + 0x3e0), 32, -1);
+      Iwram_FillWords((void *)(PLTT + 0x3e0), 32, -1);
       colors += 32;
       DECODE_01(colors, work->sheet);
       table = gResourceTableEntries;
@@ -1797,7 +1791,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Func_0815b434(work->sheet + off, n, 0x10000);
         off += n * w;
       }
-      FILL_WORDS(work->sheet + 0x1810, 0x1000, 0);
+      Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64,
                                            0x10000);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64,
@@ -2036,7 +2030,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 755) <= 2 || frame == 781)
-      FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
     if (frame == 754) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32,
@@ -2209,7 +2203,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   camera[27] = savedZoom;
   HeapSlot_Release(SLOT_BLITTER);
   Func_08191cc4();
-  FILL_WORDS(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, 0x4000, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;

@@ -397,9 +397,6 @@ void Func_081a0a70(void) {
 // The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
 // writes Iwram_ClearWords; through this game's direct entry, the build shifts
 // the size before loading the routine's address.
-static inline s32 ClearWords(void *destination, s32 size) {
-  return Iwram_ClearWordsEntry(destination, size);
-}
 
 s32 Func_08038418(s32 message, u8 *canvas, s32 align);
 
@@ -423,7 +420,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   canvas = Heap_AllocEwram(0x900);
   // BUG: the clear, and the packing loop's reads below, cover 0xc00 bytes of
   // a 0x900-byte allocation.
-  ClearWords(canvas, 0xc00);
+  Iwram_ClearWords(canvas, 0xc00);
   busy = Func_08038418(message, canvas, align);
   dst = canvas;
   src = canvas;
@@ -621,10 +618,6 @@ void Func_081a0fb8(void) {
 
 extern const u8 gDisplayScroll_GlyphWidths[];
 extern const u8 gDisplayScroll_Font[];
-static __inline__ void DisplayScroll_CopyWords(void *destination, void *source,
-                                               s32 size) {
-  Iwram_CopyWordsEntry(destination, source, size);
-}
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   u8 *buf = (u8 *)Heap_AllocEwram(0x900);
@@ -653,10 +646,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
     Iwram_FillWordsEntry(buf, 0x900, 0);
     GameFlag_SetBit(0x200);
   } else {
-    /* FAKEMATCH(wrapper): the copy forwarded through DisplayScroll_CopyWords,
-     * which keeps its own constants; as Iwram_CopyWords called directly, 71
-     * of 279 instructions differ in tla-en. */
-    DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
+    Iwram_CopyWords(buf, buf + 0x800, 0x100);
     Iwram_FillWordsEntry(buf + 0x100, 0x800, 0);
   }
 

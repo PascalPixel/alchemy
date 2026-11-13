@@ -447,15 +447,11 @@ void Func_02001f08(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Words_Copy(void *destination, const void *source,
-                                  s32 size) {
-  Iwram_CopyWordsEntry(destination, source, size);
-}
 
 void Func_02001fc4(s32 mode) {
   gData_02007e24 = 1;
   if (mode != 2)
-    Words_Copy(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
+    Iwram_CopyWords(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
   if (mode == 1) {
     /* FAKEMATCH(temporary): a local holding the zero builds it in r2 and the
      * counter address in r3, as overlay 699's twin does; as
@@ -1774,17 +1770,13 @@ void Func_02005770(const void *source, void *destination);
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
-static __inline__ void Words_Clear(void *destination, s32 size) {
-  Iwram_ClearWordsEntry(destination, size);
-}
-
 void Func_02004188(s32 a, s32 b) {
   struct TrialRoadGauge *gauge =
       (struct TrialRoadGauge *)(gData_020023c4 + 0x188);
   void *buffer;
 
   if (!GameFlag_Test(0x109))
-    Words_Clear(gauge, 0x1c8);
+    Iwram_ClearWords(gauge, 0x1c8);
   buffer = Pool_Alloc(0x800);
   Func_02005770(gField_Tiles64D, buffer);
   gauge->handle = Resource_FindFreeEntry();

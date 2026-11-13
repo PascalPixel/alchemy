@@ -139,9 +139,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
   if (mode == 1) {
-    /* FAKEMATCH(wrapper): Iwram_CopyWords called through CopyWords; as a
-     * direct call, 2 of 747 instructions differ in tla-en. */
-    CopyWords((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC), 128);
   }
 
@@ -834,10 +832,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       buffer[0x208 + i * 64 + 47 - j] = buffer[0x1000 + i * 24 + j];
     }
   }
-  /* FAKEMATCH(wrapper): Iwram_CopyWords called through CopyWords; as a
-   * direct call, 2 of 743 instructions of BattleEffect_RunVoidBeam differ in
-   * tla-en. */
-  CopyWords((void *)BG_PLTT,
+  Iwram_CopyWords((void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 
   // The beam's body: a 32-line gradient.

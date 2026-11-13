@@ -84,11 +84,6 @@ void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
                                            s32 size);
 
-static __inline__ s32 BattleStaging_FillWords(void *destination, s32 size,
-                                              u32 value) {
-  return Iwram_FillWordsEntry(destination, size, value);
-}
-
 /// Sends the 256x128 8bpp canvas to VRAM 0x06003500 on the frames its transfer
 /// is pending, then clears or fades it; a task, as The Broken
 /// Seal's.
@@ -102,11 +97,7 @@ void BattleStaging_ProcessPendingTileTransfer(void) {
     switch (work->transferMode) {
     case 1: // Send it, then fill it with transferValue.
       Dma_Set(buf, (void *)0x06003500, DMA_COPY_WORDS(0x8000 / 4), REG_DMA3);
-      /* FAKEMATCH(wrapper): the fill called through the inline
-       * BattleStaging_FillWords, which loads the routine's address before the
-       * size; as Iwram_FillWords called directly, 4 of 79 instructions differ
-       * in tla-en. */
-      BattleStaging_FillWords(buf, 0x8000, work->transferValue);
+      Iwram_FillWords(buf, 0x8000, work->transferValue);
       break;
     case 2: // Afterimage: nonzero colour numbers drop to 1/2 or 3/4.
       if (work->transferValue == 50)

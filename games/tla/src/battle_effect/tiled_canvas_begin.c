@@ -1481,14 +1481,6 @@ void BattleEffect_RunHealingMotesMode13(struct BattleEffectArgument *effect) {
   BattleEffect_RunHealingMotes(effect, 13);
 }
 
-static __inline__ s32 CopyWords_(void *destination, const void *source,
-                                 s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 18 of 1243 instructions of BattleEffect_RunHealingMotes
-   * differ in tla-en. */
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
-
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -1615,7 +1607,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
   } else {
     palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
   }
-  CopyWords_((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
   // The Djinni: 40x40 at full width, a 20x40 picture when narrow.
   if (narrow == 0) {
@@ -2806,9 +2798,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
                              work->sheet + ROCK_OFFSET, 1, 1);
 
   // Copy the background's characters and cut the band out of them.
-  /* FAKEMATCH(wrapper): the copy through an inline forwarder; as a direct
-   * Iwram_CopyWords call, 58 of 444 instructions differ in tla-en. */
-  CopyWords_(Ram_MapCellBuffer, (void *)0x06008000, 0x8000);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != PILLAR_W; col++) {
@@ -3907,13 +3897,6 @@ void BattleEffect_RunVolleyBMode11WithAction(
 // from hoisting them; height 12 is hoisted only as a local; a launch with
 // x += dx << 12 sends the whole allocation away.
 
-static __inline__ s32 ClearWords_(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 2239 instructions of
-   * BattleEffect_RunProjectileVolleyB differ in tla-en. */
-  return Iwram_ClearWordsEntry(destination, size);
-}
-
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
@@ -4076,7 +4059,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
      * call to Iwram_CopyWords, 2 of 2239 instructions of
      * BattleEffect_RunProjectileVolleyB differ in tla-en. */
     if (mode == 17)
-      CopyWords_((void *)BG_PLTT,
+      Iwram_CopyWords((void *)BG_PLTT,
                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   } else if (mode == 20) {
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet,
@@ -4087,7 +4070,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   } else if (mode == 22) {
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
-    CopyWords_((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   } else if (mode == 21) {
     // A violet ramp from color 1, blended 16:4.
@@ -4102,11 +4085,11 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     REG_BLDALPHA = 0x410;
   } else if (mode == 18) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
-    CopyWords_((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   } else if (mode == 19) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
-    CopyWords_((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   } else if (mode == 24) {
     // Six smoke pictures, each with more holes punched at random.
@@ -4116,7 +4099,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       for (j = 0; j != i * 256 + 512; j++)
         work->sheet[VOLLEY_B_PICTURE + i * 1152 + Random16() % 1152] = 0;
     }
-    CopyWords_((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   } else if (mode == 12 || mode == 16) {
     // The beam, each 24-pixel row drawn twice side by side.
@@ -4131,10 +4114,10 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       }
     }
     if (mode == 12)
-      CopyWords_((void *)BG_PLTT,
+      Iwram_CopyWords((void *)BG_PLTT,
                  Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
     else
-      CopyWords_((void *)BG_PLTT,
+      Iwram_CopyWords((void *)BG_PLTT,
                  Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -4637,8 +4620,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     HeapSlot_Release(104);
     if (mode == 11 || mode == 14 || mode == 18) {
       // Hand over to the canvas effect: clear both canvases first.
-      ClearWords_((void *)0x06004000, 0x3c00);
-      ClearWords_(canvas, 0x3c00);
+      Iwram_ClearWords((void *)0x06004000, 0x3c00);
+      Iwram_ClearWords(canvas, 0x3c00);
       effect->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       if (mode == 14)
@@ -4983,10 +4966,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   // The giant: eleven sprite objects with their tiles.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
-  /* FAKEMATCH(wrapper): the copy through CopyWords_, whose parameter sets 512
-   * in argument order; as a direct Iwram_CopyWords call, 4 of 1115 instructions
-   * differ in tla-en. */
-  CopyWords_(OBJ_PLTT, picture, 512);
+  Iwram_CopyWords(OBJ_PLTT, picture, 512);
   // Two steps: one `+= 512` reuses the size's constant across the call.
   picture += 256;
   picture += 256;

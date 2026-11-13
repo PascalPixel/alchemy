@@ -239,20 +239,6 @@ void BattleEffect_CountDownBattlerTints(void);
 
 void BattleEffect_EndCanvasLayer(void);
 
-static __inline__ s32 CpuCopy(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): every copy goes through this inline; as direct calls
-   * to Iwram_CopyWords, 196 of 4354 instructions of BattleEffect_RunCharon
-   * differ in tla-en. */
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
-
-static __inline__ s32 CpuFill(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): every fill goes through this inline; as direct calls
-   * to Iwram_FillWords, 204 of 4354 instructions of BattleEffect_RunCharon
-   * differ in tla-en. */
-  return Iwram_FillWordsEntry(destination, size, value);
-}
-
 void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   u16 tiles[16];
   struct Local264 local264;
@@ -338,7 +324,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   BattleEffect_FetchRectangleBlitters(0, blit);
 
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedSlashTiles);
-  CpuCopy(PLTT + 0x120, source, 0x140);
+  Iwram_CopyWords(PLTT + 0x120, source, 0x140);
   source += 0x140;
   Resource_DecodeType01(source, work->buffer);
   for (i = 0; i != 0x1000; i++) {
@@ -352,26 +338,26 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     work->objects[0] = object;
     object->priority = 3;
     slots = TILE_SLOTS;
-    CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer, 0x1000);
+    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->buffer, 0x1000);
   }
   work->objects[0]->oamPriority = 0;
   work->objects[0]->unk17 = 32;
 
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteArrowsTiles);
-  CpuCopy(PLTT + 0x1f0, source, 32);
+  Iwram_CopyWords(PLTT + 0x1f0, source, 32);
   source += 32;
   Resource_DecodeType01(source, work->buffer);
   for (i = 0; i != 16; i++) {
     struct SpriteObject__f175f74 *object = Func_0815b290__f175f74(16, 16, 0, 0xf000);
     SPRITES[i] = object;
     object->priority = 1;
-    CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer + i * 32, 32);
+    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->buffer + i * 32, 32);
     tiles[i] = SPRITES[i]->tile;
   }
   for (i = 0; i != 32; i++) {
     struct SpriteObject__f175f74 *object = Func_0815b3b0__f175f74(8, 8, 0, 0xf000);
     SPRITES[16 + i] = object;
-    CpuCopy(object, sprites[0], 24);
+    Iwram_CopyWords(object, sprites[0], 24);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, glyphs, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->buffer, 0, 0);
@@ -393,7 +379,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Resource_LoadAndDecompress((s32)&ResourceId_CharmRingSheet,
                              work->buffer + 0x1000, 1, 1);
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-  CpuCopy(PLTT, source, 128);
+  Iwram_CopyWords(PLTT, source, 128);
   REG_BG2CNT = 0x784;
   REG_BG2X = 0x800;
   posX = 0;
@@ -525,11 +511,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     if (frame == 131) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-      CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
-      CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
+      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
     }
     if (frame >= 132 && frame < 147) {
-      CpuFill(canvas, 0x3c00, (0x3f - (frame - 132) * 4) * 0x01010101);
+      Iwram_FillWords(canvas, 0x3c00, (0x3f - (frame - 132) * 4) * 0x01010101);
     }
     if ((frame & 3) == 0 && (frame >= 132 && frame < 240)) {
       u16 *target = Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
@@ -680,7 +666,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             (struct ResourceObjectWork *)work->objects[0]);
         source =
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
-        CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
+        Iwram_FillWords(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
         Resource_DecodeType01(source, work->buffer + 0x2400);
         for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
@@ -688,12 +674,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
           object->priority = 3;
           work->objects[i] = object;
-          CpuCopy(OBJ_VRAM + objectSlots[object->slot].offset,
+          Iwram_CopyWords(OBJ_VRAM + objectSlots[object->slot].offset,
                   work->buffer + 0x2400 + i * 0x400, 0x400);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteWispsTiles);
-        CpuCopy(PLTT + 0x1e0, source, 32);
-        CpuFill(PLTT + 0x1e0, 32, 0x7fff7fff);
+        Iwram_CopyWords(PLTT + 0x1e0, source, 32);
+        Iwram_FillWords(PLTT + 0x1e0, 32, 0x7fff7fff);
         source += 32;
         Resource_DecodeType01(source, work->buffer + 0x2400);
         {
@@ -711,19 +697,19 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
              * as OBJ_VRAM + the slot's offset in the call, 71 of 4354
              * instructions differ in tla-en. */
             vram += tileSlots[object->slot].offset;
-            CpuCopy(vram, work->buffer + 0x2400, 0x800);
+            Iwram_CopyWords(vram, work->buffer + 0x2400, 0x800);
           }
           object = Func_0815b290__f175f74(64, 64, 0xc0002000, 0);
           work->objects[13] = object;
           object->priority = 2;
           object->unk17 = 32;
-          CpuFill(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
+          Iwram_FillWords(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_EffectPalette00);
-        CpuCopy(PLTT, source, 128);
+        Iwram_CopyWords(PLTT, source, 128);
         Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                                    work->buffer + 0x2400, 0, 0);
-        CpuCopy(glyphs, work->buffer + 0x2400, 0x302);
+        Iwram_CopyWords(glyphs, work->buffer + 0x2400, 0x302);
         Resource_LoadAndDecompress((s32)&ResourceId_CurseSealSheet,
                                    work->buffer + 0x1000, 1, 1);
         posX = 144 << 15;
@@ -732,7 +718,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame == 243) {
         source =
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
-        CpuFill(PLTT + 0x1c0, 64, 0);
+        Iwram_FillWords(PLTT + 0x1c0, 64, 0);
         source += 64;
         Resource_DecodeType01(source, gData_02014000);
         for (i = 0; i != 0x1000; i++) {
@@ -802,7 +788,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       if (frame == 200) {
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-        CpuCopy(PLTT, source, 128);
+        Iwram_CopyWords(PLTT, source, 128);
       }
       if (frame >= 200 && frame < 302) {
         void *texture = Heap_AllocEwram(32);
@@ -937,13 +923,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       if (frame > 301) {
         if (frame == 302) {
-          CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
-          CpuFill(PLTT + 0x1c0, 64, 0x7fff7fff);
-          CpuCopy(PLTT + 0x60,
+          Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+          Iwram_FillWords(PLTT + 0x1c0, 64, 0x7fff7fff);
+          Iwram_CopyWords(PLTT + 0x60,
                   Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop),
                   0x100);
           source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
-          CpuCopy(PLTT, source, 128);
+          Iwram_CopyWords(PLTT, source, 128);
           Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
                                      work->buffer + 0x1000, 0, 0);
           Graphics_LoadGreyRamp();
@@ -1029,7 +1015,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
       }
       if (frame == 330) {
-        CpuFill(PLTT + 0x1c0, 64, 0x7c1f7c1f);
+        Iwram_FillWords(PLTT + 0x1c0, 64, 0x7c1f7c1f);
       }
       if (frame >= 330 && frame < 351) {
         struct ScalePair scale120 = Data_08196ec0;
@@ -1092,7 +1078,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         s32 t = frame - 357 - j * 19;
 
         if (t == 0) {
-          CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
+          Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
         }
         if (t >= 0 && t < 160) {
           u16 *target =
@@ -1242,10 +1228,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame == 54) {
-      CpuFill(canvas, 0x3c00, 0x20202020);
+      Iwram_FillWords(canvas, 0x3c00, 0x20202020);
     }
     if (frame == 55) {
-      CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
     }
     if (frame < 132) {
       s32 scale112;
@@ -1370,12 +1356,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   // the size; without it, 2 of 4354 instructions differ in tla-en.
   do {
   } while (0);
-  CpuFill(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, 0x4000, 0);
   // An empty once-only loop before the BG fill, so its address loads before
   // the size; without it, 10 of 4354 instructions differ in tla-en.
   do {
   } while (0);
-  CpuFill((void *)0x06004000, 0x4000, 0);
+  Iwram_FillWords((void *)0x06004000, 0x4000, 0);
   gCameraSceneParameters[4] = 120;
   unit30 = SYSTEM_WORK->unit30;
   shake = 0;
@@ -1409,7 +1395,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   BattleActor_SpawnObjectsForListFar((struct Local264 *)arg->actors, 0);
   Func_0815b434(work->buffer, 56, 0x10000);
   Func_0815b434(work->buffer + 0x1000, 16, 0x10000);
-  CpuFill(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
+  Iwram_FillWords(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C3, work->buffer + 0x3000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, glyphs, 0, 0);
@@ -1509,7 +1495,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                    SPRITE_BUFFER, 1, 0);
         Sound_PlayFar(144);
-        CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
         REG_BG2CNT = 0x784;
         work->transferMode = 2;
         work->transferValue = 50;
@@ -1572,7 +1558,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame < 120) {
       for (i = 0; i != 3; i++) {
         if (frame == gData_08198c67[i]) {
-          CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
+          Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
         }
         if (frame >= gData_08198c67[i] + 1 && frame < gData_08198c67[i] + 16) {
           u16 *target = SYSTEM_WORK->scene->palette;

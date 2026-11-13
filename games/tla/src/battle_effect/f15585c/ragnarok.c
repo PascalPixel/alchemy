@@ -738,12 +738,6 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
     Iwram_FillWordsEntry(dst, size, value);
   } while (0);
 }
-static inline void FillWords(void *dst, s32 size, s32 value) {
-  /* FAKEMATCH(wrapper): the closing fill of the gathering calls through this
-   * inline with no block; as a direct call to Iwram_FillWords there, 14 of
-   * 2680 instructions differ in tla-en. */
-  Iwram_FillWordsEntry(dst, size, value);
-}
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
   BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);         \
@@ -783,14 +777,6 @@ static inline void FillWords(void *dst, s32 size, s32 value) {
     }                                                                          \
     IRQ_UNLOCK(saved);                                                         \
   }
-
-/* VIEW(actor_move_random): static CopyWords as CopyWords__actor_move_random; f15585c has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; not tried: CopyWords's definition holds a FAKEMATCH tag. */
-static inline s32 CopyWords__actor_move_random(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the first palette copy calls through this inline; as a
-   * direct call to Iwram_CopyWords there, 103 of 2680 instructions differ in
-   * tla-en. */
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
 
 static inline u8 *PassBuffer(u8 *buffer) {
   /* FAKEMATCH(wrapper): the second queue's source base passed through this

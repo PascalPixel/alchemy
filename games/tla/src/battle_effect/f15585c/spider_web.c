@@ -167,14 +167,11 @@ void Func_0815b634(void) {
   u16 flipped[64];
   s32 i;
 
-  /* FAKEMATCH(wrapper): both copies through CopyWords_, so each builds its
-   * array's address anew; as direct Iwram_CopyWords calls, 19 of 39
-   * instructions differ in tla-en. */
-  CopyWords_(saved, (void *)BG_PLTT, 128);
+  Iwram_CopyWords(saved, (void *)BG_PLTT, 128);
   for (i = 1; i != 64; i++)
     flipped[i] = saved[64 - i];
   flipped[0] = saved[0];
-  CopyWords_((void *)BG_PLTT, flipped, 128);
+  Iwram_CopyWords((void *)BG_PLTT, flipped, 128);
   REG_BLDALPHA = 0x810;
 }
 
@@ -306,10 +303,6 @@ void Transform_Pop(void);
 
 
 
-static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
-  return Iwram_FillWordsEntry(destination, size, value);
-}
-
 extern char ResourceId_Data0B1;
 extern char ResourceId_Data0B3;
 extern char ResourceId_RuneCircleSheet;
@@ -421,9 +414,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     s32 y;
     s32 x;
 
-    FillWords_(map, 256, -1);
+    Iwram_FillWords(map, 256, -1);
     map += 64;
-    FillWords_(map, 128, 0x03ff03ff);
+    Iwram_FillWords(map, 128, 0x03ff03ff);
     v = (u32)Data_02010200;
     map += 32;
     for (y = 0; y != 16; y++) {
@@ -468,7 +461,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   ship.x = 0xc80000;
   ship.z = 0x540000;
   transition[4] = 1;
-  ClearWords_(canvas, 0x3c00);
+  Iwram_ClearWords(canvas, 0x3c00);
   REG_DISPCNT = 0x7141;
   wait(1);
   for (frame = 0; frame != 326; frame++) {
@@ -622,8 +615,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       struct EffectStep *p;
       struct EffectStep *q;
 
-      FillWords_(canvas, 0x3c00, 0);
-      ClearWords_((void *)0x06004000, 0x3c00);
+      Iwram_FillWords(canvas, 0x3c00, 0);
+      Iwram_ClearWords((void *)0x06004000, 0x3c00);
       REG_DISPCNT = 0x7541;
       src = Data_081986aa;
       q = (struct EffectStep *)(work->sheet + 0x4b98);
@@ -941,13 +934,13 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     void *destination = Ram_HeapSlots->battleFxWork[1];
 
     do {
-      FillWords_(destination, 0x4000, 0);
+      Iwram_FillWords(destination, 0x4000, 0);
     } while (0);
   }
   do {
-    FillWords_((void *)0x06004000, 0x3c00, 0);
+    Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
   } while (0);
-  FillWords_((void *)0x06008000, 0x7800, 0);
+  Iwram_FillWords((void *)0x06008000, 0x7800, 0);
   wait(1);
   REG_BLDALPHA = 0x100e;
   REG_BLDCNT = 0x3f46;
@@ -962,11 +955,11 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  ClearWords_((void *)(BG_PLTT + 96), 256);
+  Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
   wait(1);
   BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
   REG_BG2CNT = 0x787;
-  ClearWords_((void *)0x06004000, 0x3c00);
+  Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
@@ -1246,8 +1239,8 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   /* FAKEMATCH(wrapper): both clears through ClearWords_, which builds the size
    * anew for each; as direct Iwram_ClearWords calls, 16 of 228 instructions
    * differ in tla-en. */
-  ClearWords_((void *)0x06004000, 0x3c00);
-  ClearWords_(canvas, 0x3c00);
+  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  Iwram_ClearWords(canvas, 0x3c00);
   effect->prelude = 0;
   Task_Remove(Palette_StepFadeTransfer);
   SummonEffect_RunCanvasMode1(effect);

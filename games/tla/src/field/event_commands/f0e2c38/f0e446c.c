@@ -52,19 +52,13 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 
-static inline s32 WrapClearWords(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the clear through this inline, so its arguments are set
-   * before the entry's address is loaded; as a direct call, 4 of 77
-   * instructions differ in tla-en. */
-  return Iwram_ClearWordsEntry(destination, size);
-}
 void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
   s32 height = 32;
   s32 column;
   s32 row;
 
-  WrapClearWords(destination, 0x400);
+  Iwram_ClearWords(destination, 0x400);
   for (column = 0; column < width; column++) {
     s32 wave = (Trig_Sin(column << 13) << 3) + 0x80000;
 

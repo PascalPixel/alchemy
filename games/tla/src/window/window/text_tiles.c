@@ -98,14 +98,6 @@ extern const u8 gText_ColourPens[];
 extern const u8 gFont_GlyphWidths[];
 void *Resource_GetTableEntry(s32 id);
 
-static inline s32 ClearWords(void *destination, s32 size) {
-  return Iwram_ClearWordsEntry(destination, size);
-}
-
-static inline s32 Text_FillWords(void *destination, s32 size, u32 value) {
-  return Iwram_FillWordsEntry(destination, size, value);
-}
-
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   // Unused: gives the stack frame its 32 extra bytes.
   UNUSED u32 reserve[8];
@@ -128,20 +120,17 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   canvas = Heap_Alloc(0x800);
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   attr = work->level << 12;
-  /* FAKEMATCH(wrapper): the clear forwarded through ClearWords, which keeps
-   * its own constants; as Iwram_ClearWords called directly, 69 of 428
-   * instructions differ in tla-en. */
-  ClearWords(pens, 16);
+  Iwram_ClearWords(pens, 16);
   /* FAKEMATCH(wrapper): both fills forwarded through Text_FillWords; as
    * Iwram_FillWords called directly, 8 of 428 instructions differ in tla-en. */
   if (attr == 0xF000) {
     pens[1] = gText_ColourPens[work->colour & 15];
     pens[3] = 3;
-    Text_FillWords(canvas, 0x800, 0x04040404);
+    Iwram_FillWords(canvas, 0x800, 0x04040404);
   } else {
     pens[1] = (u8)work->colour & 15;
     pens[3] = 1;
-    Text_FillWords(canvas, 0x800, 0x0E0E0E0E);
+    Iwram_FillWords(canvas, 0x800, 0x0E0E0E0E);
   }
   if (script != 0) {
     for (;;) {

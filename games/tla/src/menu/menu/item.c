@@ -42,19 +42,6 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void ItemMenu_HideAllIcons(void);
 
-static __inline__ s32 CopyWords_(void *destination, const void *source,
-                                 s32 size) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as direct calls, 92 of 162 instructions differ in tla-en. */
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
-
-static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as a direct call, 47 of 162 instructions differ in tla-en. */
-  return Iwram_FillWordsEntry(destination, size, value);
-}
-
 /// The field menu's Item screen: choose a party member, one of their items and
 /// a command. Owns the menu work while it runs and frees it before returning.
 /// Returns ItemMenu_RunCommands' result: 1 when an item is to be used on the
@@ -91,8 +78,8 @@ s32 Func_080f94a4(void) {
       (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, 2);
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
-  CopyWords_(backup, (void *)0x06004000, size);
-  FillWords_((void *)0x06004000, size, 0x33333333);
+  Iwram_CopyWords(backup, (void *)0x06004000, size);
+  Iwram_FillWords((void *)0x06004000, size, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
 
@@ -121,7 +108,7 @@ s32 Func_080f94a4(void) {
 #if TLA_PATCH_1
   Func_08038290();
   Text_UseExtraTilesFar(0);
-  CopyWords_((void *)0x06004000, backup, size);
+  Iwram_CopyWords((void *)0x06004000, backup, size);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(backup);
   wait(1);

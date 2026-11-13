@@ -694,14 +694,6 @@ typedef void (*ConvertFn)(void *destination, void *source, void *saved);
 extern u8 Render_ConvertMapCode[];
 extern u8 Render_ConvertMapCodeSize[];
 
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the copy called through this inline, so the map cell
-   * buffer's address is loaded again for the conversion; as Iwram_CopyWords
-   * called directly, which keeps the address in a saved register, 20 of 40
-   * instructions of Tilemap_ConvertBuffer differ in tla-en. */
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
-
 /// Converts the map cell buffer's 32 KB in place with the ARM routine copied
 /// to RAM, keeping a copy of the buffer for it to read.
 void Tilemap_ConvertBuffer(void) {
@@ -711,7 +703,7 @@ void Tilemap_ConvertBuffer(void) {
 
   size = 0x8000;
   saved = Heap_AllocEwram(size);
-  CopyWords(saved, Ram_MapCellBuffer, size);
+  Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
   RamCode_Load(routine, Render_ConvertMapCode, Render_ConvertMapCodeSize);
   routine(((u8 *)gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
   Heap_Release(routine);

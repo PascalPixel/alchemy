@@ -469,12 +469,6 @@ void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 
 // The Broken Seal's iwram_call.h forwards these through static inlines; here
 // that form keeps a constant from being carried across the call.
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 2 of 1676 instructions of BattleEffect_RunThor differ in
-   * tla-en. */
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
 
 static inline s32 RatioMulQ14(s32 divisor, s32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to

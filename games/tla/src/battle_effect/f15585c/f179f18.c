@@ -174,14 +174,6 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries__f179f18[(obj)->resource].tile)
 
-/* VIEW(f179f18): static ClearWords as ClearWords__f179f18; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
-static inline s32 ClearWords__f179f18(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the VRAM clear through this inline; as a direct call
-   * to Iwram_ClearWords, 16 of 2583 instructions of BattleEffect_RunFlora
-   * differ in tla-en. */
-  return Iwram_ClearWordsEntry(destination, size);
-}
-
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   /* FAKEMATCH(wrapper): the sheet's address through this inline; as
    * work->sheet at the call, 56 of 2583 instructions of BattleEffect_RunFlora
@@ -344,7 +336,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 300 && (!(gInput.repeat & 3) || frame <= 16);
        frame++) {
     if (frame == 0) {
-      ClearWords__f179f18((void *)0x06004000, 0x4000);
+      Iwram_ClearWords((void *)0x06004000, 0x4000);
       Iwram_ClearWordsEntry(canvas, 0x4000);
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;

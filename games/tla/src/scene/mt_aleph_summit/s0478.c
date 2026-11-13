@@ -82,12 +82,6 @@ extern u8 MsgGoldenSunFormation[];
 extern char SceneId_Ov64c;
 extern char SceneId_Ov6b3;
 
-static __inline__ void CopyToPalette(void *from, void *to, s32 size) {
-  /* FAKEMATCH(wrapper): the copy forwarded inline; as Call3, 4 of 1526
-   * instructions differ in tla-en. */
-  Iwram_CopyWordsEntry(from, to, size);
-}
-
 s32 Func_02000564(void) {
   u8 *block;
   void *buffer;
@@ -195,7 +189,7 @@ s32 Func_02000564(void) {
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
-    CopyToPalette(buffer, (void *)0x5000000, 0x1c0);
+    Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
     FieldCamera_MoveTo(0x1000000, -1, 0x900000, 0);
     FieldCamera_SetSpeed(0x10000, 0x2000);
     Actor_SetAnimation(8, 14);

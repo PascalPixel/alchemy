@@ -1022,20 +1022,6 @@ void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta);
 
-static inline s32 FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 2 of 376 instructions of Func_0813e7e0 differ in
-   * tla-en. */
-  return Iwram_FillWordsEntry(destination, size, value);
-}
-
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 27 of 376 instructions of Func_0813e7e0 differ in
-   * tla-en. */
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
-
 // Shows the battle background fading in, until A (unused).
 
 void Func_0813e7e0(struct BattleEffectArgument *effect) {
@@ -1093,8 +1079,8 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   /* FAKEMATCH(wrapper): the clears through ClearWords; as a direct call to
    * Iwram_ClearWords, 14 of 376 instructions of Func_0813e7e0 differ in tla-en.
    */
-  ClearWords(canvas, 0x4000);
-  ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords((void *)0x06004000, 0x4000);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
@@ -1106,8 +1092,8 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
-  CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
-  FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+  Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);

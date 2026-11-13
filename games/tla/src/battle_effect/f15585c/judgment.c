@@ -54,7 +54,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-  CopyWords__actor_move_random((void *)OBJ_PLTT, pal, 512);
+  Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
   pal += 512;
   Resource_DecodeType01(pal, cells);
   for (i = 0; i != 16; i++) {
@@ -332,7 +332,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != 160 && (frame <= 4 || !(gInput.repeat & 3)));
 
-  FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, 0x4000, 0);
   for (i = 0; i != 16; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }

@@ -674,14 +674,6 @@ extern const u8 Data_08198ec4[];
 extern const u8 Data_0819919c[];
 extern const u8 Data_081991a4[];
 
-/* VIEW(f16d130): static ClearWords as ClearWords__f16d130; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
-static inline s32 ClearWords__f16d130(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 1101 instructions of BattleEffect_RunSerac differ
-   * in tla-en. */
-  return Iwram_ClearWordsEntry(destination, size);
-}
-
 // Abilities: Serac.
 //
 // The Mercury Djinni drops onto the target, dust bursting where it lands;
@@ -707,7 +699,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     BattleEffect_StartTiledCanvas(0x2000);
   }
   Func_0815585c(effect, (effect->side << 4) | 0x101, screenA, screenB);
-  ClearWords__f16d130((void *)0x06004000, 0x3c00);
+  Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x100;

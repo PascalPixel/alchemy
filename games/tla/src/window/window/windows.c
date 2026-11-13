@@ -196,13 +196,6 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-static inline void Window_FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as direct calls to the
-   * fixed entry, 10 of 68 instructions of Window_DrawOpened differ in tla-en.
-   */
-  Iwram_FillWordsEntry(destination, size, value);
-}
-
 /// Draws a window as its flags ask: with flag 8 its inside is filled (with
 /// colour 4 under flag 0x20, which also draws the border, else cleared), and
 /// without it only the border is drawn. Clears the window's duration.
@@ -224,9 +217,9 @@ void Window_DrawOpened(struct Window *window) {
   if (8 & flags) {
     if (0x20 & flags) {
       Window_DrawBorder(x, y, width, height);
-      Window_FillWords((void *)0x06002500, 0xF00, 0x44444444);
+      Iwram_FillWords((void *)0x06002500, 0xF00, 0x44444444);
     } else {
-      Window_FillWords((void *)0x06002500, 0xF00, 0);
+      Iwram_FillWords((void *)0x06002500, 0xF00, 0);
     }
     Func_0803a2b0(x, y, width, height, 0);
   } else {

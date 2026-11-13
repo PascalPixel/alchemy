@@ -74,13 +74,6 @@ extern u32 gCameraSceneParameters[];
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
 
-static inline s32 ClearWords(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 2 of 491 instructions of BattleEffect_RunCrystal differ
-   * in tla-en. */
-  return Iwram_ClearWordsEntry(destination, size);
-}
-
 /// Abilities: Crystal.
 ///
 /// Sixteen shaded discs, 2 to 32 pixels across, are built in the map cell
@@ -109,7 +102,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   discOffsets = (u16 *)(work->sheet + 0x2710);
   cells = (s32)gMapCellBuffer;
-  ClearWords((void *)cells, 0x8000);
+  Iwram_ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
     Func_0815b434((u8 *)(offset + cells), size, 0x10000);
     discOffsets[i] = offset;

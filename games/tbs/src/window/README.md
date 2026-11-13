@@ -19,7 +19,7 @@ caller does not run them.
 
 ## The windows' task
 
-One [task](../../glossary.md#task) runs every frame and does three jobs in
+One [task](../../glossary.md#task) runs every frame and does three things in
 order: step every window that is opening or closing, type the next letters
 of every message whose window is open, and draw. Everything on this page
 happens inside it, which is why a window keeps typing while the code that

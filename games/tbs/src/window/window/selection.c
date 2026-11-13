@@ -1379,11 +1379,6 @@ void Resource_ResetPendingTransfer(void) {
   }
 }
 
-#if TBS_PATCH_2
-
-#define HAS_LOCALIZED_MENU_GUARD 1
-#endif
-
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an
 /// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
@@ -1401,11 +1396,10 @@ s32 FieldMenu_Run(void) {
   for (;;) {
     PartyStatus_OpenAndWait();
     selection = FieldMenu_SelectCommand(selection);
-    // German, Spanish, French and Italian: mark a menu open (field work byte
-    // 0xcca, which pauses Reveal's sparkles) and, while Reveal is active
-    // (FieldWork.revealActive), clear its sparkles.
-#if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 1;
+    // German, Spanish, French and Italian: mark the menu open, which pauses
+    // Reveal's sparkles, and, while Reveal is active, clear its sparkles.
+#if TBS_PATCH_2
+    ((struct FieldWork *)state)->menuOpen = 1;
     if (((struct FieldWork *)state)->revealActive != 0) {
       FieldEffect_ReleaseRevealSparklesFar();
       wait(1);
@@ -1457,8 +1451,8 @@ s32 FieldMenu_Run(void) {
     break;
   }
 
-#if defined(HAS_LOCALIZED_MENU_GUARD)
-  state[0xcca] = 0;
+#if TBS_PATCH_2
+  ((struct FieldWork *)state)->menuOpen = 0;
 #endif
   return ret;
 }

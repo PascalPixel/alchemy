@@ -298,15 +298,6 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 // while a menu is open.
 #if TBS_PATCH_2
 
-#define REVEAL_SPARKLES_PAUSE_FOR_MENU 1
-#endif
-
-#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
-/// In gFieldWork, the byte after queuedSound: FieldMenu_Run sets it
-/// once FieldMenu_SelectCommand first returns, a cancel included, and clears it
-/// as it returns.
-#define MENU_OPEN_OFFSET 0xcca
-
 /// While Reveal is active, releases all its sparkles, leaving its marks. Called
 /// by the field menu (FieldMenu_Run, window/selection.c) each time
 /// FieldMenu_SelectCommand returns, a cancel included, while Reveal is active.
@@ -337,8 +328,8 @@ void Reveal_EmitSparkles(struct Actor *actor) {
   struct Actor *object;
   u32 randomRadius;
 
-#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
-  if (*(s8 *)((u8 *)gFieldWork + MENU_OPEN_OFFSET) != 0)
+#if TBS_PATCH_2
+  if (gFieldWork->menuOpen != 0)
     return;
 #endif
   if ((100 * Random16() >> 16) > 9)
@@ -443,5 +434,3 @@ void FieldEffect_SpawnRevealMarkers(void) {
 
 #undef EFFECT_OBJECT_COUNT
 #undef EFFECT_OBJECT_POOL
-#undef REVEAL_SPARKLES_PAUSE_FOR_MENU
-#undef MENU_OPEN_OFFSET

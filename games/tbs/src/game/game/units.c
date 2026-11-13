@@ -688,8 +688,8 @@ void Party_EndChildhood(void) {
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
 /// cures poison and haunting. Called by the events that heal the party
-/// (leaving Vale, meeting Flint, the Colosso rounds, Faran in Lalivero), by
-/// the Battle Arena after a round, and by InventorySnapshot_Save.
+/// (leaving Vale, meeting Flint, the Colosso trials, Faran in Lalivero), by
+/// the Battle Arena after a battle, and by InventorySnapshot_Save.
 void Party_RestoreHpPp(s32 cureConditions) {
   s32 partySize;
   s32 partyIndex;

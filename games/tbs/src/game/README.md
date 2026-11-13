@@ -112,7 +112,7 @@ The game remembers the story as 4,096 yes-or-no facts, the
 a conversation had: each is one flag, with a name in
 [flags.h](../../include/flags.h).
 
-A few runs have a job. The first eight say who is in the party. One run is
+A few runs have a use of their own. The first eight say who is in the party. One run is
 the 80 Djinn. Two runs of 256 are wiped automatically, one on entering a
 scene and one on entering a new area
 ([Scenes](../scene/README.md#state-that-cleans-itself-up)). Everything

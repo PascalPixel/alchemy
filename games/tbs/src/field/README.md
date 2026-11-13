@@ -167,7 +167,7 @@ is one file, [lucky_dice.c](lucky_dice.c) and
 
 ## Routines run from RAM
 
-A few jobs run for every line of the screen or every pixel of a picture,
+A few routines run for every line of the screen or every pixel of a picture,
 such as the World Map's 160 stretches. Code on the cartridge is slow to
 read, so the game copies those few routines into the console's fast
 memory and runs them there.

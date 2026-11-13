@@ -118,7 +118,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   battle = (u8 *)Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   scroll = -80;
@@ -1242,7 +1242,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
   }
 }
 
-void Func_08143354(void) {
+void BattleEffect_BuildCanvasTilemap(void) {
   u32 *map = (u32 *)0x0600f800;
   u32 tiles;
   s32 row;
@@ -1384,7 +1384,7 @@ void BattleEffect_CountDownBattlerTints(void) {
   } while (i != 8);
 }
 
-void Func_0814355c(void) {
+void BattleEffect_SetupCanvasWindows(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BG2X = 0;
@@ -1404,8 +1404,8 @@ void Func_0814355c(void) {
 
 // Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
 // changes: BattleEffect_ConfigureEffectDisplay for the display set-up, DISPCNT
-// 0x1741, Palette_StepFadeTransfer at 0x480, Func_0814355c for the display
-// registers and one more work word cleared.
+// 0x1741, Palette_StepFadeTransfer at 0x480, BattleEffect_SetupCanvasWindows
+// for the display registers and one more work word cleared.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -1450,7 +1450,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   display->secondMode = 0;
   wait(1);
 
-  Func_0814355c();
+  BattleEffect_SetupCanvasWindows();
   REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
               WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
@@ -1523,7 +1523,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   display->secondMode = 0;
   wait(1);
 
-  Func_0814355c();
+  BattleEffect_SetupCanvasWindows();
   REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
               WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;

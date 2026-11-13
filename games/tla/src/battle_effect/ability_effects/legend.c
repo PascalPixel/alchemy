@@ -58,7 +58,7 @@ extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void BattlePlayback_StartFar(s32 phase);
@@ -126,7 +126,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
                 BLIT_ADDITIVE));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, cells, 1, 1);
-  Func_0816ae40(cells, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(cells, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet, work->sheet + 0x4000,
                              1, 1);

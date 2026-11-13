@@ -86,7 +86,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *, s32, s32, s32);
@@ -121,7 +121,7 @@ extern const u8 Data_081991c0[];
 extern const u8 gData_08199210[]; // a quad's four corners, x y z for each
 extern const u8 Data_08199220[];
 extern const u8 gData_08199340[]; // the quad's face
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
@@ -142,7 +142,7 @@ void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
-void Func_0814355c(void); // the BG2 canvas's registers
+void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
 extern u8 gData_02014000[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_08199364[];
@@ -189,7 +189,7 @@ void SummonEffect_RunCanvasMode3(void *action);
 void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                                      s32 mode);
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
-void Func_0815b634(void);                // mode 3 only
+void Palette_MirrorBgColors(void);       // mode 3 only
 extern s32 gData_08197834[];             // ☀️ gPrism_ShardOffsets
 extern u8 gPrism_ShardWidths[];
 extern u8 gData_08197826[];     // ☀️ gPrism_ShardHeights

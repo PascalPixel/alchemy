@@ -25,7 +25,7 @@ Resource_FarCall003:
 	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
 	export Actor_StartScriptFar, Actor_StartScript
-	export Func_080200b0, Func_08023524
+	export Func_080200b0, Actor_StartRenderModeScript
 	export Actor_FindFreeFar, Actor_FindFree
 	export Actor_CreateFar, Actor_Create
 	export Actor_ReleaseFar, Actor_Release
@@ -62,7 +62,7 @@ Resource_FarCall003:
 	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
 	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
 	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
-	export Func_080201d8, Func_0802d530
+	export Func_080201d8, MapGrid_GetCellAttributeLowNibbleOrBump
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
 	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect

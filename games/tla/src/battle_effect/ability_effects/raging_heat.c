@@ -16,7 +16,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
@@ -125,7 +125,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   centerX = targets[0].x + (targets[effect->count - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, buffer, 1, 1);
-  Func_0816ae40(buffer, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(buffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x4000, 1, 0);
@@ -505,7 +505,9 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
 void Graphics_LoadGreyRamp(void);
 
-void Func_08179e6c(void) {
+/// Loads the grey ramp and fills the 128x128 canvas with a vertical gradient
+/// that rises over the top 32 rows and falls over the bottom 32.
+void RagingHeat_FillGradientCanvas(void) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   s32 y;
   s32 x;

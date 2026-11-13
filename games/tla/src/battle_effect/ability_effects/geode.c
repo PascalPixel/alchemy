@@ -46,7 +46,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight); // builds a grid's mesh
-void Func_08143354(void);
+void BattleEffect_BuildCanvasTilemap(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 void Display_ApplyBg2Affine(void);
 void BattleEffect_ProcessPendingBlock2Transfer(void);
@@ -201,7 +201,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     }
     if (frame == 1) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-      Func_08143354();
+      BattleEffect_BuildCanvasTilemap();
     }
     if (frame == 34) {
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

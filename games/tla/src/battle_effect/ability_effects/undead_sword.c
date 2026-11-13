@@ -318,7 +318,9 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height) {
+/// Copies a width by height picture into a picture twice its size, mirrored
+/// into all four quadrants.
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height) {
   s32 x;
   s32 y;
 
@@ -428,7 +430,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   savedYaw = camera[27];
   Resource_LoadAndDecompress((s32)&ResourceId_CrackedTextureSheet, work->sheet,
                              1, 1);
-  Func_0816ae40(work->sheet, work->sheet + 0x400, 32, 32);
+  Picture_MirrorIntoQuadrants(work->sheet, work->sheet + 0x400, 32, 32);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2000, 0,
                              0);
   if (mode == 1) {

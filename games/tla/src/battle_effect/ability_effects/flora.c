@@ -42,7 +42,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
@@ -170,7 +170,7 @@ EffectSprite_Acquire__f179f18(s32 width, s32 height, u32 shape,
                               s32 mode) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
@@ -244,7 +244,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   scroll = -80;

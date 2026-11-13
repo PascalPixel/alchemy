@@ -300,7 +300,7 @@ extern char ResourceId_SwordSheet;
 extern u8 gTitanBlade_FlashPictures[]; // ☀️ gPlasma_FlashCells
 extern s32 gTitanBlade_DustGravity[];  // the dust's four gravities
 
-void Func_0815b634(void);
+void Palette_MirrorBgColors(void);
 
 // A great sword falls from the sky onto the target, a pillar of fire and dust
 // spouting under it, and drives into the ground in a burst of flashes and
@@ -420,7 +420,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
         Iwram_CopyWordsEntry(
             (void *)0x05000000,
             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
-        Func_0815b634();
+        Palette_MirrorBgColors();
       }
     }
 
@@ -658,7 +658,7 @@ struct Model;
 struct StripQuad;
 
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);

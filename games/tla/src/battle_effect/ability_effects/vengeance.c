@@ -19,7 +19,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
@@ -1347,7 +1347,7 @@ extern struct SpriteObject *EffectSprite_CreateWithTiles__f1811d4(
     s32 width, s32 height, u32 shape,
     u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
 /* VIEW(f1811d4): routine Mesh_BuildCylinderBand as void
  * Mesh_BuildCylinderBand(struct MeshVertex *vertices, struct MeshTriangle
@@ -1476,7 +1476,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   y = -80;
@@ -1524,7 +1524,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   }
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);
-  Func_0816ae40(cellBuffer, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(cellBuffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FC, work->sheet + 0x4000, 0,
                              0);
   {

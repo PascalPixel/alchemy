@@ -390,7 +390,7 @@ extern const u8 gData_08199210[];
 extern const u8 gData_08199364[];
 
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_08179e6c(void);
+void RagingHeat_FillGradientCanvas(void);
 
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
@@ -475,7 +475,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   bank = SYSTEM->bank;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   BattleEffect_LoadBlitter(104, 3);
   blit[0] = SYSTEM->blit;
   work->transferMode = 0;
@@ -1547,7 +1547,7 @@ struct RenderModel__f17e698 {
 };
 
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);

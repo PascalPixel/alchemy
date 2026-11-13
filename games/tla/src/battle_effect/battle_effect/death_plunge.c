@@ -674,7 +674,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
   wait(1);
-  Func_0814355c();
+  BattleEffect_SetupCanvasWindows();
   REG_BG2PA = 0x100;
   REG_WININ = 0x3537;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
@@ -879,7 +879,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, work->sheet, 1,
                              0);
-  Func_0816ae40(work->sheet, gData_02014000, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2648, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3648, 0,

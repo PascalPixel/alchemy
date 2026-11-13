@@ -312,7 +312,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     routine((void *)BG_PLTT, source_, 128);
   }
   if (mode == 3)
-    Func_0815b634();
+    Palette_MirrorBgColors();
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
 
   // The motes start at the caster's body height and scatter every way at up

@@ -167,8 +167,8 @@ void Func_0815b510(u8 *map, s32 size, s32 scale) {
   }
 }
 
-// Mirrors the first 64 background colours, keeping the backdrop colour.
-void Func_0815b634(void) {
+/// Mirrors the first 64 background colours, keeping the backdrop colour.
+void Palette_MirrorBgColors(void) {
   u16 saved[64];
   u16 flipped[64];
   s32 i;
@@ -190,7 +190,7 @@ extern const struct SpriteScale gData_08196e4c;
 // grows for 20 frames, then shrinks, and its sideways speed grows from frame
 // 12), and steps the object's animation through cels 7 to 14, seven frames
 // each.
-void Func_0815b68c(void) {
+void Ulysses_MoveLastParticle(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct SpriteScale scale = gData_08196e4c;
@@ -261,7 +261,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 // Flashes an actor in a palette for some frames.
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
@@ -916,7 +916,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 288) {
-      Task_Add(Func_0815b68c, 1152);
+      Task_Add(Ulysses_MoveLastParticle, 1152);
       work->particles[63].x = 0xbc0000;
       work->particles[63].y = 0x600000;
       work->particles[63].velocityX = 0;
@@ -1012,7 +1012,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   if (dmaArmed == 1) {
-    Task_Remove(Func_0815b68c);
+    Task_Remove(Ulysses_MoveLastParticle);
   }
   for (i = 0; i != 8; i++) {
     Sprite_DestroyFar(work->objects[i]);

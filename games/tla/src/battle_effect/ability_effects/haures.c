@@ -16,7 +16,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
@@ -249,7 +249,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     u8 *c = work->sheet;
 
     Resource_LoadAndDecompress((s32)&ResourceId_Data0F7, c, 0, 0);
-    Func_0816ae40(c, SCRATCH, 64, 64);
+    Picture_MirrorIntoQuadrants(c, SCRATCH, 64, 64);
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, c, 1, 0);
     for (i = 0; i != 0x1781; i++, c++) {
       u8 v = *c;

@@ -281,7 +281,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   savedScroll = gBgScroll[1].x;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  Func_08179e6c();
+  RagingHeat_FillGradientCanvas();
   work->transferMode = none;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 

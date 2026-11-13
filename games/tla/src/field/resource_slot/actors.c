@@ -480,7 +480,7 @@ void Actor_StartApproachWatched(struct Actor *actor, struct Actor *watched) {
 
 /// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
 /// frame first in mode 9.
-void Func_08023524(struct Actor *object) {
+void Actor_StartRenderModeScript(struct Actor *object) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -935,7 +935,7 @@ s32 ActorCamera_ReturnTrue(void) { return 1; }
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
 /// chosen (flag 363) the sprites are drawn at 1.0 scale.
-void Func_08023d80(struct PlacedObject *object, s32 angle) {
+void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
   const s32 *scale = object->scale;
   s32 *point;
   void *sprite;
@@ -1011,7 +1011,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   object += 63;
   for (i = 63; i >= 0; i--, object--) {
     if (object->active != 0)
-      Func_08023d80(object, angle);
+      Actor_PlaceSprites(object, angle);
   }
   HeapSlot_Release(80);
 }

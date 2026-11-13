@@ -862,7 +862,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
 
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
 /// samples differ (a real bump or hollow, not a flat cell) reads as 99.
-s32 Func_0802d530(s32 layer, s32 x, s32 z) {
+s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *grid;
   u8 *code;

@@ -87,6 +87,12 @@
 #include "ability_ids.h"
 #include "enemy_ids.h"
 
+/// Writes code at position in the ring of decoded text and steps position on,
+/// wrapping at the ring's end.
+#define TEXT_APPEND(entries, position, code)                                   \
+  ((entries)[position] = (code),                                               \
+   (position) = ((position) + 1) & TEXT_BUFFER_MASK)
+
 // Edition-specific text and window layout values. The possessives
 // (gLocalizedWord_ItemPossessives) are by number in Spanish, singular and
 // plural, and by item gender in German and Italian; MESSAGE_EM_DASH starts with

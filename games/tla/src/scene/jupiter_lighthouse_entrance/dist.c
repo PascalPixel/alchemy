@@ -102,8 +102,7 @@ stop:
   gData_020021bc = 0;
 }
 
-/* VIEW(dist): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__dist(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
 struct GustObject *Func_020007a4(struct GustObject *source) {
   struct Vector3 position;
@@ -117,7 +116,7 @@ struct GustObject *Func_020007a4(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_020019fc(object, 2);
-  Actor_SetSingleChildFlags__dist(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -219,8 +218,7 @@ void Func_0200091c(void) {
 #include "map.h"
 #include "vram_tab.h"
 
-/* VIEW(dist): variable gData_02002200 as s16 gData_02002200; module/scene/apojii_islands.h has u32 gData_02002200[]. */
-extern s16 gData_02002200__dist __asm__("gData_02002200");
+extern s16 gData_02002200;
 extern u32 gData_02002204[];
 
 void Func_020019d4(struct LightOam *oam, s32 depth);
@@ -233,7 +231,7 @@ void Func_02000aac(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_02002200__dist].offset >> 5;
+  tile = gResourceTableEntries[gData_02002200].offset >> 5;
   viewY = map->origin[1];
   oam = Data_02002244;
 
@@ -305,8 +303,8 @@ void Func_02000c68(void) {
 
   Iwram_ClearWords(gData_02002204, 64);
   Resource_DecodeType01(gField_CachedTilesA, buffer);
-  gData_02002200__dist = Resource_FindFreeEntry();
-  VramCache_Load(gData_02002200__dist, 0xc00, buffer);
+  gData_02002200 = Resource_FindFreeEntry();
+  VramCache_Load(gData_02002200, 0xc00, buffer);
   Heap_Release(buffer);
   Task_Add(Func_02000aac, TASK_PASS_VBLANK);
   gData_02002202 = 0;
@@ -319,8 +317,8 @@ void Func_02000ce8(void) {
 
   Iwram_ClearWords(gData_02002204, 64);
   Resource_DecodeType01(gField_CachedTilesB, buffer);
-  gData_02002200__dist = Resource_FindFreeEntry();
-  Vram_Load(gData_02002200__dist, 0x800, buffer);
+  gData_02002200 = Resource_FindFreeEntry();
+  Vram_Load(gData_02002200, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02000aac, TASK_PASS_VBLANK);
   gData_02002202 = 0;
@@ -333,8 +331,8 @@ void Func_02000d68(void) {
 
   Iwram_ClearWords(gData_02002204, 64);
   Resource_DecodeType01(gField_CachedTilesC, buffer);
-  gData_02002200__dist = Resource_FindFreeEntry();
-  Vram_Load(gData_02002200__dist, 0x800, buffer);
+  gData_02002200 = Resource_FindFreeEntry();
+  Vram_Load(gData_02002200, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02000aac, TASK_PASS_VBLANK);
   gData_02002202 = 0;

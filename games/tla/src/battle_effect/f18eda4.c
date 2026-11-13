@@ -25,7 +25,7 @@ struct Model;
 #define KIND123_FRAMES 111
 
 // A model for the ARM renderer (Render_DrawModelList).
-/* VIEW(f18eda4): tag struct RenderModel as struct RenderModel__f18eda4; render_model.h has another definition. */
+/* VIEW(f18eda4): tag struct RenderModel as struct RenderModel__f18eda4; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunLiquifier moves: 2 of 892 instructions in tla-ja. */
 struct RenderModel__f18eda4 {
   s32 kind;
   s32 unk04;

@@ -360,8 +360,7 @@ void Func_02001160(void) {
 
 extern const s32 gData_02003574[];
 
-/* VIEW(s0ac8): routine Func_020032e0 as void Func_020032e0(struct Actor *, s32); module/scene/kibombo.h has void Func_020032e0(void). */
-extern void Func_020032e0__s0ac8(struct Actor *, s32) __asm__("Func_020032e0");
+void Func_020032e0(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
@@ -396,7 +395,7 @@ void Func_02001398(void) {
   object->scaleY = 0x16000;
   object->scaleX = 0x16000;
   Scene_SetActorSpritePriority(object, 2);
-  Func_020032e0__s0ac8(object, 3);
+  Func_020032e0(object, 3);
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
@@ -585,7 +584,7 @@ void Func_020017b4(struct Actor *self) {
     dust->motionFlags = 0;
     Actor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);
-    Func_020032e0__s0ac8(dust, 1);
+    Func_020032e0(dust, 1);
     Actor_SetSingleChildFlags(dust, 0);
     Actor_StartScript(dust, gData_02003594);
     self->unk4c = leader->x;

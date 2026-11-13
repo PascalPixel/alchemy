@@ -957,11 +957,11 @@ done:
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s3564.c ----
 extern volatile s16 gData_020068b0;
 extern s16 gData_02005798[];
-/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor *object); s32b8 has void Func_020031f8(void); tried as the definition's void Func_020031f8(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1051: `Func_020031f8__s3564' undeclared (first use in this function). */
+/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor *object); s32b8 has void Func_020031f8(void); tried as the definition's void Func_020031f8(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1049: `Func_020031f8__s3564' undeclared (first use in this function). */
 extern void Func_020031f8__s3564(struct Actor *object) __asm__("Func_020031f8");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02004bc0(struct Actor *object, s32 mode);
-/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1070: `Func_02004c78__s3564' undeclared (first use in this function). */
+/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1068: `Func_02004c78__s3564' undeclared (first use in this function). */
 extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_02004c78");
 
 void Func_02003564(void) {

@@ -747,8 +747,7 @@ s32 Func_02001044(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_020033e0[];
-/* VIEW(jupiter_lighthouse_room_5): variable gData_02003400 as s32 gData_02003400; module/scene/idejima.h has u32 gData_02003400[]. */
-extern s32 gData_02003400__jupiter_lighthouse_room_5 __asm__("gData_02003400");
+extern s32 gData_02003400;
 
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
 /* VIEW(jupiter_lighthouse_room_5): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position); tried as the definition's void Camera_WorldToScreen(struct EffectVector *position), which the object already declares, Func_02001538 moves: 1 of 131 instructions in tla-ja. */
@@ -831,7 +830,7 @@ stop:
     self->update = zero;
     Func_02002820__s0cb8(self, gData_020033e0);
     Event_PlaySound(228);
-    gData_02003400__jupiter_lighthouse_room_5 = zero;
+    gData_02003400 = zero;
   }
 }
 
@@ -961,7 +960,7 @@ struct Spark {
   s32 age;
 };
 
-/* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:1004: structure has no member named `x'. */
+/* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:999: structure has no member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
   s32 x;
@@ -969,7 +968,7 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk14[0x14];
 };
 
-/* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230; jupiter_lighthouse_room_5.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:979: structure has no member named `sparks'. */
+/* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230; jupiter_lighthouse_room_5.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:974: structure has no member named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
   struct Spark sparks[96];

@@ -190,7 +190,7 @@ void Func_02001c60(void) {
 
 #include "scene_ids.h"
 
-/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read value as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s1938.c:185: structure has no member named `returnEntrance'. */
+/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read value as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s1938.c:184: structure has no member named `returnEntrance'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
   s16 value;

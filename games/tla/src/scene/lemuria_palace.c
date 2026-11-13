@@ -232,19 +232,18 @@ void Func_020002b4(void) {
 #include "call.h"
 #include "system/io_write.h"
 
-/* VIEW(lemuria_palace): variable gData_02003020 as s32 gData_02003020; module/scene/jupiter_lighthouse_aerie.h has u32 gData_02003020[]. */
-extern s32 gData_02003020__lemuria_palace __asm__("gData_02003020");
-/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:266: request for member `unk1e' in something not a structure or union. */
+extern s32 gData_02003020;
+/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:264: request for member `unk1e' in something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003060__s03a0 __asm__("Data_02003060");
-/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:277: request for member `unk1e' in something not a structure or union. */
+/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:275: request for member `unk1e' in something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003030__s03a0 __asm__("Data_02003030");
-/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:282: `Data_02003090' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:280: `Data_02003090' has an incomplete type. */
 extern s32 Data_02003090__s03a0 __asm__("Data_02003090");
-/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283: `Data_02003024' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:281: `Data_02003024' has an incomplete type. */
 extern s32 Data_02003024__s03a0 __asm__("Data_02003024");
-/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:284: `Data_02003098' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:282: `Data_02003098' has an incomplete type. */
 extern s32 Data_02003098__s03a0 __asm__("Data_02003098");
-/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:285: `gData_0200308c' has an incomplete type. */
+/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283: `gData_0200308c' has an incomplete type. */
 extern u8 gData_0200308c__s03a0 __asm__("gData_0200308c");
 
 void Func_020003a0(void) {
@@ -259,10 +258,10 @@ void Func_020003a0(void) {
   Io_Write16(0x3f40, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   Resource_DecodeType01(Data_02002620, buffer);
-  firstSlot = &gData_02003020__lemuria_palace;
+  firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();
   firstTile = &Data_02003088;
-  *firstTile = Vram_Load(gData_02003020__lemuria_palace, 0x1000, buffer);
+  *firstTile = Vram_Load(gData_02003020, 0x1000, buffer);
   Func_02002104(&Data_02003060__s03a0, 0, 0, 0xc0000000, Data_02003088);
   Data_02003060__s03a0.unk1e = 1;
   Data_02003060__s03a0.priority = 2;
@@ -290,7 +289,7 @@ void Func_020003a0(void) {
 
 void Func_020004e8(void) {
   FieldTask_Remove(Func_020002b4);
-  Resource_ResetEntry(gData_02003020__lemuria_palace);
+  Resource_ResetEntry(gData_02003020);
   Resource_ResetEntry(gData_02003094);
 }
 
@@ -352,9 +351,9 @@ loop:
 void Event_Start();
 /* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void Event_End(); not tried: Event_End's bound declaration was not found. */
 extern s32 Func_02001fd4__s03a0() __asm__("Event_End");
-/* VIEW(lemuria_palace): routine Func_020020ac as void Func_020020ac(); module/scene/scene.h has void Func_020020ac(s32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:414: too few arguments to function `Func_020020ac'. */
+/* VIEW(lemuria_palace): routine Func_020020ac as void Func_020020ac(); module/scene/scene.h has void Func_020020ac(s32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:411: too few arguments to function `Func_020020ac'. */
 extern void Func_020020ac__lemuria_palace() __asm__("Func_020020ac");
-/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:359: conflicting types for `Func_020001d8'. */
+/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:356: conflicting types for `Func_020001d8'. */
 extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
 s32 __modsi3();
 void Field_StartPaletteTransition();

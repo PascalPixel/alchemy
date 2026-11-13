@@ -315,8 +315,6 @@ s32 Func_020007fc(s32 *p) {
 }
 
 void Func_02002180(s32 a, s32 b, s32 c, s32 d);
-/* VIEW(s0280): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern u8 *HeapSlot_AllocFar__s0280(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
   Func_02002180(a, b, c, d);
@@ -354,7 +352,7 @@ void Func_02000860(void) {
     actor->y += 0x100000;
   actor->flags23 &= 0xfe;
   actor->visible = 1;
-  transfer = HeapSlot_AllocFar__s0280(68, 0x608);
+  transfer = HeapSlot_AllocFar(68, 0x608);
   Item_LoadIcon(193);
   transfer += 0x400;
   Vram_Load(sprite->palette, 128, transfer);

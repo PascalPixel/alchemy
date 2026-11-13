@@ -87,10 +87,6 @@ const u8 *Scene_GetEvents(void) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-/* VIEW(scene_tables): routine Func_02003ff4 as void Func_02003ff4(); module/scene/mars_lighthouse_aerie.h has void Func_02003ff4(void). */
-extern void Func_02003ff4__scene_tables() __asm__("Func_02003ff4");
-/* VIEW(scene_tables): routine PartyInventory_Remove as void PartyInventory_Remove(s32 item); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern void PartyInventory_Remove__scene_tables(s32 item) __asm__("PartyInventory_Remove");
 
 void Func_02000210(void) {
   s32 result0;
@@ -222,7 +218,7 @@ void Func_0200040c(void) {
   result0 = Func_020003dc();
   if (result0 == 0)
     goto L_0200841e;
-  Func_02003ff4__scene_tables(21);
+  Func_02003ff4(21);
   goto L_0200843a;
 L_0200841e:
   Event_Start();
@@ -331,7 +327,7 @@ void Func_02000568(void) {
     FieldEvent_Wait(10);
     Func_02003fc4();
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
-    PartyInventory_Remove__scene_tables(0x1c4);
+    PartyInventory_Remove(0x1c4);
     Party_GiveItem(0x1c5, 0);
     Func_02003fbc();
     if (spawned != 0) {
@@ -652,7 +648,7 @@ void Func_02000e38(void) {
     trader->update = 0;
     Func_02003fc4();
     Message_ShowCentered((s32)MsgTradedHisMilk, 1);
-    PartyInventory_Remove__scene_tables(454);
+    PartyInventory_Remove(454);
     Party_GiveItem(giftItem, 0);
     Func_02003fbc();
     Actor_GetById(gMainRoutineWork.currentOwner)->facing = 0x4000;
@@ -724,7 +720,7 @@ void Func_0200129c(struct Actor *gift) {
   Actor_WaitForMove(gift);
   Func_02003de4(gift, 1);
   gift->update = 0;
-  PartyInventory_Remove__scene_tables(455);
+  PartyInventory_Remove(455);
   Event_ShowMessage(9, 0);
   ((u8 *)HeapSlot_AllocEwram(88, 664))[661] = 99;
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
@@ -1012,7 +1008,7 @@ void Func_02001c4c(void) {
 #include "dma.h"
 #include "io_reg.h"
 
-/* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04; module/scene/prox.h has s32 gData_02004f04[]. */
+/* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04; module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's extern s32 gData_02004f04[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/islets/scene_tables.c:1015: `gData_02004f04__scene_tables' undeclared (first use in this function). */
 extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
 extern s16 gData_02004f10[2][160];
 
@@ -1159,13 +1155,11 @@ void Func_02001f74(void) {
   Event_End();
 }
 
-/* VIEW(scene_tables): routine Actor_JumpDownLedge as void Actor_JumpDownLedge(); module/field/event_commands.h has void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle). */
-extern void Actor_JumpDownLedge__scene_tables() __asm__("Actor_JumpDownLedge");
 
 void Func_0200208c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_JumpDownLedge__scene_tables(gMainRoutineWork.currentOwner, 6, 1);
+  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 1);
   Event_End();
   return;
 }

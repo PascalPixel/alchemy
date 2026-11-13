@@ -183,7 +183,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8 gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as the definition's extern u32 gData_02003720[], it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:198: `gData_02003720__eastern_alhafra_ship' undeclared (first use in this function). */
+/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8 gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as the definition's extern u32 gData_02003720[], it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:199: `gData_02003720__eastern_alhafra_ship' undeclared (first use in this function). */
 extern const u8 gData_02003720__eastern_alhafra_ship[] __asm__("gData_02003720");
 
 void Func_02003100(struct Actor020003e8 *object, s32 mode);
@@ -212,7 +212,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 // ---- games/tla/src/scene/eastern_alhafra_ship/s0438.c ----
 // Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next object the overlay links, and the overlay's data.
 
-/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:214: conflicting types for `Func_020003e8'. */
+/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for `Func_020003e8'. */
 extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_020003e8");
 
 void Func_02000438(s32 id) {

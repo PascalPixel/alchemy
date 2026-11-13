@@ -4589,10 +4589,6 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
    } *)Ram_HeapSlots)                                                          \
        ->draw)
 
-/* VIEW(tiled_canvas_begin): tag struct SpritePlacement as struct SpritePlacement__tiled_canvas_begin; render_placement.h has another definition. */
-struct SpritePlacement__tiled_canvas_begin {
-  s32 x, height, y, groundHeight;
-};
 
 // A sprite object as Func_0815b290 returns it.
 struct SpriteObject {
@@ -4626,7 +4622,7 @@ struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
 void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
-  struct SpritePlacement__tiled_canvas_begin position;
+  struct SpritePlacement position;
   struct EffectPosition target;
   DrawRectangle draw[2];
   struct BattlePresentationTransition *presentation;

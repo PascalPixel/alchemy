@@ -303,7 +303,7 @@ void BattleEffect_SpawnFallingParticles(void) {
 #include "battle_effect.h"
 #include "frame.h"
 
-/* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8; module/tla.h has another definition. */
+/* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0decb8.c:351: dereferencing pointer to incomplete type. */
 struct EffectWork__f0decb8 {
   u8 unk00[4];
   s32 x;
@@ -319,23 +319,8 @@ struct EffectWork__f0decb8 {
   u8 palette;
 };
 
-/* VIEW(f0decb8): variable gData_080f0e60 as const u8 gData_080f0e60[]; module/field/event_commands.h has const s32 gData_080f0e60[]. */
-extern const u8 gData_080f0e60__f0decb8[] __asm__("gData_080f0e60");
-/* VIEW(f0decb8): variable gData_080f0e78 as const u8 gData_080f0e78[]; module/field/field.h has const s32 gData_080f0e78[]. */
-extern const u8 gData_080f0e78__f0decb8[] __asm__("gData_080f0e78");
 
-/* VIEW(f0decb8): routine BattleEffect_SpawnItemBreakMode1 as struct FxObject *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle); module/field/event_commands.h has struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle). */
-extern struct FxObject *BattleEffect_SpawnItemBreakMode1__f0decb8(s32 x, s32 y, s32 z,
-                                                  s32 angle) __asm__("BattleEffect_SpawnItemBreakMode1");
 void Actor_ApplyRandomChildValues(void);
-/* VIEW(f0decb8): routine ScriptObject_CheckOverlapFar as s32 ScriptObject_CheckOverlapFar(struct FxObject *object, struct FxPosition *position); module/field/event_commands.h has s32 ScriptObject_CheckOverlapFar(struct Actor *object, struct Effect04Vector *position). */
-extern s32 ScriptObject_CheckOverlapFar__f0decb8(struct FxObject *object,
-                                 struct FxPosition *position) __asm__("ScriptObject_CheckOverlapFar");
-/* VIEW(f0decb8): routine Func_08020210 as s32 Func_08020210(struct FxObject *object, struct FxPosition *position); module/field/field.h has s32 Func_08020210(struct Actor *object, s32 *position). */
-extern s32 Func_08020210__f0decb8(struct FxObject *object, struct FxPosition *position) __asm__("Func_08020210");
-/* VIEW(f0decb8): routine Motion_SetTargetPositionFromMagnitudeAngle as void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object, s32 magnitude, s32 angle); module/field/object.h has void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object, s32 magnitude, s32 angle). */
-extern void Motion_SetTargetPositionFromMagnitudeAngle__f0decb8(struct FxObject *object,
-                                                s32 magnitude, s32 angle) __asm__("Motion_SetTargetPositionFromMagnitudeAngle");
 void BattleEffect_SpawnRadialParticleRing(struct FxObject *object);
 
 static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
@@ -343,7 +328,7 @@ static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
   s32 hit;
 
   object->ground += 0x100000;
-  hit = Func_08020210__f0decb8(object, position);
+  hit = Func_08020210(object, position);
   object->ground -= 0x100000;
   return hit;
 }
@@ -369,7 +354,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     return;
   BattleEffect_InitializeSharedScene();
   source->linked = target;
-  Actor_StartScriptFar((struct Actor *)source, (u32)gData_080f0e60__f0decb8);
+  Actor_StartScriptFar((struct Actor *)source, (u32)gData_080f0e60);
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering
      loop's first part, which gives the shards loop's 19 r8 and its 0x20000
      r9; as position used directly, 10 of 551 instructions differ in tla-en. */
@@ -378,9 +363,9 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   p->y = work->y + 0x100000;
   p->z = work->z;
   object =
-      BattleEffect_SpawnItemBreakMode1__f0decb8(p->x + 0x200000, p->y, p->z, 0x8000);
+      BattleEffect_SpawnItemBreakMode1(p->x + 0x200000, p->y, p->z, 0x8000);
   anchors[0] = object;
-  right = BattleEffect_SpawnItemBreakMode1__f0decb8(p->x - 0x200000, p->y, p->z, 0);
+  right = BattleEffect_SpawnItemBreakMode1(p->x - 0x200000, p->y, p->z, 0);
   anchors[1] = right;
   if (anchors[0] == NULL || right == NULL) {
     BattleEffect_PrepareBufferInterpolation();
@@ -450,7 +435,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     position.y = target->ground;
     position.z = target->z;
     Vector_AddPolarOffset(0x100000, angle, &position);
-    i = ScriptObject_CheckOverlapFar__f0decb8(target, &position);
+    i = ScriptObject_CheckOverlapFar(target, &position);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     // path as the ROM lays them out; written as one || test, 389 of 551
     // instructions differ in tla-en.
@@ -515,12 +500,12 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
-        Actor_StartScriptFar((struct Actor *)object, (u32)gData_080f0e78__f0decb8);
+        Actor_StartScriptFar((struct Actor *)object, (u32)gData_080f0e78);
         object->speed = Random16() + 0x20000;
         object->lift = 0x20000;
         object->flag = 0;
         magnitude = Random16() * 24 + 0x80000;
-        Motion_SetTargetPositionFromMagnitudeAngle__f0decb8(object, magnitude,
+        Motion_SetTargetPositionFromMagnitudeAngle(object, magnitude,
                                                    Random16());
       }
     }

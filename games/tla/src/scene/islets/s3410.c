@@ -71,7 +71,7 @@ void Func_020034ec(void) {
   return;
 }
 
-/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410; palette_snapshots.h has another definition. */
+/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410; palette_snapshots.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/islets/s3410.c:82: structure has no member named `count'. */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;

@@ -10,8 +10,7 @@
 #include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s098c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s098c(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_020007cc(struct GustObject *object);
 
 struct GustObject *Func_0200098c(struct GustObject *source) {
@@ -27,7 +26,7 @@ struct GustObject *Func_0200098c(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Func_02001bec(object, 2);
-  Actor_SetSingleChildFlags__s098c(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -134,7 +133,7 @@ void Func_02000b04(void) {
 #include "map.h"
 #include "vram_tab.h"
 
-/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4; module/scene/clear.h has u16 gData_020024f4[]. */
+/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4; module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's extern u16 gData_020024f4[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_basement/s098c.c:225: `gData_020024f4' has an incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
 void Func_02001bc4(struct LightOam *oam, s32 depth);

@@ -152,7 +152,7 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218; module/tla.h has another definition; tried with the definition the rest of the object has, its members read value as flag, it does not compile in tla-ja: games/tla/src/scene/trial_road/s0218.c:172: dereferencing pointer to incomplete type. */
+/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218; module/tla.h has another definition; tried with the definition the rest of the object has, its members read value as flag, it does not compile in tla-ja: games/tla/src/scene/trial_road/s0218.c:171: dereferencing pointer to incomplete type. */
 struct EventWork15a__s0218 {
   u8 unk000[0x15a];
   u16 value;

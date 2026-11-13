@@ -16,8 +16,7 @@ void Func_0200082c(void);
 void Func_020008d0(void);
 void Func_02000904(void);
 void Func_02000990(void);
-/* VIEW(data3): routine Func_020009ac as void Func_020009ac(void); games/tla/src/scene/trial_road/trial_road.h has void Func_020009ac ( s32 , s32 ). */
-extern void Func_020009ac__data3(void) __asm__("Func_020009ac");
+void Func_020009ac(void);
 void Func_02000b3c(void);
 void Func_02000b4c(void);
 void Func_02000b5c(void);
@@ -405,9 +404,9 @@ struct Trigger gData_0200756c[] = {
     {TRIGGER_STEP, 52, 0x337, EVENT(Func_02000c5c)},
     {TRIGGER_STEP, 53, 0x1337, EVENT(Func_02000c70)},
     {0x202, 60, CONDITION_ALWAYS, EVENT(Func_02000c84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_020009ac__data3)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x1339, EVENT(Func_020009ac__data3)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_020009ac__data3)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_020009ac)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x1339, EVENT(Func_020009ac)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_020009ac)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x339, EVENT(Func_02000990)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(Func_02000b3c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, 0x1335, EVENT(Func_02000b4c)},

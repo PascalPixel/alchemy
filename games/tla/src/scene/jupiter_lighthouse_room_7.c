@@ -21,8 +21,6 @@
 extern const u8 gData_020031c4[];
 extern s32 gData_02003594;
 extern s16 gData_020035fe;
-/* VIEW(jupiter_lighthouse_room_7): variable gData_02003600 as struct Actor *gData_02003600[]; module/scene/idejima.h has u32 gData_02003600[]. */
-extern struct Actor *gData_02003600__jupiter_lighthouse_room_7[] __asm__("gData_02003600");
 extern u16 gData_02003702;
 void Func_02000060(s32 value);
 void Func_020000b4(void);
@@ -716,8 +714,7 @@ extern s32 gData_02003590;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02003590 = value; }
-/* VIEW(jupiter_lighthouse_room_7): variable gData_020035bc as u16 gData_020035bc[]; module/scene/idejima.h has u32 gData_020035bc[]. */
-extern u16 gData_020035bc__jupiter_lighthouse_room_7[] __asm__("gData_020035bc");
+extern u32 gData_020035bc[];
 
 void Func_02001168(void) {
   u16 colors[16];
@@ -746,7 +743,7 @@ next:
      * as colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_020035bc + offset),
      * 2 of 83 instructions differ in tla-en. */
     s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gData_020035bc__jupiter_lighthouse_room_7;
+    u8 *table = (u8 *)gData_020035bc;
 
     colors[slot] = *(u16 *)(table + offset);
   }
@@ -766,7 +763,7 @@ void Func_02002c44();
 void Func_02001224(s32 mode) {
   gData_02003594 = 1;
   if (mode != 2) {
-    Iwram_CopyWords(gData_020035bc__jupiter_lighthouse_room_7, (void *)&BG_PLTT_COLOR(12, 0), 32);
+    Iwram_CopyWords(gData_020035bc, (void *)&BG_PLTT_COLOR(12, 0), 32);
     Iwram_CopyWords(gData_020035dc, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
@@ -884,8 +881,6 @@ extern const s32 gData_02003598[];
 extern s32 Data_020035b8;
 
 s32 Func_02002c34(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_room_7): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__jupiter_lighthouse_room_7(s32 *position) __asm__("Camera_WorldToScreen");
 s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
@@ -914,7 +909,7 @@ void Func_02001514(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__jupiter_lighthouse_room_7(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

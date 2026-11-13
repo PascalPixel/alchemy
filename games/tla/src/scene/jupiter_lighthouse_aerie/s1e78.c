@@ -13,8 +13,7 @@
 extern const s32 *gData_02003330[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-/* VIEW(s1e78): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s1e78(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -35,7 +34,7 @@ void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Func_020029f0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02003330[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags__s1e78(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;

@@ -18,7 +18,7 @@
 #include "scene_ids.h"
 #include "system.h"
 
-/* VIEW(gabomba_statue): routine Func_02005624 as void Func_02005624(struct FieldEffect *effect, s32 mode); module/scene/scene.h has void Func_02005624(struct Actor *object, s32 mode). */
+/* VIEW(gabomba_statue): routine Func_02005624 as void Func_02005624(struct FieldEffect *effect, s32 mode); module/scene/scene.h has void Func_02005624(struct Actor *object, s32 mode); tried as the rest of the object declares it, Func_020006ac moves: 3 of 62 instructions, Func_02001a8c moves: 1 of 19 instructions, Func_020020b0 moves: 1 of 26 instructions, 1 more in tla-ja. */
 extern void Func_02005624__gabomba_statue(struct FieldEffect *effect, s32 mode) __asm__("Func_02005624");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02005ae4[];
@@ -185,7 +185,7 @@ s32 Func_02000364(struct Actor *actor) {
 
 #include "macros.h"
 
-/* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue; module/scene/scene.h has another definition. */
+/* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:194: structure has no member named `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
   u16 facing;
@@ -263,8 +263,6 @@ extern struct SceneState gSceneState;
 extern const s8 gData_02005940[];
 
 void Func_02004380(s32 x, s32 z, s32 a);
-/* VIEW(gabomba_statue): routine Func_020056b4 as void Func_020056b4(struct Actor *object); module/scene/scene.h has void Func_020056b4(void). */
-extern void Func_020056b4__gabomba_statue(struct Actor *object) __asm__("Func_020056b4");
 
 s32 Func_0200047c(struct Actor *object) {
   struct Actor *owner = object->watchedObject;
@@ -319,7 +317,7 @@ const u8 *Scene_GetPlacements(void) {
 
 #include "field.h"
 
-/* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near; gabomba_statue.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:392: structure has no member named `kind'. */
+/* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near; gabomba_statue.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:351: structure has no member named `phase'. */
 struct Orbiter__find_near {
   u8 unk00[6];
   u16 facing;
@@ -564,14 +562,12 @@ void Func_02000978(void) {
   }
 }
 
-/* VIEW(find_near): routine Func_020056b4 as void Func_020056b4(void); gabomba_statue has void Func_020056b4(struct Actor *object); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:606: too few arguments to function `Func_020056b4'. */
-extern void Func_020056b4__find_near(void) __asm__("Func_020056b4");
 
 void Func_02000a20(struct Actor *object) {
   u32 i;
   struct MainRoutineWork *party;
 
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
@@ -710,7 +706,7 @@ void Func_02000c8c(void) {
 }
 
 void Func_02000cf0(struct Actor *object) {
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Actor_SetPosition(39, 164 << 17, 148 << 17);
@@ -803,7 +799,7 @@ void Func_02000fc0(void) {
   s32 result;
 
   Event_SetFlag(0x205);
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(78);
   Func_0200533c();
@@ -891,7 +887,7 @@ void Func_020011bc(s32 x, s32 z) {
   struct GabombaStatueChamberObject *object =
       Actor_Get(gMainRoutineWork.currentOwner);
 
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -1056,7 +1052,7 @@ void Func_020015b8(void) {
   Func_020011bc(440, 288);
 }
 
-/* VIEW(gabomba_statue): tag struct EventWork154 as struct EventWork154__gabomba_statue; module/scene/scene.h has another definition. */
+/* VIEW(gabomba_statue): tag struct EventWork154 as struct EventWork154__gabomba_statue; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read exit as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:905: structure has no member named `returnEntrance'. */
 struct EventWork154__gabomba_statue {
   u8 unk000[0x154];
   s16 exit;
@@ -1076,7 +1072,7 @@ void Func_02001630(void) {
     return;
   work = Ram_HeapSlots->eventWork;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   leader->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -1095,7 +1091,7 @@ void Func_02001630(void) {
 }
 
 void Func_02001728(struct Actor *actor) {
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
@@ -1107,7 +1103,7 @@ void Func_0200176c(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   s32 speed;
 
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   actor->motionFlags = 0;
@@ -1127,7 +1123,7 @@ void Func_0200176c(void) {
 }
 
 void Func_020017dc(struct Actor *actor) {
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
@@ -1136,7 +1132,7 @@ void Func_020017dc(struct Actor *actor) {
 }
 
 void Func_02001820(struct Actor *actor) {
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
@@ -1145,7 +1141,7 @@ void Func_02001820(struct Actor *actor) {
 }
 
 void Func_02001864(struct Actor *actor) {
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
@@ -1154,7 +1150,7 @@ void Func_02001864(struct Actor *actor) {
 }
 
 void Func_020018a8(struct Actor *actor) {
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
@@ -1204,7 +1200,7 @@ void Func_02001990(s32 a, s32 b) {
 void Func_020019d0(void) {
   struct Actor *actor = Actor_Get(26);
 
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0x9999, 0x1333);
@@ -1236,7 +1232,7 @@ void Func_02001a6c(s32 value) {
 void Func_02001a8c(void) {
   struct Actor *object = Actor_Get(15);
 
-  Func_020056b4__find_near();
+  Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
   Event_PlaySound(214);

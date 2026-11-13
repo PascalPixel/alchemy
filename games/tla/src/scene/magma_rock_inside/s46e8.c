@@ -16,8 +16,7 @@
 #include "particle.h"
 #include "resource.h"
 
-/* VIEW(s46e8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s46e8(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 /* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct FieldEffect *effect, const s32 *script); local.h has void Actor_StartScript(struct Actor *object, const void *data); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02004ca0__s46e8(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
 void Actor_StartScript(struct Actor *object, const void *data);
@@ -41,7 +40,7 @@ void Func_020046e8(s32 spread) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags__s46e8(effect, 0);
+      Actor_SetSingleChildFlags(effect, 0);
       Func_02004c98(effect, 2);
       Func_02004ca0__s46e8(effect, gData_02005638);
       effect->scaleY = effect->scaleX = 0xb333;
@@ -80,7 +79,7 @@ void Func_0200481c(void) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags__s46e8(effect, 0);
+      Actor_SetSingleChildFlags(effect, 0);
       Func_02004c98(effect, 2);
       Func_02004ca0__s46e8(effect, gData_02005668);
       effect->velocity.x = Math_Cosine(i << 12);

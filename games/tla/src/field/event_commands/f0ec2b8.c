@@ -12,16 +12,6 @@
 #include "world_map.h"
 
 // The world map screen's work, laid out as field/world_map.h has it.
-/* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:45: dereferencing pointer to incomplete type. */
-struct WorldMapWork__f0ec2b8 {
-  u16 vramBlock;
-  u16 windowSlot;
-  s32 x; // the cursor's screen column, 16.16 pixels
-  s32 z; // the cursor's screen row, 16.16 pixels
-  u8 unk0c[0x638];
-  s32 unk644;
-  s32 unk648;
-};
 
 u32 Func_080ec298(struct WorldMapPlace *place);
 
@@ -41,7 +31,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
   s32 wraps;
   s32 flag;
   u32 state;
-  struct WorldMapWork__f0ec2b8 *work = Ram_WorldMapWork;
+  struct WorldMapWork *work = Ram_WorldMapWork;
 
   Party_GetLeaderActor();
   places = FlagEntries_GetTable();
@@ -149,7 +139,7 @@ void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:272: dereferencing pointer to incomplete type. */
+/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:221: structure has no member named `scrollX'. */
 struct WorldMapWork__f0ec4d4 {
   u16 vramBlock;
   u16 windowSlot;
@@ -166,7 +156,7 @@ struct WorldMapWork__f0ec4d4 {
   s32 scrollZ;
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:352: structure has no member named `name'. */
+/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:294: structure has no member named `name'. */
 struct WorldMapPlace__f0ec4d4 {
   u8 flag;
   u8 value;
@@ -179,22 +169,21 @@ struct WorldMapPlace__f0ec4d4 {
   u8 unk10[4];
 };
 
-/* VIEW(f0ec2b8): tag struct ResourceTableEntry as struct ResourceTableEntry__f0ec2b8; module/tla.h has another definition. */
+/* VIEW(f0ec2b8): tag struct ResourceTableEntry as struct ResourceTableEntry__f0ec2b8; module/tla.h has another definition; tried with the definition the rest of the object has, its members read unk00 as unk0, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:226: invalid use of undefined type `struct ResourceTableEntry'. */
 struct ResourceTableEntry__f0ec2b8 {
   u16 unk00;
   u16 offset;
 };
 
 #define WORK Ram_WorldMapWork
-/* VIEW(f0ec2b8): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
+/* VIEW(f0ec2b8): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 5 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:230: invalid use of undefined type `struct ResourceTableEntry'. */
 extern struct ResourceTableEntry__f0ec2b8 gResourceTableEntries__f0ec2b8[] __asm__("gResourceTableEntries");
 #define NAME_BOX_X Ram_WorldMapNameBox[0]
 #define NAME_BOX_Y Ram_WorldMapNameBox[1]
 #define NAME_BOX_WIDTH Ram_WorldMapNameBox[2]
 #define NAME_BOX_HEIGHT Ram_WorldMapNameBox[3]
 
-/* VIEW(f0ec2b8): routine Text_DrawMessageFar as void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y); menu.h has void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y). */
-extern void Text_DrawMessageFar__f0ec2b8(s32 message, void *window, s32 x, s32 y) __asm__("Text_DrawMessageFar");
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
@@ -454,7 +443,7 @@ void Func_080ec4d4(void) {
         }
         if (cursorY < 0)
           cursorY = 0;
-        Text_DrawMessageFar__f0ec2b8(nearestName, work->window, cursorX, cursorY);
+        Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
         {
           // One local carries width, then height, into the name box.
           s32 value = width;

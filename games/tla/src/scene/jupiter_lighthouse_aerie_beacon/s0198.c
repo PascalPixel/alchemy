@@ -167,7 +167,7 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c(); module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void). */
+/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c(); module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void); tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216 instructions in tla-ja. */
 extern s32 Func_0200581c__s0198() __asm__("Func_0200581c");
 
 void Func_0200045c(void) {
@@ -283,10 +283,7 @@ void Func_020005b8(void) {
 }
 
 s32 Actor_MoveToObject();
-/* VIEW(s0198): routine PartyInventory_Remove as s32 PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern s32 PartyInventory_Remove__s0198() __asm__("PartyInventory_Remove");
-/* VIEW(s0198): routine HeapSlot_AllocFar as void *HeapSlot_AllocFar(); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern void *HeapSlot_AllocFar__s0198() __asm__("HeapSlot_AllocFar");
+s32 PartyInventory_Remove(s32 item_id);
 
 extern u8 gData_02006338[];
 
@@ -321,7 +318,7 @@ void Func_0200065c(void) {
       PaletteFade_ApplyTarget(0x10003, 1);
       PaletteFade_Interpolate(20);
       System_Wait(20);
-      Call1((void (*)())PartyInventory_Remove__s0198, 245);
+      Call1((void (*)())PartyInventory_Remove, 245);
       actor4 = Actor_GetById(4);
       created =
           FieldActor_Create(0x1e9, actor4->x, actor4->y + 0x80000, actor4->z);
@@ -336,7 +333,7 @@ void Func_0200065c(void) {
         created->unk5c[0] = 1;
         created->speedLimit = 0x6666;
         created->acceleration = 0xccc;
-        buffer = HeapSlot_AllocFar__s0198(68, 0x608);
+        buffer = HeapSlot_AllocFar(68, 0x608);
         Item_LoadIcon(246);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
         Call1((void (*)())HeapSlot_Release, 68);
@@ -493,8 +490,6 @@ void Func_0200065c(void) {
   }
 }
 
-/* VIEW(s0198): routine PartyInventory_Add as void PartyInventory_Add(s32 item); module/game/game.h has s32 PartyInventory_Add(s32 itemId). */
-extern void PartyInventory_Add__s0198(s32 item) __asm__("PartyInventory_Add");
 void *Unit_Get(s32 owner);
 void Inventory_Equip(s32 id, s32 slot);
 static __inline__ s32 Func_0200592c_(void) { return ((s32)Func_080d4568()); }
@@ -558,7 +553,7 @@ static __inline__ void FieldMessage_Show_(s32 message, s32 position) {
   FieldMessage_Show(message, position);
 }
 static __inline__ void PartyInventory_Add_(s32 item) {
-  PartyInventory_Add__s0198(item);
+  PartyInventory_Add(item);
 }
 static __inline__ void *Unit_Get_(s32 id) { return Unit_Get(id); }
 static __inline__ void Func_020057ec_(s32 id, s32 slot) {
@@ -1044,28 +1039,18 @@ void Func_020016e8(void) {
   Field_RequestBattleFromEncounterTable(13, 7);
 }
 
-/* VIEW(s0198): routine BattleEffect_StartArcEffect as s32 BattleEffect_StartArcEffect(); module/field/event_commands.h has void BattleEffect_StartArcEffect(void). */
-extern s32 BattleEffect_StartArcEffect__s0198() __asm__("BattleEffect_StartArcEffect");
-/* VIEW(s0198): routine BattleEffect_SetObjectUpdateMode as s32 BattleEffect_SetObjectUpdateMode(); module/field/event_commands.h has void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode). */
-extern s32 BattleEffect_SetObjectUpdateMode__s0198() __asm__("BattleEffect_SetObjectUpdateMode");
-/* VIEW(s0198): routine BattleEffect_WaitForArcGroups as s32 BattleEffect_WaitForArcGroups(); module/field/event_commands.h has void BattleEffect_WaitForArcGroups(void). */
-extern s32 BattleEffect_WaitForArcGroups__s0198() __asm__("BattleEffect_WaitForArcGroups");
-/* VIEW(s0198): routine BattleEffect_EndArcEffect as s32 BattleEffect_EndArcEffect(); module/field/event_commands.h has void BattleEffect_EndArcEffect(void). */
-extern s32 BattleEffect_EndArcEffect__s0198() __asm__("BattleEffect_EndArcEffect");
 
 void Func_02001ac4(s32 a0, s32 a1) {
-  BattleEffect_StartArcEffect__s0198();
-  BattleEffect_SetObjectUpdateMode__s0198(((s32)Actor_Get(a0)), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 2);
   Event_PlaySound(0xc9);
   FieldEvent_Wait(60);
-  BattleEffect_SetObjectUpdateMode__s0198(((s32)Actor_Get(a0)), 0);
-  BattleEffect_WaitForArcGroups__s0198();
-  BattleEffect_EndArcEffect__s0198();
+  BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Actor_SetAnimation(a1, 1);
 }
 
-/* VIEW(s0198): routine Party_PlaySavedMusic as s32 Party_PlaySavedMusic(); module/system/system.h has void Party_PlaySavedMusic(void). */
-extern s32 Party_PlaySavedMusic__s0198() __asm__("Party_PlaySavedMusic");
 extern u8 gData_02005ff0[];
 extern u8 gData_02005ff8[];
 extern u8 gData_02006088[];
@@ -1242,7 +1227,7 @@ void Func_02001bc4(void) {
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_SetPositionAndFacing(30, 0x2000000, 0x1480000, mid);
   Func_02003a6c(0);
-  Party_PlaySavedMusic__s0198();
+  Party_PlaySavedMusic();
   FieldEvent_Wait(10);
   Actor_SetPositionAndFacing(0, 0x2180000, 0x1700000, mid);
   Actor_SetPositionAndFacing(1, 0x2180000, 0x1800000, mid);
@@ -1813,7 +1798,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(6, 0x4000, 0);
   Actor_FaceDirection(7, 0x4000, 0);
   Func_02003a6c(3);
-  Party_PlaySavedMusic__s0198();
+  Party_PlaySavedMusic();
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   Actor_ShowEmote(4, 0x102, 0x1e);
   W_Func_020058fc(5, 0x109, 0x1e);
@@ -2056,7 +2041,7 @@ struct SceneWork {
   u8 pad0[12];
   s32 unk_0c;
 };
-/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h has another definition. */
+/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2064: dereferencing pointer to incomplete type. */
 struct FieldWork__s0198 {
   u8 pad0[0x178];
   struct SceneWork unk_178;
@@ -2157,7 +2142,7 @@ void Func_02003a6c(s32 mode) {
   }
 }
 
-/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198; module/scene/scene.h has another definition. */
+/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2150: structure has no member named `map'. */
 struct HeapSlotWords__s0198 {
   s32 unk00[8];
   u8 *map;
@@ -2210,8 +2195,7 @@ void Func_02003c58(s32 mode) {
 }
 
 s32 Func_02004644();
-/* VIEW(s0198): routine Party_AddMember as s32 Party_AddMember(); module/game/game.h has s32 Party_AddMember(s32 owner). */
-extern s32 Party_AddMember__s0198() __asm__("Party_AddMember");
+s32 Party_AddMember(s32 value);
 
 s32 Scene_Initialize(void) {
   s32 t11;
@@ -2262,11 +2246,11 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.retreatEntrance = 1;
   } else {
     if (gMainRoutineWork.entrance == 0xa) {
-      Party_AddMember__s0198(5);
+      Party_AddMember(5);
       Func_02001388();
     } else {
       if (gMainRoutineWork.entrance == 0xb) {
-        Party_AddMember__s0198(6);
+        Party_AddMember(6);
         Func_020016e8();
       } else {
         if (gMainRoutineWork.entrance == 0xc) {
@@ -2355,7 +2339,7 @@ next:
   gData_020069f4++;
 }
 
-/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void). */
+/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many arguments to function `Func_020057c4'. */
 extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
 void Func_0200401c(s32 mode) {
@@ -2471,10 +2455,6 @@ s32 Func_020042e0(s32 *a, s32 *b) {
 
 /* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct Object6a5 *object, const void *script); s0198 has void Actor_StartScript(struct Actor *object, const void *script); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");
-/* VIEW(s0198): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Vector3 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__s0198(struct Vector3 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(s0198): routine Actor_SetAnimationSpeed as void Actor_SetAnimationSpeed(struct Object6a5 *object, s32 value); module/field/field.h has void Actor_SetAnimationSpeed(struct Actor *object, s32 value). */
-extern void Actor_SetAnimationSpeed__s0198(struct Object6a5 *object, s32 value) __asm__("Actor_SetAnimationSpeed");
 extern u8 gData_020069fc[];
 
 void Func_0200430c(struct Object6a5 *object) {
@@ -2488,10 +2468,10 @@ void Func_0200430c(struct Object6a5 *object) {
 
   if (work->unk166 != 0 || work->unk15a != 0 || work->unk15e != 0 ||
       work->unk168 != 0) {
-    Actor_SetAnimationSpeed__s0198(object, 0);
+    Actor_SetAnimationSpeed(object, 0);
     return;
   }
-  Actor_SetAnimationSpeed__s0198(object, 16);
+  Actor_SetAnimationSpeed(object, 16);
   timer = object->unk64 + 1;
   object->unk64 = timer;
   if ((timer & 31) == 31)
@@ -2506,7 +2486,7 @@ void Func_0200430c(struct Object6a5 *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Camera_WorldToScreen__s0198(&position);
+    Camera_WorldToScreen(&position);
     if (position.x <= 0x1100000) {
       if (position.x >= -0x200000) {
         if (object->unk62 == 0) {

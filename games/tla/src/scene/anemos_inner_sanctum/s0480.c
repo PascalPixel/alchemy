@@ -13,8 +13,7 @@
 #include "field.h"
 #include "module/scene/anemos_inner_sanctum.h"
 
-/* VIEW(s0480): routine Func_020032e0 as void Func_020032e0(struct Actor *, s32); module/scene/kibombo.h has void Func_020032e0(void). */
-extern void Func_020032e0__s0480(struct Actor *, s32) __asm__("Func_020032e0");
+void Func_020032e0(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 extern const s32 *gData_02003840[];
 
@@ -35,7 +34,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_020032e0__s0480(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_020032e0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -79,7 +78,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_020032e0__s0480(effect, 1);
+    Func_020032e0(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -126,7 +125,7 @@ void Func_020006a4(struct Actor *source) {
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, BYTE_AT(source, 98));
   Scene_SetActorSpritePriority(object, 2);
-  Func_020032e0__s0480(object, 1);
+  Func_020032e0(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_02003674);
   Animation_SetStateFlags(object, 1);

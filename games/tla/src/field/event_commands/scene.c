@@ -45,7 +45,7 @@ void Camera_WorldToScreen(struct EffectVector *position) {
   }
 }
 
-/* VIEW(scene): tag struct BattleFxScene as struct BattleFxScene__scene; field_psynergy_work.h has another definition. */
+/* VIEW(scene): tag struct BattleFxScene as struct BattleFxScene__scene; field_psynergy_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/scene.c:57: dereferencing pointer to incomplete type. */
 struct BattleFxScene__scene {
   u8 unk00[0x50];
   struct FieldParticle slots[24];
@@ -165,8 +165,6 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 #include "sprite.h"
 #include "actor.h"
 
-/* VIEW(scene): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__scene(s32 magnitude, s32 angle, void *position) __asm__("Vector_AddPolarOffset");
 
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct Actor *user;
@@ -203,7 +201,7 @@ void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
     scene->x = user->x;
     scene->z = user->z;
     scene->y = user->y;
-    Vector_AddPolarOffset__scene(0x100000, scene->angle, &scene->x);
+    Vector_AddPolarOffset(0x100000, scene->angle, &scene->x);
   }
 }
 
@@ -332,7 +330,7 @@ void Func_080dc954(void) {
 
 #define WAVE_FX_SLOT 88
 
-/* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene; module/field/event_commands.h has another definition. */
+/* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene; module/field/event_commands.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/scene.c:343: structure has no member named `id'. */
 struct WaveFxWork__scene {
   u8 unk000[0x28b];
   s8 red;
@@ -370,15 +368,13 @@ void Func_080dc978(s32 id, s32 value) {
 
 struct Actor;
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(scene): routine BattleEffect_ApplyFlickerValue as void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value); module/field/event_commands.h has void BattleEffect_ApplyFlickerValue(void *object, s32 value). */
-extern void BattleEffect_ApplyFlickerValue__scene(struct Actor *object, s32 value) __asm__("BattleEffect_ApplyFlickerValue");
 
 void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
   u8 *work = Ram_HeapSlots->unk4c[3];
 
   Func_080dcadc();
   Task_Remove((TaskFunc)Func_080dcb44);
-  BattleEffect_ApplyFlickerValue__scene(Actor_GetById(*(u16 *)(work + 0x290)), 1);
+  BattleEffect_ApplyFlickerValue(Actor_GetById(*(u16 *)(work + 0x290)), 1);
   BattleEffect_PrepareBufferInterpolation();
   HeapSlot_Release(WAVE_FX_SLOT);
 }

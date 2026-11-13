@@ -71,8 +71,7 @@ void Func_02001a20(void) {
   Event_End();
 }
 
-/* VIEW(s1a20): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
-extern void GameFlag_SetByte__s1a20(s32 flag, s32 value) __asm__("GameFlag_SetByte");
+void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02001888(struct CellTarget *puzzle, struct CellTargetEntry *tile);
 
 s32 Func_02001bb8(void) {
@@ -95,8 +94,8 @@ s32 Func_02001bb8(void) {
         break;
       puzzle->current = i;
       Func_02001888(puzzle, tile);
-      GameFlag_SetByte__s1a20(puzzle->flagByte, x);
-      GameFlag_SetByte__s1a20(puzzle->flagByte + 8, z);
+      GameFlag_SetByte(puzzle->flagByte, x);
+      GameFlag_SetByte(puzzle->flagByte + 8, z);
       return 1;
     }
   }
@@ -113,8 +112,8 @@ void Func_02001c68(s32 dx, s32 dz, s32 value) {
   if (x != 0 || z != 0) {
     struct Actor *shadow;
 
-    GameFlag_SetByte__s1a20(work->flagByte, 0);
-    GameFlag_SetByte__s1a20(work->flagByte + 8, 0);
+    GameFlag_SetByte(work->flagByte, 0);
+    GameFlag_SetByte(work->flagByte + 8, 0);
     object->x = ((x + dx) << 20) + 0x80000;
     object->z = ((z + dz) << 20) + 0x80000;
     shadow = *(struct Actor **)(event + 460);

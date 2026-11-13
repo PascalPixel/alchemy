@@ -45,8 +45,6 @@ struct Spark {
 extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
     gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
 void Func_02004d9c(void *object, s32 mode);
-/* VIEW(s15d0): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s15d0(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Actor_StartScript(void *object, const u8 *script);
 void Func_02001548(void);
 
@@ -93,7 +91,7 @@ first:
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags__s15d0(spark, 0);
+    Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005218);
     REG_BLDALPHA = 0x1004;
@@ -125,7 +123,7 @@ second:
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags__s15d0(spark, 0);
+    Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
     /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
      * of 402 instructions differ in tla-en. */
@@ -168,7 +166,7 @@ third:
     spark->priorityFlags = 1;
     Actor_SetPartAttribute(spark, 2);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags__s15d0(spark, 0);
+    Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005244);
   }
@@ -199,7 +197,7 @@ third:
 void Actor_MoveToObject(s32 id, s32 target);
 void DisplayBlend_EnableRunScript(void);
 void DisplayBlend_DisableRunScript(void);
-/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s15d0.c:279: void value not ignored as it ought to be. */
+/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s15d0.c:277: void value not ignored as it ought to be. */
 extern s32 Func_02004e64__s15d0(void) __asm__("Func_02004e64");
 
 /// The party meets person 11 on the ledge: they talk, the ground shakes, the

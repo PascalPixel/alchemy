@@ -20,8 +20,7 @@
 #include "module/scene/scene.h"
 
 void Func_02002ad4(struct GustObject *object, s32 mode);
-/* VIEW(s16d4): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s16d4(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02001514(struct GustObject *object);
 void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -39,7 +38,7 @@ struct GustObject *Func_020016d4(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_02002ad4(object, 2);
-  Actor_SetSingleChildFlags__s16d4(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -156,7 +155,7 @@ void Func_020019dc(const u16 *list) {
     mode = spec[1];
     flag = spec[2];
     object->collisionFlags &= 0xfe;
-    Actor_SetSingleChildFlags__s16d4(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02001acc(id, (u16)mode, (u16)flag, object->terrainId);
     limit = 0xff;
     spec += 3;

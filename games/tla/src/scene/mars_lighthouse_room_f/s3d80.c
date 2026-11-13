@@ -79,8 +79,7 @@ void Func_02003d80(void) {
 
 #include "room.h"
 
-/* VIEW(s3d80): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
-extern void GameFlag_SetByte__s3d80(s32 flag, s32 value) __asm__("GameFlag_SetByte");
+void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
 
@@ -107,8 +106,8 @@ top:
       goto end;
     work->current = index;
     Func_02003be8(work, entry);
-    GameFlag_SetByte__s3d80(work->positionFlag, x);
-    GameFlag_SetByte__s3d80(work->positionFlag + 8, z);
+    GameFlag_SetByte(work->positionFlag, x);
+    GameFlag_SetByte(work->positionFlag + 8, z);
     return 1;
   }
   index++;
@@ -129,8 +128,8 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
   if (x != 0 || z != 0) {
     struct Actor *other;
 
-    GameFlag_SetByte__s3d80(work->positionFlag, 0);
-    GameFlag_SetByte__s3d80(work->positionFlag + 8, 0);
+    GameFlag_SetByte(work->positionFlag, 0);
+    GameFlag_SetByte(work->positionFlag + 8, 0);
     object->x = ((x + dx) << 20) + 0x80000;
     object->z = ((z + dz) << 20) + 0x80000;
     other = *(struct Actor **)(event + 460);

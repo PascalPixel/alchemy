@@ -222,12 +222,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/* VIEW(mars_lighthouse_aerie): routine Func_020057d4 as void Func_020057d4(s32 a); module/scene/scene.h has void Func_020057d4(struct Actor *object). */
-extern void Func_020057d4__mars_lighthouse_aerie(s32 a) __asm__("Func_020057d4");
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
-    Func_020057d4__mars_lighthouse_aerie(1);
+    Func_020057d4(1);
   Func_020055dc(gMainRoutineWork.map +
                     ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                 0x5000000);

@@ -9,8 +9,7 @@
 #include "module/scene/scene.h"
 #include "scene.h"
 
-/* VIEW(venus_lighthouse): variable gData_02001d8c as s32 gData_02001d8c[]; module/scene/venus_lighthouse.h has s16 gData_02001d8c[]. */
-extern s32 gData_02001d8c__venus_lighthouse[] __asm__("gData_02001d8c");
+extern s32 gData_02001d8c[];
 
 void Func_02001b2c(struct StagedActor *object, s32 mode);
 s32 Func_02001b64(struct StagedActor *object, struct FieldPosition *position);
@@ -26,7 +25,7 @@ void Func_0200038c(void) {
 
   lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.currentOwner);
   dir = lead->facing >> 12;
-  step = gData_02001d8c__venus_lighthouse[dir];
+  step = gData_02001d8c[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
   dst.y = lead->y.fixed;
   step <<= 16;
@@ -35,7 +34,7 @@ void Func_0200038c(void) {
   if (next == 0)
     return;
 
-  step = gData_02001d8c__venus_lighthouse[dir];
+  step = gData_02001d8c[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;
@@ -52,7 +51,7 @@ void Func_0200038c(void) {
     return;
 
   next->transitionMode = 2;
-  step = gData_02001d8c__venus_lighthouse[dir];
+  step = gData_02001d8c[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;

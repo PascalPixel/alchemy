@@ -1240,7 +1240,7 @@ void Func_02005268(struct Actor *object) {
 #undef A
 #undef FIELD_AT
 
-/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1286: structure has no member named `flag'. */
+/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1281: structure has no member named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -1254,7 +1254,7 @@ struct SparkleSprite__s53e4 {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1276: incompatible types in assignment. */
+/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1271: incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];
   u16 unka0;
@@ -1264,7 +1264,7 @@ struct SparkleWork__s53e4 {
   struct Actor *object;
 };
 
-/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor *object); module/scene/scene.h has void Func_020057b4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1299: too many arguments to function `Func_020057b4'. */
+/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor *object); module/scene/scene.h has void Func_020057b4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1294: too many arguments to function `Func_020057b4'. */
 extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("Func_020057b4");
 
 void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {

@@ -379,7 +379,7 @@ void Func_02000a8c(void) {
   Call2(Field_RequestBattleFromEncounterTable, 0x67, 0);
 }
 
-/* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:715: conflicting types for `gData_020016e4'. */
+/* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:713: conflicting types for `gData_020016e4'. */
 extern const u8 gData_020016e4__scene_tables[] __asm__("gData_020016e4");
 
 const u8 *Scene_GetEvents(void) {
@@ -399,7 +399,7 @@ const u8 *Scene_GetEvents(void) {
 #include "iwram_call.h"
 #include "io_write_queue.h"
 
-/* VIEW(scene_tables): variable gData_02001aa4 as extern s32 gData_02001aa4; the definition has s32 gData_02001aa4[] = { - 1, }; tried as the definition's extern s32 gData_02001aa4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:422: `gData_02001aa4' has an incomplete type. */
+/* VIEW(scene_tables): variable gData_02001aa4 as extern s32 gData_02001aa4; the definition has s32 gData_02001aa4[] = { - 1, }; tried as the definition's extern s32 gData_02001aa4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:421: `gData_02001aa4' has an incomplete type. */
 extern s32 gData_02001aa4__scene_tables __asm__("gData_02001aa4");
 extern volatile u16 gData_02001ac8[];
 
@@ -442,7 +442,7 @@ void Func_02000ba0(void) {
 #include "actor.h"
 #include "task.h"
 
-/* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:454: structure has no member named `route'. */
+/* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:453: structure has no member named `route'. */
 struct TreasureIsleEventWork__s0cf4 {
   u8 unk000[0x1ac];
   s32 route;

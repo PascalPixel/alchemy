@@ -5,11 +5,9 @@
 
 extern const s32 *gData_02007bc0[];
 
-/* VIEW(s129c): routine Func_020057c8 as void Func_020057c8(struct FieldEffect *effect, s32 mode); games/tla/src/scene/trial_road/trial_road.h has void Func_020057c8 ( struct Actor * , s32 ). */
-extern void Func_020057c8__s129c(struct FieldEffect *effect, s32 mode) __asm__("Func_020057c8");
+void Func_020057c8(struct Actor *object, s32 a);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-/* VIEW(s129c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s129c(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -27,10 +25,10 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_020057c8__s129c(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_020057c8(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02007bc0[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags__s129c(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -69,7 +67,7 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_020057c8__s129c(effect, 1);
+    Func_020057c8(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

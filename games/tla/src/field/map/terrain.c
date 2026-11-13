@@ -183,8 +183,7 @@ void Func_0802dd70(s32 pitchSlope, s32 *position, struct ScanlineRow *row) {
 
 extern u32 gMapCellBuffer[];
 
-/* VIEW(terrain): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *, s32). */
-extern s32 ResourceMetadata_Register__terrain(struct MetadataSlotState *state, s32 id) __asm__("ResourceMetadata_Register");
+s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
 struct SpritePlacement;
 
 // The native reads the held keys afresh at each test.
@@ -246,9 +245,9 @@ restart:
         (i & 1))
       part = 1;
     sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
-    ResourceMetadata_Register__terrain(sprite, layers[1].spriteId);
-    ResourceMetadata_Register__terrain(sprite, layers[2].spriteId);
-    ResourceMetadata_Register__terrain(sprite, layers[3].spriteId);
+    ResourceMetadata_Register(sprite, layers[1].spriteId);
+    ResourceMetadata_Register(sprite, layers[2].spriteId);
+    ResourceMetadata_Register(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
   for (i = 0; i < 4; i++) {

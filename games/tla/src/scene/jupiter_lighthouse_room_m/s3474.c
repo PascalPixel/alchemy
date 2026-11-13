@@ -19,8 +19,7 @@
 #include "module/scene/jupiter_lighthouse_room_m.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s3474): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s3474(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_020032b4(struct GustObject *object);
 void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -37,7 +36,7 @@ struct GustObject *Func_02003474(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_020046f4(object, 2);
-  Actor_SetSingleChildFlags__s3474(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -134,8 +133,7 @@ void Func_020035ec(void) {
   }
 }
 
-/* VIEW(s3474): variable gData_02005b84 as s16 gData_02005b84; module/scene/trial_road.h has u32 gData_02005b84[]. */
-extern s16 gData_02005b84__s3474 __asm__("gData_02005b84");
+extern s16 gData_02005b84;
 
 void Func_020046ac(struct LightOam *oam, s32 depth);
 
@@ -165,7 +163,7 @@ void Func_0200377c(void) {
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
-      big = gData_02005b84__s3474;
+      big = gData_02005b84;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
@@ -227,7 +225,7 @@ void Func_02003938(void) {
   Heap_Release(buffer);
   Task_Add(Func_0200377c, TASK_PASS_VBLANK);
   gData_02005a82 = 0;
-  gData_02005b84__s3474 = 0;
+  gData_02005b84 = 0;
   gData_02005b86 = -1;
 }
 
@@ -241,7 +239,7 @@ void Func_020039b8(void) {
   Heap_Release(buffer);
   Task_AddFrame(Func_0200377c, TASK_PASS_VBLANK);
   gData_02005a82 = 0;
-  gData_02005b84__s3474 = 0;
+  gData_02005b84 = 0;
   gData_02005b86 = -1;
 }
 
@@ -255,7 +253,7 @@ void Func_02003a38(void) {
   Heap_Release(buffer);
   Task_AddFrame(Func_0200377c, TASK_PASS_VBLANK);
   gData_02005a82 = 0;
-  gData_02005b84__s3474 = 1;
+  gData_02005b84 = 1;
   gData_02005b86 = -1;
 }
 

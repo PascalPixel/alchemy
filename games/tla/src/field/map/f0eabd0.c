@@ -7,21 +7,21 @@
 #include "module/field/field.h"
 #include "module/system/system.h"
 
-/* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h has another definition. */
+/* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:56: arithmetic on pointer to an incomplete type. */
 struct SwitchCell__f0eabd0 {
   u8 unk00[2];
   u8 block;
   u8 flags;
 };
 
-/* VIEW(f0eabd0): tag struct RestoreLayer as struct RestoreLayer__f0eabd0; module/field/field.h has another definition. */
+/* VIEW(f0eabd0): tag struct RestoreLayer as struct RestoreLayer__f0eabd0; module/field/field.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:21: field `layers' has incomplete type. */
 struct RestoreLayer__f0eabd0 {
   u8 unk00[0x138 - 0x108];
   struct SwitchCell__f0eabd0 *cells;
   u8 unk34[4];
 };
 
-/* VIEW(f0eabd0): tag struct RestoreMap as struct RestoreMap__f0eabd0; module/field/field.h has another definition. */
+/* VIEW(f0eabd0): tag struct RestoreMap as struct RestoreMap__f0eabd0; module/field/field.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:32: dereferencing pointer to incomplete type. */
 struct RestoreMap__f0eabd0 {
   u8 unk000[0x108];
   struct RestoreLayer__f0eabd0 layers[3];
@@ -196,7 +196,7 @@ struct Actor *Func_080eaeb4(void) {
 
 #include "fixed_math.h"
 
-/* VIEW(f0eabd0): tag struct EventWork as struct EventWork__f0eabd0; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:202: dereferencing pointer to incomplete type. */
+/* VIEW(f0eabd0): tag struct EventWork as struct EventWork__f0eabd0; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:205: dereferencing pointer to incomplete type. */
 struct EventWork__f0eabd0 {
   u8 unk00[20];
   struct Actor *objects[64];

@@ -389,7 +389,7 @@ void Func_02000fac(void) {
 #include "text/msg_ids.h"
 
 extern s32 gData_0200559c[];
-/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:395: conflicting types for `gData_0200646c'. */
+/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:392: conflicting types for `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
 /// Object 10 turns to the leader, talks and walks to its place while the camera

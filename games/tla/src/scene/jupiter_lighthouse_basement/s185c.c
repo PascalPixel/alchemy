@@ -86,8 +86,7 @@ loop:
   Event_End();
 }
 
-/* VIEW(s185c): variable gData_020024f8 as struct CellTarget gData_020024f8; module/scene/clear.h has s16 gData_020024f8. */
-extern struct CellTarget gData_020024f8__s185c __asm__("gData_020024f8");
+extern struct CellTarget gData_020024f8;
 void Func_02001654();
 void Func_020016c4();
 
@@ -95,7 +94,7 @@ s32 Func_020019f4(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct CellTarget *work = &gData_020024f8__s185c;
+  struct CellTarget *work = &gData_020024f8;
   struct CellTargetEntry *entry = work->entries;
   s32 i;
 
@@ -124,14 +123,14 @@ s32 Func_020019f4(void) {
 void Func_02001aa4(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = FieldGameFlag_GetByte(gData_020024f8__s185c.flagByte);
-  s32 dz = FieldGameFlag_GetByte(gData_020024f8__s185c.flagByte + 8);
+  s32 dx = FieldGameFlag_GetByte(gData_020024f8.flagByte);
+  s32 dz = FieldGameFlag_GetByte(gData_020024f8.flagByte + 8);
 
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(gData_020024f8__s185c.flagByte, 0);
-    GameFlag_SetByte(gData_020024f8__s185c.flagByte + 8, 0);
+    GameFlag_SetByte(gData_020024f8.flagByte, 0);
+    GameFlag_SetByte(gData_020024f8.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;

@@ -947,9 +947,9 @@ void Func_02000904(void) {
 // ---- games/tla/src/scene/lemuria_spring/ride.c ----
 #include "task.h"
 
-/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:960: `gData_02001760__ride' undeclared (first use in this function). */
+/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:958: `gData_02001760__ride' undeclared (first use in this function). */
 extern struct SpringRide gData_02001760__ride __asm__("gData_02001760");
-/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:971: `gData_020017c0__ride' undeclared (first use in this function). */
+/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:969: `gData_020017c0__ride' undeclared (first use in this function). */
 extern struct SpringObstacle gData_020017c0__ride[] __asm__("gData_020017c0");
 
 void Func_02000904(void);

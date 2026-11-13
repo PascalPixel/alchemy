@@ -138,8 +138,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   HeapSlot_Release(220);
 }
 
-/* VIEW(s17a8): variable gData_02003380 as s16 gData_02003380; module/scene/lemurian_ship.h has struct ActorPlacement gData_02003380[]. */
-extern s16 gData_02003380__s17a8 __asm__("gData_02003380");
+extern s16 gData_02003380;
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
@@ -152,7 +151,7 @@ void Func_02001a78(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_02003380__s17a8].offset >> 5;
+  tile = gResourceTableEntries[gData_02003380].offset >> 5;
   viewY = map->origin[1];
   oam = Data_020033c4;
 
@@ -224,8 +223,8 @@ void Func_02001c34(void) {
 
   Iwram_ClearWords(gData_02003384, 64);
   Resource_DecodeType01(gField_CachedTilesA, buffer);
-  gData_02003380__s17a8 = Resource_FindFreeEntry();
-  VramCache_Load(gData_02003380__s17a8, 0xc00, buffer);
+  gData_02003380 = Resource_FindFreeEntry();
+  VramCache_Load(gData_02003380, 0xc00, buffer);
   Heap_Release(buffer);
   Task_Add(Func_02001a78, TASK_PASS_VBLANK);
   gData_02003382 = 0;
@@ -238,8 +237,8 @@ void Func_02001cb4(void) {
 
   Iwram_ClearWords(gData_02003384, 64);
   Resource_DecodeType01(gField_CachedTilesB, buffer);
-  gData_02003380__s17a8 = Resource_FindFreeEntry();
-  Vram_Load(gData_02003380__s17a8, 0x800, buffer);
+  gData_02003380 = Resource_FindFreeEntry();
+  Vram_Load(gData_02003380, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02001a78, TASK_PASS_VBLANK);
   gData_02003382 = 0;
@@ -252,8 +251,8 @@ void Func_02001d34(void) {
 
   Iwram_ClearWords(gData_02003384, 64);
   Resource_DecodeType01(gField_CachedTilesC, buffer);
-  gData_02003380__s17a8 = Resource_FindFreeEntry();
-  Vram_Load(gData_02003380__s17a8, 0x800, buffer);
+  gData_02003380 = Resource_FindFreeEntry();
+  Vram_Load(gData_02003380, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02001a78, TASK_PASS_VBLANK);
   gData_02003382 = 0;

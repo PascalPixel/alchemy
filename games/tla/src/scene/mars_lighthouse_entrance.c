@@ -692,8 +692,7 @@ void Func_02000fd4(void) {
   Func_020029a0();
 }
 
-/* VIEW(mars_lighthouse_entrance): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
-extern void GameFlag_SetByte__mars_lighthouse_entrance(s32 flag, s32 value) __asm__("GameFlag_SetByte");
+void GameFlag_SetByte(s32 flag, s32 value);
 
 void Func_02000fe0(const struct MapCell *cell) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -702,8 +701,8 @@ void Func_02000fe0(const struct MapCell *cell) {
   // as the native's register shows.
   s32 i = leader->x >> 20;
 
-  GameFlag_SetByte__mars_lighthouse_entrance(0x340, i);
-  GameFlag_SetByte__mars_lighthouse_entrance(0x348, z >> 20);
+  GameFlag_SetByte(0x340, i);
+  GameFlag_SetByte(0x348, z >> 20);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);

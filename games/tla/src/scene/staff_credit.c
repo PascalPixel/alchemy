@@ -1018,8 +1018,7 @@ done:
   Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
 }
 
-/* VIEW(staff_credit): variable gInput as u32 gInput; input.h has struct InputState gInput. */
-extern u32 gInput__staff_credit __asm__("gInput");
+extern u32 gInput;
 extern s16 gData_02003fc8;
 
 // The same cursor as the world map's, in this overlay: counts down while A or B
@@ -1031,7 +1030,7 @@ void Func_02001d90(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput__staff_credit & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
     if (--gData_02003fc8 <= 0) {
       Func_0200200c(1);
       gData_02003fc8 = 10;

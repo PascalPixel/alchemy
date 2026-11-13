@@ -95,8 +95,7 @@ s32 ItemMenu_Run(void) {
   backup = Heap_AllocEwram(size);
 #endif
   screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
-      ->suspended = 1;
+  gActorSystemWork->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
@@ -132,8 +131,7 @@ s32 ItemMenu_Run(void) {
   Window_DrawBorderFar(0, 0, 30, 20);
   IconMenu_ReleaseArrows();
   HeapSlot_Release(HEAP_SLOT_MENU);
-  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
-      ->suspended = 0;
+  gActorSystemWork->suspended = 0;
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);

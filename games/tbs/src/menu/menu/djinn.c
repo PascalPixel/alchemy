@@ -636,7 +636,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
     }
   }
   Window_DrawDividerLineFar(menu->listWindow, 0, 10, 28, 10);
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->dirty = 1;
+  WINDOW_WORK->dirty = 1;
   work->holdTilemapUpload = 0;
 }
 

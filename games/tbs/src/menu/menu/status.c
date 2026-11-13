@@ -157,8 +157,7 @@ s32 StatusScreen_Run(void) {
   s32 result;
   s32 index;
 
-  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
-      ->suspended = 1;
+  gActorSystemWork->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Menu_SuspendFieldTasks();
@@ -223,17 +222,14 @@ s32 StatusScreen_Run(void) {
   Iwram_CopyWords(BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
   Heap_Release(tiles);
   Heap_Release(palette);
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
-      1;
+  WINDOW_WORK->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(HEAP_SLOT_MENU);
-  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
-      ->suspended = 0;
+  gActorSystemWork->suspended = 0;
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
-      0;
+  WINDOW_WORK->holdTilemapUpload = 0;
   return result;
 }
 

@@ -47,8 +47,7 @@ s32 PsynergyMenu_Run(void) {
   s32 psynergy;
   s32 result;
 
-  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
-      ->suspended = 1;
+  gActorSystemWork->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
@@ -78,27 +77,23 @@ s32 PsynergyMenu_Run(void) {
   }
   // Close the menu and give the screen back to the field.
   WindowSprite_ClearListFar((void *)menu->statusWindow);
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
-      1;
+  WINDOW_WORK->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(HEAP_SLOT_MENU);
-  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
-      ->suspended = 0;
+  gActorSystemWork->suspended = 0;
 #if TBS_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords(PSYNERGY_PROMPT_TILES, saved, PSYNERGY_PROMPT_TILES_SIZE);
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
-      0;
+  WINDOW_WORK->holdTilemapUpload = 0;
   Heap_Release(saved);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
-      0;
+  WINDOW_WORK->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }

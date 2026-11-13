@@ -804,8 +804,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
-  PartyStatus_Draw(
-      ((struct BattleWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE))->partyStatus);
+  PartyStatus_Draw(gBattleWork->partyStatus);
   gBattleMenuWork->timerHidden = 0;
   wait(1);
   return 0;

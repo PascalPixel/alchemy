@@ -20,7 +20,7 @@
 ///                   typing.c: Message_UpdateAll; decode.c: Message_Decode
 ///   Text drawing    sprites.c: WindowSprite_UpdateAll; text_tiles.c:
 ///                   Text_DrawStringAsTiles, Text_DrawString
-///   Screens         selection.c: Menu_RunTopSelection; debug.c:
+///   Screens         selection.c: FieldMenu_Run; debug.c:
 ///                   DebugWarp_Run
 
 #include "window_internal.h"

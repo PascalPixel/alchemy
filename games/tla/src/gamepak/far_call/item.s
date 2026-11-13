@@ -1,22 +1,22 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Djinn_IsActiveFar
+	.global Djinn_IsSetFar
 	.thumb_func
-Djinn_IsActiveFar:
-	overlay_veneer Djinn_IsActive
-	.global Djinn_IsReadyFar
+Djinn_IsSetFar:
+	overlay_veneer Djinn_IsSet
+	.global Djinn_CanSetFar
 	.thumb_func
-Djinn_IsReadyFar:
-	overlay_veneer Djinn_IsReady
+Djinn_CanSetFar:
+	overlay_veneer Djinn_CanSet
 	.global Item_CanOwnerEquip
 	.thumb_func
 Item_CanOwnerEquip:
-	overlay_veneer Item_CanOwnerEquipDirect
-	.global Item_IsCompatibleWithOwnerFar
+	overlay_veneer Item_CanUnitEquipDirect
+	.global Item_IsCompatibleWithUnitFar
 	.thumb_func
-Item_IsCompatibleWithOwnerFar:
-	overlay_veneer Item_IsCompatibleWithOwner
+Item_IsCompatibleWithUnitFar:
+	overlay_veneer Item_IsCompatibleWithUnit
 	.global Inventory_FindEquippedFar
 	.thumb_func
 Inventory_FindEquippedFar:

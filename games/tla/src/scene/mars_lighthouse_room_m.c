@@ -783,7 +783,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
 /// message after it, the camera moves on and Func_0200080c runs, then flag
 /// 0xa2e is set. Each opens as Func_020010e4 does.
 void Func_020013a0(void) {
-  if (PartyInventory_FindOwner(222) == -1) {
+  if (PartyInventory_FindMember(222) == -1) {
     if (!Event_GetFlag(0xa2f)) {
       u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
 

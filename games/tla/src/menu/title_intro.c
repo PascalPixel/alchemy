@@ -703,8 +703,6 @@ s32 Func_081a6ea0(void) {
     goto stopped;
   scroll.limit = 216;
   scroll.step = 2;
-  /* FAKEMATCH(temporary): map reused for the result; as a separate s32 local,
-   * 52 of 325 instructions differ in tla-en. */
   map = (u16 *)Func_081a68b4(&scroll);
   if (map)
     goto stopped;

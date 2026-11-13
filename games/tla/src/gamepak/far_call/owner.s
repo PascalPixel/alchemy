@@ -9,10 +9,10 @@ Unit_AddHpFar:
 	.thumb_func
 Unit_AddPpFar:
 	overlay_veneer Unit_AddPp
-	.global Unit_UpdateRatiosFar
+	.global Unit_RecalculateGaugesFar
 	.thumb_func
-Unit_UpdateRatiosFar:
-	overlay_veneer Unit_UpdateRatios
+Unit_RecalculateGaugesFar:
+	overlay_veneer Unit_RecalculateGauges
 	.global Unit_SetHpFar
 	.thumb_func
 Unit_SetHpFar:
@@ -25,34 +25,34 @@ Unit_SetPpFar:
 	.thumb_func
 BattleUnit_SetFar:
 	overlay_veneer Func_080afbec
-	.global Party_CountActiveOwnersFar
+	.global Party_CountMembersFar
 	.thumb_func
-Party_CountActiveOwnersFar:
-	overlay_veneer Party_CountActiveOwners
-	.global Party_AddActiveOwnerFar
+Party_CountMembersFar:
+	overlay_veneer Party_CountMembers
+	.global Party_AddMemberFar
 	.thumb_func
-Party_AddActiveOwnerFar:
-	overlay_veneer Party_AddActiveOwner
-	.global Party_ListActiveOwnersFar
+Party_AddMemberFar:
+	overlay_veneer Party_AddMember
+	.global Party_ListMembersFar
 	.thumb_func
-Party_ListActiveOwnersFar:
-	overlay_veneer Party_ListActiveOwners
+Party_ListMembersFar:
+	overlay_veneer Party_ListMembers
 	.global RollWeaponUnleashFar
 	.thumb_func
 RollWeaponUnleashFar:
 	overlay_veneer RollWeaponUnleash
-	.global Party_RemoveActiveOwnerFar
+	.global Party_RemoveMemberFar
 	.thumb_func
-Party_RemoveActiveOwnerFar:
-	overlay_veneer Party_RemoveActiveOwner
+Party_RemoveMemberFar:
+	overlay_veneer Party_RemoveMember
 	.global Item_GetEquippedElementFar
 	.thumb_func
 Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
-	.global BattleEffect_RollSuccessFar
+	.global Battle_RollEffectSuccessFar
 	.thumb_func
-BattleEffect_RollSuccessFar:
-	overlay_veneer BattleEffect_RollSuccess
+Battle_RollEffectSuccessFar:
+	overlay_veneer Battle_RollEffectSuccess
 	.global Battle_CalculateAttackDamageFar
 	.thumb_func
 Battle_CalculateAttackDamageFar:
@@ -73,18 +73,18 @@ Enemy_GetDefinitionFar:
 	.thumb_func
 Battle_RandomFar:
 	overlay_veneer Battle_Random
-	.global Djinn_AddToOwnerFar
+	.global Djinn_GiveFar
 	.thumb_func
-Djinn_AddToOwnerFar:
-	overlay_veneer Djinn_AddToOwner
-	.global Djinn_ActivateFar
+Djinn_GiveFar:
+	overlay_veneer Djinn_Give
+	.global Djinn_SetFar
 	.thumb_func
-Djinn_ActivateFar:
-	overlay_veneer Djinn_Activate
-	.global Djinn_DeactivateFar
+Djinn_SetFar:
+	overlay_veneer Djinn_Set
+	.global Djinn_PutOnStandbyFar
 	.thumb_func
-Djinn_DeactivateFar:
-	overlay_veneer Djinn_Deactivate
+Djinn_PutOnStandbyFar:
+	overlay_veneer Djinn_PutOnStandby
 	.global DjinnRecovery_RemoveFar
 	.thumb_func
 DjinnRecovery_RemoveFar:

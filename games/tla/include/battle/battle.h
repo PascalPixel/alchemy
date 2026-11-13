@@ -123,7 +123,7 @@ void BattleEffect_SnapScaleToFull(struct Actor *object);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
-void BattleLayout_HighlightPartyPanelsFar(u16 *);
+void PartyStatus_HighlightMembersFar(u16 *);
 void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
                                     s32 travelDivisor, s32 initialVelocityY);
 void BattleMotion_DestroyAllSlotObjects(void);
@@ -137,14 +137,14 @@ void BattleMessage_WaitForAdvance(void);
 void BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
 void Camera_ConfigureScene(s32 scene);
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
-s32 Djinn_ActivateFar(s32 unitId, s32 element, s32 index);
+s32 Djinn_SetFar(s32 unitId, s32 element, s32 index);
 s32 Func_08020190(s32, s32, s32);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 s32 Func_080ce31c(s32 kind);
 struct TriggerEvent;
 struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector);
 void Func_080e3074(void);
-void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
+void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
 void Func_0818f620(struct BattleEffectArgument *effect, u32 mode);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
@@ -155,7 +155,7 @@ s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Unit_CalculateFar
 void Unit_CalculateFar(s32);
 #endif
-s32 Party_CountActiveOwnersFar(void);
+s32 Party_CountMembersFar(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
@@ -163,7 +163,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
 struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void MessageArgument_PushFar(s32, s32);
-void Message_ShowAndWaitCoreFar(s32 messageId);
+void BattleMessage_ShowAndWaitFar(s32 messageId);
 void PartyStatus_DrawFar(s32 mode);
 
 /// The battle sprites' animations (AnimationObject_SelectAnimation numbers)

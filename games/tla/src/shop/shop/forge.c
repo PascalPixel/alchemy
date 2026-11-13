@@ -77,7 +77,7 @@ s32 Forge_PartyHasMaterial(void) {
   s32 count;
   s32 i;
 
-  count = Party_ListActiveOwnersFar(owners);
+  count = Party_ListMembersFar(owners);
   for (i = 0; i < count; i++) {
     if (Forge_OwnerHasMaterial(owners[i]) != 0)
       return 1;

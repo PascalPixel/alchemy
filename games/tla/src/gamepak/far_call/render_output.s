@@ -24,4 +24,4 @@ WindowSprite_SetMotionFar:
 	.global Func_080380f0
 	.thumb_func
 Func_080380f0:
-	overlay_veneer Func_0804257c
+	overlay_veneer WindowSprite_SetInvertedSentinel

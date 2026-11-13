@@ -47,10 +47,10 @@ Message_AllTypedFar:
 	.thumb_func
 Window_IsClosedFar:
 	overlay_veneer Window_IsClosed
-	.global Window_SetBusyFlagsFar
+	.global Message_SetDecodeFlagsFar
 	.thumb_func
-Window_SetBusyFlagsFar:
-	overlay_veneer Window_SetBusyFlags
+Message_SetDecodeFlagsFar:
+	overlay_veneer Message_SetDecodeFlags
 	.global WindowSprite_PrepareForRedrawFar
 	.thumb_func
 WindowSprite_PrepareForRedrawFar:
@@ -67,10 +67,10 @@ Window_DrawDividerLineFar:
 	.thumb_func
 Text_DrawMessageFar:
 	overlay_veneer Text_DrawMessage
-	.global Text_DrawCharacterAtOffsetFar
+	.global Text_DrawMessageAsTilesFar
 	.thumb_func
-Text_DrawCharacterAtOffsetFar:
-	overlay_veneer Text_DrawCharacterAtOffset
+Text_DrawMessageAsTilesFar:
+	overlay_veneer Text_DrawMessageAsTiles
 	.global Text_DrawStringFar
 	.thumb_func
 Text_DrawStringFar:

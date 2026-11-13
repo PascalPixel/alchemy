@@ -8,7 +8,7 @@ Icon_PrepareActorFar:
 	.global DjinnMenu_Open
 	.thumb_func
 DjinnMenu_Open:
-	overlay_veneer Func_08100e7c
+	overlay_veneer DjinnMenu_Run
 	.global ItemMenu_DrawItemDetailsFar
 	.thumb_func
 ItemMenu_DrawItemDetailsFar:
@@ -16,7 +16,7 @@ ItemMenu_DrawItemDetailsFar:
 	.global Func_080f8040
 	.thumb_func
 Func_080f8040:
-	overlay_veneer Func_080fb8b8
+	overlay_veneer ItemMenu_DrawItemDetailsWithCount
 	.global Palette_CopyObjectBankToBackground14Far
 	.thumb_func
 Palette_CopyObjectBankToBackground14Far:

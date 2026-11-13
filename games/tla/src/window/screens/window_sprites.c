@@ -117,7 +117,7 @@ struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
   }
 
   slot = 14 + side;
-  UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
+  Icon_LoadWithPalette(id, position, &first, &second, slot, 0);
   object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
                                (struct RenderInput *)arg3, arg4, arg5);
   if (object != 0) {
@@ -157,7 +157,7 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   palette = slot;
   cached = *(u16 *)((u8 *)work + (slot * 2 + offset));
   entry = cached;
-  UiGlyph_LoadEntryWithPalette(id, unused, &entry, &tile, palette + 14, 1);
+  Icon_LoadWithPalette(id, unused, &entry, &tile, palette + 14, 1);
 }
 
 /// Sets active to mode and resets the animation step (animStep) to zero.
@@ -169,7 +169,9 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   }
 }
 
-void Func_0804257c(u8 *window, s32 value) {
+/// Sets the draw layer of the window sprite `sprite` to 255 - `priority`, so a
+/// higher priority draws on a lower layer. Does nothing when `sprite` is NULL.
+void WindowSprite_SetInvertedSentinel(u8 *window, s32 value) {
   if (window != NULL)
     window[15] = ~value;
 }
@@ -179,7 +181,7 @@ extern u8 Tile_BuildCellPicturesCodeSize[];
 
 /// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
 /// window tiles' map through the cell picture routine copied to RAM.
-void Window_FillFromScene(void *dst) {
+void ScanlineWindow_FillSpans(void *dst) {
   u8 *scene = Ram_HeapSlots->windowTiles;
 
   if (scene == 0) {

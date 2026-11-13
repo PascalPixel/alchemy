@@ -154,10 +154,10 @@ Func_020019ec:
 	.thumb_func
 Djinn_GetRecoveryTable:
 	overlay_veneer Djinn_GetRecoveryTableFar
-	.global Party_CountActiveOwners
+	.global Party_CountMembers
 	.thumb_func
-Party_CountActiveOwners:
-	overlay_veneer Party_CountActiveOwnersFar
+Party_CountMembers:
+	overlay_veneer Party_CountMembersFar
 	.global Func_02001a04
 	.thumb_func
 Func_02001a04:

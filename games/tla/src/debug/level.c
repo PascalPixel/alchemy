@@ -234,7 +234,7 @@ extern char gIncreaseItemAndLevel_ItemHelp[];
 extern char gIncreaseItemAndLevel_ItemFull[];
 
 void Text_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x, s32 y);
-void Text_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
+void Text_DrawMessageAsTiles(s32 character, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
@@ -286,7 +286,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
         messageOrDefinitionId = selectedItemId & ITEM_ID_MASK;
         Item_GetDirect(messageOrDefinitionId);
-        Text_DrawCharacterAtOffset(messageOrDefinitionId + (s32)MsgItemName,
+        Text_DrawMessageAsTiles(messageOrDefinitionId + (s32)MsgItemName,
                                    window, 120, 0);
         Text_DrawMessage(messageOrDefinitionId + (s32)MsgItemPlainName, window,
                          0, 16);

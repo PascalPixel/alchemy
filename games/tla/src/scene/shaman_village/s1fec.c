@@ -334,7 +334,7 @@ void Func_0200289c(void) {
 void *Unit_Get(s32 owner);
 struct ItemDefinition *Func_02004894(s32 item);
 
-// Forwards to Party_ListActiveOwners; tagged where it is used.
+// Forwards to Party_ListMembers; tagged where it is used.
 void Func_0200290c(void) {
   s16 owners[10];
   s32 count;
@@ -345,10 +345,10 @@ void Func_0200290c(void) {
   s16 *owner;
 
   Event_SetMessageId((s32)MsgShamanMissingShamanRod);
-  if (PartyInventory_FindOwner(65) == -1)
+  if (PartyInventory_FindMember(65) == -1)
     goto refuse;
   /* FAKEMATCH(wrapper): the count read through ListOwners; as a direct
-   * Party_ListActiveOwners call with owner = owners before it, 4 of 119
+   * Party_ListMembers call with owner = owners before it, 4 of 119
    * instructions differ in tla-en. */
   count = FieldParty_ListMembers(owners);
   owner = owners;

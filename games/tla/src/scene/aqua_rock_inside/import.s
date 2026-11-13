@@ -162,10 +162,10 @@ FieldMessage_Show:
 	.thumb_func
 MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
-	.global PartyInventory_FindOwner
+	.global PartyInventory_FindMember
 	.thumb_func
-PartyInventory_FindOwner:
-	overlay_veneer PartyInventory_FindOwnerFar
+PartyInventory_FindMember:
+	overlay_veneer PartyInventory_FindMemberFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

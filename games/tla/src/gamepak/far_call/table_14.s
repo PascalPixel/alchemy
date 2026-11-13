@@ -49,30 +49,30 @@ Window_CloseAllFar:
 	.thumb_func
 UiGlyph_ResetWorkStateFar:
 	overlay_veneer SelectionMenu_Create
-	.global Resource_ClearOwnerListAndCountersFar
+	.global SelectionMenu_ClearFar
 	.thumb_func
-Resource_ClearOwnerListAndCountersFar:
-	overlay_veneer Resource_ClearOwnerListAndCounters
-	.global Resource_PushPendingPairFar
+SelectionMenu_ClearFar:
+	overlay_veneer SelectionMenu_Clear
+	.global SelectionMenu_AddEntryFar
 	.thumb_func
-Resource_PushPendingPairFar:
-	overlay_veneer Resource_PushPendingPair
+SelectionMenu_AddEntryFar:
+	overlay_veneer SelectionMenu_AddEntry
 	.global Resource_ScheduleOwnerResetDelayedFar
 	.thumb_func
 Resource_ScheduleOwnerResetDelayedFar:
 	overlay_veneer SelectionMenu_StartDrawing
-	.global Resource_ScheduleOwnerResetFar
+	.global SelectionMenu_StopDrawingFar
 	.thumb_func
-Resource_ScheduleOwnerResetFar:
-	overlay_veneer Resource_ScheduleOwnerReset
-	.global Menu_OpenSelectionWindowFar
+SelectionMenu_StopDrawingFar:
+	overlay_veneer SelectionMenu_StopDrawing
+	.global SelectionMenu_OpenNameWindowFar
 	.thumb_func
-Menu_OpenSelectionWindowFar:
-	overlay_veneer Menu_OpenSelectionWindow
-	.global Resource_ResetOwnerEntriesFar
+SelectionMenu_OpenNameWindowFar:
+	overlay_veneer SelectionMenu_OpenNameWindow
+	.global SelectionMenu_CloseFar
 	.thumb_func
-Resource_ResetOwnerEntriesFar:
-	overlay_veneer Resource_ResetOwnerEntries
+SelectionMenu_CloseFar:
+	overlay_veneer SelectionMenu_Close
 	.global Func_08038188
 	.thumb_func
 Func_08038188:
@@ -80,24 +80,24 @@ Func_08038188:
 	.global Func_08038190
 	.thumb_func
 Func_08038190:
-	overlay_veneer Menu_SelectionLoop
+	overlay_veneer SelectionMenu_Run
 	.global Func_08038198
 	.thumb_func
 Func_08038198:
-	overlay_veneer Menu_WaitForSelectionInput
+	overlay_veneer SelectionMenu_RunWithSounds
 	.global Func_080381a0
 	.thumb_func
 Func_080381a0:
-	overlay_veneer Func_0803f610
+	overlay_veneer MenuArrow_NoOpCallbackBank
 	.global Func_080381a8
 	.thumb_func
 Func_080381a8:
-	overlay_veneer Func_0803f614
+	overlay_veneer MenuArrow_NoOpCallback1
 	.global Func_080381b0
 	.thumb_func
 Func_080381b0:
-	overlay_veneer SelectionScreen_BuildEntries
+	overlay_veneer SelectionMenu_BuildEntries
 	.global Func_080381b8
 	.thumb_func
 Func_080381b8:
-	overlay_veneer Window_ReservedNoOp
+	overlay_veneer SelectionMenu_ReservedNoOp

@@ -82,11 +82,11 @@ s32 Func_080f94a4(void) {
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
-  screen->partyCount = Party_ListActiveOwnersFar(screen->memberIds);
+  screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
   Palette_LightenHighlight(14);
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawPageArrowsFar(0x06002500);
   screen->questionWindow =
       (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, 2);
 #if TLA_PATCH_1
@@ -222,7 +222,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->selectedItemIcon->active = 13;
       menu->sideIcons[0]->active = 1;
       ItemMenu_DrawMessage(0, (s32)&MsgWhichItem);
-      selection = Func_080fc6bc(0);
+      selection = ItemMenu_RunList(0);
       state = 0;
       if (selection == -1) {
         break;
@@ -295,8 +295,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMessageWindowHeight5();
       ItemMenu_SetItemWindowRow5();
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
-      Func_080fc12c();
-      Text_DrawCharacterAtOffsetFar((s32)MsgUseOnWhom, menu->questionWindow, 16,
+      ItemMenu_DrawItemHead();
+      Text_DrawMessageAsTilesFar((s32)MsgUseOnWhom, menu->questionWindow, 16,
                                     16);
       if (Func_080fa870(0) != -1) {
         command = 0;
@@ -304,7 +304,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           command = 8;
         }
         result = ItemMenu_Use();
-        Func_080f8170(menu->statusWindow, menu->sideMember[1], 0, command);
+        StatusPanel_Draw(menu->statusWindow, menu->sideMember[1], 0, command);
         if (result != -1) {
           WindowSprite_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(
@@ -329,8 +329,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMessageWindowHeight5();
       ItemMenu_SetItemWindowRow5();
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
-      Func_080fc12c();
-      Text_DrawCharacterAtOffsetFar((s32)MsgGiveToWhom, menu->questionWindow,
+      ItemMenu_DrawItemHead();
+      Text_DrawMessageAsTilesFar((s32)MsgGiveToWhom, menu->questionWindow,
                                     16, 16);
       n = Func_080fa870(1);
       state = 4;
@@ -348,7 +348,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if ((item->flags & 16) != 0) {
         qty = (menu->selectedItems[0] >> 11) + 1;
         if (qty > 1) {
-          Func_080fc12c();
+          ItemMenu_DrawItemHead();
           result = ItemMenu_SelectGiveQuantity(0, qty, 1);
         }
       }
@@ -366,7 +366,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Icon_PrepareActor(menu->selectedItemIcon);
       Window_ClearInteriorTilesFar(menu->listWindow, 0, 72, 120, 96);
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
-      if (Func_080fc1ac(selection) == 0) {
+      if (ItemMenu_ConfirmDrop(selection) == 0) {
         command = menu->sideMember[0];
         // DEAD: the result is not used; the source keeps the call.
         Unit_Get(command);
@@ -465,7 +465,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_SetMessageWindowHeight6();
 #endif
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
-        Func_080fc12c();
+        ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
       }
       if (GameFlag_Test(0x150) != 0) {
@@ -503,7 +503,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMessageWindowHeight3();
       ItemMenu_SetItemWindowRow3();
       ItemMenu_DrawMessage(0, (s32)&MsgSwapForWhat);
-      if (Func_080fc6bc(1) == -1) {
+      if (ItemMenu_RunList(1) == -1) {
         state = 6;
         break;
       }
@@ -591,7 +591,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
         menu->sideMember[0] = menu->sideMember[1];
         menu->selectedItems[0] &= 0x1ff;
-        Func_080fc12c();
+        ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_Test(0x150) == 0) {
           WindowSprite_ClearListFar(menu->infoWindow);
@@ -677,7 +677,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 10:
       menu->sideIcons[0]->active = 13;
-      Func_080fb780(menu->selectedItems[0]);
+      ItemMenu_ShowDetails(menu->selectedItems[0]);
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->statusWindow);
       Func_080fae8c(menu->sideMember[0], menu->selectedSlots[0], 0,
                     menu->sideMember[0]);
@@ -901,7 +901,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
     menu->sideIndex[pane] = result;
     index = 0;
   } else {
-    Func_080f8ab4(index * 24 - 10, 16);
+    MenuCursor_Slide(index * 24 - 10, 16);
   }
   // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
   owner = Unit_Get((u16)menu->memberIds[index]);
@@ -967,16 +967,16 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   // Japanese draws the key names as their own strings, the help beside them.
   Text_DrawStringInWindowFar(gItemMenu_ArrangeKeysString, menu->buttonHelpWindow, 0,
                                0);
-  Text_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp, menu->buttonHelpWindow,
+  Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp, menu->buttonHelpWindow,
                                   32, 0);
   Text_DrawStringInWindowFar(gItemMenu_EquipmentKeyString, menu->buttonHelpWindow,
                                16, 8);
-  Text_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 1,
+  Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 1,
                                   menu->buttonHelpWindow, 32, 8);
 #else
-  Text_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp, menu->buttonHelpWindow, 0,
+  Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp, menu->buttonHelpWindow, 0,
                                   0);
-  Text_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 1,
+  Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 1,
                                   menu->buttonHelpWindow, 0, 8);
 #endif
   menu->sideIcons[0]->active = 1;
@@ -989,10 +989,10 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         menu->itemCount = ItemMenu_CollectItems(Unit_Get(ownerIds[selection]),
                                                 menu->items, 0);
         Func_080fa84c(ownerIds[selection]);
-        Func_080f8170(window, ownerIds[selection], 0, 8);
+        StatusPanel_Draw(window, ownerIds[selection], 0, 8);
       } else {
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
-        Func_080f8170(window, ownerIds[selection], 0, 0);
+        StatusPanel_Draw(window, ownerIds[selection], 0, 0);
       }
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
@@ -1054,7 +1054,7 @@ void Func_080fa84c(s32 category) {
 #define ITEM_INFO_DRAW Text_DrawMessageFar
 #else
 #define TRADE_LABEL_X 0
-#define ITEM_INFO_DRAW Text_DrawCharacterAtOffsetFar
+#define ITEM_INFO_DRAW Text_DrawMessageAsTilesFar
 #endif
 
 // The Japanese release clears the info window; from patch 1 it redraws the
@@ -1186,17 +1186,17 @@ s32 Func_080fa870(s32 mode) {
             } while (0);
             label = (s32)MsgNoneInStock;
           }
-          Text_DrawCharacterAtOffsetFar(label, window, labelX, 72);
+          Text_DrawMessageAsTilesFar(label, window, labelX, 72);
         }
         Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
                       menu->ownerIds[selection]);
       }
       if (mode == 0) {
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & 0x1ff))
-          Func_080f8170(menu->statusWindow, menu->ownerIds[selection],
+          StatusPanel_Draw(menu->statusWindow, menu->ownerIds[selection],
                         menu->selectedSlots[0], 8);
         else
-          Func_080f8170(menu->statusWindow, menu->ownerIds[selection],
+          StatusPanel_Draw(menu->statusWindow, menu->ownerIds[selection],
                         menu->selectedSlots[0], 0);
         if (!GameFlag_Test(0x151) && !descriptionShown) {
           ITEM_INFO_CLEAR(menu->infoWindow);
@@ -1316,7 +1316,7 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
 
   menu = Ram_HeapSlots->menuRuntime;
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-  Text_DrawCharacterAtOffsetFar(message, (s32)menu->messageWindow, 0, 0);
+  Text_DrawMessageAsTilesFar(message, (s32)menu->messageWindow, 0, 0);
 }
 
 struct ItemEntryIcon {
@@ -1438,7 +1438,7 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   ItemMenu_RefreshEntry(mode);
   ItemMenu_DrawIcons(items, 0);
   if (ItemMenu_CountItems(ownerId) == 0)
-    Text_DrawCharacterAtOffsetFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8,
+    Text_DrawMessageAsTilesFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8,
                                     24);
 }
 
@@ -1474,14 +1474,14 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
     /* FAKEMATCH(dead): the test of menu, whose two branches make the same call,
      * kept; as the one call, 34 of 217 instructions differ in tla-en. */
     if (menu)
-      Func_080f8170(menu->statusWindow, target, slot, style);
+      StatusPanel_Draw(menu->statusWindow, target, slot, style);
     else
-      Func_080f8170(menu->statusWindow, target, slot, style);
+      StatusPanel_Draw(menu->statusWindow, target, slot, style);
     break;
   case 10:
     if (owner == target) {
       style |= 9;
-      Func_080f8170(menu->statusWindow, target, slot, style);
+      StatusPanel_Draw(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
 
@@ -1495,12 +1495,12 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
           style |= 9;
-          Func_080f8170(menu->statusWindow, target, previewSlot, style);
+          StatusPanel_Draw(menu->statusWindow, target, previewSlot, style);
         } else {
-          Func_080f8170(menu->statusWindow, target, slot, style);
+          StatusPanel_Draw(menu->statusWindow, target, slot, style);
         }
       } else {
-        Func_080f8170(menu->statusWindow, target, slot, style);
+        StatusPanel_Draw(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(unit, buffer, size);
       Heap_Release(buffer);
@@ -1516,7 +1516,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
   case 9:
     if (owner == target) {
       style |= 2;
-      Func_080f8170(menu->statusWindow, target, slot, style);
+      StatusPanel_Draw(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
 
@@ -1530,12 +1530,12 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
           style |= 2;
-          Func_080f8170(menu->statusWindow, target, previewSlot, style);
+          StatusPanel_Draw(menu->statusWindow, target, previewSlot, style);
         } else {
-          Func_080f8170(menu->statusWindow, target, slot, style);
+          StatusPanel_Draw(menu->statusWindow, target, slot, style);
         }
       } else {
-        Func_080f8170(menu->statusWindow, target, slot, style);
+        StatusPanel_Draw(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(unit, buffer, size);
       Heap_Release(buffer);
@@ -1544,7 +1544,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
   case 6:
     if (target == owner) {
       style |= 4;
-      Func_080f8170(menu->statusWindow, target, slot, style);
+      StatusPanel_Draw(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
 
@@ -1557,12 +1557,12 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
           style |= 4;
-          Func_080f8170(menu->statusWindow, target, previewSlot, style);
+          StatusPanel_Draw(menu->statusWindow, target, previewSlot, style);
         } else {
-          Func_080f8170(menu->statusWindow, target, slot, style);
+          StatusPanel_Draw(menu->statusWindow, target, slot, style);
         }
       } else {
-        Func_080f8170(menu->statusWindow, target, slot, style);
+        StatusPanel_Draw(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(unit, buffer, size);
       Heap_Release(buffer);
@@ -1647,7 +1647,7 @@ void ItemMenu_BuildCommands(s8 *commandStates);
 
 void ItemMenu_SetMessageWindowHeight7(void);
 
-void Func_080fc12c(void);
+void ItemMenu_DrawItemHead(void);
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window);
 
 s32 ItemMenu_ChooseCommand(void) {
@@ -1678,7 +1678,7 @@ s32 ItemMenu_ChooseCommand(void) {
     ItemMenu_SetMessageWindowHeight7();
     WindowSprite_RedrawSavedRectFar(messageWindow);
     Window_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
-    Func_080fc12c();
+    ItemMenu_DrawItemHead();
     ItemMenu_DrawCommands(commandStates, messageWindow);
   }
   *redrawFlag = 0;
@@ -1710,7 +1710,7 @@ s32 ItemMenu_ChooseCommand(void) {
     row = (s8)(lastCommand / 3);
     commandIndex = row * 3 + column;
   }
-  Func_080f8ab4(COMMAND_CURSOR_X(column, row), COMMAND_CURSOR_Y(column, row));
+  MenuCursor_Slide(COMMAND_CURSOR_X(column, row), COMMAND_CURSOR_Y(column, row));
 
   for (;;) {
     if (GameFlag_Test(0x150) != 0)
@@ -1732,7 +1732,7 @@ s32 ItemMenu_ChooseCommand(void) {
         Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
                       menu->paneOwner[0]);
       } else {
-        Func_080f8170(menu->statusWindow, menu->paneOwner[0], 0, 0);
+        StatusPanel_Draw(menu->statusWindow, menu->paneOwner[0], 0, 0);
       }
     }
     Func_080f8a44(COMMAND_CURSOR_X(column, row), COMMAND_CURSOR_Y(column, row));
@@ -1909,33 +1909,33 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
 
   firstCommandMessage = (u32)MsgItemCommandUse;
   // "Use"
-  Text_DrawCharacterAtOffsetFar(firstCommandMessage, window, 0, 24);
+  Text_DrawMessageAsTilesFar(firstCommandMessage, window, 0, 24);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Equip"
-  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 1, window,
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 1, window,
                                   ITEM_COMMAND_TEXT_X, 24);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_GIVE] == disabled)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Give"
-  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 2, window, 0, 32);
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 2, window, 0, 32);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_DROP] == disabled)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Drop"
-  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 3, window, 80, 32);
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80, 32);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Details"
-  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 4, window, 80, 24);
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80, 24);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Remove"
-  Text_DrawCharacterAtOffsetFar(firstCommandMessage + 5, window,
+  Text_DrawMessageAsTilesFar(firstCommandMessage + 5, window,
                                   ITEM_COMMAND_TEXT_X, 32);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
@@ -2045,7 +2045,7 @@ struct ItemDetailsMenu {
   struct ItemMenuIcon *cursor;
   u8 unk174[0xa4];
   struct ItemMenuIcon *selectedItemIcon;
-  u16 unk21c; ///< bit 1 read by Func_080fd968; Japanese's Details sets 1
+  u16 unk21c; ///< bit 1 read by PsynergyMenu_DrawActionPage; Japanese's Details sets 1
 };
 
 void Window_CloseFar(s32, s32);
@@ -2054,7 +2054,7 @@ void Window_CloseFar(s32, s32);
 /// over the top half (DETAILS_WINDOW_WIDTH) and waits for A or B. Up and Down
 /// move an unused counter from 0 to 4. Returns the counter after A or Start, or
 /// -1 after B. The twin of The Broken Seal's ItemMenu_ShowDetails.
-s32 Func_080fb780(s32 value) {
+s32 ItemMenu_ShowDetails(s32 value) {
   struct ItemDetailsMenu *menu = Ram_HeapSlots->menuRuntime;
   s32 changed = 1;
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -2132,9 +2132,9 @@ s32 Func_080fb780(s32 value) {
 #undef DETAILS_WINDOW_WIDTH
 #undef DETAILS_WINDOW_WIDTH
 
-void Func_080fb8b8(s32 a, s32 b, s32 c);
+void ItemMenu_DrawItemDetailsWithCount(s32 a, s32 b, s32 c);
 
-void ItemMenu_DrawItemDetails(s32 a, s32 b) { Func_080fb8b8(a, b, -1); }
+void ItemMenu_DrawItemDetails(s32 a, s32 b) { ItemMenu_DrawItemDetailsWithCount(a, b, -1); }
 
 // The headings are indented in English and Japanese; German, Spanish and
 // Italian start all three at the window's left edge, French the uses heading
@@ -2182,7 +2182,7 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
 /// count is the count to show, which only Japanese reads;
 /// ItemMenu_DrawItemDetails passes -1, the entry's own. The twin of The Broken
 /// Seal's ItemMenu_DrawItemDetails.
-void Func_080fb8b8(s32 window, s32 item, s32 count) {
+void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
   struct ItemDefinition *def;
   s32 i;
   s32 found;
@@ -2206,18 +2206,18 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
       found = 1;
     }
     if (found == 1) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgEquipEffectHeading, window,
+      Text_DrawMessageAsTilesFar((s32)MsgEquipEffectHeading, window,
                                       ITEM_DETAILS_HEADING_X, 0);
       row = 1;
     }
     if (def->primaryBonus != 0) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgStatLabel, window, 0, row * 8);
+      Text_DrawMessageAsTilesFar((s32)MsgStatLabel, window, 0, row * 8);
       amount = def->primaryBonus;
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       row++;
     }
     if (def->secondaryBonus != 0) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgDefenseLabel, window, 0, row * 8);
+      Text_DrawMessageAsTilesFar((s32)MsgDefenseLabel, window, 0, row * 8);
       amount = def->secondaryBonus;
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       row++;
@@ -2237,7 +2237,7 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
     case 5:
     case 6:
     case 26:
-      Text_DrawCharacterAtOffsetFar(
+      Text_DrawMessageAsTilesFar(
           def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       break;
@@ -2251,7 +2251,7 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
     case 22:
       Window_SetTilemapEntryFar(
           window, (u8)((def->effects[i].kind - 15) % 4) + 1, 0, row, 2);
-      Text_DrawCharacterAtOffsetFar(
+      Text_DrawMessageAsTilesFar(
           def->effects[i].kind + (s32)MsgEquipEffectName, window, 8, row * 8);
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       break;
@@ -2263,7 +2263,7 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
     case 12:
     case 13:
     case 14:
-      Text_DrawCharacterAtOffsetFar(
+      Text_DrawMessageAsTilesFar(
           def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
       if (amount > 9) {
         Text_DrawNumberInWindowFar(1, 1, window, ITEM_DETAILS_MULTIPLIER_X,
@@ -2281,26 +2281,26 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
                                      ITEM_DETAILS_MULTIPLIER_X + 16, row * 8);
       }
 #if LANGUAGE == LANGUAGE_JAPANESE
-      Text_DrawCharacterAtOffsetFar((s32)MsgTimesSuffix, window,
+      Text_DrawMessageAsTilesFar((s32)MsgTimesSuffix, window,
                                       ITEM_DETAILS_MULTIPLIER_X + 24, row * 8);
 #endif
       break;
     case 23:
     case 25:
     case 27:
-      Text_DrawCharacterAtOffsetFar(
+      Text_DrawMessageAsTilesFar(
           def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
 #if LANGUAGE == LANGUAGE_GERMAN
       // German continues these three names on a second line.
       row++;
       if (def->effects[i].kind == 23)
-        Text_DrawCharacterAtOffsetFar((s32)MsgEquipEffectName + 28, window, 0,
+        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 28, window, 0,
                                         row * 8);
       else if (def->effects[i].kind == 25)
-        Text_DrawCharacterAtOffsetFar((s32)MsgEquipEffectName + 29, window, 0,
+        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 29, window, 0,
                                         row * 8);
       else if (def->effects[i].kind == 27)
-        Text_DrawCharacterAtOffsetFar((s32)MsgEquipEffectName + 30, window, 0,
+        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 30, window, 0,
                                         row * 8);
 #endif
       break;
@@ -2308,18 +2308,18 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
     row++;
   }
   if (def->flags & 1) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgItemCursed, window, 0, row * 8);
+    Text_DrawMessageAsTilesFar((s32)MsgItemCursed, window, 0, row * 8);
     row++;
   }
   if (def->useType == 3) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgBestowsPsynergy, window, 0,
+    Text_DrawMessageAsTilesFar((s32)MsgBestowsPsynergy, window, 0,
                                     row * 8);
     consumable = 1;
     row++;
   }
   if (def->useType != 4 && def->useType != 0) {
     if (!consumable) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgUsesHeading, window,
+      Text_DrawMessageAsTilesFar((s32)MsgUsesHeading, window,
                                       ITEM_DETAILS_USES_X, row * 8);
       row++;
     }
@@ -2327,7 +2327,7 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
     case 0:
       break;
     case 1:
-      Text_DrawCharacterAtOffsetFar((s32)MsgSingleUse, window, 0, row * 8);
+      Text_DrawMessageAsTilesFar((s32)MsgSingleUse, window, 0, row * 8);
       row++;
       break;
     case 2: {
@@ -2335,33 +2335,33 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
 
       if (item & 0x400) {
         m = (s32)MsgBrokenNotice;
-        Text_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m, window, 0, row * 8);
         row++;
 #if LANGUAGE == LANGUAGE_GERMAN
         // German ends the sentence on a third line, six messages on.
-        Text_DrawCharacterAtOffsetFar(m + 1, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m + 1, window, 0, row * 8);
         row++;
         m += 6;
-        Text_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m, window, 0, row * 8);
         row++;
 #else
         m++;
-        Text_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m, window, 0, row * 8);
         row++;
 #endif
       } else {
         m = (s32)MsgMightBreak;
-        Text_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m, window, 0, row * 8);
         row++;
 #if LANGUAGE == LANGUAGE_GERMAN
-        Text_DrawCharacterAtOffsetFar(m + 1, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m + 1, window, 0, row * 8);
         row++;
         m += 7;
-        Text_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m, window, 0, row * 8);
         row++;
 #else
         m++;
-        Text_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
+        Text_DrawMessageAsTilesFar(m, window, 0, row * 8);
         row++;
 #endif
       }
@@ -2373,44 +2373,44 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
     if (row != 0)
       row++;
     i = (s32)MsgNumberHeading;
-    Text_DrawCharacterAtOffsetFar(i, window, ITEM_DETAILS_NUMBER_X, row * 8);
+    Text_DrawMessageAsTilesFar(i, window, ITEM_DETAILS_NUMBER_X, row * 8);
     row++;
 #if LANGUAGE == LANGUAGE_JAPANESE
     // Japanese draws the count itself: the entry's own for -1, "none" for 0.
     if (count == -1) {
       amount = (item & 0xf800) / 2048;
       Text_DrawNumberInWindowFar(amount + 1, 2, window, 0, row * 8);
-      Text_DrawCharacterAtOffsetFar(i + 1, window, 16, row * 8);
+      Text_DrawMessageAsTilesFar(i + 1, window, 16, row * 8);
       row++;
     } else if (count == 0) {
-      Text_DrawCharacterAtOffsetFar(i + 8, window, 0, row * 8);
+      Text_DrawMessageAsTilesFar(i + 8, window, 0, row * 8);
       row++;
     } else {
       amount = count;
       Text_DrawNumberInWindowFar(amount, 3, window, 0, row * 8);
-      Text_DrawCharacterAtOffsetFar(i + 1, window, 24, row * 8);
+      Text_DrawMessageAsTilesFar(i + 1, window, 24, row * 8);
       row++;
     }
 #else
     amount = (item & 0xf800) / 2048;
     MessageArgument_PushFar(amount + 1, 5);
-    Text_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
+    Text_DrawMessageAsTilesFar(i + 1, window, 0, row * 8);
     row++;
 #endif
   }
   found = 0;
   if (row == 0) {
     if (def->flags & 4) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgRareItem, window, 0, 0);
+      Text_DrawMessageAsTilesFar((s32)MsgRareItem, window, 0, 0);
       found = 1;
     }
     if (!found) {
       if (def->flags & 8) {
-        Text_DrawCharacterAtOffsetFar((s32)MsgImportantItem, window, 0, 0);
+        Text_DrawMessageAsTilesFar((s32)MsgImportantItem, window, 0, 0);
         found = 1;
       }
       if (!found)
-        Text_DrawCharacterAtOffsetFar((s32)MsgDetailsUnknown, window, 0, 0);
+        Text_DrawMessageAsTilesFar((s32)MsgDetailsUnknown, window, 0, 0);
     }
   }
 }
@@ -2530,7 +2530,7 @@ extern u8 MsgHowMany[];
 #endif
 extern const u8 gMenu_QuantityTiles[];
 
-void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
+void QuantityBar_FillFar(s32 value, s32 column, void *tiles);
 
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange, s32 dropMode) {
   s32 value = baseQuantity;
@@ -2556,33 +2556,33 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange, s32 dropMod
     WindowSprite_CreateFar(entry, 0x40004000, window, 48, 32);
     arrow = WindowSprite_CreateFar(entry, 0x40004000, window, 80, 32);
     arrow->tile = arrow->tile + 4;
-    Func_080f8ab4(CURSOR_X, 40);
+    MenuCursor_Slide(CURSOR_X, 40);
     while (!GameFlag_Test(0x150)) {
       if (changed) {
         changed = 0;
         value = (value + quantityRange) % quantityRange;
         WindowSprite_RedrawSavedRectFar(window);
-        Text_DrawCharacterAtOffsetFar(MSG_HOW_MANY, window, HOW_MANY_X,
+        Text_DrawMessageAsTilesFar(MSG_HOW_MANY, window, HOW_MANY_X,
                                       HOW_MANY_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, (DMA_ENABLE | DMA_32BIT) << 16 | 64,
                 REG_DMA3);
-        Shop_FillSelectorFar(30, 14, tiles);
-        Shop_FillSelectorFar(baseQuantity + quantityRange, 0, tiles);
-        Shop_FillSelectorFar(baseQuantity + value + 1, 10, tiles);
-        Shop_FillSelectorFar(baseQuantity, 2, tiles);
+        QuantityBar_FillFar(30, 14, tiles);
+        QuantityBar_FillFar(baseQuantity + quantityRange, 0, tiles);
+        QuantityBar_FillFar(baseQuantity + value + 1, 10, tiles);
+        QuantityBar_FillFar(baseQuantity, 2, tiles);
         VramCache_Load(entry, 0x100, tiles);
         Text_DrawNumberInWindowFar(value + 1, 2, window, 32, 32);
-        Text_DrawCharacterAtOffsetFar(
+        Text_DrawMessageAsTilesFar(
             (menu->selectedItems[0] & 0x1ff) + (s32)MsgItemName, window, 16, 8);
         Text_DrawNumberInWindowFar(ownerCount - value - 1, 2, window, 16, 24);
 #if LANGUAGE == LANGUAGE_JAPANESE
-        Text_DrawCharacterAtOffsetFar(MSG_PIECE, window, 32, 24);
+        Text_DrawMessageAsTilesFar(MSG_PIECE, window, 32, 24);
 #endif
         if (dropMode == 0) {
           Text_DrawNumberInWindowFar(targetCount + value + 1, 2, window, 80,
                                      24);
 #if LANGUAGE == LANGUAGE_JAPANESE
-          Text_DrawCharacterAtOffsetFar(MSG_PIECE, window, 96, 24);
+          Text_DrawMessageAsTilesFar(MSG_PIECE, window, 96, 24);
 #endif
         }
         Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), window, 16,
@@ -2629,7 +2629,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange, s32 dropMod
 #undef CURSOR_X
 
 // Draws the selected item's icon, owner and item name in the heading.
-void Func_080fc12c(void) {
+void ItemMenu_DrawItemHead(void) {
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
 
   Func_08038288(2, menu->selectedItems[0], (u8)menu->selectedItemIcon->index,
@@ -2640,7 +2640,7 @@ void Func_080fc12c(void) {
   Icon_PrepareActor(menu->selectedItemIcon);
   Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), menu->messageWindow,
                                16, 0);
-  Text_DrawCharacterAtOffsetFar((menu->selectedItems[0] & 0x1ff) +
+  Text_DrawMessageAsTilesFar((menu->selectedItems[0] & 0x1ff) +
                                       (s32)MsgItemName,
                                   menu->messageWindow, 16, 8);
 }
@@ -2655,7 +2655,7 @@ void Func_080fc12c(void) {
 /// Asks whether to drop item (an inventory entry): its name, the question, and
 /// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start. The twin of
 /// The Broken Seal's ItemMenu_ConfirmDrop.
-s32 Func_080fc1ac(s32 item) {
+s32 ItemMenu_ConfirmDrop(s32 item) {
   s32 window;
   s32 itemId;
   s32 question;
@@ -2667,16 +2667,16 @@ s32 Func_080fc1ac(s32 item) {
   window = Window_CreateFar(13, 3, 17, 10, 2);
   itemId = item & 0x1ff;
   Item_Get(itemId);
-  Text_DrawCharacterAtOffsetFar(itemId + (s32)MsgItemName, window, 24, 0);
+  Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 24, 0);
   question = (s32)MsgConfirmDrop;
-  Text_DrawCharacterAtOffsetFar(question, window, ITEM_DROP_QUESTION_X, 16);
+  Text_DrawMessageAsTilesFar(question, window, ITEM_DROP_QUESTION_X, 16);
   question++;
-  Text_DrawCharacterAtOffsetFar(question, window, ITEM_DROP_QUESTION_X, 24);
+  Text_DrawMessageAsTilesFar(question, window, ITEM_DROP_QUESTION_X, 24);
   answer = (s32)MsgYes;
-  Text_DrawCharacterAtOffsetFar(answer, window, 24, 40);
+  Text_DrawMessageAsTilesFar(answer, window, 24, 40);
   answer++;
-  Text_DrawCharacterAtOffsetFar(answer, window, 24, 56);
-  Func_080f8ab4(104, 86);
+  Text_DrawMessageAsTilesFar(answer, window, 24, 56);
+  MenuCursor_Slide(104, 86);
   for (;;) {
     if (GameFlag_Test(336))
       break;
@@ -2784,13 +2784,13 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
             2) <= 1) {
     selection = 1;
   } else {
-    Text_DrawCharacterAtOffsetFar((s32)MsgYes, window, EQUIP_YES_X,
+    Text_DrawMessageAsTilesFar((s32)MsgYes, window, EQUIP_YES_X,
                                   EQUIP_YES_Y);
-    Text_DrawCharacterAtOffsetFar((s32)MsgYes + 1, window, EQUIP_NO_X,
+    Text_DrawMessageAsTilesFar((s32)MsgYes + 1, window, EQUIP_NO_X,
                                   EQUIP_NO_Y);
     Window_ClearInteriorTilesFar(window, 16, 16, 96, 24);
-    Text_DrawCharacterAtOffsetFar(EQUIP_QUESTION, window, EQUIP_QUESTION_X, 16);
-    Func_080f8ab4(EQUIP_CURSOR_X(0), EQUIP_CURSOR_Y(0));
+    Text_DrawMessageAsTilesFar(EQUIP_QUESTION, window, EQUIP_QUESTION_X, 16);
+    MenuCursor_Slide(EQUIP_CURSOR_X(0), EQUIP_CURSOR_Y(0));
     for (;;) {
       if (GameFlag_Test(336))
         break;
@@ -2852,7 +2852,7 @@ void Resource_LoadPairedBlocks(void) {
 }
 
 /// Splits the selected slot owner's items into pages of five rows.
-s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
+s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   s32 encoded;
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
   s32 limit;
@@ -2884,7 +2884,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
 
 /// Draws the selected item-list row's name and highlights only that row; the
 /// twin of The Broken Seal's ItemMenu_DrawItemDetailPage.
-s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
+s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state) {
   struct InventoryMenuState *menu;
   s32 page;
   s32 combined;
@@ -2915,7 +2915,7 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
 #if LANGUAGE == LANGUAGE_JAPANESE
     Text_DrawMessageFar(masked, menu->infoWindow, 0, 0);
 #else
-    Text_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
+    Text_DrawMessageAsTilesFar(masked, menu->infoWindow, 0, 0);
 #endif
   }
 
@@ -2944,7 +2944,7 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
 
 /// Draws the names on one five-row page of the item list: The Broken Seal's
 /// ItemMenu_DrawNamePage over this game's menu offsets.
-s32 Func_080fc608(s32 window, s32 unused, const struct MenuResult *state) {
+s32 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state) {
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
   u32 page;
   u32 firstEntry;
@@ -2969,7 +2969,7 @@ s32 Func_080fc608(s32 window, s32 unused, const struct MenuResult *state) {
   if (visibleCount > row) {
     itemId = &menu->items[firstEntry];
     do {
-      Text_DrawCharacterAtOffsetFar((itemId[0] & 0x1ff) + (s32)MsgItemName,
+      Text_DrawMessageAsTilesFar((itemId[0] & 0x1ff) + (s32)MsgItemName,
                                       menu->itemWindow, ENTRY_X, row * 16 + 8);
       row++;
       itemId++;
@@ -3042,7 +3042,14 @@ struct ListOwner {
 // "L/R: Change character", under the list in pane 0.
 extern u8 MsgChangeCharacterHelp[];
 
-s32 Func_080fc6bc(s32 pane) {
+/// The item list of the party member in sideIndex (0: the holder, 1: the
+/// receiver of a trade), five items a page. The cursor's item is named in the
+/// info window and previewed in the status panel, its icon animates, and the
+/// party members who can equip it move. Up and Down move the cursor, Left and
+/// Right turn pages, and in sideIndex 0 L and R switch to the previous or next
+/// party member who has items. Returns the chosen inventory entry, or -1 when
+/// the player backs out.
+s32 ItemMenu_RunList(s32 pane) {
   struct ListMenu *menu;
   void *window;
   s32 changed;
@@ -3072,7 +3079,7 @@ s32 Func_080fc6bc(s32 pane) {
     menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
     ItemMenu_DrawIcons(menu->items, 0);
     menu->selectedItemIcon->state = 13;
-    ItemMenu_PageResult(&state, pane);
+    ItemMenu_BuildPagedList(&state, pane);
     Func_080f8a44(98, state.selectedIndex * 16 + 36);
     changed = 1;
     redraw = 1;
@@ -3088,13 +3095,13 @@ s32 Func_080fc6bc(s32 pane) {
         }
         if (redraw != 0) {
           wait(1);
-          Func_080fc608(window, 0, &state);
+          ItemMenu_DrawNamePage(window, 0, &state);
           if (pane == 0)
-            Text_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window,
+            Text_DrawMessageAsTilesFar((s32)MsgChangeCharacterHelp, window,
                                           CHANGE_HELP_X, 88);
           redraw = 0;
         }
-        Func_080fc558(window, work, &state);
+        ItemMenu_DrawItemDetailPage(window, work, &state);
         menu->selectedItems[pane] = menu->items[state.selectedIndex];
         Func_080fae8c(menu->paneOwner[pane], state.selectedIndex, 0,
                       menu->paneOwner[pane]);

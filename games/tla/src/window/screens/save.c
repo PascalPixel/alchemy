@@ -234,7 +234,7 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
 
 /// Writes a save file's play time (in frames) as "HHH:MM" into out and
 /// returns out; the clock stops at 999:59.
-void *Text_FormatPlayTime(s32 frames, u8 *out) {
+void *String_FormatPlayTime(s32 frames, u8 *out) {
   u8 digits[16];
   u32 totalMinutes;
   u32 hours;
@@ -393,7 +393,7 @@ s32 Save_BuildFileSummary(void) {
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
   summary->djinn[3] = Party_SumDjinnCountsFar(3);
-  Party_ListActiveOwnersFar((s16 *)owners);
+  Party_ListMembersFar((s16 *)owners);
   for (i = 0; i <= 3 && owners[i] != 255; i++)
     summary->party[i] = owners[i];
   summary->party[i] = -1;
@@ -528,7 +528,7 @@ s32 Save_ToFile(u32 slot) {
   return result;
 }
 
-s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection);
+s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection);
 
 /// Lets the player choose a file and saves the game to it, asking first before
 /// it writes over a file in use.
@@ -544,7 +544,7 @@ s32 Func_08043690(void) {
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    slot = Func_08043cd8(gData_020036d0, 0);
+    slot = FileList_SelectFile(gData_020036d0, 0);
     if (slot == -1) {
       result = slot;
     } else {
@@ -553,7 +553,7 @@ s32 Func_08043690(void) {
         FieldMessage_Show((s32)&MsgOverwriteConfirm, 13);
         while (Message_AllTyped() == 0)
           wait(1);
-        if (Menu_RunConfirmSelection(1, 0, 0, 1) != 0) {
+        if (YesNoMenu_Run(1, 0, 0, 1) != 0) {
           Message_CloseFinishedWindows();
           goto done;
         }
@@ -589,7 +589,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    file = Func_08043cd8(gData_020036d0, mode);
+    file = FileList_SelectFile(gData_020036d0, mode);
     if (file == -1) {
       result = file;
     } else if (Save_ReadPart(file, gData_02000000) != 0) {
@@ -617,7 +617,7 @@ s32 Save_CopyFile(void) {
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    value = Func_08043cd8(0, 2);
+    value = FileList_SelectFile(0, 2);
     if (value == -1) {
       result = value;
     } else {
@@ -668,14 +668,14 @@ s32 Save_EraseSelectedFile(void) {
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    value = Func_08043cd8(0, 3);
+    value = FileList_SelectFile(0, 3);
     if (value == -1) {
       result = value;
     } else {
       Message_OpenWindow((s32)&MsgEraseConfirm, ERASE_CONFIRM_X, 1, 2);
       while (Message_AllTyped() == 0)
         wait(1);
-      if (Menu_RunConfirmSelection(1, 0, 3, 1) != 0) {
+      if (YesNoMenu_Run(1, 0, 3, 1) != 0) {
         Message_CloseFinishedWindows();
       } else {
         Message_CloseFinishedWindows();
@@ -697,7 +697,7 @@ s32 Save_EraseSelectedFile(void) {
 
 /// Updates four RGB555 colors with an eight-VBlank phase offset between them.
 /// For s = sin / 16384, red is 22 + 2s, green 16 + s, and blue 20 + s.
-void PaletteGlow_UpdateSine(void) {
+void FileList_UpdatePulse(void) {
   s32 *vblankCount;
   volatile u16 *pal;
   s32 col;
@@ -732,11 +732,12 @@ void PaletteGlow_UpdateSine(void) {
   } while (++i <= 3);
 }
 
-void PaletteGlow_Start(void) {
-  Task_Add((s32)PaletteGlow_UpdateSine, TASK_PASS_VBLANK);
+/// Starts the palette glow (FileList_UpdatePulse) as a task.
+void FileList_StartPulse(void) {
+  Task_Add((s32)FileList_UpdatePulse, TASK_PASS_VBLANK);
 }
 
-void PaletteGlow_Stop(void) { Task_Remove((u32)((s32)PaletteGlow_UpdateSine)); }
+void FileList_StopPulse(void) { Task_Remove((u32)((s32)FileList_UpdatePulse)); }
 
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
@@ -907,8 +908,8 @@ void FileList_DrawDjinnCounts(struct RenderInput *win, struct NumberRow *row) {
   ((void (*)(void *, s32, s32, s32))Text_DrawStringAtOffset)
 #define Text_DrawNumberAtOffset                                                \
   ((void (*)(s32, s32, s32, s32, s32))Text_DrawNumberAtOffset)
-#define Text_DrawCharacterAtOffset                                             \
-  ((void (*)(s32, s32, s32, s32))Text_DrawCharacterAtOffset)
+#define Text_DrawMessageAsTiles                                                \
+  ((void (*)(s32, s32, s32, s32))Text_DrawMessageAsTiles)
 
 // Edition-specific x positions of the level and coin labels, in pixels.
 #if (LANGUAGE == LANGUAGE_SPANISH)
@@ -926,7 +927,7 @@ void FileList_DrawDjinnCounts(struct RenderInput *win, struct NumberRow *row) {
 /// win: destination; do nothing if zero.
 /// rec: the file summary (SaveSummary).
 ///      +16 name, +28 level, +29 class, +32 play time, +36 coins.
-void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
+void FileList_DrawSummary(s32 win, u8 *rec) {
   u32 buf[4]; // Formatted play time.
   s32 y;
 
@@ -942,28 +943,28 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
     Text_DrawStringInWindow((u8 *)gStatusMenu_LevelLetterString, win, 72, 0);
 #endif
     Text_DrawNumberAtOffset(rec[28], 2, win, 80, y);
-    Text_DrawCharacterAtOffset(rec[29] + (s32)MsgClassName, win, 0, 16);
+    Text_DrawMessageAsTiles(rec[29] + (s32)MsgClassName, win, 0, 16);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     y = 32;
     Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 24, y);
-    Text_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
-    Text_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
-    Text_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf),
-                            win, 48, 48);
+    Text_DrawMessageAsTiles((s32)MsgCoins, win, 72, 32);
+    Text_DrawMessageAsTiles((s32)MsgStatusLabel, win, 0, 48);
+    Text_DrawStringInWindow(
+        String_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 48);
 #else
-    Text_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
-    Text_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf),
-                            win, 48, 40);
+    Text_DrawMessageAsTiles((s32)MsgStatusLabel, win, 0, 32);
+    Text_DrawStringInWindow(
+        String_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 40);
     y = 48;
     Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
 #if (LANGUAGE == LANGUAGE_FRENCH)
     // French uses the singular form for zero or one coin.
     if (*(u32 *)(rec + 36) > 1)
-      Text_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+      Text_DrawMessageAsTiles((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
     else
-      Text_DrawCharacterAtOffset((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
+      Text_DrawMessageAsTiles((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
 #else
-    Text_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+    Text_DrawMessageAsTiles((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
 #endif
 #endif
   }
@@ -990,7 +991,7 @@ extern u8 MsgSaveNoData[];
 #define SAVE_FILE_COUNT 3
 #define SAVE_MENU_NO_FILE -2
 
-s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
+s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct Window *fileList;
   struct SaveWorkspace *save;
   struct Window *summaryWindow;
@@ -1080,7 +1081,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   }
 
   Dma_Fill32(0, spriteWork, 0xcec);
-  PaletteGlow_Start();
+  FileList_StartPulse();
   fileList = Window_Create(1, 2, 28, 7, 2);
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
     if (save->summary[i].level == 0) {
@@ -1100,8 +1101,8 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
                        (s32)fileList, FILE_LIST_AREA_X, y);
     }
   }
-  modePicture = RenderResource_CreatePair(
-      menuMode, (struct RenderInput *)fileList, 72, -24);
+  modePicture =
+      MenuTitle_Create(menuMode, (struct RenderInput *)fileList, 72, -24);
   Func_080f8070();
   for (i = 0, y = 144; i < 4; i++, y += 24)
     Func_080f8090(i, y, 128);
@@ -1116,8 +1117,8 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
                       save->summary[selectedFile].paletteGlowSub);
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, 2);
-        StatusMenu_DrawCharacterSummary((s32)summaryWindow,
-                                        (u8 *)&save->summary[selectedFile]);
+        FileList_DrawSummary((s32)summaryWindow,
+                             (u8 *)&save->summary[selectedFile]);
         wait(1);
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, 2);
@@ -1199,7 +1200,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   Window_Close(partyWindow, 2);
   Window_Close(summaryWindow, 2);
   Window_Close(fileList, 2);
-  PaletteGlow_Stop();
+  FileList_StopPulse();
   HeapSlot_Release(220);
   Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
   wait(1);
@@ -1215,7 +1216,7 @@ done:
 #undef ERASE_CONFIRM_X
 #undef Text_DrawStringAtOffset
 #undef Text_DrawNumberAtOffset
-#undef Text_DrawCharacterAtOffset
+#undef Text_DrawMessageAsTiles
 #undef SUMMARY_LEVEL_X
 #undef SUMMARY_COINS_X
 #undef FILE_LIST_LEADER_X

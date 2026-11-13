@@ -260,9 +260,9 @@ void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
 
 #ifdef UBFIX
-void Func_08126700(s32 x, s32 depth, s32 y, s32 zoom) {
+void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
-void Func_08126700(s32 x, s32 depth, s32 y) {
+void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   s32 span = 0x01fe0000;
   // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
@@ -467,7 +467,7 @@ s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
-void Func_0810824c(void);
+void Shop_ReleaseWork(void);
 
 s32 Func_081269ec(s32 value) { return value / 16; }
 
@@ -734,7 +734,7 @@ extern const s32 Data_08129830[];
 // young (24 frames) a spark that dies is born again on a random ring.
 // Then three rings drift outward through their four frames. The canvas
 // is marked ready for the transfer callback at the end.
-void Func_08126e00(void) {
+void ElementGlow_UpdateStarField(void) {
   s32 j;
   s32 frame;
   u32 size;
@@ -843,7 +843,7 @@ void Func_08126e00(void) {
 
 s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 
-s32 Func_08127038(void) {
+s32 ElementGlow_UploadStarField(void) {
   void *source = Ram_HeapSlots->battleFxWork[1];
   u8 *context = Ram_HeapSlots->battleFxWork[0];
 
@@ -888,7 +888,7 @@ static __inline__ s32 PolarY(s32 angle, s32 radius) {
 /// over the first 32 colours, BG2 unscaled at the origin, the additive and max
 /// blitters (Func_08138048, the veneer of BattleEffect_LoadBlitter), and the
 /// two frame callbacks.
-s32 Func_08127068(s32 mode) {
+s32 ElementGlow_InitializeStarField(s32 mode) {
   struct SparkWork *work;
   struct Spark *spark;
   struct Ring *ring;
@@ -970,8 +970,8 @@ s32 Func_08127068(s32 mode) {
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   Func_08138048(104, 0x03);
   Func_08138048(188, 0x13);
-  Task_Add(Func_08126e00, 0x480);
-  return Task_Add(Func_08127038, 0x480);
+  Task_Add(ElementGlow_UpdateStarField, 0x480);
+  return Task_Add(ElementGlow_UploadStarField, 0x480);
 }
 
 /// Ends a star field: clears the tiles in character block 1, releases its
@@ -986,8 +986,8 @@ s32 ElementGlow_End(s32 unused) {
   HeapSlot_Release(92);
   REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                 DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1;
-  Task_Remove(Func_08127038);
-  return Task_Remove(Func_08126e00);
+  Task_Remove(ElementGlow_UploadStarField);
+  return Task_Remove(ElementGlow_UpdateStarField);
 }
 
 void Func_08127304(void) {}
@@ -1001,7 +1001,7 @@ struct ElementSession {
   u16 background;
 };
 
-s32 Func_0811c2b4(s32 slot, s32 *screen);
+s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
 void Func_08138020(struct BattlePresentationWork *launch);
 void Func_08138030(struct BattlePresentationWork *launch);
 void Func_08138038(s32 mode);
@@ -1038,7 +1038,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
   Io_Write16(17, &REG_WINOUT);
   if (mode == 0) {
     QueueIoWriteDelay2(0x04000052, 0x100e);
-    Func_08127068(kind);
+    ElementGlow_InitializeStarField(kind);
     for (frame = 0, pos = &position; frame <= 44; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
@@ -1046,7 +1046,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       if (frame <= 24)
         ColorBuffer_Scale__f11f66c(session->palette, (u16 *)0x050000c0,
                           *brightness = 0x10000 - frame * 1092, 128);
-      Func_0811c2b4(unit, (s32 *)pos);
+      BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;
       work->originY = (64 - pos->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->originX, 0x84000002);
@@ -1057,7 +1057,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
   } else if (mode == 1) {
     Func_08138038(kind);
     for (frame = 0; frame < 40; frame++) {
-      Func_0811c2b4(unit, (s32 *)&position2);
+      BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
       origin[0] = (64 - position2.x) << 8;
       origin[1] = (64 - position2.y) << 8;
       IO_WRITE_QUEUE_PUSH(0x04000028, (u32)origin, 0x84000002);
@@ -1088,7 +1088,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
 }
 
 /// Puts the background's palette back undarkened, at level 0.
-/// Called by Func_0811df70 and Func_0811f088.
+/// Called by Func_0811df70 and BattleStaging_RunPsynergyCast.
 void BattleBackground_RestorePalette(void) {
   BattleBackground_SetPaletteLevel(0, 0);
 }

@@ -4,7 +4,7 @@
 	.global Func_08118088
 	.thumb_func
 Func_08118088:
-	overlay_veneer Func_0811c074
+	overlay_veneer BattleMotion_ApplyKnockback
 	.global BattleParty_ListActorIdsFar
 	.thumb_func
 BattleParty_ListActorIdsFar:
@@ -24,11 +24,11 @@ BattleMotion_ProjectPositionFar:
 	.global BattleMotion_ProjectScaledPositionFar
 	.thumb_func
 BattleMotion_ProjectScaledPositionFar:
-	overlay_veneer Func_0811c2b4
+	overlay_veneer BattleMotion_ProjectScaledPosition
 	.global BattleMotion_ProjectConditionalPositionFar
 	.thumb_func
 BattleMotion_ProjectConditionalPositionFar:
-	overlay_veneer Func_0811c314
+	overlay_veneer BattleMotion_ProjectConditionalPosition
 	.global BattleParty_ListLivingUnitsFar
 	.thumb_func
 BattleParty_ListLivingUnitsFar:

@@ -471,7 +471,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 }
 
 s32 Func_080ca5a0(s32 owner) {
-  s32 count = Party_CountActiveOwnersFar();
+  s32 count = Party_CountMembersFar();
   s32 i;
 
   if (count > 4)

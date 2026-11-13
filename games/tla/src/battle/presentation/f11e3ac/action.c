@@ -111,8 +111,8 @@ s32 Unit_AddHpFar(s32 owner, s32 delta);
 s32 GameFlag_Test(s32 flag);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *owner, s32 slot);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
-s32 Djinn_IsActiveFar(s32 unitId, s32 element, s32 index);
-s32 Djinn_IsReadyFar(s32 unitId, s32 element, s32 index);
+s32 Djinn_IsSetFar(s32 unitId, s32 element, s32 index);
+s32 Djinn_CanSetFar(s32 unitId, s32 element, s32 index);
 u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32 element, u32 djinn);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 s32 Item_GetEquippedElementFar(s32 unitId);
@@ -205,7 +205,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         plan->targetCount = targetCount;
         if (targetCount <= 0) {
           MessageArgument_PushFar(request->unitId, 1);
-          Message_ShowAndWaitCoreFar((s32)&MsgActorDefends);
+          BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
           if (actor->guardLevel == 0)
             actor->guardLevel = 1;
           return -1;
@@ -265,23 +265,23 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     if (actor->immobile) {
       actor->immobile = 0;
       MessageArgument_PushFar(request->unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)&MsgUnableToMove);
+      BattleMessage_ShowAndWaitFar((s32)&MsgUnableToMove);
       return -1;
     }
     if (actor->sleep) {
       MessageArgument_PushFar(request->unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)&MsgIsAsleep);
+      BattleMessage_ShowAndWaitFar((s32)&MsgIsAsleep);
       return -1;
     }
     if (actor->stun) {
       MessageArgument_PushFar(request->unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)&MsgIsParalyzed);
+      BattleMessage_ShowAndWaitFar((s32)&MsgIsParalyzed);
       return -1;
     }
     if ((actor->restraint & 1) && request->command != COMMAND_DEFEND &&
         (Battle_RandomFar() & 3) == 0) {
       MessageArgument_PushFar(request->unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)&MsgIsBound);
+      BattleMessage_ShowAndWaitFar((s32)&MsgIsBound);
       return -1;
     }
   }
@@ -300,10 +300,10 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   switch (request->command) {
   case COMMAND_FLEE:
     if ((u16)request->unitId <= 7) {
-      Message_ShowAndWaitCoreFar((s32)&MsgPartyFlees);
+      BattleMessage_ShowAndWaitFar((s32)&MsgPartyFlees);
     } else {
       MessageArgument_PushFar(request->unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)&MsgActorRuns);
+      BattleMessage_ShowAndWaitFar((s32)&MsgActorRuns);
     }
     BattleMessage_WaitForAdvance();
     plan->outcome = 7;
@@ -316,10 +316,10 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     if (abilityId != 1) {
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, 1), 2);
-      Message_ShowAndWaitCoreFar((s32)&MsgWeaponHowls);
+      BattleMessage_ShowAndWaitFar((s32)&MsgWeaponHowls);
       Func_08120158();
       MessageArgument_PushFar(abilityId, 4);
-      Message_ShowAndWaitCoreFar((s32)(MsgWeaponHowls + 1));
+      BattleMessage_ShowAndWaitFar((s32)(MsgWeaponHowls + 1));
     }
     break;
 
@@ -347,13 +347,13 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     MessageArgument_PushFar(abilityId, 4);
     switch (abilityId) {
     case 600 ... 627:
-      Message_ShowAndWaitCoreFar((s32)&MsgActorCastsSpecial);
+      BattleMessage_ShowAndWaitFar((s32)&MsgActorCastsSpecial);
       break;
     case 590 ... 597:
-      Message_ShowAndWaitCoreFar((s32)&MsgActorCastsDjinni);
+      BattleMessage_ShowAndWaitFar((s32)&MsgActorCastsDjinni);
       break;
     default:
-      Message_ShowAndWaitCoreFar((s32)&MsgActorCasts);
+      BattleMessage_ShowAndWaitFar((s32)&MsgActorCasts);
       break;
     }
     if (actor->pp < ability->ppCost) {
@@ -367,7 +367,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     if (canCast) {
       plan->failure = 0;
       actor->pp -= ability->ppCost;
-      Unit_UpdateRatiosFar(request->unitId);
+      Unit_RecalculateGaugesFar(request->unitId);
       if (actor->pp < 0)
         actor->pp = 0;
       if (actor->pp > actor->maxPp)
@@ -380,14 +380,14 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
 
     if (request->parameter < 0) {
       MessageArgument_PushFar(request->unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)&MsgItemAlreadyUsed);
+      BattleMessage_ShowAndWaitFar((s32)&MsgItemAlreadyUsed);
       return -1;
     }
     item = Item_Get(actor->inventory[request->parameter]);
     abilityId = item->actionId;
     if (abilityId == 0 || (actor->inventory[request->parameter] & 0x400)) {
       MessageArgument_PushFar(request->unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)&MsgActorDefends);
+      BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
       if (actor->guardLevel == 0)
         actor->guardLevel = 1;
       return -1;
@@ -403,21 +403,21 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       case 6:
       case 7:
       case 8:
-        Message_ShowAndWaitCoreFar((s32)&MsgActorRaisesItem);
+        BattleMessage_ShowAndWaitFar((s32)&MsgActorRaisesItem);
         break;
       default:
-        Message_ShowAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
+        BattleMessage_ShowAndWaitFar((s32)&MsgActorUsesBattleItem);
         break;
       }
     } else {
-      Message_ShowAndWaitCoreFar((s32)&MsgActorUsesBattleItem);
+      BattleMessage_ShowAndWaitFar((s32)&MsgActorUsesBattleItem);
     }
   } break;
 
   case COMMAND_DEFEND:
   case COMMAND_DEFEND2:
     MessageArgument_PushFar(request->unitId, 1);
-    Message_ShowAndWaitCoreFar((s32)&MsgActorDefends);
+    BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
     return -1;
 
   case COMMAND_NONE:
@@ -492,20 +492,20 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       message = (s32)&MsgEnemyAbility0d65;
       break;
     }
-    Message_ShowAndWaitCoreFar(message);
+    BattleMessage_ShowAndWaitFar(message);
   } break;
 
   case COMMAND_DJINN:
     abilityId = Djinn_GetDefinitionHeaderFar((request->parameter >> 8) & 15,
                                              request->parameter & 255);
-    if (!Djinn_IsActiveFar(request->unitId, (request->parameter >> 8) & 15,
-                           request->parameter & 255)) {
-      if (Djinn_IsReadyFar(request->unitId, (request->parameter >> 8) & 15,
-                           request->parameter & 255)) {
+    if (!Djinn_IsSetFar(request->unitId, (request->parameter >> 8) & 15,
+                        request->parameter & 255)) {
+      if (Djinn_CanSetFar(request->unitId, (request->parameter >> 8) & 15,
+                          request->parameter & 255)) {
         BattleAction_Get(abilityId);
         BattleHighlight_SetModes(0, 0);
-        Djinn_ActivateFar(request->unitId, (request->parameter >> 8) & 15,
-                          request->parameter & 255);
+        Djinn_SetFar(request->unitId, (request->parameter >> 8) & 15,
+                     request->parameter & 255);
         DjinnRecovery_RemoveFar(request->unitId, (request->parameter >> 8) & 15,
                                 request->parameter & 255);
         Unit_CalculateFar(request->unitId);
@@ -530,7 +530,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(abilityId, 4);
       Sound_PlayFar(114);
-      Message_ShowAndWaitCoreFar((s32)&MsgDjinnInRecovery);
+      BattleMessage_ShowAndWaitFar((s32)&MsgDjinnInRecovery);
       wait(60);
       return -1;
     }
@@ -545,7 +545,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       ability = BattleAction_Get(abilityId);
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(abilityId, 4);
-      Message_ShowAndWaitCoreFar((s32)&MsgActorUnleashesDjinn);
+      BattleMessage_ShowAndWaitFar((s32)&MsgActorUnleashesDjinn);
       plan->element = ability->element;
     }
     break;
@@ -579,12 +579,12 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     if (index != 4) {
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(abilityId, 4);
-      Message_ShowAndWaitCoreFar((s32)&MsgSummonLacksDjinn);
+      BattleMessage_ShowAndWaitFar((s32)&MsgSummonLacksDjinn);
       return -1;
     }
     MessageArgument_PushFar(request->unitId, 1);
     MessageArgument_PushFar(abilityId, 4);
-    Message_ShowAndWaitCoreFar((s32)&MsgActorSummons);
+    BattleMessage_ShowAndWaitFar((s32)&MsgActorSummons);
     for (index = 0; index != list->count; index++) {
       struct DjinnRecoveryEntryDraft *entry = &list->entries[index];
 
@@ -616,7 +616,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       plan->presentationFlags = Func_0811d79c(actor->enemyId);
     }
     MessageArgument_PushFar(request->unitId, 1);
-    Message_ShowAndWaitCoreFar((s32)&MsgActorAttacks);
+    BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
     // The rolls in a one-pass block left by break, which places them ahead of
     // the five tests; as an if on the negated tests, 119 of 1601 instructions
     // differ in tla-en.
@@ -717,7 +717,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         } else {
           rate = 100;
         }
-        plan->targetHit[index] = BattleEffect_RollSuccessFar(
+        plan->targetHit[index] = Battle_RollEffectSuccessFar(
             request->unitId, plan->targetIds[index], ability->element,
             ability->effect, rate);
       }

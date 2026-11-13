@@ -230,10 +230,10 @@ PartyInventory_Remove:
 	.thumb_func
 Inventory_Equip:
 	overlay_veneer Inventory_EquipFar
-	.global Party_CountActiveOwners
+	.global Party_CountMembers
 	.thumb_func
-Party_CountActiveOwners:
-	overlay_veneer Party_CountActiveOwnersFar
+Party_CountMembers:
+	overlay_veneer Party_CountMembersFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

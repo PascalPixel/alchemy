@@ -12,7 +12,7 @@ PartyInventory_FindRoomFar:
 	.global Func_080ad2f8
 	.thumb_func
 Func_080ad2f8:
-	overlay_veneer Func_080aff94
+	overlay_veneer Class_GetSeries
 	.global Djinn_ActivateOfferedForPartyFar
 	.thumb_func
 Djinn_ActivateOfferedForPartyFar:

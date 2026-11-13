@@ -278,9 +278,9 @@ void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Message_CloseFinishedWindows(void);
-s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
-s32 Menu_SelectSaveSlotAction(void);
-void Party_AddActiveOwner(s32 id);
+s32 YesNoMenu_Run(s32 a, s32 b, s32 c, s32 d);
+s32 FileList_SelectAction(void);
+void Party_AddMember(s32 id);
 
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
@@ -335,12 +335,12 @@ s32 Scene_Initialize(void) {
     if (i == 0) {
       FieldMessage_Show(message + 1, 1);
       gMainRoutineWork.unk22d[2] = 1;
-      Party_AddActiveOwner(5);
-      Party_AddActiveOwner(6);
-      Party_AddActiveOwner(7);
-      Party_AddActiveOwner(1);
-      Party_AddActiveOwner(2);
-      Party_AddActiveOwner(3);
+      Party_AddMember(5);
+      Party_AddMember(6);
+      Party_AddMember(7);
+      Party_AddMember(1);
+      Party_AddMember(2);
+      Party_AddMember(3);
       i = Func_020022d0();
       if (i == -1)
         goto ask_save;
@@ -367,7 +367,7 @@ top:
     started = 1;
   }
   if (result > 0)
-    result = Menu_SelectSaveSlotAction();
+    result = FileList_SelectAction();
   else
     result = 0;
   if (result == 0) {
@@ -391,7 +391,7 @@ top:
       goto open;
   ask:
     FieldMessage_Show((s32)MsgTransferDataFromGoldenSun, 13);
-    result = Menu_RunConfirmSelection(1, 0, 0, 0);
+    result = YesNoMenu_Run(1, 0, 0, 0);
     Message_CloseFinishedWindows();
     if (result == 0) {
     enter:
@@ -443,7 +443,7 @@ top:
     save:
       message = (s32)MsgPlayOnEasyLevel;
       FieldMessage_Show(message, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
+      i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
         if (gData_02003860 == 0) {
@@ -465,7 +465,7 @@ top:
         }
       }
       FieldMessage_Show((s32)MsgPlayOnHardLevel, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
+      i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
         Event_SetFlag(46);
@@ -473,7 +473,7 @@ top:
         goto leave;
       }
       FieldMessage_Show((s32)MsgPlayOnNormalLevel, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
+      i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i != 0)
         goto save;
@@ -504,7 +504,7 @@ top:
         recovery = (s32)MsgSomeDataIsCorrupted;
         FieldMessage_Show(recovery, 9);
         FieldMessage_Show(recovery + 1, 13);
-        if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0) {
+        if (YesNoMenu_Run(1, 0, 0, 0) != 0) {
           Message_CloseFinishedWindows();
           goto top;
         }
@@ -934,10 +934,10 @@ void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
                             s32 mode);
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x,
                              s32 y);
-void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
+void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x,
                                 s32 y);
 void WindowSprite_RedrawSavedRect(struct Window *window);
-void Party_RemoveActiveOwner(s32 id);
+void Party_RemoveMember(s32 id);
 u16 Func_0200217c(u32 length, u8 *p);
 void Func_020018e0(s32 mode, u8 *data);
 s32 Func_02002068(u8 *src, s32 length, u8 *dst);
@@ -991,24 +991,24 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
 #define DRAW_TITLE(window)                                                     \
   {                                                                            \
     message = MSGNO(MsgFieldPasswordKana);                                     \
-    Text_DrawCharacterAtOffset(message++, window, 0, 0);                       \
-    Text_DrawCharacterAtOffset(message++, window, 0, 8);                       \
-    Text_DrawCharacterAtOffset(message++, window, 0, 16);                      \
-    Text_DrawCharacterAtOffset(message++, window, 0, 24);                      \
-    Text_DrawCharacterAtOffset(message++, window, 48, 0);                      \
-    Text_DrawCharacterAtOffset(message++, window, 48, 8);                      \
-    Text_DrawCharacterAtOffset(message++, window, 48, 16);                     \
-    Text_DrawCharacterAtOffset(message++, window, 48, 24);                     \
-    Text_DrawCharacterAtOffset(message++, window, 96, 0);                      \
-    Text_DrawCharacterAtOffset(message++, window, 96, 8);                      \
-    Text_DrawCharacterAtOffset(message++, window, 96, 16);                     \
-    Text_DrawCharacterAtOffset(message++, window, 96, 24);                     \
-    Text_DrawCharacterAtOffset(message++, window, 144, 0);                     \
-    Text_DrawCharacterAtOffset(message++, window, 144, 8);                     \
+    Text_DrawMessageAsTiles(message++, window, 0, 0);                       \
+    Text_DrawMessageAsTiles(message++, window, 0, 8);                       \
+    Text_DrawMessageAsTiles(message++, window, 0, 16);                      \
+    Text_DrawMessageAsTiles(message++, window, 0, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 48, 0);                      \
+    Text_DrawMessageAsTiles(message++, window, 48, 8);                      \
+    Text_DrawMessageAsTiles(message++, window, 48, 16);                     \
+    Text_DrawMessageAsTiles(message++, window, 48, 24);                     \
+    Text_DrawMessageAsTiles(message++, window, 96, 0);                      \
+    Text_DrawMessageAsTiles(message++, window, 96, 8);                      \
+    Text_DrawMessageAsTiles(message++, window, 96, 16);                     \
+    Text_DrawMessageAsTiles(message++, window, 96, 24);                     \
+    Text_DrawMessageAsTiles(message++, window, 144, 0);                     \
+    Text_DrawMessageAsTiles(message++, window, 144, 8);                     \
     Window_DrawDividerLine(window, 24, 0, 24, 5);                              \
-    Text_DrawCharacterAtOffset(message++, window, 192, 0);                     \
-    Text_DrawCharacterAtOffset(message++, window, 192, 8);                     \
-    Text_DrawCharacterAtOffset(message, window, 192, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 192, 0);                     \
+    Text_DrawMessageAsTiles(message++, window, 192, 8);                     \
+    Text_DrawMessageAsTiles(message, window, 192, 24);                      \
   }
 #else
 /// Draws the password screen's title and key help into the main window.
@@ -1020,9 +1020,9 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
     Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                    \
     message = MSGNO(MsgFieldSpace);                                            \
     Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
-    Text_DrawCharacterAtOffset(message++, window, 160, 0);                     \
-    Text_DrawCharacterAtOffset(message++, window, 160, 8);                     \
-    Text_DrawCharacterAtOffset(message, window, 160, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 160, 0);                     \
+    Text_DrawMessageAsTiles(message++, window, 160, 8);                     \
+    Text_DrawMessageAsTiles(message, window, 160, 24);                      \
   }
 #endif
 
@@ -1278,7 +1278,7 @@ s32 Func_02000e44(void) {
           crc = check;
           if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
-            Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box, 0,
+            Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0,
                                        0);
             Sound_Play(112);
           wait_accepted:
@@ -1289,14 +1289,14 @@ s32 Func_02000e44(void) {
             Func_02002350();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
-            Party_RemoveActiveOwner(4);
-            Party_RemoveActiveOwner(5);
-            Party_RemoveActiveOwner(6);
-            Party_RemoveActiveOwner(7);
-            Party_AddActiveOwner(0);
-            Party_AddActiveOwner(1);
-            Party_AddActiveOwner(2);
-            Party_AddActiveOwner(3);
+            Party_RemoveMember(4);
+            Party_RemoveMember(5);
+            Party_RemoveMember(6);
+            Party_RemoveMember(7);
+            Party_AddMember(0);
+            Party_AddMember(1);
+            Party_AddMember(2);
+            Party_AddMember(3);
             Func_020018e0(mode, DECODED_PASSWORD);
             Window_Close(box, 2);
             Window_Close(grid, 2);
@@ -1310,7 +1310,7 @@ s32 Func_02000e44(void) {
             return 0;
           }
           Sound_Play(113);
-          Text_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
+          Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
           System_Wait(1);
           if (!(gInput.pressed & 1) && !(gInput.pressed & 2))
@@ -1581,7 +1581,7 @@ void Func_020018e0(s32 mode, u8 *in) {
 
   for (i = 0; i != 28; i++) {
     if ((djinnBits >> i) & 1)
-      Djinn_AddToLeastLoadedOwner(i / 7, i % 7);
+      Djinn_GiveToParty(i / 7, i % 7);
   }
 
   if (mode != 0) {

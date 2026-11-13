@@ -4,7 +4,7 @@
 
 #include "../shop_internal.h"
 
-s32 Shop_ServicePrice(s32 entry_id, s32 kind) {
+s32 Sanctum_ServicePrice(s32 entry_id, s32 kind) {
   u8 value = ((struct BattleUnit *)Unit_Get(entry_id))->level;
   s32 result = 0;
 
@@ -20,7 +20,7 @@ s32 Shop_ServicePrice(s32 entry_id, s32 kind) {
   return result;
 }
 
-s32 Shop_CanServe(s32 entry_id, s32 kind) {
+s32 Sanctum_NeedsService(s32 entry_id, s32 kind) {
   struct BattleUnit *entry = Unit_Get(entry_id);
   s32 result = 0;
 
@@ -33,8 +33,8 @@ s32 Shop_CanServe(s32 entry_id, s32 kind) {
 }
 
 /// Counts the party members who need the selected sanctum service.
-// As ☀️'s Shop_CountUnits.
-s32 Shop_CountUnits(void) {
+// As ☀️'s Sanctum_CountMembersInNeed.
+s32 Sanctum_CountMembersInNeed(void) {
   struct ShopRuntime *shop;
   s32 eligibleCount;
   s32 serviceKind;
@@ -44,13 +44,13 @@ s32 Shop_CountUnits(void) {
   eligibleCount = 0;
   serviceKind = shop->partyAction;
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-    if (Shop_CanServe(shop->partyMemberIds[memberIndex], serviceKind) != 0)
+    if (Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind) != 0)
       eligibleCount++;
   }
   return eligibleCount;
 }
 
-s32 Shop_MsgByMode(s32 value) {
+s32 Sanctum_GetServiceMessage(s32 value) {
   s8 *shop;
   s8 mode;
 
@@ -71,24 +71,24 @@ s32 Shop_MsgByMode(s32 value) {
 /// Shows the service message, its wording for the shop's mode, with the
 /// keeper's portrait, and waits until it has been read.
 // The Broken Seal's Sanctum_ShowKeeperMessage.
-void Func_0810a9ac(s32 message) {
+void Sanctum_ShowKeeperMessage(s32 message) {
   u8 *shop;
   s32 portrait;
 
   shop = Ram_HeapSlots->menuRuntime;
   portrait = BattleEffect_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
   Message_CloseFinishedWindowsFar();
-  message = Shop_MsgByMode(message);
+  message = Sanctum_GetServiceMessage(message);
   Message_OpenWindowFar(message, 5, 0, (portrait << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
 }
 
-/// As Func_0810a9ac, with the cursor's anchor object set to state 13 while the
+/// As Sanctum_ShowKeeperMessage, with the cursor's anchor object set to state 13 while the
 /// message shows and restored after.
 // The Broken Seal's Sanctum_ShowKeeperMessageHidingCursor.
-void Func_0810a9fc(s32 message) {
+void Sanctum_ShowKeeperMessageHidingCursor(s32 message) {
   struct ShopRuntime *shop;
   u8 **anchor;
   s32 portrait;
@@ -98,7 +98,7 @@ void Func_0810a9fc(s32 message) {
   anchor = &shop->cursor.anchor;
   saved = (*anchor)[5];
   portrait = BattleEffect_GetResourceIdFar(shop->keeperResource);
-  message = Shop_MsgByMode(message);
+  message = Sanctum_GetServiceMessage(message);
   (*anchor)[5] = 13;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(message, 5, 0, (portrait << 16) | 0x22);
@@ -108,24 +108,24 @@ void Func_0810a9fc(s32 message) {
   shop->cursor.anchor->active = saved;
 }
 
-// Shop_ConfirmAct is the sanctum's service loop. It opens the priest's window
+// Sanctum_Run is the sanctum's service loop. It opens the priest's window
 // (his face resource from the actor's sprite, or a plain window), the cursor
 // and the coins window, then offers the party service until the menu is
-// cancelled. The Broken Seal's Shop_ConfirmAct in games/tbs/src/shop/shop.c,
+// cancelled. The Broken Seal's Sanctum_Run in games/tbs/src/shop/shop.c,
 // written with this game's calls (Shop_InitializeWork for the cursor work,
 // Func_080380f8 for the side-object window, MenuCursor_SetPositionImmediate to
-// place the cursor, Func_0810a9ac to show a message, Shop_CountUnits to count
-// the downed, Func_0810abf0 for the service, Func_0810824c to clean up), its
+// place the cursor, Sanctum_ShowKeeperMessage to show a message, Sanctum_CountMembersInNeed to count
+// the downed, Sanctum_RunPartyService for the service, Shop_ReleaseWork to clean up), its
 // work-block offsets and numbered messages.
 
 extern u8 MsgReviveService[]; // "Hmm, you were downed ...", then "Fear not ..."
 
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 
-s32 Func_0810abf0(void);
+s32 Sanctum_RunPartyService(void);
 s32 Menu_SelectSanctumServiceFar(s32 prev);
 
-s32 Shop_ConfirmAct(s32 unitId) {
+s32 Sanctum_Run(s32 unitId) {
   s32 partyAction = 0;
   s32 listWindow = 0;
   struct ShopRuntime *shop;
@@ -154,10 +154,10 @@ s32 Shop_ConfirmAct(s32 unitId) {
   cursorAnchor->unk00[4] = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = (struct WindowSprite *)cursorAnchor;
-  Func_0810a9ac((s32)MsgWelcomeWearyWanderers);
+  Sanctum_ShowKeeperMessage((s32)MsgWelcomeWearyWanderers);
 
   shop->moneyWindow = Window_CreateFar(16, 11, SHOP_COIN_WINDOW_WIDTH, 4, 2);
-  Func_08109188();
+  Shop_DrawMoney();
 
   for (;;) {
     partyAction = Menu_SelectSanctumServiceFar(partyAction);
@@ -165,21 +165,21 @@ s32 Shop_ConfirmAct(s32 unitId) {
     if (partyAction == -1)
       break;
 
-    Func_0810a9ac((s32)MsgReviveService);
-    if (Shop_CountUnits() == 0) {
-      Func_0810a9ac((s32)MsgReviveService + 1);
+    Sanctum_ShowKeeperMessage((s32)MsgReviveService);
+    if (Sanctum_CountMembersInNeed() == 0) {
+      Sanctum_ShowKeeperMessage((s32)MsgReviveService + 1);
     } else {
-      Func_0810abf0();
+      Sanctum_RunPartyService();
     }
     shop->partyAction = 0;
     MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-    Func_0810a9ac((s32)MsgSanctumMoreAid);
+    Sanctum_ShowKeeperMessage((s32)MsgSanctumMoreAid);
   }
 
-  Func_0810a9ac((s32)MsgSanctumFarewell);
+  Sanctum_ShowKeeperMessage((s32)MsgSanctumFarewell);
   Window_CloseFar(shop->moneyWindow, 2);
   Window_CloseFar(listWindow, 2);
-  Func_0810824c();
+  Shop_ReleaseWork();
   return 0;
 }
 
@@ -187,10 +187,10 @@ s32 Shop_ConfirmAct(s32 unitId) {
 // donation and its answers) take placeholders here.
 extern u8 MsgWhoShallIRevive[];
 
-void Shop_DrawServiceParty(void *window, s32 memberIndex);
-void Shop_DrawSelectMsg(s32 window, s32 unitId);
-void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
-void Func_0810b1b4(s32 member);
+void Sanctum_HighlightMembers(void *window, s32 memberIndex);
+void Sanctum_DrawFee(s32 window, s32 unitId);
+void Sanctum_ApplyService(s32 unitId, s32 serviceKind);
+void Sanctum_RunMemberIconBurst(s32 member);
 
 // Italian creates no price window and passes 0 where the others pass it, a
 // layout difference of that language's edition.
@@ -233,7 +233,7 @@ void Func_0810b1b4(s32 member);
 //   (r5 holds the windows' style, 2), which leaves global one register short,
 //   so chooseAgain and priceWindow go to the stack and chooseAgain's 0 is
 //   stored from r6.
-s32 Func_0810abf0(void) {
+s32 Sanctum_RunPartyService(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   void *priceWindow;
   s32 redraw;
@@ -260,7 +260,7 @@ s32 Func_0810abf0(void) {
      * shop->partyAction, 4 of 297 instructions differ in tla-en. */
     serviceKind = *partyAction;
   }
-  Func_0810a9ac((s32)MsgWhoShallIRevive);
+  Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
 
   listWindow = Window_CreateFar(1, 12, 13, 3, 2);
   shop->cursor.anchor->active = 4;
@@ -273,7 +273,7 @@ s32 Func_0810abf0(void) {
   memberIndex = 0;
   while (memberIndex < shop->partyMemberCount) {
     unitId = shop->partyMemberIds[memberIndex];
-    if (Shop_CanServe(unitId, serviceKind) != 0)
+    if (Sanctum_NeedsService(unitId, serviceKind) != 0)
       break;
     memberIndex++;
   }
@@ -282,12 +282,12 @@ s32 Func_0810abf0(void) {
 loop:
   if (chooseAgain != 0) {
     chooseAgain = 0;
-    Func_0810a9ac((s32)MsgWhoShallIRevive);
+    Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
     redraw = 2;
     memberIndex = 0;
     while (memberIndex < shop->partyMemberCount) {
       unitId = shop->partyMemberIds[memberIndex];
-      if (Shop_CanServe(unitId, serviceKind) != 0)
+      if (Sanctum_NeedsService(unitId, serviceKind) != 0)
         break;
       memberIndex++;
     }
@@ -295,21 +295,21 @@ loop:
 
   if (redraw != 0) {
     unitId = shop->partyMemberIds[memberIndex];
-    Shop_PlaceCursor(listWindow, (memberIndex % 4) * 24 - 12, 0);
+    MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
     shop->mode = 3;
     if (redraw == 2) {
       Func_080f8058(memberIndex / 4 * 4);
       wait(1);
     }
-    Shop_DrawServiceParty(listWindow, memberIndex);
-    Shop_DrawSelectMsg(priceWindow, unitId);
+    Sanctum_HighlightMembers(listWindow, memberIndex);
+    Sanctum_DrawFee(priceWindow, unitId);
     redraw = 0;
   }
 
   if ((gInput.pressed & 1) != 0) {
     wait(1);
-    price = Shop_ServicePrice(unitId, serviceKind);
-    if (Shop_CanServe(unitId, serviceKind) == 0) {
+    price = Sanctum_ServicePrice(unitId, serviceKind);
+    if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
       Sound_PlayFar(113);
       goto loop;
     }
@@ -317,28 +317,28 @@ loop:
     MessageArgument_PushFar(unitId, 1);
     MessageArgument_PushFar(price, 5);
     messageBase = (s32)MsgReviving;
-    Func_0810a9ac(messageBase);
+    Sanctum_ShowKeeperMessage(messageBase);
     if (Sanctum_AskYesNo(0) != 0) {
-      Func_0810a9fc(messageBase + 2);
+      Sanctum_ShowKeeperMessageHidingCursor(messageBase + 2);
       chooseAgain = 1;
       goto loop;
     }
     if ((u32)price > gMainRoutineWork.coins) {
       Sound_PlayFar(113);
-      Func_0810a9fc(messageBase + 1);
+      Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
       chooseAgain = 1;
       goto loop;
     }
     MessageArgument_PushFar(unitId, 1);
-    Func_0810a9ac(messageBase + 3);
+    Sanctum_ShowKeeperMessage(messageBase + 3);
     Message_CloseFinishedWindowsFar();
-    BattleUnit_ResetStateByMode(unitId, serviceKind);
-    Func_0810b1b4(memberIndex % 4);
+    Sanctum_ApplyService(unitId, serviceKind);
+    Sanctum_RunMemberIconBurst(memberIndex % 4);
     Party_AdjustCoinsFar(-price);
-    Func_08109188();
+    Shop_DrawMoney();
     MessageArgument_PushFar(unitId, 1);
-    Func_0810a9ac(messageBase + 4);
-    if (Shop_CountUnits() != 0) {
+    Sanctum_ShowKeeperMessage(messageBase + 4);
+    if (Sanctum_CountMembersInNeed() != 0) {
       chooseAgain = 1;
       goto loop;
     }
@@ -352,9 +352,9 @@ loop:
     s32 count = shop->partyMemberCount;
     /* FAKEMATCH(temporary): the member count read into a local of its own, so
      * it loads before memberIndex's address is set; as
-     * Func_08108690(&memberIndex, shop->partyMemberCount, 4), 2 of 297
+     * MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4), 2 of 297
      * instructions differ in tla-en. */
-    redraw = Func_08108690(&memberIndex, count, 4);
+    redraw = MenuGrid_MoveCursor(&memberIndex, count, 4);
   }
   wait(1);
   goto loop;
@@ -373,13 +373,13 @@ done:
 
 #define Item_Get ((u8 *(*)(u16))Item_Get)
 
-void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
+void Sanctum_ApplyService(s32 id, s32 mode) {
   struct BattleUnit *unit;
 
   unit = Unit_Get(id);
   if (mode == 0) {
     unit->hp = unit->maxHp;
-    Unit_UpdateRatiosFar(id);
+    Unit_RecalculateGaugesFar(id);
   } else if (mode == 1) {
     unit->poison = 0;
   } else if (mode == 2) {
@@ -400,12 +400,12 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
 
 #undef Item_Get
 
-// Shop_DrawServiceParty draws the sanctum's party page, four members at a time
+// Sanctum_HighlightMembers draws the sanctum's party page, four members at a time
 // with page arrows: The Broken Seal's Shop_DrawParty
 // (games/tbs/src/shop/shop.c) shape over a page, each member dimmed when
-// Shop_CanServe refuses the chosen service.
+// Sanctum_NeedsService refuses the chosen service.
 
-void Shop_DrawServiceParty(void *window, s32 selected) {
+void Sanctum_HighlightMembers(void *window, s32 selected) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   s32 serviceKind = shop->partyAction;
   s32 first = selected / 4 * 4;
@@ -438,7 +438,7 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
         else
           Animation_ApplyChildArgumentFar(shop->partyMemberIcons[i], 1);
         shop->partyMemberScale[i] = Q16_ONE;
-        if (!Shop_CanServe(unitId, serviceKind))
+        if (!Sanctum_NeedsService(unitId, serviceKind))
           shop->partyMemberScale[i] = 0xb333;
       }
     }
@@ -446,23 +446,23 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
 }
 
 /// Shows the selected member's service price, or that no treatment is needed.
-// As ☀️'s Shop_DrawSelectMsg. The service kind's variable takes the message
+// As ☀️'s Sanctum_DrawFee. The service kind's variable takes the message
 // once the kind is no longer needed, as the native's register does.
-void Shop_DrawSelectMsg(s32 window, s32 unitId) {
+void Sanctum_DrawFee(s32 window, s32 unitId) {
   s32 kindOrMessage;
   s32 price;
   struct ShopRuntime *shop;
 
   shop = Ram_HeapSlots->menuRuntime;
   kindOrMessage = shop->partyAction;
-  price = Shop_ServicePrice(unitId, kindOrMessage);
+  price = Sanctum_ServicePrice(unitId, kindOrMessage);
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
-    if (Shop_CanServe(unitId, kindOrMessage) != 0)
+    if (Sanctum_NeedsService(unitId, kindOrMessage) != 0)
       kindOrMessage = (s32)MsgReviveCost;
     else
       kindOrMessage = (s32)MsgNoHealingNeeded;
-    kindOrMessage = Shop_MsgByMode(kindOrMessage);
+    kindOrMessage = Sanctum_GetServiceMessage(kindOrMessage);
     MessageArgument_PushFar(price, 5);
     Text_DrawMessageFar(kindOrMessage, window, 0, 0);
   }
@@ -496,7 +496,7 @@ struct Effect_080b2f4c {
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
-void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
+void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
   struct Position position;
   s8 *statePointer;
   s32 state;
@@ -539,7 +539,7 @@ struct ShopFxWork {
   u8 slots[24][72];
 };
 
-void Func_0810b168(void) {
+void Sanctum_UpdateBurst(void) {
   struct ShopFxWork *work = Ram_HeapSlots->menuRuntime;
   s32 i;
   s32 selected;
@@ -596,7 +596,7 @@ struct BurstShop {
   struct BurstSprite effects[24];
 };
 
-void Func_0810b1b4(s32 member) {
+void Sanctum_RunMemberIconBurst(s32 member) {
   struct BurstShop *shop;
   s8 savedCursorMode;
   struct Position position;
@@ -609,11 +609,11 @@ void Func_0810b1b4(s32 member) {
   shop->burstMember = -1;
   shop->cursor.anchor->active = 13;
   Sound_PlayFar(Data_0810cf28[shop->action]);
-  Shop_RestoreSceneTiles(0x00202108);
+  Shop_SaveAndTintFieldPalette(0x00202108);
   Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 0);
   wait(20);
   callbackPriority = 0x480;
-  Task_Add(Func_0810b168, callbackPriority);
+  Task_Add(Sanctum_UpdateBurst, callbackPriority);
 
   position.x = shop->partyMemberX[member] << 16;
   position.z = (shop->partyMemberY[member] << 16) - (12 << 16);
@@ -624,7 +624,7 @@ void Func_0810b1b4(s32 member) {
     FieldParticle_InitializeFar((struct Effect_080b2f4c *)effect, 0x2a0,
                                 position.x, position.z);
     FieldParticle_SetCallbackFar((struct Effect_080b2f4c *)effect,
-                                 BattleEffect_UpdateRadialMotion);
+                                 Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar((struct Effect_080b2f4c *)effect, 7);
     Animation_ApplyChildValuesToRecordFar(effect->object,
                                           (Random16() * 7) >> 16);
@@ -672,9 +672,9 @@ void Func_0810b1b4(s32 member) {
     }
   }
 
-  Task_Remove(Func_0810b168);
+  Task_Remove(Sanctum_UpdateBurst);
   Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 16);
-  Shop_InitializeEffect();
+  Shop_RestoreFieldPalette();
   wait(30);
   shop->cursor.anchor->active = savedCursorMode;
 }

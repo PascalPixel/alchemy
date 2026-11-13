@@ -213,7 +213,7 @@ void BattleEvent_Playback(void) {
             s32 recordIndex;
 
             events->actorId = events->queue.operands[eventIndex];
-            Func_0812824c(events->actorId, events->flags);
+            BattleEnemy_RecordDefeat(events->actorId, events->flags);
             BattleActor_ResetRuntimeFields(events->actorId);
             unit = Unit_Get__f11f66c(events->actorId);
             for (recordIndex = 0;
@@ -323,7 +323,7 @@ void BattleEvent_Playback(void) {
           BattleMotion_SetRecordChildValues(
               BattleObject_Get(events->actorId)->object, 7);
         }
-        BattleLayout_HighlightPartyPanelsFar(selection);
+        PartyStatus_HighlightMembersFar(selection);
       }
       events->timer++;
       if (events->timer <= 7)

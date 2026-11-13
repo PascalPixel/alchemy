@@ -178,7 +178,7 @@ void PartyStatus_CreateWindowFar(s32 layout);
 void Func_081263c4(void);
 void Func_081263fc(s32 mode, s32 background, s32 value);
 void BattleSpoils_Clear(void);
-s32 Func_0811a39c(s32 groups, u16 *dst);
+s32 BattleUnit_ListIds(s32 groups, u16 *dst);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
 void Func_0811b9fc(void);
 void Func_0811d7e4(void);
@@ -189,7 +189,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
 s32 AutoBattle_RunAction(s16 *action);
 s32 Battle_FindTaggedSlotByValue(u32 id);
 void Func_08124cc0(void);
-void Func_08124e20(void);
+void Battle_ProcessTurnEnd(void);
 s32 Message_AllTypedFar(void);
 void Window_CloseFar(s32 window, s32 mode);
 void Func_08120060(s32 x, s32 y);
@@ -308,8 +308,8 @@ s32 Func_081197f0(s32 enemyGroup) {
 
   BattleUnit_Collect();
   BattleUnit_RefreshPlacement();
-  Func_08118eb0();
-  Func_08118f6c();
+  DjinnRecovery_Reconcile();
+  BattleSummon_UpdateAvailability();
   if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
     battle->partyStatus = 3;
   else
@@ -345,10 +345,10 @@ s32 Func_081197f0(s32 enemyGroup) {
   Task_Add(Func_0811b9fc, 0x480);
 
   for (round = 1;; round++) {
-    if (Func_0811a39c(1, 0) == 0)
+    if (BattleUnit_ListIds(1, 0) == 0)
       Func_081195ec();
     Func_0811d7e4();
-    Func_08118f6c();
+    BattleSummon_UpdateAvailability();
     if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
       battle->partyStatus = 3;
     else
@@ -441,7 +441,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     battle->nextExtraCount = 0;
     battle->encounterMode = 0;
     Func_08124cc0();
-    Func_08124e20();
+    Battle_ProcessTurnEnd();
     BattleMotion_DestroyAllSlotObjects();
     scripted = enemyGroup - 74;
     if ((u32)scripted <= 1 && round == 2)
@@ -482,7 +482,7 @@ won_scripted:
                             26);
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(128, 1);
-          Message_ShowAndWaitCoreFar(battle->defeatState + (s32)MsgDowned);
+          BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
           BattleMessage_WaitForAdvance();
         }
       }
@@ -513,9 +513,9 @@ party_lost:
       Sound_PlayFar(59);
       MessageArgument_ClearAllFar();
       if (BattleParty_PrepareActiveOwners(0) == 1)
-        Message_ShowAndWaitCoreFar((s32)MsgGoesDownInDefeat);
+        BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
       else
-        Message_ShowAndWaitCoreFar((s32)MsgPartyDefeated);
+        BattleMessage_ShowAndWaitFar((s32)MsgPartyDefeated);
       BattleMessage_WaitForAdvance();
     }
     Sound_PlayFar(78);
@@ -553,7 +553,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
   if (Ram_HeapSlots->battleWork->twoSided != 0)
     limit = 3;
 
-  count = Party_CountActiveOwnersFar();
+  count = Party_CountMembersFar();
   if (count > limit)
     count = limit;
 
@@ -574,7 +574,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   s32 count;
   s32 index;
 
-  count = Party_CountActiveOwnersFar();
+  count = Party_CountMembersFar();
   if (count > 4)
     count -= 4;
   else
@@ -786,7 +786,7 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
 }
 
 /// As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
-s32 Func_0811a39c(s32 groups, u16 *dst) {
+s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
   struct BattleWork *order;
   s32 count;
   s32 i;

@@ -12,8 +12,8 @@ Text_DrawNumberInWindowFar:
 	.global Text_SetColorFar
 	.thumb_func
 Text_SetColorFar:
-	overlay_veneer Func_08041f70
-	.global Func_080380c0
+	overlay_veneer Text_SetColor
+	.global Text_SetStyleFar
 	.thumb_func
-Func_080380c0:
-	overlay_veneer Func_08041f90
+Text_SetStyleFar:
+	overlay_veneer Text_SetStyle

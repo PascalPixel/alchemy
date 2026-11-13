@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global BattleLayout_HighlightPartyPanelsFar
+	.global PartyStatus_HighlightMembersFar
 	.thumb_func
-BattleLayout_HighlightPartyPanelsFar:
-	overlay_veneer BattleLayout_HighlightPartyPanels
+PartyStatus_HighlightMembersFar:
+	overlay_veneer PartyStatus_HighlightMembers
 	.global Icon_BuildItemIconTilesFar
 	.thumb_func
 Icon_BuildItemIconTilesFar:

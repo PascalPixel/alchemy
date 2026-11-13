@@ -81,9 +81,9 @@ void Func_080d57e4(void);
 void Func_080d59dc(void);
 void Func_080d5aa0(void);
 void Field_StartEncounterTransition(s32 battle);
-void Menu_RunSelectionWithCursorObjectFar(void);
-void Menu_RunTopSelectionFar(void);
-void Menu_RunSelectionFar(void);
+void DebugFlagEditor_RunFar(void);
+void FieldMenu_RunFar(void);
+void DebugSceneSelect_RunFar(void);
 s32 Sound_GetCurrentBgmFar(void);
 void Func_08038358(s32 mode);
 void Func_080200b0(void);
@@ -444,7 +444,7 @@ s32 FieldSequence_Run(void) {
         work->battle = 0;
         *steps = 0;
       } else if (work->examine != 0) {
-        UiTimedNotice_CloseIfActiveFar();
+        AreaNameWindow_HideFar();
         talk = 0;
         if (gMainRoutineWork.ownerOverride == 0)
           value = Field_FindNearbyTalkTarget(*leaderId);
@@ -466,19 +466,19 @@ s32 FieldSequence_Run(void) {
         }
         work->examine = 0;
       } else if (work->menu != 0) {
-        UiTimedNotice_CloseIfActiveFar();
+        AreaNameWindow_HideFar();
         Leader_StopMoving();
         Sound_PlayFar(111);
         Func_080cb82c();
         GameFlag_SetBit(262);
         if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
             ((*(volatile u32 *)&gInput.held & 4) != 0)) {
-          Menu_RunSelectionWithCursorObjectFar();
+          DebugFlagEditor_RunFar();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
         } else {
           work->effectTimerRunning = 0;
-          Menu_RunTopSelectionFar();
+          FieldMenu_RunFar();
           work->effectTimerRunning = 1;
           Func_080cb05c();
         }
@@ -498,7 +498,7 @@ s32 FieldSequence_Run(void) {
         work->searchCell = 0;
       } else if (work->psynergy != 0) {
         packed = work->psynergy & 0x2000;
-        UiTimedNotice_CloseIfActiveFar();
+        AreaNameWindow_HideFar();
         if (packed == 0) {
           Func_080cb82c();
           if (TLA_PATCH_1)
@@ -519,14 +519,14 @@ s32 FieldSequence_Run(void) {
         Func_080cb82c();
         GameFlag_SetBit(262);
         if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
-          Menu_RunSelectionFar();
+          DebugSceneSelect_RunFar();
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
           Debug_RunPaletteEditor();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
         } else {
           Event_ResolveAllPendingActions();
-          UiTimedNotice_CloseIfActiveFar();
+          AreaNameWindow_HideFar();
           party->returnCue = Sound_GetCurrentBgmFar();
           if (!GameFlag_Test(382)) {
             u8 *objects = (u8 *)Ram_HeapSlots->objectSystem;

@@ -15,12 +15,12 @@
 ///   Units           units.c: Unit_Calculate, Unit_SetHp, Unit_AddPp
 ///   Items           inventory.c: Inventory_AddItem, Inventory_Equip,
 ///                   PartyInventory_Add
-///   Levels          levels.c: Unit_LearnPsynergy, Owner_LevelUp
-///   Enemies, party  party.c: Party_AddActiveOwner, Party_AdjustCoins
+///   Levels          levels.c: Unit_LearnPsynergy, Unit_LevelUp
+///   Enemies, party  party.c: Party_AddMember, Party_AdjustCoins
 ///   Classes         classes.c: Class_Determine, Unit_UpdateClass
 ///   Battle maths    battle_arithmetic.c: Battle_GetElementMultiplier,
 ///                   Battle_Random
-///   Djinn           djinn.c: Djinn_AddToOwner, Djinn_Activate
+///   Djinn           djinn.c: Djinn_Give, Djinn_Set
 
 #include "game_internal.h"
 

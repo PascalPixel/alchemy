@@ -27,7 +27,7 @@ u32 Party_GetAverageLevel(void) {
   s32 i;
 
   total = 0;
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   if (count == 0) {
     return 0;
   }
@@ -495,7 +495,7 @@ void GameFlag_RefreshLureCap(void) {
   s32 partyIndex;
 
   GameFlag_ClearBit(0x167);
-  partySize = Party_CountActiveOwners();
+  partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     struct OwnerInventoryState *unit;
     s32 inventorySlot;
@@ -532,7 +532,7 @@ static __inline__ s32 Owner_GetPpRatio(s32 owner) {
 s32 Func_080adc90(void) {
   s32 pp = 0;
   s32 max = 0;
-  s32 count = Party_CountActiveOwners();
+  s32 count = Party_CountMembers();
   s32 i;
 
   if (count == 0)
@@ -551,7 +551,7 @@ s32 Func_080adc90(void) {
 s32 Func_080adcec(void) {
   s32 best = 0;
   s32 bestOwner = -1;
-  s32 count = Party_CountActiveOwners();
+  s32 count = Party_CountMembers();
   s32 i;
 
   if (count == 0)
@@ -643,7 +643,7 @@ extern u16 gData_02003860;
 extern const u8 Data_080b1f2c[4][5];
 
 void Party_InitializeCharacters(void);
-s32 Party_AddActiveOwner(s32 owner);
+s32 Party_AddMember(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 
 /// Starts a new game's state: clears gMainRoutineWork, the work block, the
@@ -699,8 +699,8 @@ void Func_080addf0(void) {
   gMainRoutineWork.packedEvents[0] = 0;
   gMainRoutineWork.packedEvents[1] = 0;
   gMainRoutineWork.currentOwner = 4;
-  Party_AddActiveOwner(4);
-  Party_AddActiveOwner(5);
+  Party_AddMember(4);
+  Party_AddMember(5);
   Unit_LearnPsynergy(4, 149);
   Unit_LearnPsynergy(4, 140);
   Unit_LearnPsynergy(6, 141);
@@ -760,15 +760,15 @@ void Func_080addf0(void) {
   }
 }
 
-s32 Party_RemoveActiveOwner(s32 owner);
+s32 Party_RemoveMember(s32 owner);
 
 void Party_SetLeaderJenna(void) { gMainRoutineWork.currentOwner = 5; }
 
 void Party_SetLeaderFelix(void) {
   gMainRoutineWork.currentOwner = 4;
-  Party_AddActiveOwner(4);
-  Party_RemoveActiveOwner(5);
-  Party_RemoveActiveOwner(6);
+  Party_AddMember(4);
+  Party_RemoveMember(5);
+  Party_RemoveMember(6);
 }
 
 void Func_080ae118(void) {
@@ -777,12 +777,12 @@ void Func_080ae118(void) {
 
   for (i = 10; i < 12; i++) {
     GameFlag_SetBit(i + 67);
-    Djinn_AddToOwner(7, 1, i - 1);
-    Djinn_Activate(7, 1, i - 1);
+    Djinn_Give(7, 1, i - 1);
+    Djinn_Set(7, 1, i - 1);
   }
   // Called with an argument it does not take.
   ((void (*)(s32))Func_080ae358)(0);
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   for (i = 0; i < count; i++)
     Unit_Calculate(gMainRoutineWork.activeOwners[i]);
 }
@@ -799,7 +799,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
   s32 one;
   s16 v34;
 
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   for (n = 0; n < count; n++) {
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
@@ -851,7 +851,10 @@ void Party_RestoreHpPp(s32 cureConditions) {
 extern const u8 gCharacter_ElementGroupTable[];
 
 // Party_RestorePpOfLitElements from The Broken Seal.
-void Func_080ae220(void) {
+/// Restores the PP of each party member whose element group has a lit
+/// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
+/// Called by the events at the top of the Mercury and Venus Lighthouses.
+void Party_RestorePpOfLitElements(void) {
   s32 count;
   s32 n;
   u8 ownerId;
@@ -867,7 +870,7 @@ void Func_080ae220(void) {
   s32 v3A;
   s32 one;
 
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   for (n = 0; n < count; n++) {
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
@@ -960,7 +963,7 @@ s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out) {
 /// Until the Djinn counts of the active owners are within one, moves the last
 /// Djinni of the owner holding most to the one holding least.
 void Func_080ae358(void) {
-  s32 count = Party_CountActiveOwners();
+  s32 count = Party_CountMembers();
 
   for (;;) {
     s32 lowNo = 0;
@@ -1133,7 +1136,7 @@ void Func_080ae5fc(u8 *save) {
 }
 
 void Func_080ae6c8(s32 item, s32 owner) {
-  if (PartyInventory_FindOwner(item) == -1)
+  if (PartyInventory_FindMember(item) == -1)
     Inventory_AddItem(owner, item);
 }
 
@@ -1161,10 +1164,10 @@ void Func_080ae6e4(void) {
     asm("" : "+r"(i));
   }
   PartyInventory_Remove(222);
-  Party_AddActiveOwner(0);
-  Party_AddActiveOwner(1);
-  Party_AddActiveOwner(2);
-  Party_AddActiveOwner(3);
+  Party_AddMember(0);
+  Party_AddMember(1);
+  Party_AddMember(2);
+  Party_AddMember(3);
   // Called with an argument it does not take.
   ((void (*)(s32))Func_080ae358)(0);
   Djinn_ActivateOfferedForParty();
@@ -1202,7 +1205,7 @@ void Func_080ae830(void) {}
 void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   s32 flag = element * 20 + djinn;
 
-  Djinn_AddToOwner(owner, element, djinn);
+  Djinn_Give(owner, element, djinn);
   flag += 0x30;
   DjinnRecovery_AddStandby(owner, element, djinn);
   GameFlag_SetBit(flag);
@@ -1228,13 +1231,13 @@ void Func_080ae868(void) {
   if (GameFlag_Test(0x800))
     return;
 
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   for (i = 0; i < count; i++)
     saved[i] = gMainRoutineWork.activeOwners[i];
   for (i = 0; i < count; i++)
-    Party_RemoveActiveOwner(saved[i]);
+    Party_RemoveMember(saved[i]);
   for (i = 0; i < 4; i++)
-    Party_AddActiveOwner(i);
+    Party_AddMember(i);
   Djinn_AddFoundToOwner(0, 0, 0);
   Djinn_AddFoundToOwner(3, 1, 0);
 
@@ -1262,7 +1265,7 @@ void Func_080ae868(void) {
       counts[element]--;
       if (high - low <= 1 &&
           ((Random16() * 100) >> 16) < Data_080b1290[element][djinn]) {
-        Djinn_AddToLeastLoadedOwner(element, djinn);
+        Djinn_GiveToParty(element, djinn);
         counts[element]++;
         remaining--;
       }
@@ -1278,8 +1281,7 @@ void Func_080ae868(void) {
       /* FAKEMATCH(temporary): the form kept; as GameFlag_SetBit(0x800 + k + j),
          8 of 206 instructions differ in tla-en. */
       flag = 0x800 + k + j;
-      /* FAKEMATCH(temporary): element reused for the flag; with its own local
-         or inline, 13 of 206 instructions differ in tla-en. */
+      // element carries the flag to read after the one to set.
       element = 0x30 + i * 20 + j;
       if (GameFlag_Test(element))
         GameFlag_SetBit(flag);
@@ -1287,12 +1289,16 @@ void Func_080ae868(void) {
     }
   }
   for (i = 0; i < 4; i++)
-    Party_RemoveActiveOwner(i);
+    Party_RemoveMember(i);
   for (i = 0; i < count; i++)
-    Party_AddActiveOwner(saved[i]);
+    Party_AddMember(saved[i]);
 }
 
-void Unit_UpdateRatios(s32 ownerId) {
+/// Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
+/// that Unit_Calculate keeps the same fractions. Called after anything that
+/// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
+/// battle.
+void Unit_RecalculateGauges(s32 ownerId) {
   s32 first;
   s32 second;
   s32 firstValue;
@@ -1409,7 +1415,7 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
       result = value;
   }
   state->hp = result;
-  Unit_UpdateRatios(owner);
+  Unit_RecalculateGauges(owner);
   return state->hp;
 }
 
@@ -1430,7 +1436,7 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
       result = value;
   }
   state->pp = result;
-  Unit_UpdateRatios(owner);
+  Unit_RecalculateGauges(owner);
   return state->pp;
 }
 

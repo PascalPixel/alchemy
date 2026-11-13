@@ -7,7 +7,7 @@
 
 void Func_08104e38(s32 first, s32 second);
 
-s32 Func_081039fc(u32 mode) {
+s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
   struct WindowWork *work;
@@ -42,7 +42,7 @@ s32 Func_081039fc(u32 mode) {
   menu->cursor->active = 13;
   selectedPages[0] = 0;
   selectedPages[1] = 0;
-  Party_ListActiveOwnersFar(owners);
+  Party_ListMembersFar(owners);
   first = owners[menu->selectedColumn[0]];
   second = owners[menu->selectedColumn[1]];
   Func_08104e38(first, second);
@@ -86,14 +86,14 @@ s32 Func_081039fc(u32 mode) {
     firstWasSet = (u16)(menu->pairEntries[0] & 0x8000);
     unit = Unit_Get(memberId);
     Iwram_CopyWords(original, unit, size);
-    Djinn_DeactivateFar(memberId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (mode == 0) {
       secondElement = menu->pairElement[1];
       secondIndex = menu->pairIndex[1] & 31;
       secondWasSet = (u16)(menu->pairEntries[1] & 0x8000);
-      Djinn_AddToOwnerFar(memberId, secondElement, secondIndex);
+      Djinn_GiveFar(memberId, secondElement, secondIndex);
       if (secondWasSet != 0)
-        Djinn_ActivateFar(memberId, secondElement, secondIndex);
+        Djinn_SetFar(memberId, secondElement, secondIndex);
     }
     Unit_CalculateFar(memberId);
     pageCounts[0] =
@@ -105,10 +105,10 @@ s32 Func_081039fc(u32 mode) {
     unit = Unit_Get(memberId);
     Iwram_CopyWords(original, unit, size);
     if (mode == 0)
-      Djinn_DeactivateFar(memberId, secondElement, secondIndex);
-    Djinn_AddToOwnerFar(memberId, firstElement, firstIndex);
+      Djinn_PutOnStandbyFar(memberId, secondElement, secondIndex);
+    Djinn_GiveFar(memberId, firstElement, firstIndex);
     if (firstWasSet != 0)
-      Djinn_ActivateFar(memberId, firstElement, firstIndex);
+      Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
     pageCounts[1] =
         PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
@@ -135,9 +135,9 @@ s32 Func_081039fc(u32 mode) {
     applySecond = (mode == 3);
     unit = Unit_Get(memberId);
     Iwram_CopyWords(original, unit, 332);
-    Djinn_DeactivateFar(memberId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (applySecond != 0)
-      Djinn_ActivateFar(memberId, firstElement, firstIndex);
+      Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
     pageCounts[0] =
         PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
@@ -158,17 +158,17 @@ s32 Func_081039fc(u32 mode) {
   Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
   WindowSprite_RedrawSavedRectFar(help);
   if (mode == 2) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareStandby, help, 96, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareStandby, help, 96, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
   } else if (mode == 3) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareSet, help, 96, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareSet, help, 96, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
   } else if (mode == 0) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareTrade, help, 128, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareTrade, help, 128, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   } else {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareGive, help, 128, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareGive, help, 128, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   }
   row = 0;
   entry0 = menu->pairEntries[0];
@@ -230,7 +230,7 @@ s32 Func_081039fc(u32 mode) {
           do {
             menu->cursor->active = 1;
           } while (0);
-          Func_080f8ab4(2, 96);
+          MenuCursor_Slide(2, 96);
           gMainRoutineWork.eventMode = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
@@ -262,7 +262,7 @@ s32 Func_081039fc(u32 mode) {
           do {
             menu->cursor->active = 1;
           } while (0);
-          Func_080f8ab4(106, 56);
+          MenuCursor_Slide(106, 56);
           gMainRoutineWork.eventMode = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
@@ -291,10 +291,10 @@ s32 Func_081039fc(u32 mode) {
       if (mode <= 1) {
         Window_ClearInteriorTilesFar(help, 128, 16, 224, 24);
         if (page == 1) {
-          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, help, 128, 16);
+          Text_DrawMessageAsTilesFar((s32)MsgDjinnStatusHelp, help, 128, 16);
         } else {
           MessageArgument_PushFar(menu->shownMember[page != 2], 1);
-          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, help, 128, 16);
+          Text_DrawMessageAsTilesFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }
       work->menuBusy = 1;
@@ -318,9 +318,9 @@ s32 Func_081039fc(u32 mode) {
       case 1:
         if (mode == 1)
           previewMode = 4;
-        Func_08103218(menu->window, 0, 0, menu->shownMember[1], page, 0,
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1], page, 0,
                       previewMode, 0, 0);
-        Func_08103218((s32)menu->secondWindow, 0, 0, menu->shownMember[1], page,
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->shownMember[1], page,
                       0, previewMode, selectedPages[1] + 1, 0);
         break;
       case 0:
@@ -328,9 +328,9 @@ s32 Func_081039fc(u32 mode) {
           previewMode = 1;
           addPairSlot = 0;
         }
-        Func_08103218(menu->window, 0, 0, menu->pairMember[0], page,
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], page,
                       addPairSlot, previewMode, page, 1);
-        Func_08103218((s32)menu->secondWindow, 0, 0, menu->pairMember[0], page,
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->pairMember[0], page,
                       addPairSlot, previewMode, selectedPages[0] + 1, 1);
         break;
       }
@@ -465,7 +465,12 @@ s32 Func_081039fc(u32 mode) {
   return result;
 }
 
-s32 Func_08104540(void) {
+/// Shows the chosen party member's current stats and paged Psynergy list.
+/// Opened by L on the Djinn list ("Char. Status"): the party member's stats on
+/// the left, their Psynergy six to a page on the right, which Left and Right
+/// turn. Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
+/// Start, which closes the Djinn menu.
+s32 DjinnMenu_ShowMemberStatus(void) {
   s32 selectedPages[2];
   s32 pageCounts[2];
   s32 gained;
@@ -530,9 +535,9 @@ s32 Func_08104540(void) {
   helpWindowSlot = &menu->helpWindow;
   WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
                                 0);
-  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
                                 0, 16);
   side = 0;
   while (1) {
@@ -554,8 +559,8 @@ s32 Func_08104540(void) {
       render->menuBusy = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
-      Func_08103218(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
-      Func_08103218((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
+      DjinnMenu_DrawStatPreview(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
+      DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
                     selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
@@ -635,7 +640,7 @@ s32 Func_08104540(void) {
   return result;
 }
 
-s32 Func_0810498c(s32 self, s32 other);
+s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
 /// Marks in table each other owner a djinn can move to from self and keep the
 /// party's djinn balanced, and returns how many there are.
@@ -661,7 +666,7 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
     do {
       *p = 0;
       if (i != sourceMemberColumn) {
-        if (Func_0810498c(sourceMemberColumn, i) == 0) {
+        if (Djinn_CheckGiveBalance(sourceMemberColumn, i) == 0) {
           *p = 1;
           cnt += 1;
         }
@@ -673,14 +678,14 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   return cnt;
 }
 
-void Func_081049c8(u8 *counts);
+void Djinn_CountOwned(u8 *counts);
 
 // Test whether moving one from from to to preserves the balance.
-s32 Func_0810498c(s32 from, s32 to) {
+s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
   s8 counts[16];
   s32 balanced;
 
-  Func_081049c8((u8 *)counts);
+  Djinn_CountOwned((u8 *)counts);
   counts[from] -= 1;
   counts[to] += 1;
   balanced = 1;
@@ -689,9 +694,12 @@ s32 Func_0810498c(s32 from, s32 to) {
   return balanced;
 }
 
-// Func_081049c8: The Broken Seal's Djinn_CountTurns.
+// Djinn_CountOwned: The Broken Seal's Djinn_CountTurns.
 
-void Func_081049c8(u8 *counts) {
+/// Counts each party member's Djinn across its set and available bitmasks:
+/// writes every party member's total, set or not, into ownedCounts by list
+/// column.
+void Djinn_CountOwned(u8 *counts) {
   struct DjinnMenuWork *work;
   struct DjinnUnit *unit;
   s32 ownerIndex;

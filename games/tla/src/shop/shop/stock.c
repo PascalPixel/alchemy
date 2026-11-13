@@ -10,7 +10,7 @@ extern u8 MsgLetMeGiveYouThis[];
 
 void Party_AdjustShopGiftsFar(s32 amount);
 
-void Func_0810a490(void *window, void *itemWindow) {
+void Shop_GiveGameTicket(void *window, void *itemWindow) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   u32 savedSelectedItem;
   s32 memberIndex;
@@ -37,14 +37,14 @@ void Func_0810a490(void *window, void *itemWindow) {
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
-      Shop_PlaceCursor(window, (memberIndex % 4) * 24 - 12, 0);
+      MenuCursor_Place(window, (memberIndex % 4) * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(memberIndex / 4 * 4);
         wait(1);
       }
-      Func_0810928c(window, memberIndex, shop->selectedItem);
-      Func_081095b0(itemWindow, unitId, shop->selectedItem);
+      Shop_DrawParty(window, memberIndex, shop->selectedItem);
+      Shop_DrawCarriedItem(itemWindow, unitId, shop->selectedItem);
       redraw = 0;
     }
     if (gInput.pressed & 1) {
@@ -71,18 +71,18 @@ void Func_0810a490(void *window, void *itemWindow) {
       Sound_PlayFar(113);
       break;
     } else {
-      redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
+      redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);
       wait(1);
     }
   }
   shop->selectedItem = savedSelectedItem;
 }
 
-s32 EventTable_GetRowLimit(void) { return 32; }
+s32 ShopStock_GetRowCount(void) { return 32; }
 
 extern const s16 gData_0810c3f4[][33];
 
-void EventTable_ApplyRowAbilities(s32 rowNo) {
+void ShopStock_AddArtifacts(s32 rowNo) {
   s32 flag = rowNo + 0x400;
   s32 i;
 
@@ -110,7 +110,7 @@ void EventTable_ApplyRowAbilities(s32 rowNo) {
 }
 
 /// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
-/// after, and returns how many. Called by Func_081082c4 for Buy.
+/// after, and returns how many. Called by Shop_Run for Buy.
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   const s16 *src;
   s16 *dst;
@@ -135,7 +135,7 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   return count;
 }
 
-s32 EventTable_GetRowType(s32 index) {
+s32 ShopStock_GetType(s32 index) {
   s32 offset = index << 5;
   u8 *table = (u8 *)gData_0810c3f4;
 

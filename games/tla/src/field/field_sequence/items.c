@@ -154,7 +154,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   actor = (packedItem >> 10) & actorMask;
   {
     best = 0;
-    count = Party_CountActiveOwnersFar();
+    count = Party_CountMembersFar();
 
     if (actor == 15) {
       actor = 0;

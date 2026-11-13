@@ -10,17 +10,17 @@ struct MenuSelection;
 struct StepMenu;
 struct MenuResourceList;
 struct ListNode;
-s32 Resource_FindFreeTransferEntry(s32 kind);
-void Menu_LoadSelectedResource(void);
+s32 SelectionMenu_FindFreeIcon(s32 kind);
+void SelectionMenu_LoadLargeIcon(void);
 void SelectionMenu_Draw(void);
 void SelectionMenu_DrawArrow(struct MenuSelection *state, s32 index);
 void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 index);
-void Menu_StepRight(struct SelectionScreen *state);
-void Menu_StepLeft(struct StepMenu *state);
-void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index);
-void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index);
-void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
+void SelectionMenu_StepRight(struct SelectionScreen *state);
+void SelectionMenu_StepLeft(struct StepMenu *state);
+void SelectionMenu_RedrawIcon(struct MenuResourceList *state, u32 index);
+void SelectionMenu_HighlightIcon(struct MenuResourceList *state, u32 index);
+void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward);
+void SelectionMenu_SetupIcon(u32 kind, s32 base, struct ListNode *node,
                               s32 reuse);
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
 void PartyStatus_OpenAndWait(void);
@@ -147,7 +147,9 @@ extern u8 Tile_Decompress4bppCodeSize[];
 extern u8 Tile_ExpandMaskedCodeSize[];
 extern u8 Tile_ExpandOpaqueCodeSize[];
 
-void Resource_ClearOwnerListAndCounters(void) {
+/// Empties the selection screen's list of entries.
+/// The high cursor bit requests resetting both the list origin and cursor.
+void SelectionMenu_Clear(void) {
   struct SelectionScreen *screen;
 
   screen = Ram_HeapSlots->menuWork;
@@ -161,7 +163,12 @@ void Resource_ClearOwnerListAndCounters(void) {
   screen->count = 0;
 }
 
-void Resource_PushPendingPair(u32 first, u32 second) {
+/// Adds an entry (kind and id) to the selection screen's list, up to 16.
+/// The count starts at 0 when the screen is created or cleared. The kinds
+/// SelectionMenu_SetupIcon draws (enum IconKind) are ICON_KIND_COMMAND,
+/// ICON_KIND_YES_NO, ICON_KIND_ITEM and ICON_KIND_ABILITY; base is the
+/// command's, item's or ability's number.
+void SelectionMenu_AddEntry(u32 first, u32 second) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
   u16 cnt = state->count;
 
@@ -175,8 +182,12 @@ void Resource_PushPendingPair(u32 first, u32 second) {
 /// Creates icons for the first five listed entries in a row along the bottom of
 /// the screen, then loads the selected entry's preview. Reached through the
 /// far-call table and from Menu_RunSelectionForValue.
-// As ☀️'s SelectionScreen_BuildEntries.
-void SelectionScreen_BuildEntries(u32 unused) {
+// As ☀️'s SelectionMenu_BuildEntries.
+/// Creates icons for the first five listed entries in a row along the bottom of
+/// the screen.
+/// Builds the linked row before placing the visible icons and loading the
+/// preview.
+void SelectionMenu_BuildEntries(u32 unused) {
   struct SelectionScreen *screen = Ram_HeapSlots->menuWork;
   u32 count = screen->count;
   u32 index = screen->top;
@@ -188,10 +199,10 @@ void SelectionScreen_BuildEntries(u32 unused) {
     s32 base = screen->bases[index];
     u32 kind = screen->kinds[index];
 
-    node = (struct SelectionNode *)Resource_FindFreeTransferEntry(0);
+    node = (struct SelectionNode *)SelectionMenu_FindFreeIcon(0);
     if (node == 0)
       break;
-    MenuSelection_SetupEntry(kind, base, (struct ListNode *)node, 0);
+    SelectionMenu_SetupIcon(kind, base, (struct ListNode *)node, 0);
     if (screen->head == 0) {
       screen->head = node;
       node->prev = 0;
@@ -230,7 +241,7 @@ void SelectionScreen_BuildEntries(u32 unused) {
     previous->dy = 0;
     rowPosition += 16;
   }
-  Menu_LoadSelectedResource();
+  SelectionMenu_LoadLargeIcon();
 }
 
 extern u8 Tile_Decompress4bppCode[];
@@ -240,9 +251,12 @@ extern u8 Tile_Decompress4bppCodeSize[];
 extern u8 Tile_ExpandMaskedCodeSize[];
 extern u8 Tile_ExpandOpaqueCodeSize[];
 
-void Window_ReservedNoOp(void) {}
+/// An empty function, reached only through the far-call table.
+void SelectionMenu_ReservedNoOp(void) {}
 
-s32 Resource_FindFreeTransferEntry(s32 kind) {
+/// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
+/// or NULL.
+s32 SelectionMenu_FindFreeIcon(s32 kind) {
   s32 state;
   s32 off;
   s32 i;
@@ -293,7 +307,8 @@ void SelectionMenu_StartDrawing(void) {
   Task_Add(SelectionMenu_Draw, TASK_PASS_VBLANK);
 }
 
-void Resource_ScheduleOwnerReset(void) {
+/// Stops drawing the selection screen.
+void SelectionMenu_StopDrawing(void) {
   Task_Remove(SelectionMenu_Draw);
 }
 
@@ -378,7 +393,7 @@ void SelectionMenu_Draw(void) {
     cnt++;
   }
   if (transfer->kind != 0) {
-    node = (struct SelectionNode *)NodeChain_GetNodeAtCount(
+    node = (struct SelectionNode *)SelectionMenu_GetCursorNode(
         (struct NodeChainState *)state);
     te = &transfer->sprite;
     te->mode = 0;
@@ -557,14 +572,20 @@ struct Window *Window_Create(s32, s32, s32, s32, s32);
 
 void WindowSprite_PrepareForRedraw(struct Window *);
 
-void Menu_OpenSelectionWindow(s32 mode, u32 count) {
+/// Opens or refits the name window above the selection row and writes the name
+/// of the icon under the cursor, or that nothing is known (ICON_KIND_ABILITY)
+/// or held (ICON_KIND_ITEM). ICON_KIND_YES_NO is a yes or no question, placed
+/// at the bottom or top of the screen. count is the name's width in tiles
+/// inside the frame; 0 keeps the open window as it is. The window stays open
+/// until SelectionMenu_Close closes it.
+void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
   struct SelectionScreen *screen;
   struct SelectionNode *node;
   struct Window **slot;
   struct Window *window;
 
   screen = Ram_HeapSlots->menuWork;
-  node = (struct SelectionNode *)NodeChain_GetNodeAtCount(
+  node = (struct SelectionNode *)SelectionMenu_GetCursorNode(
       (struct NodeChainState *)screen);
   slot = &screen->window;
   window = *slot;
@@ -589,27 +610,30 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
     WindowSprite_PrepareForRedraw(screen->window);
   }
   if (screen->count != 0) {
-    Text_DrawCharacterAtOffset(node->message,
+    Text_DrawMessageAsTiles(node->message,
                                (struct RenderInput *)screen->window, 0, 0);
   } else {
     switch (mode) {
     case 4:
-      Text_DrawCharacterAtOffset((s32)MsgAbilityNotKnown,
+      Text_DrawMessageAsTiles((s32)MsgAbilityNotKnown,
                                  (struct RenderInput *)screen->window, 0, 0);
       break;
     case 2:
-      Text_DrawCharacterAtOffset((s32)MsgItemNotHeld,
+      Text_DrawMessageAsTiles((s32)MsgItemNotHeld,
                                  (struct RenderInput *)screen->window, 0, 0);
       break;
     }
   }
 }
 
-void Resource_ResetOwnerEntries(void) {
+/// Closes the selection screen and frees its icons, tiles and work block (heap
+/// slot 18). The chosen icons go too, so the choices are only in the indexes
+/// the loops returned.
+void SelectionMenu_Close(void) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
   struct SelectionNode *node;
 
-  Resource_ScheduleOwnerReset();
+  SelectionMenu_StopDrawing();
   Window_Close(state->window, 2);
   wait(1);
   node = state->head;
@@ -639,7 +663,8 @@ void Resource_ResetOwnerEntries(void) {
   HeapSlot_Release(72);
 }
 
-void Menu_SetNodeCoordinates(u32 first, u32 second) {
+/// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
+void SelectionMenu_SetPosition(u32 first, u32 second) {
   struct SelectionScreen *state;
   struct SelectionNode *node;
 
@@ -711,7 +736,7 @@ void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
   }
 }
 
-struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st) {
+struct NodeChainNode *SelectionMenu_GetCursorNode(struct NodeChainState *st) {
   struct NodeChainNode *node = st->node;
   s32 i;
 
@@ -758,10 +783,14 @@ STATIC_ASSERT(offsetof(struct SelectionScrollScreen, downArrow) == 0x3e);
 STATIC_ASSERT(offsetof(struct SelectionScrollScreen, node) == 0x348);
 STATIC_ASSERT(offsetof(struct SelectionScrollScreen, status) == 0x3a2);
 
-s32 Menu_SelectionLoop(s32 mode) {
+/// Runs the selection row until the player chooses (the chosen entry's index)
+/// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
+/// moving or choosing; any mode but 0 allows cancelling. Reached only through
+/// a bare entry of the window far-call table.
+s32 SelectionMenu_Run(s32 mode) {
   struct SelectionScrollScreen *screen = Ram_HeapSlots->menuWork;
 
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)screen, 0);
+  SelectionMenu_HighlightIcon((struct MenuResourceList *)screen, 0);
   for (;;) {
     wait(1);
     if (screen->busy != 0) {
@@ -769,9 +798,9 @@ s32 Menu_SelectionLoop(s32 mode) {
     }
     if (mode != SELECTION_FIXED) {
       if (gInput.repeat & KEY_RIGHT) {
-        Menu_StepRight((struct SelectionScreen *)screen);
+        SelectionMenu_StepRight((struct SelectionScreen *)screen);
       } else if (gInput.repeat & KEY_LEFT) {
-        Menu_StepLeft((struct StepMenu *)screen);
+        SelectionMenu_StepLeft((struct StepMenu *)screen);
       } else if (gInput.pressed & KEY_A) {
         return Menu_ConfirmSelection((struct SelectionScreen *)screen);
       }
@@ -786,7 +815,8 @@ s32 Menu_SelectionLoop(s32 mode) {
 #define SOUND_MENU_CONFIRM 112
 #define SOUND_MENU_CANCEL 113
 
-u32 Menu_WaitForSelectionInput(u32 mode) {
+/// As SelectionMenu_Run, with the menu sounds.
+u32 SelectionMenu_RunWithSounds(u32 mode) {
   struct SelectionScrollScreen *screen = Ram_HeapSlots->menuWork;
   u32 result;
 
@@ -799,10 +829,10 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
     if (mode != SELECTION_FIXED) {
       if (gInput.repeat & KEY_RIGHT) {
         Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        Menu_StepRight((struct SelectionScreen *)screen);
+        SelectionMenu_StepRight((struct SelectionScreen *)screen);
       } else if (gInput.repeat & KEY_LEFT) {
         Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        Menu_StepLeft((struct StepMenu *)screen);
+        SelectionMenu_StepLeft((struct StepMenu *)screen);
       }
 
       if (gInput.pressed & KEY_A) {
@@ -827,7 +857,7 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
 }
 
 /// Moves the cursor one entry right, scrolling the row at its fourth place.
-/// This variant stops at the end; Menu_StepRight also wraps around. Nothing
+/// This variant stops at the end; SelectionMenu_StepRight also wraps around. Nothing
 /// calls it.
 UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
   u32 nextEntry = screen->top + screen->cursor + 1;
@@ -835,7 +865,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
   if (nextEntry == screen->count) {
     return;
   }
-  Menu_ReloadNodeResource((struct MenuResourceList *)screen, screen->cursor);
+  SelectionMenu_RedrawIcon((struct MenuResourceList *)screen, screen->cursor);
   screen->status = NODE_STATUS_SCROLLING;
   wait(1);
   screen->cursor++;
@@ -843,16 +873,16 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
     screen->cursor--;
     screen->downScroll = ARROW_SCROLL_FRAMES;
     screen->top++;
-    Menu_ScrollSelectionList((struct SelectionScreen *)screen, 1);
+    SelectionMenu_Scroll((struct SelectionScreen *)screen, 1);
     if (screen->top + screen->cursor + 2 == screen->count) {
       screen->downArrow = 0;
     }
     screen->upArrow = 1;
   }
   screen->status = NODE_STATUS_SHOWN;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)screen, screen->cursor);
+  SelectionMenu_HighlightIcon((struct MenuResourceList *)screen, screen->cursor);
   wait(1);
-  Menu_OpenSelectionWindow(screen->node->kind, 0);
+  SelectionMenu_OpenNameWindow(screen->node->kind, 0);
   wait(1);
 }
 
@@ -864,13 +894,13 @@ void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {
   if (screen->top == 0 && screen->cursor == 0) {
     return;
   }
-  Menu_ReloadNodeResource((struct MenuResourceList *)screen, screen->cursor);
+  SelectionMenu_RedrawIcon((struct MenuResourceList *)screen, screen->cursor);
   screen->status = NODE_STATUS_SCROLLING;
   wait(1);
   if (screen->cursor == 1 && screen->top != 0) {
     screen->upScroll = ARROW_SCROLL_FRAMES;
     screen->top--;
-    Menu_ScrollSelectionList((struct SelectionScreen *)screen, 0);
+    SelectionMenu_Scroll((struct SelectionScreen *)screen, 0);
     if (screen->top == 0) {
       screen->upArrow = 0;
     }
@@ -879,21 +909,23 @@ void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {
     screen->cursor--;
   }
   screen->status = NODE_STATUS_SHOWN;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)screen, screen->cursor);
+  SelectionMenu_HighlightIcon((struct MenuResourceList *)screen, screen->cursor);
   wait(1);
-  Menu_OpenSelectionWindow(screen->node->kind, 0);
+  SelectionMenu_OpenNameWindow(screen->node->kind, 0);
   wait(1);
 }
 
 void wait(s32 frames);
 
-void Menu_StepRight(struct SelectionScreen *state) {
+/// Moves the cursor one entry right, scrolling the row at its edge and
+/// wrapping from the last entry to the first.
+void SelectionMenu_StepRight(struct SelectionScreen *state) {
   struct SelectionNode *node;
   u32 entryIndex;
   s32 y;
   u32 end;
 
-  Menu_ReloadNodeResource((struct MenuResourceList *)state, state->cursorIndex);
+  SelectionMenu_RedrawIcon((struct MenuResourceList *)state, state->cursorIndex);
   state->status = 33;
   wait(1);
   state->cursorIndex++;
@@ -917,7 +949,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
       if (node != NULL) {
         entryIndex = 0;
         do {
-          MenuSelection_SetupEntry(state->kinds[entryIndex],
+          SelectionMenu_SetupIcon(state->kinds[entryIndex],
                                    state->bases[entryIndex],
                                    (struct ListNode *)node, 1);
           node = node->next;
@@ -940,7 +972,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
       state->cursorIndex--;
       state->records[1].base = 8;
       state->top++;
-      Menu_ScrollSelectionList(state, 1);
+      SelectionMenu_Scroll(state, 1);
       if (state->top + state->cursorIndex + 2 == state->count)
         state->records[1].kind = 0;
       state->records[0].kind = 1;
@@ -949,9 +981,9 @@ void Menu_StepRight(struct SelectionScreen *state) {
     state->cursorIndex = 0;
   }
   state->status = 1;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)state, state->cursorIndex);
+  SelectionMenu_HighlightIcon((struct MenuResourceList *)state, state->cursorIndex);
   wait(1);
-  Menu_OpenSelectionWindow(state->head->kind, 0);
+  SelectionMenu_OpenNameWindow(state->head->kind, 0);
   wait(1);
 }
 
@@ -993,12 +1025,14 @@ struct StepMenu {
 
 void wait(s32 frames);
 
-void Menu_StepLeft(struct StepMenu *state) {
+/// Moves the cursor one entry left, scrolling the row at its edge and
+/// wrapping from the first entry to the last.
+void SelectionMenu_StepLeft(struct StepMenu *state) {
   struct StepNode *node;
   s32 i;
   s32 kind;
 
-  Menu_ReloadNodeResource((struct MenuResourceList *)state, state->cursor);
+  SelectionMenu_RedrawIcon((struct MenuResourceList *)state, state->cursor);
   state->status = 33;
   wait(1);
   if (state->count > 5) {
@@ -1006,7 +1040,7 @@ void Menu_StepLeft(struct StepMenu *state) {
       if (state->cursor == 1 && state->top != 0) {
         state->scrollUp = 8;
         state->top--;
-        Menu_ScrollSelectionList((struct SelectionScreen *)state, 0);
+        SelectionMenu_Scroll((struct SelectionScreen *)state, 0);
         if (state->top == 0)
           state->moreAbove = 0;
         state->moreBelow = 1;
@@ -1036,7 +1070,7 @@ void Menu_StepLeft(struct StepMenu *state) {
       state->top = i;
       state->cursor = 4;
       while (node != NULL) {
-        MenuSelection_SetupEntry(state->entryIds[i], state->entryKinds[i],
+        SelectionMenu_SetupIcon(state->entryIds[i], state->entryKinds[i],
                                  (struct ListNode *)node, 1);
         node = node->next;
         i++;
@@ -1057,10 +1091,10 @@ void Menu_StepLeft(struct StepMenu *state) {
     state->cursor = state->count - 1;
   }
   state->status = 1;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)state, state->cursor);
+  SelectionMenu_HighlightIcon((struct MenuResourceList *)state, state->cursor);
   wait(1);
   kind = state->nodes->id;
-  Menu_OpenSelectionWindow(kind, 0);
+  SelectionMenu_OpenNameWindow(kind, 0);
   wait(1);
 }
 
@@ -1082,7 +1116,9 @@ struct MenuResourceList {
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                   s32 arg4);
 
-void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index) {
+/// Redraws the command icon at row place rowIndex in its plain state, in its
+/// own VRAM cache entry. Other kinds of icon are left alone.
+void SelectionMenu_RedrawIcon(struct MenuResourceList *state, u32 index) {
   struct MenuResourceNode *node = state->head;
   u32 output;
   u32 value;
@@ -1099,7 +1135,10 @@ void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index) {
   }
 }
 
-void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index) {
+/// Redraws the command icon at row place rowIndex and loads its large icon.
+/// The small icon is drawn the same as SelectionMenu_RedrawIcon draws it;
+/// the highlight is the large icon.
+void SelectionMenu_HighlightIcon(struct MenuResourceList *state, u32 index) {
   struct MenuResourceNode *node = state->head;
   u32 res;
   u32 value;
@@ -1113,11 +1152,15 @@ void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index) {
 
     value = node->value;
     Icon_BuildCommandIconTiles(id, 0, &value, &res, 1);
-    Menu_LoadSelectedResource();
+    SelectionMenu_LoadLargeIcon();
   }
 }
 
-void Menu_SendNodeCountList(u8 *arg0) {
+/// Stops the battle's highlight of units (BattleHighlight_SetModesFar
+/// with mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It
+/// passes a unit list with one place an icon, of which only the end marker
+/// (BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
+void Menu_ClearBattleHighlight(u8 *arg0) {
   u16 data[6];
   struct NodeChainNode *node = ((struct NodeChainState *)arg0)->node;
   s32 count = 0;
@@ -1132,7 +1175,12 @@ void Menu_SendNodeCountList(u8 *arg0) {
 
 void wait(s32 frames);
 
-void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
+/// Scrolls the row one entry: forward brings an icon in from the right as the
+/// leftmost shrinks away, and back the reverse; waits until it has moved.
+/// Releases the departing cache slot only after its shrinking animation
+/// finishes. The icons move 2 pixels a frame and zoom by 32 (in 8.8) a frame,
+/// so a scroll takes 8 frames.
+void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
   struct SelectionNode *p;
   struct SelectionNode *last;
   struct SelectionNode *first;
@@ -1146,10 +1194,10 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     index = screen->top + SELECTION_ROWS;
     base = screen->bases[index];
     kind = screen->kinds[index];
-    p = (struct SelectionNode *)Resource_FindFreeTransferEntry(0);
+    p = (struct SelectionNode *)SelectionMenu_FindFreeIcon(0);
     if (p == NULL)
       return;
-    MenuSelection_SetupEntry(kind, base, (struct ListNode *)p, 0);
+    SelectionMenu_SetupIcon(kind, base, (struct ListNode *)p, 0);
     y = screen->baseX;
     p->x = y + 80;
     z = screen->baseY;
@@ -1187,10 +1235,10 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     index = screen->top;
     base = screen->bases[index];
     kind = screen->kinds[index];
-    p = (struct SelectionNode *)Resource_FindFreeTransferEntry(0);
+    p = (struct SelectionNode *)SelectionMenu_FindFreeIcon(0);
     if (p == NULL)
       return;
-    MenuSelection_SetupEntry(kind, base, (struct ListNode *)p, 0);
+    SelectionMenu_SetupIcon(kind, base, (struct ListNode *)p, 0);
     p->x = screen->baseX - 16;
     p->y = screen->baseY;
     p->targetY = p->y;
@@ -1321,7 +1369,12 @@ void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
 void Icon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
                                s32 *result, s32 reuseSource);
 
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
+/// Sets up a selection icon for an entry: its icon tiles (in its old slot when
+/// reuse is set), its name message and its sprite.
+/// kind must select a command, item or Psynergy with the matching base ID.
+/// Items and Psynergy are drawn over the icon base; the sprite is 16x16 at
+/// full size (Q_8_8(1)).
+void SelectionMenu_SetupIcon(u32 kind, s32 base, struct ListNode *node,
                               s32 reuse) {
   s32 src;
   s32 tile;
@@ -1378,8 +1431,8 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionSprite *sprite;
 
   index = screen->top + screen->cursorIndex;
-  Menu_SendNodeCountList((u8 *)screen);
-  Menu_ReloadNodeResource((struct MenuResourceList *)screen, screen->cursorIndex);
+  Menu_ClearBattleHighlight((u8 *)screen);
+  SelectionMenu_RedrawIcon((struct MenuResourceList *)screen, screen->cursorIndex);
   screen->status = 33;
   wait(1);
   screen->records[0].kind = 0;
@@ -1421,7 +1474,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->unk39a = 0;
   screen->cursorIndex |= 0x80;
   wait(2);
-  other = (struct SelectionNode *)Resource_FindFreeTransferEntry(1);
+  other = (struct SelectionNode *)SelectionMenu_FindFreeIcon(1);
   other->kind = node->kind;
   other->message = node->message;
   other->base = node->base;
@@ -1462,17 +1515,20 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   return index;
 }
 
-void Func_0803f60c(void) {}
+/// Six empty functions; nothing calls the first, the fourth or the fifth. The
+/// others are reached only through bare entries of the window far-call table.
+/// With no body or caller to give them a role, they are numbered in ROM order.
+void MenuArrow_NoOpCallback(void) {}
 
-void Func_0803f610(void) {}
+void MenuArrow_NoOpCallbackBank(void) {}
 
-void Func_0803f614(void) {}
+void MenuArrow_NoOpCallback1(void) {}
 
-void Func_0803f618(void) {}
+void MenuArrow_NoOpCallback2(void) {}
 
-void Func_0803f61c(void) {}
+void MenuArrow_NoOpCallback3(void) {}
 
-void Func_0803f620(void) {}
+void MenuArrow_NoOpCallback4(void) {}
 
 struct MenuSprite {
   struct MenuSprite *next;
@@ -1499,7 +1555,11 @@ struct MenuSprite {
   } oam;
 };
 
-void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot) {
+/// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
+/// in *slot).
+/// The caller owns the cache slot and releases it through
+/// MenuArrow_Release.
+void MenuArrow_Create(struct MenuSprite *object, s32 *slot) {
   const void *data = gData_0805c5c4;
   s32 value = Resource_FindFreeEntry();
 
@@ -1523,7 +1583,9 @@ struct TextResourcePosition {
   u16 rest : 7;
 };
 
-void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1,
+/// Places an arrow sprite at screen pixel (x, y) and queues it for drawing
+/// this frame, at depth slot 252; the caller calls it every frame it shows.
+void MenuArrow_SetPosition(struct TextResourcePosition *obj, s32 arg1,
                                 s32 arg2) {
   obj->index = arg1;
   obj->kind = arg2;
@@ -1535,16 +1597,22 @@ void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1,
   Oam_AddSpriteAtDepth((s32 *)obj, 0xFC);
 }
 
-void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
+/// Frees an arrow sprite's tile slot.
+void MenuArrow_Release(s32 value) { Resource_ResetEntry(value); }
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 extern char ResourceId_CommandIcons;
 
-void Menu_LoadSelectedResource(void) {
+/// Loads the large icon of the command under the cursor, zooming in: 32x32 in
+/// 256 colours (32 * 32 bytes, record 15), its scale stepping from 40 to 240 by
+/// 40 a frame, after which SelectionMenu_Draw shows it at its own size.
+/// Other kinds of entry show none. The icon keeps its VRAM cache entry until
+/// Resource_ResetPendingTransfer.
+void SelectionMenu_LoadLargeIcon(void) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
-  struct SelectionNode *selection = (struct SelectionNode *)NodeChain_GetNodeAtCount(
+  struct SelectionNode *selection = (struct SelectionNode *)SelectionMenu_GetCursorNode(
       (struct NodeChainState *)state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
@@ -1589,14 +1657,20 @@ void Resource_ResetPendingTransfer(void) {
 }
 
 void PartyStatus_CreateWindow(s32 flags);
-s32 Menu_SelectTopEntry(s32);
+s32 FieldMenu_SelectCommand(s32);
 s32 DjinnMenu_Open(void);
 s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
 s32 PsynergyMenu_RunFar(void);
 s32 Func_080f8000(void);
 s32 Func_080f8010(void);
 
-s32 Menu_RunTopSelection(void) {
+/// Runs the field menu until the player picks something that leaves it, and
+/// returns the chosen screen's result. Cancelling the menu returns an
+/// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
+/// UBFIX); its one caller, FieldSequence_Run, ignores the result. Its case for
+/// command 0, which stores the trigger tile ahead in the field work's
+/// examineCell, is unreachable.
+s32 FieldMenu_Run(void) {
   s32 ret;
   s32 selection;
   u8 *state;
@@ -1606,14 +1680,14 @@ s32 Menu_RunTopSelection(void) {
 
 loop:
   PartyStatus_OpenAndWait();
-  selection = Menu_SelectTopEntry(selection);
+  selection = FieldMenu_SelectCommand(selection);
 #ifdef UBFIX
-  // UB: the original reads the void return of Window_CloseAndRelease, called
+  // UB: the original reads the void return of PartyStatus_CloseWithMenu, called
   // with no prototype in scope, as The Broken Seal's FieldMenu_Run does.
-  Window_CloseAndRelease();
+  PartyStatus_CloseWithMenu();
   ret = 0;
 #else
-  ret = Window_CloseAndRelease();
+  ret = PartyStatus_CloseWithMenu();
 #endif
 
   switch (selection) {
@@ -1656,15 +1730,15 @@ void PartyStatus_OpenAndWait(void) {
 }
 
 /// Closes the window in heap slot 16 and releases its block.
-void Window_CloseAndRelease(void) { PartyStatus_Close(); }
+void PartyStatus_CloseWithMenu(void) { PartyStatus_Close(); }
 
 void SelectionMenu_CreateEmpty(void) {
   SelectionMenu_Create();
-  Resource_ClearOwnerListAndCounters();
+  SelectionMenu_Clear();
   wait(1);
 }
 
-void SelectionScreen_BuildEntries(u32);
+void SelectionMenu_BuildEntries(u32);
 
 u32 Menu_RunSelectionForValue(u32 value) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
@@ -1672,12 +1746,12 @@ u32 Menu_RunSelectionForValue(u32 value) {
 
   state->cursorIndex = value;
   state->locked = 1;
-  SelectionScreen_BuildEntries(value);
+  SelectionMenu_BuildEntries(value);
   Menu_SetupSelectionBothSides();
-  Menu_OpenSelectionWindow(0, 5);
+  SelectionMenu_OpenNameWindow(0, 5);
   SelectionMenu_StartDrawing();
-  result = Menu_WaitForSelectionInput(1);
-  Resource_ResetOwnerEntries();
+  result = SelectionMenu_RunWithSounds(1);
+  SelectionMenu_Close();
   return result;
 }
 

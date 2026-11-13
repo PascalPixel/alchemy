@@ -70,10 +70,10 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_PlayMapEdit:
 	overlay_veneer Map_PlayMapEditFar
-	.global Party_AddActiveOwner
+	.global Party_AddMember
 	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
+Party_AddMember:
+	overlay_veneer Party_AddMemberFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

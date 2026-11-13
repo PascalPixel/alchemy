@@ -191,7 +191,7 @@ void Func_02000378(void) {
   } else {
     Event_SetMessageId((s32)MsgIfYouHave);
     Event_ShowMessageAndWait(15, 0);
-    if (PartyInventory_FindOwner(451) != -1)
+    if (PartyInventory_FindMember(451) != -1)
       FIELD_AT(work, u16, 346) = 1;
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);

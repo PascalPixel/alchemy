@@ -62,10 +62,10 @@ Window_Close:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Text_DrawCharacterAtOffset
+	.global Text_DrawMessageAsTiles
 	.thumb_func
-Text_DrawCharacterAtOffset:
-	overlay_veneer Text_DrawCharacterAtOffsetFar
+Text_DrawMessageAsTiles:
+	overlay_veneer Text_DrawMessageAsTilesFar
 	.global Text_DrawNumberInWindow
 	.thumb_func
 Text_DrawNumberInWindow:

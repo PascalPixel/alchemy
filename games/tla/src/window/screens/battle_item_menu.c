@@ -76,7 +76,7 @@ s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
-void Func_0810824c(void);
+void Shop_ReleaseWork(void);
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
@@ -264,7 +264,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                            window->width - 2, 1, 15);
-      Vram_FillWindowBlockPattern();
+      Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
@@ -285,14 +285,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           if (item == 0)
             break;
           Item_Get(item);
-          Func_08041f70(15);
+          Text_SetColor(15);
           if (Item_ClassifyUseAbility(member, item) != 0)
-            Func_08041f70(4);
+            Text_SetColor(4);
           else if (item & ITEM_BROKEN)
-            Func_08041f70(2);
-          Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName, window,
+            Text_SetColor(2);
+          Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName, window,
                                      16, i * 16);
-          Func_08041f70(15);
+          Text_SetColor(15);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;
@@ -373,7 +373,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           MENU_TEXT_COPY((s32)MsgKey0d4d, messageText, REFUSAL_TEXT_LENGTH);
         else
           MENU_TEXT_COPY((s32)MsgKey0d4c, messageText, REFUSAL_TEXT_LENGTH);
-        Vram_FillWindowBlockPattern();
+        Text_FillCanvasBackground();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {
         result = -1;

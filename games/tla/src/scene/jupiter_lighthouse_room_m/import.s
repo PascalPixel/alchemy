@@ -190,14 +190,14 @@ Unit_AddHp:
 	.thumb_func
 Unit_AddPp:
 	overlay_veneer Unit_AddPpFar
-	.global Party_AddActiveOwner
+	.global Party_AddMember
 	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
-	.global Party_RemoveActiveOwner
+Party_AddMember:
+	overlay_veneer Party_AddMemberFar
+	.global Party_RemoveMember
 	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
+Party_RemoveMember:
+	overlay_veneer Party_RemoveMemberFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

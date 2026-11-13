@@ -4,18 +4,18 @@
 
 #include "../shop_internal.h"
 
-// The Japanese money window is a tile narrower, as in Func_08108b70.
+// The Japanese money window is a tile narrower, as in Shop_SelectBuy.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define MONEY_WINDOW_WIDTH 11
 #else
 #define MONEY_WINDOW_WIDTH 12
 #endif
 
-s32 Func_08109cac(s32 unitId);
-s32 Func_0810a2d0(s32 unitId);
-s32 Func_0810b6c4(s32 unitId);
+s32 Shop_SelectSell(s32 unitId);
+s32 Shop_SelectRepair(s32 unitId);
+s32 Forge_SelectItem(s32 unitId);
 
-s32 Func_08109ad8(void) {
+s32 Shop_ChooseMember(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   s32 unitId = 0;
   s32 memberIndex = 0;
@@ -24,7 +24,7 @@ s32 Func_08109ad8(void) {
   s32 result;
 
   shop->moneyWindow = Window_CreateFar(0, 9, MONEY_WINDOW_WIDTH, 4, 2);
-  Func_08109188();
+  Shop_DrawMoney();
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);
   listWindow = Window_CreateFar(0, 14, 13, 3, 2);
   shop->listWindow = listWindow;
@@ -34,14 +34,14 @@ s32 Func_08109ad8(void) {
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
-      Shop_PlaceCursor(listWindow, (memberIndex % 4) * 24 - 12, 0);
+      MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(memberIndex / 4 * 4);
         wait(1);
       }
-      Func_0810928c(listWindow, memberIndex, 0);
-      Shop_DrawItemCount(shop->itemWindow, unitId);
+      Shop_DrawParty(listWindow, memberIndex, 0);
+      Shop_DrawMemberItems(shop->itemWindow, unitId);
       redraw = 0;
     }
     if (gInput.pressed & 1) {
@@ -53,11 +53,11 @@ s32 Func_08109ad8(void) {
       WindowSprite_PrepareForRedrawFar(listWindow);
       Sound_PlayFar(112);
       if (shop->partyAction == 1) {
-        Func_08109cac(unitId);
+        Shop_SelectSell(unitId);
       } else if (shop->partyAction == 3) {
-        Func_0810a2d0(unitId);
+        Shop_SelectRepair(unitId);
       } else {
-        result = Func_0810b6c4(unitId);
+        result = Forge_SelectItem(unitId);
         if (result == 0)
           break;
       }
@@ -69,7 +69,7 @@ s32 Func_08109ad8(void) {
       result = -1;
       break;
     } else {
-      redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
+      redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);
       wait(1);
     }
   }
@@ -77,7 +77,7 @@ s32 Func_08109ad8(void) {
    * keeps listWindow (live here) out of r8 and leaves it to unitId (dead
    * here); without it, 24 of 205 instructions differ in tla-en. */
   __asm__("" : : : "r8");
-  Func_0810bea8(0);
+  ItemIconGrid_SetVisible(0);
   Menu_ReleaseEntryObjectsFar();
   Window_CloseFar(listWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
@@ -111,14 +111,14 @@ s32 Func_08109ad8(void) {
 // Unnamed in the catalog yet: 4699, 4723 and 4862 take placeholders here.
 extern u8 MsgSellAnythingElse[];
 
-s32 Shop_GetItemPrice(s32 item);
+s32 Shop_RepairPrice(s32 item);
 s32 Forge_GetMaterialChance(s32 item);
 
-s32 Func_0810a03c(s32 unitId, s32 slot);
-void Func_0810a2d8(s32 unitId, s32 slot);
-s32 Func_0810b6cc(s32 unitId, s32 slot);
+s32 Shop_SelectSellCount(s32 unitId, s32 slot);
+void Shop_RepairItem(s32 unitId, s32 slot);
+s32 Forge_OfferItem(s32 unitId, s32 slot);
 
-s32 Func_08109cac(s32 unitId) {
+s32 Shop_SelectSell(s32 unitId) {
   struct ShopRuntime *shop;
   void *nameWindow;
   void *priceWindow;
@@ -148,18 +148,18 @@ s32 Func_08109cac(s32 unitId) {
         if (slot > inventoryCount - 1)
           slot = inventoryCount - 1;
         itemId = 0x1ff & unit->inventory[slot];
-        Shop_PlaceCursor(shop->itemWindow, slot % 5 * 16, slot / 5 * 16 + 8);
+        MenuCursor_Place(shop->itemWindow, slot % 5 * 16, slot / 5 * 16 + 8);
         shop->mode = 3;
         if (shop->partyAction == 1)
-          Func_081091cc(priceWindow, itemId,
-                        Shop_GetSellPrice(unit->inventory[slot]), 1);
+          Shop_DrawItemPrice(priceWindow, itemId,
+                        Shop_SalePrice(unit->inventory[slot]), 1);
         else if (shop->partyAction == 3)
-          Func_081091cc(priceWindow, itemId,
-                        Shop_GetItemPrice(unit->inventory[slot]), 2);
+          Shop_DrawItemPrice(priceWindow, itemId,
+                        Shop_RepairPrice(unit->inventory[slot]), 2);
         else
-          Func_081091cc(priceWindow, itemId, Forge_GetMaterialChance(itemId),
+          Shop_DrawItemPrice(priceWindow, itemId, Forge_GetMaterialChance(itemId),
                         3);
-        Shop_DrawMsg(nameWindow, itemId + (s32)MsgItemPlainName);
+        Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
       }
       if (gInput.pressed & 1) {
         Sound_PlayFar(112);
@@ -186,10 +186,10 @@ s32 Func_08109cac(s32 unitId) {
           wait(1);
         shop->detailsHidden = 1;
         Window_CloseFar(window, 2);
-        Func_08109188();
+        Shop_DrawMoney();
         WindowSprite_PrepareForRedrawFar(shop->listWindow);
 #if TLA_PATCH_2
-        Shop_DrawItemCount(shop->itemWindow, unitId);
+        Shop_DrawMemberItems(shop->itemWindow, unitId);
 #endif
         wait(1);
         // The Japanese release goes on to the next frame without redrawing
@@ -237,15 +237,15 @@ s32 Func_08109cac(s32 unitId) {
     if (result != 0)
       break;
     if (shop->partyAction == 1) {
-      count = Func_0810a03c(unitId, slot);
+      count = Shop_SelectSellCount(unitId, slot);
       if (count != -1)
         Shop_SellItem(unitId, slot, count);
       Shop_ShowKeeperMessage((s32)MsgSellAnythingElse);
     } else if (shop->partyAction == 3) {
-      Func_0810a2d8(unitId, slot);
+      Shop_RepairItem(unitId, slot);
       Shop_ShowKeeperMessage((s32)MsgRepairAnythingElse);
     } else {
-      result = Func_0810b6cc(unitId, slot);
+      result = Forge_OfferItem(unitId, slot);
       if (result == 0)
         break;
       Shop_ShowKeeperMessage((s32)MsgWhichItemNeedsAttention);
@@ -268,10 +268,10 @@ s32 Func_08109cac(s32 unitId) {
 #undef PRICE_WINDOW_WIDTH
 #undef DETAILS_WINDOW_WIDTH
 
-void Shop_DrawItemCount(void *window, s32 item) {
+void Shop_DrawMemberItems(void *window, s32 item) {
   if (window != NULL) {
     WindowSprite_PrepareForRedrawFar(window);
-    Func_0810bf98(window, 8, 0, item);
+    ItemIconGrid_ShowInventory(window, 8, 0, item);
     if (Inventory_CountFar(item) == 0)
 #if (LANGUAGE == LANGUAGE_ITALIAN)
       Text_DrawMessageFar((s32)MsgNoItems, window, 20, 12);
@@ -303,7 +303,7 @@ void Icon_PrepareActorFar(struct WindowSprite *object);
 /// Asks how many of a stackable item to sell, when the unit holds more than
 /// one, and returns the count; 1 otherwise.
 // The Broken Seal's Shop_SelectSellCount.
-s32 Func_0810a03c(s32 unitId, s32 slot) {
+s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
   s16 savedY;
@@ -318,7 +318,7 @@ s32 Func_0810a03c(s32 unitId, s32 slot) {
   unit = Unit_Get(unitId);
   item = Item_Get(unit->inventory[slot]);
   result = 1;
-  price = Shop_GetSellPrice(unit->inventory[slot]);
+  price = Shop_SalePrice(unit->inventory[slot]);
   count = Inventory_GetQuantityFar(unitId, slot);
   selection = count;
   if ((item->flags & ITEM_STACKABLE) && count > 1) {
@@ -327,11 +327,11 @@ s32 Func_0810a03c(s32 unitId, s32 slot) {
     savedY = shop->cursor.targetY;
     shop->cursor.anchor->active = 4;
     shop->mode = 12;
-    Shop_PlaceCursor(NULL, QUANTITY_CURSOR_X, 0x30);
-    result = Func_081096f8(0, selection, price);
+    MenuCursor_Place(NULL, QUANTITY_CURSOR_X, 0x30);
+    result = Shop_SelectQuantity(0, selection, price);
     wait(1);
     Icon_PrepareActorFar(shop->cursor.anchor);
-    Shop_PlaceCursor(NULL, savedX, savedY);
+    MenuCursor_Place(NULL, savedX, savedY);
   }
   return result;
 }
@@ -361,7 +361,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
       all = 1;
       count = 1;
     }
-    total = Shop_GetSellPrice(unit->inventory[slot]) * count;
+    total = Shop_SalePrice(unit->inventory[slot]) * count;
     if (total == 0) {
       MessageArgument_PushFar(itemId, 2);
       Shop_ShowKeeperMessageHidingCursor((s32)MsgWeDoNotBuy);
@@ -399,8 +399,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     Unit_RefreshPsynergyFar(unitId);
     Unit_CalculateFar(unitId);
     Party_AdjustCoinsFar(total);
-    Func_08109188();
-    Shop_DrawItemCount(shop->itemWindow, unitId);
+    Shop_DrawMoney();
+    Shop_DrawMemberItems(shop->itemWindow, unitId);
     if (rare || all)
       message = (s32)MsgSold;
     else

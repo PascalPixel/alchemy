@@ -23,7 +23,7 @@ extern const u8 Data_080f01c4[];
 extern const s8 Data_080f01e6[];
 extern struct TransitionShape Data_080f2e9c[];
 
-void Window_FillFromSceneFar(u16 *pairs);
+void ScanlineWindow_FillSpansFar(u16 *pairs);
 
 void Func_080cf78c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -84,7 +84,7 @@ void Func_080cf78c(void) {
   }
 
   scanlineData = state->pages[1 ^ state->page];
-  Window_FillFromSceneFar(scanlineData + 2);
+  ScanlineWindow_FillSpansFar(scanlineData + 2);
 
   switch (state->mode) {
   case 0:

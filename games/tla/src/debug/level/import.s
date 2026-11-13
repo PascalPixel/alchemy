@@ -26,10 +26,10 @@ Window_Close:
 	.thumb_func
 Text_DrawMessage:
 	overlay_veneer Text_DrawMessageFar
-	.global Text_DrawCharacterAtOffset
+	.global Text_DrawMessageAsTiles
 	.thumb_func
-Text_DrawCharacterAtOffset:
-	overlay_veneer Text_DrawCharacterAtOffsetFar
+Text_DrawMessageAsTiles:
+	overlay_veneer Text_DrawMessageAsTilesFar
 	.global Text_DrawStringAtOffset
 	.thumb_func
 Text_DrawStringAtOffset:
@@ -78,10 +78,10 @@ Item_GetDirect:
 	.thumb_func
 PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
-	.global Party_ListActiveOwners
+	.global Party_ListMembers
 	.thumb_func
-Party_ListActiveOwners:
-	overlay_veneer Party_ListActiveOwnersFar
+Party_ListMembers:
+	overlay_veneer Party_ListMembersFar
 	.global Unit_LevelUpTo
 	.thumb_func
 Unit_LevelUpTo:

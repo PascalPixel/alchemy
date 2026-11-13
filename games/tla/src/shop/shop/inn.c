@@ -40,14 +40,17 @@ s32 Inn_RoomPrice(s32 innId) {
   return pricePerGuest * guestCount;
 }
 
-s32 Func_0810b3ec(s32 value) {
+/// Returns the night's price at inn `value` with the shop's work opened for
+/// it, for an event to quote before checking in. Called through the far-call
+/// table.
+s32 Inn_QuoteRoomPrice(s32 value) {
   struct InnRuntime *work;
 
   Shop_InitializeWork();
   work = Ram_HeapSlots->menuRuntime;
   work->busy = 1;
   value = Inn_RoomPrice(value);
-  Func_0810824c();
+  Shop_ReleaseWork();
   return value;
 }
 
@@ -57,7 +60,7 @@ s32 Func_0810b3ec(s32 value) {
 // games/tbs/src/shop/shop.c, written with this game's calls (Shop_InitializeWork for
 // the cursor work, Func_080380f8 for the keeper's window, Inn_RoomPrice for the
 // room price, MessageArgument_PushFar, Shop_ShowKeeperMessage to show a message,
-// Shop_AskYesNo for the choice, Func_08109188 for the coins, Func_0810824c to
+// Shop_AskYesNo for the choice, Shop_DrawMoney for the coins, Shop_ReleaseWork to
 // clean up) and its work-block offsets; this game has no special-inn flag.
 // Messages from MsgInnWelcome ("Welcome to our inn.").
 
@@ -111,7 +114,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   messageBase = (s32)MsgInnWelcome;
   Shop_ShowKeeperMessage(messageBase);
   state->window = Window_CreateFar(0, 16, SHOP_COIN_WINDOW_WIDTH, 4, 2);
-  Func_08109188();
+  Shop_DrawMoney();
 
   if (Shop_AskYesNo(0) != 0) {
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_GOODBYE);
@@ -132,7 +135,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   }
 
   Window_CloseFar(win, 2);
-  Func_0810824c();
+  Shop_ReleaseWork();
   return 0;
 }
 
@@ -153,7 +156,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   struct FieldObject *object;
   struct FieldEffectState *state;
 
-  count = Party_ListActiveOwnersFar(objects);
+  count = Party_ListMembersFar(objects);
   Party_AdjustCoinsFar(-roomPrice);
 
   for (index = 0; index < count; index++) {
@@ -161,7 +164,7 @@ void Inn_PlaySleep(s32 roomPrice) {
     if (object->x != 0) {
       object->x = object->savedX;
       object->y = object->savedY;
-      Unit_UpdateRatiosFar(objects[index]);
+      Unit_RecalculateGaugesFar(objects[index]);
     }
   }
 

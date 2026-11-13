@@ -25,7 +25,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
     n = BattleParty_PrepareActiveOwnersFar(0);
     height = 3;
   } else {
-    n = Party_CountActiveOwnersFar();
+    n = Party_CountMembersFar();
     if ((u32)n > 4)
       n = 4;
   }
@@ -66,7 +66,12 @@ void PartyStatus_CreateWindow(s32 flags) {
 
 extern const s8 gWindow_PartyColumnOffsets[];
 
-void Func_080426e0(struct Window *window, u32 flags) {
+/// Draws the vertical lines between the party members' columns of the party
+/// status `window`, with their top and bottom joints, at the offsets listed in
+/// gWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
+/// line comes first in the list). In battle it also draws the window's bottom
+/// edge.
+void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 first = 1;
   s32 bias = 0;
@@ -248,7 +253,7 @@ void PartyStatus_Draw(s32 flags) {
         break;
     }
   } else {
-    count = Party_CountActiveOwnersFar();
+    count = Party_CountMembersFar();
     if (count > 4)
       count = 4;
     for (i = 0; i < count; i++)
@@ -271,7 +276,7 @@ void PartyStatus_Draw(s32 flags) {
   work->menuBusy = 1;
   if (layout->flags == flags) {
     WindowSprite_RedrawSavedRect(window);
-    Func_080426e0(window, flags);
+    Window_DrawColumnBorders(window, flags);
   } else {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
     PartyStatus_BuildLayoutBounds(flags);
@@ -279,7 +284,7 @@ void PartyStatus_Draw(s32 flags) {
     window->height = layout->height;
     window->x = layout->x;
     Window_DrawBorder(layout->x, layout->y, layout->width, layout->height);
-    Func_080426e0(window, flags);
+    Window_DrawColumnBorders(window, flags);
   }
 
   if (flags & PARTY_STATUS_SHOW_DJINN)
@@ -292,11 +297,11 @@ void PartyStatus_Draw(s32 flags) {
     s32 current;
 
     if (hp == 0)
-      Func_08041f70(2);
+      Text_SetColor(2);
     else if (hp <= maxHp / 4)
-      Func_08041f70(4);
+      Text_SetColor(4);
     else
-      Func_08041f70(15);
+      Text_SetColor(15);
     work->level = 14;
     if (work->menuState != 0)
       work->level = 5;
@@ -305,7 +310,7 @@ void PartyStatus_Draw(s32 flags) {
     work->level = 15;
     Text_DrawStringAtOffset(unit->name, (struct RenderInput *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    Func_08041f70(15);
+    Text_SetColor(15);
     if (unit->maxHp != 0) {
       current = unit->hp;
       barLength = (current * 40) / unit->maxHp;

@@ -17,7 +17,7 @@ explains the window system for The Broken Seal.
   address (`f04a85c.c`).
 - `cell_picture.c` is ARM code, compiled with GCC 2.95.2 like The Broken
   Seal's ARM files (`ARM_C`).
-- `screens/save.c` holds `PaletteGlow_UpdateSine`, which pulses four colours
+- `screens/save.c` holds `FileList_UpdatePulse`, which pulses four colours
   of background palette 14 along a sine. Its twin in The Broken Seal is
   `FileList_UpdatePulse` in
   [screens/save.c](../../../tbs/src/window/screens/save.c).

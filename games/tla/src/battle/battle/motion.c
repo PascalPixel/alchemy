@@ -104,7 +104,9 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
                           slot->anchorZ);
 }
 
-void Func_0811c01c(s32 objectId) {
+/// Sends unit id leaping back to 1.3 times its spot's distance from the
+/// centre, in POSE_DAMAGE.
+void BattleMotion_LeapBack(s32 objectId) {
   struct BattleObj *slot;
   struct MotionObject *object;
 
@@ -138,7 +140,12 @@ extern const s32 Data_0812cc28[]; ///< distance, in percent of the anchor's x
 /// enemies stay where they stand, and every object gets its vertical motion
 /// before it takes mode 5.
 // The Broken Seal's BattleMotion_ApplyVariantMotion.
-void Func_0811c074(s32 id, s32 variant) {
+/// Knocks unit id back by the speed, hop and distance of the knockback
+/// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
+/// The Fusion Dragon only takes the pose. Reached through its far stub from
+/// the battle effects, by the EFFECT_STRIKE_TARGET macro of
+/// battle_effect_internal.h and directly.
+void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
   struct BattleObj *slot;
   struct MotionObject *object;
   s32 x;
@@ -297,7 +304,12 @@ struct SlotMotionRecord {
 
 s32 BattleUnit_GetEffectHeight(s32 owner);
 
-s32 Func_0811c2b4(s32 slot, s32 *screen) {
+/// Projects the point above unit id where its battle effects play (its class's
+/// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
+/// height is scaled by the sprite's projected scale. Returns 0. Called by
+/// ElementGlow_Play, and through its far stub by
+/// Projection_ScaledUnit and SelectionMenu_Draw.
+s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
   struct SlotMotionRecord *record = GetMotionRecord(object, 0);
   s32 scale;
@@ -310,7 +322,11 @@ s32 Func_0811c2b4(s32 slot, s32 *screen) {
   return 0;
 }
 
-s32 Func_0811c314(s32 slot, s32 *screen) {
+/// Projects the point above unit id onto the screen, into projected: 24
+/// pixels up for a small enemy, 48 for others, scaled as the sprite is drawn.
+/// Returns 0. Reached through its far stub from BattleTarget_RunSelection, to
+/// place the target cursor.
+s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
   struct SlotMotionRecord *record = GetMotionRecord(object, 0);
   s32 scale;

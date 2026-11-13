@@ -20,7 +20,7 @@ struct DjinniObject {
 
 struct Actor *Actor_GetById(u32 objectId);
 void BattleEffect_InitializeSlots(void);
-void Shop_RestoreSceneTilesFar(s32 value);
+void Shop_SaveAndTintFieldPaletteFar(s32 value);
 void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void wait(s32 frames);
@@ -33,7 +33,7 @@ extern void FieldParticle_Initialize__mars_join(void *slot, s32 kind, s32 x, s32
 extern void Animation_ApplyChildValuesToRecordFar__mars_join(s32 object, s32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
 u32 Random16(void);
-void Shop_InitializeEffectFar(void);
+void Shop_RestoreFieldPaletteFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 /* VIEW(mars_join): routine Actor_Destroy as void Actor_Destroy(void *object); battle.h has void Actor_Destroy(struct Actor *object). */
 extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_Destroy");
@@ -65,7 +65,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   BattleEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->effectWork;
-  Shop_RestoreSceneTilesFar(0x201090);
+  Shop_SaveAndTintFieldPaletteFar(0x201090);
   wait(30);
   Actor_ArmCallback(djinniId, 0x4000, 0);
   wait(20);
@@ -161,7 +161,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
   wait(30);
-  Shop_InitializeEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 

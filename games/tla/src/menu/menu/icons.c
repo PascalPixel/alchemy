@@ -324,7 +324,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
       menu->ids[i] = -1;
     }
   }
-  menu->count = Party_ListActiveOwnersFar(owners);
+  menu->count = Party_ListMembersFar(owners);
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
     menu->ids[i] = owners[first + i];
     object = ResourceObject_CreateFar(Func_080c82b8(owners[first + i]));
@@ -594,7 +594,7 @@ struct MenuSlotAttr {
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
   /* FAKEMATCH(temporary): the offset as a local of its own, which adds the row
-   * and the field offset before the work pointer, as in the shop's Func_0810be70;
+   * and the field offset before the work pointer, as in the shop's ItemIconGrid_SetPosition;
    * as a plain field address, (struct MenuSlotAttr *)(menu +
    * 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
   s32 offset =
@@ -627,7 +627,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
   for (i = 0; i <= 4; i++) {
     if (enabled[i] != 0) {
       MenuIcon_SetSlot(i, icon_x, icon_y);
-      Text_DrawCharacterAtOffsetFar((s32)MsgStatusNameDown + i, panel, x + 16,
+      Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16,
                                     y);
       y += 16;
       icon_y += 16;
@@ -637,7 +637,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
     }
   }
   if (count == 0)
-    Text_DrawCharacterAtOffsetFar((s32)MsgStatusNameNormal, panel, x, y);
+    Text_DrawMessageAsTilesFar((s32)MsgStatusNameNormal, panel, x, y);
 }
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {

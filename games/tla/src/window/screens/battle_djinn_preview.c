@@ -98,7 +98,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
 /// input: destination window.
 /// x, y: position within the window, in pixels.
 /// ability: ability index.
-s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
                                     s32 ability) {
   s32 slot;
 
@@ -158,7 +158,7 @@ struct PreviewAbility {
   u8 ppCost;
 };
 
-// Text colours (Func_08041f70).
+// Text colours (Text_SetColor).
 #define PREVIEW_RED 2
 #define PREVIEW_YELLOW 4
 #define PREVIEW_WHITE 15
@@ -166,12 +166,12 @@ struct PreviewAbility {
 extern const u8 gDjinnMenu_ArrowUpTiles[];
 extern const u8 gDjinnMenu_ArrowDownTiles[];
 
-s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
-void Djinn_DeactivateFar(s32 member, s32 element, s32 index);
-// Text_RenderWideStringInWindow is called with no prototype in scope, as The
+s32 Djinn_IsSetFar(s32 member, s32 element, s32 index);
+void Djinn_PutOnStandbyFar(s32 member, s32 element, s32 index);
+// Text_DrawWideStringInWindow is called with no prototype in scope, as The
 // Broken Seal's window functions are from its menu object: an implicit int
 // call sets r0, which is what orders each call's arguments.
-void Func_08041f70(s32 color);
+void Text_SetColor(s32 color);
 
 // The sprite cell at WindowSprite.sprite: a link, then the OAM words.
 struct ArrowSprite {
@@ -194,7 +194,18 @@ struct ArrowSprite {
   } tile;
 };
 
-struct Window *Func_080464dc(struct Window *window, s32 member,
+/// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
+/// index) would change for `member`: closes the preview window `win`, opens a
+/// new one and returns it, or NULL when none could be opened. Page 0
+/// compares the class and stats, old against new, with an arrow by each stat
+/// that rises or falls; pages 1 on list, five a page, the unit's battle
+/// abilities after the change (unchanged ones in TEXT_COLOR_WHITE, new ones in
+/// TEXT_COLOR_YELLOW) and then those it would lose (TEXT_COLOR_RED), and
+/// *pageCount is set to their number (at least 1). The Djinni is toggled and
+/// the unit recalculated (Unit_CalculateFar) only to measure: the unit is
+/// restored from a copy before it returns. BattleDjinnMenu_Run calls it as the
+/// cursor moves.
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 member,
                              s32 encodedDjinn, s32 page, s32 *pageCount) {
   struct PreviewUnit *unit;
   struct PreviewUnit *savedUnit;
@@ -264,10 +275,10 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
 
   element = (encodedDjinn >> 8) & 15;
   djinnIndex = encodedDjinn & 255;
-  if (Djinn_IsActiveFar(member, element, djinnIndex) != 0)
-    Djinn_DeactivateFar(member, element, djinnIndex);
+  if (Djinn_IsSetFar(member, element, djinnIndex) != 0)
+    Djinn_PutOnStandbyFar(member, element, djinnIndex);
   else
-    Djinn_ActivateFar(member, element, djinnIndex);
+    Djinn_SetFar(member, element, djinnIndex);
   Unit_CalculateFar(member);
 
   abilityCount = BattleDjinnMenu_ListChangedDjinn(
@@ -280,38 +291,38 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
   if (page == 0) {
     s32 label = (s32)MsgKey0d0e;
 
-    Text_DrawCharacterAtOffset(label, window, 0, 8);
-    Text_DrawCharacterAtOffset(label + 1, window, 0, 16);
-    Text_DrawCharacterAtOffset(label + 2, window, 0, 24);
-    Text_DrawCharacterAtOffset(label + 3, window, 0, 32);
-    Text_DrawCharacterAtOffset(label + 4, window, 0, 40);
-    Text_DrawCharacterAtOffset(label + 5, window, 0, 48);
+    Text_DrawMessageAsTiles(label, window, 0, 8);
+    Text_DrawMessageAsTiles(label + 1, window, 0, 16);
+    Text_DrawMessageAsTiles(label + 2, window, 0, 24);
+    Text_DrawMessageAsTiles(label + 3, window, 0, 32);
+    Text_DrawMessageAsTiles(label + 4, window, 0, 40);
+    Text_DrawMessageAsTiles(label + 5, window, 0, 48);
 
     oldHp = savedUnit->hp;
     String_FormatNumberToHalfwords(numberText, oldHp);
-    Text_RenderWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 1);
+    Text_DrawWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 1);
     oldPp = savedUnit->pp;
     String_FormatNumberToHalfwords(numberText, oldPp);
-    Text_RenderWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 2);
+    Text_DrawWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 2);
     oldAtk = savedUnit->atk;
     String_FormatNumberToHalfwords(numberText, oldAtk);
-    Text_RenderWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 3);
+    Text_DrawWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 3);
     oldDef = savedUnit->def;
     String_FormatNumberToHalfwords(numberText, oldDef);
-    Text_RenderWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
+    Text_DrawWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
                                   OLD_DEFENSE_AGILITY_X, 4);
     oldAgi = savedUnit->agi;
     String_FormatNumberToHalfwords(numberText, oldAgi);
-    Text_RenderWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
+    Text_DrawWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
                                   OLD_DEFENSE_AGILITY_X, 5);
     String_FormatNumberToHalfwords(numberText, savedUnit->luck);
-    Text_RenderWideStringInWindow(numberText + 8, window, OLD_VALUE_X + 1, 6);
+    Text_DrawWideStringInWindow(numberText + 8, window, OLD_VALUE_X + 1, 6);
 
     Window_DrawDividerLine(window, 0, 8, 19, 8);
     if (gained != 0 || lost != 0)
-      Func_08041f70(PREVIEW_RED);
-    Text_DrawCharacterAtOffset((s32)MsgKey0d0d, window, PSYNERGY_PROMPT_X, 64);
-    Func_08041f70(PREVIEW_WHITE);
+      Text_SetColor(PREVIEW_RED);
+    Text_DrawMessageAsTiles((s32)MsgKey0d0d, window, PSYNERGY_PROMPT_X, 64);
+    Text_SetColor(PREVIEW_WHITE);
   }
 
   if (page > 0) {
@@ -332,16 +343,16 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       else
         rangePattern--;
       Window_DrawThreeTileColumn(window, 16, visibleRow * 2, rangePattern, 0);
-      WindowSprite_CreateFromResourceSlot((struct RenderInput *)window, 0,
+      WindowSprite_CreateAbilityIcon((struct RenderInput *)window, 0,
                                           visibleRow * 16 - 4,
                                           changedAbilities[i] & 0x3fff);
       if (changedAbilities[i] & 0x8000)
-        Func_08041f70(PREVIEW_YELLOW);
+        Text_SetColor(PREVIEW_YELLOW);
       else if (changedAbilities[i] & 0x4000)
-        Func_08041f70(PREVIEW_RED);
+        Text_SetColor(PREVIEW_RED);
       else
-        Func_08041f70(PREVIEW_WHITE);
-      Text_DrawCharacterAtOffset((changedAbilities[i] & 0x3fff) +
+        Text_SetColor(PREVIEW_WHITE);
+      Text_DrawMessageAsTiles((changedAbilities[i] & 0x3fff) +
                                      (s32)MsgAbilityNothing,
                                  window, 16, visibleRow * 16);
       Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, 11, visibleRow * 2,
@@ -352,27 +363,27 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
                               window, 104, visibleRow * 16);
     }
     if (gained != 0) {
-      Func_08041f70(PREVIEW_YELLOW);
-      Text_DrawCharacterAtOffset((s32)MsgKey10d3, window, TOTAL_LABEL_X, 80);
+      Text_SetColor(PREVIEW_YELLOW);
+      Text_DrawMessageAsTiles((s32)MsgKey10d3, window, TOTAL_LABEL_X, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
-      Func_08041f70(PREVIEW_RED);
-      Text_DrawCharacterAtOffset((s32)MsgKey10d4, window, TOTAL_LABEL_X,
+      Text_SetColor(PREVIEW_RED);
+      Text_DrawMessageAsTiles((s32)MsgKey10d4, window, TOTAL_LABEL_X,
                                  summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
-      Text_DrawCharacterAtOffset((s32)MsgKey10d9, window, TOTAL_LABEL_X, 80);
-    Func_08041f70(PREVIEW_WHITE);
-    Func_08041f70(PREVIEW_WHITE);
+      Text_DrawMessageAsTiles((s32)MsgKey10d9, window, TOTAL_LABEL_X, 80);
+    Text_SetColor(PREVIEW_WHITE);
+    Text_SetColor(PREVIEW_WHITE);
     Window_DrawDividerLine(window, 0, 10, 19, 10);
   }
 
   if (page == 0) {
-    Text_DrawCharacterAtOffset((s32)MsgClassName + savedUnit->classId, window,
+    Text_DrawMessageAsTiles((s32)MsgClassName + savedUnit->classId, window,
                                0, 0);
-    Text_DrawCharacterAtOffset((s32)MsgClassName + unit->classId, window, 80,
+    Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, window, 80,
                                0);
     if (savedUnit->classId != unit->classId)
       Window_SetTilemapEntry(window, 0xf728, 9, 0, page);
@@ -380,7 +391,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       Window_SetTilemapEntry(window, 0xf729, 9, 0, page);
 
     String_FormatNumberToHalfwords(numberText, unit->hp);
-    Text_RenderWideStringInWindow(numberText + 7, window, 11, 1);
+    Text_DrawWideStringInWindow(numberText + 7, window, 11, 1);
     if (unit->hp != oldHp) {
       rising = 0;
       if (unit->hp > oldHp)
@@ -388,7 +399,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       Func_08046414(80, 14, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->pp);
-    Text_RenderWideStringInWindow(numberText + 7, window, 11, 2);
+    Text_DrawWideStringInWindow(numberText + 7, window, 11, 2);
     if (unit->pp != oldPp) {
       rising = 0;
       if (unit->pp > oldPp)
@@ -396,7 +407,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       Func_08046414(80, 22, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->atk);
-    Text_RenderWideStringInWindow(numberText + 7, window, 11, 3);
+    Text_DrawWideStringInWindow(numberText + 7, window, 11, 3);
     if (unit->atk != oldAtk) {
       rising = 0;
       if (unit->atk > oldAtk)
@@ -404,7 +415,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       Func_08046414(80, 30, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->def);
-    Text_RenderWideStringInWindow(numberText + 7, window, 11, 4);
+    Text_DrawWideStringInWindow(numberText + 7, window, 11, 4);
     if (unit->def != oldDef) {
       rising = 0;
       if (unit->def > oldDef)
@@ -412,7 +423,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       Func_08046414(80, 38, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->agi);
-    Text_RenderWideStringInWindow(numberText + 7, window, 11, 5);
+    Text_DrawWideStringInWindow(numberText + 7, window, 11, 5);
     if (unit->agi != oldAgi) {
       rising = 0;
       if (unit->agi > oldAgi)
@@ -420,7 +431,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       Func_08046414(80, 46, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->luck);
-    Text_RenderWideStringInWindow(numberText + 8, window, 12, 6);
+    Text_DrawWideStringInWindow(numberText + 8, window, 12, 6);
     if (unit->luck != savedUnit->luck) {
       rising = 0;
       if (unit->luck > savedUnit->luck)

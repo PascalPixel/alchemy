@@ -5,15 +5,15 @@
 	.thumb_func
 Portrait_GetForSpeakerFar:
 	overlay_veneer Portrait_GetForSpeaker
-	.global Menu_RunTopSelectionFar
+	.global FieldMenu_RunFar
 	.thumb_func
-Menu_RunTopSelectionFar:
-	overlay_veneer Menu_RunTopSelection
-	.global Menu_SelectSaveSlotActionFar
+FieldMenu_RunFar:
+	overlay_veneer FieldMenu_Run
+	.global FileList_SelectActionFar
 	.thumb_func
-Menu_SelectSaveSlotActionFar:
-	overlay_veneer Menu_SelectSaveSlotAction
+FileList_SelectActionFar:
+	overlay_veneer FileList_SelectAction
 	.global Func_080381f8
 	.thumb_func
 Func_080381f8:
-	overlay_veneer Func_0804d7fc
+	overlay_veneer IconMenu_ChooseSendOption

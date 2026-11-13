@@ -501,7 +501,7 @@ extern const u8 gData_0805eb50[];
 /// Draws the ability's name; ability 0 draws a dash placeholder.
 void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
   if (ability != 0)
-    Text_DrawCharacterAtOffset(ability + (s32)MsgAbilityNothing,
+    Text_DrawMessageAsTiles(ability + (s32)MsgAbilityNothing,
                                (struct RenderInput *)arg1, arg2, arg3);
   else
     Text_DrawStringInWindow((u8 *)gData_0805eb50, arg1, arg2, arg3);

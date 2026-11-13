@@ -69,7 +69,7 @@ struct MainRoutineWork {
   ///@}
   s16 returnCue; ///< the music to play on returning, -1 for the scene's own
   /// The shortcuts' assignments, run by keys238 and keys23a
-  /// (Party_SetPackedEvent: kind << 10 | id).
+  /// (PsynergyMenu_SetShortcut: kind << 10 | id).
   u16 packedEvents[2];
   /// Not named by ⚓️ code; byte 6 is option 4, the idle sleep, as ☀️'s
   /// idleSleepEnabled.
@@ -121,8 +121,8 @@ struct MainRoutineWork {
 };
 
 extern struct MainRoutineWork gMainRoutineWork;
-s32 Party_CountActiveOwners(void);
-s32 Party_ListActiveOwners(s16 *owners);
+s32 Party_CountMembers(void);
+s32 Party_ListMembers(s16 *owners);
 void Unit_LevelUpTo(s32 owner, s32 level);
 
 #endif

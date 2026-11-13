@@ -81,7 +81,7 @@ void Func_08044348(struct Window *window, const void *resource) {
   Heap_Release(buffer);
 }
 
-s32 Text_MeasureEntry(s32 start, u32 *width, u32 *height, s32 mode);
+s32 Text_MeasureDecoded(s32 start, u32 *width, u32 *height, s32 mode);
 
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
                                  s32 width, s32 height, u32 field) {
@@ -159,7 +159,7 @@ s32 Text_SetString(const u8 *str) {
     } while (*str != 0);
   }
   work->entries[count] = 0;
-  Text_MeasureEntry(0, &width, &height, 0);
+  Text_MeasureDecoded(0, &width, &height, 0);
   return width;
 }
 

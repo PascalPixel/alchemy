@@ -12,9 +12,9 @@ struct TimedNoticeWork {
 
 #define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
 
-void UiTimedNotice_Update(void);
+void AreaNameWindow_Update(void);
 /// Opens the area-name window, which closes after ninety frames.
-void UiTimedNotice_Create(void) {
+void AreaNameWindow_Show(void) {
   struct TimedNoticeWork *work;
   s32 height;
   s32 width;
@@ -37,10 +37,11 @@ void UiTimedNotice_Create(void) {
   work->window = window;
   Text_DrawMessage(resource, (s32)window, 0, 0);
   work->countdown = 90;
-  Task_Add(UiTimedNotice_Update, TASK_PASS_VBLANK);
+  Task_Add(AreaNameWindow_Update, TASK_PASS_VBLANK);
 }
 
-void UiTimedNotice_Update(void) {
+/// Counts the area name down, and closes it at 0.
+void AreaNameWindow_Update(void) {
   struct TimedNoticeWork *work;
   u16 *countdown;
   s32 count;
@@ -52,17 +53,18 @@ void UiTimedNotice_Update(void) {
   *countdown = count;
   if ((count << 16) == 0) {
     Window_Close(work->window, 2);
-    Task_Remove(UiTimedNotice_Update);
+    Task_Remove(AreaNameWindow_Update);
   }
 }
 
-void UiTimedNotice_CloseIfActive(void) {
+/// Closes the area name at once, if it is shown.
+void AreaNameWindow_Hide(void) {
   struct Window *window;
 
   window = TIMED_NOTICE_WORK->window;
   if (window != NULL && window->flags != 0) {
     Window_Close(window, 2);
-    Task_Remove(UiTimedNotice_Update);
+    Task_Remove(AreaNameWindow_Update);
   }
 }
 

@@ -219,7 +219,7 @@ s32 sub_08124af8(s32 id) {
         BattleEvent_Push(4, (u32)&MsgHpRecover);
       }
       unit->hp = hp;
-      Unit_UpdateRatiosFar(id);
+      Unit_RecalculateGaugesFar(id);
     }
     BattleEvent_DispatchQueued();
     if (--unit->refrain == 0)
@@ -282,7 +282,7 @@ s32 DjinnRecovery_CountDown(void) {
       if (expiredEntry->turns == 0) {
         u8 id = expiredEntry->unitId;
 
-        Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
+        Djinn_SetFar(id, expiredEntry->element, expiredEntry->index);
         DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
         Unit_CalculateFar(id);
         removed = 1;
@@ -364,7 +364,7 @@ s32 Func_08124cc4(s32 side) {
                 (struct Actor *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;
-          Djinn_ActivateFar(id, element, entry->index);
+          Djinn_SetFar(id, element, entry->index);
           DjinnRecovery_RemoveFar(id, entry->element, entry->index);
           Unit_CalculateFar(id);
           if (BattleParty_IsUnitListed(id))
@@ -434,7 +434,7 @@ void Func_0812628c(s32 mode, s32 background, s32 value);
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
-    Message_ShowAndWaitCoreFar(message);                                       \
+    BattleMessage_ShowAndWaitFar(message);                                       \
     BattleMessage_WaitForAdvance();                                            \
   }
 
@@ -443,11 +443,11 @@ void Func_0812628c(s32 mode, s32 background, s32 value);
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
     BattleObject_UpdatePose(unitId);                                           \
-    Message_ShowAndWaitCoreFar(message);                                       \
+    BattleMessage_ShowAndWaitFar(message);                                       \
     BattleMessage_WaitForAdvance();                                            \
   }
 
-void Func_08124e20(void) {
+void Battle_ProcessTurnEnd(void) {
   struct BattleWork *battle;
   s32 side;
   s32 sideCount;
@@ -499,7 +499,7 @@ void Func_08124e20(void) {
                   (struct Actor *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;
-            Djinn_ActivateFar(unitId, element, expiredEntry->index);
+            Djinn_SetFar(unitId, element, expiredEntry->index);
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
             Unit_CalculateFar(unitId);
@@ -563,9 +563,9 @@ void Func_08124e20(void) {
             MessageArgument_PushFar(unitId, 1);
             MessageArgument_PushFar(hpAmount, 5);
             if (unit->hp == unit->maxHp) {
-              Message_ShowAndWaitCoreFar((s32)&MsgHpFull);
+              BattleMessage_ShowAndWaitFar((s32)&MsgHpFull);
             } else {
-              Message_ShowAndWaitCoreFar((s32)&MsgHpRecover);
+              BattleMessage_ShowAndWaitFar((s32)&MsgHpRecover);
             }
             Sound_PlayFar(175);
             BattleMessage_WaitForAdvance();
@@ -579,9 +579,9 @@ void Func_08124e20(void) {
             MessageArgument_PushFar(unitId, 1);
             MessageArgument_PushFar(ppAmount, 5);
             if (unit->pp == unit->maxPp) {
-              Message_ShowAndWaitCoreFar((s32)&MsgPpFull);
+              BattleMessage_ShowAndWaitFar((s32)&MsgPpFull);
             } else {
-              Message_ShowAndWaitCoreFar((s32)&MsgPpRecover);
+              BattleMessage_ShowAndWaitFar((s32)&MsgPpRecover);
             }
             Sound_PlayFar(175);
             BattleMessage_WaitForAdvance();
@@ -605,7 +605,7 @@ void Func_08124e20(void) {
   }
 }
 
-void Djinn_DeactivateFar(s32 unitId, s32 element, s32 djinni);
+void Djinn_PutOnStandbyFar(s32 unitId, s32 element, s32 djinni);
 
 void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce) {
   u8 elements[10];
@@ -628,7 +628,7 @@ again:
     active = 0;
     for (element = 0; element <= 3; element++) {
       for (djinni = 0; djinni <= 19; djinni++) {
-        if (Djinn_IsActiveFar(unitId, element, djinni)) {
+        if (Djinn_IsSetFar(unitId, element, djinni)) {
           elements[count] = element;
           indices[count] = djinni;
           count++;
@@ -641,7 +641,7 @@ again:
     if (count == 0) {
       for (element = 0; element <= 3; element++) {
         for (djinni = 0; djinni <= 19; djinni++) {
-          if (Djinn_IsReadyFar(unitId, element, djinni)) {
+          if (Djinn_CanSetFar(unitId, element, djinni)) {
             elements[count] = element;
             indices[count] = djinni;
             count++;
@@ -660,7 +660,7 @@ again:
     djinni = indices[count];
     if (active) {
       DjinnRecovery_AddStandbyFar(unitId, element, djinni);
-      Djinn_DeactivateFar(unitId, element, djinni);
+      Djinn_PutOnStandbyFar(unitId, element, djinni);
       if (announce) {
         BattleEvent_Push(0, unitId);
         BattleEvent_Push(3, element * 20 + djinni + 300);
@@ -746,8 +746,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
          strongestElement++) {
       if (list->entries[strongestElement].unitId == unitId &&
           list->entries[strongestElement].turns == -1) {
-        Djinn_DeactivateFar(unitId, list->entries[strongestElement].element,
-                            list->entries[strongestElement].index);
+        Djinn_PutOnStandbyFar(unitId, list->entries[strongestElement].element,
+                              list->entries[strongestElement].index);
       }
     }
   }

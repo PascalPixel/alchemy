@@ -9,10 +9,10 @@ Menu_SelectShopCommandFar:
 	.thumb_func
 Menu_SelectSanctumServiceFar:
 	overlay_veneer Menu_SelectSanctumService
-	.global Menu_RunConfirmSelectionFar
+	.global YesNoMenu_RunFar
 	.thumb_func
-Menu_RunConfirmSelectionFar:
-	overlay_veneer Menu_RunConfirmSelection
+YesNoMenu_RunFar:
+	overlay_veneer YesNoMenu_Run
 	.global Menu_SelectCoinsOrMedalsFar
 	.thumb_func
 Menu_SelectCoinsOrMedalsFar:

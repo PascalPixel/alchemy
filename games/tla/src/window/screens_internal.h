@@ -67,15 +67,15 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(struct Window *window);
 void WindowSprite_PrepareForRedraw(struct Window *work);
 void MessageArgument_Push(u32 value, u32 kind);
-void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
+void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 
 // The screens object's functions its parts call before their definitions.
 struct BobPairObject;
 void Func_08043b70(void);
-s32 Func_08043cd8(s32 selectedFile, s32 menuMode);
+s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
 void MenuTitle_Bob(struct BobPairObject *object);
-struct WindowSprite *RenderResource_CreatePair(s32 group,
+struct WindowSprite *MenuTitle_Create(s32 group,
                                                struct RenderInput *input, s32 x,
                                                s32 y);
 
@@ -85,9 +85,9 @@ void Func_0803f9c0(s32 glow, s32 sub);
 s32 GameFlag_Test(s32 flag);
 s32 Message_AllTyped(void);
 s32 Message_OpenWindow(s32 message, s32 x, s32 y, s32 style);
-void Func_08041f70(s32 nibble);
+void Text_SetColor(s32 nibble);
 extern const u8 gResource_FixedBlockBTiles[];
-void Vram_FillWindowBlockPattern(void);
+void Text_FillCanvasBackground(void);
 void MessageArgument_ClearAll(void);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void Window_MarkVisibleTextTiles(void);

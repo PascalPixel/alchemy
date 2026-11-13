@@ -125,15 +125,15 @@ extern void Text_DrawStringAtOffset__f04a85c(const u8 *text, struct TargetWindow
                              s32 y) __asm__("Text_DrawStringAtOffset");
 void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window,
                              s32 x, s32 y);
-/* VIEW(f04a85c): routine Text_DrawCharacterAtOffset as void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY); tried as the definition's void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), it does not compile in tla-ja: games/tla/include/graphics/text_render.h:10: conflicting types for `Text_DrawCharacterAtOffset'. */
+/* VIEW(f04a85c): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), it does not compile in tla-ja: games/tla/include/graphics/text_render.h:10: conflicting types for `Text_DrawMessageAsTiles'. */
 extern void Text_DrawCharacterAtOffset__f04a85c(s32 message, struct TargetWindow *window, s32 x,
-                                s32 y) __asm__("Text_DrawCharacterAtOffset");
-void Func_08041f70(s32 color);
+                                s32 y) __asm__("Text_DrawMessageAsTiles");
+void Text_SetColor(s32 color);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 s32 Text_GetWideStringWidth(u16 *text);
-/* VIEW(f04a85c): routine Vram_ClearWindowBlock as void Vram_ClearWindowBlock(void); graphics.h has s32 Vram_ClearWindowBlock(void); tried as the definition's s32 Vram_ClearWindowBlock(void), which the object already declares, BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
-extern void Vram_ClearWindowBlock__f04a85c(void) __asm__("Vram_ClearWindowBlock");
+/* VIEW(f04a85c): routine Text_ClearCanvas as void Text_ClearCanvas(void); graphics.h has s32 Text_ClearCanvas(void); tried as the definition's s32 Text_ClearCanvas(void), which the object already declares, BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
+extern void Vram_ClearWindowBlock__f04a85c(void) __asm__("Text_ClearCanvas");
 void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
                                  s32 y);
 void Sound_PlayFar(s32 cue);
@@ -463,10 +463,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow =
                 Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
-            Func_08041f70(2);
+            Text_SetColor(2);
             Text_DrawCharacterAtOffset__f04a85c((s32)MsgSetDjinni, conditionWindow, 0,
                                        0);
-            Func_08041f70(15);
+            Text_SetColor(15);
             break;
           case 1:
             TARGET_HELP_COLUMN(7, 6, 17);
@@ -644,10 +644,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               break;
           }
           no_condition:
-            Func_08041f70(2);
+            Text_SetColor(2);
             Text_DrawCharacterAtOffset__f04a85c((s32)MsgEffectNone, conditionWindow, 0,
                                        0);
-            Func_08041f70(15);
+            Text_SetColor(15);
             break;
           }
         }

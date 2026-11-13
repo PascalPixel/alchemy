@@ -63,7 +63,7 @@ void BattleCamera_Update(void) {
 
 /// Announces each enemy that appears, then who strikes first. The Broken
 /// Seal's BattleIntro_AnnounceEncounter.
-void Func_08118bcc(s32 enemyCount) {
+void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;
   s16 *enemy;
@@ -79,9 +79,9 @@ void Func_08118bcc(s32 enemyCount) {
     do {
       MessageArgument_PushFar((u16)*enemy++, 1);
       if (announced == enemyCount - 1)
-        Message_ShowAndWaitCoreFar((s32)MsgLastEnemyAppeared);
+        BattleMessage_ShowAndWaitFar((s32)MsgLastEnemyAppeared);
       else
-        Message_ShowAndWaitCoreFar((s32)MsgEnemyAppeared);
+        BattleMessage_ShowAndWaitFar((s32)MsgEnemyAppeared);
       announced++;
       BattleMessage_WaitForAdvance();
     } while (announced != enemyCount);
@@ -90,11 +90,11 @@ void Func_08118bcc(s32 enemyCount) {
   Window_CloseSharedFar();
   if (battle->encounterMode == 1) {
     MessageArgument_ClearAllFar();
-    Message_ShowAndWaitCoreFar((s32)MsgPartyStrikesFirst);
+    BattleMessage_ShowAndWaitFar((s32)MsgPartyStrikesFirst);
     BattleMessage_WaitForAdvance();
   } else if (battle->encounterMode == 2) {
     MessageArgument_ClearAllFar();
-    Message_ShowAndWaitCoreFar((s32)MsgPartySurprised);
+    BattleMessage_ShowAndWaitFar((s32)MsgPartySurprised);
     BattleMessage_WaitForAdvance();
   }
 }
@@ -222,12 +222,12 @@ void Func_08118e64(void) {
   }
 }
 
-s32 Djinn_IsReadyFar(s32 owner, s32 element, s32 djinn);
+s32 Djinn_CanSetFar(s32 owner, s32 element, s32 djinn);
 void DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn);
 
 /// Adds to the trade offers every djinn an active owner can offer that is
 /// not offered yet; owners above 7 offer on the second side.
-void Func_08118eb0(void) {
+void DjinnRecovery_Reconcile(void) {
   u16 owners[10];
   s32 count;
   s32 n;
@@ -242,7 +242,7 @@ void Func_08118eb0(void) {
     owner = owners[n];
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
-        if (Djinn_IsReadyFar(owner, element, djinn) != 0) {
+        if (Djinn_CanSetFar(owner, element, djinn) != 0) {
           list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                       owner > 7))
                       ->list;
@@ -259,11 +259,23 @@ void Func_08118eb0(void) {
   }
 }
 
-// Func_08118f6c: The Broken Seal's BattleSummon_UpdateAvailability; this game
-// keeps the high half of the offer state's mask, tests 16 summons and writes
-// the mask back.
+// BattleSummon_UpdateAvailability: The Broken Seal's
+// BattleSummon_UpdateAvailability; this game keeps the high half of the offer
+// state's mask, tests 16 summons and writes the mask back.
 
-void Func_08118f6c(void) {
+/// Works out which summons the party can call: one whose Djinn requirement
+/// of every element is met by the Djinn the party holds of that element
+/// (djinnHeldCounts, set or not), all party members together. Whether enough of
+/// them are on standby is checked as the summon is chosen
+/// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it
+/// is built (BattleActionRun_Build). Stores the mask of them (bit n for
+/// summon n) and returns the state that holds it. Called by
+/// Battle_Run as the battle is set up and at the start of each
+/// turn, which asks for the party status window's standby Djinn column
+/// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatus_Draw shows it
+/// only while a Djinni is on standby. Writes the party recovery table's
+/// availableMask.
+void BattleSummon_UpdateAvailability(void) {
   u8 totals[4];
   u16 partyMembers[10];
   s32 partySize;
@@ -321,5 +333,5 @@ void Func_08118f6c(void) {
       availableMask;
 }
 
-/// An empty function, right after Func_08118f6c.
+/// An empty function, right after BattleSummon_UpdateAvailability.
 void Func_08119050(void) {}

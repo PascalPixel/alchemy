@@ -12,7 +12,7 @@ Func_080ad208:
 	.global Func_080ad210
 	.thumb_func
 Func_080ad210:
-	overlay_veneer Func_080ae220
+	overlay_veneer Party_RestorePpOfLitElements
 	.global Party_SetLeaderJennaFar
 	.thumb_func
 Party_SetLeaderJennaFar:

@@ -308,7 +308,7 @@ void Func_0200050c(void) {
   Func_02003c3c();
   Func_02004a1c();
   Actor_SetSingleChildFlags(Actor_Get(8), 0);
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   pp = 0;
   i = 0;
   if (pp < count) {
@@ -1257,8 +1257,8 @@ void Func_02001c5c(void) {
   Event_End();
 }
 
-void Party_RemoveActiveOwner(s32 owner);
-void Party_AddActiveOwner(s32 owner);
+void Party_RemoveMember(s32 owner);
+void Party_AddMember(s32 owner);
 static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   Actor_SetMoveTarget(object, x, y, z);
 }
@@ -1307,23 +1307,23 @@ void Func_02001e34(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Party_RemoveActiveOwner(0);
-    Party_RemoveActiveOwner(1);
-    Party_RemoveActiveOwner(2);
-    Party_RemoveActiveOwner(3);
-    Party_RemoveActiveOwner(4);
-    Party_RemoveActiveOwner(5);
-    Party_RemoveActiveOwner(6);
-    Party_RemoveActiveOwner(7);
-    Party_AddActiveOwner(4);
-    Party_AddActiveOwner(5);
-    Party_AddActiveOwner(6);
+    Party_RemoveMember(0);
+    Party_RemoveMember(1);
+    Party_RemoveMember(2);
+    Party_RemoveMember(3);
+    Party_RemoveMember(4);
+    Party_RemoveMember(5);
+    Party_RemoveMember(6);
+    Party_RemoveMember(7);
+    Party_AddMember(4);
+    Party_AddMember(5);
+    Party_AddMember(6);
     owner = gMainRoutineWork.currentOwner;
     Func_02004bf8(1);
     Event_SetFlag(0x16e);
     Event_Start();
     Event_ResolvePendingActions(0);
-    Djinn_AddToOwner(owner, 0, 7);
+    Djinn_Give(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
     Func_02004da8();
     Actor_SetAngleToward(owner, 9, 0);

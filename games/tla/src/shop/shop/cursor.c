@@ -4,7 +4,7 @@
 
 #include "../shop_internal.h"
 
-void Shop_FillSelector(s32 count, s32 selector, u8 *base) {
+void QuantityBar_Fill(s32 count, s32 selector, u8 *base) {
   u32 shifted = selector << 4;
   u16 *offset;
 
@@ -13,8 +13,8 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base) {
   if (count > 0) {
     offset = gShop_SelectorOffsets;
     do {
-      struct Record_080b06c0 *record =
-          (struct Record_080b06c0 *)(base + *offset++);
+      struct TileQuantityBarSegmentView *record =
+          (struct TileQuantityBarSegmentView *)(base + *offset++);
       record->values[0] = selector;
       record->values[4] = selector;
       record->values[8] = selector;
@@ -87,7 +87,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   return sprite;
 }
 
-void Shop_RestoreSceneTiles(s32 layer) {
+void Shop_SaveAndTintFieldPalette(s32 layer) {
   u8 *map = Ram_HeapSlots->eventWork;
   u8 *work = Ram_HeapSlots->block32;
   u8 *saved = work + 0xe00;
@@ -98,15 +98,15 @@ void Shop_RestoreSceneTiles(s32 layer) {
   BattleEffect_StartBufferInterpolationFar(16);
 }
 
-void Shop_InitializeEffect(void) {
+void Shop_RestoreFieldPalette(void) {
   BattleEffect_ApplyColorToTargetBufferFar(
       (s32)Ram_HeapSlots->eventWork + 0x222, 1);
   BattleEffect_StartBufferInterpolationFar(16);
 }
 
-// ShopCursor_Advance moves the shop cursor one step of its glide toward the
+// MenuCursor_Advance moves the shop cursor one step of its glide toward the
 // target, setting the sprite's position and its OAM x and y, and stops the
-// glide on its last step; The Broken Seal's ShopCursor_Advance
+// glide on its last step; The Broken Seal's MenuCursor_Advance
 // (games/tbs/src/shop/shop.c). The x field is written through a u32 mask, as
 // MenuCursor_MoveTowardTarget does, so the
 // 0x1ff mask is split as the native's.
@@ -144,9 +144,9 @@ struct ShopCursorSprite3 {
   struct SpriteAttr2 oam;
 };
 
-void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY, s8 kind);
+void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY, s8 kind);
 
-void ShopCursor_Advance(struct ShopCursor *cursor) {
+void MenuCursor_Advance(struct ShopCursor *cursor) {
   struct WindowSprite *sprite;
   s32 kind;
   s32 step;
@@ -222,7 +222,7 @@ void MenuCursor_MoveTowardTarget(struct ShopCursor *cursor) {
   }
 }
 
-void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
+void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
                     s8 kind) {
   struct WindowSprite *anchor = cursor->anchor;
 
@@ -258,14 +258,14 @@ void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x,
   }
 }
 
-void Shop_PlaceCursor(void *window, s32 x, s32 y) {
+void MenuCursor_Place(void *window, s32 x, s32 y) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
 
   if (window != NULL) {
     x += (s16)((struct RenderInput *)window)->x * 8 + 8;
     y += (s16)((struct RenderInput *)window)->y * 8 + 8;
   }
-  Shop_SetCursor(&shop->cursor, x, y, (s8)shop->mode);
+  MenuCursor_Set(&shop->cursor, x, y, (s8)shop->mode);
 }
 
 #define Resource_DecodeByteLzInRam                                             \

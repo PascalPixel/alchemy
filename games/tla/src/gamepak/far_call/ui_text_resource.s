@@ -4,23 +4,23 @@
 	.global Window_CloseSharedFar
 	.thumb_func
 Window_CloseSharedFar:
-	overlay_veneer Message_Close
+	overlay_veneer BattleMessage_Close
 	.global Message_ResetIdleFar
 	.thumb_func
 Message_ResetIdleFar:
 	overlay_veneer Message_ResetIdle
-	.global UiTextResource_InitializeFar
+	.global MenuArrow_CreateFar
 	.thumb_func
-UiTextResource_InitializeFar:
-	overlay_veneer UiTextResource_Initialize
-	.global UiTextResource_SetPositionFar
+MenuArrow_CreateFar:
+	overlay_veneer MenuArrow_Create
+	.global MenuArrow_SetPositionFar
 	.thumb_func
-UiTextResource_SetPositionFar:
-	overlay_veneer UiTextResource_SetPosition
-	.global UiTextResource_ReleaseFar
+MenuArrow_SetPositionFar:
+	overlay_veneer MenuArrow_SetPosition
+	.global MenuArrow_ReleaseFar
 	.thumb_func
-UiTextResource_ReleaseFar:
-	overlay_veneer UiTextResource_Release
+MenuArrow_ReleaseFar:
+	overlay_veneer MenuArrow_Release
 	.global Func_08038240
 	.thumb_func
 Func_08038240:

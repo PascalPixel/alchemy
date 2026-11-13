@@ -102,10 +102,10 @@ Window_DrawDividerLine:
 	.thumb_func
 Text_DrawMessage:
 	overlay_veneer Text_DrawMessageFar
-	.global Text_DrawCharacterAtOffset
+	.global Text_DrawMessageAsTiles
 	.thumb_func
-Text_DrawCharacterAtOffset:
-	overlay_veneer Text_DrawCharacterAtOffsetFar
+Text_DrawMessageAsTiles:
+	overlay_veneer Text_DrawMessageAsTilesFar
 	.ifndef TLA_EDITION_JA
 	.global Text_DrawStringInWindow
 	.thumb_func
@@ -120,10 +120,10 @@ WindowSprite_Create:
 	.thumb_func
 Message_CloseFinishedWindows:
 	overlay_veneer Message_CloseFinishedWindowsFar
-	.global Menu_SelectSaveSlotAction
+	.global FileList_SelectAction
 	.thumb_func
-Menu_SelectSaveSlotAction:
-	overlay_veneer Menu_SelectSaveSlotActionFar
+FileList_SelectAction:
+	overlay_veneer FileList_SelectActionFar
 	.global Func_020022b0
 	.thumb_func
 Func_020022b0:
@@ -176,10 +176,10 @@ Resource_CopyFixedBlockA:
 	.thumb_func
 Func_0803f9c0:
 	overlay_veneer Func_08038348
-	.global Menu_RunConfirmSelection
+	.global YesNoMenu_Run
 	.thumb_func
-Menu_RunConfirmSelection:
-	overlay_veneer Menu_RunConfirmSelectionFar
+YesNoMenu_Run:
+	overlay_veneer YesNoMenu_RunFar
 	.global Graphics_ExpandVramTilesByColorTable
 	.thumb_func
 Graphics_ExpandVramTilesByColorTable:
@@ -208,14 +208,14 @@ PartyInventory_Add:
 	.thumb_func
 Func_02002350:
 	overlay_veneer Func_080ad090
-	.global Party_AddActiveOwner
+	.global Party_AddMember
 	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
-	.global Party_RemoveActiveOwner
+Party_AddMember:
+	overlay_veneer Party_AddMemberFar
+	.global Party_RemoveMember
 	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
+Party_RemoveMember:
+	overlay_veneer Party_RemoveMemberFar
 	.ifndef TLA_EDITION_JA
 	.global Unit_GetExperienceForLevel
 	.thumb_func
@@ -226,10 +226,10 @@ Unit_GetExperienceForLevel:
 	.thumb_func
 Func_02002370:
 	overlay_veneer Func_080ad238
-	.global Djinn_AddToLeastLoadedOwner
+	.global Djinn_GiveToParty
 	.thumb_func
-Djinn_AddToLeastLoadedOwner:
-	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
+Djinn_GiveToParty:
+	overlay_veneer Djinn_GiveToPartyFar
 	.global Unit_UpdateClass
 	.thumb_func
 Unit_UpdateClass:

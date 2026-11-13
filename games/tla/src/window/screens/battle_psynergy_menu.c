@@ -152,7 +152,17 @@ struct PsynergyMenuOam {
     (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \
   } while (0)
 
-s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
+/// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
+/// (ended by 0), five to a page, each with its icon, name, PP cost, element
+/// and range icon, in TEXT_COLOR_YELLOW when not usable in battle,
+/// TEXT_COLOR_RED when the unit's PP fall short and TEXT_COLOR_PINK while its
+/// Psynergy is sealed; the window above describes the one under the cursor.
+/// Returns the chosen ability's place in `actions`, or -1 when cancelled, when
+/// the link battle's time runs out or when the list is empty. Only an ability
+/// not usable in battle is refused here, silently: one the PP cannot pay for,
+/// or a sealed party member's, can be chosen. The Psynergy command runs it
+/// (Battle_CollectPartyCommands), listing only abilities usable in battle.
+s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct PsynergyMenuWork *work;
   s32 drawnFirstEntry;
   s32 firstEntry;
@@ -227,7 +237,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                            window->width - 2, 1, 15);
-      Vram_FillWindowBlockPattern();
+      Text_FillCanvasBackground();
       if (count != 0)
         CURSOR_TEXT_COPY((actions[firstEntry + selectedRow] & 0x3fff) +
                              (s32)MsgAbilityDescription,
@@ -253,16 +263,16 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
                             1);
           sprites[i].oam.f.tile = glyph;
           if ((action->flags & 0x80) == 0)
-            Func_08041f70(4);
+            Text_SetColor(4);
           else if (action->ppCost > unit->pp)
-            Func_08041f70(2);
+            Text_SetColor(2);
           else if (unit->psySeal != 0)
-            Func_08041f70(9);
+            Text_SetColor(9);
           work->textPalette = 5;
-          Text_DrawCharacterAtOffset(encodedAction + (s32)MsgAbilityNothing,
+          Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityNothing,
                                      window, 16, i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
-          Func_08041f70(15);
+          Text_SetColor(15);
           work->textPalette = 15;
           if (action->element != 4)
             Window_SetTilemapEntry(window, action->element + 0x5001,

@@ -182,14 +182,14 @@ Func_0803f9c0:
 	.thumb_func
 Func_02004894:
 	overlay_veneer Item_Get
-	.global PartyInventory_FindOwner
+	.global PartyInventory_FindMember
 	.thumb_func
-PartyInventory_FindOwner:
-	overlay_veneer PartyInventory_FindOwnerFar
-	.global Party_ListActiveOwners
+PartyInventory_FindMember:
+	overlay_veneer PartyInventory_FindMemberFar
+	.global Party_ListMembers
 	.thumb_func
-Party_ListActiveOwners:
-	overlay_veneer Party_ListActiveOwnersFar
+Party_ListMembers:
+	overlay_veneer Party_ListMembersFar
 	.global Func_020048ac
 	.thumb_func
 Func_020048ac:

@@ -95,7 +95,7 @@ struct SummonMenuOam {
 #define SUMMON_END 32
 
 s32 Summon_ListLearnedFar(u8 *summons);
-void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
+void Window_PutGlyph(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
 
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
@@ -230,7 +230,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2,
                              1, 15);
       }
-      Vram_FillWindowBlockPattern();
+      Text_FillCanvasBackground();
       {
         const struct SummonDefinition *definition;
         s32 element;
@@ -288,20 +288,20 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
-              Func_08041f70(2);
-            Text_DrawCharacterAtOffset(SummonDefinition_Get(id)->nameMessageId +
+              Text_SetColor(2);
+            Text_DrawMessageAsTiles(SummonDefinition_Get(id)->nameMessageId +
                                            (s32)MsgAbilityNothing,
                                        window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
                 Window_SetTilemapEntry(window, element + 0x5001,
                                        col * 2 + SUMMON_COST_X, y, 0);
-                Func_0803c274(window, summon->djinnRequired[element] + '0',
+                Window_PutGlyph(window, summon->djinnRequired[element] + '0',
                               col * 2 + SUMMON_COST_X + 1, y, 0);
                 col++;
               }
             }
-            Func_08041f70(15);
+            Text_SetColor(15);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)

@@ -4,7 +4,7 @@
 
 #include "../window_internal.h"
 
-void Func_08039f94(struct Window *window, s32 save_position);
+void Window_DrawZoomBorder(struct Window *window, s32 save_position);
 void Window_DrawOpened(struct Window *window);
 
 /// Steps each window's open or close animation: an open window moves toward
@@ -20,7 +20,7 @@ void Window_UpdateZooms(void) {
   do {
     if (work->flags != 0) {
       if ((s16)work->frame != 0) {
-        Func_08039f94(work, 0);
+        Window_DrawZoomBorder(work, 0);
         work->frame = (s16)work->frame - 1;
       } else if (work->duration != 0) {
         Window_DrawOpened(work);
@@ -30,7 +30,7 @@ void Window_UpdateZooms(void) {
         Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
                                  (s16)work->previousWidth,
                                  (s16)work->previousHeight);
-        Func_08039f94(work, 1);
+        Window_DrawZoomBorder(work, 1);
         work->frame++;
         dirty = 1;
         state->dirty = dirty;
@@ -72,7 +72,10 @@ struct WindowZoomScratch {
 
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);
 
-void Func_08039f94(struct Window *window, s32 save_position) {
+/// Draws a zooming window at its size for this frame: the window grows from
+/// its centre as zoomStage counts down to 0. With savePosition set (when
+/// closing) the drawn rectangle is remembered, for the next frame to erase.
+void Window_DrawZoomBorder(struct Window *window, s32 save_position) {
   struct WindowZoomScratch scratch;
   s32 stage;
   s32 duration;
@@ -303,7 +306,9 @@ struct UiMessageSlot {
   s32 cursor; ///< where the next message starts
 };
 
-void Message_Close(void) {
+/// Closes the battle message window at once, if one is open, and forgets it,
+/// so the next battle message (BattleMessage_Open) opens a new one.
+void BattleMessage_Close(void) {
   struct UiMessageSlot *slot = Ram_HeapSlots->unk84[4];
 
   if (slot->window != NULL) {
@@ -319,7 +324,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
 /// Decodes message and starts it in the message window along the bottom of
 /// the screen (tiles 0, 15, 30 by 6), creating the window first if it is not
 /// open; a message that decodes to nothing shows nothing.
-void Message_Show(s32 message) {
+void BattleMessage_Open(s32 message) {
   s32 entry;
   struct UiMessageSlot *slot;
   struct Window *previous;
@@ -359,10 +364,12 @@ void Message_Show(s32 message) {
 void wait(s32 frames);
 s32 Message_AllTyped(void);
 
-void Message_ShowAndWaitCore(s32 message) {
+/// Shows a message in the battle message window and waits until it has been
+/// typed out.
+void BattleMessage_ShowAndWait(s32 message) {
   while (Message_AllTyped() == 0)
     wait(1);
-  Message_Show(message);
+  BattleMessage_Open(message);
   while (Message_AllTyped() == 0)
     wait(1);
 }
@@ -390,7 +397,14 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
   return result;
 }
 
-void Window_SetBusyFlags(u32 flags) {
+/// Sets the decode flags the next message is decoded with
+/// (Message_Decode): flags bit 0 (haltingSpeech) makes it halting
+/// speech, a short pause before each character, broken off with an ellipsis
+/// after the first word; bit 1 (spacingAfter) puts code 222 after certain
+/// characters in English and Japanese. Flags already set stay set: only
+/// Message_OpenWindow clears both, once it has started a message typing,
+/// so they also apply to every message decoded before that.
+void Message_SetDecodeFlags(u32 flags) {
   u8 *work;
 
   work = Ram_HeapSlots->windowTiles;

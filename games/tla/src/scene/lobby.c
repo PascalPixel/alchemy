@@ -323,7 +323,7 @@ done:
 /// Writes up to three active party owners to out, ending the list with 0xff.
 s32 Func_02000538(u16 *out) {
   struct MainRoutineWork *party;
-  s32 count = Party_CountActiveOwners();
+  s32 count = Party_CountMembers();
   s32 i;
 
   if (count > 3)
@@ -942,7 +942,7 @@ void Func_02000f50(s32 value) {
 /// Whether owner is one of the first three active owners, or the first four
 /// while flag 370 is clear; an 0xff entry ends the list.
 s32 Func_02000f6c(s32 owner) {
-  s32 count = Party_CountActiveOwners();
+  s32 count = Party_CountMembers();
   s32 limit = 3;
   s32 i;
   struct MainRoutineWork *party;
@@ -1188,9 +1188,9 @@ s32 Func_02001304(s32 actor) {
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if (!Flag_Test(0x204)) {
-    if (Party_CountActiveOwners() == 8)
+    if (Party_CountMembers() == 8)
       message = (s32)MsgUpToThree;
-    else if (Party_CountActiveOwners() <= 3)
+    else if (Party_CountMembers() <= 3)
       message = (s32)MsgUpToThreeAllies;
     else
       message = (s32)MsgUpToThreeAlliesCan;

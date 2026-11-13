@@ -6,7 +6,7 @@
 #include "../f04a85c_internal.h"
 
 void Camera_ConfigureSceneFar(s32 offset);
-void Link_DrawShiftedTilePair(s32 destination);
+void Link_DrawPageArrows(s32 destination);
 s32 Link_CreateCountdownLabelWindow(void);
 
 #define COUNTDOWN_START_FRAMES 900
@@ -97,7 +97,7 @@ void UpdateLinkSessionCountdown(void) {
       i--;
       entry++;
     } while (i >= 0);
-    Link_DrawShiftedTilePair(0x06006680);
+    Link_DrawPageArrows(0x06006680);
 
     if (state->enabled == 0)
       goto done;
@@ -157,7 +157,7 @@ done:
   return;
 }
 
-unsigned char Vram_FillWindowBlockPattern(void);
+unsigned char Text_FillCanvasBackground(void);
 /* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
 extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
@@ -182,7 +182,14 @@ extern s32 gKeyState;
 extern char MsgNoTimeToRun__countdown __asm__("MsgNoTimeToRun");
 extern u8 MsgNoTimeToRun[];
 
-s32 Message_ShowLocalizedAndWait(void) {
+/// Tests whether the party may not run from this battle: battle types 3 and
+/// 4 (the battles an event starts, and link battles; see
+/// BATTLE_TYPE_NO_ESCAPE in battle/battle/turn.c) and a party once
+/// challenged (BattleWork.challengeFlag). When it may not, shows "This is no
+/// time to be running away!" until A or B is pressed or the link battle's
+/// time runs out, and returns 1; else returns 0. The Flee command asks it
+/// (Battle_CollectPartyCommands).
+s32 Battle_RefuseFlee(void) {
   s16 buffer[64];
   s32 work;
   s32 result;
@@ -204,7 +211,7 @@ s32 Message_ShowLocalizedAndWait(void) {
   if (result != 0) {
     attrs = 42;
     work = Window_Create__countdown(0, 7, 30, 4, attrs);
-    Vram_FillWindowBlockPattern();
+    Text_FillCanvasBackground();
     BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun__countdown, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);

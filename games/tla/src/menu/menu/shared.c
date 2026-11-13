@@ -136,7 +136,18 @@ static inline void RestoreUnit(struct BattleUnit *unit,
   Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
 }
 
-void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
+/// Draws the status panel of the Item and Psynergy screens for the party
+/// party member `member` (window at tile 0,5, 13 by 12): the name, up to two
+/// statuses or the level, the party member's portrait, and below them what
+/// mode's panel kind asks for. slot is the inventory slot of the item the panel
+/// is about, for the equipment and Psynergy item panels. The first parameter,
+/// the status window, is not used: the window is the menu work's.
+///
+/// Opens the window on first use and keeps it in the work's statusWindow;
+/// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
+/// the work's cursor. The equipment panel equips the item on the real unit for
+/// a moment and puts the unit back from a heap copy it frees before returning.
+void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
@@ -167,22 +178,22 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     CharacterMenu_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
     if (ailments[1]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_POISON_LABEL, window,
+      Text_DrawMessageAsTilesFar(MESSAGE_POISON_LABEL, window,
                                     STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[2]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_VENOM_LABEL, window,
+      Text_DrawMessageAsTilesFar(MESSAGE_VENOM_LABEL, window,
                                     STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[3]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_CURSE_LABEL, window,
+      Text_DrawMessageAsTilesFar(MESSAGE_CURSE_LABEL, window,
                                     STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[4]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_HAUNT_LABEL, window,
+      Text_DrawMessageAsTilesFar(MESSAGE_HAUNT_LABEL, window,
                                     STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
@@ -214,9 +225,9 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       goto experience;
   classChange:
     value = unit->classIndex + MESSAGE_CLASS_NAME;
-    Text_DrawCharacterAtOffsetFar(value, window, 0, 32);
+    Text_DrawMessageAsTilesFar(value, window, 0, 32);
     if (!Item_CanOwnerEquip(owner, item)) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window, 16, 48);
+      Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window, 16, 48);
       break;
     }
     backup = Heap_Alloc(sizeof(struct BattleUnit));
@@ -230,28 +241,28 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     Unit_CalculateFar(owner);
     Window_SetTilemapEntryFar((s32)window, 0xf12a, 3, 5, 0);
     value = unit->classIndex + MESSAGE_CLASS_NAME;
-    Text_DrawCharacterAtOffsetFar(value, window, 0, 48);
+    Text_DrawMessageAsTilesFar(value, window, 0, 48);
     RestoreUnit(unit, backup);
     Heap_Release(backup);
     break;
   case STATUS_PANEL_EXPERIENCE:
   experience:
     value = unit->classIndex + MESSAGE_CLASS_NAME;
-    Text_DrawCharacterAtOffsetFar(value, window, 0, 32);
+    Text_DrawMessageAsTilesFar(value, window, 0, 32);
     StatusPanel_DrawHpPp(unit, (s32)window);
     value = unit->experience;
-    Text_DrawCharacterAtOffsetFar(MESSAGE_EXP_LABEL, window, 0, 64);
+    Text_DrawMessageAsTilesFar(MESSAGE_EXP_LABEL, window, 0, 64);
     Text_DrawNumberInWindowFar(value, 8, (s32)window, 24, 72);
     break;
   case STATUS_PANEL_CLASS:
     value = unit->classIndex + MESSAGE_CLASS_NAME;
-    Text_DrawCharacterAtOffsetFar(value, window, 0, 32);
+    Text_DrawMessageAsTilesFar(value, window, 0, 32);
     StatusPanel_DrawHpPp(unit, (s32)window);
     break;
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1:
     if (!Item_CanOwnerEquip(owner, item)) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window,
+      Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window,
                                     STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
     }
@@ -279,14 +290,14 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       }
     }
     if (known) {
-      Text_DrawCharacterAtOffsetFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
+      Text_DrawMessageAsTilesFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
                                     STATUS_PANEL_LEARN_NAME_Y);
-      Text_DrawCharacterAtOffsetFar(MESSAGE_LEARNED, window, 0,
+      Text_DrawMessageAsTilesFar(MESSAGE_LEARNED, window, 0,
                                     STATUS_PANEL_LEARN_NOTE_Y);
     } else {
-      Text_DrawCharacterAtOffsetFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
+      Text_DrawMessageAsTilesFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
                                     STATUS_PANEL_LEARN_NAME_Y);
-      Text_DrawCharacterAtOffsetFar(MESSAGE_WILL_LEARN, window, 0,
+      Text_DrawMessageAsTilesFar(MESSAGE_WILL_LEARN, window, 0,
                                     STATUS_PANEL_LEARN_NOTE_Y);
     }
     break;
@@ -294,16 +305,16 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   case STATUS_PANEL_STATS: {
     s32 labels = MESSAGE_PANEL_STAT_LABEL;
 
-    Text_DrawCharacterAtOffsetFar(labels, window, 0, 40); // Attack
+    Text_DrawMessageAsTilesFar(labels, window, 0, 40); // Attack
     value = unit->atk;
     Text_DrawNumberInWindowFar(value, 3, (s32)window, 64, 40);
-    Text_DrawCharacterAtOffsetFar(labels + 1, window, 0, 48); // Defense
+    Text_DrawMessageAsTilesFar(labels + 1, window, 0, 48); // Defense
     value = unit->def;
     Text_DrawNumberInWindowFar(value, 3, (s32)window, 64, 48);
-    Text_DrawCharacterAtOffsetFar(labels + 4, window, 0, 56); // Agility
+    Text_DrawMessageAsTilesFar(labels + 4, window, 0, 56); // Agility
     value = unit->agi;
     Text_DrawNumberInWindowFar(value, 3, (s32)window, 64, 56);
-    Text_DrawCharacterAtOffsetFar(labels + 3, window, 0, 64); // Luck
+    Text_DrawMessageAsTilesFar(labels + 3, window, 0, 64); // Luck
     value = unit->luck;
     Text_DrawNumberInWindowFar(value, 3, (s32)window, 64, 64);
     break;
@@ -434,7 +445,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 var
 
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work) {
-  Text_DrawCharacterAtOffsetFar((s32)MsgPanelStatLabel,
+  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel,
                                 (struct RenderInput *)work, 0, 32);
   Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
   if (alt->atk != base->atk) {
@@ -445,7 +456,7 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
       Icon_CreateStatChangeArrow(work, 44, 36, 1);
     }
   }
-  Text_DrawCharacterAtOffsetFar((s32)MsgPanelDefenseLabel,
+  Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel,
                                 (struct RenderInput *)work, 0, 48);
   Text_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
   if (alt->def != base->def) {
@@ -456,7 +467,7 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
       Icon_CreateStatChangeArrow(work, 44, 52, 1);
     }
   }
-  Text_DrawCharacterAtOffsetFar((s32)MsgAgilityLabel,
+  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel,
                                 (struct RenderInput *)work, 0, 64);
   Text_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
   if (alt->agi != base->agi) {
@@ -558,7 +569,7 @@ void Func_080f89a4(void) {
   s32 i;
   s32 count;
 
-  count = (u16)Party_CountActiveOwnersFar();
+  count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     struct AnimationObject *figure = menu->tabObjects[i];
     s32 placeY = 0x00728000 - (menu->rowPositions[i] << 15);
@@ -595,7 +606,7 @@ void Func_080f8a44(s32 xOffset, s32 yOffset) {
 }
 
 /// The twin of The Broken Seal's MenuCursor_Slide.
-void Func_080f8ab4(s32 x, s32 y) {
+void MenuCursor_Slide(s32 x, s32 y) {
   struct OwnerMenuState *work =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor;
@@ -764,7 +775,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   Text_DrawMessageFar(message, (s32)window, 0, 0);
 #else
   if (y == -1)
-    Text_DrawCharacterAtOffsetFar(message, window, 0, 0);
+    Text_DrawMessageAsTilesFar(message, window, 0, 0);
   else
     Text_DrawMessageFar(message, (s32)window, 0, 0);
 #endif
@@ -905,7 +916,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   result = -1;
   if (count == 0)
     goto done;
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawPageArrowsFar(0x06002500);
   pages = __divsi3(count, pageSize);
   if (__modsi3(count, pageSize) != 0)
     pages++;
@@ -1108,7 +1119,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
 
 void Text_DrawWorkValueWithLabel(s32 work) {
   Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
-  Text_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
+  Text_DrawMessageAsTilesFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
                                 0x40, 0);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   Window_DrawDividerLineFar(work, 12, 0, 12, 2);

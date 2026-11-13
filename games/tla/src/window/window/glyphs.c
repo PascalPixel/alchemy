@@ -329,7 +329,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
       }
 #endif
-      x += Func_0803bde4(window, c, x, y, 0);
+      x += Glyph_Draw(window, c, x, y, 0);
     }
   }
 }
@@ -369,7 +369,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
 /// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
 /// skipping the control codes and their arguments; code 3 starts a new line.
 /// With no text, the render work's own entries are drawn, closed with a 0.
-void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
+void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                      s32 y) {
   struct WindowWork *work;
   u16 c;
@@ -415,7 +415,7 @@ void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
       } else {
         // Called with no prototype in scope, as its bytes need: declared
         // void, two argument moves trade places in tla-ja and tla-en.
-        Func_0803c274(window, c, x, y, 0);
+        Window_PutGlyph(window, c, x, y, 0);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;

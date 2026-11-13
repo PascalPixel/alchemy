@@ -156,7 +156,7 @@ s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
-void Func_0810824c(void);
+void Shop_ReleaseWork(void);
 
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
@@ -201,7 +201,7 @@ void Func_080ad2f8(s32 value);
 s32 PartyInventory_AddFar(s32 item);
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
-void Window_SetBusyFlagsFar(s32 flags);
+void Message_SetDecodeFlagsFar(s32 flags);
 void BattleEffect_ResumeObject(s32 id);
 
 s32 Func_080ccec8(s32 id) {
@@ -304,7 +304,7 @@ s32 Func_080ccec8(s32 id) {
         BattleParty_ApplyDrain(1999, 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(126);
-        if (Party_CountActiveOwnersFar() == 1)
+        if (Party_CountMembersFar() == 1)
           FieldMessage_ShowFar((s32)&MsgKey0e17 + 6, 1);
         else
           FieldMessage_ShowFar((s32)&MsgKey0e17 + 1, 1);
@@ -473,7 +473,7 @@ s32 Func_080ccec8(s32 id) {
     }
   }
   if (talk->script < 0x10000) {
-    Window_SetBusyFlagsFar(busyFlags);
+    Message_SetDecodeFlagsFar(busyFlags);
     Event_RunMessage(id, talk->script);
   } else {
     Leader_StopMoving();

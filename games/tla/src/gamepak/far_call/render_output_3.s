@@ -48,12 +48,12 @@ Resource_CopyFixedBlockAFar:
 	.global Func_08038310
 	.thumb_func
 Func_08038310:
-	overlay_veneer Menu_SetNodeCoordinates
+	overlay_veneer SelectionMenu_SetPosition
 	.global DebugBrowser_IconsFar
 	.thumb_func
 DebugBrowser_IconsFar:
-	overlay_veneer Func_0804e1d8
+	overlay_veneer DebugBrowser_Icons
 	.global DebugBrowser_PortraitsFar
 	.thumb_func
 DebugBrowser_PortraitsFar:
-	overlay_veneer Func_0804e3f4
+	overlay_veneer DebugBrowser_Portraits

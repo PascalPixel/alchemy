@@ -720,16 +720,16 @@ remove:
   goto chosen;
 last:
   item = 441;
-  if ((owner = PartyInventory_FindOwner(item)) != -1)
+  if ((owner = PartyInventory_FindMember(item)) != -1)
     goto remove;
   item = -1;
   goto chosen;
 first:
   item = 439;
-  if ((owner = PartyInventory_FindOwner(item)) != -1)
+  if ((owner = PartyInventory_FindMember(item)) != -1)
     goto remove;
   item++;
-  if ((owner = PartyInventory_FindOwner(item)) == -1)
+  if ((owner = PartyInventory_FindMember(item)) == -1)
     goto last;
   PartyInventory_Remove(item);
 chosen:

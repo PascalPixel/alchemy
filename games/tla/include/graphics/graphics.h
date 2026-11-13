@@ -37,17 +37,17 @@ extern u8 *gPsynergyIconsEnd[];
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);
 #ifndef OWN_BattleLayout_HighlightPartyPanels
-s32 BattleLayout_HighlightPartyPanels(u16 *ids);
+s32 PartyStatus_HighlightMembers(u16 *ids);
 #endif
-void PaletteGlow_UpdateSine(void);
+void FileList_UpdatePulse(void);
 void Render_ResetTransformState(void);
-s32 Vram_ClearWindowBlock(void);
+s32 Text_ClearCanvas(void);
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void Portrait_ReloadFar(s32 a, s32 b, s32 c);
 void Icon_DrawMisc(u32 index);
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
-void UiTextResource_Release(s32 value);
+void MenuArrow_Release(s32 value);
 void PartyStatus_Draw(s32 flags);
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 #ifndef OWN_Window_SetTilemapEntry
@@ -79,7 +79,7 @@ extern u8 Text_LookupSymbolCodeSize[];
 void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
-void Resource_ClearOwnerListAndCounters(void);
+void SelectionMenu_Clear(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 s32 ItemIcon_Compose(u32 code, u32 layers);

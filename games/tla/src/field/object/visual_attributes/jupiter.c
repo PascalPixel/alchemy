@@ -9,10 +9,10 @@
 extern u32 gVBlankCount;
 extern u32 gData_080f0bfc[];
 
-void Shop_RestoreSceneTilesFar(s32 value);
+void Shop_SaveAndTintFieldPaletteFar(s32 value);
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
                               s32 z);
-void Shop_InitializeEffectFar(void);
+void Shop_RestoreFieldPaletteFar(void);
 
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 /// circle and then close on the current owner, which turns and takes mode 28.
@@ -29,7 +29,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     return;
   BattleEffect_InitializeSlots();
   scene = Ram_HeapSlots->effectWork;
-  Shop_RestoreSceneTilesFar(0x20118c);
+  Shop_SaveAndTintFieldPaletteFar(0x20118c);
   Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(id, 1);
   Sound_PlayFar(174);
@@ -75,7 +75,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   wait(40);
   Sound_PlayFar(164);
   wait(100);
-  Shop_InitializeEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 

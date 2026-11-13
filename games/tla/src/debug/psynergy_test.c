@@ -189,9 +189,9 @@ void Func_0200026c(void) {
 
 void Func_020002f4(s32 owner, s32 element, s32 djinn, s32 activate) {
   Event_SetFlag(element * 20 + djinn + 48);
-  Djinn_AddToOwner(owner, element, djinn);
+  Djinn_Give(owner, element, djinn);
   if (activate == 1)
-    Djinn_Activate(owner, element, djinn);
+    Djinn_Set(owner, element, djinn);
 }
 
 void Func_02000330(void) {

@@ -24,11 +24,11 @@ BattleParty_PrepareReserveOwnersFar:
 	.global Func_08118140
 	.thumb_func
 Func_08118140:
-	overlay_veneer Func_0811a39c
+	overlay_veneer BattleUnit_ListIds
 	.global Func_08118148
 	.thumb_func
 Func_08118148:
-	overlay_veneer Func_0811b75c
+	overlay_veneer BattleObject_SpawnObjectsForList
 	.global Func_08118150
 	.thumb_func
 Func_08118150:
@@ -36,4 +36,4 @@ Func_08118150:
 	.global Func_08118158
 	.thumb_func
 Func_08118158:
-	overlay_veneer Func_08118f6c
+	overlay_veneer BattleSummon_UpdateAvailability

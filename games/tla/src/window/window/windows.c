@@ -513,7 +513,7 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
 
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-void Func_08039754(struct UiChannelSlot *channel);
+void Text_StartCanvasScroll(struct UiChannelSlot *channel);
 
 /// Starts a channel typing the decoded text at entry into the battle message
 /// window. A channel that already serves a finished window continues below
@@ -551,7 +551,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
       } else if (selected->y < 13 << 8) {
         selected->y += 13 << 8;
       } else {
-        Func_08039754(selected);
+        Text_StartCanvasScroll(selected);
       }
       selected->x = 3 << 8;
     }
@@ -578,13 +578,15 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
   return selected;
 }
 
-s32 Vram_ClearWindowBlock(void) {
+/// Clears the text canvas to transparent.
+s32 Text_ClearCanvas(void) {
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
 
   return fill((void *)0x06002500, 0xf00, 0);
 }
 
-void Vram_FillWindowBlockPattern(void) {
+/// Fills the text canvas with the window background colour (4).
+void Text_FillCanvasBackground(void) {
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
 
   fill((void *)0x06002500, 0xf00, 0x44444444);
@@ -604,7 +606,7 @@ void Message_ResetIdle(void) {
   }
   if (selection != 0) {
     if (selection->work != 0) {
-      Vram_ClearWindowBlock();
+      Text_ClearCanvas();
       selection->y = 0;
     }
     selection->x = 0;
@@ -617,7 +619,9 @@ void Message_ResetIdle(void) {
 
 // Copies the channel's text colour, outline and line spacing into the shared
 // glyph renderer before that channel draws its next character.
-void Func_0803972c(struct UiChannelSlot *channel) {
+/// Copies the message's text colour, outline and line spacing into the shared
+/// glyph renderer before that message draws its next character.
+void Message_ApplyStyle(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   work->colour = channel->colour;
@@ -625,7 +629,10 @@ void Func_0803972c(struct UiChannelSlot *channel) {
   work->lineSpacing = channel->lineSpacing;
 }
 
-void Func_08039754(struct UiChannelSlot *channel) {
+/// Starts a message scrolling its canvas up a line: 12 pixel rows, 6 a
+/// frame over two frames (Message_Type, Text_ScrollCanvasUp), during which
+/// the message types nothing.
+void Text_StartCanvasScroll(struct UiChannelSlot *channel) {
   channel->transition = 2;
 }
 

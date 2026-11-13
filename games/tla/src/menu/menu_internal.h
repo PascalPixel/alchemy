@@ -94,7 +94,7 @@ struct ItemMenuWork {
   struct WindowSprite *ownerIcons[2];
   u8 unk180[0x44];
   u16 items[32];    ///< the inventory entries listed
-  s16 memberIds[8]; ///< the party in order (Party_ListActiveOwnersFar)
+  s16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
   u8 itemCount;
   u8 partyCount;
   u8 sideMember[2]; ///< each side's party member
@@ -286,7 +286,7 @@ struct DjinnUnit {
 void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window);
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work);
-void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window,
                                    s32 x, s32 y);
 
 // Tags the parts name in prototypes before the part that defines them.
@@ -308,7 +308,7 @@ s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
 extern u8 MsgShortcutHelp[];
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-void Link_DrawShiftedTilePairFar(s32 addr);
+void Link_DrawPageArrowsFar(s32 addr);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 owner);

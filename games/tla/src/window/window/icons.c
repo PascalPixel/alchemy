@@ -15,7 +15,7 @@ s32 Icon_CountPsynergyIcons(void) {
 extern u8 *gIcon_BasePointerTable[];
 extern u8 *gIcon_OverlayPointerTable[];
 
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
+void Icon_Decode(GlyphTransfer *work, s32 layer);
 s32 Resource_FindFreeEntry(void);
 
 void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
@@ -26,11 +26,11 @@ void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
   work->encoded = gIcon_BasePointerTable[no1];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, 0);
+  Icon_Decode(work, 0);
   work->encoded = gIcon_OverlayPointerTable[no0];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, 1);
+  Icon_Decode(work, 1);
   if (flag == 0)
     *slot = Resource_FindFreeEntry();
   *ret = VramCache_Load(*slot, 0x80, work->tiles);
@@ -41,7 +41,7 @@ extern u8 *gIcon_BasePointerTable[];
 
 void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                s32 *tileOut, s32 reuse);
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
+void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountItemIcons(void);
 
 u8 *BattleAction_Get(s32);
@@ -73,14 +73,14 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 0);
+    Icon_Decode(work, 0);
     overlay = 1;
   }
 
   work->encoded = gItemIcons[glyph];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, overlay);
+  Icon_Decode(work, overlay);
 
   if (reuse == 0)
     *cacheSlot = Resource_FindFreeEntry();
@@ -94,7 +94,7 @@ extern u8 *gItemIcons[];
 extern u8 *gIcon_MarkPointers[];
 extern u8 *gIcon_DigitPointers[];
 
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
+void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
 #define ICON_BASE 1 ///< the base under the icon
 #define ICON_COUNT_ABOVE_ONE 2
@@ -119,31 +119,31 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 0);
+    Icon_Decode(work, 0);
     overlay = 1;
   }
   work->encoded = gItemIcons[item->icon];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, overlay);
+  Icon_Decode(work, overlay);
   if ((layers & ICON_EQUIPPED) && (code & 0x400)) {
     work->encoded = gIcon_MarkPointers[1];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    Icon_Decode(work, 1);
   }
   if ((layers & ICON_BROKEN) && (code & 0x200)) {
     work->encoded = gIcon_MarkPointers[0];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    Icon_Decode(work, 1);
   }
   if ((layers & ICON_ARTIFACT) && (code & 0x200) && (item->flags & 1) &&
       (item->flags & 2)) {
     work->encoded = gIcon_MarkPointers[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    Icon_Decode(work, 1);
   }
   if (layers & ICON_COUNT_ABOVE_ONE) {
     count = (code & 0xf800) >> 11;
@@ -161,12 +161,12 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     work->encoded = gIcon_DigitPointers[ones];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    Icon_Decode(work, 1);
     if (count / 10 != 0) {
       work->encoded = gIcon_DigitPointers[count / 10 + 9];
       work->width = 2;
       work->height = 2;
-      UiGlyph_DecodeWithHeapRoutines(work, 1);
+      Icon_Decode(work, 1);
     }
   }
   return 256;
@@ -194,7 +194,7 @@ s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {
 
 extern u8 *gItemIcons[];
 
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
+void Icon_Decode(GlyphTransfer *work, s32 layer);
 
 /// Decodes item code's icon (the first icon for code 0) into the glyph work.
 void Icon_DrawItem(s32 code) {
@@ -207,7 +207,7 @@ void Icon_DrawItem(s32 code) {
     state->encoded = gItemIcons[0];
   state->width = 2;
   state->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(state, 0);
+  Icon_Decode(state, 0);
 }
 
 struct BattleActionGlyph {
@@ -220,7 +220,7 @@ extern u8 *gPsynergyIcons[];
 
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                   s32 *tileOut, s32 reuse);
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
+void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountPsynergyIcons(void);
 
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
@@ -249,14 +249,14 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     work->encoded = gIcon_BasePointerTable[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 0);
+    Icon_Decode(work, 0);
     overlay = 1;
   }
 
   work->encoded = gPsynergyIcons[glyph];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, overlay);
+  Icon_Decode(work, overlay);
 
   if (reuse == 0)
     *cacheSlot = Resource_FindFreeEntry();
@@ -267,7 +267,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 
 extern char ResourceId_Icons;
 
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
+void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
 void Icon_DrawMisc(u32 index) {
   GlyphTransfer *state = Ram_HeapSlots->glyphWork;
@@ -275,10 +275,15 @@ void Icon_DrawMisc(u32 index) {
   state->encoded = gIcon_MiscIconPointers[index];
   state->width = 2;
   state->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(state, 0);
+  Icon_Decode(state, 0);
 }
 
-void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
+/// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
+/// free slot unless reuse is set) and its colours into the sprite palette
+/// named by palette. Returns the tile in *tile.
+/// This resource stores its palette before the encoded tile payload: 16
+/// colours, 32 bytes. Portraits (Portrait_Create) come through here.
+void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse) {
   GlyphTransfer *work;
   u16 *table;
@@ -295,7 +300,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   work->encoded = entry + 32;
   work->width = 4;
   work->height = 4;
-  UiGlyph_DecodeWithHeapRoutines(work, 0);
+  Icon_Decode(work, 0);
   if (reuse == 0)
     *slot = Resource_FindFreeEntry();
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
@@ -304,7 +309,8 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
           REG_DMA3);
 }
 
-void UiGlyph_ReservedNoOp(void) {}
+/// An empty function. Nothing in the tree names it but its prototype.
+void Icon_ReservedNoOp(void) {}
 
 extern u8 Tile_Decompress4bppCode[];
 extern u8 Tile_ExpandMaskedCode[];
@@ -313,7 +319,11 @@ extern u8 Tile_Decompress4bppCodeSize[];
 extern u8 Tile_ExpandMaskedCodeSize[];
 extern u8 Tile_ExpandOpaqueCodeSize[];
 
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined) {
+/// Decodes a compressed icon into the glyph buffer and expands it to tiles,
+/// opaque for the first layer or masked over what is there when outlined is
+/// set. Releases each copied decoder before loading the next routine into the
+/// same slot. glyph->width and height are the icon's size in tiles.
+void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
   void *code;
 
   {

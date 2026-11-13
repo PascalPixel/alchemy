@@ -149,7 +149,7 @@ struct OwnerState {
 /// Raises an enemy by levels, The Broken Seal's BattleEnemy_AdjustLevel with
 /// HP capped at 16383 instead of 9999. Returns nothing, though declared s32 as
 /// there.
-s32 Func_0812786c(s32 owner, s32 levels) {
+s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   struct OwnerStats *base;
   struct OwnerState *state;
   struct OwnerStats *stats;
@@ -616,7 +616,7 @@ assign_enemy:
                       enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
     unit = Unit_Get__f11f66c(memberOrEnemyIndex + 128);
     if (levelAdjustment != 0)
-      Func_0812786c(memberOrEnemyIndex + 128, levelAdjustment);
+      BattleEnemy_AdjustLevel(memberOrEnemyIndex + 128, levelAdjustment);
     else if (!GameFlag_Test(0x173) && GameFlag_Test(0x2e))
       Func_08127a0c(memberOrEnemyIndex + 128);
     battle->unk868 = 0;

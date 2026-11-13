@@ -34,7 +34,7 @@ PartyInventory_AddFar:
 	.thumb_func
 Inventory_FindFar:
 	overlay_veneer Inventory_Find
-	.global PartyInventory_FindOwnerFar
+	.global PartyInventory_FindMemberFar
 	.thumb_func
-PartyInventory_FindOwnerFar:
-	overlay_veneer PartyInventory_FindOwner
+PartyInventory_FindMemberFar:
+	overlay_veneer PartyInventory_FindMember

@@ -27,7 +27,9 @@ s32 Func_080b106c(s32 item);
 extern u16 gData_020023c4[];
 extern u16 Data_02000458[];
 
-void Func_080b1088(void) {
+// XXX: what this snapshot puts aside and when; the twin of The Broken Seal's
+// Colosso snapshot, its callers in this game would settle it.
+void InventorySnapshot_Save(void) {
   u16 *save;
   struct BattleUnit *unit;
   s16 *inventory;
@@ -73,7 +75,7 @@ void Func_080b1088(void) {
     GameFlag_ClearBit(i);
 }
 
-void Func_080b11f8(void) {
+void InventorySnapshot_Restore(void) {
   u16 *src = gData_020023c4;
   s32 owner;
 

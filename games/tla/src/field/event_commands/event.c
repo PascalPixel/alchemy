@@ -47,7 +47,7 @@ void Leader_StopMoving(void) {
 
 void Event_Start(void) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
-  UiTimedNotice_CloseIfActiveFar();
+  AreaNameWindow_HideFar();
   Leader_StopMoving();
   if (state->actionCounter != 0)
     Event_ResolveAllPendingActions();
@@ -109,15 +109,15 @@ void Event_SetSceneEvents(s32 events) {
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value) {
   Unit_Get(event_id);
-  Party_AddActiveOwnerFar(event_id);
+  Party_AddMemberFar(event_id);
   if (value != 0) {
     Party_ShowJoinedMessageFar(event_id, value);
   }
 }
 
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
-  Party_AddActiveOwnerFar(first);
-  Party_AddActiveOwnerFar(second);
+  Party_AddMemberFar(first);
+  Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
@@ -129,7 +129,7 @@ s32 Event_ValidatePackedId(u32 packed_id) {
     return -1;
   if (GameFlag_Test(group) == 0)
     return -2;
-  if (Unit_KnowsActionFar(group, entry) == 0)
+  if (Unit_KnowsPsynergyFar(group, entry) == 0)
     return -3;
   return 0;
 }
@@ -172,7 +172,7 @@ void Party_RemoveOwnerRestored(s32 owner) {
   s32 count;
   s32 standing;
 
-  Party_RemoveActiveOwnerFar(owner);
+  Party_RemoveMemberFar(owner);
   Event_ClearValidPackedIds();
   vitals = Unit_Get(owner);
   // The two copies in a once-only block keep both ahead of the ratio; as the
@@ -189,7 +189,7 @@ void Party_RemoveOwnerRestored(s32 owner) {
     vitals->ppRatio = 1;
   vitals->status = 0;
   standing = 0;
-  count = Party_CountActiveOwnersFar();
+  count = Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     vitals = Unit_Get(gMainRoutineWork.activeOwners[i]);
     if (vitals->hp != 0)
@@ -210,7 +210,7 @@ void Party_RemoveOwnerRestored(s32 owner) {
 s32 PartyInventory_FindRoomFar(s32 item);
 
 s32 Func_080d25c8(s32 item) {
-  Party_CountActiveOwnersFar();
+  Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, 2);
     FieldMessage_ShowFar((s32)MsgPartyCannotCarry, 1);
@@ -354,7 +354,7 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
 }
 
 s32 Message_AllTypedFar(void);
-s32 Menu_RunConfirmSelectionFar(s32 useBottom, s32 name, s32 width, s32 third);
+s32 YesNoMenu_RunFar(s32 useBottom, s32 name, s32 width, s32 third);
 void Window_CloseMatchingIdFar(s32 sprite);
 
 /// The event command "choose yes or no": waits for the message, asks yes or no
@@ -390,7 +390,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
       useBottom = 0;
   }
 
-  answer = Menu_RunConfirmSelectionFar(useBottom, *(s16 *)(work + 0xcb0),
+  answer = YesNoMenu_RunFar(useBottom, *(s16 *)(work + 0xcb0),
                                        *(s16 *)(work + 0xcb2),
                                        *(s16 *)(work + 0xcb4));
   if (answer != 0) {
@@ -410,7 +410,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   return answer;
 }
 
-s32 Func_080d295c(s32 a) { return Menu_RunConfirmSelectionFar(a, 0, 0, 0); }
+s32 Func_080d295c(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 
 void BattleEffect_StartEffectObject22(s32 item, s32 mode);
 void GameFlag_SetBit(s32 flag);

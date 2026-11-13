@@ -282,7 +282,7 @@ s32 Sound_GetBgmRestoreDelayFar(void);
 
 /// Ends a message wait (clearing the channel's countdown and returning 1) when
 /// the window's voice has finished or A, B or a shoulder button is held.
-s32 Message_CheckCancelByInput(struct UiChannelSlot *ch) {
+s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
   // The held keys read through a volatile pointer, so each test loads them
@@ -303,10 +303,10 @@ s32 Message_CheckCancelByInput(struct UiChannelSlot *ch) {
   return 0;
 }
 
-/// As Message_CheckCancelByInput, but on newly pressed A, B or shoulder buttons
+/// As Text_CheckPauseSkipped, but on newly pressed A, B or shoulder buttons
 /// (the pending presses in a window mode); while B is held the wait ends only
 /// at countdown 1, and otherwise the countdown is set to 2.
-s32 Message_CheckCancelByModeInput(struct UiChannelSlot *ch) {
+s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
   struct WindowWork *work =
       (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
@@ -532,7 +532,7 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
 
   work->count = x;
   entry = Message_Decode(message, 0);
-  Text_MeasureEntry(entry, (u32 *)&width, (u32 *)&height, 0);
+  Text_MeasureDecoded(entry, (u32 *)&width, (u32 *)&height, 0);
   text = &work->entries[entry];
   if (text[0] == '-') {
 #if (LANGUAGE == LANGUAGE_JAPANESE)

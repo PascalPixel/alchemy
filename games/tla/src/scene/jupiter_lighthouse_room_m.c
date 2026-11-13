@@ -1152,8 +1152,8 @@ void Func_02000cac(s32 arg) {
 
 extern const u8 MsgIMSorry[];
 
-void Party_RemoveActiveOwner(s32 owner);
-s32 Party_AddActiveOwner(s32 owner);
+void Party_RemoveMember(s32 owner);
+s32 Party_AddMember(s32 owner);
 void Unit_Calculate(s32 owner);
 s32 Unit_AddPp(s32 owner, s32 delta);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
@@ -1229,16 +1229,16 @@ void Func_02001c7c(void) {
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);
   Event_SetDefeatDestination((s32)&SceneId_Ov6a3, 77);
-  Party_RemoveActiveOwner(4);
-  Party_RemoveActiveOwner(7);
-  Party_RemoveActiveOwner(5);
-  Party_RemoveActiveOwner(6);
-  Party_RemoveActiveOwner(2);
-  Party_RemoveActiveOwner(0);
-  Party_AddActiveOwner(2);
-  Party_AddActiveOwner(0);
-  Party_RemoveActiveOwner(3);
-  Party_RemoveActiveOwner(1);
+  Party_RemoveMember(4);
+  Party_RemoveMember(7);
+  Party_RemoveMember(5);
+  Party_RemoveMember(6);
+  Party_RemoveMember(2);
+  Party_RemoveMember(0);
+  Party_AddMember(2);
+  Party_AddMember(0);
+  Party_RemoveMember(3);
+  Party_RemoveMember(1);
   JupiterLighthouseRoomM_AddHp(2, -10000);
   JupiterLighthouseRoomM_AddHp(0, -10000);
   Unit_Calculate(0);
@@ -1316,14 +1316,14 @@ void Func_02001ed0(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(0x2e10000, 0, 0xd10000, 0);
   gMainRoutineWork.currentOwner = 4;
-  Party_RemoveActiveOwner(0);
-  Party_RemoveActiveOwner(2);
-  Party_RemoveActiveOwner(5);
-  Party_RemoveActiveOwner(6);
-  Party_RemoveActiveOwner(7);
-  Party_RemoveActiveOwner(3);
-  Party_RemoveActiveOwner(1);
-  Party_AddActiveOwner(4);
+  Party_RemoveMember(0);
+  Party_RemoveMember(2);
+  Party_RemoveMember(5);
+  Party_RemoveMember(6);
+  Party_RemoveMember(7);
+  Party_RemoveMember(3);
+  Party_RemoveMember(1);
+  Party_AddMember(4);
   Actor_SetSpeed(4, 0x10000, 0x8000);
   {
     s32 angle = 0x4000;
@@ -1676,7 +1676,7 @@ void Func_02001ed0(void) {
   Actor_SetSpeed(7, 0x10000, 0x8000);
   Actor_SetScript(7, (s32)gData_020059a4);
   FieldActor_RefreshSelectorById(7);
-  Party_AddActiveOwner(7);
+  Party_AddMember(7);
   FieldCamera_FollowActor(4, 1);
   Actor_SetPosition(7, 0, 0);
   FieldEvent_Wait(0x14);

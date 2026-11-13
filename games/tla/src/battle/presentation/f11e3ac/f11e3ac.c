@@ -206,7 +206,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   }
   ids[0] = saved->unitId;
   ids[1] = 255;
-  Func_0811b75c((s16 *)ids, 1, 0);
+  BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
   object->y = 0x280000;
   object->angle = plan->targetIds[0] <= 7 ? 0 : 0x8000;
   BattleHighlight_SetSpriteMode(saved->unitId, 1);
@@ -293,7 +293,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   if (saved->single) {
     ids[0] = unitId;
     ids[1] = 255;
-    Func_0811b75c((s16 *)ids, 1, 0);
+    BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
     BattleHighlight_SetSpriteMode(unitId, 1);
   } else {
     count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
@@ -303,7 +303,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
       if (resource)
         BattleObject_Get(ids[i])->resource = resource;
     }
-    Func_0811b75c((s16 *)ids, 1, 0);
+    BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
     for (i = 0; i < count; i++)
       BattleHighlight_SetSpriteMode(ids[i], 1);
   }
@@ -341,7 +341,14 @@ extern u8 MsgNimblyDodgesBlow[];
 s32 ArcTan2(s32 x, s32 y);
 void *Unit_Get(s32 owner);
 s32 ResourceMetadata_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
-/* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32 BattleClass_GetAttackHop(s32 classId); the definition has void Func_08126700(s32 x, s32 depth, s32 y, s32 zoom) { void Func_08126700(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000; s32 zoom; struc...; tried as the one declaration s32 BattleClass_GetAttackHop(s32 classId), it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:7982: conflicting types for `BattleClass_GetAttackHop'. */
+/* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32
+ * BattleClass_GetAttackHop(s32 classId); the definition has void
+ * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) { void
+ * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000;
+ * s32 zoom; struc...; tried as the one declaration s32
+ * BattleClass_GetAttackHop(s32 classId), it does not compile in tla-ja:
+ * games/tla/src/battle/presentation/f11e3ac.c:7982: conflicting types for
+ * `BattleClass_GetAttackHop'. */
 extern s32 BattleClass_GetAttackHop__f11e3ac(s32 classId) __asm__("BattleClass_GetAttackHop");
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 frames,
                                  s32 hop);
@@ -513,7 +520,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// Func_0811edb0: The Broken Seal's BattleStaging_RunItem
+// BattleStaging_RunItem: The Broken Seal's BattleStaging_RunItem
 // (games/tbs/src/battle/battle/staging.c), ported: plays an item's use, the
 // camera turned to the user's side, the user raising the item and, for an item
 // with an effect, the screen dimming while the effect plays with the events;
@@ -543,8 +550,18 @@ void Func_0811ddd8(struct BattlePlan *plan,
                    struct BattlePresentationWork *work);
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
-s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
-                  struct BattleActionRecord *selection) {
+/// Plays an item's use: the camera turns to the user's side, the user raises
+/// the item and, for an item with a battle effect, the screen dims while it
+/// plays with its playback. Then the item is spent as its use type says; when
+/// its slot empties, later item commands of the same party member this turn
+/// follow their items to their new slots (or lose theirs, -1). Called by
+/// BattleStaging_DispatchAction for STAGING_ITEM, with the action's entry as
+/// selection. Sets gBattleBackgroundWork's yaw and, while an battle effect
+/// plays, dims gBattleWork->brightness and BG palettes 6 to 13; changes the
+/// user's inventory (Inventory_RemoveFar, Inventory_BreakFar, or the Empty
+/// Bottle) and the parameters of gBattleWork->actions.
+s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
+                          struct BattleActionRecord *selection) {
   struct BattlePresentationWork work;
   struct MotionObject *object;
   s32 targetOrFadeIndex;
@@ -702,13 +719,13 @@ void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
   }
 }
 
-// Func_0811f088: The Broken Seal's BattleStaging_RunPsynergyCast
-// (games/tbs/src/battle/battle/staging.c), ported: turns the camera to the
-// caster (across the field or reversed when the plan's flags say so), raises
-// the caster's hand with its element's glow, then either fails ("But the
-// Psynergy was blocked!" or "...But doesn't have enough PP!") or plays the
-// effect with the events. This game adds a second effect object
-// (Func_0811e3ac, shown by Func_0811e7dc, put back and freed by
+// BattleStaging_RunPsynergyCast: The Broken Seal's
+// BattleStaging_RunPsynergyCast (games/tbs/src/battle/battle/staging.c),
+// ported: turns the camera to the caster (across the field or reversed when the
+// plan's flags say so), raises the caster's hand with its element's glow, then
+// either fails ("But the Psynergy was blocked!" or "...But doesn't have enough
+// PP!") or plays the effect with the events. This game adds a second effect
+// object (Func_0811e3ac, shown by Func_0811e7dc, put back and freed by
 // Func_0811e830), sets the caster's mode from the battle work's byte 0x869,
 // and skips the playback callback and its wait when the plan's word at 100 is
 // set. mode: 1 a Djinni, 2 an enemy's cast. The two fixed yaws are stores in
@@ -733,7 +750,17 @@ extern u8 MsgPsynergyBlocked[];
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void BattleBackground_RestorePalette(void);
 
-s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
+/// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
+/// the targets from the caster's side, the caster raises its hand and glows
+/// in its element (no glow for a Djinni); then the cast fails ("blocked" or
+/// too little PP) or its battle effect plays with its playback, and the targets
+/// return to their spots.
+/// Called by BattleStaging_DispatchAction for STAGING_CAST
+/// (CAST_PSYNERGY), STAGING_DJINNI (CAST_DJINNI) and STAGING_ENEMY_CAST
+/// (CAST_ENEMY). Sets gBattleBackgroundWork's yaw (and its frames for a fixed
+/// view), redraws the party status window without its PP row, and schedules
+/// BattlePlayback_Run around the battle effect.
+s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->transitionWork;
@@ -840,7 +867,6 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-
 void BattleMotion_FlashHit(s32 id) {
   u16 selection[2];
   u16 *selected;
@@ -856,12 +882,12 @@ void BattleMotion_FlashHit(s32 id) {
     target = 0xff;
     selected[1] = target;
     selected[0] = id;
-    BattleLayout_HighlightPartyPanelsFar(selected);
+    PartyStatus_HighlightMembersFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object, 7);
     wait(2);
 
     selected[0] = id;
-    BattleLayout_HighlightPartyPanelsFar(selected);
+    PartyStatus_HighlightMembersFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object,
                                       BattleMotion_GetSlotPalette(id));
     wait(2);

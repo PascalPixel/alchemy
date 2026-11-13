@@ -198,10 +198,10 @@ Func_02005540:
 	.thumb_func
 Func_02005548:
 	overlay_veneer Func_08020390
-	.global Party_CountActiveOwners
+	.global Party_CountMembers
 	.thumb_func
-Party_CountActiveOwners:
-	overlay_veneer Party_CountActiveOwnersFar
+Party_CountMembers:
+	overlay_veneer Party_CountMembersFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

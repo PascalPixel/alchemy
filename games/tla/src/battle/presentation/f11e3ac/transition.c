@@ -232,7 +232,7 @@ extern u8 Data_0812cd74[];
 
 void PartyStatus_CreateWindowFar(s32 flags);
 void Func_08138028(struct BattlePresentationWork *work);
-void Func_08118bcc(s32 value);
+void BattleIntro_AnnounceEncounter(s32 value);
 
 extern char ResourceId_SerpentStarsBackdrop;
 
@@ -324,7 +324,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     if ((u32)(kind - 74) <= 2 || kind == 638)
       wait(60);
     else
-      Func_08118bcc(arg);
+      BattleIntro_AnnounceEncounter(arg);
     Task_Remove(BattleTransition_AdvanceTimer);
     Task_Remove(BattleTransition_DrawRows);
     gBgScroll[0].y = 0;
@@ -379,7 +379,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     }
     for (i = 0; i != count; i++)
       BattleHighlight_SetSpriteMode(shown[i], 0);
-    Func_08118bcc(arg);
+    BattleIntro_AnnounceEncounter(arg);
     gBgScroll[0].y = 0;
     wait(1);
     Irq_SetHandler(2, 0, 0);

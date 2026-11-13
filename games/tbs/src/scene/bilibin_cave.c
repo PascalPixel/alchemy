@@ -107,7 +107,6 @@
 /// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
 #define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_AREA_TEMP_05
 
-// BilibinCave_Initialize calls one of these for the scene being entered.
 static void BilibinCave_RestoreEntrance(void);
 static void BilibinCave_RestoreRapierRoom(void);
 static void BilibinCave_RestoreIceRoom(void);

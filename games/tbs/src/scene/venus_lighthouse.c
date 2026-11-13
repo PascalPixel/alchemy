@@ -557,7 +557,7 @@ static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
   return 0;
 }
 
-// Pulse the child effect and play its timed sound.
+/// Pulse the child effect and play its timed sound.
 static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *actor) {
   if ((gFrameCount & 3) == 0)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
@@ -569,7 +569,7 @@ static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-// Emit a rising particle near the actor every eight frames.
+/// Emit a rising particle near the actor every eight frames.
 static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
   struct EffectOptions options;
   s32 framePhase, particleX, particleY, riseSpeed;
@@ -596,7 +596,7 @@ static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *actor) {
   return 0;
 }
 
-// Emit the two particle patterns used by the leader's passage trail.
+/// Emit the two particle patterns used by the leader's passage trail.
 static UNREAD_RESULT
 VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
   struct EffectOptions options;
@@ -757,8 +757,8 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 /// holds it down.
 #define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_SCENE_TEMP_01
 
-// A light's update routine: every four frames a shrinking particle around it,
-// and now and then a sound while it moves.
+/// A light's update routine: every four frames a shrinking particle around it,
+/// and now and then a sound while it moves.
 static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   struct EffectOptions options;
   s32 velocityX;
@@ -1800,7 +1800,7 @@ static void VenusLighthouse_JumpOrPushSwitchPillar(void) {
   VenusLighthouse_MoveSwitchPillar();
 }
 
-// Keep a stacked pillar sixteen pixels above its supporting actor.
+/// Keep a stacked pillar sixteen pixels above its supporting actor.
 static UNREAD_RESULT
 VenusLighthouse_FollowSupportingPillarHeight(struct Actor *pillar) {
   struct Actor *support;
@@ -3203,7 +3203,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Event_End();
 }
 
-// Emit rising particles around the actor every four frames.
+/// Emit rising particles around the actor every four frames.
 static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
   struct EffectOptions options;
   s32 framePhase;

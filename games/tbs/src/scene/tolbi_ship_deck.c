@@ -87,7 +87,6 @@
 #include "map_grid_scroll.h"
 #include "tolbi_ship.h"
 
-// The scene's routines, defined below.
 static void TolbiShipDeck_ConfrontCrewman(void);
 static void TolbiShipDeck_ApplyEntryState(void);
 static void TolbiShipDeck_PlaceWaitingPassengers(void);
@@ -431,8 +430,8 @@ UNUSED static s32 sUnused1; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 
-// The ROM places these after the file's other statics, the strokes first, on
-// the 16-byte boundary the assembler gives a 32-byte common symbol.
+// The oar strokes and depths come after the file's other statics, the strokes
+// on a 16-byte boundary.
 static u32 sOarStroke[8] __attribute__((aligned(16)));
 static s32 sOarDepth[8];
 
@@ -2973,8 +2972,8 @@ const struct ActorPlacement gTolbiShipDeckActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-// UB: the matching compiler places this writable overlay table with the
-// constants. The modern build gives its talkFacing stores a mutable object.
+// UB: a table the event writes (its talkFacing), defined const and kept with
+// the constants; UBFIX makes it writable.
 #ifdef UBFIX
 struct ActorPlacement gTolbiShipDeckActorPlacementsWaiting[] = {
 #else

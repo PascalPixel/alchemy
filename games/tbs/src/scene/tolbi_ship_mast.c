@@ -79,7 +79,6 @@
 #include "map_grid_scroll.h"
 #include "macros.h"
 
-// Events and the mast's per-frame updates.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
 static void TolbiShipMast_AnnounceClearCourse(void);

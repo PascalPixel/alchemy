@@ -124,7 +124,6 @@
   ((s32 (*)())ColosseumSatrageMatch_MovePusherAndLog)
 #endif
 
-// Forward declarations.
 static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId);
 static void Colosso_ShowOpeningLettering(s32 match);
 static void Colosso_ShowMatchResult(s32 result);

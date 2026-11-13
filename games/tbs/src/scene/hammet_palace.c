@@ -123,7 +123,6 @@ enum HammetPalaceActorId {
   ACTOR_ASKING_ABOUT_THE_SILK_TRADE
 };
 
-// Entrance setup and the two long conversations use the helpers below.
 static void HammetPalace_SetUpEntrance(void);
 static void HammetPalace_IvanReportsToLayana(void);
 static void HammetPalace_FacePartyOutward(s32 waitFrames);

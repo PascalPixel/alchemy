@@ -127,7 +127,6 @@
 #include "flags.h"
 #include "field_psynergy_work.h"
 
-// The arrival events are defined after the scripts.
 static void CottageRoomsB_DoraWakesIsaac(void);
 static void CottageRoomsB_HurryToThePlaza(void);
 static void CottageRoomsB_RestoreRoomPatch(void);

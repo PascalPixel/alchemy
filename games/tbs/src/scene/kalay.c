@@ -2128,8 +2128,8 @@ static void Kalay_UpdateTunnelPassages(void) {
   }
 }
 
-// UB: the void routine's epilogue returns through r0, leaving the nonzero
-// return address as SC_CALL's status. Repeat once per frame until the actor is
+// UB: the routine returns nothing, so SC_CALL takes whatever value is left as
+// its status, which is not 0. Repeat once per frame until the actor is
 // released, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX

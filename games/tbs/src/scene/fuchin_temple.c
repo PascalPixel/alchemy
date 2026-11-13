@@ -84,9 +84,7 @@
 #include "field_psynergy_work.h"
 #include "io_reg.h"
 
-// Fuchin Temple's area temp flags, which last until the party enters
-// another area; FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE is the Psynergy Stone
-// outside, which then refills.
+// Fuchin Temple's area temp flags last until the party enters another area.
 
 /// The party refused Nyunpa's test, so talking to him offers it again.
 #define FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED FLAG_AREA_TEMP_00
@@ -191,7 +189,7 @@ FuchinTemple_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
   return 0;
 }
 
-// Keep an actor facing the party leader while the conversation is staged.
+/// Keep an actor facing the party leader while the conversation is staged.
 static UNREAD_RESULT FuchinTemple_FaceLeader(struct Actor *actor) {
   struct Actor *player = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = ArcTan2(player->z.fixed - actor->z.fixed,

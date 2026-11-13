@@ -183,8 +183,8 @@ static void LamakanDesert_TalkToSmog(void) {
 
 #include "shared/actor_wait_below_height.h"
 
-// The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
-// frames and a spray of sand every 16.
+/// The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
+/// frames and a spray of sand every 16.
 static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
   struct EffectOptions params;
   s32 phase;

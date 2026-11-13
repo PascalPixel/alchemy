@@ -187,7 +187,8 @@ static s32 Actor_DrawBehindScenery(struct Actor *actor) {
   return 0;
 }
 
-// Update routine that turns the party leader toward Feizhi while she runs past.
+/// Update routine that turns the party leader toward Feizhi while she runs
+/// past.
 static UNREAD_RESULT AlpineCrossing_LeaderFaceFeizhi(struct Actor *leader) {
   struct Actor *feizhi;
 
@@ -832,9 +833,9 @@ static void AlpineCrossing_HidePath(void) {
   Event_Wait(1);
 }
 
-// Update routine of the frozen pillar: it draws under the party leader while
-// the leader stands higher than its top, so the leader can climb onto it, and
-// over the leader otherwise.
+/// Update routine of the frozen pillar: it draws under the party leader while
+/// the leader stands higher than its top, so the leader can climb onto it, and
+/// over the leader otherwise.
 static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

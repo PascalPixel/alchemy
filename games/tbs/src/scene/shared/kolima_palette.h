@@ -4,7 +4,6 @@
 // the forest's colours turned redder and darker, and both sets of colours kept
 // for the event where the curse lifts.
 
-// Forward declarations.
 static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj);
 static void KolimaPalette_SaveHealthy(void);
 static void KolimaPalette_SaveCursed(void);

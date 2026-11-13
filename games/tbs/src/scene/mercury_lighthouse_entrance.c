@@ -143,7 +143,6 @@ enum {
   FLAG_LIZARD_MAN_STEPPED_ASIDE = FLAG_SCENE_TEMP_05
 };
 
-// Forward declarations.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
@@ -159,9 +158,9 @@ static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *actor) {
   return 0;
 }
 
-// Mia's update while she waits by the Lizard Man: she turns to watch the leader
-// while the leader is north of 184 pixels, and looks back north at the doorway
-// otherwise.
+/// Mia's update while she waits by the Lizard Man: she turns to watch the
+/// leader while the leader is north of 184 pixels, and looks back north at the
+/// doorway otherwise.
 static UNREAD_RESULT
 MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);

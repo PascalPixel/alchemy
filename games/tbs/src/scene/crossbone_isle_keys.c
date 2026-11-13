@@ -225,7 +225,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// field Psynergy itself, which keeps it from stepping out.
 static void CrossboneIsleKeys_HaltPursuer(void) {}
 
-// Turn the Djinni toward the party leader each frame.
+/// Turn the Djinni toward the party leader each frame.
 static UNREAD_RESULT
 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);

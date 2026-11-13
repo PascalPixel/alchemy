@@ -86,7 +86,6 @@ enum GomaCaveEntranceActorId {
   ACTOR_IVY
 };
 
-// Private event routines used by the reunion event.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);

@@ -1046,7 +1046,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
 /// until its timer runs out. No actor is given it.
 UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
   // XXX (no evidence): what this and Imil_SwayAndSpark were for; no
-  // actor is given either, so neither the ROM nor a render shows them in use.
+  // actor is given either, so nothing in the game shows them in use.
   s32 buf[3];
   s32 *b;
   s32 n;

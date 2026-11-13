@@ -2,10 +2,10 @@
 // Tunnel Ruins and Venus Lighthouse: blocks the leader can stand beside, behind
 // or on.
 
-// An update routine: draw the block under the actors
-// (ACTOR_PRIORITY_UNDERFOOT) unless the leader is north of it and no higher
-// than its height plus their distance and 4 pixels, that is, behind it rather
-// than on it.
+/// An update routine: draw the block under the actors
+/// (ACTOR_PRIORITY_UNDERFOOT) unless the leader is north of it and no higher
+/// than its height plus their distance and 4 pixels, that is, behind it rather
+/// than on it.
 static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *actor) {
   struct Actor *ref;
   u8 *fp;

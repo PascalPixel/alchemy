@@ -125,9 +125,9 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
 #include "shared/vault_nearby.h"
 
-// The woman wanting the roof fixed walks about looking for the man who should
-// be fixing it and stops to face the leader when near, or while a conversation
-// holds the field.
+/// The woman wanting the roof fixed walks about looking for the man who should
+/// be fixing it and stops to face the leader when near, or while a conversation
+/// holds the field.
 static UNREAD_RESULT
 Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];

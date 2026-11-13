@@ -92,7 +92,6 @@
 #include "map_grid_scroll.h"
 #include "item_ids.h"
 
-// Forward declarations.
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);

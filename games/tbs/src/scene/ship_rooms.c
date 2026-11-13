@@ -354,7 +354,6 @@ enum ShipRoomsCellBehavior {
 #define SHIP_CAMERA_RECENTER_LAYERS 0x01000000
 #define SHIP_CAMERA_WAIT_FOR_ARRIVAL 0x10000000
 
-// The scene's routines, defined below.
 static void ShipRooms_StepBesideLeader(s32 passengerId);
 static s32 ShipRooms_IsSpotFree(s32 bucket);
 static s32 ShipRooms_GetChosenOarsman(void);

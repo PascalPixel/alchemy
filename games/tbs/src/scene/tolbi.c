@@ -127,10 +127,11 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
   return stopped;
 }
 
-// The update of the two children running their loop. Each stops when it runs up
-// behind the other, and otherwise when the party leader is in its way. While
-// the party talks to someone or Mind Read shows thoughts (the range widens to
-// 26 pixels), the child being talked to stops whatever the direction.
+/// The update of the two children running their loop. Each stops when it runs
+/// up behind the other, and otherwise when the party leader is in its way.
+/// While the party talks to someone or Mind Read shows thoughts (the range
+/// widens to 26 pixels), the child being talked to stops whatever the
+/// direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   struct FieldWork *field = FIELD_WORK_FROM(gWindowWork, HEAP_SLOT_WINDOW);

@@ -2602,7 +2602,7 @@ s32 BabiPalace_ApplyEntryState(void) {
   BabiPalace_CloseDoors();
   // XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
   // BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector
-  // reaches them, and nothing in the ROM says why they set these story flags.
+  // reaches them, and nothing in the game says why they set these story flags.
   if (gMainRoutineWork.entrance == BABI_PALACE_AFTER_BABI_SAVED) {
     GameFlag_Set(FLAG_BABI_SAVED);
   }

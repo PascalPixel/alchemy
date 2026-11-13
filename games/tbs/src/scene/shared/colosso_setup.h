@@ -46,8 +46,7 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
   VramCache_Load((s16)vramSlot, 512, graphics);
 
   // UB: the Thumb bit is added to the routine's address by hand; where the
-  // address already carries it, as a current compiler gives it, this makes an
-  // ARM address.
+  // address already carries it, this makes an ARM address.
 #ifdef UBFIX
   Task_AddFrame(Colosso_DrawGauge, TASK_PASS_FRAME - 10);
 #else

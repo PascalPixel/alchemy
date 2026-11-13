@@ -320,7 +320,6 @@ enum ValePlazaAfterKalayActorId {
   ACTOR_AFTER_KALAY_HUT_OWNER
 };
 
-// Forward declarations.
 static void ValePlaza_MeetSurvivingTravelers(void);
 static void ValePlaza_FightTravelers(void);
 static void ValePlaza_TravelersLeaveAfterBattle(void);

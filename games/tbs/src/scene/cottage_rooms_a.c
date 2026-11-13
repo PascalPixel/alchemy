@@ -142,7 +142,6 @@ enum CottageRoomsAAnimation {
   ANIM_GRANDMOTHER_IN_BED = 5
 };
 
-// Forward declarations.
 static void CottageRoomsA_GaretComesHome(void);
 static void CottageRoomsA_SpawnSleepZ(void);
 

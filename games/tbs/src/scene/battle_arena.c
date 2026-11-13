@@ -224,8 +224,8 @@ static s32 sBattleArenaWaitFrames;
 
 /// What a Battle Arena handler's early exit returns.
 ///
-/// The ROM's s32 handlers return nothing there, leaving whatever the last call
-/// put in r0 (UB). UBFIX returns 0, as the function ends that fall off do.
+/// The handlers return nothing there, leaving whatever the last call returned
+/// (UB). UBFIX returns 0, as the function ends that fall off do.
 #ifdef UBFIX
 #define LOBBY_NO_RESULT 0
 #else
@@ -384,7 +384,7 @@ u32 gBattleArenaCallFrames;
 ///
 /// Returns the flag's value when FLAG_BATTLE_ARENA_ENTERING_BATTLE or
 /// FLAG_BATTLE_ARENA_ATTENDANT_ASKED is set and nothing is shown. The path that
-/// shows the line returns nothing in the ROM (UB).
+/// shows the line returns nothing (UB).
 static s32 BattleArena_PromptToParticipate(void) {
   s32 set;
 
@@ -937,7 +937,7 @@ static s32 BattleArena_EnterBattle(void) {
 
 /// Talking to ACTOR_ATTENDANT, who arranges a battle.
 static s32 BattleArena_ChooseBattleMode(void) {
-  // Returns no value: r0 is whatever the last call left.
+  // UB: returns no value, so its result is whatever the last call returned.
 
   s32 answer;
   s32 messageBase;
@@ -1240,8 +1240,8 @@ static s32 BattleArena_LeaveArena(void) {
 #endif
 }
 
-// The handlers below are s32 and return no value: r0 is whatever
-// Event_End left.
+// UB: the handlers below return no value, so their result is whatever
+// Event_End returned.
 
 /// Talking to one of three visitors.
 static s32 BattleArena_TalkToVisitor(s32 actorId) {

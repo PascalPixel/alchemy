@@ -293,8 +293,8 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 
 #include "shared/actor_depth.h"
 
-// While Douse rains on a pillar: its two frames alternate, and every fourth
-// frame a small splash appears on its top.
+/// While Douse rains on a pillar: its two frames alternate, and every fourth
+/// frame a small splash appears on its top.
 static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   struct EffectOptions options;
   s32 x;
@@ -318,9 +318,9 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-// Once the Douse pillar is soaked, its Frost target stays 32 pixels below the
-// pillar while the pillar is in row 10 and the leader is above 48 pixels down;
-// otherwise the target is put away at the map's origin.
+/// Once the Douse pillar is soaked, its Frost target stays 32 pixels below the
+/// pillar while the pillar is in row 10 and the leader is above 48 pixels down;
+/// otherwise the target is put away at the map's origin.
 static UNREAD_RESULT
 TunnelRuins_FrostTargetFollowsPillar(struct Actor *frostTarget) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -828,8 +828,8 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   Event_End();
 }
 
-// A carved stone set on the balance rides 16 pixels above what it rests on,
-// whose actor its timer holds.
+/// A carved stone set on the balance rides 16 pixels above what it rests on,
+/// whose actor its timer holds.
 static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
   struct Actor *supportingActor = Actor_Get(supportedActor->timer);
 

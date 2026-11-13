@@ -3464,9 +3464,8 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
   }
 }
 
-// The ROM keeps the pushed-actor tables in .rodata, but the shared declarations
-// in field.h and staged_actor.h lack const, so a section attribute places
-// each one.
+// Lunpa Fortress keeps its pushed-actor tables with its read-only data, though
+// the shared declarations in field.h and staged_actor.h are not const.
 #define PUSHED_ACTOR_TABLE_SECTION __attribute__((section(".rodata")))
 #include "shared/pushed_actor_tables.h"
 // clang-format off

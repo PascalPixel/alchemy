@@ -229,7 +229,7 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
   return isTracking;
 }
 
-// Ask the carrier to move after the leader blocks her route for two seconds.
+/// Ask the carrier to move after the leader blocks her route for two seconds.
 static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
   struct Actor *leader;
   s32 near = 0;

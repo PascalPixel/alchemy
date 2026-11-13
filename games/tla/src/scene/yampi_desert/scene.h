@@ -74,7 +74,7 @@ void Camera_FollowActor(s32 id, s32 mode);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 void FieldEvent_Wait(s32 frames);
 void PartyInventory_GiveItem(s32 item, s32 flags);
-struct Actor *Func_02001b70(void);
+struct Actor *YampiDesert_CreateScoopGem(void);
 void Actor_Release(struct Actor *object);
 void Sound_Play(s32 cue);
 extern struct Actor *gData_0200480c;

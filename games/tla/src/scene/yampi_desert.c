@@ -576,7 +576,9 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Event_End();
 }
 
-struct Actor *Func_02001b70(void) {
+/// The Scoop Gem (item 209's icon) as an actor, after the King Scorpion's battle (flag 0x88c).
+/// ★ Named from the game: "Scoop Gem" (item 209's name)
+struct Actor *YampiDesert_CreateScoopGem(void) {
   struct Actor *object =
       Func_02003fc0__yampi_desert(489, 232 << 16, 32 << 16, 200 << 16);
   u8 *buffer = 0;
@@ -616,7 +618,7 @@ struct Actor *Func_02001b70(void) {
   return object;
 }
 
-void Func_02001bec(void) {
+void YampiDesert_DropScoopGem(void) {
   struct Actor *object;
 
   Event_Start();
@@ -625,7 +627,7 @@ void Func_02001bec(void) {
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
-  object = Func_02001b70();
+  object = YampiDesert_CreateScoopGem();
   PartyInventory_GiveItem(209, 0);
   if (object != 0) {
     Actor_SetPositionAndResetMotion((struct Actor *)object, 0, 0, 0);
@@ -1612,7 +1614,7 @@ void Func_0200371c(void) {
     Func_02002ebc();
   } else {
     if (gMainRoutineWork.entrance == 2 && !GameFlag_Test(0x88c))
-      Func_02001bec();
+      YampiDesert_DropScoopGem();
   }
   if (GameFlag_Test(0x8ed)) {
     Map_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);

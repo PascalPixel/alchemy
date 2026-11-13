@@ -501,7 +501,9 @@ void Func_02001188(void) {
 }
 
 
-struct Actor *Func_02001210(void) {
+/// The Black Crystal (item 242's icon) as an actor on the deck.
+/// ★ Named from the game: "Black Crystal" (item 242's name)
+struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   struct Actor *object = (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
   u8 *buffer = 0;
   struct FieldSprite *sprite;
@@ -557,7 +559,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_WalkToAndWait(7, 360, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Event_PlaySound(182);
-  handle = Func_02001210();
+  handle = LemurianShipDeck_CreateBlackCrystal();
   FieldEvent_Wait(20);
   Event_PlaySound(220);
   func = Func_02001188;

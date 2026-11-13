@@ -198,7 +198,10 @@ void Func_02000558(void) { Func_020011cc(gData_020013c4); }
 void FieldCamera_WaitForArrival(void);
 void Func_02000958(void);
 
-void Func_02000568(void) {
+/// The Ruin Key (item 459) opens the double door, which slides apart, and the
+/// room beyond lights up.
+/// ★ Named from the game: "Ruin Key" (item 459's name)
+void MadraCatacombs_UnlockWithRuinKey(void) {
   struct Actor *left = Actor_GetById(8);
   struct Actor *right = Actor_GetById(9);
   u32 i;
@@ -863,7 +866,7 @@ struct Trigger gMadraCatacombs_Room6Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000c78)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x1cb04, 10, CONDITION_ALWAYS, EVENT(Func_02000568)},
+    {0x1cb04, 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_UnlockWithRuinKey)},
     {TRIGGER_EXAMINE, 10, 0x8c9, EVENT(MadraCatacombs_TryLockedDoor)},
     {TRIGGERS_END},
 };

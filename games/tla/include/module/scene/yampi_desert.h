@@ -30,7 +30,7 @@ void Func_0200371c(void);
 void Func_020037d4(void);
 void Func_020037e8(void);
 
-void Func_02001bec(void);
+void YampiDesert_DropScoopGem(void);
 
 void YampiDesert_TalkToElder(void);
 

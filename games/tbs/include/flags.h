@@ -1274,7 +1274,7 @@
 /// ★ Named from the game: "Power Bread" (MsgItemName)
 #define FLAG_TOLBI_CHEST_POWER_BREAD 0xf99
 
-// Tolbi interiors: the woman who finds a Lucky Medal after Colosso
+// Tolbi rooms: the woman who finds a Lucky Medal after Colosso
 /// After Colosso, on the party's first entry into the inn's northeast guest
 /// room, a woman has found a Lucky Medal on the floor and hidden it behind the
 /// trash pile. She then stands beside that barrel.
@@ -1288,7 +1288,7 @@
 /// The medal woman has greeted the party, startled, since it took the medal.
 /// ★ Named from the game: "Oh... Hello!" (MsgTolbiHello)
 #define FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO 0x8be
-/// The interiors' barrels, set once each is searched.
+/// The rooms' barrels, set once each is searched.
 /// ★ Named from the game: "Vial" (MsgItemName)
 #define FLAG_STUCCO_ROOMS_B_BARREL_VIAL 0xf9a
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
@@ -1701,7 +1701,7 @@
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_VAULT_BOX_NUT 0xf4a
 
-// Vault interiors: their containers, set once each is searched
+// Vault rooms: their containers, set once each is searched
 /// ★ Named from the game: "coin" (MsgGotCoins)
 #define FLAG_LOG_ROOMS_A_JAR_COINS 0xf4b
 /// ★ Named from the game: "coin" (MsgGotCoins)
@@ -1747,7 +1747,7 @@
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e
 
-// Xian interiors: set once each find is taken.
+// Xian rooms: set once each find is taken.
 /// ★ Named from the game: "Elixir" (MsgItemName)
 #define FLAG_LACQUER_ROOMS_B_ELIXIR_BARREL 0xf6f
 /// ★ Named from the game: "Sleep Bomb" (MsgItemName)

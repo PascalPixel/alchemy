@@ -1,5 +1,5 @@
 /// @file
-/// Vault's interiors, before and after the thieves are caught: whether the
+/// Vault's rooms, before and after the thieves are caught: whether the
 /// leader stands beside the Bone on the floor, which the scenes' trigger tables
 /// test through FLAG_VAULT_LEADER_BESIDE_BONE.
 #include "types.h"

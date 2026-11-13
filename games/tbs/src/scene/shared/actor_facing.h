@@ -3,7 +3,7 @@
 #include "actor.h"
 
 // Altin Peak, Bilibin, Imil, Kolima, McCoy's palace and garden, Sol Sanctum's
-// Elemental Star room, and Vale's Kraden, Babi, home and interiors scenes.
+// Elemental Star room, and Vale's Kraden, Babi, home and rooms scenes.
 
 /// An actor script call: an actor with a facing target turns towards
 /// it, at most a sixteenth of a turn a frame.

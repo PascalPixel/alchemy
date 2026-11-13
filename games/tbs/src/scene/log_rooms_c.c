@@ -76,7 +76,7 @@ enum {
 /// The residents, numbering gLogRoomsC_ActorPlacements' rows from
 /// ACTOR_FIRST_PLACED.
 /// Their notes quote what they say once the curse is lifted.
-enum KolimaInteriorActorId {
+enum KolimaRoomActorId {
   /// An old man with a cane.
   /// ★ Named from the game: "I heard that traveling warriors from the Goma
   /// Range saved the village."

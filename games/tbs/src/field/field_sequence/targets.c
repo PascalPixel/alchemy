@@ -223,7 +223,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 /// and, 12 frames later, shows itemId in front of actor with sparkles.
 /// Returns the picture's encoded actor pointer, or 0 when the target or
 /// picture is absent. Called by two scene overlays: McCoy's palace, when a
-/// reward chest opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
+/// reward chest opens, and Vault's rooms, when Ivan finds the Shaman's Rod.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId) {
   void *targetActor;

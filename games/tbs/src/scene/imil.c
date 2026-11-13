@@ -152,7 +152,7 @@ enum ImilVillageActorId {
 };
 
 /// The actors of the houses and the Sanctum (IceRooms), numbering
-/// gImil_InteriorActorPlacements' rows from ACTOR_FIRST_PLACED.
+/// gImil_RoomActorPlacements' rows from ACTOR_FIRST_PLACED.
 ///
 /// The rows of Garet, Ivan and Mia take those characters' own slots.
 enum IceRoomsActorId {
@@ -315,7 +315,7 @@ static s32 Imil_UpdateShiver(struct Actor *interpreter) {
 /// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Imil_GetEntrances(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
-    return gImil_InteriorEntrances;
+    return gImil_RoomEntrances;
   }
   return gImil_TownEntrances;
 }
@@ -332,7 +332,7 @@ const struct ActorPlacement *Imil_GetActorPlacements(void) {
   struct ActorPlacement *script;
 
   if (gMainRoutineWork.next == ((s32)&SceneId_IceRooms)) {
-    script = gImil_InteriorActorPlacements;
+    script = gImil_RoomActorPlacements;
     Scene_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       // A byte view: written as script[row].talkFacing, the row's address is
@@ -362,7 +362,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// Psynergy targets.
 const struct Trigger *Imil_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
-    return gImil_InteriorTriggers;
+    return gImil_RoomTriggers;
   }
   return gImil_TownTriggers;
 }
@@ -1856,7 +1856,7 @@ struct SceneEntrance gImil_TownEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImil_InteriorEntrances[] = {
+struct SceneEntrance gImil_RoomEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { ICE_ROOMS_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
     { ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
@@ -1916,7 +1916,7 @@ struct ActorPlacement gImil_TownActorPlacementsCured[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gImil_InteriorActorPlacements[] = {
+struct ActorPlacement gImil_RoomActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         111, 0, 215, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1983,7 +1983,7 @@ struct Trigger gImil_TownTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-struct Trigger gImil_InteriorTriggers[] = {
+struct Trigger gImil_RoomTriggers[] = {
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MIA_SENT_FOR, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilGetMiaHurry) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToOldWoman) },
@@ -2061,7 +2061,7 @@ u16 gImil_SanctumDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-u16 gImil_InteriorsEastDoorSteps[] = {
+u16 gImil_RoomsEastDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 37, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 37, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
@@ -2088,7 +2088,7 @@ u16 *gImil_DoorCellSteps[] = {
     gImil_InnDoorSteps,
     gImil_HouseWestDoorSteps,
     gImil_HouseNortheastDoorSteps,
-    gImil_InteriorsEastDoorSteps,
+    gImil_RoomsEastDoorSteps,
     gImil_SanctumDoorSteps,
 };
 

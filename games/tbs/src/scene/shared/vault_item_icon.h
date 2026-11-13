@@ -1,5 +1,5 @@
 /// @file
-/// Vault's interiors, before and after the thieves are caught: an item lying on
+/// Vault's rooms, before and after the thieves are caught: an item lying on
 /// the floor, drawn as its menu icon (the Bone, at (568, 16, 672)).
 #include "types.h"
 #include "actor.h"

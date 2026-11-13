@@ -159,7 +159,7 @@ void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z) {
 /// The event command "center actor and walk": walks the actor
 /// sideways to the middle of its 16-pixel column, sets its sprite priority to
 /// priority (Actor_SetSpritePriority), then sends it zOffset pixels along
-/// z. Kalay's interiors reach it.
+/// z. Kalay's rooms reach it.
 void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
   struct Actor *actor;
   s16 pixelX;

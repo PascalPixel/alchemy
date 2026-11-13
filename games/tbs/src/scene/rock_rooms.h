@@ -11,7 +11,7 @@
 
 /// The rooms by the entrance the party comes in by; each is also its door's
 /// trigger and exit kind (ROOM_DOOR).
-enum InteriorRoom {
+enum RockRoomsRoom {
   ROOM_FIRST_HOME = 1,
   ROOM_SECOND_HOME,
   ROOM_THIRD_HOME,
@@ -38,9 +38,9 @@ enum RockRoomsCellBehavior {
 };
 
 /// The placed actors of Lunpa's houses, shops, inn and temple, numbered in the
-/// order of gInteriorActorPlacements. Two people live in each of the three
+/// order of gRockRooms_ActorPlacements. Two people live in each of the three
 /// homes, named by their sprites and by what they say while the town is sealed.
-enum InteriorActorId {
+enum RockRoomsActorId {
   /// In the first home: this man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR)
   /// and a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).

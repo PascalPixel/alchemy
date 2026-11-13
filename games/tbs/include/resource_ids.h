@@ -89,7 +89,7 @@ extern char ResourceId_TretTreeInteriorsBackdrop;
 /// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any scene the
 /// table doesn't list, since it comes last.
 extern char ResourceId_GomaCaveBackdrop;
-/// The vault interiors and Lalivero's scenes, Faran's house included.
+/// The vault rooms and Lalivero's scenes, Faran's house included.
 extern char ResourceId_InteriorBackdrop;
 /// Altin Peak's scenes but the Hydros statue.
 extern char ResourceId_AltinPeakBackdrop;

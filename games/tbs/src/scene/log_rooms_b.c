@@ -3,7 +3,7 @@
 /// Vault's rooms: the town's houses, shops and inn once the party has reached
 /// Kalay.
 ///
-/// They replace the first visit's interiors (log_rooms_a.c), as
+/// They replace the first visit's rooms (log_rooms_a.c), as
 /// SceneId_VaultRevisit (vault_revisit.c) replaces the town. Each of its six
 /// house doors leads to the entrance here named for the same door, and
 /// each room leads back out through it.

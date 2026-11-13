@@ -536,8 +536,8 @@ static void GomaCavePillar_JumpGapWest(void) {
     leader->velocityY = px(4);
     *motionFlags &= 0x7e;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)destination + 2),
-                        *(s16 *)((u8 *)destination + 10));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)destination->x >> 16),
+                        (s16)((u32)destination->z >> 16));
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;

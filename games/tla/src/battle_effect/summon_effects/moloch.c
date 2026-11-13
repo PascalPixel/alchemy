@@ -599,7 +599,8 @@ void Transform_Pop(void);
 #define HALF(p, n) (((s16 *)(p))[n])
 
 /* VIEW(summon_effects): tag struct ResourceTableEntry as struct
- * ResourceTableEntry__summon_effects; module/tla.h has another definition. */
+ * ResourceTableEntry__summon_effects; module/tla.h has another definition; not
+ * tried: struct ResourceTableEntry__summon_effects was not found. */
 struct ResourceTableEntry {
   u16 unk0;
   u16 tile;
@@ -694,7 +695,10 @@ extern char ResourceId_SunsetBackdrop, ResourceId_StarfieldFlareBackdrop;
 extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles;
 /* VIEW(summon_effects): variable gResourceTableEntries as struct
  * ResourceTableEntry gResourceTableEntries[]; graphics/vram_tab.h has struct
- * VramBlockCacheEntry gResourceTableEntries[]. */
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
+ * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
+ * in tla-ja: games/tla/src/battle_effect/battle_effect.c:63253: structure has
+ * no member named `tile'. */
 extern struct ResourceTableEntry
     gResourceTableEntries__summon_effects[] __asm__("gResourceTableEntries");
 #define gResourceTableEntries gResourceTableEntries__summon_effects
@@ -736,20 +740,15 @@ extern const u8 Data_0819a0d4[];
 extern const u8 Data_0819a140[];
 extern const u8 Data_0819a160[];
 
-/* VIEW(summon_effects): routine EffectSprite_CreateWithTiles as struct
- * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
- * u32 attributes); battle_effect/ability_effects has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags) {. */
-struct SpriteObject *EffectSprite_CreateWithTiles__summon_effects(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
-#define EffectSprite_CreateWithTiles                                           \
-  EffectSprite_CreateWithTiles__summon_effects
+#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles
 /* VIEW(summon_effects): routine EffectSprite_Acquire as struct IrisSprite
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
  * battle_effect/ability_effects has struct EffectSprite__f15b3b0
- * *EffectSprite_Acquire(s32 kind, s32 value) {. */
+ * *EffectSprite_Acquire(s32 kind, s32 value) {; tried as the definition's
+ * struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:63274: too many arguments to
+ * function `EffectSprite_Acquire'. */
 struct IrisSprite *
 EffectSprite_Acquire__summon_effects(s32 width, s32 height, u32 shape,
                                      s32 mode) __asm__("EffectSprite_Acquire");
@@ -3137,7 +3136,8 @@ struct PoolEntry *Render_AllocateModelList(s32 count) {
 }
 
 /* VIEW(summon_effects): tag struct Texture as struct Texture__summon_effects;
- * module/battle_effect/battle_effect.h has another definition. */
+ * module/battle_effect/battle_effect.h has another definition; not tried:
+ * struct Texture__summon_effects was not found. */
 struct Texture {
   u8 logWidth;
   u8 logHeight;
@@ -3167,7 +3167,8 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
 }
 
 /* VIEW(summon_effects): tag struct Model as struct Model__summon_effects;
- * battle_effect/ability_effects has another definition. */
+ * battle_effect/ability_effects has another definition; not tried: struct
+ * Model__summon_effects was not found. */
 /// One entry of a model list. Render_AllocateModelList allocates the list with
 /// a cleared entry after the last.
 struct Model {

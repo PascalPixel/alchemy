@@ -104,9 +104,9 @@ extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
 /* VIEW(f1843fc): variable gResourceTableEntries as extern struct
  * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
  * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/ability_effects.c:34245: conflicting
+ * in tla-ja: games/tla/src/battle_effect/battle_effect.c:51608: conflicting
  * types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry
     gResourceTableEntries__f1843fc[] __asm__("gResourceTableEntries");
@@ -114,8 +114,8 @@ extern u8 gMapCellBuffer[];
 /* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698
  * has extern struct EffectStep gData_02014000[]; tried as the rest of the
  * object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:35854:
- * `gData_02014000__f1843fc' undeclared (first use in this function). */
+ * games/tla/src/battle_effect/battle_effect.c:53207: `gData_02014000__f1843fc'
+ * undeclared (first use in this function). */
 extern u8 gData_02014000__f1843fc[] __asm__("gData_02014000");
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];

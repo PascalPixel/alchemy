@@ -18,7 +18,11 @@ struct Actor *Actor_GetById(u32 objectId) {
 /* VIEW(event_commands): routine Actor_SetSpeedParameters as void
  * Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
  * field/event.h has void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32
- * acceleration). */
+ * acceleration); tried as the definition's void Actor_SetSpeedParameters(u32
+ * objectId, s32 speedLimit, s32 acceleration), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7099: conflicting types for
+ * `Actor_SetSpeedParameters'. */
 void Actor_SetSpeedParameters__event_commands(
     u32 objectId, s32 speedLimit,
     s32 acceleration) __asm__("Actor_SetSpeedParameters");
@@ -34,7 +38,11 @@ void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration) {
 
 /* VIEW(event_commands): routine Actor_SetMovementTypeById as void
  * Actor_SetMovementTypeById(u32 objectId, s32 action); field/event.h has void
- * Actor_SetMovementTypeById(s32 actorId, const void *script). */
+ * Actor_SetMovementTypeById(s32 actorId, const void *script); tried as the
+ * definition's void Actor_SetMovementTypeById(u32 objectId, s32 action), which
+ * the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7113: conflicting types for
+ * `Actor_SetMovementTypeById'. */
 void Actor_SetMovementTypeById__event_commands(
     u32 objectId, s32 action) __asm__("Actor_SetMovementTypeById");
 #define Actor_SetMovementTypeById Actor_SetMovementTypeById__event_commands
@@ -50,7 +58,10 @@ void Actor_SetMovementTypeById(u32 objectId, s32 action) {
 }
 
 /* VIEW(event_commands): routine Actor_Stop as void Actor_Stop(u32 objectId);
- * field/event.h has void Actor_Stop(s32 actorId). */
+ * field/event.h has void Actor_Stop(s32 actorId); tried as the definition's
+ * void Actor_Stop(u32 objectId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/field/field_sequence.c:7128: conflicting
+ * types for `Actor_Stop'. */
 void Actor_Stop__event_commands(u32 objectId) __asm__("Actor_Stop");
 #define Actor_Stop Actor_Stop__event_commands
 void Actor_Stop(u32 objectId) {
@@ -80,7 +91,11 @@ void Actor_ResetTargetsAndVelocity(u32 objectId) {
 
 /* VIEW(event_commands): routine Actor_WatchAndSetScript as void
  * Actor_WatchAndSetScript(u32 objectId, u32 linkedObjectId); field/event.h has
- * void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId). */
+ * void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId); tried as the
+ * definition's void Actor_WatchAndSetScript(u32 objectId, u32 linkedObjectId),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7156: conflicting types for
+ * `Actor_WatchAndSetScript'. */
 void Actor_WatchAndSetScript__event_commands(
     u32 objectId, u32 linkedObjectId) __asm__("Actor_WatchAndSetScript");
 #define Actor_WatchAndSetScript Actor_WatchAndSetScript__event_commands
@@ -102,7 +117,11 @@ void Actor_RefreshSelectorById(u32 objectId) {
 
 /* VIEW(event_commands): routine Actor_SetMovementTypeAndWaitById as void
  * Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action); field/event.h has
- * void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script). */
+ * void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script); tried
+ * as the definition's void Actor_SetMovementTypeAndWaitById(u32 objectId, s32
+ * action), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7178: conflicting types for
+ * `Actor_SetMovementTypeAndWaitById'. */
 void Actor_SetMovementTypeAndWaitById__event_commands(
     u32 objectId, s32 action) __asm__("Actor_SetMovementTypeAndWaitById");
 #define Actor_SetMovementTypeAndWaitById                                       \
@@ -142,7 +161,10 @@ void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
 
 /* VIEW(event_commands): routine Actor_WalkToById as void Actor_WalkToById(u32
  * objectId, s32 x, s32 z); field/event.h has void Actor_WalkToById(s32 actorId,
- * s32 x, s32 z). */
+ * s32 x, s32 z); tried as the definition's void Actor_WalkToById(u32 objectId,
+ * s32 x, s32 z), which the object already declares, it does not compile in
+ * tla-ja: games/tla/src/field/field_sequence.c:7214: conflicting types for
+ * `Actor_WalkToById'. */
 void Actor_WalkToById__event_commands(u32 objectId, s32 x,
                                       s32 z) __asm__("Actor_WalkToById");
 #define Actor_WalkToById Actor_WalkToById__event_commands
@@ -159,7 +181,11 @@ void Actor_WalkToById(u32 objectId, s32 x, s32 z) {
 
 /* VIEW(event_commands): routine Actor_WalkToAndWaitById as void
  * Actor_WalkToAndWaitById(u32 objectId, s32 x, s32 z); field/event.h has void
- * Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z). */
+ * Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z); tried as the definition's
+ * void Actor_WalkToAndWaitById(u32 objectId, s32 x, s32 z), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7229: conflicting types for
+ * `Actor_WalkToAndWaitById'. */
 void Actor_WalkToAndWaitById__event_commands(
     u32 objectId, s32 x, s32 z) __asm__("Actor_WalkToAndWaitById");
 #define Actor_WalkToAndWaitById Actor_WalkToAndWaitById__event_commands
@@ -211,7 +237,10 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
 /* VIEW(event_commands): routine Actor_SetDestinationOffsetById as void
  * Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset);
  * field/event.h has void Actor_SetDestinationOffsetById(s32 actorId, s32 dx,
- * s32 dz). */
+ * s32 dz); tried as the definition's void Actor_SetDestinationOffsetById(u32
+ * objectId, s32 xOffset, s32 zOffset), which the object already declares, it
+ * does not compile in tla-ja: games/tla/src/field/field_sequence.c:7280:
+ * conflicting types for `Actor_SetDestinationOffsetById'. */
 void Actor_SetDestinationOffsetById__event_commands(
     u32 objectId, s32 xOffset,
     s32 zOffset) __asm__("Actor_SetDestinationOffsetById");
@@ -253,7 +282,11 @@ void Actor_WalkByAndWaitById(u32 objectId, s32 xOffset, s32 zOffset) {
 /* VIEW(event_commands): routine Actor_LaunchFromLeader as void
  * Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action);
  * field/event.h has void Actor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
- * s32 facing). */
+ * s32 facing); tried as the definition's void Actor_LaunchFromLeader(u32
+ * actorId, s32 xOffset, s32 zOffset, s32 action), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7317: conflicting types for
+ * `Actor_LaunchFromLeader'. */
 void Actor_LaunchFromLeader__event_commands(
     u32 actorId, s32 xOffset, s32 zOffset,
     s32 action) __asm__("Actor_LaunchFromLeader");
@@ -276,7 +309,10 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
 
 /* VIEW(event_commands): routine Actor_WaitForMoveById as void
  * Actor_WaitForMoveById(u32 objectId); field/event.h has void
- * Actor_WaitForMoveById(s32 actorId). */
+ * Actor_WaitForMoveById(s32 actorId); tried as the definition's void
+ * Actor_WaitForMoveById(u32 objectId), which the object already declares, it
+ * does not compile in tla-ja: games/tla/src/field/field_sequence.c:7338:
+ * conflicting types for `Actor_WaitForMoveById'. */
 void Actor_WaitForMoveById__event_commands(u32 objectId) __asm__(
     "Actor_WaitForMoveById");
 #define Actor_WaitForMoveById Actor_WaitForMoveById__event_commands
@@ -312,7 +348,11 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
  * as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
  * s32 z, s16 angle); field/event.h has void
  * Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32
- * angle). */
+ * angle); tried as the definition's void
+ * Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
+ * s16 angle), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7373: conflicting types for
+ * `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 void Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands(
     u32 objectId, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
@@ -374,7 +414,11 @@ void Actor_SetModeById(u32 objectId, s32 action) {
 
 /* VIEW(event_commands): routine Actor_SetActionById as void
  * Actor_SetActionById(u32 objectId, s32 action); field/event.h has void
- * Actor_SetActionById(s32 actorId, s32 steps). */
+ * Actor_SetActionById(s32 actorId, s32 steps); tried as the definition's void
+ * Actor_SetActionById(u32 objectId, s32 action), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7430: conflicting types for
+ * `Actor_SetActionById'. */
 void Actor_SetActionById__event_commands(u32 objectId, s32 action) __asm__(
     "Actor_SetActionById");
 #define Actor_SetActionById Actor_SetActionById__event_commands
@@ -385,22 +429,11 @@ void Actor_SetActionById(u32 objectId, s32 action) {
     Actor_SetAnimationSpeedFar(object, action);
 }
 
-/// ⚓️'s animation group: the number last applied and its entries.
-/* VIEW(event_commands): tag struct AnimationGroup as struct
- * AnimationGroup__event_commands; module/field/field.h has another definition.
- */
-struct AnimationGroup__event_commands {
-  u8 unk00[0x18];
-  u8 lastNo;
-  u8 unk19[0x0f];
-  struct AnimationEntry *entries[4];
-};
-
 /// Waits, at most 90 frames, for an actor's animation to change or for its
 /// first entry's script to reach code 241.
 void Actor_WaitForAnimationChange(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
-  struct AnimationGroup__event_commands *group;
+  struct AnimationGroup *group;
   // volatile: saved lives in a 4-byte stack frame, stored once and loaded again
   // for each compare, as the bytes have it; as a plain u32, 29 of 37
   // instructions differ in tla-en.
@@ -423,7 +456,11 @@ void Actor_WaitForAnimationChange(u32 objectId) {
 
 /* VIEW(event_commands): routine Motion_SetModeAndWaitAnimation as void
  * Motion_SetModeAndWaitAnimation(u32 objectId, s32 action); field/event.h has
- * void Motion_SetModeAndWaitAnimation(s32 actorId, s32 animation). */
+ * void Motion_SetModeAndWaitAnimation(s32 actorId, s32 animation); tried as the
+ * definition's void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:7469: conflicting types for
+ * `Motion_SetModeAndWaitAnimation'. */
 void Motion_SetModeAndWaitAnimation__event_commands(
     u32 objectId, s32 action) __asm__("Motion_SetModeAndWaitAnimation");
 #define Motion_SetModeAndWaitAnimation                                         \
@@ -435,7 +472,10 @@ void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action) {
 
 /* VIEW(event_commands): routine Actor_Jump as void Actor_Jump(u32 objectId, s32
  * speed, s32 eventId); field/event.h has void Actor_Jump(s32 actorId, s32
- * speed, s32 frames). */
+ * speed, s32 frames); tried as the definition's void Actor_Jump(u32 objectId,
+ * s32 speed, s32 eventId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/field/field_sequence.c:7477: conflicting
+ * types for `Actor_Jump'. */
 void Actor_Jump__event_commands(u32 objectId, s32 speed,
                                 s32 eventId) __asm__("Actor_Jump");
 #define Actor_Jump Actor_Jump__event_commands
@@ -496,7 +536,10 @@ void FieldEffect_UpdateDustPuff(struct Actor *object) {
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 /* VIEW(event_commands): tag struct ParticleSprite as struct
- * ParticleSprite__event_commands; module/tla.h has another definition. */
+ * ParticleSprite__event_commands; module/tla.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/field_sequence.c:7537: redefinition of `struct
+ * ParticleSprite'. */
 #define ParticleSprite ParticleSprite__event_commands
 struct ParticleSprite {
   u8 unk00[8];

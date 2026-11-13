@@ -7,11 +7,6 @@
 #include "../presentation_internal.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"
-/* VIEW(f11f66c): routine ColorBuffer_Scale as void ColorBuffer_Scale(u16
- * *source, u16 *destination, s32 scale, s32 count); f11e3ac has void
- * ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size). */
-extern void ColorBuffer_Scale__f11f66c(u16 *source, u16 *destination, s32 scale,
-                                       s32 count) __asm__("ColorBuffer_Scale");
 
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
@@ -45,9 +40,8 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
             REG_DMA3);
   } else {
-    ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
-                               screen->brightness = 0x10000 - level * 1092,
-                               128);
+    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+                      screen->brightness = 0x10000 - level * 1092, 128);
   }
   {
     u32 saved = *slot;
@@ -136,7 +130,8 @@ void BattleBackground_Free(void) { HeapSlot_Release(40); }
 
 /* VIEW(f11e3ac): routine Resource_GetTableEntry as u8
  * *Resource_GetTableEntry(s32 id); resource.h has void
- * *Resource_GetTableEntry(s32 resourceId). */
+ * *Resource_GetTableEntry(s32 resourceId); not tried: Resource_GetTableEntry's
+ * bound declaration was not found. */
 extern u8 *
 Resource_GetTableEntry__presentation(s32 id) __asm__("Resource_GetTableEntry");
 
@@ -170,9 +165,8 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   palette = session->palette;
   Dma_Set(data, palette, 0x84000040, REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
-                               session->brightness = 0x10000 - level * 1092,
-                               128);
+    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+                      session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
@@ -251,12 +245,14 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 
 /* VIEW(f11e3ac): routine Projection_Set as void Projection_Set(s32 span, u32
  * depth, s32 range); module/system/system.h has void Projection_Set(u32 value0,
- * u32 value1, u32 value2). */
+ * u32 value1, u32 value2); not tried: Projection_Set's bound declaration was
+ * not found. */
 extern void Projection_Set__presentation(s32 span, u32 depth,
                                          s32 range) __asm__("Projection_Set");
 /* VIEW(f11e3ac): routine SceneTransform_ApplyPosition as void
  * SceneTransform_ApplyPosition(s32 *position); module/system/system.h has void
- * SceneTransform_ApplyPosition(const s32 *pos). */
+ * SceneTransform_ApplyPosition(const s32 *pos); not tried:
+ * SceneTransform_ApplyPosition's bound declaration was not found. */
 extern void SceneTransform_ApplyPosition__presentation(s32 *position) __asm__(
     "SceneTransform_ApplyPosition");
 
@@ -1042,8 +1038,8 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
       if (frame <= 24)
-        ColorBuffer_Scale__f11f66c(session->palette, (u16 *)0x050000c0,
-                                   *brightness = 0x10000 - frame * 1092, 128);
+        ColorBuffer_Scale(session->palette, (u16 *)0x050000c0,
+                          *brightness = 0x10000 - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;
       work->originY = (64 - pos->y) << 8;

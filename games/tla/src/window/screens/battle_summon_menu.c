@@ -30,7 +30,8 @@
 /* VIEW(screens): routine Window_PutGlyph as void Window_PutGlyph(struct
  * SummonMenuWindow *window, s32 character, s32 x, s32 y, s32 mode);
  * window/window has void Window_PutGlyph(struct Window *win, u32 tile, u32 x,
- * u32 y, s32 mode) {. */
+ * u32 y, s32 mode) {; not tried: Window_PutGlyph's declaration holds a
+ * FAKEMATCH tag. */
 void Window_PutGlyph__screens(struct SummonMenuWindow *window, s32 character,
                               s32 x, s32 y,
                               s32 mode) __asm__("Window_PutGlyph");

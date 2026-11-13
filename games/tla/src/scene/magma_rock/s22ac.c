@@ -784,7 +784,9 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 /* VIEW(s34ac): routine MapCollision_FindOrAddTag as s32
  * MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
  * scene/magma_rock/s22ac has u8 MapCollision_FindOrAddTag(s32 layer, s32 shape,
- * s32 height). */
+ * s32 height); tried as the definition's s32 MapCollision_FindOrAddTag(s32
+ * unused, s32 key, s32 value), which the object already declares,
+ * MagmaRock_SetActorCellShape moves: 1 of 60 instructions in tla-ja. */
 s32 MapCollision_FindOrAddTag__s34ac(
     s32 terrainId, s32 value, s32 height) __asm__("MapCollision_FindOrAddTag");
 
@@ -794,7 +796,10 @@ DEFINE_ACTOR_SET_CELL_SHAPE_AT(MagmaRock_SetActorCellShape,
 
 /* VIEW(s34ac): routine MagmaRock_StepOnCrumblingPillar as void
  * MagmaRock_StepOnCrumblingPillar(const u8 *data); scene/magma_rock/s22ac has
- * void MagmaRock_StepOnCrumblingPillar(u16 *list) {. */
+ * void MagmaRock_StepOnCrumblingPillar(u16 *list) {; tried as the definition's
+ * void MagmaRock_StepOnCrumblingPillar(u16 *list), which the object already
+ * declares, MagmaRock_SetActorCellShape (gone) moves: 60 of 60 instructions in
+ * tla-ja. */
 void MagmaRock_StepOnCrumblingPillar__s34ac(const u8 *data) __asm__(
     "MagmaRock_StepOnCrumblingPillar");
 

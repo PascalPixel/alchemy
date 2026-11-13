@@ -7,22 +7,10 @@
 #include "field_effect.h"
 #include "event_inline.h"
 
-/* VIEW(prox): routine Actor_SelectAnimation as void
- * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
- * module/field/field.h has void Actor_SelectAnimation(struct Actor *object, s32
- * argument). */
-extern void
-Actor_SelectAnimation__prox(struct FieldEffect *effect,
-                            s32 mode) __asm__("Actor_SelectAnimation");
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-/* VIEW(prox): variable gData_020047a0 as const s32 *gData_020047a0[];
- * scene/prox/prox has s32 gData_020047a0[] = {. */
-extern const s32 *gData_020047a0__prox[] __asm__("gData_020047a0");
-/* VIEW(prox): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__prox(struct FieldEffect *effect,
-                                s32 flags) __asm__("Actor_SetSpriteFlags");
+extern s32 gData_020047a0[];
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
@@ -41,10 +29,10 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Actor_SelectAnimation__prox(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_020047a0__prox[flags & EFFECT_SCRIPT_MASK]);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect, gData_020047a0[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags__prox(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -71,7 +59,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_020047a0__prox[flags & EFFECT_SCRIPT_MASK];
+    script = gData_020047a0[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -83,7 +71,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation__prox(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -282,7 +270,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /* VIEW(prox): variable gData_02004b14 as extern struct ActorPlacement
  * gData_02004b14[]; the definition has u32 gData_02004b14[] = { 0xffff, 0, 0,
  * 0, 0, 0, }; tried as the definition's extern struct Trigger gData_02004b14[],
- * it does not compile in tla-ja: games/tla/src/scene/prox.c:2710: conflicting
+ * it does not compile in tla-ja: games/tla/src/scene/prox.c:2310: conflicting
  * types for `gData_02004b14'. */
 extern struct ActorPlacement gData_02004b14__prox[] __asm__("gData_02004b14");
 extern u32 gData_0200506c[];
@@ -291,7 +279,7 @@ extern u32 gData_0200506c[];
  * 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106,
  * 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16
  * gData_0200521c[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:174: request for member `talkFacing' in something
+ * games/tla/src/scene/prox.c:291: request for member `talkFacing' in something
  * not a structure or union. */
 extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
 
@@ -342,7 +330,7 @@ void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
  * definition has struct Trigger gData_02005a20[] = { { 1, 1, CONDITION_ALWAYS,
  * 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4,
  * CON...; tried as the definition's extern u32 gData_02005a20[], it does not
- * compile in tla-ja: games/tla/src/scene/prox.c:2990: conflicting types for
+ * compile in tla-ja: games/tla/src/scene/prox.c:2590: conflicting types for
  * `gData_02005a20'. */
 extern const u8 gData_02005a20__prox[] __asm__("gData_02005a20");
 
@@ -1631,33 +1619,22 @@ s32 Actor_MoveToObject();
  * definition has u32 gData_02005ee8[] = { 39, 2, 4, 0x780000, 0, 0xc40000, 1,
  * 39, 1, 0, 10, 22, 3, 0x4000, 0, 10, 17, }; tried as the definition's extern
  * struct Trigger gData_02005ee8[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:3101: conflicting types for `gData_02005ee8'. */
+ * games/tla/src/scene/prox.c:2701: conflicting types for `gData_02005ee8'. */
 extern u8 gData_02005ee8__s1cf0[] __asm__("gData_02005ee8");
 /* VIEW(s1cf0): variable gData_02006038 as extern u8 gData_02006038[]; the
  * definition has u32 gData_02006038[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1,
  * 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the
  * definition's extern struct Trigger gData_02006038[], it does not compile in
- * tla-ja: games/tla/src/scene/prox.c:3132: conflicting types for
+ * tla-ja: games/tla/src/scene/prox.c:2732: conflicting types for
  * `gData_02006038'. */
 extern u8 gData_02006038__s1cf0[] __asm__("gData_02006038");
-/* VIEW(s1cf0): variable gData_02006088 as extern u8 gData_02006088[]; the
- * definition has u32 gData_02006088[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1,
- * 4, 0x980000, 0, 0x1100000, 1, 39, 1, 0, 1, 17, }; tried as the definition's
- * extern s32 gData_02006088[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:3139: conflicting types for `gData_02006088'. */
-extern u8 gData_02006088__s1cf0[] __asm__("gData_02006088");
-/* VIEW(s1cf0): variable gData_020060fc as extern u8 gData_020060fc[]; the
- * definition has u32 gData_020060fc[] = { 39, 2, 4, 0x780000, 0, 0xdc0000, 1,
- * 39, 1, 0, 10, 22, 3, 0x2000, 0, 5, 22, 3, 0, 0, 20, 22, 3, 0xe000, 0, 5, 22,
- * 3,...; tried as the definition's extern s32 gData_020060fc[], it does not
- * compile in tla-ja: games/tla/src/scene/prox.c:3150: conflicting types for
- * `gData_020060fc'. */
-extern u8 gData_020060fc__s1cf0[] __asm__("gData_020060fc");
+extern u32 gData_02006088[];
+extern u32 gData_020060fc[];
 /* VIEW(s1cf0): variable gData_02006268 as extern u8 gData_02006268[]; the
  * definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1,
  * 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16
  * gData_02006268[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:3179: conflicting types for `gData_02006268'. */
+ * games/tla/src/scene/prox.c:2777: conflicting types for `gData_02006268'. */
 extern u8 gData_02006268__s1cf0[] __asm__("gData_02006268");
 
 /// ★ Named from the game: "What took you so long? Mom and Dad are tired of
@@ -1817,11 +1794,11 @@ void Prox_SayFarewell(void) {
     Actor_SetScript(7, (s32)gData_02005fe8);
     FieldEvent_Wait(10);
     Actor_SetScript(2, gData_02006038__s1cf0);
-    Actor_SetScript(1, (s32)gData_02006088__s1cf0);
+    Actor_SetScript(1, (s32)gData_02006088);
     FieldEvent_Wait(30);
     Actor_SetScript(5, (s32)gData_020060cc);
     FieldEvent_Wait(20);
-    Actor_SetScript(0, (s32)gData_020060fc__s1cf0);
+    Actor_SetScript(0, (s32)gData_020060fc);
     Actor_SetScript(gMainRoutineWork.currentOwner, (s32)gData_0200617c);
     FieldEvent_Wait(10);
     Actor_RunScriptAndWait(11, (s32)gData_020061fc);
@@ -2063,25 +2040,17 @@ struct Position {
   s32 z;
 };
 
-/* VIEW(s391c): routine Func_0200385c as void Func_0200385c(void); the
- * definition has void Func_0200385c(struct Actor *object); tried as the
- * definition's void Func_0200385c(struct Actor *object), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:2004: `Func_0200385c__s391c' undeclared (first use
- * in this function). */
-extern void Func_0200385c__s391c(void) __asm__("Func_0200385c");
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 /* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the
  * definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32)
  * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
- * definition's extern s32 gData_02004780[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:1976: `gData_02004780__s391c' undeclared (first
- * use in this function). */
+ * definition's extern s32 gData_02004780[], Func_0200391c moves: 4 of 302
+ * instructions, Func_02003bc8 moves: 1 of 330 instructions in tla-ja. */
 extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
-                           Actor_SelectAnimation, Func_0200385c__s391c,
+                           Actor_SelectAnimation, Func_0200385c,
                            Field_CheckSpheresOverlap)
 
 extern volatile s16 gData_020062a4;
@@ -2094,7 +2063,7 @@ s32 Actor_HasArrived(struct Actor *object);
 #define SHARED_F02003070_ID4 gData_02004780__s391c
 #define SHARED_F02003070_ID5 Actor_SelectAnimation
 #define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Func_0200385c__s391c
+#define SHARED_F02003070_ID7 Func_0200385c
 #define SHARED_F02003070_ID8 Field_CheckSpheresOverlap
 #include "shared/func_02003070.c"
 #undef SHARED_F02003070_NAME
@@ -2116,7 +2085,7 @@ s32 Actor_HasArrived(struct Actor *object);
 void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8,
-                                 Actor_SelectAnimation, Func_0200385c__s391c,
+                                 Actor_SelectAnimation, Func_0200385c,
                                  Field_CheckSpheresOverlap)
 
 struct ParticleSprite {
@@ -2184,7 +2153,7 @@ extern char ResourceId_FallingRock;
 
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/prox.c:2523: structure has no
+ * does not compile in tla-ja: games/tla/src/scene/prox.c:2140: structure has no
  * member named `unk05_5'. */
 struct RockSprite__s4254 {
   u8 unk00[5];

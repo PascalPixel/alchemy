@@ -86,14 +86,6 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   Heap_Release(buffer);
 }
 
-/* VIEW(screens): routine Text_MeasureDecoded as s32 Text_MeasureDecoded(s32
- * start, u32 *width, u32 *height, s32 mode); window/window has void
- * Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight, u16
- * *spacing) {. */
-s32 Text_MeasureDecoded__screens(s32 start, u32 *width, u32 *height,
-                                 s32 mode) __asm__("Text_MeasureDecoded");
-#define Text_MeasureDecoded Text_MeasureDecoded__screens
-
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
                                s32 width, s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -267,25 +259,13 @@ extern u8 gNameEntry_EndKeyLabel[];
 
 /* VIEW(screens): routine Portrait_OpenWindow as void Portrait_OpenWindow(s32
  * member, s32 x, s32 y, s32 side); window/window has struct Window
- * *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y) {. */
+ * *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y) {; not
+ * tried: Portrait_OpenWindow's declaration holds a FAKEMATCH tag. */
 void Portrait_OpenWindow__screens(s32 member, s32 x, s32 y,
                                   s32 side) __asm__("Portrait_OpenWindow");
 #define Portrait_OpenWindow Portrait_OpenWindow__screens
-/* VIEW(screens): routine MenuCursor_SetPositionImmediateFar as void
- * MenuCursor_SetPositionImmediateFar(struct NameCursorMotion *cursor, s32 x,
- * s32 y); window/window has void MenuCursor_SetPositionImmediateFar(void
- * *cursor, s32 x, s32 y). */
-void MenuCursor_SetPositionImmediateFar__screens(
-    struct NameCursorMotion *cursor, s32 x,
-    s32 y) __asm__("MenuCursor_SetPositionImmediateFar");
-#define MenuCursor_SetPositionImmediateFar                                     \
-  MenuCursor_SetPositionImmediateFar__screens
-/* VIEW(screens): routine MenuCursor_SetFar as void MenuCursor_SetFar(struct
- * NameCursorMotion *cursor, s32 x, s32 y, s32 speed); window/window has void
- * MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode). */
-void MenuCursor_SetFar__screens(struct NameCursorMotion *cursor, s32 x, s32 y,
-                                s32 speed) __asm__("MenuCursor_SetFar");
-#define MenuCursor_SetFar MenuCursor_SetFar__screens
+void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
+#define MenuCursor_SetPositionImmediateFar MenuCursor_SetPositionImmediateFar
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
 // it (NameEntry_AcceptsMark refuses a mark that cannot), takes a byte but is no

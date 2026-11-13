@@ -164,9 +164,8 @@ void Func_02000198(void) {
        ->v)
 
 /* VIEW(s0198): routine Event_End as s32 Event_End();
- * module/scene/jupiter_lighthouse_aerie_beacon.h has void Event_End(void);
- * tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216
- * instructions in tla-ja. */
+ * module/scene/jupiter_lighthouse_aerie_beacon.h has void Event_End(void); not
+ * tried: Event_End's bound declaration was not found. */
 extern s32 Func_0200581c__s0198() __asm__("Event_End");
 
 void Func_0200045c(void) {
@@ -2028,7 +2027,7 @@ struct SceneWork {
 /* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2064:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2045:
  * dereferencing pointer to incomplete type. */
 struct FieldWork__s0198 {
   u8 pad0[0x178];
@@ -2133,7 +2132,7 @@ void Func_02003a6c(s32 mode) {
 /* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2150: structure
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2132: structure
  * has no member named `map'. */
 struct HeapSlotWords__s0198 {
   s32 unk00[8];
@@ -2187,10 +2186,6 @@ void Func_02003c58(s32 mode) {
   System_Wait(2);
 }
 
-/* VIEW(s0198): routine Func_02004644 as s32 Func_02004644();
- * scene/jupiter_lighthouse_aerie_beacon/s44cc has void Func_02004644(void) {.
- */
-s32 Func_02004644__s0198() __asm__("Func_02004644");
 s32 Party_AddMember(s32 value);
 
 s32 Scene_Initialize(void) {
@@ -2224,7 +2219,7 @@ s32 Scene_Initialize(void) {
   FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
   t9 = Event_GetFlag(0xa21);
   if (t9 == 0) {
-    Func_02004644__s0198();
+    Func_02004644();
   } else {
     t11 = Actor_Get(24);
     FIELD_AT(t11, s32, 24) = 0;
@@ -2300,10 +2295,8 @@ DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
                           gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 /* VIEW(s0198): routine MapGrid_SetCellHeight as void MapGrid_SetCellHeight();
- * module/scene/scene.h has void MapGrid_SetCellHeight(void); tried as the rest
- * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many
- * arguments to function `MapGrid_SetCellHeight'. */
+ * module/scene/scene.h has void MapGrid_SetCellHeight(void); not tried:
+ * MapGrid_SetCellHeight's bound declaration was not found. */
 extern void Func_020057c4__s0198() __asm__("MapGrid_SetCellHeight");
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
@@ -2491,22 +2484,12 @@ void Whirlwind_Update(struct Object6a5 *object) {
 
 extern u8 gLightSpritesLarge[];
 
-/* VIEW(s44cc): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s44cc(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
-/* VIEW(s44cc): routine Whirlwind_Update as void Whirlwind_Update(struct
- * GustObject *object);
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s3f54 has void
- * Whirlwind_Update(struct Object6a5 *object) {. */
-void Whirlwind_Update__s44cc(struct GustObject *object) __asm__(
-    "Whirlwind_Update");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
-                             Whirlwind_Update__s44cc, FieldEffect_Spawn)
+                             Whirlwind_Update, FieldEffect_Spawn)
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
 
@@ -2564,7 +2547,7 @@ void Func_02004644(void) {
 /* VIEW(s44cc): variable gLightSpritesLarge as s16 gLightSpritesLarge;
  * module/scene/scene.h has u8 gLightSpritesLarge[]; tried as the rest of the
  * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:217:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2552:
  * `gLightSpritesLarge' has an incomplete type. */
 extern s16 gLightSpritesLarge__s44cc __asm__("gLightSpritesLarge");
 

@@ -7,11 +7,7 @@
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
-/* VIEW(s0150): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s0150(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -108,19 +104,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s32 gPushLeaderSteps[];
 
-/* VIEW(venus_lighthouse): routine Import_ActorSelectAnimation as void
- * Import_ActorSelectAnimation(struct StagedActor *object, s32 mode);
- * scene/venus_lighthouse/s0150 has void Import_ActorSelectAnimation(struct
- * FieldEffect *effect, s32 mode). */
-void Import_ActorSelectAnimation__venus_lighthouse(
-    struct StagedActor *object,
-    s32 mode) __asm__("Import_ActorSelectAnimation");
 s32 MapGrid_CheckCollision(struct StagedActor *object,
                            struct FieldPosition *position);
 
 DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto, gPushLeaderSteps,
-                       MapGrid_CheckCollision,
-                       Import_ActorSelectAnimation__venus_lighthouse)
+                       MapGrid_CheckCollision, Import_ActorSelectAnimation)
 
 #include "../field/map/cell_fill_byte.c"
 
@@ -153,15 +141,6 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   return 0;
 }
 
-/* VIEW(venus_lighthouse): routine FieldEffect_Spawn as void
- * FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase, s32
- * life, struct SceneEffectParams *params); scene/venus_lighthouse/s0150 has
- * void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32
- * velocityZ, u32 flags, const struct EffectOptions *options) {. */
-void FieldEffect_Spawn__venus_lighthouse(
-    s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase, s32 life,
-    struct SceneEffectParams *params) __asm__("FieldEffect_Spawn");
-
 /// Emits a rising particle near the actor every eight frames.
 s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   struct SceneEffectParams options;
@@ -176,21 +155,15 @@ s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   particleX = actor->x + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
   particleY = actor->y + ((32 - (s32)((u32)(Random16() * 32) >> 16)) << 16);
   riseSpeed = ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x00050000) / 10;
-  FieldEffect_Spawn__venus_lighthouse(particleX, particleY, actor->z, 0,
-                                      riseSpeed, framePhase, 0x000b0000,
-                                      &options);
+  FieldEffect_Spawn(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
+                    0x000b0000, &options);
 done:
   return 0;
 }
 
 #define Actor_SetSpriteFlags ((void (*)(void *, s32))Actor_SetSpriteFlags)
 
-/* VIEW(venus_lighthouse): variable gActorPlacementsEntrance99 as const struct
- * ActorPlacement gActorPlacementsEntrance99[]; scene/venus_lighthouse/floor has
- * struct ActorPlacement gActorPlacementsEntrance99[] = {. */
-extern const struct ActorPlacement
-    gActorPlacementsEntrance99__venus_lighthouse[] __asm__(
-        "gActorPlacementsEntrance99");
+extern struct ActorPlacement gActorPlacementsEntrance99[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -210,7 +183,7 @@ s32 SceneActor_ClearSingleChildField(void *actor) {
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
-    return gActorPlacementsEntrance99__venus_lighthouse;
+    return gActorPlacementsEntrance99;
   return gActorPlacements;
 }
 
@@ -241,16 +214,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void Exit_PrepareActorAnimation(s32 actor, s32 value);
 
 extern s32 gVenusLighthouse_LeaderFlashes[];
-/* VIEW(floor): variable gMapCellBuffer as u8 gMapCellBuffer[];
- * field/map/cell_fill_byte has struct MapCell gMapCellBuffer[]. */
-extern u8 gMapCellBuffer__floor[] __asm__("gMapCellBuffer");
 
 /* VIEW(floor): routine Actor_GetById as struct VenusActor *Actor_GetById(s32
  * id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the
  * definition's struct Actor *Actor_GetById(u32 objectId), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse/floor.c:71: invalid type argument of
- * `->'. */
+ * games/tla/src/scene/venus_lighthouse.c:271: invalid type argument of `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -262,38 +231,24 @@ void Actor_SetMovementTypeById(s32 actor, const void *callback);
  * of 85 instructions in tla-ja. */
 extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__(
     "Actor_RefreshSelectorById");
-/* VIEW(floor): routine Actor_SetSpriteColor as void
- * Actor_SetSpriteColor(struct VenusActor *object, s32 value); event.h has
- * void Actor_SetSpriteColor(struct Actor *object, s32 attribute); tried as
- * the definition's void Actor_SetSpriteColor(struct Actor *object, s32
- * attribute), which the object already declares, VenusLighthouse_RepelLeader
- * moves: 3 of 85 instructions in tla-ja. */
+/* VIEW(floor): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
+ * VenusActor *object, s32 value); event.h has void Actor_SetSpriteColor(struct
+ * Actor *object, s32 attribute); not tried: Actor_SetSpriteColor's bound
+ * declaration was not found. */
 extern void
 Actor_SetPartAttribute__floor(struct VenusActor *object,
                               s32 value) __asm__("Actor_SetSpriteColor");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-/* VIEW(floor): routine Import_ActorSelectAnimation as void
- * Import_ActorSelectAnimation(struct VenusActor *object, s32 mode);
- * scene/venus_lighthouse/s0150 has void Import_ActorSelectAnimation(struct
- * FieldEffect *effect, s32 mode). */
-void Import_ActorSelectAnimation__floor(
-    struct VenusActor *object, s32 mode) __asm__("Import_ActorSelectAnimation");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct Actor *actor);
-/* VIEW(floor): routine MapGrid_CheckCollision as s32
- * MapGrid_CheckCollision(struct VenusActor *object, s32 *position);
- * scene/venus_lighthouse has s32 MapGrid_CheckCollision(struct StagedActor
- * *object, struct FieldPosition *position). */
-s32 MapGrid_CheckCollision__floor(
-    struct VenusActor *object, s32 *position) __asm__("MapGrid_CheckCollision");
 /* VIEW(floor): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
  * actor, s32 height, s32 frames); event.h has s32 Actor_ShowEmoteById(s32
  * actorId, s32 emote, s32 frames); tried as the definition's struct
  * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
  * state), it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types for
+ * games/tla/src/scene/venus_lighthouse.c:238: conflicting types for
  * `Actor_ShowEmoteById'. */
 extern void
 Actor_ShowEmoteById__floor(s32 actor, s32 height,
@@ -301,7 +256,12 @@ Actor_ShowEmoteById__floor(s32 actor, s32 height,
 /* VIEW(floor): routine VenusLighthouse_EmitRisingParticles as s32
  * VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
  * scene/venus_lighthouse has s32 VenusLighthouse_EmitRisingParticles(struct
- * SceneEffectSource *actor) {. */
+ * SceneEffectSource *actor) {; tried as the definition's s32
+ * VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor), which
+ * the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse.c:278:
+ * `VenusLighthouse_EmitRisingParticles__floor' undeclared (first use in this
+ * function). */
 s32 VenusLighthouse_EmitRisingParticles__floor(
     struct VenusActor *object) __asm__("VenusLighthouse_EmitRisingParticles");
 
@@ -504,8 +464,8 @@ void VenusLighthouse_FelixMovesStatue(void) {
 /* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse/floor.c:248: structure has no member
- * named `mode'. */
+ * games/tla/src/scene/venus_lighthouse.c:447: structure has no member named
+ * `mode'. */
 struct AerieEventWork__floor {
   u8 unk000[0x1ac];
   s32 mode;
@@ -1060,22 +1020,6 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_SetExitRequest(22);
 }
 
-/* VIEW(floor): routine OverlayObject_UpdateEveryFourFrames as void
- * OverlayObject_UpdateEveryFourFrames(void); scene/venus_lighthouse has s32
- * OverlayObject_UpdateEveryFourFrames(void *obj) {. */
-void OverlayObject_UpdateEveryFourFrames__floor(void) __asm__(
-    "OverlayObject_UpdateEveryFourFrames");
-/* VIEW(floor): routine SceneActor_ApplyCounterLowBitsAsMode as void
- * SceneActor_ApplyCounterLowBitsAsMode(void); scene/venus_lighthouse has s32
- * SceneActor_ApplyCounterLowBitsAsMode(struct Actor *actor) {. */
-void SceneActor_ApplyCounterLowBitsAsMode__floor(void) __asm__(
-    "SceneActor_ApplyCounterLowBitsAsMode");
-/* VIEW(floor): routine SceneActor_ClearSingleChildField as void
- * SceneActor_ClearSingleChildField(void); scene/venus_lighthouse has s32
- * SceneActor_ClearSingleChildField(void *actor) {. */
-void SceneActor_ClearSingleChildField__floor(void) __asm__(
-    "SceneActor_ClearSingleChildField");
-
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
@@ -1111,7 +1055,7 @@ s32 gVenusLighthouse_LeaderFlashes[] = {
     12,
     22,
     38,
-    (s32)OverlayObject_UpdateEveryFourFrames__floor,
+    (s32)OverlayObject_UpdateEveryFourFrames,
     (s32)0x80010000,
     22,
     9,
@@ -1185,8 +1129,7 @@ u32 gSceneExits[] = {
 };
 
 s32 gVenusLighthouse_StatueGlows[] = {
-    22, 35, 0x2126, 22,
-    39, 1,  46,     (s32)SceneActor_ApplyCounterLowBitsAsMode__floor,
+    22, 35, 0x2126, 22, 39, 1, 46, (s32)SceneActor_ApplyCounterLowBitsAsMode,
     17,
 };
 
@@ -1201,7 +1144,7 @@ s32 gVenusLighthouse_ShrinkAndHide[] = {
     30,
     0,
     46,
-    (s32)SceneActor_ClearSingleChildField__floor,
+    (s32)SceneActor_ClearSingleChildField,
     17,
 };
 

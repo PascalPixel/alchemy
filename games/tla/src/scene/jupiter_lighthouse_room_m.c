@@ -61,7 +61,10 @@ extern s32 gWhirlwindRiding;
  * Import_ActorSelectAnimation, Whirlwind_Update__s3474, FieldEffect_Spawn)
  * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
  * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
- * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge. */
+ * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
+ * the one declaration struct GustObject *Whirlwind_SpawnUpper(), it does not
+ * compile in tla-ja (make modern): games/tla/include/field/field.h:25:41: note:
+ * expected 'struct Actor *' but argument is of type 's32' {aka 'int'}. */
 void Whirlwind_SpawnUpper__jupiter_lighthouse_room_m() __asm__(
     "Whirlwind_SpawnUpper");
 #define Whirlwind_SpawnUpper Whirlwind_SpawnUpper__jupiter_lighthouse_room_m
@@ -92,7 +95,7 @@ void Func_02000080(void) {
 /* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[];
  * bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:134: incompatible types in
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:125: incompatible types in
  * assignment. */
 extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
@@ -100,7 +103,12 @@ extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
  * Actor_EmitRisingSparks(void); scene/jupiter_lighthouse_room_m/s3474 has
  * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
  * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
- * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge. */
+ * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
+ * the definition's DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn,
+ * Actor_SelectAnimation, Whirlwind_Update, FieldEffect_Spawn) UNUSED s32
+ * Actor_EmitRisingSparks(struct..., it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:141: `Actor_EmitRisingSparks'
+ * undeclared (first use in this function). */
 void Actor_EmitRisingSparks__jupiter_lighthouse_room_m(void) __asm__(
     "Actor_EmitRisingSparks");
 #define Actor_EmitRisingSparks Actor_EmitRisingSparks__jupiter_lighthouse_room_m
@@ -184,11 +192,8 @@ void Func_020000c4(void) {
 /* VIEW(jupiter_lighthouse_room_m): routine MapGrid_SetCellHeight as void
  * MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
  * module/scene/eastern_alhafra.h has void MapGrid_SetCellHeight(struct Actor
- * *object); tried as the definition's void MapGrid_SetCellHeight(struct Actor
- * *object), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:183:
- * `Func_02004774__jupiter_lighthouse_room_m' undeclared (first use in this
- * function). */
+ * *object); not tried: MapGrid_SetCellHeight's bound declaration was not found.
+ */
 extern void Func_02004774__jupiter_lighthouse_room_m(
     s32 x, s32 z, s32 a, s32 b) __asm__("MapGrid_SetCellHeight");
 
@@ -1715,36 +1720,13 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 #include "module/scene/jupiter_lighthouse_room_m.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s3474): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s3474(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
-/* VIEW(s3474): routine Whirlwind_Update as void Whirlwind_Update(struct
- * GustObject *object); scene/jupiter_lighthouse_room_m has
- * DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
- * Position_FlatDistance, gWhirlwindEndScript, gWhirlwindRiding) // ----
- * scene/jupiter_lighthouse_room_m/s3474.c ---- /// Scene code of overlay 0x6a3,
- * in ROM order. #include "shared/whirlwind.h" #include
- * "shared/jupiter_lighthouse.h" #include "shared/effects.h" #include "types.h"
- * #include "call.h" #include "iwram_call.h" #include "actor.h" #include
- * "field_effect.h" #include "event_inline.h" #include
- * "shared/jupiter_lighthouse_aerie.h" #include "field_coordinate.h" #include
- * "field_sprite.h" #include "ram_buffer.h" #include "map.h" #include
- * "field_event.h" #include "vram_tab.h" #include "task.h" #include
- * "item_icon.h" #include "module/scene/jupiter_lighthouse_room_m.h" #include
- * "module/scene/scene.h" /* VIEW(s3474): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags); field/field.h
- * has void Actor_SetSpriteFlags(struct Actor *object, u32 flags). * / void
- * Actor_SetSpriteFlags__s3474(struct FieldEffect *effect, s32 flags)
- * __asm__("Actor_SetSpriteFlags"). */
-void Whirlwind_Update__s3474(struct GustObject *object) __asm__(
-    "Whirlwind_Update");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Whirlwind_Update(struct Actor *self);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
-                             Whirlwind_Update__s3474, FieldEffect_Spawn)
+                             Whirlwind_Update, FieldEffect_Spawn)
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
 
@@ -1752,13 +1734,6 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)
 
 extern s16 gLightSpritesLarge;
-
-/* VIEW(s3474): routine Oam_AddSpriteAtDepthClamped as void
- * Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
- * module/system/system.h has void Oam_AddSpriteAtDepthClamped(void *entry, s32
- * slot). */
-void Oam_AddSpriteAtDepthClamped__s3474(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -1768,7 +1743,7 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
                           gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
-                          Oam_AddSpriteAtDepthClamped__s3474)
+                          Oam_AddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

@@ -539,11 +539,18 @@ s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
 
 /* VIEW(battle): routine Transform_ApplyLookAt as s32 Transform_ApplyLookAt(void
  * *, void *); transform.h has void Transform_ApplyLookAt(s32 *eye, s32
- * *target). */
+ * *target); tried as the definition's void Transform_ApplyLookAt(s32 *eye, s32
+ * *target), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/battle/battle.c:3150: void value not ignored as it ought to be.
+ */
 extern s32
 Transform_ApplyLookAt__battle(void *, void *) __asm__("Transform_ApplyLookAt");
 /* VIEW(battle): routine Transform_SetLookAt as s32 Transform_SetLookAt(void *,
- * void *); transform.h has void Transform_SetLookAt(s32 *eye, s32 *target). */
+ * void *); transform.h has void Transform_SetLookAt(s32 *eye, s32 *target);
+ * tried as the definition's void Transform_SetLookAt(s32 *eye, s32 *target),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/battle/battle.c:3152: void value not ignored as it ought to be.
+ */
 extern s32 Transform_SetLookAt__battle(void *,
                                        void *) __asm__("Transform_SetLookAt");
 

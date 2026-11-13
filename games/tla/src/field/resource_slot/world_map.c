@@ -11,32 +11,11 @@
 #include "resource_ids.h"
 #include "transform.h"
 
-/* VIEW(resource_slot): routine Projection_Set as void Projection_Set(s32
- * distance, s32 nearPlane, s32 farPlane); module/system/system.h has void
- * Projection_Set(u32 value0, u32 value1, u32 value2). */
-extern void
-Projection_Set__resource_slot(s32 distance, s32 nearPlane,
-                              s32 farPlane) __asm__("Projection_Set");
-/* VIEW(f02b998): routine Transform_Reset as u32
- * Transform_Reset(void); graphics.h has void
- * Transform_Reset(void); tried as the definition's void
- * Transform_Reset(void), which the object already declares,
- * WorldMap_InitializePerspective moves: 1 of 372 instructions in tla-ja. */
+/* VIEW(f02b998): routine Transform_Reset as u32 Transform_Reset(void);
+ * graphics.h has void Transform_Reset(void); not tried: Transform_Reset's bound
+ * declaration was not found. */
 extern u32 Render_ResetTransformState__f02b998(void) __asm__(
     "Transform_Reset"); // Returns void; see the tag.
-/* VIEW(resource_slot): routine SceneTransform_ApplyPosition as void
- * SceneTransform_ApplyPosition(void *position); module/system/system.h has void
- * SceneTransform_ApplyPosition(const s32 *pos). */
-extern void SceneTransform_ApplyPosition__resource_slot(void *position) __asm__(
-    "SceneTransform_ApplyPosition");
-/* VIEW(resource_slot): routine WorldMap_BuildScanlineTable as void
- * WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
- * field/map/terrain has void WorldMap_BuildScanlineTable(s32 pitchSlope, s32
- * *position, struct ScanlineRow *row) {. */
-void WorldMap_BuildScanlineTable__resource_slot(
-    s32 ratio, s32 *position,
-    void *affineWork) __asm__("WorldMap_BuildScanlineTable");
-#define WorldMap_BuildScanlineTable WorldMap_BuildScanlineTable__resource_slot
 
 void WorldMap_InitializePerspective(void) {
   /* FAKEMATCH(signature): Transform_Reset declared returning u32;
@@ -104,12 +83,12 @@ void WorldMap_InitializePerspective(void) {
   *(s32 *)(camera + 28) = 0;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 96;
-  Projection_Set__resource_slot(farPlane, farPlane >> 1, farPlane << 1);
+  Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   cameraPosition[0] = 0;
   cameraPosition[1] = 0;
   cameraPosition[2] = 0;
   Render_ResetTransformState__f02b998();
-  SceneTransform_ApplyPosition__resource_slot(cameraPosition);
+  SceneTransform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
   eyeOffset.x = 0;
@@ -135,7 +114,7 @@ void WorldMap_InitializePerspective(void) {
   view->pitch = 0xe000;
   view->yaw = 0;
   Render_ResetTransformState__f02b998();
-  SceneTransform_ApplyPosition__resource_slot(cameraPosition);
+  SceneTransform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
@@ -228,10 +207,9 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
 #include "transform.h"
 
 /* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[];
- * battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/resource_slot.c:8903: `gWorldMapWork' has an incomplete
- * type. */
+ * battle.h has extern struct WorldMapWork gWorldMapWork; tried as the 3
+ * declarations' extern u8 gWorldMapWork[], it does not compile in tla-ja:
+ * games/tla/src/field/field.c:9367: conflicting types for `gWorldMapWork'. */
 extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
 
 void WorldMap_LoadGraphics(s32 x, s32 z) {
@@ -373,9 +351,9 @@ void WorldMap_ApplyAffinePage(void) {
 }
 
 /* VIEW(world_map): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has
- * extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/field/resource_slot.c:9021:
- * `gMapBlocks__world_map' undeclared (first use in this function). */
+ * extern u32 gMapBlocks[]; tried as the 2 declarations' extern u8 gMapBlocks[],
+ * it does not compile in tla-ja: games/tla/src/field/field.c:9508: conflicting
+ * types for `gMapBlocks'. */
 extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
@@ -535,9 +513,9 @@ void WorldMap_UpdateView(void) {
   }
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 96;
-  Projection_Set__resource_slot(distance, height / 2, height * 2);
+  Projection_Set(distance, height / 2, height * 2);
   Transform_Reset();
-  SceneTransform_ApplyPosition__resource_slot(cameraPosition);
+  SceneTransform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(view->yaw);
   Transform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
@@ -562,17 +540,8 @@ void WorldMap_UpdateView(void) {
       affinePages + (gFrameCount & 1) * 0x1400);
 }
 
-/* VIEW(resource_slot): tag struct MapTileWindow as struct
- * MapTileWindow__resource_slot; module/field/field.h has another definition. */
-struct MapTileWindow__resource_slot {
-  s32 *origin;
-  u8 unk004[0x144];
-  u16 tileIds[32 * 32];
-};
-
 void WorldMap_UpdateCurrentTileBlock(void) {
-  struct MapTileWindow__resource_slot *window =
-      (struct MapTileWindow__resource_slot *)Ram_HeapSlots->mapWork;
+  struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
   s32 x0 = 0;
   s32 y0 = 0;
   u32 layer;

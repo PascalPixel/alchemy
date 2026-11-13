@@ -60,33 +60,32 @@
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 /* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
- * u16 gLinkStatus. */
+ * u16 gLinkStatus; not tried: gLinkStatus's declaration holds a FAKEMATCH tag.
+ */
 extern u16 gLinkStatus__menus __asm__("gLinkStatus");
 /* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16
  * gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature
- * gLinkPeerSignatures[]; tried as the 2 declarations' extern u16
- * gLinkPeerSignatures[][12], it does not compile in tla-ja:
- * games/tla/src/window/menus.c:1344: conflicting types for
- * `gLinkPeerSignatures'. */
+ * gLinkPeerSignatures[]; not tried: gLinkPeerSignatures's declaration holds a
+ * FAKEMATCH tag. */
 extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__(
     "gLinkPeerSignatures");
 /* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8
  * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
- * it does not compile in tla-ja: games/tla/src/window/menus.c:1346: conflicting
- * types for `gMainRoutineWork'. */
+ * gMainRoutineWork; not tried: gMainRoutineWork's declaration holds a FAKEMATCH
+ * tag. */
 extern u8 gMainRoutineWork__battle_party_commands[] __asm__("gMainRoutineWork");
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 /* VIEW(battle_party_commands): routine Link_DrawPageArrows as void
  * Link_DrawPageArrows(u32 address); countdown has void Link_DrawPageArrows(s32
- * destination); tried as the rest of the object declares it,
- * Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
+ * destination); not tried: Link_DrawPageArrows's bound declaration was not
+ * found. */
 extern void Link_DrawShiftedTilePair__battle_party_commands(
     u32 address) __asm__("Link_DrawPageArrows");
 /* VIEW(menus): routine Menu_BuildLocalizedPatternTiles as void
  * Menu_BuildLocalizedPatternTiles(void); window/screens has s32
- * Menu_BuildLocalizedPatternTiles(void) {. */
+ * Menu_BuildLocalizedPatternTiles(void) {; not tried:
+ * Menu_BuildLocalizedPatternTiles's declaration holds a FAKEMATCH tag. */
 void Menu_BuildLocalizedPatternTiles__menus(void) __asm__(
     "Menu_BuildLocalizedPatternTiles");
 #define Menu_BuildLocalizedPatternTiles Menu_BuildLocalizedPatternTiles__menus
@@ -94,120 +93,103 @@ void Menu_BuildLocalizedPatternTiles__menus(void) __asm__(
  * BattleParty_SplitChoosers(u16 *actors, struct BattleAction **cursor, s32
  * *forcedCount); the definition has s32 BattleParty_ChooseReserve(s32 slot) {
  * u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count =
- * BattleParty_PrepareReserveOwners...; tried as the rest of the object declares
- * it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
+ * BattleParty_PrepareReserveOwners...; not tried: BattleParty_SplitChoosers's
+ * bound declaration was not found. */
 extern s32 Func_0804babc__battle_party_commands(
     u16 *actors, struct BattleAction **cursor,
     s32 *forcedCount) __asm__("BattleParty_SplitChoosers");
 /* VIEW(battle_party_commands): routine PartyStatus_HighlightMembers as void
  * PartyStatus_HighlightMembers(u16 *units); countdown has s32
- * PartyStatus_HighlightMembers(u16 *ids); tried as the definition's s32
- * PartyStatus_HighlightMembers(u16 *ids), which the object already declares,
- * Battle_DrawPartyPanelsWithEmptyList.0 moves: 1 of 18 instructions,
- * Battle_CollectPartyCommands moves: 3 of 1909 instructions in tla-ja. */
+ * PartyStatus_HighlightMembers(u16 *ids); not tried:
+ * PartyStatus_HighlightMembers's bound declaration was not found. */
 extern void BattleLayout_HighlightPartyPanels__battle_party_commands(
     u16 *units) __asm__("PartyStatus_HighlightMembers");
 /* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32
  * BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32
- * BattleParty_ListActorIdsFar(s32 side, s32 group); tried as the rest of the
- * object declares it, Battle_CollectPartyCommands moves: 2 of 1909 instructions
- * in tla-ja. */
+ * BattleParty_ListActorIdsFar(s32 side, s32 group); not tried:
+ * BattleParty_ListActorIdsFar's declaration holds a FAKEMATCH tag. */
 extern s32 BattleParty_ListActorIdsFar__battle_party_commands(
     s32 side, u16 *units) __asm__("BattleParty_ListActorIdsFar");
 /* VIEW(battle_party_commands): routine Message_DecodeRaw as void
  * Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void
- * Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void
- * Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object
- * already declares, Link_DrawWaitingForOpponent.1 moves: 2 of 24 instructions
- * in tla-ja. */
+ * Message_DecodeRaw(s32, s16 *, s32); not tried: Message_DecodeRaw's
+ * declaration holds a FAKEMATCH tag. */
 extern void Message_DecodeRaw__battle_party_commands(
     s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
 /* VIEW(battle_party_commands): routine Window_Create as struct Window
  * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); menus has
  * struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32
- * flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y,
- * s32 width, s32 height, s32 attrs), which the object already declares,
- * Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
+ * flags); not tried: Window_Create's declaration holds a FAKEMATCH tag. */
 extern struct Window *
 Window_Create__battle_party_commands(s32 x, s32 y, s32 width, s32 height,
                                      s32 flags) __asm__("Window_Create");
 /* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void
  * Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y);
  * menus has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow
- * *window, s32 x, s32 y); tried as the definition's void
- * Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32
- * offsetX, u32 offsetY), Battle_CollectPartyCommands moves: 7 of 1909
- * instructions in tla-ja. */
+ * *window, s32 x, s32 y); not tried: Text_DrawMessageAsTiles's bound
+ * declaration was not found. */
 extern void Text_DrawCharacterAtOffset__battle_party_commands(
     s32 message, struct Window *window, s32 x,
     s32 y) __asm__("Text_DrawMessageAsTiles");
 /* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void
  * Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x,
  * s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format,
- * struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the
- * definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct
- * RenderInput *work, s32 x, s32 y), Battle_CollectPartyCommands moves: 2 of
- * 1909 instructions in tla-ja. */
+ * struct RenderInput *work, s32 offsetX, s32 offsetY); not tried:
+ * Text_DrawNumberAtOffset's declaration holds a FAKEMATCH tag. */
 extern void Text_DrawNumberAtOffset__battle_party_commands(
     s32 value, s32 digits, struct Window *window, s32 x,
     s32 y) __asm__("Text_DrawNumberAtOffset");
 /* VIEW(battle_party_commands): routine Window_SetTilemapEntry as void
  * Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y, s32
  * flags); graphics.h has void Window_SetTilemapEntry(struct Window *window, s32
- * value, s32 x, s32 y, u32 mode); tried as the definition's void
- * Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32
- * mode), which the object already declares, Battle_CollectPartyCommands moves:
- * 11 of 1909 instructions in tla-ja. */
+ * value, s32 x, s32 y, u32 mode); not tried: Window_SetTilemapEntry's
+ * declaration holds a FAKEMATCH tag. */
 extern void Window_SetTilemapEntry__battle_party_commands(
     struct Window *window, s32 entry, s32 x, s32 y,
     s32 flags) __asm__("Window_SetTilemapEntry");
 /* VIEW(menus): routine Window_PutGlyph as void Window_PutGlyph(struct Window
  * *window, s32 character, s32 x, s32 y, s32 mode); window/window has void
- * Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {. */
+ * Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {; not
+ * tried: Window_PutGlyph's declaration holds a FAKEMATCH tag. */
 void Window_PutGlyph__menus(struct Window *window, s32 character, s32 x, s32 y,
                             s32 mode) __asm__("Window_PutGlyph");
 #define Window_PutGlyph Window_PutGlyph__menus
 /* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
  * member, s32 unused); window/screens has s32 BattleDjinnMenu_Run(s32 member)
- * {. */
+ * {; not tried: BattleDjinnMenu_Run's declaration holds a FAKEMATCH tag. */
 s32 BattleDjinnMenu_Run__menus(s32 member,
                                s32 unused) __asm__("BattleDjinnMenu_Run");
 #define BattleDjinnMenu_Run BattleDjinnMenu_Run__menus
 /* VIEW(menus): routine Message_ShowAndWait as void *Message_ShowAndWait(s32
  * message, s32 x, s32 y); window/screens has s32 Message_ShowAndWait(s32
- * message, s32 x, s32 y) {. */
+ * message, s32 x, s32 y) {; not tried: Message_ShowAndWait's declaration holds
+ * a FAKEMATCH tag. */
 void *Message_ShowAndWait__menus(s32 message, s32 x,
                                  s32 y) __asm__("Message_ShowAndWait");
 #define Message_ShowAndWait Message_ShowAndWait__menus
 /* VIEW(battle_party_commands): routine Item_GetDirectFar as u16
  * *Item_GetDirectFar(s32 item); item.h has struct ItemDefinition
- * *Item_GetDirectFar(s32 item); tried as the rest of the object declares it, it
- * does not compile in tla-ja: games/tla/src/window/menus.c:2047: subscripted
- * value is neither array nor pointer. */
+ * *Item_GetDirectFar(s32 item); not tried: Item_GetDirectFar's bound
+ * declaration was not found. */
 extern u16 *
 Item_Get__battle_party_commands(s32 item) __asm__("Item_GetDirectFar");
 /* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void
  * Text_FillCanvasBackground(void); countdown has unsigned char
- * Text_FillCanvasBackground(void); tried as the definition's void
- * Text_FillCanvasBackground(void), which the object already declares,
- * Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
+ * Text_FillCanvasBackground(void); not tried: Text_FillCanvasBackground's bound
+ * declaration was not found. */
 extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__(
     "Text_FillCanvasBackground");
 /* VIEW(battle_party_commands): routine Message_CopyExpanded as s32
  * Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); menus has void
- * Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the
- * definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32
- * capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:1419:
- * conflicting types for `Message_CopyExpanded'. */
+ * Message_CopyExpanded(s32 message, u16 *text, s32 capacity); not tried:
+ * Message_CopyExpanded's declaration holds a FAKEMATCH tag. */
 extern s32 Message_CopyExpanded__battle_party_commands(
     s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
 /* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void
  * Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y);
  * menus has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow
- * *window, s32 x, s32 y); tried as the definition's void
- * Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y),
- * it does not compile in tla-ja: games/tla/src/window/menus.c:1421: conflicting
- * types for `Text_DrawWideStringAtOffset'. */
+ * *window, s32 x, s32 y); not tried: Text_DrawWideStringAtOffset's declaration
+ * holds a FAKEMATCH tag. */
 extern void Text_DrawWideStringAtOffset__battle_party_commands(
     u16 *text, struct Window *window, s32 x,
     s32 y) __asm__("Text_DrawWideStringAtOffset");
@@ -996,13 +978,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
 /* VIEW(battle_party_commands): routine OamMatrix_AllocFromTransform as s32
  * OamMatrix_AllocFromTransform(struct AffineTransform *transform); menus has
- * s32 OamMatrix_AllocFromTransform(struct TargetAffine *affine). */
+ * s32 OamMatrix_AllocFromTransform(struct TargetAffine *affine); not tried:
+ * OamMatrix_AllocFromTransform's bound declaration was not found. */
 extern s32 AffineMatrix_BuildForEffect__battle_party_commands(
     struct AffineTransform *transform) __asm__("OamMatrix_AllocFromTransform");
 
 /* VIEW(menus): variable gWindowSprite_BounceScales as const u16
  * gWindowSprite_BounceScales[]; module/window/scales.h has const u16
- * gWindowSprite_BounceScales[32]. */
+ * gWindowSprite_BounceScales[32]; not tried: gWindowSprite_BounceScales's
+ * declaration holds a FAKEMATCH tag. */
 extern const u16
     gWindowSprite_BounceScales__menus[] __asm__("gWindowSprite_BounceScales");
 
@@ -1314,7 +1298,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
 /* VIEW(resource_work): routine Window_Create as struct Window
  * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); menus has
  * struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32
- * flags). */
+ * flags); not tried: Window_Create's declaration holds a FAKEMATCH tag. */
 extern struct Window *
 Window_Create__resource_work(s32 x, s32 y, s32 width, s32 height,
                              s32 style) __asm__("Window_Create");
@@ -1544,7 +1528,8 @@ s32 FileList_SelectAction(void) {
 /* VIEW(menus): routine Window_ClearInteriorTiles as void
  * Window_ClearInteriorTiles(void *window, s32 x, s32 y, s32 right, s32 bottom);
  * window/window has void Window_ClearInteriorTiles(const struct Window *window,
- * u32 left, u32 top, u32 right, u32 bottom) {. */
+ * u32 left, u32 top, u32 right, u32 bottom) {; not tried:
+ * Window_ClearInteriorTiles's declaration holds a FAKEMATCH tag. */
 void Window_ClearInteriorTiles__menus(
     void *window, s32 x, s32 y, s32 right,
     s32 bottom) __asm__("Window_ClearInteriorTiles");
@@ -1595,7 +1580,8 @@ void Menu_DrawModeLabel(void) {
 
 /* VIEW(menus): routine Text_DrawMessage as void Text_DrawMessage(s32 message,
  * void *window, s32 x, s32 y); module/window/window.h has void
- * Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3). */
+ * Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3); not tried:
+ * Text_DrawMessage's declaration holds a FAKEMATCH tag. */
 extern void Text_DrawMessage__menus(s32 message, void *window, s32 x,
                                     s32 y) __asm__("Text_DrawMessage");
 
@@ -1964,9 +1950,8 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
 
 /* VIEW(resource_work): routine DebugSceneSelect_Run as void
  * DebugSceneSelect_Run(void); the definition has s16
- * DebugSceneSelect_Run(void); tried as the rest of the object declares it, it
- * does not compile in tla-ja: games/tla/src/window/menus.c:3143:
- * `DebugSceneSelect_Run' undeclared (first use in this function). */
+ * DebugSceneSelect_Run(void); not tried: DebugSceneSelect_Run's bound
+ * declaration was not found. */
 extern void
 Menu_RunSelection__resource_work(void) __asm__("DebugSceneSelect_Run");
 

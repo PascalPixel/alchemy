@@ -10,7 +10,8 @@
 /// The heading of each direction-pad combination, 0xffff for none.
 /* VIEW(move_by_keys): variable gWorldMap_KeyHeadings as extern const u16
  * gWorldMap_KeyHeadings[16]; f028aac has extern const s16
- * gWorldMap_KeyHeadings[16]. */
+ * gWorldMap_KeyHeadings[16]; not tried: gWorldMap_KeyHeadings's bound
+ * declaration was not found. */
 extern const u16
     gData_0802ec5c__move_by_keys[16] __asm__("gWorldMap_KeyHeadings");
 
@@ -66,7 +67,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.x = 0;
     position.y = 0;
     position.z = 0;
-    Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
+    Vector_AddPolarOffset(0x80000, angle, &position);
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
@@ -124,7 +125,9 @@ s32 Actor_MoveByKeys(struct Actor *object) {
 }
 
 /* VIEW(resource_slot): tag struct ChainSlot as struct ChainSlot__resource_slot;
- * module/field/field.h has another definition. */
+ * module/field/field.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/field.c:7200: structure has no member named `unk00'. */
 struct ChainSlot__resource_slot {
   s16 unk00;
   s16 unk02;
@@ -136,7 +139,9 @@ struct ChainSlot__resource_slot {
 };
 
 /* VIEW(resource_slot): tag struct ChainNode as struct ChainNode__resource_slot;
- * module/field/field.h has another definition. */
+ * module/field/field.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/field.c:7179: structure has no member named `visible'. */
 struct ChainNode__resource_slot {
   u8 unk00[4];
   s32 x;
@@ -192,7 +197,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     position.x = 0;
     position.y = 0;
     position.z = 0;
-    Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
+    Vector_AddPolarOffset(0x80000, angle, &position);
     position.x += object->x;
     position.y = object->y - position.z;
     position.z = object->z;
@@ -326,7 +331,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
+    Vector_AddPolarOffset(0x80000, angle, &position);
     // Read through the slot's address: as Ram_HeapSlots->unk84[7], 44 of 324
     // instructions differ in tla-en.
     workA0 = *(struct WorkA0 **)&Ram_HeapSlots->unk84[7];

@@ -31,11 +31,8 @@ extern struct Actor *gData_02004420;
 void Actor_StartScript(struct Actor *object, const void *script);
 /* VIEW(s2698): routine FieldEffect_AdvanceMotion as void
  * FieldEffect_AdvanceMotion(struct Actor *object); module/field/field_effect.h
- * has void FieldEffect_AdvanceMotion(union FieldObject *object); tried as the
- * definition's void FieldEffect_AdvanceMotion(union FieldObject *object), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau/s2698.c:75: `FieldEffect_AdvanceMotion'
- * undeclared (first use in this function). */
+ * has void FieldEffect_AdvanceMotion(union FieldObject *object); not tried:
+ * FieldEffect_AdvanceMotion's bound declaration was not found. */
 extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
     "FieldEffect_AdvanceMotion");
 
@@ -233,10 +230,8 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 /* VIEW(s2698): routine ItemDisplay_ShowPicture as void
  * ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
- * module/scene/airs_rock_inside.h has void
- * ItemDisplay_ShowPicture(void); tried as the definition's void
- * ItemDisplay_ShowPicture(void), which the object already declares,
- * Func_02002f9c moves: 1 of 34 instructions in tla-ja. */
+ * module/scene/airs_rock_inside.h has void ItemDisplay_ShowPicture(void); not
+ * tried: ItemDisplay_ShowPicture's bound declaration was not found. */
 extern void Func_02003d40__s2698(struct Actor *object,
                                  s32 mode) __asm__("ItemDisplay_ShowPicture");
 
@@ -497,7 +492,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
 /* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the
  * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
  * s32 fixed_z); tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:527: too
+ * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:502: too
  * many arguments to function `Actor_SetPosition'. */
 static __inline__ void Actor_SetPosition__s3164(struct Actor *object, s32 x,
                                                 s32 y, s32 z) {
@@ -555,10 +550,8 @@ extern s32 gData_02005678;
 void Pillars_Raise(const void *data);
 void Func_02001ee8(void);
 /* VIEW(s3284): routine Actor_GetCellIndex as s32 Actor_GetCellIndex(void);
- * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau/s2698.c:617: too few arguments to function
- * `Actor_GetCellIndex'. */
+ * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); not tried:
+ * Actor_GetCellIndex's bound declaration was not found. */
 extern s32 Func_02003db0__s3284(void) __asm__("Actor_GetCellIndex");
 
 // The room entry written in the scene layer of Func_02003164 and Func_0200390c:
@@ -804,7 +797,7 @@ static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 /* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the
  * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
  * s32 fixed_z); tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:872: too
+ * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:794: too
  * many arguments to function `Actor_SetPosition'. */
 static __inline__ void Actor_SetPosition__s390c(struct Actor *object, s32 x,
                                                 s32 y, s32 z) {

@@ -645,7 +645,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode);
 /* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:32640: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:49937: structure has no member
  * named `size'. */
 DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, BattleEffect_RunGeyser, 0)
 
@@ -675,7 +675,7 @@ struct Texture__f1811d4 {
 /* VIEW(f1811d4): tag struct RenderPrimitive as struct RenderPrimitive__f1811d4;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:32636: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:49933: structure has no member
  * named `scrollU'. */
 struct RenderPrimitive__f1811d4 {
   s32 kind;
@@ -1291,9 +1291,9 @@ struct SpriteView {
 
 /* VIEW(f1811d4): variable gResourceTableEntries as extern struct
  * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
  * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/ability_effects.c:33051: conflicting
+ * in tla-ja: games/tla/src/battle_effect/battle_effect.c:50432: conflicting
  * types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry
     gResourceTableEntries__f1811d4[] __asm__("gResourceTableEntries");

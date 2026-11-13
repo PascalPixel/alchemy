@@ -42,15 +42,13 @@ VramCache_Reload__menus(s32 entry,
 /* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the
  * definition has s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16
  * selected[2]; struct BattleWork *battle; s32 count; count =
- * BattleParty_PrepareReserveOwners...; tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/window/menus.c:328: invalid type argument of `->'.
- */
+ * BattleParty_PrepareReserveOwners...; not tried: Unit_Get's declaration holds
+ * a FAKEMATCH tag. */
 extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
 /* VIEW(menus): routine Window_Create as struct TargetWindow *Window_Create(s32
  * x, s32 y, s32 width, s32 height, s32 flags); module/window/window.h has
- * struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style).
- */
+ * struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+ * not tried: Window_Create's declaration holds a FAKEMATCH tag. */
 extern struct TargetWindow *
 Window_Create__menus(s32 x, s32 y, s32 width, s32 height,
                      s32 flags) __asm__("Window_Create");
@@ -63,15 +61,13 @@ extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
     "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
 /* VIEW(menus): routine OamMatrix_AllocFromTransform as s32
  * OamMatrix_AllocFromTransform(struct TargetAffine *affine); affine.h has s32
- * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
+ * OamMatrix_AllocFromTransform(struct AffineTransform *source); not tried:
+ * OamMatrix_AllocFromTransform's bound declaration was not found. */
 extern s32 AffineMatrix_BuildForEffect__menus(
     struct TargetAffine *affine) __asm__("OamMatrix_AllocFromTransform");
 /* VIEW(menus): routine Window_Close as void Window_Close(void *window, s32
  * mode); uiflow.h has void Window_Close(struct Window *window, s32 release);
- * tried as the definition's void Window_Close(struct Window *work, s32
- * release), it does not compile in tla-ja:
- * games/tla/include/graphics/uiflow.h:7: conflicting types for `Window_Close'.
- */
+ * not tried: Window_Close's declaration holds a FAKEMATCH tag. */
 extern void Window_Close__menus(void *window, s32 mode) __asm__("Window_Close");
 /* VIEW(menus): routine Text_DrawStringAtOffset as void
  * Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x,
@@ -86,7 +82,8 @@ Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
 /* VIEW(menus): routine Text_DrawNumberInWindow as void
  * Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window,
  * s32 x, s32 y); module/window/window.h has void Text_DrawNumberInWindow(s32
- * value, s32 width, s32 output, s32 x, s32 y). */
+ * value, s32 width, s32 output, s32 x, s32 y); not tried:
+ * Text_DrawNumberInWindow's declaration holds a FAKEMATCH tag. */
 extern void
 Text_DrawNumberInWindow__menus(s32 value, s32 digits,
                                struct TargetWindow *window, s32 x,
@@ -94,30 +91,28 @@ Text_DrawNumberInWindow__menus(s32 value, s32 digits,
 /* VIEW(menus): routine Text_DrawMessageAsTiles as void
  * Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32
  * y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct
- * RenderInput *work, u32 offsetX, u32 offsetY); tried as the definition's void
- * Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32
- * offsetX, u32 offsetY), it does not compile in tla-ja:
- * games/tla/include/graphics/text_render.h:10: conflicting types for
- * `Text_DrawMessageAsTiles'. */
+ * RenderInput *work, u32 offsetX, u32 offsetY); not tried:
+ * Text_DrawMessageAsTiles's bound declaration was not found. */
 extern void
 Text_DrawCharacterAtOffset__menus(s32 message, struct TargetWindow *window,
                                   s32 x,
                                   s32 y) __asm__("Text_DrawMessageAsTiles");
 /* VIEW(menus): routine Message_CopyExpanded as void Message_CopyExpanded(s32
  * message, u16 *text, s32 capacity); module/window/window.h has s32
- * Message_CopyExpanded(s32 key, u16 *destination, u32 capacity). */
+ * Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); not tried:
+ * Message_CopyExpanded's declaration holds a FAKEMATCH tag. */
 extern void
 Message_CopyExpanded__menus(s32 message, u16 *text,
                             s32 capacity) __asm__("Message_CopyExpanded");
 /* VIEW(menus): routine Text_ClearCanvas as void Text_ClearCanvas(void);
- * graphics.h has s32 Text_ClearCanvas(void); tried as the definition's s32
- * Text_ClearCanvas(void), which the object already declares,
- * BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
+ * graphics.h has s32 Text_ClearCanvas(void); not tried: Text_ClearCanvas's
+ * bound declaration was not found. */
 extern void Vram_ClearWindowBlock__menus(void) __asm__("Text_ClearCanvas");
 /* VIEW(menus): routine Text_DrawWideStringAtOffset as void
  * Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
  * s32 y); window/window has void Text_DrawWideStringAtOffset(u16 *text, struct
- * Window *window, s32 x, s32 y) {. */
+ * Window *window, s32 x, s32 y) {; not tried: Text_DrawWideStringAtOffset's
+ * declaration holds a FAKEMATCH tag. */
 void Text_DrawWideStringAtOffset__menus(
     u16 *text, struct TargetWindow *window, s32 x,
     s32 y) __asm__("Text_DrawWideStringAtOffset");

@@ -484,16 +484,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 
 extern const s32 gData_02003e00[];
 
-/* VIEW(s0974): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s0974(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
-/* VIEW(s0974): routine Actor_StartScript as void Actor_StartScript(struct
- * FieldEffect *effect, const s32 *script); scene/dehkan_plateau has void
- * Actor_StartScript(struct Actor *object, const void *script). */
-void Actor_StartScript__s0974(struct FieldEffect *effect,
-                              const s32 *script) __asm__("Actor_StartScript");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 /// Eight puffs (type 285) in a row over the leader, flung outwards when spread
 /// is set.
@@ -516,9 +507,9 @@ void Rubble_Spray(s32 spread) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSpriteFlags__s0974(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Func_02003ba0(effect, 2);
-      Actor_StartScript__s0974(effect, gData_02003e00);
+      Actor_StartScript(effect, gData_02003e00);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -563,9 +554,9 @@ void Rubble_Burst(void) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       object->motionFlags = 0;
       object->collisionFlags = 0;
-      Actor_SetSpriteFlags__s0974(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       Func_02003ba0(object, 2);
-      Actor_StartScript__s0974(object, gData_02003e30);
+      Actor_StartScript(object, gData_02003e30);
       effect->velocityX = Trig_Cos(i << 12);
       effect->velocityY = 0;
       effect->velocityZ = Trig_Sin(i << 12);
@@ -619,12 +610,6 @@ extern const u8 gData_02003fb0[];
 extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
-
-/* VIEW(s0bc0): routine CrumblingPillars_Step as void
- * CrumblingPillars_Step(const void *data); scene/dehkan_plateau has void
- * CrumblingPillars_Step(u16 *list) {. */
-void CrumblingPillars_Step__s0bc0(const void *data) __asm__(
-    "CrumblingPillars_Step");
 
 void Func_02002180(void);
 void Func_02001804(void);

@@ -85,7 +85,9 @@
 /* VIEW(f0cf050): routine Vector_AddPolarOffset as void
  * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position);
  * module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle,
- * s32 *position). */
+ * s32 *position); tried as the definition's void Vector_AddPolarOffset(s32
+ * radius, s32 angle, s32 *position), which the object already declares,
+ * Leader_StepAwayFromNearbyActor moves: 3 of 55 instructions in tla-ja. */
 extern void
 Vector_AddPolarOffset__f0cf050(s32 distance, u16 angle,
                                s32 *position) __asm__("Vector_AddPolarOffset");
@@ -121,22 +123,6 @@ void Leader_StepAwayFromNearbyActor(void) {
 #include "module/field/field.h"
 #include "module/field/object.h"
 
-/* VIEW(emitter): routine Vector_AddPolarOffset as void
- * Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0cf050 has void
- * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the
- * definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32
- * *position), it does not compile in tla-ja:
- * games/tla/src/field/object/f0cf050.c:56: conflicting types for
- * `Vector_AddPolarOffset'. */
-extern void
-Vector_AddPolarOffset__emitter(s32 radius, s32 angle,
-                               s32 *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(f0cf050): routine Actor_Spawn as struct ParticleEffectObject
- * *Actor_Spawn(s32, s32, s32, s32); module/field/event_commands.h has struct
- * Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z). */
-extern struct ParticleEffectObject *
-Actor_Spawn__f0cf050(s32, s32, s32, s32) __asm__("Actor_Spawn");
-
 void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
@@ -152,8 +138,8 @@ void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   position.y = emitter->position.y;
   position.z = emitter->position.z;
   randomAngle = Random16();
-  Vector_AddPolarOffset__emitter(randomAngle << 4, Random16(), &position);
-  object = Actor_Spawn__f0cf050(0x2a1, position.x, position.y, position.z);
+  Vector_AddPolarOffset(randomAngle << 4, Random16(), &position);
+  object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
   if (object != 0) {
     s32 mask;
     u8 flags;
@@ -186,15 +172,10 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 }
 
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-/* VIEW(emitter): routine Reveal_EmitSparkles as void
- * Reveal_EmitSparkles(void); the definition has void
- * Reveal_EmitSparkles(const struct ParticleSource
- * *source); tried as the definition's void
- * Reveal_EmitSparkles(const struct ParticleSource
- * *source), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/object/f0cf050.c:168:
- * `Reveal_EmitSparkles' undeclared (first use in this
- * function). */
+/* VIEW(emitter): routine Reveal_EmitSparkles as void Reveal_EmitSparkles(void);
+ * the definition has void Reveal_EmitSparkles(const struct ParticleSource
+ * *source); not tried: Reveal_EmitSparkles's bound declaration was not found.
+ */
 extern void BattleEffect_SpawnRandomParticleAtPosition__emitter(void) __asm__(
     "Reveal_EmitSparkles");
 
@@ -218,7 +199,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   position[1] = picture->y;
   position[2] = picture->z;
   if (actor == Party_GetLeaderActor()) {
-    Vector_AddPolarOffset__emitter(0x100000, picture->facing, position);
+    Vector_AddPolarOffset(0x100000, picture->facing, position);
     position[0] = (position[0] & 0xfff00000) + 0x80000;
     position[2] = (position[2] & 0xfff00000) + 0x80000;
   }
@@ -294,7 +275,8 @@ void ScreenTransition_ReservedNoOp(void) {}
 
 /* VIEW(rising): routine ItemDisplay_EmitSparkles as void
  * ItemDisplay_EmitSparkles(void); the definition has void
- * ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter). */
+ * ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter); not tried:
+ * ItemDisplay_EmitSparkles's bound declaration was not found. */
 extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__(
     "ItemDisplay_EmitSparkles");
 
@@ -347,7 +329,7 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
 /* VIEW(rising): tag struct EffectVisual as struct EffectVisual__rising;
  * f0cf050.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/object/f0cf050.c:310: structure has no member named
+ * games/tla/src/field/field_sequence.c:4492: structure has no member named
  * `flags09'. */
 struct EffectVisual__rising {
   u8 unk00[5];
@@ -403,16 +385,6 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
   }
 }
 
-/* VIEW(rising): routine Vector_AddPolarOffset as void
- * Vector_AddPolarOffset(s32, s32, struct ParticlePosition *); f0cf050 has void
- * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the
- * definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32
- * *position), it does not compile in tla-ja:
- * games/tla/src/field/object/f0cf050.c:353: conflicting types for
- * `Vector_AddPolarOffset'. */
-extern void Vector_AddPolarOffset__rising(
-    s32, s32, struct ParticlePosition *) __asm__("Vector_AddPolarOffset");
-
 void Reveal_EmitSparkles(const struct ParticleSource *source) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
@@ -425,8 +397,8 @@ void Reveal_EmitSparkles(const struct ParticleSource *source) {
   position.y = source->position.y;
   position.z = source->position.z;
   random = Random16();
-  Vector_AddPolarOffset__rising(random << 4, Random16(), &position);
-  object = Actor_Spawn__f0cf050(0x2a1, position.x, position.y, position.z);
+  Vector_AddPolarOffset(random << 4, Random16(), &position);
+  object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
   if (object != 0) {
     s32 mask;
     u8 flags;
@@ -450,7 +422,8 @@ void Reveal_EmitSparkles(const struct ParticleSource *source) {
 
 /* VIEW(rising): variable gBattleEffect_MarkerParticleScript as extern const s32
  * gBattleEffect_MarkerParticleScript[]; emitter has extern const u8
- * gBattleEffect_MarkerParticleScript[]. */
+ * gBattleEffect_MarkerParticleScript[]; not tried:
+ * gBattleEffect_MarkerParticleScript's bound declaration was not found. */
 extern const s32
     Data_080f01b8__rising[] __asm__("gBattleEffect_MarkerParticleScript");
 
@@ -2069,7 +2042,10 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
 }
 
 /* VIEW(f0cf050): tag struct EffectSprite as struct EffectSprite__f0cf050;
- * effect_sprite.h has another definition. */
+ * effect_sprite.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:6192: structure has no member named
+ * `priority'. */
 struct EffectSprite__f0cf050 {
   u8 unk00[4];
   u16 y : 8;
@@ -2086,33 +2062,16 @@ struct EffectSprite__f0cf050 {
   u16 depth;
 };
 
-/* VIEW(f0cf050): routine EffectSprite_Init as void EffectSprite_Init();
- * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
- * pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void EffectSprite_Init__f0cf050() __asm__("EffectSprite_Init");
-
 /// Sets up sprite through EffectSprite_Init with resource 94's tiles, at
 /// priority 1 in palette 0.
 void EffectSprite_InitFromSlot94(struct EffectSprite__f0cf050 *sprite, s32 a,
                                  s32 b, s32 c) {
-  EffectSprite_Init__f0cf050(sprite, a, b, c,
-                             gResourceTableEntries[94].offset >> 5);
+  EffectSprite_Init(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 1;
   sprite->palette256 = 0;
   sprite->palette = 0;
 }
-
-/* VIEW(f0cf050): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); module/field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position). */
-extern void
-Camera_WorldToScreen__f0cf050(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(f0cf050): routine EffectSprite_Draw as void EffectSprite_Draw(void
- * *sprite); effect_sprite.h has void EffectSprite_Draw(struct EffectSprite
- * *sprite). */
-extern void
-EffectSprite_Draw__f0cf050(void *sprite) __asm__("EffectSprite_Draw");
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
 /// effect sprite's position and draws the sprite.
@@ -2120,17 +2079,16 @@ void BattleEffect_DrawSpriteAtWorldPosition(s32 *sprite, s32 x, s32 y, s32 z) {
   s32 position[3];
 
   SET_VECTOR(position, x, y, z);
-  Camera_WorldToScreen__f0cf050(position);
+  Camera_WorldToScreen(position);
   sprite[3] = position[0];
   sprite[4] = position[2];
-  EffectSprite_Draw__f0cf050(sprite);
+  EffectSprite_Draw(sprite);
 }
 
 /// The twin of EffectSprite_InitFromSlot94 with object mode 1 and priority 0.
 void EffectSprite_InitFromSlot94Blended(struct EffectSprite__f0cf050 *sprite,
                                         s32 a, s32 b, s32 c) {
-  EffectSprite_Init__f0cf050(sprite, a, b, c,
-                             gResourceTableEntries[94].offset >> 5);
+  EffectSprite_Init(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 0;
   sprite->palette256 = 0;
@@ -2171,11 +2129,8 @@ s32 Speaker_GetActorSprite(u32 objectId) {
 
 /* VIEW(definition_flags): routine Speaker_GetActorSprite as s32
  * Speaker_GetActorSprite(void); the definition has s32
- * Speaker_GetActorSprite(u32 objectId); tried as the definition's s32
- * Speaker_GetActorSprite(u32 objectId), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/object/f0cf050.c:2239: too few arguments to function
- * `Speaker_GetActorSprite'. */
+ * Speaker_GetActorSprite(u32 objectId); not tried: Speaker_GetActorSprite's
+ * bound declaration was not found. */
 extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
     "Speaker_GetActorSprite");
 
@@ -2366,13 +2321,21 @@ void Heading_Close(void) {
 /// object, and the rest of the commands are still separate files.
 
 /* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
- * flag); field/event.h has s32 GameFlag_GetByte(s32 flag). */
+ * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the
+ * definition's u8 GameFlag_GetByte(s32 flag), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/include/game/game_flags.h:13: conflicting types for
+ * `GameFlag_GetByte'. */
 u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__event_commands
 /* VIEW(event_commands): routine Actor_SetHorizontalPositionWithTerrain as void
  * Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
  * field/event.h has void Actor_SetHorizontalPositionWithTerrain(s32 actorId,
- * s32 x, s32 z). */
+ * s32 x, s32 z); tried as the definition's void
+ * Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands_internal.h:52: conflicting types for
+ * `Actor_SetHorizontalPositionWithTerrain'. */
 void Actor_SetHorizontalPositionWithTerrain__event_commands(
     u32 objectId, s32 x,
     s32 z) __asm__("Actor_SetHorizontalPositionWithTerrain");
@@ -2386,7 +2349,6 @@ void Actor_SetHorizontalPositionWithTerrain__event_commands(
 #include "event_commands/requests.c"
 #include "event_commands/actor_commands.c"
 
-#undef Encounter_GetDjinnFormation
 #undef Field_RequestDjinnBattle
 #undef Event_SetAfterBattleDestination
 #undef Party_SetFields1f2And1f4

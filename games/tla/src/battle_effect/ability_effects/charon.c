@@ -12,7 +12,7 @@ struct ScalePair {
 /* VIEW(f175f74): tag struct Particle as struct Particle__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:23763: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:41100: structure has no member
  * named `timer'. */
 struct Particle__f175f74 {
   s32 x;
@@ -27,7 +27,7 @@ struct Particle__f175f74 {
 /* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:23652: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:40986: structure has no member
  * named `oamPriority'. */
 struct SpriteObject__f175f74 {
   u16 unk00;
@@ -60,7 +60,7 @@ struct ModelDesc {
 /* VIEW(f175f74): tag struct Model as struct Model__f175f74; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:24127: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:41464: structure has no member
  * named `depth'. */
 struct Model__f175f74 {
   s32 kind;
@@ -83,7 +83,7 @@ struct ActorPos {
 /* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:23602: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:40934: structure has no member
  * named `transferMode'. */
 struct SummonWork__f175f74 {
   struct Particle__f175f74 drops[16];
@@ -209,18 +209,12 @@ void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Palette_BrightenSavedBattleBg(s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-/* VIEW(f175f74): routine EffectSprite_CreateWithTiles as struct
- * SpriteObject__f175f74 *EffectSprite_CreateWithTiles(s32, s32, u32, u32); the
- * definition has struct EffectSprite *EffectSprite_CreateWithTiles(s32 width,
- * s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject__f175f74 *EffectSprite_CreateWithTiles__f175f74(
-    s32, s32, u32, u32) __asm__("EffectSprite_CreateWithTiles");
 /* VIEW(f175f74): routine EffectSprite_Acquire as struct SpriteObject__f175f74
  * *EffectSprite_Acquire(s32, s32, u32, u32); the definition has struct
  * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
  * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
  * s32 value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:23681: too many arguments to
+ * games/tla/src/battle_effect/battle_effect.c:41077: too many arguments to
  * function `EffectSprite_Acquire'. */
 extern struct SpriteObject__f175f74 *
 EffectSprite_Acquire__f175f74(s32, s32, u32,
@@ -234,21 +228,14 @@ void Transform_ApplyRoll(s32);
 void Transform_ApplyYaw(s32);
 void SceneTransform_ApplyUniformScale(s32);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f175f74): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model__f175f74 *); f173aac has void
- * Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f175f74(struct Model__f175f74 *) __asm__(
-    "Render_DrawModelList");
 void Graphics_LoadGreyRamp(void);
 void Canvas_BlitAtFoot(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
 /* VIEW(f175f74): routine BattleObject_GetFar as struct ActorPos
  * **BattleObject_GetFar(s32); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:23540: conflicting types for
- * `BattleObject_GetFar'. */
+ * *BattleObject_GetFar(s32 objectId); not tried: BattleObject_GetFar's bound
+ * declaration was not found. */
 extern struct ActorPos **
 GetBattleObjectSlotFar__f175f74(s32) __asm__("BattleObject_GetFar");
 void BattlePlayback_StartFar(s32);
@@ -356,7 +343,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   {
     struct SpriteObject__f175f74 *object =
-        EffectSprite_CreateWithTiles__f175f74(64, 64, 0xc0002000, 0);
+        EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
 
     work->objects[0] = object;
     object->priority = 3;
@@ -373,7 +360,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Decompress_TaggedLz(source, work->buffer);
   for (i = 0; i != 16; i++) {
     struct SpriteObject__f175f74 *object =
-        EffectSprite_CreateWithTiles__f175f74(16, 16, 0, 0xf000);
+        EffectSprite_CreateWithTiles(16, 16, 0, 0xf000);
     SPRITES[i] = object;
     object->priority = 1;
     Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset,
@@ -697,7 +684,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Decompress_TaggedLz(source, work->buffer + 0x2400);
         for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
           struct SpriteObject__f175f74 *object =
-              EffectSprite_CreateWithTiles__f175f74(32, 32, 0x80002000, 0);
+              EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
           object->priority = 3;
           work->objects[i] = object;
@@ -711,7 +698,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Decompress_TaggedLz(source, work->buffer + 0x2400);
         {
           struct SpriteObject__f175f74 *object =
-              EffectSprite_CreateWithTiles__f175f74(64, 64, 0xc0000000, 0xe000);
+              EffectSprite_CreateWithTiles(64, 64, 0xc0000000, 0xe000);
           struct TileSlot *tileSlots;
 
           work->objects[12] = object;
@@ -726,7 +713,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             vram += tileSlots[object->slot].offset;
             Iwram_CopyWords(vram, work->buffer + 0x2400, 0x800);
           }
-          object = EffectSprite_CreateWithTiles__f175f74(64, 64, 0xc0002000, 0);
+          object = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
           work->objects[13] = object;
           object->priority = 2;
           object->unk17 = 32;
@@ -853,7 +840,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_ApplyRoll(0x4000 - t * 256);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList__f175f74(model);
+          Render_DrawModelList(model);
         }
         if (frame > 231) {
           t = frame - 232;
@@ -879,7 +866,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_ApplyPitch(0xc000);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList__f175f74(model);
+          Render_DrawModelList(model);
         }
         Heap_Release(model);
         Heap_Release(texture);
@@ -1035,7 +1022,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               }
               Transform_ApplyPitch(0x800);
               Render_TransformVertices(gData_08199210, texture, 4);
-              Render_DrawModelList__f175f74(model);
+              Render_DrawModelList(model);
             }
           }
           Heap_Release(model);
@@ -1307,7 +1294,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_ApplyYaw(-frame << 10);
         }
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList__f175f74(model);
+        Render_DrawModelList(model);
       }
       if (frame > 95) {
         depth = 568 - frame * 6;
@@ -1320,7 +1307,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_ApplyPitch(0x2000);
         Transform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList__f175f74(model);
+        Render_DrawModelList(model);
       }
       if (frame > 55) {
         s32 last = frame * 2 - 208;
@@ -1336,7 +1323,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_ApplyPitch(0x2000);
         Transform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList__f175f74(model);
+        Render_DrawModelList(model);
         /* FAKEMATCH(dead): twice raised to frame though nothing reads it again;
          * flow deletes the store and its test; as no test, 290 of 4354
          * instructions differ in tla-en. */
@@ -1350,7 +1337,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_ApplyPitch(0x2000);
           Transform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList__f175f74(model);
+          Render_DrawModelList(model);
         }
       }
       Heap_Release(model);
@@ -1806,7 +1793,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             SceneTransform_ApplyScale3(size / 3, size, size);
             Transform_ApplyPitch(0xc000);
             Render_TransformVertices(gData_08199210, texture, 4);
-            Render_DrawModelList__f175f74(model);
+            Render_DrawModelList(model);
           }
           Heap_Release(model);
           Heap_Release(texture);

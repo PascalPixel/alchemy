@@ -72,19 +72,26 @@
 
 /* VIEW(screens): routine Text_DrawPrefixedNumberAtOffset as int
  * Text_DrawPrefixedNumberAtOffset(), called with no declaration in scope;
- * another part has its declaration. */
+ * another part has its declaration; tried as the definition's void
+ * Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work, s32
+ * offsetX, s32 offsetY, s32 variant), PartyStatus_Draw moves: 1 of 495
+ * instructions in tla-ja. */
 s32 Text_DrawPrefixedNumberAtOffset__screens() __asm__(
     "Text_DrawPrefixedNumberAtOffset");
 #define Text_DrawPrefixedNumberAtOffset Text_DrawPrefixedNumberAtOffset__screens
 /* VIEW(screens): routine Text_DrawWideStringInWindow as int
  * Text_DrawWideStringInWindow(), called with no declaration in scope; another
- * part has its declaration. */
+ * part has its declaration; tried as the rest of the object declares it,
+ * BattleDjinnMenu_ShowChangePreview moves: 6 of 684 instructions in tla-ja. */
 s32 Text_DrawWideStringInWindow__screens() __asm__(
     "Text_DrawWideStringInWindow");
 #define Text_DrawWideStringInWindow Text_DrawWideStringInWindow__screens
 /* VIEW(screens): routine Window_MapTextCanvasTiles as int
  * Window_MapTextCanvasTiles(), called with no declaration in scope; another
- * part has its declaration. */
+ * part has its declaration; tried as the definition's void
+ * Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32
+ * fullWidth), BattleStatusScreen_Run moves: 3 of 3110 instructions in tla-ja.
+ */
 s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 #define Window_MapTextCanvasTiles Window_MapTextCanvasTiles__screens
 
@@ -133,12 +140,8 @@ s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 #include "screens/battle_psynergy_menu.c"
 
 #undef Message_OpenWindow
-#undef Portrait_GetForSpeaker
-#undef Window_DrawBorder
-#undef Text_MeasureDecoded
 #undef Portrait_OpenWindow
 #undef MenuCursor_SetPositionImmediateFar
-#undef MenuCursor_SetFar
 #undef Message_Start
 #undef gWindowSprite_BounceScales
 #undef Text_DrawWideStringAtOffset

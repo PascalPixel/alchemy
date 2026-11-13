@@ -45,12 +45,9 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f172b00): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:21159: conflicting types for
- * `BattleObject_GetFar'. */
+/* VIEW(f172b00): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
+ * not tried: BattleObject_GetFar's bound declaration was not found. */
 extern void **
 GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("BattleObject_GetFar");
 
@@ -75,7 +72,12 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
  * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
  * *screen, s32 count); battle_effect/summon_effects has void
  * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
- * *screen, s32 count) {. */
+ * *screen, s32 count) {; tried as the definition's void
+ * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
+ * *screen, s32 count), which the object already declares, BattleEffect_RunSerac
+ * moves: 5 of 1094 instructions, BattleEffect_RunWaterColumn moves: 1 of 1741
+ * instructions, BattleEffect_RunDjinniCharge moves: 1 of 1209 instructions in
+ * tla-ja. */
 void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
                                              struct ProjectedVertex *screen,
                                              s32 count);

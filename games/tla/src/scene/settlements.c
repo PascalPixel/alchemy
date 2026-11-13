@@ -783,15 +783,6 @@ void Settlements_BlockCrate(void) {
 
 extern const u8 gSettlements_SmokeScript[];
 
-/* VIEW(s0280): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags, struct SettlementsSpawn *spawn);
- * field/field_effect/spawn has void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options) {. */
-void FieldEffect_Spawn__s0280(
-    s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
-    struct SettlementsSpawn *spawn) __asm__("FieldEffect_Spawn");
-
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
@@ -808,6 +799,5 @@ void Settlements_SplashCrate(s32 id) {
   spawn.acceleration = 0x10000;
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(154);
-  FieldEffect_Spawn__s0280(object->x, object->y, object->z, 0, 0, 0, 0x1c0000,
-                           &spawn);
+  FieldEffect_Spawn(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
 }

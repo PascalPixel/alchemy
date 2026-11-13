@@ -25,19 +25,6 @@ struct PointPair {
   s32 y;
 };
 
-/* VIEW(f18df5c): tag struct RenderModel as struct RenderModel__f18df5c;
- * render_model.h has another definition. */
-struct RenderModel__f18df5c {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f18df5c *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
@@ -53,7 +40,12 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(ability_effects): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model *model); battle_effect/summon_effects has
- * void Render_DrawModelList(struct Model *model). */
+ * void Render_DrawModelList(struct Model *model); tried as the definition's
+ * void Render_DrawModelList(struct Model *model), which the object already
+ * declares, BattleEffect_RunUlysses moves: 2 of 1912 instructions,
+ * BattleEffect_RunAzul moves: 4 of 2201 instructions,
+ * BattleEffect_RunCastingImpact moves: 9 of 7568 instructions, 42 more in
+ * tla-ja. */
 void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
@@ -373,7 +365,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 115) {
-      struct RenderModel__f18df5c *model;
+      struct RenderModel *model;
       s32 shade;
       s32 scroll;
       s32 angle;
@@ -553,7 +545,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {
-    struct RenderModel__f18df5c *model;
+    struct RenderModel *model;
     s32 angle;
     s32 back;
     s32 shade;

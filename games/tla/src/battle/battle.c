@@ -30,7 +30,6 @@
 #undef EncounterWork
 #undef Data_02018000
 #undef GameFlag_GetByte
-#undef BattleMessage_WaitForAdvanceAt
 #undef BattleSprite_GetEffectHeight
 #undef Unit_CalculateFar
 

@@ -306,16 +306,6 @@ struct MagmaRockEffectParams {
 
 extern const u8 gMagmaRock_FlameEmberScript[];
 
-/* VIEW(magma_rock): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32 x,
- * s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags, s32 *params);
- * field/field_effect/spawn has void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options) {. */
-void FieldEffect_Spawn__magma_rock(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c,
-                                   s32 flags,
-                                   s32 *params) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__magma_rock
-
 void MagmaRock_ThrowEmbers(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
   s16 *timer = &object->timer;
@@ -502,8 +492,6 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
 
 DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 
-#undef FieldEffect_Spawn
-
 // ---- scene/magma_rock/s0ff4.c ----
 
 /// Magma Rock's statues: the magma they fire, the flame columns that lift the
@@ -521,7 +509,10 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 #include "module/scene/magma_rock.h"
 
 /* VIEW(s0ff4): tag struct MagmaRockEventWork as struct
- * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition. */
+ * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock.c:513: redefinition of `struct
+ * MagmaRockEventWork'. */
 #define MagmaRockEventWork MagmaRockEventWork__s0ff4
 struct MagmaRockEventWork {
   u8 unk000[0x15a];
@@ -652,28 +643,17 @@ void MagmaRock_DriftAndSlow(struct Actor *object) {
 #include "field.h"
 
 s32 Trig_Cos(s32 angle);
-/* VIEW(s0ff4): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct
- * EffectOptions *options); field/field_effect/spawn has void EFFECT_SPAWN(s32
- * x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
- * const struct EffectOptions *options) {. */
-void FieldEffect_Spawn__s0ff4(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s0ff4
 s32 Position_FlatDistance(s32 *a, s32 *b);
 // XXX: magma_rock.c defines this with an s16 value; this call matches only with
 // u16. A match of magma_rock.c's MagmaRock_PlayBurst under u16 would settle
 // which the game declares.
 /* VIEW(s0ff4): routine MagmaRock_PlayBurst as void MagmaRock_PlayBurst(u16
- * index); scene/magma_rock has void MagmaRock_PlayBurst(s16 value) {. */
+ * index); scene/magma_rock has void MagmaRock_PlayBurst(s16 value) {; tried as
+ * the definition's void MagmaRock_PlayBurst(s16 value), which the object
+ * already declares, MagmaRock_FireFromStatue moves: 1 of 260 instructions in
+ * tla-ja. */
 void MagmaRock_PlayBurst__s0ff4(u16 index) __asm__("MagmaRock_PlayBurst");
 #define MagmaRock_PlayBurst MagmaRock_PlayBurst__s0ff4
-/* VIEW(s0ff4): routine MagmaRock_TrailEmbers as void
- * MagmaRock_TrailEmbers(void); scene/magma_rock has void
- * MagmaRock_TrailEmbers(struct Actor *object) {. */
-void MagmaRock_TrailEmbers__s0ff4(void) __asm__("MagmaRock_TrailEmbers");
-#define MagmaRock_TrailEmbers MagmaRock_TrailEmbers__s0ff4
 void Actor_Release(struct Actor *object);
 s32 Func_02003af4(void);
 void FieldCamera_WaitForArrival(void);
@@ -843,7 +823,10 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 /* VIEW(s0ff4): tag union Position as union Position__s0ff4;
- * module/scene/scene.h has struct Position. */
+ * module/scene/scene.h has struct Position; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock.c:820: `Position' defined as wrong kind of
+ * tag. */
 #define Position Position__s0ff4
 /// A 16.16 position word, read whole or by halves.
 union Position {
@@ -879,7 +862,10 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 #include "system/main_routine_work.h"
 
 /* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
- * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition. */
+ * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock.c:854: redefinition of `struct
+ * MagmaRockEffectConfig'. */
 #define MagmaRockEffectConfig MagmaRockEffectConfig__s0ff4
 struct MagmaRockEffectConfig {
   s32 kind;
@@ -913,7 +899,10 @@ struct MagmaRockEffectConfig {
  * attribute bit 6. #include "text/msg_ids.h" /// For each id of a list ended by
  * 0xffff: settles the object on its ground, /// copies the cell under it, and
  * blocks the cells ahead of and behind it on a /// cell with attribute bit 6.
- * void MagmaRock_SettleBlocks(u16 *ids) {. */
+ * void MagmaRock_SettleBlocks(u16 *ids) {; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock.c:1231: conflicting types for
+ * `MagmaRock_SetCellShape'. */
 void MagmaRock_SetCellShape__s0ff4(s32 layer, s32 x, s32 z, s32 height) __asm__(
     "MagmaRock_SetCellShape");
 #define MagmaRock_SetCellShape MagmaRock_SetCellShape__s0ff4
@@ -1198,10 +1187,8 @@ void MagmaRock_ClearLedgeBehavior(void) {
 void Actor_SetActionById(s32 id, s32 action);
 /* VIEW(s1c00): routine FieldCamera_MoveToActor as void
  * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
- * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
- * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for
- * `FieldCamera_MoveToActor'. */
+ * FieldCamera_MoveToActor(s32 actorId, s32 pan); not tried:
+ * FieldCamera_MoveToActor's bound declaration was not found. */
 extern void Func_080d452c__s1c00(s32 a,
                                  s32 b) __asm__("FieldCamera_MoveToActor");
 void FieldCamera_WaitForArrival(void);
@@ -1286,19 +1273,6 @@ second:
 void MagmaRock_ClearBlockCells(struct Actor *object);
 void MagmaRock_SetCellShape(s32 layer, s32 x, s32 z, s32 height);
 void MagmaRock_PushBlockOnto(void);
-/* VIEW(s0ff4): routine Blocks_MarkCells as void Blocks_MarkCells(s16 *ids);
- * scene/magma_rock has DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells,
- * MapCell_GetAttributes) // Clears the object's mark and the cells ahead of and
- * behind it that the mark // blocked.
- * DEFINE_BLOCK_CLEAR_CELLS(MagmaRock_ClearBlockCells) // For each id of a list
- * ended by 0xffff: settles the object on its ground, // copies the cell under
- * it, and blocks the cells ahead of and behind it on a // cell with attribute
- * bit 6. #include "text/msg_ids.h" /// For each id of a list ended by 0xffff:
- * settles the object on its ground, /// copies the cell under it, and blocks
- * the cells ahead of and behind it on a /// cell with attribute bit 6. void
- * MagmaRock_SettleBlocks(u16 *ids) {. */
-void Blocks_MarkCells__s0ff4(s16 *ids) __asm__("Blocks_MarkCells");
-#define Blocks_MarkCells Blocks_MarkCells__s0ff4
 
 void MagmaRock_PushPillarEast(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1477,9 +1451,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef BYTE_AT
 
 #undef MagmaRockEventWork
-#undef FieldEffect_Spawn
 #undef MagmaRock_PlayBurst
-#undef MagmaRock_TrailEmbers
 #undef MagmaRockEffectConfig
 #undef MagmaRock_SetCellShape
 #undef Blocks_MarkCells #undef Position

@@ -53,19 +53,21 @@ extern const u8 gOwnerStatus_PvString[];
 
 /* VIEW(screens): routine BattleActor_SpawnObjectsForListFar as void
  * BattleActor_SpawnObjectsForListFar(u16 *list, s32 count); module/tla.h has
- * void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode). */
+ * void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode); not tried:
+ * BattleActor_SpawnObjectsForListFar's declaration holds a FAKEMATCH tag. */
 extern void BattleActor_SpawnObjectsForListFar__screens(
     u16 *list, s32 count) __asm__("BattleActor_SpawnObjectsForListFar");
 void BattleObject_SpawnObjectsForListFar(u16 *list, s32 count, s32 mode);
-/* VIEW(screens): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 member); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId). */
+/* VIEW(screens): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * member); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
+ * not tried: BattleObject_GetFar's bound declaration was not found. */
 extern void **
 GetBattleObjectSlotFar__screens(s32 member) __asm__("BattleObject_GetFar");
 /* VIEW(screens): routine Text_DrawWideStringAtOffset as void
  * Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
  * s32 y); window/window has void Text_DrawWideStringAtOffset(u16 *text, struct
- * Window *window, s32 x, s32 y) {. */
+ * Window *window, s32 x, s32 y) {; not tried: Text_DrawWideStringAtOffset's
+ * declaration holds a FAKEMATCH tag. */
 void Text_DrawWideStringAtOffset__screens(
     u16 *text, struct SummaryWindow *window, s32 x,
     s32 y) __asm__("Text_DrawWideStringAtOffset");

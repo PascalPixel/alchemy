@@ -84,15 +84,6 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
 
 #include "field_effect.h"
 
-/* VIEW(treasure_isle): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32
- * x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
- * struct EffectOptions *options); field/field_effect/spawn has void
- * EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32
- * velocityZ, u32 flags, const struct EffectOptions *options) {. */
-void FieldEffect_Spawn__treasure_isle(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-
 /// A spiky rock rises out of the ground at a listed cell: the camera goes to
 /// it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
 /// it standing.
@@ -114,16 +105,13 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   options.priority = 1;
   options.type = 0x115;
   options.script = gTreasureIsle_RockDust;
-  FieldEffect_Spawn__treasure_isle((cell->x << 20) + 0x80000, 0,
-                                   (cell->z << 20) + 0x140000, 0, 0, 0,
-                                   0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0,
+                    0, 0, 0x3a0000, &options);
   options.startScaleX = 0x9999;
-  FieldEffect_Spawn__treasure_isle((cell->x << 20) - 0x20000, 0,
-                                   (cell->z << 20) + 0x80000, 0, 0, 0, 0x3a0000,
-                                   &options);
-  FieldEffect_Spawn__treasure_isle((cell->x << 20) + 0x120000, 0,
-                                   (cell->z << 20) + 0x80000, 0, 0, 0, 0x3a0000,
-                                   &options);
+  FieldEffect_Spawn((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0,
+                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0,
+                    0, 0, 0x3a0000, &options);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
@@ -415,8 +403,8 @@ void TreasureIsle_CycleWaterColors(void) {
 /* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct
  * TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/treasure_isle.c:453: structure has no member
- * named `route'. */
+ * tla-ja: games/tla/src/scene/treasure_isle/treasure_isle.c:415: structure has
+ * no member named `route'. */
 struct TreasureIsleEventWork__s0cf4 {
   u8 unk000[0x1ac];
   s32 route;

@@ -114,7 +114,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(world_map): routine Actor_SetSpriteColorMode as void
  * Actor_SetSpriteColorMode(struct Actor *object, s32 value); actor_view.h has
- * void Actor_SetSpriteColorMode(struct Actor *, u32). */
+ * void Actor_SetSpriteColorMode(struct Actor *, u32); tried as the definition's
+ * void Actor_SetSpriteColorMode(struct Actor *object, u32 value),
+ * WorldMap_MeetEcho moves: 1 of 714 instructions in tla-ja. */
 void Actor_SetSpriteColorMode__world_map(
     struct Actor *object, s32 value) __asm__("Actor_SetSpriteColorMode");
 #define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__world_map
@@ -1104,15 +1106,24 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 }
 
 /* VIEW(world_map): variable gData_02004e38 as const u8 gData_02004e38[];
- * scene/world_map/s3b38 has u32 gData_02004e38[] = {. */
+ * scene/world_map/s3b38 has u32 gData_02004e38[] = {; tried as the definition's
+ * extern u32 gData_02004e38[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:1157: `gData_02004e38' undeclared (first use
+ * in this function). */
 extern const u8 gData_02004e38__world_map[] __asm__("gData_02004e38");
 #define gData_02004e38 gData_02004e38__world_map
 /* VIEW(world_map): variable gData_02004e58 as const u8 gData_02004e58[];
- * scene/world_map/s3b38 has u32 gData_02004e58[] = {. */
+ * scene/world_map/s3b38 has u32 gData_02004e58[] = {; tried as the definition's
+ * extern u32 gData_02004e58[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:1159: `gData_02004e58' undeclared (first use
+ * in this function). */
 extern const u8 gData_02004e58__world_map[] __asm__("gData_02004e58");
 #define gData_02004e58 gData_02004e58__world_map
 /* VIEW(world_map): variable gData_02004e88 as const u8 gData_02004e88[];
- * scene/world_map/s3b38 has u32 gData_02004e88[] = {. */
+ * scene/world_map/s3b38 has u32 gData_02004e88[] = {; tried as the definition's
+ * extern u32 gData_02004e88[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:1160: `gData_02004e88' undeclared (first use
+ * in this function). */
 extern const u8 gData_02004e88__world_map[] __asm__("gData_02004e88");
 #define gData_02004e88 gData_02004e88__world_map
 
@@ -1446,13 +1457,6 @@ refused:
 
 extern const u8 gData_02006bc8[];
 
-/* VIEW(world_map): routine Actor_StartScript as void Actor_StartScript(struct
- * Actor *object, const u8 *script); scene/shared/world_map_s36a8.h has void
- * Actor_StartScript(struct Actor *object, const s32 *script). */
-void Actor_StartScript__world_map(
-    struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__world_map
-
 /// Spawns object 285 at a random spot with a random scale and starts its
 /// script.
 void Func_02002594(void) {
@@ -1577,7 +1581,10 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
 }
 
 /* VIEW(world_map): variable gData_02004f10 as const u8 gData_02004f10[];
- * scene/world_map/s3b38 has s32 gData_02004f10[] = {. */
+ * scene/world_map/s3b38 has s32 gData_02004f10[] = {; tried as the definition's
+ * extern struct Trigger gData_02004f10[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:1602: `gData_02004f10' undeclared (first use
+ * in this function). */
 extern const u8 gData_02004f10__world_map[] __asm__("gData_02004f10");
 #define gData_02004f10 gData_02004f10__world_map
 
@@ -1620,7 +1627,10 @@ void Func_020028cc(void) {
 #include "io_reg.h"
 
 /* VIEW(world_map): variable gData_02004eb8 as const u8 gData_02004eb8[];
- * scene/world_map/s3b38 has u32 gData_02004eb8[] = {. */
+ * scene/world_map/s3b38 has u32 gData_02004eb8[] = {; tried as the definition's
+ * extern u32 gData_02004eb8[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:1628: `gData_02004eb8' undeclared (first use
+ * in this function). */
 extern const u8 gData_02004eb8__world_map[] __asm__("gData_02004eb8");
 #define gData_02004eb8 gData_02004eb8__world_map
 
@@ -1656,11 +1666,6 @@ void Func_020029a4(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(77);
 }
-
-/* VIEW(world_map): routine Func_020042e0 as void Func_020042e0(s32 mode);
- * scene/world_map/s3b38 has void Func_020042e0(void) {. */
-void Func_020042e0__world_map(s32 mode) __asm__("Func_020042e0");
-#define Func_020042e0 Func_020042e0__world_map
 
 /// ★ Named from the game: "We're saved!" (MsgWeReSaved)
 void WorldMap_DriftNorthOfContinent(void) {
@@ -1981,7 +1986,10 @@ s32 Func_02003418(struct Actor *object) {
 }
 
 /* VIEW(world_map): variable gData_02004f70 as const u8 gData_02004f70[];
- * scene/world_map/s3b38 has s32 gData_02004f70[] = {. */
+ * scene/world_map/s3b38 has s32 gData_02004f70[] = {; tried as the definition's
+ * extern s32 gData_02004f70[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:1975: `gData_02004f70' undeclared (first use
+ * in this function). */
 extern const u8 gData_02004f70__world_map[] __asm__("gData_02004f70");
 #define gData_02004f70 gData_02004f70__world_map
 
@@ -2034,9 +2042,7 @@ void Func_02003490(void) {
 
 DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
-#undef Actor_StartScript
 #undef Actor_SetSpriteColorMode
-#undef Func_020042e0
 #undef gData_02004e38
 #undef gData_02004e58
 #undef gData_02004e88
@@ -2047,7 +2053,9 @@ DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
 /* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];
  * module/scene/scene.h has u8 gData_02006c08[]. The three parts after see it so
- * too. */
+ * too; tried as the rest of the object declares it, it does not compile in
+ * tla-ja: games/tla/src/scene/shared/world_map_s3600.h:8: conflicting types for
+ * `gData_02006c08'. */
 extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 #define gData_02006c08 gData_02006c08__s3600
 
@@ -2086,12 +2094,6 @@ extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 #include "module/scene/staff_credit.h"
 #include "module/scene/world_map.h"
 
-/* VIEW(cell_index): routine Actor_SetSpriteColorMode as void
- * Actor_SetSpriteColorMode(struct Actor *object, s32 value); actor_view.h has
- * void Actor_SetSpriteColorMode(struct Actor *, u32). */
-void Actor_SetSpriteColorMode__cell_index(
-    struct Actor *object, s32 value) __asm__("Actor_SetSpriteColorMode");
-#define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__cell_index
 u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
@@ -2112,7 +2114,6 @@ s32 Func_020039a8(struct Actor *object) {
   return 1;
 }
 
-#undef Actor_SetSpriteColorMode
 // ---- scene/world_map/s39f4.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
@@ -2146,13 +2147,6 @@ extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
 void WorldMap_Freeze(void);
-
-/* VIEW(s3b38): routine Actor_SetSpriteColorMode as void
- * Actor_SetSpriteColorMode(struct Actor *object, s32 value); actor_view.h has
- * void Actor_SetSpriteColorMode(struct Actor *, u32). */
-void Actor_SetSpriteColorMode__s3b38(struct Actor *object, s32 value) __asm__(
-    "Actor_SetSpriteColorMode");
-#define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__s3b38
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
@@ -2386,7 +2380,10 @@ DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Actor_Release)
 /* VIEW(s3b38): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
  * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
- * s32). */
+ * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
+ * AnimationGroup *state, s32 flags), it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:2379: `Func_020045e4' undeclared (first use
+ * in this function). */
 s32 Animation_ApplyChildArgument__s3b38(
     struct AnimationGroup *state,
     s32 flags) __asm__("Animation_ApplyChildArgument");
@@ -2447,22 +2444,22 @@ void Func_02004634(struct Actor *parent) {
 #include "input.h"
 
 /* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c;
- * module/scene/scene.h has u8 gData_02006e0c[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map/s3b38.c:447: `gData_02006e0c' has an incomplete
- * type. */
+ * module/scene/scene.h has u8 gData_02006e0c[]; tried as the one declaration
+ * extern s16 gData_02006e0c, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:2411: conflicting types for `gData_02006e0c'.
+ */
 extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
 /* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e;
- * module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map/s3b38.c:532: array subscript is not an integer.
+ * module/scene/scene.h has u8 gData_02006e0e[]; tried as the one declaration
+ * extern s16 gData_02006e0e, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:2413: conflicting types for `gData_02006e0e'.
  */
 extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 /* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
  * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array
- * nor pointer. */
+ * games/tla/src/scene/world_map.c:2417: `gData_02006f20__s3b38' undeclared
+ * (first use in this function). */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
 DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
@@ -2507,13 +2504,12 @@ DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38, gData_02006e0e__s3b38,
 #include "scene_tables.h"
 
 /* VIEW(s3b38): routine Func_02003418 as void Func_02003418(void);
- * scene/world_map has s32 Func_02003418(struct Actor *object) {. */
+ * scene/world_map has s32 Func_02003418(struct Actor *object) {; tried as the
+ * definition's s32 Func_02003418(struct Actor *object), which the object
+ * already declares, Func_020049bc (gone) moves: 26 of 26 instructions in
+ * tla-ja. */
 void Func_02003418__s3b38(void) __asm__("Func_02003418");
 #define Func_02003418 Func_02003418__s3b38
-/* VIEW(s3b38): routine Func_020039a8 as void Func_020039a8(void);
- * scene/world_map/cell_index has s32 Func_020039a8(struct Actor *object) {. */
-void Func_020039a8__s3b38(void) __asm__("Func_020039a8");
-#define Func_020039a8 Func_020039a8__s3b38
 
 // clang-format off
 u32 gData_02004e38[] = {
@@ -2572,7 +2568,5 @@ u32 gData_02004fc8[] = {
 };
 // clang-format on
 
-#undef Actor_SetSpriteColorMode
 #undef Animation_ApplyChildArgument
 #undef Func_02003418
-#undef Func_020039a8

@@ -301,13 +301,6 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
   return cnt;
 }
 
-/* VIEW(screens): variable gData_020036d8 as u16 gData_020036d8;
- * module/window/window.h has s16 gData_020036d8. */
-extern u16 gData_020036d8__screens __asm__("gData_020036d8");
-/* VIEW(screens): variable gData_02005350 as u16 gData_02005350;
- * module/window/window.h has s16 gData_02005350. */
-extern u16 gData_02005350__screens __asm__("gData_02005350");
-
 s32 Save_ScanFileSummaries(void) {
   s32 err;
   s32 cnt;
@@ -323,17 +316,17 @@ s32 Save_ScanFileSummaries(void) {
     ret = Save_LoadFileSummaries();
     work = Ram_HeapSlots->serialWork;
     gData_02003860 = 0;
-    gData_020036d8__screens = 0;
-    gData_02005350__screens = 0;
+    gData_020036d8 = 0;
+    gData_02005350 = 0;
     for (i = 0; i < 3; i++) {
       if (work->summary[i].sendFlag != 0) {
         gData_02003860 = 1;
         cnt++;
       }
       if (work->summary[i].flagCount != 0)
-        gData_020036d8__screens = 1;
+        gData_020036d8 = 1;
       if (work->summary[i].level != 0 && work->summary[i].hasFlag34 == 0)
-        gData_02005350__screens = 1;
+        gData_02005350 = 1;
     }
   }
   Save_ReleaseWork();
@@ -345,7 +338,9 @@ s32 Save_ScanFileSummaries(void) {
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gMainRoutineWork)
 
 /* VIEW(screens): variable gData_02001000 as u32 gData_02001000; module/tla.h
- * has s8 gData_02001000[]. */
+ * has s8 gData_02001000[]; tried as the rest of the object declares it, it does
+ * not compile in tla-ja: games/tla/src/window/window.c:10840:
+ * `gData_02001000__screens' undeclared (first use in this function). */
 extern u32 gData_02001000__screens __asm__("gData_02001000");
 
 // Builds the save header.

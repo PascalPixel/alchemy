@@ -289,8 +289,8 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
 /* VIEW(s0910): variable gLightSpriteCount as s16 gLightSpriteCount;
  * module/scene/scene.h has u8 gLightSpriteCount[]; tried as the rest of the
  * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_9/s0910.c:229:
- * `gLightSpriteCount' has an incomplete type. */
+ * games/tla/src/scene/jupiter_lighthouse_room_9.c:302: `gLightSpriteCount' has
+ * an incomplete type. */
 extern s16 gLightSpriteCount__s0910 __asm__("gLightSpriteCount");
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;

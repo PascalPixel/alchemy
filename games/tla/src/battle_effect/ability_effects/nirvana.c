@@ -644,12 +644,6 @@ struct ProjectedPoint {
   s32 x, y, depth;
 };
 
-/* VIEW(f16d130): routine Render_ProjectPoint as s32 Render_ProjectPoint(const
- * void *point, struct ProjectedPoint *screen); fxdisp has s32
- * Render_ProjectPoint(const void *point, s32 *screen). */
-extern s32 Render_ProjectPoint__f16d130(
-    const void *point,
-    struct ProjectedPoint *screen) __asm__("Render_ProjectPoint");
 void Render_ProjectVertices__ability_effects(
     struct ModelVertex *vertices, struct ProjectedVertex *screen,
     s32 count) __asm__("Render_ProjectVertices");
@@ -841,7 +835,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       world[0] = target->x;
       world[1] = 0;
       world[2] = target->z;
-      Render_ProjectPoint__f16d130(world, &screen);
+      Render_ProjectPoint(world, &screen);
       if (screen.x <= 63) {
         screen.x = 64;
       }
@@ -878,7 +872,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             continue;
           }
           picture = p->variant / 6;
-          Render_ProjectPoint__f16d130(p, &point);
+          Render_ProjectPoint(p, &point);
           BattleEffectKernels_IntegrateVector3(p, 60, 0x2000);
           x = point.x - 16;
           y = point.y - 16;
@@ -891,7 +885,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         point.x = target->x;
         point.y = 0x3c0000 - (frame << 17);
         point.depth = target->z + (Trig_Sin(frame << 9) << 5);
-        Render_ProjectPoint__f16d130(&point, &dropScreen);
+        Render_ProjectPoint(&point, &dropScreen);
         blitters[1](canvas, work->sheet + 0x4000, dropScreen.x - 20,
                     dropScreen.y - 30, 40, 40);
       }

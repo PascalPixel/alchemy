@@ -56,12 +56,9 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f178710): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); f175f74 has struct ActorPos
- * **BattleObject_GetFar(s32); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:25232: conflicting types for
- * `BattleObject_GetFar'. */
+/* VIEW(f178710): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * objectId); f175f74 has struct ActorPos **BattleObject_GetFar(s32); not tried:
+ * BattleObject_GetFar's bound declaration was not found. */
 extern void **
 GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("BattleObject_GetFar");
 

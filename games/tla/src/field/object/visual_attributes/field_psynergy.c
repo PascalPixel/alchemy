@@ -141,7 +141,11 @@ u8 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer) {
 
 /* VIEW(visual_attributes): routine MapGrid_SetCellBehavior as u8
  * MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value); field/event.h
- * has s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior). */
+ * has s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior); tried
+ * as the definition's u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32
+ * value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:145: conflicting types for
+ * `MapGrid_SetCellBehavior'. */
 u8 MapGrid_SetCellBehavior__visual_attributes(
     s32 x, s32 z, s32 layer, s32 value) __asm__("MapGrid_SetCellBehavior");
 #define MapGrid_SetCellBehavior MapGrid_SetCellBehavior__visual_attributes
@@ -316,7 +320,8 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 
 /* VIEW(depthend): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
  * kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject
- * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+ * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); not tried: Actor_CreateFar's
+ * bound declaration was not found. */
 extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y,
                                              s32 z) __asm__("Actor_CreateFar");
 
@@ -363,11 +368,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
   } while (objectId <= 0x50);
 }
 
-/* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void
- * BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void
- * BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
-extern void BattleEffect_ApplyColorToTargetBuffer__depthend(
-    s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
+void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
 
 void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->eventWork;
@@ -378,7 +379,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   if (*(s8 *)(state + 0xca4) == 0)
     Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer__depthend(0x200000 | color, 1);
+  BattleEffect_ApplyColorToTargetBuffer(0x200000 | color, 1);
   GameFlag_Set(0x108);
   PaletteFade_StartInterpolation(frames);
 }
@@ -387,11 +388,11 @@ void Field_StartPaletteTransition(s32 frames) {
   u8 *state = Ram_HeapSlots->eventWork;
   s32 colors = (s32)(state + 0x222);
 
-  BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 2);
+  BattleEffect_ApplyColorToTargetBuffer(colors, 2);
   if (*(s8 *)(state + 0xca4) != 0)
-    BattleEffect_ApplyColorToTargetBuffer__depthend(0x10001, 1);
+    BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
   else
-    BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 1);
+    BattleEffect_ApplyColorToTargetBuffer(colors, 1);
   GameFlag_Clear(0x108);
   PaletteFade_StartInterpolation(frames);
 }

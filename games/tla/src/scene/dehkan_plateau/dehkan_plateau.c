@@ -406,12 +406,6 @@ void Func_020019b8(void) {
 }
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
-/* VIEW(dehkan_plateau): routine Actor_StartScript as void
- * Actor_StartScript(struct Actor *object, const void *script);
- * field/field_effect/spawn has void EFFECT_SET_SCRIPT(struct Actor *object,
- * const s32 *script). */
-void Actor_StartScript__dehkan_plateau(
-    struct Actor *object, const void *script) __asm__("Actor_StartScript");
 void Actor_MoveToObject(s32 id, s32 target);
 
 extern struct Actor *gData_02004420;
@@ -729,8 +723,8 @@ extern const struct CellRecord gData_02004066[];
  * actorId, s32 x, s32 z, s32 angle); tried as the definition's void
  * Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
  * s16 angle), it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:832: conflicting types for
- * `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
+ * games/tla/src/scene/dehkan_plateau/dehkan_plateau.c:720: conflicting types
+ * for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");

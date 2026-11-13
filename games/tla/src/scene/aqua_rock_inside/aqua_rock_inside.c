@@ -280,7 +280,10 @@ void Func_020007a8(void) {
 }
 
 /* VIEW(aqua_rock_inside): variable gData_02003fb8 as const u8 gData_02003fb8[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {. */
+ * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {; tried as the
+ * definition's extern u32 gData_02003fb8[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:319: `gData_02003fb8'
+ * undeclared (first use in this function). */
 extern const u8 gData_02003fb8__aqua_rock_inside[] __asm__("gData_02003fb8");
 #define gData_02003fb8 gData_02003fb8__aqua_rock_inside
 
@@ -494,8 +497,8 @@ void Func_02000ca8(void) {
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:503: too many arguments to
- * function `Func_02000ca8'. */
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:523: too
+ * many arguments to function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 
 void Func_02000cc8(s32 trigger) {
@@ -868,35 +871,58 @@ union ActorView {
   } bytes;
 };
 /* VIEW(s1620): variable gData_02004034 as const u8 gData_02004034[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02004034[] = {. */
+ * scene/aqua_rock_inside/s3844 has u32 gData_02004034[] = {; tried as the
+ * definition's extern DEFINE_G_DATA_02003584(gData_02004004, Orbiter_Spiral,
+ * 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
+ * Actor_AimAtWatche..., it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:912: `gData_02004034'
+ * undeclared (first use in this function). */
 extern const u8 gData_02004034__s1620[] __asm__("gData_02004034");
 #define gData_02004034 gData_02004034__s1620
 /* VIEW(s1620): variable gData_02003fe8 as const u8 gData_02003fe8[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02003fe8[] = {. */
+ * scene/aqua_rock_inside/s3844 has u32 gData_02003fe8[] = {; tried as the
+ * definition's extern u32 gData_02003fe8[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:932: `gData_02003fe8'
+ * undeclared (first use in this function). */
 extern const u8 gData_02003fe8__s1620[] __asm__("gData_02003fe8");
 #define gData_02003fe8 gData_02003fe8__s1620
 /* VIEW(s1620): variable gData_02004004 as const u8 gData_02004004[];
  * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02003584(gData_02004004,
  * Orbiter_Spiral, 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
- * Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] = {. */
+ * Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] = {; tried as
+ * the definition's extern u32 gData_02004004[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:970: `gData_02004004'
+ * undeclared (first use in this function). */
 extern const u8 gData_02004004__s1620[] __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__s1620
 /* VIEW(s1620): variable gData_02004058 as const u8 gData_02004058[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02004058[] = {. */
+ * scene/aqua_rock_inside/s3844 has u32 gData_02004058[] = {; tried as the
+ * definition's extern u32 gData_02004058[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:897: `gData_02004058'
+ * undeclared (first use in this function). */
 extern const u8 gData_02004058__s1620[] __asm__("gData_02004058");
 #define gData_02004058 gData_02004058__s1620
 /* VIEW(s1620): variable gData_02004014 as const u8 gData_02004014[];
  * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02004014(gData_02004014,
  * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] =
- * {. */
+ * {; tried as the one declaration extern const u8 gData_02004014[], it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1003:
+ * `gData_02004014' undeclared (first use in this function). */
 extern const u8 gData_02004014__s1620[] __asm__("gData_02004014");
 #define gData_02004014 gData_02004014__s1620
 /* VIEW(s1620): variable gData_0200407c as const u8 gData_0200407c[];
- * scene/aqua_rock_inside/s3844 has s32 gData_0200407c[] = {. */
+ * scene/aqua_rock_inside/s3844 has s32 gData_0200407c[] = {; tried as the
+ * definition's extern s32 gData_0200407c[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1018:
+ * `gData_0200407c' undeclared (first use in this function). */
 extern const u8 gData_0200407c__s1620[] __asm__("gData_0200407c");
 #define gData_0200407c gData_0200407c__s1620
 /* VIEW(s1620): variable gData_020040ac as const u8 gData_020040ac[];
- * scene/aqua_rock_inside/s3844 has s32 gData_020040ac[] = {. */
+ * scene/aqua_rock_inside/s3844 has s32 gData_020040ac[] = {; tried as the
+ * definition's extern s32 gData_020040ac[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1019:
+ * `gData_020040ac' undeclared (first use in this function). */
 extern const u8 gData_020040ac__s1620[] __asm__("gData_020040ac");
 #define gData_020040ac gData_020040ac__s1620
 
@@ -1297,19 +1323,31 @@ void Func_02001fcc(void) {
 }
 
 /* VIEW(s1620): variable gData_020040f4 as const u8 gData_020040f4[];
- * scene/aqua_rock_inside/s3844 has u16 gData_020040f4[] = {. */
+ * scene/aqua_rock_inside/s3844 has u16 gData_020040f4[] = {; tried as the
+ * definition's extern u16 gData_020040f4[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1363:
+ * `gData_020040f4' undeclared (first use in this function). */
 extern const u8 gData_020040f4__s1620[] __asm__("gData_020040f4");
 #define gData_020040f4 gData_020040f4__s1620
 /* VIEW(s1620): variable gData_02004102 as const u8 gData_02004102[];
- * scene/aqua_rock_inside/s3844 has u16 gData_02004102[] = {. */
+ * scene/aqua_rock_inside/s3844 has u16 gData_02004102[] = {; tried as the
+ * definition's extern u16 gData_02004102[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1363:
+ * `gData_02004102' undeclared (first use in this function). */
 extern const u8 gData_02004102__s1620[] __asm__("gData_02004102");
 #define gData_02004102 gData_02004102__s1620
 /* VIEW(s1620): variable gData_02004106 as const u8 gData_02004106[];
- * scene/aqua_rock_inside/s3844 has u16 gData_02004106[] = {. */
+ * scene/aqua_rock_inside/s3844 has u16 gData_02004106[] = {; tried as the
+ * definition's extern u16 gData_02004106[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1368:
+ * `gData_02004106' undeclared (first use in this function). */
 extern const u8 gData_02004106__s1620[] __asm__("gData_02004106");
 #define gData_02004106 gData_02004106__s1620
 /* VIEW(s1620): variable gData_02004114 as const u8 gData_02004114[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02004114[] = {. */
+ * scene/aqua_rock_inside/s3844 has u32 gData_02004114[] = {; tried as the
+ * definition's extern u32 gData_02004114[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1368:
+ * `gData_02004114' undeclared (first use in this function). */
 extern const u8 gData_02004114__s1620[] __asm__("gData_02004114");
 #define gData_02004114 gData_02004114__s1620
 
@@ -2249,7 +2287,11 @@ DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
 /* VIEW(s3844): routine Func_02003ab0 as void Func_02003ab0(const u16 *spots,
  * const u16 *levels, void (*handler)(void));
  * games/tla/src/scene/aqua_rock_inside/s1620 has s32 Func_02003ab0(const u8 *a,
- * const u8 *b, void (*handler)(void)). */
+ * const u8 *b, void (*handler)(void)); tried as the definition's void
+ * Func_02003ab0(const u16 *spots, const u16 *levels, void(*handler) (void)),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:2227: conflicting
+ * types for `Func_02003ab0'. */
 void Func_02003ab0__s3844(const u16 *spots, const u16 *levels,
                           void (*handler)(void)) __asm__("Func_02003ab0");
 #define Func_02003ab0 Func_02003ab0__s3844
@@ -2343,36 +2385,11 @@ DEFINE_VENTS_SET_ID(Vents_SetId)
  * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
  * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
  * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options). */
+ * EffectOptions *options); tried as the one declaration
+ * DEFINE_VENTS_SET_ID(Vents_SetId) void Orbiter_Spiral(void), Vents_SetId
+ * (gone) moves: 10 of 10 instructions in tla-ja. */
 void Orbiter_Spiral__s3844(void) __asm__("Orbiter_Spiral");
 #define Orbiter_Spiral Orbiter_Spiral__s3844
-/* VIEW(s3844): routine Orbit_Update as void Orbit_Update(void);
- * games/tla/src/scene/aqua_rock_inside/s13bc has
- * DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8 *)((u8
- * *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
- * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
- * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options). */
-void Orbit_Update__s3844(void) __asm__("Orbit_Update");
-#define Orbit_Update Orbit_Update__s3844
-/* VIEW(s3844): routine Actor_AimAtWatched as void Actor_AimAtWatched(void);
- * games/tla/src/scene/aqua_rock_inside/s13bc has
- * DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
- * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
- * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options). */
-void Actor_AimAtWatched__s3844(void) __asm__("Actor_AimAtWatched");
-#define Actor_AimAtWatched Actor_AimAtWatched__s3844
-/* VIEW(s3844): routine Actor_StepToWatched as void Actor_StepToWatched(void);
- * games/tla/src/scene/aqua_rock_inside/s13bc has
- * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
- * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options). */
-void Actor_StepToWatched__s3844(void) __asm__("Actor_StepToWatched");
-#define Actor_StepToWatched Actor_StepToWatched__s3844
 
 // clang-format off
 u32 gData_02003f04[] = {
@@ -2464,6 +2481,3 @@ u32 gWaterDropScript[] = {
 
 #undef Func_02003ab0
 #undef Orbiter_Spiral
-#undef Orbit_Update
-#undef Actor_AimAtWatched
-#undef Actor_StepToWatched

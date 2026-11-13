@@ -158,7 +158,8 @@ s32 GameFlag_Get();
 /* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:294: too few
+ * compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:164: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
@@ -228,62 +229,22 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Placements as u8
- * gMagmaRockInside_Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Placements[] = {. */
-extern u8 gMagmaRockInside_Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Placements");
-#define gMagmaRockInside_Placements                                            \
-  gMagmaRockInside_Placements__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room2Placements as u8
- * gMagmaRockInside_Room2Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Room2Placements[] = {. */
-extern u8 gMagmaRockInside_Room2Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room2Placements");
-#define gMagmaRockInside_Room2Placements                                       \
-  gMagmaRockInside_Room2Placements__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room3Placements as u8
- * gMagmaRockInside_Room3Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Room3Placements[] = {. */
-extern u8 gMagmaRockInside_Room3Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room3Placements");
-#define gMagmaRockInside_Room3Placements                                       \
-  gMagmaRockInside_Room3Placements__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room4Placements as u8
- * gMagmaRockInside_Room4Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Room4Placements[] = {. */
-extern u8 gMagmaRockInside_Room4Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room4Placements");
-#define gMagmaRockInside_Room4Placements                                       \
-  gMagmaRockInside_Room4Placements__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room5Placements as u8
- * gMagmaRockInside_Room5Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Room5Placements[] = {. */
-extern u8 gMagmaRockInside_Room5Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room5Placements");
-#define gMagmaRockInside_Room5Placements                                       \
-  gMagmaRockInside_Room5Placements__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room6Placements as u8
- * gMagmaRockInside_Room6Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Room6Placements[] = {. */
-extern u8 gMagmaRockInside_Room6Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room6Placements");
-#define gMagmaRockInside_Room6Placements                                       \
-  gMagmaRockInside_Room6Placements__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room7Placements as u8
- * gMagmaRockInside_Room7Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Room7Placements[] = {. */
-extern u8 gMagmaRockInside_Room7Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room7Placements");
-#define gMagmaRockInside_Room7Placements                                       \
-  gMagmaRockInside_Room7Placements__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room8Placements as u8
- * gMagmaRockInside_Room8Placements[]; scene/magma_rock_inside/s46e8 has struct
- * ActorPlacement gMagmaRockInside_Room8Placements[] = {. */
-extern u8 gMagmaRockInside_Room8Placements__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room8Placements");
-#define gMagmaRockInside_Room8Placements                                       \
-  gMagmaRockInside_Room8Placements__magma_rock_inside
+extern struct ActorPlacement gMagmaRockInside_Placements[];
+#define gMagmaRockInside_Placements gMagmaRockInside_Placements
+extern struct ActorPlacement gMagmaRockInside_Room2Placements[];
+#define gMagmaRockInside_Room2Placements gMagmaRockInside_Room2Placements
+extern struct ActorPlacement gMagmaRockInside_Room3Placements[];
+#define gMagmaRockInside_Room3Placements gMagmaRockInside_Room3Placements
+extern struct ActorPlacement gMagmaRockInside_Room4Placements[];
+#define gMagmaRockInside_Room4Placements gMagmaRockInside_Room4Placements
+extern struct ActorPlacement gMagmaRockInside_Room5Placements[];
+#define gMagmaRockInside_Room5Placements gMagmaRockInside_Room5Placements
+extern struct ActorPlacement gMagmaRockInside_Room6Placements[];
+#define gMagmaRockInside_Room6Placements gMagmaRockInside_Room6Placements
+extern struct ActorPlacement gMagmaRockInside_Room7Placements[];
+#define gMagmaRockInside_Room7Placements gMagmaRockInside_Room7Placements
+extern struct ActorPlacement gMagmaRockInside_Room8Placements[];
+#define gMagmaRockInside_Room8Placements gMagmaRockInside_Room8Placements
 
 extern s16 gMagmaRockInside_Room6Pillars[];
 
@@ -448,7 +409,12 @@ void MagmaRockInside_PlayBurst(s16 value) {
 
 /* VIEW(magma_rock_inside): variable gMagmaRockInside_EmberScript as const s32
  * gMagmaRockInside_EmberScript[]; scene/magma_rock_inside/s46e8 has u32
- * gMagmaRockInside_EmberScript[] = {. */
+ * gMagmaRockInside_EmberScript[] = {; tried as the definition's extern
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44) ..., it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:413: parse error
+ * before `22'. */
 extern const s32 gMagmaRockInside_EmberScript__magma_rock_inside[] __asm__(
     "gMagmaRockInside_EmberScript");
 #define gMagmaRockInside_EmberScript                                           \
@@ -520,17 +486,15 @@ void MagmaRockInside_ResolveBeforeBurst(void) {
 
 /* VIEW(magma_rock_inside): variable gMagmaRockInside_Statues as u16
  * gMagmaRockInside_Statues[]; scene/magma_rock_inside/s46e8 has s32
- * gMagmaRockInside_Statues[] = {. */
+ * gMagmaRockInside_Statues[] = {; tried as the definition's extern s32
+ * gMagmaRockInside_Statues[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:500:
+ * `gMagmaRockInside_Statues' undeclared (first use in this function). */
 extern u16 gMagmaRockInside_Statues__magma_rock_inside[] __asm__(
     "gMagmaRockInside_Statues");
 #define gMagmaRockInside_Statues gMagmaRockInside_Statues__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room4Statues as u16
- * gMagmaRockInside_Room4Statues[]; scene/magma_rock_inside/s46e8 has s16
- * gMagmaRockInside_Room4Statues[] = {. */
-extern u16 gMagmaRockInside_Room4Statues__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room4Statues");
-#define gMagmaRockInside_Room4Statues                                          \
-  gMagmaRockInside_Room4Statues__magma_rock_inside
+extern s16 gMagmaRockInside_Room4Statues[];
+#define gMagmaRockInside_Room4Statues gMagmaRockInside_Room4Statues
 
 void MagmaRockInside_FlashStatue(struct Actor *object);
 
@@ -590,9 +554,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 /* VIEW(s0e20): routine MagmaRockInside_PlayBurst as void
  * MagmaRockInside_PlayBurst(u16 id); the definition has void
- * MagmaRockInside_PlayBurst(s16 value); tried as the definition's void
- * MagmaRockInside_PlayBurst(s16 value), which the object already declares,
- * MagmaRockInside_FireFromStatue moves: 1 of 270 instructions in tla-ja. */
+ * MagmaRockInside_PlayBurst(s16 value); not tried: MagmaRockInside_PlayBurst's
+ * bound declaration was not found. */
 extern void Func_02000ce4__s0e20(u16 id) __asm__("MagmaRockInside_PlayBurst");
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
@@ -798,7 +761,10 @@ void MagmaRockInside_PushPillarIntoLava(void) {
 
 /* VIEW(magma_rock_inside): variable gMagmaRockInside_FlameEmberScript as const
  * s32 gMagmaRockInside_FlameEmberScript[]; scene/magma_rock_inside/s46e8 has
- * u32 gMagmaRockInside_FlameEmberScript[] = {. */
+ * u32 gMagmaRockInside_FlameEmberScript[] = {; tried as the definition's extern
+ * u32 gMagmaRockInside_FlameEmberScript[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:1159: conflicting
+ * types for `gMagmaRockInside_FlameEmberScript'. */
 extern const s32 gMagmaRockInside_FlameEmberScript__magma_rock_inside[] __asm__(
     "gMagmaRockInside_FlameEmberScript");
 #define gMagmaRockInside_FlameEmberScript                                      \
@@ -1660,8 +1626,8 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
 /* VIEW(magma_rock_inside): tag struct Orbiter as struct
  * Orbiter__magma_rock_inside; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock_inside.c:1762: structure has no member
- * named `parent'. */
+ * tla-ja: games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:1614:
+ * structure has no member named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];
   s32 x;
@@ -1762,7 +1728,10 @@ union ActorView {
  * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
- * *gFieldEffect_DurationScripts[] = {. */
+ * *gFieldEffect_DurationScripts[] = {; tried as the one declaration extern
+ * const u8 gMagmaRockInside_BlazeCasterScript[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:3004: conflicting
+ * types for `gMagmaRockInside_BlazeCasterScript'. */
 extern const u8 gMagmaRockInside_BlazeCasterScript__magma_rock_inside[] __asm__(
     "gMagmaRockInside_BlazeCasterScript");
 #define gMagmaRockInside_BlazeCasterScript                                     \
@@ -1770,14 +1739,21 @@ extern const u8 gMagmaRockInside_BlazeCasterScript__magma_rock_inside[] __asm__(
 /* VIEW(magma_rock_inside): variable gMagmaRockInside_TorchScript as const s32
  * gMagmaRockInside_TorchScript[]; scene/magma_rock_inside/s46e8 has
  * DEFINE_G_DATA_02005218(gMagmaRockInside_TorchScript) s32
- * gMagmaRockInside_SparkScript[] = {. */
+ * gMagmaRockInside_SparkScript[] = {; tried as the one declaration extern const
+ * s32 gMagmaRockInside_TorchScript[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2991: conflicting
+ * types for `gMagmaRockInside_TorchScript'. */
 extern const s32 gMagmaRockInside_TorchScript__magma_rock_inside[] __asm__(
     "gMagmaRockInside_TorchScript");
 #define gMagmaRockInside_TorchScript                                           \
   gMagmaRockInside_TorchScript__magma_rock_inside
 /* VIEW(magma_rock_inside): variable gMagmaRockInside_SparkScript as const s32
  * gMagmaRockInside_SparkScript[]; scene/magma_rock_inside/s46e8 has s32
- * gMagmaRockInside_SparkScript[] = {. */
+ * gMagmaRockInside_SparkScript[] = {; tried as the definition's extern
+ * DEFINE_G_DATA_02005218(gMagmaRockInside_TorchScript) s32
+ * gMagmaRockInside_SparkScript[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:1719: storage class
+ * specified for parameter `gMagmaRockInside_BlazeWatcherScript__. */
 extern const s32 gMagmaRockInside_SparkScript__magma_rock_inside[] __asm__(
     "gMagmaRockInside_SparkScript");
 #define gMagmaRockInside_SparkScript                                           \
@@ -1789,7 +1765,10 @@ extern const s32 gMagmaRockInside_SparkScript__magma_rock_inside[] __asm__(
  * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
- * *gFieldEffect_DurationScripts[] = {. */
+ * *gFieldEffect_DurationScripts[] = {; tried as the one declaration extern
+ * const u8 gMagmaRockInside_BlazeWatcherScript[], it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:3005:
+ * conflicting types for `gMagmaRockInside_BlazeWatcherScript'. */
 extern const u8
     gMagmaRockInside_BlazeWatcherScript__magma_rock_inside[] __asm__(
         "gMagmaRockInside_BlazeWatcherScript");
@@ -1805,7 +1784,10 @@ extern const u8
  * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
- * *gFieldEffect_DurationScripts[] = {. */
+ * *gFieldEffect_DurationScripts[] = {; tried as the one declaration extern
+ * const s32 gMagmaRockInside_OrbitScript[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:3002: conflicting
+ * types for `gMagmaRockInside_OrbitScript'. */
 extern const s32 gMagmaRockInside_OrbitScript__magma_rock_inside[] __asm__(
     "gMagmaRockInside_OrbitScript");
 #define gMagmaRockInside_OrbitScript                                           \
@@ -1817,7 +1799,10 @@ extern const s32 gMagmaRockInside_OrbitScript__magma_rock_inside[] __asm__(
  * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
- * *gFieldEffect_DurationScripts[] = {. */
+ * *gFieldEffect_DurationScripts[] = {; tried as the one declaration extern
+ * const u8 gMagmaRockInside_BlazeCasterReturnScript[], it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:3007:
+ * conflicting types for `gMagmaRockInside_BlazeCasterReturnScript'. */
 extern const u8
     gMagmaRockInside_BlazeCasterReturnScript__magma_rock_inside[] __asm__(
         "gMagmaRockInside_BlazeCasterReturnScript");
@@ -1829,7 +1814,10 @@ extern const u8
  * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
- * *gFieldEffect_DurationScripts[] = {. */
+ * *gFieldEffect_DurationScripts[] = {; tried as the one declaration extern
+ * const u8 gMagmaRockInside_BlazeWatcherReturnScript[], it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:3009:
+ * conflicting types for `gMagmaRockInside_BlazeWatcherReturnScript'. */
 extern const u8
     gMagmaRockInside_BlazeWatcherReturnScript__magma_rock_inside[] __asm__(
         "gMagmaRockInside_BlazeWatcherReturnScript");
@@ -2098,59 +2086,27 @@ DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
 
 /* VIEW(magma_rock_inside): variable gMagmaRockInside_Triggers as u8
  * gMagmaRockInside_Triggers[]; scene/magma_rock_inside/s46e8 has struct Trigger
- * gMagmaRockInside_Triggers[] = {. */
+ * gMagmaRockInside_Triggers[] = {; tried as the definition's extern struct
+ * Trigger gMagmaRockInside_Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2051:
+ * `gMagmaRockInside_Triggers' undeclared (first use in this function). */
 extern u8 gMagmaRockInside_Triggers__magma_rock_inside[] __asm__(
     "gMagmaRockInside_Triggers");
 #define gMagmaRockInside_Triggers gMagmaRockInside_Triggers__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room2Triggers as u8
- * gMagmaRockInside_Room2Triggers[]; scene/magma_rock_inside/s46e8 has struct
- * Trigger gMagmaRockInside_Room2Triggers[] = {. */
-extern u8 gMagmaRockInside_Room2Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room2Triggers");
-#define gMagmaRockInside_Room2Triggers                                         \
-  gMagmaRockInside_Room2Triggers__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room3Triggers as u8
- * gMagmaRockInside_Room3Triggers[]; scene/magma_rock_inside/s46e8 has struct
- * Trigger gMagmaRockInside_Room3Triggers[] = {. */
-extern u8 gMagmaRockInside_Room3Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room3Triggers");
-#define gMagmaRockInside_Room3Triggers                                         \
-  gMagmaRockInside_Room3Triggers__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room4Triggers as u8
- * gMagmaRockInside_Room4Triggers[]; scene/magma_rock_inside/s46e8 has struct
- * Trigger gMagmaRockInside_Room4Triggers[] = {. */
-extern u8 gMagmaRockInside_Room4Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room4Triggers");
-#define gMagmaRockInside_Room4Triggers                                         \
-  gMagmaRockInside_Room4Triggers__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room5Triggers as u8
- * gMagmaRockInside_Room5Triggers[]; scene/magma_rock_inside/s46e8 has struct
- * Trigger gMagmaRockInside_Room5Triggers[] = {. */
-extern u8 gMagmaRockInside_Room5Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room5Triggers");
-#define gMagmaRockInside_Room5Triggers                                         \
-  gMagmaRockInside_Room5Triggers__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room6Triggers as u8
- * gMagmaRockInside_Room6Triggers[]; scene/magma_rock_inside/s46e8 has struct
- * Trigger gMagmaRockInside_Room6Triggers[] = {. */
-extern u8 gMagmaRockInside_Room6Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room6Triggers");
-#define gMagmaRockInside_Room6Triggers                                         \
-  gMagmaRockInside_Room6Triggers__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room7Triggers as u8
- * gMagmaRockInside_Room7Triggers[]; scene/magma_rock_inside/s46e8 has struct
- * Trigger gMagmaRockInside_Room7Triggers[] = {. */
-extern u8 gMagmaRockInside_Room7Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room7Triggers");
-#define gMagmaRockInside_Room7Triggers                                         \
-  gMagmaRockInside_Room7Triggers__magma_rock_inside
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room8Triggers as u8
- * gMagmaRockInside_Room8Triggers[]; scene/magma_rock_inside/s46e8 has struct
- * Trigger gMagmaRockInside_Room8Triggers[] = {. */
-extern u8 gMagmaRockInside_Room8Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Room8Triggers");
-#define gMagmaRockInside_Room8Triggers                                         \
-  gMagmaRockInside_Room8Triggers__magma_rock_inside
+extern struct Trigger gMagmaRockInside_Room2Triggers[];
+#define gMagmaRockInside_Room2Triggers gMagmaRockInside_Room2Triggers
+extern struct Trigger gMagmaRockInside_Room3Triggers[];
+#define gMagmaRockInside_Room3Triggers gMagmaRockInside_Room3Triggers
+extern struct Trigger gMagmaRockInside_Room4Triggers[];
+#define gMagmaRockInside_Room4Triggers gMagmaRockInside_Room4Triggers
+extern struct Trigger gMagmaRockInside_Room5Triggers[];
+#define gMagmaRockInside_Room5Triggers gMagmaRockInside_Room5Triggers
+extern struct Trigger gMagmaRockInside_Room6Triggers[];
+#define gMagmaRockInside_Room6Triggers gMagmaRockInside_Room6Triggers
+extern struct Trigger gMagmaRockInside_Room7Triggers[];
+#define gMagmaRockInside_Room7Triggers gMagmaRockInside_Room7Triggers
+extern struct Trigger gMagmaRockInside_Room8Triggers[];
+#define gMagmaRockInside_Room8Triggers gMagmaRockInside_Room8Triggers
 
 u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -2309,20 +2265,32 @@ void Tightrope_Initialize(void);
  * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath1, 776, 680, 744, 680,
  * 744, 632, 776, 632) DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath2,
  * 216, 568, 216, 584, 136, 584, 136, 568) u16 gMagmaRockInside_PlatformPath3[]
- * = {. */
+ * = {; tried as the one declaration extern const u8
+ * gMagmaRockInside_PlatformPath1[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2256:
+ * `gMagmaRockInside_PlatformPath1' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath1__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath1");
 #define gMagmaRockInside_PlatformPath1 gMagmaRockInside_PlatformPath1__s3678
 /* VIEW(s3678): variable gMagmaRockInside_PlatformPath2 as const u8
  * gMagmaRockInside_PlatformPath2[]; scene/magma_rock_inside/s46e8 has
  * DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath2, 216, 568, 216, 584,
- * 136, 584, 136, 568) u16 gMagmaRockInside_PlatformPath3[] = {. */
+ * 136, 584, 136, 568) u16 gMagmaRockInside_PlatformPath3[] = {; tried as the
+ * one declaration extern const u8 gMagmaRockInside_PlatformPath2[], it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2295:
+ * `gMagmaRockInside_PlatformPath2' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath2__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath2");
 #define gMagmaRockInside_PlatformPath2 gMagmaRockInside_PlatformPath2__s3678
 /* VIEW(s3678): variable gMagmaRockInside_PlatformPath3 as const u8
  * gMagmaRockInside_PlatformPath3[]; scene/magma_rock_inside/s46e8 has u16
- * gMagmaRockInside_PlatformPath3[] = {. */
+ * gMagmaRockInside_PlatformPath3[] = {; tried as the definition's extern
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath1, 776, 680, 744, 680,
+ * 744, 632, 776, 632) DEFINE_G_DATA_020050D4(gMagmaRockInsid..., it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2296:
+ * `gMagmaRockInside_PlatformPath3' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath3__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath3");
 #define gMagmaRockInside_PlatformPath3 gMagmaRockInside_PlatformPath3__s3678
@@ -2341,7 +2309,11 @@ extern const u8 gMagmaRockInside_PlatformPath3__s3678[] __asm__(
  * 408, 232, 408, 264) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11,
  * 216, 680, 280, 680, 280, 712, 216, 712)
  * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680,
- * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {. */
+ * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {; tried as the one
+ * declaration extern const u8 gMagmaRockInside_PlatformPath4[], it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2306:
+ * `gMagmaRockInside_PlatformPath4' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath4__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath4");
 #define gMagmaRockInside_PlatformPath4 gMagmaRockInside_PlatformPath4__s3678
@@ -2359,7 +2331,10 @@ extern const u8 gMagmaRockInside_PlatformPath4__s3678[] __asm__(
  * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11, 216, 680, 280, 680,
  * 280, 712, 216, 712) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12,
  * 376, 680, 312, 680, 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] =
- * {. */
+ * {; tried as the one declaration extern const u8
+ * gMagmaRockInside_PlatformPath5[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2308:
+ * `gMagmaRockInside_PlatformPath5' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath5__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath5");
 #define gMagmaRockInside_PlatformPath5 gMagmaRockInside_PlatformPath5__s3678
@@ -2369,7 +2344,11 @@ extern const u8 gMagmaRockInside_PlatformPath5__s3678[] __asm__(
  * 408, 232, 408, 264) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11,
  * 216, 680, 280, 680, 280, 712, 216, 712)
  * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680,
- * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {. */
+ * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {; tried as the one
+ * declaration extern const u8 gMagmaRockInside_PlatformPath10[], it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2384:
+ * `gMagmaRockInside_PlatformPath10' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath10__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath10");
 #define gMagmaRockInside_PlatformPath10 gMagmaRockInside_PlatformPath10__s3678
@@ -2378,55 +2357,38 @@ extern const u8 gMagmaRockInside_PlatformPath10__s3678[] __asm__(
  * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11, 216, 680, 280, 680,
  * 280, 712, 216, 712) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12,
  * 376, 680, 312, 680, 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] =
- * {. */
+ * {; tried as the one declaration extern const u8
+ * gMagmaRockInside_PlatformPath11[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2385:
+ * `gMagmaRockInside_PlatformPath11' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath11__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath11");
 #define gMagmaRockInside_PlatformPath11 gMagmaRockInside_PlatformPath11__s3678
 /* VIEW(s3678): variable gMagmaRockInside_PlatformPath12 as const u8
  * gMagmaRockInside_PlatformPath12[]; scene/magma_rock_inside/s46e8 has
  * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680,
- * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {. */
+ * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {; tried as the one
+ * declaration extern const u8 gMagmaRockInside_PlatformPath12[], it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2386:
+ * `gMagmaRockInside_PlatformPath12' undeclared (first use in this function). */
 extern const u8 gMagmaRockInside_PlatformPath12__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath12");
 #define gMagmaRockInside_PlatformPath12 gMagmaRockInside_PlatformPath12__s3678
 /* VIEW(s3678): variable gMagmaRockInside_Statues as u16
  * gMagmaRockInside_Statues[]; scene/magma_rock_inside/s46e8 has s32
- * gMagmaRockInside_Statues[] = {. */
+ * gMagmaRockInside_Statues[] = {; tried as the definition's extern s32
+ * gMagmaRockInside_Statues[], it does not compile in tla-ja:
+ * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2298:
+ * `gMagmaRockInside_Statues' undeclared (first use in this function). */
 extern u16
     gMagmaRockInside_Statues__s3678[] __asm__("gMagmaRockInside_Statues");
 #define gMagmaRockInside_Statues gMagmaRockInside_Statues__s3678
-/* VIEW(s3678): variable gMagmaRockInside_Room4Statues as u16
- * gMagmaRockInside_Room4Statues[]; scene/magma_rock_inside/s46e8 has s16
- * gMagmaRockInside_Room4Statues[] = {. */
-extern u16 gMagmaRockInside_Room4Statues__s3678[] __asm__(
-    "gMagmaRockInside_Room4Statues");
-#define gMagmaRockInside_Room4Statues gMagmaRockInside_Room4Statues__s3678
-/* VIEW(s3678): variable gMagmaRockInside_Room6Pillars as const u8
- * gMagmaRockInside_Room6Pillars[]; scene/magma_rock_inside/magma_rock_inside
- * has s16 gMagmaRockInside_Room6Pillars[]. */
-extern const u8 gMagmaRockInside_Room6Pillars__s3678[] __asm__(
-    "gMagmaRockInside_Room6Pillars");
-#define gMagmaRockInside_Room6Pillars gMagmaRockInside_Room6Pillars__s3678
 
-/* VIEW(s3678): routine MagmaRockInside_StartLavaPlatform as void
- * MagmaRockInside_StartLavaPlatform(s32 id, const u8 *script, s32 flag);
- * scene/magma_rock_inside/magma_rock_inside has void
- * MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {. */
-void MagmaRockInside_StartLavaPlatform__s3678(
-    s32 id, const u8 *script,
-    s32 flag) __asm__("MagmaRockInside_StartLavaPlatform");
-#define MagmaRockInside_StartLavaPlatform                                      \
-  MagmaRockInside_StartLavaPlatform__s3678
+#define MagmaRockInside_StartLavaPlatform MagmaRockInside_StartLavaPlatform
 void Actor_PlaceBlocks(const u8 *table);
 void Tightrope_Place(s32 a, s32 b, s32 c);
 s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
-/* VIEW(s3678): routine MagmaRockInside_LayerWithLeader as void
- * MagmaRockInside_LayerWithLeader(void);
- * scene/magma_rock_inside/magma_rock_inside has void
- * MagmaRockInside_LayerWithLeader(struct Actor *arg) {. */
-void MagmaRockInside_LayerWithLeader__s3678(void) __asm__(
-    "MagmaRockInside_LayerWithLeader");
-#define MagmaRockInside_LayerWithLeader MagmaRockInside_LayerWithLeader__s3678
 
 #define CLOSED_BLEND()                                                         \
   {                                                                            \
@@ -2746,11 +2708,6 @@ void MagmaRockInside_SetPillarMode3(s32 id) {
   Actor_DisableById(id);
 }
 
-/* VIEW(s3678): routine Actor_MoveToObject as void Actor_MoveToObject(s32 id,
- * s32 owner); scene/magma_rock_inside/magma_rock_inside has s32
- * Actor_MoveToObject(). */
-void Actor_MoveToObject__s3678(s32 id, s32 owner) __asm__("Actor_MoveToObject");
-#define Actor_MoveToObject Actor_MoveToObject__s3678
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
@@ -2851,13 +2808,9 @@ test:
 
 #include "../../field/field_effect/advance_motion_priority.c"
 
-#undef gMagmaRockInside_Room6Pillars
 #undef MagmaRockInside_StartLavaPlatform
-#undef MagmaRockInside_LayerWithLeader
-#undef Actor_MoveToObject
 #undef gMagmaRockInside_PlatformPath3
 #undef gMagmaRockInside_Statues
-#undef gMagmaRockInside_Room4Statues
 
 #undef gMagmaRockInside_PlatformPath1
 #undef gMagmaRockInside_PlatformPath2
@@ -2890,12 +2843,6 @@ test:
 #include "particle.h"
 #include "resource.h"
 
-/* VIEW(s46e8): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s46e8(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
-#define Actor_SetSpriteFlags Actor_SetSpriteFlags__s46e8
 /* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct
  * FieldEffect *effect, const s32 *script); local.h has void
  * Actor_StartScript(struct Actor *object, const void *data); not tried:
@@ -3066,55 +3013,11 @@ void MagmaRockInside_EndFallingRocks(void) {
 
 void MagmaRockInside_MeetDjinni(void);
 void MagmaRockInside_ResolveBeforeBurst(void);
-/* VIEW(s46e8): routine MagmaRockInside_TargetStatue as void
- * MagmaRockInside_TargetStatue(void); scene/magma_rock_inside/magma_rock_inside
- * has void MagmaRockInside_TargetStatue(s32 mode) {. */
-void MagmaRockInside_TargetStatue__s46e8(void) __asm__(
-    "MagmaRockInside_TargetStatue");
-#define MagmaRockInside_TargetStatue MagmaRockInside_TargetStatue__s46e8
 void MagmaRockInside_FireStatue(void);
-/* VIEW(s46e8): routine MagmaRockInside_BurstCrackedPillar1 as void
- * MagmaRockInside_BurstCrackedPillar1(void);
- * scene/magma_rock_inside/magma_rock_inside has
- * DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar1, 9,
- * 0x350)
- * DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar2,
- * 11, 0x351) void MagmaRockInside_SmokeEmber(struct Actor *object) {. */
-void MagmaRockInside_BurstCrackedPillar1__s46e8(void) __asm__(
-    "MagmaRockInside_BurstCrackedPillar1");
-#define MagmaRockInside_BurstCrackedPillar1                                    \
-  MagmaRockInside_BurstCrackedPillar1__s46e8
-/* VIEW(s46e8): routine MagmaRockInside_BurstCrackedPillar2 as void
- * MagmaRockInside_BurstCrackedPillar2(void);
- * scene/magma_rock_inside/magma_rock_inside has
- * DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar2,
- * 11, 0x351) void MagmaRockInside_SmokeEmber(struct Actor *object) {. */
-void MagmaRockInside_BurstCrackedPillar2__s46e8(void) __asm__(
-    "MagmaRockInside_BurstCrackedPillar2");
-#define MagmaRockInside_BurstCrackedPillar2                                    \
-  MagmaRockInside_BurstCrackedPillar2__s46e8
+#define MagmaRockInside_BurstCrackedPillar1 MagmaRockInside_BurstCrackedPillar1
+#define MagmaRockInside_BurstCrackedPillar2 MagmaRockInside_BurstCrackedPillar2
 void MagmaRockInside_LightTorch(void);
 void MagmaRockInside_OpenStairs(void);
-/* VIEW(s46e8): routine MagmaRockInside_OrbitParent as void
- * MagmaRockInside_OrbitParent(void); scene/magma_rock_inside/magma_rock_inside
- * has s32 MagmaRockInside_OrbitParent(struct Orbiter__magma_rock_inside
- * *object) {. */
-void MagmaRockInside_OrbitParent__s46e8(void) __asm__(
-    "MagmaRockInside_OrbitParent");
-#define MagmaRockInside_OrbitParent MagmaRockInside_OrbitParent__s46e8
-/* VIEW(s46e8): routine Orbit_Update as void Orbit_Update(void);
- * scene/magma_rock_inside/magma_rock_inside has
- * DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8 *)((u8
- * *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched) s32
- * MagmaRockInside_DriftForSteps(struct Actor *object) {. */
-void Orbit_Update__s46e8(void) __asm__("Orbit_Update");
-#define Orbit_Update Orbit_Update__s46e8
-/* VIEW(s46e8): routine Actor_AimAtWatched as void Actor_AimAtWatched(void);
- * scene/magma_rock_inside/magma_rock_inside has
- * DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched) s32
- * MagmaRockInside_DriftForSteps(struct Actor *object) {. */
-void Actor_AimAtWatched__s46e8(void) __asm__("Actor_AimAtWatched");
-#define Actor_AimAtWatched Actor_AimAtWatched__s46e8
 
 extern u32 gFieldEffect_LongScript[];
 
@@ -3702,13 +3605,8 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-#undef Actor_SetSpriteFlags
-#undef MagmaRockInside_TargetStatue
 #undef MagmaRockInside_BurstCrackedPillar1
 #undef MagmaRockInside_BurstCrackedPillar2
-#undef MagmaRockInside_OrbitParent
-#undef Orbit_Update
-#undef Actor_AimAtWatched
 #undef gMagmaRockInside_PlatformPath1
 #undef gMagmaRockInside_PlatformPath2
 #undef gMagmaRockInside_PlatformPath4

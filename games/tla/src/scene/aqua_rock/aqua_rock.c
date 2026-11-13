@@ -436,9 +436,8 @@ void Func_02000d64(struct Actor *object, s32 limit) {
 
 /* VIEW(aqua_rock): routine MapGrid_CheckCollision as s32
  * MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
- * module/scene/lemurian_ship.h has void MapGrid_CheckCollision(void); tried as
- * the definition's void MapGrid_CheckCollision(void), which the object already
- * declares, Func_02001e00 moves: 4 of 151 instructions in tla-ja. */
+ * module/scene/lemurian_ship.h has void MapGrid_CheckCollision(void); not
+ * tried: MapGrid_CheckCollision's bound declaration was not found. */
 extern s32 Func_02002970__aqua_rock(
     struct Actor *object,
     struct Vector3 *position) __asm__("MapGrid_CheckCollision");
@@ -1102,15 +1101,6 @@ void Func_02001f60(s32 id) {
     Actor_SelectAnimation(object, 2);
   }
 }
-
-/* VIEW(events_g): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32 x,
- * s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags, s32 *params);
- * field/field_effect/spawn has void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options) {. */
-void FieldEffect_Spawn__events_g(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c,
-                                 s32 flags,
-                                 s32 *params) __asm__("FieldEffect_Spawn");
 
 void Func_02001f90(s32 arg0) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

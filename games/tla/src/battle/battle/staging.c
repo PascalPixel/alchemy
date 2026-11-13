@@ -40,7 +40,8 @@ void Battle_TurnStartNoOp(void) {}
 
 /* VIEW(battle): routine BattleAI_ChooseRandomTarget as s32
  * BattleAI_ChooseRandomTarget(); module/battle/presentation.h has s32
- * BattleAI_ChooseRandomTarget(s32 party). */
+ * BattleAI_ChooseRandomTarget(s32 party); not tried:
+ * BattleAI_ChooseRandomTarget's bound declaration was not found. */
 extern s32 Func_0811f4d4__battle() __asm__("BattleAI_ChooseRandomTarget");
 
 /// The plan of an extra action queued for the turn's end (command 10): ability
@@ -434,12 +435,6 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   return completed;
 }
 
-/* VIEW(battle): routine BattlePlayback_WaitForReady as void
- * BattlePlayback_WaitForReady(void); module/battle/battle.h has s32
- * BattlePlayback_WaitForReady(void). */
-extern void BattlePlayback_WaitForReady__battle(void) __asm__(
-    "BattlePlayback_WaitForReady");
-
 s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
   struct BattlePresentationWork work;
@@ -558,7 +553,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       BattleEffect_DispatchByIdRangeFar(&work);
     else
       BattleEffect_RunFromTableFar(&work);
-    BattlePlayback_WaitForReady__battle();
+    BattlePlayback_WaitForReady();
   }
 
   BattleObject_Put();

@@ -30,7 +30,8 @@
 #endif
 
 /* VIEW(screens): tag struct DjinnMenuWork as struct DjinnMenuWork__screens;
- * djinn_menu.h has another definition. */
+ * djinn_menu.h has another definition; not tried: struct DjinnMenuWork__screens
+ * was not found. */
 struct DjinnMenuWork__screens {
   u8 unk00[3];
   u8 dirty;

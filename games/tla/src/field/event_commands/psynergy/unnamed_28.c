@@ -41,12 +41,6 @@ extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
 void FieldPsynergy_UpdateUnnamed28(void);
-/* VIEW(f0e82cc): routine Canvas_PlotPolarPixel as void Canvas_PlotPolarPixel(u8
- * *canvas, s32 radius, s32 angle, s32 color); the definition has void
- * Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color). */
-extern void
-Canvas_PlotPolarPixel__f0e82cc(u8 *canvas, s32 radius, s32 angle,
-                               s32 color) __asm__("Canvas_PlotPolarPixel");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 
 void FieldPsynergy_Unnamed28(void) {
@@ -159,10 +153,10 @@ void FieldPsynergy_Unnamed28(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Canvas_PlotPolarPixel__f0e82cc(picture, 0x340000, radius, 243);
-          Canvas_PlotPolarPixel__f0e82cc(picture, 0x350000, radius, 247);
-          Canvas_PlotPolarPixel__f0e82cc(picture, 0x360000, radius, 251);
-          Canvas_PlotPolarPixel__f0e82cc(picture, 0x370000, radius, 255);
+          Canvas_PlotPolarPixel(picture, 0x340000, radius, 243);
+          Canvas_PlotPolarPixel(picture, 0x350000, radius, 247);
+          Canvas_PlotPolarPixel(picture, 0x360000, radius, 251);
+          Canvas_PlotPolarPixel(picture, 0x370000, radius, 255);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
@@ -279,7 +273,7 @@ struct BurstMote {
 /* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:4606: structure has no member
+ * games/tla/src/field/event_commands/radial.c:6871: structure has no member
  * named `motes'. */
 struct BurstWork__f0e82cc {
   u8 unk0000[0x1000];
@@ -575,7 +569,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
 /* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc;
  * f0e2c38.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:4845: structure has no member
+ * games/tla/src/field/event_commands/radial.c:7113: structure has no member
  * named `firstObjectId'. */
 struct EffectScene__f0e82cc {
   u8 unk00[0x18];

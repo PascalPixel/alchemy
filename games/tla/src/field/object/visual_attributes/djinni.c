@@ -46,7 +46,8 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(motes): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
  * kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+ * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+ * not tried: Actor_CreateFar's bound declaration was not found. */
 extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y,
                                           s32 z) __asm__("Actor_CreateFar");
 
@@ -305,9 +306,9 @@ void Djinn_ResolvePending(s32 shown) {
 
 /* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes;
  * field_psynergy_work.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:3869: dereferencing pointer to
- * incomplete type. */
+ * rest of the object has, FieldEffect_UpdateAllSlots moves: 1 of 15
+ * instructions, FieldEffect_InitializeSlots moves: 2 of 23 instructions,
+ * FieldEffect_ReleaseSlots moves: 2 of 27 instructions, 1 more in tla-ja. */
 struct BattleFxScene__motes {
   u8 unk00[0x50];
   struct FieldParticle slots[24];
@@ -359,18 +360,6 @@ void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
   object->angle += 0x2000;
 }
 
-/* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct
- * EffectVector *position); ground_particles has void Camera_WorldToScreen(union
- * FieldCoordinate *position). */
-extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__(
-    "Camera_WorldToScreen");
-/* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32
- * magnitude, s32 angle, struct EffectVector *position); f0d489c has void
- * Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__motes(
-    s32 magnitude, s32 angle,
-    struct EffectVector *position) __asm__("Vector_AddPolarOffset");
-
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
 /// circles its centre while it widens for 60 frames, circles 40, drifts toward
 /// a point 20 pixels over the leader for 40, closes in for 60 and is freed. It
@@ -402,7 +391,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     position.x = owner->x;
     position.y = owner->y + 20 * Q16_ONE;
     position.z = owner->z;
-    Camera_WorldToScreen__motes(&position);
+    Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
     if ((s16)particle->age == 40) {
@@ -421,8 +410,8 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset__motes(particle->orbitRadius << 16,
-                               particle->orbitAngle << 11, &position);
+  Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,
+                        &position);
   particle->x = position.x;
   particle->z = position.z;
 }

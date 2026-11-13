@@ -10,11 +10,7 @@
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02004ce0[];
-/* VIEW(s363c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s363c(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
@@ -36,7 +32,7 @@ void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02004ce0[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags__s363c(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;

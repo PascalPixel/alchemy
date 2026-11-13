@@ -224,13 +224,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 struct DailaActor *Actor_GetById(s32 id);
 
-/* VIEW(daila_interiors): routine Inn_CheckIn as void Inn_CheckIn(s32 slot, s32
- * actor); module/tla.h has void *Inn_CheckIn(s32, s32, s32, s32); tried as the
- * rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:165: too few arguments to function
- * `Inn_CheckIn'. */
-extern void Inn_CheckIn__daila_interiors(s32 slot,
-                                         s32 actor) __asm__("Inn_CheckIn");
+s32 Inn_CheckIn(s32 mode, s32 objectId);
 
 void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
@@ -266,7 +260,7 @@ void DailaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
-    Inn_CheckIn__daila_interiors(0, actor);
+    Inn_CheckIn(0, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -366,7 +360,7 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
-    Inn_CheckIn__daila_interiors(0, actor);
+    Inn_CheckIn(0, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -444,7 +438,7 @@ DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
 /* VIEW(item): tag struct DailaActor as struct DailaActor__item;
  * daila_interiors.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:357: structure has no member named
+ * games/tla/src/scene/daila_interiors.c:454: structure has no member named
  * `unk48'. */
 struct DailaActor__item {
   u8 unk00[0xc];
@@ -468,7 +462,7 @@ struct DailaActor__item {
  * *Actor_GetById(s32 id); daila_interiors has struct DailaActor
  * *Actor_GetById(s32 id); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/daila_interiors.c:373: structure has
+ * compile in tla-ja: games/tla/src/scene/daila_interiors.c:469: structure has
  * no member named `unk48'. */
 extern struct DailaActor__item *
 Actor_GetById__item(s32 id) __asm__("Actor_GetById");
@@ -616,16 +610,14 @@ void Map_SetLayerEntryFlag(s32 mode);
  * *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32
  * id); tried as the definition's struct Actor *Actor_GetById(u32 objectId),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:530: invalid type argument of `->'. */
+ * games/tla/src/scene/daila_interiors.c:623: structure has no member named
+ * `priorityFlags'. */
 extern struct DailaStartActor *
 Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
 /* VIEW(arrival): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct DailaStartActor *object, s32 value); field.h
- * has void Actor_SetSpriteFlags(struct Actor *object, u32 flags); tried as
- * the 35 declarations' void Actor_SetSpriteFlags(struct FieldEffect
- * *effect, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:506: conflicting types for
- * `Actor_SetSpriteFlags'. */
+ * Actor_SetSpriteFlags(struct DailaStartActor *object, s32 value); field.h has
+ * void Actor_SetSpriteFlags(struct Actor *object, u32 flags); not tried:
+ * Actor_SetSpriteFlags's bound declaration was not found. */
 extern void
 Actor_SetSingleChildFlags__arrival(struct DailaStartActor *object,
                                    s32 value) __asm__("Actor_SetSpriteFlags");

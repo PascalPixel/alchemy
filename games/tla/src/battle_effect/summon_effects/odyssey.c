@@ -18,7 +18,8 @@ struct Model;
 // *(u16 *)(battle)->unk670, 6 of 1075 instructions differ in tla-en.
 /* VIEW(summon_effects): tag union BattleBackgroundId as union
  * BattleBackgroundId__summon_effects; module/battle_effect/battle_effect.h has
- * another definition. */
+ * another definition; not tried: struct BattleBackgroundId__summon_effects was
+ * not found. */
 union BattleBackgroundId {
   u16 id;
   s32 word;
@@ -33,7 +34,7 @@ union BattleBackgroundId {
 /* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74;
  * render_model.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/summon_effects.c:1096: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:61266: structure has no member
  * named `look'. */
 struct RenderModel__f190b74 {
   s32 kind;

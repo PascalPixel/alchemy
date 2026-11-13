@@ -21,19 +21,6 @@ struct ModelTexture__f179f18 {
   u8 *pixels;
 };
 
-/* VIEW(f179f18): tag struct RenderModel as struct RenderModel__f179f18;
- * ability_effects.c has another definition. */
-struct RenderModel__f179f18 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f179f18 *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
@@ -115,9 +102,9 @@ struct WordPair {
 
 /* VIEW(f179f18): variable gResourceTableEntries as extern struct
  * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
  * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/ability_effects.c:26450: conflicting
+ * in tla-ja: games/tla/src/battle_effect/battle_effect.c:43846: conflicting
  * types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry
     gResourceTableEntries__f179f18[] __asm__("gResourceTableEntries");
@@ -148,19 +135,12 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
-/* VIEW(f179f18): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); f175f74 has struct SpriteObject__f175f74
- * *EffectSprite_CreateWithTiles(s32, s32, u32, u32). */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__f179f18(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 /* VIEW(f179f18): routine EffectSprite_Acquire as struct FloraObject
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f175f74
  * has struct SpriteObject *EffectSprite_Acquire(s32, s32, u32, u32); tried as
  * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
  * s32 value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:26593: too many arguments to
+ * games/tla/src/battle_effect/battle_effect.c:43988: too many arguments to
  * function `EffectSprite_Acquire'. */
 extern struct FloraObject *
 EffectSprite_Acquire__f179f18(s32 width, s32 height, u32 shape,
@@ -218,7 +198,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 place[4];
   struct WordPair req;
   struct ModelTexture__f179f18 texture;
-  struct RenderModel__f179f18 *model;
+  struct RenderModel *model;
   void *verts;
   struct EffectStep *p;
   u8 *cells;
@@ -265,7 +245,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
         struct FloraObject *obj =
-            EffectSprite_CreateWithTiles__f179f18(16, 16, 0x40000000, 0xf000);
+            EffectSprite_CreateWithTiles(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
@@ -290,7 +270,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
         struct FloraObject *obj =
-            EffectSprite_CreateWithTiles__f179f18(32, 32, 0x80002000, 0);
+            EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->flags = 2;
         work->objects[i] = obj;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
@@ -1152,7 +1132,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
 }
 
 /* VIEW(ability_effects): tag struct FxSlot as struct FxSlot__ability_effects;
- * module/battle_effect/battle_effect.h has another definition. */
+ * module/battle_effect/battle_effect.h has another definition; not tried:
+ * struct FxSlot__ability_effects was not found. */
 struct FxSlot {
   void *object;
   u8 unk04[0x26];

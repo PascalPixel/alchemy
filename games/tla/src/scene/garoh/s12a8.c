@@ -54,7 +54,7 @@ burst:
 /* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the
  * definition has u32 gData_02006330[] = { 38, }; tried as the definition's
  * extern u32 gData_02006330[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh/s12a8.c:82: `gData_02006330__s12a8' undeclared
+ * games/tla/src/scene/garoh/s12a8.c:77: `gData_02006330__s12a8' undeclared
  * (first use in this function). */
 extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 

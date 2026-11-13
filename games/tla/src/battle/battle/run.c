@@ -118,7 +118,9 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
 }
 
 /* VIEW(battle): tag struct EncounterWork as struct EncounterWork__battle;
- * module/tla.h has another definition. */
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/include/module/tla.h:95: redefinition of `struct EncounterWork'. */
 #define EncounterWork EncounterWork__battle
 struct EncounterWork {
   s32 enemyGroup;
@@ -160,30 +162,25 @@ struct EncounterWork {
 };
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 /* VIEW(battle): variable Data_02018000 as u8 Data_02018000[]; module/tla.h has
- * u32 Data_02018000[]. */
+ * u32 Data_02018000[]; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/battle/battle.c:1265: `Data_02018000'
+ * undeclared (first use in this function). */
 extern u8 Data_02018000__battle[] __asm__("Data_02018000");
 #define Data_02018000 Data_02018000__battle
 
 // The ROM's call here keeps the whole return register, as an s32 return
 // does; system/system/flags.c defines it returning u8.
 /* VIEW(battle): routine GameFlag_GetByte as s32 GameFlag_GetByte(s32 flag);
- * game/game_flags.h has u8 GameFlag_GetByte(s32 flag). */
+ * game/game_flags.h has u8 GameFlag_GetByte(s32 flag); tried as the
+ * definition's u8 GameFlag_GetByte(s32 flag), which the object already
+ * declares, it does not compile in tla-ja (make modern):
+ * games/tla/src/battle/battle.c:3270:3: note: in expansion of macro
+ * 'Actor_StartIdleFar'. */
 s32 GameFlag_GetByte__battle(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__battle
 void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
 struct BattleSortedUnitEntry;
-/* VIEW(battle): routine Window_CloseFar as void Window_CloseFar(s32 window, s32
- * mode); gamepak/far_call/window.h has void Window_CloseFar(struct RenderInput
- * *window, s32 mode). */
-extern void Window_CloseFar__battle(s32 window,
-                                    s32 mode) __asm__("Window_CloseFar");
-/* VIEW(battle): routine BattleMessage_WaitForAdvanceAt as void
- * BattleMessage_WaitForAdvanceAt(s32 x, s32 y); battle/presentation has s32
- * BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {. */
-void BattleMessage_WaitForAdvanceAt__battle(s32 x, s32 y) __asm__(
-    "BattleMessage_WaitForAdvanceAt");
-#define BattleMessage_WaitForAdvanceAt BattleMessage_WaitForAdvanceAt__battle
 
 s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
@@ -445,12 +442,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7, 0, 4, 1);
     while (Message_AllTypedFar() == 0)
       wait(1);
-    Window_CloseFar__battle(window, 1);
+    Window_CloseFar(window, 1);
     wait(1);
     window =
         Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8, 10, 4, 1);
     BattleMessage_WaitForAdvanceAt(44, 24);
-    Window_CloseFar__battle(window, 1);
+    Window_CloseFar(window, 1);
     wait(1);
   }
 

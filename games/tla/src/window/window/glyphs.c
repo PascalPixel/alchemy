@@ -425,7 +425,8 @@ u32 Math_UnsignedMulHigh(u32 a, u32 b);
 /* VIEW(window): routine Math_UnsignedMulHighAdd as u32
  * Math_UnsignedMulHighAdd(u32 a, u32 b, s32 c);
  * module/battle_effect/battle_effect.h has s32 Math_UnsignedMulHighAdd(s32
- * value, u32 magic, s32 multiplier). */
+ * value, u32 magic, s32 multiplier); not tried: Math_UnsignedMulHighAdd's
+ * declaration holds a FAKEMATCH tag. */
 u32 Math_UnsignedMulHighAdd__window(u32 a, u32 b,
                                     s32 c) __asm__("Math_UnsignedMulHighAdd");
 #define Math_UnsignedMulHighAdd Math_UnsignedMulHighAdd__window

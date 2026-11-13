@@ -73,12 +73,6 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
 
 #include "event_inline.h"
 
-/* VIEW(trial_road): routine TrialRoad_OfferToGiveUp as s32
- * TrialRoad_OfferToGiveUp(s32 value); scene/trial_road/s0218 has s32
- * TrialRoad_OfferToGiveUp(void) {. */
-s32 TrialRoad_OfferToGiveUp__trial_road(s32 value) __asm__(
-    "TrialRoad_OfferToGiveUp");
-
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
   s16 *order = (s16 *)state;
@@ -86,7 +80,7 @@ void TrialRoad_TakeStairs(s32 direction) {
   if ((u32)(direction - 1) <= 1) {
     if (state->stage[0] <= 0) {
       if (Event_GetFlag(2559)) {
-        if (TrialRoad_OfferToGiveUp__trial_road(0) == 0)
+        if (TrialRoad_OfferToGiveUp(0) == 0)
           Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
         return;
       }
@@ -275,7 +269,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
 /* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, its members read value as flag, it does not compile in
- * tla-ja: games/tla/src/scene/trial_road/s0218.c:171: dereferencing pointer to
+ * tla-ja: games/tla/src/scene/trial_road.c:288: dereferencing pointer to
  * incomplete type. */
 struct EventWork15a__s0218 {
   u8 unk000[0x15a];

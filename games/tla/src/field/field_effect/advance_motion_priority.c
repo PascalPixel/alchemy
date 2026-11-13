@@ -5,7 +5,10 @@
 
 /* VIEW(advance_motion_priority): tag struct EffectSpriteBits as struct
  * EffectSpriteBits__advance_motion_priority; module/scene/trial_road.h has
- * another definition. */
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/field_effect/advance_motion_priority.c:13: field `bits'
+ * has incomplete type. */
 /// The sprite's priority bits, read as the byte that holds them.
 struct EffectSpriteBits__advance_motion_priority {
   u8 unk0 : 2;
@@ -14,7 +17,10 @@ struct EffectSpriteBits__advance_motion_priority {
 
 /* VIEW(advance_motion_priority): tag struct EffectSpriteAttributes as struct
  * EffectSpriteAttributes__advance_motion_priority; module/scene/trial_road.h
- * has another definition. */
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/field_effect/advance_motion_priority.c:45: dereferencing
+ * pointer to incomplete type. */
 /// A sprite's attribute 2, as the byte bits view reaches it.
 struct EffectSpriteAttributes__advance_motion_priority {
   u8 unk00[9];

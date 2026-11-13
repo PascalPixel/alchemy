@@ -82,10 +82,9 @@ void Func_02000120(struct Actor *object) {
     Actor_SetSpriteColorMode(object, (frameCount >> 1) % 6);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine Trig_Cos as s32 Trig_Cos(u32
- * angle); module/scene/scene.h has s32 Trig_Cos(s32 angle); tried as the
- * rest of the object declares it, Func_02001070 moves: 1 of 195 instructions,
- * Func_02001230 moves: 1 of 90 instructions in tla-ja. */
+/* VIEW(jupiter_lighthouse_room_5): routine Trig_Cos as s32 Trig_Cos(u32 angle);
+ * module/scene/scene.h has s32 Trig_Cos(s32 angle); not tried: Trig_Cos's bound
+ * declaration was not found. */
 extern s32
 Math_Cosine__jupiter_lighthouse_room_5(u32 angle) __asm__("Trig_Cos");
 
@@ -734,7 +733,7 @@ struct Spark {
 /* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct
  * SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:999: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:755: structure has no
  * member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
@@ -746,7 +745,7 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
 /* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230;
  * jupiter_lighthouse_room_5.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:974: structure has no member
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:730: structure has no member
  * named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
@@ -807,22 +806,14 @@ void Func_02001538(void) {
 #include "module/tla.h"
 #include "resource.h"
 
-/* VIEW(s1650): tag struct Spark as struct Spark__s1650;
- * games/tla/src/scene/jupiter_lighthouse_room_5/s1230 has another definition.
- */
-struct Spark__s1650 {
-  u8 unk00[0x0c];
-  s32 dx;
-  s32 dy;
-  s32 speed;
-  s32 age;
-};
-
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
- * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition. */
+ * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:805: structure has no
+ * member named `sparks'. */
 struct SparkWork__s1650 {
   u8 tiles[0x400];
-  struct Spark__s1650 sparks[96];
+  struct Spark sparks[96];
   struct SparkSprite sprites[96];
   s32 from[3];
   s32 to[3];
@@ -837,7 +828,7 @@ struct SparkWork__s1650 {
 /// speed of 16 to 31 and an age of 0.
 void Func_02001650(s32 count) {
   struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;
-  struct Spark__s1650 *spark;
+  struct Spark *spark;
   s32 angle;
   s32 i;
   s32 radius;
@@ -857,7 +848,7 @@ void Func_02001650(s32 count) {
     cosine = Trig_Cos(angle);
     spark->dx = Iwram_MulQ16(cosine, radius) >> 16;
     spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
-    spark->speed = speed;
+    spark->duration = speed;
     spark->age = 0;
     work->next++;
     work->next %= 96;
@@ -872,9 +863,8 @@ void Func_02001650(s32 count) {
 /* VIEW(s1650): routine BattleEffect_GetObjectPriority as s32
  * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
  * has void BattleEffect_GetObjectPriority(struct FieldEffect *effect, s32
- * mode); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5/s1650.c:98: too few
- * arguments to function `BattleEffect_GetObjectPriority'. */
+ * mode); not tried: BattleEffect_GetObjectPriority's bound declaration was not
+ * found. */
 extern s32 Func_020029f0__s1650(struct Actor *object) __asm__(
     "BattleEffect_GetObjectPriority");
 
@@ -883,7 +873,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
       HeapSlot_Alloc(220, sizeof(struct SparkWork__s1650));
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct SparkSprite *sprite;
-  struct Spark__s1650 *spark;
+  struct Spark *spark;
   s32 entry;
   s32 tile;
   s32 i;

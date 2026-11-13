@@ -42,16 +42,6 @@ struct BurstTexture {
 };
 
 // One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
-/* VIEW(f17e698): tag struct RenderPrimitive as struct RenderPrimitive__f17e698;
- * ability_effects.c has another definition. */
-struct RenderPrimitive__f17e698 {
-  s32 kind;
-  s32 unk04;
-  const void *faces;
-  void *vertices;
-  struct BurstTexture *texture;
-  s32 unk14;
-};
 
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_OrangePaletteB;
@@ -98,7 +88,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BurstTexture texture;
   struct EffectPosition target;
-  struct RenderPrimitive__f17e698 *quad;
+  struct RenderPrimitive *quad;
   void *vertices;
   s32 frame;
   s32 cel;
@@ -224,7 +214,7 @@ typedef volatile s32 vs32;
 /* VIEW(f17e698): tag struct Particle as struct Particle__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:30472: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:47770: structure has no member
  * named `timer'. */
 typedef struct Particle__f17e698 {
   s32 x;
@@ -265,7 +255,8 @@ typedef struct Sprite {
 
 /* VIEW(ability_effects): tag struct SpriteAttributes as struct
  * SpriteAttributes__ability_effects; battle_effect/cybele has another
- * definition. */
+ * definition; not tried: struct SpriteAttributes__ability_effects was not
+ * found. */
 /// A sprite's first ten bytes, its attribute 2 fields after eight others.
 struct SpriteAttributes {
   u8 unk00[8];
@@ -289,7 +280,7 @@ typedef struct Bitmap {
 /* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:30366: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:47663: structure has no member
  * named `transferMode'. */
 struct SummonWork__f17e698 {
   Particle particles[48];
@@ -330,7 +321,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /* VIEW(f17e698): tag struct SystemWork as struct SystemWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:30365: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:47662: structure has no member
  * named `map'. */
 struct SystemWork__f17e698 {
   u8 unk00[0x24];
@@ -356,10 +347,10 @@ struct SystemWork__f17e698 {
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
 /* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput;
- * input.h has extern struct InputState gInput; tried as the 3 declarations'
- * extern u32 gInput, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:30276: conflicting types for
- * `gInput'. */
+ * input.h has extern struct InputState gInput; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:47927: `gInput__f17e698'
+ * undeclared (first use in this function). */
 extern struct InputState gInput__f17e698 __asm__("gInput");
 
 extern char ResourceId_VioletSkyBackdrop;
@@ -1569,7 +1560,7 @@ extern const u8 Data_081995ec[]; // the seven strike frames
 /* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:31647: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:48946: structure has no member
  * named `x'. */
 struct PlacementSource__f17e698 {
   s32 x;
@@ -1582,7 +1573,7 @@ extern const u8 gData_081991b0[]; // their corners
 /* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:31579: request for member
+ * games/tla/src/battle_effect/battle_effect.c:48951: request for member
  * `variant' in something not a structure or union. */
 extern struct EffectStep
     gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks

@@ -12,25 +12,9 @@
 #include "scene_call.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(mars_join): routine Camera_WorldToScreen as void
- * Camera_WorldToScreen(struct EffectVector *position); ground_particles has
- * void Camera_WorldToScreen(union FieldCoordinate *position). */
-extern void Camera_WorldToScreen__mars_join(
-    struct EffectVector *position) __asm__("Camera_WorldToScreen");
-/* VIEW(mars_join): routine FieldParticle_Initialize as void
- * FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 z); motes has void
- * FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z).
- */
-extern void
-FieldParticle_Initialize__mars_join(void *slot, s32 kind, s32 x,
-                                    s32 z) __asm__("FieldParticle_Initialize");
-/* VIEW(mars_join): routine Animation_ApplyChildValuesToRecordFar as void
- * Animation_ApplyChildValuesToRecordFar(s32 object, s32 value); motes has void
- * Animation_ApplyChildValuesToRecordFar(void *object, u32 value). */
-extern void Animation_ApplyChildValuesToRecordFar__mars_join(
-    s32 object, s32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
 /* VIEW(mars_join): routine Actor_ReleaseFar as void Actor_ReleaseFar(void
- * *object); battle.h has void Actor_ReleaseFar(struct Actor *object). */
+ * *object); battle.h has void Actor_ReleaseFar(struct Actor *object); not
+ * tried: Actor_ReleaseFar's bound declaration was not found. */
 extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_ReleaseFar");
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
@@ -84,17 +68,17 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     remaining = 23;
     position.y = y;
     position.z = djinni->z;
-    Camera_WorldToScreen__mars_join(p);
+    Camera_WorldToScreen(p);
   }
 
   slot = (u8 *)effectSlots + 80;
   do {
-    FieldParticle_Initialize__mars_join(slot, 672, position.x, position.z);
+    FieldParticle_Initialize(slot, 672, position.x, position.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateMarsSpark);
     FieldParticle_SetActorMode(slot, 7);
     objectPointer = slot;
     value = *(s32 *)objectPointer;
-    Animation_ApplyChildValuesToRecordFar__mars_join(value, 10);
+    Animation_ApplyChildValuesToRecordFar(value, 10);
     value = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     ((struct FieldParticle *)slot)->scaleY = value;
     ((struct FieldParticle *)slot)->scaleX = value;
@@ -178,22 +162,15 @@ void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
 struct BattleFxScene;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar__mars_join)
+  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define Actor_ReleaseFar Actor_Destroy__mars_join
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
-/* VIEW(mars_join): routine Vector_AddPolarOffset as void
- * Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector
- * *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle,
- * s32 *position). */
-extern void Vector_AddPolarOffset__mars_join(
-    s32 magnitude, s32 angle,
-    struct EffectVector *position) __asm__("Vector_AddPolarOffset");
-
 /* VIEW(mars_join): routine Actor_SetSpriteColorModeFar as void
  * Actor_SetSpriteColorModeFar(struct CaptureObject *object, s32 value); motes
- * has void Actor_SetSpriteColorModeFar(struct Actor *object, u32 value). */
+ * has void Actor_SetSpriteColorModeFar(struct Actor *object, u32 value); not
+ * tried: Actor_SetSpriteColorModeFar's bound declaration was not found. */
 extern void Animation_ApplyChildValuesFar__mars_join(
     struct CaptureObject *object,
     s32 value) __asm__("Actor_SetSpriteColorModeFar");
@@ -217,8 +194,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
   value = actor->timer;
   local.x = other->x;
   local.z = other->z;
-  Vector_AddPolarOffset__mars_join(value * 0x6666, (value << 11) + actor->angle,
-                                   &local);
+  Vector_AddPolarOffset(value * 0x6666, (value << 11) + actor->angle, &local);
   actor->x = local.x;
   actor->z = local.z;
   y = actor->y + 0xFFFF0000;
@@ -248,8 +224,8 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.z = source->z;
 
     random = Random16() * 10 + 0xa0000;
-    Vector_AddPolarOffset__mars_join(random, Random16(), &position);
-    Camera_WorldToScreen__mars_join(&position);
+    Vector_AddPolarOffset(random, Random16(), &position);
+    Camera_WorldToScreen(&position);
 
     x = position.x;
     magnitude = 240;
@@ -261,7 +237,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset__mars_join(magnitude << 15, angle << 8, &position);
+    Vector_AddPolarOffset(magnitude << 15, angle << 8, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = Q16_ONE;

@@ -7,10 +7,7 @@
 
 // Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
 /* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:5812: structure has no member
- * named `resource'. */
+ * another definition; not tried: struct GlowWork__f0e9af4 was not found. */
 struct GlowWork__f0e9af4 {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
@@ -33,10 +30,8 @@ struct GlowScene {
 };
 
 /* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:5837: structure has no member
- * named `objects'. */
+ * has another definition; not tried: struct GlowEvent__f0e9af4 was not found.
+ */
 struct GlowEvent__f0e9af4 {
   u8 unk000[0x14];
   struct Actor *objects[80];
@@ -271,7 +266,10 @@ void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
 // One mote: a position chasing its target (Motion_StepTowardTarget's struct
 // Chase) and a frame count, negative before it starts.
 /* VIEW(psynergy): tag struct Mote as struct Mote__psynergy;
- * module/field/field.h has another definition. */
+ * module/field/field.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial.c:8290: redefinition of `struct
+ * Mote'. */
 #define Mote Mote__psynergy
 struct Mote {
   s32 x;
@@ -305,7 +303,8 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 /* VIEW(f0e9af4): routine EffectSprite_DrawAtWorldPosition as void
  * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct Mote
  * *mote); f0e92b4 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite
- * *sprite, struct SplashParticle *particle). */
+ * *sprite, struct SplashParticle *particle); not tried:
+ * EffectSprite_DrawAtWorldPosition's marker was not found. */
 extern void EffectSprite_DrawAtWorldPosition__f0e9af4(
     struct EffectSprite *sprite,
     struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");

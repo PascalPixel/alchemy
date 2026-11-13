@@ -535,7 +535,11 @@ void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
 /* VIEW(field): routine Render_ApplyProjectedPlacement as void
  * Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos, s32
  * *scale, s32 mode); field/field.h has void Render_ApplyProjectedPlacement(void
- * *sprite, s32 *position, s32 *scale, u16 angle). */
+ * *sprite, s32 *position, s32 *scale, u16 angle); tried as the definition's
+ * void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
+ * s32 *scale, s32 mode), which the object already declares, it does not compile
+ * in tla-ja: games/tla/include/field/field.h:107: conflicting types for
+ * `Render_ApplyProjectedPlacement'. */
 void Render_ApplyProjectedPlacement__field(
     struct LayeredSprite *object, s32 *pos, s32 *scale,
     s32 mode) __asm__("Render_ApplyProjectedPlacement");
@@ -887,15 +891,7 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 #undef Animation_ApplyChildValue
 #undef SpriteAnimation_Alloc
 #undef Render_ApplyProjectedPlacementAtDepth
-#undef Sprite_ComposePicture
-#undef Render_PlaceProjectedSprite
 #undef MapGrid_CheckCollision
-#undef MapGrid_CheckCollision
-#undef MapGrid_CheckCollisionAbove
-#undef WorldMap_IsWalkable
-#undef WorldMap_IsSailable
-#undef WorldMap_IsFlyable
-#undef WorldMap_BuildScanlineTable
 #undef MapGrid_CheckCollisionAbove
 #undef MapGrid_CheckCollision
 #undef WorldMap_IsSailable
@@ -923,7 +919,9 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 #include "module/field/object.h"
 
 /* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
- * battle/battle.h has struct WorldMapWork gWorldMapWork. */
+ * battle/battle.h has struct WorldMapWork gWorldMapWork; tried as the 3
+ * declarations' extern u8 gWorldMapWork[], it does not compile in tla-ja:
+ * games/tla/src/field/field.c:9883: `gWorldMapWork' has an incomplete type. */
 extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
 #define gWorldMapWork gWorldMapWork__tile_animation
 
@@ -1071,13 +1069,6 @@ void MapAnimation_PresentPicture(void) {
   Dma_Set(Ram_MapCellBuffer, (void *)0x06006000, DMA_COPY_WORDS(0xa000 / 4),
           dma);
 }
-
-/* VIEW(tile_animation): routine TileMap_DrawRowsFromRam as void
- * TileMap_DrawRowsFromRam(void *source, void *destination); field/map/terrain
- * has void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {. */
-void TileMap_DrawRowsFromRam__tile_animation(
-    void *source, void *destination) __asm__("TileMap_DrawRowsFromRam");
-#define TileMap_DrawRowsFromRam TileMap_DrawRowsFromRam__tile_animation
 
 void MapAnimation_Start(void) {
   u8 *pages = Ram_HeapSlots->unk1c[0];
@@ -1761,11 +1752,6 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
 
 #include "edition.h"
 
-/* VIEW(tile_animation): variable gMapCellBuffer as u8 gMapCellBuffer[];
- * field/resource_slot has struct MapCell gMapCellBuffer[]. */
-extern u8 gMapCellBuffer__tile_animation[] __asm__("gMapCellBuffer");
-#define gMapCellBuffer gMapCellBuffer__tile_animation
-
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
@@ -2039,10 +2025,9 @@ s32 MapGrid_IsWallAt(s32 *position) {
 }
 
 /* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[];
- * module/tla.h has u32 gMapBlocks[]; tried as the rest of the object declares
- * it, it does not compile in tla-ja:
- * games/tla/src/field/map/tile_animation.c:1131: request for member `unk2' in
- * something not a structure or union. */
+ * module/tla.h has u32 gMapBlocks[]; tried as the 2 declarations' extern u8
+ * gMapBlocks[], it does not compile in tla-ja:
+ * games/tla/src/field/field.c:10899: conflicting types for `gMapBlocks'. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 
 /// Byte 2 of the world map block under position (blocks 32 pixels square on a
@@ -2171,8 +2156,6 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
 }
 
 #undef gWorldMapWork
-#undef gMapCellBuffer
-#undef TileMap_DrawRowsFromRam
 // ---- field/map/terrain.c ----
 
 #include "battle.h"
@@ -2359,20 +2342,6 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
 
 #include "input.h"
 #include "module/system/system.h"
-
-/* VIEW(terrain): variable gMapCellBuffer as u32 gMapCellBuffer[];
- * field/resource_slot has struct MapCell gMapCellBuffer[]. */
-extern u32 gMapCellBuffer__terrain[] __asm__("gMapCellBuffer");
-#define gMapCellBuffer gMapCellBuffer__terrain
-
-/* VIEW(terrain): routine ResourceMetadata_Register as s32
- * ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
- * actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *,
- * s32). */
-s32 ResourceMetadata_Register__terrain(
-    struct MetadataSlotState *state,
-    s32 id) __asm__("ResourceMetadata_Register");
-#define ResourceMetadata_Register ResourceMetadata_Register__terrain
 
 // The native reads the held keys afresh at each test.
 #define HELD (*(volatile u32 *)&gInput.held)
@@ -2931,6 +2900,3 @@ void SpriteViewer_PlaceRing(void) {
       angle += odd;
   }
 }
-
-#undef gMapCellBuffer
-#undef ResourceMetadata_Register

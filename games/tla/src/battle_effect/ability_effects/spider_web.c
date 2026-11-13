@@ -8,16 +8,16 @@
 struct AnimationEntry *AnimationObject_AllocateEmpty(void);
 /* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32
  * Animation_ApplyChildArgumentFar(void *, s32); ability_effects has void
- * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the 4
- * declarations' void Animation_ApplyChildArgumentFar(void *, s32),
- * EffectSprite_Acquire moves: 1 of 46 instructions in tla-ja. */
+ * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the rest
+ * of the object declares it, EffectSprite_Acquire moves: 1 of 46 instructions
+ * in tla-ja. */
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
     "Animation_ApplyChildArgumentFar");
 
 /* VIEW(f15b3b0): tag struct EffectSprite as struct EffectSprite__f15b3b0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:4172: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:21641: structure has no member
  * named `kind'. */
 struct EffectSprite__f15b3b0 {
   u8 unk00[0x0c];
@@ -211,29 +211,16 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f15b3b0): tag struct ModelTexture as struct ModelTexture__f15b3b0;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:4524: storage size of `texture'
- * isn't known. */
-struct ModelTexture__f15b3b0 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
-
 /* VIEW(f15b3b0): tag struct RenderModel as struct RenderModel__f15b3b0;
  * render_model.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:4819: dereferencing pointer to
- * incomplete type. */
+ * the object has, BattleEffect_RunUlysses moves: 1 of 1912 instructions in
+ * tla-ja. */
 struct RenderModel__f15b3b0 {
   s32 kind;
   s32 unk04;
   const u8 *mesh;
   s16 *vertices;
-  struct ModelTexture__f15b3b0 *texture;
+  struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;
   u8 scrollV;
@@ -362,8 +349,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   u8 *picture;
   s32 place[4];
   DrawRectangle blits[2];
-  struct ModelTexture__f15b3b0 texture;
-  struct ModelTexture__f15b3b0 texture2;
+  struct ModelTexture texture;
+  struct ModelTexture texture2;
   struct PlacementSource req;
   u8 *battle;
   s32 mask;

@@ -31,12 +31,6 @@ void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_CheckBlockOnCell(void);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
-/* VIEW(jupiter_lighthouse_room_7): routine Func_02001a48 as void
- * Func_02001a48(const u8 *data, s32 a, s32 b);
- * scene/jupiter_lighthouse_room_7/s16d4 has void Func_02001a48(u16 *list, s32
- * mode, s32 count) {. */
-void Func_02001a48__jupiter_lighthouse_room_7(const u8 *data, s32 a,
-                                              s32 b) __asm__("Func_02001a48");
 void Field_TryJumpForward(void);
 
 void Func_02000038(void) { Field_RequestDjinnBattle(21, 74); }
@@ -413,9 +407,7 @@ void Func_020007a4(s32 unused, s32 id) {
 
 void Func_020009d8(void) { Event_ResolvePendingActions(0); }
 
-void Func_020009e4(s32 a, s32 b) {
-  Func_02001a48__jupiter_lighthouse_room_7(gData_020031c4, a, b);
-}
+void Func_020009e4(s32 a, s32 b) { Func_02001a48(gData_020031c4, a, b); }
 
 void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
@@ -559,12 +551,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Actors_SetCellsOpen();
 void LightSprites_InitB();
 void LightSprites_AddCounted();
-/* VIEW(jupiter_lighthouse_room_7): routine LightSprites_SetPriority as void
- * LightSprites_SetPriority(); scene/jupiter_lighthouse_room_7/s16d4 has void
- * LightSprites_SetPriority(u16 value) { gLightSpritePriority__s16d4 = value; }
- * #include "../field/object/set_sprite_priority.c". */
-void LightSprites_SetPriority__jupiter_lighthouse_room_7() __asm__(
-    "LightSprites_SetPriority");
 
 s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
@@ -593,7 +579,7 @@ L_02008eaa:
   JupiterLighthouse_OpenDoor(0);
 L_02008ebe:
   LightSprites_InitB();
-  LightSprites_SetPriority__jupiter_lighthouse_room_7(2);
+  LightSprites_SetPriority(2);
   LightSprites_AddCounted(18, 2);
   LightSprites_AddCounted(19, 1);
   LightSprites_AddCounted(20, 0);
@@ -770,43 +756,13 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 #include "module/scene/jupiter_lighthouse_room_7.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s16d4): routine Actor_SelectAnimation as void
- * Actor_SelectAnimation(struct GustObject *object, s32 mode);
- * module/field/field.h has void Actor_SelectAnimation(struct Actor *object, s32
- * argument). */
-void Actor_SelectAnimation__s16d4(struct GustObject *object,
-                                  s32 mode) __asm__("Actor_SelectAnimation");
-/* VIEW(s16d4): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s16d4(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
-/* VIEW(s16d4): routine Whirlwind_Update as void Whirlwind_Update(struct
- * GustObject *object); scene/jupiter_lighthouse_room_7 has
- * DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
- * Position_FlatDistance, gWhirlwindEndScript, gWhirlwindRiding) // ----
- * scene/jupiter_lighthouse_room_7/s16d4.c ---- /// Scene code of overlay 0x6a0,
- * in ROM order. #include "shared/whirlwind.h" #include
- * "shared/jupiter_lighthouse.h" #include "shared/map_cells.h" #include
- * "shared/effects.h" #include "types.h" #include "call.h" #include
- * "iwram_call.h" #include "actor.h" #include "field_effect.h" #include
- * "event_inline.h" #include "shared/jupiter_lighthouse_aerie.h" #include
- * "field_coordinate.h" #include "field_sprite.h" #include "ram_buffer.h"
- * #include "field_event.h" #include "map.h" #include "vram_tab.h" #include
- * "task.h" #include "item_icon.h" #include
- * "module/scene/jupiter_lighthouse_room_7.h" #include "module/scene/scene.h" /*
- * VIEW(s16d4): routine Actor_SelectAnimation as void
- * Actor_SelectAnimation(struct GustObject *object, s32 mode);
- * module/field/field.h has void Actor_SelectAnimation(struct Actor *object, s32
- * argument). * / void Actor_SelectAnimation__s16d4(struct GustObject *object,
- * s32 mode) __asm__("Actor_SelectAnimation"). */
-void Whirlwind_Update__s16d4(struct GustObject *object) __asm__(
-    "Whirlwind_Update");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Whirlwind_Update(struct Actor *self);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation__s16d4,
-                       Whirlwind_Update__s16d4, FieldEffect_Spawn)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
+                       FieldEffect_Spawn)
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
 
@@ -853,11 +809,14 @@ top:
 }
 
 DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation__s16d4)
+                           Actor_SelectAnimation)
 
 extern u32 gLightSpriteActors[];
 /* VIEW(s16d4): variable gLightSpritePriority as s16 gLightSpritePriority;
- * scene/jupiter_lighthouse_room_7 has u16 gLightSpritePriority. */
+ * scene/jupiter_lighthouse_room_7 has u16 gLightSpritePriority; tried as the
+ * rest of the object declares it, LightSprites_Draw moves: 99 of 200
+ * instructions, LightSprites_InitA moves: 0 of 36 instructions,
+ * LightSprites_InitB moves: 0 of 36 instructions, 1 more in tla-ja. */
 extern s16 gLightSpritePriority__s16d4 __asm__("gLightSpritePriority");
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);

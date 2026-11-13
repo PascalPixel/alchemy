@@ -92,12 +92,8 @@ void Func_0200137c(void) {
     MapCell_SetAttributes(0, 14, 17, 0x3200);
 }
 
-/* VIEW(s11e0): variable gData_02003340 as const u8 gData_02003340[];
- * scene/tundaria_tower/s29d0 has s16 gData_02003340[] = {. */
-extern const u8 gData_02003340__s11e0[] __asm__("gData_02003340");
-/* VIEW(s11e0): variable gData_0200335a as const u8 gData_0200335a[];
- * scene/tundaria_tower/s29d0 has s16 gData_0200335a[] = {. */
-extern const u8 gData_0200335a__s11e0[] __asm__("gData_0200335a");
+extern s16 gData_02003340[];
+extern s16 gData_0200335a[];
 void Actor_PlaceBlocks(const s16 *data);
 
 s32 Scene_Initialize(void) {
@@ -163,7 +159,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (scene == (s32)&SceneId_Ov68fRoom5) {
-    Func_02000404(gData_02003340__s11e0);
+    Func_02000404(gData_02003340);
   } else if (scene == (s32)&SceneId_Ov68fRoom6) {
     switch (gMainRoutineWork.entrance) {
     case 3:
@@ -178,7 +174,7 @@ s32 Scene_Initialize(void) {
       break;
     case 1:
     case 2:
-      Func_02000404(gData_0200335a__s11e0);
+      Func_02000404(gData_0200335a);
       if (GameFlag_Get(0x947)) {
         Actor_SetPosition(13, PIXELS(216), PIXELS(136));
         if (GameFlag_Get(0x946))
@@ -237,9 +233,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
- * InputState gInput; tried as the 3 declarations' extern u32 gInput, it does
- * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
- * for `gInput'. */
+ * InputState gInput; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/tundaria_tower/events_f.c:249:
+ * `gInput' undeclared (first use in this function). */
 extern u32 gInput__s11e0 __asm__("gInput");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
@@ -285,9 +281,10 @@ void Func_02001868(void) {
 
 /* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the
  * definition has void Func_020017dc(struct Actor *object); tried as the
- * definition's void Func_020017dc(struct Actor *actor), it does not compile in
- * tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355:
- * `Func_020017dc__events_e' undeclared (first use in this function). */
+ * definition's void Func_020017dc(struct Actor *object), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/tundaria_tower/events_f.c:350: `Func_020017dc__events_e'
+ * undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
@@ -428,7 +425,10 @@ end:
 #include "call.h"
 
 /* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
- * scene/tundaria_tower/tundaria_tower.h has u16 gData_02003cd0. */
+ * scene/tundaria_tower/tundaria_tower.h has u16 gData_02003cd0; tried as the 2
+ * declarations' extern volatile s16 gData_02003cd0, it does not compile in
+ * tla-en: games/tla/src/scene/tundaria_tower/events_f.c:419: conflicting types
+ * for `gData_02003cd0'. */
 extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
 extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
@@ -786,7 +786,10 @@ void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
 /* VIEW(events_f): routine Func_020017dc as void Func_020017dc(void);
  * games/tla/src/scene/tundaria_tower/s11e0 has void Func_020017dc(struct Actor
- * *object) {. */
+ * *object) {; tried as the definition's void Func_020017dc(struct Actor
+ * *object), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/tundaria_tower/events_f.c:831: `Func_020017dc__events_f'
+ * undeclared (first use in this function). */
 void Func_020017dc__events_f(void) __asm__("Func_020017dc");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
@@ -1320,25 +1323,9 @@ void Func_02002764(const u16 *table) {
 #include "particle.h"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
-/* VIEW(s29d0): routine Sprite_ShareVramCacheEntry as u32
- * Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
- * module/field/event_commands.h has void *Sprite_ShareVramCacheEntry(void
- * *sprite, void *last). */
-u32 Sprite_ShareVramCacheEntry__s29d0(
-    struct FieldSprite *sprite,
-    u32 frame) __asm__("Sprite_ShareVramCacheEntry");
+void *Sprite_ShareVramCacheEntry(void *src, void *alt);
 
-/* VIEW(s29d0): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s29d0(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
-/* VIEW(s29d0): routine Actor_SelectAnimation as void
- * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
- * scene/tundaria_tower/events_f has void Actor_SelectAnimation(struct Actor
- * *object, s32 mode). */
-void Actor_SelectAnimation__s29d0(struct FieldEffect *effect,
-                                  s32 mode) __asm__("Actor_SelectAnimation");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void Func_020029d0(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1356,11 +1343,11 @@ void Func_020029d0(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Sprite_ShareVramCacheEntry__s29d0(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSpriteFlags__s29d0(effect, 0);
-      Actor_SelectAnimation__s29d0(effect, 2);
+      Actor_SetSpriteFlags(effect, 0);
+      Actor_SelectAnimation(effect, 2);
       Func_02002f90(effect, gData_020032d4);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -1397,12 +1384,12 @@ void Func_02002b04(void) {
       if (effect != NULL) {
         s32 angle;
 
-        state = Sprite_ShareVramCacheEntry__s29d0(effect->sprite, state);
+        state = Sprite_ShareVramCacheEntry(effect->sprite, state);
         zero = 0;
         effect->motionFlags = zero;
         effect->collisionFlags = zero;
-        Actor_SetSpriteFlags__s29d0(effect, 0);
-        Actor_SelectAnimation__s29d0(effect, 2);
+        Actor_SetSpriteFlags(effect, 0);
+        Actor_SelectAnimation(effect, 2);
         Func_02002f90(effect, gData_02003304);
         angle = i << 12;
         effect->velocity.x = Trig_Cos(angle);
@@ -1464,8 +1451,8 @@ next:
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower/s29d0.c:232: structure has no member named
- * `blend'. */
+ * games/tla/src/scene/tundaria_tower/events_f.c:1477: structure has no member
+ * named `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -1501,7 +1488,10 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 /* VIEW(s29d0): routine EffectSprite_Init as void EffectSprite_Init(struct
  * RockSprite__s29d0 *sprite, s32 width, s32 height, u32 attr, s32 tile);
  * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
- * pivotX, s32 pivotY, u32 attributes, s32 tile). */
+ * pivotX, s32 pivotY, u32 attributes, s32 tile); tried as the definition's void
+ * EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32
+ * attributes, s32 tile), which the object already declares, Rocks_Spawn (gone)
+ * moves: 88 of 88 instructions in tla-ja. */
 void EffectSprite_Init__s29d0(struct RockSprite__s29d0 *sprite, s32 width,
                               s32 height, u32 attr,
                               s32 tile) __asm__("EffectSprite_Init");

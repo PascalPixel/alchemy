@@ -18,7 +18,7 @@
 
 /* VIEW(ability_effects): tag struct CameraWork as struct
  * CameraWork__ability_effects; module/battle_effect/battle_effect.h has another
- * definition. */
+ * definition; not tried: struct CameraWork__ability_effects was not found. */
 struct CameraWork {
   s32 eye[3];
   s32 pos[3];

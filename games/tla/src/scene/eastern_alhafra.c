@@ -26,13 +26,6 @@ extern u8 gData_02004d0c[];
 extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
-/* VIEW(eastern_alhafra): routine Statue_Sink as void Statue_Sink(void *, s32,
- * s32); scene/eastern_alhafra/s44c4 has DEFINE_STATUE_SINK(Statue_Sink,
- * Actor_SetCellOpen) #include "field_event.h"
- * DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
- * Actor_SelectAnimation). */
-void Statue_Sink__eastern_alhafra(void *, s32, s32) __asm__("Statue_Sink");
-#define Statue_Sink Statue_Sink__eastern_alhafra
 s32 Actor_HasArrived();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -122,26 +115,16 @@ void Func_02000190(s32 unused, s32 id) {
 
 extern u8 gData_02005290[];
 
-/* VIEW(eastern_alhafra): routine Func_02004240 as s32 Func_02004240(struct
- * DoorPlan *); scene/eastern_alhafra/s4004 has s32 Func_02004240(struct
- * PushState *push) {. */
-s32 Func_02004240__eastern_alhafra(struct DoorPlan *) __asm__("Func_02004240");
-/* VIEW(eastern_alhafra): routine Func_020044c4 as void Func_020044c4(struct
- * DoorPlan); scene/eastern_alhafra/s44c4 has void Func_020044c4(struct
- * PushTarget target) {. */
-void Func_020044c4__eastern_alhafra(struct DoorPlan) __asm__("Func_020044c4");
 /* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
  * Actor_SelectAnimation(); module/scene/scene.h has void
- * Actor_SelectAnimation(struct Actor *object, s32 mode); tried as the rest of
- * the object declares it, Func_02001b9c moves: 1 of 35 instructions in tla-ja.
- */
+ * Actor_SelectAnimation(struct Actor *object, s32 mode); not tried:
+ * Actor_SelectAnimation's bound declaration was not found. */
 extern s32 Func_02004a0c__eastern_alhafra() __asm__("Actor_SelectAnimation");
 s32 Party_FindOwnerWithAction();
 /* VIEW(eastern_alhafra): routine Field_FindNearbyTalkTarget as s32
  * Field_FindNearbyTalkTarget(); module/scene/airs_rock_inside.h has void
- * Field_FindNearbyTalkTarget(void); tried as the definition's void
- * Field_FindNearbyTalkTarget(void), which the object already declares,
- * Func_020006ec moves: 1 of 25 instructions in tla-ja. */
+ * Field_FindNearbyTalkTarget(void); not tried: Field_FindNearbyTalkTarget's
+ * bound declaration was not found. */
 extern s32
 Func_02004bb4__eastern_alhafra() __asm__("Field_FindNearbyTalkTarget");
 void Event_Start();
@@ -258,7 +241,6 @@ void Func_0200042c(s32 mode, s32 id) {
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
 
-#undef Statue_Sink
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
 // Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
 // object the overlay links.
@@ -268,9 +250,9 @@ void Func_0200042c(s32 mode, s32 id) {
 void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
  * Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried
- * as the definition's void Func_020044c4(struct PushTarget target), it does not
- * compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:245: conflicting
- * types for `Func_020044c4'. */
+ * as the definition's void Func_020044c4(struct PushTarget target), which the
+ * object already declares, Func_02000514 moves: 1 of 198 instructions in
+ * tla-ja. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 
 void Func_02000514(void) {
@@ -509,22 +491,14 @@ void Func_02000af8(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-/* VIEW(s0514): routine Func_020040ec as void Func_020040ec();
- * scene/eastern_alhafra/s4004 has s32 Func_020040ec(s32 id) {. */
-void Func_020040ec__s0514() __asm__("Func_020040ec");
 /* VIEW(eastern_alhafra): routine Rope_Place as void Rope_Place();
- * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); tried as
- * the definition's void Rope_Place(void), which the object already declares,
- * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:573: too
- * many arguments to function `Rope_Place'. */
+ * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); not tried:
+ * Rope_Place's bound declaration was not found. */
 extern void Func_02004c2c__eastern_alhafra() __asm__("Rope_Place");
 void Func_020047fc();
 /* VIEW(eastern_alhafra): routine Tightrope_Settle as void Tightrope_Settle();
- * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); tried
- * as the definition's void Tightrope_Settle(void), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:595: too many arguments to function
- * `Tightrope_Settle'. */
+ * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); not
+ * tried: Tightrope_Settle's bound declaration was not found. */
 extern void Func_02004c94__eastern_alhafra() __asm__("Tightrope_Settle");
 
 s32 Scene_Initialize(void) {
@@ -604,7 +578,7 @@ s32 Scene_Initialize(void) {
   }
   Func_02000fa4();
   if (Event_GetFlag(0x8a6) == 0)
-    Func_020040ec__s0514(15);
+    Func_020040ec(15);
   Rope_Initialize();
   Func_02004c2c__eastern_alhafra(0, 0x8a3, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
@@ -2170,17 +2144,6 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 #include "module/tla.h"
 #include "resource.h"
 
-/* VIEW(s4004): tag struct RockWork as struct RockWork__s4004;
- * games/tla/src/scene/eastern_alhafra/s1bf4 has another definition. */
-struct RockWork__s4004 {
-  u8 tiles[0x500];
-  struct Rock rocks[64];
-  struct RockSprite sprites[64];
-  s16 next;
-  u16 tileBase;
-  u16 resource;
-};
-
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
    * instructions differ in tla-en. */
@@ -2188,8 +2151,7 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004004(void) {
-  struct RockWork__s4004 *work =
-      HeapSlot_Alloc(220, sizeof(struct RockWork__s4004));
+  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -2400,7 +2362,10 @@ struct PushTarget {
 };
 
 /* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
- * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]. */
+ * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]; tried as the
+ * definition's extern u32 gPushFootprints[], it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:2348: conflicting types for
+ * `gPushFootprints'. */
 extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
 extern s32 gPushDirectionSteps[];
 

@@ -46,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Camera_WorldToScreen__motes(&position);
+  Camera_WorldToScreen(&position);
   Actor_ReleaseFar(object);
   Sound_PlayFar(164);
   slot = scene->slots;
@@ -140,10 +140,10 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->z = effect->originZ;
     position.x = effect->x;
     position.z = effect->z;
-    Vector_AddPolarOffset__motes(0x780000,
-                                 ((Random16() * 3 << 11) >> 16) -
-                                     ((Random16() * 3 << 11) >> 16) + 0xc000,
-                                 &position);
+    Vector_AddPolarOffset(0x780000,
+                          ((Random16() * 3 << 11) >> 16) -
+                              ((Random16() * 3 << 11) >> 16) + 0xc000,
+                          &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = 0x50000;
@@ -181,8 +181,8 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     position.x = owner->position.x;
     position.y = owner->position.y + 0x140000;
     position.z = owner->position.z;
-    Camera_WorldToScreen__motes(&position);
-    Vector_AddPolarOffset__motes(0x40000, Random16(), &position);
+    Camera_WorldToScreen(&position);
+    Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;

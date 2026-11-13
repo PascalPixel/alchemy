@@ -207,7 +207,10 @@ s32 Party_AdjustShopGifts(s32 amount) {
 
 /// The summons in the order the menus list them.
 /* VIEW(game): variable gSummon_OrderList as u8 gSummon_OrderList[29];
- * game/summon_table has const u8 gSummon_OrderList[29] = {. */
+ * game/summon_table has const u8 gSummon_OrderList[29] = {; tried as the
+ * definition's extern const u8 gSummon_OrderList[29], it does not compile in
+ * tla-ja: games/tla/src/game/game.c:2618: `gSummon_OrderList' undeclared (first
+ * use in this function). */
 extern u8 gSummon_OrderList__game[29] __asm__("gSummon_OrderList");
 #define gSummon_OrderList gSummon_OrderList__game
 

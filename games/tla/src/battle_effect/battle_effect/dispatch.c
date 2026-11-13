@@ -23,15 +23,6 @@ void BattleEffect_CallDoNothing(s32 cnt) {
   }
 }
 
-/* VIEW(f14b9e8): routine BattleEffect_RunTiamat as void
- * BattleEffect_RunTiamat(s32 *arg); the definition has
- * DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, BattleEffect_RunDragonFire,
- * 1) DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
- * void Func_08....
- */
-extern void
-BattleEffect_RunTiamat__f14b9e8(s32 *arg) __asm__("BattleEffect_RunTiamat");
-
 extern u8 gMapCellBuffer[];
 
 /// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
@@ -68,7 +59,7 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
       BattleEffect_RunNeptune(arg);
       break;
     case 7:
-      BattleEffect_RunTiamat__f14b9e8(arg);
+      BattleEffect_RunTiamat(arg);
       break;
     case 8:
       BattleEffect_RunProcne(arg);

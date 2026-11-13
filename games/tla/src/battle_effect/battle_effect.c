@@ -110,7 +110,8 @@ struct MenuFlagWork {
 };
 
 /* VIEW(cybele): tag struct FxGroup as struct FxGroup__cybele;
- * battle_effect/battle_effect has another definition. */
+ * battle_effect/battle_effect has another definition; not tried: struct
+ * FxGroup__cybele was not found. */
 struct FxGroup {
   u8 unk00[32];
   struct Actor *objects[8];
@@ -4697,7 +4698,12 @@ struct SpriteObject {
  * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
  * attributes); battle_effect/ability_effects has struct EffectSprite
  * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags) {. */
+ * flags) {; tried as the definition's struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags), which the object already declares, it does not compile in tla-ja
+ * (make modern): games/tla/include/module/battle_effect/battle_effect.h:210:64:
+ * note: expected 'struct BattleEffectArgument *' but argument is of type 'u8
+ * *'. */
 struct SpriteObject *EffectSprite_CreateWithTiles__cybele(
     s32 width, s32 height, u32 shape,
     u32 attributes) __asm__("EffectSprite_CreateWithTiles");
@@ -5785,24 +5791,37 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 /* VIEW(ability_effects): tag struct Scale as struct Scale__ability_effects;
  * module/battle_effect/battle_effect.h has the same members, but
  * battle_effect_internal.h declares it before that header defines it, so of a
- * smaller alignment. */
+ * smaller alignment; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:21102: redefinition of `struct
+ * Scale'. */
 #define Scale Scale__ability_effects
 /* VIEW(ability_effects): tag struct WordPair as struct
  * WordPair__ability_effects; module/battle_effect/battle_effect.h has the same
  * members, but battle_effect_internal.h declares it before that header defines
- * it, so of a smaller alignment. */
+ * it, so of a smaller alignment; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:43815: redefinition of `struct
+ * WordPair'. */
 #define WordPair WordPair__ability_effects
 /* VIEW(ability_effects): tag struct Point2D as struct Point2D__ability_effects;
  * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone. */
+ * it stood alone; tried with the definition the rest of the object has, it does
+ * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:27342:
+ * redefinition of `struct Point2D'. */
 #define Point2D Point2D__ability_effects
 /* VIEW(ability_effects): tag struct EffectCamera as struct
  * EffectCamera__ability_effects; module/battle_effect/battle_effect.h has the
- * same, which the part repeats as it stood alone. */
+ * same, which the part repeats as it stood alone; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:27988: redefinition of `struct
+ * EffectCamera'. */
 #define EffectCamera EffectCamera__ability_effects
 /* VIEW(ability_effects): typedef BlitterPair as BlitterPair__ability_effects;
  * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone. */
+ * it stood alone; tried with the definition the rest of the object has, it does
+ * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:19636:
+ * redefinition of `BlitterPair'. */
 #define BlitterPair BlitterPair__ability_effects
 #define SpriteAttributes SpriteAttributes__ability_effects
 #define FxSlot FxSlot__ability_effects
@@ -5876,7 +5895,6 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 #include "ability_effects/meteor_blow.c"
 
 #undef CameraWork
-#undef Projection_Set
 #undef ResourceTableEntry
 #undef Particle
 #undef Texture
@@ -5944,13 +5962,6 @@ struct RenderModel__liquifier {
 // The first load names the buffer by its address: as the symbol it would
 // combine with the second.
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
-
-/* VIEW(liquifier): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model *model); battle_effect/summon_effects has
- * void Render_DrawModelList(struct Model *model). */
-void Render_DrawModelList__liquifier(struct Model *model) __asm__(
-    "Render_DrawModelList");
-#define Render_DrawModelList Render_DrawModelList__liquifier
 
 // Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
 // and burst from it toward the target (16-110); eight flat flashes turn about
@@ -6630,26 +6641,35 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
 #undef HI
 #undef Actor_SetAnimationSpeedFar
 
-#undef Render_DrawModelList
 // ---- battle_effect/summon_effects.c ----
 
 /* VIEW(summon_effects): tag struct Scale as struct Scale__summon_effects;
  * module/battle_effect/battle_effect.h has the same members, but
  * battle_effect_internal.h declares it before that header defines it, so of a
- * smaller alignment. */
+ * smaller alignment; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:62377: redefinition of `struct
+ * Scale'. */
 #define Scale Scale__summon_effects
 /* VIEW(summon_effects): tag struct WordPair as struct WordPair__summon_effects;
  * module/battle_effect/battle_effect.h has the same members, but
  * battle_effect_internal.h declares it before that header defines it, so of a
- * smaller alignment. */
+ * smaller alignment; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:62372: redefinition of `struct
+ * WordPair'. */
 #define WordPair WordPair__summon_effects
 /* VIEW(summon_effects): tag struct Point2D as struct Point2D__summon_effects;
  * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone. */
+ * it stood alone; tried with the definition the rest of the object has, it does
+ * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:61784:
+ * redefinition of `struct Point2D'. */
 #define Point2D Point2D__summon_effects
 /* VIEW(summon_effects): typedef BlitterPair as BlitterPair__summon_effects;
  * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone. */
+ * it stood alone; tried with the definition the rest of the object has, it does
+ * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:61456:
+ * redefinition of `BlitterPair'. */
 #define BlitterPair BlitterPair__summon_effects
 #define Model Model__summon_effects
 #define Texture Texture__summon_effects

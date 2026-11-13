@@ -68,7 +68,7 @@ extern char ResourceId_VioletPaletteC;
 /* VIEW(f16fca8): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f16e65c has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:19186: request for member
+ * games/tla/src/battle_effect/battle_effect.c:36555: request for member
  * `variant' in something not a structure or union. */
 extern struct EffectStep
     gData_02014000__f16fca8[] __asm__("gData_02014000"); // the sparks

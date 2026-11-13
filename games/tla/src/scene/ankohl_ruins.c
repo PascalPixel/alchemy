@@ -32,33 +32,43 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 #include "ankohl_ruins/ankohl_ruins.h"
 
 /* VIEW(ankohl_ruins): variable gData_02003780 as s16 gData_02003780;
- * scene/ankohl_ruins/s2438 has u16 gData_02003780[] = {. */
+ * scene/ankohl_ruins/s2438 has u16 gData_02003780[] = {; tried as the
+ * definition's extern u16 gData_02003780[], it does not compile in tla-ja:
+ * games/tla/src/scene/ankohl_ruins.c:975: `gData_02003780' has an incomplete
+ * type. */
 extern s16 gData_02003780__ankohl_ruins __asm__("gData_02003780");
 /* VIEW(ankohl_ruins): variable gData_02003782 as s16 gData_02003782;
- * scene/ankohl_ruins/s2438 has u16 gData_02003782[] = {. */
+ * scene/ankohl_ruins/s2438 has u16 gData_02003782[] = {; tried as the
+ * definition's extern u16 gData_02003782[], it does not compile in tla-ja:
+ * games/tla/src/scene/ankohl_ruins.c:785: wrong type argument to increment. */
 extern s16 gData_02003782__ankohl_ruins __asm__("gData_02003782");
 /* VIEW(ankohl_ruins): variable gData_02003784 as s16 gData_02003784;
- * scene/ankohl_ruins/s2438 has u32 gData_02003784[] = {. */
+ * scene/ankohl_ruins/s2438 has u32 gData_02003784[] = {; tried as the
+ * definition's extern u32 gData_02003784[], it does not compile in tla-ja:
+ * games/tla/src/scene/ankohl_ruins.c:977: `gData_02003784' has an incomplete
+ * type. */
 extern s16 gData_02003784__ankohl_ruins __asm__("gData_02003784");
 /* VIEW(ankohl_ruins): variable gData_02003788 as s32 gData_02003788;
- * scene/ankohl_ruins/s2438 has u32 gData_02003788[] = {. */
+ * scene/ankohl_ruins/s2438 has u32 gData_02003788[] = {; tried as the
+ * definition's extern u32 gData_02003788[], it does not compile in tla-ja:
+ * games/tla/src/scene/ankohl_ruins.c:978: `gData_02003788' has an incomplete
+ * type. */
 extern s32 gData_02003788__ankohl_ruins __asm__("gData_02003788");
 /* VIEW(ankohl_ruins): variable gData_0200378c as s32 gData_0200378c;
- * scene/ankohl_ruins/s2438 has u32 gData_0200378c[] = {. */
+ * scene/ankohl_ruins/s2438 has u32 gData_0200378c[] = {; tried as the
+ * definition's extern u32 gData_0200378c[], it does not compile in tla-ja:
+ * games/tla/src/scene/ankohl_ruins.c:979: `gData_0200378c' has an incomplete
+ * type. */
 extern s32 gData_0200378c__ankohl_ruins __asm__("gData_0200378c");
 
-/* VIEW(ankohl_ruins): variable gData_0200307c as const u8 gData_0200307c[];
- * scene/ankohl_ruins/s2438 has u32 gData_0200307c[] = {. */
-extern const u8 gData_0200307c__ankohl_ruins[] __asm__("gData_0200307c");
-/* VIEW(ankohl_ruins): variable gData_0200309c as const u8 gData_0200309c[];
- * scene/ankohl_ruins/s2438 has u32 gData_0200309c[] = {. */
-extern const u8 gData_0200309c__ankohl_ruins[] __asm__("gData_0200309c");
+extern u32 gData_0200307c[];
+extern u32 gData_0200309c[];
 
 const struct ActorPlacement *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
-    return (const struct ActorPlacement *)gData_0200307c__ankohl_ruins;
+    return (const struct ActorPlacement *)gData_0200307c;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
-    return (const struct ActorPlacement *)gData_0200309c__ankohl_ruins;
+    return (const struct ActorPlacement *)gData_0200309c;
   return 0;
 }
 
@@ -803,7 +813,10 @@ void Func_020015ac(void) {
 #include "frame.h"
 
 /* VIEW(ankohl_ruins): variable gData_02002fa8 as struct AnkohlRuinsWaterRow
- * gData_02002fa8[]; scene/ankohl_ruins/s2438 has u32 gData_02002fa8[] = {. */
+ * gData_02002fa8[]; scene/ankohl_ruins/s2438 has u32 gData_02002fa8[] = {;
+ * tried as the definition's extern u32 gData_02002fa8[], it does not compile in
+ * tla-ja: games/tla/src/scene/ankohl_ruins.c:851: request for member `level' in
+ * something not a structure or union. */
 extern struct AnkohlRuinsWaterRow
     gData_02002fa8__ankohl_ruins[] __asm__("gData_02002fa8");
 
@@ -887,7 +900,10 @@ void Func_0200160c(void) {
 }
 
 /* VIEW(ankohl_ruins): variable gData_02002ff0 as struct AnkohlRuinsWaterRow
- * gData_02002ff0[]; scene/ankohl_ruins/s2438 has u32 gData_02002ff0[] = {. */
+ * gData_02002ff0[]; scene/ankohl_ruins/s2438 has u32 gData_02002ff0[] = {;
+ * tried as the definition's extern u32 gData_02002ff0[], it does not compile in
+ * tla-ja: games/tla/src/scene/ankohl_ruins.c:935: request for member `level' in
+ * something not a structure or union. */
 extern struct AnkohlRuinsWaterRow
     gData_02002ff0__ankohl_ruins[] __asm__("gData_02002ff0");
 
@@ -1250,18 +1266,28 @@ struct AnkohlRuinsFloatWork {
 
 /* VIEW(s2438): variable Data_02004030 as struct AnkohlRuinsFloatWork
  * Data_02004030; scene/ankohl_ruins has struct AnkohlRuinsSpriteWork
- * Data_02004030. */
+ * Data_02004030; tried as the 2 declarations' extern struct
+ * AnkohlRuinsFloatWork Data_02004030, it does not compile in tla-en:
+ * games/tla/src/scene/ankohl_ruins.c:1240: conflicting types for
+ * `Data_02004030'. */
 extern struct AnkohlRuinsFloatWork
     Data_02004030__s2438 __asm__("Data_02004030");
 void Func_020010f4(void);
 /* VIEW(s2438): routine Func_020023d0 as void Func_020023d0(void);
- * scene/ankohl_ruins has void Func_020023d0(struct Actor *object) {. */
+ * scene/ankohl_ruins has void Func_020023d0(struct Actor *object) {; tried as
+ * the definition's void Func_020023d0(struct Actor *object), which the object
+ * already declares, it does not compile in tla-en:
+ * games/tla/src/scene/ankohl_ruins.c:1499: `Func_020023d0__s2438' undeclared
+ * (first use in this function). */
 void Func_020023d0__s2438(void) __asm__("Func_020023d0");
 void FieldEffect_StartBlankOverlay();
 void Func_02000418(void);
 void Event_StartScreenTransition(void);
 /* VIEW(s2438): routine Func_02001420 as void Func_02001420(s32 a0);
- * scene/ankohl_ruins has void Func_02001420(void) {. */
+ * scene/ankohl_ruins has void Func_02001420(void) {; tried as the definition's
+ * void Func_02001420(struct Actor *object, s16 timer, u8 value), it does not
+ * compile in tla-en: games/tla/src/scene/ankohl_ruins.c:1249: conflicting types
+ * for `Func_02001420'. */
 void Func_02001420__s2438(s32 a0) __asm__("Func_02001420");
 void Map_CenterOnFollowedPoint(void);
 
@@ -1804,34 +1830,7 @@ s32 Scene_Initialize(s32 a0) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000384(void);
-/* VIEW(s2438): routine Func_020005c0 as void Func_020005c0(void);
- * scene/ankohl_ruins has s32 Func_020005c0(struct Actor *object) {. */
-void Func_020005c0__s2438(void) __asm__("Func_020005c0");
 void Func_02000698(void);
-/* VIEW(s2438): routine Func_020006d0 as void Func_020006d0(void);
- * scene/ankohl_ruins has void Func_020006d0(s32 unused, s32 id) {. */
-void Func_020006d0__s2438(void) __asm__("Func_020006d0");
-/* VIEW(s2438): routine Func_02000850 as void Func_02000850(void);
- * scene/ankohl_ruins has void Func_02000850(s32 unused, s32 id) {. */
-void Func_02000850__s2438(void) __asm__("Func_02000850");
-/* VIEW(s2438): routine Func_02000a68 as void Func_02000a68(void);
- * scene/ankohl_ruins has void Func_02000a68(s32 unused, s32 objectId) {. */
-void Func_02000a68__s2438(void) __asm__("Func_02000a68");
-/* VIEW(s2438): routine Func_02000c24 as void Func_02000c24(void);
- * scene/ankohl_ruins has void Func_02000c24(s32 unused, s32 id) {. */
-void Func_02000c24__s2438(void) __asm__("Func_02000c24");
-/* VIEW(s2438): routine Func_02000e60 as void Func_02000e60(void);
- * scene/ankohl_ruins has void Func_02000e60(s32 unused, s32 id) {. */
-void Func_02000e60__s2438(void) __asm__("Func_02000e60");
-/* VIEW(s2438): routine Func_0200104c as void Func_0200104c(void);
- * scene/ankohl_ruins has void Func_0200104c(s32 unused, s32 id) {. */
-void Func_0200104c__s2438(void) __asm__("Func_0200104c");
-/* VIEW(s2438): routine Func_0200124c as void Func_0200124c(void);
- * scene/ankohl_ruins has void Func_0200124c(s32 a, s32 id) {. */
-void Func_0200124c__s2438(void) __asm__("Func_0200124c");
-/* VIEW(s2438): routine Func_02001264 as void Func_02001264(void);
- * scene/ankohl_ruins has void Func_02001264(s32 a, s32 id) {. */
-void Func_02001264__s2438(void) __asm__("Func_02001264");
 void Func_0200160c(void);
 void Func_020019a0(void);
 void Func_020022e0(void);
@@ -2004,7 +2003,7 @@ s32 gData_02003268[] = {
     11,
     0x18000,
     46,
-    (s32)Func_020005c0__s2438,
+    (s32)Func_020005c0,
     17,
 };
 
@@ -2152,29 +2151,29 @@ struct Trigger gData_020037b4[] = {
     {TRIGGER_EXIT, 31, CONDITION_ALWAYS, 31},
     {0x21, 32, CONDITION_ALWAYS, 32},
     {0x21, 33, CONDITION_ALWAYS, 33},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c6, EVENT(Func_02000850__s2438)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c6, EVENT(Func_020006d0__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9d2, EVENT(Func_02000a68__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9d3, EVENT(Func_02000a68__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9d4, EVENT(Func_02000a68__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x9d5, EVENT(Func_02000a68__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x9d6, EVENT(Func_02000a68__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9d7, EVENT(Func_02000a68__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x9d8, EVENT(Func_02000a68__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 19, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 24, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 25, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 26, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 27, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 28, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 29, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 30, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c6, EVENT(Func_02000850)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c6, EVENT(Func_020006d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9d2, EVENT(Func_02000a68)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9d3, EVENT(Func_02000a68)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9d4, EVENT(Func_02000a68)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x9d5, EVENT(Func_02000a68)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x9d6, EVENT(Func_02000a68)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9d7, EVENT(Func_02000a68)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x9d8, EVENT(Func_02000a68)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 19, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 24, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 25, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 26, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 27, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 28, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 29, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 30, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
     {TRIGGER_TABLE_END},
@@ -2197,11 +2196,11 @@ struct Trigger gData_02003a78[] = {
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {0x21, 19, CONDITION_ALWAYS, 19},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9dc, EVENT(Func_02000e60__s2438)},
-    {0x9, 8, 0x9dc, EVENT(Func_02000e60__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9dc, EVENT(Func_02000e60)},
+    {0x9, 8, 0x9dc, EVENT(Func_02000e60)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
     {TRIGGER_TABLE_END},
@@ -2222,10 +2221,10 @@ struct Trigger gData_02003b98[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_020020fc)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_020021d4)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c7, EVENT(Func_020006d0__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c7, EVENT(Func_02000850__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9dd, EVENT(Func_0200104c__s2438)},
-    {0x9, 10, 0x9dd, EVENT(Func_0200104c__s2438)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c7, EVENT(Func_020006d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c7, EVENT(Func_02000850)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9dd, EVENT(Func_0200104c)},
+    {0x9, 10, 0x9dd, EVENT(Func_0200104c)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
     {TRIGGER_TABLE_END},
@@ -2248,22 +2247,22 @@ struct Trigger gData_02003c94[] = {
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {0x21, 15, CONDITION_ALWAYS, 15},
     {0x21, 16, CONDITION_ALWAYS, 16},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(Func_02001264__s2438)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_0200124c__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT(Func_02000c24__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02000c24__s2438)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c8, EVENT(Func_020006d0__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c8, EVENT(Func_02000850__s2438)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 18, 0x9c9, EVENT(Func_020006d0__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, 0x9c9, EVENT(Func_02000850__s2438)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 19, 0x9ca, EVENT(Func_020006d0__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x9ca, EVENT(Func_02000850__s2438)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(Func_02001264)},
+    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_0200124c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT(Func_02000c24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02000c24)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9c8, EVENT(Func_020006d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c8, EVENT(Func_02000850)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 18, 0x9c9, EVENT(Func_020006d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, 0x9c9, EVENT(Func_02000850)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 19, 0x9ca, EVENT(Func_020006d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x9ca, EVENT(Func_02000850)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
     {TRIGGER_TABLE_END},
@@ -2284,9 +2283,9 @@ struct Trigger gData_02003e38[] = {
     {0x4602, 13, CONDITION_ALWAYS, EVENT(Func_02000384)},
     {TRIGGER_EXIT, 26, CONDITION_ALWAYS, 26},
     {TRIGGER_STEP, 66, CONDITION_ALWAYS, EVENT(Func_020011c0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9cb, EVENT(Func_020006d0__s2438)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9cb, EVENT(Func_02000850__s2438)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 9, 0x9db, EVENT(Func_020006d0__s2438)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 8, 0x9cb, EVENT(Func_020006d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9cb, EVENT(Func_02000850)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 9, 0x9db, EVENT(Func_020006d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9db, EVENT(Func_02002260)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020022a8)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020022e0)},

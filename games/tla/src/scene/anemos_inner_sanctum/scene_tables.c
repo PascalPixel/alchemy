@@ -234,10 +234,6 @@ struct Work {
   u16 unk66;
 };
 
-/* VIEW(scene_tables): routine Func_020006f8 as void Func_020006f8();
- * scene/anemos_inner_sanctum/s0480 has s32 Func_020006f8(struct Mover *mover)
- * {. */
-void Func_020006f8__scene_tables() __asm__("Func_020006f8");
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript();
 extern u8 gData_02003684[];
@@ -267,7 +263,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   Actor_SetSpriteFlags(actor, 0);
   FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
   Actor_StartScript(actor, gData_02003684);
-  Func_020006f8__scene_tables(actor);
+  Func_020006f8(actor);
 }
 
 #include "actor.h"
@@ -329,36 +325,35 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 #include "text/msg_ids.h"
 
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
- * scene/anemos_inner_sanctum/scene_tables has another definition. */
+ * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
+ * the definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/anemos_inner_sanctum/scene_tables.c:357: structure has no
+ * member named `room'. */
 struct Work__s0ac8 {
   u8 pad[340];
   u16 room;
 };
 
-/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum/s0ac8.c:47: storage size of `from'
- * isn't known. */
-struct Vector3__s0ac8 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 /* VIEW(s0ac8): routine Func_0200088c as void Func_0200088c(), with no
  * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
- * void Func_0200088c(struct Vector3 *, struct Vector3 *, s16). */
+ * void Func_0200088c(struct Vector3 *, struct Vector3 *, s16); tried as the
+ * definition's void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16
+ * part), which the object already declares, Func_02000ac8 moves: 7 of 630
+ * instructions in tla-ja. */
 void Func_0200088c__s0ac8() __asm__("Func_0200088c");
 #define Func_0200088c Func_0200088c__s0ac8
 /* VIEW(s0ac8): routine Func_020009b8 as void Func_020009b8(), with no
  * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
- * void Func_020009b8(s32, s32, s16, s16). */
+ * void Func_020009b8(s32, s32, s16, s16); tried as the definition's void
+ * Func_020009b8(s32 x, s32 y, s16 part, s16 a3), which the object already
+ * declares, Func_02000ac8 moves: 10 of 630 instructions in tla-ja. */
 void Func_020009b8__s0ac8() __asm__("Func_020009b8");
 #define Func_020009b8 Func_020009b8__s0ac8
 /* VIEW(s0ac8): routine Func_02000a78 as void Func_02000a78(), with no
  * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
- * void Func_02000a78(s32, s32, s16). */
+ * void Func_02000a78(s32, s32, s16); tried as the definition's void
+ * Func_02000a78(s32 a0, s32 a1, s16 a2), which the object already declares,
+ * Func_02000ac8 moves: 1 of 630 instructions in tla-ja. */
 void Func_02000a78__s0ac8() __asm__("Func_02000a78");
 #define Func_02000a78 Func_02000a78__s0ac8
 void Actor_StartScript();
@@ -386,8 +381,8 @@ void Func_02000ac8(void) {
   struct Actor *actor;
   u8 found[20];
   u8 order[20];
-  struct Vector3__s0ac8 from;
-  struct Vector3__s0ac8 to;
+  struct Vector3 from;
+  struct Vector3 to;
 
   x = ((index & 1) << 8) + 408;
   base = 0;
@@ -942,10 +937,6 @@ void Func_020017b4(struct Actor *self) {
 void Actor_PlaceBlocks(void);
 
 void Func_02000178(void);
-/* VIEW(s1938): routine Func_020017b4 as void Func_020017b4(void);
- * scene/anemos_inner_sanctum/s0ac8 has void Func_020017b4(struct Actor *self)
- * {. */
-void Func_020017b4__s1938(void) __asm__("Func_020017b4");
 
 void Func_02001938(void) {
   struct Actor *object;
@@ -958,7 +949,7 @@ void Func_02001938(void) {
     object = Actor_Get(10);
   if (*(s16 *)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 18) <= 247) {
     object->motionFlags = 0;
-    object->update = Func_020017b4__s1938;
+    object->update = Func_020017b4;
     object->unk4c = Actor_Get(gMainRoutineWork.currentOwner)->x;
     object->acceleration = Actor_Get(gMainRoutineWork.currentOwner)->z;
     Event_SetFlag(0x200);
@@ -1118,8 +1109,9 @@ void Func_02001c60(void) {
 /* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, its members read value as returnEntrance, it does not
- * compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s1938.c:184:
- * structure has no member named `returnEntrance'. */
+ * compile in tla-ja:
+ * games/tla/src/scene/anemos_inner_sanctum/scene_tables.c:1084: structure has
+ * no member named `returnEntrance'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
   s16 value;
@@ -1220,9 +1212,6 @@ void Func_02001df4(void) {
 
 #include "call.h"
 s32 Func_02000038();
-/* VIEW(s1938): routine Func_02000a78 as s32 Func_02000a78();
- * scene/anemos_inner_sanctum/s0ac8 has void Func_02000a78(). */
-s32 Func_02000a78__s1938() __asm__("Func_02000a78");
 s32 CrackedTiles_Find();
 s32 CrackedTile_PlaceLanding();
 extern u8 gData_020036e4[];
@@ -1255,22 +1244,22 @@ s32 Scene_Initialize(void) {
           (s32)gData_02003888, (s32)gData_020038b4);
     t3 = Event_GetFlag(0xa87);
     if (t3 != 0) {
-      Call3((void (*)())Func_02000a78__s1938, 0x208, 48, 0);
+      Call3((void (*)())Func_02000a78, 0x208, 48, 0);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
     t6 = Event_GetFlag(0xa88);
     if (t6 != 0) {
-      Call3((void (*)())Func_02000a78__s1938, 0x228, 48, 3);
+      Call3((void (*)())Func_02000a78, 0x228, 48, 3);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
     t9 = Event_GetFlag(0xa89);
     if (t9 != 0) {
-      Call3((void (*)())Func_02000a78__s1938, 0x1f8, 40, 10);
+      Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
     t12 = Event_GetFlag(0xa8a);
     if (t12 != 0) {
-      Call3((void (*)())Func_02000a78__s1938, 0x238, 40, 2);
+      Call3((void (*)())Func_02000a78, 0x238, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
     t15 = Event_GetFlag(0xa8b);
@@ -1588,25 +1577,9 @@ void Effect_MoveLocal(union FieldObject *object) {
 #include "event_inline.h"
 
 void Actor_SelectAnimation(struct Actor *, s32);
-/* VIEW(move): routine Actor_StartScript as void Actor_StartScript(struct
- * FieldEffect *effect, const s32 *script); scene/anemos_inner_sanctum/s0ac8 has
- * void Actor_StartScript(). */
-extern void
-Actor_StartScript__move(struct FieldEffect *effect,
-                        const s32 *script) __asm__("Actor_StartScript");
 extern const s32 *gData_02004428[];
-/* VIEW(move): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__move(struct FieldEffect *effect,
-                                s32 flags) __asm__("Actor_SetSpriteFlags");
-/* VIEW(move): routine Actor_SetSpritePriorityB as void
- * Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
- * field/object/set_sprite_priority_b has void Actor_SetSpritePriorityB(struct
- * Actor *object, s32 priority) {. */
-extern void Actor_SetSpritePriorityB__move(
-    struct FieldEffect *effect,
-    s32 priority) __asm__("Actor_SetSpritePriorityB");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpritePriorityB(struct Actor *object, s32 priority);
 void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                             s32 velocityZ, u32 flags,
                             const struct EffectOptions *options) {
@@ -1626,14 +1599,14 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript__move(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags__move(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = Effect_MoveLocal;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Actor_SetSpritePriorityB__move(effect, party->sprite->priority);
+  Actor_SetSpritePriorityB(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -1644,7 +1617,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Actor_SetSpritePriorityB__move(effect, options->priority);
+    Actor_SetSpritePriorityB(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {
@@ -1668,7 +1641,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Actor_SelectAnimation(effect, 1);
-    Actor_StartScript__move(effect, options->script);
+    Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;

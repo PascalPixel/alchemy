@@ -743,19 +743,19 @@ struct Model;
 
 void Render_DrawModelList__battle_effect(struct Model *model);
 
-/* VIEW(f13eb70): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:3126: conflicting types for
- * `BattleObject_GetFar'. */
+/* VIEW(f13eb70): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
+ * not tried: BattleObject_GetFar's bound declaration was not found. */
 extern void **
 GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("BattleObject_GetFar");
 
 #define HI(v) (((s16 *)&(v))[1])
 
 /* VIEW(battle_effect): tag struct ResourceTableEntry as struct
- * ResourceTableEntry__battle_effect; module/tla.h has another definition. */
+ * ResourceTableEntry__battle_effect; module/tla.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/battle_effect/battle_effect.c:3360: structure has no
+ * member named `tile'. */
 struct ResourceTableEntry__battle_effect {
   u16 unk0;
   u16 tile;
@@ -763,10 +763,10 @@ struct ResourceTableEntry__battle_effect {
 
 /* VIEW(f13eb70): variable gResourceTableEntries as extern struct
  * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
  * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for
- * `gResourceTableEntries'. */
+ * in tla-ja: games/tla/src/battle_effect/battle_effect.c:2833: conflicting
+ * types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry__battle_effect
     gResourceTableEntries__f13eb70[] __asm__("gResourceTableEntries");
 extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
@@ -782,7 +782,11 @@ struct SpriteObject *EffectSprite_CreateWithTiles__battle_effect(
 /* VIEW(battle_effect): routine EffectSprite_Acquire as struct RuinObject
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
  * battle_effect/ability_effects has struct EffectSprite__f15b3b0
- * *EffectSprite_Acquire(s32 kind, s32 value) {. */
+ * *EffectSprite_Acquire(s32 kind, s32 value) {; tried as the definition's
+ * struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value),
+ * which the object already declares, it does not compile in tla-ja (make
+ * modern): games/tla/include/module/battle_effect/battle_effect.h:210:64: note:
+ * expected 'struct BattleEffectArgument *' but argument is of type 'u8 *'. */
 struct RuinObject *
 EffectSprite_Acquire__battle_effect(s32 width, s32 height, u32 shape,
                                     s32 mode) __asm__("EffectSprite_Acquire");

@@ -40,41 +40,18 @@ void Func_02000280(void) {
 // order; the rest of the overlay is in shrine_of_the_sea_god/.
 
 #include "battle.h"
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetPositionAndResetMotion as void
- * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
- * shrine_of_the_sea_god.h has void Actor_SetPositionAndResetMotion(struct
- * ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z); tried as the
- * definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x,
- * s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95:
- * conflicting types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
-extern void Actor_SetPositionAndResetMotion__shrine_of_the_sea_god(
-    struct Actor *object, s32 x, s32 y,
-    s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion                                        \
-  Actor_SetPositionAndResetMotion__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpritePriority as void
- * Actor_SetSpritePriority(u32, s32); shrine_of_the_sea_god.h has void
- * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
- * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
- * in tla-ja: games/tla/include/actor.h:106: conflicting types for
- * `Actor_SetSpritePriority'. */
-extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__(
-    "Actor_SetSpritePriority");
-#define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_of_the_sea_god
+#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 /* VIEW(shrine_of_the_sea_god): routine Actor_SetSpriteFlags as void
  * Actor_SetSpriteFlags(struct Actor *object, u32 flags);
  * shrine_of_the_sea_god.h has void Actor_SetSpriteFlags(struct
- * ShrineOfTheSeaGodObject *object, u32 value); tried as the 35 declarations'
- * void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags), it
- * does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting
- * types for `Actor_SetSpriteFlags'. */
+ * ShrineOfTheSeaGodObject *object, u32 value); not tried:
+ * Actor_SetSpriteFlags's bound declaration was not found. */
 extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
     struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
 #include "field.h"
 #undef Actor_SetSpriteFlags
-#undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
 #include "game.h"
 #include "graphics.h"

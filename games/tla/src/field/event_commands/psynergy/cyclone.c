@@ -18,7 +18,10 @@ struct BurstSprite {
 };
 
 /* VIEW(psynergy): tag struct BurstWork as struct BurstWork__psynergy;
- * module/field/event_commands.h has another definition. */
+ * module/field/event_commands.h has another definition; tried with the
+ * definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial.c:2266: redefinition of `struct
+ * BurstWork'. */
 #define BurstWork BurstWork__psynergy
 struct BurstWork {
   u8 tiles[384];
@@ -34,7 +37,11 @@ struct BurstWork {
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 /* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
  * *position); module/field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position). */
+ * Camera_WorldToScreen(struct EffectVector *position); tried as the
+ * definition's void Camera_WorldToScreen(struct EffectVector *position), which
+ * the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial.c:3513: conflicting types for
+ * `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");
 #define Camera_WorldToScreen Camera_WorldToScreen__psynergy
@@ -193,18 +200,7 @@ void Cyclone_LiftLeader(void) {
 
 #include "battle.h"
 #include "debug.h"
-/* VIEW(f0e2c38): routine BattleEffect_DropObjectAtAnchor as void
- * BattleEffect_DropObjectAtAnchor(u32 objectId); the definition has void
- * BattleEffect_DropObjectAtAnchor(s32 id); tried as the definition's void
- * BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares,
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:3297: conflicting types for
- * `BattleEffect_DropObjectAtAnchor'. */
-extern void BattleEffect_DropObjectAtAnchor__f0e2c38(u32 objectId) __asm__(
-    "BattleEffect_DropObjectAtAnchor");
-#define BattleEffect_DropObjectAtAnchor BattleEffect_DropObjectAtAnchor__f0e2c38
 #include "field.h"
-#undef BattleEffect_DropObjectAtAnchor
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
@@ -617,7 +613,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
  * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
  * SprayParticle *particle); field/event_commands/radial has void
  * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * ScatterParticle *p). */
+ * ScatterParticle *p); not tried: EffectSprite_DrawAtWorldPosition's marker was
+ * not found. */
 void EffectSprite_DrawAtWorldPosition__psynergy(
     struct EffectSprite *sprite,
     struct SprayParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");

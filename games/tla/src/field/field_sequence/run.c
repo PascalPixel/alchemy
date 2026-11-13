@@ -20,7 +20,11 @@ void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
 s32 Field_GetSceneAttributes(s32 scene);
 /* VIEW(field_sequence): routine PartyInventory_GiveItem as s32
  * PartyInventory_GiveItem(s32 item); field/event.h has s32
- * PartyInventory_GiveItem(s32 item, s32 flags). */
+ * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
+ * PartyInventory_GiveItem(s32 item, s32 unused), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:1612: `PartyInventory_GiveItem'
+ * undeclared (first use in this function). */
 s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
     "PartyInventory_GiveItem");
 #define PartyInventory_GiveItem PartyInventory_GiveItem__field_sequence
@@ -511,7 +515,10 @@ done:
 }
 
 /* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
- * module/tla.h has another definition. */
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:1908: structure has no member named
+ * `pos'. */
 struct Object__field_sequence {
   u8 pad0[6];
   u16 angle;

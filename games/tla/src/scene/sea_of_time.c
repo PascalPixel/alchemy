@@ -84,20 +84,12 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(sea_of_time): variable gSeaOfTime_Placements as extern const u8
- * gSeaOfTime_Placements[]; the definition has struct ActorPlacement
- * gSeaOfTime_Placements[] = { { 8, CONDITION_ALWAYS, (s32)
- * gSeaOfTime_ShipRests, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 },
- * {...; tried as the definition's extern struct WarpTarget
- * gSeaOfTime_Placements, it does not compile in tla-ja:
- * games/tla/src/scene/sea_of_time.c:83: cannot convert to a pointer type. */
-extern const u8
-    gSeaOfTime_Placements__sea_of_time[] __asm__("gSeaOfTime_Placements");
+extern struct ActorPlacement gSeaOfTime_Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
     return (const struct ActorPlacement *)gSeaOfTime_Room2Placements;
-  return (const struct ActorPlacement *)gSeaOfTime_Placements__sea_of_time;
+  return (const struct ActorPlacement *)gSeaOfTime_Placements;
 }
 
 void SeaOfTime_CircleSwirl(void) {
@@ -380,19 +372,19 @@ void SeaOfTime_FollowChannel(void) {
 /* VIEW(sea_of_time): variable gSeaOfTime_LapCount as extern u16
  * gSeaOfTime_LapCount; the definition has u16 gSeaOfTime_LapCount[] = { 0, };
  * tried as the definition's extern u16 gSeaOfTime_LapCount[], it does not
- * compile in tla-ja: games/tla/src/scene/sea_of_time.c:388:
+ * compile in tla-ja: games/tla/src/scene/sea_of_time.c:402:
  * `gSeaOfTime_LapCount' has an incomplete type. */
 extern u16 gSeaOfTime_LapCount__sea_of_time __asm__("gSeaOfTime_LapCount");
 /* VIEW(sea_of_time): variable gSeaOfTime_LapTurn as extern s16
  * gSeaOfTime_LapTurn; the definition has u32 gSeaOfTime_LapTurn[] = { 0, };
  * tried as the definition's extern u32 gSeaOfTime_LapTurn[], it does not
- * compile in tla-ja: games/tla/src/scene/sea_of_time.c:389:
+ * compile in tla-ja: games/tla/src/scene/sea_of_time.c:403:
  * `gSeaOfTime_LapTurn' has an incomplete type. */
 extern s16 gSeaOfTime_LapTurn__sea_of_time __asm__("gSeaOfTime_LapTurn");
 /* VIEW(sea_of_time): variable gSeaOfTime_LastLapCell as extern u16
  * gSeaOfTime_LastLapCell; the definition has u16 gSeaOfTime_LastLapCell[] = {
  * 0, }; tried as the definition's extern u16 gSeaOfTime_LastLapCell[], it does
- * not compile in tla-ja: games/tla/src/scene/sea_of_time.c:424:
+ * not compile in tla-ja: games/tla/src/scene/sea_of_time.c:437:
  * `gSeaOfTime_LastLapCell' has an incomplete type. */
 extern u16
     gSeaOfTime_LastLapCell__sea_of_time __asm__("gSeaOfTime_LastLapCell");
@@ -400,7 +392,7 @@ extern u16
  * gSeaOfTime_LapSpots; the definition has u16 gSeaOfTime_LapSpots[] = { 0, 672,
  * 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0,
  * 96, 0, 160, }; tried as the definition's extern u16 gSeaOfTime_LapSpots[], it
- * does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:428: invalid
+ * does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:441: invalid
  * initializer. */
 extern struct Spots
     gSeaOfTime_LapSpots__sea_of_time __asm__("gSeaOfTime_LapSpots");
@@ -513,11 +505,11 @@ void SeaOfTime_TrackWaves(void) {
 #include "system/io_reg.h"
 
 extern u32 gSeaOfTime_WaveState;
-/* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h
- * has void Event_End(void); tried as the definition's void
- * Event_End(s32 *position, s32 speed, s32 mode), it does not compile in
- * tla-ja: games/tla/src/scene/sea_of_time.c:473: conflicting types for
- * `Event_End'. */
+/* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h has void
+ * Event_End(void); tried as the definition's void Event_End(void), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/sea_of_time.c:542: void value not ignored as it ought to
+ * be. */
 extern s32 Event_End__s0c94(void) __asm__("Event_End");
 
 /// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per

@@ -14,11 +14,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-/* VIEW(s1f74): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s1f74(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -40,7 +36,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags__s1f74(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -132,9 +128,7 @@ struct CellTargetEntry;
 
 /* VIEW(s25a4): tag struct CellTarget as struct CellTarget__s25a4; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7/s25a4.c:18: dereferencing
- * pointer to incomplete type. */
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s25a4 {
   s16 firstFlag;
   s16 flagByte;

@@ -80,7 +80,11 @@ void Actor_DisableById(u32 id) {
 
 /* VIEW(visual_attributes): routine Actor_SetSpriteRotationById as void
  * Actor_SetSpriteRotationById(u32 id, s32 rotation); field/event.h has void
- * Actor_SetSpriteRotationById(s32 actorId, s32 angle). */
+ * Actor_SetSpriteRotationById(s32 actorId, s32 angle); tried as the
+ * definition's void Actor_SetSpriteRotationById(u32 id, s32 rotation), which
+ * the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:144: conflicting types for
+ * `Actor_SetSpriteRotationById'. */
 void Actor_SetSpriteRotationById__visual_attributes(
     u32 id, s32 rotation) __asm__("Actor_SetSpriteRotationById");
 #define Actor_SetSpriteRotationById                                            \
@@ -95,7 +99,8 @@ void Actor_SetSpriteRotationById(u32 id, s32 rotation) {
 
 /* VIEW(visual_attributes): routine Icon_DrawItemFar as void
  * Icon_DrawItemFar(s32 resource, u8 *buffer); module/field/field.h has void
- * Icon_DrawItemFar(s32 item). */
+ * Icon_DrawItemFar(s32 item); not tried: Icon_DrawItemFar's bound declaration
+ * was not found. */
 extern void
 Func_08038248__visual_attributes(s32 resource,
                                  u8 *buffer) __asm__("Icon_DrawItemFar");
@@ -192,7 +197,10 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
 /// into the sprite's VRAM block as its tile.
 /* VIEW(visual_attributes): routine Actor_ShowItemIconById as void
  * Actor_ShowItemIconById(u32 id, s32 resource); field/event.h has void
- * Actor_ShowItemIconById(s32 actorId, s32 item). */
+ * Actor_ShowItemIconById(s32 actorId, s32 item); tried as the definition's void
+ * Actor_ShowItemIconById(u32 id, s32 resource), which the object already
+ * declares, it does not compile in tla-ja: games/tla/include/field/event.h:140:
+ * conflicting types for `Actor_ShowItemIconById'. */
 void Actor_ShowItemIconById__visual_attributes(u32 id, s32 resource) __asm__(
     "Actor_ShowItemIconById");
 #define Actor_ShowItemIconById Actor_ShowItemIconById__visual_attributes

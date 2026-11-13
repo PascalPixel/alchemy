@@ -14,11 +14,7 @@
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-/* VIEW(s3b7c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
-void Actor_SetSpriteFlags__s3b7c(struct FieldEffect *effect,
-                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -40,7 +36,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags__s3b7c(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -133,9 +129,7 @@ struct CellTargetEntry;
 
 /* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m/s41ac.c:18: dereferencing
- * pointer to incomplete type. */
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s41ac {
   s16 firstFlag;
   s16 flagByte;
@@ -153,7 +147,11 @@ struct CellTarget__s41ac {
 /* VIEW(s41ac): routine CrackedTile_Fall as void CrackedTile_Fall(struct
  * CellTarget__s41ac *table, struct CellTargetEntry *entry);
  * module/scene/jupiter_lighthouse_room_m.h has void CrackedTile_Fall(struct
- * CellTarget *table, struct CellTargetEntry *entry). */
+ * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
+ * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
+ * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m/s3b7c.c:146: conflicting types
+ * for `CrackedTile_Fall'. */
 void CrackedTile_Fall__s41ac(
     struct CellTarget__s41ac *table,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");

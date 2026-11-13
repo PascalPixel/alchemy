@@ -861,10 +861,7 @@ void Func_020017f4(struct Actor *object) {
   SET_POSITION(object, target->x, target->y + (128 << 12), target->z);
 }
 
-/* VIEW(airs_rock_inside): routine Func_02002bd0 as void Func_02002bd0(void);
- * games/tla/src/scene/airs_rock_inside/s2770 has void Func_02002bd0(struct
- * Actor *object) {. */
-void Func_02002bd0__airs_rock_inside(void) __asm__("Func_02002bd0");
+void Func_02002bd0(struct Actor *object);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
@@ -945,7 +942,7 @@ void Func_02001828(void) {
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
-      spark->update = Func_02002bd0__airs_rock_inside;
+      spark->update = Func_02002bd0;
     }
     if (gFrameCount & 1) {
       gust->scaleX += 655;
@@ -1537,27 +1534,13 @@ void Func_02002cc0(struct Actor *object) {
 
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
-/* VIEW(s2cf0): routine PaletteFade_StartInterpolation as s32
- * PaletteFade_StartInterpolation(s32 frames); battle/battle.h has void
- * PaletteFade_StartInterpolation(s32 frames). */
-s32 PaletteFade_StartInterpolation__s2cf0(s32 frames) __asm__(
-    "PaletteFade_StartInterpolation");
-/* VIEW(s2cf0): routine FieldCamera_FollowActor as s32
- * FieldCamera_FollowActor(s32 id, s32 a); field/field.h has void
- * FieldCamera_FollowActor(s32 id, s32 flag). */
-s32 FieldCamera_FollowActor__s2cf0(s32 id,
-                                   s32 a) __asm__("FieldCamera_FollowActor");
+void PaletteFade_StartInterpolation(s32 mode);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_ConfigureSpriteColor(s32 actor, s32 a);
-/* VIEW(s2cf0): routine Func_02001084 as void Func_02001084(struct Actor
- * *object, s32 a, s32 b); scene/airs_rock_inside/airs_rock_inside has void
- * Func_02001084(struct Actor *object, s16 timer, u8 value) {. */
-void Func_02001084__s2cf0(struct Actor *object, s32 a,
-                          s32 b) __asm__("Func_02001084");
 
 /// The second pillar of light, Func_02003654 with object 11 glowing, the camera
 /// at (0x138, 0x2a8), the cells at (0x40, 78) opening and the light reaching
@@ -1639,8 +1622,8 @@ row:
   }
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10000, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
-  PaletteFade_StartInterpolation__s2cf0(60);
-  FieldCamera_FollowActor__s2cf0(gMainRoutineWork.currentOwner, 1);
+  PaletteFade_StartInterpolation(60);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(312), -1,
@@ -1656,11 +1639,11 @@ row:
   Sound_Play(138);
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-  PaletteFade_StartInterpolation__s2cf0(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  PaletteFade_StartInterpolation__s2cf0(8);
+  PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(64, 78, 18, 105, 3, 3);
   MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
@@ -1674,7 +1657,7 @@ fade:
     goto fade;
   BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  PaletteFade_StartInterpolation__s2cf0(60);
+  PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(148);
   Func_02002aa8(0x1380000, 0x2d00000);
@@ -1692,7 +1675,7 @@ fade:
   Actor_SetSpriteColor(Actor_GetById(9), 0);
   Actor_SetSpriteColor(Actor_GetById(10), 0);
   wait(40);
-  Func_02001084__s2cf0(Actor_GetById(10), 8, 0);
+  Func_02001084(Actor_GetById(10), 8, 0);
   Window_LoadGraphics();
   DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
@@ -1777,12 +1760,6 @@ void Func_02003254(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-/* VIEW(s2cf0): routine Func_0200062c as void Func_0200062c(s32 layer, s32 x,
- * s32 z, s32 cell); scene/airs_rock_inside/airs_rock_inside has s32
- * Func_0200062c(u32 layer, s32 x, s32 y, s32 value) {. */
-void Func_0200062c__s2cf0(s32 layer, s32 x, s32 z,
-                          s32 cell) __asm__("Func_0200062c");
-
 /// After the pushed object (the event work's object at 0xcbc) comes to rest:
 /// if it stopped above the ground it drops onto it with cue 188; then, by
 /// room, the place where it stopped sets the flag for that pillar's spot
@@ -1860,15 +1837,12 @@ void Func_0200332c(void) {
       GameFlag_Clear(513);
     if (x == 77 && z == 19)
       GameFlag_Clear(514);
-    Func_0200062c__s2cf0(2, Actor_GetById(8)->x >> 20,
-                         Actor_GetById(8)->z >> 20, 0);
-    Func_0200062c__s2cf0(2, Actor_GetById(9)->x >> 20,
-                         Actor_GetById(9)->z >> 20, 0);
+    Func_0200062c(2, Actor_GetById(8)->x >> 20, Actor_GetById(8)->z >> 20, 0);
+    Func_0200062c(2, Actor_GetById(9)->x >> 20, Actor_GetById(9)->z >> 20, 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
     if (x == 45 && z == 33)
       GameFlag_Set(0x8d3);
-    Func_0200062c__s2cf0(2, Actor_GetById(10)->x >> 20,
-                         Actor_GetById(10)->z >> 20, 0);
+    Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
   }
   Event_End();
 }
@@ -1960,8 +1934,8 @@ row:
   }
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10000, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
-  PaletteFade_StartInterpolation__s2cf0(60);
-  FieldCamera_FollowActor__s2cf0(gMainRoutineWork.currentOwner, 1);
+  PaletteFade_StartInterpolation(60);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(216), -1,
@@ -1977,11 +1951,11 @@ row:
   Sound_Play(138);
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-  PaletteFade_StartInterpolation__s2cf0(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  PaletteFade_StartInterpolation__s2cf0(8);
+  PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(68, 84, 12, 77, 3, 3);
   MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
@@ -1995,7 +1969,7 @@ fade:
     goto fade;
   BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  PaletteFade_StartInterpolation__s2cf0(60);
+  PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(148);
   Func_02002aa8(0xd80000, 0x12d0000);
@@ -2011,7 +1985,7 @@ fade:
   wait(3);
   Actor_SetSpriteColor(Actor_GetById(8), 0);
   wait(40);
-  Func_02001084__s2cf0(Actor_GetById(8), 8, 0);
+  Func_02001084(Actor_GetById(8), 8, 0);
   Window_LoadGraphics();
   DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
@@ -2091,7 +2065,7 @@ fadeOut:
   cellY = (y >> 4) - 1;
   Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 65, 1, cellX + 64,
         cellY, 1, 2);
-  Func_0200062c__s2cf0(0, cellX, cellY, 0xff00);
+  Func_0200062c(0, cellX, cellY, 0xff00);
   Actor_Release(marker);
   Event_End();
   REG_BLDCNT = 0;
@@ -2262,7 +2236,7 @@ void Func_02004138(s32 idA, s32 idB) {
   Call3(MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  PaletteFade_StartInterpolation__s2cf0(60);
+  PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
@@ -2375,14 +2349,14 @@ third:
   Sound_Play(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  PaletteFade_StartInterpolation__s2cf0(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetScreenShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  PaletteFade_StartInterpolation__s2cf0(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_02006128);
   Actor_SetMovementTypeById(idB, gData_02006158);
   b->update = Actor_EmitBubbles;
@@ -2529,7 +2503,10 @@ void Func_02004880(void) {}
 
 /* VIEW(s2cf0): routine Func_020007b4 as void Func_020007b4(void);
  * scene/airs_rock_inside/airs_rock_inside has void Func_020007b4(s32 mode, s32
- * step) {. */
+ * step) {; tried as the definition's void Func_020007b4(s32 mode, s32 step),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/airs_rock_inside/airs_rock_inside.c:2519: too few
+ * arguments to function `Func_020007b4'. */
 void Func_020007b4__s2cf0(void) __asm__("Func_020007b4");
 
 void Func_02004884(void) {
@@ -2786,11 +2763,6 @@ void Func_02004cc8(void) {
   Event_End();
 }
 
-/* VIEW(s2cf0): routine Func_02000550 as void Func_02000550(void);
- * scene/airs_rock_inside/airs_rock_inside has void Func_02000550(struct Actor
- * *object) {. */
-void Func_02000550__s2cf0(void) __asm__("Func_02000550");
-
 void Func_02004eb0(void) {
   struct Actor *object;
   s32 i = 0;
@@ -2807,7 +2779,7 @@ void Func_02004eb0(void) {
       object->priorityFlags = zero;
     }
     object->acceleration = object->speedLimit = (i << 12) + 0x8000;
-    object->update = Func_02000550__s2cf0;
+    object->update = Func_02000550;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 2);
     if (i & 1) {

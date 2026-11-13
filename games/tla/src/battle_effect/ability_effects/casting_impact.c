@@ -40,7 +40,8 @@ void BattleEffect_StepPaletteToResource(s32 resource) {
 }
 
 /* VIEW(ability_effects): tag struct Particle as struct
- * Particle__ability_effects; field/particle.h has another definition. */
+ * Particle__ability_effects; field/particle.h has another definition; not
+ * tried: struct Particle__ability_effects was not found. */
 struct Particle {
   s32 x;
   s32 y;
@@ -75,7 +76,8 @@ struct DrawFuncs {
 };
 
 /* VIEW(ability_effects): tag struct Texture as struct Texture__ability_effects;
- * module/battle_effect/battle_effect.h has another definition. */
+ * module/battle_effect/battle_effect.h has another definition; not tried:
+ * struct Texture__ability_effects was not found. */
 struct Texture {
   u8 width;
   u8 height;
@@ -227,10 +229,8 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
 /* VIEW(fxdisp): routine BattleEffect_PackTileRows as void
  * BattleEffect_PackTileRows(void *, void *, s32, s32); the definition has void
- * BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride); tried as the
- * definition's void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride),
- * which the object already declares, BattleEffect_RunCastingImpact moves: 1 of
- * 7568 instructions in tla-ja. */
+ * BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride); not tried:
+ * BattleEffect_PackTileRows's bound declaration was not found. */
 extern void
 Graphics_PackTileRows__fxdisp(void *, void *, s32,
                               s32) __asm__("BattleEffect_PackTileRows");

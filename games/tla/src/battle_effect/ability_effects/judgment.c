@@ -56,7 +56,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Decompress_TaggedLz(pal, cells);
   for (i = 0; i != 16; i++) {
     struct JudgmentObject *obj =
-        EffectSprite_CreateWithTiles__actor_move_random(32, 32, 0x80002000, 0);
+        EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
     obj->priority = 2;
     work->objects[i] = obj;

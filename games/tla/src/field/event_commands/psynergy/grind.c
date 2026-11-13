@@ -32,10 +32,7 @@ struct SplashAnimation {
 };
 
 /* VIEW(f0e92b4): tag struct FxScene as struct FxScene__f0e92b4; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:5353: structure has no member
- * named `facing'. */
+ * another definition; not tried: struct FxScene__f0e92b4 was not found. */
 struct FxScene__f0e92b4 {
   u16 facing;
   u16 angle;
@@ -52,10 +49,8 @@ struct FxScene__f0e92b4 {
 };
 
 /* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4;
- * event_work.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:5484: structure has no member
- * named `callback'. */
+ * event_work.h has another definition; not tried: struct PendingEvent__f0e92b4
+ * was not found. */
 struct PendingEvent__f0e92b4 {
   u8 unk00[8];
   void (*callback)(s32, s32, s32);
@@ -66,7 +61,8 @@ extern char ResourceId_WaterSplash;
 /* VIEW(f0e92b4): routine Scene_FindPsynergyTrigger as struct
  * PendingEvent__f0e92b4 *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
  * arg); f0e5d5c has void *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
- * arg). */
+ * arg); not tried: Scene_FindPsynergyTrigger's bound declaration was not found.
+ */
 extern struct PendingEvent__f0e92b4 *
 Func_080ce458__f0e92b4(u32 kind, s32 entry,
                        s32 arg) __asm__("Scene_FindPsynergyTrigger");
@@ -79,7 +75,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
  * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
  * SplashParticle *particle); f0e4a34 has void
  * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * GlowParticle *particle). */
+ * GlowParticle *particle); not tried: EffectSprite_DrawAtWorldPosition's marker
+ * was not found. */
 extern void EffectSprite_DrawAtWorldPosition__f0e92b4(
     struct EffectSprite *sprite,
     struct SplashParticle
@@ -411,10 +408,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 
 // Kind 24's work (battle_fx_work[0]).
 /* VIEW(f0e92b4): tag struct GlowWork as struct GlowWork__f0e92b4; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:5689: structure has no member
- * named `fading'. */
+ * another definition; not tried: struct GlowWork__f0e92b4 was not found. */
 struct GlowWork__f0e92b4 {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;

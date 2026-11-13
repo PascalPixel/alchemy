@@ -18,13 +18,10 @@
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s00b8): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
- * shaman_village.h has void Actor_SetSpriteFlags(struct
- * ShamanVillageObject *object, u32 value); tried as the 35 declarations' void
- * Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags), it does not
- * compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73:
- * conflicting types for `Actor_SetSpriteFlags'. */
+/* VIEW(s00b8): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); shaman_village.h has void
+ * Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value); not
+ * tried: Actor_SetSpriteFlags's bound declaration was not found. */
 extern void
 Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect,
                                  s32 flags) __asm__("Actor_SetSpriteFlags");
@@ -104,7 +101,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
  * ShamanVillageObject *object, s32 mode); field_event.h has void
  * Import_ActorSetMode(struct Actor *object, s32 mode); tried as the rest of the
  * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/shaman_village/shaman_village.h:71: conflicting types for
+ * games/tla/src/scene/shaman_village.c:150: conflicting types for
  * `Import_ActorSetMode'. */
 struct ShamanVillageObject;
 extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object,
@@ -240,23 +237,17 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 #include "battle.h"
 /* VIEW(scene_tables): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags); shaman_village.h
- * has void Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32
- * value); tried as the 35 declarations' void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
- * games/tla/include/field/field.h:25: conflicting types for
- * `Actor_SetSpriteFlags'. */
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags); shaman_village.h has
+ * void Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value); not
+ * tried: Actor_SetSpriteFlags's bound declaration was not found. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__scene_tables(
     struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__scene_tables
 /* VIEW(scene_tables): routine Actor_SetBlendMode as void
- * Actor_SetBlendMode(struct Actor *object, u32 value); shaman_village.h
- * has void Actor_SetBlendMode(struct ShamanVillageObject *object, s32
- * flags); tried as the definition's void Actor_SetBlendMode(struct Actor
- * *object, u32 value), which the object already declares, it does not compile
- * in tla-ja: games/tla/include/field/field.h:58: conflicting types for
- * `Actor_SetBlendMode'. */
+ * Actor_SetBlendMode(struct Actor *object, u32 value); shaman_village.h has
+ * void Actor_SetBlendMode(struct ShamanVillageObject *object, s32 flags); not
+ * tried: Actor_SetBlendMode's bound declaration was not found. */
 extern void
 Animation_SetStateFlags__scene_tables(struct Actor *object,
                                       u32 value) __asm__("Actor_SetBlendMode");
@@ -278,19 +269,28 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(s00b8): variable gShamanVillage_Placements as u32
  * gShamanVillage_Placements[]; scene/shaman_village/s1fec has struct
- * ActorPlacement gShamanVillage_Placements[] = {. */
+ * ActorPlacement gShamanVillage_Placements[] = {; tried as the definition's
+ * extern struct ActorPlacement gShamanVillage_Placements[], it does not compile
+ * in tla-ja: games/tla/src/scene/shaman_village.c:301:
+ * `gShamanVillage_Placements' undeclared (first use in this function). */
 extern u32
     gShamanVillage_Placements__s00b8[] __asm__("gShamanVillage_Placements");
 #define gShamanVillage_Placements gShamanVillage_Placements__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room1Placements as u32
  * gShamanVillage_Room1Placements[]; scene/shaman_village/s1fec has struct
- * ActorPlacement gShamanVillage_Room1Placements[] = {. */
+ * ActorPlacement gShamanVillage_Room1Placements[] = {; tried as the
+ * definition's extern struct ActorPlacement gShamanVillage_Room1Placements[],
+ * it does not compile in tla-ja: games/tla/src/scene/shaman_village.c:287:
+ * `gShamanVillage_Room1Placements' undeclared (first use in this function). */
 extern u32 gShamanVillage_Room1Placements__s00b8[] __asm__(
     "gShamanVillage_Room1Placements");
 #define gShamanVillage_Room1Placements gShamanVillage_Room1Placements__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room3Placements as s16
  * gShamanVillage_Room3Placements[]; scene/shaman_village/s1fec has struct
- * ActorPlacement gShamanVillage_Room3Placements[] = {. */
+ * ActorPlacement gShamanVillage_Room3Placements[] = {; tried as the
+ * definition's extern struct ActorPlacement gShamanVillage_Room3Placements[],
+ * it does not compile in tla-ja: games/tla/src/scene/shaman_village.c:289:
+ * `gShamanVillage_Room3Placements' undeclared (first use in this function). */
 extern s16 gShamanVillage_Room3Placements__s00b8[] __asm__(
     "gShamanVillage_Room3Placements");
 #define gShamanVillage_Room3Placements gShamanVillage_Room3Placements__s00b8
@@ -298,26 +298,38 @@ extern s16 gShamanVillage_Room3Placements__s00b8[] __asm__(
 /* VIEW(s00b8): variable gShamanVillage_Room2Placements as struct
  * ShamanVillageSceneBlock gShamanVillage_Room2Placements;
  * scene/shaman_village/s1fec has struct ActorPlacement
- * gShamanVillage_Room2Placements[] = {. */
+ * gShamanVillage_Room2Placements[] = {; tried as the definition's extern struct
+ * ActorPlacement gShamanVillage_Room2Placements[], it does not compile in
+ * tla-ja: games/tla/src/scene/shaman_village.c:291:
+ * `gShamanVillage_Room2Placements' undeclared (first use in this function). */
 extern struct ShamanVillageSceneBlock
     gShamanVillage_Room2Placements__s00b8 __asm__(
         "gShamanVillage_Room2Placements");
 #define gShamanVillage_Room2Placements gShamanVillage_Room2Placements__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room4Placements as u32
  * gShamanVillage_Room4Placements[]; scene/shaman_village/s1fec has struct
- * ActorPlacement gShamanVillage_Room4Placements[] = {. */
+ * ActorPlacement gShamanVillage_Room4Placements[] = {; tried as the
+ * definition's extern struct ActorPlacement gShamanVillage_Room4Placements[],
+ * it does not compile in tla-ja: games/tla/src/scene/shaman_village.c:296:
+ * `gShamanVillage_Room4Placements' undeclared (first use in this function). */
 extern u32 gShamanVillage_Room4Placements__s00b8[] __asm__(
     "gShamanVillage_Room4Placements");
 #define gShamanVillage_Room4Placements gShamanVillage_Room4Placements__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room5Placements as u32
  * gShamanVillage_Room5Placements[]; scene/shaman_village/s1fec has struct
- * ActorPlacement gShamanVillage_Room5Placements[] = {. */
+ * ActorPlacement gShamanVillage_Room5Placements[] = {; tried as the
+ * definition's extern struct ActorPlacement gShamanVillage_Room5Placements[],
+ * it does not compile in tla-ja: games/tla/src/scene/shaman_village.c:298:
+ * `gShamanVillage_Room5Placements' undeclared (first use in this function). */
 extern u32 gShamanVillage_Room5Placements__s00b8[] __asm__(
     "gShamanVillage_Room5Placements");
 #define gShamanVillage_Room5Placements gShamanVillage_Room5Placements__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room6Placements as u32
  * gShamanVillage_Room6Placements[]; scene/shaman_village/s1fec has struct
- * ActorPlacement gShamanVillage_Room6Placements[] = {. */
+ * ActorPlacement gShamanVillage_Room6Placements[] = {; tried as the
+ * definition's extern struct ActorPlacement gShamanVillage_Room6Placements[],
+ * it does not compile in tla-ja: games/tla/src/scene/shaman_village.c:300:
+ * `gShamanVillage_Room6Placements' undeclared (first use in this function). */
 extern u32 gShamanVillage_Room6Placements__s00b8[] __asm__(
     "gShamanVillage_Room6Placements");
 #define gShamanVillage_Room6Placements gShamanVillage_Room6Placements__s00b8
@@ -451,7 +463,10 @@ void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
 
 /* VIEW(s00b8): variable gFieldEffect_MediumScript as const s32
  * gFieldEffect_MediumScript[]; scene/shaman_village/s1fec has u32
- * gFieldEffect_MediumScript[] = {. */
+ * gFieldEffect_MediumScript[] = {; tried as the definition's extern u32
+ * gFieldEffect_MediumScript[], which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/shaman_village.c:487:
+ * `gFieldEffect_MediumScript' undeclared (first use in this function). */
 extern const s32
     gFieldEffect_MediumScript__s00b8[] __asm__("gFieldEffect_MediumScript");
 #define gFieldEffect_MediumScript gFieldEffect_MediumScript__s00b8
@@ -700,42 +715,63 @@ fade:
 
 /* VIEW(s00b8): variable gShamanVillage_Triggers as u32
  * gShamanVillage_Triggers[]; scene/shaman_village/s1fec has struct Trigger
- * gShamanVillage_Triggers[] = {. */
+ * gShamanVillage_Triggers[] = {; tried as the definition's extern struct
+ * Trigger gShamanVillage_Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village.c:701: `gShamanVillage_Triggers'
+ * undeclared (first use in this function). */
 extern u32 gShamanVillage_Triggers__s00b8[] __asm__("gShamanVillage_Triggers");
 #define gShamanVillage_Triggers gShamanVillage_Triggers__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room1Triggers as u32
  * gShamanVillage_Room1Triggers[]; scene/shaman_village/s1fec has struct Trigger
- * gShamanVillage_Room1Triggers[] = {. */
+ * gShamanVillage_Room1Triggers[] = {; tried as the definition's extern struct
+ * Trigger gShamanVillage_Room1Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village.c:689: `gShamanVillage_Room1Triggers'
+ * undeclared (first use in this function). */
 extern u32 gShamanVillage_Room1Triggers__s00b8[] __asm__(
     "gShamanVillage_Room1Triggers");
 #define gShamanVillage_Room1Triggers gShamanVillage_Room1Triggers__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room3Triggers as u32
  * gShamanVillage_Room3Triggers[]; scene/shaman_village/s1fec has struct Trigger
- * gShamanVillage_Room3Triggers[] = {. */
+ * gShamanVillage_Room3Triggers[] = {; tried as the definition's extern struct
+ * Trigger gShamanVillage_Room3Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village.c:691: `gShamanVillage_Room3Triggers'
+ * undeclared (first use in this function). */
 extern u32 gShamanVillage_Room3Triggers__s00b8[] __asm__(
     "gShamanVillage_Room3Triggers");
 #define gShamanVillage_Room3Triggers gShamanVillage_Room3Triggers__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room2Triggers as u32
  * gShamanVillage_Room2Triggers[]; scene/shaman_village/s1fec has struct Trigger
- * gShamanVillage_Room2Triggers[] = {. */
+ * gShamanVillage_Room2Triggers[] = {; tried as the definition's extern struct
+ * Trigger gShamanVillage_Room2Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village.c:693: `gShamanVillage_Room2Triggers'
+ * undeclared (first use in this function). */
 extern u32 gShamanVillage_Room2Triggers__s00b8[] __asm__(
     "gShamanVillage_Room2Triggers");
 #define gShamanVillage_Room2Triggers gShamanVillage_Room2Triggers__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room4Triggers as u32
  * gShamanVillage_Room4Triggers[]; scene/shaman_village/s1fec has struct Trigger
- * gShamanVillage_Room4Triggers[] = {. */
+ * gShamanVillage_Room4Triggers[] = {; tried as the definition's extern struct
+ * Trigger gShamanVillage_Room4Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village.c:695: `gShamanVillage_Room4Triggers'
+ * undeclared (first use in this function). */
 extern u32 gShamanVillage_Room4Triggers__s00b8[] __asm__(
     "gShamanVillage_Room4Triggers");
 #define gShamanVillage_Room4Triggers gShamanVillage_Room4Triggers__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room5Triggers as u32
  * gShamanVillage_Room5Triggers[]; scene/shaman_village/s1fec has struct Trigger
- * gShamanVillage_Room5Triggers[] = {. */
+ * gShamanVillage_Room5Triggers[] = {; tried as the definition's extern struct
+ * Trigger gShamanVillage_Room5Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village.c:697: `gShamanVillage_Room5Triggers'
+ * undeclared (first use in this function). */
 extern u32 gShamanVillage_Room5Triggers__s00b8[] __asm__(
     "gShamanVillage_Room5Triggers");
 #define gShamanVillage_Room5Triggers gShamanVillage_Room5Triggers__s00b8
 /* VIEW(s00b8): variable gShamanVillage_Room6Triggers as u32
  * gShamanVillage_Room6Triggers[]; scene/shaman_village/s1fec has struct Trigger
- * gShamanVillage_Room6Triggers[] = {. */
+ * gShamanVillage_Room6Triggers[] = {; tried as the definition's extern struct
+ * Trigger gShamanVillage_Room6Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village.c:699: `gShamanVillage_Room6Triggers'
+ * undeclared (first use in this function). */
 extern u32 gShamanVillage_Room6Triggers__s00b8[] __asm__(
     "gShamanVillage_Room6Triggers");
 #define gShamanVillage_Room6Triggers gShamanVillage_Room6Triggers__s00b8
@@ -1202,20 +1238,12 @@ void ShamanVillage_ChallengeMoapa(void) {
   Event_End();
 }
 
-/* VIEW(s00b8): variable gShamanVillage_WalkToLeftStartScript as const u8
- * gShamanVillage_WalkToLeftStartScript[]; scene/shaman_village/s1fec has u32
- * gShamanVillage_WalkToLeftStartScript[] = {. */
-extern const u8 gShamanVillage_WalkToLeftStartScript__s00b8[] __asm__(
-    "gShamanVillage_WalkToLeftStartScript");
+extern u32 gShamanVillage_WalkToLeftStartScript[];
 #define gShamanVillage_WalkToLeftStartScript                                   \
-  gShamanVillage_WalkToLeftStartScript__s00b8
-/* VIEW(s00b8): variable gShamanVillage_WalkToRightStartScript as const u8
- * gShamanVillage_WalkToRightStartScript[]; scene/shaman_village/s1fec has u32
- * gShamanVillage_WalkToRightStartScript[] = {. */
-extern const u8 gShamanVillage_WalkToRightStartScript__s00b8[] __asm__(
-    "gShamanVillage_WalkToRightStartScript");
+  gShamanVillage_WalkToLeftStartScript
+extern u32 gShamanVillage_WalkToRightStartScript[];
 #define gShamanVillage_WalkToRightStartScript                                  \
-  gShamanVillage_WalkToRightStartScript__s00b8
+  gShamanVillage_WalkToRightStartScript
 
 /// The leader takes the left path and Moapa the right, after the countdown.
 /// ★ Named from the game: "If you have chosen, then we shall take the other
@@ -1508,14 +1536,6 @@ struct ShamanVillageObject *ShamanVillage_CreateRodIcon(void) {
   }
   return object;
 }
-
-/* VIEW(s1fec): routine DriftScene_SpawnObject as void
- * DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
- * scene/shared/drift_spawn has void DriftScene_SpawnObject(x, y, z, value) s32
- * x, y, z. */
-void DriftScene_SpawnObject__s1fec(s32 x, s32 y, s32 z,
-                                   u16 value) __asm__("DriftScene_SpawnObject");
-#define DriftScene_SpawnObject DriftScene_SpawnObject__s1fec
 
 extern u32 gShamanVillage_JennaStandsByRodScript[];
 extern u32 gShamanVillage_GuardLeavesHouseScript[];
@@ -3637,5 +3657,3 @@ u32 gDriftScene_SpawnScript[] = {
     46,
     38,
 };
-
-#undef DriftScene_SpawnObject

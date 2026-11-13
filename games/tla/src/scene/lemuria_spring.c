@@ -956,16 +956,17 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 
 /* VIEW(ride): variable gLemuriaSpring_Toss as extern struct SpringRide
  * gLemuriaSpring_Toss; lemuria_spring has extern struct SpringTossMotion
- * gLemuriaSpring_Toss; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/lemuria_spring.c:958:
- * `gLemuriaSpring_Toss__ride' undeclared (first use in this function). */
+ * gLemuriaSpring_Toss; tried as the one declaration extern struct SpringRide
+ * gLemuriaSpring_Toss, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_spring.c:957: conflicting types for
+ * `gLemuriaSpring_Toss'. */
 extern struct SpringRide
     gLemuriaSpring_Toss__ride __asm__("gLemuriaSpring_Toss");
 /* VIEW(ride): variable gLemuriaSpring_Obstacles as extern struct
  * SpringObstacle__ride gLemuriaSpring_Obstacles[]; lemuria_spring has extern
  * struct SpringObstacle gLemuriaSpring_Obstacles[]; tried as the rest of the
  * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_spring.c:969: `gLemuriaSpring_Obstacles__ride'
+ * games/tla/src/scene/lemuria_spring.c:977: `gLemuriaSpring_Obstacles__ride'
  * undeclared (first use in this function). */
 extern struct SpringObstacle
     gLemuriaSpring_Obstacles__ride[] __asm__("gLemuriaSpring_Obstacles");

@@ -463,10 +463,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 void MapGrid_SetCellHeight();
 /* VIEW(jupiter_lighthouse_room_2): routine MapGrid_SetAttributeBAt as void
  * MapGrid_SetAttributeBAt(); module/scene/scene.h has void
- * MapGrid_SetAttributeBAt(s32 actor); tried as the rest of the object declares
- * it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to
- * function `MapGrid_SetAttributeBAt'. */
+ * MapGrid_SetAttributeBAt(s32 actor); not tried: MapGrid_SetAttributeBAt's
+ * bound declaration was not found. */
 extern void
 Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
 
@@ -518,7 +516,11 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
 
 /* VIEW(s0d94): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
  * FieldEffect *effect, s32 flags); field/field.h has void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags); tried as the
+ * definition's void Actor_SetSpriteFlags(struct Actor *object, u32 value), it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_2.c:516: `Whirlwind_UpdateLower'
+ * undeclared (first use in this function). */
 void Actor_SetSpriteFlags__s0d94(struct FieldEffect *effect,
                                  s32 flags) __asm__("Actor_SetSpriteFlags");
 

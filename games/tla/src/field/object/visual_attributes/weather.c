@@ -66,14 +66,9 @@ void Weather_UpdateRain(void) {
   }
 }
 
-/* VIEW(visual_attributes): routine BattleEffect_ApplyColorToTargetBuffer as
- * void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode);
- * field/event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32
- * mode). */
-void BattleEffect_ApplyColorToTargetBuffer__visual_attributes(
-    void *buffer, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
+void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
 #define BattleEffect_ApplyColorToTargetBuffer                                  \
-  BattleEffect_ApplyColorToTargetBuffer__visual_attributes
+  BattleEffect_ApplyColorToTargetBuffer
 
 // Lightning: selects the palette according to the remaining duration.
 void Weather_UpdateLightning(void) {

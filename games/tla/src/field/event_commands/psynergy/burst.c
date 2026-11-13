@@ -6,9 +6,8 @@
 
 /* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:2101: structure has no member
- * named `facing'. */
+ * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:4366:
+ * structure has no member named `facing'. */
 struct FxScene__f0e572c {
   u16 facing;
   u16 angle;
@@ -180,13 +179,6 @@ struct BlendWork {
   u8 mode;
 };
 
-/* VIEW(f0e572c): routine BattleEffect_IntegrateVector2 as void
- * BattleEffect_IntegrateVector2(struct ShineParticle *particle, s32 frames, s32
- * flags); f0e4a34 has void BattleEffect_IntegrateVector2(s32 *vector, s32
- * damping, s32 gravity). */
-extern void BattleEffect_IntegrateVector2__f0e572c(
-    struct ShineParticle *particle, s32 frames,
-    s32 flags) __asm__("BattleEffect_IntegrateVector2");
 void MapGrid_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 /// Task of the Pound: its shine's colours and particles, each frame.
@@ -238,7 +230,7 @@ void FieldPsynergy_UpdatePound(void) {
         sprite->x = particle->x;
         sprite->y = particle->y;
         EffectSprite_Draw(sprite);
-        BattleEffect_IntegrateVector2__f0e572c(particle, 64, 0);
+        BattleEffect_IntegrateVector2(particle, 64, 0);
       }
       particle->timer++;
     }

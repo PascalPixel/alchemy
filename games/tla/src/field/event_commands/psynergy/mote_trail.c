@@ -14,7 +14,9 @@ void Camera_WorldToScreen(s32 *position);
 /* VIEW(psynergy): routine Actor_StartScriptFar as void
  * Actor_StartScriptFar(struct Actor *object, const void *script);
  * field/objdisp.h has void Actor_StartScriptFar(struct Actor *object, const s32
- * *script). */
+ * *script); tried as the rest of the object declares it, it does not compile in
+ * tla-ja: games/tla/src/field/event_commands/radial.c:7151: dereferencing
+ * pointer to incomplete type. */
 void Actor_StartScriptFar__psynergy(
     struct Actor *object, const void *script) __asm__("Actor_StartScriptFar");
 #define Actor_StartScriptFar Actor_StartScriptFar__psynergy
@@ -22,7 +24,8 @@ void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 /* VIEW(f0ea14c): routine SummonTablet_CyclePictures as void
  * SummonTablet_CyclePictures(void); the definition has void
- * SummonTablet_CyclePictures(struct Actor *object). */
+ * SummonTablet_CyclePictures(struct Actor *object); not tried:
+ * SummonTablet_CyclePictures's bound declaration was not found. */
 extern void Func_080e9e8c__f0ea14c(void) __asm__("SummonTablet_CyclePictures");
 void SummonTablet_UpdateMotes(void);
 

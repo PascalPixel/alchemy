@@ -21,7 +21,7 @@ struct Model;
 /* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:29798: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:47117: structure has no member
  * named `logWidth'. */
 struct Texture__f17e0c0 {
   u8 logWidth;
@@ -35,7 +35,7 @@ struct Texture__f17e0c0 {
 /* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:29770: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:47088: structure has no member
  * named `brightness'. */
 struct RenderPrimitive__f17e0c0 {
   s32 kind;

@@ -1101,7 +1101,7 @@ void Func_02001c4c(void) {
 /* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
  * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
  * extern s32 gData_02004f04[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/islets/scene_tables.c:1015:
+ * compile in tla-ja: games/tla/src/scene/islets.c:1105:
  * `gData_02004f04__scene_tables' undeclared (first use in this function). */
 extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
 extern s16 gData_02004f10[2][160];
@@ -1957,7 +1957,9 @@ struct MapLayerBits {
 void Func_02003410(void);
 /* VIEW(islets): routine PaletteCycle_Add as void PaletteCycle_Add(s32 a, s32 b,
  * s32 c, s32 d); graphics/palette_snapshots.h has s32 PaletteCycle_Add(s16
- * bank, s16 index, s16 delay, s16 count). */
+ * bank, s16 index, s16 delay, s16 count); tried as the definition's s32
+ * PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count), which the object
+ * already declares, Func_0200329c moves: 2 of 145 instructions in tla-en. */
 void PaletteCycle_Add__islets(s32 a, s32 b, s32 c,
                               s32 d) __asm__("PaletteCycle_Add");
 
@@ -2184,8 +2186,7 @@ void Func_020034ec(void) {
 /* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
  * palette_snapshots.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islets/s3410.c:82: structure has no member named `count'.
- */
+ * games/tla/src/scene/islets.c:2186: structure has no member named `count'. */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
@@ -2458,15 +2459,12 @@ inner:
   return NULL;
 }
 
-/* VIEW(s3410): routine Actor_StopAtPushTarget as void
- * Actor_StopAtPushTarget(void); scene/islets/s3d0c has void
- * Actor_StopAtPushTarget(struct Actor *object) {. */
-void Actor_StopAtPushTarget__s3410(void) __asm__("Actor_StopAtPushTarget");
+void Actor_StopAtPushTarget(struct Actor *object);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
-                        Actor_StopAtPushTarget__s3410, Actor_SelectAnimation,
+                        Actor_StopAtPushTarget, Actor_SelectAnimation,
                         gPushLeaderSteps)
 
 // ---- scene/islets/s3d0c.c ----

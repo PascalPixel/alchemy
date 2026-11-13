@@ -341,25 +341,40 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
 /// when BattleEnemy_ClaimNameLetter's result has ENEMY_LETTER_FIRST_TOO set.
 /// Writes Unit.name.
 UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
-  s32 enemy;
+  struct Unit *unit;
+  s32 enemyIndex;
+  s32 nameIndex;
+  s32 terminatorIndex;
+  u8 nameByte;
 
-  for (enemy = 0; enemy < ENEMY_BATTLE_SIZE; enemy++) {
-    struct Unit *unit = Unit_GetFar(FIRST_ENEMY_UNIT + enemy);
-    s32 length;
-
-    if (unit->side != BATTLE_SIDE_ENEMY || unit->id != classId)
+  enemyIndex = 0;
+  for (; enemyIndex <= 5; enemyIndex++) {
+    unit = Unit_GetFar(enemyIndex + FIRST_ENEMY_UNIT);
+    nameByte = unit->side;
+    if (nameByte != BATTLE_SIDE_ENEMY)
       continue;
-    // The letter goes after the name, with a new terminator after it; a name
-    // that fills all 14 characters takes none.
-    length = 0;
-  findEnd:
-    if (unit->name[length] != 0) {
-      if (++length > 13)
-        return;
-      goto findEnd;
+    if (unit->id != classId)
+      continue;
+    // nameByte still holds BATTLE_SIDE_ENEMY here, used as the index after
+    // the letter; nameIndex holds the terminator, 0.
+    nameIndex = 0;
+    if (unit->name[0] == 0) {
+      unit->name[0] = LIST_MARKER_CHAR;
+      unit->name[nameByte] = nameIndex;
+      return;
     }
-    unit->name[length] = LIST_MARKER_CHAR;
-    unit->name[length + 1] = 0;
+    // The name's end, then the letter and a new terminator after it.
+    // Written with goto: as do { } while, tbs-en does not match.
+  scan_slots:
+    nameIndex++;
+    if (nameIndex > 13)
+      return;
+    nameByte = unit->name[nameIndex];
+    if (nameByte != 0)
+      goto scan_slots;
+    terminatorIndex = nameIndex + 1;
+    unit->name[nameIndex] = LIST_MARKER_CHAR;
+    unit->name[terminatorIndex] = nameByte;
     return;
   }
 }

@@ -306,26 +306,58 @@ s32 ShopStock_GetRowCount(void) { return SHOP_STOCK_ROWS; }
 /// so an item listed by two shops can be bought twice once both are
 /// visited.
 void ShopStock_AddArtifacts(s32 stockRow) {
-  const s16 *artifacts = &sStockTable[stockRow][SHOP_STOCK_ARTIFACTS];
-  s32 flag = FLAG_SHOP_ARTIFACTS_STOCKED + stockRow;
-  s32 i;
+  const s16 *stockEntries;
+  const s16 *artifactCursor;
+  s32 itemId;
+  s32 artifactIndex;
+  s32 initializedFlag;
 
-  if (GameFlag_GetFar(flag) != 0)
-    return;
-  GameFlag_SetFar(flag);
-  for (i = 0; i < SHOP_STOCK_ARTIFACT_COUNT && artifacts[i] != 0; i++)
-    Item_AdjustCounterFar(artifacts[i], 1);
+  initializedFlag = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
+  if (GameFlag_GetFar(initializedFlag) == 0) {
+    GameFlag_SetFar(initializedFlag);
+    artifactIndex = 0;
+    itemId = sStockTable[stockRow][SHOP_STOCK_ARTIFACTS];
+    if (itemId != 0) {
+      stockEntries = sStockTable[stockRow];
+      artifactCursor = stockEntries + SHOP_STOCK_ARTIFACTS;
+      do {
+        Item_AdjustCounterFar(itemId, 1);
+        artifactIndex++;
+        if (artifactIndex > SHOP_STOCK_ARTIFACT_COUNT - 1)
+          break;
+        artifactCursor++;
+        itemId = *artifactCursor;
+      } while (itemId != 0);
+    }
+  }
 }
 
 /// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
 /// after, and returns how many. Called by Shop_Run for Buy.
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
-  const s16 *items = sStockTable[stockRow];
-  s32 count = 0;
+  const s16 *src;
+  s32 copying = 1;
+  s16 *dst;
+  s32 count;
 
-  while (count < SHOP_STOCK_ITEM_COUNT && items[count] != 0) {
-    output[count] = items[count];
-    count++;
+  count = 0;
+  if (sStockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
+    dst = output;
+    src = sStockTable[stockRow];
+    do {
+      /* FAKEMATCH(dead): the copy under a test of copying, always 1, which
+       * emits nothing but keeps the copy's read apart from the signed sentinel
+       * read; as the copy and increments without the test, 41 of 30
+       * instructions differ in tbs-en (the plain form is 31 instructions). */
+      if (copying) {
+        *dst = *src;
+        count++;
+        src++;
+        dst++;
+      }
+      if (count > SHOP_STOCK_ITEM_COUNT - 1)
+        break;
+    } while (*src != 0);
   }
   output[count] = 0;
   return count;

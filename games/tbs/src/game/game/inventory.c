@@ -424,21 +424,26 @@ u8 Item_GetTargetMode(s32 itemId) {
 /// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
 /// returns the new count (0 for an index past 127).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
-  s32 count = 0;
-  u8 *stock = gRareItemStock;
+  s32 counter_slot = index;
+  u8 *data = gRareItemStock;
 
-  if (index <= 127) {
-    s32 value = stock[index] + delta;
+  index = 0;
+  if (counter_slot <= 127) {
+    s32 value = data[counter_slot];
 
-    if (value < 0)
+    value += delta;
+
+    if (value < 0) {
       value = 0;
-    else if (value > 99)
-      count = value = 99;
-    else
-      count = value;
-    stock[index] = value;
+    } else if (value > 99) {
+      value = 99;
+      index = 99;
+    } else {
+      index = value;
+    }
+    data[counter_slot] = value;
   }
-  return count;
+  return index;
 }
 
 /// Adds `delta` to the counter of a rare item; ordinary items have none.

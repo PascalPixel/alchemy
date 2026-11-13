@@ -243,6 +243,10 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   s32 n;
   u32 kept;
   struct Actor *object;
+  // UB: indexing past scalar gBattleWork reaches another heap slot.
+#ifndef UBFIX
+  void **slots = (void **)&gBattleWork;
+#endif
 
   // The camera: a staged battle effect turns to the acting unit's side over 60
   // frames (an enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's
@@ -253,7 +257,11 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   if (plan->battleEffect & EFFECT_SUMMON) {
     struct BattleBackgroundWork *view;
     s32 yaw;
+#ifdef UBFIX
     view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+#else
+    view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+#endif
     yaw = YAW_PARTY_ACTION;
     if (actor > ALLY_MAX)
       yaw = YAW_BEHIND_ENEMIES;
@@ -262,7 +270,11 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   } else {
     struct BattleBackgroundWork *view;
     s32 yaw;
+#ifdef UBFIX
     view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+#else
+    view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+#endif
     yaw = YAW_ENEMY_ACTION;
     if (actor <= ALLY_MAX)
       yaw = YAW_PARTY_ACTION;
@@ -670,7 +682,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingWork work;
   struct Actor *actor;
-  s32 i;
+  s32 targetOrFadeIndex;
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *item;
@@ -701,13 +713,14 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   else
     work.effect.side = EFFECT_SIDE_ENEMIES;
 
-  for (i = 0; i != work.effect.targetCount; i++) {
-    struct Sprite *animation =
-        GetMotionRecord(BattleObject_Get(work.effect.targets[i])->actor, 0);
+  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
+       targetOrFadeIndex++) {
+    struct Sprite *animation = GetMotionRecord(
+        BattleObject_Get(work.effect.targets[targetOrFadeIndex])->actor, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
-      work.savedAnimationParameters[i][entryIndex] =
+      work.savedAnimationParameters[targetOrFadeIndex][entryIndex] =
           animation->entries[entryIndex]->colorMode;
   }
 
@@ -716,16 +729,25 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   // one with none waits a second.
   Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
   if (work.effect.kind != 0) {
-    s32 step;
+    s32 fade;
 
-    for (step = 0; step < 20; step++) {
+    targetOrFadeIndex = 0;
+    fade = 0;
+    do {
       struct BattleWork *battle = gBattleWork;
 
-      battle->brightness = Q16_ONE - step * (Q16_ONE / 60);
-      Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
-                                  battle->brightness, BATTLE_BG_PALETTE_COLORS);
+      if (targetOrFadeIndex < 20) {
+        u16 *palette = battle->palette;
+        s32 value = Q16_ONE - fade;
+
+        battle->brightness = value;
+        Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,
+                                    128);
+      }
       wait(1);
-    }
+      targetOrFadeIndex++;
+      fade += Q16_ONE / 60;
+    } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work.effect);
     else
@@ -735,8 +757,9 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   }
   BattlePlayback_WaitForReady();
   Actor_SelectAnimationFar(actor, POSE_STANDING);
-  for (i = 0; i != work.effect.targetCount; i++)
-    BattleMotion_ReturnToSpot(work.effect.targets[i]);
+  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
+       targetOrFadeIndex++)
+    BattleMotion_ReturnToSpot(work.effect.targets[targetOrFadeIndex]);
 
   // Spend the item, by its use type.
   unit = Unit_GetFar(selection->unitId);

@@ -37,31 +37,46 @@ struct InventorySnapshot {
 /// Nothing happens when a snapshot is already saved, apart from the restore.
 /// Called by the Colosseum entrance scene as Isaac enters the Colosso.
 void InventorySnapshot_Save(void) {
-  struct InventorySnapshot *snapshot =
-      (struct InventorySnapshot *)gInventorySnapshot;
+  u16 *save;
+  struct Unit *unit;
+  s16 *inventory;
   s32 unitId;
   s32 slot;
+  s16 firstShortcut;
+  s16 secondShortcut;
 
-  if (snapshot->sentinel != INVENTORY_SNAPSHOT_SENTINEL) {
-    snapshot->sentinel = INVENTORY_SNAPSHOT_SENTINEL;
-    // Save each inventory before keeping only its Psynergy-granting items.
+  save = gInventorySnapshot;
+  if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
+    *save++ = INVENTORY_SNAPSHOT_SENTINEL;
+    firstShortcut = gMainRoutineWork.firstShortcut;
+    secondShortcut = gMainRoutineWork.secondShortcut;
+    // Save each inventory before retaining its Psynergy-granting items.
     for (unitId = 0; unitId < 4; unitId++) {
       struct Unit *unit = Unit_Get(unitId);
 
       for (slot = 0; slot < INVENTORY_SLOTS; slot++)
-        snapshot->inventories[unitId][slot] = unit->inventory[slot];
+        *save++ = unit->inventory[slot];
       for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
         if (Item_GetDirect(unit->inventory[slot])->type != ITEM_TYPE_PSYNERGY)
           unit->inventory[slot] = 0;
       }
-      Inventory_CompactSlots(unit->inventory);
+      inventory = unit->inventory;
+      Inventory_CompactSlots(inventory);
       Unit_UpdateClass(unitId);
       Unit_Calculate(unitId);
     }
-    snapshot->firstShortcut = gMainRoutineWork.firstShortcut;
-    snapshot->secondShortcut = gMainRoutineWork.secondShortcut;
-    for (slot = 0; slot < 4; slot++)
-      snapshot->party[slot] = gMainRoutineWork.party[slot];
+    // Keep shortcuts and party order with the inventory snapshot.
+    *save++ = firstShortcut;
+    *save++ = secondShortcut;
+#ifdef UBFIX
+    // Party order is a byte array; pack its two saved halfwords explicitly.
+    save[0] = gMainRoutineWork.party[0] | (gMainRoutineWork.party[1] << 8);
+    save[1] = gMainRoutineWork.party[2] | (gMainRoutineWork.party[3] << 8);
+#else
+    inventory = (s16 *)gMainRoutineWork.party;
+    save[0] = inventory[0];
+    save[1] = inventory[1];
+#endif
     Inventory_AddAndEquip(ISAAC, ITEM_SHORT_SWORD);
     GameFlag_Set(FLAG_COLOSSO_HOLDS_EQUIPMENT);
   }

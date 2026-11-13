@@ -73,16 +73,27 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 needsSingleSlot = BattleSprite_IsSmall(unit->id);
-  s32 sprite = BattleSprite_GetSprite(unit->id);
-  s32 result = 0;
+  /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
+   * spritePart a copy of its register (mov r4, r10); as an s32 set to 0, 2 of
+   * 114 instructions differ in tbs-en. */
+  union {
+    s32 value;
+    u16 halves[2];
+  } result;
+  s32 sprite;
 
-  // A unit with a class is a party member: it has no battle sprite to load.
-  if (unit->classId != CLASS_NONE)
-    return 0;
-
+  result.halves[0] = 0;
+  result.halves[1] = 0;
+  sprite = BattleSprite_GetSprite(unit->id);
+  spritePart = result.value;
   // Once for the sprite, and again for its second part if it has one.
-  for (spritePart = 0; spritePart <= 1; spritePart++) {
+  do {
     s32 slot;
+
+    // A unit with a classIndex is no enemy: nothing is loaded and the
+    // result stays 0.
+    if (unit->classId != CLASS_NONE)
+      continue;
 
     // The first free slot (and, for a large enemy, the one after it).
     for (slot = 0; slot < ENEMY_SPRITE_SLOTS; slot++) {
@@ -107,8 +118,12 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
         return 0;
     }
 
+    /* FAKEMATCH(dead): two updates that cancel, raising sprite's priority in
+     * allocation; without them, 18 of 114 instructions differ in tbs-en. */
+    sprite ^= 1;
+    sprite ^= 1;
     if (spritePart == 0)
-      result = (slot << 12) | sprite;
+      result.value = (slot << 12) | sprite;
 
     battle->spriteSlots[slot] = unitId;
     if (!needsSingleSlot)
@@ -117,9 +132,9 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
     if (sprite != SPRITE_WITH_SECOND_PART_A &&
         sprite != SPRITE_WITH_SECOND_PART_B)
       break;
-  }
+  } while (++spritePart <= 1);
 
-  return result;
+  return result.value;
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.

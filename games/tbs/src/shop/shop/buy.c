@@ -240,46 +240,60 @@ close:
 /// the chosen item lifted and pulsing. Called by Shop_SelectBuy each time the
 /// cursor moves.
 void Shop_DrawStock(struct Window *window, s32 selected) {
-  struct ShopWork *shop = gMenuWork;
-  s32 first = selected - selected % SHOP_STOCK_PAGE_ITEMS;
-  s32 slot;
 
-  if (window == 0)
-    return;
-  WindowSprite_PrepareForRedrawFar(window);
-  if (first != 0) {
-    struct WindowSprite *arrow = WindowSprite_CreateFar(
-        shop->previousPageIcon, OUTPUT_SIZE_16X16, window, 216, -16);
+  struct ShopWork *shop;
+  s16 *itemIds;
+  s16 *stockCursor;
+  s32 itemCount;
+  s32 stockIndex;
+  s32 pageSlot;
+  s32 priceX;
+  s16 itemId;
+  struct ItemDefinition *item;
+  struct WindowSprite *icon;
 
-    arrow->kind = 0;
-    arrow->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-    arrow->animationStep = 0;
-  }
-  if (first + SHOP_STOCK_PAGE_ITEMS < shop->stockCount) {
-    struct WindowSprite *arrow = WindowSprite_CreateFar(
-        shop->nextPageIcon, OUTPUT_SIZE_16X16, window, 216, 24);
-
-    arrow->kind = 0;
-    arrow->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-    arrow->animationStep = 0;
-  }
-  // Depth slots: the items 252, the chosen one 253, the prices 251.
-  for (slot = 0;
-       slot < SHOP_STOCK_PAGE_ITEMS && first + slot < shop->stockCount;
-       slot++) {
-    s32 itemId = shop->stockItemIds[first + slot];
-    struct ItemDefinition *item = Item_GetDirectFar(itemId);
-    struct WindowSprite *icon =
-        WindowSprite_CreateLoadedFar(itemId, 1, window, slot * 32, 0);
-
-    icon->sentinel = 252;
-    if (first + slot == selected) {
-      icon->motion = WINDOW_SPRITE_MOTION_SWELL;
-      icon->animationStep = 10;
-      icon->sentinel = 253;
+  shop = gMenuWork;
+  itemIds = shop->stockItemIds;
+  itemCount = shop->stockCount;
+  stockIndex = selected - selected % SHOP_STOCK_PAGE_ITEMS;
+  if (window != 0) {
+    WindowSprite_PrepareForRedrawFar(window);
+    if (stockIndex != 0) {
+      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
+                                    window, 216, -16);
+      icon->kind = 0;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
+      icon->animationStep = 0;
     }
-    icon = Shop_CreatePriceSprite(item->price, window, slot * 32 + 16, 0);
-    icon->sentinel = 251;
+    if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
+      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
+                                    window, 216, 24);
+      icon->kind = 0;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+      icon->animationStep = 0;
+    }
+    pageSlot = 0;
+    if (stockIndex < (u32)itemCount) {
+      stockCursor = (s16 *)((stockIndex * 2) + (u32)itemIds);
+      priceX = 16;
+      for (;
+           (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
+           priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
+        itemId = *stockCursor;
+        item = Item_GetDirectFar(itemId);
+        // Depth slots: the items 252, the chosen one 253, the prices 251
+        icon =
+            WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
+        icon->sentinel = 252;
+        if (stockIndex == selected) {
+          icon->motion = WINDOW_SPRITE_MOTION_SWELL;
+          icon->animationStep = 10;
+          icon->sentinel = 253;
+        }
+        icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
+        icon->sentinel = 251;
+      }
+    }
   }
 }
 

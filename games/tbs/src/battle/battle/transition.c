@@ -191,24 +191,46 @@ void BattleTransition_AdvanceTimer(void) {
 /// map in screen block 12.
 void BattleTransition_DrawRows(void) {
   u32 column;
-  s32 frame = *gBattleEntryTimer;
-  s32 entry;
-  u32 row;
-  u16 *tiles;
+  s32 transitionFrame;
+  s32 alignedFrame;
+  s32 tileEntry;
+  u32 tileRow;
+  u16 *tilemap;
 
-  // The upper half moves up from row 13, the lower half, flipped, down.
-  if (frame >= 0 && frame <= 79) {
-    entry = (frame & 7) + TRANSITION_CURTAIN_ENTRY(1);
-    row = 13 - frame / 8;
-    tiles = (u16 *)BG_SCREEN_BLOCK(12) + row * 32;
-    for (column = 0; column != 32; column++)
-      *tiles++ = entry;
-    entry |= TILE_VFLIP;
-    row = 13 + frame / 8;
-    if (row <= 20) {
-      tiles = (u16 *)BG_SCREEN_BLOCK(12) + row * 32;
-      for (column = 0; column != 32; column++)
-        *tiles++ = entry;
+  transitionFrame = *gBattleEntryTimer;
+  if (transitionFrame >= 0 && transitionFrame <= 79) {
+    tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
+    // transitionFrame / 8 as signed division rounds it; the frame is never
+    // negative here.
+    if (transitionFrame >= 0) {
+      alignedFrame = transitionFrame;
+    } else {
+      alignedFrame = transitionFrame + 7;
+    }
+    tileRow = 13 - (alignedFrame >> 3);
+    column = 0;
+    tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
+    do {
+      column++;
+      *tilemap = tileEntry;
+      tilemap++;
+    } while (column != 32);
+
+    // The lower half: the same tile flipped vertically.
+    tileEntry |= TILE_VFLIP;
+    alignedFrame = transitionFrame;
+    if (transitionFrame < 0) {
+      alignedFrame += 7;
+    }
+    tileRow = (alignedFrame >> 3) + 13;
+    if (tileRow <= 20) {
+      column = 0;
+      tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
+      do {
+        column++;
+        *tilemap = tileEntry;
+        tilemap++;
+      } while (column != 32);
     }
   }
 }

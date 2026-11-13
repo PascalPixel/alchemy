@@ -225,19 +225,32 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
 /// calls it by name.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 standbyCount = 0;
-  struct DjinnRecoveryTable *table =
-      Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY);
-  struct DjinnRecoveryEntry *entry = table->list.entries;
-  s32 i;
+  struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);
+  struct DjinnRecoveryEntry *entry = recoveryTable->list.entries;
+  s32 entryIndex;
 
-  if (counts != 0)
-    counts[0] = counts[1] = counts[2] = counts[3] = 0;
-  for (i = 0; i != table->list.count; i++, entry++) {
-    if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE) {
-      if (counts != 0)
-        counts[entry->element]++;
-      standbyCount++;
-    }
+  if (counts != 0) {
+    u8 *slot;
+
+    slot = counts + 3;
+    *slot = standbyCount;
+    slot = counts + 2;
+    *slot = standbyCount;
+    slot = counts + 1;
+    *slot = standbyCount;
+    counts[0] = standbyCount;
+  }
+  entryIndex = 0;
+  if (recoveryTable->list.count != 0) {
+    do {
+      if (entry->turns == -1) {
+        if (counts != 0)
+          counts[entry->element]++;
+        standbyCount++;
+      }
+      entryIndex++;
+      entry++;
+    } while (entryIndex != recoveryTable->list.count);
   }
   return standbyCount;
 }

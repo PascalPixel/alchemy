@@ -59,7 +59,7 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Event_End__lemuria_palace();
 }
 
-void Func_020000c8(s32 kind) {
+void LemuriaPalace_EnterDoor(s32 kind) {
   const u8 *data = gData_02002368;
 
   if (kind == 3)
@@ -362,7 +362,11 @@ extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
 s32 __modsi3();
 void Field_StartPaletteTransition();
 
-s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
+/// In the palace the party is stopped by a guard, then brought before King
+/// Hydros and his council, who have been waiting for the warriors Piers spoke
+/// of.
+/// "You are Lord Felix, correct?"
+s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r5_1, r7_1, r8_1, r5_3, r5_4, r5_5;
   s32 v0, v2, r0, v10, v14, v17, v18, r2, r3, v29;
   struct Actor *v3, *v6, *v7, *v12, *v13, *v19, *v20, *v22, *v23, *v24, *v25,
@@ -1207,8 +1211,8 @@ s32 gData_02002378[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020000c8)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020000c8)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
@@ -1221,9 +1225,9 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {0xc602, 16, CONDITION_ALWAYS, EVENT(Func_020000c8)},
+    {0xc602, 16, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 20, 0x96a, EVENT(Func_0200058c)},
+    {TRIGGER_STEP, 20, 0x96a, EVENT(LemuriaPalace_MeetKingHydros)},
     {TRIGGER_TALK, 8, 0x196a, MSGNO(MsgLemuriaPalace12)},
     {TRIGGER_TALK, 9, 0x196a, MSGNO(MsgLemuriaPalace13)},
     {TRIGGER_TALK, 10, 0x196a, MSGNO(MsgLemuriaPalace14)},

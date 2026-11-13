@@ -946,14 +946,13 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
 
 /// Hides all 32 item icons.
 void ItemMenu_HideAllIcons(void) {
-  s32 hiddenState = ICON_HIDDEN;
   struct WindowSprite **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   s32 slot;
 
   for (slot = 31; slot >= 0; slot--) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
-      icon->motion = hiddenState;
+      icon->motion = ICON_HIDDEN;
     }
   }
 }
@@ -963,14 +962,13 @@ void ItemMenu_HideAllIcons(void) {
 void ItemMenu_HidePageIcons(void) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 slot = 0;
-  s32 hiddenState = ICON_HIDDEN;
   struct WindowSprite **iconSlot = menu->entryIcons;
 
   do {
     struct WindowSprite *icon = *iconSlot++;
 
     if (icon != 0 && slot % MENU_ITEM_GRID_COLUMNS == 0) {
-      icon->motion = hiddenState;
+      icon->motion = ICON_HIDDEN;
     }
     slot++;
   } while (slot <= 31);
@@ -2116,10 +2114,9 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #if TBS_PATCH_1
     cursor->motion = ICON_SHOWN;
 #else
-    u8 one = 1;
 
-    cursor->motion = one;
-    menu->flags = one;
+    cursor->motion = 1;
+    menu->flags = 1;
 #endif
   }
 #if LANGUAGE != LANGUAGE_JAPANESE

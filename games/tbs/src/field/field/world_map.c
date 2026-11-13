@@ -717,13 +717,12 @@ void WorldMap_StartStillPicture(void) {
   struct WorldMapAffineWork *affineWork =
       HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
   struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 one = 1;
 
-  perspective->animationActive = one;
+  perspective->animationActive = 1;
   Task_SuspendAll(TilesetAnim_Update);
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(2048), REG_DMA3);
   wait(1);
-  TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & one],
+  TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & 1],
                           (u8 *)gMapGridCellBuffer);
   perspective->windowTop = 200;
   perspective->windowBottom = 255;

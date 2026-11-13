@@ -121,7 +121,6 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
   window = NULL;
   {
-    u32 cleared = 0;
 
     name = gDjinn_ElementSprites[element & 3];
     entry = sprite;
@@ -133,19 +132,19 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
       work->dirty = 1;
 
       id = Portrait_GetForSpeaker(name);
-      Icon_LoadWithPalette(id, cleared, &handle, &palette, PORTRAIT_PALETTE,
-                           cleared);
+      Icon_LoadWithPalette(id, 0, &handle, &palette, PORTRAIT_PALETTE,
+                           0);
 
       // The portrait as a bare OAM entry, pushed onto draw layer 250 each
       // frame: a link word, attributes 0 and 1 and attribute 2.
       p = entry;
-      *p++ = cleared;
+      *p++ = 0;
       *p++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
       *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
       // No voice blips while the message types.
-      work->voiceSound = cleared;
-      work->voiceCountdown = cleared;
+      work->voiceSound = 0;
+      work->voiceCountdown = 0;
 
       // The message's arguments: the party member (MESSAGE_ARGUMENT_ACTOR) and
       // the Djinni's name, its ability (ABILITY_DJINNI_FIRST,
@@ -157,7 +156,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
       text = Message_DecodeMode1(element + MsgVenusDjinnJoined);
 
-      JOINED_QUEUE_TEXT(window, text, 36, 2, cleared);
+      JOINED_QUEUE_TEXT(window, text, 36, 2, 0);
 
       Sound_PlayFar(MUS_JOINED);
 

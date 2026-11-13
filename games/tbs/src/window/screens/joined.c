@@ -109,68 +109,43 @@ s32 ColossoMenu_Choose(s32 unused) {
 /// closes the window at once (Window_Close with instant set), waits a
 /// frame and frees the portrait's VRAM slot.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
-  struct WindowWork *work = (struct WindowWork *)*gWindowWork;
-  s32 name;
+  struct WindowWork *work = WINDOW_WORK;
   struct Window *window;
-  s32 sprite[3];
-  s32 *entry;
+  s32 portrait[3];
   s32 palette, handle;
-  s32 id;
-  s32 text;
-  s32 *p;
 
-  window = NULL;
-  {
-
-    name = gDjinn_ElementSprites[element & 3];
-    entry = sprite;
-    window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
-
-    if (window != NULL) {
-      Window_DrawDividerLine(window, 4, 0, 4, 4);
-
-      work->dirty = 1;
-
-      id = Portrait_GetForSpeaker(name);
-      Icon_LoadWithPalette(id, 0, &handle, &palette, PORTRAIT_PALETTE,
-                           0);
-
-      // The portrait as a bare OAM entry, pushed onto draw layer 250 each
-      // frame: a link word, attributes 0 and 1 and attribute 2.
-      p = entry;
-      *p++ = 0;
-      *p++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
-      *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
-
-      // No voice blips while the message types.
-      work->voiceSound = 0;
-      work->voiceCountdown = 0;
-
-      // The message's arguments: the party member (MESSAGE_ARGUMENT_ACTOR) and
-      // the Djinni's name, its ability (ABILITY_DJINNI_FIRST,
-      // MESSAGE_ARGUMENT_ABILITY).
-      MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
-                               ABILITY_DJINNI_FIRST,
-                           MESSAGE_ARGUMENT_ABILITY);
-
-      text = Message_DecodeMode1(element + MsgVenusDjinnJoined);
-
-      JOINED_QUEUE_TEXT(window, text, 36, 2, 0);
-
-      Sound_PlayFar(MUS_JOINED);
-
-      do {
-        Oam_AddSpriteAtDepth(entry, 250);
-        wait(1);
-      } while (Sound_GetBgmRestoreDelayFar() != 0 &&
-               (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
-
-      Window_Close(window, 2);
-      wait(1);
-      VramCache_FreeEntry(handle);
-    }
-  }
+  window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+  if (window == NULL)
+    return;
+  Window_DrawDividerLine(window, 4, 0, 4, 4);
+  work->dirty = 1;
+  Icon_LoadWithPalette(
+      Portrait_GetForSpeaker(gDjinn_ElementSprites[element & 3]), 0, &handle,
+      &palette, PORTRAIT_PALETTE, 0);
+  // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
+  // a link word, attributes 0 and 1 and attribute 2.
+  portrait[0] = 0;
+  portrait[1] = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
+  portrait[2] = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
+  // No voice blips while the message types.
+  work->voiceSound = 0;
+  work->voiceCountdown = 0;
+  // The message's arguments: the party member and the Djinni, by its ability.
+  MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
+                           ABILITY_DJINNI_FIRST,
+                       MESSAGE_ARGUMENT_ABILITY);
+  JOINED_QUEUE_TEXT(window, Message_DecodeMode1(element + MsgVenusDjinnJoined),
+                    36, 2, 0);
+  Sound_PlayFar(MUS_JOINED);
+  do {
+    Oam_AddSpriteAtDepth(portrait, 250);
+    wait(1);
+  } while (Sound_GetBgmRestoreDelayFar() != 0 &&
+           (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+  Window_Close(window, 2);
+  wait(1);
+  VramCache_FreeEntry(handle);
 }
 
 /// Returns the portrait character of party member `member` (0-8): from
@@ -191,7 +166,7 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
 /// `<member> joined your party.`, with the party member's portrait. The field's
 /// party events reach it by far call (field/event_commands/event.c).
 void Party_ShowJoinedMessage(s32 member) {
-  struct WindowWork *work = (struct WindowWork *)*gWindowWork;
+  struct WindowWork *work = WINDOW_WORK;
   struct Window *window = NULL;
   s32 sprite[3];
   s32 *entry = sprite;

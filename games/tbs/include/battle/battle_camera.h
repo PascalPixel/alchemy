@@ -12,6 +12,7 @@
 #include "static_assert.h"
 #include "edition.h"
 #include "far_call.h"
+#include "fixed_math.h"
 
 /// The battle camera: its eye, the focus it turns about, and its pitch, yaw
 /// and distance. It lives in the HEAP_SLOT_CAMERA heap slot.
@@ -39,7 +40,7 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
 /// The battle camera's distance from its focus in its default view, and the
 /// unzoomed projection's focal length, in 16.16 pixels (BattleCamera_SetView).
-#define BATTLE_CAMERA_DISTANCE (510 << 16)
+#define BATTLE_CAMERA_DISTANCE px(510)
 
 /// The HEAP_SLOT_CAMERA heap slot during a battle: the battle camera.
 extern struct BattleCamera *gBattleCamera;

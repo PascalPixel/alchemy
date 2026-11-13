@@ -652,7 +652,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     leader->update = (void (*)(struct Actor *))AlpineCrossing_LeaderFaceFeizhi;
 #endif
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if ((FIELD_CELL(leader->z.fixed)) == 13) {
+    if (FIELD_CELL(leader->z.fixed) == 13) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 200);
     }
     Actor_SetSpeed(ACTOR_FEIZHI, 2);

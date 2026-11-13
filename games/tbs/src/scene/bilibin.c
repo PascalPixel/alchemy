@@ -548,7 +548,7 @@ static void Bilibin_PullJillFromRiver(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   jillTree = Actor_Get(ACTOR_JILL_TREE);
-  if ((FIELD_CELL(jillTree->x.fixed)) == 6) {
+  if (FIELD_CELL(jillTree->x.fixed) == 6) {
     Event_Start();
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 1);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -794,8 +794,8 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   statue = Actor_Get(ACTOR_VILLAGE_STATUE);
   statueRow = FIELD_CELL(statue->z.fixed);
-  leaderColumn = (FIELD_CELL(leader->x.fixed));
-  leaderRow = (FIELD_CELL(leader->z.fixed));
+  leaderColumn = FIELD_CELL(leader->x.fixed);
+  leaderRow = FIELD_CELL(leader->z.fixed);
   statueX = statue->x.fixed;
   // Repaint the statue's lane before clearing the cells it currently occupies.
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 12);

@@ -1141,7 +1141,7 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   leaderPosition = Actor_Get(ACTOR_PARTY_LEADER);
   column = FIELD_CELL(leaderPosition->x.fixed);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((FIELD_CELL(leader->z.fixed)) == 8) {
+  if (FIELD_CELL(leader->z.fixed) == 8) {
     if ((u32)(column - 17) <= 1) {
       Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
       Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);
@@ -1276,7 +1276,7 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
 
   movingActor = Actor_Get(ACTOR_CENTER_STATUE);
   if (movingActor != 0) {
-    if ((FIELD_CELL(movingActor->z.fixed)) == 8) {
+    if (FIELD_CELL(movingActor->z.fixed) == 8) {
       Event_Start();
       Sound_Play(SE_PUSH);
       Actor_SetSpeed(ACTOR_CENTER_STATUE, 0.2);
@@ -1424,10 +1424,10 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
 /// Returns 1 when the actor stands in the given map cell.
 static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
   struct Actor *actor = Actor_Get(actorId);
-  if (actor == NULL || (FIELD_CELL(actor->x.fixed)) != column) {
+  if (actor == NULL || FIELD_CELL(actor->x.fixed) != column) {
     return 0;
   }
-  if ((FIELD_CELL(actor->z.fixed)) != row) {
+  if (FIELD_CELL(actor->z.fixed) != row) {
     return 0;
   }
   return 1;

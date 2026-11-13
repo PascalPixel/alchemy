@@ -954,7 +954,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         GameFlag_Clear(FLAG_STAIRS_RAISED);
       }
     } else if (pillarId == ACTOR_FOUNTAIN_PIPE) {
-      if ((FIELD_CELL(probe.position.z)) == 40) {
+      if (FIELD_CELL(probe.position.z) == 40) {
         Actor_MoveAndRedraw(probe);
         if (Event_GetFlag(FLAG_FOUNTAIN_SHOWN) == 0) {
           FieldCamera_SetSpeed(1.5);
@@ -967,7 +967,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
           MercuryLighthouse_OpenFountainWithSpray(5);
         }
         GameFlag_Set(FLAG_FOUNTAIN_RUNNING);
-      } else if ((FIELD_CELL(probe.position.z)) == 42) {
+      } else if (FIELD_CELL(probe.position.z) == 42) {
         probe.callback = MercuryLighthouse_StopFountainSpray;
         Actor_MoveAndRedraw(probe);
         MercuryLighthouse_RestoreFountainTiles(5);

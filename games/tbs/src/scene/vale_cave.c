@@ -645,7 +645,7 @@ static void ValeCave_PushLogOverEdge(void) {
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
-    if ((FIELD_CELL(probe.position.x)) == 17) {
+    if (FIELD_CELL(probe.position.x) == 17) {
       Actor_SetAnimation(probe.actorSlot, 3);
       stationaryMotion = 0;
       Actor_Get(probe.actorSlot)->motionFlags = stationaryMotion;
@@ -667,14 +667,12 @@ static void ValeCave_PushLogOverEdge(void) {
       }
       // The cells it held on the ledge, and its landing, become open floor.
       clearedRows = 4;
-      PushedActor_FillGridAttributeRectangle(
-          0, (FIELD_CELL(probe.position.x)),
-          ((FIELD_CELL(probe.position.z)) - 2), 1, clearedRows,
-          stationaryMotion);
-      PushedActor_FillGridAttributeRectangle(
-          2, (FIELD_CELL(probe.position.x)),
-          ((FIELD_CELL(probe.position.z)) - 2), 1, clearedRows,
-          stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
+                                             (FIELD_CELL(probe.position.z) - 2),
+                                             1, clearedRows, stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(probe.position.x),
+                                             (FIELD_CELL(probe.position.z) - 2),
+                                             1, clearedRows, stationaryMotion);
       PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2, stationaryMotion);
       PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
                                              stationaryMotion);
@@ -759,7 +757,7 @@ static void ValeCave_PushLogNorth(void) {
                                              (FIELD_CELL(probe.position.z)) - 1,
                                              4, clearedRows, emptyAttributes);
     }
-    if ((FIELD_CELL(probe.position.z)) == 20) {
+    if (FIELD_CELL(probe.position.z) == 20) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW);

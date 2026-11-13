@@ -294,7 +294,7 @@ static s32 Xian_WatchWaterCarrierPath(struct Actor *updated) {
     return 0;
 #endif
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u32)((FIELD_CELL(leader->x.fixed)) - 17) <= 1 &&
+  if ((u32)(FIELD_CELL(leader->x.fixed) - 17) <= 1 &&
       FIELD_CELL(leader->z.fixed) == 14 && self->x.fixed >> 20 <= 19 &&
       self->velocityX <= 0) {
     if (leader->x.fixed <= self->x.fixed) {
@@ -417,14 +417,14 @@ static void Xian_TalkToWaterCarrier(void) {
     if (leader->x.fixed < carrier->x.fixed) {
       Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-      Actor_WalkTo(ACTOR_PARTY_LEADER,
-                   ((FIELD_CELL(carrier->x.fixed)) << 4) - 8, 232);
+      Actor_WalkTo(ACTOR_PARTY_LEADER, (FIELD_CELL(carrier->x.fixed) << 4) - 8,
+                   232);
       leaderMustStepAside = 1;
     } else {
       Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-      Actor_WalkTo(ACTOR_PARTY_LEADER,
-                   ((FIELD_CELL(carrier->x.fixed)) << 4) + 24, 232);
+      Actor_WalkTo(ACTOR_PARTY_LEADER, (FIELD_CELL(carrier->x.fixed) << 4) + 24,
+                   232);
     }
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   }
@@ -475,7 +475,7 @@ static void Xian_TalkToWaterCarrier(void) {
   // "What are you doing! You made me spill my water!"
   Event_ShowMessageThenWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
   Scene_PlayQueuedMusic();
-  if ((FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed)) == 26 &&
+  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed) == 26 &&
       (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed)) > 13) {
     leaderMustStepAside = 1;
   }
@@ -491,7 +491,7 @@ static void Xian_TalkToWaterCarrier(void) {
   }
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0.8);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  if ((FIELD_CELL(carrier->z.fixed)) != 14) {
+  if (FIELD_CELL(carrier->z.fixed) != 14) {
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, carrier->x.part.pixel, 232);
   }
@@ -505,7 +505,7 @@ static void Xian_TalkToWaterCarrier(void) {
 /// front while the leader stands north of it.
 static void Xian_UpdatePuddlePriority(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((FIELD_CELL(leader->z.fixed)) <= 13)
+  if (FIELD_CELL(leader->z.fixed) <= 13)
     Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }
 

@@ -23,9 +23,9 @@ static void *Actor_FindAtPosition(const struct FieldPosition *position,
     if (p == NULL)
       continue;
 #endif
-    if ((pos->x >> 20) == (FIELD_CELL(p->x.fixed)) &&
-        (pos->y >> 20) == (FIELD_CELL(p->y.fixed)) &&
-        (pos->z >> 20) == (FIELD_CELL(p->z.fixed))) {
+    if ((pos->x >> 20) == FIELD_CELL(p->x.fixed) &&
+        (pos->y >> 20) == FIELD_CELL(p->y.fixed) &&
+        (pos->z >> 20) == FIELD_CELL(p->z.fixed)) {
       return p;
     }
   }

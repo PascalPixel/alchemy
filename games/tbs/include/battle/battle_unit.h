@@ -237,7 +237,7 @@ enum AbilityUse {
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
 
-/// The last party unit id: ids 0 to 7, one for each character who can join.
+/// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
 #define ALLY_MAX 7
 #define PARTY_UNIT_COUNT (ALLY_MAX + 1)
 

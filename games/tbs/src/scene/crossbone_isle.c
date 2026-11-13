@@ -855,7 +855,7 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
     actor->priorityFlags = priorityFlags;
     {
       s32 row = FIELD_CELL(actor->z.fixed);
-      s32 column = (FIELD_CELL(actor->x.fixed)) - 1;
+      s32 column = FIELD_CELL(actor->x.fixed) - 1;
 
       MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 3, 1, column, row);
     }
@@ -877,7 +877,7 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
     actor->priorityFlags = priorityFlags;
     {
       s32 column = FIELD_CELL(actor->x.fixed);
-      s32 row = (FIELD_CELL(actor->z.fixed)) - 1;
+      s32 row = FIELD_CELL(actor->z.fixed) - 1;
 
       MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 1, 3, column, row);
     }
@@ -1226,12 +1226,12 @@ static void CrossboneIsle_SlideFourthLogWest(void) {
 
   if (column != 30) {
     if (column == 34) {
-      if ((FIELD_CELL(Actor_Get(ACTOR_THIRD_LOG)->z.fixed)) == 18) {
+      if (FIELD_CELL(Actor_Get(ACTOR_THIRD_LOG)->z.fixed) == 18) {
         return;
       }
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, -64, 0);
     } else if (column == 36) {
-      if ((FIELD_CELL(Actor_Get(ACTOR_THIRD_LOG)->z.fixed)) == 18) {
+      if (FIELD_CELL(Actor_Get(ACTOR_THIRD_LOG)->z.fixed) == 18) {
         CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, -32, 0);
       } else {
         CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, -96, 0);
@@ -1248,7 +1248,7 @@ static void CrossboneIsle_SlideFourthLogEast(void) {
 
   if (column != 36) {
     if (column == 30) {
-      if ((FIELD_CELL(Actor_Get(ACTOR_THIRD_LOG)->z.fixed)) == 18) {
+      if (FIELD_CELL(Actor_Get(ACTOR_THIRD_LOG)->z.fixed) == 18) {
         return;
       }
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, 96, 0);

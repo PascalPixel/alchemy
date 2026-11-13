@@ -1081,7 +1081,7 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
   row >>= 20;
   MogallForest_UpdateRockFootprint(column, row);
   rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  if ((FIELD_CELL(rock->z.fixed)) == 27) {
+  if (FIELD_CELL(rock->z.fixed) == 27) {
     rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
     rock->motionFlags = 0;
     rock->groundHeight = -px(2);

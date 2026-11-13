@@ -83,11 +83,11 @@ enum ClassSeries {
   CLASS_SERIES_HERMIT
 };
 
-/// A class: its series, the element levels it needs, its stat multipliers and
-/// the abilities it teaches.
 /// How many actions a class can teach (ClassDefinition.abilities).
 #define CLASS_ABILITY_SLOTS 16
 
+/// A class: its series, the element levels it needs, its stat multipliers and
+/// the abilities it teaches.
 struct ClassDefinition {
   /// The series the class belongs to; Class_Determine picks the series from
   /// the character's two strongest elements.

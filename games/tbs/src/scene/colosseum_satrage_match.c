@@ -363,7 +363,7 @@ static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 row;
 
   obstacle = Actor_Get(ACTOR_WALL_PILLAR);
-  if ((FIELD_CELL(obstacle->x.fixed)) == 36) {
+  if (FIELD_CELL(obstacle->x.fixed) == 36) {
     GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
     column = 35;
     row = 77;
@@ -617,7 +617,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *log = Actor_Get(logId);
   s32 heading = (pusherActor->facing + TRIG_TURN / 16) & 0xe000;
-  s32 alongX = (FIELD_CELL(log->x.fixed)) != halfCellX / 2;
+  s32 alongX = FIELD_CELL(log->x.fixed) != halfCellX / 2;
   s32 offsetX;
   s32 offsetZ;
 
@@ -1480,7 +1480,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   s32 pusher = gMainRoutineWork.leaderActorId;
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *obstacle = Actor_Get(obstacleId);
-  s32 alongX = (FIELD_CELL(obstacle->x.fixed)) != column / 2;
+  s32 alongX = FIELD_CELL(obstacle->x.fixed) != column / 2;
   s32 offsetX;
   s32 offsetZ;
 

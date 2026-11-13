@@ -125,7 +125,7 @@ void ActorSystem_PlaceSprites(void) {
         // row holds 128 of them.
         tile = &((struct ActorCameraTile *)grid->layers[actor->layer]
                      .cells)[(FIELD_CELL(actor->x.fixed)) +
-                             ((FIELD_CELL(actor->z.fixed)) << 7)];
+                             (FIELD_CELL(actor->z.fixed) << 7)];
         if (actor->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {

@@ -413,7 +413,7 @@ static void GondowanCave_MoveStump(void) {
   {
     struct Actor *actor = Actor_Get(ACTOR_STUMP);
 
-    if ((FIELD_CELL(actor->x.fixed)) <= 30) {
+    if (FIELD_CELL(actor->x.fixed) <= 30) {
       GondowanCave_RunSpinningLeap(ACTOR_STUMP);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
       GameFlag_Set(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
@@ -441,7 +441,7 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
 /// drops into the water with a splash, for good.
 static void GondowanCave_MovePillar(void) {
   Event_Start();
-  if ((FIELD_CELL(Actor_Get(ACTOR_PILLAR)->x.fixed)) > 42) {
+  if (FIELD_CELL(Actor_Get(ACTOR_PILLAR)->x.fixed) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
 

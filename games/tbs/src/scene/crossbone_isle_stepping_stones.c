@@ -463,15 +463,15 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
                                    (row << 20) + actor->z.fixed);
     top /= px(16);
     if (level < top) {
-      x = ((FIELD_CELL(actor->x.fixed)) << 20) + px(8);
+      x = (FIELD_CELL(actor->x.fixed) << 20) + px(8);
       if (far == 0) {
         row += 2;
-        z = ((row + (FIELD_CELL(actor->z.fixed))) << 20) + px(2);
+        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) + px(2);
         y = top << 20;
         kind = 223;
       } else {
         row += 3;
-        z = ((row + (FIELD_CELL(actor->z.fixed))) << 20) - px(2);
+        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) - px(2);
         y = top << 20;
         kind = 253;
       }
@@ -1089,7 +1089,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     actor = Actor_Get(id);
     actor->layer = 2;
     i = id - ACTOR_FIRST_PILLAR;
-    if ((FIELD_CELL(actor->x.fixed)) == sPillarSlots[i].x &&
+    if (FIELD_CELL(actor->x.fixed) == sPillarSlots[i].x &&
         (FIELD_CELL(actor->z.fixed)) == sPillarSlots[i].z &&
         actor->velocityY == 0) {
       continue;
@@ -1139,7 +1139,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
                                                 &sPillarSlots[i].cell);
     if (actor->y.fixed >= 0) {
       CrossboneIsleSteppingStones_ReadMapGridCell(
-          0, 27, (FIELD_CELL(actor->y.fixed)) + 6, &cell);
+          0, 27, FIELD_CELL(actor->y.fixed) + 6, &cell);
       CrossboneIsleSteppingStones_SetCellAttributes(
           0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
@@ -1159,8 +1159,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       }
       GameFlag_Clear(sPillarSlots[k].flag);
       other = Actor_Get(k + ACTOR_FIRST_PILLAR);
-      if ((FIELD_CELL(actor->x.fixed)) == (FIELD_CELL(other->x.fixed)) &&
-          (FIELD_CELL(actor->z.fixed)) == (FIELD_CELL(other->z.fixed)) &&
+      if (FIELD_CELL(actor->x.fixed) == FIELD_CELL(other->x.fixed) &&
+          (FIELD_CELL(actor->z.fixed)) == FIELD_CELL(other->z.fixed) &&
           actor->y.fixed > other->y.fixed) {
         GameFlag_Set(sPillarSlots[k].flag);
       }
@@ -1481,10 +1481,10 @@ static void CrossboneIsleSteppingStones_MoveSinkingPillar(void) {
 
   pillar = Actor_Get(ACTOR_SINKING_BOULDER);
   Event_Start();
-  PushedActor_FillGridAttributeRectangle(2, (FIELD_CELL(pillar->x.fixed)),
+  PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(pillar->x.fixed),
                                          (FIELD_CELL(pillar->z.fixed)), 1, 1,
                                          CELL_BEHAVIOR_WALL);
-  if ((FIELD_CELL(pillar->x.fixed)) == 16) {
+  if (FIELD_CELL(pillar->x.fixed) == 16) {
     alreadyLowered =
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     if (alreadyLowered == 0) {

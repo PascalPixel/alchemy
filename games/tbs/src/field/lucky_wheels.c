@@ -732,7 +732,7 @@ void LuckyWheels_Update(void) {
           work->phase = 0;
           Window_CloseFar(work->window, 1);
 #if LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN
-          if (work->spins <= 3)
+          if (work->spins < LUCKY_WHEELS_RESPINS)
 #endif
           {
             work->window = Window_CreateFar(3, 16, 24, 4, 6);
@@ -882,7 +882,9 @@ void LuckyWheels_Update(void) {
     sprite++;
   }
 
-  for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
+  // One sprite for each pull of the lever, the first and its re-pulls; the
+  // current pull's takes other tiles.
+  for (i = 0; i != LUCKY_WHEELS_RESPINS + 1; i++) {
     work->oam[sprite].attr01 =
         objMode | ((i * 16 + 32) << 16) | 3 | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (i == work->spins)
@@ -1161,6 +1163,7 @@ void LuckyWheels_Run(void) {
       reel->held = 0;
       reel->stop = -1;
       for (k = 0; k != LUCKY_WHEELS_REEL_SYMBOLS; k++)
+        // One of the plain symbols, all numbered below the wild one.
         reel->symbols[k] = Random16() % LUCKY_WHEELS_WILD_SYMBOL;
     }
     // Then eight different places on each wheel take symbols 0 to 4 and three

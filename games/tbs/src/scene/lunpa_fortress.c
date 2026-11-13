@@ -569,7 +569,7 @@ static void LunpaFortress_MoveCrates(void) {
   struct Actor *cratesActor;
 
   cratesActor = Actor_Get(ACTOR_CAVE_CRATES);
-  if ((FIELD_CELL(cratesActor->z.fixed)) > 22) {
+  if (FIELD_CELL(cratesActor->z.fixed) > 22) {
     MapGrid_SetShake(4, 4, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     Sound_Play(SE_CLATTER);

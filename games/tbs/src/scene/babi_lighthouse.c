@@ -378,7 +378,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
-  if (((FIELD_CELL(leader->x.fixed)) == 6 ||
+  if ((FIELD_CELL(leader->x.fixed) == 6 ||
        (FIELD_CELL(leader->x.fixed)) == 18) &&
       (FIELD_CELL(leader->z.fixed)) == 20) {
     leader->targetX = ACTOR_NO_TARGET;
@@ -418,17 +418,17 @@ static void BabiLighthouse_PushLedgePillar(void) {
 static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
   struct Actor *pillar = Actor_Get(ACTOR_RIGHT_PILLAR);
 
-  if ((FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed)) <= 12) {
+  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed) <= 12) {
     pillar = Actor_Get(ACTOR_LEFT_PILLAR);
-    if ((FIELD_CELL(pillar->x.fixed)) == 6) {
-      if ((FIELD_CELL(pillar->z.fixed)) == 20) {
+    if (FIELD_CELL(pillar->x.fixed) == 6) {
+      if (FIELD_CELL(pillar->z.fixed) == 20) {
         BabiLighthouse_PushLedgePillar();
         return;
       }
     }
   } else {
-    if ((FIELD_CELL(pillar->x.fixed)) == 18) {
-      if ((FIELD_CELL(pillar->z.fixed)) == 20) {
+    if (FIELD_CELL(pillar->x.fixed) == 18) {
+      if (FIELD_CELL(pillar->z.fixed) == 20) {
         BabiLighthouse_PushLedgePillar();
         return;
       }

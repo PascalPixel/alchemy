@@ -732,8 +732,7 @@ static void TunnelRuins_BlowAwayIvyC(void) {
 static void TunnelRuins_HopWestBySmallPillars(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((FIELD_CELL(actor->x.fixed)) != 32 ||
-      (FIELD_CELL(actor->z.fixed)) != 50) {
+  if (FIELD_CELL(actor->x.fixed) != 32 || (FIELD_CELL(actor->z.fixed)) != 50) {
     TunnelRuins_HopWest();
   }
 }
@@ -744,8 +743,7 @@ static void TunnelRuins_HopWestBySmallPillars(void) {
 static void TunnelRuins_HopNorthBySmallPillars(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((FIELD_CELL(actor->x.fixed)) != 30 ||
-      (FIELD_CELL(actor->z.fixed)) != 52) {
+  if (FIELD_CELL(actor->x.fixed) != 30 || (FIELD_CELL(actor->z.fixed)) != 52) {
     TunnelRuins_HopNorth();
   }
 }
@@ -779,7 +777,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
 
   Event_Start();
   actor = Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR);
-  if ((FIELD_CELL(actor->x.fixed)) == 46) {
+  if (FIELD_CELL(actor->x.fixed) == 46) {
     Event_Wait(30);
     overlay = Actor_Prepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
@@ -864,7 +862,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
 
   Event_Start();
   actor = Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR);
-  if ((FIELD_CELL(actor->x.fixed)) == 48) {
+  if (FIELD_CELL(actor->x.fixed) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
       overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
@@ -1121,10 +1119,10 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     if (candidateId == actorId)
       continue;
 
-    if ((FIELD_CELL(Actor_Get(candidateId)->x.fixed)) !=
+    if (FIELD_CELL(Actor_Get(candidateId)->x.fixed) !=
         (FIELD_CELL(Actor_Get(actorId)->x.fixed)))
       continue;
-    if ((FIELD_CELL(Actor_Get(candidateId)->z.fixed)) !=
+    if (FIELD_CELL(Actor_Get(candidateId)->z.fixed) !=
         (FIELD_CELL(Actor_Get(actorId)->z.fixed)))
       continue;
 
@@ -1175,7 +1173,7 @@ static void TunnelRuins_SetStoneOnBalance(void) {
       GameFlag_Set(i + FLAG_SCENE_TEMP_00);
       break;
     }
-    if ((FIELD_CELL(Actor_Get(i + ACTOR_WEST_CARRY_STONE)->z.fixed)) == 9 &&
+    if (FIELD_CELL(Actor_Get(i + ACTOR_WEST_CARRY_STONE)->z.fixed) == 9 &&
         GameFlag_Get(i + FLAG_SCENE_TEMP_00) == 0) {
       Actor_Get(i + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
       Actor_Get(i + ACTOR_WEST_CARRY_STONE)->velocityY = 0;
@@ -1222,9 +1220,8 @@ static void TunnelRuins_SetStoneOnBalance(void) {
       FieldCamera_MoveTo(168, 8, 184, 1);
       FieldCamera_WaitForMove();
       TunnelRuins_DropStoneOnStack(settledIndex + ACTOR_WEST_CARRY_STONE);
-      if ((FIELD_CELL(
-              Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->x.fixed)) ==
-          8) {
+      if (FIELD_CELL(
+              Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->x.fixed) == 8) {
         Actor_Get(ACTOR_BALANCE_WEST)->timer++;
         (Actor_Get(ACTOR_BALANCE_EAST)->timer)--;
       } else {
@@ -1265,13 +1262,13 @@ static void TunnelRuins_PushActor(void) {
 static void TunnelRuins_MoveEastPillar(void) {
   Event_Start();
 
-  if ((FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed)) == 45) {
+  if (FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed) == 45) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   }
 
-  if ((FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed)) == 46) {
+  if (FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed) == 46) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
@@ -1369,37 +1366,37 @@ static void TunnelRuins_MoveLadyStatue(void) {
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
   // Count the statues on their marks.
   actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-  if ((FIELD_CELL(actor->x.fixed)) == 25) {
+  if (FIELD_CELL(actor->x.fixed) == 25) {
     actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-    if ((FIELD_CELL(actor->z.fixed)) == 49) {
+    if (FIELD_CELL(actor->z.fixed) == 49) {
       correctPositions = 1;
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-  if ((FIELD_CELL(actor->x.fixed)) == 23) {
+  if (FIELD_CELL(actor->x.fixed) == 23) {
     actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-    if ((FIELD_CELL(actor->z.fixed)) == 49) {
+    if (FIELD_CELL(actor->z.fixed) == 49) {
       correctPositions = (correctPositions + 1);
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-  if ((FIELD_CELL(actor->x.fixed)) == 25) {
+  if (FIELD_CELL(actor->x.fixed) == 25) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-    if ((FIELD_CELL(actor->z.fixed)) == 47) {
+    if (FIELD_CELL(actor->z.fixed) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-  if ((FIELD_CELL(actor->x.fixed)) == 23) {
+  if (FIELD_CELL(actor->x.fixed) == 23) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-    if ((FIELD_CELL(actor->z.fixed)) == 47) {
+    if (FIELD_CELL(actor->z.fixed) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-  if ((FIELD_CELL(actor->x.fixed)) == 24) {
+  if (FIELD_CELL(actor->x.fixed) == 24) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-    if ((FIELD_CELL(actor->z.fixed)) == 48) {
+    if (FIELD_CELL(actor->z.fixed) == 48) {
       correctPositions = (correctPositions + 1);
     }
   }

@@ -83,9 +83,7 @@ u8 GameFlag_DecrementByte(s32 flag) {
   return flags[flag];
 }
 
-/// Returns the four bits `flag` is in, 0 to 15 (bit 2 of the number picks the
-/// half: flags n to n + 3, with n a multiple of 4, are one nibble). Only
-/// GAME.S's bare veneer reaches it; nothing calls it by name.
+/// Returns the four bits a flag is in, 0 to 15.
 s32 GameFlag_GetNibble(u32 flag) {
   s32 shift = flag & 4;
   s32 mask = 15 << shift;

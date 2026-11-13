@@ -23,11 +23,8 @@ s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
   return donation;
 }
 
-/// Returns 1 when party member `unitId` needs `serviceKind`: down (HP 0) for a
-/// revive, poisoned for a cure, haunted for an exorcism, any curse bit set for
-/// removing a curse. Unit_Calculate sets the curse bits only for a cursed item
-/// worn, and nothing sets CURSE_KEEP_BOUND, so a party member accepted for
-/// removing a curse always has a cursed item to take off.
+/// Returns 1 when a party member needs the service: down for a revive, poisoned
+/// for a cure, haunted for an exorcism, cursed for removing a curse.
 s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
   struct Unit *unit = Unit_GetFar(unitId);
   s32 eligible = 0;
@@ -55,10 +52,8 @@ s32 Sanctum_CountMembersInNeed(void) {
   return eligibleCount;
 }
 
-/// Returns the line of the service in shop->action that stands where
-/// `messageId` stands among the revive service's lines. Each service's lines
-/// are a run in the same order, from MsgReviveService, MsgCurePoisonService,
-/// MsgExorcismService and MsgRemoveCurseService.
+/// Returns the current service's line that stands where messageId stands among
+/// the revive service's lines.
 s32 Sanctum_GetServiceMessage(s32 messageId) {
   s8 serviceKind = ((struct ShopWork *)gMenuWork)->action;
 
@@ -74,9 +69,7 @@ s32 Sanctum_GetServiceMessage(s32 messageId) {
   return messageId;
 }
 
-/// Shows the keeper's line `messageId`, moved to the current service's
-/// (Sanctum_GetServiceMessage), and waits for its window, one more frame
-/// included: the sanctum's Shop_ShowKeeperMessage.
+/// Shows the keeper's line for the current service and waits for its window.
 void Sanctum_ShowKeeperMessage(s32 messageId) {
   s32 portraitResource;
 
@@ -91,9 +84,7 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   wait(1);
 }
 
-/// As Sanctum_ShowKeeperMessage, hiding the hand cursor while the line
-/// shows and putting back its motion after: the sanctum's
-/// Shop_ShowKeeperMessageHidingCursor.
+/// As Sanctum_ShowKeeperMessage, hiding the hand cursor while the line shows.
 void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   struct ShopWork *shop = gMenuWork;
   u8 savedCursorMode = shop->cursor.anchor->motion;
@@ -109,10 +100,8 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   shop->cursor.anchor->motion = savedCursorMode;
 }
 
-/// Runs a sanctum: the keeper's welcome, then the service menu (revive, cure
-/// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is the
-/// keeper's actor, whose portrait the lines show. Holds the shop work block
-/// while it runs; returns 0.
+/// Runs a sanctum: the keeper's welcome, the service menu until B, and the
+/// farewell; unitId is the keeper, whose portrait the lines show.
 s32 Sanctum_Run(s32 unitId) {
   s32 serviceSelection = 0;
   struct Window *listWindow = 0;
@@ -180,11 +169,8 @@ s32 Sanctum_Run(s32 unitId) {
   return 0;
 }
 
-/// Lets the player pick a party member for the service in shop->action,
-/// starting on the first who needs it, asks for the donation, then applies the
-/// service with its burst and takes the coins; offers another party member
-/// while any still need it, until B. A party member who needs nothing can be
-/// pointed at, but A only buzzes.
+/// Lets the player pick a party member for the service, asks for the donation,
+/// then applies it with its burst; offers another while any still need it.
 s32 Sanctum_RunPartyService(void) {
   struct ShopWork *shop = gMenuWork;
   struct Window *priceWindow;
@@ -309,11 +295,8 @@ s32 Sanctum_RunPartyService(void) {
   return 0;
 }
 
-/// Applies sanctum service `serviceKind` to party member `unitId`: full HP for
-/// a revive, poison or the haunting cleared, or every cursed item taken off
-/// (Unit_Calculate then rebuilds the curse bits from what is still equipped).
-/// With no cursed item equipped, removing a curse changes nothing, whatever
-/// curse bits Sanctum_NeedsService saw.
+/// Applies a sanctum service to a party member: full HP for a revive, poison or
+/// the haunting cleared, or every cursed item taken off.
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   struct Unit *unit;
 
@@ -340,10 +323,8 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   }
 }
 
-/// Shows the chosen party member running in place and the others standing, and
-/// draws at seven tenths of their size (Q16_ONE * 7 / 10 in 16.16) the party
-/// members who do not need the service.
-/// The sanctum's Shop_DrawParty.
+/// Shows the chosen party member running in place, and those who do not need
+/// the service drawn smaller.
 void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
@@ -364,9 +345,8 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   }
 }
 
-/// Draws in `target` the party member's fee for the current service (its cost
-/// line with the donation filled in), or the line that the party member needs
-/// no treatment.
+/// Draws the party member's fee for the current service, or that they need no
+/// treatment.
 void Sanctum_DrawFee(struct Window *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
@@ -386,13 +366,8 @@ void Sanctum_DrawFee(struct Window *target, s32 unitId) {
   }
 }
 
-/// Steps one sparkle of the sanctum's burst, its slot's callback.
-/// SANCTUM_SPARKLE_START places it at a random point 40 pixels from the burst's
-/// centre and aims it at a random point 4 pixels from it;
-/// SANCTUM_SPARKLE_FLYING waits for it to arrive and starts it again, so it
-/// flies in again; SANCTUM_SPARKLE_LAST_FLIGHT, which
-/// Sanctum_RunMemberIconBurst sets as the burst ends, frees the slot on
-/// arrival.
+/// Steps one sparkle of the sanctum's burst, which flies in from a ring around
+/// the icon, again and again until the burst ends.
 void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
   struct FixedPointPosition position;
   s8 *statePointer;
@@ -426,11 +401,8 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
   }
 }
 
-/// The burst's frame-pass task while Sanctum_RunMemberIconBurst plays: steps
-/// all 24 sparkle slots, then, from the sixth sparkle until 20 frames after
-/// the tune ends (while burstMember is not -1), gives the party member's icon a
-/// random colour mode each frame: SpriteColorMode 0 to 6, normal, the channel
-/// swaps or grey.
+/// Steps the burst's sparkles, and while the tune plays gives the party
+/// member's icon a random colour each frame.
 void Sanctum_UpdateBurst(void) {
   struct ShopWork *shop = gMenuWork;
   struct FieldParticle *effect = shop->effects;
@@ -448,9 +420,7 @@ void Sanctum_UpdateBurst(void) {
                                      (Random16() * 7) >> 16);
 }
 
-/// The tune each service's burst plays, by enum SanctumService; the burst
-/// waits for the sound driver (Sound_WaitForJingle) before
-/// freeing its sparkles.
+/// The tune each service's burst plays.
 static const s8 sSanctumServiceCues[4] = {
     [SANCTUM_SERVICE_REVIVE] = MUS_REVIVE,
     [SANCTUM_SERVICE_CURE_POISON] = MUS_CURE,
@@ -458,12 +428,8 @@ static const s8 sSanctumServiceCues[4] = {
     [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_REMOVE_CURSE,
 };
 
-/// Plays the service's burst on party member `member` (an index into the party
-/// row): the service's tune, the field's colours tinted, 18 sparkles in random
-/// colour modes flying in from a ring around the party member's icon three
-/// frames apart, the icon cycling through colour modes, then, once the sound
-/// driver is done, the sparkles freed and the colours faded back. The hand
-/// cursor is hidden throughout.
+/// Plays the service's burst on a party member's icon: its tune, the colours
+/// tinted, and 18 sparkles flying in around the icon as it changes colour.
 void Sanctum_RunMemberIconBurst(s32 member) {
 
   struct ShopWork *shop;

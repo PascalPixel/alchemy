@@ -7,11 +7,8 @@
 /// The battle's multipliers are 256ths: this one keeps an amount as it is.
 #define BATTLE_MULTIPLIER_ONE 256
 
-/// Returns the multiplier (256 = 1x) for an element difference `input`, read
-/// from a five-point line (gElement_PowerResistCurve); with `halve` the effect
-/// of the difference is half. The curve's points lie on one straight line, so
-/// the result is 256 plus 1.28 for each point of difference, with the
-/// difference held to -200 to 200: 0 to 512, or 128 to 384 halved.
+/// Returns the multiplier, 256 for 1x, for an element difference: 256 plus 1.28
+/// a point, the difference held to -200 to 200, its effect half with halve.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 minimumDifference;
   s32 maximumDifference;
@@ -55,10 +52,8 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   }
 }
 
-/// The battle's random number generator, the same linear congruential one as
-/// Random16 with its own seed. Returns bits 8 to 23 of the new seed and writes
-/// gBattleRandomSeed. Rolls that use it advance independently of Random16;
-/// link battles exchange this seed before resolving the turn.
+/// The battle's random number generator, the same as Random16 with its own
+/// seed, which link battles exchange.
 s32 Battle_Random(void) {
   u32 seed;
 
@@ -70,9 +65,8 @@ s32 Battle_Random(void) {
 /// Returns a battle random number from 0 to 99.
 u32 Battle_RandomPercent(void) { return ((u32)Battle_Random() * 100) >> 16; }
 
-/// Scales max(attack - defense, 0) + twice the action's added power by the
-/// elemental multiplier, then halves it. elementDifference is power minus
-/// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
+/// Scales max(attack - defense, 0) plus twice the added power by half the
+/// element multiplier, then halves it.
 s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
                                  s32 elementDifference) {
   s32 damage;
@@ -92,9 +86,7 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
   return damage;
 }
 
-/// Returns the power of Psynergy: `power` times the multiplier for the element
-/// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
-/// powerMultiplier (also 256 = 1x).
+/// Returns Psynergy's power times the element multiplier and powerMultiplier.
 s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
                                   s32 powerMultiplier) {
   s32 scaledPower;
@@ -106,11 +98,8 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
   return scaledPower >> 16;
 }
 
-/// Returns the amount healed: `power` and `powerMultiplier` (256 is 1x) times
-/// the multiplier for twice the healer's element power above 100.
-///   elementPower : the healer's power in the element (100 is 1x)
-/// Reached through GAME.S as Battle_CalculateRecoveryFar, which the battle and
-/// the menu's healing use.
+/// Returns the amount healed: power times powerMultiplier and the multiplier
+/// for the healer's element power above 100.
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   s32 signedProduct;
   u32 scaledRecovery;
@@ -162,9 +151,8 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
   return chanceBonus;
 }
 
-/// Rolls whether a character's weapon unleashes: its chance is the weapon's
-/// unleashChance times 5 percent plus what the equipment adds. Returns the
-/// unleash action, or 1 for a plain attack.
+/// Rolls whether a character's weapon unleashes, 5 percent a point of its
+/// chance. Returns the unleash action, or 1 for a plain attack.
 s32 RollWeaponUnleash(struct Unit *unit) {
   struct ItemDefinition *item;
   s32 rate;
@@ -188,9 +176,8 @@ s32 RollWeaponUnleash(struct Unit *unit) {
   return 1;
 }
 
-/// Returns the base chance, in percent, of effect `effectId`. A negative value
-/// is a fixed chance that elements and luck do not change; effects not listed
-/// always work (-100).
+/// Returns the base chance in percent of an effect; a negative one is fixed,
+/// and effects not listed always work.
 s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
 
@@ -241,9 +228,8 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   return -fixedChance;
 }
 
-/// Returns 1 when the unit is weak to effect `effectId`: one of three listed
-/// for its enemy kind (EnemyDefinition.weakEffects) or class
-/// (ClassDefinition.weakEffects).
+/// Returns 1 when the unit is weak to the effect, as its enemy kind or class
+/// lists.
 s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;
@@ -276,14 +262,10 @@ s32 Battle_IsReviveEffect(s32 effectId) {
   return 0;
 }
 
-/// Rolls whether effect `effectId` takes hold on `target`: it fails at once
-/// when there is nothing for it to do. The chance is the base rate, plus three
-/// times the caster's lead over the target in the element's level less half the
-/// target's luck (so every two points of luck take off three), plus 25 against
-/// a weakness, times `successScale` percent. A base rate of 0 or less counts as
-/// its magnitude, still scaled but skipping the levels, luck and weakness; 0
-/// still succeeds when Battle_RandomPercent gives 0, about 1 time in 100. Luff
-/// gets three tries.
+/// Rolls whether an effect takes hold on target: the base rate, plus three
+/// times the caster's lead in the element's level, less half the target's luck,
+/// plus 25 against a weakness, times successScale percent. Luff gets three
+/// tries.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   struct Unit *unit = Unit_Get(target);

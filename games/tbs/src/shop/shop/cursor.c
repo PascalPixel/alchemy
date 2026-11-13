@@ -20,10 +20,8 @@ static const u16 sSelectorTileOffsets[30] = {
 };
 // clang-format on
 
-/// Colours the first `itemCount` segments of the quantity bar in `tileBuffer`:
-/// each segment is two pixels wide on rows 1 to 6 of its tile, the left pixel
-/// colour 1 and the right one colour `paletteSelector` (a colour number, not a
-/// palette).
+/// Colours the first itemCount segments of the quantity bar, each two pixels
+/// wide.
 void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   s32 segment;
 
@@ -73,12 +71,8 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   } while (count >= 0);
 }
 
-/// Builds a price of up to five digits in scratch tiles
-/// (HEAP_SLOT_TILE_SCRATCH), loads them into a free VRAM cache slot and
-/// attaches them to `window` as one sprite at (x, y). Returns the sprite, or
-/// NULL with no free slot. A price of 100000 or more shows its last five
-/// digits. The scratch block is released before returning; the cache entry is
-/// not freed here.
+/// Builds a price of up to five digits as a sprite on window at (x, y). Returns
+/// the sprite, or NULL with no free slot.
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
                                             s32 x, s32 y) {
   u8 *tileBuffer;
@@ -147,10 +141,7 @@ void Shop_RestoreFieldPalette(void) {
   PaletteFade_StartInterpolationFar(16);
 }
 
-/// Moves the cursor from its saved position toward its target, in a straight
-/// line over `kind` frames, one frame a call; `active` counts the frames and
-/// both go back to 0 on arrival. Runs every frame from MenuCursor_Step, and
-/// from the settings menu's, name entry screen's and file list's cursor tasks.
+/// Moves the cursor a frame along its straight line toward its target.
 void MenuCursor_Advance(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 durationFrames;

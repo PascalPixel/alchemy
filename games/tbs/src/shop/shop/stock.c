@@ -30,9 +30,8 @@ const s16 gShop_GiftItemIds[21] = {
 };
 // clang-format on
 
-/// Gives a Game Ticket once the party's shop credit (what it has spent in
-/// shops) reaches the next ticket's cost, and lets the player choose who takes
-/// it. Spends the credit and counts the gift, not coins.
+/// Gives a Game Ticket once the party's spending in shops reaches the next
+/// ticket's cost, and lets the player choose who takes it.
 void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
   struct ShopWork *shop = gMenuWork;
   s32 creditCost;
@@ -299,10 +298,8 @@ static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 /// Returns how many stock rows there are; Shop_Run refuses a row past them.
 s32 ShopStock_GetRowCount(void) { return SHOP_STOCK_ROWS; }
 
-/// Adds a shop's artifacts to the shared stock counters once, on its first
-/// visit, and sets the shop's flag (FLAG_SHOP_ARTIFACTS_STOCKED + row) to
-/// remember it. Each artifact adds one, so an item listed by two shops can be
-/// bought twice once both are visited.
+/// Adds a shop's artifacts to the shared stock on its first visit, so an item
+/// two shops list can be bought twice.
 void ShopStock_AddArtifacts(s32 stockRow) {
   const s16 *stockEntries;
   const s16 *artifactCursor;

@@ -10,9 +10,8 @@ s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
   return gClass_SeriesByElements[(primaryElement * 4) + secondaryElement];
 }
 
-/// Writes ten times each element level to `output`: an enemy's from its
-/// element preset, a character's from the Djinn set on it (`source` is its
-/// Djinn bits) plus its own element bonus.
+/// Writes ten times each element level: an enemy's from its preset, a
+/// character's from the Djinn set on it plus its own bonus.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
@@ -75,10 +74,8 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
   return gEnemy_ElementPresetTable[presetIndex].first;
 }
 
-// Writes a unit's base power and resistance in each element: an enemy's come
-// from its preset, a character's from its element levels, as the value of
-// gElement_PowerResistByLevel for the whole level (0 to 15) plus the level's
-// tenths (Unit_GetElementLevels counts in tenths).
+// Writes a unit's base Power and Resist in each element, from its element
+// levels.
 UNREAD_RESULT
 Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   struct Unit *state = Unit_Get(unitId);
@@ -117,12 +114,8 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   }
 }
 
-/// Returns the class a character has with `djinn` set: the series is chosen by
-/// its two strongest elements, and the class is the last of the series whose
-/// element requirements it meets. Isaac and Garet as children and Jenna have
-/// fixed classes (200, 201 and 202). Returns 0 for a unit past the eight
-/// characters, and for a character that reaches no class of its series; 0 is
-/// also the class that marks an enemy.
+/// Returns the class a character has with these Djinn: the series of its two
+/// strongest elements, and the last class of it whose requirements it meets.
 s32 Class_Determine(s32 character, const u8 *djinn) {
   s32 levels[4];
   s32 primary;
@@ -162,9 +155,8 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
       j = i;
     }
   }
-  // A second element below level 1 does not count: the series is then the
-  // primary element's alone. Ties go to the lower element number, as each
-  // search keeps the first strictly greater level.
+  // A second element below level 1 does not count, and ties go to the lower
+  // element.
   series = Class_GetSeries(primary, levels[j] > 9 ? j : primary);
   // The last class of the series that the element levels reach.
   for (i = 202; i >= 0; i--) {

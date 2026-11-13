@@ -4,9 +4,7 @@
 
 #include "../shop_internal.h"
 
-/// Lets the player choose whose items to sell or repair, with the coins window
-/// and the party member's item grid, and runs Shop_SelectSell or
-/// Shop_SelectRepair for each party member chosen until B.
+/// Lets the player choose whose items to sell or repair, until B.
 s32 Shop_ChooseMember(void) {
   struct ShopWork *shop = gMenuWork;
   struct Window *listWindow;
@@ -145,9 +143,7 @@ s32 Shop_SelectSell(s32 unitId) {
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
-      // Up from the top row wraps to the bottom row of the 15-slot grid, then
-      // steps up a row at a time onto a filled slot; down onto an empty slot
-      // wraps to the same column's top row, which may be where it started
+      // Up and down wrap round the 15-slot grid onto filled slots.
       if ((gKeysRepeat & KEY_UP) != 0) {
         slot -= SHOP_INVENTORY_COLUMNS;
         if (slot < 0)
@@ -224,9 +220,7 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
   }
 }
 
-/// Asks how many to sell when the item is a stack of more than one, and
-/// returns the count (1 otherwise, -1 when cancelled), putting the cursor back
-/// after.
+/// Asks how many to sell of a stack, and returns the count, -1 when cancelled.
 s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
@@ -259,13 +253,9 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   return result;
 }
 
-/// Sells `count` of the item in `slot`: refuses an item the shop does not buy
-/// or one equipped and cursed on, asks with the offer that fits (an old item
-/// the player just replaced, a broken one, a stack, a rare one), then discards
-/// them, pays the coins and redraws. `count` -1 is the old equipment the equip
-/// prompt offers to sell (Shop_SellOld). Each item goes through
-/// Inventory_Discard, so one with a stock counter (an artifact) goes back on
-/// it, and the shops of its type may sell it again.
+/// Sells count of the item in slot, after asking with the offer that fits; an
+/// artifact goes back on the shops' stock. count -1 sells the old equipment the
+/// equip prompt offers.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);

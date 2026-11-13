@@ -217,9 +217,8 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   return index;
 }
 
-/// Levels the character up once if it has the experience. Returns `gains`
-/// filled with the gains, or NULL. Only GAME.S's bare veneer reaches it;
-/// nothing calls it by name.
+/// Levels the character up once if it has the experience, and returns gains, or
+/// NULL.
 struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
                                         struct LevelUpResult *gains) {
   return Unit_TryLevelUp(unitId, gains);
@@ -313,10 +312,8 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
   return -1;
 }
 
-/// Raises a character one level (up to 99), adding to each base stat the growth
-/// between the two points of its growth curve around the new level (one point
-/// every 20 levels), a twentieth of it per level with a random part. The gains
-/// go to `gains`, which is returned.
+/// Raises a character one level, up to 99, each base stat growing along its
+/// curve with a random part. Returns gains.
 struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
   struct LevelUpWork *work;
@@ -354,12 +351,8 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
       gains->agi += work->growth->agi[0];
       gains->luck += work->growth->luck[0];
     }
-    // Each twenty-level band interpolates between adjacent growth points.
-    // Keep one RNG draw per stat, in HP, PP, attack, defense, agility, luck
-    // order. Random16() * GROWTH_BAND_LEVELS >> 16 is 0 to 19, so a rising step
-    // of d gives d / 20 rounded up with a chance of about (d % 20) / 20: on
-    // average a twentieth of the step a level, the whole step over a 20-level
-    // band (band 0, levels 1 to 19, gains nineteen twentieths).
+    // Each twenty-level band grows by the step between its growth points, a
+    // twentieth a level with a random part; one roll per stat, in order.
     growthBand = gains->level / GROWTH_BAND_LEVELS;
     CLAMP(growthBand, 0, GROWTH_POINTS - 2);
     growthDifference =
@@ -394,9 +387,7 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     unit->baseDefense += gains->def;
     unit->baseAgility += gains->agi;
     unit->baseLuck += gains->luck;
-    // A character's base is always one action a turn and no regeneration;
-    // Unit_Calculate adds equipment's actions and regeneration, Kite's extra
-    // action and 4 PP a turn once the character's lighthouse is lit
+    // A character's base is one action a turn and no regeneration.
     unit->baseActionCount = 1;
     unit->baseHpRegen = 0;
     unit->basePpRegen = 0;
@@ -407,9 +398,8 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   return gains;
 }
 
-/// Levels the character up once if its experience reaches the next level.
-/// Returns `gains` filled with the gains, or NULL. At level 99 the next level
-/// needs -1 (0xffffffff) experience, which none reaches.
+/// Levels the character up once if its experience reaches the next level, and
+/// returns gains, or NULL.
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
 

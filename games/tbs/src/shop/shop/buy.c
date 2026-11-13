@@ -576,10 +576,8 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 #define SHOP_QUANTITY_COIN_LABEL_X 136
 #endif
 
-/// Chooses how many items to buy or sell, returning the quantity above
-/// `minimum` or -1 when cancelled. The bar's fixed prefix is `minimum` (items
-/// already carried when buying); `maximum` must exceed it so at least one can
-/// be chosen. Holds HEAP_SLOT_TILE_SCRATCH for the bar's tiles.
+/// Chooses how many items to buy or sell, above minimum, the items already
+/// carried; returns -1 when cancelled.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   void *tileBuffer;
   struct Window *window;
@@ -669,10 +667,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   return selectedQuantity;
 }
 
-/// Adds each item bought to the party member, charging its price and adding it
-/// to the shop credit one at a time, then offers to equip it and, if equipped,
-/// to sell what it replaced. The artifact counters are not touched here:
-/// Shop_SelectBuy takes them down after.
+/// Gives the party member each item bought and takes its price, then offers to
+/// equip it and to sell what it replaced.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
   s32 remainingQuantity;
@@ -701,10 +697,8 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   }
 }
 
-/// Offers to equip the item just bought, unless it is equipped already, the
-/// party member cannot equip it, or what it would replace is cursed on. Equips
-/// it on Yes, redraws the grid and warns of a curse. Returns 1 when it was
-/// equipped.
+/// Offers to equip the item just bought, and warns of a curse. Returns 1 when
+/// it was equipped.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);

@@ -83,26 +83,18 @@ void BattleCamera_Update(void) {
 /// message argument tables.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
-  struct BattleWork *battle;
-  s16 *enemy;
-  s32 announced;
+  struct BattleWork *battle = gBattleWork;
+  s32 i;
 
-  battle = gBattleWork;
   MessageArgument_ClearAllFar();
   BattleEnemy_List(enemies);
-
-  announced = 0;
-  if (enemyCount != 0) {
-    enemy = enemies;
-    do {
-      MessageArgument_PushFar((u16)*enemy++, MESSAGE_ARGUMENT_ACTOR);
-      if (announced == enemyCount - 1)
-        BattleMessage_ShowAndWaitFar(MsgLastEnemyAppeared);
-      else
-        BattleMessage_ShowAndWaitFar(MsgEnemyAppeared);
-      announced++;
-      BattleMessage_WaitForAdvance();
-    } while (announced != enemyCount);
+  for (i = 0; i != enemyCount; i++) {
+    MessageArgument_PushFar((u16)enemies[i], MESSAGE_ARGUMENT_ACTOR);
+    if (i == enemyCount - 1)
+      BattleMessage_ShowAndWaitFar(MsgLastEnemyAppeared);
+    else
+      BattleMessage_ShowAndWaitFar(MsgEnemyAppeared);
+    BattleMessage_WaitForAdvance();
   }
 
   BattleMessage_CloseFar();
@@ -145,18 +137,16 @@ void BattleUnit_Collect(void) {
   // the centre and the rest alternately either side of it.
   count = BattleEnemy_List(unitIds);
   formation = battle->layout;
-  if (formation >= FORMATION_LAYOUT_SHUFFLED) {
-    if (formation <= FORMATION_LAYOUT_INTERLEAVED) {
-      for (i = 0; i < count; i++)
-        battle->enemyIds[i] = unitIds[i];
-      goto done;
+  if (formation >= FORMATION_LAYOUT_SHUFFLED &&
+      formation <= FORMATION_LAYOUT_INTERLEAVED) {
+    for (i = 0; i < count; i++)
+      battle->enemyIds[i] = unitIds[i];
+  } else {
+    for (i = 0; i < count; i++) {
+      position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+      battle->enemyIds[position] = unitIds[i];
     }
   }
-  for (i = 0; i < count; i++) {
-    position = gBattleParty_CenterOrderOffsets[i] + count / 2;
-    battle->enemyIds[position] = unitIds[i];
-  }
-done:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
@@ -172,14 +162,7 @@ s32 Battle_ShiftVramTiles(void) {
 }
 
 /// Nothing in the source calls it.
-void Battle_ClearBg0Vofs(void) {
-  // A literal 0 is stored from the literal pool, as REG_BLDCNT's is in
-  // BattleEffect_ConfigureEffectDisplay; the ROM builds this one in a register,
-  // as a local's value is.
-  u32 scroll = 0;
-
-  REG_BG0VOFS = scroll;
-}
+void Battle_ClearBg0Vofs(void) { REG_BG0VOFS = 0; }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set
 /// up.
@@ -196,49 +179,38 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
 
   count = BattleParty_PrepareMembers(unitIds);
 
-  i = 0;
-  if (i < count) {
-    struct Unit *unit;
-    u8 *level;
-    s32 remaining;
+  for (i = 0; i < count; i++) {
+    struct Unit *unit = Unit_GetFar(unitIds[i]);
+    s32 element;
 
-    do {
-      unit = Unit_GetFar(unitIds[i]);
+    // The four element levels, cleared from the last.
+    for (element = ELEMENT_COUNT - 1; element >= 0; element--)
+      unit->summonBoost[element] = 0;
 
-      // The four element levels, cleared from the last.
-      level = (u8 *)&unit->summonBoost[ELEMENT_COUNT - 1];
-      remaining = ELEMENT_COUNT - 1;
-      do {
-        remaining--;
-        *level-- = 0;
-      } while (remaining >= 0);
+    unit->attackTurns = 0;
+    unit->attackStage = 0;
+    unit->defenseTurns = 0;
+    unit->defenseStage = 0;
+    unit->resistanceTurns = 0;
+    unit->resistanceStage = 0;
+    unit->delusion = 0;
+    unit->confusion = 0;
+    unit->charm = 0;
+    unit->stun = 0;
+    unit->sleep = 0;
+    unit->psySeal = 0;
+    unit->regenerate = 0;
+    unit->reflect = 0;
+    unit->grimReaper = 0;
+    unit->equipBonus[0] = 0;
+    unit->equipBonus[1] = 0;
+    unit->ready = 0;
+    unit->immobile = 0;
+    unit->agilityTurns = 0;
+    unit->agilityStage = 0;
+    unit->challenge = 0;
 
-      unit->attackTurns = 0;
-      unit->attackStage = 0;
-      unit->defenseTurns = 0;
-      unit->defenseStage = 0;
-      unit->resistanceTurns = 0;
-      unit->resistanceStage = 0;
-      unit->delusion = 0;
-      unit->confusion = 0;
-      unit->charm = 0;
-      unit->stun = 0;
-      unit->sleep = 0;
-      unit->psySeal = 0;
-      unit->regenerate = 0;
-      unit->reflect = 0;
-      unit->grimReaper = 0;
-      unit->equipBonus[0] = 0;
-      unit->equipBonus[1] = 0;
-      unit->ready = 0;
-      unit->immobile = 0;
-      unit->agilityTurns = 0;
-      unit->agilityStage = 0;
-      unit->challenge = 0;
-
-      Unit_CalculateFar(unitIds[i]);
-      i++;
-    } while (i < count);
+    Unit_CalculateFar(unitIds[i]);
   }
 }
 
@@ -292,26 +264,19 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
         &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
               DJINN_RECOVERY_PARTY))
              ->list;
-    struct DjinnRecoveryEntry *entry;
 
-    i = 0;
-    if (i < list->count) {
-      s32 afterBattle = DJINN_RECOVERY_AFTER_BATTLE;
+    for (i = 0; i < list->count; i++) {
+      struct DjinnRecoveryEntry *entry = &list->entries[i];
 
-      entry = list->entries;
-      do {
-        if (entry->turns == afterBattle &&
-            BattleObject_Get(entry->unitId) == 0) {
-          u8 id = entry->unitId;
-          u8 element = entry->element;
-          u8 index = entry->index;
+      if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
+          BattleObject_Get(entry->unitId) == 0) {
+        u8 id = entry->unitId;
+        u8 element = entry->element;
+        u8 index = entry->index;
 
-          Djinn_SetFar(id, element, index);
-          DjinnRecovery_RemoveFar(id, element, index);
-        }
-        i++;
-        entry++;
-      } while (i < list->count);
+        Djinn_SetFar(id, element, index);
+        DjinnRecovery_RemoveFar(id, element, index);
+      }
     }
   }
 }
@@ -336,6 +301,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   u16 partyMembers[10];
   s32 partySize;
   s32 element;
+  s32 summonId;
   u32 availableMask;
 
   partySize = BattleParty_PrepareMembers(partyMembers);
@@ -355,30 +321,21 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
     }
   }
 
-  // element walks the summon ids here. The inner loop stops at the first
-  // element whose requirement is not met.
-  for (element = 0; element < SUMMON_COUNT; element++) {
-    const struct SummonDefinition *summon = SummonDefinition_Get(element);
+  // The inner loop stops at the first element whose requirement is not met.
+  for (summonId = 0; summonId < SUMMON_COUNT; summonId++) {
+    const struct SummonDefinition *summon = SummonDefinition_Get(summonId);
     s32 elementsMet;
 
     if (summon != 0) {
       const u8 *required = summon->djinnRequired;
 
-      elementsMet = 0;
-      if (totals[0] >= required[0]) {
-        u8 *total = totals;
-
-        do {
-          elementsMet++;
-          if (elementsMet >= ELEMENT_COUNT)
-            break;
-          total++;
-          required++;
-        } while (*total >= *required);
+      for (elementsMet = 0; elementsMet < ELEMENT_COUNT; elementsMet++) {
+        if (totals[elementsMet] < required[elementsMet])
+          break;
       }
 
       if (elementsMet == ELEMENT_COUNT)
-        availableMask |= 1u << element;
+        availableMask |= 1u << summonId;
     }
   }
 

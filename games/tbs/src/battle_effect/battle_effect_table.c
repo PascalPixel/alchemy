@@ -13,10 +13,6 @@
 
 // Keep the definitions in link order.
 
-// The tables are plain arrays, not const, as the effect code reads them:
-// it reloads their addresses where const would let the compiler keep
-// them. Their .data is linked into the effect bank in ROM.
-
 struct BattleEffectParams;
 
 // Picture layouts that several effects read from the same sheet. The ROM

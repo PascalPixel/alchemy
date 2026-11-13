@@ -103,23 +103,7 @@ DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownDelusion, delusion, 30)
 
 /// Counts down confusion, which may end early at bias 60;
 /// Battle_ProcessTurnEnd shows `MsgConscious` when it returns 1.
-s32 BattleUnit_CountDownConfusion(s32 unitId) {
-  struct Unit *unit = Unit_GetFar(unitId);
-  // Unit.confusion is counted down here as a u8, unlike the statuses
-  // DEFINE_COUNT_DOWN_STATUS counts down, as are its reads in targeting.c and
-  // battle_arithmetic.c; the plain s8 reads below and in turn.c match too. It
-  // runs from 0 to STATUS_TURNS, so its sign never shows.
-  if ((u8)unit->confusion != 0) {
-    (*(u8 *)&unit->confusion)--;
-    if (unit->confusion == 0)
-      return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, (u8)unit->confusion, 60) != 0) {
-      unit->confusion = 0;
-      return 1;
-    }
-  }
-  return 0;
-}
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownConfusion, confusion, 60)
 
 /// Counts down charm, which may end early at bias 70; Battle_ProcessTurnEnd
 /// shows `MsgConscious2` when it returns 1.

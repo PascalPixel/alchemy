@@ -664,9 +664,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // From frame 280 the canvas's palette ramp, background colours 1 to 63,
     // brightens one step a channel each frame, reaching white by frame 311.
     if (frame > 279) {
-      // Through palette RAM's own volatile type, which keeps red's mask 31 in
-      // the loop; a plain pointer hoists it (24 of 2455 instructions differ
-      // in tbs-en).
       volatile u16 *pal = &BG_PLTT_COLOR(0, 1);
       for (i = 0; i != 63; i++, pal++) {
         s32 c = *pal;
@@ -950,12 +947,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // From frame 64 the battle background shakes up and down: BG1's vertical
     // scroll jumps between 30 and 33 pixels.
     if (frame > 63) {
-      // The shake value through an s32 keeps the AND constant an immediate; as
-      // a direct store to gBgScroll[1].y, 9 of 2455 instructions differ in
-      // tbs-en.
-      s32 shake = (Random16() & 3) + 30;
-
-      gBgScroll[1].y = shake;
+      gBgScroll[1].y = (Random16() & 3) + 30;
     }
 
     EFFECT_PRESENT_CANVAS(work);

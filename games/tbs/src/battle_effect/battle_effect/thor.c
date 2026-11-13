@@ -334,16 +334,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != beamHeight; i++) {
-        // Default: 0, until it is set to the beam's full 32 pixels.
-        s32 fullWidth = 0;
-
-        // loop.c matches a lone 32 here with the light-fan calls' 32 and hoists
-        // it out of the frame loop, where it loses its register and later
-        // reloads rotate; set twice in a row, it moves only to this loop's
-        // preheader.
-        fullWidth = 32;
-        blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
-                1);
+        blit[0](canvas, ramp + inset, inset + 48, i + 16, 32 - inset * 2, 1);
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);

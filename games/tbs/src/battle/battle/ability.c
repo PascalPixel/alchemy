@@ -58,9 +58,6 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// Party unit ids run to ALLY_MAX; enemy units start at FIRST_ENEMY_UNIT.
 #define IS_PARTY_UNIT(unitId) ((unitId) >= 0 && (unitId) <= ALLY_MAX)
 
-// The helpers below are macros because the bytes need them so: written as
-// inline functions they compile to different code.
-
 /// Holds a stat stage within STAT_STAGE_MIN to STAT_STAGE_MAX.
 #define CLAMP_STAT_STAGE(stage)                                                \
   {                                                                            \
@@ -215,8 +212,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       affinity = 1;
   }
 
-  // The user's power in the ability's element; items always use 100. (Here
-  // and below the element is read from plan again, as the bytes need.)
+  // The user's power in the ability's element; items always use 100.
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
       plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;

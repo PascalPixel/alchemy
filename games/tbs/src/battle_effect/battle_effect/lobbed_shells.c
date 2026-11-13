@@ -231,9 +231,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           step = (frame - k * 8) / 3;
           if (step > 9)
             step = 9;
-          // shot's address spelled out, which loop.c reads from its
-          // strength-reduced register; as shot, r7 is passed (2 differ).
-          Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
+          Projection_Point(shot, &position);
           position.x >>= 1;
           if (step > 4)
             draw[0](canvas, work->sheet + step * (32 * 24), position.x - 16,

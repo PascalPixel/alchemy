@@ -87,67 +87,38 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
 // from its preset, a character's from its element levels, as the value of
 // gElement_PowerResistByLevel for the whole level (0 to 15) plus the level's
 // tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnit_Set
-// and Unit_UpdateClass, which both ignore the result.
-#ifdef UBFIX
+// and Unit_UpdateClass.
 void Unit_CalculateBaseElements(s32 unitId,
                                 struct BattleElementStats *destination) {
-#else
-u32 Unit_CalculateBaseElements(s32 unitId, s16 destination[4][2]) {
-#endif
-  // Without UBFIX the return type is u32, which keeps r0 as the ROM does
-  // (as void, the two return instructions differ: 4 in tbs-en), and the
-  // destination is the array view, which keeps the table address added
-  // after the first store (the typed fields differ by 2 in tbs-en).
   struct Unit *state = Unit_Get(unitId);
-  u32 index;
-  s32 values[4];
+  s32 levels[ELEMENT_COUNT];
   s32 i;
 
   if (state->classId == CLASS_NONE) {
-    index = ((const struct EnemyDefinition *)Enemy_GetDefinition(state->id))
-                ->elementPreset;
-    if (index > 43)
-      index = 0;
+    u32 preset =
+        ((const struct EnemyDefinition *)Enemy_GetDefinition(state->id))
+            ->elementPreset;
 
-#ifdef UBFIX
-    // Copy the packed pairs without accessing halfword members as words.
-    memcpy(destination, gEnemy_ElementPresetTable[index].values,
-           sizeof(gEnemy_ElementPresetTable[index].values));
+    if (preset > 43)
+      preset = 0;
+    for (i = 0; i < ELEMENT_COUNT; i++)
+      destination[i] = gEnemy_ElementPresetTable[preset].stats[i];
     return;
-#else
-    i = 0;
-    for (;;) {
-      ((s32 *)destination)[i] = gEnemy_ElementPresetTable[index].values[i];
-      i++;
-      if (i > 3) {
-        return index;
-      }
-    }
-#endif
   }
 
-  Unit_GetElementLevels(state->id, (u8 *)state->djinnHeld, values);
+  // Element levels in tenths: the whole level picks the table's row, the
+  // tenths add to it.
+  Unit_GetElementLevels(state->id, (u8 *)state->djinnHeld, levels);
   for (i = 0; i < ELEMENT_COUNT; i++) {
-    s32 value;
-    s32 ones;
-    s32 tens;
+    s32 tenths = levels[i] % 10;
+    s32 level = levels[i] / 10;
 
-    value = values[i];
-    ones = value % 10;
-    tens = value / 10;
-
-    if (tens > 15)
-      tens = 15;
-    if (tens < 0)
-      tens = 0;
-
-#ifdef UBFIX
-    destination[i].power = gElement_PowerResistByLevel[tens].power + ones;
-    destination[i].resistance = gElement_PowerResistByLevel[tens].res + ones;
-#else
-    destination[i][0] = gElement_PowerResistByLevel[tens].power + ones;
-    destination[i][1] = gElement_PowerResistByLevel[tens].res + ones;
-#endif
+    if (level > 15)
+      level = 15;
+    if (level < 0)
+      level = 0;
+    destination[i].power = gElement_PowerResistByLevel[level].power + tenths;
+    destination[i].resistance = gElement_PowerResistByLevel[level].res + tenths;
   }
 }
 
@@ -234,9 +205,5 @@ void Unit_UpdateClass(s32 unitId) {
 
   unit->classId = Class_Determine(unit->id, (u8 *)unit->djinnHeld);
   Unit_RefreshPsynergy(unitId);
-#ifdef UBFIX
   Unit_CalculateBaseElements(unitId, unit->baseElement);
-#else
-  Unit_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
-#endif
 }

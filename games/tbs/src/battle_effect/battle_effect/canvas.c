@@ -27,8 +27,6 @@
 ///            bottom (enum CanvasWipeDirection).
 /// fill: what the wipe leaves (enum CanvasWipeFill).
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
-  // The pixel addresses and both bounds tests stay written out: as a shared
-  // helper or one merged test they compile differently.
   struct BattleEffectWork *work;
   u8 *canvas;
   u8 delay[128];
@@ -159,8 +157,6 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
 /// work->transferPending after a copy; unlike the canvas transfer it keeps
 /// no count of VBlanks.
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
-  // This switch stays apart from BattleEffect_ProcessPendingGraphicsTransfer's:
-  // shared, both compile differently.
   struct BattleEffectWork *work;
   void *source;
   s32 transferMode;
@@ -396,8 +392,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
-  // The tile-map loop is written out here and in BattleEffect_StartCanvasLayer:
-  // shared, both compile 4 bytes shorter.
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);

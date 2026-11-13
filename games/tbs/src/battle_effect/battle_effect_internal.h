@@ -131,10 +131,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
                             POSE_DAMAGE, i, frames),                           \
    BattleMotion_ApplyKnockbackFar((effect)->targets[i], motion))
 
-// The canvas life cycle, shared by every canvas effect. The statement macros
-// are comma expressions, not do { } while (0) blocks: agscc compiles a
-// do-while (0) in an effect's frame loop differently at some sites, and the
-// comma form matches at all of them.
+// The canvas life cycle, shared by every canvas effect.
 
 /// Lets the battle show the damage: resumes its paused playback, which plays
 /// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.

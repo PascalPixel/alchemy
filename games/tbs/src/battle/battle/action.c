@@ -636,18 +636,13 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
     // Attacks cannot miss a target that cannot move. In the Djinn tutorial
     // the attack always misses.
-    // The rolls in a one-pass block left by break, which places them ahead of
-    // the five tests; as an if on the negated tests, 46 of 1393 instructions
-    // differ in tbs-en.
-    do {
-      if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
-          target->immobile != 0 || target->charm != 0)
-        break;
+    if (target->hp != 0 && target->sleep == 0 && target->stun == 0 &&
+        target->immobile == 0 && target->charm == 0) {
       if (actor->delusion != 0 && (Battle_RandomFar() & 255) <= 152)
         plan->targetMultiplier[0] = 0;
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
-    } while (0);
+    }
     if (GameFlag_GetFar(FLAG_DJINN_LESSON))
       plan->targetMultiplier[0] = 0;
     // Critical hit: one chance in 32, or else the equipment's unleash bonus

@@ -129,38 +129,25 @@ finish:
 /// sets its side.
 UNREAD_RESULT BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                             struct BattleEffectParams *args) {
-  s16 *outputTarget;
-  u32 flags;
-  s32 livingTargets;
-  s32 targetIndex;
-  u8 *inputTarget;
+  s32 count = 0;
+  s32 i;
 
-  livingTargets = 0;
   args->prelude = 0;
-  flags = plan->battleEffect;
-  args->kind = flags & EFFECT_ID_MASK;
-  args->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
+  args->kind = plan->battleEffect & EFFECT_ID_MASK;
+  args->variant =
+      (plan->battleEffect & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
   args->user = plan->unitId;
-  targetIndex = 0;
-  if (targetIndex < plan->targetCount) {
-    inputTarget = plan->targetIds;
-    outputTarget = args->targets;
-    do {
-      if (Unit_GetFar(*inputTarget)->hp != 0 ||
-          (plan->battleEffect & EFFECT_ON_DOWNED)) {
-        livingTargets++;
-        *outputTarget++ = *inputTarget;
-      }
-      targetIndex++;
-      inputTarget++;
-    } while (targetIndex < plan->targetCount);
+  for (i = 0; i < plan->targetCount; i++) {
+    if (Unit_GetFar(plan->targetIds[i])->hp != 0 ||
+        (plan->battleEffect & EFFECT_ON_DOWNED))
+      args->targets[count++] = plan->targetIds[i];
   }
-  if (livingTargets == 0) {
+  if (count == 0) {
     args->targets[0] = plan->targetIds[0];
-    livingTargets = 1;
+    count = 1;
   }
   args->firstTarget = plan->targetIds[0];
-  args->targetCount = livingTargets;
+  args->targetCount = count;
   args->range = 1;
 }
 
@@ -671,7 +658,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingWork work;
   struct Actor *actor;
-  s32 targetOrFadeIndex;
+  s32 i;
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *item;
@@ -702,14 +689,13 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   else
     work.effect.side = EFFECT_SIDE_ENEMIES;
 
-  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
-       targetOrFadeIndex++) {
-    struct Sprite *animation = GetMotionRecord(
-        BattleObject_Get(work.effect.targets[targetOrFadeIndex])->actor, 0);
+  for (i = 0; i != work.effect.targetCount; i++) {
+    struct Sprite *animation =
+        GetMotionRecord(BattleObject_Get(work.effect.targets[i])->actor, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
-      work.savedAnimationParameters[targetOrFadeIndex][entryIndex] =
+      work.savedAnimationParameters[i][entryIndex] =
           animation->entries[entryIndex]->colorMode;
   }
 
@@ -718,25 +704,16 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   // one with none waits a second.
   Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
   if (work.effect.kind != 0) {
-    s32 fade;
+    s32 step;
 
-    targetOrFadeIndex = 0;
-    fade = 0;
-    do {
+    for (step = 0; step < 20; step++) {
       struct BattleWork *battle = gBattleWork;
 
-      if (targetOrFadeIndex < 20) {
-        u16 *palette = battle->palette;
-        s32 value = Q16_ONE - fade;
-
-        battle->brightness = value;
-        Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,
-                                    128);
-      }
+      battle->brightness = Q16_ONE - step * (Q16_ONE / 60);
+      Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
+                                  battle->brightness, BATTLE_BG_PALETTE_COLORS);
       wait(1);
-      targetOrFadeIndex++;
-      fade += Q16_ONE / 60;
-    } while (targetOrFadeIndex < 20);
+    }
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work.effect);
     else
@@ -746,9 +723,8 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   }
   BattlePlayback_WaitForReady();
   Actor_SelectAnimationFar(actor, POSE_STANDING);
-  for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
-       targetOrFadeIndex++)
-    BattleMotion_ReturnToSpot(work.effect.targets[targetOrFadeIndex]);
+  for (i = 0; i != work.effect.targetCount; i++)
+    BattleMotion_ReturnToSpot(work.effect.targets[i]);
 
   // Spend the item, by its use type.
   unit = Unit_GetFar(selection->unitId);
@@ -944,31 +920,25 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
 /// redraws the party's status at the end.
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
-  u16 *selected;
-  s32 flashesRemaining;
+  s32 flash;
 
+  // DEAD: the unit, fetched and not used; the ROM keeps the call.
   Unit_GetFar(unitId);
   Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, POSE_DAMAGE);
-
-  selected = selection;
-  flashesRemaining = 1;
-  do {
-    s32 listTerminator = BATTLE_UNIT_LIST_END;
-    selected[1] = listTerminator;
-    selected[0] = unitId;
-    PartyStatus_HighlightMembersFar(selected);
+  for (flash = 0; flash < 2; flash++) {
+    selection[0] = unitId;
+    selection[1] = BATTLE_UNIT_LIST_END;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               SPRITE_COLOR_WHITE);
     wait(2);
 
-    selected[0] = unitId;
-    PartyStatus_HighlightMembersFar(selected);
+    selection[0] = unitId;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               BattleObject_GetPalette(unitId));
     wait(2);
-    flashesRemaining--;
-  } while (flashesRemaining >= 0);
-
+  }
   PartyStatus_DrawFar(gBattleWork->partyStatus);
 }
 
@@ -985,7 +955,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
 void BattleObject_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;
   s32 partyIndex;
-  u32 enemyOrActionIndex;
+  u32 i;
   s32 listedUnit;
 
   // The party's list.
@@ -1001,10 +971,10 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  for (enemyOrActionIndex = 0;; enemyOrActionIndex++) {
-    listedUnit = battle->enemyIds[enemyOrActionIndex];
+  for (i = 0;; i++) {
+    listedUnit = battle->enemyIds[i];
     if (listedUnit == unitId) {
-      battle->enemyIds[enemyOrActionIndex] = BATTLE_UNIT_REMOVED;
+      battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
     if (listedUnit == BATTLE_UNIT_LIST_END)
@@ -1014,10 +984,9 @@ void BattleObject_RemoveFromLists(s32 unitId) {
 removed:
   // Free the letter that told the enemy apart from others of its class.
   BattleEnemy_ReleaseNameLetter(unitId);
-  for (enemyOrActionIndex = 0; enemyOrActionIndex < BATTLE_ACTION_CAPACITY;
-       enemyOrActionIndex++) {
-    if (battle->actions[enemyOrActionIndex].unitId == unitId)
-      battle->actions[enemyOrActionIndex].unitId = BATTLE_UNIT_LIST_END;
+  for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
+    if (battle->actions[i].unitId == unitId)
+      battle->actions[i].unitId = BATTLE_UNIT_LIST_END;
   }
 }
 

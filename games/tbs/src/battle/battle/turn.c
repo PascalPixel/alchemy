@@ -237,7 +237,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   s32 entryCount = 0;
   struct BattleWork *battle = gBattleWork;
   s32 unitCount;
-  s32 shuffleOrUnitIndex;
+  s32 i;
 
   if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     return 0;
@@ -248,7 +248,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
     return 0;
   }
 
-  for (shuffleOrUnitIndex = 31; shuffleOrUnitIndex >= 0; shuffleOrUnitIndex--) {
+  for (i = 31; i >= 0; i--) {
     u32 first = (unitCount * Random16()) >> 16;
     u32 second = (unitCount * Random16()) >> 16;
     s32 swap = unitIds[first];
@@ -268,9 +268,8 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
     }
   }
 
-  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
-       shuffleOrUnitIndex++) {
-    s32 unitId = unitIds[shuffleOrUnitIndex];
+  for (i = 0; i < unitCount; i++) {
+    s32 unitId = unitIds[i];
     struct Unit *unit = Unit_GetFar(unitId);
     s32 copyIndex;
 

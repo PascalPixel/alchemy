@@ -43,7 +43,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   s32 unitCount;
   s32 standbyCount;
   s32 recoveryIndex;
-  s32 unitOrElementIndex;
+  s32 i;
   s32 sideMask;
   s32 enemySide;
 
@@ -58,19 +58,16 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
               ->list;
   if (counts != 0)
-    for (unitOrElementIndex = ELEMENT_COUNT - 1; unitOrElementIndex >= 0;
-         unitOrElementIndex--)
-      counts[unitOrElementIndex] = 0;
+    for (i = ELEMENT_COUNT - 1; i >= 0; i--)
+      counts[i] = 0;
   recoveryIndex = 0;
   if (list->count != 0) {
     do {
       if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-        for (unitOrElementIndex = 0; unitOrElementIndex < unitCount;
-             unitOrElementIndex++)
-          if (unitIds[unitOrElementIndex] ==
-              list->entries[recoveryIndex].unitId)
+        for (i = 0; i < unitCount; i++)
+          if (unitIds[i] == list->entries[recoveryIndex].unitId)
             break;
-        if (unitOrElementIndex != unitCount) {
+        if (i != unitCount) {
           if (counts != 0)
             counts[list->entries[recoveryIndex].element]++;
           standbyCount++;

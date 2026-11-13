@@ -383,9 +383,9 @@ void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
-  // volatile: saved lives in a 4-byte stack frame, stored once and loaded again
-  // for each compare, as the bytes have it; as a plain s32, 29 of 31
-  // instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): saved kept on the stack, stored once and loaded
+   * again for each compare; as a plain s32, 29 of 31 instructions differ in
+   * tbs-en. */
   volatile s32 saved;
   s32 elapsedFrames;
 

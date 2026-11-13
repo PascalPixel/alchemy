@@ -234,8 +234,8 @@ static void OrbGlow_Fade(void) {
 /// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
 /// set.
 static void Ship_UpdateSwell(void) {
-  // volatile: blend kept at sp+18 and loaded again with ldrh for the register
-  // write; as a plain u16, 5 of 225 instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again for the
+   * register write; as a plain u16, 5 of 225 instructions differ in tbs-en. */
   volatile u16 blend;
   struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
@@ -663,8 +663,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  // volatile: each BGxCNT value stored at sp+6 with strh on its way to the
-  // register; as a plain u16, 6 of 231 instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): each BGxCNT value stored at sp+6 on its way to the
+   * register; as a plain u16, 6 of 231 instructions differ in tbs-en. */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -761,8 +761,8 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  // volatile: each step stored at sp+2 with strh; as a plain u16, 2 of 165
-  // instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): each step stored at sp+2; as a plain u16, 2 of 165
+   * instructions differ in tbs-en. */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];

@@ -20,9 +20,9 @@
 /// were. It draws four random numbers a frame, which only advances the
 /// random number generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  // volatile: the four saved BGxCNT values kept on the stack, each stored and
-  // loaded again as in the ROM; without volatile, 61 of 90 instructions differ
-  // in tbs-en.
+  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
+   * stored and loaded again; as plain u16 locals, 61 of 90 instructions
+   * differ in tbs-en. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;

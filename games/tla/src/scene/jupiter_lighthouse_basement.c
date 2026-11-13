@@ -29,7 +29,46 @@
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
-#include "module/scene/jupiter_lighthouse_basement.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+#include "module/scene/scene.h"
+
+struct EffectOptions;
+
+void Actor_DepartInRing(s32 id);
+
+void MapGrid_SetAttributeBAt();
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
+
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam Data_02002434[];
+
+void Leader_CenterInCell(void);
+
+void Func_02000074(void);
+
+void Func_020000f8(void);
+
+void Func_02000118(void);
+
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
+extern s32 Data_020023ac;
+
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -457,7 +496,6 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/field/field.h"
-#include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -638,7 +676,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "event_work.h"
 #include "module/field/field_effect.h"
-#include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {

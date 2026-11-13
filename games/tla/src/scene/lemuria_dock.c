@@ -54,7 +54,12 @@ void Event_End(void);
 #include "event_inline.h"
 #include "version.h"
 #include "io_reg.h"
-#include "module/scene/lemuria_dock.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern s16 gLemuriaDock_HouseDoorOpening[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

@@ -24,7 +24,18 @@
 #include "objcmd.h"
 #include "frame.h"
 #include "event_work.h"
-#include "module/scene/mercury_lighthouse.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+
+void MercuryLighthouse_HearVoices(void);
+
+extern s32 gMercuryLighthouse_MoteScript[];
+extern u32 gMercuryLighthouse_MoteFrames;
+
+void FieldPsynergy_StopMindReadWave(void);
+
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 

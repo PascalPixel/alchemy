@@ -16,7 +16,23 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "module/scene/madra_interiors.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern s32 gMadraInteriors_InterrogatorLifted[];
+extern s32 gMadraInteriors_InterrogatorTopples[];
+void MadraInteriors_SayGoodbyeAgain(void);
+
+void MadraInteriors_AskToStayLonger(void);
+
+extern u32 gMadraInteriors_OldManWalksToBackRoom[];
+extern u32 gMadraInteriors_WifeComesBack[];
+extern u32 gMadraInteriors_OldManComesBack[];
+
+extern u32 gMadraInteriors_CharFollows[];
+
 #include "module/scene/scene.h"
 
 void Func_02001ef8();

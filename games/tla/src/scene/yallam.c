@@ -8,7 +8,40 @@
 #include "actor.h"
 #include "field.h"
 #include "module/scene/scene.h"
-#include "module/scene/yallam.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+void Yallam_SingMoonSong(void);
+
+void Yallam_SingSunSong(void);
+void Yallam_StartWatchers(void);
+
+void Yallam_DigFirstHole(void);
+
+void Yallam_DigSecondHole(void);
+
+void Yallam_DigFourthHole(void);
+
+void Yallam_DigSixthHole(void);
+
+void Yallam_OfferYeppSong(void);
+
+void Yallam_TalkAboutSongGame(void);
+
+void Yallam_ForcePillarDown(void);
+
+void Yallam_DoNothing(void);
+
+extern s32 gYallam_PillarRaised[];
+extern s32 gYallam_PillarSunk[];
+extern u32 gYallam_FirstVillagerPaces[];
+extern u32 gYallam_SecondVillagerPaces[];
+extern s16 gYallam_DoorOpening[];
+extern s16 gYallam_SecondDoorOpening[];
+extern s16 gYallam_ThirdDoorOpening[];
+extern s16 gYallam_FourthDoorOpening[];
 
 void TileCopies_CopyTouchedCells(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5,
                                  s32 a6);
@@ -1909,7 +1942,6 @@ void Yallam_StartWatchers(void) {
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "version.h"
-#include "module/scene/yallam.h"
 
 /* VIEW(data): routine Yallam_HideSprite as this part declared it; the joined
  * file has another. */

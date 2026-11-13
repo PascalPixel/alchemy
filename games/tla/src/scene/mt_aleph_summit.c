@@ -26,7 +26,21 @@
 
 #include "objcmd.h"
 #include "frame.h"
-#include "module/scene/mt_aleph_summit.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern const s32 *gFieldEffect_DurationScripts[];
+
+extern u32 gFieldEffect_ShortScript[];
+
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+
+extern char SceneId_Ov6b3;
+
+void FieldCamera_WaitForArrival(void);
 
 extern void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -282,7 +296,6 @@ struct Trigger gSceneEvents[] = {
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field_effect.h"
-#include "module/scene/mt_aleph_summit.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "text/msg_ids.h"

@@ -30,7 +30,70 @@
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
-#include "module/scene/jupiter_lighthouse_room_5.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+#include "field/cell_target.h"
+
+struct Actor;
+struct CellTarget;
+struct CellTargetEntry;
+struct SparkSprite;
+
+enum {
+  EFFECT_DEFAULT_TYPE = 285,
+  EFFECT_SCALE_ONE = 0x10000,
+  EFFECT_OPTION_MASK = 0xffff0000,
+  EFFECT_SCRIPT_REPEAT_COUNT = 3
+};
+
+extern u32 gOrbScript[];
+
+void Func_02001718(const s32 *from, const s32 *to);
+
+void JupiterLighthouse_LoadPalettes(s32 value);
+
+void Func_02001538(void);
+
+void Actor_PlaceBlocks(void *data);
+
+void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
+                   s32 attributes, s32 tile);
+
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
+extern struct Actor *gLightSpriteActors[];
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
+
+void Leader_CenterInCell(void);
+
+extern struct CellTarget gCrackedTiles;
+
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
+
+void Func_020006ac(void);
+
+void Func_02000724(void);
+
+void Func_020008a4(void);
+
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+
+struct FieldEffect;
+struct SparkSprite__jupiter_lighthouse_room_5;
+
+void Actor_PlaceMovedBlock(void);
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
+void MapGrid_SetAttributeBAt();
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
+void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
+
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
@@ -1011,7 +1074,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "event_inline.h"
 #include "heap_release.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_room_5.h"
 #include "module/scene/scene.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1168,7 +1230,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
 #include "cell_target.h"
 #include "event_work.h"
 #include "module/field/field_effect.h"
-#include "module/scene/jupiter_lighthouse_room_5.h"
 #include "module/scene/scene.h"
 
 /* VIEW(s2450): routine FieldEffect_Spawn as this part declared it; the joined

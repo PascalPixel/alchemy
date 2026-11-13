@@ -21,7 +21,24 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
-#include "module/scene/mikasalla_interiors.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct ActorPlacement gMikasallaInteriors_InnPlacements[];
+extern struct ActorPlacement gMikasallaInteriors_SanctumPlacements[];
+extern struct Trigger gMikasallaInteriors_InnTriggers[];
+extern struct Trigger gMikasallaInteriors_SanctumTriggers[];
+
+void Shop_Run();
+
+void MikasallaInteriors_FadeInAndClearFlag(void);
+
+extern u32 gMikasallaInteriors_ExplorersWidowPaces[];
+extern u32 gMikasallaInteriors_ClimbersWifePaces[];
+
 #include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

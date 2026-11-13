@@ -29,7 +29,22 @@ extern u8 MsgNotThatWay[];
 #include "text/msg_ids.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
-#include "module/scene/suhalla_gate.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+#include "scene_tables.h"
+
+extern struct SceneEntrance gSuhallaGate_Entrances[];
+extern struct SceneEntrance gSuhallaGate_Room2Entrances[];
+extern struct SceneEntrance gSuhallaGate_Room3Entrances[];
+extern struct ActorPlacement gSuhallaGate_Placements[];
+extern struct ActorPlacement gSuhallaGate_Room2Placements[];
+extern struct ActorPlacement gSuhallaGate_Room1Placements[];
+extern struct Trigger gSuhallaGate_Triggers[];
+extern struct Trigger gSuhallaGate_Room2Triggers[];
+extern struct Trigger gSuhallaGate_Room3Triggers[];
+
 #include "scene_ids.h"
 
 /// Talking to a Ruffian again starts his battle.

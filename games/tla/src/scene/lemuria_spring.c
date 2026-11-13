@@ -20,7 +20,36 @@
 #include "event_work.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
-#include "module/scene/lemuria_spring.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+
+s32 LemuriaSpring_RunSpringGame(void);
+
+extern u16 gLemuriaSpring_CoinPrizes[];
+extern u32 gLemuriaSpring_MedalPrizes[];
+
+s32 LemuriaSpring_RunToss();
+
+void LemuriaSpring_GivePrize(s32 a0);
+
+void SummonTablet_PlayRunes(s32 targetId);
+
+s32 ItemDisplay_ShowItem();
+
+extern u8 gLemuriaSpring_FrontObstacleAnimations[];
+extern u8 gLemuriaSpring_BackObstacleAnimations[];
+extern u8 gLemuriaSpring_ObstacleStartX[];
+extern u8 gLemuriaSpring_ObstacleStartZ[];
+
+extern u16 gLemuriaSpring_ObstacleHeadings[];
+
+void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
+
+s32 Party_RestoreHpPp();
+s32 Class_GetSeries();
+
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "module/window/window.h"

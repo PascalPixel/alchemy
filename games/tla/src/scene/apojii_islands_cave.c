@@ -20,7 +20,12 @@
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "flags.h"
-#include "module/scene/apojii_islands_cave.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern u32 gApojiiIslandsCave_FoliageScript[];
 
 /// The four patches of overgrowth, numbering the rows of gActorPlacements.
 enum ApojiiIslandsCaveActorId {

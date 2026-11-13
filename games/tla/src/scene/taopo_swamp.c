@@ -210,7 +210,30 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
 #include "field.h"
 #include "graphics.h"
 #include "module/scene/scene.h"
-#include "module/scene/taopo_swamp.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+
+s32 Vent_IsActive(s32 hole);
+
+void TaopoSwamp_FocusMapMiddle();
+void TaopoSwamp_JumpForward(void);
+
+void TaopoSwamp_GrowVine(void);
+
+void TaopoSwamp_DigHoleUnderfoot(void);
+
+void TaopoSwamp_StartMadPlantBattle(void);
+
+void TaopoSwamp_TremorPillar(void);
+
+void TaopoSwamp_SinkInMud(void);
+
+void TaopoSwamp_RiseOnBubble(void);
+
+void TaopoSwamp_StepOnFirmGround(void);
+
 #include "module/tla.h"
 
 s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
@@ -2149,7 +2172,6 @@ DEFINE_VENTS_SET_ID(Vents_SetId)
 #include "scene_tables.h"
 #include "version.h"
 #include "module/scene/lemurian_ship.h"
-#include "module/scene/taopo_swamp.h"
 
 void TaopoSwamp_FightFlower(void);
 /* VIEW(data): routine TaopoSwamp_BlowAwayBush as this part declared it; the

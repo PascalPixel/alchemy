@@ -23,7 +23,13 @@
 #include "event_inline.h"
 #include "actor.h"
 #include "event_work.h"
-#include "module/scene/madra_drawbridge.h"
+
+/// What games/tla/src/field/map/ declares for the files that use it, written
+/// once.
+
+#include "types.h"
+
+void FieldCamera_WaitForArrival(void);
 
 /// Set once the guards have closed ranks on this visit.
 #define FLAG_GUARDS_BLOCKED_BRIDGE 0x200

@@ -20,7 +20,21 @@
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "module/scene/scene.h"
-#include "module/scene/shaman_village_cave.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern u32 gShamanVillageCave_GladiatorLeaves[];
+
+extern s32 gShamanVillageCave_GladiatorFollowsOut[];
+
+void Field_TryJumpForward();
+
+extern s32 gShamanVillageCave_OvergrowthRests[];
+extern u32 gShamanVillageCave_Settle[];
+
+void FieldCamera_WaitForArrival();
 
 void WorldMap_SetReturnLeavingScene();
 s32 Event_PickUpItem();

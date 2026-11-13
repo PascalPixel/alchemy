@@ -11,7 +11,51 @@
 #include "main_routine_work.h"
 #include "event_inline.h"
 #include "event_work.h"
-#include "module/scene/kibombo_mountains.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+void Func_02000da8(s32 value);
+void Func_02000e28(s32 value);
+
+void Func_0200036c(void);
+
+void Func_02000438(void);
+
+void Func_02000440(void);
+
+void Func_02000478(void);
+
+void Func_02000960(void);
+
+void Func_02000ea8(void);
+
+void Func_02000ef4(void);
+
+void Func_02000f40(void);
+
+void Func_02000f4c(void);
+
+void Func_02000f58(void);
+
+void Func_02000f78(void);
+void Func_02000f84(void);
+void Func_02000f90(void);
+void Func_02000fdc(void);
+void Func_02000ff4(void);
+
+extern u32 gData_020011a4[];
+extern u32 gData_02001284[];
+extern u32 gData_020012ac[];
+extern u32 gData_02001334[];
+extern u32 gData_02001410[];
+extern u32 gData_020017f8[];
+
+void Func_02000fc4(void);
+
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "text/msg_ids.h"
@@ -622,7 +666,6 @@ void Func_02000ff4(void) {
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
-#include "module/scene/kibombo_mountains.h"
 
 void Func_02000038(void);
 /* VIEW(data): routine Actor_Bob as this part declared it; the joined file has

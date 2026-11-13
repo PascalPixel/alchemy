@@ -18,7 +18,66 @@
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
-#include "module/scene/jupiter_lighthouse_room_2.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+#include "field/cell_target.h"
+#include "module/scene/scene.h"
+
+void Actor_Release(struct Actor *object);
+
+void Actor_RaiseFromCell(s32 id);
+
+void LightSprites_InitB(void);
+
+void Func_020015a0(s32 id, s32 value);
+
+void BattleEffect_FillOverlayTiles(s32 a);
+
+void JupiterLighthouse_LoadPalettes(s32 mode);
+
+extern s32 gWhirlwindRiding;
+
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
+
+s32 Position_FlatDistance(s32 *a, s32 *b);
+
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam gLightSpriteOams[];
+extern s16 gLightSpritePriority;
+
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+
+void Leader_CenterInCell(void);
+
+extern struct CellTarget gCrackedTiles;
+
+void Func_020003f4(void);
+void Func_02000410(void);
+
+void Func_02000440(void);
+
+void Func_02000454(void);
+
+void Func_020006dc(void);
+
+void Func_02000704(void);
+
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+
+void MapGrid_SetAttributeBAt(s32 actor);
+extern s32 gData_02002b88[3];
+extern const u8 gData_02002b60[];
+void EffectSprite_InitFromSlot94Blended(const void *script, s32 a, s32 b,
+                                        s32 c);
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitColors[];
+
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
@@ -719,7 +778,6 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 #include "io_reg.h"
 #include "event_work.h"
 #include "field.h"
-#include "module/scene/jupiter_lighthouse_room_2.h"
 
 struct CellTargetEntry;
 
@@ -764,7 +822,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c,
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "event_work.h"
 #include "module/field/field_effect.h"
-#include "module/scene/jupiter_lighthouse_room_2.h"
 #include "module/scene/scene.h"
 
 /* VIEW(s1e24): routine FieldEffect_Spawn as this part declared it; the joined

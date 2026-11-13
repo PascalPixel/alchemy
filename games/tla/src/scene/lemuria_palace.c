@@ -25,7 +25,20 @@
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
-#include "module/scene/lemuria_palace.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern s32 gLemuriaPalace_Doors[];
+extern s32 gLemuriaPalace_InnerDoor[];
+
+void LemuriaPalace_DrawMaps(void);
+
+void Field_StartColorTransition();
+
+extern s16 gLemuriaPalace_DoorOpening[];
+
 #include "module/scene/scene.h"
 #include "module/game/game.h"
 

@@ -96,7 +96,16 @@ extern struct Trigger gYallamInteriors_Room2Triggers[];
 #include "main_routine_work.h"
 #include "module/game/game.h"
 #include "module/scene/scene.h"
-#include "module/scene/yallam_interiors.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+void Forge_Run(s32 actor);
+
+void Forge_SetItem(s32 value);
+
+void ItemDisplay_ShowItem(s32 item, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

@@ -19,7 +19,18 @@
 #include "scene_tables.h"
 #include "event_work.h"
 #include "call.h"
-#include "module/scene/lemuria_entrance.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern u32 gLemuriaEntrance_ShipSailsOut[];
+void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames);
+
+void LemuriaEntrance_ShebaAsksPiersAge(void);
+
+extern s32 gLemuriaEntrance_ShipAtRest[];
+
 #include "module/scene/scene.h"
 #include "module/window/window.h"
 #include "text/msg_ids.h"

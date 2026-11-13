@@ -18,7 +18,42 @@
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
-#include "module/scene/yampi_desert_cave.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+struct Actor;
+
+extern u16 gYampiDesertCave_LogSprites[];
+
+void YampiDesertCave_StopLeaderAtLog(struct Actor *object);
+
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
+
+void YampiDesertCave_ArriveByTeleport(void);
+
+extern u16 gYampiDesertCave_MarkCycle[];
+
+void FieldEffect_StartBlankOverlay(s32 value);
+
+void YampiDesertCave_FightCrystal(void);
+
+void YampiDesertCave_WonderAtRipple(void);
+
+void YampiDesertCave_TryPushLog(void);
+
+void YampiDesertCave_TeleportFromFirstMark(void);
+
+void YampiDesertCave_TeleportFromSecondMark(void);
+
+void YampiDesertCave_CastSand(void);
+void YampiDesertCave_EndSand(void);
+
+extern u32 gYampiDesertCave_Settle[];
+
+void Teleport_PlayWhirl(void);
+
 #include "scene_ids.h"
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
@@ -1048,7 +1083,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "module/scene/yampi_desert_cave.h"
 
 /* VIEW(data): routine YampiDesertCave_BurstRoom1Pillar as this part declared
  * it; the joined file has another. */

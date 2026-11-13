@@ -120,7 +120,16 @@ void Shop_Run(s32 slot, s32 actor);
 void Sanctum_Run(s32 id);
 void Inn_CheckIn(s32 slot, s32 actor);
 #include "event_inline.h"
-#include "module/scene/garoh_interiors.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+
+void GarohInteriors_WakeAtInn(void);
+
+void MapGrid_SetShownLayers(s32 value);
+
+void FieldEffect_StartBlankOverlay(s32 value);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

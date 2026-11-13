@@ -32,7 +32,31 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #include "event.h"
 #include "event_work.h"
 #include "item_icon.h"
-#include "module/scene/anemos_inner_sanctum_entrance.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+extern s32 gData_02000e20[];
+extern s32 gData_02000e5c[];
+extern s32 gData_02000ea4[];
+extern s8 gData_02000eec[];
+void Func_02000b18(void);
+void Func_02000ba4(s32 id, s32 value);
+void Func_02000bd4(u16 value);
+void Func_02000588(void);
+
+extern s32 gData_02001970[];
+
+struct Actor;
+
+extern s16 gData_02001cde;
+extern struct Actor *gLightSpriteActors[];
+extern u16 gData_02001de2;
+extern u16 gData_02001de4;
+extern s16 gLightSpriteTile;
+extern s16 gData_02001de0;
+
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "scene_call.h"
@@ -518,7 +542,6 @@ s8 gData_02000eec[] = {
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "module/scene/anemos_inner_sanctum_entrance.h"
 
 /* VIEW(data2): routine Func_0200033c as this part declared it; the joined file
  * has another. */

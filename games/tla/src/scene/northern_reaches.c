@@ -22,7 +22,24 @@
 #include "system/dma.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
-#include "module/scene/northern_reaches.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+
+struct IceShard;
+struct IceShardSpark;
+struct IceShardSprite;
+
+void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
+                                    void (*callback)(void));
+void Oam_AddSpriteAtDepthClamped(struct IceShardSpark *spark, s32 value);
+
+void EffectSprite_DrawAtWorldPosition(struct IceShardSprite *sprite,
+                                      struct IceShard *particle);
+
+extern s32 gNorthernReaches_ShipAtRest[];
+
 #include "module/scene/scene.h"
 #include "render_input.h"
 #include "effect_sprite.h"

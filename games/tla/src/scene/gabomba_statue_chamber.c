@@ -15,7 +15,29 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "gamepak/far_call/system.h"
-#include "module/scene/gabomba_statue_chamber.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+
+void Func_02001094(void);
+
+void Func_02000ef0();
+void Func_02001b14(void);
+void Func_02001ba8(void);
+
+void Func_02001c44(void);
+
+void Func_02000be8(void);
+void Func_02000184(void);
+void Func_02000b60(void);
+void Func_02000b70(void);
+void Func_02000d3c(void);
+
+extern s32 gData_02002048[];
+
+void ActorSystem_SuspendProjectionAndShowSprites(void);
+
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 
@@ -1070,7 +1092,6 @@ void Func_02001c44(void) {
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
-#include "module/scene/gabomba_statue_chamber.h"
 
 void Func_02000e50(void);
 void Func_02000e60(void);

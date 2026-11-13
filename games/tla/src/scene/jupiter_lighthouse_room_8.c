@@ -48,7 +48,28 @@
 
 #include "field/cell_target.h"
 
-#include "jupiter_lighthouse_room_8.h"
+/// What the files of Jupiter Lighthouse's left-tower room share: its flag and
+/// its actors.
+
+#include "scene_tables.h"
+
+// Set once Move has dropped the pillar into the gap in the floor; cleared as
+// the party comes back unless the party comes back from a battle
+// (FLAG_KEEP_PARTY_POSITION).
+#define FLAG_PILLAR_DROPPED 0xa18
+
+/// The room's statue, pillar and logs, numbering the rows of gActorPlacements.
+enum JupiterLighthouseLeftTowerActorId {
+  /// ★ Named from what the player sees: a stone archer (spr_340.png)
+  ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a grey stone pillar (spr_312.png)
+  ACTOR_PILLAR = ACTOR_FIRST_PLACED + 2,
+  /// The first of five blue logs, two standing and three lying, that the
+  /// leader pushes.
+  /// ★ Named from what the player sees: blue logs (spr_331.png, spr_332.png)
+  ACTOR_FIRST_LOG
+};
+
 struct Actor;
 struct IsletsVector {
   s32 x;
@@ -665,7 +686,6 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
-#include "jupiter_lighthouse_room_8.h"
 
 #include "field/cell_target.h"
 void JupiterLighthouse_PushBlock(void);

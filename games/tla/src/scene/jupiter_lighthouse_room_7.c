@@ -753,7 +753,58 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 #include "vram_tab.h"
 #include "task.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_room_7.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+#include "types.h"
+#include "module/scene/scene.h"
+
+struct CellTarget;
+struct CellTargetEntry;
+struct LightOam;
+
+void Whirlwind_CarryLeader(void);
+
+void JupiterLighthouse_OpenDoor(s32 value);
+
+void JupiterLighthouse_CloseDoor(void);
+
+void JupiterLighthouse_CheckBlockOnCell(void);
+
+void JupiterLighthouse_StepOffButton(void);
+
+void Func_02000184(void);
+
+void Func_020009d8(void);
+void Func_02000a74(void);
+
+void Func_02000c7c(void);
+
+void Func_02000cec(void);
+
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+
+void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
+
+s32 Actor_GetCellIndex(struct Actor *object);
+
+extern s16 gLightSpriteTile;
+extern struct LightOam gLightSpriteOams[];
+extern s16 gLightSpritesLarge;
+
+void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
+
+void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
+
+extern s16 gLightSpriteCount;
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
+void Field_TryJumpForward(void);
+
 #include "module/scene/scene.h"
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1053,7 +1104,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
 #include "cell_target.h"
 #include "event_work.h"
 #include "module/field/field_effect.h"
-#include "module/scene/jupiter_lighthouse_room_7.h"
 #include "module/scene/scene.h"
 
 /* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined
@@ -1155,7 +1205,6 @@ s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
-#include "module/scene/jupiter_lighthouse_room_7.h"
 
 void Func_02000038(void);
 void JupiterLighthouse_StepOnButton(void);

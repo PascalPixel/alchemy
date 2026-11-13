@@ -10,6 +10,7 @@
 #include "vram_cache.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
+#include "module/field/world_map_lines.h"
 #include "module/system/system.h"
 #include "types.h"
 #include "battle_action_run.h"

@@ -83,11 +83,6 @@ extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 extern u16 *gKolimaForestFloodgateReturned;
 /// Heap slot 5: the 64 actors, 112 bytes each.
 extern struct Actor *gActors;
-/// The world map camera's yaw the scanline parameters were built for; the
-/// vertex update rebuilds them when it changes.
-extern u32 gScanlineAngle;
-/// The world map camera's pitch the scanline parameters were built for.
-extern u32 gScanlinePitch;
 /// The lighthouse transition's pictures, packed (tagged LZ), decoded 4 KB
 /// bytes after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedPictures[];

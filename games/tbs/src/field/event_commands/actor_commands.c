@@ -420,16 +420,16 @@ void Actor_NoOp(void) {}
 /// four element parts) call it too.
 void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   struct Actor *actor;
-  u8 *objectFlags;
+  u8 *flagsByte;
   s32 updatedFlags;
   s32 verticalVelocity;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    objectFlags = &actor->motionFlags;
-    updatedFlags = *objectFlags | ACTOR_FALLS;
+    flagsByte = &actor->motionFlags;
+    updatedFlags = *flagsByte | ACTOR_FALLS;
     verticalVelocity = px(speed);
-    *objectFlags = updatedFlags;
+    *flagsByte = updatedFlags;
     actor->velocityY = verticalVelocity;
     if (speed > 5) {
       Sound_PlayFar(SE_HIGH_JUMP);
@@ -556,7 +556,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
   struct Actor *actor;
-  u8 *objectFlags;
+  u8 *flagsByte;
 
   actor = Actor_GetById(actorId);
   startZ = actor->z.fixed;
@@ -566,12 +566,12 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     wait(10);
 
     // Hop up and forward 12 pixels.
-    objectFlags = &actor->motionFlags;
+    flagsByte = &actor->motionFlags;
     Actor_SelectAnimationFar(actor, ANIM_STAND);
     {
       u8 flags = 2;
-      flags |= *objectFlags;
-      *objectFlags = flags;
+      flags |= *flagsByte;
+      *flagsByte = flags;
     }
     actor->velocityY = px(4);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
@@ -584,7 +584,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     // From here pose counts frames.
     pose = 0;
     Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
-    *objectFlags = 0;
+    *flagsByte = 0;
     do {
       nextY = actor->y.fixed - px(2);
       actor->y.fixed = nextY;
@@ -598,7 +598,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
     // the ground and falling again.
-    *objectFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    *flagsByte = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->velocityY = px(3);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + px(16));
@@ -692,14 +692,14 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
 /// empties its slot, writing NULL to its place in the field work's actor
 /// table. Events reach it (about 14 of them).
 void Actor_ReleaseById(s32 index) {
-  void *object = Actor_Lookup(index);
+  void *released = Actor_Lookup(index);
   struct FieldWork *table = gFieldWork;
 #ifdef UBFIX
   struct Actor *empty = NULL;
 #endif
 
-  if (object != 0) {
-    Actor_ReleaseFar(object);
+  if (released != 0) {
+    Actor_ReleaseFar(released);
 #ifdef UBFIX
     // The getter accepts slots through 191, including non-actor storage.
     // Copy the pointer representation without extending the actor array.

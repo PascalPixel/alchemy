@@ -163,14 +163,14 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// for the actors, and sets the sprite outline colours.
 void ActorSystem_Initialize(s32 controlMode) {
   struct ActorSystemWork *system;
-  struct Actor *objectPool;
+  struct Actor *pool;
   volatile u32 fill;
 
   system = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*system));
-  objectPool =
-      HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, ACTOR_COUNT * sizeof(*objectPool));
+  pool =
+      HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, ACTOR_COUNT * sizeof(*pool));
   ActorSystem_Configure(controlMode);
-  Dma_Fill32Cell(fill, 0, objectPool, ACTOR_COUNT * sizeof(*objectPool));
+  Dma_Fill32Cell(fill, 0, pool, ACTOR_COUNT * sizeof(*pool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
   // The task runner runs higher priorities first: the actors move before
   // the camera follows them.
@@ -201,14 +201,14 @@ UNUSED void ActorSystem_ReservedNoOpB(void) {}
 void *Actor_FindFree(void) {
   struct Actor *actor = gActors;
   void *freeActor = 0;
-  s32 objectIndex = 0;
+  s32 actorIndex = 0;
 
-  while (objectIndex <= ACTOR_COUNT - 1) {
+  while (actorIndex <= ACTOR_COUNT - 1) {
     if (actor->script == 0) {
       freeActor = actor;
       break;
     }
-    objectIndex++;
+    actorIndex++;
     actor++;
   }
   return freeActor;

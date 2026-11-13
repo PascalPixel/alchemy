@@ -283,25 +283,25 @@ void TreasureSpot_Hide(s32 id) {
 void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 groundHeight;
-  s32 objectX;
-  s32 objectZ;
+  s32 spotX;
+  s32 spotZ;
   struct TreasureSpot *marker;
   struct Actor *actor;
 
-  objectZ = z;
-  objectX = x;
+  spotZ = z;
+  spotX = x;
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
     marker = &gFieldWork->treasureSpots[slotIndex];
     actor = marker->actor;
     if (actor != NULL) {
-      if (objectX == -1)
-        objectX = (marker->column << 20) + px(8);
-      if (objectZ == -1)
-        objectZ = (marker->row << 20) + px(8);
-      actor->x.fixed = objectX;
-      actor->z.fixed = objectZ;
-      groundHeight = MapGrid_GetTerrainHeightFar(0, objectX, objectZ);
+      if (spotX == -1)
+        spotX = (marker->column << 20) + px(8);
+      if (spotZ == -1)
+        spotZ = (marker->row << 20) + px(8);
+      actor->x.fixed = spotX;
+      actor->z.fixed = spotZ;
+      groundHeight = MapGrid_GetTerrainHeightFar(0, spotX, spotZ);
       actor->groundHeight = groundHeight;
       actor->y.fixed = groundHeight;
     }

@@ -106,17 +106,17 @@ void DjinnFigures_UpdateAllPositions(void) {
 /// faces FACING_WEST instead of FACING_SOUTH.
 void DjinnFigures_UpdateBottomRow(void) {
   struct ItemMenuWork *menu = gMenuWork;
-  s32 objectIndex;
+  s32 figure;
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
-  for (objectIndex = 0; objectIndex <= 3; objectIndex++) {
-    struct Sprite *animation = menu->figures[objectIndex];
+  for (figure = 0; figure <= 3; figure++) {
+    struct Sprite *animation = menu->figures[figure];
 
     if (animation != 0) {
       u32 projectedY =
-          (241u << 17) - px((u32)(s32)menu->memberY[objectIndex]);
+          (241u << 17) - px((u32)(s32)menu->memberY[figure]);
       s32 phase;
       s32 limit;
       s32 rowY;
@@ -124,20 +124,20 @@ void DjinnFigures_UpdateBottomRow(void) {
       animation->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
       // closes a third of its gap to full size (Q16_ONE) each frame.
-      phase = menu->figureScales[objectIndex];
+      phase = menu->figureScales[figure];
       if (phase < 0) {
         scale.x = -phase;
         scale.y = -phase;
       } else {
         scale.x = phase + (s32)(Q16_ONE - phase) / 3;
         scale.y = scale.x;
-        menu->figureScales[objectIndex] = scale.x;
+        menu->figureScales[figure] = scale.x;
       }
-      placement.x = px((u32)(s32)menu->figureX[objectIndex]);
+      placement.x = px((u32)(s32)menu->figureX[figure]);
       placement.height = projectedY;
-      placement.y = px((u32)(s32)menu->figureY[objectIndex]) + projectedY;
+      placement.y = px((u32)(s32)menu->figureY[figure]) + projectedY;
       placement.groundHeight = 0;
-      rowY = menu->figureY[objectIndex];
+      rowY = menu->figureY[figure];
       /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live,
        * so rowY takes r2 and limit keeps r3; as no statement, 81 of 119
        * instructions differ in tbs-en. */

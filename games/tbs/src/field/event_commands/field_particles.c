@@ -28,24 +28,24 @@ void FieldParticle_Update(struct FieldParticle *effect) {
 /// exclusive. With flag 4 the slot's z also lifts it (508 pixels less z):
 /// it is placed at y 508 pixels and raised back to z, so it shows at the
 /// same point but sorts as if at 508.
-void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
+void FieldEffect_DrawScaledActor(struct FieldParticle *particle) {
   struct Sprite *sprite;
   s32 offset;
   struct SpriteScale scale;
   struct SpritePlacement position;
 
-  sprite = object->actor;
+  sprite = particle->actor;
   offset = 0;
-  if (object->flags & 4)
-    offset = px(508) - object->z;
-  scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
-  scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
-  position.x = object->x;
+  if (particle->flags & 4)
+    offset = px(508) - particle->z;
+  scale.x = Iwram_MulQ16(particle->scaleX, sprite->scale);
+  scale.y = Iwram_MulQ16(particle->scaleY, sprite->scale);
+  position.x = particle->x;
   position.height = offset;
-  position.y = object->z + offset;
+  position.y = particle->z + offset;
   position.groundHeight = 0;
-  if (object->x > -px(32) && object->x < px(272) && object->z > -px(32) &&
-      object->z < px(224))
+  if (particle->x > -px(32) && particle->x < px(272) && particle->z > -px(32) &&
+      particle->z < px(224))
     Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 

@@ -66,7 +66,7 @@ struct WorldMapOam {
 
 void Func_020048f4(void);
 
-void Func_02003654(s32 a, s32 b, s32 c);
+void WorldMap_SetCountdownByZ(s32 a, s32 b, s32 c);
 
 void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
@@ -718,11 +718,11 @@ void Func_02000d4c(void) {
   Event_SetFlag(0xa77);
 }
 
-void Func_02000d98(s32 id) { Func_02003654(id, 63, 62); }
+void Func_02000d98(s32 id) { WorldMap_SetCountdownByZ(id, 63, 62); }
 
-void Func_02000da4(s32 id) { Func_02003654(id, 34, 33); }
+void Func_02000da4(s32 id) { WorldMap_SetCountdownByZ(id, 34, 33); }
 
-void Func_02000db0(s32 id) { Func_02003654(id, 3, 2); }
+void Func_02000db0(s32 id) { WorldMap_SetCountdownByZ(id, 3, 2); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -750,7 +750,7 @@ s32 Scene_Initialize(void) {
   wait(1);
   FieldCamera_SetSpeed(0x80000, 0x10000);
   GameFlag_Clear(0x12f);
-  Func_02003960();
+  WorldMap_StartPlacedActors();
   if (GameFlag_Get(0x90f))
     Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
   if (GameFlag_Get(0xa21)) {
@@ -2111,65 +2111,25 @@ DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s3600.c"
-
-// ---- scene/world_map/s36a8.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/world_map_s36a8.c"
-
-// ---- scene/world_map/s3960.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/world_map_s3960.c"
-
-// ---- scene/world_map/cell_index.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
-
-s32 Func_020039a8(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
-  s32 step = ++object->timer;
-  s32 scale;
-
-  if (step > 31)
-    return 0;
-  scale = Iwram_MulQ16(Math_Sin(step << 10), 0x14000);
-  object->scaleX = scale;
-  object->scaleY = scale;
-  object->x = parent->x;
-  object->y += 0x10000;
-  object->z = parent->z;
-  return 1;
-}
-
-// ---- scene/world_map/s39f4.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/world_map_s39f4.c"
+#include "shared/world_map_objects.c"
 
 // ---- scene/world_map/s3b38.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
+DEFINE_ACTOR_FLICKER(Func_02003b38, WorldMap_SpawnSparkPair)
 
 /* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA
- * DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0) LATE_DATA u32
- * gData_02006be4[], it does not compile in tla-ja:
+ * DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, Func_020035e0, 17, 0)
+ * LATE_DATA u32 gData_02006be4[], it does not compile in tla-ja:
  * games/tla/src/scene/world_map.c:2168: `gData_02006be4' undeclared (first use
  * in this function). */
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 
 DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02004fc8,
-                                gData_02006be4, Func_02003aac)
+                                gData_02006be4, WorldMap_SpawnParticle)
 
 DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_02003b38,
                              Actor_CycleChildValues)
@@ -2519,13 +2479,13 @@ s32 gData_02004f70[] = {
     38,
 };
 
-s32 gData_02004f90[] = {
+s32 gWorldMap_SparkScript[] = {
     46,
-    (s32)Func_020039a8,
+    (s32)WorldMap_RiseFromAnchor,
     38,
 };
 
-u32 gData_02004f9c[] = {
+u32 gWorldMap_ParticleScript[] = {
     0, 39, 22, 5, 0, 22,
     7, 0, 0, 1, 38,
 };
@@ -2922,7 +2882,8 @@ LATE_DATA u32 gData_02006bc8[] = {
     38,
 };
 
-LATE_DATA DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0)
+LATE_DATA DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, Func_020035e0, 17,
+                                 0)
 
     LATE_DATA u32 gData_02006be4[] = {
         0,

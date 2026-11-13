@@ -55,7 +55,7 @@
 struct Actor;
 struct Vector3;
 
-void Func_020024e4(void);
+void Leader_KnockBack(void);
 
 s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Actor_LaunchAhead(struct Actor *self);
@@ -1016,7 +1016,7 @@ extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(void *handle);
-void Func_020024e4(void);
+void Leader_KnockBack(void);
 s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Actor_LaunchAhead(struct Actor *self);
 
@@ -1461,25 +1461,25 @@ DEFINE_ACTOR_BLINK(Actor_Blink, 10, 4, 0)
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 
-#define SHARED_F02002148_NAME Func_020024e4
-#define SHARED_F02002148_ID2 Party_TakeFallDamage
-#define SHARED_F02002148_ID3 Actor_Blink
-#define SHARED_F02002148_ID4 Actor_SelectAnimation
-#define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
-#define SHARED_F02002148_ID6 MapGrid_CheckCollision
-#define SHARED_F02002148_ID7 Field_CheckSpheresOverlap
-#include "shared/func_02002148.c"
-#undef SHARED_F02002148_NAME
-#undef SHARED_F02002148_ID2
-#undef SHARED_F02002148_ID3
-#undef SHARED_F02002148_ID4
-#undef SHARED_F02002148_ID5
-#undef SHARED_F02002148_ID6
-#undef SHARED_F02002148_ID7
+#define KNOCK_BACK Leader_KnockBack
+#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
+#define KNOCK_BACK_BLINK Actor_Blink
+#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
+#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
+#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
+#define KNOCK_BACK_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/leader_knock_back.c"
+#undef KNOCK_BACK
+#undef KNOCK_BACK_TAKE_DAMAGE
+#undef KNOCK_BACK_BLINK
+#undef KNOCK_BACK_SET_ANIMATION
+#undef KNOCK_BACK_CELL_ATTRIBUTE
+#undef KNOCK_BACK_CHECK_COLLISION
+#undef KNOCK_BACK_SPHERES_OVERLAP
 
 void Func_020026f0(void) {
   if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
-    Func_020024e4();
+    Leader_KnockBack();
 }
 
 #undef Unit_Get

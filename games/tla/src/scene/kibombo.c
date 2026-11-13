@@ -324,15 +324,15 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
 
 void Func_020005d0(void) { FlagBlock_ApplyFlags(gData_02006324); }
 
-void Func_020005e0(void) {
+void Kibombo_UncoverVent(void) {
   MapGrid_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
   Kibombo_BlendStart(34, 33, 1, 1, 23, 18);
   GameFlag_Set(0x86a);
 }
 
-void Func_02000618(s32 mode) {
+void Kibombo_ScoopVent(s32 mode) {
   if (mode == 1)
-    Func_020005e0();
+    Kibombo_UncoverVent();
 }
 
 void Func_02000624(void) {
@@ -397,12 +397,12 @@ void Func_02000734(void) {
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
     GameFlag_Set(0x9ea);
     if (!GameFlag_Get(0x8f4))
-      Func_02001318();
+      Kibombo_PiersJoinsParty();
     Event_End();
   }
 }
 
-void Func_020007c8(void) {
+void Kibombo_MeetPiers(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
@@ -430,9 +430,9 @@ void Func_020007c8(void) {
   Actor_SetMovementTypeAndWaitById(6, gData_02005da0);
   Event_ShowMessageAndWait(7, 0);
   if (GameFlag_Get(0x911))
-    Func_02000978();
+    Kibombo_PiersHasForgottenParty();
   else
-    Func_02000b2c();
+    Kibombo_PiersTakesPartyForEnemies();
   Func_02000d74();
   Kibombo_ObjSpeed(26, 0x19999, 0xcccc);
   Kibombo_ObjSpeed(5, 0x19999, 0xcccc);
@@ -444,7 +444,7 @@ void Func_020007c8(void) {
   Event_End();
 }
 
-void Func_02000978(void) {
+void Kibombo_PiersHasForgottenParty(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 20);
   Event_SetMessageId((s32)MsgItLooksLikeHas);
   FieldMessage_ShowAtActor(6, 0);
@@ -488,7 +488,7 @@ void Func_02000978(void) {
   Event_ShowMessageAndWait(7, 0);
 }
 
-void Func_02000b2c(void) {
+void Kibombo_PiersTakesPartyForEnemies(void) {
   Event_SetMessageId((s32)MsgHeSeemsTo);
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjArm(5, FACING_SOUTH, 10);
@@ -736,7 +736,7 @@ extern u32 gData_02005fe0[];
 /// move, turn and speak around the controlled character, two yes-or-no
 /// questions count up the event work's halfword 0x1c4, and the scene ends with
 /// Party_GivePiersDjinn. Each call goes through the call layer (call.h).
-void Func_02001318(void) {
+void Kibombo_PiersJoinsParty(void) {
   Actor_ArmCallback(7, FACING_NORTH, 0);
   Event_SetMessageId(MsgBlank7);
   Event_ShowMessage(0x2007, 0);
@@ -1042,7 +1042,7 @@ void Func_02001318(void) {
   GameFlag_Set(0x8f4);
   GameFlag_Set(0x92e);
   Event_PrepareObjectAndApplyValue(7, 1);
-  Party_GivePiersDjinn(); // arity?
+  Party_GivePiersDjinn();
 }
 #undef EVENT_WORK
 
@@ -2059,7 +2059,7 @@ DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b20, 38, 23, 25, 24, 39, 392, 608)
 
 DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b88, 54, 42, 44, 43, 55, 696, 864)
 
-void Func_02003bf0(void) {
+void Kibombo_EnterVent(void) {
   if (GameFlag_Get(0x202))
     Func_02003898();
   Func_02003a08(376, 288);
@@ -2915,7 +2915,7 @@ void Func_0200538c(void) {
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (GameFlag_Get(0x86a))
-    Func_020005e0();
+    Kibombo_UncoverVent();
   if (GameFlag_Get(0x204))
     Func_02000624();
   if (GameFlag_Get(0x205))
@@ -3143,7 +3143,7 @@ void Kibombo_TalkAchingBack(void);
 void Kibombo_ReadMindNeverAgain(void);
 void Func_020005d0(void);
 void Func_02000734(void);
-void Func_020007c8(void);
+void Kibombo_MeetPiers(void);
 void Kibombo_PiersThanksParty(void);
 void Kibombo_PiersRefusesToLeave(void);
 void Kibombo_DeadEndByTheStatue(void);
@@ -3716,14 +3716,14 @@ struct Trigger gKibombo_Room4Triggers[] = {
 struct Trigger gKibombo_Room2Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
-    {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Func_02003bf0)},
+    {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Kibombo_EnterVent)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoomFading)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9ea, EVENT(Func_02000734)},
     {9, 0, 0x9ea, EVENT(Func_02000734)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, 0x86a,
-     EVENT(Func_02000618)},
+     EVENT(Kibombo_ScoopVent)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 11, 0x204,
      EVENT(Func_0200065c)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 12, 0x205,
@@ -3738,7 +3738,7 @@ struct Trigger gKibombo_Room2Triggers[] = {
 struct Trigger gKibombo_Room5Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
-    {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Func_02003bf0)},
+    {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Kibombo_EnterVent)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoomFading)},
     {TRIGGER_STEP, 5, 0x8f3, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 5, 0x92f, EVENT(Kibombo_PiersRefusesToLeave)},
@@ -3747,7 +3747,7 @@ struct Trigger gKibombo_Room5Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9ea, EVENT(Func_02000734)},
     {9, 0, 0x9ea, EVENT(Func_02000734)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, 0x86a,
-     EVENT(Func_02000618)},
+     EVENT(Kibombo_ScoopVent)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 11, 0x204,
      EVENT(Func_0200065c)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 12, 0x205,
@@ -3756,7 +3756,7 @@ struct Trigger gKibombo_Room5Triggers[] = {
      EVENT(Func_020006e4)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 14, 0x207,
      EVENT(Func_02000728)},
-    {TRIGGER_STEP, 20, 0x8f3, EVENT(Func_020007c8)},
+    {TRIGGER_STEP, 20, 0x8f3, EVENT(Kibombo_MeetPiers)},
     {TRIGGER_STEP, 22, 0x92e, EVENT(Kibombo_PiersThanksParty)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS,

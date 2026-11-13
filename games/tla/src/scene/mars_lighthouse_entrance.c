@@ -1668,25 +1668,25 @@ void Func_02002614__s263c(void) __asm__("Func_02002614");
 #define Func_02002614 Func_02002614__s263c
 extern u8 gInventorySnapshot[];
 
-#define SHARED_F02002148_NAME Func_0200263c
-#define SHARED_F02002148_ID2 Party_TakeFallDamage
-#define SHARED_F02002148_ID3 Func_02002614
-#define SHARED_F02002148_ID4 Func_02004bc0
-#define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
-#define SHARED_F02002148_ID6 MapGrid_CheckCollision
-#define SHARED_F02002148_ID7 Func_02004c78
-#include "shared/func_02002148.c"
-#undef SHARED_F02002148_NAME
-#undef SHARED_F02002148_ID2
-#undef SHARED_F02002148_ID3
-#undef SHARED_F02002148_ID4
-#undef SHARED_F02002148_ID5
-#undef SHARED_F02002148_ID6
-#undef SHARED_F02002148_ID7
+#define KNOCK_BACK Leader_KnockBack
+#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
+#define KNOCK_BACK_BLINK Func_02002614
+#define KNOCK_BACK_SET_ANIMATION Func_02004bc0
+#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
+#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
+#define KNOCK_BACK_SPHERES_OVERLAP Func_02004c78
+#include "shared/leader_knock_back.c"
+#undef KNOCK_BACK
+#undef KNOCK_BACK_TAKE_DAMAGE
+#undef KNOCK_BACK_BLINK
+#undef KNOCK_BACK_SET_ANIMATION
+#undef KNOCK_BACK_CELL_ATTRIBUTE
+#undef KNOCK_BACK_CHECK_COLLISION
+#undef KNOCK_BACK_SPHERES_OVERLAP
 
 void MarsLighthouseEntrance_ContinueSlide(void) {
   if (RIDE_WORK->active)
-    Func_0200263c();
+    Leader_KnockBack();
 }
 
 /* VIEW(s2860): routine Party_TakeFallDamage as s32 Party_TakeFallDamage(s32 a,
@@ -2037,13 +2037,13 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef SET_SPRITE_WINDOW_LAYERS
 #undef FIELD_AT
 #undef IWRAM
-#undef SHARED_F02002148_NAME
-#undef SHARED_F02002148_ID2
-#undef SHARED_F02002148_ID3
-#undef SHARED_F02002148_ID4
-#undef SHARED_F02002148_ID5
-#undef SHARED_F02002148_ID6
-#undef SHARED_F02002148_ID7
+#undef KNOCK_BACK
+#undef KNOCK_BACK_TAKE_DAMAGE
+#undef KNOCK_BACK_BLINK
+#undef KNOCK_BACK_SET_ANIMATION
+#undef KNOCK_BACK_CELL_ATTRIBUTE
+#undef KNOCK_BACK_CHECK_COLLISION
+#undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
 #undef ABS
 #undef SLIDE_FROM_EDGE
@@ -3001,7 +3001,7 @@ struct Trigger gMarsLighthouseEntrance_Room3Triggers[] = {
     {0x51, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0x31, 16, CONDITION_ALWAYS, 16},
-    {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200263c)},
+    {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Leader_KnockBack)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x202,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x203,

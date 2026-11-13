@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-void Func_020005e0(void);
+void Kibombo_UncoverVent(void);
 
 void Func_020032e0(void);
 

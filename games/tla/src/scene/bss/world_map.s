@@ -4,8 +4,8 @@
 	.global Data_02006be8
 Data_02006be8:
 	.space 0x00000020
-	.global gData_02006c08
-gData_02006c08:
+	.global gWorldMap_PlacedActors
+gWorldMap_PlacedActors:
 	.space 0x00000200
 	.global gData_02006e08
 gData_02006e08:

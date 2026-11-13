@@ -1668,25 +1668,25 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
 
-#define SHARED_F02002148_NAME Func_02002148
-#define SHARED_F02002148_ID2 Party_TakeFallDamage
-#define SHARED_F02002148_ID3 Actor_Blink
-#define SHARED_F02002148_ID4 Actor_SelectAnimation
-#define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
-#define SHARED_F02002148_ID6 MapGrid_CheckCollision
-#define SHARED_F02002148_ID7 Field_CheckSpheresOverlap
-#include "shared/func_02002148.c"
-#undef SHARED_F02002148_NAME
-#undef SHARED_F02002148_ID2
-#undef SHARED_F02002148_ID3
-#undef SHARED_F02002148_ID4
-#undef SHARED_F02002148_ID5
-#undef SHARED_F02002148_ID6
-#undef SHARED_F02002148_ID7
+#define KNOCK_BACK Leader_KnockBack
+#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
+#define KNOCK_BACK_BLINK Actor_Blink
+#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
+#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
+#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
+#define KNOCK_BACK_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/leader_knock_back.c"
+#undef KNOCK_BACK
+#undef KNOCK_BACK_TAKE_DAMAGE
+#undef KNOCK_BACK_BLINK
+#undef KNOCK_BACK_SET_ANIMATION
+#undef KNOCK_BACK_CELL_ATTRIBUTE
+#undef KNOCK_BACK_CHECK_COLLISION
+#undef KNOCK_BACK_SPHERES_OVERLAP
 
 void Func_02002354(void) {
   if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
-    Func_02002148();
+    Leader_KnockBack();
 }
 
 extern u8 gInventorySnapshot[];
@@ -2037,13 +2037,13 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_02002d90,
 #undef DEFINE_FUNC_0200196C_97
 #undef ABS
 #undef IWRAM
-#undef SHARED_F02002148_NAME
-#undef SHARED_F02002148_ID2
-#undef SHARED_F02002148_ID3
-#undef SHARED_F02002148_ID4
-#undef SHARED_F02002148_ID5
-#undef SHARED_F02002148_ID6
-#undef SHARED_F02002148_ID7
+#undef KNOCK_BACK
+#undef KNOCK_BACK_TAKE_DAMAGE
+#undef KNOCK_BACK_BLINK
+#undef KNOCK_BACK_SET_ANIMATION
+#undef KNOCK_BACK_CELL_ATTRIBUTE
+#undef KNOCK_BACK_CHECK_COLLISION
+#undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
 #undef ABS
 #undef SLIDE_FROM_EDGE

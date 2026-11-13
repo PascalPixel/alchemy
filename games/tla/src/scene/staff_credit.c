@@ -465,7 +465,7 @@ void Func_0200020c(s32 stage) {
   Event_SetFlag(0x101);
 }
 
-void Func_0200101c(void);
+void WorldMap_StartPlacedActors(void);
 
 /// Chooses where the credits go next by the entrance they were entered from:
 /// entrances 0 to 5 run resource FarCall00A with 2 to 7 and continue, 2 to 6
@@ -480,7 +480,7 @@ s32 Scene_Initialize(void) {
   System_Wait(1);
   FieldCamera_SetSpeed(0x80000, 0x10000);
   Event_ClearFlag(0x12f);
-  Func_0200101c();
+  WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
   case 0:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
@@ -528,74 +528,21 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
-/// The two countdown choices the world map (overlay 64b) also has, under this
-/// overlay's names.
-#define Func_02003600 Func_02000cbc
-#define Func_02003654 Func_02000d10
-#define Func_02004e30 Sound_Play
-#define gData_02006c08 gData_02003dc0
-#include "shared/world_map_s3600.c"
+#include "shared/world_map_objects.c"
 
-/// The world map's placed objects (overlay 64b), shown and hidden as the view
-/// moves, under this overlay's names.
-
-#define Func_020036a8 Func_02000d64
-#define Func_02004e08 FlagEntries_GetTable
-#define Func_02004e10 Party_GetLeaderActor
-#define Func_02004b30 Import_ActorCreate
-#define Func_02004b20 Actor_StartScript
-#define Func_02004b18 Import_ActorSelectAnimation
-#define Func_02004b38 Actor_Release
-#define gData_02006bd4 gData_02003da8
-#include "shared/world_map_s36a8.c"
-
-/// The blend queue and the cell table reset the world map (overlay 64b) also
-/// has, under this overlay's names.
-#define Func_020038e4 Func_02000fa0
-#define Func_02003960 Func_0200101c
-#include "shared/world_map_s3960.c"
-
-s32 Func_02001044(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
-
-s32 Func_02001064(struct Actor *object) {
-  struct Actor *anchor = object->watchedObject;
-  s32 frame;
-  s32 scale;
-
-  object->timer++;
-  frame = object->timer;
-  if (frame > 31)
-    return 0;
-  scale = Iwram_MulQ16(Math_Sin(frame << 10), 0x14000);
-  object->scaleX = scale;
-  object->scaleY = scale;
-  object->x = anchor->x;
-  object->y += 0x10000;
-  object->z = anchor->z;
-  return 1;
-}
-
-/// The spark pair and the random particle the world map (overlay 64b) also
-/// has, under this overlay's names.
-#define Func_020039f4 Func_020010b0
-#define Func_02003aac Func_02001168
-#define gData_02004f90 gData_02002e74
-#define gData_02004f9c gData_02002e80
-#include "shared/world_map_s39f4.c"
-
-DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
+DEFINE_ACTOR_FLICKER(Func_020011f4, WorldMap_SpawnSparkPair)
 
 /* VIEW(first): routine gData_02003db8 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA
- * DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0) LATE_DATA u32
- * gData_02003db8[], it does not compile in tla-ja:
+ * DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, TileSprite_Reset, 17, 0)
+ * LATE_DATA u32 gData_02003db8[], it does not compile in tla-ja:
  * games/tla/src/scene/staff_credit.c:596: `gData_02003db8' undeclared (first
  * use in this function). */
 extern s32 gData_02003db8__first __asm__("gData_02003db8");
 #define gData_02003db8 gData_02003db8__first
 
 DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02002eac,
-                                gData_02003db8, Func_02001168)
+                                gData_02003db8, WorldMap_SpawnParticle)
 
 DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_020011f4,
                              Actor_CycleChildValues)
@@ -859,14 +806,14 @@ DEFINE_GAUGE_INIT(Func_02001e58, gData_020040d8, gData_02003fc6, gData_02003fc4,
 DEFINE_GAUGE_END(Func_02001eb8, gData_020040d8, gData_02003fc6, gData_02003fc4,
                  Func_02001d90)
 
-s32 gData_02002e74[] = {
+s32 gWorldMap_SparkScript[] = {
     46,
-    (s32)Func_02001064,
+    (s32)WorldMap_RiseFromAnchor,
     38,
 };
 
 // clang-format off
-u32 gData_02002e80[] = {
+u32 gWorldMap_ParticleScript[] = {
     0, 39, 22, 5, 0, 22,
     7, 0, 0, 1, 38,
 };
@@ -876,24 +823,6 @@ u32 gData_02002eac[] = {
 };
 // clang-format on
 
-#undef Func_02003600
-#undef Func_02003654
-#undef Func_02004e30
-#undef gData_02006c08
-#undef Func_020036a8
-#undef Func_02004e08
-#undef Func_02004e10
-#undef Func_02004b30
-#undef Func_02004b20
-#undef Func_02004b18
-#undef Func_02004b38
-#undef gData_02006bd4
-#undef Func_020038e4
-#undef Func_02003960
-#undef Func_020039f4
-#undef Func_02003aac
-#undef gData_02004f90
-#undef gData_02004f9c
 #undef PUSH_PICTURE
 #undef gData_02003db8
 
@@ -1040,7 +969,8 @@ LATE_DATA s8 gData_02003d9c[][2] = {
     {22, -4}, {8, -8}, {2, -28}, {14, 12}, {8, 8}, {0, 0},
 };
 
-LATE_DATA DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)
+LATE_DATA DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, TileSprite_Reset,
+                                 17, 0)
 
     LATE_DATA u32 gData_02003db8[] = {
         0,

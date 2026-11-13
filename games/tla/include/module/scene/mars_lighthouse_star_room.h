@@ -11,7 +11,7 @@ struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 
-void Func_02002148(void);
+void Leader_KnockBack(void);
 void Actor_LaunchAhead(struct Actor *object);
 
 void Func_020014f4(void);

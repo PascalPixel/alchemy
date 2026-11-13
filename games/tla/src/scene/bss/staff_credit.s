@@ -7,8 +7,8 @@ gData_02003dbc:
 	.global gData_02003dbe
 gData_02003dbe:
 	.space 0x00000002
-	.global gData_02003dc0
-gData_02003dc0:
+	.global gWorldMap_PlacedActors
+gWorldMap_PlacedActors:
 	.space 0x00000200
 	.global gData_02003fc0
 gData_02003fc0:

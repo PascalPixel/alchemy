@@ -38,7 +38,7 @@ struct MarsLighthouseEntranceEventWork {
   s32 value1ac;
 };
 
-void Func_0200263c(void);
+void Leader_KnockBack(void);
 
 void Func_02001c74();
 

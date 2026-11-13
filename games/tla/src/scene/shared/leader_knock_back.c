@@ -1,12 +1,14 @@
 /// @file
-/// A routine 3 scenes' overlays each keep a copy of
-/// (mars_lighthouse_entrance/s263c, mars_lighthouse_room_m/s2118,
-/// mars_lighthouse_star_room/s2148), included as text where each copy sits
-/// after the scene defines SHARED_F02002148_NAME, SHARED_F02002148_ID2,
-/// SHARED_F02002148_ID3, SHARED_F02002148_ID4, SHARED_F02002148_ID5,
-/// SHARED_F02002148_ID6, SHARED_F02002148_ID7.
+/// The leader is thrown back by the flames that struck them: they take the fall
+/// damage, blink, and are pushed cell by cell in the flames' direction,
+/// sliding over ice, until a wall, another actor or a ledge stops them. Three
+/// Mars Lighthouse rooms keep a copy; each includes this file as text after
+/// defining KNOCK_BACK, its name, and the names its copy calls:
+/// KNOCK_BACK_TAKE_DAMAGE, KNOCK_BACK_BLINK, the update hook while they are
+/// thrown, KNOCK_BACK_SET_ANIMATION, KNOCK_BACK_CELL_ATTRIBUTE,
+/// KNOCK_BACK_CHECK_COLLISION and KNOCK_BACK_SPHERES_OVERLAP.
 
-void SHARED_F02002148_NAME(void) {
+void KNOCK_BACK(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
   struct Vector3 position;
@@ -15,20 +17,21 @@ void SHARED_F02002148_NAME(void) {
     struct Actor *actor;
 
 #ifdef UBFIX
-    SHARED_F02002148_ID2();
+    KNOCK_BACK_TAKE_DAMAGE();
 #else
-    // UB: Func_020024c0 takes no arguments and returns nothing.
-    ((s32 (*)())SHARED_F02002148_ID2)(-10, 0);
+    // UB: the fall damage takes no arguments and returns nothing.
+    ((s32 (*)())KNOCK_BACK_TAKE_DAMAGE)(-10, 0);
 #endif
     actor = Actor_Get(main->currentOwner);
     work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    actor->update = SHARED_F02002148_ID3;
+    actor->update = KNOCK_BACK_BLINK;
     actor->facing = TRIG_TURN / 4;
-    SHARED_F02002148_ID4(actor, 49);
+    KNOCK_BACK_SET_ANIMATION(actor, 49);
     for (;;) {
-      if (SHARED_F02002148_ID5(actor->terrainId, actor->x, actor->z) == 7) {
+      if (KNOCK_BACK_CELL_ATTRIBUTE(actor->terrainId, actor->x, actor->z) ==
+          7) {
         s32 i;
 
         /* FAKEMATCH(temporary): velocityX stored through a union, so the
@@ -53,7 +56,7 @@ void SHARED_F02002148_NAME(void) {
             position.z = actor->z + (work->unk6a << 19);
           } while (0);
 #endif
-          if (SHARED_F02002148_ID6(actor, &position) != 0) {
+          if (KNOCK_BACK_CHECK_COLLISION(actor, &position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -77,13 +80,13 @@ void SHARED_F02002148_NAME(void) {
         position.y = actor->y;
 #if TLA_PATCH_1
         position.z = actor->z + (work->unk6a << 19);
-        result = SHARED_F02002148_ID6(actor, &position);
+        result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
 #else
         // A once-only block, as in the loop above, with the call inside so
         // the call reuses position's address.
         do {
           position.z = actor->z + (work->unk6a << 19);
-          result = SHARED_F02002148_ID6(actor, &position);
+          result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
         } while (0);
 #endif
         if (result > 0)
@@ -98,12 +101,12 @@ void SHARED_F02002148_NAME(void) {
         other = Ram_HeapSlots->scriptObjects;
         flags = &other->collisionFlags;
         /* FAKEMATCH(wrapper): the overlap test forwarded through Value4; as a
-         * direct Func_02004c78 call, 117 of 236 instructions differ in tla-en.
+         * direct call, 117 of 236 instructions differ in tla-en.
          */
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())SHARED_F02002148_ID7, (s32)&other->x, radius,
-                     (s32)&position, other->radius - 2) >= 0) {
+              Value4((s32 (*)())KNOCK_BACK_SPHERES_OVERLAP, (s32)&other->x,
+                     radius, (s32)&position, other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
           }

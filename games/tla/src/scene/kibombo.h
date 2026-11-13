@@ -79,7 +79,7 @@ static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): the blend start reaches the main image through this
    * inline; as a direct call to Map_CopyCellAttributeRect, 4 of 25
-   * instructions differ in tla-en (Func_020005e0). */
+   * instructions differ in tla-en (Kibombo_UncoverVent). */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
@@ -188,10 +188,10 @@ void Func_02000624(void);
 void Func_02000668(void);
 void Func_020006ac(void);
 void Func_020006f0(void);
-void Func_02000978(void);
-void Func_02000b2c(void);
+void Kibombo_PiersHasForgottenParty(void);
+void Kibombo_PiersTakesPartyForEnemies(void);
 void Func_02000d74(void);
-void Func_02001318(void);
+void Kibombo_PiersJoinsParty(void);
 void Func_02002b18(s32 index, s32 entry, s32 delta);
 void Func_02002ba4(s32 index, s32 entry, s32 delta);
 void Func_02002c34(void);

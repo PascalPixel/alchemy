@@ -337,7 +337,7 @@ void Func_02000e04(void);
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Place(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
+  Actor_SetPosition(id, x, z);
 }
 
 s32 Scene_Initialize(void) {
@@ -347,18 +347,18 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     Func_02002140(0);
     Func_02002188(gData_0200226c);
-    if (GameFlag_Test(0x206))
-      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+    if (Event_GetFlag(0x206))
+      Actor_SetPosition(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
-    Actor_SetModeById(18, 2);
-    Actor_SetModeById(19, 2);
-    Actor_SetModeById(21, 2);
-    if (GameFlag_Test(0x205))
-      Actor_SetModeById(10, 2);
+    Actor_SetAnimation(18, 2);
+    Actor_SetAnimation(19, 2);
+    Actor_SetAnimation(21, 2);
+    if (Event_GetFlag(0x205))
+      Actor_SetAnimation(10, 2);
     Func_02000e04();
 #if TLA_PATCH_1
-    if (GameFlag_Test(0x204)) {
-      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    if (Event_GetFlag(0x204)) {
+      Actor_SetPosition(9, 0, 0);
       Place(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
       CopyCells2(9, 11, 1, 1, 11, 12);
@@ -366,12 +366,12 @@ s32 Scene_Initialize(void) {
 #endif
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4) {
-    if (GameFlag_Test(0x230)) {
+    if (Event_GetFlag(0x230)) {
       CopyCells2(0, 3, 1, 1, 3, 15);
-      Actor_SetModeById(9, 4);
+      Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Test(0x109) && Flag_Test(0x220)) {
-      GameFlag_ClearBit(0x220);
+    if (Event_GetFlag(0x109) && Flag_Test(0x220)) {
+      Event_ClearFlag(0x220);
       Func_0200125c();
     }
     Func_02002188(gData_02002272);
@@ -387,15 +387,15 @@ s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     if (Flag_Test(0x205)) {
       CopyCells2(9, 11, 1, 1, 11, 12);
-      Map_CopyCellPictureIndicesRect(12, 32, 11, 15, 1, 1);
-      Map_CopyCellPictureIndicesRect(77, 15, 75, 15, 1, 1);
+      MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
+      MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
     }
 #if !TLA_PATCH_1
-    if (GameFlag_Test(0x205))
-      Map_CopyCellAttributeRect(9, 11, 1, 1, 11, 11);
+    if (Event_GetFlag(0x205))
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
 #else
-    if (GameFlag_Test(0x204)) {
-      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    if (Event_GetFlag(0x204)) {
+      Actor_SetPosition(9, 0, 0);
       Place(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
       CopyCells2(9, 11, 1, 1, 11, 12);
@@ -403,9 +403,9 @@ s32 Scene_PrepareMap(void) {
 #endif
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room1) {
-    if (GameFlag_Test(0xa60)) {
-      Map_CopyCellPictureIndicesRect(5, 46, 5, 47, 1, 1);
-      Map_CopyCellPictureIndicesRect(4, 25, 5, 17, 1, 1);
+    if (Event_GetFlag(0xa60)) {
+      MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
+      MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
       CopyCells2(4, 25, 1, 1, 5, 17);
     }
   }
@@ -556,19 +556,19 @@ void Func_02000f2c(void) {
   s32 row = object->z >> 20;
   s32 i;
 
-  if (!GameFlag_Test(0x204) && column == 11 && row == 12) {
+  if (!Event_GetFlag(0x204) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
       object->y -= 0x20000;
       Event_Wait(1);
     }
     Func_0200156c(9);
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    Actor_SetPosition(9, 0, 0);
     Place(21, PIXELS(184), PIXELS(184));
     Actor_GetById(21)->motionFlags = 0;
     Actor_GetById(21)->y -= 0x400000;
     CopyCells2(9, 11, 1, 1, 11, 12);
-    GameFlag_SetBit(0x204);
+    Event_SetFlag(0x204);
   }
 }
 

@@ -61,7 +61,7 @@ void Func_02000098(s32 id);
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001060_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+  MapGrid_CopyCellAttributes(a, b, c, d, e, f);
 }
 
 void Func_02000098(s32 id) {
@@ -581,7 +581,7 @@ next:
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
+  Actor_SetPosition(id, x, z);
 }
 
 s32 Scene_Initialize(void) {

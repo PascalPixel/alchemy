@@ -126,13 +126,13 @@ s32 Func_0200008c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = GameFlag_Test(0x301);
+  t2 = Event_GetFlag(0x301);
   if (t2 != 0) {
     Event_SetMessageId((s32)MsgYallamInteriors37);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors33);
   }
-  Event_ShowMessageAndWait(14, 0);
+  Event_ShowMessage(14, 0);
   Event_End();
   return 0;
 }
@@ -142,13 +142,13 @@ s32 Func_020000cc(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = GameFlag_Test(0x301);
+  t2 = Event_GetFlag(0x301);
   if (t2 != 0) {
     Event_SetMessageId((s32)MsgYallamInteriors38);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors34);
   }
-  Event_ShowMessageAndWait(15, 0);
+  Event_ShowMessage(15, 0);
   Event_End();
   return 0;
 }
@@ -158,13 +158,13 @@ s32 Func_0200010c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = GameFlag_Test(0x301);
+  t2 = Event_GetFlag(0x301);
   if (t2 != 0) {
     Event_SetMessageId((s32)MsgYallamInteriors39);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors35);
   }
-  Event_ShowMessageAndWait(16, 0);
+  Event_ShowMessage(16, 0);
   Event_End();
   return 0;
 }
@@ -174,13 +174,13 @@ s32 Func_0200014c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = GameFlag_Test(0x301);
+  t2 = Event_GetFlag(0x301);
   if (t2 != 0) {
     Event_SetMessageId((s32)MsgYallamInteriors36);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors32);
   }
-  Event_ShowMessageAndWait(16, 0);
+  Event_ShowMessage(16, 0);
   Event_End();
   return 0;
 }
@@ -189,7 +189,7 @@ s32 Func_0200018c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors22);
-  Event_ShowMessageAndWait(10, 0);
+  Event_ShowMessage(10, 0);
   Event_End();
   return 0;
 }
@@ -198,7 +198,7 @@ s32 Func_020001b4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors24);
-  Event_ShowMessageAndWait(11, 0);
+  Event_ShowMessage(11, 0);
   Event_End();
   return 0;
 }
@@ -207,7 +207,7 @@ s32 Func_020001dc(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors26);
-  Event_ShowMessageAndWait(12, 0);
+  Event_ShowMessage(12, 0);
   Event_End();
   return 0;
 }
@@ -229,7 +229,7 @@ void Func_02000244(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgYallamInteriors10;
   Event_SetMessageId(msg);
-  FieldMessage_ShowAtActor(9, 0);
+  Event_OpenMessage(9, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -237,7 +237,7 @@ void Func_02000244(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessage(9, 0);
   Event_End();
 }
 
@@ -250,7 +250,7 @@ void Func_0200029c(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors21);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
     Event_End();
   }
 }
@@ -264,7 +264,7 @@ void Func_020002fc(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors23);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
     Event_End();
   }
 }
@@ -278,7 +278,7 @@ void Func_0200035c(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors25);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
     Event_End();
   }
 }
@@ -288,12 +288,12 @@ void Func_020003bc(s32 actor) {
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a78(7, actor);
-    GameFlag_ClearBit(0x301);
+    Event_ClearFlag(0x301);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors27);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
     Event_End();
   }
 }
@@ -307,7 +307,7 @@ void Func_02000424(s32 actor) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgMikasallaInteriors27);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
     Event_End();
   }
 }
@@ -320,7 +320,7 @@ void Func_02000480(void) {
   Actor_StartRepeatedMotion(14, 2);
   msg = (s32)MsgYallamInteriors31;
   Event_SetMessageId(msg);
-  FieldMessage_ShowAtActor(14, 0);
+  Event_OpenMessage(14, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -328,7 +328,7 @@ void Func_02000480(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(14, 0);
+  Event_ShowMessage(14, 0);
   Event_End();
 }
 
@@ -359,7 +359,7 @@ void Func_02000524(void) {
   if (Func_020004e0())
     Event_SetFlag(0x10f);
   else if (!Event_GetFlag(0x301) && !Func_02000a90())
-    GameFlag_ClearBit(0x10f);
+    Event_ClearFlag(0x10f);
 
   if (!Event_GetFlag(0x10f)) {
     message = (s32)MsgAhSoYou;
@@ -385,15 +385,15 @@ void Func_02000524(void) {
     Event_OpenMessage(14, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(message + 1);
-      Event_ShowMessageAndWait(14, 0);
+      Event_ShowMessage(14, 0);
       Func_02000a60(14, 0xc000);
       Actor_SetSingleChildFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
       Actor_SetDestination(14, 504, 408);
       Actor_WaitForMoveById(14);
-      Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);
       Func_02000a80(14);
       if (Func_02000a90()) {
         Actor_SetSpeed(14, 0x6666, 0x3333);
@@ -403,29 +403,29 @@ void Func_02000524(void) {
         Actor_WaitForMoveById(14);
         Actor_WalkTo(16, 632, 346);
         Actor_FaceDirection(16, FACING_SOUTH, 0);
-        Actor_SetModeById(16, 0);
-        Actor_ResetAndSetPositionInMode2(14, 600, 360);
+        Actor_SetAnimation(16, 0);
+        Actor_WalkTo(14, 600, 360);
         Actor_WaitForMoveById(14);
-        Actor_SetModeById(14, 0);
-        Actor_ArmCallback(14, FACING_SOUTH, 0);
+        Actor_SetAnimation(14, 0);
+        Actor_FaceDirection(14, FACING_SOUTH, 0);
         ((struct YallamInteriorsObject *)Actor_GetById(14))->collisionFlags = 129;
         ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags = 1;
         Actor_SetSpritePriority(14, 1);
         ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags |= 1;
 #if TLA_PATCH_1
-        Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+        Actor_SetPosition(17, 0, 0);
 #endif
-        GameFlag_SetBit(0x301);
+        Event_SetFlag(0x301);
       } else {
-        Actor_ResetAndSetPosition(14, 491, 398);
+        Actor_SetDestination(14, 491, 398);
         Actor_WaitForMoveById(14);
-        Actor_ArmCallback(14, FACING_SOUTH, 0);
+        Actor_FaceDirection(14, FACING_SOUTH, 0);
         Actor_SetSingleChildFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
         Func_02000a60(14, 0);
       }
     } else {
       Event_SetMessageId(message + 2);
-      Event_ShowMessageAndWait(14, 0);
+      Event_ShowMessage(14, 0);
     }
   }
 }
@@ -435,10 +435,10 @@ u16 *Func_02000988(s32 item);
 void Func_0200077c(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
   } else if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgItTakesOur);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
   } else if (Func_02000a90()) {
     s32 item = Func_02000a90();
     u32 price = *Func_02000988(item);
@@ -448,27 +448,27 @@ void Func_0200077c(s32 actor) {
     MessageArgument_Push(price, 5);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
-    FieldMessage_ShowAtActor(actor, 0);
+    Event_OpenMessage(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) != 0) {
       Event_SetMessageId(message + 1);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
     } else if (PartyInventory_FindRoom(item) < 0) {
       Event_SetMessageId(message + 2);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
     } else if ((u32)gMainRoutineWork.coins < price) {
       Event_SetMessageId(message + 3);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId(message + 4);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
       Func_02000a40(item, 3);
-      PartyInventory_GiveItem(item, 0);
+      Party_GiveItem(item, 0);
       Func_02000a88(0);
       Party_AdjustCoins(-price);
     }
   } else {
     Event_SetMessageId((s32)MsgManSunshineWould);
-    Event_ShowMessageAndWait(actor, 0);
+    Event_ShowMessage(actor, 0);
   }
 }
 
@@ -490,7 +490,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(16, PIXELS(632), PIXELS(346));
       Actor_FaceDirection(16, FACING_SOUTH, 0);
 #if TLA_PATCH_1
-      Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+      Actor_SetPosition(17, 0, 0);
 #endif
     } else {
       Func_02000a60(14, 0);

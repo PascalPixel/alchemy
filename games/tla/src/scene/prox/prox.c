@@ -1275,8 +1275,8 @@ s32 Scene_Initialize(void) {
   s32 scene;
 
   if (Flag_Test(0xa3d)) {
-    GameFlag_SetBit(0x17c);
-    GameFlag_SetBit(0x144);
+    Event_SetFlag(0x17c);
+    Event_SetFlag(0x144);
   }
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room4) {
@@ -1299,9 +1299,9 @@ s32 Scene_Initialize(void) {
     *effect = value;
     Func_020045dc(skip);
   } else {
-    if (!GameFlag_Test(0xa3d))
-      GameFlag_SetBit(0x201);
-    if (GameFlag_Test(0x201)) {
+    if (!Event_GetFlag(0xa3d))
+      Event_SetFlag(0x201);
+    if (Event_GetFlag(0x201)) {
       Func_0200461c(1);
     } else {
       REG_BLDALPHA = 0xc08;
@@ -1317,13 +1317,13 @@ s32 Scene_Initialize(void) {
     }
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_Ov6a8Room2) {
-      if (!GameFlag_Test(0x300))
+      if (!Event_GetFlag(0x300))
         Actor_SetWideSprite(64, 1);
       Func_020027e4();
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
       Func_02002878();
     }
-    if (GameFlag_Test(0x201)) {
+    if (Event_GetFlag(0x201)) {
       BattleEffect_ApplyColorToTargetBuffer(0x10004, 1);
       BattleEffect_StartBufferInterpolation(16);
       wait(16);
@@ -1871,7 +1871,7 @@ void Func_020038e8(void) {
     FlagSet(0x106);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
-    GameFlag_ClearBit(0x106);
+    Event_ClearFlag(0x106);
   }
 }
 #undef FIELD_AT

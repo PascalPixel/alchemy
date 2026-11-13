@@ -21,11 +21,11 @@
 #include "module/system/system.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveTo(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetShake(a, b, c);
 }
 
 DEFINE_FUNC_02001E24(Func_02003d80, Func_020035b8)

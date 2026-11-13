@@ -58,14 +58,14 @@ s32 Func_02000038(s32 id) {
    * as direct arguments, 36 of 160 instructions differ in tla-en. */
   layer1X = (u16)i + x;
   layer1Z = (u16)az + z;
-  Map_CopyCellAttributeRect(x, z, w, h, layer1X, layer1Z);
+  MapGrid_CopyCellAttributes(x, z, w, h, layer1X, layer1Z);
   /* FAKEMATCH(temporary): the second call's arguments held in locals; as direct
    * arguments, 10 of 160 instructions differ in tla-en. */
   fromX = (u16)(bx >> 20) + x;
   fromZ = (u16)(bz >> 20) + z;
   toX = x + 64;
   toZ = z + 64;
-  Map_CopyCellAttributeRect(fromX, fromZ, w, h, toX, toZ);
+  MapGrid_CopyCellAttributes(fromX, fromZ, w, h, toX, toZ);
   Map_FillCellRectByte2(0, x, z, w, h, 255);
   Map_FillCellRectByte2(2, x, z, w, h, 255);
   return 1;
@@ -276,7 +276,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   h = (ABS(gData_02001974[kind * 4 + 1]) + ABS(gData_02001974[kind * 4 + 3])) >> 4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
   wait(15);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
                              (rect.word[0] - from[0]) >> 17,
@@ -284,8 +284,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   Actor_GetById(gMainRoutineWork.currentOwner)->update = Func_02000754;
   wait(4);
   Func_02001828(object, 2);
-  Sound_Play(239);
-  Actor_SetSpeedParameters(rect.word[4], 0x8000, 0x1999);
+  Event_PlaySound(239);
+  Actor_SetSpeed(rect.word[4], 0x8000, 0x1999);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
   /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch, so the
    * second half starts afresh in cse; as no loop, 277 of 342 instructions
@@ -295,21 +295,21 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
       w = 1;
   }
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   offset = gData_0200198c[i] << 16;
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
                                      offset >> 31, offset >> 17);
   if (rect.word[5] != 0)
     ((void (*)(void))rect.word[5])();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  Script_WaitForEventTimeout(object);
-  Sound_Play(298);
-  Sound_Play(213);
+  Actor_WaitForMove(object);
+  Event_PlaySound(298);
+  Event_PlaySound(213);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
                                   rect.word[2]);
   Func_02001828(object, 1);
@@ -501,7 +501,7 @@ DEFINE_FUNC_02000128(Func_02000c44, Func_02001940, Func_02001828)
 #include "scene_tables.h"
 
 void Func_02000cec(void) {
-  GameFlag_SetBit(0x271);
+  Event_SetFlag(0x271);
   Func_080d2b4c(17, 17);
   return;
 }
@@ -511,7 +511,7 @@ void Event_End();
 void Func_02000d04(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x101, 32);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 32);
   Event_End();
   return;
 }
@@ -549,8 +549,8 @@ void Func_02000e68(s32 unused, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
     s32 row = 12;
 
-    Map_CopyCellAttributeRect(98, 3, 3, 3, 97, row);
-    Map_CopyCellAttributeRect(33, 12, 1, 1, 34, row);
+    MapGrid_CopyCellAttributes(98, 3, 3, 3, 97, row);
+    MapGrid_CopyCellAttributes(33, 12, 1, 1, 34, row);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
     if (id == 12) {
@@ -563,7 +563,7 @@ void Func_02000e68(s32 unused, s32 id) {
       s32 column = object->x >> 20;
       s32 row = object->z >> 20;
 
-      Map_CopyCellAttributeRect(7, 10, 1, 1, column, row);
+      MapGrid_CopyCellAttributes(7, 10, 1, 1, column, row);
     }
   }
 }
@@ -578,13 +578,13 @@ void Func_02000f10(s32 unused, s32 id) {
 
     if (row == 13) {
       object->motionFlags = 0;
-      GameFlag_SetBit(0x303);
-      Map_CopyCellAttributeRect(32, 13, 1, 1, 34, row);
+      Event_SetFlag(0x303);
+      MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 97, 12);
     } else {
       row = 12;
-      Map_CopyCellAttributeRect(92, 3, 3, 3, 97, row);
-      Map_CopyCellAttributeRect(32, 13, 1, 1, 34, row);
+      MapGrid_CopyCellAttributes(92, 3, 3, 3, 97, row);
+      MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
@@ -594,15 +594,15 @@ void Func_02000f10(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(103, 16, 1, 1, 103, 15);
       column = object->x >> 20;
       if (column == 38) {
-        GameFlag_SetBit(0x305);
-        Map_CopyCellAttributeRect(38, 15, 1, 1, column, 16);
+        Event_SetFlag(0x305);
+        MapGrid_CopyCellAttributes(38, 15, 1, 1, column, 16);
       } else {
         MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
       }
     }
     if (id == 13) {
       if (object->x >> 20 == 10 && object->z >> 20 == 11)
-        GameFlag_SetBit(0x304);
+        Event_SetFlag(0x304);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, object->x >> 20,
                                  object->z >> 20);
     }
@@ -619,9 +619,9 @@ void Func_02001040(void) {
     MapGrid_CopyCellAttributes(43, 71, 4, 1, 55, 71);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
-    Map_CopyCellAttributeRect(110, 45, 5, 2, 90, 50);
-    Map_CopyCellAttributeRect(113, 47, 2, 1, 90, 52);
-    Map_CopyCellAttributeRect(107, 48, 3, 2, 90, 53);
+    MapGrid_CopyCellAttributes(110, 45, 5, 2, 90, 50);
+    MapGrid_CopyCellAttributes(113, 47, 2, 1, 90, 52);
+    MapGrid_CopyCellAttributes(107, 48, 3, 2, 90, 53);
     MapGrid_CopyCellAttributes(97, 58, 5, 2, 110, 45);
     MapGrid_CopyCellAttributes(97, 58, 2, 1, 113, 47);
     MapGrid_CopyCellAttributes(97, 58, 3, 2, 107, 48);
@@ -659,8 +659,8 @@ void Func_020011e0(void) {
   s32 row = gData_020019cc[index + 1];
 
   if (Actor_GetById(16)->movementState == 0) {
-    Actor_SetHorizontalPositionWithTerrain(16, column << 19, row << 19);
-    if (GameFlag_Test(0x104) == 0)
+    Actor_SetPosition(16, column << 19, row << 19);
+    if (Event_GetFlag(0x104) == 0)
       step++;
     GameFlag_SetByte(0x278, step);
   }
@@ -689,12 +689,12 @@ void Func_02001238(s32 mode) {
     return;
   if (mode == 1) {
     Task_RemoveFar(Func_020011e0);
-    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+    Actor_SetPosition(16, 0, 0);
   }
   if (mode == 2) {
     struct Actor *chest = Actor_GetById(17);
 
-    Actor_SetHorizontalPositionWithTerrain(17, column << 19, row << 19);
+    Actor_SetPosition(17, column << 19, row << 19);
     chest->y = 0x200000;
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
@@ -708,7 +708,7 @@ void Func_02001238(s32 mode) {
       *counter = value;
     }
 #if TLA_PATCH_1
-    GameFlag_ClearBit(0x270);
+    Event_ClearFlag(0x270);
 #endif
   }
 }
@@ -739,7 +739,7 @@ void Func_0200130c(void) {
   Event_Wait(60);
   leader = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214)));
   if (leader != 0)
-    Actor_ResetAndSetPosition(9, FIELD_AT(leader, s16, 10),
+    Actor_SetDestination(9, FIELD_AT(leader, s16, 10),
                               FIELD_AT(leader, s16, 18));
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
@@ -789,32 +789,32 @@ s32 Scene_Initialize(void) {
     Func_02000038(8);
     Func_02000038(9);
     Func_02000038(10);
-    if (GameFlag_Test(0x300)) {
-      Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    if (Event_GetFlag(0x300)) {
+      Actor_SetPosition(11, 0, 0);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
     }
     if (gMainRoutineWork.entrance == 1) {
-      if (GameFlag_Test(0xa29)) {
+      if (Event_GetFlag(0xa29)) {
         gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room1;
         gMainRoutineWork.retreatEntrance = 1;
-      } else if (GameFlag_Test(0xa2a)) {
+      } else if (Event_GetFlag(0xa2a)) {
         gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room8;
         gMainRoutineWork.retreatEntrance = 2;
-      } else if (GameFlag_Test(0xa2b)) {
+      } else if (Event_GetFlag(0xa2b)) {
         gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room9;
         gMainRoutineWork.retreatEntrance = 2;
       }
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
-    if (GameFlag_Test(0x303)) {
+    if (Event_GetFlag(0x303)) {
       Actor_SetPosition(8, 138 << 18, 216 << 16);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 98, 13);
     } else {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
-    if (!GameFlag_Test(0x302))
+    if (!Event_GetFlag(0x302))
       Actor_SetWideSprite(64, 1);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
@@ -835,11 +835,11 @@ s32 Scene_Initialize(void) {
     Func_02000038(10);
     Func_02000038(11);
     Func_02000b54(gData_02001d20);
-    if (!GameFlag_Test(0x206))
+    if (!Event_GetFlag(0x206))
       MapGrid_CopyCellAttributes(48, 12, 1, 1, 46, 12);
-    if (GameFlag_Test(0x301))
-      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-    if (GameFlag_Test(0x304)) {
+    if (Event_GetFlag(0x301))
+      Actor_SetPosition(15, 0, 0);
+    if (Event_GetFlag(0x304)) {
       Actor_SetPosition(13, 168 << 16, 184 << 16);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 10, 11);
     } else {
@@ -851,26 +851,26 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 8, 10);
 #endif
     }
-    if (GameFlag_Test(0x305)) {
+    if (Event_GetFlag(0x305)) {
       Actor_SetPosition(12, 154 << 18, 132 << 17);
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 38, 16);
     } else {
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
     }
-    if (!GameFlag_Test(65) && !GameFlag_Test(145)) {
+    if (!Event_GetFlag(65) && !Event_GetFlag(145)) {
       s32 step = FieldGameFlag_GetByte(0x278);
-      s32 placed = GameFlag_Test(0x271);
+      s32 placed = Event_GetFlag(0x271);
 
       if (placed) {
         step = step / 32 * 2;
-        Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-        Actor_SetHorizontalPositionWithTerrain(17, gData_020019cc[step] << 19,
+        Actor_SetPosition(16, 0, 0);
+        Actor_SetPosition(17, gData_020019cc[step] << 19,
                                                gData_020019cc[step + 1] << 19);
       } else {
-        if (GameFlag_Test(0x109))
+        if (Event_GetFlag(0x109))
           GameFlag_SetByte(0x278, 0);
         Task_Add(Func_020011e0, 0x480);
-        GameFlag_SetBit(0x270);
+        Event_SetFlag(0x270);
         Actor_SetSpritePriority(16, 3);
         Actor_GetById(16)->collisionFlags = 0;
       }

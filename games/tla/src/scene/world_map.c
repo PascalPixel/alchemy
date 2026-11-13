@@ -428,13 +428,13 @@ void Func_02000918(void) {
 static __inline__ void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
-  Actor_SetModeById(actor, 2);
+  Actor_SetAnimation(actor, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
+    Actor_SetDestination(actor, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
-  Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
+  Actor_SetPosition(actor, 0, 0);
 }
 
 void Func_02000994(void) {
@@ -756,7 +756,7 @@ void Func_020011fc(void) {
     s32 a1 = west;                                                             \
                                                                                \
     asm volatile("" : "+l"(a1));                                               \
-    Actor_ArmCallback(id, a1, 0);                                              \
+    Actor_FaceDirection(id, a1, 0);                                              \
   } while (0)
 
 void Func_020012bc(s32 entrance) {
@@ -1085,16 +1085,16 @@ extern const u8 gData_02004e88[];
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
                                                         s32 acceleration) {
-  Actor_SetSpeedParameters(actor, speed, acceleration);
+  Actor_SetSpeed(actor, speed, acceleration);
 }
 
 static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle,
                                                  s32 frames) {
-  Actor_ArmCallback(actor, angle, frames);
+  Actor_FaceDirection(actor, angle, frames);
 }
 
 static __inline__ void Func_02004c90_(s32 actor, s32 x, s32 z, s32 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
+  Actor_SetPositionAndFacing(actor, x, z, angle);
 }
 
 void Func_02001c5c(void) {
@@ -1159,7 +1159,7 @@ static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
 }
 
 static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
-  Func_080d47b4(id, animation, frames);
+  FieldActor_ShowEmote(id, animation, frames);
 }
 
 /// A tutorial message: the second set (from MsgDjinnGiveTutorialB) when
@@ -1467,7 +1467,7 @@ static __inline__ void PosSet(s32 id, s32 x, s32 z) {
    * call or a forwarding inline, id and dz take each other's register; as
    * Actor_SetHorizontalPositionWithTerrain called directly, 8 of 18
    * instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
+  Actor_SetPosition(id, x << 16, z << 16);
 }
 
 void Func_02002618(s32 id, s32 dx, s32 dz) {
@@ -1490,11 +1490,11 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
-  Camera_MoveWithinMapBounds(a, b, c, d);
+  FieldCamera_MoveTo(a, b, c, d);
 }
 
 static __inline__ void Func_02004b78_(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetShake(a, b, c);
 }
 
 static __inline__ void Func_02004d78_(s32 a, s32 b) {
@@ -1743,7 +1743,7 @@ void Func_02002ab0(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
-  Func_080d47b4(actor, value, frames);
+  FieldActor_ShowEmote(actor, value, frames);
 }
 
 /// The leader is hidden and released, the screen fades and the camera moves;
@@ -1762,7 +1762,7 @@ void Func_02002e00(void) {
      * in tla-en. */
     register s32 mode asm("r3") = 1;
 
-    Camera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);
+    FieldCamera_MoveTo(11890 << 16, -1, 10090 << 16, mode);
   }
   // Entered at its test: as a while loop the test is copied ahead of it and
   // gInput hoisted (differ 17).
@@ -1993,7 +1993,7 @@ void Func_0200343c(struct Actor *parent) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x,
                                                           s32 z) {
-  Actor_SetPositionAndCommit(actor, x, z);
+  Actor_MoveToAndWait(actor, x, z);
 }
 
 void Func_02003490(void) {

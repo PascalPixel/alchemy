@@ -63,7 +63,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
    * shifts z before it starts the -1, where called directly the -1 starts
    * first; as direct calls, 6 of 66 instructions of Func_02003ca8 differ in
    * tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveTo(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.

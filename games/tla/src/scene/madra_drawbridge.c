@@ -59,9 +59,9 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraGoingToOsenia);
-  FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
+  Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Motion_SetModeAndWaitAnimation(ACTOR_EAST_GUARD, 3);
+    Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   } else {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -79,32 +79,32 @@ void MadraDrawbridge_BlockBridge(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
-      Camera_SetSpeedParameters(0x18000, 0x3000);
-      Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
+      FieldCamera_SetSpeed(0x18000, 0x3000);
+      FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
       Actor_WalkTo(gMainRoutineWork.currentOwner, 158, 316);
     }
     Actor_GetById(ACTOR_EAST_GUARD)->actionFlags &= ~1;
     Actor_GetById(ACTOR_WEST_GUARD)->actionFlags &= ~1;
-    Actor_ResetAndSetPositionInMode2(ACTOR_WEST_GUARD, 148, 252);
-    Actor_SetPositionAndReset(ACTOR_EAST_GUARD, 170, 252);
+    Actor_WalkTo(ACTOR_WEST_GUARD, 148, 252);
+    Actor_WalkToAndWait(ACTOR_EAST_GUARD, 170, 252);
     Actor_WaitForMoveById(ACTOR_WEST_GUARD);
     Actor_GetById(ACTOR_EAST_GUARD)->actionFlags |= 1;
     Actor_GetById(ACTOR_WEST_GUARD)->actionFlags |= 1;
     Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
-    Actor_ArmCallback(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    GameFlag_SetBit(FLAG_GUARDS_BLOCKED_BRIDGE);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Event_SetFlag(FLAG_GUARDS_BLOCKED_BRIDGE);
     Func_02000338();
     MapGrid_CopyCellAttributes(11, 9, 4, 1, 8, 14);
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
       Event_SetMessageId((s32)MsgMadraNeedEldersPermission);
       Event_Wait(10);
-      Motion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 1);
+      Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 5);
-      Motion_SetModeAndWaitAnimation(ACTOR_WEST_GUARD, 3);
-      Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0);
-      GameFlag_SetBit(FLAG_GUARDS_ASKED_FOR_PERMISSION);
+      Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
+      Event_ShowMessage(ACTOR_WEST_GUARD, 0);
+      Event_SetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION);
       Event_End();
     }
   }
@@ -116,13 +116,13 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
-  Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
+  FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
   Func_02000338();
-  Motion_SetModeAndWaitAnimation(ACTOR_EAST_GUARD, 3);
-  Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
-  Motion_SetModeAndWaitAnimation(ACTOR_WEST_GUARD, 3);
-  Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0);
-  GameFlag_SetBit(0x916);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+  Event_ShowMessage(ACTOR_EAST_GUARD, 0);
+  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
+  Event_ShowMessage(ACTOR_WEST_GUARD, 0);
+  Event_SetFlag(0x916);
   Event_End();
 }
 

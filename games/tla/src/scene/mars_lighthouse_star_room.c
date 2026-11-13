@@ -231,12 +231,12 @@ s32 Scene_Initialize(void) {
 
   ((struct Overlay6abEventWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
   Data_02004cec = NULL;
-  GameFlag_SetBit(0x112);
+  Event_SetFlag(0x112);
   Func_02001d7c();
   Func_02001df0(0, 0, 0, 88);
   if (scene == (s32)&SceneId_Ov6abRoom1) {
     Func_0200443c(0);
-    if (GameFlag_Test(0xa30)) {
+    if (Event_GetFlag(0xa30)) {
       MapGrid_CopyCellAttributes(65, 65, 9, 21, 38, 24);
       MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
       MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
@@ -260,37 +260,37 @@ s32 Scene_Initialize(void) {
       other->x = x;
       other->z = leader->z;
       Map_CenterOnFollowedPoint();
-      if (!GameFlag_Test(0x109))
+      if (!Event_GetFlag(0x109))
         Func_02003e04();
     }
     if (entrance == 9 || entrance == 10) {
-      if (!GameFlag_Test(0x109))
+      if (!Event_GetFlag(0x109))
         Func_02003e04();
     }
     if (entrance == 1 || entrance == 20) {
-      if (!GameFlag_Test(0xa30)) {
+      if (!Event_GetFlag(0xa30)) {
         FieldActor_SetSpritePriority(11, 3);
         FieldActor_SetSpritePriority(12, 3);
         Actor_GetById(12)->scaleX = 0xffff0000;
       }
-      if (GameFlag_Test(0xa4b)) {
+      if (Event_GetFlag(0xa4b)) {
         Func_02000d88();
         Actor_SetPosition(10, 0, 0);
-      } else if (GameFlag_Test(0xa4a)) {
-        GameFlag_SetBit(0x233);
+      } else if (Event_GetFlag(0xa4a)) {
+        Event_SetFlag(0x233);
       } else {
         Actor_SetPosition(10, 0, 0);
       }
-      if (GameFlag_Test(0xa3b)) {
-        if (!GameFlag_Test(0xa30)) {
+      if (Event_GetFlag(0xa3b)) {
+        if (!Event_GetFlag(0xa30)) {
           Actor_SetPosition(11, 0, 0);
           Actor_SetPosition(12, 0, 0);
         }
         Func_02000d88();
         System_Wait(10);
-        if (!GameFlag_Test(0xa3a)) {
+        if (!Event_GetFlag(0xa3a)) {
           Func_02000ae4(0);
-          if (!GameFlag_Test(0x109)) {
+          if (!Event_GetFlag(0x109)) {
             Func_02000db8(13);
             Func_02000db8(14);
           }
@@ -619,14 +619,14 @@ void Func_02000bd8(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetModeById(13, 5);
+  Actor_SetAnimation(13, 5);
   Event_SetMessageId((s32)MsgMarsStar02);
-  Event_ShowMessageAndWait(13, 0);
-  Actor_SetModeById(13, 10);
-  if (!GameFlag_Test(0xa3a)) {
+  Event_ShowMessage(13, 0);
+  Actor_SetAnimation(13, 10);
+  if (!Event_GetFlag(0xa3a)) {
     leader = Actor_Get(gMainRoutineWork.currentOwner);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
-    Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
     object = Data_02004cec;
     object->motionFlags = 0;
     object->speedLimit = 0x40000;
@@ -645,7 +645,7 @@ void Func_02000bd8(void) {
         break;
       }
     }
-    Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     Event_SetFlag(0xa3a);
     FieldActor_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
     System_Wait(1);
@@ -686,12 +686,12 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_0200432c_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
+  Actor_SetPosition(id, x, z);
 }
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+  MapGrid_CopyCellAttributes(a, b, c, d, e, f);
 }
 
 void Func_02000db8(s32 id) {
@@ -863,7 +863,7 @@ void Func_02000e80(void) {
   u8 *buffer, *buffer2;
   u16 *screen;
 
-  flag = GameFlag_Test(0xa9e);
+  flag = Event_GetFlag(0xa9e);
   if (flag != 0)
     goto L_02008ea2;
   goto L_0200905c;

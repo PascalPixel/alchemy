@@ -240,13 +240,13 @@ prompt:
     notice = message + 2;
   }
   Event_SetMessageId(notice);
-  Event_ShowMessageAndWait(-1, 0);
+  Event_ShowMessage(-1, 0);
   wait(1);
   goto prompt;
 full:
   if (PartyInventory_CountFreeSlots() == 0) {
     Event_SetMessageId(message + 4);
-    FieldMessage_ShowAtActor(minusOne, 0);
+    Event_OpenMessage(minusOne, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
       goto end;
   }
@@ -256,15 +256,15 @@ toss:
   Text_DrawMessageAsTiles(result, window, 0, 0);
   Text_DrawMessageAsTiles(result + 1, window, 0, 8);
   wait(5);
-  Sound_Play(116);
+  Event_PlaySound(116);
   for (;;) {
     if (gInput.pressed & 1) {
-      Sound_Play(112);
+      Event_PlaySound(112);
       result = 0;
       break;
     }
     if (gInput.pressed & 2) {
-      Sound_Play(113);
+      Event_PlaySound(113);
       result = -1;
       break;
     }
@@ -301,7 +301,7 @@ toss:
     if (choice == 0) {
       if (coins == 0) {
         Event_SetMessageId(message + 1);
-        Event_ShowMessageAndWait(-1, 0);
+        Event_ShowMessage(-1, 0);
         wait(1);
         continue;
       }
@@ -309,14 +309,14 @@ toss:
     } else if (choice == 1) {
       if (medals == 0) {
         Event_SetMessageId(message + 2);
-        Event_ShowMessageAndWait(-1, 0);
+        Event_ShowMessage(-1, 0);
         wait(1);
         continue;
       }
       PartyInventory_Remove(229);
       if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessageId(message + 4);
-        FieldMessage_ShowAtActor(-1, 0);
+        Event_OpenMessage(-1, 0);
         if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
           goto end;
       }
@@ -326,15 +326,15 @@ toss:
     Text_DrawMessageAsTiles(result, window, 0, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     wait(5);
-    Sound_Play(116);
+    Event_PlaySound(116);
     for (;;) {
       if (gInput.pressed & 1) {
-        Sound_Play(112);
+        Event_PlaySound(112);
         result = 0;
         break;
       }
       if (gInput.pressed & 2) {
-        Sound_Play(113);
+        Event_PlaySound(113);
         result = -1;
         break;
       }
@@ -356,12 +356,12 @@ toss:
     if (choice == 0) {
       if (result != 4) {
         Party_AdjustCoins(gData_0200173c[result]);
-        Sound_Play(91);
+        Event_PlaySound(91);
         MessageArgument_Push(gData_0200173c[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
-        Event_ShowMessageAndWait((s32)minusOne, 0);
+        Event_ShowMessage((s32)minusOne, 0);
       } else {
-        Sound_Play(113);
+        Event_PlaySound(113);
         FieldEvent_Wait(10);
       }
     } else {
@@ -872,7 +872,7 @@ void Func_02000904(void) {
           toss->velocity.z = -deltaZ * speed / distance;
           toss->attractionFrames = toss->attractionFrames - 100;
         }
-        Sound_Play(301);
+        Event_PlaySound(301);
         nextMode = (obstacle->speedMode + 1) % 3;
         obstacle->reactionFrames = 36;
         obstacle->speedMode = nextMode;

@@ -69,7 +69,7 @@ void OseniaCliffs_LashRope(void) {
    * Func_020001a0(1, 13, 14), 2 of 10 instructions differ in tla-en. */
   asm volatile("" : "+l"(a1), "+l"(a2));
   Func_020001a0(1, a1, a2);
-  GameFlag_SetBit(FLAG_ROPE_LASHED);
+  Event_SetFlag(FLAG_ROPE_LASHED);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -106,8 +106,8 @@ s32 Scene_Initialize(void) {
     asm volatile("" : "+l"(a2), "+l"(a1));
     Func_02000198(0, a1, a2);
   }
-  Actor_SetModeById(ACTOR_SECOND_ROPE_POST, 4);
-  Actor_SetModeById(ACTOR_FIRST_ROPE_POST, 4);
+  Actor_SetAnimation(ACTOR_SECOND_ROPE_POST, 4);
+  Actor_SetAnimation(ACTOR_FIRST_ROPE_POST, 4);
   {
     s32 flag = 0x104;
     s32 a0;

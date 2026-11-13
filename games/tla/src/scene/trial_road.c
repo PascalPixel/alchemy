@@ -60,7 +60,7 @@ s32 Func_020000fc(s32 fallback) {
     return 1;
   if (state->field1a > state->field1c)
     return 0;
-  if (GameFlag_Test(0x284))
+  if (Event_GetFlag(0x284))
     return 0;
   if (state->field14 != 0)
     return 1;
@@ -77,7 +77,7 @@ void Func_02000138(s32 direction) {
 
   if ((u32)(direction - 1) <= 1) {
     if (state->field16[0] <= 0) {
-      if (GameFlag_Test(2559)) {
+      if (Event_GetFlag(2559)) {
         if (Func_02000330(0) == 0)
           Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
         return;
@@ -87,19 +87,19 @@ void Func_02000138(s32 direction) {
       state->field16[0]--;
       Import_EventSetExitRequest(direction);
     }
-    Sound_Play(123);
+    Event_PlaySound(123);
   }
   if ((u32)(direction - 3) <= 1) {
     state->field16[0]++;
     if (state->field16[0] > 3) {
-      if (GameFlag_Test(2559) && Func_020000fc(0) == 0)
-        GameFlag_SetBit(901);
-      Sound_Play(128);
+      if (Event_GetFlag(2559) && Func_020000fc(0) == 0)
+        Event_SetFlag(901);
+      Event_PlaySound(128);
       ObjectEffect_StartContextEffect26();
       Import_EventSetExitRequest(direction + 4);
     } else {
       Import_EventSetExitRequest(direction);
-      Sound_Play(123);
+      Event_PlaySound(123);
     }
     if (state->field16[0] > state->field1a)
       state->field1a = state->field16[0];

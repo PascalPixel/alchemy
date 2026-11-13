@@ -1103,7 +1103,7 @@ extern u8 gData_0200602c[];
 extern u8 gData_02006070[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
-  Func_080d47b4(a0, a1, a2);
+  FieldActor_ShowEmote(a0, a1, a2);
 }
 
 void Func_02001f10(void) {
@@ -1407,7 +1407,7 @@ L_0200a47a:
 #include "event_work.h"
 
 static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
-  Func_080d47b4(actor, a, b);
+  FieldActor_ShowEmote(actor, a, b);
 }
 
 void Func_0200298c(s32 id) {

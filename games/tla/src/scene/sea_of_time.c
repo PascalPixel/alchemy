@@ -221,7 +221,7 @@ void Func_0200054c(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Sound_Play(0x255);
+      Event_PlaySound(0x255);
     spark.priority = 2;
     spark.palette = 7;
     spark.startScaleX = 0xcccc;
@@ -480,8 +480,8 @@ s32 Func_02000c94(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0x200);
-  Sound_Play(0x22d);
+  Event_SetFlag(0x200);
+  Event_PlaySound(0x22d);
   do {
     wait(10);
     changed = 0;
@@ -676,7 +676,7 @@ void Func_02001068(void) {
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x8dd)) {
     Import_EventSetExitRequest(4);
-    GameFlag_SetBit(0x8dd);
+    Event_SetFlag(0x8dd);
   } else {
     Import_EventSetExitRequest(1);
   }
@@ -850,7 +850,7 @@ void Func_0200141c(s32 x, s32 z, s32 actor) {
   Func_02000388(1, cx, cz - 1, 0);
   Func_02000388(1, cx - 1, cz, 0);
   Func_02000388(1, cx, cz, 0);
-  Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
+  Actor_SetPosition(actor, 0, 0);
 }
 
 DEFINE_FUNC_02001480(Func_02001480, 9, 0xa90)
@@ -979,7 +979,7 @@ void Func_02001650(void) {
 
 void Func_020018a8(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
-  Actor_SetHorizontalPositionWithTerrain(actor, (x << 19) + 0x80000,
+  Actor_SetPosition(actor, (x << 19) + 0x80000,
                                          (z << 19) + 0x80000);
   x >>= 1;
   z >>= 1;
@@ -995,12 +995,12 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   s32 pz;
   s32 i;
 
-  Camera_SetSpeedParameters(0x60000, 0xc000);
+  FieldCamera_SetSpeed(0x60000, 0xc000);
   px = (x << 19) + 0x80000;
   pz = (z << 19) + 0x80000;
   FieldCamera_MoveTo(px, -1, pz, 1);
   Func_02001ffc();
-  Sound_Play(144);
+  Event_PlaySound(144);
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   spark.startScaleX = 0x13333;
@@ -1031,8 +1031,8 @@ void Func_02001a14(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(0);
-  Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
+  Event_PlaySound(0);
+  MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
   actor->update = (void (*)(void))Func_020010a8;
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 0);
@@ -1046,15 +1046,15 @@ void Func_02001a14(void) {
   Func_02001928(47, 27, 12);
   Func_02001928(59, 19, 13);
   Map_WaitForShakeToSettle();
-  Camera_MoveWithinMapBounds(0x1600000, -1, 0xc40000, 1);
+  FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 1);
   Func_02001ffc();
-  GameFlag_SetBit(0x200);
+  Event_SetFlag(0x200);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
-  Sound_Play(0x212);
+  Event_PlaySound(0x212);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
     if ((i & 31) == 0)
-      Sound_Play(164);
+      Event_PlaySound(164);
     if (i < 120) {
       if (i & 15)
         continue;
@@ -1097,7 +1097,7 @@ void Func_02001a14(void) {
     wait(1);
   }
   Func_02001f64(actor);
-  Sound_Play(0x22d);
+  Event_PlaySound(0x22d);
   do {
     wait(10);
     changed = 0;
@@ -1137,7 +1137,7 @@ void Func_02001a14(void) {
   } while (changed);
   Task_RemoveFar(Func_02001650);
   Party_PlaySavedMusic();
-  GameFlag_SetBit(0x940);
+  Event_SetFlag(0x940);
   Func_02001fb4();
 }
 

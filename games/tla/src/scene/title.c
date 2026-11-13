@@ -66,7 +66,7 @@ s32 Title_Run(void) {
 
   if (gMainRoutineWork.entrance == 10) {
     Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-    Sound_Play(75);
+    Event_PlaySound(75);
     Func_0200031c(0);
     wait(120);
     // Goto loops: the native reloads gInput's address on every pass,
@@ -91,27 +91,27 @@ s32 Title_Run(void) {
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
-    Sound_Play(68);
+    Event_PlaySound(68);
     Func_0200061c(1);
-    Sound_Play(78);
+    Event_PlaySound(78);
     Fade_ToBlack(60);
     Fade_Wait();
     Event_Wait(240);
-    Sound_Play(0);
+    Event_PlaySound(0);
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00B);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
-      Sound_Play(0);
+      Event_PlaySound(0);
       Func_0200062c(0);
       Func_02000634(0);
       if (Func_020005d4() > 0) {
-        Sound_Play(40);
+        Event_PlaySound(40);
         Func_0200063c(1);
         if (Func_02000624(1) == 0) {
-          Sound_Play(78);
+          Event_PlaySound(78);
           Fade_ToBlack(30);
           Fade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
@@ -137,25 +137,25 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_Ov64a, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
-      Sound_Play(40);
+      Event_PlaySound(40);
       Func_0200063c(0);
       Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderJenna();
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
-      Sound_Play(75);
+      Event_PlaySound(75);
       Func_02000624(0);
       Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
       Event_SetDestination((s32)&SceneId_Ov650, 13);
     }
   }
-  Sound_Play(78);
+  Event_PlaySound(78);
   Fade_ToBlack(30);
   Fade_Wait();
   Event_Wait(60);
-  Sound_Play(0);
+  Event_PlaySound(0);
   return 0;
 }
 

@@ -125,14 +125,14 @@ void Mikasalla_EnterDoor(void) {
   }
   choice = (s16 *)(work + 340);
   index = *choice;
-  Sound_Play(158);
+  Event_PlaySound(158);
   index--;
   MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
                  gMikasalla_Doors[index].z);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   if (index != 4) {
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
     Event_Wait(10);
@@ -165,7 +165,7 @@ void Mikasalla_AskLookingForSomeone(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
-  FieldMessage_ShowAtActor(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
+  Event_OpenMessage(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -173,7 +173,7 @@ void Mikasalla_AskLookingForSomeone(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
+  Event_ShowMessage(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
   Event_End();
 }
 
@@ -181,9 +181,9 @@ void Mikasalla_AskLookingForSomeone(void) {
 /// tunnels, and it stays dug (flag 0x85b), Scene_PrepareMap redrawing it on
 /// every visit.
 void Mikasalla_DigUpLadder(void) {
-  Map_CopyCellPictureIndicesRect(5, 49, 5, 41, 1, 1);
+  MapGrid_CopyCellsTo(5, 49, 5, 41, 1, 1);
   MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
-  GameFlag_SetBit(0x85b);
+  Event_SetFlag(0x85b);
 }
 
 /// Parch on cell 60 in the tunnels redraws three stretches of the cave and its
@@ -194,16 +194,16 @@ void Mikasalla_CastParch(void) {
     Func_02000620(0);
     Func_02000620(1);
     Func_02000620(2);
-    Map_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
-    Map_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
+    MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
+    MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
     MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
     MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
-    Map_CopyCellsRect(28, 90, 4, 4, 17, 89);
-    Map_CopyCellsRect(28, 90, 2, 1, 17, 91);
-    Map_CopyCellsRect(28, 90, 2, 2, 19, 91);
-    Map_CopyCellsRect(28, 92, 2, 2, 15, 92);
-    Map_CopyCellsRect(30, 92, 2, 2, 17, 92);
-    GameFlag_SetBit(0x200);
+    MapGrid_CopyCells(28, 90, 4, 4, 17, 89);
+    MapGrid_CopyCells(28, 90, 2, 1, 17, 91);
+    MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
+    MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
+    MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
+    Event_SetFlag(0x200);
   }
 }
 
@@ -228,21 +228,21 @@ s32 Scene_PrepareMap(void) {
   object->priorityFlags = flags;
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   if (party->scene == (s32)&SceneId_Ov65dRoom2) {
-    if (GameFlag_Test(0x200)) {
+    if (Event_GetFlag(0x200)) {
       Func_02000620(0);
       Func_02000620(1);
       Func_02000620(2);
-      Map_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
-      Map_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
-      Map_CopyCellsRect(28, 23, 16, 16, 15, 23);
+      MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
+      MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
+      MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
       MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
-      Map_CopyCellsRect(28, 90, 4, 4, 17, 89);
-      Map_CopyCellsRect(28, 90, 2, 1, 17, 91);
-      Map_CopyCellsRect(28, 90, 2, 2, 19, 91);
+      MapGrid_CopyCells(28, 90, 4, 4, 17, 89);
+      MapGrid_CopyCells(28, 90, 2, 1, 17, 91);
+      MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
       MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
-      Map_CopyCellsRect(30, 92, 2, 2, 17, 92);
+      MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
     }
-  } else if (GameFlag_Test(0x85b)) {
+  } else if (Event_GetFlag(0x85b)) {
     Mikasalla_DigUpLadder();
   }
   return 0;
@@ -259,19 +259,19 @@ void Mikasalla_ClimbDownLadder(void) {
     exit = 3;
     drop = 9;
   }
-  Actor_ArmCallback(4, FACING_NORTH, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_GetById(4)->actionFlags &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_SetDestinationOffset(4, 0, 4);
   Actor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
-  Actor_SetModeById(4, 13);
-  Actor_OffsetPositionAndResetMotion(4, 0, drop);
+  Actor_SetAnimation(4, 13);
+  Actor_SetDestinationOffset(4, 0, drop);
   Actor_WaitForMoveById(4);
-  Actor_SetModeById(4, 10);
+  Actor_SetAnimation(4, 10);
   Event_Wait(10);
-  Sound_Play(123);
+  Event_PlaySound(123);
   Import_EventSetExitRequest(exit);
   Event_End();
 }

@@ -692,7 +692,7 @@ s32 Scene_Initialize(void) {
       Event_Wait(30);
       Func_02005598_(18, 0, 0);
       Func_02005598_(17, 0x1080000, 0x2080000);
-      Sound_Play(136);
+      Event_PlaySound(136);
       Event_Wait(60);
       Flag_Set(0x109);
       return ((s32 (*)())Import_EventSetExitRequest)(3);
@@ -849,7 +849,7 @@ void Func_020015a4(s32 mode) {
     Iwram_CopyWordsEntry(gData_02007068, (void *)&BG_PLTT_COLOR(12, 0), 32);
     Iwram_CopyWordsEntry(gData_02007088, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
-  if (GameFlag_Test(0xa00) || mode == 1) {
+  if (Event_GetFlag(0xa00) || mode == 1) {
     s32 zero = 0;
 
     gData_0200703c = zero;
@@ -1018,7 +1018,7 @@ void Func_02001bcc(void) {
   actor9->y.fixed = actor9->terrainHeight;
   actor10->motionFlags = 0;
   actor10->y.fixed = actor10->terrainHeight;
-  if (GameFlag_Test(0xa0a)) {
+  if (Event_GetFlag(0xa0a)) {
     actor9->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -1042,7 +1042,7 @@ void Func_02001bcc(void) {
     Animation_ApplyChildValues(Actor_GetById(10), 4);
     Animation_ApplyChildValues(Actor_GetById(12), 4);
   }
-  if (GameFlag_Test(0xa0a) && GameFlag_Test(0xa0b)) {
+  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
     actor9->y.fixed += 0x199900;
     actor10->y.fixed += 0x199900;
     {

@@ -13,7 +13,7 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static __inline__ void Func_02004c50_(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetShake(a, b, c);
 }
 
 void Func_020042f8(void) {

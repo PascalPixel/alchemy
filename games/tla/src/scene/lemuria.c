@@ -93,7 +93,7 @@ extern struct WarpTarget gData_020021ec;
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  Actor_ArmCallback(id, angle, flags);
+  Actor_FaceDirection(id, angle, flags);
 }
 
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
@@ -102,7 +102,7 @@ static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_SetDestinationOffset(id, dx, dz);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -235,7 +235,7 @@ void Func_02000398(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001c2c_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
+  Actor_SetPosition(id, x, z);
 }
 
 static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,

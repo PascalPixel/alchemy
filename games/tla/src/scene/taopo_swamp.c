@@ -131,16 +131,16 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
 
 static __inline__ void
 Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_SetDestinationOffset(id, dx, dz);
 }
 
 static __inline__ void Func_02002840_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+  MapGrid_CopyCellAttributes(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_020028d0_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
+  Actor_SetPosition(id, x, z);
 }
 
 static __inline__ void Func_020028e0_(s32 id, s32 a, s32 b) {
@@ -148,7 +148,7 @@ static __inline__ void Func_020028e0_(s32 id, s32 a, s32 b) {
 }
 
 static __inline__ void Func_02002910_(s32 id, s32 a) {
-  FieldEffect_SetAttached(id, a);
+  Actor_SetAttachedEffect(id, a);
 }
 
 static __inline__ void Func_02002958_(s32 a, s32 b, s32 c) {
@@ -167,12 +167,12 @@ static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y,
 
 static __inline__ void Func_02002838_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Map_CopyCellsRect(a, b, c, d, e, f);
+  MapGrid_CopyCells(a, b, c, d, e, f);
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
                                                         s32 acceleration) {
-  Actor_SetSpeedParameters(id, speed, acceleration);
+  Actor_SetSpeed(id, speed, acceleration);
 }
 
 static __inline__ void Func_02002848_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -412,23 +412,23 @@ void Func_020004c8(s32 hole) {
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room5) {
     found = Func_02002708(gData_020029b8[hole - 10]);
-    if (hole == 12 && GameFlag_Test(0xa6e))
+    if (hole == 12 && Event_GetFlag(0xa6e))
       return;
-    if (hole == 18 && GameFlag_Test(0xa6d))
+    if (hole == 18 && Event_GetFlag(0xa6d))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room7) {
     u8 *table = gData_020029c0 + 1;
     s32 at = hole - 10;
     found = Func_02002708(table[at]);
-    if (hole == 10 && GameFlag_Test(545))
+    if (hole == 10 && Event_GetFlag(545))
       return;
-    if (hole == 12 && GameFlag_Test(545))
+    if (hole == 12 && Event_GetFlag(545))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room8) {
     found = Func_02002708(hole - 10);
-    if (hole == 10 && GameFlag_Test(545))
+    if (hole == 10 && Event_GetFlag(545))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room9)
@@ -1085,14 +1085,14 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.retreatEntrance = 1;
     Func_02002120();
     for (id = 8; id <= 12; id++) {
-      if (GameFlag_Test(id + 0x8d8))
-        Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+      if (Event_GetFlag(id + 0x8d8))
+        Actor_SetPosition(id, 0, 0);
       else
         Actor_GetById(id)->scaleY = 0x14000;
     }
     Actor_SetSpritePriority(13, 3);
     Actor_GetById(13)->collisionFlags = 0;
-    if (GameFlag_Test(0x220))
+    if (Event_GetFlag(0x220))
       Call6(Map_CopyCellAttributeRect, 50, 16, 1, 2, 47, 16);
     dummy = Actor_GetById(14);
     if (dummy != 0) {
@@ -1104,22 +1104,22 @@ s32 Scene_Initialize(void) {
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
   } else if (scene == (s32)&SceneId_Ov678Room3) {
-    if (!GameFlag_Test(0x300))
+    if (!Event_GetFlag(0x300))
       Actor_SetWideSprite(0x40, 1);
-    if (!GameFlag_Test(769))
+    if (!Event_GetFlag(769))
       Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
     Func_02002960(0);
-    if (!GameFlag_Test(0x310))
-      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    if (!Event_GetFlag(0x310))
+      Actor_SetPosition(8, 0, 0);
   } else if (scene == (s32)&SceneId_Ov678Room5) {
     Func_02002960(0);
-    if (GameFlag_Test(0x310))
-      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-    if (GameFlag_Test(0xa6d))
+    if (Event_GetFlag(0x310))
+      Actor_SetPosition(8, 0, 0);
+    if (Event_GetFlag(0xa6d))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(280),
             PIXELS(232));
-    if (GameFlag_Test(0xa6e))
+    if (Event_GetFlag(0xa6e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
             PIXELS(248));
     Func_02002614(gData_02002a78, gData_02002ab6, Func_02001304);
@@ -1131,19 +1131,19 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
     Actor_SetSingleChildFlags(piece, 0);
-    if (GameFlag_Test(545)) {
+    if (Event_GetFlag(545)) {
       Call6(Map_CopyCellAttributeRect, 28, 8, 1, 1, 26, 8);
       Func_020027f8(piece, 0);
     } else {
       Call6(Map_CopyCellAttributeRect, 22, 8, 1, 1, 26, 8);
       Actor_SetSpritePriority(8, 3);
       piece->priorityFlags |= 2;
-      if (!GameFlag_Test(0x220))
+      if (!Event_GetFlag(0x220))
         Func_020027f8(piece, 7);
     }
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
-    if (GameFlag_Test(0xa6f)) {
+    if (Event_GetFlag(0xa6f)) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(264),
             PIXELS(424));
       piece->terrainHeight = 0;
@@ -1164,22 +1164,22 @@ s32 Scene_Initialize(void) {
       object = Actor_GetById(10);
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
-      if (GameFlag_Test(545)) {
+      if (Event_GetFlag(545)) {
         Func_020027f8(object, 0);
       } else {
         Actor_SetSpritePriority(10, 3);
         object->priorityFlags |= 2;
-        if (!GameFlag_Test(0x220))
+        if (!Event_GetFlag(0x220))
           Func_020027f8(object, 7);
       }
       Call6(Map_CopyCellsRect, 50, 36, 13, 13, 60, 5);
     }
   } else if (scene == (s32)&SceneId_Ov678Room9) {
     Func_02002614(gData_02002ad8, 0, Func_0200151c);
-    if (!GameFlag_Test(824)) {
-      GameFlag_SetBit(825);
-    } else if (GameFlag_Test(826)) {
-      Actor_SetModeById(8, 3);
+    if (!Event_GetFlag(824)) {
+      Event_SetFlag(825);
+    } else if (Event_GetFlag(826)) {
+      Actor_SetAnimation(8, 3);
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(184),
             PIXELS(344));
       Actor_GetById(8)->collisionFlags = 0;
@@ -1187,10 +1187,10 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(8, 3);
       Call6(Map_CopyCellAttributeRect, 11, 19, 1, 1, 11, 21);
     }
-    if (!GameFlag_Test(827)) {
-      GameFlag_SetBit(828);
-    } else if (GameFlag_Test(829)) {
-      Actor_SetModeById(9, 3);
+    if (!Event_GetFlag(827)) {
+      Event_SetFlag(828);
+    } else if (Event_GetFlag(829)) {
+      Actor_SetAnimation(9, 3);
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(504),
             PIXELS(184));
       Actor_GetById(9)->collisionFlags = 0;
@@ -1199,10 +1199,10 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_Ov678Room10) {
     piece = Actor_GetById(19);
-    if (GameFlag_Test(0x330)) {
+    if (Event_GetFlag(0x330)) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 19, PIXELS(480),
             PIXELS(248));
-      if (!GameFlag_Test(265))
+      if (!Event_GetFlag(265))
         Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(440),
               PIXELS(232));
       Call6(Map_CopyCellsRect, 47, 50, 2, 14, 29, 1);
@@ -1211,55 +1211,55 @@ s32 Scene_Initialize(void) {
       piece->motionFlags = 0;
       piece->y = 0x200000;
     }
-    if (!GameFlag_Test(817)) {
-      GameFlag_SetBit(818);
-    } else if (GameFlag_Test(819)) {
-      Actor_SetModeById(9, 3);
+    if (!Event_GetFlag(817)) {
+      Event_SetFlag(818);
+    } else if (Event_GetFlag(819)) {
+      Actor_SetAnimation(9, 3);
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(120),
             PIXELS(248));
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Map_CopyCellAttributeRect, 7, 17, 1, 1, 7, 15);
     } else {
-      Actor_SetModeById(9, 0);
+      Actor_SetAnimation(9, 0);
     }
-    if (!GameFlag_Test(820)) {
-      GameFlag_SetBit(821);
+    if (!Event_GetFlag(820)) {
+      Event_SetFlag(821);
     } else {
       Call6(Map_CopyCellAttributeRect, 27, 14, 1, 1, 27, 13);
-      if (GameFlag_Test(822)) {
-        Actor_SetModeById(10, 3);
+      if (Event_GetFlag(822)) {
+        Actor_SetAnimation(10, 3);
         Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(408),
               PIXELS(264));
         Actor_GetById(10)->collisionFlags = 0;
         Actor_GetById(10)->priorityFlags |= 2;
         Call6(Map_CopyCellAttributeRect, 25, 18, 1, 1, 25, 16);
       } else {
-        Actor_SetModeById(10, 0);
+        Actor_SetAnimation(10, 0);
       }
     }
   } else if (scene == (s32)&SceneId_Ov678Room11) {
-    if (!GameFlag_Test(0x340)) {
-      GameFlag_SetBit(833);
+    if (!Event_GetFlag(0x340)) {
+      Event_SetFlag(833);
     } else {
-      Actor_SetModeById(8, 0);
+      Actor_SetAnimation(8, 0);
       Call6(Map_CopyCellAttributeRect, 7, 39, 1, 1, 7, 38);
     }
-    if (!GameFlag_Test(834))
-      GameFlag_SetBit(835);
+    if (!Event_GetFlag(834))
+      Event_SetFlag(835);
     else
-      Actor_SetModeById(9, 0);
-    if (!GameFlag_Test(840))
+      Actor_SetAnimation(9, 0);
+    if (!Event_GetFlag(840))
       Actor_SetWideSprite(0x40, 0);
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
-      if (GameFlag_Test(0x340))
+      if (Event_GetFlag(0x340))
         Func_02002084(0);
       else
         Func_02002114(0);
     }
     if (entrance == 6) {
-      if (GameFlag_Test(834))
+      if (Event_GetFlag(834))
         Func_02002084(0);
       else
         Func_02002114(0);
@@ -1283,14 +1283,14 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.retreatEntrance = 1;
     Func_02002120();
     for (id = 8; id <= 12; id++) {
-      if (GameFlag_Test(id + 0x8d8))
-        Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+      if (Event_GetFlag(id + 0x8d8))
+        Actor_SetPosition(id, 0, 0);
       else
         Actor_GetById(id)->scaleY = 0x14000;
     }
     Actor_SetSpritePriority(13, 3);
     Actor_GetById(13)->collisionFlags = 0;
-    if (GameFlag_Test(0x220))
+    if (Event_GetFlag(0x220))
       Call6(Map_CopyCellAttributeRect, 50, 16, 1, 2, 47, 16);
     dummy = Actor_GetById(14);
     if (dummy != 0) {
@@ -1303,24 +1303,24 @@ s32 Scene_Initialize(void) {
     gDecodeFillByte = 93;
   } else if (scene == (s32)&SceneId_Ov678Room3) {
     *effect = 516;
-    if (!GameFlag_Test(0x300))
+    if (!Event_GetFlag(0x300))
       Actor_SetWideSprite(0x40, 1);
-    if (!GameFlag_Test(769))
+    if (!Event_GetFlag(769))
       Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
     *effect = 516;
     Func_02002960(0);
-    if (!GameFlag_Test(0x310))
-      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    if (!Event_GetFlag(0x310))
+      Actor_SetPosition(8, 0, 0);
   } else if (scene == (s32)&SceneId_Ov678Room5) {
     *effect = 516;
     Func_02002960(0);
-    if (GameFlag_Test(0x310))
-      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-    if (GameFlag_Test(0xa6d))
+    if (Event_GetFlag(0x310))
+      Actor_SetPosition(8, 0, 0);
+    if (Event_GetFlag(0xa6d))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(280),
             PIXELS(232));
-    if (GameFlag_Test(0xa6e))
+    if (Event_GetFlag(0xa6e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
             PIXELS(248));
     Func_02002614(gData_02002a78, gData_02002ab6, Func_02001304);
@@ -1335,19 +1335,19 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
     Actor_SetSingleChildFlags(piece, 0);
-    if (GameFlag_Test(545)) {
+    if (Event_GetFlag(545)) {
       Call6(Map_CopyCellAttributeRect, 28, 8, 1, 1, 26, 8);
       Func_020027f8(piece, 0);
     } else {
       Call6(Map_CopyCellAttributeRect, 22, 8, 1, 1, 26, 8);
       Actor_SetSpritePriority(8, 3);
       piece->priorityFlags |= 2;
-      if (!GameFlag_Test(0x220))
+      if (!Event_GetFlag(0x220))
         Func_020027f8(piece, 7);
     }
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
-    if (GameFlag_Test(0xa6f)) {
+    if (Event_GetFlag(0xa6f)) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(264),
             PIXELS(424));
       piece->terrainHeight = 0;
@@ -1369,12 +1369,12 @@ s32 Scene_Initialize(void) {
       object = Actor_GetById(10);
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
-      if (GameFlag_Test(545)) {
+      if (Event_GetFlag(545)) {
         Func_020027f8(object, 0);
       } else {
         Actor_SetSpritePriority(10, 3);
         object->priorityFlags |= 2;
-        if (!GameFlag_Test(0x220))
+        if (!Event_GetFlag(0x220))
           Func_020027f8(object, 7);
       }
       Call6(Map_CopyCellsRect, 50, 36, 13, 13, 60, 5);
@@ -1382,21 +1382,21 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov678Room9) {
     *effect = 516;
     Func_02002614(gData_02002ad8, 0, Func_0200151c);
-    if (!GameFlag_Test(824)) {
-      GameFlag_SetBit(825);
-    } else if (GameFlag_Test(826)) {
-      Actor_SetModeById(8, 3);
-      Actor_SetHorizontalPositionWithTerrain(8, PIXELS(184), PIXELS(344));
+    if (!Event_GetFlag(824)) {
+      Event_SetFlag(825);
+    } else if (Event_GetFlag(826)) {
+      Actor_SetAnimation(8, 3);
+      Actor_SetPosition(8, PIXELS(184), PIXELS(344));
       Actor_GetById(8)->collisionFlags = 0;
       Actor_GetById(8)->priorityFlags |= 2;
       Actor_SetSpritePriority(8, 3);
       Call6(Map_CopyCellAttributeRect, 11, 19, 1, 1, 11, 21);
     }
-    if (!GameFlag_Test(827)) {
-      GameFlag_SetBit(828);
-    } else if (GameFlag_Test(829)) {
-      Actor_SetModeById(9, 3);
-      Actor_SetHorizontalPositionWithTerrain(9, PIXELS(504), PIXELS(184));
+    if (!Event_GetFlag(827)) {
+      Event_SetFlag(828);
+    } else if (Event_GetFlag(829)) {
+      Actor_SetAnimation(9, 3);
+      Actor_SetPosition(9, PIXELS(504), PIXELS(184));
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Map_CopyCellAttributeRect, 30, 13, 1, 1, 31, 11);
@@ -1404,9 +1404,9 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov678Room10) {
     *effect = 516;
     piece = Actor_GetById(19);
-    if (GameFlag_Test(0x330)) {
-      Actor_SetHorizontalPositionWithTerrain(19, PIXELS(480), PIXELS(248));
-      if (!GameFlag_Test(265))
+    if (Event_GetFlag(0x330)) {
+      Actor_SetPosition(19, PIXELS(480), PIXELS(248));
+      if (!Event_GetFlag(265))
         Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(440),
               PIXELS(232));
       Call6(Map_CopyCellsRect, 47, 50, 2, 14, 29, 1);
@@ -1415,54 +1415,54 @@ s32 Scene_Initialize(void) {
       piece->motionFlags = 0;
       piece->y = 0x200000;
     }
-    if (!GameFlag_Test(817)) {
-      GameFlag_SetBit(818);
-    } else if (GameFlag_Test(819)) {
-      Actor_SetModeById(9, 3);
-      Actor_SetHorizontalPositionWithTerrain(9, PIXELS(120), PIXELS(248));
+    if (!Event_GetFlag(817)) {
+      Event_SetFlag(818);
+    } else if (Event_GetFlag(819)) {
+      Actor_SetAnimation(9, 3);
+      Actor_SetPosition(9, PIXELS(120), PIXELS(248));
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Map_CopyCellAttributeRect, 7, 17, 1, 1, 7, 15);
     } else {
-      Actor_SetModeById(9, 0);
+      Actor_SetAnimation(9, 0);
     }
-    if (!GameFlag_Test(820)) {
-      GameFlag_SetBit(821);
+    if (!Event_GetFlag(820)) {
+      Event_SetFlag(821);
     } else {
       Call6(Map_CopyCellAttributeRect, 27, 14, 1, 1, 27, 13);
-      if (GameFlag_Test(822)) {
-        Actor_SetModeById(10, 3);
-        Actor_SetHorizontalPositionWithTerrain(10, PIXELS(408), PIXELS(264));
+      if (Event_GetFlag(822)) {
+        Actor_SetAnimation(10, 3);
+        Actor_SetPosition(10, PIXELS(408), PIXELS(264));
         Actor_GetById(10)->collisionFlags = 0;
         Actor_GetById(10)->priorityFlags |= 2;
         Call6(Map_CopyCellAttributeRect, 25, 18, 1, 1, 25, 16);
       } else {
-        Actor_SetModeById(10, 0);
+        Actor_SetAnimation(10, 0);
       }
     }
   } else if (scene == (s32)&SceneId_Ov678Room11) {
     *effect = 516;
-    if (!GameFlag_Test(0x340)) {
-      GameFlag_SetBit(833);
+    if (!Event_GetFlag(0x340)) {
+      Event_SetFlag(833);
     } else {
-      Actor_SetModeById(8, 0);
+      Actor_SetAnimation(8, 0);
       Call6(Map_CopyCellAttributeRect, 7, 39, 1, 1, 7, 38);
     }
-    if (!GameFlag_Test(834))
-      GameFlag_SetBit(835);
+    if (!Event_GetFlag(834))
+      Event_SetFlag(835);
     else
-      Actor_SetModeById(9, 0);
-    if (!GameFlag_Test(840))
+      Actor_SetAnimation(9, 0);
+    if (!Event_GetFlag(840))
       Actor_SetWideSprite(0x40, 0);
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
-      if (GameFlag_Test(0x340))
+      if (Event_GetFlag(0x340))
         Func_02002084(0);
       else
         Func_02002114(0);
     }
     if (entrance == 6) {
-      if (GameFlag_Test(834))
+      if (Event_GetFlag(834))
         Func_02002084(0);
       else
         Func_02002114(0);

@@ -386,18 +386,18 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
           (volatile u32 *)0x40000d4);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
-      Sound_Play(145);
+      Event_PlaySound(145);
     }
     if (frame == 60) {
       BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
       BattleEffect_StartBufferInterpolation(90);
-      Sound_Play(141);
+      Event_PlaySound(141);
     }
     if (frame == 105) {
       callback();
       flying = 1;
       MapGrid_SetShake(0x60000, 0x60000, 0x10000);
-      Sound_Play(228);
+      Event_PlaySound(228);
     }
     if (frame == 130) {
       flying = 1;

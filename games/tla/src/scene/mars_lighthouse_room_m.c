@@ -712,7 +712,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
   s32 px;
   s32 pz;
 
-  Sound_Play(144);
+  Event_PlaySound(144);
   Func_020012a4(x, z + 12, 1);
   for (i = 0; i < 3; i++) {
     px = x + ((u32)(Random16Far() * 12) >> 16) - 6;
@@ -720,7 +720,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
     Func_020012a4(px, pz, 0);
   }
   wait(4);
-  Map_CopyCellPictureIndicesRect(c, d, e + 64, f, 1, 1);
+  MapGrid_CopyCellsTo(c, d, e + 64, f, 1, 1);
 }
 
 /// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
@@ -777,7 +777,7 @@ void Func_020013a0(void) {
     FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
     Func_02003228();
     FieldEvent_Wait(20);
-    Sound_Play(560);
+    Event_PlaySound(560);
     Func_0200080c();
     FieldEvent_Wait(20);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);

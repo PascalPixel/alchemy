@@ -54,15 +54,15 @@ void Func_020007dc(void);
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 FlagCheck(s32 flag) {
-  return GameFlag_Test(flag);
+  return Event_GetFlag(flag);
 }
 
 static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
-  Actor_ArmCallback(actor, angle, frames);
+  Actor_FaceDirection(actor, angle, frames);
 }
 
 static inline void ActorPlace(s32 actor, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
+  Actor_SetPosition(actor, x, z);
 }
 #include "version.h"
 #include "actor.h"
@@ -301,7 +301,7 @@ void Func_02000534(void) {
 }
 
 static inline void ActorPlaceFacing(s32 actor, s32 x, s32 z, u16 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
+  Actor_SetPositionAndFacing(actor, x, z, angle);
 }
 
 void Func_02000570(void) {

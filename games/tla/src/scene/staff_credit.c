@@ -147,7 +147,7 @@ extern u16 gData_02003d8e[];
 extern s8 gData_02003d9c[][2];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, -1, z, mode);
+  FieldCamera_MoveTo(x, -1, z, mode);
 }
 
 void Func_0200020c(s32 stage) {
@@ -160,10 +160,10 @@ void Func_0200020c(s32 stage) {
   s32 i;
   s32 frame;
 
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetPosition(8, 0, 0);
   gData_02003dbe = 0;
   wait(1);
-  GameFlag_ClearBit(0x109);
+  Event_ClearFlag(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
@@ -247,7 +247,7 @@ void Func_0200020c(s32 stage) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Task_Add(Func_0200005c, 0x480);
-  Sound_Play(246);
+  Event_PlaySound(246);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
       if (stage == 4) {
@@ -278,11 +278,11 @@ void Func_0200020c(s32 stage) {
         z = -0x1e0000;
         x0 = -0x320000;
 
-        Actor_SetHorizontalPositionWithTerrain(8, (top << 16) + x0,
+        Actor_SetPosition(8, (top << 16) + x0,
                                                (left << 16) + z);
       }
       Animation_SetStateFlags(Actor_GetById(8), 1);
-      Actor_SetModeById(8, 0);
+      Actor_SetAnimation(8, 0);
       Actor_GetById(8)->scaleX = zero;
       Actor_GetById(8)->scaleY = zero;
       if (frame > 22) {
@@ -597,7 +597,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
    * arguments up in their own order: z is shifted before the -1 starts; as
    * direct Camera_MoveWithinMapBounds calls, 6 of 66 instructions differ in
    * tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveTo(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.

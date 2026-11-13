@@ -81,8 +81,8 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Func_02000110(void) {
   if (gMainRoutineWork.entrance == 99)
-    GameFlag_SetBit(0x894);
-  if (GameFlag_Test(0x894)) {
+    Event_SetFlag(0x894);
+  if (Event_GetFlag(0x894)) {
     Actor_SetPosition(8, PIXELS(456), PIXELS(312));
     Func_02000a98(8, 0x4000, 0);
     Actor_SetActionCallback(Actor_GetById(8), 8);
@@ -92,11 +92,11 @@ void Func_02000110(void) {
 void Func_02000168(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   if (gMainRoutineWork.entrance == 99)
-    GameFlag_SetBit(0x895);
-  if (GameFlag_Test(0x895)) {
+    Event_SetFlag(0x895);
+  if (Event_GetFlag(0x895)) {
     Actor_SetPosition(13, PIXELS(590), PIXELS(920));
     Actor_SetPosition(14, PIXELS(624), PIXELS(939));
-    Actor_SetHorizontalPositionWithTerrain(15, PIXELS(632), PIXELS(920));
+    Actor_SetPosition(15, PIXELS(632), PIXELS(920));
     Actor_GetById(13)->facing = 0x4000;
     Func_02000a90(13, 0x6000);
     Actor_GetById(14)->facing = 0;
@@ -107,15 +107,15 @@ void Func_02000168(void) {
     Actor_GetById(14)->collisionFlags = 1;
     Actor_GetById(15)->collisionFlags = 1;
   }
-  Actor_SetModeById(8, 4);
-  Actor_SetModeById(9, 4);
-  Actor_SetModeById(10, 3);
-  Actor_SetModeById(11, 4);
-  Actor_SetModeById(12, 3);
+  Actor_SetAnimation(8, 4);
+  Actor_SetAnimation(9, 4);
+  Actor_SetAnimation(10, 3);
+  Actor_SetAnimation(11, 4);
+  Actor_SetAnimation(12, 3);
 }
 
 void Func_02000264(void) {
-  if (GameFlag_Test(0x109) == 0 && gMainRoutineWork.entrance == 99)
+  if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 99)
     Func_02000800();
 }
 
@@ -137,20 +137,20 @@ s32 Scene_Initialize(void) {
 
 void Func_020002e0(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
-  GameFlag_SetBit(0x8de);
+  Event_SetFlag(0x8de);
 }
 
 void Func_02000308(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   Actor_GetById(0)->motionFlags = 0;
-  Sound_Play(158);
-  Map_CopyCellPictureIndicesRect(66, 36, 71, 8, 2, 2);
+  Event_PlaySound(158);
+  MapGrid_CopyCellsTo(66, 36, 71, 8, 2, 2);
   wait(4);
-  Map_CopyCellPictureIndicesRect(68, 36, 71, 8, 2, 2);
+  MapGrid_CopyCellsTo(68, 36, 71, 8, 2, 2);
   wait(4);
   Actor_CenterAndWalk(0, 3, -16);
-  Sound_Play(123);
+  Event_PlaySound(123);
   Import_EventSetExitRequest(value);
 }
 
@@ -158,7 +158,7 @@ void Func_02000378(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   gMainRoutineWork.currentOwner = 4;
-  Sound_Play(123);
+  Event_PlaySound(123);
   Import_EventSetExitRequest(value);
 }
 
@@ -171,11 +171,11 @@ void Func_020003ac(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
-  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 472, 320);
-  Camera_MoveWithinMapBounds(PIXELS(456), -1, PIXELS(280), 1);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 472, 320);
+  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(280), 1);
   Func_02000a30();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Actor_Jump(8, 6, 20);
   Event_Wait(20);
@@ -184,10 +184,10 @@ void Func_020003ac(void) {
     s32 x = 256;
     s32 z = 50;
 
-    Func_080d47b4(8, x, z);
+    FieldActor_ShowEmote(8, x, z);
   }
   Event_ShowMessageThenWait(8, 0, 10);
-  Motion_SetModeAndWaitAnimation(8, 3);
+  Actor_SetAnimationAndWait(8, 3);
   Event_Wait(30);
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_WalkToAndWait(8, 456, 312);
@@ -247,7 +247,7 @@ void Func_020005e8(void) {
   Actor_Jump(8, 4, 0);
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
   if (owner != NULL)
-    Actor_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
+    Actor_SetDestination(8, *(s16 *)((u8 *)owner + 10),
                                      *(s16 *)((u8 *)owner + 18));
   Event_Wait(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
@@ -260,16 +260,16 @@ void Func_020005e8(void) {
 void Func_02000650(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit(8, 480, 472);
+  Actor_MoveToAndWait(8, 480, 472);
   Event_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_MoveToAndWait(8, 496, 464);
@@ -285,12 +285,12 @@ void Func_0200071c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
+  Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
   z = 0;
-  Func_080d47b4(gMainRoutineWork.currentOwner, x, z);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, x, z);
   Event_Wait(16);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);
   Event_Wait(16);
@@ -299,7 +299,7 @@ void Func_0200071c(void) {
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit(8, 488, 480);
+  Actor_MoveToAndWait(8, 488, 480);
   Event_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_MoveToAndWait(8, 504, 472);
@@ -317,25 +317,25 @@ void Func_02000800(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(9, PIXELS(512), PIXELS(432));
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Event_Wait(30);
-  Motion_SetVarCbAndRefresh(9, 2);
+  Actor_RunRepeatedMotion(9, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Event_Wait(30);
-  GameFlag_SetBit(0x896);
-  Actor_SetModeById(9, 2);
+  Event_SetFlag(0x896);
+  Actor_SetAnimation(9, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
+    Actor_SetDestination(9, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetPosition(9, 0, 0);
   Event_Wait(10);
   Event_End();
 }
@@ -349,15 +349,15 @@ void Func_020008cc(void) {
   Actor_LaunchFromLeader(16, -16, 0, 0);
   Actor_WaitForMoveById(16);
   Event_ShowMessageThenWait(0x1010, 0, 10);
-  Actor_SetModeById(16, 2);
+  Actor_SetAnimation(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_ResetAndSetPosition(16, ((s16 *)&leader->x)[1],
+    Actor_SetDestination(16, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
-  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  Actor_SetPosition(16, 0, 0);
   Event_Wait(10);
-  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 16, 0);
+  Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 16, 0);
   Event_End();
 }
 

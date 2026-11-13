@@ -59,7 +59,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 s32 *Scene_GetExits(void) {
-  if (!GameFlag_Test(0x960))
+  if (!Event_GetFlag(0x960))
     return gData_0200057c;
   return gData_0200059c;
 }
@@ -84,16 +84,16 @@ void Func_0200006c(void) {
     } else {
       struct Actor *leader;
 
-      Actor_CommitPositionAndActivate(4, 0, 16);
+      Actor_WalkByAndWait(4, 0, 16);
       Actor_SetSpeed(8, 0x20000, 0x10000);
       Actor_WalkToAndWait(8, 440, 440);
       Actor_SetSpeed(8, 0x13333, 0x9999);
-      Actor_SetModeById(8, 2);
+      Actor_SetAnimation(8, 2);
       leader = Actor_GetById(party->currentOwner);
       if (leader != NULL)
-        Actor_ResetAndSetPosition(8, S16_AT(leader, 10), S16_AT(leader, 18));
+        Actor_SetDestination(8, S16_AT(leader, 10), S16_AT(leader, 18));
       Actor_WaitForMoveById(8);
-      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+      Actor_SetPosition(8, 0, 0);
     }
     Event_End();
   }
@@ -106,28 +106,28 @@ void Func_02000158(void) {
   s32 z;
 
   if (SCENE_WORK->unk166 != 0) {
-    Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
     Actor_ShowEmote(8, 0x100, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
-  FieldMessage_ShowAtActor(8, 0);
+  Event_OpenMessage(8, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(15);
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessage(8, 0);
     Event_Wait(5);
     Actor_Jump(8, 4, 0);
-    Actor_ArmCallbackAndRefresh(8, FACING_EAST);
+    Actor_FaceDirectionAndWait(8, FACING_EAST);
     Event_Wait(5);
     party = &gMainRoutineWork;
     z = Actor_GetById(party->currentOwner)->z;
     limit = 0x1880000;
     id = party->currentOwner;
     if (z < limit)
-      Actor_SetPositionAndReset(id, 472, 376);
+      Actor_WalkToAndWait(id, 472, 376);
     else
-      Actor_SetPositionAndReset(id, 472, 408);
+      Actor_WalkToAndWait(id, 472, 408);
     id = 4;
-    Actor_ArmCallbackAndRefresh(id, FACING_EAST);
+    Actor_FaceDirectionAndWait(id, FACING_EAST);
     Event_Wait(10);
 
     gMainRoutineWork.ownerOverride = 1;
@@ -135,7 +135,7 @@ void Func_02000158(void) {
   } else {
     Event_Wait(20);
     SCENE_WORK->unk1c4++;
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessage(8, 0);
   }
 }
 
@@ -144,11 +144,11 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
-  Map_PlayMapEdit(warp->scene, warp->x, warp->z);
+  Event_PlaySound(158);
+  MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
@@ -204,18 +204,18 @@ s32 Scene_Initialize(void) {
   if (Flag_IsSet(0x90a))
     Actor_SetSpritePriority(9, 1);
   else
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    Actor_SetPosition(9, 0, 0);
 #endif
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
   if (!Flag_IsSet(0x8df)) {
-    Map_CopyCellPictureIndicesRect(57, 52, 64, 15, 1, 1);
-    Map_CopyCellPictureIndicesRect(60, 53, 67, 16, 6, 3);
-    Map_CopyCellPictureIndicesRect(50, 52, 16, 16, 6, 3);
-    Map_CopyCellPictureIndicesRect(50, 61, 16, 28, 10, 3);
-    Map_CopyCellPictureIndicesRect(61, 61, 16, 63, 10, 3);
+    MapGrid_CopyCellsTo(57, 52, 64, 15, 1, 1);
+    MapGrid_CopyCellsTo(60, 53, 67, 16, 6, 3);
+    MapGrid_CopyCellsTo(50, 52, 16, 16, 6, 3);
+    MapGrid_CopyCellsTo(50, 61, 16, 28, 10, 3);
+    MapGrid_CopyCellsTo(61, 61, 16, 63, 10, 3);
   }
   return 0;
 }

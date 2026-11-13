@@ -451,7 +451,7 @@ void Func_02001738(struct Actor *object) {
 
   if ((gFrameCount & 15) == 0)
     Func_02003c4c(object, 136);
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
 
@@ -504,7 +504,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3 - i;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetPartAttribute(part, 3);
+      Actor_SetSpriteColor(part, 3);
     }
     {
       struct Actor *part = parts[0];
@@ -520,7 +520,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetPartAttribute(part, 3);
+      Actor_SetSpriteColor(part, 3);
     }
     id = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
@@ -546,7 +546,7 @@ void Func_02001738(struct Actor *object) {
     fifthPart->update = Func_020015e4;
     object->timer++;
   } else if (object->timer > 364) {
-    Actor_SetPartAttribute(object, 0);
+    Actor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
   // screenStatus read unsigned: as work->screenStatus, 39 of 294 instructions
@@ -629,10 +629,10 @@ void Func_02001c00(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0x260);
-  Sound_Play(133);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 6);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
+  Event_SetFlag(0x260);
+  Event_PlaySound(133);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 6);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
   opt = &options;
   opt->kind = 1;
@@ -676,18 +676,18 @@ second:
     if (i != 0)
       goto second;
   }
-  Sound_Play(188);
+  Event_PlaySound(188);
   Actor_SetSingleChildFlags(leader, 1);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())Map_SetScreenShake, 0x50000, 0x80000, 0x10000);
   Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
   Map_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 4);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 4);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
-  GameFlag_ClearBit(0x260);
+  Event_ClearFlag(0x260);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   Func_02003af4();

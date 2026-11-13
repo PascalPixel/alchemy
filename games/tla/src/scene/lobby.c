@@ -55,22 +55,22 @@ s32 Func_0200006c(s32 slot) {
 
   if ((gLinkStatus & 3) == 3) {
     id = (REG_SIOCNT << 26) >> 30;
-    GameFlag_SetBit(0x303);
+    Event_SetFlag(0x303);
   } else {
-    GameFlag_ClearBit(0x303);
+    Event_ClearFlag(0x303);
   }
   /* FAKEMATCH(dead): a once-only loop, which places the test after the body;
    * as a plain if with no break, the test comes first, 43 of 67 instructions
    * differ in tla-en. */
-  while (id >= 0 && GameFlag_Test(0x303)) {
+  while (id >= 0 && Event_GetFlag(0x303)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 
     if (id != 0)
-      GameFlag_SetBit(0x302);
+      Event_SetFlag(0x302);
     else
-      GameFlag_ClearBit(0x302);
+      Event_ClearFlag(0x302);
     {
-      struct LinkPeer *row = &gLinkPeerSignatures[GameFlag_Test(0x302) ^ 1];
+      struct LinkPeer *row = &gLinkPeerSignatures[Event_GetFlag(0x302) ^ 1];
 
       if (row->values[gLinkLobby_SlotColumns[slot]] == *expected)
         return 1;
@@ -175,13 +175,13 @@ static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
-  set = GameFlag_Test(0x203);
+  set = Event_GetFlag(0x203);
   if (set != 0) {
     return set;
   }
   if (++gData_020022bc == 300) {
     gData_020022bc = 0;
-    GameFlag_ClearBit(0x200);
+    Event_ClearFlag(0x200);
   }
   set = Flag_Test(0x200);
   if (set != 0) {
@@ -190,9 +190,9 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgIfYouWantToParticipate);
-  FieldMessage_ShowAtActor(8, 0);
+  Event_OpenMessage(8, 0);
   wait(5);
-  GameFlag_SetBit(0x200);
+  Event_SetFlag(0x200);
   Event_End();
 }
 
@@ -200,14 +200,14 @@ s32 Func_02000344(void) {
   struct LobbyEventWork *work = Ram_HeapSlots->eventWork;
 
   LinkLobby_WriteSlotValue(4);
-  GameFlag_ClearBit(0x200);
-  GameFlag_ClearBit(0x203);
+  Event_ClearFlag(0x200);
+  Event_ClearFlag(0x203);
   Event_Start();
   Event_ResolvePendingActions(0);
   work->raisedTrigger = 0;
   Event_SetMessageId((s32)MsgTheLinkWas);
-  FieldMessage_ShowAtActor(8, 0);
-  GameFlag_ClearBit(0x205);
+  Event_OpenMessage(8, 0);
+  Event_ClearFlag(0x205);
   Event_End();
 }
 
@@ -544,7 +544,7 @@ s32 LinkLobby_ExchangePartyRecords(void) {
   do {
     result = 0;
   } while (0);
-  flag = GameFlag_Test(0x302);
+  flag = Event_GetFlag(0x302);
   gLinkExchangeState = result;
   if (!flag) {
     wait(5);
@@ -652,24 +652,24 @@ s32 Func_02000864(void) {
     wait(8);
     Func_02001994(5);
     if (Event_GetFlag(0x173)) {
-      Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgGoodLuck2);
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
       wait(45);
       Actor_SetSpeed(4, 0x10000, 0x8000);
-      Actor_ResetAndSetPositionInMode2(4, 216, 184);
+      Actor_WalkTo(4, 216, 184);
       Actor_WaitForMoveById(4);
-      Actor_ResetAndSetPositionInMode2(4, 216, 168);
+      Actor_WalkTo(4, 216, 168);
       Actor_WaitForMoveById(4);
     } else {
       Actor_SetSpeed(4, 0x10000, 0x8000);
-      Actor_ResetAndSetPositionInMode2(4, 216, 200);
+      Actor_WalkTo(4, 216, 200);
       Actor_WaitForMoveById(4);
       Actor_SetSpeed(4, 0x1999, 0xccc);
-      Actor_ResetAndSetPositionInMode2(4, 216, 168);
+      Actor_WalkTo(4, 216, 168);
       if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(4, 0x10000, 0x8000);
-        Actor_ResetAndSetPositionInMode2(4, 216, 200);
+        Actor_WalkTo(4, 216, 200);
         Func_0200198c(5);
         wait(8);
         Func_02001994(5);
@@ -688,7 +688,7 @@ s32 Func_02000864(void) {
         Event_End();
         return;
       }
-      Actor_SetSpeedParameters(4, 0x8000, 0x4000);
+      Actor_SetSpeed(4, 0x8000, 0x4000);
       Actor_WaitForMoveById(4);
     }
     /* FAKEMATCH(temporary): the flag test's result kept while the scene
@@ -741,7 +741,7 @@ s32 Func_02000bb0(void) {
   msg = (s32)MsgPleaseSpeakTo;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
   if (Func_0200006c(0) == 0)
     wait(1);
   if (Func_0200006c(0) == 0) {
@@ -749,7 +749,7 @@ s32 Func_02000bb0(void) {
     Func_02000044();
     if (!Event_GetFlag(0x173)) {
       Event_SetMessageId(msg + 5);
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
       answer = Event_AskYesNoWithActorAnimation(4, 0);
       if (answer == 0) {
         GameFlag_SetByte(1000, 0);
@@ -774,7 +774,7 @@ s32 Func_02000bb0(void) {
     if (Event_GetFlag(0x173)) {
       LinkLobby_WriteSlotValue(0);
       Event_SetMessageId((s32)MsgYourOpponentHas);
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
       Event_ClearFlag(0x202);
       Event_ClearFlag(0x173);
     }
@@ -786,10 +786,10 @@ s32 Func_02000bb0(void) {
     message:
       Event_SetMessageId(line);
     open_message:
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
     } else if (!Event_GetFlag(0x201) && !Event_GetFlag(0x300)) {
       Event_SetMessageId(msg);
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
       Event_SetFlag(0x300);
     } else {
       Event_SetFlag(0x300);
@@ -797,7 +797,7 @@ s32 Func_02000bb0(void) {
         Event_SetMessageId(msg + 2);
       else
         Event_SetMessageId(msg + 1);
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
         if (Func_0200006c(0)) {
           Event_SetFlag(0x16c);
@@ -814,7 +814,7 @@ s32 Func_02000bb0(void) {
         }
       } else {
         Event_SetMessageId(msg);
-        FieldMessage_ShowAtActor(8, 0);
+        Event_OpenMessage(8, 0);
       }
     }
   }
@@ -832,7 +832,7 @@ s32 Func_02000da0(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
     count = &gMainRoutineWork.linkTallies[4];
@@ -840,10 +840,10 @@ s32 Func_02000da0(s32 actor) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId((s32)MsgIWillTell);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
@@ -852,10 +852,10 @@ s32 Func_02000da0(s32 actor) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId((s32)MsgIWillTellYou);
-      Event_ShowMessageAndWait(actor, 0);
+      Event_ShowMessage(actor, 0);
     }
   }
 }
@@ -874,9 +874,9 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actorId, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actorId, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgChooseYourParameters);
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   window = Window_Create(0, 0, 6, 4, 2);
   choice = 0;
   shown = -1;
@@ -921,10 +921,10 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
       message = (s32)MsgThereSNoSuch;
     show:
       Event_SetMessageId(message);
-      Event_ShowMessageAndWait(9, 0);
+      Event_ShowMessage(9, 0);
     } else {
       Event_SetMessageId((s32)MsgTheSettingsAre);
-      Event_ShowMessageAndWait(9, 0);
+      Event_ShowMessage(9, 0);
     }
   }
   wait(10);
@@ -946,7 +946,7 @@ s32 Func_02000f6c(s32 owner) {
   s32 i;
   struct MainRoutineWork *party;
 
-  if (!GameFlag_Test(370))
+  if (!Event_GetFlag(370))
     limit = 4;
   if (count > limit)
     count = limit;
@@ -996,14 +996,14 @@ void Func_02000fbc(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgYouHaveA);
-  Event_ShowMessageAndWait(actor, 0);
+  Event_ShowMessage(actor, 0);
   song = 0;
   all = 0;
   if ((gInput.held & 0x248) == 0x248)
     all = 1;
-  Sound_Play(78);
+  Event_PlaySound(78);
   for (;;) {
     window = Window_Create(12, 8, 6, 3, 2);
     shown = -1;
@@ -1041,18 +1041,18 @@ void Func_02000fbc(s32 actor) {
     Window_Close(window, 1);
     if (song < 0)
       break;
-    Sound_Play(gData_02001b02[song]);
+    Event_PlaySound(gData_02001b02[song]);
   }
-  Sound_Play(78);
+  Event_PlaySound(78);
   wait(120);
-  Sound_Play(0x2c5);
+  Event_PlaySound(0x2c5);
   /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 2 of 153 instructions differ
    * in tla-en. */
   do {
     Event_SetMessageId((s32)MsgComeBackWhen);
   } while (0);
-  Event_ShowMessageAndWait(actor, 0);
+  Event_ShowMessage(actor, 0);
   wait(10);
   Event_End();
 }
@@ -1085,11 +1085,11 @@ s32 Func_02001130(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
-  if (GameFlag_Test(0x304)) {
-    GameFlag_Test(0x2f4);
-    base = GameFlag_Test(actor + 0x2f0);
-    if (GameFlag_Test(0x305)) {
+  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
+  if (Event_GetFlag(0x304)) {
+    Event_GetFlag(0x2f4);
+    base = Event_GetFlag(actor + 0x2f0);
+    if (Event_GetFlag(0x305)) {
       if (base)
         base = (s32)MsgEverybodyDeservesA;
       else
@@ -1107,7 +1107,7 @@ s32 Func_02001130(s32 actor) {
     base = (s32)MsgILlFight;
   }
   Event_SetMessageId(base + actor);
-  Event_ShowMessageAndWait(actor, 0);
+  Event_ShowMessage(actor, 0);
   if (base == (s32)MsgILlFight && actor == 5) {
     Func_080d47b4__talk(5, 263, 0);
     Event_Wait(10);
@@ -1137,7 +1137,7 @@ s32 Func_0200122c(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test(0x206)) {
+  if (Event_GetFlag(0x206)) {
     switch (actor) {
     case 13:
       message = (s32)MsgILlBe;
@@ -1161,18 +1161,18 @@ s32 Func_0200122c(s32 actor) {
       message = (s32)MsgSometimesYourClass;
       break;
     }
-    GameFlag_SetBit(0x206);
+    Event_SetFlag(0x206);
   }
   Event_SetMessageId(message);
-  FieldMessage_ShowAtActor(actor, 0);
+  Event_OpenMessage(actor, 0);
   Event_Wait(1);
   if (message == (s32)MsgYouLookA) {
     Actor_StartRepeatedMotion(14, 1);
-    Actor_SetModeById(14, 4);
+    Actor_SetAnimation(14, 4);
     Event_Wait(15);
-    Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);
     Event_Wait(5);
-    FieldMessage_ShowAtActor(14, 0);
+    Event_OpenMessage(14, 0);
   }
   Event_End();
 }
@@ -1182,7 +1182,7 @@ s32 Func_02001304(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
   if (!Flag_Test(0x204)) {
     if (Party_CountMembers() == 8)
       message = (s32)MsgUpToThree;
@@ -1190,13 +1190,13 @@ s32 Func_02001304(s32 actor) {
       message = (s32)MsgUpToThreeAllies;
     else
       message = (s32)MsgUpToThreeAlliesCan;
-    GameFlag_SetBit(0x204);
+    Event_SetFlag(0x204);
   } else {
     message = (s32)MsgYouCanChange;
-    GameFlag_ClearBit(0x204);
+    Event_ClearFlag(0x204);
   }
   Event_SetMessageId(message);
-  FieldMessage_ShowAtActor(actor, 0);
+  Event_OpenMessage(actor, 0);
   Event_End();
 }
 
@@ -1206,14 +1206,14 @@ s32 Func_02001388(s32 id) {
   Event_Start();
   Event_ResolvePendingActions(0);
   gs = &gMainRoutineWork;
-  Actor_SetAngleToward(id, gs->currentOwner, 0);
+  Actor_FaceActor(id, gs->currentOwner, 0);
   if (gs->linkTallies[2] != 0) {
     MessageArgument_Push(gs->linkTallies[2], 5);
     Event_SetMessageId((s32)MsgYouVeWon);
   } else {
     Event_SetMessageId((s32)MsgICanTWaitTo);
   }
-  FieldMessage_ShowAtActor(id, 0);
+  Event_OpenMessage(id, 0);
   Event_End();
 }
 
@@ -1247,7 +1247,7 @@ void Func_02001414(s32 value) {
   // A goto loop; as ☀️'s for loop, loop.c keeps the stacked 1 in r7 (differ
   // 12).
 next:
-  Map_CopyCellPictureIndicesRect(27, value % 10, 16 - i, 8, 1, 1);
+  MapGrid_CopyCellsTo(27, value % 10, 16 - i, 8, 1, 1);
   value /= 10;
   i++;
   if (i <= 2)
@@ -1343,9 +1343,9 @@ s32 LinkLobby_RunRoundResult(void) {
     } else {
       Flag_SetByte(1000, v + 1);
     }
-    Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId((s32)MsgNotBadWould + msg);
-    FieldMessage_ShowAtActor(8, 0);
+    Event_OpenMessage(8, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       if (wins > 90)
         wins = 90;
@@ -1362,11 +1362,11 @@ s32 LinkLobby_RunRoundResult(void) {
       if (gMainRoutineWork.linkTallies[2] < score) {
         gMainRoutineWork.linkTallies[2] = score;
         Event_SetMessageId((s32)MsgYouWonBattle);
-        FieldMessage_ShowAtActor(8, 0);
+        Event_OpenMessage(8, 0);
         Func_02001400();
       } else {
         Event_SetMessageId((s32)MsgYouWonBattlePlease);
-        FieldMessage_ShowAtActor(8, 0);
+        Event_OpenMessage(8, 0);
       }
       LinkLobby_WriteSlotValue(0);
     }
@@ -1378,7 +1378,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
     /* FAKEMATCH(temporary): one scalar holds the row address, then its score;
      * as the row read directly in entrances 8 and 9, 36 of 438 instructions
      * differ in tla-en. */
@@ -1388,11 +1388,11 @@ s32 LinkLobby_RunRoundResult(void) {
     if (gMainRoutineWork.linkTallies[2] < score) {
       gMainRoutineWork.linkTallies[2] = score;
       Event_SetMessageId((s32)MsgYouWonBattle);
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
       Func_02001400();
     } else {
       Event_SetMessageId((s32)MsgYouWonBattleI);
-      FieldMessage_ShowAtActor(8, 0);
+      Event_OpenMessage(8, 0);
     }
     gMainRoutineWork.linkTallies[3] = 0;
     Event_ClearFlag(0x173);
@@ -1456,9 +1456,9 @@ s32 LinkLobby_RunRoundResult(void) {
       Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgNoteYouCan);
-      Event_ShowMessageAndWait(8, 0);
+      Event_ShowMessage(8, 0);
       Event_End();
     }
     gMainRoutineWork.unk244[6] = 0;

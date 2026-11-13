@@ -143,7 +143,7 @@ void Func_02000800(s32 a0, s32 a1, s32 a2) {
   FIELD_AT(v6, u8, 35) = (128 | FIELD_AT(v6, u8, 35));
   v5 = ((u32)v5 >> 16);
   Actor_SetSingleChildFlags(v6, 0);
-  t4 = GameFlag_Test(v5);
+  t4 = Event_GetFlag(v5);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 2 of 53 instructions differ in
    * tla-en. */
@@ -152,7 +152,7 @@ void Func_02000800(s32 a0, s32 a1, s32 a2) {
     goto L_0200886a;
   FIELD_AT(v6, s32, 20) = 0x100000;
   FIELD_AT(v6, s32, 12) = 0x100000;
-  t5 = GameFlag_Test(0x109);
+  t5 = Event_GetFlag(0x109);
   if (t5 != 0)
     goto L_02008870;
   Actor_StartScript(v6, v7);
@@ -487,7 +487,7 @@ extern void Func_02000ce4__s0e20(u16 id) __asm__("Func_02000ce4");
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004e10_(s32 a, s32 b) {
-  Camera_SetSpeedParameters(a, b);
+  FieldCamera_SetSpeed(a, b);
 }
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
@@ -696,7 +696,7 @@ static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): Func_02004cd8_ forwarded inline; as direct calls to
    * Map_CopyCellPictureIndicesRect, 20 of 537 instructions differ in tla-en. */
-  Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
+  MapGrid_CopyCellsTo(a, b, c, d, e, f);
 }
 
 void Func_02001350(void) {
@@ -742,7 +742,7 @@ void Func_02001350(void) {
     roomPosition[2] = 200 << 16;
     srcX = 20;
     srcZ = 69;
-    if (GameFlag_Test(768))
+    if (Event_GetFlag(768))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room3) {
     baseX = 232 << 16;
@@ -750,7 +750,7 @@ void Func_02001350(void) {
     roomPosition[2] = 248 << 16;
     srcX = 14;
     srcZ = 72;
-    if (GameFlag_Test(769))
+    if (Event_GetFlag(769))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room4) {
     baseX = 196 << 17;
@@ -758,7 +758,7 @@ void Func_02001350(void) {
     roomPosition[2] = 134 << 18;
     srcX = 24;
     srcZ = 90;
-    if (GameFlag_Test(770))
+    if (Event_GetFlag(770))
       t = 212;
   }
   // The loops are written with goto: they carry no loop notes, so the masks,
@@ -775,7 +775,7 @@ burst:
   asm("" : : : SFP_CLOBBER);
   burstPosition = position;
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
-  Sound_Play(145);
+  Event_PlaySound(145);
   Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0,
                 (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
@@ -784,7 +784,7 @@ burst:
   Event_Wait(8);
   if (i != 16)
     goto burst;
-  Sound_Play(148);
+  Event_PlaySound(148);
   effectOptions->priority = 1;
   effectOptions->startScaleX = 0x20000;
   effectOptions->startScaleY = 0x20000;
@@ -805,18 +805,18 @@ rise:
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_Wait(30);
-  Map_CopyCellPictureIndicesRect(71, 70, srcX, srcZ, 3, 6);
+  MapGrid_CopyCellsTo(71, 70, srcX, srcZ, 3, 6);
   effectOptions->type = 403;
   effectOptions->priority = 1;
   effectOptions->palette = 10;
   effectOptions->script = gData_0200502c;
   if (t != 0) {
-    Map_CopyCellPictureIndicesRect(68, 70, srcX, srcZ, 3, 6);
+    MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
     Event_Wait(30);
     burstPosition[2] -= 0x280000;
   } else {
     MapGrid_SetShake(0x20000, 0x10000, 0x10000);
-    Sound_Play(107);
+    Event_PlaySound(107);
     row = 0;
   row:
     i = 0;
@@ -829,11 +829,11 @@ rise:
     if (i != 6)
       goto column;
     wait(3);
-    Map_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
+    MapGrid_CopyCellsTo(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
     row++;
     if (row != 12)
       goto row;
-    Map_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, 8);
+    MapGrid_CopyCellsTo(74, 70, srcX, srcZ, 3, 8);
     t = 0;
   frame:
     if ((t & 3) == 0) {
@@ -874,8 +874,8 @@ rise:
       goto frame;
     MapGrid_WaitForShakeToSettle();
   }
-  Sound_Play(288);
-  Sound_Play(136);
+  Event_PlaySound(288);
+  Event_PlaySound(136);
   lastOptions = &options;
   lastOptions->startScaleY = 0x1cccc;
   lastOptions->startScaleX = 0x1cccc;
@@ -893,7 +893,7 @@ last:
     goto last;
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_CopyCellPictureIndicesRect(68, 64, srcX, srcZ, 3, 6);
+  MapGrid_CopyCellsTo(68, 64, srcX, srcZ, 3, 6);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(30);
   work = &gMainRoutineWork;
@@ -1097,8 +1097,8 @@ void Func_02001d04(struct Actor *object) {
 extern const s32 gData_02005050[];
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, 194 << 18, 248 << 16);
-  Actor_ResetAndSetPosition(id, x, z);
+  Actor_SetPosition(id, 194 << 18, 248 << 16);
+  Actor_SetDestination(id, x, z);
   Actor_GetById(id)->velocityY = 0xc0000;
   Actor_GetById(id)->gravity = 0x8000;
   Actor_GetById(id)->timer = 0;
@@ -1112,10 +1112,10 @@ void Func_02001d64(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(107);
+  Event_PlaySound(107);
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_Wait(30);
-  Camera_MoveWithinMapBounds(194 << 18, -1, 136 << 17, 1);
+  FieldCamera_MoveTo(194 << 18, -1, 136 << 17, 1);
   Func_02004e20();
   options.type = 403;
   options.priority = 2;
@@ -1131,7 +1131,7 @@ loop:
   Func_0200015c(position[0], position[1], position[2], 0, 0x10000, 0, 0x3b0000,
                 &options);
   if ((i & 7) == 0)
-    Sound_Play(567);
+    Event_PlaySound(567);
   if (i == 32) {
     Arrive(13, 744, 216);
   } else if (i == 40) {
@@ -1164,7 +1164,7 @@ loop:
     goto loop;
   FieldActor_WaitForMoveById(12);
   MapGrid_WaitForShakeToSettle();
-  Sound_Play(288);
+  Event_PlaySound(288);
   Event_Wait(40);
   Event_SetFlag(2552);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
@@ -1196,26 +1196,26 @@ void Func_020021c0(void) {
   s32 i;
 
   object = Actor_GetById(((s8 *)work)[0xd30]);
-  Actor_SetPartAttribute(object, 0);
-  Sound_Play(136);
+  Actor_SetSpriteColor(object, 0);
+  Event_PlaySound(136);
   i = 0;
   do {
     object->scaleY = object->scaleX += 0x1000;
     wait(5);
     i++;
   } while (i != 16);
-  GameFlag_SetBit(((s8 *)work)[0xd30] + 0x2ee);
-  if (GameFlag_Test(0x303) && GameFlag_Test(0x304)) {
+  Event_SetFlag(((s8 *)work)[0xd30] + 0x2ee);
+  if (Event_GetFlag(0x303) && Event_GetFlag(0x304)) {
     other = Actor_GetById(11);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     MapGrid_SetShake(0x20000, 0x10000, 0x10000);
-    Sound_Play(141);
+    Event_PlaySound(141);
     FieldEvent_Wait(30);
     FieldCamera_MoveTo(0x2680000, -1, 0x1280000, 1);
     Func_02004e20();
     FieldEvent_Wait(30);
-    Sound_Play(0x22d);
+    Event_PlaySound(0x22d);
     REG_BLDALPHA = 0x1000;
     REG_BLDCNT = 0x3f10;
     {
@@ -1231,7 +1231,7 @@ void Func_020021c0(void) {
       FieldEvent_Wait(5);
       i++;
     } while (i != 32);
-    Sound_Play(0x22a);
+    Event_PlaySound(0x22a);
     Func_02004c98(other, 4);
     Func_02004cb0(actor);
     FieldEvent_Wait(1);
@@ -1672,13 +1672,13 @@ void Func_02002cd0(s32 a, s32 b) {
   s32 unused[3];
 
   script = gData_020055b4;
-  Sound_Play(78);
+  Event_PlaySound(78);
   Event_Wait(30);
   FieldCamera_SetSpeed(0x8000, 0x1000);
-  Camera_MoveWithinMapBounds(((s16 *)&first->x)[1] << 16,
+  FieldCamera_MoveTo(((s16 *)&first->x)[1] << 16,
                              ((s16 *)&first->y)[1] << 16,
                              ((s16 *)&first->z)[1] << 16, 1);
-  Sound_Play(141);
+  Event_PlaySound(141);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
@@ -1686,23 +1686,23 @@ void Func_02002cd0(s32 a, s32 b) {
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
-  Actor_SetMovementTypeById(a, gData_02005590);
-  Sound_Play(194);
+  Actor_SetScript(a, gData_02005590);
+  Event_PlaySound(194);
   Event_Wait(45);
-  Actor_ConfigureSpriteColor(a, 256);
+  Actor_SetSpriteColorById(a, 256);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   i = 0;
 burst:
   object = (struct Actor *)(struct Actor *)Import_ActorCreate(
       672, first->x, first->y, first->z);
-  Sound_Play(246);
+  Event_PlaySound(246);
   object->x += ((Random16Far() & 31) - 16) << 16;
   object->y += ((Random16Far() & 15) - 8) << 16;
   object->speedLimit = 0x80000;
   object->acceleration = 0x3333;
   object->motionFlags = 0;
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 7);
   Actor_SetSingleChildFlags(object, 0);
@@ -1731,7 +1731,7 @@ burst:
   }
 spiral:
   spark = FieldActor_Create(672, second->x, second->y, second->z);
-  Sound_Play(195);
+  Event_PlaySound(195);
   spark->timer = (Random16Far() & 0x7fff) + 0x8000;
   spark->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
   noMotion = 0;
@@ -1739,7 +1739,7 @@ spiral:
   spark->unk4c = 0x7a0000;
   spark->watchedObject = second;
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-  Actor_SetPartAttribute(spark, 10);
+  Actor_SetSpriteColor(spark, 10);
   Scene_SetActorSpritePriority(spark, 1);
   Func_02004c98(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
@@ -1751,14 +1751,14 @@ spiral:
     second->motionFlags = noMotion;
     second->acceleration = 0x3333;
     second->speedLimit = 0x3333;
-    Actor_SetMovementTypeById(b, script);
+    Actor_SetScript(b, script);
   }
 tail:
   wait(8);
   i++;
   if (i != 16)
     goto spiral;
-  Sound_Play(220);
+  Event_PlaySound(220);
   wait(16);
   i = 2;
 column:
@@ -1774,7 +1774,7 @@ column:
   riser->watchedObject = second;
   riser->motionFlags = (u16)0;
   riser->priorityFlags = 1;
-  Actor_SetPartAttribute(riser, 10);
+  Actor_SetSpriteColor(riser, 10);
   Func_02004c98(riser, 7);
   Actor_SetSingleChildFlags(riser, 0);
   Animation_SetStateFlags(riser, 1);
@@ -1782,23 +1782,23 @@ column:
   i += 2;
   if (i != 32)
     goto column;
-  Sound_Play(220);
+  Event_PlaySound(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   BattleEffect_StartBufferInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
-  Actor_ConfigureSpriteColor(a, 0);
-  Actor_ConfigureSpriteColor(b, 0);
-  Sound_Play(574);
+  Actor_SetSpriteColorById(a, 0);
+  Actor_SetSpriteColorById(b, 0);
+  Event_PlaySound(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(80);
-  Actor_SetMovementTypeById(a, gData_020055d8);
-  Actor_SetMovementTypeById(b, gData_02005608);
+  Actor_SetScript(a, gData_020055d8);
+  Actor_SetScript(b, gData_02005608);
   second->update = (void (*)(void))Func_02002c48;
   wait(120);
   second->update = 0;
-  Sound_Play(390);
+  Event_PlaySound(390);
   Party_PlaySavedMusic();
   wait(1);
 }

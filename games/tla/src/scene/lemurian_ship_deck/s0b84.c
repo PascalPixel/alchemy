@@ -152,14 +152,14 @@ void Func_020002cc(void) {
 static inline void RunToActor4(s32 id) {
   struct Actor *target;
 
-  Actor_SetSpeedParameters(id, 0x13333, 0x9999);
-  Actor_SetModeById(id, 2);
+  Actor_SetSpeed(id, 0x13333, 0x9999);
+  Actor_SetAnimation(id, 2);
   target = Actor_GetById(4);
   if (target != NULL)
-    Actor_ResetAndSetPosition(id, ((s16 *)&target->x)[1],
+    Actor_SetDestination(id, ((s16 *)&target->x)[1],
                               ((s16 *)&target->z)[1]);
   Actor_WaitForMoveById(id);
-  Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+  Actor_SetPosition(id, 0, 0);
 }
 
 /// The scene run from entrance 20: the camera frames actors 4 to 9 around the

@@ -33,15 +33,15 @@ s32 Func_02000330(void) {
   t1 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   v_r5 = t1;
   v_r6 = (s32)Ram_HeapSlots->eventWork;
-  t2 = GameFlag_Test(0x9ff);
+  t2 = Event_GetFlag(0x9ff);
   if (t2 == 0)
     goto L_02008400;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
                             (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
                             (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
-  Sound_Play(229);
+  Event_PlaySound(229);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
   FieldMessage_Show(v_r5, 13);
@@ -52,17 +52,17 @@ s32 Func_02000330(void) {
   t9 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1);
   if (t9 != 0)
     goto L_02008400;
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   Event_Wait(10);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x109, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x109, 0);
   Event_Wait(30);
   Func_02005868();
   Import_EventSetExitRequest(9);
   return 1;
 L_02008400:
-  GameFlag_SetBit(0x281);
+  Event_SetFlag(0x281);
   return 0;
 }
 
@@ -75,30 +75,30 @@ void Func_02000428(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
                                    ((leader->x >> 20) << 4) + 8,
                                    ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();
   found = Func_020000fc(0);
   if (found != 0)
-    GameFlag_SetBit(state->field16[0] + 897);
-  Sound_Play(124);
+    Event_SetFlag(state->field16[0] + 897);
+  Event_PlaySound(124);
   if (state->mirrored == 0) {
-    Actor_SetModeById(9, 6);
-    GameFlag_SetBit(645);
+    Actor_SetAnimation(9, 6);
+    Event_SetFlag(645);
     if (found != 0) {
-      Actor_SetModeById(10, 6);
-      GameFlag_SetBit(646);
+      Actor_SetAnimation(10, 6);
+      Event_SetFlag(646);
     }
   } else {
-    Actor_SetModeById(11, 6);
-    GameFlag_SetBit(645);
+    Actor_SetAnimation(11, 6);
+    Event_SetFlag(645);
     if (found != 0) {
-      Actor_SetModeById(12, 6);
-      GameFlag_SetBit(646);
+      Actor_SetAnimation(12, 6);
+      Event_SetFlag(646);
     }
   }
-  GameFlag_SetBit(644);
+  Event_SetFlag(644);
   Event_End();
 }
 
@@ -117,16 +117,16 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   MessageArgument_Push(owner, 1);
   MessageArgument_Push(item, 2);
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
-  Sound_Play(125);
-  Motion_SetModeAndWaitAnimation(kind, 5);
+  Event_PlaySound(125);
+  Actor_SetAnimationAndWait(kind, 5);
   if (kind == 9 || kind == 11)
-    GameFlag_ClearBit(645);
+    Event_ClearFlag(645);
   else
-    GameFlag_ClearBit(646);
-  if (!GameFlag_Test(645) && !GameFlag_Test(646)) {
+    Event_ClearFlag(646);
+  if (!Event_GetFlag(645) && !Event_GetFlag(646)) {
     Func_02000218(state->mirrored, state->field16[0]);
-    Sound_Play(138);
-    GameFlag_SetBit(642);
+    Event_PlaySound(138);
+    Event_SetFlag(642);
   }
   Func_02005870(owner, slot);
   Event_End();
@@ -145,7 +145,7 @@ void Func_020005b4(s32 id) {
     flag = 0x285;
   else
     flag = 0x286;
-  if (!GameFlag_Test(flag)) {
+  if (!Event_GetFlag(flag)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldMessage_Show((s32)MsgTrialRoadChestBlocked, 1);
@@ -235,7 +235,7 @@ DEFINE_FUNC_02000728(Func_02000748, Func_0200062c)
 
 void Func_02000768(void) {
   OBJECT_BYTE(Actor_GetById(17), 98) = 0;
-  GameFlag_SetBit(0x307);
+  Event_SetFlag(0x307);
 }
 
 void Func_02000784(void) { Func_020059c0(); }
@@ -251,9 +251,9 @@ void Func_020007b4(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   if (y == 0x200000)
-    GameFlag_SetBit(0x208);
+    Event_SetFlag(0x208);
   else
-    GameFlag_ClearBit(0x208);
+    Event_ClearFlag(0x208);
 }
 
 void Func_020007e8(void) {
@@ -289,20 +289,20 @@ void Func_0200082c(s32 a, s32 id) {
   if (id != 0) {
     s32 flag = id + 0x203;
 
-    if (GameFlag_Test(flag) == 0) {
+    if (Event_GetFlag(flag) == 0) {
       struct Actor *object = Actor_GetById(id);
 
       object->update = NULL;
       Animation_ApplyChildValues(object, 0);
-      Actor_SetModeById(id, 6);
+      Actor_SetAnimation(id, 6);
       Func_0200070c(id, -16);
-      GameFlag_SetBit(flag);
+      Event_SetFlag(flag);
     }
   }
 }
 
 void Func_020008a4(void) {
-  if (GameFlag_Test(Func_020059b8(gMainRoutineWork.currentOwner) + 0x203))
+  if (Event_GetFlag(Func_020059b8(gMainRoutineWork.currentOwner) + 0x203))
     Func_020059c0();
 }
 
@@ -310,14 +310,14 @@ void Func_020008d0(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   Func_0200070c(id, 16);
-  GameFlag_ClearBit(id + 0x203);
+  Event_ClearFlag(id + 0x203);
   if (object != NULL)
     object->priorityFlags &= 0xfd;
 }
 
 void Func_02000904(s32 a, s32 id) {
   OBJECT_BYTE(Actor_GetById(id - 5), 98) = 0;
-  GameFlag_SetBit(id + 0x313);
+  Event_SetFlag(id + 0x313);
 }
 
 void Func_02000924(s32 id) {
@@ -344,7 +344,7 @@ void Func_0200095c(s32 id) {
 
 void Func_02000990(void) {
   OBJECT_BYTE(Actor_GetById(16), 98) = 0;
-  GameFlag_SetBit(0x339);
+  Event_SetFlag(0x339);
 }
 
 extern const s8 gData_02005a88[4];
@@ -399,16 +399,16 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
     Func_0200095c(other);
     switch (id) {
     case 18:
-      GameFlag_SetBit(821);
+      Event_SetFlag(821);
       break;
     case 19:
-      GameFlag_ClearBit(821);
+      Event_ClearFlag(821);
       break;
     case 20:
-      GameFlag_SetBit(823);
+      Event_SetFlag(823);
       break;
     case 21:
-      GameFlag_ClearBit(823);
+      Event_ClearFlag(823);
       break;
     }
     if (partner->x >> 20 == leader->x >> 20 &&
@@ -459,11 +459,11 @@ grow:
     goto grow;
   object->scaleY = 0x10000;
   Func_02000924(id);
-  Sound_Play(138);
+  Event_PlaySound(138);
   if (side != 0)
-    GameFlag_SetBit(flag);
+    Event_SetFlag(flag);
   else
-    GameFlag_ClearBit(flag);
+    Event_ClearFlag(flag);
   Event_End();
 }
 
@@ -535,14 +535,14 @@ void Func_02000cf8(s32 id, s32 mode) {
 }
 
 void Func_02000d70(void) {
-  Map_CopyCellAttributeRect(11, 64, 11, 8, 11, 22);
-  Map_CopyCellAttributeRect(79, 64, 11, 8, 79, 22);
+  MapGrid_CopyCellAttributes(11, 64, 11, 8, 11, 22);
+  MapGrid_CopyCellAttributes(79, 64, 11, 8, 79, 22);
   Func_02000cf8(16, 0);
   Func_02000cf8(17, 0);
   Func_02000cf8(18, 1);
-  if (GameFlag_Test(0x253))
+  if (Event_GetFlag(0x253))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 23);
-  if (GameFlag_Test(0x254))
+  if (Event_GetFlag(0x254))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 26);
 }
 
@@ -683,7 +683,7 @@ void Func_02001104(s32 id, s32 a, s32 frame) {
     object->terrainHeight = height;
     object->y = height;
     Func_0200078c(id);
-    GameFlag_SetBit(id + 0x353);
+    Event_SetFlag(id + 0x353);
   }
 }
 
@@ -715,7 +715,7 @@ void Func_020011dc(void) {
 
 void Func_020011f8(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
-  GameFlag_SetBit(0x374);
+  Event_SetFlag(0x374);
 }
 
 #include "../../field/object/set_sprite_priority.c"

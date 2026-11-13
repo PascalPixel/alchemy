@@ -33,8 +33,6 @@ enum {
 ///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
 ///         Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -46,10 +44,9 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct Particle *mote;
   s32 i;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sparkleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sparkleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
@@ -125,28 +122,25 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
           mote = &work->particles[i];
           if (mote->y < px(48 - i / 2) && mote->y > -px(48)) {
-            /* FAKEMATCH(temporary): position holds &screen; as screen used
-             * directly, 126 of 782 instructions differ in tbs-en. */
-            struct ScreenPoint *position;
             u32 width;
             u32 height;
 
             SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
                        mote->z * Trig_Cos(mote->x));
-            Projection_Point(xyz, position = &screen);
-            position->x = (position->x >> 17) + 64;
-            position->y = Q_16_16_TO_INT(position->y) + 60;
+            Projection_Point(xyz, &screen);
+            screen.x = (screen.x >> 17) + 64;
+            screen.y = Q_16_16_TO_INT(screen.y) + 60;
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gFrost_MoteWidths[picture];
             height = gFrost_MoteHeights[picture];
             pair[1](canvas, work->sheet + gFrost_MotePictures[picture],
-                    position->x - (width >> 1), position->y - (height >> 1),
-                    width, height);
+                    screen.x - (width >> 1), screen.y - (height >> 1), width,
+                    height);
 #else
             pair[1](canvas, work->sheet + gFrost_MotePictures[picture],
-                    position->x - ((width = gFrost_MoteWidths[picture]) >> 1),
-                    position->y - ((height = gFrost_MoteHeights[picture]) >> 1),
+                    screen.x - ((width = gFrost_MoteWidths[picture]) >> 1),
+                    screen.y - ((height = gFrost_MoteHeights[picture]) >> 1),
                     width, height);
 #endif
           }

@@ -72,7 +72,6 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// mode: Tiamat's or Dragon Driver's (enum DragonFireMode).
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
-  void **cursor;
   void *canvas;
   struct BattleCamera *camera;
   struct BattleEffectWork *work;
@@ -84,11 +83,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   u8 *palette;
   s32 i;
 
-  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = cursor[0];
-  camera = cursor[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -96,10 +94,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                BGCNT_SCREEN_BASE(7);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   // The breath from FlashBurst, the fireballs' flames from EmberStreak (at
   // sheet + 12288).

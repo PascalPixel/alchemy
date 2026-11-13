@@ -208,14 +208,6 @@ void Sound_WaitForJingle(void) {
   }
 }
 
-/// Byte view of the six colour writes in a quantity-bar segment, laid over a
-/// 4-bit tile at the segment's byte column (QuantityBar_Fill, cursor.c).
-struct TileQuantityBarSegmentView {
-  u8 filler0[4]; ///< the 4 bytes before the segment's byte in row 1, untouched
-  /// Rows 1 to 6: index 4n is the segment's byte in row n + 1.
-  u8 values[21];
-};
-
 /// Shows a shopkeeper's line and waits for its window to finish, one more
 /// frame included. `messageId` is the weapon shop's line; the armor, item and
 /// warriors' shops say theirs, at the same distance from their own welcome.

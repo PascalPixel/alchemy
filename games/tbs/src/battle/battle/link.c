@@ -49,8 +49,7 @@ s32 LinkBattle_ReceiveParty(void) {
   // so no run of the game uses it either way.
   buffer = Heap_AllocEwram(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
-  partySlot = 0;
-  while (partySlot < LINK_PARTY_SIZE) {
+  for (partySlot = 0; partySlot < LINK_PARTY_SIZE; partySlot++) {
     opponent = Unit_GetFar(partySlot + FIRST_ENEMY_UNIT);
     if (Serial_StartReceive(opponent) == -1) {
       break;
@@ -64,14 +63,9 @@ s32 LinkBattle_ReceiveParty(void) {
     // Measure the label (at most NAME_LIMIT + 1 characters), shift the name
     // right to make room for it, then write it in; the name's end is cut.
     Message_DecodeRawUnboundedFar(MsgEnemyLabel, label);
-    i = 0;
-    if (label[i] != 0) {
-      do {
-        i += 1;
-        if (i > NAME_LIMIT) {
-          break;
-        }
-      } while (label[i] != 0);
+    for (i = 0; i <= NAME_LIMIT; i++) {
+      if (label[i] == 0)
+        break;
     }
 #if APPEND_NAME_SPACE
     label[i] = ' ';
@@ -85,7 +79,6 @@ s32 LinkBattle_ReceiveParty(void) {
       opponent->name[i] = label[i];
     }
     opponent->name[UNIT_NAME_LENGTH] = 0;
-    partySlot += 1;
   }
   Heap_Release(buffer);
 
@@ -116,7 +109,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
   u16 unitIds[8];
 
   size = LINK_PARTY_UNIT_BYTES;
-  buffer = (u8 *)Heap_AllocEwram(size);
+  buffer = Heap_AllocEwram(size);
   {
     s32 noSlot = 0xff;
 

@@ -111,7 +111,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
     {
       s32 palette = BattleSprite_GetPalette(unit->id);
       // Each slot owns 16 KB of sprite buffer.
-      s32 spriteBuffer = (slot << 14) + (s32)Ram_EnemySpriteSlots;
+      u8 *spriteBuffer = Ram_EnemySpriteSlots + slot * 0x4000;
 
       if (SpritePictureCache_LoadFar(slot, (u32 *)spriteBuffer,
                                      sprite + spritePart, palette) == 0)

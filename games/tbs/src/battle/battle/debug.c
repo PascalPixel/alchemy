@@ -23,11 +23,6 @@
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
-// Declared here without const, as Camelot's code read it: with const,
-// alchemy-gcc compiles DebugParameterSet_Load differently.
-// debug_parameter_sets.c defines it, const, in ROM.
-extern struct DebugParameterSetRow gDebug_ParameterSets[];
-
 /// The last row of gDebug_ParameterSets; the scan reports a missing parameter
 /// set past it.
 #define DEBUG_PARAMETER_SET_LAST_ROW 332
@@ -85,17 +80,15 @@ s32 DebugParameterSet_Load(s32 set) {
     Unit_LevelUpToFar(unitId, gDebug_ParameterSets[row].level);
 
     // Start from no Djinn and no abilities.
-    member = (struct Unit *)Unit_GetFar(unitId);
+    member = Unit_GetFar(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       member->djinnHeldCounts[i] = 0;
       member->djinnSetCounts[i] = 0;
       member->djinnHeld[i] = 0;
       member->djinnSet[i] = 0;
     }
-    // The slot's first halfword, its encodedAction, stored through a cast:
-    // the zero comes from the literal pool, as in the ROM.
     for (i = 0; i < 32; i++)
-      *(u16 *)&member->psynergy[i] = 0;
+      *&member->psynergy[i].encodedAction = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].abilities[i] != 0)
         Unit_LearnPsynergyFar(unitId, gDebug_ParameterSets[row].abilities[i]);

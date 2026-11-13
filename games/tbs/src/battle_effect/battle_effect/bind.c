@@ -32,33 +32,27 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   u16 *palette;
   // A 32-colour blue ramp at colours 32 to 63, red and green at half the blue.
   palette = (u16 *)&BG_PLTT_COLOR(2, 0);
-  i = 0;
-  do {
+  for (i = 0; i != 32; i++) {
     s32 half;
     half = i / 2;
     *palette++ = RGB(half, half, i);
-    i++;
-  } while (i != 32);
-  delays = *(u8 **)&gHeapSlots[HEAP_SLOT_BATTLE_SHEET];
+  }
+  delays = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   // The edge moves speed / 4 lines a frame, speed rising by one a frame
   // from 16.
   end = 0;
   speed = 16;
   Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2),
                   BATTLE_BACKGROUND_BYTES);
-  x = 0;
-  do {
+  for (x = 0; x != 256; x++) {
     delays[x] = Random16() & 63;
-    x++;
-  } while (x != 256);
+  }
   row = 0;
-  i = 0;
-  do {
+  for (i = 0; i != 27; i++) {
     end += speed / 4;
     speed++;
     while (row != end) {
-      x = 0;
-      do {
+      for (x = 0; x != 256; x++) {
         y = row - delays[x];
         if (y >= 0) {
           if (y <= 119) {
@@ -78,8 +72,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
             *pixel = 63 - red;
           }
         }
-        x++;
-      } while (x != 256);
+      }
       row++;
     }
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
@@ -90,22 +83,17 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     // Never true: by the 27th frame the edge reaches only line 186.
     if (end > 248)
       break;
-    i++;
-  } while (i != 27);
+  }
   // Then move every pixel up 64 colours, onto a second ramp at 96 to 127.
   palette = (u16 *)&BG_PLTT_COLOR(6, 0);
-  i = 0;
-  do {
+  for (i = 0; i != 32; i++) {
     s32 half;
     half = i / 2;
     *palette++ = RGB(half, half, i);
-    i++;
-  } while (i != 32);
-  i = 0;
-  do {
+  }
+  for (i = 0; i != BATTLE_BACKGROUND_BYTES; i++) {
     BLUE_RAMP_PIXELS[i] += 64;
-    i++;
-  } while (i != BATTLE_BACKGROUND_BYTES);
+  }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                   BATTLE_BACKGROUND_BYTES);
   wait(1);
@@ -140,8 +128,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 originX;
   s32 originY;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -157,8 +143,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -218,11 +205,11 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     // frame 32 the canvas darkens one level faster every 16 frames.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
@@ -320,8 +307,6 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   } position;
   struct ScreenPoint screen;
   struct Vector3 scale;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -338,8 +323,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
@@ -373,11 +359,11 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                                     TRIG_TURN / 3, 0);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 

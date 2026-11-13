@@ -104,8 +104,8 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   // it takes WINDOW_BACKGROUND_COLOR.
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
-      *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE,
@@ -209,8 +209,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
                                 BATTLE_BG_PALETTE_COLORS);
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
-      *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
   // Clears BG1's last row, 64 bytes from the end of its screen block, which
@@ -566,8 +566,7 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
         break;
       record->image.objectMode = mode;
       record->shadow.objectMode = mode;
-      recordIndex++;
-    } while (recordIndex <= ACTOR_SPRITE_GROUP_SIZE - 1);
+    } while (++recordIndex < ACTOR_SPRITE_GROUP_SIZE);
     break;
   }
   }

@@ -326,34 +326,29 @@ s32 ElementGlow_End(s32 unused) {
 /// battle effects' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
-  s32 remaining;
-  u32 pixel;
-  u32 red;
-  u32 green;
-  u32 blue;
+  s32 i;
 
   if (scale > Q16_ONE)
     scale = Q16_ONE;
-  if (count > 0) {
+  // Each channel scaled in place: a 16.16 scale of at most 1 keeps it inside
+  // its own five bits.
+  for (i = 0; i < count; i++) {
     u32 redMask = 0x1f;
     u32 greenMask = 0x3e0;
     u32 blueMask = 0x7c00;
-    remaining = count;
-    do {
-      pixel = *source;
-      red = pixel & redMask;
-      green = pixel & greenMask;
-      blue = blueMask & pixel;
-      red *= scale;
-      green *= scale;
-      blue *= scale;
-      pixel = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
-      pixel |= (blue >> 16) & blueMask;
-      *destination = pixel;
-      source++;
-      destination++;
-      remaining--;
-    } while (remaining != 0);
+    u32 color = *source;
+    u32 red = color & redMask;
+    u32 green = color & greenMask;
+    u32 blue = blueMask & color;
+
+    red *= scale;
+    green *= scale;
+    blue *= scale;
+    color = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
+    color |= (blue >> 16) & blueMask;
+    *destination = color;
+    source++;
+    destination++;
   }
   return 0;
 }
@@ -382,7 +377,8 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   // from the effect's (EFFECT_SLOT).
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   volatile u16 *ime;
-  struct BattleWork *battle = slots[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+  struct BattleWork *battle =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;

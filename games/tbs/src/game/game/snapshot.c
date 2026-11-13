@@ -8,24 +8,28 @@
 /// Called by InventorySnapshot_Save to arm Isaac for the Colosso.
 void Inventory_AddAndEquip(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
-  u16 *entry;
   s32 slot;
 
   Inventory_AddItem(unitId, itemId);
-  slot = 0;
-  entry = unit->inventory;
-  do {
-    if (*entry++ == itemId)
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if (unit->inventory[slot] == itemId)
       Inventory_Equip(unitId, slot);
-    slot++;
-  } while (slot < INVENTORY_SLOTS);
+  }
 }
 
 /// The first halfword of gInventorySnapshot while it holds the party's
-/// equipment, put aside while the Colosso takes it away. After it come four
-/// inventories of 15 slots, the two shortcuts and the four party order
-/// bytes: 65 halfwords of the 70 that gInventorySnapshot reserves.
+/// equipment, put aside while the Colosso takes it away.
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
+
+/// What gInventorySnapshot holds while the Colosso has the party's
+/// equipment: 65 halfwords of the 70 it reserves.
+struct InventorySnapshot {
+  u16 sentinel; ///< INVENTORY_SNAPSHOT_SENTINEL while it holds them
+  u16 inventories[4][INVENTORY_SLOTS]; ///< Isaac's to Mia's
+  u16 firstShortcut;
+  u16 secondShortcut;
+  u8 party[4]; ///< the party order
+};
 
 /// Saves the first four characters' inventories, shortcuts and party order,
 /// then keeps only the Psynergy-granting items, gives Isaac the Short
@@ -48,7 +52,8 @@ void InventorySnapshot_Save(void) {
     secondShortcut = gMainRoutineWork.secondShortcut;
     // Save each inventory before retaining its Psynergy-granting items.
     for (unitId = 0; unitId < 4; unitId++) {
-      unit = Unit_Get(unitId);
+      struct Unit *unit = Unit_Get(unitId);
+
       for (slot = 0; slot < INVENTORY_SLOTS; slot++)
         *save++ = unit->inventory[slot];
       for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -82,6 +87,8 @@ void InventorySnapshot_Save(void) {
 /// put aside, then clears the snapshot and FLAG_COLOSSO_HOLDS_EQUIPMENT. Called
 /// by the Babi palace scene after the Colosso, and by the File Screen.
 void InventorySnapshot_Restore(void) {
+  struct InventorySnapshot *snapshot =
+      (struct InventorySnapshot *)gInventorySnapshot;
   s32 unitId;
   u16 *source = gInventorySnapshot;
 

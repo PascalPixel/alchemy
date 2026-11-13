@@ -201,56 +201,52 @@ s32 RollWeaponUnleash(struct Unit *unit) {
 /// listed always work (-100). Called by Battle_RollEffectSuccess.
 s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
-  u32 effectIndex;
 
-  // The switch is on the effect less its first case's, as the ROM's jump
-  // table is.
-  effectIndex = effectId - ABILITY_EFFECT_ATTACK_DOWN_2;
-  switch (effectIndex) {
-  case ABILITY_EFFECT_DEFENSE_DOWN_2 - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_DEFENSE_DOWN - ABILITY_EFFECT_ATTACK_DOWN_2:
+  switch (effectId) {
+  case ABILITY_EFFECT_DEFENSE_DOWN_2:
+  case ABILITY_EFFECT_DEFENSE_DOWN:
     return 70;
-  case ABILITY_EFFECT_RESISTANCE_DOWN_2 - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_RESISTANCE_DOWN - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_RESISTANCE_DOWN_2:
+  case ABILITY_EFFECT_RESISTANCE_DOWN:
     return 75;
-  case ABILITY_EFFECT_CHARM - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_CHARM:
     return 30;
-  case ABILITY_EFFECT_STUN - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_STUN:
     return 40;
-  case ABILITY_EFFECT_SLEEP - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_SLEEP:
     return 45;
-  case ABILITY_EFFECT_POISON - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_VENOM - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_SEAL - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_POISON:
+  case ABILITY_EFFECT_VENOM:
+  case ABILITY_EFFECT_SEAL:
     return 55;
-  case ABILITY_EFFECT_HAUNT - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_HAUNT:
     return 25;
-  case ABILITY_EFFECT_INSTANT_DEATH - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_INSTANT_DEATH:
     return 20;
-  case ABILITY_EFFECT_DELUSION - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_DRAIN_HP - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_DELUSION:
+  case ABILITY_EFFECT_DRAIN_HP:
     return 65;
-  case ABILITY_EFFECT_CONFUSION - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_LEAVE_ONE_HP - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_CONFUSION:
+  case ABILITY_EFFECT_LEAVE_ONE_HP:
     return 35;
-  case ABILITY_EFFECT_HALVE_DEFENSE - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_HALVE_DEFENSE:
     return 50;
-  case ABILITY_EFFECT_REVIVE_HALF - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_REVIVE_HALF:
     fixedChance = 60;
     break;
-  case ABILITY_EFFECT_REVIVE_80 - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_REVIVE_80:
     fixedChance = 90;
     break;
-  case ABILITY_EFFECT_ATTACK_DOWN_2 - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_ATTACK_DOWN - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_CURSE - ABILITY_EFFECT_ATTACK_DOWN_2:
-  case ABILITY_EFFECT_DRAIN_PP - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_ATTACK_DOWN:
+  case ABILITY_EFFECT_CURSE:
+  case ABILITY_EFFECT_DRAIN_PP:
     return 60;
   default:
     fixedChance = 100;
     break;
   }
-  return 0 - fixedChance;
+  return -fixedChance;
 }
 
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
@@ -261,9 +257,7 @@ s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   s32 weaknessIndex;
 
   if (target->classId == CLASS_NONE) {
-    weakEffects =
-        ((const struct EnemyDefinition *)Enemy_GetDefinition(target->id))
-            ->weakEffects;
+    weakEffects = Enemy_GetDefinition(target->id)->weakEffects;
     for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
       if (*weakEffects == effectId)
         return 1;
@@ -304,10 +298,6 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// of an ability with an effect.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
-  // Restore's psySeal and confusion reads and Cure All's haunt read go
-  // through the byte view; as unit fields, each zero test merges with its
-  // neighbour's into one halfword or word load (30 of 204 instructions
-  // differ in tbs-en).
   struct Unit *unit = Unit_Get(target);
   s32 attempts = 1;
   s32 score;
@@ -328,26 +318,26 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   }
 
   // Restore needs a delusion, confusion or charm, or failing those a stun,
-  // sleep, seal or curse; the order of these tests is the ROM's.
-  goto action4_check;
-action4_tail:
+  // sleep, seal or curse, tested in that order.
+  goto check_restore;
+check_restore_others:
   if (unit->stun == 0 && unit->sleep == 0 && *(u8 *)&unit->psySeal == 0 &&
       unit->grimReaper == 0) {
     return 0;
   }
-  goto action4_done;
-action4_check:
+  goto restore_checked;
+check_restore:
   if (effectId == ABILITY_EFFECT_RESTORE) {
     if (unit->delusion == 0 && *(u8 *)&unit->confusion == 0 &&
         unit->charm == 0) {
-      goto action4_tail;
+      goto check_restore_others;
     }
   }
 
-action4_done:
+restore_checked:
   poison = &unit->poison;
   delusion = &unit->delusion;
-  confusion = (u8 *)&unit->confusion;
+  confusion = &unit->confusion;
   charm = &unit->charm;
   stun = &unit->stun;
   sleep = &unit->sleep;
@@ -368,6 +358,7 @@ action4_done:
     s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
                      Unit_GetElementLevel(target, resistanceCategory) -
                      (unit->luck >> 1);
+
     score += difference * 3;
     if (BattleAbility_IsWeakToEffect(unit, effectId) != 0) {
       score += 25;

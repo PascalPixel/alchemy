@@ -16,8 +16,6 @@
 /// -1 once it has gone. Loads the ice block palette into the first 64 colours
 /// of the background palette.
 void BattleEffect_RunBreak(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw;
@@ -29,11 +27,10 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -41,7 +38,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
   EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_ICE_SHARDS_PER_TARGET);
 
@@ -143,8 +140,6 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 /// args: the targets; Drain's basic variant takes the ice block palette,
 ///         any stronger one (Psy Drain's) the blast palette.
 void BattleEffect_RunDrain(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw;
@@ -156,10 +151,9 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   if (args->variant == EFFECT_VARIANT_BASIC)
     alternate = 0;
@@ -200,7 +194,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   // transfer so the motes leave fading trails.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Sound_PlayFar(SE_SWIRL);
 

@@ -44,8 +44,6 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
       -32,
       -32,
   };
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -61,9 +59,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   s32 col;
   s32 y;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -99,7 +96,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   // particles[member].variant becomes 1 once that target has landed.
   EFFECT_FOR_EACH_TARGET(member, work->args)
     work->particles[member].variant = 0;

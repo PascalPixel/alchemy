@@ -7,7 +7,7 @@
 #include "enemy_ids.h"
 
 // clang-format off
-const struct Formation gFormations[] = {
+struct Formation gFormations[] = {
     {0},
     {
         .memberIds = {ENEMY_ROW(ENEMY_VERMIN)},
@@ -1531,7 +1531,7 @@ const struct Formation gFormations[] = {
 
 /// The 20 enemies whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
-const u16 gBattleFormation_LevelMatchedEnemies[] = {
+u16 gBattleFormation_LevelMatchedEnemies[] = {
     ENEMY_ZOMBIE_DJINN_LESSON,
     ENEMY_MYSTERY_MAN,
     ENEMY_MYSTERY_WOMAN,

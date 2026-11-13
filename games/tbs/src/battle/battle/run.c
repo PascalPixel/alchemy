@@ -420,27 +420,20 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
 /// the opponent's three places. Called by BattleIntro_AnnounceEncounter,
 /// BattleUnit_Collect and BattleAbility_ApplyToTarget.
 s32 BattleEnemy_List(s16 *unitIds) {
-  s16 *output;
-  s32 count;
-  s32 id;
-  s32 lastId;
-  s32 listed;
+  s16 *output = unitIds;
+  s32 listed = 0;
+  s32 enemyCapacity = ENEMY_BATTLE_SIZE;
+  s32 count = 0;
+  s32 unitId;
 
-  output = unitIds;
-  listed = 0;
-  lastId = ENEMY_BATTLE_SIZE;
-  count = 0;
   if (output != NULL) {
-    if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
-      lastId = LINK_PARTY_SIZE;
-    }
-    id = FIRST_ENEMY_UNIT;
-    lastId += FIRST_ENEMY_UNIT;
-    for (; id < lastId; id += 1) {
-      if (Unit_GetFar(id)->side != BATTLE_SIDE_NONE) {
-        *output = id;
-        listed += 1;
-        output += 1;
+    if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0)
+      enemyCapacity = LINK_PARTY_SIZE;
+    for (unitId = FIRST_ENEMY_UNIT; unitId < FIRST_ENEMY_UNIT + enemyCapacity;
+         unitId++) {
+      if (Unit_GetFar(unitId)->side != BATTLE_SIDE_NONE) {
+        *output++ = unitId;
+        listed++;
       }
     }
     *output = BATTLE_UNIT_LIST_END;

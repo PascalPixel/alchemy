@@ -33,8 +33,6 @@
 ///
 /// Abilities: Death Plunge (BATTLE_EFFECT_DEATH_PLUNGE).
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
@@ -56,7 +54,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 frame;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
@@ -66,7 +65,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   // Trails keep 3/4 a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // The run: the user moves to 90% of the way to the target, with an
   // acceleration of 2 pixels a frame per frame and a top speed of 8 pixels a
@@ -206,7 +205,10 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
+  work = *cursor++;
+  canvas = *cursor;
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Invisible to start with.
@@ -215,11 +217,11 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   // Setup: [0] draws as is, [1] mirrored; both skip colour 0.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1,
                              1);
@@ -298,10 +300,10 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #ifdef UBFIX
         width = gDeathPlunge_SwordWidths[picture];
         height = gDeathPlunge_SwordHeights[picture];
-        blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
-            width, height);
+        blit[drift < 0](canvas,
+                        work->sheet + gDeathPlunge_SwordPictures[picture],
+                        (blade->x >> 16) - (width >> 1),
+                        (blade->y >> 16) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
@@ -322,10 +324,10 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #ifdef UBFIX
         width = gDeathPlunge_SwordWidths[picture];
         height = gDeathPlunge_SwordHeights[picture];
-        blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
-            width, height - 4);
+        blit[drift < 0](canvas,
+                        work->sheet + gDeathPlunge_SwordPictures[picture],
+                        (blade->x >> 16) - (width >> 1),
+                        (blade->y >> 16) - (height >> 1), width, height - 4);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
@@ -431,7 +433,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   // The mote size, written back into the caller's argument.
   work->args->variant++;
   if (work->args->variant <= 0)
@@ -464,7 +466,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       n = frame / 2 % 4;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       draw[1](canvas, work->sheet + n * (17 * 64), 47, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       glow = work->sheet + n * 1032 + 4352;
@@ -473,7 +475,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      draw[1] = ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * (17 * 64), 64, ground.y - 64, 17, 64);
       draw[1](canvas, glow, 64, ground.y - 36, 24, 43);
@@ -570,7 +572,6 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleWork *battle;
   struct BattleBackgroundWork *view;
-  void **slots;
   s32 targetRadius;
   struct Particle *piece;
   s32 radius;
@@ -594,9 +595,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  slots = gHeapSlots + HEAP_SLOT_BATTLE;
-  battle = slots[0];
-  view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   work->args = args;
 
   // Setup. Make BG2 the 128x128 canvas, as BattleEffect_StartCanvasLayer does
@@ -642,10 +642,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   // Each piece flies out from (32, 60) at a quarter of its distance from
   // there a frame, in work->particles 0 to 32.
@@ -1003,7 +1003,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Sound_PlayFar(SE_SPIN);
 
   for (frame = 0; frame != 56; frame++) {
@@ -1035,7 +1035,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             gDeathPlunge_DrawFlags[i] | EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        draw[1] = *slot;
+        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
                 ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);

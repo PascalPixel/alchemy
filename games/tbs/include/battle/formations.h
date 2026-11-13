@@ -23,19 +23,29 @@
 /// two Thieves and Menardi with Saturos.
 #define FORMATION_LAYOUT_CENTERED 2
 
+/// The kinds of enemy a formation may hold.
+#define FORMATION_MEMBERS 5
+
 /// An enemy formation: its battle type and up to five kinds of enemy, each
 /// with the fewest and most of it that appear. BattleFormation_BuildEnemyList
 /// draws a battle's enemies from it.
 struct Formation {
-  u8 layout;           ///< a FORMATION_LAYOUT_
-  u8 memberIds[5];     ///< rows of enemy_table.c (enemy id less ENEMY_ID_FIRST)
-  u8 minimumCounts[5]; ///< each always appears this often
+  u8 layout;                           ///< a FORMATION_LAYOUT_
+  u8 memberIds[FORMATION_MEMBERS];     ///< rows of enemy_table.c (enemy id less
+                                       ///< ENEMY_ID_FIRST)
+  u8 minimumCounts[FORMATION_MEMBERS]; ///< each always appears this often
   /// Each may appear up to this often while the six sprite slots hold them;
   /// 0 for a member that does not appear.
-  u8 maximumCounts[5];
+  u8 maximumCounts[FORMATION_MEMBERS];
 };
 
-/// The 380 formations, by formation id (battle/formations.c).
-extern const struct Formation gFormations[];
+/// The rows of gFormations.
+#define FORMATION_COUNT 380
+/// The formations, by formation id (battle/formations.c).
+extern struct Formation gFormations[FORMATION_COUNT];
+
+/// The 20 enemies whose defeated flags a monster battle clears before it picks
+/// a formation (battle/formations.c).
+extern u16 gBattleFormation_LevelMatchedEnemies[20];
 
 #endif

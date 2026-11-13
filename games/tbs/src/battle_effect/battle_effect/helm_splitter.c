@@ -27,8 +27,6 @@
 ///
 /// Abilities: Helm Splitter (BATTLE_EFFECT_HELM_SPLITTER).
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *graphics;
@@ -41,8 +39,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
@@ -275,8 +274,12 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   // BG2 shows the canvas at twice its width, and BG1 and BG2 blend over the
   // layers below.
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
+  work = *cursor++;
+  canvas = *cursor;
+  sheet =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
   orgX = x;
   x += px(40);
   x /= 2;
@@ -384,8 +387,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 3;
-        drawX = Q_16_16_TO_INT(particle->x);
-        drawY = Q_16_16_TO_INT(particle->y);
+        drawX = Q_16_16_UPPER_HALF(particle->x);
+        drawY = Q_16_16_UPPER_HALF(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
       }
     }
@@ -401,8 +404,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 1;
-        drawX = Q_16_16_TO_INT(particle->x);
-        drawY = Q_16_16_TO_INT(particle->y);
+        drawX = Q_16_16_UPPER_HALF(particle->x);
+        drawY = Q_16_16_UPPER_HALF(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
       }
     }
@@ -419,8 +422,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
         Particle_AdvanceWithGravity2D(shard, 64, 0);
         picture = (frame - 36) / 7;
-        drawX = Q_16_16_TO_INT(shard->x);
-        drawY = Q_16_16_TO_INT(shard->y);
+        drawX = Q_16_16_UPPER_HALF(shard->x);
+        drawY = Q_16_16_UPPER_HALF(shard->y);
         maxBlend(canvas,
                  work->sheet +
                      picture * (IMPACT_BURST_FRAGMENT_WIDTH *

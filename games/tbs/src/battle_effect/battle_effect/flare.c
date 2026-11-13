@@ -19,8 +19,6 @@
 ///         16 pixels above each one, and Flare Storm, the strongest, a third
 ///         32 pixels above (and longer trails).
 void BattleEffect_RunFlare(struct BattleEffectParams *args) {
-  u32 *slots;
-  u32 *cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -36,10 +34,8 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct Particle *flame;
 
   // The work, the canvas, and BG1 and BG2 blended at 14:16.
-  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
-  canvas = (void *)*cursor;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =
@@ -49,7 +45,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
                              1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
   // The arc: from -90 to 90 degrees in steps of 22.5, half an ellipse with
   // radii of 32 pixels across and 16 up and down, centred on x 20 (84 on the
@@ -156,13 +152,11 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     } while (i != FLARE_ARC_COUNT);
 
     // The targets flash red, 8 frames apart from frame 16.
-    i = 0;
-    while (i != work->args->targetCount) {
+    for (i = 0; i != work->args->targetCount; i++) {
       if (frame == (i * 8) + 16) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
                                  POSE_DAMAGE, i, 12);
       }
-      i += 1;
     }
     EFFECT_END_FRAME(work);
     frame += 1;

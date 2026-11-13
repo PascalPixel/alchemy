@@ -123,10 +123,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 j;
 
-  work = *(gHeapSlots + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gHeapSlots + HEAP_SLOT_BATTLE_CANVAS);
-  sprites = *(gHeapSlots + HEAP_SLOT_BATTLE_SHEET);
-  camera = *(gHeapSlots + HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -223,8 +223,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                           COMPOSITE_LIGHTEN);
     }
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     for (i = 0; i != bursts; i++) {
       s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
 
@@ -291,8 +291,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     for (i = 0; i != 512; i++) {
       struct Particle *mote = &PARTICLES[i];
 

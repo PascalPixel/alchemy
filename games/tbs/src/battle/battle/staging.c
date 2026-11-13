@@ -129,38 +129,25 @@ finish:
 /// sets its side.
 UNREAD_RESULT BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                             struct BattleEffectParams *args) {
-  s16 *outputTarget;
-  u32 flags;
-  s32 livingTargets;
-  s32 targetIndex;
-  u8 *inputTarget;
+  s32 count = 0;
+  s32 i;
 
-  livingTargets = 0;
   args->prelude = 0;
-  flags = plan->battleEffect;
-  args->kind = flags & EFFECT_ID_MASK;
-  args->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
+  args->kind = plan->battleEffect & EFFECT_ID_MASK;
+  args->variant =
+      (plan->battleEffect & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
   args->user = plan->unitId;
-  targetIndex = 0;
-  if (targetIndex < plan->targetCount) {
-    inputTarget = plan->targetIds;
-    outputTarget = args->targets;
-    do {
-      if (Unit_GetFar(*inputTarget)->hp != 0 ||
-          (plan->battleEffect & EFFECT_ON_DOWNED)) {
-        livingTargets++;
-        *outputTarget++ = *inputTarget;
-      }
-      targetIndex++;
-      inputTarget++;
-    } while (targetIndex < plan->targetCount);
+  for (i = 0; i < plan->targetCount; i++) {
+    if (Unit_GetFar(plan->targetIds[i])->hp != 0 ||
+        (plan->battleEffect & EFFECT_ON_DOWNED))
+      args->targets[count++] = plan->targetIds[i];
   }
-  if (livingTargets == 0) {
+  if (count == 0) {
     args->targets[0] = plan->targetIds[0];
-    livingTargets = 1;
+    count = 1;
   }
   args->firstTarget = plan->targetIds[0];
-  args->targetCount = livingTargets;
+  args->targetCount = count;
   args->range = 1;
 }
 
@@ -968,31 +955,25 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
 /// redraws the party's status at the end.
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
-  u16 *selected;
-  s32 flashesRemaining;
+  s32 flash;
 
+  // DEAD: the unit, fetched and not used; the ROM keeps the call.
   Unit_GetFar(unitId);
   Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, POSE_DAMAGE);
-
-  selected = selection;
-  flashesRemaining = 1;
-  do {
-    s32 listTerminator = BATTLE_UNIT_LIST_END;
-    selected[1] = listTerminator;
-    selected[0] = unitId;
-    PartyStatus_HighlightMembersFar(selected);
+  for (flash = 0; flash < 2; flash++) {
+    selection[0] = unitId;
+    selection[1] = BATTLE_UNIT_LIST_END;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               SPRITE_COLOR_WHITE);
     wait(2);
 
-    selected[0] = unitId;
-    PartyStatus_HighlightMembersFar(selected);
+    selection[0] = unitId;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(unitId)->actor,
                               BattleObject_GetPalette(unitId));
     wait(2);
-    flashesRemaining--;
-  } while (flashesRemaining >= 0);
-
+  }
   PartyStatus_DrawFar(gBattleWork->partyStatus);
 }
 
@@ -1009,7 +990,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
 void BattleObject_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;
   s32 partyIndex;
-  u32 enemyOrActionIndex;
+  u32 i;
   s32 listedUnit;
 
   // The party's list.
@@ -1025,19 +1006,18 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  // The scan is a label loop, the form its branches match with.
   /* FAKEMATCH(dead): a once-only block round the label loop keeps the party
    * loop's first test from being peeled ahead of it; as the plain loop, 26 of
    * 53 instructions differ in tbs-en. */
   do {
-    enemyOrActionIndex = 0;
+    i = 0;
   again:
-    listedUnit = battle->enemyIds[enemyOrActionIndex];
+    listedUnit = battle->enemyIds[i];
     if (listedUnit == unitId) {
-      battle->enemyIds[enemyOrActionIndex] = BATTLE_UNIT_REMOVED;
+      battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
-    enemyOrActionIndex++;
+    i++;
     if (listedUnit == BATTLE_UNIT_LIST_END)
       return;
     goto again;
@@ -1046,10 +1026,9 @@ void BattleObject_RemoveFromLists(s32 unitId) {
 removed:
   // Free the letter that told the enemy apart from others of its class.
   BattleEnemy_ReleaseNameLetter(unitId);
-  for (enemyOrActionIndex = 0; enemyOrActionIndex < BATTLE_ACTION_CAPACITY;
-       enemyOrActionIndex++) {
-    if (battle->actions[enemyOrActionIndex].unitId == unitId)
-      battle->actions[enemyOrActionIndex].unitId = BATTLE_UNIT_LIST_END;
+  for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
+    if (battle->actions[i].unitId == unitId)
+      battle->actions[i].unitId = BATTLE_UNIT_LIST_END;
   }
 }
 

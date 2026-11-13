@@ -391,7 +391,7 @@ struct Unit {
   /// cost the unit its actions.
   ///@{
   u8 delusion;
-  s8 confusion;
+  u8 confusion;
   u8 charm;
   u8 stun;
   u8 sleep;
@@ -464,9 +464,6 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 }
 
 /// Recalculates HP and PP gauges, keeping at least one when any points remain.
-// A statement macro, written do { } while (0): every site matches through that
-// shape. Written out at each site, or as an inline function, the gauge loads
-// are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
     (unit)->hpGauge =                                                          \

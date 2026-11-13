@@ -4,24 +4,40 @@
 
 #include "../game_internal.h"
 
+/// A view of EWRAM from gSceneLocalState on, which
+/// MainRoutineWork_InitializeDefaults writes one byte through.
+struct MapLocalStateSnapshotView {
+  u8 mapAndInventory[256]; ///< gSceneLocalState, then most of
+                           ///< gInventorySnapshot
+  /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
+  /// uses; nothing reads or writes it through this view.
+  u32 playTime;
+  /// gActorSnapshot.slots[0]: set to ACTOR_SNAPSHOT_EMPTY,
+  /// so a new game holds no saved actors.
+  u8 firstSnapshotSlot;
+};
+
 /// The running totals Unit_Calculate builds a unit's stats in. Each call takes
 /// a block from EWRAM first (Heap_AllocEwram) and frees it
 /// with Heap_Release before returning; only Unit_Calculate reads it.
 struct StatWork {
-  s32 hp;                 ///< maximum HP
-  s32 pp;                 ///< maximum PP
-  s32 atk;                ///< Attack, 0 to UNIT_STAT_MAX once clamped
-  s32 def;                ///< Defense, 0 to UNIT_STAT_MAX once clamped
-  s32 agi;                ///< Agility, 0 to UNIT_STAT_MAX once clamped
-  s32 unused;             ///< never written; a gap between Agility and Luck
-  s32 luck;               ///< Luck, 0 to UNIT_LUCK_MAX once clamped
-  s32 actionCount;        ///< actions a turn, 0 to 2
-  s32 hpRegen;            ///< HP regained each turn
-  s32 ppRegen;            ///< PP regained each turn
-  s32 element[4][2];      ///< [element][0] power and [1] resistance
-  s32 kind;               ///< the item effect being applied
-  s32 unusedAfterKind[2]; ///< never written
-  s32 amount;             ///< the amount of the item effect being applied
+  s32 hp;          ///< maximum HP
+  s32 pp;          ///< maximum PP
+  s32 atk;         ///< Attack, 0 to UNIT_STAT_MAX once clamped
+  s32 def;         ///< Defense, 0 to UNIT_STAT_MAX once clamped
+  s32 agi;         ///< Agility, 0 to UNIT_STAT_MAX once clamped
+  s32 unused;      ///< never written; a gap between Agility and Luck
+  s32 luck;        ///< Luck, 0 to UNIT_LUCK_MAX once clamped
+  s32 actionCount; ///< actions a turn, 0 to 2
+  s32 hpRegen;     ///< HP regained each turn
+  s32 ppRegen;     ///< PP regained each turn
+  struct {
+    s32 power;
+    s32 resistance;
+  } element[ELEMENT_COUNT];    ///< each element's power and resistance
+  s32 kind;                    ///< the item effect being applied
+  s32 unusedAfterKind[2];      ///< never written
+  s32 amount;                  ///< the amount of the item effect being applied
   struct ItemDefinition *item; ///< the equipped item being applied
   s32 unusedAfterItem;         ///< never written
 };
@@ -41,11 +57,10 @@ void Game_RestartQuest(void) {
 /// read as a bank. The bank also holds the summon flags Summon_ListLearned
 /// reads. Called by the battle code that sets, recovers and links Djinn
 /// (DjinnRecovery_CountDown, BattleSummon_UpdateAvailability, the link battle).
-void *Djinn_GetRecoveryTable(s32 enemySide) {
-  if (enemySide != 0) {
-    return Unit_Get(FIRST_ENEMY_UNIT + 3);
-  }
-  return &gMainRoutineWork.summonMask;
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
+  if (enemySide != 0)
+    return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
+  return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -53,19 +68,15 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
 /// random battle's enemies, and by the Lucky Dice game in Tolbi to set its
 /// prizes.
 u32 Party_GetAverageLevel(void) {
-  s32 partySize;
-  s32 totalLevels;
-  s32 partyIndex;
+  s32 totalLevels = 0;
+  s32 partySize = Party_CountMembers();
+  s32 i;
 
-  totalLevels = 0;
-  partySize = Party_CountMembers();
-  if (partySize == 0) {
+  if (partySize == 0)
     return 0;
-  }
-  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += Unit_Get(gMainRoutineWork.party[partyIndex])->level;
-  }
-  totalLevels = totalLevels / partySize;
+  for (i = 0; i < partySize; i++)
+    totalLevels += Unit_Get(gMainRoutineWork.party[i])->level;
+  totalLevels /= partySize;
   return totalLevels;
 }
 
@@ -78,7 +89,7 @@ struct Unit *Unit_Get(u32 unitId) {
   struct Unit *unit;
   // DEAD: the return address, read and never used; the ROM keeps its copy of
   // lr into r3.
-  void *caller = __builtin_return_address(0);
+  UNUSED void *caller = __builtin_return_address(0);
 
   states = gMainRoutineWork.units;
   /* FAKEMATCH(dead): the party return repeated under a test of the return
@@ -108,10 +119,9 @@ struct Unit *Unit_Get(u32 unitId) {
 /// attack effect and hop) before the enemies'. Called by the
 /// battle code that builds and scores enemies (the formations, the enemy AI,
 /// the spoils) and by the element and weakness reads in this object.
-const u8 *Enemy_GetDefinition(s32 selector) {
-  u32 recordIndex;
+const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
+  u32 recordIndex = selector - ENEMY_ID_FIRST;
 
-  recordIndex = selector - ENEMY_ID_FIRST;
   // BUG: the table has 165 rows, but only rows past 249 are refused, so 165 to
   // 249 read the tables after it. BattleUnit_Set refuses them itself.
 #ifdef BUGFIX
@@ -121,29 +131,21 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 #endif
     recordIndex = 0;
   }
-  return (const u8 *)&gEnemy_Definitions[recordIndex];
+  return &gEnemy_Definitions[recordIndex];
 }
 
 /// Copies `count` bytes from `first` to `second` when `direction` is set, and
 /// from `second` to `first` otherwise.
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                  s32 direction) {
-  s32 index;
+  s32 i;
 
   if (direction != 0) {
-    index = 0;
-    if (index < count) {
-      do {
-        *second++ = *first++;
-        index++;
-      } while (index < count);
-    }
-  } else if (count > 0) {
-    index = count;
-    do {
+    for (i = 0; i < count; i++)
+      *second++ = *first++;
+  } else {
+    for (i = 0; i < count; i++)
       *first++ = *second++;
-      index--;
-    } while (index != 0);
   }
 }
 
@@ -154,6 +156,9 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.
+/// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
+#define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
+
 void Unit_Calculate(s32 unitId) {
   struct StatWork *stats;
   struct Unit *unit;
@@ -178,8 +183,8 @@ void Unit_Calculate(s32 unitId) {
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
-    stats->element[index][0] = unit->baseElement[index].power;
-    stats->element[index][1] = unit->baseElement[index].resistance;
+    stats->element[index].power = unit->baseElement[index].power;
+    stats->element[index].resistance = unit->baseElement[index].resistance;
   }
 
   // A gauge is HP or PP as a fraction of its maximum, UNIT_GAUGE_FULL full.
@@ -250,28 +255,28 @@ void Unit_Calculate(s32 unitId) {
           stats->luck += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_VENUS_POWER:
-          stats->element[0][0] += stats->amount;
+          stats->element[ELEMENT_VENUS].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MERCURY_POWER:
-          stats->element[1][0] += stats->amount;
+          stats->element[ELEMENT_MERCURY].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MARS_POWER:
-          stats->element[2][0] += stats->amount;
+          stats->element[ELEMENT_MARS].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_JUPITER_POWER:
-          stats->element[3][0] += stats->amount;
+          stats->element[ELEMENT_JUPITER].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_VENUS_RESIST:
-          stats->element[0][1] += stats->amount;
+          stats->element[ELEMENT_VENUS].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MERCURY_RESIST:
-          stats->element[1][1] += stats->amount;
+          stats->element[ELEMENT_MERCURY].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MARS_RESIST:
-          stats->element[2][1] += stats->amount;
+          stats->element[ELEMENT_MARS].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_JUPITER_RESIST:
-          stats->element[3][1] += stats->amount;
+          stats->element[ELEMENT_JUPITER].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_UNLEASH_CHANCE:
           unit->equipBonus[0] += stats->amount;
@@ -333,33 +338,31 @@ void Unit_Calculate(s32 unitId) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
-        effectKind -= EQUIP_EFFECT_SCALE_HP;
+        effectKind = SCALE_EFFECT(effectKind);
         stats->amount = effectAmount;
-        // The kind less EQUIP_EFFECT_SCALE_HP, as the switch table begins
-        // there.
         switch (effectKind) {
-        case EQUIP_EFFECT_SCALE_HP - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP):
           stats->hp = stats->hp * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_HP_REGEN - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP_REGEN):
           stats->hpRegen = stats->hpRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_PP - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP):
           stats->pp = stats->pp * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_PP_REGEN - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP_REGEN):
           stats->ppRegen = stats->ppRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_ATTACK - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_ATTACK):
           stats->atk = stats->atk * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_DEFENSE - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_DEFENSE):
           stats->def = stats->def * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_AGILITY - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_AGILITY):
           stats->agi = stats->agi * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_LUCK - EQUIP_EFFECT_SCALE_HP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_LUCK):
           stats->luck = stats->luck * stats->amount / STAT_SCALE_ONE;
           break;
         }
@@ -373,12 +376,12 @@ void Unit_Calculate(s32 unitId) {
   stats->def = stats->def * (unit->defenseStage + 8) / 8;
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
   for (index = 0; index < ELEMENT_COUNT; index++)
-    stats->element[index][0] +=
+    stats->element[index].power +=
         (unit->summonBoost[index] * unit->summonBoost[index] +
          unit->summonBoost[index]) *
         5;
   for (index = 0; index < ELEMENT_COUNT; index++)
-    stats->element[index][1] += unit->resistanceStage * 20;
+    stats->element[index].resistance += unit->resistanceStage * 20;
 
   if (unit->classId != CLASS_NONE) {
     lighthouseLit = 0;
@@ -412,8 +415,8 @@ void Unit_Calculate(s32 unitId) {
   CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
   CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
   for (index = 0; index < ELEMENT_COUNT; index++) {
-    CLAMP(stats->element[index][0], 0, UNIT_ELEMENT_MAX);
-    CLAMP(stats->element[index][1], 0, UNIT_ELEMENT_MAX);
+    CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
+    CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
   }
 
   unit->atk = stats->atk;
@@ -424,8 +427,8 @@ void Unit_Calculate(s32 unitId) {
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
-    unit->element[index].power = stats->element[index][0];
-    unit->element[index].resistance = stats->element[index][1];
+    unit->element[index].power = stats->element[index].power;
+    unit->element[index].resistance = stats->element[index].resistance;
   }
 
   statLimit = UNIT_HP_MAX;
@@ -463,30 +466,24 @@ void Unit_Calculate(s32 unitId) {
 /// an event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
-  s32 partyIndex;
+  s32 member;
 
   GameFlag_Clear(FLAG_LURE_CAP);
   partySize = Party_CountMembers();
-  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    struct Unit *unit;
-    s32 inventorySlot;
+  for (member = 0; member < partySize; member++) {
+    struct Unit *unit = Unit_Get(gMainRoutineWork.party[member]);
+    s32 slot;
 
-    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
-    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
-      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
-        struct EquipEffect *effect;
-        s32 effectIndex;
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+      struct ItemDefinition *item;
+      s32 effect;
 
-        effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;
-        for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
-          u8 effectKind;
-
-          effectKind = effect->kind;
-          effect++;
-          if (effectKind == EQUIP_EFFECT_LURE) {
-            GameFlag_Set(FLAG_LURE_CAP);
-          }
-        }
+      if (!(unit->inventory[slot] & INVENTORY_EQUIPPED))
+        continue;
+      item = Item_GetDirect(unit->inventory[slot]);
+      for (effect = 0; effect < EQUIP_EFFECT_SLOTS; effect++) {
+        if (item->effects[effect].kind == EQUIP_EFFECT_LURE)
+          GameFlag_Set(FLAG_LURE_CAP);
       }
     }
   }
@@ -498,62 +495,28 @@ void GameFlag_RefreshLureCap(void) {
 /// and the file list (FileList_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 BuildStamp_GetTime(void) {
-  u8 *digits;
-  s32 hourTens;
-  s32 hourUnits;
-  s32 minuteTens;
-  s32 minuteUnits;
-  s32 secondTens;
-  s32 secondUnits;
+  // The stamp is six ASCII digits, hhmmss.
+  const u8 *digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
   s32 hours;
   s32 minutes;
   s32 seconds;
-  s32 packed;
-  s32 shifted;
-  s32 result;
+  s16 time;
+  s32 stamp;
 
-  // The stamp is six ASCII digits, hhmmss.
-  digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
-  hourTens = *digits;
-  hours = (hourTens - '0') * 10;
-  digits++;
-  hourUnits = *digits;
-  digits++;
-  hours += hourUnits - '0';
-  minuteTens = *digits;
-  minutes = (minuteTens - '0') * 10;
-  digits++;
-  minuteUnits = *digits;
-  digits++;
-  minutes += minuteUnits - '0';
-  secondTens = digits[0];
-  seconds = (secondTens - '0') * 10;
-  secondUnits = digits[1];
-  seconds += secondUnits - '0';
-  packed = (((hours << 4) + minutes) << 6) + seconds;
-  shifted = 0x80 << 21;
-  shifted |= packed << 16;
-  result = shifted >> 16;
-  if (gDebugMode != 0) {
-    result |= 0xffff8000;
-  }
-  return (u16)result;
+  hours = (*digits++ - '0') * 10;
+  hours += *digits++ - '0';
+  minutes = (*digits++ - '0') * 10;
+  minutes += *digits++ - '0';
+  seconds = (digits[0] - '0') * 10;
+  seconds += digits[1] - '0';
+  time = (hours * 16 + minutes) * 64 + seconds;
+  time |= 0x1000;
+  stamp = time;
+
+  if (gDebugMode != 0)
+    stamp |= 0xFFFF8000;
+  return (u16)stamp;
 }
-
-/// A view of EWRAM from gSceneLocalState on, which
-/// MainRoutineWork_InitializeDefaults writes one byte through.
-/// gSceneLocalState's 120 bytes and gInventorySnapshot's 140 come first, so
-/// firstSnapshotSlot is the first byte of gActorSnapshot.
-struct MapLocalStateSnapshotView {
-  u8 mapAndInventory[256]; ///< gSceneLocalState, then most of
-                           ///< gInventorySnapshot
-  /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
-  /// uses; nothing reads or writes it through this view.
-  u32 playTime;
-  /// gActorSnapshot.slots[0]: set to ACTOR_SNAPSHOT_EMPTY,
-  /// so a new game holds no saved actors.
-  u8 firstSnapshotSlot;
-};
 
 /// Clears the game-state header, the scene state with the Colosso's inventory
 /// snapshot and the actor snapshot after it, the flags and most of the
@@ -818,3 +781,5 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef UNIT_DEFINE_SET
 #undef UNIT_DEFINE_ADD
 #undef UNIT_STAT_DIFF
+
+#undef SCALE_EFFECT

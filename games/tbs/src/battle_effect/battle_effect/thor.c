@@ -77,7 +77,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   struct ScreenPoint screen[11];
   s32 position[3];
   s32 scale[3];
-  void **slots;
   struct BattleBackgroundWork *view;
   struct BattleEffectWork *work;
   void *canvas;
@@ -97,11 +96,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   s32 dotCount;
   struct Particle *spark;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
-  view = slots[0];
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_BACKGROUND];
-  canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
+  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   // Open the canvas and load the pictures. The light fan sheet is loaded
   // twice, to the same place; the second load changes nothing.
@@ -153,7 +151,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blit[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  blit[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_SHOW_WIDE_CANVAS(15);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -336,13 +334,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != beamHeight; i++) {
-        // Default: 0, until it is set to the beam's full 32 pixels.
+        /* FAKEMATCH(dead): the width set to 0 and at once to 32; as the
+         * constant 32 in the call, 209 of 1817 instructions differ in tbs-en.
+         */
         s32 fullWidth = 0;
 
-        // loop.c matches a lone 32 here with the light-fan calls' 32 and hoists
-        // it out of the frame loop, where it loses its register and later
-        // reloads rotate; set twice in a row, it moves only to this loop's
-        // preheader.
         fullWidth = 32;
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);

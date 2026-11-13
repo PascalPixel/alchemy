@@ -89,26 +89,21 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   messageId = Sanctum_GetServiceMessage(messageId);
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0) {
-    wait(1U);
+    wait(1);
   }
-  wait(1U);
+  wait(1);
 }
 
 /// As Sanctum_ShowKeeperMessage, hiding the hand cursor while the line
 /// shows and putting back its motion after: the sanctum's
 /// Shop_ShowKeeperMessageHidingCursor.
 void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
-  struct ShopWork *shop;
-  struct WindowSprite **cursorSlot;
-  s32 portraitResource;
-  u8 savedCursorMode;
+  struct ShopWork *shop = gMenuWork;
+  u8 savedCursorMode = shop->cursor.anchor->motion;
+  s32 portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
 
-  shop = gMenuWork;
-  cursorSlot = &shop->cursor.anchor;
-  savedCursorMode = (*cursorSlot)->motion;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
   messageId = Sanctum_GetServiceMessage(messageId);
-  (*cursorSlot)->motion = 13;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
@@ -151,7 +146,7 @@ s32 Sanctum_Run(s32 unitId) {
 
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
                                         listWindow, 0, 0);
-  cursorAnchor->motion = 1;
+  cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
   cursorAnchor->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
@@ -236,12 +231,11 @@ s32 Sanctum_RunPartyService(void) {
       chooseAgain = 0;
       Sanctum_ShowKeeperMessage(MsgWhoToRevive);
       redraw = 1;
-      memberIndex = 0;
-      while (memberIndex < shop->partyMemberCount) {
+      for (memberIndex = 0; memberIndex < shop->partyMemberCount;
+           memberIndex++) {
         unitId = shop->partyMemberIds[memberIndex];
         if (Sanctum_NeedsService(unitId, serviceKind) != 0)
           break;
-        memberIndex++;
       }
     }
 

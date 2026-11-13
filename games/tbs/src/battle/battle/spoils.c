@@ -101,7 +101,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct EnemyDefinition *enemy;
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
-  s32 itemOrClassIndex;
+  s32 i;
   s32 dropShift;
   s32 classSlot;
   s32 lowestItemPriority;
@@ -116,15 +116,15 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   if (unit->classId != CLASS_NONE)
     return -2;
   classSlot = 0;
-  itemOrClassIndex = 0;
+  i = 0;
   if (battle->enemyKinds[0] != unit->id) {
     do {
-      if (++itemOrClassIndex > ENEMY_BATTLE_SIZE - 1)
+      if (++i > ENEMY_BATTLE_SIZE - 1)
         break;
-    } while (battle->enemyKinds[itemOrClassIndex] != unit->id);
+    } while (battle->enemyKinds[i] != unit->id);
   }
-  if (itemOrClassIndex != ENEMY_BATTLE_SIZE)
-    classSlot = itemOrClassIndex;
+  if (i != ENEMY_BATTLE_SIZE)
+    classSlot = i;
   // The earliest listed class to fall names the victory message, and a
   // second defeat makes it DEFEAT_SEVERAL.
   // No defeat state is 2, so this test never fails.
@@ -154,14 +154,15 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   if (enemy->item == 0 || enemy->itemChance == 0)
     return 0;
-  itemOrClassIndex = 0;
+  // An item already kept drops no second time.
+  i = 0;
   if (spoils->items[0] != enemy->item) {
     do {
-      if (++itemOrClassIndex > 3)
+      if (++i > 3)
         break;
-    } while (spoils->items[itemOrClassIndex] != enemy->item);
+    } while (spoils->items[i] != enemy->item);
   }
-  if (itemOrClassIndex != 4)
+  if (i != 4)
     return 0;
   dropShift = enemy->itemChance;
   if (djinnBonus != 0)
@@ -172,11 +173,11 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   if ((Q16_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
-    for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
-      itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
+    for (i = 0; i <= 3; i++) {
+      itemPriority = BattleSpoils_RankItem(spoils->items[i]);
       if (itemPriority < lowestItemPriority) {
         lowestItemPriority = itemPriority;
-        lowestSlot = itemOrClassIndex;
+        lowestSlot = i;
       }
     }
     if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
@@ -220,6 +221,8 @@ void Battle_AwardSpoils(void) {
   }
   // Experience and level ups: each party member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
+  /* FAKEMATCH(temporary): unitIds stands in for units' own address; as
+   * units used directly, 9 of 302 instructions differ in tbs-en. */
   unitIds = units;
   count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   beforeLevelUp = Heap_AllocEwram(sizeof(struct Unit));

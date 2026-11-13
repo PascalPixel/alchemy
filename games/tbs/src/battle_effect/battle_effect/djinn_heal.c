@@ -19,8 +19,6 @@
 /// point the transform is centred on, in 16.16. work->sheet holds the
 /// Djinni, the battle sheet slot first the motes and then the sparkle dots.
 UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 member;
@@ -39,8 +37,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct ScreenPoint view;
   BlitterPair callbacks;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
@@ -142,7 +141,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       Projection_Point(djinniPoint, &screen);
       screen.x >>= 1;
-      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
+      callbacks[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -252,11 +251,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 /// which the effects leave unmarked. Changes the camera slot's yaw and
 /// work->cameraPhase.
 void BattleCamera_ApplyPhasedDelta(void) {
-  // Both come from the one heap slot table; a separate camera base compiles 4
-  // bytes longer.
-  void **slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  struct BattleEffectWork *work = slots[0];
-  struct BattleCamera *camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 *phase = &work->cameraPhase;
 
   if (*phase == CAMERA_PHASE_FRAME_DONE) {

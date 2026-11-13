@@ -4,7 +4,6 @@
 
 #include "../battle_internal.h"
 
-// Native-only view retained for the measured target-picker form below.
 #ifndef UBFIX
 /// BattleWork's unit lists, read as one array of halfwords.
 struct BattleWorkUnitListView {
@@ -20,7 +19,6 @@ struct BattleWorkUnitListView {
 /// requireLivingUnit set for a party unit. Takes one Random16 roll when any
 /// position qualifies.
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
-
   u16 positions[6];
   s32 count;
 

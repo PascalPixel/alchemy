@@ -68,7 +68,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   u8 *sparkleSheet;
   s32 edgeSpeed;
   s32 row;
-  u32 *slots;
   s32 count;
   s32 i;
   s32 j;
@@ -80,10 +79,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   struct Particle *trail;
   struct SpriteScale scale;
 
-  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
-  sparkleSheet = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sparkleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
@@ -99,10 +97,10 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkleSheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  drawAlt = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  drawAlt = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);

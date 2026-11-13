@@ -4,6 +4,14 @@
 
 #include "../game_internal.h"
 
+// Slots are four-byte entries, read as halfwords; UBFIX reads each entry
+// through its own type.
+#ifdef UBFIX
+#define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
+#else
+#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
+#endif
+
 /// Returns the definition of ability `abilityId` (its low 14 bits); an id
 /// past the table gives the first. Reached through GAME.S as
 /// Ability_Get, which every bank uses to read an ability.
@@ -50,14 +58,6 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
 /// equipped item. Plain entries were taught for good.
 enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
 
-// Slots are four-byte entries, not a flat halfword array. UBFIX accesses each
-// entry through its actual declared type.
-#ifdef UBFIX
-#define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
-#else
-#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
-#endif
-
 /// Rebuilds a character's Psynergy list: drops the actions its class and items
 /// gave, closes up the list, adds every class action learned by its level and
 /// the action of each equipped item that grants one, and closes it up again.
@@ -94,11 +94,10 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
   // Pack permanent actions at the end to leave room for class abilities.
   for (slot = PSYNERGY_SLOTS - 1, sourceIndex = PSYNERGY_SLOTS - 1;
        slot >= 0;) {
-    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+    if (abilities[slot].encodedAction == 0) {
       slot--;
     } else {
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
-          PSYNERGY_ACTION_AT(abilities, slot);
+      abilities[sourceIndex].encodedAction = abilities[slot].encodedAction;
       slot--;
       sourceIndex--;
     }
@@ -160,11 +159,10 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
 
   // Restore a dense display list with empty slots at the end.
   for (slot = 0, sourceIndex = 0; slot < PSYNERGY_SLOTS;) {
-    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+    if (abilities[slot].encodedAction == 0) {
       slot++;
     } else {
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
-          PSYNERGY_ACTION_AT(abilities, slot);
+      abilities[sourceIndex].encodedAction = abilities[slot].encodedAction;
       slot++;
       sourceIndex++;
     }

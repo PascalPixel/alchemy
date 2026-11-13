@@ -356,7 +356,6 @@ draw:
   default:
     goto show_price;
   }
-  return;
 }
 
 /// Shows `message`, an item's description, in the help window; a NULL window
@@ -818,6 +817,4 @@ s32 Shop_SalePrice(s32 inventoryEntry) {
 
 #undef SHOP_QUANTITY_NUMBER_X
 #undef SHOP_QUANTITY_COIN_LABEL_X
-#undef SHOP_INVENTORY_OFFSET
-#undef SHOP_ICON_DEPTH_OFFSET
 #undef SHOP_STACK_LIMIT

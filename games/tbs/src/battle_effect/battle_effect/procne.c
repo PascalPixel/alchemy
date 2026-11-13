@@ -75,19 +75,22 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = slots[0];
-  camera = CANVAS_SLOT(slots, HEAP_SLOT_CAMERA);
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  camera = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
+  work =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
+  graphics =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
 
   BattleEffect_StartCanvasLayer(0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_CANVAS];
+  draw[0] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
+                                          HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] =
-      (DrawRectangle)slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_CANVAS];
+  draw[1] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
+                                          HEAP_SLOT_RAM_CODE_2);
 
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
   Iwram_CopyWords((void *)BG_PLTT, resource, 128);

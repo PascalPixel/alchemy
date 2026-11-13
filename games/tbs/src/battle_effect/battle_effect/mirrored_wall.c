@@ -30,19 +30,19 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    out[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    out[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    out[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    out[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
-    out[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    out[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   }
 }
 
@@ -76,19 +76,17 @@ void BattleEffect_RunRecovery(struct BattleEffectParams *args) {
 ///
 /// mode: the wall's width, shake and colours (enum MirroredWallMode).
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *palette;
   s32 x;
   struct ScreenPoint screenPosition;
   BlitterPair draw;
-  void **slots;
   s32 frame;
   s32 picture;
 
-  cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
@@ -122,11 +120,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   // colour.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  slots = gHeapSlots;
-  draw[0] = slots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
-  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 

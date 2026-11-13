@@ -20,7 +20,7 @@ s32 Shop_ChooseMember(void) {
   Shop_DrawMoney();
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-  shop->cursor.anchor->motion = 4;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = 12;
   Menu_CreatePartyFiguresFar(listWindow, 2, 0, 8, 0);
 
@@ -46,7 +46,7 @@ s32 Shop_ChooseMember(void) {
           Shop_SelectSell(unitId);
         else
           Shop_SelectRepair(unitId);
-        shop->cursor.anchor->motion = 4;
+        shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         shop->mode = 12;
         redraw = 1;
       }
@@ -104,7 +104,7 @@ s32 Shop_SelectSell(s32 unitId) {
 
   for (;;) {
     descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
-    shop->cursor.anchor->motion = 18;
+    shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
     shop->mode = 12;
     redraw = 1;
 
@@ -207,8 +207,7 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
       Text_DrawMessageFar(MsgNoItems, window, SHOP_EMPTY_GRID_X,
                           SHOP_EMPTY_GRID_Y);
     } else {
-      slot = 0;
-      do {
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
         if (unit->inventory[slot] != 0) {
           icon = WindowSprite_CreateLoadedFar(unit->inventory[slot], 27, window,
                                               x, y);
@@ -223,8 +222,7 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
           x = 8;
           y += 16;
         }
-        slot++;
-      } while (slot < INVENTORY_SLOTS);
+      }
     }
   }
 }
@@ -253,7 +251,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessage(MsgHowManyToSell);
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
-    shop->cursor.anchor->motion = 4;
+    shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
     shop->mode = 12;
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, stackQuantity, unitSalePrice);

@@ -840,9 +840,9 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   Menu_HideEmptyEntryIcons(psynergies);
 }
 
-/// Lists unit's Psynergy into actions (32 entries, cleared first) and returns
-/// how many there are, as mode (enum PsynergyListMode) chooses; any mode
-/// other than PSYNERGY_LIST_SHORTCUTS and PSYNERGY_LIST_FIELD lists as
+/// Lists unit's Psynergy into actions (PSYNERGY_SLOTS entries, cleared first)
+/// and returns how many there are, as mode (enum PsynergyListMode) chooses; any
+/// mode other than PSYNERGY_LIST_SHORTCUTS and PSYNERGY_LIST_FIELD lists as
 /// PSYNERGY_LIST_ALL.
 s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   s32 clearIndex;
@@ -852,13 +852,13 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   s32 passIndex;
 
   passCount = (mode != PSYNERGY_LIST_FIELD) ? 4 : 3;
-  for (clearIndex = 0; clearIndex < 32; clearIndex++)
+  for (clearIndex = 0; clearIndex < PSYNERGY_SLOTS; clearIndex++)
     actions[clearIndex] = 0;
   actionCount = 0;
 
   // fieldPsynergy is the Psynergy's field effect. Passes 1 and 2 add nothing.
   if (mode == PSYNERGY_LIST_SHORTCUTS) {
-    for (slotIndex = 0; slotIndex < 32; slotIndex++) {
+    for (slotIndex = 0; slotIndex < PSYNERGY_SLOTS; slotIndex++) {
       if (unit->psynergy[slotIndex].encodedAction != 0) {
         if (Ability_Get(unit->psynergy[slotIndex].encodedAction &
                         PSYNERGY_ABILITY_MASK)
@@ -870,7 +870,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
     }
   } else {
     for (passIndex = 0; passIndex < passCount; passIndex++) {
-      for (slotIndex = 0; slotIndex < 32; slotIndex++) {
+      for (slotIndex = 0; slotIndex < PSYNERGY_SLOTS; slotIndex++) {
         if (unit->psynergy[slotIndex].encodedAction != 0) {
           struct AbilityDefinition *ability = Ability_Get(
               unit->psynergy[slotIndex].encodedAction & PSYNERGY_ABILITY_MASK);

@@ -535,32 +535,32 @@ s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
   gainedCount = 0;
   lostCount = 0;
   for (actionIndex = 0;
-       actionIndex < 32 && after[actionIndex].encodedAction != 0;
+       actionIndex < PSYNERGY_SLOTS && after[actionIndex].encodedAction != 0;
        actionIndex++) {
     actionsOut[actionCount] =
         after[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK;
     actionCount++;
-    for (otherIndex = 0; otherIndex < 32; otherIndex++) {
+    for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++) {
       if (((after[actionIndex].encodedAction ^
             before[otherIndex].encodedAction) &
            PSYNERGY_ABILITY_MASK) == 0)
         break;
     }
-    if (otherIndex == 32) {
+    if (otherIndex == PSYNERGY_SLOTS) {
       gainedCount++;
       actionsOut[actionCount - 1] |= DJINN_PREVIEW_GAINED;
     }
   }
   for (actionIndex = 0;
-       actionIndex < 32 && before[actionIndex].encodedAction != 0;
+       actionIndex < PSYNERGY_SLOTS && before[actionIndex].encodedAction != 0;
        actionIndex++) {
-    for (otherIndex = 0; otherIndex < 32; otherIndex++) {
+    for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++) {
       if (((before[actionIndex].encodedAction ^
             after[otherIndex].encodedAction) &
            PSYNERGY_ABILITY_MASK) == 0)
         break;
     }
-    if (otherIndex == 32) {
+    if (otherIndex == PSYNERGY_SLOTS) {
       lostCount++;
       actionsOut[actionCount] =
           (before[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK) |

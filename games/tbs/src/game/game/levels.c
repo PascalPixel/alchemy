@@ -221,7 +221,7 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   }
 
   Unit_RefreshPsynergy(stateIndex);
-  for (index = 0; index <= 31; index++) {
+  for (index = 0; index < PSYNERGY_SLOTS; index++) {
     if (state->psynergy[index].encodedAction == key) {
       break;
     }

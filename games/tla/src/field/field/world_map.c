@@ -18,8 +18,7 @@ extern u32 Render_ResetTransformState__f02b998(void) __asm__(
     "Transform_Reset"); // Returns void; see the tag.
 
 void WorldMap_InitializePerspective(void) {
-  /* FAKEMATCH(signature): Transform_Reset declared returning u32;
-   * as void, 2 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Transform_Reset declared returning u32. */
   u8 *perspective;
   struct WorldView *view;
   u8 *camera;
@@ -375,14 +374,10 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
 
   cellBytes = gMapBlocks__world_map + ((((s32)tileRow / 2) & 31) << 7);
   {
-    /* FAKEMATCH(pin): the BG map address held in r5, loaded right after the
-     * cell address is formed; as a plain local, 4 of 57 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(pin): the BG map address held in r5. */
     register u32 screenBase asm("r5") = 0x06004000;
 
-    /* FAKEMATCH(barrier): the empty asm holding the pin above, which keeps the
-     * address's load where it is; without it, 10 of 57 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): the empty asm. */
     __asm__ volatile("" : "+l"(screenBase));
     screenTile = (u8 *)(((tileRow & 62) << 6) + screenBase);
   }
@@ -395,12 +390,10 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   } while (column <= 31);
 
   {
-    /* FAKEMATCH(pin): the step to the next half's screen row held in r2; as a
-     * plain local, built in r3, 6 of 57 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the step to the next half's screen row held in r2. */
     register u32 screenStep asm("r2") = 0xfc0;
 
-    /* FAKEMATCH(barrier): the empty asm holding the pin above; without it, 10
-     * of 57 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm holding the pin above. */
     __asm__("" : "+l"(screenStep));
     screenTile += screenStep;
   }
@@ -420,14 +413,11 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *cellBytes;
   u8 *screenTile;
   u32 row;
-  /* FAKEMATCH(pin): the BG map address held in r5, loaded between the cell
-   * offset's shift and add; as a plain local, 4 of 32 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(pin): the BG map address held in r5. */
   register u32 screenBase asm("r5") = 0x06004000;
 
   cellBytes = gMapBlocks__world_map + ((((s32)tileColumn / 2) & 31) << 2);
-  /* FAKEMATCH(barrier): the empty asm holding the pin above after the cell
-   * address; without it, 4 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm. */
   __asm__ volatile("" : "+l"(screenBase));
   screenTile = (u8 *)((tileColumn & 62) + screenBase);
   row = 0;

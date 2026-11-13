@@ -112,9 +112,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     state = canvas->menuState;
   }
   {
-    /* FAKEMATCH(barrier): an empty asm copies the state into a word local,
-     * so the test reads the copy (add r3, r4, #0); as if (state) with no asm,
-     * 11 of 137 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm copies the state into a word local. */
     u32 shown;
 
     asm("" : "=r"(shown) : "0"(state));
@@ -320,9 +318,7 @@ void PartyStatus_Draw(s32 flags) {
   if (work->menuState != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
-    /* FAKEMATCH(dead): i set to a 0 never read, so the zero the first four
-     * tiles pass is i's (mov r7, #0) rather than the level store's; without
-     * it, 6 of 495 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): i set to a 0 never read. */
     i = 0;
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;

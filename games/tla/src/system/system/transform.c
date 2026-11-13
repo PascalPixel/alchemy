@@ -302,8 +302,7 @@ void Transform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
 #define RelocatedQ16DotProduct Math_DotProductQ16Code
 
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
-  /* FAKEMATCH(pin): dot held in r10; as a plain local, 175 of 228
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): dot held in r10. */
   register Dot3Fn dot asm("r10");
   u32 code[8];
   s32 dx, dy, dz;
@@ -318,11 +317,9 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   s32 t;
   s32 w;
   u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
-  /* FAKEMATCH(pin): divide held in r9; as a plain local, 141 of 228
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): divide held in r9. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
-  /* FAKEMATCH(pin): mul held in r11; as a plain local, 209 of 228
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): mul held in r11. */
   register s32 (*mul)(s32 a, s32 b) asm("r11");
 
   // Copy the dot-product routine to the stack and call it there.

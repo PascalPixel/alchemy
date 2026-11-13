@@ -781,9 +781,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
     wait(1);
     do {
       wait(1);
-      /* FAKEMATCH(volatile): a volatile view of gInput (INPUT), which makes
-       * each of the three tests load the keys afresh; as gInput.pressed &
-       * KEY_A and so on, 76 of 127 instructions differ in tla-en. */
+      /* FAKEMATCH(volatile): a volatile view of gInput (INPUT). */
     } while (!(INPUT->pressed & KEY_A) && !(INPUT->pressed & KEY_B) &&
              !(INPUT->pressed & KEY_START));
     WindowSprite_ClearListFar(window);

@@ -109,10 +109,7 @@ void FieldPsynergy_Pound(void) {
     scene->z = caster->z;
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
   } else if (child->motionFlags & 4) {
-    /* FAKEMATCH(dead): lift cleared under a test of the ground's height, a
-     * store the line after next overwrites, which sends scene to r4 and the
-     * 0x200000 to r0 for the y store; without it, 12 of 639 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
     if (child->terrainHeight == 300)
       lift = 0;
     scene->y = child->terrainHeight;

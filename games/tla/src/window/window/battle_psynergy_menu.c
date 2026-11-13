@@ -128,9 +128,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     u32 t = 0;
 
     y = i * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
-     * and the zero ahead of the stores; without it, 10 of 817 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the row. */
     do {
     } while (0);
     iconSprite = &sprites[i];
@@ -150,8 +148,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
-    /* FAKEMATCH(temporary): iconSprite holds &cursor; as cursor used directly,
-     * 304 of 817 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): iconSprite holds &cursor. */
     iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;

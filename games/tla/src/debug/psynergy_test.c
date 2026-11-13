@@ -196,10 +196,7 @@ void Func_02000224(void) {
 }
 
 static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, so -100 is built
-   * again before each call, as the ROM has it, where a direct call would keep
-   * it in r5 for the next call; as a direct Unit_AddHp call, 10 of 53
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
   Unit_AddHp(owner, delta);
 }
 
@@ -548,10 +545,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
         {
-          /* FAKEMATCH(temporary): the turn is added as a word, so its step
-           * is built inside the loop as in the native; as
-           * object->angle += 0x1000, 22 of 86 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(temporary): the turn is added as a word. */
           s32 angle = object->facing + 0x1000;
 
           object->facing = angle;

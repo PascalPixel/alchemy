@@ -157,8 +157,7 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   result = -1;
   if (character > 7)
     return 0;
-  /* FAKEMATCH(signature): called as a void function, though it returns 0;
-   * as a plain call, 2 of 156 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): called as a void function, though it returns 0. */
   ((void (*)(s32, const u8 *, s32 *))Unit_GetElementLevels)(
       character, (const u8 *)djinn, levels);
   best = result;

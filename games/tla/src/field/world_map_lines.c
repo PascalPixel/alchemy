@@ -88,18 +88,14 @@ void Transform_UpdateVertices(struct Vector3__world_map_lines *eye,
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
     {
-      /* FAKEMATCH(pin): x held in r0 from its shift, which keeps the two
-       * differences in r1 and r4; as a plain local, 15 of 156 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(pin): x held in r0 from its shift. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
       s32 y = depth >> 4;
       /* FAKEMATCH(pin): the target held in ip, where the stub
-       * Transform_CallInThumb reads it; as the plain call through
-       * table->atan2.target, 1 of 156 instructions differ in tla-en. */
+       * Transform_CallInThumb reads it. */
       register void *entry __asm__("ip") = table->atan2.target;
-      /* FAKEMATCH(barrier): an empty asm reading the arguments and the
-       * target, which keeps ip's load alive into the stub's call; without it,
-       * 2 of 156 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the arguments and the target.
+       */
       __asm__("" : : "r"(x), "r"(y), "r"(entry));
       angle = (u16)Transform_CallInThumb(x, y);
     }

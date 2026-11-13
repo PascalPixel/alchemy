@@ -129,9 +129,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     break;
   }
   palette = Resource_GetTableEntry(resource);
-  /* FAKEMATCH(barrier): an empty asm between the picture's table entry and
-     its + 128 copies the entry before the sheet is read; without it, 2 of 818
-     instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm between the picture's table entry and its
+   * + 128 copies the entry before the sheet is read. */
   asm("");
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
@@ -934,8 +933,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             if (target->x < 0) {
               hit = x < 0;
               /* FAKEMATCH(dead): the twin's cancelling updates under a test
-               * that emits nothing; as no updates, 35 of 2278 instructions
-               * differ in tla-en. */
+               * that emits nothing. */
               if (target) {
                 hit ^= x;
                 hit ^= x;
@@ -944,8 +942,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 goto draw_shot;
             } else {
               hit = x >= 0;
-              /* FAKEMATCH(dead): the same for the other side; as no updates,
-               * 28 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(dead): the same for the other side. */
               if (target) {
                 hit ^= x;
                 hit ^= x;
@@ -995,9 +992,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 s32 held;
 
                 for (n = 0, held = 0; n != 1; n++) {
-                  /* FAKEMATCH(barrier): the asm operand keeps held a register
-                   * the loop carries, so it is allocated r2 before n; as no
-                   * asm, 12 of 2278 instructions differ in tla-en. */
+                  /* FAKEMATCH(barrier): the asm operand. */
                   __asm__("" : "+r"(held));
                   PARTICLES[PTCL_STREAKS + j + n].variant = held;
                 }
@@ -1102,8 +1097,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984ec[step],
                              gProjectileVolley_FlashWidths[step],
                              gProjectileVolley_FlashHeights[step]);
-              /* FAKEMATCH(dead): an empty once-only block before the release;
-               * as no block, 68 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(dead): an empty once-only block before the release.
+               */
               do {
               } while (0);
               HeapSlot_Release(188);

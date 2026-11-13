@@ -185,9 +185,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 blue;
 
         red &= entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used, which
-         * keeps blue's (u16) cast as a shift pair; as no green at all, 61 of
-         * 1075 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): green is taken and clamped, then never used. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
 
@@ -554,8 +552,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
-  /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette; as a direct
-   * Iwram_CopyWords, 22 of 468 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette. */
   Swirl_CopyPalette(palette);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
@@ -586,8 +583,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
   transition->active = enabled;
-  /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer;
-   * as a direct draw, 58 of 468 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
+   */
   Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, 128);
   draw(Ram_MapCellBuffer, canvas, 128, 0, 128, 128);
   work->transferPending = enabled;
@@ -658,8 +655,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
-   * frame's outgoing argument word at sp+0; as no call, 18 of 185
-   * instructions differ in tla-en. */
+   * frame's outgoing argument word at sp+0. */
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   BattleEffect_LoadBlitter(104, 3);

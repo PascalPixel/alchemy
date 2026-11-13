@@ -169,9 +169,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     u32 t = 0;
 
     y = i * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
-     * and the zero ahead of the stores; without it, 56 of 790 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the row. */
     do {
     } while (0);
     iconSprite = &sprites[i];
@@ -191,8 +189,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage used
-     * directly, 219 of 790 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage. */
     sprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
@@ -274,8 +271,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds; without
-     * it, 44 of 790 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds. */
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = 0x40000000;
     ((u32 *)sprite)[2] = 0;

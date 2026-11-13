@@ -87,9 +87,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     u32 t = 0;
 
     y = index * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
-     * and the zero ahead of the stores; without it, 6 of 984 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the row. */
     do {
     } while (0);
     sprite = &sprites[index];
@@ -145,17 +143,14 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* FAKEMATCH(temporary): cur holds &cursorStorage; as cursorStorage used
-     * directly, 277 of 984 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): cur holds &cursorStorage. */
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       {
         s32 x = window->x + 1;
-        /* FAKEMATCH(barrier): an empty asm on x, which issues its add after the
-         * other arguments; as x inside the call, 2 of 984 instructions differ
-         * in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on x. */
         asm("" : "=r"(x) : "0"(x));
         Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2,
                              1, 15);

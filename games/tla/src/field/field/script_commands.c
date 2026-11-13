@@ -600,8 +600,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
     } else {
       dx = (x - cameraObject->x) / 0x10000;
       /* FAKEMATCH(dead): this dy, overwritten below, as in The Broken Seal's
-       * twin, which steers register allocation;
-       * without it, 129 of 345 instructions differ in tla-en. */
+       * twin. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
@@ -678,9 +677,7 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
       cameraObject->z = z;
     } else {
       dx = (x - cameraObject->x) / Q16_ONE;
-      /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
-       * in global allocation and keeps it in r5; without it, 54 of 228
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): dy computed and overwritten below. */
       dy = (y - cameraObject->y) / Q16_ONE;
       dz = (z - cameraObject->z) / Q16_ONE;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
@@ -821,13 +818,10 @@ retry:
   return 0;
 found:
   {
-    /* FAKEMATCH(pin): the object moved to r0 before the target's words load;
-     * as a plain local, 2 of 188 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the object moved to r0 before the target's words load. */
     register struct Actor *moved asm("r0") = (struct Actor *)object;
 
-    /* FAKEMATCH(barrier): the empty asm holding the pin above, which keeps the
-     * move ahead of the loads; without it, 2 of 188 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): the empty asm. */
     asm("");
     Actor_SetMoveTarget(moved, pos.x, pos.y, pos.z);
   }

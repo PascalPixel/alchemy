@@ -322,8 +322,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
                 s32 mode = BLIT_MAX;
                 s32 flags = chip->velocityY;
                 /* FAKEMATCH(barrier): an empty asm after the mode and the flags
-                 * are set; without it, 2 of 571 instructions differ in
-                 * tla-en. */
+                 * are set. */
                 __asm__("");
                 BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7, flags,
                                           mode);
@@ -467,8 +466,6 @@ void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 // that form keeps a constant from being carried across the call.
 
 static inline s32 RatioMulQ14(s32 divisor, s32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_RatioMulQ14, 10 of 1676 instructions of BattleEffect_RunThor differ
-   * in tla-en. */
+  /* FAKEMATCH(wrapper): the call through this inline. */
   return Iwram_RatioMulQ14(divisor, value);
 }

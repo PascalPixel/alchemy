@@ -238,9 +238,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
 
   if (GameFlag_Get(0x16c) != 0) {
     battle->twoSided = 1;
-    /* FAKEMATCH(dead): an empty once-only block after the twoSided store, so
-     * battleStart's address is started after it; without it, 4 of 885
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the twoSided store. */
     do {
     } while (0);
     gMainRoutineWork.battleRule24b = 4;
@@ -371,9 +369,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         if (enemyGroup == 80)
           Battle_PlayFormChange(80);
         if (actingUnit <= 7 && battle->defeated == 1) {
-          /* FAKEMATCH(barrier): an empty asm before the defeatState store,
-           * so battle's copy (mov r5, r9) comes before the 3; without it, 2
-           * of 885 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm before the defeatState store. */
           asm("");
           battle->defeatState = 3;
         }

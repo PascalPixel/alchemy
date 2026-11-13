@@ -49,13 +49,10 @@ struct RenderInput *DebugSoundTest_Open(void) {
   work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                                      OUTPUT_SIZE_16X16, window, 0, 0);
   {
-    /* FAKEMATCH(pin): the cursor's address held in r0 for the barrier to
-     * read; as &work->cursor read by the barrier directly, 4 of 39
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the cursor's address held in r0 for the barrier to read.
+     */
     register struct WindowSprite **cursor asm("r0") = &work->cursor;
-    /* FAKEMATCH(barrier): the empty asm reads r0 and rewrites window, so
-     * the window's loads wait for the address copy; as the plain call with
-     * no asm, 4 of 39 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm reads r0 and rewrites window. */
     asm("" : "+r"(window) : "r"(cursor));
     MenuCursor_SetPositionImmediateFar(&work->cursor, ((s16)window->x << 3) - 4,
                                        ((s16)window->y << 3) + 12);
@@ -476,9 +473,7 @@ done:
   Window_Close(window, 2);
   DebugWarp_Release();
   wait(1);
-  /* FAKEMATCH(signature): the handlers are typed as returning s32, which
-   * puts the handler in r0 for the call; as void (*)(void), 4 of 115
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(signature): the handlers are typed as returning s32. */
   if (index != -1)
     gDebugWarp_Presets[index].warp();
   return index;
@@ -581,9 +576,8 @@ UNUSED s32 DebugShortcut_Run(void) {
     if (result != 0) {
       column = (column + columns) % columns;
       row = (row + 9) % 9;
-      /* FAKEMATCH(temporary): the window's x read through a halfword
-       * temporary, which copies the window out of r10 for each field; as
-       * (s16)window->x in place, 23 of 261 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the window's x read through a halfword temporary.
+       */
       left = window->x;
       x = (column * 7 + left) * 8 - 4;
       y = ((s16)window->y << 3) + (row << 4) + 12;

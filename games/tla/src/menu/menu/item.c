@@ -953,8 +953,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->sideIndex[0];
   /* FAKEMATCH(temporary): the first owner's byte offset, taken before the
-   * count; as Unit_Get(ownerIds[selection]) below, 2 of 307 instructions
-   * differ in tla-en. */
+   * count. */
   s32 firstOffset = selection * 2;
   s32 count;
   s32 redraw;
@@ -1183,20 +1182,15 @@ s32 ItemMenu_SelectTarget(s32 mode) {
           } else if (heldCount != 0) {
             Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
             /* FAKEMATCH(dead): an empty once-only block between
-             * `Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);` and
-             * `labelX = IN_STOCK_LABEL_X;`, which keeps their instructions
-             * apart; as plain statements, 2 of 387 instructions differ in
-             * tla-en. */
+             * `Text_DrawNumberInWindowFar(heldCount. */
             do {
             } while (0);
             labelX = IN_STOCK_LABEL_X;
             label = (s32)MsgInStock;
           } else {
             labelX = 16;
-            /* FAKEMATCH(dead): an empty once-only block between `labelX = 16;`
-             * and `label = (s32)MsgNoneInStock;`, which keeps their
-             * instructions apart; as plain statements, 2 of 387 instructions
-             * differ in tla-en. */
+            /* FAKEMATCH(dead): an empty once-only block between `labelX = 16.
+             */
             do {
             } while (0);
             label = (s32)MsgNoneInStock;
@@ -1484,7 +1478,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   case 0:
   case 11:
     /* FAKEMATCH(dead): the test of menu, whose two branches make the same call,
-     * kept; as the one call, 34 of 217 instructions differ in tla-en. */
+     * kept. */
     if (menu)
       StatusPanel_Draw(menu->statusWindow, target, slot, style);
     else
@@ -2780,7 +2774,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   member = menu->paneOwner[1];
   ItemMenu_DrawEquipPreview(member, slot, 0, member);
   /* FAKEMATCH(temporary): the unit size held in size for the allocation and
-   * both copies; as 332 at each, 6 of 179 instructions differ in tla-en. */
+   * both copies. */
   size = 332;
   saved = Heap_Alloc(size);
   Iwram_CopyWordsEntry(saved, unit, size);

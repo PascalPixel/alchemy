@@ -72,9 +72,8 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   u32 start;
 
 #ifdef EFFECT_SPRITE_PRIORITY
-  /* FAKEMATCH(wrapper): the create call forwarded through
-   * Effect_CreateActor; as a direct call, 36 of 219 instructions differ in
-   * tla-en (overlay 663). */
+  /* FAKEMATCH(wrapper): the create call forwarded through Effect_CreateActor.
+   */
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = Effect_CreateActor(options->type, x, y, z);
   else

@@ -35,9 +35,7 @@ void FieldMotes_Start(void) {
   volatile u32 zero;
   volatile u16 *reg;
   struct HeapSlots *slots;
-  /* FAKEMATCH(pin): clear held in r6, which keeps its zero set inside the
-   * loop on every pass and ready for the last blend register; as a plain
-   * local, 4 of 92 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): clear held in r6. */
   register s32 clear asm("r6");
 
   size = sizeof(struct MoteWork__motes);
@@ -58,9 +56,8 @@ void FieldMotes_Start(void) {
   for (; i < 64; i++) {
     struct MapWork *view = slots->mapWork;
     s32 *pos;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
-     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
-     * its own, 18 of 92 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
+     * height's x. */
     u32 p;
     s32 z;
 
@@ -84,10 +81,8 @@ void FieldMotes_Start(void) {
   // ahead of the call's other argument; as a plain block, 4 of 92 instructions
   // differ in tla-en.
   do {
-    /* FAKEMATCH(temporary): the values through v and the registers through
-     * one stepped pointer, which builds each value from a small constant and
-     * steps the address by 2; as REG_BLDCNT, REG_BLDALPHA and REG_BLDY
-     * written directly, 31 of 92 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the values through v and the registers through one
+     * stepped pointer. */
     s32 v;
     v = 0x3f00;
     reg = &REG_BLDCNT;
@@ -112,15 +107,13 @@ void Weather_StartRain(s32 withCue) {
   struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of
-   * work; as a plain local, 8 of 100 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of work.
+   */
   register u32 zero asm("r1");
   u8 *tiles;
   u32 i;
   struct HeapSlots *slots;
-  /* FAKEMATCH(pin): clear held in r6, which keeps its zero set inside the
-   * loop on every pass and ready for the last blend register; as a plain
-   * local, 4 of 100 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): clear held in r6. */
   register s32 clear asm("r6");
 
   zero = 0;
@@ -135,9 +128,8 @@ void Weather_StartRain(s32 withCue) {
   for (; i < 64; i++, particle++) {
     struct MapWork *view = slots->mapWork;
     s32 *focus;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
-     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
-     * its own, 18 of 100 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
+     * height's x. */
     u32 p;
     s32 z;
 
@@ -321,9 +313,7 @@ loop:
   {
     struct MapWork *view = slots->mapWork;
     s32 *leader;
-    /* FAKEMATCH(temporary): one integer cursor for the stores and the x keeps
-     * the leader in r2; as a u32 * cursor and an x of its own, 16 of 79
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): one integer cursor for the stores and the x. */
     u32 attr;
     s32 z;
 

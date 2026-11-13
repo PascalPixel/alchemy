@@ -599,9 +599,7 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
   x = 156;
   z = 208;
   id = ACTOR_LEVEL_EDITOR;
-  /* FAKEMATCH(barrier): x, z and the actor held at an empty asm, so the actor
-   * is set between the halves of the position, as the ROM has it; as no asm,
-   * 2 of 20 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): x, z and the actor held at an empty asm. */
   asm("" : "+l"(x), "+l"(z), "+l"(id));
   Actor_SetHorizontalPositionWithTerrain(id, x << 17, z << 17);
   Event_End();

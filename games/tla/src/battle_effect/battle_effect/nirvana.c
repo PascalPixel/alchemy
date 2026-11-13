@@ -139,9 +139,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
 
 // The pixel half of a 16.16 fixed-point value.
 static inline s16 *Fixed_Halves(s32 *value) {
-  /* FAKEMATCH(wrapper): the halves read through this inline; as the cast ((s16
-   * *)&v)[1], 324 of 374 instructions of BattleEffect_RunStoneJustice differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the halves read through this inline. */
   return (s16 *)value;
 }
 #define HI(v) (Fixed_Halves(&(v))[1])
@@ -555,8 +553,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
               userX = -userX;
             // Gone once it has passed the user on the user's side of x = 0.
             /* FAKEMATCH(dead): each arm stores its test in sameSide, never
-             * read; as user->x < 0 ? mote->x < 0 : mote->x >= 0, 37 of 589
-             * instructions differ in tla-en. */
+             * read. */
             if (moteX >= userX && (user->x < 0 ? (sameSide = mote->x < 0)
                                                : (sameSide = mote->x >= 0)))
               mote->variant = -1;

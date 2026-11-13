@@ -73,9 +73,7 @@ s32 Shop_ChooseMember(void) {
       wait(1);
     }
   }
-  /* FAKEMATCH(barrier): an empty asm clobbering r8 at the loop exit, which
-   * keeps listWindow (live here) out of r8 and leaves it to unitId (dead
-   * here); without it, 24 of 205 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm clobbering r8 at the loop exit. */
   __asm__("" : : : "r8");
   ItemIconGrid_SetVisible(0);
   Menu_ReleaseEntryObjectsFar();

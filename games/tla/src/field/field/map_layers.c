@@ -616,8 +616,7 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   // instructions; as an initializer, 2 of 53 instructions differ in tla-en.
   endMarker = 0xffff;
   /* FAKEMATCH(dead): the updates that cancel out emit nothing but end CSE
-   * before the comparison, keeping its ip copy while source stays in r0;
-   * without them, 5 of 53 instructions differ in tla-en. */
+   * before the comparison. */
   if (copyCommand) {
     sourceX ^= firstSourceCopy;
     sourceX ^= firstSourceCopy;
@@ -638,9 +637,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       copyCommand++;
       wait((u16)delay);
       sourceX = copyCommand->source;
-      /* FAKEMATCH(dead): updates that cancel out between the load and its
-       * copy, so CSE does not swap the load into the copy and source stays in
-       * r0; without them, 8 of 53 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): updates that cancel out between the load and its copy.
+       */
       if (copyCommand) {
         sourceX++;
         sourceX--;
@@ -649,8 +647,7 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
         u32 nextSourceCopy = sourceX;
 
         /* FAKEMATCH(dead): updates that cancel out after the copy end CSE's
-         * knowledge of source, so the comparison keeps its ip copy; without
-         * them, 7 of 53 instructions differ in tla-en. */
+         * knowledge of source. */
         if (copyCommand) {
           sourceX++;
           sourceX--;
@@ -747,10 +744,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         // 110 of 148 instructions differ in tla-en.
         cellPictureId = 0xfff;
         mask = 0x7ff;
-        /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff, which
-         * ranks mask above the destination word in local allocation, so mask
-         * keeps r3, the word r2 and 0xfffff800 r1; without it, 23 of 145
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff. */
         __asm__("" : "+r"(mask));
         cellPictureId = cell & cellPictureId;
         mask &= cell;

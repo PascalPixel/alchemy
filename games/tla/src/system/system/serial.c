@@ -480,9 +480,8 @@ void Serial_StepBlockTransfer(void) {
   u32 id;
   struct SerialTransferState *own;
   u32 gap;
-  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the
-   * pool into r8 at entry; as the constant 1 at both stores, 86 of 268
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the pool
+   * into r8 at entry. */
   struct SerialHalfword one;
 
   id = ~((REG_SIOCNT << 26) >> 30) & 1;

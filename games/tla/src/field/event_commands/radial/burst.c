@@ -198,8 +198,7 @@ void FieldPsynergy_UpdatePound(void) {
   if (work->state == 1) {
     i = 0;
     /* FAKEMATCH(temporary): the phase read through a pointer kept across the
-     * loop, whose address is built ahead of the loop's constants; as
-     * blend->phase, 4 of 302 instructions differ in tla-en. */
+     * loop. */
     phase = &blend->phase;
     // The phase offset built in two steps stays in a register across the loop;
     // as base = 0x90000, 48 of 302 instructions differ in tla-en.

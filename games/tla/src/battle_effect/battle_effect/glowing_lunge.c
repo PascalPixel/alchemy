@@ -288,9 +288,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
 
       Transform_Reset();
       spark = gData_02014000;
-      /* FAKEMATCH(barrier): an empty asm on spark, which ranks it over the
-       * screen pointer; with spark set after the look-at and no asm, 2 of 601
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on spark. */
       __asm__("" : "=r"(spark) : "0"(spark));
       Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != SPARK_COUNT; i++, spark++) {

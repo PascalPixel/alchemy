@@ -208,8 +208,7 @@ s32 DebugBrowser_Portraits(void) {
   for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
   }
   total = count + i;
-  /* FAKEMATCH(dead): a zero from the count keeps the mask in r9 and work in
-   * fp; as cancel = 2, 30 of 180 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a zero from the count. */
   cancel = ((u32)(u16)count >> 16) | 2;
   slotOffset = offsetof(struct WindowWork, outputIds[1]);
   while (1) {

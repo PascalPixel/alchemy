@@ -110,15 +110,11 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
       goto counted;
     }
   }
-  /* FAKEMATCH(dead): a test that sets onObject to 1 when it is nonzero, which
-   * nothing reads after; as no test, 12 of 713 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): a test that sets onObject to 1 when it is nonzero. */
   if (onObject)
     onObject = 1;
   if (gDebugMode != 0 && (gInput.held & 0x200)) {
-    /* FAKEMATCH(dead): a store of the 0 collision already holds, which
-     * cross-jumping folds into clear's; as goto clear, 36 of 713 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): a store of the 0 collision already holds. */
     collision = 0;
     goto counted;
   }
@@ -159,8 +155,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
     angleOffsets[headingCount++] = angle - 0x2000;
     angleOffsets[headingCount++] = angle + 0x3000;
     angleOffsets[headingCount++] = angle - 0x3000;
-    /* FAKEMATCH(dead): a test of headingCount that is never true; as no test,
-     * 183 of 713 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a test of headingCount that is never true. */
     if (headingCount == 0)
       goto clear;
     for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
@@ -772,7 +767,7 @@ counted:
       cells = gMapCellBuffer;
     cells += object->x / 0x100000 + (object->z / 0x100000) * 128;
     /* FAKEMATCH(temporary): the cell attribute read into a local before the
-     * flags; as a read at the test, 4 of 1094 instructions differ in tla-en. */
+     * flags. */
     attribute = cells->attributeB;
     oldFlags = sprite->flags;
     if (attribute & 16) {

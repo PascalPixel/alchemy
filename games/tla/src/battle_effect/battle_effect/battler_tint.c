@@ -38,9 +38,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   REG_DISPCNT = 1;
   gBgScroll__f14cca8[0].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-  /* FAKEMATCH(wrapper): both fills through FillWords_, which sets each call's
-   * own size anew; as direct Iwram_FillWords calls, 43 of 59 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): both fills through FillWords_. */
   FillWords___f14cca8(buffer, 0x4000, 0);
   FillWords___f14cca8((void *)0x06004000, 0x4000, 0);
   wait(1);

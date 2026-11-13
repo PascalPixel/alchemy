@@ -485,16 +485,14 @@ void FieldEffect_StartWindowHBlankDma(void) {
   REG_WININ = in;
   src++;
   /* FAKEMATCH(temporary): WINOUT's value read into out before the register
-   * address is built; as REG_WINOUT = *src, 10 of 68 instructions differ in
-   * tla-en. */
+   * address is built. */
   out = *src;
   REG_WINOUT = out;
   src++;
   REG_WIN0H = *src;
   src++;
   /* FAKEMATCH(temporary): WIN1H's value read into other before the register
-   * address is built; as REG_WIN1H = *src, 8 of 68 instructions differ in
-   * tla-en. */
+   * address is built. */
   other = *src;
   REG_WIN1H = other;
   src++;

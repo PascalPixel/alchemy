@@ -596,8 +596,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     }
     Actor_SetAnimationSpeedFar(object, 0);
     /* FAKEMATCH(temporary): vec holds origin and then base while each is
-     * filled; as origin[...] and base[...], 62 of 7666 instructions differ in
-     * tla-en. */
+     * filled. */
     vec = origin;
     vec[0] = object->x;
     vec[1] = object->y + 0x500000;
@@ -658,8 +657,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         pos[0] = pos[0] / 2;
         drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                           40);
-        /* FAKEMATCH(barrier): an empty asm reading origin keeps it live past
-         * the draw; without it, 287 of 7666 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm reading origin. */
         __asm__("" : : "X"(origin));
       }
       work->unk78e8 = 1;
@@ -1405,13 +1403,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (y > 16)
           y = 16;
         {
-          /* FAKEMATCH(pin): hold, an input of the empty asm below, keeps r2 for
-           * h; as a plain local, 1602 of 7666 instructions differ in tla-en. */
+          /* FAKEMATCH(pin): hold, an input of the empty asm below. */
           register s32 hold __asm__("r2");
           h = 96;
-          /* FAKEMATCH(barrier): an empty asm through h, with hold as an
-           * input, keeps r2 held until h is set; as h = 96 alone, 16 of 7666
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm through h, with hold as an input.
+           */
           __asm__("" : "=r"(h) : "0"(h), "r"(hold));
         }
         if (frame > 7) {
@@ -1424,9 +1420,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               s32 k;
               s32 threshold;
               for (k = 0, threshold = t; k != 69; k++) {
-                /* FAKEMATCH(barrier): an empty asm through threshold keeps it a
-                 * copy of t in a register of its own; without it, 48 of 7666
-                 * instructions differ in tla-en. */
+                /* FAKEMATCH(barrier): an empty asm through threshold. */
                 __asm__("" : "=r"(threshold) : "0"(threshold));
                 if (work->frames[(row & 15) * 69 + k] < threshold)
                   buffer[row * 69 + k] = 0;
@@ -1473,9 +1467,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           // Once-only block: it ends CSE's block before the second draw reads
           // target again, with no scheduling barrier inside the first draw.
           do {
-            /* FAKEMATCH(pin): pinned, set to 56 among the first draw's
-             * arguments, takes r3 while they are evaluated; as a plain 56, 2 of
-             * 7666 instructions differ in tla-en. */
+            /* FAKEMATCH(pin): a 56 pinned to r3 for the first draw. */
             register s32 pinned __asm__("r3");
             HeapSlot_Release(104);
             BattleEffect_LoadBlitter(104, 3);
@@ -2210,8 +2202,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 scale;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        /* FAKEMATCH(temporary): tex holds &texture132; as texture132.width and
-         * so on, 106 of 7666 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): tex holds &texture132. */
         tex = &texture132;
         tex->width = 6;
         tex->height = 6;

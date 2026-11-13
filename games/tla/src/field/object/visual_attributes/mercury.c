@@ -344,9 +344,7 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
     slot->second = other;
     slot->priority = priority;
     lift = 128;
-    /* FAKEMATCH(barrier): an empty asm on lift keeps its 128 built after the
-     * priority's store and ahead of the coordinates' loads; without it, 10
-     * of 75 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on lift. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
     Rope_LayTied(index, first->x, first->y + lift, first->z, second->x,

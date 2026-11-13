@@ -438,8 +438,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       {
         u32 hidden;
         /* FAKEMATCH(temporary): the mask held in a halfword struct set in the
-         * for clause; as a literal 0xf000, 4 of 4354 instructions differ in
-         * tla-en. */
+         * for clause. */
         struct {
           u16 value;
         } mask;
@@ -865,7 +864,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           u8 *low = REVEAL_BUFFER;
           u8 *high = REVEAL_BUFFER + 1;
           /* FAKEMATCH(temporary): orderCopy, a copy of order set again in the
-           * loop; as order itself, 20 of 4354 instructions differ in tla-en. */
+           * loop. */
           u8 *orderCopy = order;
 
           for (i = 0; i != 64; i++) {
@@ -1313,9 +1312,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Transform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList(model);
-        /* FAKEMATCH(dead): twice raised to frame though nothing reads it again;
-         * flow deletes the store and its test; as no test, 290 of 4354
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): twice raised to frame though nothing reads it again.
+         */
         if (frame > twice) {
           twice = frame;
         }
@@ -1663,9 +1661,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (member->timer == 2 || member->timer == 7) {
           BattleEffect_TintBattler(arg->actors[i], 7, 5, i, 32);
         }
-        /* FAKEMATCH(dead): landed set to 2 though nothing reads it again; flow
-         * deletes the store and its test; as no test, 402 of 4354 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(dead): landed set to 2 though nothing reads it again. */
         if (actor == 0) {
           landed = 2;
         }

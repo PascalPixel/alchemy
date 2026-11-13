@@ -348,8 +348,7 @@ void Credits_DrawEnteringCrawlLine(void) {
 /// adds Credits_UpdateCrawlSprites and Credits_DrawEnteringCrawlLine, as The
 /// Broken Seal's Credits_InitTextSprites starts its credits.
 void Credits_InitCrawlSprites(void) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 152
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   u32 *entry;
   u32 i;
@@ -535,8 +534,7 @@ void Credits_DrawEnteringLine(void) {
 /// Credits_UpdateTextSprites and Credits_DrawEnteringLine to the task table and
 /// draws the first 32 lines blank.
 void Credits_InitTextSpritesAtPage(s32 page) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 178
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   s32 marks;
   u32 *entry;
@@ -661,8 +659,7 @@ s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
   u32 bits;
   u32 mask;
   /* FAKEMATCH(dead): an unused array for the stack frame's 32 bytes no
-   * instruction touches; as no array, 4 of 279 instructions differ in tla-en.
-   */
+   * instruction touches. */
   u32 unused[8];
 
   if (text == NULL)
@@ -821,8 +818,7 @@ void EndingPicture_Scroll(void) {
     gEndingPicture_Row += d;
   }
   {
-    /* FAKEMATCH(temporary): the form kept; as scroll = gEndingPicture_Scroll, 6
-     * of 212 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the scroll read through a word pointer. */
     s32 *word = (s32 *)&gEndingPicture_Scroll;
     s32 target = gEndingPicture_Row << 16;
 
@@ -937,8 +933,7 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 /// The size is a linker symbol (the pool holds 0x234 where movs and a shift
 /// would do).
 void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile, so its address stays in a
-   * register; as a plain u32, 10 of 209 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 cell;
   u32 word;
   u32 fill = 0;
@@ -1016,9 +1011,7 @@ void EndingPicture_InitStrips(void) {
   s32 tile;
   u32 i;
 
-  /* FAKEMATCH(temporary): the allocation kept in entries; as
-   * gEndingPicture_Strips = Heap_AllocEwram(0x120), 1 of 82
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the allocation kept in entries. */
   entries = Heap_AllocEwram(0x120);
   gEndingPicture_Strips = entries;
   tile = VramCache_Load(slot, 0x200, 0);

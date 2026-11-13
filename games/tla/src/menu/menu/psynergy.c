@@ -158,9 +158,8 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 its
-       * own register, as The Broken Seal's twin; as if (chosen == -1) setting
-       * done and useResult, 12 of 344 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 its own
+       * register. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {
@@ -182,10 +181,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         {
           struct PsynergyMenuState *savedWork = menu;
 
-          /* FAKEMATCH(dead): menu cleared and restored under a false test, so
-           * the mode's offset is built from its own constant, as The Broken
-           * Seal's twin; without the two tests, 45 of 344 instructions differ
-           * in tla-en. */
+          /* FAKEMATCH(dead): menu cleared and restored under a false test. */
           if (done)
             menu = NULL;
           if (done)
@@ -283,10 +279,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         void *window;
         s32 target = menu->memberIds[1];
 
-        /* FAKEMATCH(temporary): the target read before the window, as the
-         * native orders the call's arguments; as StatusPanel_Draw(menu->
-         * statusWindow, menu->memberIds[1], 0, 0), 2 of 344 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the target read before the window. */
         window = menu->statusWindow;
         StatusPanel_Draw(window, target, 0, 0);
         {
@@ -344,8 +337,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct BattleAct *psynergy;
   s32 diff;
   s32 ret;
-  /* FAKEMATCH(pin): the action fixed to r3; as a plain local, 8 of 34
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the action fixed to r3. */
   register u32 action asm("r3");
 
   menu = Ram_HeapSlots->menuRuntime;
@@ -1186,8 +1178,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
             Text_DrawMessageAsTilesFar(MsgShortcutHelp, window, 0, 88);
           }
         }
-        /* FAKEMATCH(volatile): held read afresh for this test; as plain
-         * gInput.held, 85 of 762 instructions differ in tla-en. */
+        /* FAKEMATCH(volatile): held read afresh for this test. */
         if ((*(volatile u32 *)&gInput.held & 4) == 0 && shortcutHelp == 1) {
           shortcutHelp = 0;
           menu->flags &= ~2;

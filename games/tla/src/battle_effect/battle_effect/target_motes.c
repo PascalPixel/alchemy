@@ -171,8 +171,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           const u8 *w;
 
           /* FAKEMATCH(temporary): w and h set inside statement expressions at
-           * their first reads; as (w = gData_08197492)[frame & 3] and its twin
-           * for h, 4 of 755 instructions differ in tla-en. */
+           * their first reads. */
           angle = Random16() & 0xffff;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
@@ -182,8 +181,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                })[frame & 3] >>
                1);
           /* FAKEMATCH(barrier): an empty asm through w hides that it holds the
-           * width table's address, so the draw reads through w's register;
-           * without it, 233 of 755 instructions differ in tla-en. */
+           * width table's address. */
           __asm__("" : "=r"(w) : "0"(w));
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
               (({
@@ -191,9 +189,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                  h;
                })[frame & 3] >>
                1);
-          /* FAKEMATCH(barrier): an empty asm through h, the same for the
-           * height table; without it, 331 of 755 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(barrier): an empty asm through h, the same for the height
+           * table. */
           __asm__("" : "=r"(h) : "0"(h));
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
                                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |

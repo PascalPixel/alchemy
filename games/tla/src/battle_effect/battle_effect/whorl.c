@@ -268,9 +268,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           pos[1] = pos[1] + (frame << 18) - 0x700000;
         }
         {
-          /* FAKEMATCH(temporary): out stands in for screen's address, so
-           * point's address stays out of r5 and k gets it; as screen, 18 of
-           * 1748 instructions differ in tla-en. */
+          /* FAKEMATCH(temporary): out stands in for screen's address. */
           s32 *out = screen;
 
           pos[2] = point[2];

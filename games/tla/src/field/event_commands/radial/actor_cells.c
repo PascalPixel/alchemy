@@ -132,10 +132,8 @@ void Actor_PlaceMovedBlock(void) {
 
   if (target != NULL) {
     struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
-    /* FAKEMATCH(temporary): the cell table read split into its byte offset
-     * and the read, with the grid's address read between them; as
-     * cells = map->layers[target->terrainId].cells, 35 of 84 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(temporary): the cell table read split into its byte offset and
+     * the read. */
     s32 offset = offsetof(struct RestoreMap, layers[target->terrainId].cells);
     u8 *grid = gMapShapeGrid;
     struct SwitchCell__f0eabd0 *cells =
@@ -150,14 +148,11 @@ void Actor_PlaceMovedBlock(void) {
     u8 flags;
 
     /* FAKEMATCH(barrier): an empty asm on the grid index that claims to read
-     * blocks, giving layer 2's table load a fourth dependent, so sched2 takes
-     * it before the grid's pool load; without it, 2 of 84 instructions differ
-     * in tla-en. */
+     * blocks. */
     asm("" : "+l"(index) : "l"(blocks));
     shapes = &grid[index];
     key = MapGrid_GetTerrainKindFar(target->terrainId, target->x, target->z);
-    /* FAKEMATCH(wrapper): x read through ActorX for the height call; as
-     * target->x, 12 of 84 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): x read through ActorX for the height call. */
     level = MapGrid_GetTerrainHeightFar(target->terrainId, ActorX(target),
                                         target->z);
     slot = Actor_GetCellIndex(target);

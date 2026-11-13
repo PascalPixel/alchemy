@@ -1670,8 +1670,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t = COLOR_RED(s);
         s32 sr;
 
-        /* FAKEMATCH(barrier): t held apart from s through an empty asm; as sr =
-         * COLOR_RED(s) + tr, 31 of 2781 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): t held apart from s through an empty asm. */
         __asm__("" : "=r"(t) : "0"(t));
         sr = t + tr;
         if (cb < sb - 1) {
@@ -1726,8 +1725,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t;
 
         s = *e;
-        /* FAKEMATCH(temporary): red through a temporary set twice; as r =
-         * COLOR_RED(s) + d, 79 of 2781 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): red through a temporary set twice. */
         t = 31;
         t &= s;
         r = t + d;

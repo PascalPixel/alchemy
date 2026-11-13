@@ -404,8 +404,6 @@ extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
   }
 
 /// Runs a game of Super Lucky Dice.
-/// ★ Named from the game: "Super Lucky Dice\nThe Rules of the Game."
-/// (MsgContigo25)
 void SuperLuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spinRate[4];

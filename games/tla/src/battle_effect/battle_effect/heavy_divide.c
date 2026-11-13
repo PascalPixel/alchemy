@@ -745,9 +745,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->kind = 7;
     model->mesh = Data_08199244;
     splash = 25000;
-    /* FAKEMATCH(barrier): an empty asm through splash hides its constant, so it
-     * stays in a register through the loop; without it, 137 of 568
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm through splash hides its constant. */
     asm("" : "+r"(splash));
     // The loop is written with goto: as for (i = 0; i != 6; i++, drop++),
     // loop.c hoists the halving of splash out of it, and 150 of 568
@@ -1044,9 +1042,8 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   {
-    /* FAKEMATCH(temporary): x computed before the register's address is built;
-     * as REG_BG2X = (64 - position.x) << 8, 10 of 376 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(temporary): x computed before the register's address is built.
+     */
     s32 x = 64 - position.x;
 
     REG_BG2X = x << 8;
@@ -1135,8 +1132,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
       streak->x = x;
       streak->y += streak->velocityY;
       if (streak->y >> 16 > 48) {
-        /* FAKEMATCH(temporary): landing set to the buffer, then advanced; as
-         * &PARTICLES[i], 162 of 376 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): landing set to the buffer, then advanced. */
         struct EffectStep *landing = PARTICLES;
 
         landing += i;
@@ -1159,9 +1155,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   // Clear the canvas and its characters and hand the layer over.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
-  /* FAKEMATCH(barrier): an empty asm that keeps the clear routine's load
-   * after HeapSlot_Release; without it, 2 of 376 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(barrier): an empty asm. */
   __asm__("");
   Iwram_ClearWordsEntry((void *)0x06004000, size);
   Iwram_ClearWordsEntry(canvas, size);

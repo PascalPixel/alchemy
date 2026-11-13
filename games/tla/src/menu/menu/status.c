@@ -65,9 +65,7 @@ s32 PartyMemberChooser_Run(void) {
       (struct MenuRuntimeSelect *)Ram_HeapSlots->menuRuntime;
   s32 result = 0;
 
-  /* FAKEMATCH(dead): the cursor store in a once-only block, which keeps it in
-   * source order, as in The Broken Seal's CharacterSelector_Run; as the plain
-   * statement, 2 of 24 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the cursor store in a once-only block. */
   do {
     work->selectedSlots[0] = result;
   } while (0);

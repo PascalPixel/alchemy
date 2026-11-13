@@ -275,9 +275,7 @@ void FieldPsynergy_Cyclone(void) {
     do {
     } while (0);
     *palette++ = (c << 5) | blue | c;
-    /* FAKEMATCH(barrier): an empty asm that ends the loop's body, which keeps
-     * the counters' updates after the colour's store; without it, 4 of 713
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     asm("");
   }
   BattleEffect_StartCanvasSprite();
@@ -361,9 +359,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
     Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
-       * 999's copy to r8 ahead of the state's address; without it, 2 of 713
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
       asm("");
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
@@ -395,9 +391,7 @@ void FieldPsynergy_Cyclone(void) {
     Task_Add(Cyclone_CarryLeader, 0x480);
     frame = 0;
     while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
-       * 999's copy to r8 ahead of the state's address; without it, 2 of 713
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
       asm("");
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();

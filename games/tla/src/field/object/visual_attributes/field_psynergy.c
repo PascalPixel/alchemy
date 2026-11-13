@@ -406,9 +406,7 @@ void FieldPsynergy_FadeToCastColor(void) {
 
   tint = gFrameCount & 7;
   raw = *(u16 *)&scene->fieldKind;
-  /* FAKEMATCH(barrier): raw passed through an empty asm, which keeps the
-   * animation's signed read (ldrsh) apart from raw's unsigned one (ldrh);
-   * without it, 7 of 102 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): raw passed through an empty asm. */
   asm("" : "+r"(raw));
   animation = scene->fieldKind;
   if (animation == 18)

@@ -537,9 +537,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         mp = (u8 *)(v + (s32)map);
         do {
           v = ((u8 *)work)[gBattleEffect_MoteCells[n] + i + off];
-          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load;
-           * as w = 32 at its declaration before the loops, 56 of 3921
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load.
+           */
           w = 32;
           if (v != 0) {
             v = v - j * 4 - 40;
@@ -590,8 +589,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       } while (0);
       obj->priority = 3;
       /* FAKEMATCH(barrier): an asm operand cuts i, known 21, from the copy's
-       * source; as DECODE_BUFFER + i * 0x400 with no asm, 2 of 3921
-       * instructions differ in tla-en. */
+       * source. */
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_CopyWords(
           (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
@@ -606,9 +604,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Iwram_CopyWords(
           (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
           DECODE_BUFFER, 0x100);
-      /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's
-       * hoisted constants; as no asm, 6 of 3921 instructions differ in tla-en.
-       */
+      /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] =
@@ -1402,9 +1398,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         i = 0;
         radius = 0;
         for (; i != 16; i++) {
-          /* FAKEMATCH(dead): a store nothing reads; its test reloads work
-           * once before z is read; without it, 53 of 3921 instructions differ
-           * in tla-en. */
+          /* FAKEMATCH(dead): a store nothing reads. */
           if (work == NULL)
             k = 0;
           p = &work->particles[i];
@@ -1767,8 +1761,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       struct EffectStep *ring;
       u8 *cells;
 
-      /* FAKEMATCH(temporary): the disc's x copied into the loop counter i;
-       * as discX passed directly, 10 of 575 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the disc's x copied into the loop counter i. */
       i = discX;
       size = 128;
       // cells holds the cell buffer, set again before each call; as

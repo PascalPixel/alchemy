@@ -707,10 +707,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
   work = ROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the node
-   * pointer, the best distance, the count and the IWRAM entry) after the
-   * workspace test, where if-conversion would hoist it; without it, 29 of 85
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm. */
   asm("");
   node = work->nodes;
   best = 0x10000000;
@@ -814,10 +811,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
   work = TIGHTROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the node
-   * pointer, the best distance, the count and the IWRAM entry) after the
-   * workspace test, where if-conversion would hoist it; without it, 29 of 84
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm. */
   asm("");
   node = work->nodes;
   best = 0x10000000;

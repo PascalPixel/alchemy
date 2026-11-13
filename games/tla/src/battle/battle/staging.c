@@ -42,7 +42,6 @@ void Battle_TurnStartNoOp(void) {}
 /// The plan of an extra action queued for the turn's end (command 10): ability
 /// 403, Daedalus, from a random unit of the queuing side against every unit
 /// of the other, staged as a summon (0x8000 | 26).
-/// ★ Named from the game: "Daedalus" (MsgAbilityName + 403)
 void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
@@ -82,7 +81,6 @@ void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
 
 /// The plan of command 12: ability 103, High Impact, from the acting unit
 /// on every living unit of its own side.
-/// ★ Named from the game: "High Impact" (MsgAbilityName + 103)
 void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
@@ -106,7 +104,6 @@ void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
 
 /// The plan of command 13: ability 298, Aurora Field, over the acting unit's
 /// whole side, reserves included for the party.
-/// ★ Named from the game: "Aurora Field" (MsgAbilityName + 298)
 void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
@@ -201,9 +198,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   if (request->command == 10) {
     BattleStaging_PlanDaedalus((u16 *)request,
                                (struct ActionTargets *)&battle->plan);
-    /* FAKEMATCH(dead): an empty once-only block after the call, so the plan's
-     * address is finished before request is copied to r0; without it, 2 of 421
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the call. */
     do {
     } while (0);
     result = 0;

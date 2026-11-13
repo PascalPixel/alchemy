@@ -171,10 +171,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     bestDistance = 0x10000000;
     if (rope == NULL) {
       collisionFlags = 1;
-      /* FAKEMATCH(dead): the event work slot copied onto itself, a second
-       * store in the null branch that keeps the loop count from being lifted
-       * above the null test; without it, 21 of 300 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): the event work slot copied onto itself. */
       Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
       goto done;
     }
@@ -304,10 +301,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     bestDistance = 0x10000000;
     if (tightrope == NULL) {
       collisionFlags = 1;
-      /* FAKEMATCH(dead): the event work slot copied onto itself, a second
-       * store in the null branch that keeps the loop count from being lifted
-       * above the null test; without it, 29 of 324 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): the event work slot copied onto itself. */
       Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
     } else {
       for (count = 0; count < 128; count++, point++) {
@@ -338,9 +332,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
             slot->amplitude = 0x20000;
           object->watchedObject = (struct Actor *)best;
         }
-        /* FAKEMATCH(dead): position.x copied onto itself before the copies, a
-         * store that stops GCSE carrying the compare's x load past the pair
-         * block; without it, 45 of 324 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): position.x copied onto itself before the copies. */
         position.x = position.x;
         position.x = best->x;
         position.y = best->y;
@@ -407,9 +399,8 @@ void Sand_JitterGrain(struct Actor *object) {
 /// flag 0x146 is clear.
 s32 Sand_CheckEndKeys(s32 arg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is
-   * returned in, so the argument moves to r6; as a plain local, which takes r6
-   * itself, 14 of 61 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is returned
+   * in. */
   register s32 pressed asm("r0") = 0;
 
   if (work == NULL)

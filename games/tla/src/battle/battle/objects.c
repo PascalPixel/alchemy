@@ -353,8 +353,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != 255) {
     for (;;) {
-      /* FAKEMATCH(pin): slot held in r5; as a plain local, 27 of 273
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(pin): slot held in r5. */
       register struct BattleObj *slot asm("r5");
 
       object = 0;

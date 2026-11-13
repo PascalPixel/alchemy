@@ -257,9 +257,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     REG_DISPCNT = 1;
     {
       u32 v = 0x33333333;
-      /* FAKEMATCH(barrier): an empty asm on v, so the fill's value loads after
-       * its size; as Iwram_FillWords((void *)0x06005000, 32, 0x33333333), 2
-       * of 490 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on v. */
       __asm__("" : "=r"(v) : "0"(v));
       Iwram_FillWordsEntry((void *)0x06005000, 32, v);
     }

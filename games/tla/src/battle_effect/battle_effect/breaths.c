@@ -618,10 +618,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
     if (effect->side != 0)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
   }
-  /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing; its
-   * return-register clobber issues in the mode store's second cycle, so the
-   * flags move is picked before r1 and r2; as a void function, or without the
-   * call, 2 of 303 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
   Nothing();
   BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];

@@ -64,9 +64,7 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
     slot->second = secondId;
     slot->priority = priority;
     lift = 128;
-    /* FAKEMATCH(barrier): an empty asm on lift keeps its 128 built after the
-     * priority's store and ahead of the coordinates' loads; without it, 10 of
-     * 69 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on lift. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
     Rope_LayCoil(index, first->x, first->y + lift, first->z, second->x,
@@ -326,9 +324,8 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
-       * which copies it for the compare ahead of the store; without it, 2 of
-       * 225 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
+       */
       asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
@@ -856,9 +853,8 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
-       * which copies it for the compare ahead of the store; without it, 2 of
-       * 319 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
+       */
       asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
@@ -956,9 +952,8 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
     i = count + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
-       * which copies it for the compare ahead of the store; without it, 2 of
-       * 259 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
+       */
       asm("" : : "l"(i));
       *entry++ = node;
       node = node->next;
@@ -1081,9 +1076,7 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
     Decompress_TaggedLz(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
     Decompress_TaggedLz(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
-    /* FAKEMATCH(barrier): an empty asm closing the arm keeps each decode's
-     * destination set before its source loads; without it, 4 of 95
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm closing the arm. */
     asm("");
   }
   {
@@ -1239,9 +1232,7 @@ struct HangingVineSlot *HangingVine_FindFreeSlot(void) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
   s32 index;
-  /* FAKEMATCH(dead): index set to 0 before the loop sets it again, so its
-   * zero is copied from found's register (adds r1, r0, #0); without it, 2 of
-   * 26 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
   index = 0;
 
   for (index = 0; index <= 7; index++) {
@@ -1259,9 +1250,7 @@ struct HangingVineSlot *HangingVine_FindSlot(s32 id) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
   s32 index;
-  /* FAKEMATCH(dead): index set to 0 before the loop sets it again, so its
-   * zero is copied from found's register (adds r1, r5, #0); without it, 2 of
-   * 27 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
   index = 0;
 
   for (index = 0; index <= 7; index++) {

@@ -12,7 +12,6 @@
 /// Runs the forge: the smith's line, then a party member's materials to
 /// forge, until the player leaves. `objectId` is the actor whose portrait the
 /// messages show. Called through the far-call table; returns 0.
-/// ★ Named from the game: "Sunshine's smithy" (message 4879)
 s32 Forge_Run(s32 objectId) {
   struct ShopRuntime *shop;
   struct WindowSprite *icon;
@@ -63,8 +62,7 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
   u32 raw = unit->inventory[slot];
   s32 item;
   s32 chance;
-  /* FAKEMATCH(pin): result held in r8; as a plain local, 16 of 78
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): result held in r8. */
   register s32 result asm("r8");
 
   item = 0x1ff;

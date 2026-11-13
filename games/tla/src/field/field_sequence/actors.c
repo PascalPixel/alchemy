@@ -237,9 +237,7 @@ void Actor_ResetForLeader(s32 table) {
     gMainRoutineWork.renderMode = 6;
   } else {
     gMainRoutineWork.renderMode = 0;
-    /* FAKEMATCH(barrier): an empty asm after the store keeps the terrain id's
-     * load and the heap slots' address after it; without it, 6 of 292
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapWork->layers[object->terrainId].cells +
            ((object->x / 0x100000) + ((object->z / 0x100000) << 7));

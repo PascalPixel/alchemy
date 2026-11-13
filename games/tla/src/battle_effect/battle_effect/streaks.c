@@ -80,10 +80,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   s32 lift = 20 << 16;
 
   heap = Ram_HeapSlots;
-  /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the
-   * heap slots' fixed address, so later reads go through its register, not
-   * the address built again; without it, 16 of 580 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
+   * slots' fixed address. */
   __asm__("" : "=r"(heap) : "0"(heap));
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];

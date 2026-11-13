@@ -241,9 +241,7 @@ void SpriteAnimation_Reset(struct AnimationEntry *work) {
       z = 0;
       work->kind = info->drawKind;
       work->script = (u8 *)z;
-      /* FAKEMATCH(dead): an empty once-only block keeps the kind's store and
-       * the script's clear ahead of the lists' stores; without it, 6 of 30
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block. */
       do {
       } while (0);
       animation = info->animation;
@@ -684,9 +682,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
   *attribute++ = 0x6000;
   *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
   if (ResourceMetadata_Register(sprite, id) == -1) {
-    /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 built after
-     * the call and never used; with the call alone, 20 of 154 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;
   }
   return (struct ResourceObject *)freeSprite;

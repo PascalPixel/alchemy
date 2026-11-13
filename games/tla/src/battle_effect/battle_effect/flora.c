@@ -151,9 +151,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
   (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
 
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
-  /* FAKEMATCH(wrapper): the sheet's address through this inline; as
-   * work->sheet at the call, 56 of 2583 instructions of BattleEffect_RunFlora
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): the sheet's address through this inline. */
   return owner->sheet;
 }
 
@@ -831,8 +829,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x80;
   {
-    /* FAKEMATCH(pin): e kept in r6; as a plain u8 *, 61 of 2583 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(pin): e kept in r6. */
     register u8 *e asm("r6") =
         Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
     s32 row;
@@ -844,8 +841,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 t;
     u8 *sheet;
     s32 hi;
-    /* FAKEMATCH(pin): c kept in r1; as a plain u32, 641 of 2583 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(pin): c kept in r1. */
     register u32 c asm("r1");
 
     Iwram_CopyWordsEntry((void *)BG_PLTT, e, 32);

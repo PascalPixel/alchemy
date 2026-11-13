@@ -133,7 +133,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 /// Meteor Blow.
-/// ★ Named from the game: "Meteor Blow" (message 02130)
 void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -576,17 +575,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       i = 0;
       half = (hx / 2) << 16;
       /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
-       * here, so GCSE does not carry its sign on to the hoop's hx / 2;
-       * without them, 392 of 1556 instructions differ in tla-en. */
+       * here. */
       hx++;
       hx--;
       for (; i != count; i++, p++) {
         s32 r;
         s32 a;
 
-        /* FAKEMATCH(dead): updates of count, the shard count and the radius's
-         * base, that cancel out and keep GCSE from folding 256 into the radius
-         * add; without them, 74 of 1556 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): updates of count. */
         count++;
         count--;
         r = (Random16() & 511) + count;

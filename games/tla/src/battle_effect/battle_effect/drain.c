@@ -63,9 +63,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
     struct EffectPosition *position;
 
     offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
-    /* FAKEMATCH(temporary): position holds &screen; as
-     * EffectPosition_ProjectPoint(point, &screen), 12 of 337 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(temporary): position holds &screen. */
     position = &screen;
     object = BattleObject_GetFar(effect->actors[member])->object;
     height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;

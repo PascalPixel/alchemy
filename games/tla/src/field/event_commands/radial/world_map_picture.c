@@ -465,10 +465,8 @@ void WorldPicture_UpdateMarkers(void) {
     if (cursorY < 0)
       cursorY = 0;
     width = cursorX - NAME_BOX_X;
-    /* FAKEMATCH(temporary): the name box's y read through a pointer to a
-       struct with an s32 member standing in for its own address, so its
-       load may alias width's store to the stack and stays after it; as
-       NAME_BOX_Y, 10 of 1044 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the name box's y read through a pointer to a struct
+     * with an s32 member standing in for its own address. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
     WindowSpriteList_Move(work->window, width, height);
     NAME_BOX_X = cursorX;
@@ -545,8 +543,7 @@ void WorldMapPicture_Draw(void) {
   for (row = 0; row <= 20; row++) {
     bufferRow = firstRow + row;
     unwrapped = bufferRow;
-    /* FAKEMATCH(barrier): an empty asm reading x, which keeps it live over the
-       row's start; without it, 118 of 149 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm reading x. */
     asm("" : : "r"(x));
     if (bufferRow > 23)
       bufferRow -= 24;
@@ -565,9 +562,8 @@ void WorldMapPicture_Draw(void) {
       to = 0x06000000;
       x <<= 6;
       x += (s32)buffer;
-      /* FAKEMATCH(barrier): VRAM's address through an empty asm that also
-         reads i, which builds it once in r7 ahead of the loop; without it, 10
-         of 149 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): VRAM's address through an empty asm that also reads
+       * i. */
       asm("" : "=r"(to) : "0"(to), "r"(i));
       for (; i <= 30; i++) {
         Dma_Set((void *)x, (void *)((tile << 6) + to), 0x84000010,
@@ -630,9 +626,7 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
 }
 
 static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
-  /* FAKEMATCH(wrapper): the column added through an inline, so the sum
-   * keeps the column as its first operand; as column + cell, 2 of 51
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the column added through an inline. */
   return column + cell;
 }
 

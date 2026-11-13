@@ -684,10 +684,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 
         if (distance < 0)
           distance = divider - i;
-        /* FAKEMATCH(barrier): an empty asm that, with the one below, keeps
-         * side's 1 and counts' address inside the loop instead of hoisted
-         * into r8 and ip; without it, 32 of 67 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(barrier): an empty asm that, with the one below. */
         __asm__("");
         if (slot - divider >= 0) {
           if (distance >= slot - divider)
@@ -697,9 +694,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
         }
       }
       slot = i;
-      /* FAKEMATCH(barrier): the second empty asm keeping the loop's 1 and
-       * counts' address inside it; without it, 32 of 67 instructions differ
-       * in tla-en. */
+      /* FAKEMATCH(barrier): the second empty asm. */
       __asm__("");
     next:;
     } else {
@@ -1581,8 +1576,7 @@ power_end:
       u16 *pt;
 
       /* FAKEMATCH(temporary): a pointer walked down from hp to maxHp reads each
-       * stat twice, unsigned and signed; as reads of target->hp and
-       * target->maxHp, 94 of 3451 instructions differ in tla-en. */
+       * stat twice. */
       pt = (u16 *)&target->hp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
@@ -1601,9 +1595,7 @@ power_end:
       } else if (action->effect == 70) {
         maxu = (u16)target->maxHp;
         heal += (s16)maxu / 2;
-        /* FAKEMATCH(barrier): an empty asm on maxu, so the clamp shifts maxu
-         * left by 16 again instead of sharing this halving's shift; without
-         * it, 45 of 3451 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on maxu. */
         asm("" : "+r"(maxu));
       } else {
         pt--;
@@ -1643,8 +1635,7 @@ power_end:
       u16 *pt;
 
       /* FAKEMATCH(temporary): a pointer walked down from pp to maxPp reads each
-       * stat twice, unsigned and signed; as reads of target->pp and
-       * target->maxPp, 255 of 3451 instructions differ in tla-en. */
+       * stat twice. */
       pt = (u16 *)&target->pp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
@@ -1920,9 +1911,7 @@ power_end:
     case 60:
       ap = dealt;
       dmg = actor->hp;
-      /* FAKEMATCH(barrier): an empty asm on dmg, so its copy comes before
-       * dealt is reloaded from the stack; without it, 2 of 3451 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on dmg. */
       __asm__("" : "=r"(dmg) : "0"(dmg));
       if (action->effect == 60)
         ap /= 2;

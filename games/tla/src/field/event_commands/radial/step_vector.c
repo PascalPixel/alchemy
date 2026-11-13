@@ -196,9 +196,7 @@ void BattleEffect_UploadCanvas(void) {
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
     {
       s32 size = 128;
-      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in, so its
-       * copy there comes before the size's shift; as a plain u8 *buffer, 2
-       * of 98 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in. */
       register u8 *buffer asm("r0");
       s32 (*fill)(void *, s32, u32);
 
@@ -437,9 +435,7 @@ void Actor_VanishInSparks(s32 objectId) {
     for (; i >= 0; i--, sprite++, spark++) {
       if (spark->age >= 0) {
         struct EffectSprite *drawn = sprite;
-        /* FAKEMATCH(barrier): sprite copied to drawn through an empty asm,
-           which keeps the two in registers of their own; as sprite itself (or
-           the plain copy), 83 of 325 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): sprite copied to drawn through an empty asm. */
         asm("" : "=r"(drawn) : "0"(drawn));
 
         if ((u32)spark->age < SPARK_LIFE) {

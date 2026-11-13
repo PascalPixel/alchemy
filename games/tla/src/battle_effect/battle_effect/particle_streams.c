@@ -821,9 +821,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BG2PA = 0x100;
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
-  /* FAKEMATCH(temporary): mode tested through its copy in direction, so CSE
-   * keeps the mode reload in this arm; as if (mode == 1), 2 of 1591
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): mode tested through its copy in direction. */
   direction = mode;
   if (direction == 1) {
     struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
@@ -949,8 +947,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 transferMode = 3;
 
     /* FAKEMATCH(temporary): the transfer mode's 3 set in transferMode before
-     * the blitter build, so it stays in r6 across the call; as
-     * work->transferMode = 3, 16 of 1591 instructions differ in tla-en. */
+     * the blitter build. */
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     BattleEffect_BuildBlitter(HEAP_BLITTER, 8, 7,
@@ -975,13 +972,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(temporary): the division written out on a copy of count,
-       * which it tests and biases; as heat = count / 4, 4 of 1591 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(temporary): the division written out on a copy of count. */
       dividend = count;
-      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count,
-       * so the test reads the copy; without them, 4 of 1591 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count.
+       */
       if (base) {
         count++;
         count--;
@@ -990,8 +984,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         dividend += 3;
       heat = dividend >> 2;
       /* FAKEMATCH(barrier): count and base through an empty asm clobbering r1
-       * and r3, so count keeps r2 and base takes r0; without it, 67 of 1591
-       * instructions differ in tla-en. */
+       * and r3. */
       asm("" : "=r"(base) : "0"(base), "r"(count) : "r1", "r3");
       line = HEAT_LINES(base);
 
@@ -1006,17 +999,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         s32 hold;
 
         /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
-         * call, so heat takes r4 and its sp+8 save; without hold, 336 of 1591
-         * instructions differ in tla-en. */
+         * call. */
         asm("" : "=r"(hold));
-        /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
-         * without it, 336 of 1591 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call. */
         asm("" : : : "r6");
         if (frame == 0)
           Sound_PlayFar(SE_RUMBLE);
-        /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
-         * hold, keep it live across the call; without them, 336 of 1591
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): updates of hold that cancel out. */
         if (hold) {
           hold++;
           hold--;
@@ -1033,9 +1022,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         s32 level = quarter + heat;
         s32 red;
 
-        /* FAKEMATCH(dead): updates of quarter that cancel out, under a test of
-         * quarter, keep it live past level's sum, so level takes r2; as level =
-         * quarter + heat alone, 18 of 1591 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): updates of quarter that cancel out. */
         if (quarter) {
           quarter++;
           quarter--;

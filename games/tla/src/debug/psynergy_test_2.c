@@ -237,8 +237,7 @@ void EffectSprite_Init(struct RockSprite *sprite, s32 width, s32 height,
                        u32 attributes, s32 tile);
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline. */
   Task_Add(func, priority);
 }
 
@@ -352,10 +351,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
         {
-          /* FAKEMATCH(temporary): the turn is added as a word, so its step
-           * is built inside the loop as in the native; as
-           * object->angle += 0x1000, 22 of 86 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(temporary): the turn is added as a word. */
           s32 angle = object->facing + 0x1000;
 
           object->facing = angle;

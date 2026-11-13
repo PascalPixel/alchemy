@@ -282,16 +282,15 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) | 0x4000;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
   /* FAKEMATCH(temporary): the cell read back through a pointer to output's
-   * sprite; as output->sprite.oam.x and .y, 27 of 99 instructions differ in
-   * tla-en. */
+   * sprite. */
   sprite = &output->sprite;
   output->sentinel = 253;
   output->x = sprite->oam.x;
   output->y = sprite->oam.y;
   output->index = index;
   output->next = NULL;
-  /* FAKEMATCH(dead): active stored a second time with the 1 it already holds;
-   * as the first store alone, 46 of 99 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): active stored a second time with the 1 it already holds.
+   */
   output->active = 1;
   WindowSprite_AppendToList(&window->output, output);
   return vram;

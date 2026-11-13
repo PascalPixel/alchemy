@@ -325,9 +325,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   angle = (u16)scene->angle + TRIG_TURN / 2;
   moved = 0;
   /* FAKEMATCH(temporary): a byte pointer standing in for target->terrainId at
-   * the save and the restore, whose stack slot then comes after pushed's and
-   * event's; as target->terrainId, 18 of 444 instructions differ in tla-en.
-   */
+   * the save and the restore. */
   layer = &target->terrainId;
   savedLayer = *layer;
   pushed = 0;
@@ -488,9 +486,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   BattleEffect_StopMainActor();
   if (moved == 1) {
     /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
-     * actionFlags, which loads them into r3 and the 1 into r2; as
-     * Actor_GetById(...)->actionFlags |= 1, 4 of 444 instructions differ in
-     * tla-en. */
+     * actionFlags. */
     userFlags = &Actor_GetById(scene->firstObjectId)->actionFlags;
     *userFlags |= 1;
   }
@@ -1692,9 +1688,7 @@ void FieldPsynergy_Ply(void) {
   wait(12);
   if (target != 0) {
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH(temporary): a redundant copy keeps object as a second
-       * register copy of the centre object (r5 beside r6); without it, 123 of
-       * 188 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): a redundant copy. */
       target = object;
       if (i & 3)
         Actor_SetSpriteColorModeFar(object, 9);

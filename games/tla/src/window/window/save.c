@@ -100,9 +100,7 @@ s32 Save_WritePartMasked(s32 partId, void *buffer) {
   volatile u32 ie;
   s32 result;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime, which
-   * starts ime's address before REG_IME's load; as IRQ_LOCK(ime), 4 of 102
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime. */
   do {
     volatile u32 *saved = &ime;
     volatile u16 *imeReg = &REG_IME;
@@ -136,9 +134,7 @@ s32 Save_DeletePartMasked(s32 partId) {
   volatile u32 ie;
   s32 result;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime, which
-   * starts ime's address before REG_IME's load; as IRQ_LOCK(ime), 4 of 97
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime. */
   do {
     volatile u32 *saved = &ime;
     volatile u16 *imeReg = &REG_IME;
@@ -394,8 +390,7 @@ s32 Save_BuildFileSummary(void) {
 
     frames = SAVE_GAME_WORDS->buildStamp;
     word = (u32 *)gGameFlagBytes;
-    /* FAKEMATCH(barrier): an empty asm reading frames and word, so both load
-     * before the bound; without it, 4 of 179 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm reading frames and word. */
     __asm__("" : : "r"(frames), "r"(word));
     n = 242;
     i = 0;

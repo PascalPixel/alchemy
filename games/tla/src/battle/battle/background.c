@@ -23,9 +23,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     u16 *imeReg;
     s32 once;
 
-    /* FAKEMATCH(temporary): a pointer to ime, which keeps the save in a stack
-     * slot stored through r6; as ime directly, 33 of 54 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(temporary): a pointer to ime. */
     slot = &ime;
     imeReg = (u16 *)&REG_IME;
     once = 0;
@@ -144,9 +142,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     u32 offset = 0x100;
     void *vram;
 
-    /* FAKEMATCH(dead): two updates that cancel, under a test that emits
-     * nothing, end a CSE block so the VRAM address loads before the data's
-     * add; without them, 2 of 137 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): two updates that cancel. */
     if (session) {
       offset++;
       offset--;
@@ -323,9 +319,8 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
   {
-    /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound
-     * stores; as Iwram_TransformVector(renderBounds, (s32 *)scene), 2 of
-     * 111 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound stores.
+     */
     register s32 *camera asm("r1") = (s32 *)scene;
 
     renderBounds[0] = 0;
@@ -803,9 +798,7 @@ void ElementGlow_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      /* FAKEMATCH(dead): an empty once-only block after the age's store, so
-       * Data_08129830's address loads after it; without it, 2 of 267
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block after the age's store. */
       do {
       } while (0);
       draw(dest, (u8 *)work + Data_08129830[phase], ringX + 48, ringY + 48, 32,
@@ -937,9 +930,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(0x100, &REG_BG2PD);
-  /* FAKEMATCH(dead): a never-taken five-argument call, which reserves the
-   * frame's outgoing argument word below mode; as no call, 10 of 255
-   * instructions differ in tla-en (6 with an unused u8[4] in its place). */
+  /* FAKEMATCH(dead): a never-taken five-argument call. */
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(104, 0x03);

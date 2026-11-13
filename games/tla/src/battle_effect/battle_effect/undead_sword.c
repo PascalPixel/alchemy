@@ -438,8 +438,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     u8 *pixel;
 
     /* FAKEMATCH(temporary): pixel set inside the call that takes the sheet's
-     * address; as pixel = work->sheet + 0x3000 before the call, 8 of 902
-     * instructions differ in tla-en. */
+     * address. */
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                                pixel = work->sheet + 0x3000, 1, 0);
     for (i = 0; i != 0x1b00; i++, pixel++) {
@@ -453,9 +452,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     {
       const void *palette =
           Resource_GetTableEntry((s32)&ResourceId_CrystalSheet);
-      /* FAKEMATCH(temporary): the copy routine's address in a local, named
-       * once the palette is fetched; as Iwram_CopyWords called by name, 2 of
-       * 902 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the copy routine's address in a local. */
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
@@ -467,15 +464,13 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   for (row = 0; row != WATER_ROWS; row++) {
     s32 v = row * 16;
     /* FAKEMATCH(dead): the row's first vertex index with the row added and
-     * taken away again, which keeps it in a register of its own; as q = v,
-     * 621 of 902 instructions differ in tla-en. */
+     * taken away again. */
     s32 q = v + row - row;
 
     for (column = 0; column != WATER_COLUMNS; column++) {
       s32 a = row * 16 + column;
       /* FAKEMATCH(dead): the vertex's index with q added and v, its equal,
-       * taken away, so the pointer's first value is read from q; as a alone,
-       * 849 of 902 instructions differ in tla-en. */
+       * taken away. */
       struct WaterVertex *vertex =
           (struct WaterVertex *)((s8 *)gMapCellBuffer + (a + q - v) * 4);
       s32 u = column * 8;
@@ -490,10 +485,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         s32 d = q + column + 17;
         s32 c = q + column + 16;
 
-        /* FAKEMATCH(dead): a store the frame count below overwrites. Its
-         * column * 8 - 60 is a counter of the column that the u + 7 below is
-         * then counted from (- 60, then + 67); as no statement, 171 of 902
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): a store the frame count below overwrites. Its column
+         * * 8 - 60 is a counter of the column that the u + 7 below is then
+         * counted from (- 60. */
         frames = (column * 8 - 60) & 1;
         quad[0].u0 = u + 7;
         quad[0].v0 = q;
@@ -622,8 +616,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
                 amplitude;
 
         /* FAKEMATCH(temporary): the height stored through the vertex it is part
-         * of, one before the pointer; as *vertex = y + 64, 6 of 902
-         * instructions differ in tla-en. */
+         * of. */
         ((struct WaterVertex *)(vertex - 1))->y = y + 64;
       }
     }
@@ -690,8 +683,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         if (picture < 0) {
           continue;
         }
-        /* FAKEMATCH(temporary): position holds &screen; as screen itself, 50
-         * of 902 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): position holds &screen. */
         position = &screen;
         if (EffectPosition_ProjectPoint(step, position) == 0 &&
             HI(position->depth) > 10) {
@@ -859,8 +851,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
       yaw = 0;
       // vertices is reused for the radius, 32, through casts; an s32 of its own
       // differs.
-      /* FAKEMATCH(dead): both arms set the radius alike; as one set before the
-       * if, 41 of 609 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): both arms set the radius alike. */
       if (mode == 0) {
         x = 80;
         vertices = (u8 *)32;

@@ -1173,9 +1173,8 @@ void FieldPsynergy_Avoid(void) {
     wait(1);
   }
   {
-    /* FAKEMATCH(temporary): the flags restored through a pointer of their
-     * own, which sets the param's 0 after the flags' copy; as group->flags =
-     * flags, 2 of 156 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the flags restored through a pointer of their own.
+     */
     u8 *restore = &group->flags;
 
     *restore = flags;
@@ -1588,9 +1587,7 @@ again:
         BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
                                      x, (s16)(motion->y >> 16), 8, 8);
         BattleEffect_IntegrateVector2(&motion->x, 60, 0);
-        /* FAKEMATCH(barrier): an empty asm after the step, which keeps the
-         * picture's address add after the y's load for the draw; without it,
-         * 2 of 923 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm after the step. */
         asm("");
       }
       motion->delay++;
@@ -1850,9 +1847,7 @@ void FieldPsynergy_RunTouchedEvents(void) {
   }
 
   for (i = 0; ids[i] != -1; i++) {
-    /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i,
-     * so the id is read before the kind; as ids[i], 18 of 160 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i. */
     s32 event =
         Scene_FindPsynergyTrigger(0x50000005, work->kind, ids[Index(i)]);
 

@@ -215,8 +215,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, 0x10000);
       }
       Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
-      /* FAKEMATCH(dead): the test of the block it stands in, made again; as a
-       * plain block, 8 of 2680 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the test of the block it stands in, made again. */
       if ((u32)(frame - 116) <= 27) {
         s32 size = (frame - 116) / 3 + 16;
 
@@ -253,9 +252,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         flag = 1;
       }
       if ((u32)(frame - 144) <= 8) {
-        /* FAKEMATCH(temporary): the step taken through a local assigned twice;
-         * as addB = addR = addG = 304 - frame * 2, 40 of 2680 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the step taken through a local assigned twice.
+         */
         addB = addR = addG = step = (step = 304 - frame * 2);
         flag = 1;
       }
@@ -289,10 +287,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       s32 y = frame * 16 - 2272;
 
       DRAW_ALT(3, work->sheet, 36, y, 24, 64);
-      /* FAKEMATCH(dead): a test that is never true, cells being the cell
-       * buffer's address, kept between the two draws so that each builds
-       * the sheet's address anew; as no test, 104 of 2680 instructions differ
-       * in tla-en. */
+      /* FAKEMATCH(dead): a test that is never true. */
       if (!cells && !canvas)
         y = 0;
       DRAW_ALT(7, work->sheet, 60, y, 24, 64);
@@ -547,8 +542,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 66) <= 1) {
       /* FAKEMATCH(temporary): the width through a local set at both draws of
-       * this picture; as 24 at both, 116 of 2680 instructions differ in
-       * tla-en. */
+       * this picture. */
       width = 24;
       draw[0](canvas, work->sheet + 0x6110, 48, 40, width, 41);
     }
@@ -619,16 +613,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
             half = radius / 2;
             dx = (half * sx) / 8;
-            /* FAKEMATCH(dead): a store top's own line overwrites; its test
-             * builds 1000 in a reload register before cx's reload, the one
-             * pick that sends cx to r4; without it, 28 of 2680 instructions
-             * differ in tla-en. */
+            /* FAKEMATCH(dead): a store top's own line overwrites. */
             if (dx > 1000)
               top = 0;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 231 of 2680 instructions differ in tla-en. */
+             * restores the label CSE and reload saw between the edges. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -660,14 +650,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
             /* FAKEMATCH(dead): as above, the pick before cx's reload in the
-             * second half; without it, 28 of 2680 instructions differ in
-             * tla-en. */
+             * second half. */
             if (dx > 1000)
               top = 0;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 205 of 2680 instructions differ in tla-en. */
+             * restores the label CSE and reload saw between the edges. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -795,8 +783,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     HeapSlot_Release(SLOT_ALT);
     if (frame > 63) {
-      /* FAKEMATCH(temporary): the scroll value through a local; as stored
-       * straight to gBgScroll[1].y, 2 of 2680 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the scroll value through a local. */
       s32 y = Random16() % 4 + 30;
 
       gBgScroll[1].y = y;

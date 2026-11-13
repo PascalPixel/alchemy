@@ -133,9 +133,7 @@ void HangingVine_Swing(s32 id) {
   s32 side = 0;
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   struct Actor *anchor = Actor_GetById(id);
-  /* FAKEMATCH(wrapper): the slot read through a one-member union, which may
-   * alias every store, so its reads stay after the stores before them; as
-   * struct HangingVineSlot *, 12 of 378 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the slot read through a one-member union. */
   union {
     struct HangingVineSlot s;
   } *slot;

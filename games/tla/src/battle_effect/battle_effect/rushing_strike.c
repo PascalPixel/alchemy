@@ -485,8 +485,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         s32 blue;
 
         red = max & entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used; as no
-         * green at all, 329 of 1034 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): green is taken and clamped, then never used. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
         // DEAD: both channels are already at most 31.
@@ -593,10 +592,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     {
       s32 u = frame << 2;
 
-      /* FAKEMATCH(barrier): an empty asm that claims to read frame, giving
-       * frame's reload a fifth dependent, so sched2 takes it before the
-       * strip's pool load; without it, 2 of 1034 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that claims to read frame. */
       asm("" : "+l"(u) : "l"(frame));
       model->scrollU = 127 & ~u;
     }

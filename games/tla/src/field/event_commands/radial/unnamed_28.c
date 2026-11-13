@@ -378,9 +378,7 @@ void FieldPsynergy_EndUnnamed28(void) {
     mote = work->motes;
     spark = work->sprites;
     for (i = 63; i >= 0; i--, spark++, mote++) {
-      /* FAKEMATCH(barrier): an empty asm that opens the loop's body, which
-       * keeps the index's 0xfffffc00 mask loaded inside the loop rather than
-       * hoisted to r9; without it, 36 of 226 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the loop's body. */
       asm("");
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;
@@ -461,16 +459,11 @@ void ViewMove_Start(s32 direction) {
     }
   }
 
-  /* FAKEMATCH(barrier): an empty asm before the bounds are fetched, the first
-   * of three that lengthen viewX's and viewZ's lives so the allocator ranks
-   * them below the bounds; without it, 33 of 157 instructions differ in
-   * tla-ja. */
+  /* FAKEMATCH(barrier): an empty asm before the bounds are fetched. */
   __asm__("");
-  /* FAKEMATCH(barrier): the second; without it, 33 of 157 instructions differ
-   * in tla-ja. */
+  /* FAKEMATCH(barrier): a second empty asm. */
   __asm__("");
-  /* FAKEMATCH(barrier): the third; without it, 33 of 157 instructions differ
-   * in tla-ja. */
+  /* FAKEMATCH(barrier): a third empty asm. */
   __asm__("");
   Map_GetHeaderSizeFar(gMainRoutineWork.map, &bounds);
   minX = bounds.minX;

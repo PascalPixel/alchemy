@@ -83,9 +83,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[1];
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
-    /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
-     * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
-     * return -1, 20 of 38 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || xx)
       return -1;
     else
@@ -117,9 +115,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   }
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
-    /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
-     * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
-     * return -1, 26 of 42 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (v || x)
       return -1;
     else
@@ -599,10 +595,7 @@ struct MenuSlotAttr {
 
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(temporary): the offset as a local of its own, which adds the row
-   * and the field offset before the work pointer, as in the shop's
-   * ItemIconGrid_SetPosition; as a plain field address, (struct MenuSlotAttr
-   * *)(menu + 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the offset as a local of its own. */
   s32 offset =
       index * sizeof(struct MenuSlotAttr) + 0xbd0; /* slots[index] + 4 */
   struct MenuSlotAttr *slot = (struct MenuSlotAttr *)(menu + offset);

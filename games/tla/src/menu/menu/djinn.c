@@ -782,8 +782,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
           p++;
         } while (col != 0);
       }
-      /* FAKEMATCH(dead): the dirty bit's update in a once-only block;
-       * as the plain statement, 4 of 90 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the dirty bit's update in a once-only block. */
       do {
         tiles->dirty |= 2 << ((u32)y >> 2);
       } while (0);
@@ -843,8 +842,7 @@ s32 DjinnMenu_ShowHelp(void) {
   helpIndex = 0;
   listMessage = (s32)MsgDjinnInfoTopic;
   do {
-    /* FAKEMATCH(temporary): the topic's row held in y before the call; as
-       the argument helpIndex * 8, 2 of 289 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the topic's row held in y before the call. */
     s32 y = helpIndex * 8;
 
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, y);

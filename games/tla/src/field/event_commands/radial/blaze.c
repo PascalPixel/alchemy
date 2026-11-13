@@ -372,13 +372,9 @@ void FieldPsynergy_WatchSandGround(void) {
     x = object->x & 0xfff00000;
     z = object->z & 0xfff00000;
     back = -0x80000;
-    /* FAKEMATCH(barrier): back through an empty asm, so its -0x80000 loads
-     * before the forward offset is built; without it, 10 of 93 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(barrier): back through an empty asm. */
     asm("" : "+l"(back));
-    /* FAKEMATCH(dead): an empty once-only block that keeps the forward offset's
-     * add after that load; without it, 4 of 93 instructions differ in tla-en.
-     */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     if (MapGrid_IsClimbableCell(x + 0x80000, z + back, 2) == 0)

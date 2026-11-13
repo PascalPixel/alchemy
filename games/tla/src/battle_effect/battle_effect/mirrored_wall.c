@@ -23,9 +23,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     s32 flags = 19;
     void **slots;
 
-    /* FAKEMATCH(barrier): an empty asm on heap and flags, so both are set
-     * before the heap base is shifted and the slot offset built; without it,
-     * 2 of 30 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on heap and flags. */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(104, flags);
@@ -37,8 +35,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     s32 flags = 23;
     void **slots;
 
-    /* FAKEMATCH(barrier): the same asm for the mirrored blitters; without it,
-     * 2 of 30 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the same asm for the mirrored blitters. */
     __asm__("" : "+l"(heap), "+l"(flags));
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(104, flags);

@@ -778,6 +778,6 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
 
 static inline u8 *PassBuffer(u8 *buffer) {
   /* FAKEMATCH(wrapper): the second queue's source base passed through this
-   * inline; as Ram_MapCellBuffer, 52 of 2680 instructions differ in tla-en. */
+   * inline. */
   return buffer;
 }

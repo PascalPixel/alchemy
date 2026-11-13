@@ -775,11 +775,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->vertices = verts;
         model->shade = (s32)shades;
         {
-          /* FAKEMATCH(dead): a never-true test of the byte scroll, which
-           * combine folds after CSE, so its label ends post-reload CSE's run
-           * (the fill pointer reloads its pool word, not r0's copy) and flow2
-           * merges the blocks before sched2; without it, 2 of 2667 instructions
-           * differ in tla-en. */
+          /* FAKEMATCH(dead): a never-true test of the byte scroll. */
           s32 scroll = model->scrollU;
 
           if (scroll > 255) {

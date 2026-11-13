@@ -798,15 +798,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 196;
       else if (t <= 23)
         offset = 98;
-      /* FAKEMATCH(dead): t * 4 / 3 into dead, which flow deletes once PRE has
-       * copied t * 4 into the join ahead of ring and blit; without it, 700 of
-       * 4851 instructions of BattleEffect_RunIris differ in tla-en. */
+      /* FAKEMATCH(dead): t * 4 / 3 into dead. */
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
-      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws; as
-       * draw called directly, 1126 of 4851 instructions of
-       * BattleEffect_RunIris differ in tla-en. */
+      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws. */
       blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px;
@@ -833,15 +829,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 394;
       else if (t <= 23)
         offset = 344;
-      /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's arm;
-       * without it, 698 of 4851 instructions of BattleEffect_RunIris differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's arm. */
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
-      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws; as
-       * draw called directly, 1120 of 4851 instructions of
-       * BattleEffect_RunIris differ in tla-en. */
+      /* FAKEMATCH(temporary): draw copied into blit for the ring's draws. */
       blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px;
@@ -1082,10 +1074,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 off;
   u8 *dst;
   u8 *tiles;
-  /* FAKEMATCH(dead): 284 locals nothing uses (any count from 275 to 294
-   * does), which number the later pseudos so PRE's spilled registers take
-   * their frame slots in order; as no locals, 34 of 4851 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): 284 locals nothing uses (any count from 275 to 294 does).
+   */
   UNUSED s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14,
       z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29,
       z30, z31, z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44,
@@ -1304,8 +1294,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
                 b++;
               {
                 /* FAKEMATCH(temporary): the colour copied into a u16 before its
-                 * store; as *fade++ = b << 10 | g << 5 | r, 171 of 4851
-                 * instructions differ in tla-en. */
+                 * store. */
                 u16 v = b << 10 | g << 5 | r;
 
                 *fade++ = v;
@@ -1630,9 +1619,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1008;
     }
     if ((u32)(frame - 414) <= 7) {
-      /* FAKEMATCH(temporary): the blend level copied into alpha; as
-       * REG_BLDALPHA = (frame - 406) | 0x1000, 14 of 4851 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(temporary): the blend level copied into alpha. */
       s32 alpha = frame - 406;
       REG_BLDALPHA = alpha | 0x1000;
     }
@@ -1699,19 +1686,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       top = 120;
       first = top - step * 8;
-      /* FAKEMATCH(dead): off set to 0, which nothing reads before the loop sets
-       * it; without it, 168 of 4851 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): off set to 0. */
       off = 0;
-      /* FAKEMATCH(temporary): the band's first row passed to i through first;
-       * as i = top - step * 8, 168 of 4851 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the band's first row passed to i through first.
+       */
       i = first;
       top = i;
       for (; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
         if (i >= 0) {
-          /* FAKEMATCH(dead): i / 3 into dead, which flow deletes; its call puts
-           * the band's loop over loop.c's threshold, which then keeps
-           * (i - top) * 2; without it, 191 of 4851 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(dead): i / 3 into dead, which flow deletes. */
           dead = i / 3;
           if (v > 63)
             v = 63;
@@ -2176,8 +2159,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             b++;
           {
             /* FAKEMATCH(temporary): the colour copied into a u16 before its
-             * store; as *fade++ = b << 10 | g << 5 | r, 171 of 4851
-             * instructions differ in tla-en. */
+             * store. */
             u16 v = b << 10 | g << 5 | r;
 
             *fade++ = v;
@@ -2549,9 +2531,7 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           uA += duA;
           vA += dvA;
           /* FAKEMATCH(dead): edge B's values stepped on though nothing reads
-           * them again; flow deletes both, and cse2 then stores uv[0] to uB
-           * ahead of uA; without them, 4 of 966 instructions differ in
-           * tla-en. */
+           * them again. */
           uB += duB;
           vB += dvB;
         }
@@ -2983,13 +2963,11 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   {
     u32 words = (u32)runSize / 4;
-    /* FAKEMATCH(pin): count fixed in r2, where the rounded size is built; as a
-     * plain local, 35 of 597 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): count fixed in r2, where the rounded size is built. */
     register s32 count __asm__("r2") = words * 4;
     s32 size = count;
 
-    /* FAKEMATCH(barrier): an empty asm that keeps words alive past count's
-     * set; without it, 6 of 597 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     __asm__("" : : "r"(words));
     Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
     dst = (u32 *)((u8 *)dst + size);

@@ -815,9 +815,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
           }
-          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is
-           * rebuilt; as the plain sum, 3369 of 4580 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(barrier): idx held through an empty asm. */
           __asm__("" : "=r"(idx) : "0"(idx));
           p->velocityY = Data_081998f2[idx + off];
           p->velocityZ = Data_0819995e[idx + off];
@@ -1258,8 +1256,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 s32 at = gBattleEffect_GlintCells[n];
 
                 /* FAKEMATCH(dead): an empty once-only block between the
-                 * picture's offset and the draw; as no block, 536 of 4580
-                 * instructions differ in tla-en. */
+                 * picture's offset and the draw. */
                 do {
                 } while (0);
                 ((DrawRectangle)Ram_HeapSlots->unkb8[1])(

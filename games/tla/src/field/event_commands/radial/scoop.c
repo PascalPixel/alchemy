@@ -517,10 +517,7 @@ void FieldPsynergy_Scoop(void) {
       if (frame == 50)
         stage = 2;
       {
-        /* FAKEMATCH(barrier): frame copied through an empty asm, so its move
-         * to r2 comes before pending's to r0; as
-         * Field_RunPsynergyEvent(pending, stage, frame), 2 of 938 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(barrier): frame copied through an empty asm. */
         s32 frameCopy;
 
         asm("" : "=r"(frameCopy) : "0"(frame));
@@ -1163,8 +1160,7 @@ loaded:
     for (i = 63; i >= 0; i--) {
       if (particle->timer >= 0) {
         s32 grown;
-        /* FAKEMATCH(temporary): sprite holds a copy of cursor; as cursor used
-         * directly, 57 of 871 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): sprite holds a copy of cursor. */
         sprite = cursor;
         sprite->oam.index = tile + ((particle->timer >> 2) & 7) * 8;
         grown = sprite->scaleX + 0x1999;
@@ -1355,8 +1351,7 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
 /// upward.
 void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
-  /* FAKEMATCH(pin): the angle pinned to r8, which leaves the multiply's entry
-   * to r10; as angle itself, 12 of 39 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the angle pinned to r8. */
   register s32 turn asm("r8") = angle;
   s32 center = 63;
   s32 x = Iwram_MulQ16(Trig_Cos(turn), radius);
@@ -1384,9 +1379,7 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
     x /= 8;
     y /= 8;
     fill = Iwram_FillWordsEntry;
-    /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry, so its
-     * load comes before the size; without it, 4 of 66 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry. */
     asm volatile("" : : "l"(fill));
     fill((void *)0x06002000, 0x400, 0);
   } while (0);
@@ -1475,9 +1468,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
     red = 28;
   cycle:
     {
-      /* FAKEMATCH(pin): green pinned to r5, so the call's result is shifted
-       * straight into it; as a plain local, 17 of 272 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(pin): green pinned to r5. */
       register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
       s32 blue;
       s32 color;

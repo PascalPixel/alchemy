@@ -759,9 +759,7 @@ void ActorSystem_PlaceSprites(void) {
           middlePriority = 0;
           if (!(*priorityFlags & 32)) {
             /* FAKEMATCH(temporary): the base priority read through a
-             * function-scope pointer, which gives the two spills at sp+12 and
-             * sp+16 their order; as priority = BASE_PRIORITY(map), 8 of 606
-             * instructions differ in tla-en. */
+             * function-scope pointer. */
             basePriority = &BASE_PRIORITY(map);
             priority = *basePriority;
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==

@@ -225,9 +225,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 4 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 1;
           } while (0);
@@ -242,9 +240,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 2 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 13;
           } while (0);
@@ -257,9 +253,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 4 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 1;
           } while (0);
@@ -275,9 +269,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
-          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
-           * Broken Seal's twin has it; as a plain statement, 2 of 1244
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->active = 13;
           } while (0);
@@ -503,8 +495,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   frame = 0;
   menu->cursor->active = 13;
   /* FAKEMATCH(temporary): selected = selectedPages, the page array read through
-   * a pointer; as selectedPages itself, 12 of 436 instructions differ in
-   * tla-en. */
+   * a pointer. */
   selected = selectedPages;
   selected[1] = selected[0] = result;
   for (side = 3; side >= 0; side--)
@@ -512,7 +503,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
   /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
-   * pointer; as pageCounts itself, 55 of 436 instructions differ in tla-en. */
+   * pointer. */
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = Heap_AllocEwram(96);
@@ -543,15 +534,13 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     s32 *pageCount;
     s32 *selectedPage;
     /* FAKEMATCH(temporary): selectedPage = &selected[side], taken at the top of
-     * the loop; as selected[side] at each page turn, 22 of 436 instructions
-     * differ in tla-en. */
+     * the loop. */
     selectedPage = &selected[side];
     render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
     /* FAKEMATCH(temporary): pageCount = &pageCounts[side], taken at the top of
-     * the loop; as pageCounts[side] at each page turn, 227 of 436 instructions
-     * differ in tla-en. */
+     * the loop. */
     pageCount = &pageCounts[side];
     pairMember = menu->pairMember;
     if (redraw) {

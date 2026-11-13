@@ -148,13 +148,9 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
         row = 0;
       } else {
         column = 1;
-        /* FAKEMATCH(dead): i is 160 here, so i >> 31 folds to 0 and only
-         * changes allocation; as row = 0, 477 of 549 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(dead): i is 160 here. */
         row = i >> 31;
-        /* FAKEMATCH(dead): side = 0, never read, keeps the side's copy from
-         * replacing the draws' index, so the test and the draws share one
-         * register; without it, 31 of 549 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): side = 0, never read. */
         side = 0;
       }
       if (frame <= 71) {

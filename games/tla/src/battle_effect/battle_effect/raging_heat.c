@@ -191,8 +191,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         draw[1](canvas, buffer, centerX / 2, y, 24, 64);
       }
       i = 0;
-      /* FAKEMATCH(dead): the test repeats the loop's own; as a plain for loop,
-       * 4 of 669 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the test repeats the loop's own. */
       if (i != Data_08199400[effect->variant][0]) {
         for (particle = work->particles; i != Data_08199400[effect->variant][0];
              i++, particle++) {

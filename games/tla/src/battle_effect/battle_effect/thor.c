@@ -300,9 +300,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
                         96);
       HeapSlot_Release(188);
-      /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0, that
-       * clears beamHeight; without it, 249 of 1676 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): a never-true test of never and neverToo. */
       if (never || neverToo) {
         beamHeight = 0;
       }
@@ -541,8 +539,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               (gData_08197492[cell] >> 1);
           y = ((Trig_Cos(angle) * 40) >> 16) - (gData_08197498[cell] >> 1);
           /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0,
-           * that clears y; without it, 248 of 1676 instructions differ in
-           * tla-en. */
+           * that clears y. */
           if (never || neverToo) {
             y = 0;
           }

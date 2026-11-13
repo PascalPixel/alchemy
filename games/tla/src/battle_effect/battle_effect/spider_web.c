@@ -611,8 +611,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         p->x = src[0] << 16;
         p->variant = -8 * i;
         /* FAKEMATCH(barrier): an empty asm parts the particle's first stores
-         * from the rest; as no asm, 44 of 1932 instructions differ in tla-en.
-         */
+         * from the rest. */
         __asm__("");
         p->y = src[1] << 16;
         p->z = src[2] << 6;
@@ -798,9 +797,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       /* FAKEMATCH(dead): j takes frame * 3 + 1 here and 0 below before any
-       * read; the scale step's first value is then built from this frame * 3,
-       * where the listing builds it; as no store, 284 of 1932 instructions
-       * differ in tla-en. */
+       * read. */
       j = frame * 3 + 1;
       model->shade = 0;
       work->transferMode = 2;
@@ -1184,9 +1181,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     // is built; each once-only block holds a draw, its release and the next
     // build (as one block per quarter, 12 differ); the last draw needs none.
     /* FAKEMATCH(signature): the three releases between draws called as
-     * returning s64, so each call sets r1 and the scheduler sets a draw's x
-     * and y before its sheet; as plain void calls, 6 of 228 instructions
-     * differ in tla-en. */
+     * returning s64. */
     LOAD_QUARTER(CLIP);
     do {
       DRAW_QUARTER(33, 41);

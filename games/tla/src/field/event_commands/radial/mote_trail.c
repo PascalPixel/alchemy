@@ -19,8 +19,6 @@ void SummonTablet_UpdateMotes(void);
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the
 /// stone tablet"): the tablet's runes and pebbles fly as motes between it
 /// and the leader, with their sounds, before Summon_ShowLearnedMessage.
-/// ★ Named from the game: "{protagonist_name} examined the stone tablet..."
-/// (MsgKey0dc4 + 26)
 void SummonTablet_PlayRunes(s32 targetId) {
   struct MoteWork *work = HeapSlot_Alloc(92, sizeof(struct MoteWork));
   s32 ownerId = Party_GetLeaderActor();

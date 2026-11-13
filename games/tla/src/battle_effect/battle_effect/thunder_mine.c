@@ -158,9 +158,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 0) {
     frames = 24;
-    /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24, which puts
-     * its arm over BRANCH_COST so if-conversion keeps both arms; as the bare
-     * `frames = 24;`, 27 of 747 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24. */
     asm("");
   } else {
     frames = 40;
@@ -338,8 +336,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         if (frame == i) {
           shade = -16;
         } else if (frame >= i + 4) {
-          /* FAKEMATCH(temporary): the fade negated through a local; as shade =
-           * 64 - (frame - i) * 16, 4 of 747 instructions differ in tla-en. */
+          /* FAKEMATCH(temporary): the fade negated through a local. */
           s32 fade = (frame - i) * 16 - 64;
 
           shade = -fade;

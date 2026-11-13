@@ -206,9 +206,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      /* FAKEMATCH(temporary): the left pose copied into left before the
-       * call's other argument is read; as a direct argument, 2 of 1490
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the left pose copied into left before the call's
+       * other argument is read. */
       {
         u8 left = gCybele_ObjectPoses[pose * 2];
 
@@ -556,9 +555,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_BLITTER);
   BattlePlayback_StartFar(134);
   // Tear down.
-  /* FAKEMATCH(wrapper): the burst through BurstAt_, whose parameter sets 128 <<
-   * 16 in argument order; as a direct BattleEffect_RunImpactBurst call, 2 of
-   * 1490 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the burst through BurstAt_. */
   BurstAt_(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->objects[i]);

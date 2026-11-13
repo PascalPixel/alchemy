@@ -113,9 +113,7 @@ Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
 
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32, though
-   * it returns nothing, so the call sets r0 and the marker's last attribute
-   * byte is stored before its address goes to r0; as void, 2 of 1647
-   * instructions differ in tla-en. */
+   * it returns nothing. */
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
@@ -164,9 +162,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   targetCount = 0;
   redraw = 0xffff;
   cursorSlot = VramCache_AllocEntry(256);
-  /* FAKEMATCH(dead): a null computed from selection, which the compiler cannot
-   * fold to a constant, keeps conditionWindow in a register; as
-   * conditionWindow = NULL, 492 of 1647 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a null computed from selection. */
   conditionWindow = (struct TargetWindow *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
@@ -260,8 +256,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   }
 #if !TLA_PATCH_2
   /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
-   * mode are dead, so conditionWindow takes r9, selection r10 and mode r8; as
-   * no asm, 96 of 1647 instructions differ in tla-en. */
+   * mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
   window = Window_Create(0, 12, 30, 4, 74);
@@ -270,9 +265,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     // A once-only block: its end keeps the tile reload after the sprite's
     // words.
     do {
-      /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]; as
-       * cursorSprites used directly, 399 of 1647 instructions differ in tla-en.
-       */
+      /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
       firstSprite = cursorSprites;
       drawCursors = 0;
       BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
@@ -503,9 +496,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (unit->delusion != 0)
               count++;
 #if TLA_PATCH_2
-            /* FAKEMATCH(temporary): count read back through a pointer to it,
-             * which keeps count in its stack slot; as count == 0, 142 of 1748
-             * instructions differ in tla-de. */
+            /* FAKEMATCH(temporary): count read back through a pointer to it. */
             countAddress = &count;
 #endif
             if (unit->stun != 0)

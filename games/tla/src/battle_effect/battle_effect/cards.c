@@ -314,10 +314,8 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
             // first, free here, holds the cleared pixel: a second lifetime
             // keeps the flight's copy of card.x (see the header).
             for (j = 0; j != 32; j++) {
-              /* FAKEMATCH(dead): first cleared inside the test, or'd into
-               * frame - 48, so loop.c hoists the zero after the test's 7 and
-               * level; as `first = 0;` at the top of the outer body, 2 of
-               * 1246 instructions differ in tla-en. */
+              /* FAKEMATCH(dead): first cleared inside the test, or'd into frame
+               * - 48. */
               if (noise[(i & 7) * 32 + j] == (frame - 48 | (first = 0)))
                 card[i * 32 + j] = first;
             }

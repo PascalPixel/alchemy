@@ -304,8 +304,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
         {
           /* FAKEMATCH(temporary): the variant copied into size in a block of
-           * its own; as Canvas_BlitAtFoot(..., work->particles[16].variant *
-           * 2), 50 of 2159 instructions differ in tla-en. */
+           * its own. */
           s32 size = work->particles[16].variant;
 
           Canvas_BlitAtFoot(work->sheet, cx >> 16, cy >> 16, size * 2);
@@ -875,8 +874,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
     } else {
       center.y -= 48;
       /* FAKEMATCH(barrier): an empty asm taking the centre's address gives it
-       * two more references, so the register allocator ranks it above the
-       * corners; without it, 189 of 734 instructions differ in tla-en. */
+       * two more references. */
       __asm__("" : : "r"(&center));
     }
 
@@ -1280,8 +1278,7 @@ void BattleEffect_ApplyWindowBlendRegisters(void) {
 
 /// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
 void Display_ApplyBg2Affine(void) {
-  /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
-   * takes r1; as a plain local, 32 of 30 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the work pointer kept in r2. */
   register struct BattleFxWork *work asm("r2") =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
 
@@ -1289,14 +1286,12 @@ void Display_ApplyBg2Affine(void) {
     u32 value = work->bg2pa;
 
     /* FAKEMATCH(barrier): an empty asm through the first value loads it before
-     * the register's address is built; without it, 14 of 30 instructions
-     * differ in tla-en. */
+     * the register's address is built. */
     __asm__ volatile("" : "+l"(value));
     REG_BG2PA = value;
   }
   REG_BG2PD = work->bg2pd;
-  /* FAKEMATCH(barrier): an empty asm keeps the next offset's step after the
-   * store before it; without it, 2 of 30 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm. */
   __asm__ volatile("");
   REG_BG2X = work->bg2x;
   REG_BG2Y = work->bg2y;
@@ -1304,8 +1299,7 @@ void Display_ApplyBg2Affine(void) {
 
 /// Writes background 2's reference point.
 void Display_ApplyBg2Reference(void) {
-  /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
-   * takes r1; as a plain local, 20 of 20 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the work pointer kept in r2. */
   register struct BattleFxWork *work asm("r2") =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   u32 hold;
@@ -1314,8 +1308,7 @@ void Display_ApplyBg2Reference(void) {
     u32 value = work->bg2x;
 
     /* FAKEMATCH(barrier): an empty asm through the first value loads it before
-     * the register's address is built, and ends hold; as an asm on hold
-     * alone, 14 of 20 instructions differ in tla-en. */
+     * the register's address is built. */
     __asm__ volatile("" : "+l"(value) : "l"(hold));
     REG_BG2X = value;
   }

@@ -63,9 +63,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   else
     target = Unit_Get(targetId);
 
-  /* FAKEMATCH(dead): the dead test loads effect->range ahead of the
-   * count guard, as in The Broken Seal's twin; as plain code, 84 of 501
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the dead test loads effect->range ahead of the count
+   * guard. */
   if (effect->range == 0xff && partyResultShown != 0)
     messageOffset = 3;
 

@@ -125,9 +125,7 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   vector[0] = position[0];
   vector[1] = zero;
   vector[2] = position[2];
-  /* FAKEMATCH(wrapper): the call through this file's inline; as the direct
-   * Iwram_TransformVector macro call, 41 of 132 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the call through this file's inline. */
   Iwram_TransformVector(vector, result);
   height = result[1] - Iwram_MulQ16(result[2], pitchSlope);
   nearZ = -gCameraSceneParameters[0];

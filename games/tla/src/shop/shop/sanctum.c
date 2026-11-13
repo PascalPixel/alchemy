@@ -251,9 +251,7 @@ s32 Sanctum_RunPartyService(void) {
   redraw = 1;
   {
     s8 *partyAction = &shop->partyAction;
-    /* FAKEMATCH(temporary): partyAction read through a pointer to it, so
-     * memberIndex's 0 is stored before it is read; as serviceKind =
-     * shop->partyAction, 4 of 297 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): partyAction read through a pointer to it. */
     serviceKind = *partyAction;
   }
   Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
@@ -346,10 +344,7 @@ loop:
   }
   {
     s32 count = shop->partyMemberCount;
-    /* FAKEMATCH(temporary): the member count read into a local of its own, so
-     * it loads before memberIndex's address is set; as
-     * MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4), 2 of 297
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the member count read into a local of its own. */
     redraw = MenuGrid_MoveCursor(&memberIndex, count, 4);
   }
   wait(1);

@@ -236,8 +236,7 @@ void EventObject_Initialize(void) {
   } while (0);
   sound = work->sound;
   /* FAKEMATCH(barrier): the zero set through an empty asm after the sound's
-   * read, so its copy to r8 comes after that read; as zero = 0, 4 of 109
-   * instructions differ in tla-en. */
+   * read. */
   asm("" : "=r"(zero) : "0"(0));
   if (sound != 0) {
     Sound_PlayFar(SE_POWER_UP);

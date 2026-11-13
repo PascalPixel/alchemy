@@ -129,8 +129,8 @@ void RisingParticles_Start(void) {
   struct RisingParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH(pin): the fill's zero held in r2, built after the copy of
-   * work; as a plain local, 8 of 85 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the fill's zero held in r2, built after the copy of work.
+   */
   register u32 zero asm("r2");
   s32 priority;
   u8 *tiles;

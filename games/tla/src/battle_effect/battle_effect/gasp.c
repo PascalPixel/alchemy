@@ -651,8 +651,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           s32 t = frame - k * 32;
           s32 scale = (t << 10) + 0x1000;
           s32 shade = 0;
-          /* FAKEMATCH(pin): half kept in r5; as a plain local, 32 of 4138
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(pin): half kept in r5. */
           register s32 half __asm__("r5");
 
           if (t > 63) {

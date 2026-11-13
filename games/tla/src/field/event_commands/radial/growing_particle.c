@@ -141,18 +141,14 @@ void FieldPsynergy_EndSand(void) {
 
     sprite = 0x400;
     {
-      /* FAKEMATCH(pin): the copy's size pinned to r2, so it is set before
-       * work's copy to r1; as FieldPsynergy_DecodePicture(source, work,
-       * sprite), 2 of 332 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the copy's size pinned to r2. */
       register s32 size asm("r2") = sprite;
 
       FieldPsynergy_DecodePicture(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
-  /* FAKEMATCH(barrier): an empty asm reading party, which nothing reads after
-   * the animation's set, keeps it live in r6 to here; without it, 79 of 332
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm reading party. */
   asm("" : : "r"(party));
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);

@@ -261,10 +261,8 @@ enum ShopAction {
 /// artifacts the shop lists and which of the keepers' lines it says.
 enum ShopType {
   SHOP_TYPE_ITEMS = 0, ///< an item shop
-  /// ★ Named from the game: "Weapons Shop" (message 4973)
   SHOP_TYPE_WEAPONS = 1,
   SHOP_TYPE_ARMOR = 2,
-  /// ★ Named from the game: "General Storekeeper" (message 4982)
   SHOP_TYPE_GENERAL_STORE = 3
 };
 

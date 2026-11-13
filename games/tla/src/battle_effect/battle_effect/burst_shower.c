@@ -824,12 +824,10 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
               dy = object->y + half - mote->y;
               dz = object->z - mote->z;
               /* FAKEMATCH(barrier): an empty asm through dy adds the references
-               * that rank it above dz and dx; without it, 18 of 2239
-               * instructions differ in tla-en. */
+               * that rank it above dz and dx. */
               __asm__("" : "=r"(dy) : "0"(dy));
-              /* FAKEMATCH(barrier): an empty asm through dz ranks it above dx,
-               * which takes the register after it; without it, 16 of 2239
-               * instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): an empty asm through dz ranks it above dx.
+               */
               __asm__("" : "=r"(dz) : "0"(dz));
               mote->velocityX += dx >> 7;
               mote->velocityY += dy >> 8;

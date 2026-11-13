@@ -167,8 +167,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   work->dirty = 1;
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorSprite; as cursorSprite used
-     * directly, 417 of 1246 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): sprite holds &cursorSprite. */
     struct DjinnMenuOam *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||

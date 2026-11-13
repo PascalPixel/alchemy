@@ -153,9 +153,7 @@ void MapAnimation_PresentPicture(void) {
   control = 0x682;
   REG_BG1CNT = control;
   dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma, which loads the DMA channel's
-   * address before the transfer's operands; without it, 2 of 24 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on dma. */
   __asm__ volatile("" : "+l"(dma));
   Dma_Set(Ram_MapCellBuffer, (void *)0x06006000, DMA_COPY_WORDS(0xa000 / 4),
           dma);
@@ -200,9 +198,7 @@ void Map_ShowBg1FromBuffer(void) {
   control = 0x501;
   REG_BG1CNT = control;
   dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma, which loads the DMA channel's
-   * address before the transfer's operands; without it, 2 of 24 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on dma. */
   __asm__ volatile("" : "+l"(dma));
   Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(0x8000 / 4), dma);
 }
@@ -556,15 +552,12 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
       if (count <= 31) {
         u32 *entry;
         /* FAKEMATCH(temporary): the entry's byte offset held in offset and
-         * scaled after the count store; as u32 *entry = q->entries[count]
-         * before the store, 21 of 210 instructions differ in tla-en. */
+         * scaled after the count store. */
         s32 offset = count * 3;
 
         q->count = count + 1;
         offset *= sizeof(u32);
-        /* FAKEMATCH(barrier): an empty asm keeps the tint's load after the
-         * offset's scaling; without it, 2 of 210 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(barrier): an empty asm. */
         asm("");
         entry = (u32 *)((u8 *)q->entries + offset);
         *entry++ = (u16)work->tint;
@@ -720,9 +713,7 @@ s32 Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   start = samples[0];
   end = samples[1];
   table = gTerrain_LerpWeightTable;
-  /* FAKEMATCH(barrier): an empty asm reading the table's address keeps its
-   * load after both samples' and before the row's scaling; without it, 15 of
-   * 15 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm reading the table's address. */
   __asm__("" : : "r"(table));
   position += row * CURVE_FULL_STEPS;
   weight = table[position];

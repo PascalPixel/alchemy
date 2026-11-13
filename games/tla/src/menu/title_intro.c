@@ -697,8 +697,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   for (row = 0; row < 20; row++) {
     for (i = 29; i >= 0; i--) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
-       * the high halfword; as *map = tile; tile++, 97 of 325 instructions
-       * differ in tla-en. */
+       * the high halfword. */
       number = tile;
       tile = ((tile << 16) + q16One) >> 16;
       *map = number;
@@ -819,13 +818,12 @@ done:
 /// running TitleIntro_ShowLighthouse when all finish, then restores the display
 /// and the CPU-load flag it saved.
 s32 TitleIntro_Run(void) {
-  /* FAKEMATCH(volatile): the saved flag lives in a stack byte across the
-   * calls; as a plain u8 local, 28 of 78 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the saved flag lives in a stack byte across the calls.
+   */
   volatile u8 cpuLoad;
   s32 result;
-  /* FAKEMATCH(temporary): the flag is read before the stack byte's address
-   * is formed; as cpuLoad = gCpuLoadDisplayEnabled, 2 of 78 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(temporary): the flag is read before the stack byte's address is
+   * formed. */
   u8 saved = gCpuLoadDisplayEnabled;
 
   cpuLoad = saved;
@@ -890,16 +888,13 @@ s32 Title_ShowIntro(s32 prompt) {
   VramCache_Reset();
   wait(1);
   {
-    /* FAKEMATCH(pin): the native loads the control word from the pool before
-     * it starts the register address; as REG_BG2CNT = 0x681, 2 of 254
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the native loads the control word from the pool before it
+     * starts the register address. */
     register u16 control asm("r3") =
         BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
 
-    /* FAKEMATCH(barrier): an asm holding r2 until the control word is loaded;
-     * as the pin alone, 2 of 254 instructions differ in tla-en (the Japanese
-     * and German editions place the first literal pool one instruction later
-     * and match with the pin alone). */
+    /* FAKEMATCH(barrier): an asm holding r2 until the control word is loaded.
+     */
 #if TLA_PATCH_1 && !(TLA_PATCH_2 && !TLA_PATCH_3)
     __asm__("" : "+l"(control) : : "r2");
 #endif
@@ -927,8 +922,7 @@ row:
 column:
   {
     /* FAKEMATCH(temporary): the s16 step as its high-half wrap, with goto
-     * loops, so loop.c leaves it alone; as *tilemap++ = tile; tile++, 94 of
-     * 254 instructions differ in tla-en. */
+     * loops. */
     s32 old = tile;
 
     tile = ((old << 16) + 0x10000) >> 16;
@@ -1016,9 +1010,8 @@ column:
   }
   HeapSlot_Release(172);
   {
-    /* FAKEMATCH(pin): the native loads the zero from the pool before it
-     * starts the register address; as REG_BLDCNT = 0 and REG_BLDALPHA = 0, 2
-     * of 254 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the native loads the zero from the pool before it starts
+     * the register address. */
     register u16 zero asm("r2") = 0;
 
     REG_BLDCNT = zero;
@@ -1055,9 +1048,8 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   DebugText_Clear();
   wait(1);
   {
-    /* FAKEMATCH(pin): the native loads the control word from the pool before
-     * it starts the register address; as REG_BG2CNT = 0x681, 2 of 192
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the native loads the control word from the pool before it
+     * starts the register address. */
     register u16 control asm("r3") =
         BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
 
@@ -1086,9 +1078,7 @@ col:
     x = 0;
   row:
     {
-      /* FAKEMATCH(temporary): the s16 step as its high-half wrap keeps loop.c
-       * from hoisting it; as an s16 tile stored and stepped, 37 of 192
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the s16 step as its high-half wrap. */
       s32 old = tile;
 
       tile = ((old << 16) + 0x10000) >> 16;

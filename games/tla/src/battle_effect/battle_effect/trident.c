@@ -143,9 +143,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   blit[0] = draw;
-  /* FAKEMATCH(temporary): the orange palette's id in a local, summed after the
-   * 0xF8 load from the address four below it; as the id at its two uses, 56 of
-   * 1122 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = (s32)&ResourceId_OrangePaletteB - 4;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   circles = (s16 *)(work->sheet + 0x4c56);
@@ -156,13 +154,9 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
                              0);
   orange = orangeBase + 4;
   size = 2;
-  /* FAKEMATCH(dead): a test on the blitter, which the routine calls through and
-   * is never null; as its three statements alone, 77 of 1122 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): a test on the blitter. */
   if (draw) {
-    /* FAKEMATCH(temporary): the effect palette's id in a local, summed from the
-     * address four below it; as the id at its three uses, 6 of 1122
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the effect palette's id in a local. */
     paletteBase = (s32)&ResourceId_EffectPalette02 - 4;
     cells = (s32)gMapCellBuffer;
     palette = paletteBase + 4;
@@ -390,8 +384,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             continue;
           }
           x = (spinner->variant / 8) % 3;
-          /* FAKEMATCH(dead): a test on x with both arms alike; as one
-           * model->shade = -16, 192 of 1122 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): a test on x with both arms alike. */
           if (x) {
             model->shade = -16;
           } else {
@@ -494,8 +487,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         {
           s32 c = Data_08199e54[Random16() & 3] | 3;
 
-          /* FAKEMATCH(dead): an empty once-only block before the blitter call;
-           * as no block, 277 of 1122 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): an empty once-only block before the blitter call.
+           */
           do {
           } while (0);
           BattleEffect_BuildBlitter(188, 7, 7, c, 1);

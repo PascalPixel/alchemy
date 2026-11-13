@@ -149,8 +149,7 @@ s32 FieldSequence_Run(void) {
   }
   FieldPsynergy_ResumeCloakCheck();
   /* FAKEMATCH(signature): Field_GetSceneAttributes declared returning s32,
-   * though it returns s16; as s16, 17 of 1300 instructions differ in
-   * tla-en. */
+   * though it returns s16. */
   value = Field_GetSceneAttributes(gMainRoutineWork.scene);
   work->sceneAttributeHigh = (value >> 4) & 15;
   work->sceneAttributeLow = value & 15;
@@ -203,9 +202,7 @@ s32 FieldSequence_Run(void) {
         // 1300 instructions differ in tla-en.
         if (ARRIVAL.scene != (s16)(s32)&SceneId_WorldMap)
           goto clearOwner;
-        /* FAKEMATCH(barrier): an empty asm clobbering r0, so the entrance's
-         * offset 0x2c0 is built afresh, not added to the scene's 0x2be in r0;
-         * without it, 21 of 1300 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm clobbering r0. */
         asm("" : : : "r0");
         if ((value = FlagEntries_GetValue(ARRIVAL.entrance)) & 16)
         clearOwner:
@@ -674,9 +671,7 @@ s32 Field_PlaceAtEntrance(void) {
       return 0;
     }
     if (*(s8 *)cursor == entrance) {
-      /* FAKEMATCH(barrier): an empty asm reading work keeps it live across the
-       * loop in r6, so entrance takes r7; without it, 14 of 211 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading work. */
       asm("" : : "r"(work));
       cursor++;
       x = Stream_ReadS16(&cursor);

@@ -62,9 +62,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
                              &work->sheet[0x3c00], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
-  /* FAKEMATCH(wrapper): the copy routine fetched through Iwram_GetCopyWords,
-   * so the call loads its address before its arguments; as Iwram_CopyWords
-   * called directly, 2 of 1123 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the copy routine fetched through Iwram_GetCopyWords. */
   if (effect->variant == 1)
     Iwram_GetCopyWords()(
         (void *)BG_PLTT,
@@ -90,9 +88,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       step->velocityY = (Random16() & 63) << 13;
     }
     step->velocityZ = ((Random16() & 63) - 32) << 14;
-    /* FAKEMATCH(dead): an empty once-only block that keeps the variant's 1 and
-     * i's step after velocityZ's store; without it, 4 of 1123 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     step->variant = 1;
@@ -121,8 +117,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     else
       step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
     step->y = (Trig_Cos(angle) * 16 >> 16) + 40;
-    /* FAKEMATCH(dead): an empty once-only block that keeps the y store ahead of
-     * the variant's; without it, 2 of 1123 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     step->variant = -(i * 2);
@@ -160,8 +155,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 offset;
 
       offset = gBattleEffect_PuffArcCells[cell];
-      /* FAKEMATCH(dead): width, read from the puff table and never used; as no
-       * width, 523 of 1123 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): width, read from the puff table and never used. */
       width = gData_08197467[cell];
       draw[0](canvas, &work->sheet[offset + 0x3c00],
               56 - gData_08197467[cell] / 2,

@@ -63,9 +63,7 @@ s32 Shop_SelectBuy(void) {
   s32 unitId;
   s32 capacitySlot;
   s32 removedCount;
-  /* FAKEMATCH(dead): both A-button tests also store into key, which nothing
-   * reads; as if (gInput.pressed & 1) at both, 8 of 540 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): both A-button tests also store into key. */
   s32 key;
 
   shop->itemWindow = 0;
@@ -743,9 +741,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           QuantityBar_Fill(30, 14, buffer);
           QuantityBar_Fill(minimum + maximum, 0, buffer);
           QuantityBar_Fill(minimum + count + 1, 10, buffer);
-          /* FAKEMATCH(temporary): the quantity in its own local before the
-           * last fill; as result = count + 1 after VramCache_Load, 28 of 192
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(temporary): the quantity in its own local before the last
+           * fill. */
           selected = count + 1;
           QuantityBar_Fill(minimum, 2, buffer);
           VramCache_Load(slot, 0x100, buffer);

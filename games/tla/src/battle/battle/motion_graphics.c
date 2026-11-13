@@ -28,8 +28,6 @@ void BattleObject_Reset__presentation() __asm__("BattleObject_Reset");
 /// a call that lands, saves the battle object it borrows and brings in the
 /// beast's class (Wild Wolf's 117 and so on) to play the attack; returns the
 /// save, or NULL for any other ability. BattleMotion_DismissBeast undoes it.
-/// ★ Named from the game: "Call on a feral ally's aid." (Wild Wolf's
-/// description)
 struct SavedBattleObj *
 BattleMotion_CallBeast(struct BattlePlan *plan,
                        struct BattlePresentationWork *work) {

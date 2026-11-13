@@ -70,9 +70,7 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   ctx->count = 1;
   SpriteAnimation_ClearFar(ctx->entries[1]);
   {
-    /* FAKEMATCH(pin): the sprite copied into r1 for its two stores, leaving
-     * r3 to the zero's copy from sl; as ctx in both stores, 8 of 69
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the sprite copied into r1 for its two stores. */
     register struct ContextSprite *pinnedCtx asm("r1") = ctx;
 
     pinnedCtx->flags = 1;

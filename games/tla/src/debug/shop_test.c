@@ -45,8 +45,7 @@ void Test_ReceiveFlint(s32 message, s32 count) {
   s32 typed;
   volatile struct InputState *input;
 
-  /* FAKEMATCH(volatile): the input read through a volatile pointer; as a plain
-   * pointer, 31 of 94 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the input read through a volatile pointer. */
   window = Portrait_OpenWindow(206, 0, 0, 0);
   i = 0;
   if (i >= count)
@@ -251,9 +250,7 @@ void Party_RemoveMember(s32 owner);
 
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline where the next
-   * call adds the same item, so the item is built again, as the ROM has it;
-   * where a direct call would keep it in r5; as direct Inventory_AddItem
-   * calls, 24 of 134 instructions differ in tla-en. */
+   * call adds the same item. */
   Inventory_AddItem(owner, item);
 }
 
@@ -828,10 +825,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
         wait(1);
         scale = object->scaleX + 0x51e;
         {
-          /* FAKEMATCH(temporary): the turn is added as a word, so its step
-           * is built inside the loop as in the native; as
-           * object->angle += 0x1000, 22 of 86 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(temporary): the turn is added as a word. */
           s32 angle = object->facing + 0x1000;
 
           object->facing = angle;

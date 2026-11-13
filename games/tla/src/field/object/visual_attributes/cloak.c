@@ -378,9 +378,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   source->linked = target;
   Actor_StartScriptFar((struct Actor *)source,
                        (u32)gFieldEffect_SourceHoldScript);
-  /* FAKEMATCH(temporary): p holds &position everywhere but the steering
-     loop's first part, which gives the shards loop's 19 r8 and its 0x20000
-     r9; as position used directly, 10 of 551 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): p holds &position everywhere but the steering loop's
+   * first part. */
   p = &position;
   p->x = work->x;
   p->y = work->y + 0x100000;

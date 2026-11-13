@@ -39,23 +39,18 @@ void ScriptedBattle_SaveUnits(void) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
         {
           struct SnapshotVitals *pv;
-          /* FAKEMATCH(pin): the PP base held in r0; as a plain local, 4 of
-           * 183 instructions differ in tla-en. */
+          /* FAKEMATCH(pin): the PP base held in r0. */
           register struct SnapshotVitals *base asm("r0");
           u32 pp;
 
           /* FAKEMATCH(temporary): the PP value held in a local while pv is
-           * built; as pv->pp = unit->unk3a, 121 of 183 instructions differ
-           * in tla-en. */
+           * built. */
           pp = unit->unk3a;
           base = Data_0200ffec;
           // The address as an integer sum, i * 4 first: &base[i] puts the
           // base first in the add.
           pv = (struct SnapshotVitals *)(i * 4 + (s32)base);
-          /* FAKEMATCH(dead): a store the tag loop's init overwrites; its
-           * test builds 300 in a reload register while pp and pv hold r2
-           * and r3, which puts r1 among reload's registers; without it, 121
-           * of 183 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): a store the tag loop's init overwrites. */
           if (i == 300)
             j = 0;
           pv->pp = pp;

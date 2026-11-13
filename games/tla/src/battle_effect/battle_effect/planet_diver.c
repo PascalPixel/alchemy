@@ -362,9 +362,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
-    /* FAKEMATCH(barrier): an empty asm after the look-at call keeps its
-     * arguments loaded in order, r0 before r1; without it, 2 of 511
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after the look-at call. */
     __asm__("");
     row = work->bg2xLines;
     sway = Trig_Sin((frame << 15) /
@@ -422,16 +420,12 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
               // target is, on the target's side.
               targetDistance = target->x < 0 ? -target->x : target->x;
               moteDistance = x;
-              /* FAKEMATCH(barrier): an empty asm through moteDistance keeps it
-               * a copy apart from x, so the sign test and the negation read the
-               * copy; as x < 0 ? -x : x, 4 of 511 instructions differ in
-               * tla-en. */
+              /* FAKEMATCH(barrier): an empty asm through moteDistance. */
               __asm__("" : "=r"(moteDistance) : "0"(moteDistance));
               if (moteDistance < 0)
                 moteDistance = -moteDistance;
               /* FAKEMATCH(dead): each arm stores its test in crossed, never
-               * read; as the tests without the stores, 81 of 511 instructions
-               * differ in tla-en. */
+               * read. */
               if (targetDistance <= moteDistance &&
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {

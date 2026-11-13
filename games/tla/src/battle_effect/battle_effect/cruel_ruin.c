@@ -1389,19 +1389,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
 
               BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
               /* FAKEMATCH(dead): a test that is always true here (the block is
-               * entered only when r > 1); its two arms end common subexpression
-               * elimination's path at their join, so the circle's work->sheet
-               * and the first blit's stay two sums, and the join is gone before
-               * scheduling; as BattleEffect_LoadBlitter(SLOT_ALT, 19), 440 of
-               * 2579 instructions differ in tla-en. */
+               * entered only when r > 1). */
               BattleEffect_LoadBlitter(SLOT_ALT, r > 1 ? 19 : 0);
               half = r / 2;
               y -= r;
               ALT_BLITTER(canvas, work->sheet, x - half, y + 8, half, r);
               HeapSlot_Release(SLOT_ALT);
-              /* FAKEMATCH(dead): the same always-true test, keeping the two
-               * blits' work->sheet apart; as BattleEffect_LoadBlitter(SLOT_ALT,
-               * 23), 436 of 2579 instructions differ in tla-en. */
+              /* FAKEMATCH(dead): the same always-true test. */
               BattleEffect_LoadBlitter(SLOT_ALT, r > 1 ? 23 : 0);
               ALT_BLITTER(canvas, work->sheet, x, y + 8, half, r);
               HeapSlot_Release(SLOT_ALT);
@@ -1540,14 +1534,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           s32 tile = i + k_ + phase;
           place[0] = (i << 21) + scrollX;
           place[2] = 0x790000 + (j << 21);
-          /* FAKEMATCH(dead): a store both arms below overwrite, behind a test
-           * that is never true. i == 300 builds 300 in a reload register, the
-           * one pick after the place stores that leaves reload's round-robin
-           * on r0, so the else arm's reloads take r1, r2 and r0; the reads of
-           * row, j and last raise their reference counts, so global.c ranks
-           * last, j, row and then the Apply pointer and they take r6, r7, r4
-           * and the stack; as no test, 197 of 2579 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(dead): a store both arms below overwrite. */
           if (i == 300 && row == j && last == 0)
             u = 0;
           if (i == 8) {

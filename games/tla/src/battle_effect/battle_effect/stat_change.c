@@ -67,9 +67,7 @@ void BattleEffect_RunStatBoostMode10(struct BattleEffectArgument *effect) {
 #define FLARES_PER_MEMBER 64
 
 static inline CopyWordsFn CopyWordsRoutine(void) {
-  /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
-   * calls to Iwram_CopyWords, 4 of 1146 instructions of
-   * BattleEffect_RunStatBoost differ in tla-en. */
+  /* FAKEMATCH(wrapper): the routine fetched through this inline. */
   return Iwram_CopyWordsEntry;
 }
 
@@ -304,8 +302,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
-          /* FAKEMATCH(barrier): an empty asm through mode keeps it in a high
-           * register; without it, 2 of 1146 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm through mode. */
           __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags,
@@ -314,8 +311,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
             /* FAKEMATCH(barrier): an empty asm through slot hides that it holds
-             * the heap slot's address; as draw[1] = Ram_HeapSlots->unkb8[1], 32
-             * of 1146 instructions differ in tla-en. */
+             * the heap slot's address. */
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;
           }
@@ -509,9 +505,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
     palette = (s32)&ResourceId_PinkBurstSheet;
   else if (mode == 3) {
     palette = (s32)&ResourceId_GlowOrbSheet;
-    /* FAKEMATCH(barrier): an empty asm keeps the mode-3 arm apart from the
-     * identical mode-1 arm; without it, 8 of 553 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     asm("");
   } else if (mode == 1)
     palette = (s32)&ResourceId_GlowOrbSheet;

@@ -382,7 +382,10 @@ void Func_02000838(void) {
   }
 }
 
-void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
+/// Stepping into a door: it opens, the leader walks through and the scene
+/// leaves by the exit given.
+void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
+                                     s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
@@ -399,7 +402,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
 }
 
 void Func_02000940(s32 countdown) {
-  Func_020008cc(gData_02005290, countdown, 0);
+  EasternAlhafra_OpenDoorAndEnter(gData_02005290, countdown, 0);
 }
 
 void Func_02000954(void) {}

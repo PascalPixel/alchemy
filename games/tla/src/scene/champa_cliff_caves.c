@@ -28,7 +28,8 @@ struct RiseObject {
 
 extern const struct WarpTarget gData_02003d10;
 
-void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode);
+void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
+                                       s32 mode);
 void Func_02003474(s32 a, s32 b, s32 c);
 void Func_02003624(struct Actor *object, struct Actor *target);
 
@@ -135,7 +136,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gData_0200375c;
 }
 
-void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
+/// Stepping into a door: it opens, the leader walks through and the scene
+/// leaves by the exit given.
+void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
+                                       s32 mode) {
   s32 id;
 
   Event_Start();
@@ -157,7 +161,9 @@ void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-void Func_020001f4(s32 door) { Func_0200016c(&gData_02003d10, door, 0); }
+void Func_020001f4(s32 door) {
+  ChampaCliffCaves_OpenDoorAndEnter(&gData_02003d10, door, 0);
+}
 
 extern const struct WarpTarget gData_02003d18;
 

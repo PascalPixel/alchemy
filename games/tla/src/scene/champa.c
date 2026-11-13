@@ -60,7 +60,9 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
-void Func_02000080(const void *warp, s32 door, s32 mode) {
+/// Stepping into a door: it opens, the leader walks through and the scene
+/// leaves by the exit given.
+void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
   s32 id;
 
   Event_Start();
@@ -91,9 +93,9 @@ void Func_020000fc(s32 door) {
         Func_0200006c;
   if (door == 7) {
     Map_ClearLayerEntryFlag(8);
-    Func_02000080(table, 7, 1);
+    Champa_OpenDoorAndEnter(table, 7, 1);
   } else {
-    Func_02000080(table + 2, door, 0);
+    Champa_OpenDoorAndEnter(table + 2, door, 0);
   }
 }
 

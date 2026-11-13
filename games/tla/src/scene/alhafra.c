@@ -46,7 +46,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gData_02001e48;
 }
 
-void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
+/// Stepping into a door: it opens, the leader walks through and the scene
+/// leaves by the exit given.
+void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
+                              s32 unused) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
@@ -65,7 +68,7 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
 void Func_0200010c(s32 index) {
   struct DoorStep *table = gData_0200277c;
 
-  Func_02000098(&table[index], index, 0);
+  Alhafra_OpenDoorAndEnter(&table[index], index, 0);
 }
 
 #define FIELD_AT(base, type, off)                                              \

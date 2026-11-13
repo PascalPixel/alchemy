@@ -432,7 +432,9 @@ void Func_02000c14(void) {
   }
 }
 
-void Func_02000c8c(void) {
+/// Stepping into a door: it opens, the leader walks through and the scene
+/// leaves by the exit given.
+void AttekaInlet_OpenDoorAndEnter(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -612,7 +614,7 @@ struct Trigger gData_0200171c[] = {
 };
 
 struct Trigger gData_02001728[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(AttekaInlet_OpenDoorAndEnter)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 10, 0x9b1, EVENT(Func_020003e4)},

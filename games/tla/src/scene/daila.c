@@ -43,12 +43,14 @@ s32 *Scene_GetExits(void) {
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
-    return gData_02001238;
+    return gDaila2ActorPlacements;
   else
-    return gData_020010d0;
+    return gDaila1ActorPlacements;
 }
 
-void Func_0200009c(void) {
+/// Stepping onto one of the village's doors: the leader walks through it and
+/// the scene leaves by the exit of its number.
+void Daila_EnterDoor(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   Import_EventStart();
@@ -70,9 +72,9 @@ void Func_02000118(s32 mode) { ReturnHome(mode, 66, 0x300); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
-    return gData_02001664;
+    return gDaila2Triggers;
   else
-    return gData_02001490;
+    return gDaila1Triggers;
 }
 
 void Daila_TalkBeenBefore(void) {
@@ -138,7 +140,7 @@ void Daila_TalkBoat(void) {
   Import_EventEnd();
 }
 
-void Func_02000288(s32 keeper) {
+void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -171,7 +173,7 @@ void Daila_TalkHip(void) {
   Import_EventEnd();
 }
 
-void Func_02000340(s32 keeper) {
+void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -476,7 +478,7 @@ s32 gData_02001068[] = {
 };
 // clang-format on
 
-struct ActorPlacement gData_020010d0[] = {
+struct ActorPlacement gDaila1ActorPlacements[] = {
     {115, CONDITION_ALWAYS, 2, PIXELS(40), 0, PIXELS(280), FACING_EAST, 1, 0},
     {116, CONDITION_ALWAYS, 3, PIXELS(264), 0, PIXELS(232), FACING_SOUTH, 1, 0},
     {114, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_EAST, 1, 0},
@@ -498,7 +500,7 @@ struct ActorPlacement gData_020010d0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001238[] = {
+struct ActorPlacement gDaila2ActorPlacements[] = {
     {115, CONDITION_ALWAYS, 2, PIXELS(40), 0, PIXELS(280), FACING_EAST, 1, 0},
     {116, CONDITION_ALWAYS, 3, PIXELS(264), 0, PIXELS(232), FACING_SOUTH, 1, 0},
     {114, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_EAST, 1, 0},
@@ -528,13 +530,13 @@ struct ActorPlacement gData_02001238[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001490[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Func_0200009c)},
+struct Trigger gDaila1Triggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
@@ -556,7 +558,7 @@ struct Trigger gData_02001490[] = {
     {TRIGGER_TALK, 19, CONDITION_ALWAYS,
      MSGNO(MsgFieldYaaayPuddlesInTheVillageYaaay)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgFieldBleahIFellInAPuddle)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_02000288)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Daila_AskAfterTaviAndRiki)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgFieldThatWaveTurnedThisPlaceInto)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
@@ -589,13 +591,13 @@ struct Trigger gData_02001490[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001664[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Func_0200009c)},
+struct Trigger gDaila2Triggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
@@ -624,7 +626,7 @@ struct Trigger gData_02001664[] = {
     {TRIGGER_TALK, 19, CONDITION_ALWAYS,
      MSGNO(MsgFieldThePuddlesAreGoneAndNow)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgFieldIGotHurtWhenIWas)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_02000340)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Daila_TaviAndRikiAreHome)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgFieldThankOurLuckyStarsOurLittle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,

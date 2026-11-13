@@ -333,7 +333,9 @@ void Func_02000b88(void) { Func_02001e0c_(67, 38, 11, 6, 67, 8, 1); }
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(Func_02000ba8, 67, 11, 6, 8, 0xf9e,
                                           64, 200, 152, 12, 9)
 
-void Func_02000c38(void) {
+/// Stepping onto a door: the leader walks through it and the scene leaves by
+/// the exit of its number.
+void ApojiiIslands_EnterDoor(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -1014,11 +1016,11 @@ struct Trigger gData_020024d0[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Func_02000c38)},
-    {TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Func_02000c38)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {0xc602, 33, CONDITION_ALWAYS, EVENT(Func_020010d0)},
     {0xc602, 21, CONDITION_ALWAYS, EVENT(Func_020010d0)},

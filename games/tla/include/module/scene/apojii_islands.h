@@ -22,7 +22,7 @@ void Func_020003cc(void);
 void Func_020006a8(void);
 void Func_02000b88(void);
 void Func_02000ba8(void);
-void Func_02000c38(void);
+void ApojiiIslands_EnterDoor(void);
 void Func_02000d74(void);
 void Func_020010d0(void);
 extern u32 gData_02001e34[];

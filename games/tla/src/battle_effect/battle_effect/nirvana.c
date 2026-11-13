@@ -991,7 +991,6 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           }
         }
       }
-      // Two compares in the native, not one merged range check.
       if (frame < 64) {
         if (frame > 25) {
           s32 scale;

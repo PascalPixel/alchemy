@@ -491,8 +491,6 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
       }
       if (Title_WaitOrPress(s->frames))
         goto fail;
-      // Read through a volatile cast: keeps the ldrh, its copy and the sign
-      // extension apart, where a plain read folds them into one ldrsh.
       step = *(volatile u16 *)&s->step;
     }
   }
@@ -533,10 +531,6 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
 #define LOGO_RIGHT_X 140
 #endif
 
-// Declared here without const, as Camelot's code read them: a const table's
-// loads are scheduled across the stores before them (4 of 360 differ with
-// either const, 6 with both). menu/logo.c defines both, const, in
-// ROM.
 extern s16 gData_081a8378[];
 extern s16 gData_081a84e6[];
 
@@ -621,8 +615,6 @@ void TitleIntro_UpdateLogo(void) {
     Title_PlaceLogoPiece(128, LOGO_MIDDLE_X, y);
     pieceX = LOGO_RIGHT_X - (logo->step - 256) / 4;
     Title_PlaceLogoPiece(256, pieceX, y);
-    // Pointer steps and one index, as the listing schedules them: plain
-    // indexes give 34 of 360, steps throughout 9.
     matrix = (volatile u16 *)0x07000006;
     *matrix = logo->step;
     matrix += 4;

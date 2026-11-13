@@ -1889,8 +1889,6 @@ s32 ItemMenu_SelectItem(void) {
     if ((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       ownerIndex = menu->paneIndex;
-      // Read unsigned (ldrh): the party's ids, as this routine's bytes load
-      // them.
       menu->selectedIndexByOwner[(u16)menu->ownerIds[ownerIndex]] =
           state.selectedIndex;
       if (gInput.repeat & KEY_R)

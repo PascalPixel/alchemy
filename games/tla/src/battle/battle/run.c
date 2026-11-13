@@ -59,8 +59,6 @@ void BattleParty_SwapInReserves(void) {
 }
 
 /// Allocates the battle camera (heap slot 48) and sets its starting view.
-// The values are those The Broken Seal's battle start sets inline after its
-// own allocation.
 void BattleCamera_Create(void) {
   struct BattleCamera *camera =
       HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
@@ -170,8 +168,6 @@ struct EncounterWork {
 extern u8 Data_02018000__battle[] __asm__("Data_02018000");
 #define Data_02018000 Data_02018000__battle
 
-// The ROM's call here keeps the whole return register, as an s32 return
-// does; system/system/flags.c defines it returning u8.
 /* VIEW(battle): routine GameFlag_GetByte as s32 GameFlag_GetByte(s32 flag);
  * game/game_flags.h has u8 GameFlag_GetByte(s32 flag); tried as the
  * definition's u8 GameFlag_GetByte(s32 flag), which the object already

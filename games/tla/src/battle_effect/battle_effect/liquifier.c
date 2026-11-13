@@ -403,7 +403,6 @@ void BattleEffect_RunCanvasMode3WithAction(
 #include "bg_scroll.h"
 #include "battle_work.h"
 
-// The ball is the last particle, never a local: the native rereads its address.
 #define ball (&work->particles[63])
 
 // Draws a disc of the given size from the disc sheet in the map cell buffer

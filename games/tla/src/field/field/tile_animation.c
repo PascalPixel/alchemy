@@ -36,9 +36,6 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   if (window->origin != NULL) {
     s32 *p = window->origin;
 
-    // origin[0] and origin[2], read through a stepped pointer: the only
-    // spelling that gives the native's post-increment load (4 of 277 as
-    // indexes).
     x = *p++;
     y = p[1];
   }
@@ -59,9 +56,6 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   block = (struct Data02020000 *)Ram_MapBlocks +
           (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
-  // One local holds the region, then ScreenTransition_IsScanlineActiveFar's
-  // result: set twice, it reads the region into r3 for the divide, as the
-  // original does.
   value = block->region;
   switch (value / 10) {
   case 3:

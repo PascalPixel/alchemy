@@ -830,10 +830,6 @@ s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
                                  s32 flags, s32 mode);
 
-// The rings' vectors go through these two polar helpers, as the native
-// rebuilds 0x200 at each call (movs, lsls) and keeps only the radius and the
-// multiply's entry in registers; written out, loop.c hoists 0x200 too (81 of
-// 255 differ, 2026-11-08).
 static __inline__ s32 PolarX(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Cos(angle), radius);
 }
@@ -913,8 +909,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     break;
   }
   Dma_Set(data, (void *)BG_PLTT, 0x84000000 | 32, REG_DMA3);
-  // A once-only block, as in The Broken Seal: it keeps the zero ahead of the
-  // BG2X address, which reload derives from the DMA register's (8 without it).
+  /* FAKEMATCH(dead): a once-only block. */
   do {
     zero = 0;
     REG_BG2X = zero;

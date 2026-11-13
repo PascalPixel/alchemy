@@ -11,8 +11,6 @@ extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SkullSheet;
 extern char ResourceId_BlueFlameSheet;
 
-// The swirl's seven growth frames, cut from one sheet. Not const: the native
-// reloads them after every call.
 extern u16 gHelmSplitter_Cells[];
 extern s8 gHelmSplitter_CellBiasX[];
 extern s8 gHelmSplitter_CellBiasY[];

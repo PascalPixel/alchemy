@@ -974,8 +974,6 @@ struct DaggerTexture {
   void *pixels;
 };
 
-// One entry of the list Render_DrawModelList draws; kind 9 is a textured quad.
-// Render_AllocateModelList allocates the list with an empty entry after it.
 struct RenderPrimitive {
   s32 kind;
   s32 unk04;
@@ -1309,7 +1307,6 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   }
 
   {
-    // A local for the 0, so the address is built first, in r2.
     s32 cleared = 0;
 
     battle[0x866] = cleared;

@@ -88,7 +88,6 @@ s32 MapGrid_LoadMap(s32 index) {
     u32 y = layerSource->y;
     s32 scaleX;
     s32 cell;
-    // Set inside the loop, where the original's register allocation needs it.
     u8 *shapeGrid;
     u32 maskY;
 
@@ -954,8 +953,6 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
     Iwram_ClearWordsEntry(decodedTile, 0x400);
 
   sourceTiles = decodedTile;
-  // The block table at its fixed address: as the symbol gMapBlocks, its
-  // address forms in r2 rather than r1 and update reloads into r3, not r2.
   quarterCells = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
   for (rowIndex = 0; rowIndex < 16; rowIndex++) {
     Dma_Set(sourceTiles, quarterCells, 0x84000010, REG_DMA3);

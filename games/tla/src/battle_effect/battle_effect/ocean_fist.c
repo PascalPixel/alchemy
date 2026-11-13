@@ -120,7 +120,6 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
                                    1, 0);
         Sound_PlayFar(SE_CRASH);
         work->shakeFrames = 4;
-        // Set once: reload rebuilds each of these at its use (see the header).
         halfWidth = 48;
         width = 96;
         sheet = gData_02014000;

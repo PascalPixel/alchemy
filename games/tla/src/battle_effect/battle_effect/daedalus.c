@@ -1581,8 +1581,6 @@ struct SummonObject {
 void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: the second blitter gives the stack frame its sp+24 (as one, every
-  // slot above it moves: 36 of 575 differ in tla-en).
   DrawRectangle draw[2];
   struct ModelTexture texture;
   s32 request[4];

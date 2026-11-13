@@ -793,7 +793,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           shot->y += shot->velocityY * 2;
           shot->z += shot->velocityZ * 2;
         } else if (mode == 18) {
-          // As mode 10, tested apart as the native does.
           shot->velocityY =
               (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
               steps;

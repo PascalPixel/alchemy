@@ -476,17 +476,6 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// BattleStaging_RunItem: The Broken Seal's BattleStaging_RunItem
-// (games/tbs/src/battle/battle/staging.c), ported: plays an item's use, the
-// camera turned to the user's side, the user raising the item and, for an item
-// with an effect, the screen dimming while the effect plays with the events;
-// then spends the item as its use type says. This game sets the user's mode
-// from the battle work's byte 0x869. The dimming loop reads the battle work
-// through a heap pointer, which keeps 0x03000000 in r11 as the native. Message
-// 3176 is MsgItemBroke here, a name not yet in the catalogs.
-// BattleStaging_BuildTargetList is void (r0 is set before r1 for the call, as
-// the native).
-
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
 /// Plays an item's use: the camera turns to the user's side, the user raises

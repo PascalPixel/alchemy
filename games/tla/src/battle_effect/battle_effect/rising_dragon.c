@@ -117,8 +117,6 @@ extern struct StripVertex
 void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: blit[1] gives the stack frame its 8 bytes at sp+68 as one DImode
-  // pseudo.
   DrawRectangle blit[2];
   s32 frame;
   s32 *camera;

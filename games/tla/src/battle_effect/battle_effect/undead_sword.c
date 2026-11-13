@@ -350,9 +350,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// A vertex of the water: three signed bytes, written as bit-fields (a store
-// through a plain byte pointer is scheduled after every earlier load, a
-// stack slot's included).
 struct WaterVertex {
   s32 x : 8;
   s32 y : 8;

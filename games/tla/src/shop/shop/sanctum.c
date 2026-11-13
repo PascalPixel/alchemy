@@ -208,28 +208,6 @@ s32 Sanctum_Run(s32 unitId) {
 #define SERVICE_PRICE_WINDOW_WIDTH 23
 #endif
 
-// One source for all six editions: every local takes its default at the
-// top, in this order, and memberIndex is zeroed again after the windows.
-// How the listing's zeros come out of the defaults:
-// - listWindow's NULL comes first, so cse stores memberIndex's first 0 from
-//   listWindow's register, r11. A store from a high register is reloaded
-//   through a low one, the function's first reload, so r0: reload registers
-//   go round r0 to r3 from one instruction to the next, which is why redraw's
-//   1 then takes r1 and the 0x507 offset r2. listWindow is set again before
-//   any read, so its own mov from r0 is deleted after reload; only
-//   movs r0, #0 and the store remain.
-// - In Italian priceWindow's NULL is the second zero. cse1 stores it for the
-//   second memberIndex = 0 while its uses in the loop still exist; gcse then
-//   turns those uses into constants, which leaves it local to the first
-//   block and alive across the three calls: local-alloc gives it r5, ahead
-//   of global's choice for shop. unitId's 0 beside it is reloaded as a copy
-//   of r5, and both, with chooseAgain's 0, sink below the last call in
-//   sched2.
-// - With a price window the second store's zero is a temporary of its own,
-//   local to the first block across its four calls: local-alloc gives it r6
-//   (r5 holds the windows' style, 2), which leaves global one register short,
-//   so chooseAgain and priceWindow go to the stack and chooseAgain's 0 is
-//   stored from r6.
 s32 Sanctum_RunPartyService(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   void *priceWindow;
@@ -436,8 +414,6 @@ void Sanctum_HighlightMembers(void *window, s32 selected) {
 }
 
 /// Shows the selected member's service price, or that no treatment is needed.
-// As ☀️'s Sanctum_DrawFee. The service kind's variable takes the message
-// once the kind is no longer needed, as the native's register does.
 void Sanctum_DrawFee(s32 window, s32 unitId) {
   s32 kindOrMessage;
   s32 price;

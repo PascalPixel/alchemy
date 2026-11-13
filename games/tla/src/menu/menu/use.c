@@ -70,8 +70,6 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == 0xff) {
-      // Read unsigned (ldrh): the party's ids, as this routine's bytes load
-      // them.
       targetId = (u16)menu->ownerIds[targetIndex];
       target = Unit_Get(targetId);
     }

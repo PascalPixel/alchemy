@@ -457,7 +457,6 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
         if (gGrowth_Kinds[i] < 2) {
           height = age * 16;
-          // Six times the age, spelled as the shifts and add the native
           lean = (age * 2 + age) * 2;
           if (height > 80) {
             height = 80;

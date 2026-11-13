@@ -56,8 +56,6 @@ extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
       helpColumn = (last);                                                     \
   }
 
-// The window listing the aimed member's conditions, count lines tall. The
-// European editions share one image and widen it at run time for Spanish.
 #if TLA_PATCH_2
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
@@ -245,8 +243,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   window = Window_Create(0, 12, 30, 4, 74);
 
   for (;;) {
-    // A once-only block: its end keeps the tile reload after the sprite's
-    // words.
+    /* FAKEMATCH(dead): a once-only block. */
     do {
       /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
       firstSprite = cursorSprites;

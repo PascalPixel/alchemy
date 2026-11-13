@@ -388,7 +388,6 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 
     frame = 0;
     if (stagger != -54) {
-    // No loop notes: the heap slot reads below stay in the frame loop.
     top:
       // Frame 0: 16 sparks leave the ground in random directions.
       if (frame == 0) {
@@ -596,7 +595,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     s32 x;
     s32 half;
     s32 offset;
-    // The clear through a local: the native loads its entry before the sheet.
     s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
 
     size = width / 2;
@@ -615,9 +613,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
 
         row = y * 32;
         work->sheet[0x1000 + row + x * 2] = v;
-        // x + x: the same byte as x * 2 + 1, spelled so that CSE cannot share
-        // row + x * 2 between the two stores, which gives row the register
-        // order the listing has.
         work->sheet[0x1000 + row + x + x + 1] = v;
         work->sheet[0x1000 + (offset + (size - x - 1)) * 2] = v;
         work->sheet[0x1000 + (offset + (size - x - 1)) * 2 + 1] = v;
@@ -639,8 +634,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D8, work->sheet + 0x4000, 0,
                              0);
 
-  // A local holding 0 for the whole effect clears the glow's variant and both
-  // models' shade (with literal zeros, 151 of 568 differ in tla-en).
   zero = 0;
   for (frame = 0; frame != WYRD_FRAMES; frame++) {
     struct RenderModel *model;
@@ -653,8 +646,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       s32 still;
 
       EffectPosition_ProjectBattler(effect->actors[0], &screen);
-      // A local holding 0 for the drops' rest values: the listing builds the 0
-      // between i and the drop pointer (with literal zeros, 2 of 568 differ).
       still = 0;
       for (i = 0, drop = work->particles; i != WYRD_DROPS; i++, drop++) {
         drop->x = (screen.x / 2 + (Random16() & 15) - 8) << 16;

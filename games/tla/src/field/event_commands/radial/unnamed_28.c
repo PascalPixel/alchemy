@@ -317,8 +317,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   event->unkcae = 0;
   Task_Remove(FieldPsynergy_UpdateUnnamed28);
   wait(1);
-  // A once-only block: its end holds the order around it (as plain
-  // statements, 6 of 226 differ in tla-en).
+  /* FAKEMATCH(dead): a once-only block. */
   do {
     Sound_PlayFar(SE_MAP_TRANSITION);
     {

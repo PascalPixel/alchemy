@@ -382,8 +382,6 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *res) {
     st->baseTurns = 1;
     st->base20 = 0;
     st->base21 = 0;
-    // Called as returning a value, where the definition returns nothing: the
-    // stores before it are scheduled as they are only then.
     ((s32 (*)(s32))Unit_RefreshPsynergy)(owner);
     Unit_Calculate(owner);
   }

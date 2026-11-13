@@ -971,8 +971,6 @@ void ObjectSystem_UpdateCameraFixed(void) {
   HeapSlot_Release(80);
 }
 
-// Object scripts: move the instruction cursor and control byte54.
-
 #include "field/script.h"
 
 /// Jumps to the script the next word points to and returns 1 to continue

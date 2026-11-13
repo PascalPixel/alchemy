@@ -792,7 +792,6 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   menu->sideIcons[0]->active = 1;
 #if TLA_PATCH_1
   if (y != -1)
-    // With the second argument Window_CloseIfOpen passes on in r1.
     ((void (*)(void **, s32))Window_CloseIfOpen)((void **)&menu->modalWindow,
                                                  1);
 #endif

@@ -25,12 +25,6 @@
 // argument for the actor loops; gCameraSceneParameters declared unsized (with
 // the shared u32[3], word 3 folds into the address).
 
-// What fixed the frame and slots: screen.y >> 16 and screen.depth >>= 16 as the
-// twin writes them (combine makes the ldrsh off the pointer to screen; a cast
-// to s16 * gave screen + 6 its own register and two spills); the twin's
-// declaration order; wave and drift in a block opened after the blitter fetch,
-// whose spill slots fall below the pointer to draw.
-
 // frame / 4 % 3, as the source writes it: the multiply-high routine with the
 // reciprocal of 3, where a plain % calls __modsi3.
 #define MOD3(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)

@@ -45,8 +45,6 @@ struct ModelTexture__f18ad40 {
   u8 *pixels;
 };
 
-// One entry of a model list, as Render_AllocateModelList allocates them and
-// Render_DrawModelList draws them.
 /* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -426,7 +424,6 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 64; i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 63) {
-          // CARD_NOISE at its fixed address: reload builds the number here.
           draw[0](canvas,
                   Ram_MapCellBuffer + 0x683e + ((step->variant / 4 & 3) << 10),
                   overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);

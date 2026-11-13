@@ -277,8 +277,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
             y + ((Trig_Cos(angle) * half) >> 16) - (gData_08197498[cell] >> 1);
         s32 flags = 3 | Data_08198bee[Random16() & 3];
 
-        // Once-only block: it ends CSE's block, so the width and height tables
-        // stay in the flash loop.
+        /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
         BattleEffect_BuildBlitter(188, 7, 7, flags, 1);

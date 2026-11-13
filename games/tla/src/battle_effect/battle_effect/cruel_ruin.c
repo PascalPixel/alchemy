@@ -765,7 +765,6 @@ EffectSprite_Acquire__battle_effect(s32 width, s32 height, u32 shape,
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
-// The listing reads the transfer count twice per pass of its wait.
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
@@ -1597,8 +1596,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   {
     u16 *background = (u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670);
 
-    // A once-only block: the listing stores 32 after the backdrop address and
-    // sets up the call while the store settles.
+    /* FAKEMATCH(dead): a once-only block. */
     do {
       gBgScroll[1].y = 32;
       BattleBackground_LoadFar(1, *background, 24);

@@ -453,9 +453,6 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         drawn->variant++;
       }
-      // The cell table's address is a local set before the walker, and each
-      // spark's cell is read at its byte offset: the listing's pool order
-      // and its ldrh by register offset.
       for (i = 0, cellTable = (const u8 *)gBattleEffect_MoteCells,
           drawn = (struct EffectStep *)Data_02012964;
            i != 128; i++, drawn++) {
@@ -914,8 +911,6 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
   for (row = 0; row != rows; row++) {
     for (column = 0; column != columns; column++) {
       if (row < rows - 1) {
-        // The address as an integer sum, which adds the offset to the base
-        // as the native does.
         struct MeshTriangle *triangle =
             (struct MeshTriangle *)((row * columns + column) * 24 +
                                     (u32)triangles);

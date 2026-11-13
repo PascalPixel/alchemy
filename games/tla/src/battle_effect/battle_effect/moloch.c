@@ -2269,8 +2269,6 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
       *cx += 64 << 16;
       *cy += 64 << 16;
 
-      // Sort the corners by y. bx[1] is *by and cx[1] is *cy: the y swaps
-      // store b's and c's y through their x pointers, as the native does.
       if (*ay > *by) {
         XOR_SWAP(*ax, *bx);
         *ay ^= *by;
@@ -3153,10 +3151,6 @@ extern u8 Data_0813ae14CodeWords[];
 extern u8 Data_0813b2ecCodeWords[];
 
 /// Copies a kernel whose DMA control is a word of its own.
-// Kernels 8, 9 and 10 read it from the pool, one word each, two of them equal
-// yet stored twice, so it is a symbol of each kernel: written
-// 0x84000000 | (size >> 2) the two fold into one pool entry, and as a number
-// the size is built in three instructions.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
   {                                                                            \
     (to) = Heap_Alloc((u32)(bytes));                                           \

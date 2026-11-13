@@ -382,7 +382,6 @@ extern const u8 gData_081991f0[]; // its corners
 void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: blit[1] gives the stack frame its 8-byte spill at sp+32.
   DrawRectangle blit[2];
   struct EffectPosition target;
   struct ModelTexture texture;
@@ -967,7 +966,6 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *canvas = Ram_HeapSlots->battleFxWork[1];
-  // Only draw[0] is used; the array takes an 8-byte spill slot in the frame.
   DrawRectangle draw[2];
   s32 member;
   u8 *sparkCels = Ram_HeapSlots->unk64[0];

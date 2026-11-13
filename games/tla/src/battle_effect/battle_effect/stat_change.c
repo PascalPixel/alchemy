@@ -95,9 +95,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   // Holds 0 for the whole function: the center's coordinates are stored from
   // it.
   s32 zero = 0;
-  // Each holds COMPOSITE_FLIP_X for the whole function, one for each of the
-  // Djinni's builds: reload rebuilds the 4 at each xor, and the two xors stay
-  // apart.
   s32 flipX = COMPOSITE_FLIP_X;
   s32 flipX2 = COMPOSITE_FLIP_X;
   s32 frame;
@@ -369,9 +366,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cel;
 
-        // An empty once-only block: its loop notes end CSE's block here, so the
-        // burst reads screen from the stack, not through the pointer passed to
-        // EffectPosition_ProjectPoint.
+        /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
         cel = (frame - member * 8 - 52) / 4 % 6;
@@ -410,8 +405,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
 
-          // The lower half's flags are taken before the first entry is
-          // fetched, which leaves the first entry r8 and the second sl.
           BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, BLIT_MAX);
           lowerFlags = flags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];

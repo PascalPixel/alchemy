@@ -209,8 +209,6 @@ void Actor_ShowItemIconById(u32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite;
   u8 *buffer;
-  // One zero for the fill and the stores, set between the allocation and its
-  // 0x400 offset; a literal 0 at each use differs.
   s32 zero;
   s32 tile;
   u8 kind;

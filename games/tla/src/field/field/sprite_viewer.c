@@ -80,7 +80,7 @@ restart:
     {
       s32 a;
 
-      // Once-only block: the animation index is read before i moves into r0.
+      /* FAKEMATCH(dead): a once-only block. */
       do {
         a = layers[i].animationIndex;
       } while (0);

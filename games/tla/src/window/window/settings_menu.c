@@ -209,8 +209,6 @@ void *CommandIcon_Create__window(s32 frame, s32 flags,
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
-// The option screen's work (heap slot 0xd0), as The Broken Seal's
-// workspace_options.h lays it out; the listing's offsets agree.
 struct OptionCursorMove {
   struct WindowSprite *anchor;
   u16 x;

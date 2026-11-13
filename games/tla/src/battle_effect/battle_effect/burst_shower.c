@@ -160,12 +160,6 @@ void BattleEffect_RunVolleyBMode11WithAction(
 // BattleEffect_BlastSheet, 0x190 BattleEffect_BlueBeamSheet and 0xb9
 // BattleEffect_EffectPalette01.
 
-// Forms that decided the allocation: i is one counter for every r9 loop;
-// user is a pointer spilled to sp+60; targets and aim are arrays; widths and
-// heights are set inside the glint loop, their NULL defaults keeping loop.c
-// from hoisting them; height 12 is hoisted only as a local; a launch with
-// x += dx << 12 sends the whole allocation away.
-
 #define DJINNI_BEHIND 64
 
 // A volley of shots flies from the user at the targets, one launched each

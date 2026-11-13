@@ -274,10 +274,6 @@ void BattleEffect_RunSlaver(void *object) {
 // The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct EffectStep *)Ram_MapCellBuffer)
 
-// The IWRAM routines are called through one inline each, as The Broken Seal's
-// iwram_call.h layer calls them: called directly, CSE shares the size
-// between the two clears.
-
 // Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
 // Slaver (mode 2, kind 395).
 

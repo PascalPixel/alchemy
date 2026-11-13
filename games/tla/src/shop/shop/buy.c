@@ -313,7 +313,6 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
           icon->animStep = highlightFrame;
           icon->sentinel = 253;
         }
-        // Read unsigned (ldrh), as the buy screen reads the price elsewhere.
         icon =
             Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
         icon->sentinel = 251;
@@ -366,9 +365,6 @@ void Shop_DrawMoney(void) {
 
 /// Draws the shop item's name and price, or its cannot-buy or not-broken note;
 /// kind 3 draws the item condition message numbered by the price instead.
-// The twin of ☀️'s Shop_DrawItemPrice (games/tbs/src/shop/shop.c), in the
-// twin's goto layout, with kind 3 added. It matches with the switch on the
-// kind as the twin has it (if-gotos give differ 46).
 void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind) {
   s32 labelMessage;
 
@@ -562,9 +558,6 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
 
 /// Shows how many of an item the member already carries and draws the
 /// member's inventory icons through ItemIconGrid_ShowInventory at (8, 8).
-// The twin of ☀️'s Shop_DrawUnitItem (games/tbs/src/shop/shop.c), whose icon
-// loop ⚓️ moved into that helper. It matches with the twin's quantityOffset
-// local (differ 10 with the offset inside the read).
 void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
   u8 *unitBytes;
   s32 slot;

@@ -441,8 +441,6 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
-  // Unused: the second blitter gives the stack frame its 4 bytes (as one, 154
-  // of 222 differ in tla-en); the family's pair, as in The Broken Seal.
   DrawRectangle draw[2];
   struct EffectStep *marker;
   s32 i;

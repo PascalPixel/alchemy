@@ -10,9 +10,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// One model vertex: signed byte coordinates, padded to a word. Written
-// through this struct, its stores are not char stores, so a reload of the
-// stack may pass them.
 /* VIEW(summon_effects): tag struct ModelVertex as struct
  * ModelVertex__summon_effects; battle_effect/ability_effects has another
  * definition; not tried: struct ModelVertex__summon_effects was not found. */
@@ -479,7 +476,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       asm("" : "+m"(*t));
       /* FAKEMATCH(barrier): the third asm on *t. */
       asm("" : "+m"(*t));
-      // A once-only block: it ends CSE's block after the % 5.
+      /* FAKEMATCH(dead): a once-only block. */
       do {
         t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
       } while (0);

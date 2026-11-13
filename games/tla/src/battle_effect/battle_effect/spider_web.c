@@ -455,7 +455,6 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       skip = 1;
     }
-    // The listing masks the frame with draw (still 1) here, not a literal 1.
     if ((frame & draw) && skip == 1) {
       draw = 0;
     }
@@ -725,7 +724,6 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           }
           step->velocityZ += 1024;
           if (draw) {
-            // Offset first, as the listing adds it.
             texture.pixels = (u8 *)((u << 12) + (s32)portraits);
             Transform_Reset();
             SceneTransform_ApplyPosition3(mx, my, 0);
@@ -744,7 +742,6 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           {
             s32 first = i * 16;
 
-            // Offset first, as the listing adds it.
             q = (struct EffectStep *)(first * (s32)sizeof(*q) + (s32)sparks);
           }
           for (; j != 16; j++, q++) {
@@ -913,9 +910,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   BattlePlayback_StartFar(134);
   REG_BG1CNT = 0x1f83;
   wait(1);
-  // Once-only blocks: the listing loads each fill's destination before its
-  // size; the first destination is read before its block, whose loop note then
-  // keeps the size and the call's address behind that load.
+  /* FAKEMATCH(dead): a once-only block. */
   {
     void *destination = Ram_HeapSlots->battleFxWork[1];
 

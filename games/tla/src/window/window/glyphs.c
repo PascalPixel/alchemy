@@ -403,8 +403,6 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
           break;
         }
       } else {
-        // Called with no prototype in scope, as its bytes need: declared
-        // void, two argument moves trade places in tla-ja and tla-en.
         Window_PutGlyph(window, c, x, y, 0);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)

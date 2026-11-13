@@ -481,7 +481,6 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   }
 }
 
-// BattleObject_Get, as the native expands it here.
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   u8 *work = (u8 *)Ram_HeapSlots->battleWork;
   struct BattleObj *slots = ((struct BattleWork *)work)->slots;

@@ -244,7 +244,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       v[1] = y;
       c = (Trig_Cos(j << 13) * r) >> 16;
       j++;
-      // A once-only block keeps j's reload after the multiply.
+      /* FAKEMATCH(dead): a once-only block. */
       do {
         v[2] = c;
       } while (0);
@@ -651,8 +651,6 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     texture2.pixels = work->sheet + 0x5000;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
-    // hx / 2 written out: as hx / 2 it would share the hoop's sign through
-    // GCSE, and through a copy of hx combine would add the sign first.
     half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;
     for (i = 0; i != 3; i++) {
       s32 start = Data_08199e98[i] + 8;

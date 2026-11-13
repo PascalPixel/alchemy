@@ -242,8 +242,7 @@ void Render_DrawModelList__ability_effects(struct Model *);
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
-// The second release in a once-only block, whose loop note sets kinds 68 and
-// 84's scheduling; the other sites spell the releases out.
+/* FAKEMATCH(dead): the second release in a once-only block. */
 #define RELEASE_BLITTERS()                                                     \
   HeapSlot_Release(188);                                                       \
   do {                                                                         \
@@ -1198,8 +1197,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             y = ((Trig_Cos(angle) * amp) >> 16) + off - gData_08197498[m] / 2;
             HeapSlot_Release(188);
             HeapSlot_Release(104);
-            // Once-only block: its loop notes keep sched2 from moving the
-            // releases' argument loads, as the listing has them.
+            /* FAKEMATCH(dead): a once-only block. */
             do {
               BattleEffect_BuildBlitter(188, 7, 7,
                                         gData_0819887e[Random16() & 3] | 3, 0);
@@ -1465,8 +1463,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           else
             m = 3;
           HeapSlot_Release(188);
-          // Once-only block: it ends CSE's block before the second draw reads
-          // target again, with no scheduling barrier inside the first draw.
+          /* FAKEMATCH(dead): a once-only block. */
           do {
             /* FAKEMATCH(pin): a 56 pinned to r3 for the first draw. */
             register s32 pinned __asm__("r3");

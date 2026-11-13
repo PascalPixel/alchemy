@@ -164,13 +164,6 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // Teardown: the callback and the blitter are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleEffect_RunGround (kind 203 there
-// too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
-// task priority, no work->effect store, the canvas preparer's packed
-// arguments, and the chips' blitter built by BattleEffect_BuildBlitter
-// directly. Other editions place a differently built version; only the
-// English listing was compared.
-
 #define ROCK_COUNT 6
 #define CHIPS_PER_ROCK 4
 // The chips' shapes and flips live in particles[32..63].

@@ -27,8 +27,6 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-// One entry of a model list, as Render_AllocateModelList allocates them and
-// Render_DrawModelList draws them.
 /* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -148,8 +146,6 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     model->texture = &texture;
     model->vertices = vertices;
 
-    // The three bites; the native counts them in the same register as the
-    // spark loops, as one variable.
     for (i = 0; i != 3; i++) {
       // The bite closes: 32 sparks fly from the target's middle, and the
       // target jolts and flashes. The last bite ends the action.

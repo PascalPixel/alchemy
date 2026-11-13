@@ -70,7 +70,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     slot &= 0xff;
     current = battle->partyUnits[slot];
     Sound_PlayFar(SE_MENU_CONFIRM);
-    // Once-only block: the native's code order after the first sound.
+    /* FAKEMATCH(dead): a once-only block. */
     do {
       goto test;
       for (;;) {

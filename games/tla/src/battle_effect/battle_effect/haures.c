@@ -1135,9 +1135,6 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 
       // The side from this vertex to the next, as two triangles.
       if (ring < 1) {
-        // A byte offset added to the base: as
-        // &triangles[(ring * segments + i) * 2], 4 of 141 differ (base +
-        // offset, where the native adds offset + base).
         struct MeshTriangle *triangle =
             (struct MeshTriangle *)((ring * segments + i) * 24 +
                                     (u32)triangles);

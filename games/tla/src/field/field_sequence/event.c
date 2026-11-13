@@ -412,7 +412,6 @@ Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 /// unit: character ID (message name 1).
 /// ability: ability ID (message ability 4).
 void Party_LearnAbility(s32 unit, s32 ability) {
-  // Declared without arguments, but unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar__event_commands();
   Sound_PlayFar(MUS_083);
   MessageArgument_PushFar(unit, 1);

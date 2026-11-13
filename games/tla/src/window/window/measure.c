@@ -316,8 +316,6 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 #if TLA_PATCH_1 && !TLA_PATCH_2
-  // English alone clears maxWidth before the page heights rather than after
-  // them; only the registers the compiler gives it show the difference.
   maxWidth = 0;
 #endif
   pageHeights[0] = 15;

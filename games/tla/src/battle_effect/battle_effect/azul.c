@@ -734,8 +734,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           texture2.pixels = gData_02014000;
           texture2.logWidth = 7;
           model->mesh = gData_08199364;
-          // A once-only block: its end parts the scheduler's rows, as the
-          // native's order needs (without it, 6 of 2209 differ).
+          /* FAKEMATCH(dead): a once-only block. */
           do {
             texture2.logHeight = 7;
           } while (0);

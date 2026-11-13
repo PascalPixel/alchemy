@@ -43,8 +43,6 @@ struct ModelTexture__f18bc98 {
   u8 *pixels;
 };
 
-// One entry of a model list, as Render_AllocateModelList allocates them and
-// Render_DrawModelList draws them.
 /* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -600,8 +598,6 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *cells = Ram_MapCellBuffer;
-  // The blitter pair, as a two-word array one DImode pseudo: it takes r6 and
-  // r7, the second unused, which is why r7 is saved and effect spilled.
   DrawRectangle draw[2];
   s32 flags;
   s32 frame;

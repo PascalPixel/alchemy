@@ -379,7 +379,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       menu->sideMember[1] = 0;
-      // The icon's slot is read unsigned, as the bytes show.
       Resource_LoadByModeIntoSlotFar(
           2, (menu->selectedItems[0] & 0x1ff) | (result << 11),
           (u8)menu->selectedItemIcon->index, 0);
@@ -918,7 +917,6 @@ s32 ItemMenu_SelectMember(s32 pane) {
   } else {
     MenuCursor_Slide(index * 24 - 10, 16);
   }
-  // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
   owner = Unit_Get((u16)menu->memberIds[index]);
   menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
   result = ItemMenu_RunMemberSelection(menu->memberIds, menu->items);

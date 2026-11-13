@@ -996,8 +996,6 @@ void LuckyWheels_InitializeTitle(void) {
     SPARKS[i].variant = 0;
 
   letter = work->particles;
-  // The Broken Seal walks a pointer and steps a height; this game's bytes match
-  // only with the table read by name and the height worked out from the index.
   for (i = 0; i != REEL_TITLE_LETTERS; i++) {
     letter[i].x = (left + REEL_TITLE_LEFT) << 16;
     left += gLuckyWheels_TitleLetterWidths[i];

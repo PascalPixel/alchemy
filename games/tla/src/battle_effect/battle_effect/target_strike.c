@@ -453,7 +453,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
                                 RECORD(mode, RECORD_BLEND));
       do {
-        // Empty: its loop notes end CSE's block after the blitter call.
+        /* FAKEMATCH(dead): an empty once-only block. */
       } while (0);
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
@@ -526,7 +526,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
             SLOT_BLITTER_ALTERNATE, 7, 7,
             gDeathPlunge_SwordWidths[Random16() & 3] | CLIP, BLIT_ADDITIVE);
         do {
-          // Empty: its loop notes end CSE's block after the blitter call.
+          /* FAKEMATCH(dead): an empty once-only block. */
         } while (0);
         gBlitterAlternate(canvas, work->sheet + gBattleEffect_GlintCells[image],
                           x, y, gData_08197492[image], gData_08197498[image]);

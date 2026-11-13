@@ -24,8 +24,6 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-// One entry of a model list, as Render_AllocateModelList allocates them and
-// Render_DrawModelList draws them.
 /* VIEW(f189b14): tag struct Model as struct Model__f189b14; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:

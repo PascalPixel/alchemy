@@ -515,8 +515,6 @@ s32 NameEntry_EditMemberName(s32 member) {
       u32 tx = (s16)keyboardWindow->x + keyColumn + 1;
       u8 *slot;
 
-      // `tx + tx`: as `tx << 1`, the shift is scheduled before the row's
-      // address.
       letter = ((u8 *)render->tilemap +
                 (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx + tx];
       // The keyboard keeps the marks as 0xFE and 0xFF.

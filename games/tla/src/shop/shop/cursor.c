@@ -104,13 +104,6 @@ void Shop_RestoreFieldPalette(void) {
   PaletteFade_StartInterpolationFar(16);
 }
 
-// MenuCursor_Advance moves the shop cursor one step of its glide toward the
-// target, setting the sprite's position and its OAM x and y, and stops the
-// glide on its last step; The Broken Seal's MenuCursor_Advance
-// (games/tbs/src/shop/shop.c). The x field is written through a u32 mask, as
-// MenuCursor_MoveTowardTarget does, so the
-// 0x1ff mask is split as the native's.
-
 void MenuCursor_Advance(struct ShopCursor *cursor) {
   struct WindowSprite *sprite;
   s32 kind;

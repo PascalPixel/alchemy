@@ -306,8 +306,6 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop;
 
   shop = Ram_HeapSlots->menuRuntime;
-  // The inner block gives its locals their pseudos after the item id's
-  // offset, which puts the stack slots in the ROM's order.
   {
     struct BattleUnit *unit = Unit_Get(unitId);
     s32 itemId = unit->inventory[slot] & 0x1ff;

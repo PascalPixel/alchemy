@@ -534,9 +534,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         ok = j == 4;
         COMMAND_ICON_X(state) = SUMMON_CHOSEN_ICON_X;
-        // Written through a u32 pointer, not the union: these stores then no
-        // longer conflict with the load of state, which sched2 needs to order
-        // eors first.
         ((u32 *)&iconSprite->oam)[0] = 0x40000400;
         ((u32 *)&iconSprite->oam)[1] = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes. */

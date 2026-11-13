@@ -40,8 +40,6 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
 
-  // The zero is held in r8 through the setup calls, as in The Broken Seal's
-  // twin (the literal 0 stored directly: 81 of 549 differ, 2026-11-08).
   zero = 0;
 
   // Set up: half-and-half blending, the image with its palette, the crescent

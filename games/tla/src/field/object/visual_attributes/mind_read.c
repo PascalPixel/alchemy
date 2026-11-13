@@ -132,7 +132,6 @@ void FieldEffect_ArmBg0HBlankDma(void) {
     dma[5] &= 0xc5ff; // Clear start timing and repeat.
     dma[5] &= 0x7fff; // Stop.
     (void)dma[5];
-    // One halfword per HBlank, repeating with destination reload.
     Dma_Set(lines, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);
   }

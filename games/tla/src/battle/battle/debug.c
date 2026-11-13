@@ -24,7 +24,6 @@ UNUSED void DebugBattle_RunForever(void) {
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
   struct Snapshot *snap = &Data_0200ff58;
-  // Set here, between snap and ids: the native sets i before it loads ids.
   s32 i = 0;
   u8 *ids = gScriptedBattle_Units;
   struct SnapshotCopy *copies = Data_0200ff6c;
@@ -197,8 +196,6 @@ s32 DebugParty_LoadPreset(s32 preset) {
       ((struct OwnerDjinnState *)state)->flags.banks.active[i] = 0;
     }
     for (i = 0; i < 32; i++)
-      // Through a u16 cast the zero loads from the literal pool, as the ROM has
-      // it.
       *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].actions[i] != 0)

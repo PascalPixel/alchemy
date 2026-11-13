@@ -575,15 +575,12 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
 /// For each active party member of the menu work, fills a 20-byte entry of the
 /// list with Djinn_ListUnitEntries (owner, -1) and keeps its result byte at
 /// offset 160 of the list.
-// With the owner read as the argument the two walking pointers swap r5 and
-// r6 (differ 16).
 void DjinnMenu_BuildLists(struct OwnerList *list) {
   struct InventoryMenuState *menu =
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 0; i < menu->partyCount; i++) {
-    // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
     s32 owner = (u16)menu->ownerIds[i];
 
     list->results[i] = Djinn_ListUnitEntries(&list->entries[i], owner, -1);

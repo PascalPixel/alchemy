@@ -598,10 +598,6 @@ void Actor_ArmCallback(s32 id, s32 value, s32 mode);
 /// `particle` every other frame (none for -1), and jumps on 16 pixels to land,
 /// waiting up to 180 frames for it unless `particle` has flag 0x1000. The
 /// Broken Seal's twin is Actor_JumpDownLedge.
-// The landing wait matches only as a guarded do-while: as
-// while (y > ground) { wait(1); if (++i >= 180) break; } agscc keeps
-// the test at the top and jumps back to it (differ 18), where the native has
-// the test copied below the body as loop rotation would place it.
 void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   struct Actor *object = Actor_GetById(id);
   s32 z = object->z;

@@ -234,9 +234,6 @@ struct FxScene__f0e6400 {
   s16 frame;
 };
 
-// The event work with its flag word past the shared struct. Read as a member,
-// the flag word takes this struct's alias set, which orders its reads after
-// s32 stores but not after an Actor's u8 stores, as the listing has them.
 /* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:5251:
@@ -489,7 +486,6 @@ void FieldPsynergy_Scoop(void) {
   work->phase = 0;
   work->timer = 0;
   {
-    // A local holding one constant: keeps 0x480's load where the native has it.
     s32 order = 0x480;
 
     Task_Add(Scoop_Update, order);
@@ -1067,8 +1063,6 @@ void FieldPsynergy_Parch(void) {
   pos[2] = caster->z;
   Vector_AddPolarOffset(0x200000, scene->facing, pos);
 
-  // The kind and the heap slots are locals that hold one value each, set
-  // after i so the kind's constant is built where the listing builds it.
   i = 0;
   kind = 290;
   slots = Ram_HeapSlots;

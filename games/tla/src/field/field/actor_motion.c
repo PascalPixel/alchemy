@@ -290,9 +290,6 @@ void Actor_UpdateAllThumb(void) {
           if (velocityY > maximumChange)
             velocityY = maximumChange;
           velocityY *= 3;
-          // This slowdown and the landing bounce below call IwramMulQ16 by its
-          // linked name, so each call reads the routine's address from the
-          // literal pool after the call before it.
           if (velocityY != 0 && !(object->motionFlags & 16) && !standing) {
             dx = object->velocityX;
             dy = object->velocityY;

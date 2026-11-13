@@ -30,8 +30,6 @@ struct ModelTexture__f188714 {
   u8 *pixels;
 };
 
-// One entry of a model list, as Render_AllocateModelList allocates them and
-// Render_DrawModelList draws them.
 /* VIEW(f188714): tag struct Model as struct Model__f188714; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:

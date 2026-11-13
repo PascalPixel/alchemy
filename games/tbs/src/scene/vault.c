@@ -85,6 +85,7 @@
 #include "djinn_ids.h"
 #include "character_ids.h"
 #include "sounds.h"
+#include "heap.h"
 
 enum { VAULT_DRIFT_RATE = px(1) / 10 };
 
@@ -168,6 +169,8 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // holds the field.
 static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *entity) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
+  struct FieldWork *field =
+      (struct FieldWork *)gWindowWork[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
   s32 flag = 0;
   s32 selector = 18;
   struct Actor *leader;
@@ -176,7 +179,7 @@ static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *entity) {
     RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (gFieldWork->talk != 0 || window->mindRead != 0) {
+  if ((s16)field->talk != 0 || window->mindRead != 0) {
     selector = 26;
     flag = 1;
   }
@@ -1088,8 +1091,20 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->timer = 1;
   }
   // Install the custom motion and share the anchor's drawing priority.
-  effect->update = Vault_UpdateDriftingEffect;
-  sprite->flags = 0;
+  {
+    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
+     * sprite->flags, 2 of 141 instructions differ in tbs-en. */
+    u8 *spriteFlags = &sprite->flags;
+
+    effect->update = Vault_UpdateDriftingEffect;
+    /* FAKEMATCH(dead): the flags store in both arms of a test, which ends the
+     * scheduling block after the update store; as one store, 2 of 141
+     * instructions differ in tbs-en. */
+    if (flags < 0)
+      *spriteFlags = 0;
+    else
+      *spriteFlags = 0;
+  }
   sprite->image.priority = anchor->sprite->image.priority;
 }
 

@@ -1726,7 +1726,12 @@ static void TolbiShipDeck_MonstersBoard(void) {
     wait(1);
   } while (Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
   TolbiShipDeck_OpenFirstDoor();
-  Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
+  /* FAKEMATCH(dead): the walk in a once-only block loads its actor id straight
+   * after the call above; as the plain call, 1 of 163 instructions differ in
+   * tbs-en. */
+  do {
+    Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
+  } while (0);
   Actor_WaitForScriptEndById(ACTOR_SEA_FIRST_ATTACK_MONSTER);
   Event_Wait(10);
   Event_FinishScreenTransition();
@@ -2168,8 +2173,15 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetPosition(ACTOR_SEA_OURANOS, 184, 632);
   actor = Actor_Get(ACTOR_SEA_OURANOS);
   actor->facing = FACING_NORTH_NORTHWEST;
+  // UB: the field work's pointer is read through a u32 lvalue, which keeps
+  // the facing store ahead of its load; UBFIX reads it as declared.
+#ifdef UBFIX
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+#else
+  ((struct FieldWork *)*(u32 *)&gFieldWork)->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+#endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);

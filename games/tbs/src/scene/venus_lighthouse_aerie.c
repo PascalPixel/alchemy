@@ -563,8 +563,14 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  leader->y.fixed = -px(32);
-  leader->facing = FACING_SOUTH;
+  {
+    /* FAKEMATCH(temporary): south holds the facing; as FACING_SOUTH at the
+     * store, 4 of 923 instructions differ in tbs-en. */
+    u16 south = FACING_SOUTH;
+
+    leader->y.fixed = -px(32);
+    leader->facing = south;
+  }
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
   Actor_MoveToAndWait(ACTOR_RISING_PLATFORM, 524, 191);
@@ -2948,14 +2954,15 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
   Event_Wait(80);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = 16;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(80);
   ActorSystem_SuspendProjectionAndShowSprites();
-  ((struct WindowWork *)gWindowWork[0])->voiceSound = 0;
-  ((struct WindowWork *)gWindowWork[0])->voiceCountdown = 0;
+  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceSound = 0;
+  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceCountdown = 0;
   FieldMessage_ShowCentered(MsgVenusDespiteLongTiring, 0, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
   Event_Wait(80);

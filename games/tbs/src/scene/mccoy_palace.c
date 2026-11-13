@@ -232,13 +232,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     Scene_AssignViewFlags(placements);
 
     if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-      placements[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_KEEP;
-      placements[ACTOR_OLD_MAN_PRAISING_THE_WARRIORS - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_OLD_MAN_PRAISING_THE_WARRIORS -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
-      placements[ACTOR_SOLDIER_WATCHING_KOLIMA - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_WATCHING_KOLIMA -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_THEN_WATCH;
-      placements[ACTOR_SOLDIER_SHOWING_THE_REWARD - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_SHOWING_THE_REWARD -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
     }
 

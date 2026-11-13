@@ -298,6 +298,11 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       McCoyPalaceGrounds_OpenGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
+      /* FAKEMATCH(dead): an empty once-only loop keeps r0 last among the call
+       * above's arguments; without it, 1 of 233 instructions differ in
+       * tbs-en. */
+      do {
+      } while (0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
     guard:
       FieldActor_WatchAndStartScript(

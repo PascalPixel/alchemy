@@ -912,9 +912,10 @@ prompt:
       prizeIndex = 0;
       if (prizeIndex < result * 3 + 3) {
         do {
-          /* FAKEMATCH(dead): the weight read as a byte from state's start
-           * leaves the weights' address free for the halving below; read by
-           * name, 6 of 280 instructions differ in tbs-en. */
+          /* FAKEMATCH(temporary): the weight read as a byte from state's start
+           * leaves the weights' address free for the halving below; as
+           * state->prizeWeights[prizeIndex], 6 of 280 instructions differ in
+           * tbs-en. */
           u8 weight =
               ((u8 *)state)[prizeIndex +
                             offsetof(struct MainRoutineWork, prizeWeights)];
@@ -1010,6 +1011,10 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   sprite = actor->sprite;
   count = sprite->count;
   if (count != 0) {
+    /* FAKEMATCH(temporary): none and picture hold the marker and the picture
+     * it is ored into; as entry->picture |= SPRITE_PICTURE_NONE, 1 of 53
+     * instructions differ in tbs-en. */
+    u32 none = SPRITE_PICTURE_NONE;
     struct SpriteAnimation **animation = sprite->entries;
     u32 left = count;
 
@@ -1017,9 +1022,13 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
       struct SpriteAnimation *entry = *animation++;
 
       if (entry->colorMode != colorVariant) {
+        u32 picture;
+
         entry->colorMode = colorVariant;
         // No picture is cached in the new colours yet.
-        entry->picture |= SPRITE_PICTURE_NONE;
+        picture = entry->picture;
+        picture |= none;
+        entry->picture = picture;
       }
     } while (--left != 0);
   }

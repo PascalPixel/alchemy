@@ -767,24 +767,43 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   s32 destinationColumn;
   s32 sourceColumn;
   s32 column;
+
   Sound_Play(SE_GUSH);
-  step = 0;
-  destinationColumn = 41;
-  sourceColumn = 40;
-  do {
-    MapGrid_CopyCellsTo(sourceColumn, 32, destinationColumn, 32, 3 - step, 6);
-    MapGrid_CopyCellsTo(39, 51, sourceColumn, 32, 1, 6);
-    column = step + 106;
-    MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, 2, 4);
-    if (delayFrames != 0) {
-      MapGrid_SetShake(5, 5, 1);
-      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      Event_Wait(delayFrames);
-    }
-    step++;
-    destinationColumn += 2;
-    sourceColumn += 2;
-  } while (step <= 2);
+  {
+    // The fountain's strips are six cells tall.
+    s32 height = 6;
+
+    step = 0;
+    destinationColumn = 41;
+    sourceColumn = 40;
+    do {
+      MapGrid_CopyCellsTo(sourceColumn, 32, destinationColumn, 32, 3 - step,
+                          height);
+      {
+        /* FAKEMATCH(temporary): the picture strip's width and height held in
+         * block locals; as 2 and 4 at the call, 10 of 90 instructions differ
+         * in tbs-en. */
+        s32 width = 2;
+
+        MapGrid_CopyCellsTo(39, 51, sourceColumn, 32, 1, height);
+        column = step + 106;
+        {
+          s32 stripHeight = 4;
+
+          MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, width,
+                                             stripHeight);
+          if (delayFrames != 0) {
+            MapGrid_SetShake(5, 5, 1);
+            MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+            Event_Wait(delayFrames);
+          }
+          step++;
+          destinationColumn += 2;
+          sourceColumn += 2;
+        }
+      }
+    } while (step <= 2);
+  }
   Sound_Play(SE_STOP_ACTION_SE);
   MapGrid_CopyCellAttributes(106, 33, 4, 5, 42, 33);
   MapGrid_WaitForShakeToSettle();

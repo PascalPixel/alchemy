@@ -24,10 +24,43 @@ void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
 #define Statue_Sink Statue_Sink__placements
 #define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "yampi_desert/scene.h"
+#include "types.h"
+#include "module/tla.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "map.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
+#include "system/field_effect.h"
+#include "event_work.h"
+#include "flag_call.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/field_effect.h"
+#include "module/scene/scene.h"
+#include "graphics/resource.h"
+#include "call.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "system/task.h"
+#include "fixed_math.h"
+#include "version.h"
+#include "system/iwram_call.h"
+#include "macros.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 void YampiDesert_RippleFollowsScorpion(void);
 
@@ -99,8 +132,6 @@ void Icon_DrawItem(s32 item);
 void FieldEffect_SetAttached(s32 actor, s32 a);
 void FieldCamera_WaitForArrival();
 
-#include "module/tla.h"
-
 /* VIEW(first): routine gYampiDesert_Entrances as this part declared it; the
  * joined file has another. */
 extern const u8
@@ -140,24 +171,9 @@ const u8 *Scene_GetRegions(void) {
   return 0;
 }
 
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "map.h"
 
 /* VIEW(first): routine gYampiDesert_Placements as this part declared it; the
  * joined file has another. */
@@ -649,7 +665,6 @@ void YampiDesert_WatchScorpionStop(void) {
 #undef gYampiDesert_Room10Triggers
 #undef gYampiDesert_Room11Triggers
 #undef gYampiDesert_Room12Triggers
-// ---- from scene/yampi_desert.c ----
 // @file
 // The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
 // Pound sinks its wooden stakes and Sand lets the party slip under them; a
@@ -660,21 +675,6 @@ void YampiDesert_WatchScorpionStop(void) {
 // rising sand carries the party out. Rooms 8 and 12 are the cave's sand
 // slides, and Reveal shows the rocks' hints and a hidden Lucky Medal.
 
-#include "shared/map_cells.h"
-#include "shared/actors.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/field_effect.h"
-#include "event_work.h"
-#include "flag_call.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "graphics/resource.h"
 #include "text/msg_ids.h"
 
 /* VIEW(yampi_desert): routine Actor_ShowEmoteById as this part declared it; the
@@ -696,12 +696,7 @@ void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 extern void Statue_Sink__s0b84(const void *script, s32 a,
                                s32 b) __asm__("Statue_Sink");
 #define Statue_Sink Statue_Sink__s0b84
-#include "yampi_desert/scene.h"
 #undef Statue_Sink
-#include "scene_tables.h"
-#include "actor.h"
-#include "call.h"
-#include "system/main_routine_work.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1376,10 +1371,6 @@ void YampiDesert_RippleFollowsScorpion(void) {
 #undef OBJ
 #undef MOVE_LEADER_TO
 
-#include "system/input.h"
-#include "system/frame.h"
-#include "field/field.h"
-
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -1447,13 +1438,6 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
     }
   }
 }
-
-#include "system/ram_buffer.h"
-#include "map.h"
-#include "system/task.h"
-#include "event_work.h"
-#include "fixed_math.h"
-#include "version.h"
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -2390,8 +2374,6 @@ loop:
 // Finds the current target's table row and shrinks it.
 DEFINE_STATUE_SINK(Statue_Sink, YampiDesert_SetStakeCell)
 
-#include "system/iwram_call.h"
-
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesert_SetStakeCell, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
@@ -2704,15 +2686,11 @@ u32 gYampiDesert_SlideDust[] = {
 #undef gYampiDesert_FinderRunsAhead
 #undef gYampiDesert_TravelersFollow
 #undef gYampiDesert_LastTravelersFollow
-// ---- from scene/yampi_desert/data2.c ----
 
-#include "macros.h"
 // @file
 // The Yampi Desert's data: its effect and travelers' scripts, stake lists,
 // rooms' tables and triggers.
 
-#include "types.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void YampiDesert_FightBlitz(void);

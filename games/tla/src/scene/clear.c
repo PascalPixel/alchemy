@@ -27,10 +27,27 @@
 #include "system/frame.h"
 #include "system/heap_slots.h"
 #include "module/game/game.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
+#include "system/serial.h"
+#include "edition.h"
+#include "version.h"
+#include "system/iwram_call.h"
+#include "call.h"
+#include "field/event_work.h"
+#include "window.h"
+#include "graphics/uiwindow.h"
+#include "graphics/oam.h"
+#include "fixed_math.h"
+#include "system/heap_release.h"
+#include "battle/battle_unit.h"
+#include "owner_state.h"
+#include "macros.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 // The two secret button codes: unlocked, held and progress of each.
 extern s16 gData_020024f6;
@@ -78,13 +95,6 @@ extern u8 Data_0200274a[];
 extern u8 Data_0200288a[];
 extern u8 Data_0200284e[];
 void *Glyph_AddBlankSprite(struct Window *window, void *glyph, s32 x, s32 y);
-
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
-#include "system/serial.h"
 
 extern u8 gData_0200265e[];
 extern u8 Data_02012f94[];
@@ -276,14 +286,7 @@ s32 Func_020002e0(void) {
   return -((u32)(-mode | mode) >> 31);
 }
 
-#include "edition.h"
-#include "version.h"
 #include "text/msg_ids.h"
-#include "system/iwram_call.h"
-#include "system/frame.h"
-#include "call.h"
-#include "field/event_work.h"
-#include "window.h"
 
 /* VIEW(clear): variable gData_02003860 as s16 gData_02003860; module/tla.h has
  * u16 gData_02003860; tried as the rest of the object declares it,
@@ -888,13 +891,6 @@ void Func_02000db4(const struct Window *object, s32 x, s32 y, s32 width,
     work->dirty = 1;
   }
 }
-
-#include "graphics/uiwindow.h"
-#include "graphics/oam.h"
-#include "fixed_math.h"
-#include "system/heap_release.h"
-#include "battle/battle_unit.h"
-#include "owner_state.h"
 
 extern u8 gData_0200247c[];
 
@@ -2008,11 +2004,6 @@ s16 gData_02002500 = 0;
 #undef gData_02002700
 #undef gData_020026f0
 #undef gData_0200270c
-// ---- from scene/data/clear.c ----
-
-#include "macros.h"
-#include "types.h"
-#include "scene_tables.h"
 
 // clang-format off
 LATE_DATA u32 gData_020026a0[] = {

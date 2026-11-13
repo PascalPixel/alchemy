@@ -16,6 +16,15 @@
 #include "field_sprite.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
+#include "system/vector3.h"
+#include "version.h"
+#include "event_work.h"
+#include "call.h"
+#include "field/field.h"
+#include "graphics/graphics.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "module/scene/lemurian_ship.h"
 
 extern u32 gSceneExits[];
 
@@ -195,25 +204,8 @@ static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
 static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
   FieldItem_JumpToLeader(a, b, c);
 }
-#include "types.h"
-#include "actor.h"
-#include "field_sprite.h"
-#include "field/event_inline.h"
-#include "system/main_routine_work.h"
-#include "system/vector3.h"
-#include "system/iwram_call.h"
-#include "version.h"
-#include "event_work.h"
-#include "system/ram_buffer.h"
-#include "call.h"
-#include "scene_tables.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "module/scene/scene.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 s32 Vent_IsActive(s32 hole);
 
@@ -233,8 +225,6 @@ void TaopoSwamp_SinkInMud(void);
 void TaopoSwamp_RiseOnBubble(void);
 
 void TaopoSwamp_StepOnFirmGround(void);
-
-#include "module/tla.h"
 
 s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
 void FieldEffect_StartBlankOverlay(s32 a);
@@ -2167,11 +2157,6 @@ DEFINE_VENTS_SET_ID(Vents_SetId)
 #undef gTaopoSwamp_Room5Vents
 #undef gTaopoSwamp_Room8Vents
 #undef gTaopoSwamp_Room5VentPair
-// ---- from scene/data/taopo_swamp.c ----
-#include "types.h"
-#include "scene_tables.h"
-#include "version.h"
-#include "module/scene/lemurian_ship.h"
 
 void TaopoSwamp_FightFlower(void);
 /* VIEW(data): routine TaopoSwamp_BlowAwayBush as this part declared it; the

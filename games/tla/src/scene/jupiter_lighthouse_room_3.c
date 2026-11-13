@@ -42,8 +42,16 @@ int Random16__first() __asm__("Random16");
 #include "system/task.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
-
 #include "field/cell_target.h"
+#include "event_work.h"
+#include "field/field.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "shared/cracked_tile.h"
+#include "module/field/field_effect.h"
+#include "macros.h"
+#include "objcmd.h"
 
 /// Where a pushed object comes to rest, read by the push that follows.
 struct PushTarget {
@@ -113,8 +121,6 @@ extern s32
 extern const u16 gPaletteCycleColors[];
 extern const u16 gPaletteCycleUnlitPalette[];
 extern const u16 gPaletteCycleUnlitColors[];
-#include "event_work.h"
-#include "field/field.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -257,10 +263,7 @@ s32 Scene_PrepareMap(void) {
 
 void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
-#include "shared/scene_set_arrival_flags.h"
-
-#include "system/io_reg.h"
-#include "field_event.h"
+#include "shared/scene_set_arrival_flags.c"
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
@@ -277,8 +280,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
-
-#include "system/frame.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
@@ -517,28 +518,9 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #undef FieldEffect_Spawn
 #undef Oam_AddSpriteAtDepthClamped
 #undef Random16
-// ---- from scene/jupiter_lighthouse_room_3/cracked_tiles.c ----
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
-
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "shared/cracked_tile.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "system/io_reg.h"
-#include "field/cell_target.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-
-#include "field/cell_target.h"
 
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
@@ -654,27 +636,13 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_SelectAnimation
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_room_3/cracked_tile_steps.c ----
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
 // and the fall to the floor below.
 
-#include "shared/cracked_tile.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "field/cell_target.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
 #include "system/system.h"
-#include "system/frame.h"
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 extern u16 gPushKinds[];
 
@@ -714,20 +682,11 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
 
 #undef FieldEffect_Spawn
 #undef CrackedTile_FallEvent
-// ---- from scene/data/jupiter_lighthouse_room_3.c ----
 
-#include "macros.h"
 // @file
 // The tables of Jupiter Lighthouse's room of gaps and logs that the scene's
 // getters return.
 
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "objcmd.h"
-
-#include "field/cell_target.h"
-#include "module/scene/scene.h"
 void JupiterLighthouse_StartMovingPillar(void);
 void JupiterLighthouse_LeaveByCyclone(void);
 void JupiterLighthouse_JumpForward(void);

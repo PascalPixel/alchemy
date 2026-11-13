@@ -14,7 +14,6 @@
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "call.h"
-#include "text/msg_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -30,10 +29,11 @@
 #include "event_work.h"
 #include "actor_view.h"
 #include "module/field/field.h"
+#include "module/system/system.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 void FieldCamera_WaitForArrival();
 
@@ -46,8 +46,6 @@ extern u32 gLemuria_FirstWalkerPaces[];
 extern u32 gLemuria_SecondWalkerPaces[];
 extern s16 gLemuria_DoorOpening[];
 extern s16 gLemuria_WideDoorOpening[];
-
-#include "module/system/system.h"
 
 DEFINE_POSITION_DISTANCE(Lemuria_Distance)
 
@@ -1029,8 +1027,6 @@ void Actor_TakeLeaderLayer(void);
 
 /// An actor's per-frame hook: it is drawn on the party leader's layer.
 void Lemuria_TakeLeaderLayer(void) { Actor_TakeLeaderLayer(); }
-
-#include "objcmd.h"
 
 extern s16 gLemuria_ThirdDoorOpening[];
 

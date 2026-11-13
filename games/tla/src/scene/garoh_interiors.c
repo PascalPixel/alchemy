@@ -23,13 +23,12 @@
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
-#include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "text/msg_ids.h"
 #include "field/event_inline.h"
+#include "text/msg_ids.h"
 
 /// The inn's actors, numbering the rows of gGarohInteriors_InnActorPlacements.
 enum GarohInnActorId {
@@ -119,11 +118,8 @@ void Event_End(void);
 void Shop_Run(s32 slot, s32 actor);
 void Sanctum_Run(s32 id);
 void Inn_CheckIn(s32 slot, s32 actor);
-#include "field/event_inline.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 void GarohInteriors_WakeAtInn(void);
 

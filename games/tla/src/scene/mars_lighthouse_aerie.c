@@ -3,6 +3,39 @@
 
 #include "shared/mars_lighthouse.h"
 #include "shared/effects.h"
+#include "event_work.h"
+#include "module/scene/mars_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_ids.h"
+#include "module/field/event_commands.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/io_reg.h"
+#include "field_sprite.h"
+#include "system/ram_buffer.h"
+#include "call.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "shared/actors.h"
+#include "shared/tables.h"
+#include "item_icon.h"
+#include "version.h"
+#include "system/dma.h"
+#include "system/task.h"
+#include "system/vector3.h"
+#include "objcmd.h"
 #ifndef TLA_MARS_LIGHTHOUSE_AERIE_H
 #define TLA_MARS_LIGHTHOUSE_AERIE_H
 
@@ -54,13 +87,7 @@ s32 List_CountEntries(u16 *list);
 
 #endif
 
-#include "event_work.h"
-#include "module/scene/mars_lighthouse_aerie.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "module/field/event_commands.h"
 
 extern u32 Data_0200eb60;
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
@@ -142,17 +169,6 @@ void Func_020000e4(struct Actor *object) {
   *pangle -= 0x800;
 }
 
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -171,10 +187,6 @@ DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Teleport_PlaySparks, 1,
                            Func_02005010)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
 
 extern s16 gData_02005aa4[];
 extern s16 gData_02005ab4[];
@@ -234,8 +246,6 @@ void Func_020001d8(void) {
   Data_0200eb60 = 0;
   FieldTask_AddFrame(Func_020004a4, 0x480);
 }
-
-#include "system/io_reg.h"
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
 s32 Scene_Initialize(void) {
@@ -337,8 +347,6 @@ void Func_020004a4(void) {
   Data_0200eb60++;
 }
 
-#include "field_sprite.h"
-
 /// Swings the object along an arc beside its watched object, drawing it behind
 /// (priority 2) while its z is short of 0x108 and in front (priority 1) after.
 void Func_020005a0(struct Actor *object) {
@@ -370,8 +378,6 @@ void Func_02000640(s32 id) {
   Actor_FaceDirection(id, FACING_NORTH, 0);
 }
 
-#include "system/ram_buffer.h"
-#include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -1654,8 +1660,6 @@ L_0200a47a:
   return;
 }
 
-#include "event_work.h"
-
 void Func_0200298c(s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -1882,8 +1886,6 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_End();
 }
 
-#include "field_event.h"
-
 /// Circles the actor around actor 23 by its timer, at its speed plus 3 in x
 /// and twice the sine in z, and turns the timer back by 0x800; Func_02000148
 /// of the Jupiter Lighthouse's fifth room is the same function.
@@ -1904,8 +1906,6 @@ void Func_02003210(struct Actor *self) {
   self->targetZ = z;
   self->timer += -0x800;
 }
-
-#include "system/frame.h"
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
@@ -1947,20 +1947,6 @@ DEFINE_ORBS_SPAWN_RISING(Func_0200326c, 0x200, gData_02006afc, Func_02003210, 2)
 
 /// Scene code of overlay 0x6ae, in ROM order.
 
-#include "shared/actors.h"
-#include "shared/effects.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "actor.h"
-#include "system/frame.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "item_icon.h"
-#include "module/scene/mars_lighthouse_aerie.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "system/system.h"
 #include "text/msg_ids.h"
 
 void BattleEffect_GetObjectPriority(void);
@@ -2068,8 +2054,6 @@ void Func_02003370(void) {
     FieldTask_Remove(Func_02003370);
 }
 
-#include "scene_tables.h"
-
 void Func_020035ec(s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -2087,9 +2071,6 @@ void Func_0200361c(s32 id) {
 }
 
 void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
-
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
 
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
@@ -2834,8 +2815,6 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_End();
 }
 
-#include "version.h"
-
 void Func_02004d14(void) { GameFlag_Clear(0x202); }
 
 // From patch 1, as is Func_02004d50.
@@ -2977,16 +2956,11 @@ void Func_02004ed8(void) { Func_02004e80(30, 22); }
 void Func_02004ee4(void) { Func_02004e80(29, 21); }
 #endif
 
-#include "system/dma.h"
-#include "system/io_reg.h"
-
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_PALETTE_SET_COLORS_FADE(Func_02004ef0, gData_02006ce0, Data_02006ce4,
                                Data_02006ce8, Data_02006cd4, Func_020051e0)
-
-#include "system/task.h"
 
 DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
                            List_CountEntries, gData_02006ce0, gData_02006cdc,
@@ -3034,8 +3008,6 @@ void Func_020051e0(void) {
   }
   work->screenEffect = saved;
 }
-
-#include "system/vector3.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -3176,7 +3148,6 @@ void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
 void Func_020054e4(struct Actor *object) { object->unk5c[6] = 1; }
 
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 void Func_020001a0(void);
 void MarsLighthouseAerie_FaceDoomDragon(void);

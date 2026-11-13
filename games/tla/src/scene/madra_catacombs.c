@@ -22,11 +22,18 @@
 #include "scene_tables.h"
 #include "event_work.h"
 #include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "objcmd.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 struct Actor;
 
@@ -83,17 +90,7 @@ void MadraCatacombs_LeaveBlockedVillage(void);
 
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
-#include "module/scene/scene.h"
-#include "module/tla.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
 
 struct Actor *Leader_FindActorAhead(void);
 void Actor_PlaceMovedBlock(void);

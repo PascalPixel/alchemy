@@ -28,10 +28,13 @@
 #include "field_event.h"
 #include "flag_call.h"
 #include "module/game/game.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "scene_call.h"
+#include "module/window/window.h"
+#include "field_sprite.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 extern struct ActorPlacement gMadra_Placements[];
 extern struct ActorPlacement gMadra_PlacementsOnReturn[];
@@ -64,12 +67,7 @@ extern s16 gMadra_CavernHomeDoorOpening[];
 
 void FieldCamera_WaitForArrival(void);
 
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "scene_call.h"
 #include "text/msg_ids.h"
-#include "module/window/window.h"
-#include "field_sprite.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

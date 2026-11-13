@@ -27,11 +27,11 @@
 #include "scene_ids.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
-#include "text/msg_ids.h"
 #include "field_event.h"
 #include "field_sprite.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 // The inlet's own story, which no other scene reads.
 #define FLAG_SHIPWRIGHTS_STOPPED_PARTY                                         \

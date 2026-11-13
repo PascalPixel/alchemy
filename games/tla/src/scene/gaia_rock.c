@@ -25,16 +25,14 @@
 #include "worka0.h"
 #include "system/frame.h"
 #include "field/event_work.h"
-#include "text/msg_ids.h"
 #include "map.h"
 #include "system/task.h"
 #include "actor_view.h"
 #include "module/field/event_commands.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 struct Actor;
 
@@ -665,8 +663,6 @@ fall:
 }
 
 void Func_02000dd0(void) { Task_AddFrame(Func_02000ab4, TASK_PASS_VBLANK); }
-
-#include "objcmd.h"
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 24, 0, 408, FACING_EAST, 0, -1, -1, -1, -1, 0},

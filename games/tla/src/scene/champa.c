@@ -28,6 +28,10 @@
 #include "module/field/object.h"
 #include "module/scene/scene.h"
 #include "module/window/window.h"
+#include "actor.h"
+#include "call.h"
+#include "version.h"
+#include "system/frame.h"
 
 struct Actor;
 extern s16 gChampa_ActorPlacementsOnceBriggsSailed[];
@@ -136,7 +140,6 @@ void Champa_RevealTreasureSpot(void) {
 void Champa_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
 
 #include "text/msg_ids.h"
-#include "actor.h"
 
 void Champa_SailorsSpotFelix(void) {
 
@@ -290,8 +293,6 @@ void Champa_SailorsNotWelcome(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-#include "call.h"
-
 void Champa_TakeFeizhisGift(s32 a0) {
   s32 t2;
 
@@ -313,9 +314,6 @@ void Champa_FeizhiHoldsHerGift(void) {
   }
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
-
-#include "version.h"
-#include "system/frame.h"
 
 void Champa_FeizhiArrives(void) {
   s32 t0;

@@ -20,10 +20,9 @@
 #include "scene_tables.h"
 #include "system/ram_buffer.h"
 #include "flags.h"
+#include "field/event_inline.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 extern u32 gApojiiIslandsCave_FoliageScript[];
 
@@ -44,8 +43,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
-
-#include "field/event_inline.h"
 
 /// Whirlwind on a patch of overgrowth blows it away for good.
 void ApojiiIslandsCave_BlowAwayFoliage(s32 unused, s32 actor) {

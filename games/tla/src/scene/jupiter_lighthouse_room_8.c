@@ -45,13 +45,20 @@
 #include "system/task.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
-
 #include "field/cell_target.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/frame.h"
+#include "field_sprite.h"
+#include "shared/cracked_tile.h"
+#include "system/io_write.h"
+#include "module/field/field_effect.h"
+#include "macros.h"
+#include "objcmd.h"
 
 /// What the files of Jupiter Lighthouse's left-tower room share: its flag and
 /// its actors.
-
-#include "scene_tables.h"
 
 // Set once Move has dropped the pillar into the gap in the floor; cleared as
 // the party comes back unless the party comes back from a battle
@@ -218,13 +225,10 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
+#include "shared/scene_set_arrival_flags.c"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
 
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another. */
@@ -257,9 +261,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
-
-#include "system/frame.h"
-#include "field_sprite.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
@@ -469,24 +470,10 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
 #undef Oam_AddSpriteAtDepthClamped
-// ---- from scene/jupiter_lighthouse_room_8/cracked_tiles.c ----
 // @file
 // The first room of Jupiter Lighthouse's left tower: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-#include "system/io_reg.h"
-#include "field/field.h"
-#include "event_work.h"
-
-#include "field/cell_target.h"
 struct Actor;
 struct CellTarget;
 struct FieldEffect;
@@ -581,12 +568,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "scene_tables.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
@@ -612,8 +593,6 @@ struct CellTarget__s1c30 {
   s16 tile;
 };
 
-#include "system/io_write.h"
-
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c30,
                          Leader_CenterInCell)
 
@@ -623,24 +602,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c30,
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_room_8/cracked_tile_steps.c ----
 // @file
 // The first room of Jupiter Lighthouse's left tower: the cracked tiles' steps
 // and the fall to the floor below.
-
-#include "shared/cracked_tile.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "field/cell_target.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -675,19 +639,11 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
 
 #undef FieldEffect_Spawn
 #undef CrackedTile_Fall
-// ---- from scene/data/jupiter_lighthouse_room_8.c ----
 
-#include "macros.h"
 // @file
 // The tables of Jupiter Lighthouse's left-tower room that the scene's getters
 // return.
 
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "objcmd.h"
-
-#include "field/cell_target.h"
 void JupiterLighthouse_PushBlock(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];

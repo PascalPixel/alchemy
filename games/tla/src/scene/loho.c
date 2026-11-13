@@ -19,15 +19,16 @@
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
 #include "system/dma.h"
-#include "text/msg_ids.h"
 #include "event_work.h"
 #include "item_icon.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_ids.h"
+#include "graphics/resource.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "module/scene/scene.h"
-#include "scene_tables.h"
 
 extern u32 gLoho_VillagerMovesNorth[];
 extern u32 gLoho_VillagerMovesWest[];
@@ -54,11 +55,6 @@ extern struct LohoPicture gLoho_HouseDoor;
 extern u32 gLoho_VillagerPaces[];
 
 extern s16 gLoho_DoorOpening[];
-
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "scene_ids.h"
-#include "graphics/resource.h"
 
 s32 Oam_AddSpriteAtDepthClamped();
 
@@ -784,8 +780,6 @@ s32 Scene_PrepareMap(void) {
     Loho_DrawBrokenWall();
   return 0;
 }
-
-#include "objcmd.h"
 
 // clang-format off
 u32 gLoho_FirstMinerGoesToWall[] = {

@@ -2,28 +2,7 @@
 /// The scene code of overlay 0x6a9, in ROM order.
 
 #include "shared/actors.h"
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/object/prepare_object.c"
-
 #include "caverns.h"
-
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
-
-#include "../field/field_effect/move.c"
-
-// ---- from scene/caverns/caverns.c ----
-// @file
-// Scene code of overlay 0x6a9, in ROM order.
-
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Actor_SelectAnimation
-#define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
-
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -36,10 +15,37 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #include "types.h"
 #include "scene_tables.h"
 #include "module/field/object.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "field/event_inline.h"
+#include "actor.h"
+#include "field_sprite.h"
+#include "system/ram_buffer.h"
+#include "system/field_effect.h"
+#include "fixed_math.h"
+#include "macros.h"
+#include "system/main_routine_work.h"
+#include "event_work.h"
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
+
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+
+#include "../field/field_effect/move.c"
+
+// @file
+// Scene code of overlay 0x6a9, in ROM order.
+
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../field/field_effect/spawn.c"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 
@@ -52,12 +58,7 @@ extern u32 gData_0200116c[];
 extern u32 gData_020011a8[];
 extern u32 gData_020011e4[];
 
-#include "module/scene/scene.h"
-#include "module/tla.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "caverns.h"
 
 const s16 *Scene_GetRegions(void) {
   const s16 *result = NULL;
@@ -113,15 +114,6 @@ s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value) {
 
 #include "../field/object/wait_until_idle.c"
 
-#include "field/event_inline.h"
-#include "actor.h"
-#include "field_sprite.h"
-#include "system/ram_buffer.h"
-#include "system/field_effect.h"
-#include "fixed_math.h"
-#include "macros.h"
-#include "system/main_routine_work.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
 
 void Func_02000454(const s16 *data) {

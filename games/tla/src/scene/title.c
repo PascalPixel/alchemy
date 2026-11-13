@@ -31,10 +31,10 @@
 #include "event_work.h"
 #include "module/game/game.h"
 #include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "resource_ids.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 extern s16 gTitleVramBlock;
 
@@ -47,9 +47,6 @@ void TitleIntro_Run(s32 value);
 void Title_LoadBackground(void);
 
 struct TitleSprite__title;
-
-#include "module/system/system.h"
-#include "resource_ids.h"
 
 extern s16 gTitle_RevealStep;
 

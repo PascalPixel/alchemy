@@ -22,11 +22,12 @@
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "event_work.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "objcmd.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern s16 gMikasalla_TunnelRegions[];
 extern struct ActorPlacement gMikasalla_VillagePlacements[];
@@ -96,19 +97,11 @@ void *Scene_GetPlacements(void) {
   return gMikasalla_TunnelPlacements;
 }
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "scene_tables.h"
-#include "field/event_inline.h"
-
 void Map_SetLayerEntryFlag(s32 a);
 
 void Mikasalla_ClimbDownLadder(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone[];
-#include "field/event_inline.h"
 
 /* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
  * module/scene/scene.h has another definition; tried with the definition the
@@ -342,7 +335,6 @@ void Mikasalla_StepOntoLadderAhead(void) {
 }
 
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 // clang-format off
 /// The doors' cell animations: most doors, the third door's own cells, and

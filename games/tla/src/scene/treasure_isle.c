@@ -2,19 +2,42 @@
 /// Treasure Isle's first object: the shared actor helpers it links first.
 
 #include "shared/actors.h"
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/object/prepare_object.c"
-
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
+#include "shared/tables.h"
+#include "shared/map_cells.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "module/scene/scene.h"
+#include "scene_ids.h"
+#include "module/field/event_commands.h"
+#include "field/cell_target.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "map.h"
+#include "system/field_effect.h"
+#include "field_event.h"
+#include "call.h"
+#include "system/iwram_call.h"
+#include "system/io_write_queue.h"
+#include "system/task.h"
+#include "edition.h"
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
 
 DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/treasure_isle/treasure_isle.c ----
 // @file
 // Treasure Isle's copy of the field effect spawner.
 
@@ -35,25 +58,7 @@ DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 // Lift raises, Gale the Jupiter Djinni, a Venus Djinni, and the guardian of
 // water.
 
-#include "shared/tables.h"
-#include "shared/map_cells.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "module/scene/scene.h"
-
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "module/scene/scene.h"
-#include "scene_tables.h"
 
 struct TreasureIsleCell;
 
@@ -113,11 +118,7 @@ void TreasureIsle_PressRoom2Button(void);
 
 void FieldCamera_WaitForArrival(void);
 
-#include "scene_ids.h"
-#include "module/field/event_commands.h"
 #include "text/msg_ids.h"
-
-#include "field/cell_target.h"
 
 extern u16 gTreasureIsle_SavedBgColors[];
 extern volatile u16 gTreasureIsle_SavedObjColors[];
@@ -128,8 +129,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "system/main_routine_work.h"
 
 const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -145,14 +144,9 @@ const u8 *Scene_GetPlacements(void) {
   return gTreasureIsle_Placements;
 }
 
-#include "system/ram_buffer.h"
-#include "map.h"
-
 extern struct MapCell gMapCellBuffer[];
 
 DEFINE_MAP_CELL_SWAP(TreasureIsle_SwapCells)
-
-#include "field/event_inline.h"
 
 // Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
@@ -161,8 +155,6 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, cells[index].x, cells[index].z);
   Event_SetFlag(cells[index].flag);
 }
-
-#include "system/field_effect.h"
 
 // A spiky rock rises out of the ground at a listed cell: the camera goes to
 // it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
@@ -199,8 +191,6 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   FieldEvent_Wait(10);
   TreasureIsle_SetSpikyRock(cells, index);
 }
-
-#include "field_event.h"
 
 // For each of cells 0 to 3 of gTreasureIsle_Room2SpikyRocks whose flag (0x303
 // to 0x306) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
@@ -381,8 +371,6 @@ DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 15, 0x206)
 
 DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 16, 0x207)
 
-#include "call.h"
-
 // The guardian of water challenges the party to prove its worth.
 // "I am the guardian of water. If you would claim my power, you must prove
 // your worth."
@@ -426,9 +414,6 @@ const u8 *Scene_GetEvents(void) {
     return gTreasureIsle_Room5Triggers;
   return (const u8 *)gTreasureIsle_Room1Triggers;
 }
-
-#include "system/iwram_call.h"
-#include "system/io_write_queue.h"
 
 // The water colours' cycle frame, -1 until the first frame saves the
 // palettes.
@@ -476,9 +461,6 @@ void TreasureIsle_CycleWaterColors(void) {
 #undef FIELD_AT
 
 // its code, then the overlay's data.
-
-#include "actor.h"
-#include "system/task.h"
 
 /* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct
  * TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried
@@ -570,7 +552,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "text/msg_ids.h"
-#include "edition.h"
 
 // The Rusty Sword's name; the Japanese edition holds message 0 in its place.
 #if LANGUAGE == LANGUAGE_JAPANESE

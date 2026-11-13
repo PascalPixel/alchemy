@@ -17,13 +17,16 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "event_work.h"
-#include "text/msg_ids.h"
 #include "field/event_inline.h"
 #include "module/scene/scene.h"
+#include "field_sprite.h"
+#include "call.h"
+#include "scene_ids.h"
+#include "edition.h"
+#include "version.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 extern u32 gShamanVillageCave_GladiatorLeaves[];
 
@@ -60,13 +63,6 @@ notFirst:
 done:
   return;
 }
-
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field_sprite.h"
-#include "field/event_inline.h"
 
 struct ShamanVillageCaveEventWork {
   u8 unk000[0x154];
@@ -234,8 +230,6 @@ void ShamanVillageCave_LiftFourthRock(void) {
   return;
 }
 
-#include "call.h"
-
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 /// The Golden Shirt the gladiators leave goes to the party, if there is room.
@@ -274,10 +268,6 @@ void ShamanVillageCave_PlaceGoldenShirt(void) {
   Event_SetFlag(0xa73);
   return;
 }
-
-#include "scene_ids.h"
-#include "edition.h"
-#include "version.h"
 
 /// The fighters from Colosso, after a linked game, find the party and challenge
 /// it.

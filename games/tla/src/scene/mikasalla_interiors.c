@@ -19,13 +19,12 @@
 #include "actor.h"
 #include "system/ram_buffer.h"
 #include "event_work.h"
-#include "text/msg_ids.h"
 #include "field/event_inline.h"
+#include "module/scene/scene.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern struct ActorPlacement gMikasallaInteriors_InnPlacements[];
 extern struct ActorPlacement gMikasallaInteriors_SanctumPlacements[];
@@ -38,8 +37,6 @@ void MikasallaInteriors_FadeInAndClearFlag(void);
 
 extern u32 gMikasallaInteriors_ExplorersWidowPaces[];
 extern u32 gMikasallaInteriors_ClimbersWifePaces[];
-
-#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -285,8 +282,6 @@ void MikasallaInteriors_MeetGalahad(void) {
   Event_SetFlag(0x341);
   Event_End();
 }
-
-#include "objcmd.h"
 
 // clang-format off
 /// Two women pace the inn: the explorer's widow, whose father-in-law and husband

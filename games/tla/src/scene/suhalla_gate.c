@@ -9,6 +9,18 @@
 #include "system/main_routine_work.h"
 #include "scene_tables.h"
 #include "field/event_inline.h"
+#include "module/field/event_commands.h"
+#include "module/scene/scene.h"
+#include "scene_ids.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "event_work.h"
 
 extern u32 gSceneExits[];
 
@@ -24,16 +36,9 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 extern u8 MsgMyThatWas[];
 extern u8 MsgNotThatWay[];
-#include "types.h"
-#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
-#include "module/field/event_commands.h"
-#include "module/scene/scene.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern struct SceneEntrance gSuhallaGate_Entrances[];
 extern struct SceneEntrance gSuhallaGate_Room2Entrances[];
@@ -44,8 +49,6 @@ extern struct ActorPlacement gSuhallaGate_Room1Placements[];
 extern struct Trigger gSuhallaGate_Triggers[];
 extern struct Trigger gSuhallaGate_Room2Triggers[];
 extern struct Trigger gSuhallaGate_Room3Triggers[];
-
-#include "scene_ids.h"
 
 /// Talking to a Ruffian again starts his battle.
 void SuhallaGate_FightRuffian(void) { Field_RequestDjinnBattle(13, 26); }
@@ -59,16 +62,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
     return gSuhallaGate_Room3Entrances;
   return gSuhallaGate_Entrances;
 }
-
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
@@ -93,10 +86,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return gSuhallaGate_Room3Triggers;
   return gSuhallaGate_Triggers;
 }
-
-#include "field/event_inline.h"
-#include "system/ram_buffer.h"
-#include "event_work.h"
 
 /// After the first battle (flag 0x894) its Ruffian lies beaten by the path.
 void SuhallaGate_SetUpRoom1(void) {
@@ -222,8 +211,6 @@ void SuhallaGate_ThievesSpotParty(void) {
   Field_RequestBattleFromEncounterTable(9, 1);
   Event_End();
 }
-
-#include "actor.h"
 
 /// "Ha! That was a good idea, waiting here for 'em!"
 void SuhallaGate_ThievesAmbushParty(void) {

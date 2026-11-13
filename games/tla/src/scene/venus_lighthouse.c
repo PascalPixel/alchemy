@@ -12,6 +12,26 @@
 #include "types.h"
 #include "field_event.h"
 #include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "field_sprite.h"
+#include "system/field_effect.h"
+#include "shared/push.h"
+#include "field/field_coordinate.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "system/scene.h"
+#include "scene_tables.h"
+#include "system/frame.h"
+#include "shared/tables.h"
+#include "system/ram_buffer.h"
+#include "event_work.h"
+#include "field/event.h"
+#include "flag_call.h"
+#include "module/field/event_commands.h"
+#include "module/game/game.h"
+#include "tla_edition.h"
+#include "scene_ids.h"
+#include "version.h"
 
 #define Actor_SetSpriteFlags                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
@@ -55,12 +75,6 @@ struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
 
 #undef Actor_SetSpriteFlags
 #undef Actor_SetSpriteColor
-// ---- from scene/venus_lighthouse.c ----
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
 
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -151,12 +165,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // routines and the block push; the rest of the overlay is in
 // venus_lighthouse/.
 
-#include "shared/push.h"
-#include "field/field_coordinate.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "system/scene.h"
-
 extern s32 gPushLeaderSteps[];
 
 s32 MapGrid_CheckCollision(struct StagedActor *object,
@@ -166,19 +174,6 @@ DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto, gPushLeaderSteps,
                        MapGrid_CheckCollision, Import_ActorSelectAnimation)
 
 #include "../field/map/cell_fill_byte.c"
-
-#include "battle/battle.h"
-#include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field_event.h"
-#include "scene_tables.h"
-#include "system/frame.h"
 
 // Unused: does nothing; nothing calls it.
 UNUSED void VenusLighthouse_Nothing(void) {}
@@ -250,16 +245,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 // leaving Jenna and Kraden, their talk of leaving, the floor switch, the
 // statue that repels the leader, the reliefs and the paths Reveal shows.
 
-#include "shared/tables.h"
-#include "system/ram_buffer.h"
-#include "event_work.h"
-#include "field/event.h"
-#include "flag_call.h"
-#include "module/field/event_commands.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 struct VenusActor {
   u8 unk00[6];
@@ -313,8 +299,6 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern s32 gVenusLighthouse_StatueGlows[];
 extern s32 gVenusLighthouse_ShrinkAndHide[];
-
-#include "module/game/game.h"
 
 void Exit_PrepareActorAnimation(s32 actor, s32 value);
 
@@ -446,22 +430,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   }
 }
 
-#include "field_event.h"
 #include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "battle/battle.h"
-#include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-#include "tla_edition.h"
-#include "scene_ids.h"
-#include "version.h"
 
 // The statue Felix moved sinks into the floor in column 42 (flag 0x200), and
 // the way past it opens.

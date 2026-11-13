@@ -10,6 +10,39 @@
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "field/event_inline.h"
+#include "shared/tables.h"
+#include "shared/mars_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
+#include "system/ram_buffer.h"
+#include "event_work.h"
+#include "actor.h"
+#include "version.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+#include "call.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "module/field/field.h"
+#include "module/scene/magma_rock.h"
+#include "module/system/system.h"
+#include "field/particle.h"
+#include "graphics/resource.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "fixed_math.h"
+#include "system/iwram_call.h"
+#include "system/task.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -105,25 +138,6 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 /// Scene code of overlay 0x6a8, in ROM order.
 
-#include "shared/tables.h"
-#include "shared/mars_lighthouse.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
-#include "system/ram_buffer.h"
-#include "event_work.h"
-#include "actor.h"
-#include "version.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
-#include "call.h"
 #ifndef TLA_PROX_LOCAL_H
 #define TLA_PROX_LOCAL_H
 
@@ -140,17 +154,7 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #endif
 
-#include "system/input.h"
-#include "system/frame.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/field/field.h"
-#include "module/scene/magma_rock.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern s16 gData_02004b2c[];
 extern u32 gProx_Room2Placements[];
@@ -233,9 +237,6 @@ extern u32 gData_02004680[];
 
 void Func_020018e0(void);
 
-#include "module/system/system.h"
-#include "field/particle.h"
-#include "graphics/resource.h"
 #include "text/msg_ids.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -1214,8 +1215,6 @@ void Func_02001c24(s32 a0) {
 
 // object the overlay links.
 
-#include "system/io_reg.h"
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -1667,9 +1666,6 @@ void Func_020029c8(void) {
   }
 }
 
-#include "field_event.h"
-#include "field_sprite.h"
-
 void Func_02002a08(void) {
   s32 variant =
       ((struct FieldSprite *)Actor_Get(gMainRoutineWork.currentOwner)->sprite)
@@ -2115,11 +2111,6 @@ void Func_020038e8(void) {
 
 // object the overlay links.
 
-#include "fixed_math.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "system/main_routine_work.h"
-
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
   s32 x;
@@ -2233,8 +2224,6 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 #undef FIELD_AT
 
 // object the overlay links, and the overlay's data.
-
-#include "system/task.h"
 
 extern char ResourceId_FallingRock;
 

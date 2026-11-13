@@ -20,6 +20,34 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "shared/jupiter_lighthouse_aerie.h"
+#include "event_work.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/ram_buffer.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "field_sprite.h"
+#include "call.h"
+#include "system/field_effect.h"
+#include "field/field_coordinate.h"
+#include "effect_sprite.h"
+#include "map.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
+#include "gamepak/far_call/system.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "graphics/resource.h"
+#include "shared/cracked_tile.h"
+#include "field/cell_target.h"
+#include "system/io_write.h"
+#include "shared/tables.h"
+#include "module/field/field_effect.h"
+#include "objcmd.h"
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
@@ -27,13 +55,8 @@ extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-#include "event_work.h"
-#include "module/field/field.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "module/scene/scene.h"
 
 struct EffectOptions;
 struct EffectSprite;
@@ -99,9 +122,6 @@ void Func_02002b38(struct BeamSprite *sprite);
 void EffectSprite_DrawAtWorldPosition(struct BeamSprite *sprite,
                                       struct BeamSpark *spark);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
-
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -360,13 +380,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
-
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "system/ram_buffer.h"
-#include "field_event.h"
+#include "shared/scene_set_arrival_flags.c"
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
@@ -418,9 +432,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
-
-#include "system/frame.h"
-#include "field_sprite.h"
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
@@ -587,13 +598,9 @@ stop:
 }
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie/s0d08.c ----
-#include "call.h"
-#include "system/field_effect.h"
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation,
                        Whirlwind_Update, FieldEffect_Spawn)
-
-#include "field/field_coordinate.h"
 
 s32 Func_02000de0(struct Actor *object) {
   struct EffectOptions spark;
@@ -840,15 +847,6 @@ void Func_02001080(void) {
 
 /// Scene code of overlay 0x6a4, in ROM order.
 
-#include "effect_sprite.h"
-#include "map.h"
-#include "graphics/vram_tab.h"
-#include "system/task.h"
-#include "gamepak/far_call/system.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "graphics/resource.h"
-
 /* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;
  * games/tla/src/scene/jupiter_lighthouse_aerie/s0d08 has another definition;
  * tried with the definition the rest of the object has, it does not compile in
@@ -1019,18 +1017,9 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #undef LERP
 #undef gData_0200331c
-// ---- from scene/jupiter_lighthouse_aerie/s1e78.c ----
 // @file
 // Scene code of overlay 0x6a4, in ROM order.
 
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1121,15 +1110,8 @@ void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__(
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1e78
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gData_02003488,
                           CrackedTiles_Update)
-
-#include "shared/jupiter_lighthouse_aerie.h"
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
@@ -1137,7 +1119,6 @@ extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-#include "scene_tables.h"
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
@@ -1150,10 +1131,6 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 // ---- scene/jupiter_lighthouse_aerie/s24a8.c ----
 
 // Scene code of overlay 0x6a4, in ROM order.
-
-#include "system/io_reg.h"
-#include "field/field.h"
-#include "event_work.h"
 
 struct CellTargetEntry;
 
@@ -1173,7 +1150,6 @@ struct CellTarget__s24a8 {
 };
 
 void Leader_CenterInCell(void);
-#include "system/io_write.h"
 
 /* VIEW(s24a8): routine CrackedTile_Fall as this part defines it; the scene's
  * module header declares it with the joined file's CellTarget. */
@@ -1189,19 +1165,8 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_aerie/s2640.c ----
 // @file
 // Scene code of overlay 0x6a4, in ROM order.
-
-#include "shared/tables.h"
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "shared/jupiter_lighthouse_aerie.h"
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
@@ -1209,9 +1174,6 @@ extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -1248,9 +1210,6 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
   }
 }
-
-#include "scene_tables.h"
-#include "objcmd.h"
 
 /* VIEW(s2640): routine Func_02000314 as this part declared it; the joined file
  * has another. */

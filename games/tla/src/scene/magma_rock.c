@@ -8,6 +8,47 @@
 #include "actor.h"
 #include "field/event_inline.h"
 #include "module/scene/scene.h"
+#include "shared/push.h"
+#include "system/main_routine_work.h"
+#include "field/field_coordinate.h"
+#include "module/field/field.h"
+#include "system/scene.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
+#include "map.h"
+#include "field/field.h"
+#include "module/field/event_commands.h"
+#include "module/scene/magma_rock.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+#include "system/frame.h"
+#include "field/event.h"
+#include "event_work.h"
+#include "flag_call.h"
+#include "field/event_work.h"
+#include "system/field_effect.h"
+#include "macros.h"
+#include "call.h"
+#include "fixed_math.h"
+#include "field/sprite.h"
+#include "module/field/object.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "shared/effects.h"
+#include "shared/tables.h"
+#include "field_sprite.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
+#include "module/field/field_effect.h"
+#include "field/particle.h"
+#include "system/task.h"
+#include "objcmd.h"
 
 struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = (FieldActor_Create(kind, x, y, z));
@@ -26,7 +67,6 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/magma_rock.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -43,15 +83,6 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 // ---- scene/magma_rock/s03b4.c ----
 
-#include "shared/push.h"
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/field_coordinate.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "system/scene.h"
-
 extern s32 gPushLeaderSteps[];
 
 DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gPushLeaderSteps,
@@ -66,16 +97,6 @@ DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gPushLeaderSteps,
 // leader on a column of flame, the cracked columns they break, the pillars
 // Move pushes and the crumbling ones, Growth's vines and the slides, and at
 // the top the Psynergy rock that blasts the way in.
-
-#include "shared/map_cells.h"
-#include "shared/actors.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "actor.h"
-#include "map.h"
-#include "field/field.h"
-#include "module/field/event_commands.h"
-#include "module/scene/magma_rock.h"
 
 void MagmaRock_FightFury(void) { Field_RequestDjinnBattle(8, 56); }
 
@@ -94,14 +115,6 @@ DEFINE_MAP_CELL_SET_SHAPE(MagmaRock_SetCellShape, MapGrid_GetTerrainKind,
 
 DEFINE_ACTORS_RAISE_CELLS(MagmaRock_RaiseActorCells, MagmaRock_SetCellShape)
 
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
 #ifndef TLA_MAGMA_ROCK_H
 #define TLA_MAGMA_ROCK_H
 
@@ -119,8 +132,6 @@ struct MagmaRockWork {
 };
 
 #endif
-
-#include "scene_ids.h"
 
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
@@ -342,8 +353,6 @@ s32 MagmaRock_BlockMovedPillar(void) {
   return Func_02003af4();
 }
 
-#include "system/frame.h"
-
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 
 void MagmaRock_PlayBurst(s16 value) {
@@ -562,9 +571,6 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 
 // Magma Rock's statues: the magma they fire, the flame columns that lift the
 // leader, the cracked columns, slides, pillars, vines and the final blast.
-#include "field/event.h"
-#include "event_work.h"
-#include "flag_call.h"
 
 /* VIEW(s0ff4): tag struct MagmaRockEventWork as struct
  * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition; tried
@@ -692,9 +698,6 @@ void MagmaRock_DriftAndSlow(struct Actor *object) {
   object->unk4c -= object->unk4c >> 3;
 }
 
-#include "field/event_work.h"
-#include "system/field_effect.h"
-
 s32 Position_FlatDistance(s32 *a, s32 *b);
 // XXX: magma_rock.c defines this with an s16 value; this call matches only with
 // u16. A match of magma_rock.c's MagmaRock_PlayBurst under u16 would settle
@@ -814,8 +817,6 @@ hit:
   return Func_02003af4();
 }
 
-#include "macros.h"
-
 void MagmaRock_FireStatue(void) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct Actor *object;
@@ -910,8 +911,6 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 
 // The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
 // others, throws effect 403 every eighth frame and marks the ground beneath.
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
 
 /* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
  * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition; tried
@@ -1005,8 +1004,6 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
 #undef BYTE_AT
 #undef PART_Y
 #undef EFFECT_Y
-
-#include "system/ram_buffer.h"
 
 // The native reads these event work halfwords signed (ldrsh).
 
@@ -1238,8 +1235,6 @@ void MagmaRock_ClearLedgeBehavior(void) {
   Event_ClearFlag(0x212);
 }
 
-#include "call.h"
-
 void Actor_SetActionById(s32 id, s32 action);
 /* VIEW(s1c00): routine FieldCamera_MoveToActor as void
  * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
@@ -1323,8 +1318,6 @@ second:
   leader->bounce = 0x4000;
   Func_02003af4();
 }
-
-#include "fixed_math.h"
 
 void MagmaRock_ClearBlockCells(struct Actor *object);
 void MagmaRock_SetCellShape(s32 layer, s32 x, s32 z, s32 height);
@@ -1573,32 +1566,12 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef gMagmaRock_Room2UpperTriggers
 #undef gMagmaRock_Room2TopTriggers
 #undef gMagmaRock_Room3Triggers
-// ---- from scene/magma_rock/s22ac.c ----
 /* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined
  * file has another. */
 #define MagmaRockEventWork MagmaRockEventWork__s22ac
 // @file
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
-
-#include "shared/map_cells.h"
-#include "shared/actors.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "scene_tables.h"
-#include "field/sprite.h"
-#include "call.h"
-#include "scene_ids.h"
-#include "field/event_work.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "module/field/object.h"
-#include "module/scene/magma_rock.h"
-#include "module/scene/mars_lighthouse_star_room.h"
 
 struct MagmaRockEventWork {
   u8 unk000[0x1ac];
@@ -2022,7 +1995,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 // On entering, sets each listed pillar from its two flags, then lifts the
 // leader onto the ground under it.
-#include "map.h"
 
 extern u8 gMapShapeGrid[];
 
@@ -2271,17 +2243,6 @@ test:
 
 // Magma Rock's rubble and falling rocks, and its tables.
 
-#include "shared/effects.h"
-#include "shared/tables.h"
-#include "system/iwram_call.h"
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "system/ram_buffer.h"
-#include "graphics/resource.h"
-#include "system/heap_release.h"
-#include "module/field/field_effect.h"
-#include "field/particle.h"
-
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void MagmaRock_SpawnRubble(s32 spread) {
@@ -2451,7 +2412,6 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
 
 // The falling rocks' setup: loads their picture, sets up 64 small sprites,
 // marks each rock idle and starts the task that spawns them.
-#include "system/task.h"
 
 extern char ResourceId_FallingRock;
 
@@ -2530,9 +2490,6 @@ void MagmaRock_EndFallingRocks(void) {
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
-
-#include "scene_tables.h"
-#include "objcmd.h"
 
 void MagmaRock_UnblockMovedPillar(void);
 /* VIEW(s34ac): routine MagmaRock_BlockMovedPillar as this part declared it; the

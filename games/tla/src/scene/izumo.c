@@ -19,6 +19,20 @@
 #include "field_event.h"
 #include "system/main_routine_work.h"
 #include "scene_tables.h"
+#include "call.h"
+#include "flag_call.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/io_reg.h"
+#include "version.h"
+#include "system/frame.h"
+#include "objcmd.h"
 
 // Set as the stone circle's guard finds the misaligned stone back in place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924
@@ -88,22 +102,6 @@ void Sound_Play(s32 cue);
 void Izumo_RotateWaterColors(void);
 void Izumo_StopThePartyToThankThem(void);
 void Izumo_TellTheCloudBrandLegend(void);
-#include "call.h"
-#include "flag_call.h"
-#include "scene_tables.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "system/io_reg.h"
-#include "system/task.h"
-#include "version.h"
-#include "system/frame.h"
 
 void Izumo_StartMovingStone(void) {
   Actor_LiftTargetBlock(gIzumo_MovableStones);
@@ -609,7 +607,6 @@ void Izumo_EnterTheRuins(void) {
 }
 
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 s16 gIzumo_MovableStones[] = {
     12,

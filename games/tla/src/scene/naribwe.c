@@ -9,6 +9,8 @@
 #include "system/main_routine_work.h"
 #include "scene_tables.h"
 #include "field/event_inline.h"
+#include "field/field.h"
+#include "shared/tables.h"
 
 extern u32 gSceneExits[];
 
@@ -92,7 +94,6 @@ extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
  * has another. */
 extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
 #define MsgNaribwe45 MsgNaribwe45__first
-#include "field/field.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -107,8 +108,6 @@ const u8 *Scene_GetPlacements(void) {
     return gNaribwe_PlacementsOnReturn;
   return gNaribwe_Placements;
 }
-
-#include "field/event_inline.h"
 
 /// Before Blaze is cast on the central fire, the event work notes whether the
 /// party came in by entrance 10.
@@ -343,18 +342,12 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef MsgNaribwe43
 #undef MsgNaribwe23
 #undef MsgNaribwe45
-// ---- from scene/data/naribwe.c ----
 // @file
 // Naribwe's data: its scripts, door, placements and triggers.
 
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 void Naribwe_PrepareBlaze(void);
 void Naribwe_AskAboutKibomboExpedition(void);

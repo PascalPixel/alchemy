@@ -21,6 +21,32 @@
 #include "scene_tables.h"
 #include "event_work.h"
 #include "module/field/field.h"
+#include "jupiter_lighthouse_room_7.h"
+#include "system/main_routine_work.h"
+#include "call.h"
+#include "system/ram_buffer.h"
+#include "shared/jupiter_lighthouse_aerie.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "field_sprite.h"
+#include "shared/map_cells.h"
+#include "system/field_effect.h"
+#include "field/field_coordinate.h"
+#include "map.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "field/cell_target.h"
+#include "system/io_write.h"
+#include "module/field/field_effect.h"
+#include "macros.h"
+#include "shared/tables.h"
+#include "objcmd.h"
 
 /* VIEW(first): routine gData_020031c4 as this part declared it; the joined file
  * has another. */
@@ -51,10 +77,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
-
-#include "jupiter_lighthouse_room_7.h"
-#include "system/main_routine_work.h"
-#include "call.h"
 
 DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 76, 42, 4, 76,
                                     35, 81, 42, 12, 41, 12, 35)
@@ -551,8 +573,6 @@ void Func_02000cec(void) {
 
 void Func_02000e20(void) { Field_TryJumpForward(); }
 
-#include "system/ram_buffer.h"
-
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Actors_SetCellsOpen();
@@ -679,12 +699,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
-
-#include "shared/jupiter_lighthouse_aerie.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "field_event.h"
+#include "shared/scene_set_arrival_flags.c"
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
@@ -716,9 +731,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
-#include "system/frame.h"
-#include "field_sprite.h"
-
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -746,18 +758,7 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 /// Scene code of overlay 0x6a0, in ROM order.
 
-#include "shared/map_cells.h"
-#include "system/field_effect.h"
-#include "field/field_coordinate.h"
-#include "map.h"
-#include "graphics/vram_tab.h"
-#include "system/task.h"
-#include "item_icon.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "module/scene/scene.h"
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -804,8 +805,6 @@ extern s16 gLightSpriteCount;
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Field_TryJumpForward(void);
-
-#include "module/scene/scene.h"
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
@@ -922,18 +921,8 @@ void LightSprites_SetPriority(u16 value) {
 #undef gPaletteCycleFrame
 #undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
-// ---- from scene/jupiter_lighthouse_room_7/s1f74.c ----
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
-
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -1030,12 +1019,6 @@ void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__(
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1f74
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "scene_tables.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
@@ -1049,11 +1032,6 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 // ---- scene/jupiter_lighthouse_room_7/s25a4.c ----
 
 // Scene code of overlay 0x6a0, in ROM order.
-
-#include "system/io_reg.h"
-#include "field/field.h"
-#include "event_work.h"
-#include "jupiter_lighthouse_room_7.h"
 
 struct CellTargetEntry;
 
@@ -1072,8 +1050,6 @@ struct CellTarget__s25a4 {
   s16 tile;
 };
 
-#include "system/io_write.h"
-
 /* VIEW(s25a4): routine CrackedTile_Fall as this part defines it; the scene's
  * module header declares it with the joined file's CellTarget. */
 void CrackedTile_Fall__s25a4(
@@ -1089,22 +1065,8 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_SelectAnimation
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_room_7/s273c.c ----
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
-
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "field/cell_target.h"
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 /* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined
  * file has another. */
@@ -1185,8 +1147,6 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
-#include "scene_tables.h"
-
 // clang-format off
 /* VIEW(s273c): variable gData_02002c64 as this part defines it; a header the joined file includes has another. */
 s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
@@ -1198,13 +1158,6 @@ s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
 // clang-format on
 
 #undef FieldEffect_Spawn
-// ---- from scene/data/jupiter_lighthouse_room_7.c ----
-
-#include "macros.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "objcmd.h"
 
 void Func_02000038(void);
 void JupiterLighthouse_StepOnButton(void);

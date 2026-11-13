@@ -9,7 +9,6 @@
 
 #include "flags.h"
 #include "field/field.h"
-
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field_sprite.h"
@@ -22,6 +21,35 @@
 #include "module/tla.h"
 #include "scene_ids.h"
 #include "system/system.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "scene_tables.h"
+#include "system/frame.h"
+#include "field_event.h"
+#include "macros.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/iwram_call.h"
+#include "system/vector3.h"
+#include "system/input.h"
+#include "shared/gabomba_statue_chamber.h"
+#include "system/task.h"
+#include "shared/tables.h"
+#include "shared/map_cells.h"
+#include "system/heap_release.h"
+#include "module/field/field.h"
+#include "module/field/field_effect.h"
+#include "module/system/system.h"
+#include "graphics/resource.h"
+#include "system/affine.h"
+#include "graphics/vram_tab.h"
+#include "call.h"
+#include "map.h"
+#include "objcmd.h"
 
 extern u8 Data_0202c001[];
 
@@ -146,14 +174,6 @@ s32 Func_0200028c(struct Wanderer *actor) {
   return 1;
 }
 
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 /* VIEW(gabomba_statue): routine gData_02005dfc as this part declared it; the
@@ -199,9 +219,6 @@ const u8 *Scene_GetRegions(void) {
   return NULL;
 }
 
-#include "system/frame.h"
-#include "field_event.h"
-
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 s32 Func_02000364(struct Actor *actor) {
@@ -211,8 +228,6 @@ s32 Func_02000364(struct Actor *actor) {
     ((struct FieldAnimation *)actor->sprite)->part->frame = frame % 20 / 10 + 3;
   return 1;
 }
-
-#include "macros.h"
 
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
  * module/scene/scene.h has another definition; tried with the definition the
@@ -272,9 +287,6 @@ s32 Func_02000408(struct Orbiter__gabomba_statue *actor) {
   actor->link = Func_02000398;
   return 1;
 }
-
-#include "system/ram_buffer.h"
-#include "actor.h"
 
 struct SceneState {
   struct PuzzleCell cells[88];
@@ -382,8 +394,6 @@ const u8 *Scene_GetPlacements(void) {
 // ---- games/tla/src/scene/gabomba_statue/find_near.c ----
 // Scene code of overlay 0x671, in ROM order, from find_near's offset up to the
 // next object the overlay links.
-
-#include "field/field.h"
 
 /* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
  * gabomba_statue.c has another definition; tried with the definition the rest
@@ -529,9 +539,6 @@ void Func_02000740(void) {
     leader->facing += delta;
   }
 }
-
-#include "system/iwram_call.h"
-#include "system/vector3.h"
 
 void Func_02000784(void) {
   struct Actor *actor, *table;
@@ -840,7 +847,6 @@ void Func_02000cf0(struct Actor *object) {
   Event_End();
 }
 
-#include "system/input.h"
 #include "text/msg_ids.h"
 
 void Func_020022d0(s32 id, s32 x, s32 z, s32 facing);
@@ -971,8 +977,6 @@ const u8 *Scene_GetEvents(void) {
     table = gData_02006e78;
   return table;
 }
-
-#include "shared/gabomba_statue_chamber.h"
 
 void Func_020011bc(s32 x, s32 z) {
   struct GabombaStatueChamberEventWork *work = Ram_HeapSlots->eventWork;
@@ -1370,8 +1374,6 @@ next:
     goto next;
 }
 
-#include "system/task.h"
-
 #define MARK(at, cellPicture, shape)                                           \
   (cell = (at), layerA[cell] = (cellPicture), layerB[cell] = (cellPicture),    \
    word = &shapesA[cell], *word |= (shape), word = &shapesB[cell],             \
@@ -1616,7 +1618,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef Statue_Sink
 #undef Func_020043a4
 #undef gData_0200e88c
-// ---- from scene/gabomba_statue/s2394.c ----
 /* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
  * before has its own. */
 #define Wanderer Wanderer__s2394
@@ -1625,27 +1626,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 // Scene code of overlay 0x671, in ROM order.
 
 // ---- games/tla/src/scene/gabomba_statue/s2394.c ----
-
-#include "flags.h"
-#include "shared/tables.h"
-#include "shared/map_cells.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/field/field.h"
-#include "module/field/field_effect.h"
-#include "module/scene/gabomba_statue.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "graphics/resource.h"
 
 /* VIEW(s2394): routine FieldEffect_Spawn as this part declared it; the joined
  * file has another. */
@@ -1710,7 +1690,6 @@ void Func_02002394(void) {
 }
 
 #include "text/msg_ids.h"
-#include "scene_tables.h"
 
 struct Wanderer {
   u8 unk00[98];
@@ -1860,8 +1839,6 @@ void Func_020027cc(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(12);
 }
-
-#include "field/field.h"
 
 /* VIEW(s2394): routine gData_02005d7c as this part declared it; the joined file
  * has another. */
@@ -2116,8 +2093,6 @@ void Func_02003338(void) {
   Event_SetFlag(0x9ec);
   Func_02005364();
 }
-
-#include "scene_ids.h"
 
 struct EventWork1ac {
   u8 unk000[0x1ac];
@@ -2443,8 +2418,6 @@ void Func_02003974(void) {
                           state->originX + col, state->originZ + row);
     }
 }
-
-#include "system/iwram_call.h"
 
 /* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32
  * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
@@ -3091,9 +3064,6 @@ void Func_020046c8(void) {
   }
 }
 
-#include "system/affine.h"
-#include "graphics/vram_tab.h"
-
 void Func_02004710(void) {
   s32 affine = 0;
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0xe4);
@@ -3141,8 +3111,6 @@ void Func_02004710(void) {
   }
 }
 
-#include "system/task.h"
-
 s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
   struct SceneState *state = &gSceneState;
   s32 count;
@@ -3164,8 +3132,6 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
   Actor_Get(id)->unk5c[0] = 2;
   return count;
 }
-
-#include "call.h"
 
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the
  * joined file has another. */
@@ -3622,8 +3588,6 @@ void Func_0200525c(void) {
     clock->timer--;
 }
 
-#include "map.h"
-
 void Func_020052a4(s32 mode) {
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *tiles;
@@ -3737,8 +3701,6 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   }
 }
 
-#include "objcmd.h"
-
 // clang-format off
 DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
@@ -3774,14 +3736,6 @@ u32 gData_02005944[] = {
 #undef Wanderer
 #undef SceneState
 #undef gSceneState
-// ---- from scene/data/gabomba_statue.c ----
-
-#include "macros.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "objcmd.h"
-#include "module/scene/gabomba_statue.h"
 
 void Func_02000280(void);
 /* VIEW(data): routine Func_0200028c as this part declared it; the joined file

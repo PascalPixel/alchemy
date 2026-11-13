@@ -2,17 +2,46 @@
 /// The scene code of overlay 0x679, in ROM order.
 
 #include "shared/actors.h"
+#include "apojii_islands.h"
+#include "shared/effects.h"
+#include "shared/tables.h"
+#include "types.h"
+#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "call.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/io_write_queue.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
+#include "field/event.h"
+#include "event_work.h"
+#include "field/field.h"
+#include "field_event.h"
+#include "flag_call.h"
+#include "field/ground_mask.h"
+#include "module/field/field.h"
+#include "scene_tables.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "actor.h"
+#include "map.h"
+#include "field_sprite.h"
+#include "graphics/vram_tab.h"
+#include "system/dma.h"
+#include "system/heap_release.h"
+#include "graphics/resource.h"
+#include "version.h"
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
-
-#include "apojii_islands.h"
 
 DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/apojii_islands/apojii_islands.c ----
 // @file
 // Scene code of overlay 0x679, in ROM order.
 
@@ -30,31 +59,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 // ---- games/tla/src/scene/apojii_islands.c ----
 
-#include "shared/actors.h"
-#include "shared/effects.h"
-#include "shared/tables.h"
-#include "apojii_islands.h"
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "scene_ids.h"
-#include "call.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/io_write_queue.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "field/event.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "field_event.h"
-#include "flag_call.h"
-#include "field/ground_mask.h"
-#include "module/field/field.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern struct ActorPlacement gData_02002200[];
 extern struct ActorPlacement gData_02002218[];
@@ -80,11 +85,6 @@ extern u32 gData_02001eac[];
 extern s32 gData_02002044[];
 
 extern u16 gData_02002a58[16];
-
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "system/system.h"
-#include "system/task.h"
 
 extern u8 Data_0202c001[];
 
@@ -238,8 +238,6 @@ void Func_02000770(struct Actor *object) {
 DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 
 // ---- games/tla/src/scene/apojii_islands/s07a4.c ----
-#include "scene_tables.h"
-#include "actor.h"
 
 /* VIEW(s07a4): routine Random16 as u16 Random16(void); system.h has u32
  * Random16(void); tried as the definition's u32 Random16(void), which the
@@ -332,8 +330,6 @@ blend:
 // ---- games/tla/src/scene/apojii_islands/events_d.c ----
 // Scene code of overlay 0x679, in ROM order, from events_d's offset up to the
 // next object the overlay links.
-
-#include "map.h"
 
 void Func_02000974(void) {
   Event_Start();
@@ -581,8 +577,6 @@ void Func_020010b4(void) {
 
 void Func_020010d0(void) { Field_TryJumpForward(); }
 
-#include "field_sprite.h"
-
 void Func_020010d8(struct Actor *object) {
   struct Actor *child;
   struct FieldSprite *parent;
@@ -677,9 +671,6 @@ DEFINE_LEADER_SINK_AWAY(Leader_SinkAway, Actor_EmitMist)
 
 DEFINE_LEADER_RISE_FROM_WATER(Leader_RiseFromWater, Actor_EmitMist)
 
-#include "graphics/vram_tab.h"
-#include "system/dma.h"
-
 #define COPY_PICTURE(from, to)                                                 \
   Dma_Set((void *)(from), (void *)(offset + (to)), DMA_COPY_WORDS(16), REG_DMA3)
 
@@ -760,10 +751,6 @@ void Func_020017bc(void) {
   Vram_Load(gData_02002aa0.block, 0x200, 0);
   FieldTask_AddFrame(Func_020015f8, 0x480);
 }
-
-#include "system/heap_release.h"
-#include "system/io_reg.h"
-#include "graphics/resource.h"
 
 void Func_020017f8(u32 base, s32 a, s32 b) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -878,7 +865,6 @@ void Func_02001ba0(s32 id) {
 }
 
 #include "text/msg_ids.h"
-#include "version.h"
 
 #if !TLA_PATCH_1
 // The Japanese table holds 131 where later editions hold MsgFieldOff's number,

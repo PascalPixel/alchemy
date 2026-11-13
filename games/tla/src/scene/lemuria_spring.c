@@ -20,10 +20,22 @@
 #include "event_work.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "module/window/window.h"
+#include "graphics/text_render.h"
+#include "graphics/uiflow.h"
+#include "system/main_routine_work.h"
+#include "version.h"
+#include "edition.h"
+#include "system/input.h"
+#include "actor.h"
+#include "call.h"
+#include "system/iwram_call.h"
+#include "system/vector3.h"
+#include "system/task.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 s32 LemuriaSpring_RunSpringGame(void);
 
@@ -50,12 +62,7 @@ void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 s32 Party_RestoreHpPp();
 s32 Class_GetSeries();
 
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "module/window/window.h"
 #include "text/msg_ids.h"
-#include "graphics/text_render.h"
-#include "graphics/uiflow.h"
 
 extern struct SpringTossMotion gLemuriaSpring_Toss;
 extern struct SpringObstacle gLemuriaSpring_Obstacles[];
@@ -135,8 +142,6 @@ void LemuriaSpring_TossCoin(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "system/main_routine_work.h"
-
 void LemuriaSpring_InitializeTossSimulation(void);
 
 /// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
@@ -180,10 +185,6 @@ s32 Scene_Initialize(void) {
 }
 
 #include "text/msg_ids.h"
-#include "version.h"
-#include "edition.h"
-#include "system/input.h"
-#include "actor.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -425,7 +426,6 @@ end:
   return 0;
 }
 
-#include "call.h"
 s32 Actor_MoveToObject();
 s32 Summon_ShowLearnedMessage();
 
@@ -593,9 +593,6 @@ void LemuriaSpring_SetSpriteStorageKind(s32 a0, s32 a1) {
     object->animationKind = a1;
   }
 }
-
-#include "system/iwram_call.h"
-#include "system/vector3.h"
 
 void LemuriaSpring_UpdateTossSimulation(void) {
   struct SpringTossMotion *toss;
@@ -980,8 +977,6 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 #undef TOSS_WINDOW_X
 #undef TOSS_WINDOW_WIDTH
 #undef WEIGHT
-
-#include "system/task.h"
 
 /* VIEW(ride): variable gLemuriaSpring_Toss as extern struct SpringRide
  * gLemuriaSpring_Toss; lemuria_spring has extern struct SpringTossMotion

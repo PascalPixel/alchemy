@@ -10,6 +10,31 @@
 #include "system/ram_buffer.h"
 #include "field_event.h"
 #include "scene_call.h"
+#include "field/event.h"
+#include "event_work.h"
+#include "field/field.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "scene_tables.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "graphics/resource.h"
+#include "system/system.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "scene_ids.h"
+#include "version.h"
+#include "call.h"
+#include "actor.h"
+#include "flag_call.h"
+#include "system/dma.h"
+#include "system/task.h"
+#include "macros.h"
 #include "text/msg_ids.h"
 
 struct WarpTarget {
@@ -51,17 +76,8 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {
   Actor_FaceDirectionById(actor, angle);
 }
-#include "field/event.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/field/event_commands.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern struct ActorPlacement gData_0200375c[];
 extern struct ActorPlacement gData_020037a4[];
@@ -106,11 +122,6 @@ void FieldEffect_StartBlankOverlay(s32 a);
 void Field_StartColorTransition(s32 a, s32 b);
 extern char ResourceId_FireColumn;
 
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "graphics/resource.h"
-#include "system/system.h"
-
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
     object->scale += n1;                                                       \
@@ -123,21 +134,11 @@ extern char ResourceId_FireColumn;
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02000038, 0x1000)
 
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "scene_ids.h"
 
 extern struct ActorPlacement gData_0200381c[];
 extern struct ActorPlacement gData_02003864[];
@@ -337,8 +338,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gData_02003d20;
 }
 
-#include "version.h"
-
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -528,8 +527,6 @@ void Func_02000978(s32 actor) {
 }
 
 // ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
-#include "call.h"
-#include "actor.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -790,8 +787,6 @@ chosen:
 }
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02001138, 0xc00)
-
-#include "flag_call.h"
 
 #define PALETTE ((u16 *)0x05000000)
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -1547,8 +1542,6 @@ void Func_02001868(void) {
   Event_End();
 }
 
-#include "system/dma.h"
-
 /* VIEW(champa_cliff_caves): routine Decompress_TaggedLz as void
  * Decompress_TaggedLz(void *entry, void *destination); resource.h has s32
  * Decompress_TaggedLz(const void *source, void *destination); not tried:
@@ -1935,7 +1928,6 @@ void Func_02003078(void) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/champa_cliff_caves/s3164.c ----
-#include "system/task.h"
 
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
@@ -2107,12 +2099,7 @@ u32 gData_02003634[] = {
 #undef gData_02004254
 #undef gData_0200432c
 #undef gData_020042d4
-// ---- from scene/data/champa_cliff_caves.c ----
 
-#include "macros.h"
-#include "types.h"
-#include "flags.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 /* VIEW(data): routine Func_020001f4 as this part declared it; the joined file

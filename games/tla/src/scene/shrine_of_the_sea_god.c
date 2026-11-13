@@ -20,6 +20,24 @@
 #include "event_work.h"
 #include "module/scene/scene.h"
 #include "module/scene/shrine_of_the_sea_god.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "call.h"
+#include "macros.h"
+#include "shared/actors.h"
+#include "system/frame.h"
+#include "module/field/field_effect.h"
+#include "shared/tables.h"
 
 void Func_02000280(void) {
   struct ShrineOfTheSeaGodObject *leader =
@@ -43,7 +61,6 @@ void Func_02000280(void) {
 // The scene code of overlay 0x654 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in shrine_of_the_sea_god/.
 
-#include "battle/battle.h"
 struct Actor;
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 /* VIEW(shrine_of_the_sea_god): routine Actor_SetSpriteFlags as void
@@ -57,15 +74,6 @@ extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
 #include "field/field.h"
 #undef Actor_SetSpriteFlags
 #undef Actor_SetPositionAndResetMotion
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
 
 /* VIEW(shrine_of_the_sea_god): routine gData_02003df4 as this part declared it;
  * the joined file has another. */
@@ -280,11 +288,6 @@ const struct Trigger *Scene_GetEvents(void) {
 // next object the overlay links.
 
 #include "text/msg_ids.h"
-#include "shrine_of_the_sea_god.h"
-#include "system/io_reg.h"
-#include "system/io_write.h"
-#include "call.h"
-#include "macros.h"
 
 /* VIEW(shrine_of_the_sea_god): routine gData_02003c10 as this part declared it;
  * the joined file has another. */
@@ -926,22 +929,10 @@ void Func_020012b4(void) {
 #undef gShrineOfTheSeaGod_Room9Triggers
 #undef gData_02003c10
 #undef gData_02003cbc
-// ---- from scene/shrine_of_the_sea_god/s1340.c ----
 // @file
 // Scene code of overlay 0x654, in ROM order.
 
-#include "shared/actors.h"
-#include "shrine_of_the_sea_god.h"
-#include "system/system.h"
-#include "macros.h"
-#include "call.h"
 #include "text/msg_ids.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
-#include "system/frame.h"
-#include "module/scene/scene.h"
-#include "module/scene/shrine_of_the_sea_god.h"
-#include "module/field/field_effect.h"
 
 extern u32 gData_02004a18[];
 
@@ -2173,12 +2164,7 @@ s32 Scene_PrepareMap(void) {
 #undef gData_02003cbc
 #undef gData_02003c10
 #undef Actor_SetSpriteColor
-// ---- from scene/data/shrine_of_the_sea_god.c ----
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "module/scene/shrine_of_the_sea_god.h"
 
 void Func_02000280(void);
 void ShrineOfTheSeaGod_ExamineStatue(void);

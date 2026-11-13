@@ -7,13 +7,33 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "text/msg_ids.h"
 #include "types.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+#include "izumo_ruins/izumo_ruins.h"
+#include "map.h"
+#include "shared/trial_road.h"
+#include "system/system.h"
+#include "field_sprite.h"
+#include "system/field_effect.h"
+#include "module/field/field_effect.h"
+#include "flags.h"
+#include "shared/actors.h"
+#include "shared/tables.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "scene_tables.h"
+#include "event_work.h"
+#include "call.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 struct Actor;
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
@@ -47,10 +67,6 @@ loop:
   if (entry[0] != 0xffff)
     goto loop;
 }
-
-#include "izumo_ruins/izumo_ruins.h"
-#include "map.h"
-#include "shared/trial_road.h"
 
 // Finds the current target's table row and shrinks it.
 void Pillars_Pound(u16 *list, s32 mode, s32 count) {
@@ -397,27 +413,9 @@ test:
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-// ---- from scene/izumo_ruins/rubble.c ----
 // @file
 // The Izumo Ruins' rubble, sprayed and burst from the leader as a pillar
 // crumbles (Rubble_Spray, Rubble_Burst).
-
-#include "shared/map_cells.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/iwram_call.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "map.h"
-#include "system/ram_buffer.h"
-#include "izumo_ruins/izumo_ruins.h"
-#include "field/field.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 struct Actor;
 struct FieldSprite;
@@ -537,7 +535,6 @@ void Leader_SetCellShapeAt(s32 a, s32 b) {
 #undef gIzumoRuins_RubbleSprayScript
 #undef Actor_StartScript
 #undef gIzumoRuins_RubbleBurstScript
-// ---- from scene/izumo_ruins.c ----
 // @file
 // The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
 // this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).
@@ -559,27 +556,7 @@ void Leader_SetCellShapeAt(s32 a, s32 b) {
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-#include "flags.h"
-#include "shared/actors.h"
-#include "shared/tables.h"
-#include "izumo_ruins/izumo_ruins.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
-#include "field/event_inline.h"
 
 struct Actor;
 extern u32 gFieldEffect_ShortScript[];
@@ -826,8 +803,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-#include "objcmd.h"
 
 // clang-format off
 DEFINE_G_DATA_02001540(gIzumoRuins_RubbleSprayScript, 33)

@@ -35,11 +35,30 @@
 #include "flags.h"
 #include "kandorean_temple.h"
 #include "field/field.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/scene.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/event_inline.h"
+#include "macros.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
+#include "version.h"
+#include "system/task.h"
+#include "shared/tables.h"
+#include "system/field_effect.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "objcmd.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct MapWork17 {
   s32 *origin;
@@ -124,7 +143,6 @@ extern u16 gKandoreanTemple_RightBobPhase;
 void Tightrope_Initialize(void);
 void Actor_PlaceBlocks(const void *data);
 
-#include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
 extern s32 gKandoreanTemple_RightTimer;
@@ -187,17 +205,6 @@ s32 KandoreanTemple_PlaceLevitatingStudent(struct Actor *object) {
   return 0;
 }
 
-#include "battle/battle.h"
-
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u32 gKandoreanTemple_ChestbeaterRoomRegions[];
@@ -213,14 +220,6 @@ u32 *Scene_GetRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "field/event_inline.h"
-#include "macros.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/io_reg.h"
-#include "version.h"
-#include "system/task.h"
 
 /* VIEW(kandorean_temple): routine gKandoreanTemple_Placements as this part
  * declared it; the joined file has another. */
@@ -1957,21 +1956,11 @@ L_0200ae24:
 #undef gKandoreanTemple_FogRoomEvents
 #undef gKandoreanTemple_GateEvents
 #undef gKandoreanTemple_PoisHallEvents
-// ---- from scene/kandorean_temple/events.c ----
 // @file
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
 
-#include "shared/tables.h"
-#include "kandorean_temple.h"
-#include "system/field_effect.h"
-#include "event_work.h"
-#include "field/event_inline.h"
-#include "version.h"
-#include "system/task.h"
 #include "text/msg_ids.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 extern s32 gKandoreanTemple_RightTimer;
 
@@ -3025,10 +3014,6 @@ void KandoreanTemple_LowerTheLadder(void) {
   GameFlag_Set(0x92d);
   Event_End();
 }
-
-#include "types.h"
-#include "scene_tables.h"
-#include "objcmd.h"
 
 void KandoreanTemple_FightFog(void);
 /* VIEW(events): routine KandoreanTemple_CountDownSteam as this part declared

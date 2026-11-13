@@ -13,10 +13,23 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
-
 #include "scene_tables.h"
 #include "system/frame.h"
 #include "item_icon.h"
+#include "module/scene/scene.h"
+#include "module/window/window.h"
+#include "graphics/resource.h"
+#include "scene_ids.h"
+#include "graphics/uiflow.h"
+#include "call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
+#include "edition.h"
+#include "bg_scroll.h"
+#include "system/main_routine_work.h"
+#include "system/input.h"
+#include "system/ram_buffer.h"
 
 struct EpilogueSprite;
 
@@ -37,12 +50,7 @@ extern const u16 gEpilogueNamePanelPalette[];
 extern char ResourceId_GreenPanel;
 
 s32 EndingPicture_Show();
-#include "module/scene/scene.h"
-#include "module/window/window.h"
-#include "graphics/resource.h"
-#include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "graphics/uiflow.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -81,16 +89,6 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
-
-#include "call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "edition.h"
-#include "bg_scroll.h"
-#include "system/main_routine_work.h"
-#include "system/input.h"
-#include "system/ram_buffer.h"
 
 void EffectSprite_Init(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                        s32 tile);

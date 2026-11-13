@@ -38,7 +38,6 @@
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
-#include "text/msg_ids.h"
 #include "field/event_inline.h"
 #include "call.h"
 #include "system/io_reg.h"
@@ -50,6 +49,8 @@
 #include "scene_ids.h"
 #include "flags.h"
 #include "module/scene/scene.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 /// Set once the leader has been walked back from the edge of the map by
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
@@ -1594,8 +1595,6 @@ void Idejima_PlaceTheSleepers(void) {
   if (!Event_GetFlag(FLAG_IDEJIMA_FELIX_WOKE))
     Idejima_FelixWakes();
 }
-
-#include "objcmd.h"
 
 // clang-format off
 DEFINE_G_DATA_0200200C(gIdejima_KradenToTheShipScript, 216, 172, 264, 164)

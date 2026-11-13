@@ -25,10 +25,39 @@
 #include "settlements.h"
 #include "field_event.h"
 #include "field/field.h"
+#include "types.h"
+#include "graphics/palette_snapshots.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/io_write_queue.h"
+#include "system/irq_lock.h"
+#include "map.h"
+#include "system/io_write.h"
+#include "system/field_effect.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "module/field/field.h"
+#include "module/field/field_effect.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "event_work.h"
+#include "call.h"
+#include "system/input.h"
+#include "shared/tables.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 extern s16 gSettlements_SlideAnglesByKey[];
 
@@ -157,8 +186,6 @@ void Settlements_SpawnSplashRing(s32 objectId);
 
 void Settlements_MovePillar(void);
 
-#include "graphics/palette_snapshots.h"
-
 void Settlements_MeetGel(void) { Djinn_JoinParty(10, 1, 14); }
 
 void Settlements_MeetTinder(void) { Djinn_JoinParty(11, 2, 14); }
@@ -171,16 +198,6 @@ s32 Settlements_ClearSpriteFlags(struct Actor *object) {
 }
 
 DEFINE_ACTOR_BOB(Actor_Bob)
-
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -197,10 +214,6 @@ u32 *Scene_GetRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "system/main_routine_work.h"
-#include "system/io_reg.h"
-#include "version.h"
 
 /* VIEW(first): routine gSettlements_Placements as this part declared it; the
  * joined file has another. */
@@ -632,12 +645,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/io_write_queue.h"
-#include "system/irq_lock.h"
-#include "map.h"
-
 void Settlements_StepOntoIce(void) { GameFlag_Set(0x201); }
 
 void Settlements_StepOffIce(void) { GameFlag_Clear(0x201); }
@@ -738,7 +745,6 @@ void Settlements_StartWaterfall(void) {
 
 // The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
 // value and blending is off; below it, by the other, with BG1 blended.
-#include "system/io_write.h"
 
 /// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
 /// value and blending is off; below it, by the other, with BG1 blended.
@@ -1047,22 +1053,9 @@ void Settlements_SplashCrate(s32 id) {
 #undef gSettlements_WaterColorFrame
 #undef gSettlements_CrateDropScript
 #undef gSettlements_SmokeScript
-// ---- from scene/settlements/settlements.c ----
 // @file
 // The settlements' events, continued; settlements.c says which places these
 // are.
-
-#include "types.h"
-#include "system/field_effect.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "settlements.h"
-#include "field/field.h"
-#include "module/field/field.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1137,13 +1130,6 @@ void Settlements_KeepSliding(struct Actor *object) {
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 }
-
-#include "event_work.h"
-#include "call.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
 
 void Settlements_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -1290,9 +1276,6 @@ end:
 
 // The settlements' events, continued; settlements.c says which places these
 // are.
-
-#include "version.h"
-#include "field/event_inline.h"
 
 #if TLA_PATCH_1
 
@@ -1634,19 +1617,6 @@ end:
 // The settlements' events, continued; settlements.c says which places these
 // are.
 
-#include "shared/tables.h"
-#include "settlements.h"
-#include "call.h"
-#include "types.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "field/event_inline.h"
-#include "field/field.h"
-#include "module/field/field.h"
-#include "module/tla.h"
-
 void Settlements_SetSlideStopped(s32 value) {
   gSettlements_SlideStopped = value;
 }
@@ -1767,7 +1737,6 @@ end:
   Actor_SelectAnimation(object, 1);
 }
 
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 void Settlements_MeetGel(void);

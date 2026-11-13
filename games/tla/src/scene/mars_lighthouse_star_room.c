@@ -12,6 +12,41 @@
 #include "module/scene/mars_lighthouse_star_room.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/iwram_call.h"
+#include "version.h"
+#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "event_work.h"
+#include "field_sprite.h"
+#include "shared/mars_lighthouse_entrance_room.h"
+#include "field/event_work.h"
+#include "module/field/field.h"
+#include "system/io_reg.h"
+#include "battle/battle_unit.h"
+#include "call.h"
+#include "system/vector3.h"
+#include "fixed_math.h"
+#include "graphics/display_transition.h"
+#include "item_icon.h"
+#include "module/system/system.h"
+#include "map.h"
+#include "macros.h"
+#include "system/input.h"
+#include "system/field_effect.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "field/cell_target.h"
+#include "shared/tables.h"
+#include "module/field/field_effect.h"
+#include "objcmd.h"
 
 struct RideEntry {
   s16 a;
@@ -56,15 +91,6 @@ s32 Func_02000038(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
 }
-
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -121,8 +147,6 @@ extern const s16 gData_020047fc__first[] __asm__("gData_020047fc");
 
 #endif
 
-#include "system/iwram_call.h"
-
 /* VIEW(first): routine gMarsLighthouseStarRoom_ScatterIceChipsScript as this
  * part declared it; the joined file has another. */
 extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript__first[] __asm__(
@@ -171,8 +195,6 @@ next:
   if (--i >= 0)
     goto next;
 }
-
-#include "version.h"
 
 void Func_02000188(void) {
   struct Actor *object = Actor_Get(10);
@@ -246,8 +268,6 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 DEFINE_ACTOR_FREEZE(Func_020002d4)
-
-#include "system/main_routine_work.h"
 
 struct Overlay6abEventWork {
   u8 unk000[0x1ac];
@@ -355,8 +375,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-#include "scene_ids.h"
 
 extern char SceneId_Ov6ACRoom3;
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
@@ -772,8 +790,6 @@ void Func_02000db8(s32 id) {
   }
 }
 
-#include "event_work.h"
-
 struct EventNote {
   u8 unk000[0x15a];
   u16 unk15a;
@@ -790,8 +806,6 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   ((struct EventNote *)work)->unk15a = 1;
   Event_End();
 }
-
-#include "field_sprite.h"
 
 extern char SceneId_Ov6ACRoom3;
 extern char SceneId_Ov66d;
@@ -1218,9 +1232,6 @@ s32 Func_0200158c(struct Actor *a, struct Actor *b) {
   return 0;
 }
 
-#include "shared/mars_lighthouse_entrance_room.h"
-#include "field/event_work.h"
-
 /* VIEW(s1424): tag struct RideSlot as struct RideSlot__s1424;
  * mars_lighthouse_star_room.c has another definition; not tried: struct
  * RideSlot__s1424 was not found. */
@@ -1275,8 +1286,6 @@ void Func_02001780(s32 *position, s32 speed, s32 flag) {
     Actor_SelectAnimation(object, 2);
   }
 }
-
-#include "shared/mars_lighthouse_entrance_room.h"
 
 /* VIEW(spawn): tag struct RideSlot as struct RideSlot__spawn;
  * mars_lighthouse_star_room.c has another definition; not tried: struct
@@ -1518,17 +1527,6 @@ void Func_02001d7c(void) {
 
 /// Scene code of overlay 0x6ab, in ROM order.
 
-#include "shared/mars_lighthouse.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "module/field/field.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(struct Actor *object);
 #define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
@@ -1538,9 +1536,6 @@ DEFINE_RIDE_RELEASE_HANDLE(Func_02001dd0, Actor_Release)
 void Func_02001de4(s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
 }
-
-#include "system/io_reg.h"
-#include "field/field.h"
 
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
  * MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition;
@@ -1684,9 +1679,6 @@ s32 Func_02001fa8(s32 index) {
 
 DEFINE_RIDE_SET_SLOT(Func_02001fb8)
 
-#include "system/main_routine_work.h"
-#include "battle/battle_unit.h"
-
 struct MarsLighthouseEventWork {
   u8 unk000[0x16a];
   u16 unk16a;
@@ -1716,25 +1708,6 @@ DEFINE_ACTOR_BLINK(Func_02002120, 10, 4, 0)
 
 /// Scene code of overlay 0x6ab, in ROM order.
 
-#include "shared/mars_lighthouse.h"
-#include "version.h"
-
-#include "types.h"
-#include "call.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/vector3.h"
-#include "fixed_math.h"
-#include "field/event_inline.h"
-#include "graphics/display_transition.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "item_icon.h"
-#include "module/field/field.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/system/system.h"
-
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
@@ -1754,8 +1727,6 @@ extern u8 gInventorySnapshot[];
 #undef SHARED_F02002148_ID5
 #undef SHARED_F02002148_ID6
 #undef SHARED_F02002148_ID7
-
-#include "system/frame.h"
 
 extern u16 gData_02004cf0[];
 
@@ -1859,8 +1830,6 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   ride->active = 0;
 }
 
-#include "system/system.h"
-
 extern u16 gData_02004cf0[];
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide,
@@ -1869,9 +1838,6 @@ DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide,
 s32 MarsLighthouseStarRoom_IsSliding(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
 }
-
-#include "system/iwram_call.h"
-#include "field/field.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -1990,8 +1956,6 @@ void Func_02002738(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
 }
 
-#include "map.h"
-
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c
@@ -2038,10 +2002,6 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
   object->update = Func_02002738;
 }
 
-#include "field_sprite.h"
-#include "scene_tables.h"
-#include "system/vector3.h"
-
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
 /// gives it Func_0200274c as its update hook and its speed, clears its scale
@@ -2056,8 +2016,6 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 DEFINE_ACTOR_POP_UP_SLOW(Func_02002b98, Actor_SelectAnimation)
 
 DEFINE_ACTOR_POP_UP(Func_02002c44, Actor_SelectAnimation)
-
-#include "macros.h"
 
 extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
@@ -2076,10 +2034,6 @@ void Func_02002d90(void) {
     Event_ClearFlag(0x106);
   }
 }
-
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "system/main_routine_work.h"
 
 /* VIEW(s2148): tag struct Position as struct Position__s2148;
  * scene/mars_lighthouse_star_room has another definition; tried with the
@@ -2103,8 +2057,6 @@ extern s16 gData_0200483c__s2148[] __asm__("gData_0200483c");
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
                            Actor_SelectAnimation, Func_02002d04,
                            Field_CheckSpheresOverlap)
-
-#include "system/input.h"
 
 /* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0;
  * s2a58 has extern u16 gData_02004cf0[]; tried as the one declaration extern
@@ -2150,27 +2102,12 @@ Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
 
 /// Scene code of overlay 0x6ab, in ROM order.
 
-#include "shared/mars_lighthouse.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "module/field/field.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-
 extern u16 gData_02004cf0[];
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 #define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
 void Func_02003384(u16 value) { gData_02004cf0[0] = value; }
-
-#include "fixed_math.h"
-#include "scene_tables.h"
-#include "system/main_routine_work.h"
 
 /* VIEW(set_data): tag struct Position as struct Position__set_data;
  * scene/mars_lighthouse_star_room has another definition; tried with the
@@ -2238,15 +2175,8 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90,
 #undef gData_0200483c
 #undef gData_0200483c
 #undef Position
-// ---- from scene/mars_lighthouse_star_room/s363c.c ----
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
-
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 /* VIEW(s363c): routine Actor_StartScript as this part declared it; the joined
@@ -2331,26 +2261,12 @@ void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#include "shared/cracked_tile.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-
 #define CELL_TABLE gData_02004cf4
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND(Func_02003930, gData_02004cf4, CrackedTiles_Update)
-
-#include "scene_tables.h"
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
@@ -2362,8 +2278,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(Func_02003bfc, Leader_CenterInCell)
 
-#include "system/io_reg.h"
-
 DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
 #include "../field/field_effect/advance_motion.c"
@@ -2373,23 +2287,8 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
 #undef gData_02004ce0
-// ---- from scene/mars_lighthouse_star_room/s3e04.c ----
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
-
-#include "shared/tables.h"
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/scene/scene.h"
 
 /* VIEW(s3e04): routine Func_0200363c as this part declared it; the joined file
  * has another. */
@@ -2408,8 +2307,6 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 
 DEFINE_CRACKED_TILE_DROP_IN(Func_02003e04, Func_0200363c)
 
-#include "field/cell_target.h"
-
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3e04): routine CrackedTile_FallEvent as this part declared it; the
  * joined file has another. */
@@ -2424,9 +2321,7 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02004cf4, Func_02003bfc,
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gData_02004cf4,
                                   Func_02003e04)
 
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 /* VIEW(s3e04): routine Func_02000038 as this part declared it; the joined file
  * has another. */

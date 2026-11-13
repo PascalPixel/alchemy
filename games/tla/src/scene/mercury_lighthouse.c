@@ -20,14 +20,12 @@
 #include "system/ram_buffer.h"
 #include "system/task.h"
 #include "system/io_reg.h"
-
 #include "objcmd.h"
 #include "system/frame.h"
 #include "event_work.h"
+#include "module/scene/scene.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 void MercuryLighthouse_HearVoices(void);
 
@@ -36,7 +34,6 @@ extern u32 gMercuryLighthouse_MoteFrames;
 
 void FieldPsynergy_StopMindReadWave(void);
 
-#include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
 /// A mote's script call: it flickers between colours 15 and 7 every other

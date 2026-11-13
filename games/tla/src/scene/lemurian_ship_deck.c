@@ -24,6 +24,14 @@
 #include "system/frame.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
+#include "shared/effects.h"
+#include "shared/tables.h"
+#include "version.h"
+#include "macros.h"
+#include "field_sprite.h"
+#include "system/task.h"
+#include "call.h"
+#include "objcmd.h"
 #include "text/msg_ids.h"
 
 extern s32 gLemurianShipDeck_WaveScroll;
@@ -178,18 +186,9 @@ void LemurianShipDeck_BobDeck(void) {
   gLemurianShipDeck_BobPhase += 0x200;
 }
 
-#include "shared/effects.h"
-#include "shared/tables.h"
 #include "text/msg_ids.h"
-#include "version.h"
-#include "macros.h"
-#include "field_sprite.h"
-#include "system/task.h"
-#include "call.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 
@@ -1078,8 +1077,6 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_End();
   }
 }
-
-#include "objcmd.h"
 
 // clang-format off
 s16 gLemurianShipDeck_Puddles[] = {

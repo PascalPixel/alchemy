@@ -6,6 +6,43 @@
 #include "../field/object/prepare_object.c"
 
 #include "aqua_rock.h"
+#include "flags.h"
+#include "shared/actors.h"
+#include "event_work.h"
+#include "shared/effects.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "field/event.h"
+#include "field/ground_mask.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "system/task.h"
+#include "actor.h"
+#include "system/iwram_call.h"
+#include "system/vector3.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/frame.h"
+#include "map.h"
+#include "system/input.h"
+#include "call.h"
+#include "scene_ids.h"
+#include "graphics/vram_tab.h"
+#include "system/heap_release.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "graphics/resource.h"
+#include "macros.h"
+#include "shared/tables.h"
 
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = Import_ActorCreate(kind, x, y, z);
@@ -24,7 +61,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/aqua_rock/aqua_rock.c ----
 // @file
 // Scene code of overlay 0x67b, in ROM order.
 
@@ -44,26 +80,7 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 
 // ---- games/tla/src/scene/aqua_rock.c ----
 
-#include "flags.h"
-#include "shared/actors.h"
-#include "event_work.h"
-#include "shared/effects.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "field/event.h"
-#include "field/ground_mask.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 
@@ -114,13 +131,7 @@ struct Unk02003450 {
 
 extern struct Unk02003450 Data_02003450[];
 
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "system/task.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "aqua_rock.h"
 
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -131,11 +142,6 @@ const u8 *Scene_GetRegions(void) {
     return gData_02002e60;
   return 0;
 }
-
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "system/vector3.h"
-#include "field/event_inline.h"
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -520,10 +526,6 @@ void Func_02000d64(struct Actor *object, s32 limit) {
   }
 }
 
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-
 /* VIEW(aqua_rock): routine MapGrid_CheckCollision as s32
  * MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
  * module/scene/lemurian_ship.h has void MapGrid_CheckCollision(void); not
@@ -609,9 +611,6 @@ void Func_02000d80(void) {
   } else
     Func_02001e00();
 }
-
-#include "map.h"
-#include "system/input.h"
 
 static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
   cells += row * 128 + col;
@@ -942,8 +941,6 @@ settle:
 // Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next
 // object the overlay links.
 
-#include "call.h"
-
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
@@ -1118,8 +1115,6 @@ void Func_02001d30(struct Actor *object) {
 // ---- games/tla/src/scene/aqua_rock/events_g.c ----
 DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
 
-#include "scene_ids.h"
-
 void Func_02001e00(void) {
   struct Actor *anchor;
   s32 owner;
@@ -1280,8 +1275,6 @@ void Func_02002158(void) {
     Event_End();
   }
 }
-
-#include "graphics/vram_tab.h"
 
 void Func_02002250(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1448,11 +1441,6 @@ void Func_020025a8(s32 id) {
       work->direction = 1;
   }
 }
-
-#include "system/heap_release.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "graphics/resource.h"
 
 DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
 
@@ -1624,12 +1612,6 @@ u32 gWaterDropScript[] = {
 #undef gData_02003208
 #undef gData_0200320c
 #undef gData_02003210
-// ---- from scene/data/aqua_rock.c ----
-
-#include "macros.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 
 /* VIEW(data): routine Func_02000b68 as this part declared it; the joined file
  * has another. */

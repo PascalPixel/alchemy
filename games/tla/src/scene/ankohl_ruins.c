@@ -4,6 +4,35 @@
 #include "../field/object/prepare_object.c"
 #include "ankohl_ruins/ankohl_ruins.h"
 #include "field/field.h"
+#include "flags.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "call.h"
+#include "system/field_effect.h"
+#include "map.h"
+#include "scene_ids.h"
+#include "graphics/vram_tab.h"
+#include "system/iwram_call.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
+#include "system/task.h"
+#include "system/frame.h"
 
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = FieldActor_Create(type, x, y, z);
@@ -22,7 +51,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/ankohl_ruins.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -36,25 +64,9 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 // The scene code of overlay 0x686 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in ankohl_ruins/.
 
-#include "flags.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
 extern struct AnkohlRuinsSpriteWork Data_02004030;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "ankohl_ruins/ankohl_ruins.h"
 
 /* VIEW(ankohl_ruins): variable gData_02003780 as s16 gData_02003780;
  * scene/ankohl_ruins/s2438 has u16 gData_02003780[] = {; tried as the
@@ -99,8 +111,6 @@ const struct ActorPlacement *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "version.h"
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
@@ -120,13 +130,6 @@ void Func_02000384(void) {
 #if TLA_PATCH_1
 #include "../field/field_effect/advance_motion.c"
 #endif
-
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "call.h"
-#include "system/field_effect.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -566,8 +569,6 @@ void Func_0200104c(s32 unused, s32 id) {
   }
 }
 
-#include "map.h"
-
 extern struct MapCell gMapCellBuffer[];
 
 void Func_020010f4(void) {
@@ -605,9 +606,6 @@ void Func_020010f4(void) {
   leader->z += 0x8000;
   companion->z += 0x8000;
 }
-
-#include "scene_ids.h"
-#include "graphics/vram_tab.h"
 
 void Func_020011c0(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -726,12 +724,6 @@ void Func_020012c4(void) {
   }
 }
 
-#include "system/iwram_call.h"
-#include "graphics/resource.h"
-#include "system/heap_release.h"
-#include "system/io_reg.h"
-#include "system/task.h"
-
 void Func_02001420(void) {
   struct AnkohlRuinsSpriteWork *work = &Data_02004030;
   u32 *tiles = Heap_Alloc(128);
@@ -834,8 +826,6 @@ void Func_020015ac(void) {
     }
   }
 }
-
-#include "system/frame.h"
 
 /* VIEW(ankohl_ruins): variable gData_02002fa8 as struct AnkohlRuinsWaterRow
  * gData_02002fa8[]; scene/ankohl_ruins/s2438 has u32 gData_02002fa8[] = {;
@@ -1266,13 +1256,7 @@ void Func_020023d0(struct Actor *object) {
 
 // ---- scene/ankohl_ruins/s2438.c ----
 
-#include "flags.h"
-#include "version.h"
-#include "field/event_inline.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 void Func_020006b4(void);
 void Func_020011c0(void);
@@ -1873,9 +1857,6 @@ s32 Scene_Initialize(s32 a0) {
 }
 
 #endif
-
-#include "types.h"
-#include "scene_tables.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 

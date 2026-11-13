@@ -6,7 +6,6 @@
 
 #include "shared/tables.h"
 #include "field/field.h"
-
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -17,11 +16,15 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
+#include "module/scene/scene.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "actor.h"
+#include "version.h"
+#include "call.h"
+#include "system/ram_buffer.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern struct Trigger gNaribweInteriors_Triggers[];
 extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
@@ -36,8 +39,6 @@ void NaribweInteriors_ReadWeapon(void);
 
 void NaribweInteriors_ReadArmor(void);
 
-#include "module/scene/scene.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -49,7 +50,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 #include "text/msg_ids.h"
-#include "field/event_inline.h"
 
 /// "The items that one carries are filled with one's hopes and desires."
 s32 NaribweInteriors_MindReadFortuneTeller(void) {
@@ -69,9 +69,6 @@ s32 NaribweInteriors_MindReadFortuneTellerOnReturn(void) {
   Event_End();
   return 0;
 }
-
-#include "system/main_routine_work.h"
-#include "actor.h"
 
 const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
@@ -195,8 +192,6 @@ void NaribweInteriors_TalkToFortuneTeller(void) {
   Event_ShowMessage(10, 0);
   Event_End();
 }
-
-#include "version.h"
 
 void *Unit_Get(s32 owner);
 void NaribweInteriors_ReadShiningItem(void);
@@ -622,8 +617,6 @@ s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
   return count;
 }
 
-#include "call.h"
-
 /// The message telling where an unfound Djinni waits, or MsgInTheItem when none
 /// is left to find.
 u8 *NaribweInteriors_GetDjinniHint(void) {
@@ -790,8 +783,6 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
   HeapSlot_Release(252);
   return message;
 }
-
-#include "system/ram_buffer.h"
 
 void Actor_DisableById(s32 id);
 

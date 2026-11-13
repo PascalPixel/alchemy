@@ -17,6 +17,34 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "module/field/object.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "macros.h"
+#include "system/vector3.h"
+#include "event_work.h"
+#include "module/window/window.h"
+#include "map.h"
+#include "system/field_effect.h"
+#include "actor.h"
+#include "system/frame.h"
+#include "shared/map_cells.h"
+#include "shared/effects.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "graphics/resource.h"
+#include "system/serial.h"
+#include "system/task.h"
+#include "system/heap_slots.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field_sprite.h"
+#include "field_event.h"
+#include "graphics/vram_tab.h"
 
 void TrialRoad_FightGasp(void) { Field_RequestDjinnBattle(8, 75); }
 
@@ -90,8 +118,6 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
   return fallback;
 }
 
-#include "field/event_inline.h"
-
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
   s16 *order = (s16 *)state;
@@ -139,17 +165,9 @@ void TrialRoad_TakeStairs(s32 direction) {
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
 /// torches, logs, spouts and sand the eight rooms are built from.
 
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "macros.h"
 #include "text/msg_ids.h"
-#include "system/vector3.h"
-#include "event_work.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 struct Actor;
 struct FieldSprite;
@@ -410,8 +428,6 @@ void TrialRoad_SetUpFountainStage(void);
 void TrialRoad_SetUpSandStage(void);
 
 void TrialRoad_UpdateFountains(void);
-
-#include "module/window/window.h"
 
 #define DEFINE_TRIAL_ROAD_OPEN_DOOR(name, n1, n2, n3, n4, n5, n6)              \
   void name(s32 side, s32 phase) {                                             \
@@ -951,7 +967,6 @@ void TrialRoad_CrumblePillar16(s32 phase) {
 // Blocks the three cells through an object's cell on layers 0 and 2 (collision
 // code 255): the column above and below it in mode 0, the row beside it
 // otherwise.
-#include "map.h"
 
 /// Blocks the three cells through an object's cell on layers 0 and 2 (collision
 /// code 255): the column above and below it in mode 0, the row beside it
@@ -1189,14 +1204,8 @@ void TrialRoad_RevealVine(void) {
 #undef gTrialRoad_Room1Placements
 #undef gTrialRoad_PillarTopScript
 #undef gTrialRoad_PoundPartners
-// ---- from scene/trial_road/s129c.c ----
 // @file
 // Trial Road's effect spawner and the sand stage's stream.
-
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -1275,10 +1284,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#include "system/system.h"
-#include "actor.h"
-#include "system/frame.h"
-
 void TrialRoad_DriftWithStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
@@ -1307,21 +1312,6 @@ void TrialRoad_DriftWithStream(void) {
 
 // Trial Road's rooms set up, the rival Moapa's race, the peak, the
 // fountains and crumbling pillars, the race's progress display and the tables.
-
-#include "shared/map_cells.h"
-#include "shared/effects.h"
-#include "shared/trial_road.h"
-#include "event_work.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/field/object.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "graphics/resource.h"
-#include "system/serial.h"
-#include "system/task.h"
-#include "system/heap_slots.h"
 
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(0x289); }
 
@@ -1399,10 +1389,6 @@ void TrialRoad_SetSummitPillar(s32 a, s32 id) {
     object->y -= 0x10000;
   }
 }
-
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
 
 /* VIEW(s15a8): routine gTrialRoad_Triggers as this part declared it; the joined
  * file has another. */
@@ -1755,11 +1741,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
   }
 }
 
-#include "scene_tables.h"
-#include "system/ram_buffer.h"
-#include "map.h"
 #include "text/msg_ids.h"
-#include "field/field.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -3184,8 +3166,6 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
   to->bits = bits;
 }
 
-#include "field_sprite.h"
-
 /* VIEW(s15a8): routine gTrialRoad_RubbleScript as this part declared it; the
  * joined file has another. */
 extern const s32
@@ -3307,8 +3287,6 @@ next:
   if (i >= 0)
     goto next;
 }
-
-#include "field_event.h"
 
 extern u8 gSceneState[];
 
@@ -3491,8 +3469,6 @@ void TrialRoad_MoveRival(void) {
 }
 
 // next object the overlay links, and the overlay's data.
-
-#include "graphics/vram_tab.h"
 
 /* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
  * s15a8.c has another definition; tried with the definition the rest of the
@@ -3882,11 +3858,6 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef gTrialRoad_HexDigits
 #undef TrialRoad_SettleOnGround
 #undef TrialRoad_FollowPillar
-// ---- from scene/data/trial_road.c ----
-
-#include "macros.h"
-#include "types.h"
-#include "scene_tables.h"
 
 // clang-format off
 LATE_DATA u32 gTrialRoad_RubbleScript[] = {
@@ -3899,12 +3870,6 @@ LATE_DATA u32 gTrialRoad_DustScript[] = {
     0, 0, 0, 0, 1, 38,
 };
 // clang-format on
-
-// ---- from scene/data/trial_road_2.c ----
-
-#include "macros.h"
-#include "types.h"
-#include "scene_tables.h"
 
 void TrialRoad_FightGasp(void);
 /* VIEW(data_2): routine TrialRoad_TakeStairs as this part declared it; the

@@ -2,19 +2,51 @@
 /// The scene code of overlay 0x681, in ROM order.
 
 #include "shared/actors.h"
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/object/prepare_object.c"
-
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "system/field_effect.h"
+#include "field_sprite.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
+#include "module/scene/scene.h"
+#include "shared/effects.h"
+#include "flags.h"
+#include "module/field/field.h"
+#include "module/tla.h"
+#include "module/field/field_effect.h"
+#include "call.h"
+#include "system/iwram_call.h"
+#include "system/frame.h"
+#include "system/io_reg.h"
+#include "fixed_math.h"
+#include "module/system/system.h"
+#include "actor_view.h"
+#include "map.h"
+#include "shared/tables.h"
+#include "system/task.h"
+#include "objcmd.h"
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
 
 DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/gaia_rock_inside/gaia_rock_inside.c ----
 // @file
 // Scene code of overlay 0x681, in ROM order.
 
@@ -32,32 +64,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 // Scene code of overlay 0x681, in ROM order.
 
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "system/main_routine_work.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "version.h"
-#include "system/ram_buffer.h"
-#include "system/field_effect.h"
-#include "field_sprite.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
-#include "module/scene/scene.h"
-
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 struct Actor;
 
@@ -495,12 +502,7 @@ s32 Func_02000748(void) {
 
 // ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
 
-#include "shared/effects.h"
-#include "flags.h"
-#include "module/field/field.h"
-#include "module/tla.h"
 #include "text/msg_ids.h"
-#include "module/field/field_effect.h"
 
 /* VIEW(s07f4): routine Actor_StartScript as void Actor_StartScript(struct Actor
  * *object, const s32 *script); scene/gaia_rock_inside/gaia_rock_inside has void
@@ -562,8 +564,6 @@ s32 Func_020008b4(void) {
     Actor_StartScript(object, gData_020056c4);
   return 0;
 }
-
-#include "call.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -750,8 +750,6 @@ void Func_02000c74(void) {
 void Func_02000cd8(void) {
   Call7(Cyclone_CopyTouchedCells, 0x13, 0x18, 0, 4, 3, 0x1f, 4);
 }
-
-#include "system/iwram_call.h"
 
 void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 
@@ -1038,9 +1036,6 @@ void Func_02001314(s32 a0) {
 // Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
 // object the overlay links.
 
-#include "system/frame.h"
-#include "system/field_effect.h"
-
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 // countdown runs out returns 0, else, unless its radius is down to 2 pixels,
@@ -1086,22 +1081,7 @@ DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 
 // Scene code of overlay 0x681, in ROM order.
 
-#include "types.h"
-#include "flags.h"
-#include "system/system.h"
-#include "actor.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
-#include "system/field_effect.h"
-#include "fixed_math.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "field/field.h"
 
 struct Spark {
   u8 unk00[8];
@@ -1580,13 +1560,6 @@ void Func_02001ebc(void) {
 
 // ---- games/tla/src/scene/gaia_rock_inside/s1f68.c ----
 
-#include "shared/actors.h"
-#include "types.h"
-#include "flags.h"
-#include "system/main_routine_work.h"
-#include "actor_view.h"
-#include "event_work.h"
-#include "module/field/field.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -1596,13 +1569,9 @@ void Func_02001ebc(void) {
    } *)(base))                                                                 \
        ->v)
 
-#include "field/event_inline.h"
-
 DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 2)
 
 DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
-
-#include "system/ram_buffer.h"
 
 void Func_02001fa0(void) {
   struct Actor *t0;
@@ -1635,7 +1604,6 @@ void Func_02001fd8(void) {
   }
 }
 
-#include "system/system.h"
 #include "text/msg_ids.h"
 void Actor_MoveToObject(s32 id, s32 target);
 
@@ -1741,10 +1709,6 @@ L_0200a22e:
   Actor_SetPosition(13, 0, 0);
   Event_End();
 }
-
-#include "actor.h"
-#include "scene_tables.h"
-#include "system/iwram_call.h"
 
 // Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
 // 14: the first object shakes with random vertical speeds, and while the flag
@@ -2138,7 +2102,6 @@ void Func_02002b04(u32 id, s8 mode) {
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 /* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
@@ -2163,8 +2126,6 @@ void Func_02002b58(s32 a0, s32 a1, s32 a2) {
 // stop while flag 0x106 is set or the event work holds them; otherwise, once
 // per pending step, at frame 60 of every 240 they lean one way and at frame
 // 180 they come back.
-
-#include "event_work.h"
 
 extern struct SwayState gSceneState;
 
@@ -2220,14 +2181,6 @@ step:
 // ---- scene/gaia_rock_inside/s2cb4.c ----
 
 // Scene code of overlay 0x681, in ROM order.
-
-#include "types.h"
-#include "flags.h"
-#include "system/system.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
@@ -2337,8 +2290,6 @@ void Func_02002d30(void) {
       MapGrid_CopyCellsLayered(81, 91, 1, 3, 30, 85);
   }
 }
-
-#include "version.h"
 
 #if TLA_PATCH_1
 
@@ -3820,9 +3771,6 @@ end:
 
 #endif
 
-#include "system/iwram_call.h"
-#include "map.h"
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -4441,19 +4389,11 @@ burst:
 
 // Scene code of overlay 0x681, in ROM order.
 
-#include "shared/tables.h"
-#include "types.h"
-
-#include "system/task.h"
-#include "field/event_inline.h"
-
 void Func_02004d00(void) {
   Task_AddFrame((s32)Func_020049e4, TASK_PASS_VBLANK);
 }
 
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 void Func_02000b6c(void);
 void Func_02000cd8(void);

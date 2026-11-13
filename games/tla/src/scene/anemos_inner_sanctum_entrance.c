@@ -5,6 +5,34 @@
 #include "shared/actors.h"
 #include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
 #include "field/field.h"
+#include "shared/jupiter_lighthouse.h"
+#include "types.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "field/event.h"
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_call.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "map.h"
+#include "field_event.h"
+#include "graphics/vram_tab.h"
+#include "system/frame.h"
+#include "system/iwram_call.h"
+#include "system/task.h"
+#include "macros.h"
+#include "shared/tables.h"
 
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
@@ -12,7 +40,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/anemos_inner_sanctum_entrance.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -24,18 +51,8 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 // ---- scene/anemos_inner_sanctum_entrance.c ----
 
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
-#include "shared/jupiter_lighthouse.h"
-#include "types.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "field/field.h"
-#include "field/event.h"
-#include "event_work.h"
-#include "item_icon.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 extern s32 gData_02000e20[];
 extern s32 gData_02000e5c[];
@@ -57,9 +74,6 @@ extern u16 gData_02001de4;
 extern s16 gLightSpriteTile;
 extern s16 gData_02001de0;
 
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "scene_call.h"
 #include "text/msg_ids.h"
 
 s32 Func_0200033c(struct Actor *object) {
@@ -67,22 +81,11 @@ s32 Func_0200033c(struct Actor *object) {
   return 0;
 }
 
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
 
 extern struct ActorPlacement gData_020019dc[];
 extern struct ActorPlacement gData_020019f4[];
@@ -205,7 +208,6 @@ void Func_02000534(s32 a) {
 }
 
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.c ----
-#include "version.h"
 
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -354,12 +356,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#include "system/ram_buffer.h"
-#include "map.h"
-#include "field_event.h"
-#include "graphics/vram_tab.h"
-#include "system/frame.h"
-
 extern struct LightOam gData_02001d20[];
 /* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has
  * extern u16 gData_02001de2; tried as the rest of the object declares it,
@@ -441,9 +437,6 @@ void LightSprites_Draw(void) {
     }
   }
 }
-
-#include "system/iwram_call.h"
-#include "system/task.h"
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -536,12 +529,6 @@ s8 gData_02000eec[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-// ---- from scene/anemos_inner_sanctum_entrance/data2.c ----
-
-#include "macros.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 
 /* VIEW(data2): routine Func_0200033c as this part declared it; the joined file
  * has another. */

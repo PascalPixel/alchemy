@@ -17,13 +17,18 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "event_work.h"
-#include "text/msg_ids.h"
 #include "field/event_inline.h"
 #include "version.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "module/game/game.h"
+#include "system/iwram_call.h"
+#include "field_event.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 void LemuriaInteriors_PiersVisitsUncle(void);
 
@@ -37,10 +42,6 @@ void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0);
 void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1);
 
 void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2);
-
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "module/game/game.h"
 
 void Event_Start();
 void Event_End();
@@ -447,8 +448,6 @@ noLeader:
   return;
 }
 
-#include "system/iwram_call.h"
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -699,8 +698,6 @@ visited:
   Event_End();
 }
 
-#include "field_event.h"
-
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
@@ -725,9 +722,6 @@ void LemuriaInteriors_EmitNote(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
     sprite->rotation = rotation;
   }
 }
-
-#include "shared/actors.h"
-#include "shared/effects.h"
 
 // The notes' emitter is called without its prototype, as the calls below
 // were compiled in a file of their own: with it, the rotation would be

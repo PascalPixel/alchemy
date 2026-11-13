@@ -3,7 +3,6 @@
 /// until flag 2219 is set.
 
 #include "field/field.h"
-
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -15,6 +14,9 @@
 #include "scene_tables.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "field/event_inline.h"
 
 /// The hideout's placed actors: two not yet understood, then the four
 /// Kibombo warriors, named for what each says when spoken to.
@@ -35,10 +37,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "system/ram_buffer.h"
 #include "text/msg_ids.h"
-#include "actor.h"
-#include "field/event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Get(2219))

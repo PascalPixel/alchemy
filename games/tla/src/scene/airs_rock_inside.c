@@ -5,14 +5,50 @@
 #include "shared/actors.h"
 #include "airs_rock_inside.h"
 #include "system/system.h"
-
 #include "actor.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 #include "types.h"
 #include "scene_tables.h"
-#include "actor.h"
+#include "module/scene/scene.h"
+#include "system/ram_buffer.h"
+#include "field_event.h"
+#include "map.h"
+#include "flags.h"
+#include "module/field/field.h"
+#include "module/tla.h"
+#include "field_sprite.h"
+#include "graphics/vram_tab.h"
+#include "system/dma.h"
+#include "call.h"
+#include "system/main_routine_work.h"
+#include "system/input.h"
+#include "system/iwram_call.h"
+#include "field/event_work.h"
+#include "system/field_effect.h"
+#include "system/vector3.h"
+#include "macros.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "shared/effects.h"
+#include "system/task.h"
+#include "event_work.h"
+#include "flag_call.h"
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
+#include "graphics/resource.h"
+#include "bg_scroll.h"
+#include "system/io_reg.h"
+#include "system/frame.h"
+#include "version.h"
+#include "shared/tables.h"
+#include "module/field/field_effect.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct Actor;
 
@@ -142,8 +178,6 @@ struct Actor *FieldCamera_GetActor(void);
 void Event_PlayCueNearFocus(struct Actor *object, s32 cue);
 s32 Actor_HasArrived(struct Actor *object);
 
-#include "module/scene/scene.h"
-
 void Func_020006cc(struct Actor *object);
 
 void Func_02000038(s16 *list) {
@@ -167,9 +201,6 @@ next:
   if ((u16)entry[0] != 0xffff)
     goto next;
 }
-
-#include "types.h"
-#include "system/ram_buffer.h"
 
 // Finds the current target's table row and shrinks it.
 void Func_020000a4(u16 *list, s32 mode, s32 count) {
@@ -200,10 +231,6 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
   }
 }
 
-#include "field_event.h"
-
-#include "map.h"
-
 DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
@@ -215,7 +242,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/airs_rock_inside/airs_rock_inside.c ----
 // @file
 // Scene code of overlay 0x664, in ROM order.
 
@@ -230,14 +256,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 // ---- scene/airs_rock_inside/airs_rock_inside.c ----
 
 // Scene code of overlay 0x664, in ROM order.
-
-#include "flags.h"
-#include "shared/actors.h"
-#include "airs_rock_inside.h"
-#include "system/system.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 extern struct ActorPlacement gData_0200675c[];
 extern struct ActorPlacement gData_020068f4[];
@@ -354,9 +372,6 @@ s32 Func_02000690(u32 layer, s32 x, s32 y) {
   return (cell[2] << 8) | cell[3];
 }
 
-#include "types.h"
-#include "actor.h"
-
 // Sets an object's cells by its flag (its action parameter): when the flag is
 // set it clears the kind byte of its layer 2 cell and its layer 0 cell, sinks
 // 4 pixels when not on its ground and takes sprite priority 3; otherwise it
@@ -395,11 +410,6 @@ void Func_020006cc(struct Actor *object) {
   Func_0200062c(2, x, z, cell);
   MapGrid_SetCellHeight(px, pz, object->terrainId, height);
 }
-
-#include "system/ram_buffer.h"
-#include "field_sprite.h"
-#include "graphics/vram_tab.h"
-#include "system/dma.h"
 
 // One step of two paired objects trading places: the effect work's halfword
 // at 26 names the first, and its partner is the other id of its even and odd
@@ -454,8 +464,6 @@ void Func_020007b4(s32 mode, s32 step) {
   }
 }
 
-#include "call.h"
-
 // Places the objects of a list ended by 0xffff: each entry (three halfwords)
 // names an object, the first of its three script choices and the flag that
 // picks between them; the object stops moving, loses its solid bit and keeps
@@ -493,9 +501,6 @@ void Func_02000908(u16 *list) {
     entry += 3;
   } while (*entry != 0xffff);
 }
-
-#include "system/main_routine_work.h"
-#include "system/input.h"
 
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void FieldCamera_FollowActor(s32 id, s32 flag);
@@ -656,9 +661,6 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 // mode 0); it moves 1.5 pixels a frame along its angle, upward when its angle
 // is 0xc000.
 
-#include "system/iwram_call.h"
-#include "field/event_work.h"
-
 /* VIEW(airs_rock_inside): routine gData_020061ac as this part declared it; the
  * joined file has another. */
 extern u8 gData_020061ac__airs_rock_inside[] __asm__("gData_020061ac");
@@ -735,9 +737,6 @@ void Func_02000d48(struct Actor *shot) {
     shot->z += Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   }
 }
-
-#include "system/field_effect.h"
-#include "system/vector3.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1080,8 +1079,6 @@ void Func_02001690(void) {
     }
   }
 }
-
-#include "macros.h"
 
 void Func_020017f4(struct Actor *object) {
   struct Actor *target = (struct Actor *)WORD_AT(object, 104);
@@ -1467,15 +1464,6 @@ const u8 *Scene_GetEntrances(void) {
   return gData_02006238;
 }
 
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "scene_tables.h"
-
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
@@ -1539,15 +1527,6 @@ void Func_020026c0(void) {
 // Scene code of overlay 0x664, in ROM order.
 
 // ---- games/tla/src/scene/airs_rock_inside/s2770.c ----
-
-#include "shared/effects.h"
-#include "system/task.h"
-#include "event_work.h"
-#include "flag_call.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
-#include "graphics/resource.h"
 
 void Func_02002770(void) {
   s32 value = -1;
@@ -1742,9 +1721,6 @@ void Func_02002cc0(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/airs_rock_inside/s2cf0.c ----
-#include "bg_scroll.h"
-#include "system/io_reg.h"
-#include "system/frame.h"
 
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
@@ -2753,8 +2729,6 @@ void Func_02004884(void) {
 
 void Func_020048bc(void) { Func_020007b4__s2cf0(); }
 
-#include "graphics/vram_tab.h"
-
 extern u16 gData_0200621c[];
 void Func_020006cc(struct Actor *object);
 
@@ -2925,8 +2899,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return gData_020073a8;
   return gData_02006d6c;
 }
-
-#include "version.h"
 
 void Func_02004cc8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -3100,27 +3072,8 @@ void Func_02004f3c(void) {
 #undef gData_02006128
 #undef gData_02006158
 #undef gData_020073d8
-// ---- from scene/airs_rock_inside/s505c.c ----
 // @file
 // Scene code of overlay 0x664, in ROM order.
-
-#include "flags.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/task.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/field_effect.h"
-#include "system/vector3.h"
-#include "call.h"
-#include "field/field.h"
-#include "airs_rock_inside.h"
-#include "event_work.h"
-#include "flag_call.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Trig_Sin(s32 angle);
@@ -3182,11 +3135,6 @@ void Func_0200505c(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
 }
-
-#include "version.h"
-
-#include "scene_tables.h"
-#include "system/io_reg.h"
 
 /* VIEW(s505c): routine gData_0200621c as this part declared it; the joined file
  * has another. */
@@ -3483,8 +3431,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-#include "airs_rock_inside.h"
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)

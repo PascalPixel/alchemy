@@ -22,10 +22,17 @@
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
+#include "module/tla.h"
+#include "graphics/resource.h"
+#include "scene_ids.h"
+#include "module/game/game.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "call.h"
+#include "system/iwram_call.h"
+#include "system/heap_release.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 struct GlowSprite;
@@ -51,10 +58,6 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void);
 
 void VenusLighthouseEntrance_PointToMeetingSpot(void);
 
-#include "module/tla.h"
-#include "graphics/resource.h"
-#include "scene_ids.h"
-#include "module/game/game.h"
 #include "text/msg_ids.h"
 
 /// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play.
@@ -148,8 +151,6 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -234,8 +235,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-#include "call.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -1060,8 +1059,6 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   Event_End();
 }
 
-#include "system/iwram_call.h"
-
 /// ★ Named from the game: " ... Are... Are you all right?" (MsgAreAreYou)
 void VenusLighthouseEntrance_WakeUp(void) {
   s32 t96;
@@ -1522,9 +1519,6 @@ void VenusLighthouseEntrance_StartDust(void) {
   }
   Task_AddFrame(VenusLighthouseEntrance_UpdateDust, (s32)(0x480));
 }
-
-#include "graphics/resource.h"
-#include "system/heap_release.h"
 
 /* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks;
  * venus_lighthouse_entrance.c has another definition; tried with the definition

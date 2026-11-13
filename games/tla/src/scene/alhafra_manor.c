@@ -6,7 +6,6 @@
 
 #include "text/msg_ids.h"
 #include "flags.h"
-
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -18,6 +17,13 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
+#include "module/system/system.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "field/event_inline.h"
+#include "system/input.h"
 
 void AlhafraManor_BriggsEscapes(void);
 void AlhafraManor_KeepToTheLeadersLayer(void);
@@ -26,7 +32,6 @@ void AlhafraManor_GrumbleAboutTheMayor(void);
 
 void AlhafraManor_DefendTheMayor(void);
 void AlhafraManor_TellOfTheEasternSea(void);
-#include "module/system/system.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -42,13 +47,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gAlhafraManor_ActorPlacementsOnceTheMastIsCleared;
   return gActorPlacements;
 }
-
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "event_work.h"
-#include "scene_ids.h"
-#include "field/event_inline.h"
 
 void AlhafraManor_AskAboutAlhafra(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor02;
@@ -209,8 +207,6 @@ void AlhafraManor_TellOfTheEasternSea(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
-#include "system/input.h"
 
 s32 Scene_Initialize(void) {
   s32 cameraY = -1;

@@ -5,16 +5,31 @@
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "field/field.h"
-
 #include "types.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "event_work.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "field_event.h"
+#include "scene_ids.h"
+#include "system/iwram_call.h"
+#include "call.h"
+#include "system/ram_buffer.h"
+#include "version.h"
+#include "shared/tables.h"
+#include "objcmd.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 void Func_02000da8(s32 value);
 void Func_02000e28(s32 value);
@@ -56,22 +71,11 @@ void Func_02000fc4(void);
 
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
-#include "module/scene/scene.h"
-#include "module/tla.h"
 #include "text/msg_ids.h"
 
 void Field_TryJumpForward(void);
 
 void Func_02000038(void) { Field_RequestDjinnBattle(18, 70); }
-
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -79,11 +83,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "field_event.h"
-
 DEFINE_ACTOR_BOB(Actor_Bob)
-
-#include "scene_ids.h"
 
 /* VIEW(first): routine gData_02001294 as this part declared it; the joined file
  * has another. */
@@ -122,9 +122,6 @@ void Func_02000190(s32 unused, s32 id) {
   if (id == 15)
     FieldActor_SetSpritePriority(15, 1);
 }
-
-#include "system/iwram_call.h"
-#include "call.h"
 
 /* VIEW(first): routine gData_02001404 as this part declared it; the joined file
  * has another. */
@@ -321,9 +318,6 @@ const u8 *Scene_GetEvents(void) {
     return gData_02001db4;
   return gData_02001ad8;
 }
-
-#include "system/ram_buffer.h"
-#include "version.h"
 
 void Func_02000af0(void);
 void Rope_Initialize(void);
@@ -660,12 +654,7 @@ void Func_02000ff4(void) {
 #undef gData_02001ae4
 #undef gData_02001c58
 #undef gData_02001db4
-// ---- from scene/data/kibombo_mountains.c ----
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 void Func_02000038(void);
 /* VIEW(data): routine Actor_Bob as this part declared it; the joined file has

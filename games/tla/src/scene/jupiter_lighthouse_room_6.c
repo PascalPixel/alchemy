@@ -33,14 +33,6 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "module/field/field.h"
-
-// Set while the leader stands on the button by the door, which holds it open.
-#define FLAG_DOOR_BUTTON_HELD 0x200
-
-/// The pillar the party pushes onto the button by the door, after the four
-/// angel statues in gActorPlacements.
-/// ★ Named from what the player sees: a grey stone pillar (spr_312.png)
-enum { ACTOR_SHORTCUT_PILLAR = ACTOR_FIRST_PLACED + 4 };
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "call.h"
@@ -51,6 +43,26 @@ enum { ACTOR_SHORTCUT_PILLAR = ACTOR_FIRST_PLACED + 4 };
 #include "system/task.h"
 #include "item_icon.h"
 #include "objcmd.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field/cell_target.h"
+#include "system/ram_buffer.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "field_sprite.h"
+#include "event_work.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "system/io_write.h"
+#include "module/field/field_effect.h"
+
+// Set while the leader stands on the button by the door, which holds it open.
+#define FLAG_DOOR_BUTTON_HELD 0x200
+
+/// The pillar the party pushes onto the button by the door, after the four
+/// angel statues in gActorPlacements.
+/// ★ Named from what the player sees: a grey stone pillar (spr_312.png)
+enum { ACTOR_SHORTCUT_PILLAR = ACTOR_FIRST_PLACED + 4 };
 
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CheckBlockOnCell(void);
@@ -127,9 +139,6 @@ void JupiterLighthouse_FinishMovingBlock(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "system/dma.h"
-#include "system/io_reg.h"
-
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
@@ -169,13 +178,10 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
+#include "shared/scene_set_arrival_flags.c"
 
-#include "field/cell_target.h"
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "system/ram_buffer.h"
-#include "field_event.h"
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
@@ -206,10 +212,6 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   MapGrid_SetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
   MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
 }
-
-#include "system/frame.h"
-#include "field_sprite.h"
-#include "event_work.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
@@ -380,22 +382,9 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef Oam_AddSpriteAtDepthClamped
 #undef CrackedTiles_Find
 #undef CrackedTiles_Step
-// ---- from scene/jupiter_lighthouse_room_6/cracked_tiles.c ----
 // @file
 // The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
 // and the cracked tiles, found, cracked and fallen through.
-
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-#include "system/io_reg.h"
-#include "field/field.h"
-#include "event_work.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -484,12 +473,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "scene_tables.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
@@ -517,8 +500,6 @@ struct CellTarget__s158c {
   s16 tile;
 };
 
-#include "system/io_write.h"
-
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s158c,
                          Leader_CenterInCell)
 
@@ -528,24 +509,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s158c,
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_room_6/cracked_tile_steps.c ----
 // @file
 // The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and
 // landings.
-
-#include "shared/tables.h"
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "field/cell_target.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_StepOffButton(void);

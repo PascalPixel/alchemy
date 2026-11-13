@@ -20,6 +20,30 @@
 #include "module/scene/garoh.h"
 #include "module/scene/scene.h"
 #include "scene_ids.h"
+#include "types.h"
+#include "flags.h"
+#include "event_work.h"
+#include "system/ram_buffer.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "graphics/palette_buffers.h"
+#include "system/frame.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
+#include "shared/tables.h"
+#include "system/field_effect.h"
+#include "actor.h"
+#include "field_sprite.h"
+#include "module/field/field_effect.h"
+#include "call.h"
+#include "objcmd.h"
 #include "text/msg_ids.h"
 
 void Func_02000280(void) {
@@ -32,15 +56,6 @@ void Func_02000280(void) {
   to->unk28 = from->unk28;
   to->unk2a = from->unk2a;
 }
-
-#include "types.h"
-#include "flags.h"
-#include "event_work.h"
-#include "system/ram_buffer.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "graphics/palette_buffers.h"
-#include "system/frame.h"
 
 void Func_020002a4(void) {
   // Declared first: x then wins its allocation tie with sine.
@@ -138,22 +153,11 @@ s32 Func_02000420(struct Actor *object) {
   return 0;
 }
 
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "system/main_routine_work.h"
 
 /* VIEW(first): routine gData_020056dc as this part declared it; the joined file
  * has another. */
@@ -840,25 +844,10 @@ void Func_020011c8(void) {
 #undef gData_02006278
 #undef gData_0200632c
 #undef gData_02005450
-// ---- from scene/garoh/s12a8.c ----
 // @file
 // Scene code of overlay 0x65f, in ROM order.
 
 // ---- games/tla/src/scene/garoh/s12a8.c ----
-
-#include "shared/tables.h"
-#include "types.h"
-#include "flags.h"
-#include "system/field_effect.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "garoh.h"
-#include "field_sprite.h"
-#include "field/field.h"
-#include "module/field/event_commands.h"
-#include "module/field/field_effect.h"
-#include "module/scene/garoh.h"
-#include "module/scene/scene.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -938,13 +927,6 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 // Scene code of overlay 0x65f, in ROM order, from push's offset up to the next
 // object the overlay links, and the overlay's data.
 
-#include "system/system.h"
-#include "system/main_routine_work.h"
-#include "event_work.h"
-#include "scene_tables.h"
-#include "system/ram_buffer.h"
-#include "call.h"
-#include "field/field.h"
 #include "text/msg_ids.h"
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -3107,8 +3089,6 @@ L_0200d0fa:;
   }
   Event_End();
 }
-
-#include "objcmd.h"
 
 /* VIEW(push): routine Func_02000420 as this part declared it; the joined file
  * has another. */

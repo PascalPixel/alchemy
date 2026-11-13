@@ -22,6 +22,31 @@
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "module/scene/scene.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "objcmd.h"
+#include "flags.h"
+#include "shared/map_cells.h"
+#include "map.h"
+#include "event_work.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "module/tla.h"
+#include "field_sprite.h"
+#include "system/field_effect.h"
+#include "system/frame.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "call.h"
+#include "graphics/vram_tab.h"
+#include "macros.h"
 
 /* VIEW(first): routine gGondowanCliffs_Entrances as this part declared it; the
  * joined file has another. */
@@ -43,16 +68,6 @@ const u8 *Scene_GetEntrances(void) {
     return gGondowanCliffs_PassEntrances;
   return gGondowanCliffs_Entrances;
 }
-
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
@@ -76,8 +91,6 @@ const u8 *Scene_GetPlacements(void) {
   return gGondowanCliffs_ActorPlacements;
 }
 
-#include "objcmd.h"
-
 // clang-format off
 DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
@@ -98,7 +111,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #undef gGondowanCliffs_PassEntrances
 #undef gGondowanCliffs_ActorPlacements
 #undef gGondowanCliffs_PassActorPlacements
-// ---- from scene/gondowan_cliffs/effect_spawn.c ----
 // @file
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
 // the yellow sand: each rises and falls on its timer, carrying the leader up
@@ -113,19 +125,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
-
-#include "flags.h"
-#include "shared/map_cells.h"
-#include "types.h"
-#include "map.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "field/field.h"
-#include "event_work.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 // Set as Frost freezes each puddle into a pillar of ice, for this visit.
 #define FLAG_FIRST_PUDDLE_FROZEN 0x201
@@ -190,9 +189,6 @@ void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
   }
 }
 
-#include "field_sprite.h"
-#include "system/field_effect.h"
-
 void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 unused[3]; // Unused: gives the stack frame its 12 bytes.
@@ -249,8 +245,6 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   Event_End();
 }
 
-#include "scene_tables.h"
-
 DEFINE_PILLAR_SET_MOVED(GondowanCliffs_FreezeFirstPuddle, 12, 79, 28, 81,
                         FLAG_FIRST_PUDDLE_FROZEN)
 
@@ -282,8 +276,6 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   }
 }
 
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
 void GondowanCliffs_TalkToDog(void) {
@@ -310,8 +302,6 @@ void GondowanCliffs_TalkToDog(void) {
   }
 }
 
-#include "scene_ids.h"
-
 /* VIEW(effect_spawn): routine gGondowanCliffs_PassTriggers as this part
  * declared it; the joined file has another. */
 extern const u8 gGondowanCliffs_PassTriggers__effect_spawn[] __asm__(
@@ -334,9 +324,6 @@ const u8 *Scene_GetEvents(void) {
   return gGondowanCliffs_Triggers;
 }
 
-#include "system/frame.h"
-#include "system/io_reg.h"
-
 extern u16 gGondowanCliffs_SavedWaterColors[];
 
 void GondowanCliffs_CycleWaterColors(void) {
@@ -352,9 +339,6 @@ void GondowanCliffs_CycleWaterColors(void) {
     phase++;
   }
 }
-
-#include "system/iwram_call.h"
-#include "call.h"
 
 void GondowanCliffs_SetUpPass(void) {
   if (gMainRoutineWork.entrance == 99) {
@@ -590,8 +574,6 @@ void Geysers_Update(void) {
   }
 }
 
-#include "graphics/vram_tab.h"
-
 void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 
 // Draws the swinging actors' ropes and heads (the 16 records of
@@ -755,17 +737,11 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef gGondowanCliffs_PassTriggers
 #undef gGondowanCliffs_Triggers
 #undef gGondowanCliffs_MapRects
-// ---- from scene/data/gondowan_cliffs.c ----
 
-#include "macros.h"
 // @file
 // The Gondowan Cliffs' tables, which the scene's getters return.
 
-#include "types.h"
-#include "flags.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 // Set as Frost freezes each puddle into a pillar of ice, for this visit.
 #define FLAG_FIRST_PUDDLE_FROZEN 0x201

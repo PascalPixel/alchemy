@@ -19,15 +19,13 @@
 #include "scene_tables.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
-#include "text/msg_ids.h"
 #include "field/event_inline.h"
 #include "actor.h"
 #include "event_work.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/field/map/ declares for the files that use it, written
 /// once.
-
-#include "types.h"
 
 void FieldCamera_WaitForArrival(void);
 

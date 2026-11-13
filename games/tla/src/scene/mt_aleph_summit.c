@@ -23,13 +23,26 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "scene_tables.h"
-
 #include "objcmd.h"
 #include "system/frame.h"
+#include "actor.h"
+#include "system/vector3.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/heap_release.h"
+#include "bg_scroll.h"
+#include "system/input.h"
+#include "call.h"
+#include "map.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field_effect.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -269,35 +282,9 @@ struct Trigger gSceneEvents[] = {
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- from scene/mt_aleph_summit/s0478.c ----
 // @file
 // The summit's events: the Golden Sun's formation and what follows it.
 
-#include "types.h"
-#include "system/system.h"
-#include "actor.h"
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "system/vector3.h"
-#include "field/event_inline.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "system/io_reg.h"
-#include "system/io_write_queue.h"
-#include "system/iwram_call.h"
-#include "system/heap_release.h"
-#include "bg_scroll.h"
-#include "system/input.h"
-#include "call.h"
-#include "map.h"
-
-#include "scene_tables.h"
-#include "field/field.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
 #include "text/msg_ids.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

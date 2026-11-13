@@ -9,6 +9,52 @@
 #include "../field/object/prepare_object.c"
 
 #include "magma_rock_inside.h"
+#include "shared/actors.h"
+#include "shared/push.h"
+#include "shared/map_cells.h"
+#include "shared/effects.h"
+#include "types.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "event_work.h"
+#include "field/field.h"
+#include "field/field_coordinate.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/scene/mars_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "system/scene.h"
+#include "system/ram_buffer.h"
+#include "map.h"
+#include "actor.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/io_reg.h"
+#include "system/frame.h"
+#include "system/field_effect.h"
+#include "macros.h"
+#include "field_sprite.h"
+#include "call.h"
+#include "edition.h"
+#include "shared/trial_road.h"
+#include "shared/tables.h"
+#include "system/iwram_call.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "module/field/field_effect.h"
+#include "field/particle.h"
+#include "graphics/resource.h"
+#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
+#include "system/task.h"
+#include "objcmd.h"
 
 struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = FieldActor_Create(kind, x, y, z);
@@ -27,7 +73,6 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/magma_rock_inside/magma_rock_inside.c ----
 // @file
 // Scene code of overlay 0x692, in ROM order.
 
@@ -43,9 +88,6 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 // Scene code of overlay 0x692, in ROM order.
 
-#include "shared/actors.h"
-#include "magma_rock_inside.h"
-
 DEFINE_POSITION_DISTANCE(Position_Distance)
 
 #include "../field/object/find_in_cell.c"
@@ -55,21 +97,7 @@ DEFINE_POSITION_DISTANCE(Position_Distance)
 // Magma Rock's inside: the lava floods and drains, its platforms, statues and
 // pillars, the Blaze tablet and the flames and torches it opens the way with.
 
-#include "shared/push.h"
-#include "shared/map_cells.h"
-#include "shared/effects.h"
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "field/field_coordinate.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 struct FieldSprite;
@@ -176,11 +204,6 @@ extern u32 gFieldEffect_MediumScript[];
 
 void MagmaRockInside_BurstStatue(s32 mode, s32 cue);
 
-#include "module/scene/mars_lighthouse_aerie.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "system/scene.h"
 #include "text/msg_ids.h"
 
 void Actor_LiftTargetBlock(s16 *cells);
@@ -196,9 +219,6 @@ extern s32 gPushLeaderSteps[];
 
 DEFINE_BLOCK_PUSH_ONTO(MagmaRockInside_PushBlockOnto, gPushLeaderSteps,
                        MapGrid_CheckCollision, Func_02004c98)
-
-#include "system/ram_buffer.h"
-#include "map.h"
 
 extern struct MapCell gMapCellBuffer[];
 
@@ -230,8 +250,6 @@ void MagmaRockInside_FightFury(void) { Field_RequestDjinnBattle(15, 56); }
 void MagmaRockInside_MeetDjinni(void) { Djinn_JoinParty(17, 2, 19); }
 
 DEFINE_POSITION_FLAT_DISTANCE(MagmaRockInside_FlatDistance)
-
-#include "actor.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
@@ -349,15 +367,6 @@ s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
 DEFINE_ACTORS_RAISE_CELLS(MagmaRockInside_RaiseActorCells,
                           MagmaRockInside_SetCellShape)
 
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -423,8 +432,6 @@ void MagmaRockInside_UnblockMovedPillar(void) {
     Actor_LiftTargetBlock(gMagmaRockInside_Room7Pillars);
   MagmaRockInside_ClearBlockCells(*(s32 *)(work + 0xcbc));
 }
-
-#include "system/io_reg.h"
 
 void MagmaRockInside_BlockMovedPillar(void) {
   struct Actor *object =
@@ -525,9 +532,6 @@ void MagmaRockInside_BlockMovedPillar(void) {
   }
   Event_End();
 }
-
-#include "system/frame.h"
-#include "system/field_effect.h"
 
 s32 Import_BattleEffectStopMainActor(void);
 
@@ -801,8 +805,6 @@ hit:
   System_Wait(10);
   Event_End();
 }
-
-#include "macros.h"
 
 void MagmaRockInside_EndFallingRocks(void);
 
@@ -1613,8 +1615,6 @@ void MagmaRockInside_StampOtherStepCell(void) {
   }
 }
 
-#include "field_sprite.h"
-
 void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   struct Actor *object;
   s32 i;
@@ -1732,10 +1732,6 @@ void MagmaRockInside_GrowTabletFlame(void) {
   MagmaRockInside_SwapCells(0, 7, 21, 128);
   Event_End();
 }
-
-#include "call.h"
-#include "event_work.h"
-#include "edition.h"
 
 void MagmaRockInside_PutOutTabletFlame(void) {
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
@@ -2373,16 +2369,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 // Magma Rock's inside: its crumbling pillars and traps.
 
-#include "shared/map_cells.h"
-#include "magma_rock_inside.h"
-#include "system/io_reg.h"
-#include "call.h"
-#include "event_work.h"
-#include "field/field.h"
-#include "module/field/object.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-
 void Tightrope_Initialize(void);
 
 /* VIEW(s3678): variable gMagmaRockInside_PlatformPath1 as const u8
@@ -2754,13 +2740,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "map.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
@@ -2770,8 +2749,6 @@ DEFINE_PILLARS_RESTORE_RAISED(MagmaRockInside_RestoreCrumblingPillars,
                               Actor_GetCellIndex, MapGrid_GetTerrainKind,
                               Actor_DisableById, MapCollision_FindOrAddTag,
                               Func_02004c98)
-
-#include "shared/trial_road.h"
 
 DEFINE_TRAPS_CHECK(MagmaRockInside_CheckCrumblingStep, Field_TryJumpForward,
                    Actor_FindAtCell, Func_02004c98, MagmaRockInside_SpawnRubble,
@@ -2939,25 +2916,6 @@ test:
 
 // Magma Rock's inside: its falling rocks and rubble, and its tables.
 
-#include "shared/map_cells.h"
-#include "shared/effects.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/iwram_call.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "field/particle.h"
-#include "graphics/resource.h"
-
 /* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct
  * FieldEffect *effect, const s32 *script); local.h has void
  * Actor_StartScript(struct Actor *object, const void *data); not tried:
@@ -3045,22 +3003,15 @@ void MagmaRockInside_SpawnDustRing(void) {
   } while (i <= 16);
 }
 
-#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
-#include "map.h"
-
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 DEFINE_ACTOR_SET_CELL_SHAPE(MagmaRockInside_SetActorCellShape,
                             MapGrid_GetTerrainKind, MapCollision_FindOrAddTag)
 
-#include "magma_rock_inside.h"
-
 void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
   MagmaRockInside_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
 }
-
-#include "system/ram_buffer.h"
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
@@ -3081,8 +3032,6 @@ struct RockWork {
 // Spawns count rocks around (x, y, z), each pushed out at a random angle and
 // thrown up and out along it.
 DEFINE_ROCKS_SPAWN(MagmaRockInside_DropRocks)
-
-#include "system/task.h"
 
 void MagmaRockInside_StartFallingRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
@@ -3122,9 +3071,6 @@ void MagmaRockInside_EndFallingRocks(void) {
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
-
-#include "scene_tables.h"
-#include "objcmd.h"
 
 void MagmaRockInside_MeetDjinni(void);
 void MagmaRockInside_ResolveBeforeBurst(void);

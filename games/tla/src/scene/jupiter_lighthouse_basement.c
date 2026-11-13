@@ -29,11 +29,30 @@
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/tla.h"
+#include "shared/jupiter_lighthouse_aerie.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "system/irq.h"
+#include "call.h"
+#include "system/field_effect.h"
+#include "item_icon.h"
+#include "field/field_coordinate.h"
+#include "system/task.h"
+#include "map.h"
+#include "graphics/vram_tab.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "system/io_write.h"
+#include "shared/tables.h"
+#include "module/field/field_effect.h"
+#include "objcmd.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "module/scene/scene.h"
 
 struct EffectOptions;
 
@@ -68,10 +87,6 @@ extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 extern s32 Data_020023ac;
-
-#include "module/scene/mars_lighthouse_entrance.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
@@ -258,13 +273,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
-
-#include "shared/jupiter_lighthouse_aerie.h"
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "field_event.h"
+#include "shared/scene_set_arrival_flags.c"
 
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another. */
@@ -300,8 +309,6 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74,
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
-#include "system/irq.h"
-
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
@@ -319,19 +326,12 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
 
 /// Scene code of overlay 0x699, in ROM order.
 
-#include "call.h"
-#include "system/field_effect.h"
-#include "item_icon.h"
-
 extern s16 gData_020024f6;
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
                        Whirlwind_UpdateLower, FieldEffect_Spawn)
-
-#include "field/field_coordinate.h"
-#include "system/task.h"
 
 s32 Func_02000a64(struct Actor *object) {
   struct EffectOptions params;
@@ -360,8 +360,6 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
 // sprite, or a 32 by 64 one when the big switch is set, at its animation
 // picture and depth.
-#include "map.h"
-#include "graphics/vram_tab.h"
 
 /* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4;
  * module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's
@@ -483,20 +481,8 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 #undef gPaletteCycleFrame
 #undef gWhirlwindEndScript
 #undef Oam_AddSpriteAtDepthClamped
-// ---- from scene/jupiter_lighthouse_basement/s1094.c ----
 // @file
 // Scene code of overlay 0x699, in ROM order.
-
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/field.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -581,18 +567,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
                                 CrackedTiles_Update)
-
-#include "scene_ids.h"
-#include "system/frame.h"
-#include "field_sprite.h"
-#include "scene_tables.h"
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -629,9 +605,6 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 // Scene code of overlay 0x699, in ROM order.
 
-#include "system/io_reg.h"
-#include "event_work.h"
-
 struct CellTargetEntry;
 
 /* VIEW(s16c4): tag struct CellTarget as struct CellTarget__s16c4; cell_target.h
@@ -649,8 +622,6 @@ struct CellTarget__s16c4 {
   s16 tile;
 };
 
-#include "system/io_write.h"
-
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
                          Leader_CenterInCell)
 
@@ -661,22 +632,8 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
 #undef CELL_PUSH_SLOT_ENTRY
 #undef OBJECT_BYTE
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_basement/s185c.c ----
 // @file
 // Scene code of overlay 0x699, in ROM order.
-
-#include "shared/tables.h"
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "shared/jupiter_lighthouse_aerie.h"
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -695,13 +652,8 @@ void CrackedTile_Fall();
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
 
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropInLower)
-
-#include "scene_tables.h"
-#include "objcmd.h"
 
 void Func_02000054(void);
 void Func_02000094(void);

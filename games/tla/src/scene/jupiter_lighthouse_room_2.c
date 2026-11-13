@@ -18,12 +18,37 @@
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 #include "field/cell_target.h"
 #include "module/scene/scene.h"
+#include "module/tla.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "actor.h"
+#include "field_sprite.h"
+#include "system/ram_buffer.h"
+#include "field_event.h"
+#include "system/iwram_call.h"
+#include "macros.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "call.h"
+#include "shared/jupiter_lighthouse_aerie.h"
+#include "system/dma.h"
+#include "system/frame.h"
+#include "system/irq.h"
+#include "system/field_effect.h"
+#include "field/field_coordinate.h"
+#include "map.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
+#include "item_icon.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "shared/tables.h"
+#include "module/field/field_effect.h"
+#include "objcmd.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
 
 void Actor_Release(struct Actor *object);
 
@@ -78,9 +103,6 @@ void EffectSprite_InitFromSlot94Blended(const void *script, s32 a, s32 b,
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitColors[];
 
-#include "module/scene/scene.h"
-#include "module/tla.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -90,9 +112,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
-
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
 
 void Func_02000054(void) {
   struct Actor *t0;
@@ -111,10 +130,6 @@ void Func_020000b4(void) {
   BattleEffect_DrawSpriteAtWorldPosition((s32)gData_02002b60, gData_02002b88[0],
                                          gData_02002b88[1], gData_02002b88[2]);
 }
-
-#include "actor.h"
-#include "field_sprite.h"
-#include "system/ram_buffer.h"
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -311,13 +326,6 @@ void Func_020004d0(s32 a0, s32 a1) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }
 
-#include "field_event.h"
-#include "system/iwram_call.h"
-#include "macros.h"
-#include "system/io_reg.h"
-#include "system/io_write.h"
-#include "call.h"
-
 static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
                              s32 destX, s32 destY) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
@@ -491,7 +499,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
+#include "shared/scene_set_arrival_flags.c"
 
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another. */
@@ -500,9 +508,6 @@ extern s32
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 
 void Func_020009dc(s32 a0) { gPaletteCyclePausesInEvents = a0; }
-
-#include "shared/jupiter_lighthouse_aerie.h"
-#include "system/dma.h"
 
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
  * file has another. */
@@ -536,8 +541,6 @@ Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              Func_0200230c__jupiter_lighthouse_room_2)
 
-#include "system/frame.h"
-
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
@@ -545,14 +548,6 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 // ---- scene/jupiter_lighthouse_room_2/s0d94.c ----
 
 /// Scene code of overlay 0x69b, in ROM order.
-
-#include "system/irq.h"
-#include "system/field_effect.h"
-#include "field/field_coordinate.h"
-#include "map.h"
-#include "graphics/vram_tab.h"
-#include "system/task.h"
-#include "item_icon.h"
 
 /* VIEW(s0d94): routine gWhirlwindEndScript as this part declared it; the joined
  * file has another. */
@@ -654,18 +649,8 @@ void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 #undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
 #undef Oam_AddSpriteAtDepthClamped
-// ---- from scene/jupiter_lighthouse_room_2/s165c.c ----
 // @file
 // Scene code of overlay 0x69b, in ROM order.
-
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -754,12 +739,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "scene_tables.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
                                 CrackedTiles_Update)
 
@@ -774,10 +753,6 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 // ---- scene/jupiter_lighthouse_room_2/s1c8c.c ----
 
 // Scene code of overlay 0x69b, in ROM order.
-
-#include "system/io_reg.h"
-#include "event_work.h"
-#include "field/field.h"
 
 struct CellTargetEntry;
 
@@ -796,8 +771,6 @@ struct CellTarget__s1c8c {
   s16 tile;
 };
 
-#include "system/io_write.h"
-
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c,
                          Leader_CenterInCell)
 
@@ -807,22 +780,8 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c,
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_room_2/s1e24.c ----
 // @file
 // Scene code of overlay 0x69b, in ROM order.
-
-#include "shared/tables.h"
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "shared/jupiter_lighthouse_aerie.h"
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 /* VIEW(s1e24): routine FieldEffect_Spawn as this part declared it; the joined
  * file has another. */
@@ -847,13 +806,8 @@ void CrackedTile_Fall();
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
 
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
-
-#include "scene_tables.h"
-#include "objcmd.h"
 
 /* VIEW(s1e24): routine Func_020000d0 as this part declared it; the joined file
  * has another. */

@@ -2,23 +2,52 @@
 /// The scene code of overlay 0x663, in ROM order.
 
 #include "shared/actors.h"
-#include "../field/object/set_sprite_priority.c"
-
-#include "../field/object/prepare_object.c"
-
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
+#include "module/scene/airs_rock.h"
+#include "system/ram_buffer.h"
+#include "flags.h"
+#include "shared/map_cells.h"
+#include "system/main_routine_work.h"
+#include "field/field.h"
+#include "event_work.h"
+#include "system/frame.h"
+#include "map.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "graphics/resource.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "field_event.h"
+#include "system/iwram_call.h"
+#include "field_sprite.h"
+#include "system/field_effect.h"
+#include "system/vector3.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/input.h"
+#include "field/event_work.h"
+#include "call.h"
+#include "bg_scroll.h"
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
 
 DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/airs_rock/airs_rock.c ----
 // @file
 // Scene code of overlay 0x663, in ROM order.
-
-#include "module/scene/airs_rock.h"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -28,14 +57,10 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-#include "types.h"
-
 s32 Func_0200033c(s32 a0) {
   Actor_SetSpriteFlags(a0, 0);
   return 0;
 }
-
-#include "system/ram_buffer.h"
 
 extern u8 gMapCellBuffer[];
 
@@ -81,25 +106,9 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 
 // Scene code of overlay 0x663, in ROM order.
 
-#include "flags.h"
-#include "shared/map_cells.h"
-#include "shared/actors.h"
-#include "system/main_routine_work.h"
-#include "field/field.h"
-#include "event_work.h"
-#include "system/frame.h"
-
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-#include "map.h"
-#include "actor.h"
-#include "field/event_inline.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "graphics/resource.h"
 #include "text/msg_ids.h"
 
 void Actor_PlaceMovedBlock(s32 id);
@@ -129,15 +138,6 @@ void Func_02000468(struct Unk_02000468 *unk) {
     }
   }
 }
-
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -304,9 +304,6 @@ void Func_02000830(void) {
   FIELD_AT(((s32)Ram_HeapSlots->effectWork + 0x34), u8, 0) = 1;
 }
 
-#include "field_event.h"
-#include "system/iwram_call.h"
-
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 // Circles the object around the centre in words 68 and 76, the radius
@@ -351,10 +348,6 @@ void Func_0200092c(struct Actor *object) {
 }
 
 // The Whirlwind gust in Air's Rock.
-
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "system/vector3.h"
 
 /* VIEW(airs_rock): routine gData_02004674 as this part declared it; the joined
  * file has another. */
@@ -585,9 +578,6 @@ void Func_02000f9c(struct Actor *object) {
   ((struct FieldSprite *)object->sprite)->rotation += 0x1800;
 }
 
-#include "system/dma.h"
-#include "system/io_reg.h"
-
 struct SpriteParts {
   u8 unk00[9];
   u8 unk09Low : 2;
@@ -771,8 +761,6 @@ fade:
   Event_End();
 }
 
-#include "system/input.h"
-
 void Func_02001560(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ride = leader->watchedObject;
@@ -912,8 +900,6 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
-#include "field/event_work.h"
-
 /* VIEW(airs_rock): routine gData_02003de0 as this part declared it; the joined
  * file has another. */
 extern u8 gData_02003de0__airs_rock[] __asm__("gData_02003de0");
@@ -1001,8 +987,6 @@ void Func_02001908(struct Actor *shot) {
     shot->z += Iwram_MulQ16(Math_Sin(shot->facing), speed);
   }
 }
-
-#include "call.h"
 
 // A launcher's update, the Air's Rock Inside launcher with a new shot each
 // time: while none of the event work's four busy counters is set it counts
@@ -1161,8 +1145,6 @@ void Func_02001dc4(s32 x, s32 z) {
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(shakeA, shakeA, shakeC);
 }
-
-#include "bg_scroll.h"
 
 // The pillar of light in Air's Rock, overlay 664's Func_02003654 with object
 // 14 glowing: the camera moves to (0x218, 0xd8), the leader turns, and the
@@ -1898,10 +1880,6 @@ s32 Scene_PrepareMap(void) {
 #undef gData_02003dcc
 #undef gData_02003dfc
 #undef gData_02004698
-// ---- from scene/data/airs_rock.c ----
-#include "types.h"
-#include "scene_tables.h"
-#include "module/scene/airs_rock.h"
 
 /* VIEW(data): routine Func_0200033c as this part declared it; the joined file
  * has another. */

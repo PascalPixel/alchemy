@@ -5,7 +5,6 @@
 #include "shared/effects.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
-
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "system/dma.h"
@@ -13,10 +12,23 @@
 #include "field/event_inline.h"
 #include "event_work.h"
 #include "module/scene/garoh.h"
+#include "module/scene/scene.h"
+#include "system/task.h"
+#include "actor.h"
+#include "scene_tables.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_ids.h"
+#include "stddef.h"
+#include "shared/tables.h"
+#include "objcmd.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 void Func_02000328(void);
 
@@ -82,8 +94,6 @@ void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void BattleEffect_PackTargetBuffer(void);
 
-#include "module/scene/scene.h"
-
 extern u16 *gPaletteColors;
 extern u16 *gPaletteCycleSlots;
 
@@ -92,8 +102,6 @@ extern u16 *gPaletteCycleSlots;
 /// blend.
 DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
                           Data_02001a2c, gPaletteCycleSlots, Func_02000328)
-
-#include "system/task.h"
 
 extern u16 gPaletteCycleTimer;
 
@@ -121,8 +129,6 @@ DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gData_02001a20,
                           gData_02001a34, gData_02001a24, gData_02001a14,
                           gPaletteColors)
 
-#include "actor.h"
-
 void Func_02000328(void) {
   struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
@@ -148,7 +154,6 @@ void Func_02000328(void) {
   work->value1ac = saved;
 }
 
-#include "event_work.h"
 #include "text/msg_ids.h"
 
 void Func_020003b0(void) {
@@ -166,8 +171,6 @@ s32 Func_020003c8(s32 arg0) {
   return 0;
 }
 
-#include "scene_tables.h"
-
 s32 Func_020003d4(struct Actor *object) {
   u8 *phase = (u8 *)object + 0x62;
   s32 step = *phase & 63;
@@ -183,21 +186,11 @@ s32 Func_020003d4(struct Actor *object) {
   return -1;
 }
 
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "scene_ids.h"
 
 /* VIEW(first): routine gData_02001548 as this part declared it; the joined file
  * has another. */
@@ -310,8 +303,6 @@ void Func_02000580(s32 scale) {
     i++;
   } while (i < count);
 }
-
-#include "stddef.h"
 
 /* VIEW(first): routine gData_020019ec as this part declared it; the joined file
  * has another. */
@@ -775,11 +766,6 @@ void Func_0200115c(void) {
 #undef gData_0200135c
 #undef gData_02001388
 #undef gData_02001454
-// ---- from scene/data/islet_cave.c ----
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "objcmd.h"
 
 /* VIEW(data): routine Func_020003c8 as this part declared it; the joined file
  * has another. */

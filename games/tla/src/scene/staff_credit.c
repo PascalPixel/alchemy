@@ -31,6 +31,13 @@
 #include "module/tla.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
+#include "field_sprite.h"
+#include "graphics/vram_tab.h"
+#include "actor_view.h"
+#include "call.h"
+#include "system/task.h"
+#include "macros.h"
+#include "shared/tables.h"
 
 extern s32 gData_0200215c[];
 
@@ -554,7 +561,7 @@ DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 #define Func_02003654 Func_02000d10
 #define Func_02004e30 Sound_Play
 #define gData_02006c08 gData_02003dc0
-#include "shared/world_map_s3600.h"
+#include "shared/world_map_s3600.c"
 
 /// The world map's placed objects (overlay 64b), shown and hidden as the view
 /// moves, under this overlay's names.
@@ -567,13 +574,13 @@ DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 #define Func_02004b18 Import_ActorSelectAnimation
 #define Func_02004b38 Actor_Release
 #define gData_02006bd4 gData_02003da8
-#include "shared/world_map_s36a8.h"
+#include "shared/world_map_s36a8.c"
 
 /// The blend queue and the cell table reset the world map (overlay 64b) also
 /// has, under this overlay's names.
 #define Func_020038e4 Func_02000fa0
 #define Func_02003960 Func_0200101c
-#include "shared/world_map_s3960.h"
+#include "shared/world_map_s3960.c"
 
 s32 Func_02001044(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
 
@@ -601,7 +608,7 @@ s32 Func_02001064(struct Actor *object) {
 #define Func_02003aac Func_02001168
 #define gData_02004f90 gData_02002e74
 #define gData_02004f9c gData_02002e80
-#include "shared/world_map_s39f4.h"
+#include "shared/world_map_s39f4.c"
 
 DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
 
@@ -778,13 +785,6 @@ DEFINE_ACTOR_GROW_UP(Func_02001a34, Actor_Release)
 
 DEFINE_ACTOR_GROW_DOWN(Func_02001a80, Actor_Release)
 
-#include "field_sprite.h"
-#include "graphics/vram_tab.h"
-#include "actor_view.h"
-#include "graphics/resource.h"
-#include "call.h"
-#include "system/task.h"
-
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -927,12 +927,6 @@ u32 gData_02002eac[] = {
 #undef gData_02003d8e
 #undef gData_02003d9c
 #undef gData_02003db8
-// ---- from scene/data/staff_credit.c ----
-
-#include "macros.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 
 /* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
  * file has another. */

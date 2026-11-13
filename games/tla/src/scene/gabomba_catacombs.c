@@ -12,6 +12,16 @@
 #include "system/frame.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "module/scene/scene.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "version.h"
+#include "objcmd.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -64,12 +74,7 @@ struct GabombaCatacombsParty {
   u16 value254;
 };
 
-#include "field/event_inline.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gData_02001310[];
@@ -87,7 +92,6 @@ extern struct Trigger gData_02001714[];
 
 void Actor_DepartInRing(s32 id);
 
-#include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
 #define LEADER_HOP()                                                           \
@@ -306,11 +310,6 @@ s32 Func_020009bc(struct Actor *object) {
   return 0;
 }
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
 
@@ -427,16 +426,6 @@ void Func_02000d90(void) {
     Scene_TalkToActor(0x1040);
 }
 
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) {
@@ -476,8 +465,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return (const struct Trigger *)gData_02001714;
   return (const struct Trigger *)gData_02001540;
 }
-
-#include "version.h"
 
 #if !TLA_PATCH_1
 #define CATACOMBS_SCREEN_EFFECT 513
@@ -539,8 +526,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-#include "objcmd.h"
 
 // clang-format off
 u32 gData_0200128c[] = {

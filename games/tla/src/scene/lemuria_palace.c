@@ -20,15 +20,19 @@
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/iwram_call.h"
-#include "text/msg_ids.h"
 #include "system/vector3.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
+#include "module/scene/scene.h"
+#include "module/game/game.h"
+#include "system/task.h"
+#include "call.h"
+#include "system/io_write.h"
+#include "macros.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 extern s32 gLemuriaPalace_Doors[];
 extern s32 gLemuriaPalace_InnerDoor[];
@@ -38,9 +42,6 @@ void LemuriaPalace_DrawMaps(void);
 void Field_StartColorTransition();
 
 extern s16 gLemuriaPalace_DoorOpening[];
-
-#include "module/scene/scene.h"
-#include "module/game/game.h"
 
 /// The sprite each of the two maps is drawn as.
 struct LemuriaPalaceMapSprite {
@@ -289,10 +290,6 @@ void LemuriaPalace_DrawMaps(void) {
     EffectSprite_Draw(gLemuriaPalace_SecondMapSprite);
   }
 }
-
-#include "system/task.h"
-#include "call.h"
-#include "system/io_write.h"
 
 extern s32 gLemuriaPalace_FirstMapVram;
 /* VIEW(s03a0): variable gLemuriaPalace_FirstMapSprite as extern struct
@@ -1354,11 +1351,6 @@ u32 gLemuriaPalace_GlowColors[] = {
 #undef BLEND_SET_ALPHA
 #undef FIELD_AT
 #undef gLemuriaPalace_MapCrossfade
-// ---- from scene/data/lemuria_palace.c ----
-
-#include "macros.h"
-#include "types.h"
-#include "scene_tables.h"
 
 // clang-format off
 LATE_DATA u32 gLemuriaPalace_MapCrossfade[] = {

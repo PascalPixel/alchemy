@@ -47,6 +47,16 @@
 #include "item_icon.h"
 #include "module/field/field.h"
 #include "objcmd.h"
+#include "field/cell_target.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "actor.h"
+#include "system/frame.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "system/io_write.h"
+#include "module/field/field_effect.h"
 
 // Set while the leader stands on the button by the gates, which holds them
 // open.
@@ -152,14 +162,10 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
+#include "shared/scene_set_arrival_flags.c"
 
-#include "field/cell_target.h"
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
 
 extern s32 gPaletteCyclePausesInEvents;
 
@@ -188,9 +194,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
-
-#include "actor.h"
-#include "system/frame.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
@@ -324,22 +327,9 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef FLAG_GATES_BUTTON_HELD
 #undef Oam_AddSpriteAtDepthClamped
 #undef FieldEffect_Spawn
-// ---- from scene/jupiter_lighthouse_room_1/cracked_tiles.c ----
 // @file
 // Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
 // cracked tiles, found, cracked and fallen through.
-
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-#include "system/io_reg.h"
-#include "field/field.h"
-#include "event_work.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -431,12 +421,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "scene_tables.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
                                 CrackedTiles_Update)
 
@@ -465,8 +449,6 @@ struct CellTarget__s156c {
   s16 tile;
 };
 
-#include "system/io_write.h"
-
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s156c,
                          Leader_CenterInCell)
 
@@ -477,26 +459,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s156c,
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_SelectAnimation
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_room_1/cracked_tile_steps.c ----
 // @file
 // Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.
 
-#include "shared/tables.h"
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "field/cell_target.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "system/system.h"
-#include "system/frame.h"
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 void JupiterLighthouse_StepOnButton(void);
 void JupiterLighthouse_StepOffButton(void);

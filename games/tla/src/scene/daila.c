@@ -30,10 +30,10 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
-#include "text/msg_ids.h"
 #include "actor.h"
 #include "flags.h"
 #include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 // Daila2's puddles dried by Parch for this visit, one flag each, in the order
 // of the puddles' rows, and frozen into pillars by Frost.

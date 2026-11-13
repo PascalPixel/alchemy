@@ -4,12 +4,34 @@
 #include "../field/object/prepare_object.c"
 #include "shared/actors.h"
 #include "sea_of_time/sea_of_time.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/scene.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_ids.h"
+#include "actor.h"
+#include "system/ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "system/field_effect.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
+#include "map.h"
 
 DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/sea_of_time.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -25,16 +47,7 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
 // tell the way by, and rocks Grind breaks; the rest of the overlay is in
 // sea_of_time/.
 
-#include "shared/actors.h"
-#include "sea_of_time/sea_of_time.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
-#include "module/scene/scene.h"
-
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 // The Sea of Time's frame callback: rotates two runs of the background palette,
 // pulses the red of colour 15 (or steps it with the alarm), copies the palette
@@ -111,18 +124,6 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
 }
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
-
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -317,12 +318,6 @@ void SeaOfTime_RideCurrent(void) {
   }
 }
 
-#include "actor.h"
-#include "system/ram_buffer.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "system/field_effect.h"
-
 // Walks actor 8 along a run of cells in the facing the event work names,
 // throwing sparks from both sides of it every fourth frame.
 void SeaOfTime_FollowChannel(void) {
@@ -410,8 +405,6 @@ void SeaOfTime_FollowChannel(void) {
   Event_End();
 }
 
-#include "system/iwram_call.h"
-#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
 /* VIEW(sea_of_time): variable gSeaOfTime_LapCount as extern u16
@@ -547,7 +540,6 @@ void SeaOfTime_TrackWaves(void) {
 
 // Two fades of BG palette 3: toward RGB(11, 6, 23), then, in
 // SeaOfTime_StopWaves, back to its saved colours.
-#include "system/io_reg.h"
 
 extern u32 gSeaOfTime_WaveState;
 /* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h has void
@@ -754,8 +746,6 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   }
   Event_End();
 }
-
-#include "system/io_reg.h"
 
 void SeaOfTime_SweptBack(void) {
   Event_Start();
@@ -982,8 +972,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return gSeaOfTime_EntranceTriggers;
   return gSeaOfTime_Triggers;
 }
-
-#include "map.h"
 
 // The Sea of Time's frame callback: rotates two runs of the background
 // palette, pulses the red of colour 15 (or steps it with the alarm), copies

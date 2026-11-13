@@ -11,6 +11,19 @@
 #include "system/iwram_call.h"
 #include "field_event.h"
 #include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "event_work.h"
+#include "module/scene/scene.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
@@ -26,26 +39,9 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
   TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, layer);
 }
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "map.h"
-#include "scene_tables.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/ram_buffer.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
 /// The twelve colours, a frame in four, the water's shimmer takes in turn.
 extern s16 gAncientLemuria_ShimmerColors[];
-#include "module/scene/scene.h"
 
 void AncientLemuria_RimeJoins(void) { Djinn_JoinParty(12, 1, 13); }
 

@@ -15,10 +15,38 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
+#include "module/scene/scene.h"
+#include "module/sound/sound.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "scene_ids.h"
+#include "system/ram_buffer.h"
+#include "system/frame.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/iwram_call.h"
+#include "system/io_write_queue.h"
+#include "system/io_reg.h"
+#include "call.h"
+#include "version.h"
+#include "system/dma.h"
+#include "shared/mars_lighthouse_entrance_room.h"
+#include "field/event_work.h"
+#include "module/field/field.h"
+#include "module/scene/dehkan_plateau.h"
+#include "battle/battle_unit.h"
+#include "system/vector3.h"
+#include "fixed_math.h"
+#include "shared/tables.h"
+#include "graphics/display_transition.h"
+#include "item_icon.h"
+#include "map.h"
+#include "field_sprite.h"
+#include "macros.h"
+#include "objcmd.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 struct Vector3;
@@ -67,11 +95,6 @@ void MarsLighthouseRoomM_HearDragonStatue(void);
 
 extern s32 gData_020032c8[];
 
-#include "module/scene/scene.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "scene_ids.h"
 #include "text/msg_ids.h"
 
 extern u16 gData_02004cf0[];
@@ -97,11 +120,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-#include "actor.h"
-#include "field/event_inline.h"
 
 struct RideEntry {
   s16 a;
@@ -140,7 +158,6 @@ struct RideWork {
 };
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-#include "system/main_routine_work.h"
 
 void Func_0200166c(void);
 
@@ -268,9 +285,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gMarsLighthouseRoomM_Room1Placements;
   return gMarsLighthouseRoomM_Placements;
 }
-
-#include "system/iwram_call.h"
-#include "system/io_write_queue.h"
 
 /* VIEW(mars_lighthouse_room_m): variable gData_020036c4 as s32 gData_020036c4;
  * scene/mars_lighthouse_room_m/s2708 has s32 gData_020036c4[] = {; tried as the
@@ -417,8 +431,6 @@ void Func_020003c4(void) {
   IO_WRITE_QUEUE_PUSH(0x05000100, (u32)Data_02003a1c, 0x84000010);
   gData_02003704++;
 }
-
-#include "system/io_reg.h"
 
 /// Scheduled by Func_02000934: steps room 1's blend (Data_02003a7c) one toward
 /// its target (gData_02003a7e) each frame and queues the BLDALPHA write; as it
@@ -599,8 +611,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return gMarsLighthouseRoomM_Room5Triggers;
   return gMarsLighthouseRoomM_Triggers;
 }
-
-#include "call.h"
 
 void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
 /* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void);
@@ -801,8 +811,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "version.h"
-
 /// ★ Named from the game: "Mankind... With the power of wisdom, they ruled the
 /// earth." (MsgMankindWithThe)
 void MarsLighthouseRoomM_ReadEarthInscription(void) {
@@ -987,8 +995,6 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
   }
 }
 
-#include "system/dma.h"
-
 extern u16 *Data_0200392c;
 extern u16 *Data_02003930;
 extern u16 *Data_0200391c;
@@ -1102,9 +1108,6 @@ s32 Func_02001928(struct Actor *a, struct Actor *b) {
   return 0;
 }
 
-#include "shared/mars_lighthouse_entrance_room.h"
-#include "field/event_work.h"
-
 /* VIEW(s1988): tag struct RideSlot as struct RideSlot__s1988;
  * mars_lighthouse_room_m.c has another definition; not tried: struct
  * RideSlot__s1988 was not found. */
@@ -1155,8 +1158,6 @@ void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
     Actor_SelectAnimation(object, 2);
   }
 }
-
-#include "shared/mars_lighthouse_entrance_room.h"
 
 /* VIEW(s1b64): tag struct RideSlot as struct RideSlot__s1b64;
  * mars_lighthouse_room_m.c has another definition; not tried: struct
@@ -1387,12 +1388,6 @@ DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
 
 /// Scene code of overlay 0x6ac, in ROM order.
 
-#include "shared/mars_lighthouse.h"
-#include "field/event_inline.h"
-#include "module/field/field.h"
-#include "module/scene/dehkan_plateau.h"
-#include "module/scene/scene.h"
-
 void Actor_Release(void *handle);
 s32 MapGrid_CheckCollision(s32 layer, s32 shape, s32 height);
 
@@ -1413,22 +1408,13 @@ void Func_02002118(void) {
   animation->flag11 = 1;
 }
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-#include "actor.h"
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-#include "system/main_routine_work.h"
 
 DEFINE_RIDE_RELEASE_HANDLE(Func_0200216c, Actor_Release)
 
 void Func_02002180(s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
 }
-
-#include "system/io_reg.h"
-#include "field/field.h"
 
 DEFINE_BEAM_START(Func_0200218c, Func_02001f94)
 
@@ -1458,8 +1444,6 @@ s32 Func_02002344(s32 index) {
 
 DEFINE_RIDE_SET_SLOT(Func_02002354)
 
-#include "battle/battle_unit.h"
-
 struct MarsLighthouseEventWork {
   u8 unk000[0x16a];
   u16 unk16a;
@@ -1481,12 +1465,6 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002368)
 #include "../field/field_effect/advance_spin.c"
 
 DEFINE_ACTOR_BLINK(Func_020024bc, 10, 4, 0)
-
-#include "version.h"
-
-#include "call.h"
-#include "system/vector3.h"
-#include "fixed_math.h"
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 /* VIEW(s2118): routine MapGrid_CheckCollision as s32
@@ -1523,12 +1501,6 @@ void Func_020026f0(void) {
 // ---- scene/mars_lighthouse_room_m/s2708.c ----
 
 /// Scene code of overlay 0x6ac, in ROM order.
-
-#include "shared/tables.h"
-#include "shared/mars_lighthouse.h"
-#include "field/event_inline.h"
-#include "graphics/display_transition.h"
-#include "item_icon.h"
 
 /* VIEW(s2708): routine Func_02002368 as int Func_02002368(), called with no
  * declaration in scope as its bytes need; the definition has void
@@ -1622,14 +1594,8 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   ride->active = 0;
 }
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-#include "actor.h"
-
 extern u16 gData_02004cf0[];
 void Actor_Release(void *handle);
-#include "system/main_routine_work.h"
 
 void FieldCamera_MoveToActorById(s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
@@ -1641,10 +1607,6 @@ DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomM_ContinueSlide,
 s32 Func_02002864(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
 }
-
-#include "system/iwram_call.h"
-#include "fixed_math.h"
-#include "field/field.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -1754,9 +1716,6 @@ void Func_02002ad4(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
 }
 
-#include "system/vector3.h"
-#include "map.h"
-
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
@@ -1802,9 +1761,6 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
   object->update = Func_02002ad4;
 }
 
-#include "field_sprite.h"
-#include "scene_tables.h"
-
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
 /// gives it Func_02002ae8 as its update hook and its speed, clears its scale
@@ -1819,11 +1775,7 @@ DEFINE_ACTOR_POP_UP_SLOW(Func_02002f34, Actor_SelectAnimation)
 
 DEFINE_ACTOR_POP_UP(Func_02002fe0, Actor_SelectAnimation)
 
-#include "macros.h"
-
 DEFINE_ACTOR_PARK(Func_02003084, Func_02002e6c)
-
-#include "objcmd.h"
 
 /* VIEW(s2708): routine Func_0200004c as void Func_0200004c(void);
  * scene/mars_lighthouse_room_m has s32 Func_0200004c(struct Actor *object) {;

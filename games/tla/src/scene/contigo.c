@@ -11,11 +11,34 @@
 #include "contigo.h"
 #include "system/task.h"
 #include "actor.h"
+#include "scene_tables.h"
+#include "module/scene/scene.h"
+#include "flags.h"
+#include "shared/tables.h"
+#include "shared/actors.h"
+#include "system/field_effect.h"
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/game/game.h"
+#include "module/system/system.h"
+#include "system/iwram_call.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_ids.h"
+#include "system/frame.h"
+#include "edition.h"
+#include "version.h"
+#include "system/vector3.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
-#include "scene_tables.h"
 
 extern s32 gData_0200474c[];
 extern struct ActorPlacement gData_02004c88[];
@@ -119,8 +142,6 @@ s32 List_CountEntries(u16 *list);
 
 void PaletteCycle_Fade(void);
 
-#include "module/scene/scene.h"
-
 extern u16 *gPaletteColors;
 extern u16 *gPaletteCycleSlots;
 
@@ -196,7 +217,6 @@ void Func_02000328(void) {
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/contigo/contigo.c ----
 /* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
  * another. */
 #define TalkActor TalkActor__contigo
@@ -207,19 +227,6 @@ void Func_02000328(void) {
 // Scene code of overlay 0x694, in ROM order.
 
 // ---- games/tla/src/scene/contigo.c ----
-#include "flags.h"
-#include "shared/tables.h"
-#include "shared/actors.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
 /* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct
  * ContigoObject *object, const void *effect); the definition has void
  * Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the
@@ -239,27 +246,9 @@ struct ContigoObject;
 extern void
 Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
 #define Func_02003f54 Func_02003f54__contigo
-#include "contigo.h"
 #undef Func_02003f54
 #undef Func_02003e54
-#include "system/iwram_call.h"
-#include "actor.h"
-#include "system/ram_buffer.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "system/frame.h"
-#include "edition.h"
-#include "event_work.h"
-#include "version.h"
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
@@ -2310,7 +2299,6 @@ void Func_02003a8c(void) {
 
 // The sparkle's update: raises two pairs of sprites over the object, each pair
 // starting when its counter is cleared, until both counters pass 31.
-#include "system/vector3.h"
 
 struct SparkleSprite {
   u8 unk00[12];

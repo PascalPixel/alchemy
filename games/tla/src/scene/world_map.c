@@ -20,7 +20,6 @@
 #include "system/iwram_call.h"
 #include "actor.h"
 #include "field/field_coordinate.h"
-#include "text/msg_ids.h"
 #include "owner_state.h"
 #include "event_work.h"
 #include "field_sprite.h"
@@ -33,10 +32,23 @@
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/scene/staff_credit.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "module/window/window.h"
+#include "module/game/game.h"
+#include "scene_ids.h"
+#include "system/io_reg.h"
+#include "shared/flight.h"
+#include "system/io_write_queue.h"
+#include "graphics/resource.h"
+#include "bg_scroll.h"
+#include "field/sprite.h"
+#include "graphics/vram_tab.h"
+#include "macros.h"
+#include "shared/tables.h"
+#include "text/msg_ids.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 
@@ -131,12 +143,6 @@ void Party_DrainPp(s32 value);
 s32 Party_GetPpRatio(void);
 
 void WorldMap_WatchVenusLighthouseCollapse(void);
-
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "module/window/window.h"
-#include "module/game/game.h"
-#include "scene_ids.h"
 
 s32 Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_StartRenderModeScript(void);
@@ -1719,8 +1725,6 @@ void Func_020028cc(void) {
   Actor_StartScript(obj, gData_02004f10);
 }
 
-#include "system/io_reg.h"
-
 extern u32 gData_02004eb8[];
 
 void Func_020029a4(void) {
@@ -2129,26 +2133,26 @@ DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 /* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];
  * module/scene/scene.h has u8 gData_02006c08[]. The three parts after see it so
  * too; tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/scene/shared/world_map_s3600.h:8: conflicting types for
+ * tla-ja: games/tla/src/scene/shared/world_map_s3600.c:8: conflicting types for
  * `gData_02006c08'. */
 extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 #define gData_02006c08 gData_02006c08__s3600
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s3600.h"
+#include "shared/world_map_s3600.c"
 
 // ---- scene/world_map/s36a8.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s36a8.h"
+#include "shared/world_map_s36a8.c"
 
 // ---- scene/world_map/s3960.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s3960.h"
+#include "shared/world_map_s3960.c"
 
 #undef gData_02006c08
 
@@ -2178,15 +2182,11 @@ s32 Func_020039a8(struct Actor *object) {
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s39f4.h"
+#include "shared/world_map_s39f4.c"
 
 // ---- scene/world_map/s3b38.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/flight.h"
-#include "system/io_write_queue.h"
-#include "graphics/resource.h"
 
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
@@ -2241,10 +2241,6 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 
 /// Shakes the camera diagonally by one pixel every three frames.
 DEFINE_CAMERA_JITTER(WorldMap_JitterTransitionCamera)
-
-#include "bg_scroll.h"
-#include "field/sprite.h"
-#include "graphics/vram_tab.h"
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -2623,12 +2619,6 @@ u32 gData_02004fc8[] = {
 #undef gData_02006be4
 #undef Animation_ApplyChildArgument
 #undef Func_02003418
-// ---- from scene/data/world_map.c ----
-
-#include "macros.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 
 void Func_02000038(void);
 /* VIEW(data): routine TileSprite_Reset as this part declared it; the joined

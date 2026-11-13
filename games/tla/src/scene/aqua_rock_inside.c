@@ -2,17 +2,51 @@
 /// The scene code of overlay 0x67c, in ROM order.
 
 #include "shared/actors.h"
+#include "aqua_rock_inside.h"
+#include "flags.h"
+#include "shared/effects.h"
+#include "event_work.h"
+#include "field/field.h"
+#include "module/field/map.h"
+#include "types.h"
+#include "module/scene/scene.h"
+#include "module/sound/sound.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "version.h"
+#include "actor.h"
+#include "system/vector3.h"
+#include "field/event_inline.h"
+#include "system/io_write_queue.h"
+#include "system/frame.h"
+#include "system/field_effect.h"
+#include "system/io_reg.h"
+#include "system/ram_buffer.h"
+#include "call.h"
+#include "system/iwram_call.h"
+#include "map.h"
+#include "graphics/vram_tab.h"
+#include "macros.h"
+#include "shared/vents.h"
+#include "shared/tables.h"
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
-
-#include "aqua_rock_inside.h"
 
 DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- from scene/aqua_rock_inside/aqua_rock_inside.c ----
 // @file
 // Scene code of overlay 0x67c, in ROM order.
 
@@ -30,16 +64,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
-#include "flags.h"
-#include "shared/effects.h"
-#include "event_work.h"
-#include "aqua_rock_inside.h"
-#include "field/field.h"
-#include "module/field/map.h"
-
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 
@@ -100,27 +125,11 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void FieldEffect_StartBlankOverlay();
 void Tightrope_Place();
 
-#include "module/scene/scene.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
-#include "module/tla.h"
 #include "text/msg_ids.h"
 
 extern u8 Data_0202c001[];
 
 void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
-
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "system/main_routine_work.h"
-#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -198,8 +207,6 @@ const u8 *Scene_GetPlacements(void) {
     return gData_02004b98;
   return gData_02004688;
 }
-
-#include "version.h"
 
 // When object 10 reaches row 12, or object 11 column 51, stops its motion,
 // lifts it one pixel and sets its flag; object 10 also redraws two blocks of
@@ -599,11 +606,6 @@ void Func_02000ca8(void) {
 // Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
 // object the overlay links.
 
-#include "actor.h"
-#include "system/vector3.h"
-#include "field/event_inline.h"
-#include "system/io_write_queue.h"
-
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
@@ -936,8 +938,6 @@ void Func_02001364(struct Actor *object) {
 // Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next
 // object the overlay links.
 
-#include "system/frame.h"
-
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 // countdown runs out returns 0, else, unless its radius is down to 2 pixels,
@@ -956,8 +956,6 @@ DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
 
 DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
 
-#include "system/field_effect.h"
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -968,9 +966,6 @@ DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 // ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----
 // Scene code of overlay 0x67c, in ROM order, from s1620's offset up to the
 // next object the overlay links.
-
-#include "system/io_reg.h"
-#include "system/ram_buffer.h"
 
 union ActorView {
   struct Actor actor;
@@ -1234,8 +1229,6 @@ L_02009c42:
   Event_End();
 L_02009c56:
 }
-
-#include "call.h"
 
 void Func_02001c68(void) {
   if (Event_GetFlag(0x9ae)) {
@@ -1546,7 +1539,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "system/iwram_call.h"
 #include "text/msg_ids.h"
 
 // The original keeps the masked BG1CNT in a stack slot it never reads again:
@@ -1827,8 +1819,6 @@ done:
   return 0;
 }
 
-#include "system/frame.h"
-
 void Func_02002bd4(struct Actor *object) {
   struct Actor *child = FieldActor_Create(14, object->x, object->y + 0x40000,
                                           object->z + 0x40000);
@@ -1920,9 +1910,6 @@ DEFINE_ACTOR_EMIT_MIST(Actor_EmitMist)
 DEFINE_LEADER_SINK_AWAY(Leader_SinkAway, Actor_EmitMist)
 
 DEFINE_LEADER_RISE_FROM_WATER(Leader_RiseFromWater, Actor_EmitMist)
-
-#include "map.h"
-#include "graphics/vram_tab.h"
 
 // Draws the scene's pillars: a top sprite for each active one and, when it
 // stands above its base, a column sprite as tall as its height.
@@ -2195,8 +2182,6 @@ void Func_020034fc(void) {
   } while (i >= 0);
 }
 
-#include "macros.h"
-
 void Func_02003628(void) {
   void *buffer;
   s32 priority;
@@ -2324,16 +2309,6 @@ s32 Func_020036b8(s32 first, s32 target) {
 
 // Scene code of overlay 0x67c, in ROM order.
 
-#include "flags.h"
-#include "shared/vents.h"
-#include "shared/tables.h"
-#include "aqua_rock_inside.h"
-#include "types.h"
-#include "system/iwram_call.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "field/field.h"
-
 #define VENT_TOUCHING Func_02003844
 #define VENT_BOUNCE Func_0200389c
 #include "../field/object/vent_bounce.c"
@@ -2454,8 +2429,6 @@ void Func_02003c00(s32 index, s32 value) {
 }
 
 DEFINE_VENTS_SET_ID(Vents_SetId)
-
-#include "scene_tables.h"
 
 /* VIEW(s3844): routine Orbiter_Spiral as void Orbiter_Spiral(void);
  * games/tla/src/scene/aqua_rock_inside/s13bc has
@@ -2602,11 +2575,6 @@ u32 gWaterDropScript[] = {
 #undef gData_0200534c
 #undef Func_02003ab0
 #undef Orbiter_Spiral
-// ---- from scene/data/aqua_rock_inside.c ----
-
-#include "macros.h"
-#include "types.h"
-#include "scene_tables.h"
 
 void Func_0200033c(void);
 /* VIEW(data): routine Func_0200042c as this part declared it; the joined file

@@ -35,10 +35,6 @@
 #include "actor.h"
 #include "event_work.h"
 #include "module/field/field.h"
-
-/// Where a stone face's whirlwind starts: an unseen actor moved to the face
-/// that blows, which the whirlwind takes its place and heading from.
-enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "call.h"
@@ -48,9 +44,23 @@ enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
 #include "graphics/vram_tab.h"
 #include "system/task.h"
 #include "item_icon.h"
-
 #include "field/cell_target.h"
 #include "objcmd.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "field_sprite.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "system/io_write.h"
+#include "module/field/field_effect.h"
+
+/// Where a stone face's whirlwind starts: an unseen actor moved to the face
+/// that blows, which the whirlwind takes its place and heading from.
+enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
+
 struct Actor;
 struct LightOam;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
@@ -232,14 +242,10 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
+#include "shared/scene_set_arrival_flags.c"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "field_event.h"
 
 extern s32 gPaletteCyclePausesInEvents;
 
@@ -264,9 +270,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
-
-#include "system/frame.h"
-#include "field_sprite.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
@@ -453,22 +456,9 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef Oam_AddSpriteAtDepthClamped
 #undef CrackedTiles_Find
 #undef FieldEffect_Spawn
-// ---- from scene/jupiter_lighthouse_room_9/cracked_tiles.c ----
 // @file
 // The hover-tile hall of Jupiter Lighthouse's right tower: its copy of the
 // effect spawner, and the cracked tiles, found, cracked and fallen through.
-
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-#include "system/io_reg.h"
-#include "field/field.h"
-#include "event_work.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -560,12 +550,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/iwram_call.h"
-#include "scene_tables.h"
-#include "field/cell_target.h"
-
 DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
@@ -591,8 +575,6 @@ struct CellTarget__s1648 {
   s16 tile;
 };
 
-#include "system/io_write.h"
-
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1648,
                          Leader_CenterInCell)
 
@@ -603,24 +585,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1648,
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_SelectAnimation
 #undef Actor_StartScript
-// ---- from scene/jupiter_lighthouse_room_9/cracked_tile_steps.c ----
 // @file
 // The hover-tile hall of Jupiter Lighthouse's right tower: the cracked tiles'
 // steps and landings.
-
-#include "shared/tables.h"
-#include "shared/cracked_tile.h"
-#include "types.h"
-#include "field/cell_target.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "event_work.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
 
 struct CellTarget;
 struct CellTargetEntry;

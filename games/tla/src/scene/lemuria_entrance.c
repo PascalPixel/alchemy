@@ -19,10 +19,12 @@
 #include "scene_tables.h"
 #include "event_work.h"
 #include "call.h"
+#include "module/scene/scene.h"
+#include "module/window/window.h"
+#include "graphics/uiflow.h"
+#include "objcmd.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 extern u32 gLemuriaEntrance_ShipSailsOut[];
 void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames);
@@ -31,10 +33,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void);
 
 extern s32 gLemuriaEntrance_ShipAtRest[];
 
-#include "module/scene/scene.h"
-#include "module/window/window.h"
 #include "text/msg_ids.h"
-#include "graphics/uiflow.h"
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
@@ -255,8 +254,6 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   gMainRoutineWork.eventMode = saved;
   Event_End();
 }
-
-#include "objcmd.h"
 
 // clang-format off
 /// The ship's course out of the harbour.

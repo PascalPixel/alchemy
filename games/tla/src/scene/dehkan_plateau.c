@@ -13,6 +13,31 @@
 #include "module/scene/dehkan_plateau.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+#include "system/main_routine_work.h"
+#include "field_sprite.h"
+#include "system/iwram_call.h"
+#include "system/field_effect.h"
+#include "module/field/field_effect.h"
+#include "shared/map_cells.h"
+#include "tundaria_tower/tundaria_tower.h"
+#include "module/field/field.h"
+#include "flags.h"
+#include "shared/actors.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+#include "field/event.h"
+#include "flag_call.h"
+#include "scene_call.h"
+#include "fixed_math.h"
+#include "gamepak/far_call/system.h"
+#include "system/heap_release.h"
+#include "system/task.h"
 
 void Actor_DisableById(s32 id);
 
@@ -117,10 +142,6 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
     }
   }
 }
-
-#include "system/main_routine_work.h"
-#include "field_sprite.h"
-#include "system/iwram_call.h"
 
 void CrumblingPillars_Place(const void *data) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -502,9 +523,6 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#include "system/field_effect.h"
-#include "module/field/field_effect.h"
-
 /* VIEW(first): routine gData_02003e00 as this part declared it; the joined file
  * has another. */
 extern const s32 gData_02003e00__first[] __asm__("gData_02003e00");
@@ -599,10 +617,6 @@ void Rubble_Burst(void) {
   }
 }
 
-#include "shared/map_cells.h"
-#include "tundaria_tower/tundaria_tower.h"
-#include "module/field/field.h"
-
 DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
                             MapCollision_FindOrAddTag)
 
@@ -685,7 +699,6 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 #undef gData_02004066
 #undef gData_02003e00
 #undef gData_02003e30
-// ---- from scene/dehkan_plateau/dehkan_plateau.c ----
 // @file
 // Scene code of overlay 0x655, in ROM order.
 
@@ -703,36 +716,6 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 // Scene code of overlay 0x655, in ROM order.
 
 // ---- games/tla/src/scene/dehkan_plateau.c ----
-
-#include "flags.h"
-#include "shared/map_cells.h"
-#include "shared/actors.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
-#include "map.h"
-#include "field_sprite.h"
-#include "system/iwram_call.h"
-#include "event_work.h"
-#include "field/event.h"
-#include "flag_call.h"
-#include "module/field/event_commands.h"
-#include "module/scene/dehkan_plateau.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "scene_call.h"
 
 void Actor_DisableById(s32 id);
 
@@ -1725,33 +1708,10 @@ void Func_02002604(void) {
 #undef gData_02003fc8
 #undef CrumblingPillars_Step
 #undef CrumblingPillars_StepWithStandIn
-// ---- from scene/dehkan_plateau/s2698.c ----
 // @file
 // Scene code of overlay 0x655, in ROM order.
 
 // ---- games/tla/src/scene/dehkan_plateau/s2698.c ----
-
-#include "flags.h"
-#include "types.h"
-#include "system/system.h"
-#include "actor.h"
-#include "field_sprite.h"
-#include "fixed_math.h"
-#include "field/event_inline.h"
-#include "scene_tables.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "event_work.h"
-#include "field/event.h"
-#include "field/field.h"
-#include "flag_call.h"
-#include "gamepak/far_call/system.h"
-#include "system/heap_release.h"
-#include "module/field/event_commands.h"
-#include "module/scene/dehkan_plateau.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "scene_call.h"
 
 void Actor_DisableById(s32 id);
 /* VIEW(s2698): routine gData_02004420 as this part declared it; the joined file
@@ -2045,10 +2005,6 @@ void Func_02002bcc(void) {
 // Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next
 // object the overlay links.
 
-#include "map.h"
-#include "system/iwram_call.h"
-#include "scene_ids.h"
-
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
@@ -2322,9 +2278,6 @@ void Func_02003164(void) {
 // ---- games/tla/src/scene/dehkan_plateau/s3284.c ----
 // Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
 // object the overlay links.
-
-#include "system/task.h"
-#include "system/field_effect.h"
 
 /* VIEW(s3284): routine gData_02003fc8 as this part declared it; the joined file
  * has another. */
@@ -2693,10 +2646,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef Pillars_Raise
 #undef gData_02004276
 #undef Actor_PlaceFacing
-// ---- from scene/data/dehkan_plateau.c ----
-#include "types.h"
-#include "scene_tables.h"
-#include "module/scene/dehkan_plateau.h"
 
 /* VIEW(data): routine Func_02001554 as this part declared it; the joined file
  * has another. */

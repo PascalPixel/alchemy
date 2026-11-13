@@ -2,8 +2,6 @@
 /// The scene code of overlay 0x672, in ROM order.
 
 #include "flags.h"
-#include "text/msg_ids.h"
-
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -15,10 +13,24 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "gamepak/far_call/system.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "shared/gabomba_statue_chamber.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "system/input.h"
+#include "field_sprite.h"
+#include "../../include/system/io_reg.h"
+#include "version.h"
+#include "shared/tables.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 void Func_02001094(void);
 
@@ -38,12 +50,7 @@ extern s32 gData_02002048[];
 
 void ActorSystem_SuspendProjectionAndShowSprites(void);
 
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "shared/gabomba_statue_chamber.h"
 
 u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -77,9 +84,6 @@ u8 *Scene_GetEvents(void) {
   return gData_02002530;
 }
 
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-
 void Func_02000100(void) {
   volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
   struct GabombaStatueChamberEventWork *work;
@@ -98,11 +102,6 @@ void Func_02000100(void) {
   wait(20);
   Actor_SetModeById(8, 1);
 }
-
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "scene_ids.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
@@ -427,8 +426,6 @@ void Func_02000a98(s32 x, s32 z) {
 
 void Func_02000b60(void) { Func_02000a98(312, 144); }
 
-#include "system/input.h"
-
 void Func_02000b70(void) {
   struct GabombaStatueChamberObject *leader =
       ((struct GabombaStatueChamberObject *)Actor_GetById(
@@ -627,8 +624,6 @@ void Func_02001094(void) {
 }
 
 // The scene after the statue is lifted in the Gabomba Statue's chamber.
-
-#include "field_sprite.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
@@ -999,8 +994,6 @@ void Func_02001b14(void) {
   }
 }
 
-#include "../../include/system/io_reg.h"
-
 void Func_02001ba8(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(519)) {
@@ -1033,8 +1026,6 @@ void Func_02001ba8(void) {
     Func_02000be8();
   }
 }
-
-#include "version.h"
 
 /// Gives actors 15 to 32 action variant 2, runs Actor_DisableById for actor 8
 /// and grounds it, then Func_02001094 with actor 10 placed when flag 0x8ff is
@@ -1086,12 +1077,7 @@ void Func_02001c44(void) {
 #undef gData_0200200c
 #undef gData_02001f18
 #undef gData_02001f4c
-// ---- from scene/data/gabomba_statue_chamber.c ----
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 void Func_02000e50(void);
 void Func_02000e60(void);

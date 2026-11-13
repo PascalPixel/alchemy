@@ -20,10 +20,9 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "system/frame.h"
+#include "module/scene/scene.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 extern u32 gOseniaCliffs_PaletteCycleStep[];
 
@@ -37,8 +36,6 @@ void Rope_Tie(s32 a, s32 b, s32 c);
 void Rope_Place(s32 a, s32 flag, s32 b, s32 c);
 
 void OseniaCliffs_CyclePalette(void);
-
-#include "module/scene/scene.h"
 
 /// Set once the party has lashed the second rope, which stays tied for the
 /// visit.

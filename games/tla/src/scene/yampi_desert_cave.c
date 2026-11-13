@@ -18,10 +18,25 @@
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
+#include "scene_ids.h"
+#include "field/field.h"
+#include "system/main_routine_work.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/task.h"
+#include "field_event.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "version.h"
+#include "shared/tables.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 
@@ -53,8 +68,6 @@ void YampiDesertCave_EndSand(void);
 extern u32 gYampiDesertCave_Settle[];
 
 void Teleport_PlayWhirl(void);
-
-#include "scene_ids.h"
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 extern u16 *gYampiDesertCave_MarkColors;
@@ -214,11 +227,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
   }
 }
 
-#include "field/field.h"
 #include "text/msg_ids.h"
-#include "system/main_routine_work.h"
-
-#include "event_work.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
@@ -273,11 +282,6 @@ inner:
     goto outer;
   return NULL;
 }
-
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/event_inline.h"
 
 extern char SceneId_Ov662Room1;
 extern char SceneId_Ov662Room2;
@@ -471,9 +475,6 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 
-#include "system/dma.h"
-#include "system/io_reg.h"
-
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
@@ -483,8 +484,6 @@ DEFINE_PALETTE_SET_COLORS(YampiDesertCave_SetMarkColors,
                           gYampiDesertCave_MarkDimColors,
                           gYampiDesertCave_MarkCycleSlots,
                           YampiDesertCave_ArriveByTeleport)
-
-#include "system/task.h"
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(
     YampiDesertCave_StartMarkGlow, gYampiDesertCave_MarkCycleIndex,
@@ -604,21 +603,10 @@ loop:
 // Finds the current target's table row and shrinks it.
 DEFINE_STATUE_SINK(Statue_Sink, YampiDesertCave_SetStakeCell)
 
-#include "field_event.h"
-
 s32 Actor_GetCellIndex(struct Actor *object);
 
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
                            Actor_SelectAnimation)
-
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).
@@ -827,8 +815,6 @@ void YampiDesertCave_MoveSandRipple(void) {
     GameFlag_SetByte(0x278, step);
   }
 }
-
-#include "version.h"
 
 /// The chest that follows the step count: when the tracked object stands on
 /// its cell, mode 1 stops the follower and mode 2 drops the chest.
@@ -1079,10 +1065,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef gYampiDesertCave_MarkPaletteSlots
 #undef gYampiDesertCave_MarkColorsLit
 #undef gYampiDesertCave_MarkColorsDim
-// ---- from scene/data/yampi_desert_cave.c ----
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 
 /* VIEW(data): routine YampiDesertCave_BurstRoom1Pillar as this part declared
  * it; the joined file has another. */

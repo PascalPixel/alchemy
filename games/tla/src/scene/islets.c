@@ -14,10 +14,27 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "field/event_inline.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "event_work.h"
+#include "call.h"
+#include "version.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "shared/push.h"
+#include "system/heap_release.h"
+#include "graphics/palette_snapshots.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "system/vector3.h"
+#include "shared/tables.h"
+#include "objcmd.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/scene/shrine_of_the_sea_god.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 
@@ -218,8 +235,6 @@ void FieldPsynergy_StopMindReadWave(void);
 
 #endif
 
-#include "field/event_inline.h"
-
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
@@ -280,10 +295,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gData_02004b14;
 }
 
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
 
 void Func_02000210(void) {
@@ -733,8 +744,6 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
 
 DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
 
-#include "call.h"
-
 /* VIEW(first): routine gData_020043f8 as this part declared it; the joined file
  * has another. */
 extern const u8 gData_020043f8__first[] __asm__("gData_020043f8");
@@ -865,8 +874,6 @@ void Func_02001278(struct Actor *object) {
                                        source->y + PIXELS(16), source->z);
   object->facing = source->facing;
 }
-
-#include "version.h"
 
 #if !TLA_PATCH_1
 #define ISLETS_GIFT_TRANSITION 521
@@ -1199,9 +1206,6 @@ void Func_02001c4c(void) {
     Actor_Get(12)->collisionFlags &= ~8;
   }
 }
-
-#include "system/dma.h"
-#include "system/io_reg.h"
 
 /* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
  * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
@@ -2226,12 +2230,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// Scene code of overlay 0x674, in ROM order.
 
-#include "shared/push.h"
-#include "system/heap_release.h"
-#include "graphics/palette_snapshots.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-
 void Func_02003410(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
@@ -2433,8 +2431,6 @@ void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
   }
 }
 
-#include "system/vector3.h"
-
 extern s32 gPushLeaderSteps[];
 
 static __inline__ s32 RowByte(s8 *row, s32 index) { return row[index]; }
@@ -2634,15 +2630,7 @@ void Actor_StopAtPushTarget(struct Actor *object) {
 #undef gData_02004554
 #undef gData_02004274
 #undef gPushFootprints
-// ---- from scene/data/islets.c ----
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "version.h"
-#include "objcmd.h"
-#include "module/scene/mars_lighthouse_entrance.h"
-#include "module/scene/shrine_of_the_sea_god.h"
 
 void Func_0200030c(void);
 void Islets_TalkToHealer(void);

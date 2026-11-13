@@ -13,6 +13,46 @@
 
 #include "types.h"
 #include "field/event_inline.h"
+#include "system/ram_buffer.h"
+#include "map.h"
+#include "field/field.h"
+#include "module/field/map.h"
+#include "module/scene/magma_rock.h"
+#include "flag_call.h"
+#include "tundaria_tower/tundaria_tower.h"
+#include "field_event.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+#include "system/iwram_call.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "call.h"
+#include "system/field_effect.h"
+#include "system/io_reg.h"
+#include "event_work.h"
+#include "system/frame.h"
+#include "field/event.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "module/field/field_effect.h"
+#include "system/input.h"
+#include "version.h"
+#include "shared/map_cells.h"
+#include "module/field/object.h"
+#include "shared/effects.h"
+#include "shared/tables.h"
+#include "field_sprite.h"
+#include "gamepak/far_call/system.h"
+#include "field/particle.h"
 
 void Func_02000280(void) {
   GameFlag_Set(513);
@@ -22,13 +62,6 @@ void Func_02000280(void) {
 #include "../field/object/wait_until_idle.c"
 
 #include "../field/map/cell_get.c"
-
-#include "system/ram_buffer.h"
-#include "map.h"
-#include "field/field.h"
-#include "module/field/map.h"
-#include "module/scene/magma_rock.h"
-#include "flag_call.h"
 
 extern u8 gMapCellBuffer[];
 
@@ -50,8 +83,6 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   cell[3] = value;
   return old;
 }
-
-#include "tundaria_tower/tundaria_tower.h"
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
@@ -87,16 +118,6 @@ void Func_02000338(struct Actor *object) {
   MapGrid_SetCellHeight(x << 20, z << 20, object->terrainId, height);
 }
 
-#include "field_event.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-
 void Actor_SelectAnimation();
 
 void Func_02000404(u16 *table) {
@@ -125,8 +146,6 @@ loop:
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "scene_ids.h"
 
 /* VIEW(first): routine gData_020033d0 as this part declared it; the joined file
  * has another. */
@@ -216,9 +235,6 @@ void Func_0200058c(void) {
   Event_End();
 }
 
-#include "system/iwram_call.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -267,9 +283,6 @@ void Func_020005d0(void) {
   Import_EventSetExitRequest(*choice);
   Event_End();
 }
-
-#include "call.h"
-#include "system/field_effect.h"
 
 void Func_020006d4(union FieldObject *object) {
   object->effect.x += object->effect.velocity.x;
@@ -540,8 +553,6 @@ void Func_02000c64(s32 unused, s32 actorArg) {
   Event_End();
 }
 
-#include "system/io_reg.h"
-
 /// Off layer 2's terrain height, the event's object runs cue 188 on terrain 2
 /// with motion flags 3. In room 6, column 27 sets flag 0x947, and column 25
 /// with that flag set sets 0x946.
@@ -716,21 +727,7 @@ void Func_020010d4(struct Actor *object) {
 #undef gData_02003708
 #undef gData_020037c8
 #undef gData_02003370
-// ---- from scene/tundaria_tower/events_f.c ----
 // ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
-#include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "event_work.h"
-#include "system/frame.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "field/event.h"
-#include "field/field.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
 /* VIEW(events_f): routines Func_020010d4, Func_02000404, Func_020007dc,
  * Func_02000f0c and Func_02000fb8 as module/scene/tundaria_tower.h declares
  * them; the scene before defines them otherwise. */
@@ -746,8 +743,6 @@ void Func_02000fb8__events_f(void) __asm__("Func_02000fb8");
 #define Func_02000fb8 Func_02000fb8__events_f
 
 /// What The Lost Age's code declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 struct Particle;
@@ -813,11 +808,6 @@ extern u32 gData_020031b0[];
 extern u32 gData_020031ec[];
 extern u32 gData_02003228[];
 
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "tundaria_tower/tundaria_tower.h"
-#include "module/field/field_effect.h"
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -878,11 +868,6 @@ void Func_020011e0(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
 }
-
-#include "system/iwram_call.h"
-#include "call.h"
-#include "scene_ids.h"
-#include "scene_tables.h"
 
 void Func_0200137c(void) {
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->y >> 19) != 0)
@@ -1065,8 +1050,6 @@ void Func_020017dc(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-#include "system/input.h"
-
 void Func_02001868(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -1209,8 +1192,6 @@ end:
 }
 
 // ---- scene/tundaria_tower/s1b48.c ----
-
-#include "version.h"
 
 #if TLA_PATCH_1
 
@@ -1561,10 +1542,6 @@ end:
 
 // ---- scene/tundaria_tower/events_f.c ----
 
-#include "shared/map_cells.h"
-#include "field_event.h"
-#include "module/field/object.h"
-
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
@@ -1744,8 +1721,6 @@ top:
   if (*list != 0xffff)
     goto top;
 }
-
-#include "map.h"
 
 DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Actor_GetCellIndex,
                            Actor_SelectAnimation)
@@ -2089,23 +2064,6 @@ void Func_02002764(const u16 *table) {
 
 // ---- scene/tundaria_tower/s29d0.c ----
 
-#include "shared/effects.h"
-#include "shared/map_cells.h"
-#include "shared/tables.h"
-#include "types.h"
-#include "system/system.h"
-#include "system/iwram_call.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field_sprite.h"
-#include "system/field_effect.h"
-#include "field/event_inline.h"
-#include "gamepak/far_call/system.h"
-#include "module/field/field_effect.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "field/particle.h"
-
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);
 
@@ -2192,10 +2150,6 @@ void Func_02002b04(void) {
     }
   }
 }
-
-#include "tundaria_tower/tundaria_tower.h"
-#include "map.h"
-#include "system/ram_buffer.h"
 
 DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, MapGrid_GetTerrainKind,
                             MapCollision_FindOrAddTag)
@@ -2323,8 +2277,6 @@ void Func_02002ebc(void) {
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
-
-#include "scene_tables.h"
 
 void Func_02000280(void);
 void Func_020005d0(void);

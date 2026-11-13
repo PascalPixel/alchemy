@@ -1720,7 +1720,6 @@ void Func_02002eb0(void) {
 #undef gData_0200609c
 #undef gData_020060e0
 #undef gData_02006108
-// ---- from scene/kibombo/s2f34.c ----
 // @file
 // Scene code of overlay 0x670, in ROM order.
 

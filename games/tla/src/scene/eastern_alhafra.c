@@ -17,10 +17,30 @@
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "field/particle.h"
+#include "system/ram_buffer.h"
+#include "event_work.h"
+#include "actor.h"
+#include "system/io_reg.h"
+#include "system/dma.h"
+#include "map.h"
+#include "system/frame.h"
+#include "call.h"
+#include "field_sprite.h"
+#include "scene_ids.h"
+#include "shared/push.h"
+#include "system/task.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "graphics/resource.h"
+#include "system/vector3.h"
+#include "shared/map_cells.h"
+#include "module/field/field.h"
+#include "field_event.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 struct Actor;
 struct RockSprite;
@@ -102,10 +122,6 @@ void Actor_FallOverWithAnimationById();
 void Rope_Initialize(void);
 void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
-
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "field/particle.h"
 
 /* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the
  * joined file has another. */
@@ -203,8 +219,6 @@ void Func_02000190(s32 unused, s32 id) {
   }
 }
 
-#include "system/ram_buffer.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
 
 /* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the
@@ -295,8 +309,6 @@ void Func_02000200(s32 mode, s32 id) {
   }
 }
 
-#include "actor.h"
-
 void Func_02000394(s32 unused, s32 id) {
   Func_02000190(unused, id);
   FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 255);
@@ -341,8 +353,6 @@ void Func_0200042c(s32 mode, s32 id) {
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
 // Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
 // object the overlay links.
-
-#include "field/field.h"
 
 void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
@@ -535,11 +545,6 @@ check:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "system/io_reg.h"
-#include "system/dma.h"
-#include "map.h"
-#include "system/frame.h"
-
 /* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file
  * has another. */
 extern u8 gData_020054f0__s0514[] __asm__("gData_020054f0");
@@ -585,8 +590,6 @@ void Func_02000af8(void) {
   Task_AddFrame(Func_02000a98, 0x480);
   Task_AddFrame(Func_02000a44, 0xc80);
 }
-
-#include "call.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
@@ -806,8 +809,6 @@ L_02009100:
   MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
 L_02009122:
 }
-
-#include "field_sprite.h"
 
 void Func_0200112c(void) {
   struct Actor *object0;
@@ -1261,8 +1262,6 @@ void Func_02001bf4(s32 id) {
   Event_PlaySound(151);
   FieldEvent_Wait(15);
 }
-
-#include "scene_ids.h"
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
   Actor_ShowEmoteById(actor, a, b);
@@ -2236,12 +2235,6 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
 /// Scene code of overlay 0x668, in ROM order.
 
-#include "shared/push.h"
-#include "system/task.h"
-#include "system/heap_release.h"
-#include "item_icon.h"
-#include "graphics/resource.h"
-
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
    * instructions differ in tla-en. */
@@ -2350,8 +2343,6 @@ s32 Func_020040ec(s32 id) {
 
 #include "../field/map/cellfill.c"
 
-#include "system/vector3.h"
-
 /* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined
  * file has another. */
 extern s32 gPushDirectionSteps__s4004[] __asm__("gPushDirectionSteps");
@@ -2434,9 +2425,6 @@ DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
 // ---- scene/eastern_alhafra/s44c4.c ----
 
 /// Scene code of overlay 0x668, in ROM order.
-
-#include "shared/map_cells.h"
-#include "module/field/field.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -2578,8 +2566,6 @@ next:
 // Finds the current target's table row and shrinks it.
 DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
 
-#include "field_event.h"
-
 DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
@@ -2597,10 +2583,6 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #undef gData_020056d4
 #undef gPushFootprints
 #undef gPushDirectionSteps
-// ---- from scene/data/eastern_alhafra.c ----
-#include "types.h"
-#include "flags.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 /* VIEW(data): routine Func_0200006c as this part declared it; the joined file

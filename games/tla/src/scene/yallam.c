@@ -8,10 +8,24 @@
 #include "actor.h"
 #include "field/field.h"
 #include "module/scene/scene.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "version.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "event_work.h"
+#include "system/task.h"
+#include "macros.h"
+#include "shared/tables.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
-
-#include "types.h"
 
 void Yallam_SingMoonSong(void);
 
@@ -59,12 +73,6 @@ s32 Yallam_HideSprite(struct Actor *object) {
 }
 
 #include "venus_lighthouse/distance.c"
-
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
-#include "actor.h"
-#include "field/event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -120,21 +128,6 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
                       s32 force);
 void Yallam_UpdateSongGame(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-#include "version.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_tables.h"
-#include "field/event_inline.h"
-#include "system/main_routine_work.h"
-#include "event_work.h"
-#include "system/task.h"
-#include "system/ram_buffer.h"
-#include "macros.h"
 
 /// Stops an actor and turns it to the target when it is within range (or
 /// forced) and already faces near it; returns whether it did.
@@ -1936,12 +1929,7 @@ void Yallam_StartWatchers(void) {
 #undef gYallam_SongGameStart8
 #undef gYallam_SongGameStart10
 #undef gYallam_SongGameStart9
-// ---- from scene/data/yallam.c ----
-#include "shared/tables.h"
-#include "types.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "version.h"
 
 /* VIEW(data): routine Yallam_HideSprite as this part declared it; the joined
  * file has another. */

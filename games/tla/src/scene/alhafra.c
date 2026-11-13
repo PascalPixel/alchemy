@@ -12,7 +12,6 @@
 /// (Alhafra_EnterDoor).
 
 #include "system/main_routine_work.h"
-
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -26,8 +25,12 @@
 #include "scene_tables.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
-#include "text/msg_ids.h"
 #include "shared/tables.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
+
+#include "text/msg_ids.h"
 
 void Alhafra_LookoutSeesMadrasMayor(s32 a0);
 void Alhafra_TalkToHungryBoy(s32 a);
@@ -49,10 +52,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
 
 // The town's own story, which no other scene reads.
 #define FLAG_TOLD_INDRA_MOVED 0x8b0 ///< told the fisherman Indra moved
@@ -228,8 +227,6 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Actor_FaceDirection(ACTOR_HUNGRY_BOY, 0x4000, 0);
   Event_End();
 }
-
-#include "system/ram_buffer.h"
 
 void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {

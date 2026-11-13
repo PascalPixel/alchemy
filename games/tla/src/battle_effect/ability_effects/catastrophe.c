@@ -34,7 +34,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -162,25 +162,26 @@ extern const s16 Data_081999f2[];
 
 void VramBlock_Reset93Far(void);
 void VramBlock_Load93Far(void);
-/* VIEW(f1843fc): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
- * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
- * attributes, s32 flags); tried as the definition's struct EffectSprite
- * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the
- * object already declares, BattleEffect_RunCatastrophe moves: 4 of 4547
- * instructions in tla-ja. */
+/* VIEW(f1843fc): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); the definition has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags); tried as the definition's struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags), which the object already declares, BattleEffect_RunCatastrophe moves:
+ * 4 of 4547 instructions in tla-ja. */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__f1843fc(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+/* VIEW(f1843fc): routine EffectSprite_Acquire as struct SpriteObject
+ * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f17e698
+ * has Sprite *EffectSprite_Acquire(s32, s32, u32, s32); tried as the
+ * definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32
+ * value), which the object already declares, BattleEffect_RunCatastrophe moves:
+ * 2 of 4547 instructions in tla-ja. */
 extern struct SpriteObject *
-Func_0815b290__f1843fc(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f1843fc): routine Func_0815b3b0 as struct SpriteObject
- * *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f17e698 has
- * Sprite *Func_0815b3b0(s32, s32, u32, s32); tried as the definition's struct
- * EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object
- * already declares, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions
- * in tla-ja. */
-extern struct SpriteObject *
-Func_0815b3b0__f1843fc(s32 width, s32 height, u32 shape,
-                       s32 mode) __asm__("Func_0815b3b0");
+EffectSprite_Acquire__f1843fc(s32 width, s32 height, u32 shape,
+                              s32 mode) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 a, s32 b);
@@ -192,7 +193,7 @@ void Graphics_LoadGreyRamp(void);
 void BattleEffect_StepPaletteToResource(s32 resource);
 void Camera_ApplyVerticalShake(s32 range);
 void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
-void Func_08164b2c(s32 r, s32 g, s32 b);
+void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
@@ -274,7 +275,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 240;
   HeapSlot_Release(SLOT_BLITTER);
   BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-  Func_08164b2c(-31, -31, -31);
+  Palette_BrightenSavedBattleBg(-31, -31, -31);
   transition[4] = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = 0x80;
@@ -316,7 +317,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
-      obj = Func_0815b290__f1843fc(32, 32, 0x80002000, 0);
+      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
@@ -325,7 +326,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       u8 *cells = Data_02016000;
 
       for (i = 0; i != 4; i++) {
-        obj = Func_0815b3b0__f1843fc(32, 32, 0x80002000, 0);
+        obj = EffectSprite_Acquire__f1843fc(32, 32, 0x80002000, 0);
         work->objects[24 + i] = obj;
         Iwram_CopyWords(obj, work->objects[i], 24);
         Iwram_CopyWords((void *)OBJ_TILES(work->objects[24 + i]),
@@ -335,7 +336,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Iwram_CopyWords(cellBuffer + 0x1000, Data_02016000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
-    obj = Func_0815b3b0__f1843fc(32, 32, 0x80002000, 0);
+    obj = EffectSprite_Acquire__f1843fc(32, 32, 0x80002000, 0);
     work->objects[28 + i] = obj;
     Iwram_CopyWords(obj, work->objects[i], 24);
   }
@@ -348,7 +349,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = Func_0815b290__f1843fc(32, 32, 0x80000000, 0xc000);
+      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xc000);
       obj->priority = 1;
       work->objects[34 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -363,7 +364,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = Func_0815b290__f1843fc(32, 32, 0x80000000, 0xd000);
+      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xd000);
       obj->priority = 1;
       work->objects[39 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -378,7 +379,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 6; cells += 512, i++) {
-      obj = Func_0815b290__f1843fc(32, 32, 0x80000000, 0xe000);
+      obj = EffectSprite_CreateWithTiles__f1843fc(32, 32, 0x80000000, 0xe000);
       obj->priority = 1;
       work->objects[44 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -413,7 +414,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     if (frame <= 15) {
       s32 v = frame * 2 - 30;
 
-      Func_08164b2c(v, v, v);
+      Palette_BrightenSavedBattleBg(v, v, v);
     }
     if (gInput.repeat & 3) {
       break;
@@ -1107,7 +1108,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       } else {
         r = 38;
       }
-      Func_0818caa8(cellBuffer, 62, y, r);
+      Canvas_BlitAtFoot(cellBuffer, 62, y, r);
     }
     work->transferPending = 1;
     wait(1);
@@ -1130,7 +1131,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   work->fadeStep = 0;
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-  Func_08164b2c(0, -16, -16);
+  Palette_BrightenSavedBattleBg(0, -16, -16);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cellBuffer, 1,
                              1);
@@ -1176,7 +1177,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame == 0) {
           Iwram_FillWordsEntry(canvas, 0x4000, 0);
           rise = -0x400000;
-          Func_08164b2c(0, -16, -16);
+          Palette_BrightenSavedBattleBg(0, -16, -16);
           work->transferMode = 2;
           work->transferValue = 50;
           Iwram_CopyWords(
@@ -1190,7 +1191,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 d = frame - 96;
 
           if ((u32)d <= 23) {
-            Func_08164b2c(-d, -16, frame - 112);
+            Palette_BrightenSavedBattleBg(-d, -16, frame - 112);
             work->shakeFrames = 8;
           }
         }
@@ -1232,7 +1233,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame > 128) {
           s32 d = (frame - 128) << 1;
 
-          Func_08164b2c(d - 11, frame - 136, 3 - d);
+          Palette_BrightenSavedBattleBg(d - 11, frame - 136, 3 - d);
         }
         r = 16;
         ry = rise >> 16;
@@ -1248,7 +1249,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           r = 64;
         }
         top = ry - r / 2 + 60;
-        Func_0818caa8(work->sheet, 60, top, r);
+        Canvas_BlitAtFoot(work->sheet, 60, top, r);
         if (frame > 95) {
           {
             for (i = 0; i != 4; i++) {
@@ -1491,7 +1492,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     wait(1);
     gBgScroll[1].x = savedScroll;
     BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-    Func_08164b2c(-16, -16, -4);
+    Palette_BrightenSavedBattleBg(-16, -16, -4);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,

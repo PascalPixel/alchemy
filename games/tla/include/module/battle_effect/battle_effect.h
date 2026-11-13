@@ -89,7 +89,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *, s32, s32, s32);
+void Canvas_BlitAtFoot(void *, s32, s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
@@ -125,13 +125,13 @@ void Func_08179e6c(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
-void Func_08164abc(s32 r, s32 g, s32 b);
-void Func_08164b2c(s32 red, s32 green, s32 blue);
-void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
-                   s32 segments);
+void Palette_BrightenBattleBg(s32 r, s32 g, s32 b);
+void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
+void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
+                            struct MeshTriangle *triangles, s32 segments);
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight);
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight);
 // The models: the rings' quad (Data_08199220), its corners, the crystal and its
 // corners.
 extern const u8 gData_081990d0[];
@@ -205,7 +205,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
 void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
                                   s32 mode);
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
-void Func_0815e22c(struct EffectPosition *midpoint);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
 void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                                   s32 mode);

@@ -9,7 +9,7 @@
 
 // A unit whose suffix is below SUFFIX_COUNT gets one more character after its
 // name, SUFFIX_BASE plus the suffix: the digits 1 to 9 outside Japan, and the
-// codes 65 to 90 in the Japanese release (Func_08128228 reads it back).
+// codes 65 to 90 in the Japanese release (String_FindFirstDigit reads it back).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SUFFIX_BASE 65
 #define SUFFIX_COUNT 26

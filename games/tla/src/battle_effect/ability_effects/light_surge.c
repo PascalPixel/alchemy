@@ -33,7 +33,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -436,22 +436,22 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode);
+void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect, u32 mode);
 
 /// Abilities: Whorl (kind 232).
-void BattleEffect_RunWhorl(s32 a0) { Func_08171bb0(a0, 0); }
+void BattleEffect_RunWhorl(s32 a0) { BattleEffect_RunWaterColumn(a0, 0); }
 
 /// Abilities: Gale (kind 233).
-void BattleEffect_RunGale(s32 a0) { Func_08171bb0(a0, 1); }
+void BattleEffect_RunGale(s32 a0) { BattleEffect_RunWaterColumn(a0, 1); }
 
 /// Abilities: Lethe Albion (kind 107).
-void BattleEffect_RunLetheAlbion(s32 a0) { Func_08171bb0(a0, 2); }
+void BattleEffect_RunLetheAlbion(s32 a0) { BattleEffect_RunWaterColumn(a0, 2); }
 
 /// Abilities: Poison Flow (kind 81).
-void BattleEffect_RunPoisonFlow(s32 a0) { Func_08171bb0(a0, 3); }
+void BattleEffect_RunPoisonFlow(s32 a0) { BattleEffect_RunWaterColumn(a0, 3); }
 
 /// Abilities: Raging Flood (kind 392).
-void BattleEffect_RunRagingFlood(s32 a0) { Func_08171bb0(a0, 4); }
+void BattleEffect_RunRagingFlood(s32 a0) { BattleEffect_RunWaterColumn(a0, 4); }
 #undef SLOT_BLITTER
 #undef BLITTER
 #undef HI

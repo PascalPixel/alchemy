@@ -235,7 +235,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 extern void
 Graphics_PackTileRows__fxdisp(void *, void *, s32,
                               s32) __asm__("BattleEffect_PackTileRows");
-void Func_0818caa8(void *, s32, s32, s32);
+void Canvas_BlitAtFoot(void *, s32, s32, s32);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -2030,7 +2030,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (two > 1 && fade > 0) {
             Func_0815b434(work->frames, m * 4, fade);
             HeapSlot_Release(188);
-            Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);
+            Canvas_BlitAtFoot(work->frames, target[0] / 2, target[1], m * 4);
             BattleEffect_LoadBlitter(188, 15);
           }
         }

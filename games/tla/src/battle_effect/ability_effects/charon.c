@@ -208,22 +208,24 @@ void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void wait(s32);
 void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
-void Func_08164b2c(s32, s32, s32);
+void Palette_BrightenSavedBattleBg(s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-/* VIEW(f175f74): routine Func_0815b290 as struct SpriteObject__f175f74
- * *Func_0815b290(s32, s32, u32, u32); the definition has struct EffectSprite
- * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject__f175f74 *
-Func_0815b290__f175f74(s32, s32, u32, u32) __asm__("Func_0815b290");
-/* VIEW(f175f74): routine Func_0815b3b0 as struct SpriteObject__f175f74
- * *Func_0815b3b0(s32, s32, u32, u32); the definition has struct
- * EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the
- * definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32
- * value), which the object already declares, it does not compile in tla-ja:
+/* VIEW(f175f74): routine EffectSprite_CreateWithTiles as struct
+ * SpriteObject__f175f74 *EffectSprite_CreateWithTiles(s32, s32, u32, u32); the
+ * definition has struct EffectSprite *EffectSprite_CreateWithTiles(s32 width,
+ * s32 height, s32 attributes, s32 flags). */
+extern struct SpriteObject__f175f74 *EffectSprite_CreateWithTiles__f175f74(
+    s32, s32, u32, u32) __asm__("EffectSprite_CreateWithTiles");
+/* VIEW(f175f74): routine EffectSprite_Acquire as struct SpriteObject__f175f74
+ * *EffectSprite_Acquire(s32, s32, u32, u32); the definition has struct
+ * EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value); tried as
+ * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
+ * s32 value), which the object already declares, it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:23681: too many arguments to
- * function `Func_0815b3b0'. */
+ * function `EffectSprite_Acquire'. */
 extern struct SpriteObject__f175f74 *
-Func_0815b3b0__f175f74(s32, s32, u32, u32) __asm__("Func_0815b3b0");
+EffectSprite_Acquire__f175f74(s32, s32, u32,
+                              u32) __asm__("EffectSprite_Acquire");
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 s32 Func_0800206c(s32, s32);
 
@@ -245,7 +247,7 @@ extern void Render_DrawModelList__f175f74(struct Model__f175f74 *) __asm__(
     "Render_DrawModelList");
 void Graphics_LoadGreyRamp(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
-void Func_0818caa8(void *, s32, s32, s32);
+void Canvas_BlitAtFoot(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
 /* VIEW(f175f74): routine BattleObject_GetFar as struct ActorPos
@@ -342,7 +344,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Palette_LoadBasicSpriteColors();
   scene->unk867 = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-  Func_08164b2c(0, -20, -20);
+  Palette_BrightenSavedBattleBg(0, -20, -20);
   BattleEffect_WipeCanvas(1, 1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
@@ -362,7 +364,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   {
     struct SpriteObject__f175f74 *object =
-        Func_0815b290__f175f74(64, 64, 0xc0002000, 0);
+        EffectSprite_CreateWithTiles__f175f74(64, 64, 0xc0002000, 0);
 
     work->objects[0] = object;
     object->priority = 3;
@@ -379,7 +381,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Decompress_TaggedLz(source, work->buffer);
   for (i = 0; i != 16; i++) {
     struct SpriteObject__f175f74 *object =
-        Func_0815b290__f175f74(16, 16, 0, 0xf000);
+        EffectSprite_CreateWithTiles__f175f74(16, 16, 0, 0xf000);
     SPRITES[i] = object;
     object->priority = 1;
     Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset,
@@ -388,7 +390,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   for (i = 0; i != 32; i++) {
     struct SpriteObject__f175f74 *object =
-        Func_0815b3b0__f175f74(8, 8, 0, 0xf000);
+        EffectSprite_Acquire__f175f74(8, 8, 0, 0xf000);
     SPRITES[16 + i] = object;
     Iwram_CopyWords(object, sprites[0], 24);
   }
@@ -423,10 +425,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
     t = frame - 32;
     if (t >= 0 && t < 22) {
-      Func_08164b2c(-t, -20, frame - 52);
+      Palette_BrightenSavedBattleBg(-t, -20, frame - 52);
     }
     if (frame == 55) {
-      Func_08164b2c(0, -10, -20);
+      Palette_BrightenSavedBattleBg(0, -10, -20);
     }
     if (frame == 4) {
       Sound_PlayFar(107);
@@ -703,7 +705,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Decompress_TaggedLz(source, work->buffer + 0x2400);
         for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
           struct SpriteObject__f175f74 *object =
-              Func_0815b290__f175f74(32, 32, 0x80002000, 0);
+              EffectSprite_CreateWithTiles__f175f74(32, 32, 0x80002000, 0);
 
           object->priority = 3;
           work->objects[i] = object;
@@ -717,7 +719,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Decompress_TaggedLz(source, work->buffer + 0x2400);
         {
           struct SpriteObject__f175f74 *object =
-              Func_0815b290__f175f74(64, 64, 0xc0000000, 0xe000);
+              EffectSprite_CreateWithTiles__f175f74(64, 64, 0xc0000000, 0xe000);
           struct TileSlot *tileSlots;
 
           work->objects[12] = object;
@@ -732,7 +734,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             vram += tileSlots[object->slot].offset;
             Iwram_CopyWords(vram, work->buffer + 0x2400, 0x800);
           }
-          object = Func_0815b290__f175f74(64, 64, 0xc0002000, 0);
+          object = EffectSprite_CreateWithTiles__f175f74(64, 64, 0xc0002000, 0);
           work->objects[13] = object;
           object->priority = 2;
           object->unk17 = 32;
@@ -1104,7 +1106,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           t = 104;
         }
         HeapSlot_Release(188);
-        Func_0818caa8(work->buffer + 0x1000, height, 58, t);
+        Canvas_BlitAtFoot(work->buffer + 0x1000, height, 58, t);
         BattleEffect_LoadBlitter(188, 3);
         blit[1] = SYSTEM_WORK->blitBc;
       }
@@ -1645,7 +1647,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         work->wave = wave - step;
         if (wave > 0) {
           Func_0815b434(work->buffer, wave, 0x10000);
-          Func_0818caa8(work->buffer, 60, 60, wave);
+          Canvas_BlitAtFoot(work->buffer, 60, 60, wave);
         }
       }
     } else {
@@ -1750,8 +1752,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             drop->vy = -0x10000;
           }
           if (drop->timer >= 0) {
-            Func_0818caa8(work->buffer + 0x1000, drop->x >> 16, drop->y >> 16,
-                          16);
+            Canvas_BlitAtFoot(work->buffer + 0x1000, drop->x >> 16,
+                              drop->y >> 16, 16);
             drop->x += drop->vx;
             drop->y += drop->vy;
           }

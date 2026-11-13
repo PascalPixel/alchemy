@@ -570,7 +570,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyYaw(s32 angle);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
@@ -731,14 +731,15 @@ extern const u8 Data_0819a0d4[];
 extern const u8 Data_0819a140[];
 extern const u8 Data_0819a160[];
 
-struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
-                                   u32 attributes);
-struct IrisSprite *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
+struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
+                                                  u32 shape, u32 attributes);
+struct IrisSprite *EffectSprite_Acquire(s32 width, s32 height, u32 shape,
+                                        s32 mode);
 void BattleEffect_ConfigureEffectDisplay(void);
 
 void Palette_LoadBasicSpriteColors(void);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
-void Func_08164b2c(s32 red, s32 green, s32 blue);
+void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
 void Func_08191958(u8 side, u8 speed, void (*midpoint)(void));
 void Func_08191cc4(void);
 void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
@@ -1332,7 +1333,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 size = scene->radiusPixels * 2;
 
         Func_0815b434(work->sheet, size, 0x10000);
-        Func_0818caa8(work->sheet, scene->xPixels, scene->yPixels, size);
+        Canvas_BlitAtFoot(work->sheet, scene->xPixels, scene->yPixels, size);
       }
       if (frame == 175) {
         REG_BG2CNT = 0x785;
@@ -1357,7 +1358,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = Data_02010578;
       for (i = 0; i != 16; i++) {
-        struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
+        struct IrisSprite *obj =
+            EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
         work->objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
@@ -1370,7 +1372,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       DECODE_01(colors, work->sheet);
       table = gResourceTableEntries;
       for (i = 0; i != 15; i++) {
-        struct IrisSprite *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
+        struct IrisSprite *obj =
+            EffectSprite_CreateWithTiles(16, 16, 0x40000000, 0xf000);
 
         objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
@@ -1381,7 +1384,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
                 REG_DMA3);
       }
       for (; i != 36; i++) {
-        struct IrisSprite *obj = Func_0815b3b0(16, 16, 0x40000000, 0xf000);
+        struct IrisSprite *obj =
+            EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
 
         objects[i] = obj;
         Dma_Set(objects[0], obj, 0x84000006, REG_DMA3);
@@ -1595,7 +1599,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 240) <= 127 && !(frame & 15)) {
       s32 v = (240 - frame) / 16;
 
-      Func_08164b2c(v, v, v);
+      Palette_BrightenSavedBattleBg(v, v, v);
     }
     for (j = 0; j != 6; j++) {
       if (frame > Data_0819a048[j]) {

@@ -34,7 +34,8 @@ enum {
 // pixels.
 /* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40;
  * render_model.h has another definition; tried with the definition the rest of
- * the object has, Func_0818ad40 moves: 1 of 1232 instructions in tla-ja. */
+ * the object has, BattleEffect_RunCards moves: 1 of 1232 instructions in
+ * tla-ja. */
 struct ModelTexture__f18ad40 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -89,7 +90,7 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void Func_0815e22c(struct EffectPosition *middle);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *middle);
 void BattleEffect_StepPaletteToResource(s32 resource);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -123,7 +124,7 @@ void BattleEffect_EndCanvasLayer(void);
 // card dissolves into the background's colours while a skeleton reaps the
 // target or a dagger strikes it and breaks into shards. The screen fades in
 // the last eight frames.
-void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *graphics;
@@ -233,7 +234,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 0) {
       Sound_PlayFar(190);
       EffectPosition_ProjectSprite(effect->actor, &card);
-      Func_0815e22c(&middle);
+      BattleEffect_GetTargetsMidpoint(&middle);
       if (mode == CARD_DEATH) {
         if (effect->side == 0)
           middle.x += 32;

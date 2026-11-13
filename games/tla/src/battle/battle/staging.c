@@ -265,7 +265,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       battle->skipPlayback = 0;
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnRecoverFaster);
-      kept = Func_08124cc4(battle->plan.targetIds[0] > 7);
+      kept = DjinnRecovery_CountDownSide(battle->plan.targetIds[0] > 7);
       if (kept == 0)
         BattleMessage_ShowAndWaitFar((s32)(MsgDjinnRecoverFaster + 1));
       if (kept <= 1)

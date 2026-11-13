@@ -2,7 +2,6 @@
 /// The world map screen's picture: drawing it, scrolling it with the cursor,
 /// its area markers, and zooming the view out while L is held.
 
-// ---- games/tla/src/field/event_commands/world_map_picture.c ----
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -126,7 +125,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #undef PLACE_SCREEN_X
 #undef PLACE_SCREEN_Y
 
-// ---- games/tla/src/field/event_commands/f0ec4d4.c ----
 #include "input.h"
 #include "main_routine_work.h"
 #include "io_write_queue.h"
@@ -520,7 +518,6 @@ void WorldPicture_UpdateMarkers(void) {
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 
-// ---- games/tla/src/field/event_commands/f0ece20.c ----
 #include "dma.h"
 #include "resource.h"
 #include "bg_scroll.h"

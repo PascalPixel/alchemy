@@ -1038,7 +1038,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
-  Func_08164b2c(-31, -31, -31);
+  Palette_BrightenSavedBattleBg(-31, -31, -31);
   BattleEffect_TintBattler(effect->actors[0], 7, 3, 0, 30);
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
@@ -1051,7 +1051,8 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
     if (*(volatile u32 *)&gInput.held & 1)
       break;
     if (frame <= 63)
-      Func_08164b2c(frame / 2 - 31, frame / 2 - 31, frame / 2 - 31);
+      Palette_BrightenSavedBattleBg(frame / 2 - 31, frame / 2 - 31,
+                                    frame / 2 - 31);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

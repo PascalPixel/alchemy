@@ -60,8 +60,8 @@ extern u8 gMapCellBuffer[];
  * undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 
-struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
-                                   u32 attributes);
+struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
+                                                  u32 shape, u32 attributes);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)->slot].offset)
@@ -144,7 +144,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Decompress_TaggedLz(cells, gMapCellBuffer);
       tiles = gMapCellBuffer;
       for (i = 0; i != 31; i++) {
-        obj = Func_0815b290(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
@@ -154,7 +154,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Decompress_TaggedLz(cells, gMapCellBuffer);
-      obj = Func_0815b290(32, 32, 0x80002000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
       work->objects[31] = obj;
       obj->priority = 2;
       Iwram_CopyWords((void *)OBJ_TILES(obj), gMapCellBuffer, 0x400);
@@ -305,11 +305,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
         {
           /* FAKEMATCH(temporary): the variant copied into size in a block of
-           * its own; as Func_0818caa8(..., work->particles[16].variant * 2), 50
-           * of 2159 instructions differ in tla-en. */
+           * its own; as Canvas_BlitAtFoot(..., work->particles[16].variant *
+           * 2), 50 of 2159 instructions differ in tla-en. */
           s32 size = work->particles[16].variant;
 
-          Func_0818caa8(work->sheet, cx >> 16, cy >> 16, size * 2);
+          Canvas_BlitAtFoot(work->sheet, cx >> 16, cy >> 16, size * 2);
         }
       }
       if (frame > 47) {
@@ -533,7 +533,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         if (frame <= 27) {
           cells = work->sheet + 0x38c0;
           Func_0815b434(cells, 96, 0x10000);
-          Func_0818caa8(cells, q->x >> 16, q->y >> 16, 96);
+          Canvas_BlitAtFoot(cells, q->x >> 16, q->y >> 16, 96);
         }
         Transform_Reset();
         SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000, 0);
@@ -565,7 +565,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   count = -1;
   transition[4] = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-  Func_08164b2c(31, 31, 31);
+  Palette_BrightenSavedBattleBg(31, 31, 31);
   gBgScroll[1].x = 0;
   gCameraSceneParameters[4] = 240;
   wait(1);
@@ -609,10 +609,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         if (c <= 3) {
           c = 4;
         }
-        Func_08164b2c(a, b, c);
+        Palette_BrightenSavedBattleBg(a, b, c);
       }
       if (frame > 17 || count > 0) {
-        Func_08164abc(4, 4, 4);
+        Palette_BrightenBattleBg(4, 4, 4);
         if (--count == 0) {
           break;
         }
@@ -678,7 +678,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
       if (frame == 0) {
         Sound_PlayFar(208);
-        Func_0818de3c(Data_02011000, 16, 8, 8, 8);
+        Mesh_BuildGrid(Data_02011000, 16, 8, 8, 8);
         {
           s32 ringAngle = 0;
           for (ring = 0, offset = 0; ring != 8;
@@ -697,7 +697,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             }
           }
         }
-        Func_081885f0(Data_02012000, Data_02012800, 32);
+        Mesh_BuildCylinderBand(Data_02012000, Data_02012800, 32);
       }
       texture3.logWidth = 5;
       texture3.logHeight = 5;
@@ -987,7 +987,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           size = width * 2;
           Func_0815b434(Ram_MapCellBuffer, size, 0x10000);
         }
-        Func_0818caa8(Ram_MapCellBuffer, cx >> 16, cy >> 16, size);
+        Canvas_BlitAtFoot(Ram_MapCellBuffer, cx >> 16, cy >> 16, size);
       }
 
       // Each ring has an angle (x), a spin (y) and an age (variant), the

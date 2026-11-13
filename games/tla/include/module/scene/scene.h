@@ -286,7 +286,6 @@ struct FlashWork {
   struct FlashSprite sprite;
 };
 
-// ---- games/tla/src/scene/champa_cliff_caves/s2c88.c ----
 struct ChampaCliffCavesSprite {
   u8 unk00[4];
   u16 y : 8;
@@ -911,7 +910,6 @@ struct Overlay6aaEventWork {
   s32 screenEffect;
 };
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s1254.c ----
 /// One halfword read as a struct's field.
 struct HalfwordField {
   s16 value;
@@ -952,7 +950,6 @@ struct Work020023c4 {
   s16 unk6a;
 };
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s25b0.c ----
 struct MarsLighthouseRoomFAnimation {
   u8 unk00[0x10];
   u8 value10;

@@ -274,7 +274,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, 1), 2);
       BattleMessage_ShowAndWaitFar((s32)&MsgWeaponHowls);
-      Func_08120158();
+      BattleMessage_WaitForTyping();
       MessageArgument_PushFar(abilityId, 4);
       BattleMessage_ShowAndWaitFar((s32)(MsgWeaponHowls + 1));
     }
@@ -680,7 +680,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       }
     }
     if (abilityId == 312) {
-      plan->actorId2 = Func_0811f5a4(plan->actorId);
+      plan->actorId2 = BattleUnit_FindStrongestAlly(plan->actorId);
     } else if (abilityId == 316) {
       s32 tries = 0;
 

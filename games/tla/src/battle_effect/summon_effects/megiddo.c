@@ -29,7 +29,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -120,7 +120,7 @@ void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleObject_PutFar(void);
 void BattleEffect_BuildRepeatingTilemap(void);
-void Func_08164abc(s32 red, s32 green, s32 blue);
+void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
 void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
 void BattleEffect_StepPaletteToResource(s32 palette);
 void Graphics_LoadGreyRamp(void);
@@ -284,7 +284,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
-      Func_08164abc(8, 2, 2);
+      Palette_BrightenBattleBg(8, 2, 2);
       BattleEffect_SpawnObjects(1, 0x299, 2);
     }
     EffectPosition_ProjectScaledBattler(effect->actor, &pos);
@@ -368,7 +368,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     if (frame == 143) {
       s32 *target;
 
-      Func_08164abc(-12, -2, -2);
+      Palette_BrightenBattleBg(-12, -2, -2);
       camera[27] = savedYaw;
       x = 0x780000;
       z = 0x300000;

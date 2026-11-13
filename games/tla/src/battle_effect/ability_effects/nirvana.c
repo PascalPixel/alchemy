@@ -615,7 +615,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -1094,13 +1094,13 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Heavy Divide (kind 101).
-void BattleEffect_RunHeavyDivide(s32 a0) { Func_0816e65c(a0, 0); }
+void BattleEffect_RunHeavyDivide(s32 a0) { BattleEffect_RunHeavyBlow(a0, 0); }
 
 /// Abilities: Strong Hit (kind 469).
-void BattleEffect_RunStrongHit(s32 a0) { Func_0816e65c(a0, 1); }
+void BattleEffect_RunStrongHit(s32 a0) { BattleEffect_RunHeavyBlow(a0, 1); }
 #undef HI
 #undef BLITTER
 #undef ROCKS

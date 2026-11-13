@@ -2,8 +2,6 @@
 /// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM
 /// order.
 
-// ---- games/tla/src/debug/shop_test.c ----
-
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -421,7 +419,6 @@ struct Trigger gSceneEvents[] = {
 };
 #undef INPUT_HELD
 
-// ---- games/tla/src/debug/shop_test/s0520.c ----
 // Overlay 0x6ba's code from Func_02000520 on, in ROM order.
 
 #include "owner_state.h"

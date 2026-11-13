@@ -90,7 +90,7 @@ struct ParticleTimer {
   u16 timer;
 };
 
-// ⚓️'s composite sprite (as worka0/f0daecc.c's CompositeAnimation).
+// ⚓️'s composite sprite (as field.h's CompositeAnimation).
 struct CloakSprite {
   u8 unk00[0x19];
   u8 dirty; // redraw the parts

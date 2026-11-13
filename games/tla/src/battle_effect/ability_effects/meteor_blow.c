@@ -49,7 +49,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -132,9 +132,9 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_StepPaletteToResource(s32 palette);
-void Func_08164abc(s32 red, s32 green, s32 blue);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight);
+void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void SceneTransform_ApplyPosition(const s32 *pos);
@@ -241,7 +241,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   z = 0;
   size = 0;
   scale = 0x10000;
-  Func_0818de3c(triangles, 2, 16, 32, 2);
+  Mesh_BuildGrid(triangles, 2, 16, 32, 2);
   for (offset = 0, frame = 0, angle0 = 0; frame != 16;
        angle0 += 1092, offset += 8, frame++) {
     s32 y = (-Trig_Cos(angle0) * 48) >> 16;
@@ -549,7 +549,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       *q = 0;
     }
   }
-  Func_08164abc(5, -4, -12);
+  Palette_BrightenBattleBg(5, -4, -12);
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {

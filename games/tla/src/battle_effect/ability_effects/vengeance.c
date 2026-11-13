@@ -22,7 +22,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -721,7 +721,7 @@ static inline void CopyPalette(const void *palette) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 }
 
-void Func_0815e22c(struct EffectPosition *midpoint);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
 void BattleEffect_StepPaletteToResource(s32 resourceId);
 
 // A geyser between the targets. A textured column, its texture scrolling
@@ -776,7 +776,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     for (frame = 0; frame != GEYSER_FRAMES; frame++) {
       // The geyser follows the targets' midpoint while it rises.
       if (frame < GEYSER_PEAK_FRAME)
-        Func_0815e22c(&midpoint);
+        BattleEffect_GetTargetsMidpoint(&midpoint);
       if (frame == 0) {
         Sound_PlayFar(144);
         // An empty once-only loop after the call, so work reloads before the
@@ -1281,7 +1281,8 @@ void Func_08182898(struct BattleEffectArgument *effect) {
 struct MeshTriangle;
 struct MeshVertex;
 
-/// The effect sprite Func_0815b290 returns, as far as this function reads it.
+/// The effect sprite EffectSprite_CreateWithTiles returns, as far as this
+/// function reads it.
 struct SpriteView {
   s32 unk00;
   s32 attributes;
@@ -1334,35 +1335,38 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data0FB;
 extern char ResourceId_Data0FC;
 
-/* VIEW(f1811d4): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
- * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
- * attributes, s32 flags); tried as the definition's struct EffectSprite
- * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the
- * object already declares, BattleEffect_RunCoatlicue moves: 1 of 2768
- * instructions in tla-ja. */
-extern struct SpriteObject *
-Func_0815b290__f1811d4(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f1811d4): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); the definition has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags); tried as the definition's struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags), which the object already declares, BattleEffect_RunCoatlicue moves: 1
+ * of 2768 instructions in tla-ja. */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__f1811d4(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex
- * *vertices, struct MeshTriangle *triangles, s32 segments); the definition has
- * void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle
- * *triangles, s32 segments); tried as the definition's void
- * Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
- * s32 segments), which the object already declares, BattleEffect_RunCoatlicue
- * moves: 3 of 2768 instructions in tla-ja. */
-extern void Func_081885f0__f1811d4(struct MeshVertex *vertices,
-                                   struct MeshTriangle *triangles,
-                                   s32 segments) __asm__("Func_081885f0");
+/* VIEW(f1811d4): routine Mesh_BuildCylinderBand as void
+ * Mesh_BuildCylinderBand(struct MeshVertex *vertices, struct MeshTriangle
+ * *triangles, s32 segments); the definition has void
+ * Mesh_BuildCylinderBand(struct MeshVertex__f186dfc *vertices, struct
+ * MeshTriangle *triangles, s32 segments); tried as the definition's void
+ * Mesh_BuildCylinderBand(struct MeshVertex *vertices, struct MeshTriangle
+ * *triangles, s32 segments), which the object already declares,
+ * BattleEffect_RunCoatlicue moves: 3 of 2768 instructions in tla-ja. */
+extern void
+Mesh_BuildCylinderBand__f1811d4(struct MeshVertex *vertices,
+                                struct MeshTriangle *triangles,
+                                s32 segments) __asm__("Mesh_BuildCylinderBand");
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 
 void Palette_LoadBasicSpriteColors(void);
 void Graphics_LoadGreyRamp(void);
 void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
-void Func_08164b2c(s32 r, s32 g, s32 b);
+void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
 
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries__f1811d4[(obj)->vramEntry].tile)
@@ -1497,7 +1501,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 3326);
   skip = 0;
-  Func_081885f0__f1811d4(Data_02014400, coilMesh, 32);
+  Mesh_BuildCylinderBand__f1811d4(Data_02014400, coilMesh, 32);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
@@ -1511,7 +1515,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       i = 0;
       cells = gMapCellBuffer;
       for (; i != 12; cells += 1024, i++) {
-        obj = Func_0815b290__f1811d4(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles__f1811d4(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
@@ -2253,7 +2257,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-  Func_08164b2c(0, 0, 11);
+  Palette_BrightenSavedBattleBg(0, 0, 11);
   frame = 0;
   for (; frame != 60; frame++) {
     s32 s;
@@ -2272,7 +2276,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     if (frame > 48) {
       s32 fade = frame - 48;
 
-      Func_08164b2c(-fade, -fade, 11 - fade * 2);
+      Palette_BrightenSavedBattleBg(-fade, -fade, 11 - fade * 2);
     }
     if (frame == 0) {
       work->transferMode = 3;

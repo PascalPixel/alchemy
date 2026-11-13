@@ -3189,7 +3189,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     else
       REG_BG2X = 0x1000;
   } else {
-    Func_0815e22c(&midpoint);
+    BattleEffect_GetTargetsMidpoint(&midpoint);
     midpoint.x -= 64;
     if (midpoint.x < 0) {
       xOffset = midpoint.x;
@@ -4599,7 +4599,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
    } *)Ram_HeapSlots)                                                          \
        ->draw)
 
-// A sprite object as Func_0815b290 returns it.
+// A sprite object as EffectSprite_CreateWithTiles returns it.
 struct SpriteObject {
   u8 unk00[9];
   u8 tileHigh : 2;
@@ -4609,8 +4609,8 @@ struct SpriteObject {
   u8 slot; // its row of gResourceTableEntries
 };
 
-struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
-                                   u32 attributes);
+struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
+                                                  u32 shape, u32 attributes);
 
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
@@ -4675,7 +4675,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   picture += 256;
   Decompress_TaggedLz(picture, tiles);
   for (i = 0; i != GIANT_PIECES; i++) {
-    struct SpriteObject *piece = Func_0815b290(32, 32, 0x80002000, 0);
+    struct SpriteObject *piece =
+        EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
     piece->priority = 1;
     work->objects[i] = piece;

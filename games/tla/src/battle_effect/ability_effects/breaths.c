@@ -32,7 +32,8 @@ enum {
 // pixels.
 /* VIEW(f18bc98): tag struct ModelTexture as struct ModelTexture__f18bc98;
  * render_model.h has another definition; tried with the definition the rest of
- * the object has, Func_0818bc98 moves: 1 of 1241 instructions in tla-ja. */
+ * the object has, BattleEffect_RunBreaths moves: 1 of 1241 instructions in
+ * tla-ja. */
 struct ModelTexture__f18bc98 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -133,7 +134,7 @@ void BattleEffect_EndCanvasLayer(void);
 /// The breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and Blast
 /// Breath): motes gather at the user's mouth and burst out of it, then each
 /// breath fires its own way.
-void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -566,13 +567,14 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
+                                   s32 mode);
 
 /// Abilities: Human Hunt (kind 437).
-DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, Func_0818c7b8, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, BattleEffect_RunCrescentSlash, 0)
 
 /// Abilities: Echo Cut (kind 390).
-DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, Func_0818c7b8, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, BattleEffect_RunCrescentSlash, 1)
 
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.
@@ -596,7 +598,8 @@ void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
 // cuts it upside down and higher, and throws the target into the air at
 // frame 12. Human Hunt loads the Mars Djinn's colours into the background
 // palette and blends its slash more faintly.
-void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -730,7 +733,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
 typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width,
                               s32 height);
 
-void Func_0818caa8(void *source, s32 x, s32 y, s32 size) {
+void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   s32 half;
 

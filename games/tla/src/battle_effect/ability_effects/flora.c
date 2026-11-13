@@ -45,7 +45,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
@@ -151,22 +151,23 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
-/* VIEW(f179f18): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); f175f74 has
- * struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32). */
-extern struct SpriteObject *
-Func_0815b290__f179f18(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32
- * width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject
- * *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct
- * EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object
- * already declares, it does not compile in tla-ja:
+/* VIEW(f179f18): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); f175f74 has struct SpriteObject__f175f74
+ * *EffectSprite_CreateWithTiles(s32, s32, u32, u32). */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__f179f18(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+/* VIEW(f179f18): routine EffectSprite_Acquire as struct FloraObject
+ * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); f175f74
+ * has struct SpriteObject *EffectSprite_Acquire(s32, s32, u32, u32); tried as
+ * the definition's struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind,
+ * s32 value), which the object already declares, it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:26593: too many arguments to
- * function `Func_0815b3b0'. */
+ * function `EffectSprite_Acquire'. */
 extern struct FloraObject *
-Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape,
-                       s32 mode) __asm__("Func_0815b3b0");
+EffectSprite_Acquire__f179f18(s32 width, s32 height, u32 shape,
+                              s32 mode) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
@@ -267,7 +268,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
         struct FloraObject *obj =
-            Func_0815b290__f179f18(16, 16, 0x40000000, 0xf000);
+            EffectSprite_CreateWithTiles__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
@@ -275,7 +276,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != 17; i++) {
         struct FloraObject *obj =
-            Func_0815b3b0__f179f18(16, 16, 0x40000000, 0xf000);
+            EffectSprite_Acquire__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[27 + i] = obj;
         Iwram_CopyWordsEntry(obj, work->objects[12], 24);
       }
@@ -291,7 +292,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
-        struct FloraObject *obj = Func_0815b290__f179f18(32, 32, 0x80002000, 0);
+        struct FloraObject *obj =
+            EffectSprite_CreateWithTiles__f179f18(32, 32, 0x80002000, 0);
         obj->flags = 2;
         work->objects[i] = obj;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
@@ -377,7 +379,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       s32 k = Random16() & 3;
       s32 n = Data_08199421[k] * 2;
 
-      Func_0818caa8(source + Data_08199426[k], 44, 78, n);
+      Canvas_BlitAtFoot(source + Data_08199426[k], 44, 78, n);
     }
     u = frame - 112;
     if (u <= 31) {

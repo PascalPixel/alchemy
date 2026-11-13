@@ -84,7 +84,7 @@ void Render_DrawModelList(struct Model *model);
 // rune picture mirrored into a 48x48 crystal, Haze's star sheet; one additive
 // blitter, flipped on the player's side.
 // Frame loop (48 frames).
-void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
   s32 center[3];
   s32 base[3];
   struct BattleEffectWork *work;

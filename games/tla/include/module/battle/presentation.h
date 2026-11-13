@@ -33,7 +33,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
 s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode);
 
-s32 Func_08124cc4(s32 side);
+s32 DjinnRecovery_CountDownSide(s32 side);
 
 void BattleBackground_SetMode(s32 mode, s32 background, s32 value);
 

@@ -20,7 +20,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
@@ -60,7 +60,7 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-void Func_0815e22c(
+void BattleEffect_GetTargetsMidpoint(
     struct EffectPosition *position); // the targets' centre on screen
 void BattleEffect_StepPaletteToResource(s32 palette);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
@@ -192,7 +192,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     p->y = -(Trig_Cos(angle) * radius);
     p->variant = i / 2 + 25;
   }
-  Func_0815e22c(center);
+  BattleEffect_GetTargetsMidpoint(center);
   centerX = center[0] / 2;
 
   for (frame = 0; frame != 104; frame++) {
@@ -281,7 +281,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             u8 *pool = work->sheet + 0x4c86;
 
             Func_0815b434(pool, grow, 0x10000);
-            Func_0818caa8(pool, centerX, 100, grow);
+            Canvas_BlitAtFoot(pool, centerX, 100, grow);
           }
           continue;
         }
@@ -310,7 +310,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             s32 tier = index >> 1;
 
             BattleEffectKernels_IntegrateVector2(p, 64, 0);
-            Func_0818caa8((u8 *)(circles[tier] + cells), dropX, dropY, drop);
+            Canvas_BlitAtFoot((u8 *)(circles[tier] + cells), dropX, dropY,
+                              drop);
           }
         }
       }
@@ -907,8 +908,8 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void) {
 /// Fills a grid of columns by rows vertices with two triangles a cell, each
 /// cell cellWidth by cellHeight texels of the texture, and ends the list with
 /// an all-zero triangle.
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight) {
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight) {
   s32 row;
   s32 column;
   struct MeshTriangle *second;

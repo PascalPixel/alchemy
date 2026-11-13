@@ -22,7 +22,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -71,8 +71,8 @@ void Transform_Pop(void);
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight); // builds a grid's mesh
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight); // builds a grid's mesh
 void Render_ProjectVertices(struct ModelVertex *vertices,
                             struct ProjectedVertex *screen, s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
@@ -410,7 +410,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           s32 row;
           s32 angle;
 
-          Func_0818de3c(mesh, 8, 8, 8, 8);
+          Mesh_BuildGrid(mesh, 8, 8, 8, 8);
           for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
             s32 y = (-Trig_Cos(angle) * 48) >> 16;
             s32 radius = (Trig_Sin(angle) * 48) >> 16;
@@ -478,12 +478,12 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08173588(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Rime (kind 240).
-void BattleEffect_RunRime(s32 a0) { Func_08173588(a0, 0); }
+void BattleEffect_RunRime(s32 a0) { BattleEffect_RunDjinniSign(a0, 0); }
 
 /// Abilities: Haze (kind 238).
-void BattleEffect_RunHaze(s32 a0) { Func_08173588(a0, 1); }
+void BattleEffect_RunHaze(s32 a0) { BattleEffect_RunDjinniSign(a0, 1); }
 #undef SLOT_BLITTER
 #undef BLITTER

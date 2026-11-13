@@ -44,8 +44,8 @@ void *Resource_GetTableEntry(s32 resource);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight); // builds a grid's mesh
+void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                    s32 cellWidth, s32 cellHeight); // builds a grid's mesh
 void Func_08143354(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 void Display_ApplyBg2Affine(void);
@@ -162,7 +162,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
                        128);
   IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
   Actor_SetAnimationSpeedFar(caster, 48);
-  Func_0818de3c(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
+  Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
   for (frame = 0; frame != 74; frame++) {
     EffectPosition_ProjectBattler(effect->actor, &source);

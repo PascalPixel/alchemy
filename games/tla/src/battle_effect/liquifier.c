@@ -506,7 +506,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   for (frame = 0; frame != frames; frame++) {
     EffectPosition_ProjectBattler(effect->actor, &from);
     if (mode == 3)
-      Func_0815e22c(&to);
+      BattleEffect_GetTargetsMidpoint(&to);
     else
       EffectPosition_ProjectBattler(effect->actors[0], &to);
     if (mode == 0 && frame == 0)

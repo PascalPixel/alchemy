@@ -19,7 +19,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -90,7 +90,7 @@ extern const u8 Data_081991c0[];       // and (Earth Force)
 // light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
 // target, trailed by 40 spinning bolts, and grows; when it arrives the
 // target is hit, and in Thunder Mine 128 sparks scatter and bounce.
-void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -267,7 +267,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      Func_0818caa8(buffer, x, y, radius);
+      Canvas_BlitAtFoot(buffer, x, y, radius);
       for (i = 0; i != 4; i++) {
         // DEAD: i runs 0 to 3, so the mask changes nothing; the source keeps
         // it.

@@ -341,19 +341,20 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818a220(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
+                                  s32 mode);
 
 /// Abilities: Bramble Card (kind 88).
-DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, Func_0818a220, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, BattleEffect_RunElementCards, 0)
 
 /// Abilities: Frost Card (kind 87).
-DEFINE_EFFECT_KIND(BattleEffect_RunFrostCard, Func_0818a220, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunFrostCard, BattleEffect_RunElementCards, 1)
 
 /// Abilities: Flame Card (kind 79).
-DEFINE_EFFECT_KIND(BattleEffect_RunFlameCard, Func_0818a220, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunFlameCard, BattleEffect_RunElementCards, 2)
 
 /// Abilities: Thunder Card (kind 89).
-DEFINE_EFFECT_KIND(BattleEffect_RunThunderCard, Func_0818a220, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunThunderCard, BattleEffect_RunElementCards, 3)
 
 // The four cards, as the wrappers pass them.
 enum {
@@ -405,7 +406,8 @@ void BattleEffect_StepPaletteToResource(s32 resource);
 // Thunder cards spread four pictures over the field. Each target is struck
 // every five frames for a while, reeling, flashing and throwing up sparks.
 // From frame 96 the card shrinks away.
-void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -802,19 +804,19 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Sleep Card (kind 92).
-DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, Func_0818ad40, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, BattleEffect_RunCards, 0)
 
 /// Abilities: Baffle Card (kind 90).
-DEFINE_EFFECT_KIND(BattleEffect_RunBaffleCard, Func_0818ad40, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunBaffleCard, BattleEffect_RunCards, 1)
 
 /// Abilities: Death Card (kind 93).
-DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, Func_0818ad40, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, BattleEffect_RunCards, 2)
 
 /// Abilities: Sword Card (kind 91).
-DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, Func_0818ad40, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, BattleEffect_RunCards, 3)
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER
 #undef HI

@@ -21,7 +21,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -79,7 +79,7 @@ extern const u8 Data_08198b9a[];  // a chip's two pixels
 // Data_08198b96[0]. Strong Hit: an axe is thrown, spinning, from the caster
 // to the target. Either way chips of stone fly from the target and bounce
 // on the ground.
-void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: blit[1] gives the stack frame its 4 bytes.
@@ -941,8 +941,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
               ((Trig_Sin(burst->variant << 10) * burst->velocityX) >> 16) * 2;
           index = diameter - 2;
           if ((u32)index <= 61)
-            Func_0818caa8((void *)(*(s16 *)(index + (s32)discs) + cells),
-                          burst->x, burst->y, diameter);
+            Canvas_BlitAtFoot((void *)(*(s16 *)(index + (s32)discs) + cells),
+                              burst->x, burst->y, diameter);
         }
       }
 
@@ -1171,13 +1171,13 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   SummonEffect_RunCanvasMode3(effect);
 }
 
-void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Earth Force (kind 459).
-void BattleEffect_RunEarthForce(s32 a0) { Func_0816fca8(a0, 1); }
+void BattleEffect_RunEarthForce(s32 a0) { BattleEffect_RunBoltTrail(a0, 1); }
 
 /// Abilities: Thunder Mine (kind 86).
-void BattleEffect_RunThunderMine(s32 a0) { Func_0816fca8(a0, 0); }
+void BattleEffect_RunThunderMine(s32 a0) { BattleEffect_RunBoltTrail(a0, 0); }
 #undef SLOT_BLITTER
 #undef BLITTER
 #undef HI

@@ -217,7 +217,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
 #define Func_080219ccFar Func_08020370
 
 /// Frees the borrowed buffer and releases the motion graphics slot.
-void Func_0811e7dc(struct Work0811e7dc *work) {
+void BattleMotion_ReleaseBuffer(struct Work0811e7dc *work) {
   struct MotionObject *object = BattleObject_Get(work->objectId)->object;
 
   if (work->buffer != NULL) {
@@ -451,7 +451,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (work.kind != 0) {
       if (saved)
-        Func_0811e7dc(saved);
+        BattleMotion_ReleaseBuffer(saved);
       if (plan->presentationFlags & 0x4000)
         BattleEffect_DispatchByIdRangeFar(&work);
       else
@@ -648,12 +648,12 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
 // plan's flags say so), raises the caster's hand with its element's glow, then
 // either fails ("But the Psynergy was blocked!" or "...But doesn't have enough
 // PP!") or plays the effect with the events. This game adds a second effect
-// object (Func_0811e3ac, shown by Func_0811e7dc, put back and freed by
-// Func_0811e830), sets the caster's mode from the battle work's byte 0x869,
-// and skips the playback callback and its wait when the plan's word at 100 is
-// set. mode: 1 a Djinni, 2 an enemy's cast. The two fixed yaws are stores in
-// each arm of an if (as a ternary or one value the arms are folded into a
-// default and an override).
+// object (Func_0811e3ac, shown by BattleMotion_ReleaseBuffer, put back and
+// freed by Func_0811e830), sets the caster's mode from the battle work's byte
+// 0x869, and skips the playback callback and its wait when the plan's word at
+// 100 is set. mode: 1 a Djinni, 2 an enemy's cast. The two fixed yaws are
+// stores in each arm of an if (as a ternary or one value the arms are folded
+// into a default and an override).
 
 /// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
 /// the targets from the caster's side, the caster raises its hand and glows
@@ -751,7 +751,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (work.kind) {
       if (saved)
-        Func_0811e7dc(saved);
+        BattleMotion_ReleaseBuffer(saved);
       if (plan->presentationFlags & 0x4000)
         BattleEffect_DispatchByIdRangeFar(&work);
       else

@@ -13,7 +13,8 @@ struct StripQuad;
 
 /* VIEW(f171bb0): tag struct ModelTexture as struct ModelTexture__f171bb0;
  * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, Func_08171bb0 moves: 1 of 1741 instructions in tla-ja. */
+ * of the object has, BattleEffect_RunWaterColumn moves: 1 of 1741 instructions
+ * in tla-ja. */
 struct ModelTexture__f171bb0 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -45,7 +46,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -114,7 +115,8 @@ void SceneTransform_ApplyPosition(const s32 *pos);
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 // Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 // rises around the target, with spray, bubbles and a burst.
-void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
+void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
+                                 u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
   // Unused: the second of The Broken Seal's blitter pair gives the stack frame

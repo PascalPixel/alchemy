@@ -69,24 +69,24 @@ gData_081974ad:
 gSpire_ShardCells:
 	.2byte 0, 55, 121, 221, 298, 368, 452, 673
 	.2byte 862, 1090, 1342, 1631, 1917, 2157, 2413, 2623
-@ As The Broken Seal's; read by SummonEffect_RunCanvasEffect and Func_0818ad40
+@ As The Broken Seal's; read by SummonEffect_RunCanvasEffect and BattleEffect_RunCards
 	.global gStatChange_ShardCells
 gStatChange_ShardCells:
 	.2byte 0, 120, 180, 258, 298, 352, 408, 471
 	.2byte 567, 607, 631, 661
-@ As The Broken Seal's; read by SummonEffect_RunCanvasEffect and Func_0818ad40
+@ As The Broken Seal's; read by SummonEffect_RunCanvasEffect and BattleEffect_RunCards
 	.global gStatChange_ShardWidths
 gStatChange_ShardWidths:
 	.byte 10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7
-@ As The Broken Seal's; read by SummonEffect_RunCanvasEffect and Func_0818ad40
+@ As The Broken Seal's; read by SummonEffect_RunCanvasEffect and BattleEffect_RunCards
 	.global gStatChange_ShardHeights
 gStatChange_ShardHeights:
 	.byte 12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5
-@ The Broken Seal's gCondemn_PanelX; read by BattleEffect_RunCastingImpact and Func_0818ad40
+@ The Broken Seal's gCondemn_PanelX; read by BattleEffect_RunCastingImpact and BattleEffect_RunCards
 	.global gData_0819750c
 gData_0819750c:
 	.byte 10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0
-@ read by BattleEffect_RunCastingImpact and Func_0818ad40
+@ read by BattleEffect_RunCastingImpact and BattleEffect_RunCards
 	.global gData_0819751a
 gData_0819751a:
 	.byte 0, 20, 2, 2, 34, 64, 68
@@ -1693,11 +1693,11 @@ gData_08198962:
 	.global gData_08198966
 gData_08198966:
 	.byte 3, 4, 5, 6
-@ read by Func_08163e14
+@ read by BattleEffect_RunNereidCopy
 	.global gCastingImpact_IceChipPictures
 gCastingImpact_IceChipPictures:
 	.byte 16, 104, 32, 104, 48, 104, 64, 104, 0, 0
-@ The Broken Seal's gNereid_Gravity; read by Func_08163e14
+@ The Broken Seal's gNereid_Gravity; read by BattleEffect_RunNereidCopy
 	.global gData_08198974
 gData_08198974:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
@@ -1796,11 +1796,11 @@ gRagnarok_StrikeColumns:
 	.global gRagnarok_FlashPictures
 gRagnarok_FlashPictures:
 	.byte 5, 5, 4, 3, 2, 1
-@ The Broken Seal's gPlasma_FlashCells; read by Func_08166b10
+@ The Broken Seal's gPlasma_FlashCells; read by BattleEffect_RunFallingSword
 	.global gTitanBlade_FlashPictures
 gTitanBlade_FlashPictures:
 	.byte 5, 5, 4, 3, 2, 1
-@ The Broken Seal's gNereid_Gravity; read by Func_08166b10
+@ The Broken Seal's gNereid_Gravity; read by BattleEffect_RunFallingSword
 	.global gTitanBlade_DustGravity
 gTitanBlade_DustGravity:
 	.4byte 0x8000, 0x4000, 0x4000, 0x2000
@@ -1905,15 +1905,15 @@ Data_08198b8e:
 	.global Data_08198b92
 Data_08198b92:
 	.byte 16, 32, 56, 72
-@ read by Func_0816e65c
+@ read by BattleEffect_RunHeavyBlow
 	.global Data_08198b96
 Data_08198b96:
 	.byte 38, 40
-@ read by Func_0816e65c
+@ read by BattleEffect_RunHeavyBlow
 	.global Data_08198b98
 Data_08198b98:
 	.byte 128, 32
-@ read by Func_0816e65c
+@ read by BattleEffect_RunHeavyBlow
 	.global Data_08198b9a
 Data_08198b9a:
 	.byte 58, 58
@@ -1946,7 +1946,7 @@ Data_08198bdc:
 	.global Data_08198bea
 Data_08198bea:
 	.byte -12, 4, -8, 14
-@ The Broken Seal's gTargetMotes_GlintFlips; read by Func_0816fca8
+@ The Broken Seal's gTargetMotes_GlintFlips; read by BattleEffect_RunBoltTrail
 	.global Data_08198bee
 Data_08198bee:
 	.byte 0, 4, 8, 12
@@ -2159,7 +2159,7 @@ gData_08199268:
 	.2byte 769, 2, 31, 30495, 30464, 0, 256, 2
 	.2byte 0, 31, 30464, 0, 0, 0, 0, 0
 	.2byte 0, 0
-@ read by Func_0816e65c
+@ read by BattleEffect_RunHeavyBlow
 	.global Data_0819928c
 Data_0819928c:
 	.2byte 256, 2, 0, 31, 32512, 0, 769, 2
@@ -2702,11 +2702,11 @@ gHelmSplitter_CellBiasY:
 	.global Data_08199d5c
 Data_08199d5c:
 	.byte 48, 40, 0, 0
-@ read by Func_0818a220
+@ read by BattleEffect_RunElementCards
 	.global Data_08199d60
 Data_08199d60:
 	.byte 124, 140, 132, 130
-@ read by Func_0818a220
+@ read by BattleEffect_RunElementCards
 	.global Data_08199d64
 Data_08199d64:
 	.4byte 0x2000, 62, 1, 0x2000
@@ -2716,31 +2716,31 @@ Data_08199d64:
 	.global gData_08199d94
 gData_08199d94:
 	.byte 0, 12, 24
-@ read by Func_0818bc98
+@ read by BattleEffect_RunBreaths
 	.global Data_08199d97
 Data_08199d97:
 	.byte 90, 38, 32, 48
-@ read by Func_0818bc98
+@ read by BattleEffect_RunBreaths
 	.global Data_08199d9b
 Data_08199d9b:
 	.byte 56, 0, 0, 0
-@ read by Func_0818bc98
+@ read by BattleEffect_RunBreaths
 	.global Data_08199d9f
 Data_08199d9f:
 	.byte 24, 32, 32, 24
-@ read by Func_0818bc98
+@ read by BattleEffect_RunBreaths
 	.global Data_08199da3
 Data_08199da3:
 	.byte 56, 58, 60, 61, 8, 12, 16, 20, 0, 2, 4, 5
-@ read by Func_0818bc98
+@ read by BattleEffect_RunBreaths
 	.global Data_08199daf
 Data_08199daf:
 	.byte 5, 6, 7, 6, 10, 9, 11, 10, 5, 6, 7, 6
-@ read by Func_0818bc98
+@ read by BattleEffect_RunBreaths
 	.global Data_08199dbb
 Data_08199dbb:
 	.byte -32, -48, -56, -72, -16, -32, -64, -72, -32, -48, -56, -72
-@ read by Func_0818bc98
+@ read by BattleEffect_RunBreaths
 	.global Data_08199dc7
 Data_08199dc7:
 	.byte 56, 14, 6, 56

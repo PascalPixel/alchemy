@@ -513,7 +513,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   return 1;
 }
 
-void Func_08120158(void) {
+void BattleMessage_WaitForTyping(void) {
   while (!Message_AllTypedFar())
     wait(1);
   ((s32 *)Ram_HeapSlots->unk84[4])[2] = 1;

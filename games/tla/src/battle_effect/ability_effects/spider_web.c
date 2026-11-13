@@ -10,7 +10,7 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void);
  * Animation_ApplyChildArgumentFar(void *, s32); ability_effects has void
  * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the 4
  * declarations' void Animation_ApplyChildArgumentFar(void *, s32),
- * Func_0815b3b0 moves: 1 of 46 instructions in tla-ja. */
+ * EffectSprite_Acquire moves: 1 of 46 instructions in tla-ja. */
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
     "Animation_ApplyChildArgumentFar");
 
@@ -39,7 +39,7 @@ struct EffectSprite__f15b3b0 {
 };
 
 // Takes the first free effect sprite of the 64 with a new animation entry.
-struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value) {
+struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value) {
   struct EffectSprite__f15b3b0 *sprite = Ram_HeapSlots->unk0c[1];
   struct EffectSprite__f15b3b0 *found = NULL;
   s32 i = 0;
@@ -264,7 +264,7 @@ void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -1155,7 +1155,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 extern char ResourceId_SpiderWebSheet;
 
 // The middle between the first and the last target.
-void Func_0815e22c(struct EffectPosition *middle);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *middle);
 
 void SummonEffect_RunCanvasMode1(void *action);
 
@@ -1183,7 +1183,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(2);
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x1000;
-  Func_0815e22c(&middle);
+  BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
                              1);

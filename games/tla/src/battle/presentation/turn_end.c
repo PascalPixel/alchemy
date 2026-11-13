@@ -313,7 +313,7 @@ void Func_08124cc0(void) {}
 /// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else
 /// 0.
 // ☀️'s DjinnRecovery_CountDown with ⚓️'s presentation.
-s32 Func_08124cc4(s32 side) {
+s32 DjinnRecovery_CountDownSide(s32 side) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *entry;

@@ -37,7 +37,7 @@ extern u16 gBattleEffect_MoteCells[];
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 
-void Func_08164abc(s32 red, s32 green, s32 blue);
+void Palette_BrightenBattleBg(s32 red, s32 green, s32 blue);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyPitch(s32 angle);
@@ -239,7 +239,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     if (frame > 75)
       REG_BLDALPHA = (168 - frame * 2) | 0x1000;
     if (anchor == ANCHOR_BRIGHTEN && frame > 23)
-      Func_08164abc(2, 2, 2);
+      Palette_BrightenBattleBg(2, 2, 2);
     if (frame == 8)
       Sound_PlayFar(212);
     Transform_Reset();

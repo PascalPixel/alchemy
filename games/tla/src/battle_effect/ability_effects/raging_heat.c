@@ -19,7 +19,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
@@ -334,7 +334,7 @@ extern s32 Data_02010018[];
 extern u8 Data_0819940c[][7];
 
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void Func_0815e22c(struct EffectPosition *midpoint);
+void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
 
 // A ring of small flames. The flames circle the caster in a ring that rises
 // over its head from frame 8, each turning its own way through four cels.
@@ -405,7 +405,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       // The throw: z and velocityZ hold the pull toward the midpoint, and
       // the ring keeps three quarters of its speed each frame.
       if (frame == RING_THROW_FRAME) {
-        Func_0815e22c(&midpoint);
+        BattleEffect_GetTargetsMidpoint(&midpoint);
         ring->x = caster.x << 16;
         ring->y = (caster.y - lift - 32) << 16;
         ring->velocityX = 0;

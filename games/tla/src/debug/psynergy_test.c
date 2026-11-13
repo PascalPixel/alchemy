@@ -2,8 +2,6 @@
 /// Overlay 0x6b8's scene: its code up to Func_02000c4c, then its tables, in ROM
 /// order.
 
-// ---- games/tla/src/debug/psynergy_test.c ----
-
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -791,7 +789,6 @@ struct Trigger gSceneEvents[] = {
 };
 #undef INPUT_HELD
 
-// ---- games/tla/src/debug/psynergy_test/s0c4c.c ----
 // Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
 
 /* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c;

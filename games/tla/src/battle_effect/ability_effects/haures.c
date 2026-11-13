@@ -19,7 +19,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -127,19 +127,20 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-/* VIEW(f186dfc): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
- * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
- * attributes, s32 flags). */
-extern struct SpriteObject *
-Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f186dfc): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); the definition has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags). */
+extern struct SpriteObject *EffectSprite_CreateWithTiles__f186dfc(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 a, s32 b);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Func_08164abc(s32 r, s32 g, s32 b);
-void Func_08164b2c(s32 r, s32 g, s32 b);
+void Palette_BrightenBattleBg(s32 r, s32 g, s32 b);
+void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void BattleEffect_ProcessPendingStampTransfer(
@@ -239,7 +240,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
   }
-  sprite = Func_0815b290__f186dfc(64, 64, 0xc0002000, 0);
+  sprite = EffectSprite_CreateWithTiles__f186dfc(64, 64, 0xc0002000, 0);
   ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) =
@@ -391,16 +392,17 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if ((u32)frame <= 31) {
         s32 a = frame * 2 / 3 - 35;
 
-        Func_08164b2c(a, a, frame - 35);
+        Palette_BrightenSavedBattleBg(a, a, frame - 35);
       }
       if ((u32)(frame - 242) <= 21 && (frame & 1)) {
-        Func_08164abc(1, 0, 0);
+        Palette_BrightenBattleBg(1, 0, 0);
       }
       if (frame == 277) {
-        Func_08164b2c(8, -12, -12);
+        Palette_BrightenSavedBattleBg(8, -12, -12);
       }
       if (frame > 359) {
-        Func_08164b2c(8 - (frame - 360) / 4, -12, (frame - 360) / 8 - 12);
+        Palette_BrightenSavedBattleBg(8 - (frame - 360) / 4, -12,
+                                      (frame - 360) / 8 - 12);
       }
       if (frame == 48) {
         Sound_PlayFar(136);
@@ -1138,8 +1140,8 @@ struct MeshTriangle {
 // to the second (row 15). A triangle whose three vertices are 0 ends the list.
 // Summon 20 builds it with 32 segments into the buffers at 0x02014400 and
 // 0x02014800.
-void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
-                   s32 segments) {
+void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
+                            struct MeshTriangle *triangles, s32 segments) {
   s32 ring;
   s32 i;
 

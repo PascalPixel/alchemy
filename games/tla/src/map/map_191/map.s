@@ -32,7 +32,7 @@ Field_Map191:
 	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map191_SCENE:
-	.incbin "games/tla/src/map/map_191/scene.parts.lz"
+	.incbin "games/tla/src/map/map_191/scene.scene.lz"
 	.global Tileset_Set83Palette
 Tileset_Set83Palette:
 	.incbin "games/tla/src/graphics/tileset/set_83/palette.gbapal.lz"

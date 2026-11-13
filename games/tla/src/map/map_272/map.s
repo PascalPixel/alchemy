@@ -32,5 +32,5 @@ Field_Map272:
 	.incbin "games/tla/src/map/map_260/blend.script.lz"
 	.balign 4, 0
 .LField_Map272_SCENE:
-	.incbin "games/tla/src/map/map_272/scene.parts.lz"
+	.incbin "games/tla/src/map/map_272/scene.scene.lz"
 	.balign 4, 0

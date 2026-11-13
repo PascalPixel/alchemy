@@ -454,3 +454,60 @@ collision(const Buffer *input)
 	freeStrings(&lines);
 	return out;
 }
+
+/*
+ * A map's scene: the points the map's events place things at, the entrances,
+ * and the camera's bounds, three tables one after another with a blank line
+ * between, each under its own header line as a table has. The game reads a
+ * header first, the offsets of the entrances, of the map's cell edits and of
+ * the bounds, then a zero halfword; the edits are an empty list here, its
+ * end marker alone.
+ */
+Buffer
+scene(const Buffer *input)
+{
+	Strings all = split((char *) input->data, '\n'), sections = {0};
+	Buffer section = {0};
+	for (size_t i = 0; i <= all.len; i++)
+	{
+		bool blank = i == all.len || !*trim(all.items[i]);
+		if (!blank)
+		{
+			append(&section, all.items[i], strlen(all.items[i]));
+			byte(&section, '\n');
+		}
+		else if (section.len)
+		{
+			byte(&section, 0);
+			addString(&sections, (char *) section.data);
+			free(section.data);
+			section = (Buffer){0};
+		}
+	}
+	freeStrings(&all);
+	if (sections.len != 3)
+		fail("a scene is three tables: points, entrances, bounds");
+	Buffer parts[3];
+	for (size_t i = 0; i < 3; i++)
+	{
+		Buffer text = {(uint8_t *) sections.items[i], strlen(sections.items[i]), 0};
+		parts[i] = table(&text);
+	}
+	size_t entrances = 8 + parts[0].len, edits = entrances + parts[1].len,
+		   bounds = edits + 2;
+	if (bounds > 0xffff)
+		fail("a scene is too large for its header");
+	Buffer out = {0};
+	half(&out, (unsigned) entrances);
+	half(&out, (unsigned) edits);
+	half(&out, (unsigned) bounds);
+	half(&out, 0);
+	append(&out, parts[0].data, parts[0].len);
+	append(&out, parts[1].data, parts[1].len);
+	half(&out, 0xffff);
+	append(&out, parts[2].data, parts[2].len);
+	for (size_t i = 0; i < 3; i++)
+		free(parts[i].data);
+	freeStrings(&sections);
+	return out;
+}

@@ -34,7 +34,7 @@ Field_Map032:
 	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map032_SCENE:
-	.incbin "games/tla/src/map/map_032/scene_ja.parts.lz"
+	.incbin "games/tla/src/map/map_032/scene_ja.scene.lz"
 	.else
 	map_header 0, 0, 128, 80, 3, 3, 2, 0, 2, 2, 0, 0
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
@@ -66,7 +66,7 @@ Field_Map032:
 	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map032_SCENE:
-	.incbin "games/tla/src/map/map_032/scene.parts.lz"
+	.incbin "games/tla/src/map/map_032/scene.scene.lz"
 	.endif
 	.balign 4, 0
 	.global Tileset_Set15Palette

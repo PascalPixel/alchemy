@@ -26,7 +26,7 @@ Field_Map293:
 	.incbin "games/tla/src/map/map_293/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map293_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.parts.lz"
+	.incbin "games/tla/src/map/map_000/scene.scene.lz"
 	.balign 4, 0
 	.global Resource_Data620
 Resource_Data620:

@@ -29,5 +29,5 @@ Field_Map241:
 	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map241_SCENE:
-	.incbin "games/tla/src/map/map_241/scene.parts.lz"
+	.incbin "games/tla/src/map/map_241/scene.scene.lz"
 	.balign 4, 0

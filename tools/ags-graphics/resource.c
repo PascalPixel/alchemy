@@ -52,7 +52,8 @@ static bool
 dataForm(const char *form)
 {
 	return !strncmp(form, "delta", 5) || !strcmp(form, "table") ||
-		   !strcmp(form, "plane") || !strcmp(form, "grid") || !strcmp(form, "parts") ||
+		   !strcmp(form, "plane") || !strcmp(form, "grid") ||
+		   !strcmp(form, "scene") || !strcmp(form, "parts") ||
 		   !strcmp(form, "tilemap") || !strcmp(form, "collision") ||
 		   !strcmp(form, "icons4") || !strcmp(form, "blocks") ||
 		   !strcmp(form, "script") || !strcmp(form, "sprites") ||
@@ -236,6 +237,8 @@ buildResource(const char *input, const char *form, const char *codec,
 		raw = plane(&data);
 	else if (!strcmp(form, "grid"))
 		raw = grid(&data);
+	else if (!strcmp(form, "scene"))
+		raw = scene(&data);
 	else if (!strcmp(form, "tilemap"))
 		raw = tilemap(&data, NULL);
 	else if (!strcmp(form, "collision"))

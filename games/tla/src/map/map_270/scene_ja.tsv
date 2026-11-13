@@ -1,5 +1,29 @@
-SCENE_HEADER	table
-SCENE_POINTS_JA	table
-SCENE_ENTRANCES_JA	table
-SCENE_PATCHES	table
-SCENE_BOUNDS	table
+id:u8	x:u16	z:u16
+0x64	40	136
+0xff
+
+id:u8	x:u16	z:u16	flags:u8
+0x1	856	792	12
+0x2	344	824	12
+0x3	552	744	4
+0x4	216	792	12
+0x5	952	536	4
+0x6	296	776	4
+0x7	856	120	4
+0x8	968	120	4
+0x9	0	0	0
+0xa	88	488	12
+0xb	168	136	4
+0xc	224	424	4
+0xd	208	728	4
+0xe	456	424	12
+0xf	88	424	4
+0xff
+
+left:s8	top:s8	right:s8	bottom:s8
+1	1	63	15
+3	20	19	32
+26	20	62	37
+3	37	24	51
+32	42	56	52
+-1

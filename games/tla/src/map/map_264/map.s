@@ -29,7 +29,7 @@ Field_Map264:
 	.incbin "games/tla/src/map/map_264/animation.script.lz"
 	.balign 4, 0
 .LField_Map264_SCENE:
-	.incbin "games/tla/src/map/map_264/scene.parts.lz"
+	.incbin "games/tla/src/map/map_264/scene.scene.lz"
 	.balign 4, 0
 	.global Tileset_Map264TilesD
 Tileset_Map264TilesD:

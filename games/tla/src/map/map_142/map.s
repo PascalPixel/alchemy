@@ -34,7 +34,7 @@ Field_Map142:
 	.incbin "games/tla/src/map/map_060/blend.script.lz"
 	.balign 4, 0
 .LField_Map142_SCENE:
-	.incbin "games/tla/src/map/map_142/scene_ja.parts.lz"
+	.incbin "games/tla/src/map/map_142/scene_ja.scene.lz"
 	.else
 	map_header 0, 0, 90, 100, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -66,5 +66,5 @@ Field_Map142:
 	.incbin "games/tla/src/map/map_060/blend.script.lz"
 	.balign 4, 0
 .LField_Map142_SCENE:
-	.incbin "games/tla/src/map/map_142/scene.parts.lz"
+	.incbin "games/tla/src/map/map_142/scene.scene.lz"
 	.endif

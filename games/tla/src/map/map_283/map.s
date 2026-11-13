@@ -32,7 +32,7 @@ Field_Map283:
 	.incbin "games/tla/src/map/map_060/blend.script.lz"
 	.balign 4, 0
 .LField_Map283_SCENE:
-	.incbin "games/tla/src/map/map_283/scene.parts.lz"
+	.incbin "games/tla/src/map/map_283/scene.scene.lz"
 	.balign 4, 0
 	.global Tileset_Set116Palette
 Tileset_Set116Palette:

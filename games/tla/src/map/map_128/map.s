@@ -31,7 +31,7 @@ Field_Map128:
 	.incbin "games/tla/src/map/map_008/animation.script.lz"
 	.balign 4, 0
 .LField_Map128_SCENE:
-	.incbin "games/tla/src/map/map_128/scene_ja.parts.lz"
+	.incbin "games/tla/src/map/map_128/scene_ja.scene.lz"
 	.else
 	map_header 0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -60,7 +60,7 @@ Field_Map128:
 	.incbin "games/tla/src/map/map_008/animation.script.lz"
 	.balign 4, 0
 .LField_Map128_SCENE:
-	.incbin "games/tla/src/map/map_128/scene.parts.lz"
+	.incbin "games/tla/src/map/map_128/scene.scene.lz"
 	.endif
 	.global Tileset_Palette23
 Tileset_Palette23:

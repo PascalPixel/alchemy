@@ -31,7 +31,7 @@ Field_Map192:
 	.incbin "games/tla/src/map/map_192/animation.script.lz"
 	.balign 4, 0
 .LField_Map192_SCENE:
-	.incbin "games/tla/src/map/map_192/scene_ja.parts.lz"
+	.incbin "games/tla/src/map/map_192/scene_ja.scene.lz"
 	.else
 	map_header 0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -60,7 +60,7 @@ Field_Map192:
 	.incbin "games/tla/src/map/map_192/animation.script.lz"
 	.balign 4, 0
 .LField_Map192_SCENE:
-	.incbin "games/tla/src/map/map_192/scene.parts.lz"
+	.incbin "games/tla/src/map/map_192/scene.scene.lz"
 	.endif
 	.balign 4, 0
 	.global Tileset_Set84Palette

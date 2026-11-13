@@ -32,7 +32,7 @@ Resource_Data60D:
 	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LResource_Data60D_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.parts.lz"
+	.incbin "games/tla/src/map/map_000/scene.scene.lz"
 	.balign 4, 0
 	.global Tileset_Set120Palette
 Tileset_Set120Palette:

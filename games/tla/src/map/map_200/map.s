@@ -29,7 +29,7 @@ Field_Map200:
 	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map200_SCENE:
-	.incbin "games/tla/src/map/map_200/scene.parts.lz"
+	.incbin "games/tla/src/map/map_200/scene.scene.lz"
 	.balign 4, 0
 	.global Tileset_Palette44
 Tileset_Palette44:

@@ -129,12 +129,7 @@ void Func_020001f8(void) {
     red = *src++;
     green = *src++;
     blue = *src++;
-    /* FAKEMATCH(dead): the store in a once-only block, whose end holds the
-     * order around it; as the plain statement, 2 of 120 instructions differ in
-     * tla-en. */
-    do {
-      *dst = (blue << 10) | (green << 5) | red;
-    } while (0);
+    SET_RGB(*dst, red, green, blue);
   }
   dst = &BG_PLTT[gData_02004444[gData_02004450]];
   if (gData_02004434 != 0)
@@ -143,13 +138,8 @@ void Func_020001f8(void) {
     src = Data_0200444c + gData_02004450 * 3;
   red = *src++;
   green = *src++;
-  /* FAKEMATCH(dead): the last read in a once-only block, whose end holds the
-   * order around it; as the plain statement, 2 of 120 instructions differ in
-   * tla-en. */
-  do {
-    blue = *src++;
-  } while (0);
-  *dst = (blue << 10) | (green << 5) | red;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
   gData_02004434 ^= 1;
   if (++gData_02004454 == gData_02004450)
     gData_02004454 = 0;

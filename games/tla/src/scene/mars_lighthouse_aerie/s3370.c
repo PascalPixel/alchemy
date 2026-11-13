@@ -1116,16 +1116,7 @@ void Func_02004ef0(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int index = *slots++;
       int green = *colours++;
       int blue = *colours++;
-      int value;
-
-      /* FAKEMATCH(dead): the colour's build and store in a once-only
-       * block, so both lists are stepped right after their loads and the
-       * next entry's marker loads before 0xffff is built; as plain
-       * statements, 22 of 80 instructions differ in tla-en. */
-      do {
-        value = (blue << 10) | (green << 5) | red;
-        ((u16 *)BG_PLTT)[index] = value;
-      } while (0);
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
     }
     if (*slots != 0xffff && *colours != 0xffff)
       goto next;
@@ -1197,12 +1188,7 @@ void Func_020050b0(void) {
     red = *src++;
     green = *src++;
     blue = *src++;
-    /* FAKEMATCH(dead): the store in a once-only block, whose end holds the
-     * order around it; as the plain statement, 2 of 120 instructions differ in
-     * tla-en. */
-    do {
-      *dst = (blue << 10) | (green << 5) | red;
-    } while (0);
+    SET_RGB(*dst, red, green, blue);
   }
   dst = &BG_PLTT[gData_02006ce0[gData_02006cec]];
   if (gData_02006cd0 != 0)
@@ -1211,13 +1197,8 @@ void Func_020050b0(void) {
     src = Data_02006ce8 + gData_02006cec * 3;
   red = *src++;
   green = *src++;
-  /* FAKEMATCH(dead): the last read in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 120 instructions differ
-   * in tla-en. */
-  do {
-    blue = *src++;
-  } while (0);
-  *dst = (blue << 10) | (green << 5) | red;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
   gData_02006cd0 ^= 1;
   if (++gData_02006cf0 == gData_02006cec)
     gData_02006cf0 = 0;

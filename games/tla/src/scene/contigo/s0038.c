@@ -32,16 +32,7 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int index = *slots++;
       int green = *colours++;
       int blue = *colours++;
-      int value;
-
-      /* FAKEMATCH(dead): the colour's build and store in a once-only
-       * block, so both lists are stepped right after their loads and the
-       * next entry's marker loads before 0xffff is built; as plain
-       * statements, 22 of 80 instructions differ in tla-en. */
-      do {
-        value = (blue << 10) | (green << 5) | red;
-        ((u16 *)BG_PLTT)[index] = value;
-      } while (0);
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
     }
     if (*slots != 0xffff && *colours != 0xffff)
       goto next;
@@ -115,23 +106,12 @@ void Func_020001f8(void) {
   if (step == 0)
     return;
   src = Data_02006018;
-  for (i = 0; i < gData_0200601c;) {
+  for (i = 0; i < gData_0200601c; i++) {
     dst = &BG_PLTT[gData_02006004[gData_02006020 * gData_0200601c + i]];
     red = *src++;
     green = *src++;
-    /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-     * the order around it; as the plain statement, 4 of 120 instructions differ
-     * in tla-en. */
-    do {
-      blue = *src++;
-    } while (0);
-    *dst = (blue << 10) | (green << 5) | red;
-    /* FAKEMATCH(dead): the count's step in a once-only block, whose end
-     * holds it before the exit test's load; as the for loop's own step, 2 of
-     * 120 instructions differ in tla-en. */
-    do {
-      i++;
-    } while (0);
+    blue = *src++;
+    SET_RGB(*dst, red, green, blue);
   }
   dst = &BG_PLTT[gData_02006010[gData_0200601c]];
   if (gData_02006000 != 0)
@@ -140,13 +120,8 @@ void Func_020001f8(void) {
     src = Data_02006018 + gData_0200601c * 3;
   red = *src++;
   green = *src++;
-  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 120 instructions differ
-   * in tla-en. */
-  do {
-    blue = *src++;
-  } while (0);
-  *dst = (blue << 10) | (green << 5) | red;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
   gData_02006000 ^= 1;
   if (++gData_02006020 == gData_0200601c)
     gData_02006020 = 0;

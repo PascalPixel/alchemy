@@ -73,7 +73,7 @@ Map_CopyCellAttributeRect:
 	.global Func_020010b4
 	.thumb_func
 Func_020010b4:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:

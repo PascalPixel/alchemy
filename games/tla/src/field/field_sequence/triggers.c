@@ -291,7 +291,7 @@ s32 Func_080ccec8(s32 id) {
         Event_ResolvePendingActions(0);
         Func_080ea14c(index);
         Func_08038340(contents);
-        Func_080ad2f8(contents);
+        Class_GetSeriesFar(contents);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_SetBit(flag);

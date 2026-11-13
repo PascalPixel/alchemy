@@ -153,7 +153,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -173,7 +173,7 @@ Func_0803ce64:
 	.global Func_020028a0
 	.thumb_func
 Func_020028a0:
-	overlay_veneer Func_080ad208
+	overlay_veneer Party_RestoreHpPpFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -249,7 +249,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Actor_ArmCallbackAndRefresh
 	.thumb_func
 Actor_ArmCallbackAndRefresh:
@@ -265,7 +265,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -341,11 +341,11 @@ Func_020029e8:
 	.global Func_020029f0
 	.thumb_func
 Func_020029f0:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_020029f8
 	.thumb_func
 Func_020029f8:
-	overlay_veneer Func_080c87f0
+	overlay_veneer BattleEffect_GetObjectDepthFar
 	.global BattleEffect_StartArcEffect
 	.thumb_func
 BattleEffect_StartArcEffect:

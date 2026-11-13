@@ -101,7 +101,7 @@ Func_0802b450:
 	.global Func_02002e0c
 	.thumb_func
 Func_02002e0c:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -118,7 +118,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.endif
 	.global Actor_SetSpritePriorityDirect
 	.thumb_func
@@ -175,7 +175,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -187,7 +187,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02002eb4
 	.thumb_func
 Func_02002eb4:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

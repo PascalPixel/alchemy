@@ -250,7 +250,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
           Func_0814cd48(effect->actors[i], 7, 5, i, 10);
         if (frame == start + 6) {
           Func_0814cd48(effect->actors[i], 7, 5, i, 10);
-          Func_08118088(effect->actors[i], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
       }
       col++;
@@ -279,7 +279,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTitanBlade, Func_08166b10, 0)
 DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, Func_08166b10, 1)
 
 #undef FLASH_SHEET
-
 
 // The sheet: the fire pillar, the flashes after it, the sword far after.
 #define FLASH_SHEET (221 << 4)
@@ -625,7 +624,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 68) {
       for (i = 0; i != effect->count; i++) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 16);
-        Func_08118088(effect->actors[i], 7);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 7);
       }
     }
 
@@ -651,7 +650,6 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
 
 struct Model;
 struct StripQuad;
-
 
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
@@ -680,7 +678,6 @@ void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
-
 
 struct JudgmentObject {
   u8 unk0[9];
@@ -723,16 +720,24 @@ extern const u16 Data_08198ac2[];
 extern const u8 gData_08199364[];
 extern const u8 gData_08199210[];
 
-/* VIEW(actor_move_random): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject *Func_0815b290__actor_move_random(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
+/* VIEW(actor_move_random): routine Func_0815b290 as struct SpriteObject
+ * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
+ * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
+ * attributes, s32 flags). */
+extern struct SpriteObject *
+Func_0815b290__actor_move_random(s32 width, s32 height, u32 shape,
+                                 u32 attributes) __asm__("Func_0815b290");
 
 void Palette_LoadBasicObjColors(void);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 speed);
 void Graphics_LoadGreyRamp(void);
 
 #define SLOT_ALT 188 // unkb8[1]
-/* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has static __inline__ void FILL(void *dst, s32 size, s32 value) { Iwram_FillWords(dst, size, value); }; tried with the definition the rest of the object has, BattleEffect_RunJudgment moves: 18 of 2634 instructions in tla-ja. */
+/* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has
+ * static __inline__ void FILL(void *dst, s32 size, s32 value) {
+ * Iwram_FillWords(dst, size, value); }; tried with the definition the rest of
+ * the object has, BattleEffect_RunJudgment moves: 18 of 2634 instructions in
+ * tla-ja. */
 static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   do {
     Iwram_FillWordsEntry(dst, size, value);

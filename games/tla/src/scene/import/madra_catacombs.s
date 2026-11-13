@@ -49,7 +49,7 @@ Actor_SetSingleChildFlags:
 	.global Func_020010ec
 	.thumb_func
 Func_020010ec:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -117,7 +117,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001174
 	.thumb_func
 Func_02001174:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -125,7 +125,7 @@ Import_EventSetExitRequest:
 	.global Func_02001184
 	.thumb_func
 Func_02001184:
-	overlay_veneer Func_080c82c0
+	overlay_veneer Field_FindNearbyTalkTargetFar
 	.global Field_FindNearbyPsynergyTarget
 	.thumb_func
 Field_FindNearbyPsynergyTarget:

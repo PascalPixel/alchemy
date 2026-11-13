@@ -221,7 +221,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   picture->velocityY = 0x20000;
   picture->gravity = 0x4000;
   buffer = HeapSlot_Alloc(68, 0x608);
-  Func_08038248(item);
+  Icon_DrawItemFar(item);
   tile = VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
   visual->tile = tile;
   HeapSlot_Release(68);
@@ -346,7 +346,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
     mask |= 4;
     visual->flags09 = mask;
 
-    Func_08038248(item);
+    Icon_DrawItemFar(item);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
     HeapSlot_Release(68);
 

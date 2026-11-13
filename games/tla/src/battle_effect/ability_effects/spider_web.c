@@ -6,10 +6,19 @@
 #include "../ability_effects_internal.h"
 
 struct AnimationEntry *AnimationObject_AllocateEmpty(void);
-/* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32 Animation_ApplyChildArgumentFar(void *, s32); ability_effects has void Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the 4 declarations' void Animation_ApplyChildArgumentFar(void *, s32), Func_0815b3b0 moves: 1 of 46 instructions in tla-ja. */
-extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__("Animation_ApplyChildArgumentFar");
+/* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32
+ * Animation_ApplyChildArgumentFar(void *, s32); ability_effects has void
+ * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the 4
+ * declarations' void Animation_ApplyChildArgumentFar(void *, s32),
+ * Func_0815b3b0 moves: 1 of 46 instructions in tla-ja. */
+extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
+    "Animation_ApplyChildArgumentFar");
 
-/* VIEW(f15b3b0): tag struct EffectSprite as struct EffectSprite__f15b3b0; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:4172: structure has no member named `kind'. */
+/* VIEW(f15b3b0): tag struct EffectSprite as struct EffectSprite__f15b3b0;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:4172: structure has no member
+ * named `kind'. */
 struct EffectSprite__f15b3b0 {
   u8 unk00[0x0c];
   s32 unk0c;
@@ -202,7 +211,8 @@ void Func_0815b68c(void) {
     work->particles[63].velocityY -= 0x1000;
   if (work->frame > 11)
     work->particles[63].velocityX += 0x1000;
-  Animation_ApplyChildArgumentFar__f15b3b0(work->objects[7], work->frame / 7 % 8 + 7);
+  Animation_ApplyChildArgumentFar__f15b3b0(work->objects[7],
+                                           work->frame / 7 % 8 + 7);
   work->frame++;
 }
 
@@ -210,7 +220,11 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f15b3b0): tag struct ModelTexture as struct ModelTexture__f15b3b0; render_model.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:4524: storage size of `texture' isn't known. */
+/* VIEW(f15b3b0): tag struct ModelTexture as struct ModelTexture__f15b3b0;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:4524: storage size of `texture'
+ * isn't known. */
 struct ModelTexture__f15b3b0 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -218,7 +232,11 @@ struct ModelTexture__f15b3b0 {
   const void *pixels;
 };
 
-/* VIEW(f15b3b0): tag struct RenderModel as struct RenderModel__f15b3b0; render_model.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:4819: dereferencing pointer to incomplete type. */
+/* VIEW(f15b3b0): tag struct RenderModel as struct RenderModel__f15b3b0;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:4819: dereferencing pointer to
+ * incomplete type. */
 struct RenderModel__f15b3b0 {
   s32 kind;
   s32 unk04;
@@ -266,8 +284,9 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 // An actor's recoil motion, through a far call.
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 // Shakes the camera while work->shakeFrames lasts.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
@@ -475,9 +494,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BG1CNT = 0x1f80;
       work->transferMode = 2;
       work->transferValue = 75;
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
       for (i = 0; i != 9; i++) {
         p = &work->particles[i];
         p->variant = -2 * i;
@@ -592,7 +611,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BG2CNT = 0x784;
       REG_BLDALPHA = 0x1010;
       Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+                           Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
+                           128);
     }
     if (frame == 133) {
       const s8 *src;
@@ -1092,7 +1112,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 8) {
       if (mode == 0) {
         Func_081180e8(0x85);
-        Func_08118088(effect->actors[0], 1);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       } else {
         Sound_PlayFar(0x86);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 4);

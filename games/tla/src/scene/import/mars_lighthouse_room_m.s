@@ -93,7 +93,7 @@ Map_CopyCellPictureIndicesRect:
 	.global Func_02003150
 	.thumb_func
 Func_02003150:
-	overlay_veneer Func_08020198
+	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global DisplayBlend_EnableRunScript
 	.thumb_func
 DisplayBlend_EnableRunScript:
@@ -117,7 +117,7 @@ Func_0802b450:
 	.global Func_02003180
 	.thumb_func
 Func_02003180:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -191,7 +191,7 @@ Actor_SetPartAttribute:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -203,11 +203,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_02003228
 	.thumb_func
 Func_02003228:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02003230
 	.thumb_func
 Func_02003230:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

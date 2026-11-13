@@ -33,7 +33,7 @@ Func_0802b450:
 	.global Func_02001174
 	.thumb_func
 Func_02001174:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -105,7 +105,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
 Camera_MoveWithinMapBounds:
@@ -113,7 +113,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001214
 	.thumb_func
 Func_02001214:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

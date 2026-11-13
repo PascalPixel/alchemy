@@ -139,7 +139,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     if (frame == RIPPLE_HIT_FRAME) {
       Func_081180e8(PHASE_RESULTS);
       work->shakeFrames = 8;
-      Func_08118088(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
     }
 
     // One BG2 X offset per scanline, a sine wave running down the screen.

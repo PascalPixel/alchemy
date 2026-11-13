@@ -682,7 +682,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         }
         for (i = 0; i != effect->count; i++) {
           Func_0814cd48(effect->actors[i], 10, 5, -1, 0);
-          Func_08118088(effect->actors[i], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
         frame = 160;
       }
@@ -899,7 +899,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 138) {
         for (i = 0; i != effect->count; i++) {
           Func_0814cd48(effect->actors[i], 10, 5, -1, 0);
-          Func_08118088(effect->actors[i], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
       }
 

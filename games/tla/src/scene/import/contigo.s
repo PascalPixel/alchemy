@@ -245,7 +245,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -253,7 +253,7 @@ Event_ShowMessageAndWait:
 	.global Event_AskYesNoAndShowResponse
 	.thumb_func
 Event_AskYesNoAndShowResponse:
-	overlay_veneer Func_080c81a8
+	overlay_veneer Event_AskYesNoAndShowResponseFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -277,7 +277,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -293,11 +293,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_0200419c
 	.thumb_func
 Func_0200419c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global MapGrid_SetCameraBounds
 	.thumb_func
 MapGrid_SetCameraBounds:
-	overlay_veneer Func_080c8260
+	overlay_veneer MapGrid_SetCameraBoundsFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -341,7 +341,7 @@ Event_WaitTransitionFrames:
 	.global Func_020041fc
 	.thumb_func
 Func_020041fc:
-	overlay_veneer Func_080c83e0
+	overlay_veneer BattleEffect_StartEffectObject22Far
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -385,11 +385,11 @@ Func_0200424c:
 	.global Func_02004254
 	.thumb_func
 Func_02004254:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_0200425c
 	.thumb_func
 Func_0200425c:
-	overlay_veneer Func_080c87f0
+	overlay_veneer BattleEffect_GetObjectDepthFar
 	.global BattleEffect_StartArcEffect
 	.thumb_func
 BattleEffect_StartArcEffect:
@@ -417,15 +417,15 @@ Func_0200428c:
 	.global Func_02004294
 	.thumb_func
 Func_02004294:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_0200429c
 	.thumb_func
 Func_0200429c:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_020042a4
 	.thumb_func
 Func_020042a4:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_WaitForJingle
 	.thumb_func
 Sound_WaitForJingle:

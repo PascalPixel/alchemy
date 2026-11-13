@@ -90,7 +90,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
     if (frame == BURST_HIT_FRAME) {
       work->shakeFrames = 8;
       Func_081180e8(PHASE_HIT);
-      Func_08118088(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
     }
 
@@ -249,7 +249,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
         step->variant = (Random16() & 7) + 48;
       }
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       Func_081180e8(145);
@@ -553,7 +553,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 17) {
         Sound_PlayFar(145);
         for (i = 0; i != effect->count; i++) {
-          Func_08118088(effect->actors[i], 0);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 8;
@@ -1124,7 +1124,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
             BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16,
                                            70);
           } else {
-            Func_08118088(effect->actors[0], 4);
+            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             Func_081180e8(144);
             Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
           }

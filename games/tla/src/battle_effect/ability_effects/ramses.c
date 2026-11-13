@@ -8,7 +8,6 @@
 #undef FORMATION_SIZE
 #undef SCENE_FRAMES
 
-
 // The map cell buffer holds the sparks of the final blow.
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARK_COUNT 512
@@ -49,8 +48,9 @@ extern u16 gData_08198a84[];          // ☀️ gCybele_EmberSizes
 
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 
-void Func_08118088(s32 actor,
-                   s32 variant); // BattleMotion_ApplyVariantMotionFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor,
+    s32 variant); // BattleMotion_ApplyVariantMotionFar
 
 void BattleEffect_CountDownBattlerTints(void);
 
@@ -279,7 +279,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     // (32, 92).
     if (frame == HIT_FRAME) {
       for (i = 0; i != effect->count; i++) {
-        Func_08118088(effect->actors[i], 4);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         Func_0814cd48(effect->actors[i], 7, -1, i, 8);
       }
       work->shakeFrames = 8;

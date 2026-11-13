@@ -36,7 +36,7 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
       MenuCursor_Place(window, (memberIndex % 4) * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
-        Func_080f8058(memberIndex / 4 * 4);
+        Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
         wait(1);
       }
       Shop_DrawParty(window, memberIndex, shop->selectedItem);

@@ -105,7 +105,7 @@ Party_RemoveMember:
 	.global Func_020028a4
 	.thumb_func
 Func_020028a4:
-	overlay_veneer Func_080ad208
+	overlay_veneer Party_RestoreHpPpFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -189,7 +189,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -205,7 +205,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -221,11 +221,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_0200298c
 	.thumb_func
 Func_0200298c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02002994
 	.thumb_func
 Func_02002994:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Func_0200299c
 	.thumb_func
 Func_0200299c:
@@ -289,7 +289,7 @@ Func_02002a0c:
 	.global Func_02002a14
 	.thumb_func
 Func_02002a14:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global BattleEffect_StepVector3
 	.thumb_func
 BattleEffect_StepVector3:
@@ -297,15 +297,15 @@ BattleEffect_StepVector3:
 	.global Func_02002a24
 	.thumb_func
 Func_02002a24:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_02002a2c
 	.thumb_func
 Func_02002a2c:
-	overlay_veneer Func_080c87f0
+	overlay_veneer BattleEffect_GetObjectDepthFar
 	.global Func_02002a34
 	.thumb_func
 Func_02002a34:
-	overlay_veneer Func_080c87f8
+	overlay_veneer Field_StartColorTransitionFar
 	.global Field_StartPaletteTransition
 	.thumb_func
 Field_StartPaletteTransition:

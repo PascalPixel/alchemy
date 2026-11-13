@@ -195,7 +195,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     if (frame == 68)
       Sound_PlayFar(212);
     if (frame == 72) {
-      Func_08118088(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       work->shakeFrames = 8;
       Func_081180e8(144);
     }

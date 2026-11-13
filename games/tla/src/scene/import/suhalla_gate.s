@@ -93,7 +93,7 @@ Event_SetMessageId:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -113,7 +113,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02000a30
 	.thumb_func
 Func_02000a30:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

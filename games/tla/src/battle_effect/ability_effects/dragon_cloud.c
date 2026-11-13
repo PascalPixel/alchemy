@@ -367,7 +367,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     if (frame == 83) {
       work->shakeFrames = 8;
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
-      Func_08118088(effect->actors[0], 1);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
     }
     if (frame == 50) {
       work->shakeFrames = 12;

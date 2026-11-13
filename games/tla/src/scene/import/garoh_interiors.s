@@ -25,15 +25,15 @@ Actor_SetSingleChildFlags:
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:
-	overlay_veneer Func_08020240
+	overlay_veneer Graphics_EnableObjLayerAndCallbacksFar
 	.global Func_020007d4
 	.thumb_func
 Func_020007d4:
-	overlay_veneer Func_08020248
+	overlay_veneer ActorSystem_ResumeProjectionAndHideLayersFar
 	.global Func_020007dc
 	.thumb_func
 Func_020007dc:
-	overlay_veneer Func_080202a0
+	overlay_veneer Map_SetShownLayersFar
 	.global Func_0803ce64
 	.thumb_func
 Func_0803ce64:
@@ -93,7 +93,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -129,15 +129,15 @@ Func_080d3928:
 	.global Func_0200089c
 	.thumb_func
 Func_0200089c:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_020008a4
 	.thumb_func
 Func_020008a4:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_020008ac
 	.thumb_func
 Func_020008ac:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

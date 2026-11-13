@@ -33,8 +33,8 @@ Resource_FarCall004:
 	export SideObject_CreateFar, CreateSideObject
 	export Portrait_ReloadFar, Portrait_Reload
 	export WindowSprite_SetMotionFar, WindowSprite_SetMotion
-	export Func_080380f0, WindowSprite_SetInvertedSentinel
-	export Func_080380f8, Portrait_OpenWindow
+	export WindowSprite_SetInvertedSentinelFar, WindowSprite_SetInvertedSentinel
+	export Portrait_OpenWindowFar, Portrait_OpenWindow
 	export Window_CloseMatchingIdFar, Portrait_CloseWindow
 	export Text_GetMessageSizeFar, Text_GetMessageSize
 	export Text_GetMessageSizeAltFar, Text_GetMessageSizeAlt
@@ -52,22 +52,22 @@ Resource_FarCall004:
 	export SelectionMenu_StopDrawingFar, SelectionMenu_StopDrawing
 	export SelectionMenu_OpenNameWindowFar, SelectionMenu_OpenNameWindow
 	export SelectionMenu_CloseFar, SelectionMenu_Close
-	export Func_08038188, Menu_SetupSelectionBothSides
-	export Func_08038190, SelectionMenu_Run
-	export Func_08038198, SelectionMenu_RunWithSounds
-	export Func_080381a0, MenuArrow_NoOpCallbackBank
-	export Func_080381a8, MenuArrow_NoOpCallback1
-	export Func_080381b0, SelectionMenu_BuildEntries
-	export Func_080381b8, SelectionMenu_ReservedNoOp
-	export Func_080381c0, Battle_CollectPartyCommands
+	export Menu_SetupSelectionBothSidesFar, Menu_SetupSelectionBothSides
+	export SelectionMenu_RunFar, SelectionMenu_Run
+	export SelectionMenu_RunWithSoundsFar, SelectionMenu_RunWithSounds
+	export MenuArrow_NoOpCallbackBankFar, MenuArrow_NoOpCallbackBank
+	export MenuArrow_NoOpCallback1Far, MenuArrow_NoOpCallback1
+	export SelectionMenu_BuildEntriesFar, SelectionMenu_BuildEntries
+	export SelectionMenu_ReservedNoOpFar, SelectionMenu_ReservedNoOp
+	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
 	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
-	export Func_080381d0, BattleMessage_Open
-	export Func_080381d8, MenuArrow_NoOpCallback4
+	export BattleMessage_OpenFar, BattleMessage_Open
+	export MenuArrow_NoOpCallback4Far, MenuArrow_NoOpCallback4
 	export Portrait_GetForSpeakerFar, Portrait_GetForSpeaker
 	export FieldMenu_RunFar, FieldMenu_Run
 	export FileList_SelectActionFar, FileList_SelectAction
-	export Func_080381f8, IconMenu_ChooseSendOption
-	export Func_08038200, AreaNameWindow_Show
+	export IconMenu_ChooseSendOptionFar, IconMenu_ChooseSendOption
+	export AreaNameWindow_ShowFar, AreaNameWindow_Show
 	export AreaNameWindow_HideFar, AreaNameWindow_Hide
 	export Func_08038210, Func_0803ce64
 	export BattleMessage_CloseFar, BattleMessage_Close
@@ -75,8 +75,8 @@ Resource_FarCall004:
 	export MenuArrow_CreateFar, MenuArrow_Create
 	export MenuArrow_SetPositionFar, MenuArrow_SetPosition
 	export MenuArrow_ReleaseFar, MenuArrow_Release
-	export Func_08038240, Item_RemoveFromInventory
-	export Func_08038248, Icon_DrawItem
+	export Item_RemoveFromInventoryFar, Item_RemoveFromInventory
+	export Icon_DrawItemFar, Icon_DrawItem
 	export Text_DrawWideStringAtOffsetFar, Text_DrawWideStringAtOffset
 	export ScanlineWindow_FillSpansFar, ScanlineWindow_FillSpans
 	export WindowSprite_RedrawSavedRectFar, WindowSprite_RedrawSavedRect
@@ -84,24 +84,24 @@ Resource_FarCall004:
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
 	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
 	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
-	export Func_08038288, Resource_LoadByModeIntoSlot
-	export Func_08038290, Window_MarkVisibleTextTiles
+	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
+	export Window_MarkVisibleTextTilesFar, Window_MarkVisibleTextTiles
 	export ItemIcon_ComposeFar, ItemIcon_Compose
 	export PartyStatus_HighlightMembersFar, PartyStatus_HighlightMembers
 	export Icon_BuildItemIconTilesFar, Icon_BuildItemIconTiles
 	export Icon_BuildAbilityIconTilesFar, Icon_BuildAbilityIconTiles
 	export WindowSprite_CreateLoadedFar, WindowSprite_CreateLoaded
 	export Func_080382c0, Func_08043690
-	export Func_080382c8, Save_ChooseAndLoadFile
-	export Func_080382d0, Save_CopyFile
-	export Func_080382d8, Save_EraseSelectedFile
+	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
+	export Save_CopyFileFar, Save_CopyFile
+	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
 	export Func_080382e0, Func_08043534
-	export Func_080382e8, Save_WriteFile
+	export Save_WriteFileFar, Save_WriteFile
 	export Func_080382f0, Func_080432a4
 	export Func_080382f8, Func_08044558
 	export Resource_CopyFixedBlockBFar, Resource_CopyFixedBlockB
 	export Resource_CopyFixedBlockAFar, Resource_CopyFixedBlockA
-	export Func_08038310, SelectionMenu_SetPosition
+	export SelectionMenu_SetPositionFar, SelectionMenu_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
 	export Func_08038328, Func_08044a58
@@ -109,8 +109,8 @@ Resource_FarCall004:
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage
 	export Func_08038340, Func_08044dc8
 	export Func_08038348, Func_0803f9c0
-	export Func_08038350, SettingsMenu_Run
-	export Func_08038358, PauseMenu_Run
+	export SettingsMenu_RunFar, SettingsMenu_Run
+	export PauseMenu_RunFar, PauseMenu_Run
 	export BgScreen_FillRectFar, BgScreen_FillRect
 	export Menu_SelectShopCommandFar, Menu_SelectShopCommand
 	export Menu_SelectSanctumServiceFar, Menu_SelectSanctumService
@@ -126,13 +126,13 @@ Resource_FarCall004:
 	export Text_UseExtraTilesFar, Text_UseExtraTiles
 	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
 	export WindowSprite_GetPointerTilesFar, WindowSprite_GetPointerTiles
-	export Func_080383d8, Message_OpenDecoded
-	export Func_080383e0, Save_CountFilesExcludingSent
+	export Message_OpenDecodedFar, Message_OpenDecoded
+	export Save_CountFilesExcludingSentFar, Save_CountFilesExcludingSent
 	export Window_DrawBorderFar, Window_DrawBorder
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
 	export Link_DrawPageArrowsFar, Link_DrawPageArrows
 	export Func_08038400, Func_080430c4
-	export Func_08038408, Save_ToFile
+	export Save_ToFileFar, Save_ToFile
 	export Icon_CopyResourceToSlotFar, Icon_CopyResourceToSlot
 	export Func_08038418, Func_0803d020
 	export Func_08038420, Func_0803c068

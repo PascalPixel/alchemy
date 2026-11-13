@@ -109,11 +109,11 @@ Map_CopyCellPictureIndicesRect:
 	.global Func_0200440c
 	.thumb_func
 Func_0200440c:
-	overlay_veneer Func_08020198
+	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global Func_02004414
 	.thumb_func
 Func_02004414:
-	overlay_veneer Func_080201a0
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -253,7 +253,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -261,7 +261,7 @@ Event_ShowMessageAndWait:
 	.global Event_AskYesNoAndShowResponse
 	.thumb_func
 Event_AskYesNoAndShowResponse:
-	overlay_veneer Func_080c81a8
+	overlay_veneer Event_AskYesNoAndShowResponseFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -281,7 +281,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -293,7 +293,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_0200457c
 	.thumb_func
 Func_0200457c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:
@@ -365,7 +365,7 @@ Func_02004604:
 	.global Func_0200460c
 	.thumb_func
 Func_0200460c:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global BattleEffect_StepVector3
 	.thumb_func
 BattleEffect_StepVector3:
@@ -377,15 +377,15 @@ Func_0200461c:
 	.global Func_02004624
 	.thumb_func
 Func_02004624:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_0200462c
 	.thumb_func
 Func_0200462c:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02004634
 	.thumb_func
 Func_02004634:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

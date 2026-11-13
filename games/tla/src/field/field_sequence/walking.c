@@ -385,7 +385,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
 
 /// In control mode 3, marks the event work busy, shows its object and, when a
 /// fade is pending, starts it at level 80 and waits 2 frames; then calls
-/// Func_08020268.
+/// MapAnimation_StartFar.
 void Func_080cb82c(void) {
   struct FxWork *work = HeapSlot_AllocEwram(108, 0xd50);
 
@@ -405,7 +405,7 @@ void Func_080cb82c(void) {
       fade->pending = zero;
       wait(2);
     }
-    Func_08020268();
+    MapAnimation_StartFar();
   }
 }
 

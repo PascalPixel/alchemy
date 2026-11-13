@@ -37,8 +37,9 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -182,7 +183,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         }
         Func_081180e8(145);
         for (i = 0; i != effect->count; i++) {
-          Func_08118088(effect->actors[i], 0);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 16;
@@ -454,7 +455,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       Func_081180e8(134);
       for (i = 0; i != effect->count; i++) {
         EffectPosition_ProjectSprite(effect->actors[i], &target);
-        Func_08118088(effect->actors[i], 4);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         Func_0814cd48(effect->actors[i], 7, 5, i, 16);
         for (j = 0; j != Data_0819940c[effect->variant][RING_SPARKS]; j++) {
           struct EffectStep *spark =

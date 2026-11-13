@@ -133,7 +133,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -153,7 +153,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -165,7 +165,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001508
 	.thumb_func
 Func_02001508:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -241,7 +241,7 @@ Func_080d3928:
 	.global Func_020015a0
 	.thumb_func
 Func_020015a0:
-	overlay_veneer Func_080c87f8
+	overlay_veneer Field_StartColorTransitionFar
 	.ifdef TLA_EDITION_ES
 	.global Field_EndActorSpriteEffect
 	.thumb_func
@@ -287,7 +287,7 @@ Func_020015d8:
 	.global Func_020015e0
 	.thumb_func
 Func_020015e0:
-	overlay_veneer Func_080c88a0
+	overlay_veneer BattleEffect_FillOverlayTilesFar
 	.global Func_020015e8
 	.thumb_func
 Func_020015e8:
@@ -295,7 +295,7 @@ Func_020015e8:
 	.global Func_020015f0
 	.thumb_func
 Func_020015f0:
-	overlay_veneer Func_080c88b0
+	overlay_veneer BattleEffect_DrawSpriteAtWorldPositionFar
 	.global Actor_ApplyRandomChildValues
 	.thumb_func
 Actor_ApplyRandomChildValues:

@@ -149,11 +149,11 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Func_02003010
 	.thumb_func
 Func_02003010:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global Func_02003018
 	.thumb_func
 Func_02003018:
@@ -245,7 +245,7 @@ Func_020030c0:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global ObjectVisual_CopyAttributes
 	.thumb_func
 ObjectVisual_CopyAttributes:
@@ -313,7 +313,7 @@ Event_ResolvePendingActions:
 	.global Func_02003150
 	.thumb_func
 Func_02003150:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:
@@ -349,7 +349,7 @@ Func_02003190:
 	.global Func_02003198
 	.thumb_func
 Func_02003198:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global Func_020031a0
 	.thumb_func
 Func_020031a0:

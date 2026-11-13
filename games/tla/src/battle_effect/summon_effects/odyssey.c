@@ -27,7 +27,11 @@ union BattleBackgroundId {
 
 // A model for the ARM renderer (Render_DrawModelList). A textured model (kind
 // 7) takes a shade; a flat one (kind 3) the address of its colour.
-/* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74; render_model.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/summon_effects.c:1096: structure has no member named `look'. */
+/* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/summon_effects.c:1096: structure has no member
+ * named `look'. */
 struct RenderModel__f190b74 {
   s32 kind;
   s32 unk04;
@@ -823,7 +827,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
   }
 }
 
-void Func_08118088(s32 actor, s32 mode);
+void BattleMotion_ApplyKnockbackFar(s32 actor, s32 mode);
 void Palette_LoadBasicObjColors(void);
 
 // Summon 25's teardown: sets each target back on the ground at the battle
@@ -847,7 +851,7 @@ void Func_08191cc4(void) {
     object->y = 120 << 16;
     object->z = 0;
     object->verticalMotionStrength = 0xab85;
-    Func_08118088(work->effect->actors[i], 1);
+    BattleMotion_ApplyKnockbackFar(work->effect->actors[i], 1);
   }
   transition->active = 0;
   gCameraSceneParameters[3] = 120;

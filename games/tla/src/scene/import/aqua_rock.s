@@ -117,11 +117,11 @@ Script_WaitForEventTimeout:
 	.global Func_02002940
 	.thumb_func
 Func_02002940:
-	overlay_veneer Func_08020198
+	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global Func_02002948
 	.thumb_func
 Func_02002948:
-	overlay_veneer Func_080201a0
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -141,7 +141,7 @@ Func_0802b450:
 	.global Func_02002970
 	.thumb_func
 Func_02002970:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -209,7 +209,7 @@ Actor_SetSpritePriority:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -221,7 +221,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02002a10
 	.thumb_func
 Func_02002a10:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -257,7 +257,7 @@ Actor_CommitPositionAndActivate:
 	.global Func_02002a58
 	.thumb_func
 Func_02002a58:
-	overlay_veneer Func_080c8688
+	overlay_veneer Scene_QueueMusicFar
 	.global Event_NoOp
 	.thumb_func
 Event_NoOp:

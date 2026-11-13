@@ -149,7 +149,7 @@ Field_RequestBattleFromEncounterTable:
 	.global Func_02000d0c
 	.thumb_func
 Func_02000d0c:
-	overlay_veneer Func_080c82c0
+	overlay_veneer Field_FindNearbyTalkTargetFar
 	.global Func_02000d14
 	.thumb_func
 Func_02000d14:
@@ -189,7 +189,7 @@ Func_02000d54:
 	.global Func_02000d5c
 	.thumb_func
 Func_02000d5c:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

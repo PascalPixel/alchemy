@@ -109,7 +109,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
       work->shakeFrames = frame;
       Func_081180e8(0x86);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
-      Func_08118088(effect->actors[0], 3);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 3);
     }
 
     // The water rises 4 pixels a frame to 32 and drifts away from the
@@ -167,7 +167,6 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // arguments, and the chips' blitter built by BattleEffect_BuildBlitter
 // directly. Other editions place a differently built version; only the
 // English listing was compared.
-
 
 #define ROCK_COUNT 6
 #define CHIPS_PER_ROCK 4
@@ -363,7 +362,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               rock->variant = 0;
               Sound_PlayFar(134);
               Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
-              Func_08118088(effect->actors[0], 4);
+              BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             }
           }
         }
@@ -380,7 +379,6 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
-
 
 /// Shakes the battle view while the effect work's shakeFrames lasts, moving
 /// BG1 and gCameraSceneParameters[3] and [4] by a random offset; once the
@@ -441,8 +439,6 @@ void Camera_ApplyVerticalShake(s32 range) {
 
 // Thor: a beam of light falls from a dusk sky, then a pillar of lightning and
 // violet bolts strike the foes.
-
-
 
 struct FxPartyList;
 

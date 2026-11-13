@@ -379,18 +379,18 @@ extern char ResourceId_BlizzardBackdrop;
 extern const s16 Data_080efd1c[];
 
 void Func_08020110(void);
-void Func_08020108(s32 map);
+void MapGrid_LoadMapFar(s32 map);
 
 void Map_UpdateCurrentTileBlockFar(void);
 
-void Func_08020180(void);
+void Map_ApplySetFlagEditsFar(void);
 
-void Func_08038200(s32 scene);
+void AreaNameWindow_ShowFar(s32 scene);
 
 s32 WorldPicture_Show(s32 mode);
 void WorldMap_ZoomOutWhileLHeld(void);
 
-void Func_08038358(s32 mode);
+void PauseMenu_RunFar(s32 mode);
 
 void Func_080200b0(void);
 
@@ -402,11 +402,11 @@ extern s16 Data_080f2204[];
 
 void Func_08038340(s32 value);
 
-void Func_080ad2f8(s32 value);
+void Class_GetSeriesFar(s32 value);
 
 extern const u8 Data_080eff22[];
 
-void Func_08020268();
+void MapAnimation_StartFar();
 void Func_08020270(void);
 
 void BattleBackground_SelectForEnvironment(s32 terrain);

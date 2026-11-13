@@ -38,8 +38,9 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -67,9 +68,14 @@ extern char ResourceId_TornadoSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_VioletPaletteC;
-/* VIEW(f16fca8): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f16e65c has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:19186: request for member `variant' in something not a structure or union. */
-extern struct EffectStep gData_02014000__f16fca8[] __asm__("gData_02014000"); // the sparks
-extern u16 gData_08197410[];               // gBattleEffect_MoteCells
+/* VIEW(f16fca8): variable gData_02014000 as extern struct EffectStep
+ * gData_02014000[]; f16e65c has extern u8 gData_02014000[]; tried as the rest
+ * of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:19186: request for member
+ * `variant' in something not a structure or union. */
+extern struct EffectStep
+    gData_02014000__f16fca8[] __asm__("gData_02014000"); // the sparks
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 // Heights not const: a const table's second height read issues two places
 // early (6).
 extern u16 gData_08197486[];      // the flashes' cells: offsets,
@@ -128,7 +134,8 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
   if (mode == 1) {
     Iwram_CopyWords((void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC),
+                    128);
   }
 
   // The bolts' four pictures, 24 by 120, each in a 32-wide cell.
@@ -224,7 +231,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       }
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       if (mode == 0) {
         Func_081180e8(145);
@@ -458,7 +465,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     SPARKS[i].variant = -1;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+                       128);
   BattleEffect_SelectLivingTargets(work->effect);
   wait(1);
 
@@ -534,9 +542,9 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       Func_0815f0a0((s32)&ResourceId_TanPalette);
     }
     if (frame == 64) {
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
 
     // The whirl of flame, and smoke.
@@ -820,7 +828,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
     }
   }
   Iwram_CopyWords((void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+                  128);
 
   // The beam's body: a 32-line gradient.
   row = work->sheet + 0x1a20;
@@ -952,7 +961,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
         if (frame == 72) {
           work->shakeFrames = 8;
           Func_081180e8(145);
-          Func_08118088(effect->actors[0], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         }
         for (i = 0; i != BEAM_SEGMENTS; i++) {

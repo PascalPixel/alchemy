@@ -6,8 +6,7 @@
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
 
-s32 AutoBattle_BuildActions(
-    struct BattleSortedUnitEntry *entries) {
+s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;
   u16 unitIds[14];
   s32 firstCount;
@@ -337,7 +336,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   work.flags = 0;
 
   wait(4);
-  Func_08138008(&work);
+  BattleEffect_DispatchByIdRangeFar(&work);
   ObjMotRst(work.actors[0]);
   ObjMotRst(work.actor);
   return 0;
@@ -410,7 +409,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   work.kind = 3;
   Func_08138020(&work);
   work.kind = 0;
-  Func_08138018(&work);
+  BattleEffect_RunTableEffectFar(&work);
   Actor_SetMode((struct Actor *)object, 1);
   // An empty once-only loop ends CSE's knowledge of work's address, so the
   // return loop's exit test addresses work afresh; without it, 103 of 180
@@ -424,7 +423,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
 }
 
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
-                                        u8 *context) {
+                            u8 *context) {
   u8 localContext[4];
   struct BattleUnit *character;
   struct BattleObj *slot;

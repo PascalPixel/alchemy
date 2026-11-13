@@ -23,7 +23,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
                                     s32 travelDivisor, s32 initialVelocityY);
 
-void Func_08118088(s32 actor, s32 motion);
+void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 
 void BattleEffect_CountDownBattlerTints(void);
 
@@ -70,9 +70,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     }
     Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet,
                                work->sheet + 0x3e80, 1, 1);
-    Iwram_CopyWordsEntry((void *)0x05000000,
-                    Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                    128);
+    Iwram_CopyWordsEntry(
+        (void *)0x05000000,
+        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     work->transferValue = 75;
   }
   work->transferMode = 2;
@@ -142,7 +142,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
       EffectPosition_ProjectBattler(effect->actors[0], &position);
       Func_081180e8(134);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
-      Func_08118088(effect->actors[0], 6);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 6);
       work->shakeFrames = 4;
       for (i = 0; i != effect->variant * 16 + 16; i++) {
         s32 force = (Random16() & 255) + 256;
@@ -201,7 +201,6 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
 // The pillar sheet's cell is 24 x 39; the faded copies follow it.
 #define PILLAR_CELL_SIZE 936
-
 
 extern char ResourceId_FirePillarSheetB;
 extern char ResourceId_Data134;

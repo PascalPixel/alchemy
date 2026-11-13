@@ -37,11 +37,11 @@ Import_ActorCreate:
 	.global Func_020029f4
 	.thumb_func
 Func_020029f4:
-	overlay_veneer Func_08020198
+	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global Func_020029fc
 	.thumb_func
 Func_020029fc:
-	overlay_veneer Func_080201a0
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -65,7 +65,7 @@ Message_AllTyped:
 	.global Func_02002a2c
 	.thumb_func
 Func_02002a2c:
-	overlay_veneer Func_080380f8
+	overlay_veneer Portrait_OpenWindowFar
 	.global Window_CloseMatchingId
 	.thumb_func
 Window_CloseMatchingId:
@@ -161,7 +161,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -189,7 +189,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -201,7 +201,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02002b3c
 	.thumb_func
 Func_02002b3c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

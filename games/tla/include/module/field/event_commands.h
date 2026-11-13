@@ -189,7 +189,7 @@ extern const s32 Data_080f0874[];
 
 s32 PartyInventory_FindRoomFar(s32 item);
 
-s32 Func_08108068(s32 *member, s32 *slot);
+s32 ItemPicker_RunToDropFar(s32 *member, s32 *slot);
 
 void FieldEffect_AdvanceHueCycle(void);
 void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *object);

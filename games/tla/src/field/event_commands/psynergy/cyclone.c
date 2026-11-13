@@ -612,7 +612,7 @@ struct SprayEvent {
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SprayParticle *particle);
-s32 Func_08020210(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
@@ -701,7 +701,7 @@ void Func_080e38c8(void) {
       pos[0] = particle->x;
       pos[1] = particle->y;
       pos[2] = particle->z;
-      if (Func_08020210(scene->mainObject, pos) > 0)
+      if (MapGrid_CheckCollisionFar(scene->mainObject, pos) > 0)
         particle->timer = -1;
     }
     if (particle->timer == -1 && (i & 1)) {

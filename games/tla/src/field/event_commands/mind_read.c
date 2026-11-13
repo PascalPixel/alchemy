@@ -337,8 +337,8 @@ Func_080ce458__f0dd054(u32 filter, s32 kind,
  * function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
     "BattleEffect_GetCycledTableWord");
-s32 Func_08020210(struct Actor *object, struct Vec3 *position);
-s32 Func_080202f0(s32 layer, s32 x, s32 z);
+s32 MapGrid_CheckCollisionFar(struct Actor *object, struct Vec3 *position);
+s32 MapGrid_GetTerrainKindFar(s32 layer, s32 x, s32 z);
 void Actor_ApplyRandomChildValues(void);
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
@@ -451,7 +451,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     beyond.y = target->y;
     beyond.z = target->z;
     Vector_AddPolarOffset__f0dcb44(32 << 16, direction, &beyond);
-    if (Func_08020210(target, &position) > 0) {
+    if (MapGrid_CheckCollisionFar(target, &position) > 0) {
       Actor_SetMode(pusher, 4);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(114);
@@ -476,7 +476,8 @@ void FieldPsynergy_SteerPushedTarget(void) {
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
-        if (Func_080202f0(user->terrainId, beyond.x, beyond.z) != 0) {
+        if (MapGrid_GetTerrainKindFar(user->terrainId, beyond.x, beyond.z) !=
+            0) {
           Actor_SetMode(pusher, 4);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(114);
@@ -1343,12 +1344,13 @@ extern struct Actor *Actor_Spawn__f0de21c(s32 kind, s32 x, s32 y,
 extern struct ResourceEntry *Sprite_ShareVramCacheEntry__f0dcb44(
     void *sprite,
     struct ResourceEntry *last) __asm__("Sprite_ShareVramCacheEntry");
-/* VIEW(f0de21c): routine Func_08020210 as s32 Func_08020210(struct Actor
- * *object, struct Effect04Vector *position); f0dd054 has s32
- * Func_08020210(struct Actor *object, struct Vec3 *position). */
+/* VIEW(f0de21c): routine MapGrid_CheckCollisionFar as s32
+ * MapGrid_CheckCollisionFar(struct Actor *object, struct Effect04Vector
+ * *position); f0dd054 has s32 MapGrid_CheckCollisionFar(struct Actor *object,
+ * struct Vec3 *position). */
 extern s32 Func_08020210__f0de21c(
     struct Actor *object,
-    struct Effect04Vector *position) __asm__("Func_08020210");
+    struct Effect04Vector *position) __asm__("MapGrid_CheckCollisionFar");
 /* VIEW(f0de21c): routine Func_080de060 as void Func_080de060(struct
  * FieldParticle *slot); the definition has void Func_080de060(struct
  * RadialBurstEffect *effect). */

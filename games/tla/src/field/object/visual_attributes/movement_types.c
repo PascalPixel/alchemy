@@ -7,14 +7,26 @@
 #include "module/system/system.h"
 #include "scene_call.h"
 
-/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct LinkedEffectObject *Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
-/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor *object). */
-extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_Destroy");
-/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
-extern s32 Actor_IsOutsideAnimation108__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
-/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void BattleEffect_CopyWatchedObjectPosition(void); the definition has s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
-extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__("BattleEffect_CopyWatchedObjectPosition");
+/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject
+ * *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
+ * BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct LinkedEffectObject *
+Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
+/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct
+ * LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor
+ * *object). */
+extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__(
+    "Actor_Destroy");
+/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32
+ * Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the
+ * definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
+extern s32 Actor_IsOutsideAnimation108__f0d489c(
+    struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
+/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void
+ * BattleEffect_CopyWatchedObjectPosition(void); the definition has s32
+ * BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
+extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__(
+    "BattleEffect_CopyWatchedObjectPosition");
 extern const u8 gData_080f341c[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
@@ -35,7 +47,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
+    if ((flags & 3) == 2 ||
+        Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
       child = Func_080200c0__f0d489c(264, object->x, object->y, object->z);
     }
   } else {
@@ -310,7 +323,8 @@ s32 Func_080d4ccc(struct Actor *object, s32 *position) {
   s8 *event = Ram_HeapSlots->eventWork;
 
   if (map == 0 || event[0x18a] == 3 ||
-      Func_080202f0(object->terrainId, position[0], position[2]) <= 2)
+      MapGrid_GetTerrainKindFar(object->terrainId, position[0], position[2]) <=
+          2)
     return 0;
   return 1;
 }
@@ -353,7 +367,7 @@ again:
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   Vector_AddPolarOffset(0x100000, angle, position);
-  if (Func_08020210(leader, position) == 1)
+  if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
@@ -361,7 +375,7 @@ again:
   Vector_AddPolarOffset(0x200000, angle, position);
   canJump = 0;
   if (Func_080d4ccc(leader, position) == 0 &&
-      Func_08020210(leader, position) == 0)
+      MapGrid_CheckCollisionFar(leader, position) == 0)
     canJump = 1;
 
   // A platform 16 pixels below the landing makes it a jump spot.
@@ -533,14 +547,15 @@ s32 Func_080d50f8(void) {
     south = cell + 128;
     if (south->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) <=
+    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
+                                    gridZ << 16) <=
         MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
-                                (gridZ + 16) << 16))
+                                    (gridZ + 16) << 16))
       goto failure;
     position[0] = leader->x;
     position[1] = leader->y - 0x100000;
     position[2] = leader->z;
-    if (Func_08020258(position) != 0)
+    if (MapGrid_IsWallAtFar(position) != 0)
       goto failure;
     radius = leader->radius - 2;
     position[0] = leader->x;
@@ -623,14 +638,15 @@ s32 Func_080d53b8(void) {
     north = cell - 128;
     if (north->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) >=
+    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
+                                    gridZ << 16) >=
         MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
-                                (gridZ - 16) << 16))
+                                    (gridZ - 16) << 16))
       goto failure;
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
-    result = Func_08020258(position);
+    result = MapGrid_IsWallAtFar(position);
     if (result != 0)
       goto failure;
 
@@ -776,8 +792,9 @@ s32 Func_080d57e4(void) {
   position[2] = leader->z;
   Vector_AddPolarOffset(0x100000, angle, position);
   leader->terrainHeight = leader->y - 0x80000;
-  if (Func_080201d0(leader->terrainId, position[0], position[2]) ||
-      Func_08020210(leader, position))
+  if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
+                                           position[2]) ||
+      MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;
   leader->priorityFlags |= 1;
@@ -878,8 +895,9 @@ s32 Func_080d5aa0(void) {
   position[2] = leader->z;
   Vector_AddPolarOffset(0x100000, angle, position);
   leader->terrainHeight = leader->y - 0x80000;
-  if (Func_080201d0(leader->terrainId, position[0], position[2]) ||
-      Func_08020210(leader, position))
+  if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
+                                           position[2]) ||
+      MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;
   leader->priorityFlags |= 1;

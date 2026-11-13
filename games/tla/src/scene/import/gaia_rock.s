@@ -109,11 +109,11 @@ Event_ShowMessageAndWait:
 	.global Event_AskYesNoAndShowResponse
 	.thumb_func
 Event_AskYesNoAndShowResponse:
-	overlay_veneer Func_080c81a8
+	overlay_veneer Event_AskYesNoAndShowResponseFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
 Camera_MoveWithinMapBounds:
@@ -121,11 +121,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_02000ecc
 	.thumb_func
 Func_02000ecc:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02000ed4
 	.thumb_func
 Func_02000ed4:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Func_02000edc
 	.thumb_func
 Func_02000edc:

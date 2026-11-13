@@ -81,7 +81,7 @@ s32 Func_0804b8b8(s32 slot) {
 #else
         if (INPUT->pressed & 1) {
 #endif
-          if (Func_08118140(1, 0) == 0) {
+          if (BattleUnit_ListIdsFar(1, 0) == 0) {
             Sound_PlayFar(114);
             goto test;
           }

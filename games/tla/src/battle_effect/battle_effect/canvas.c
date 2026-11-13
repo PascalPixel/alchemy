@@ -14,7 +14,10 @@
 struct Model;
 
 // A texture for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions, Func_08142944 moves: 1 of 730 instructions in tla-ja. */
+/* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions,
+ * Func_08142944 moves: 1 of 730 instructions in tla-ja. */
 struct ModelTexture__f14153c {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -22,7 +25,8 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
-/* VIEW(f14153c): tag struct RenderModel as struct RenderModel__f14153c; render_model.h has another definition. */
+/* VIEW(f14153c): tag struct RenderModel as struct RenderModel__f14153c;
+ * render_model.h has another definition. */
 struct RenderModel__f14153c {
   s32 kind;
   s32 unk04;
@@ -49,7 +53,11 @@ extern char ResourceId_Data134, ResourceId_TornadoSheet, ResourceId_Data0B4;
 extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
 
 extern u8 gMapCellBuffer[];
-/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:4528: `gData_02014000__f14153c' undeclared (first use in this function). */
+/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep
+ * gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest
+ * of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:4528: `gData_02014000__f14153c'
+ * undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
@@ -179,7 +187,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT,
-             Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   {
     const u8 *texturePixels = (const u8 *)gData_02014000__f14153c;
 
@@ -192,8 +200,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
-        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000__f14153c, 0,
-                                   0);
+        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                                   gData_02014000__f14153c, 0, 0);
       }
       if (frame == 136) {
         u8 *dst = Data_02010400;
@@ -439,7 +447,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   for (i = 0; i != 32; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  Func_08020388();
+  VramBlock_Load93Far();
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->effect);
   for (i = 0; i != effect->count; i++) {
@@ -801,7 +809,11 @@ struct Model;
 #define HI(value) (((s16 *)&(value))[1])
 
 // One model for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c; battle_effect.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:5359: structure has no member named `depthBias'. */
+/* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c;
+ * battle_effect.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:5359: structure has no member
+ * named `depthBias'. */
 struct ModelDraw__f14153c {
   s32 kind;
   s32 next;
@@ -878,9 +890,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       work->transferMode = 2;
       work->transferValue = 50;
       if (kind == KIND_LEFT)
-        Iwram_CopyWordsEntry((void *)BG_PLTT,
-                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                        128);
+        Iwram_CopyWordsEntry(
+            (void *)BG_PLTT,
+            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
       else
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,

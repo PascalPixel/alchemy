@@ -343,13 +343,13 @@ void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 /// The enemy flags (0x600 + id) cleared before every search.
 extern const u16 Data_08130c5c[];
 
-void Func_080381d0(s32 message);
+void BattleMessage_OpenFar(s32 message);
 
 void Map_RenderAnimatedTilePictureFar(void *record, s32 step);
 
 extern u16 Data_0200049c;
 
-s32 Func_080ad0b0(s32 unitId, s16 *gains);
+s32 Unit_TryLevelUpFar(s32 unitId, s16 *gains);
 
 extern u8 Data_0812996c[];
 

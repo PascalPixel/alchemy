@@ -97,7 +97,7 @@ void Func_0802c58c(void) {
     Dma_Set(buffer, (void *)0x05000000, 0x84000070, REG_DMA3);
     {
       u8 *anim = Data_0202d000;
-      Func_080c8970(buffer);
+      BattleEffect_LoadBufferPaletteFar(buffer);
       Resource_DecodeType01(Resource_GetTableEntry(resources[1]), anim);
       TilesetAnim_StartAll((const u16 *)anim);
     }

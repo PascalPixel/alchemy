@@ -127,7 +127,7 @@ FileList_SelectAction:
 	.global Func_020022b0
 	.thumb_func
 Func_020022b0:
-	overlay_veneer Func_080381f8
+	overlay_veneer IconMenu_ChooseSendOptionFar
 	.global Func_0803ce64
 	.thumb_func
 Func_0803ce64:
@@ -147,15 +147,15 @@ Func_020022d0:
 	.global Func_020022d8
 	.thumb_func
 Func_020022d8:
-	overlay_veneer Func_080382c8
+	overlay_veneer Save_ChooseAndLoadFileFar
 	.global Func_020022e0
 	.thumb_func
 Func_020022e0:
-	overlay_veneer Func_080382d0
+	overlay_veneer Save_CopyFileFar
 	.global Func_020022e8
 	.thumb_func
 Func_020022e8:
-	overlay_veneer Func_080382d8
+	overlay_veneer Save_EraseSelectedFileFar
 	.global Func_020022f0
 	.thumb_func
 Func_020022f0:
@@ -241,7 +241,7 @@ BuildStamp_GetTime:
 	.global Func_02002390
 	.thumb_func
 Func_02002390:
-	overlay_veneer Func_080ad2e0
+	overlay_veneer InventorySnapshot_RestoreFar
 	.global Func_02002398
 	.thumb_func
 Func_02002398:
@@ -285,19 +285,19 @@ Func_020023e0:
 	.global Func_020023e8
 	.thumb_func
 Func_020023e8:
-	overlay_veneer Func_080f8010
+	overlay_veneer StatusScreen_RunFar
 	.global Func_020023f0
 	.thumb_func
 Func_020023f0:
-	overlay_veneer Func_08108030
+	overlay_veneer MenuCursor_AdvanceFar
 	.global Func_020023f8
 	.thumb_func
 Func_020023f8:
-	overlay_veneer Func_08108040
+	overlay_veneer MenuCursor_SetFar
 	.global Func_02002400
 	.thumb_func
 Func_02002400:
-	overlay_veneer Func_08108048
+	overlay_veneer MenuCursor_SetPositionImmediateFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

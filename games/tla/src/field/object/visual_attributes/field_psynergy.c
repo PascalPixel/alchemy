@@ -49,7 +49,7 @@ s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
   if (*(s8 *)(event + 394) == 3)
     return Func_080dbcd8(x, z, layer);
   if (Func_080dbda8(x, z, layer) != 0 || Func_080dbd5c(x, z, layer) != 0 ||
-      Func_080201d0(layer, x, z) != 0)
+      MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
   if (Func_080dbcd8(x, z, layer) != 0)
     return 1;

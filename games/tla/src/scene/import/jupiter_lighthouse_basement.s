@@ -129,7 +129,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -185,7 +185,7 @@ Actor_SetPartAttribute:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -233,7 +233,7 @@ Func_02001d1c:
 	.global Func_02001d24
 	.thumb_func
 Func_02001d24:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_02001d2c
 	.thumb_func
 Func_02001d2c:

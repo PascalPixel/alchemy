@@ -18,7 +18,11 @@ struct Model;
 
 // A texture: log2 of its width and height in the first word, then its
 // pixels.
-/* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:29798: structure has no member named `logWidth'. */
+/* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:29798: structure has no member
+ * named `logWidth'. */
 struct Texture__f17e0c0 {
   u8 logWidth;
   u8 logHeight;
@@ -28,7 +32,11 @@ struct Texture__f17e0c0 {
 
 // One entry of the list Render_DrawModelList draws; kinds 6 and 7 are textured
 // quads.
-/* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:29770: structure has no member named `brightness'. */
+/* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:29770: structure has no member
+ * named `brightness'. */
 struct RenderPrimitive__f17e0c0 {
   s32 kind;
   s32 unk04;
@@ -79,7 +87,7 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void Func_08118088(s32 actor, s32 motion);
+void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
@@ -260,7 +268,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, LUNGE_HIT_FRAME);
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       if (mode == 5)
         Func_081180e8(145);
       else

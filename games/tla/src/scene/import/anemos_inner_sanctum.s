@@ -153,7 +153,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global SetMapCellCollision
 	.thumb_func
 SetMapCellCollision:
@@ -233,7 +233,7 @@ Actor_SetSpritePriority:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -249,11 +249,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_02003430
 	.thumb_func
 Func_02003430:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02003438
 	.thumb_func
 Func_02003438:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:

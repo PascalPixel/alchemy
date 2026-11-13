@@ -145,7 +145,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_020010e0
 	.thumb_func
 Func_020010e0:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:

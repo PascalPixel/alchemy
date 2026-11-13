@@ -41,7 +41,8 @@ s32 Shop_ListAvailableArtifacts(void) {
 /// Advances the hand cursor one frame. Runs every frame as a task while a
 /// counter is open.
 void MenuCursor_Step(void) {
-  MenuCursor_Advance(&((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
+  MenuCursor_Advance(
+      &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
 }
 
 /// Allocates and clears the work block in the menu's heap slot, lists the
@@ -124,7 +125,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
       **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(keeperId) + 80) + 40);
   // The shopkeeper's portrait window, or an empty one off the right edge when
   // there is no portrait.
-  window = Func_080380f8(shop->keeperResource, 0, 0, 0);
+  window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(30, 0, 2, 2, 2);
   anchor =
@@ -177,8 +178,9 @@ s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.counterC = 28;
   // A broken Virtuous Armlet (141), a broken Muramasa (11) and a Bone (231)
   Inventory_EquipFar__shop(GARET,
-                     Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
-  Inventory_EquipFar__shop(ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
+                           Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
+  Inventory_EquipFar__shop(ISAAC,
+                           Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
   Inventory_AddItemFar(IVAN, 231);
   ((struct BattleUnit *)Unit_Get(MIA))->poison = 1;
   ((struct BattleUnit *)Unit_Get(JENNA))->poison = 1;
@@ -257,7 +259,7 @@ s32 Shop_AskYesNo(s32 choice) {
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
   choice = YesNoMenu_RunAtFar(6, 5, choice);
 #else

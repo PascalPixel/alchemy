@@ -109,7 +109,7 @@ Func_0802b450:
 	.global Func_02004a64
 	.thumb_func
 Func_02004a64:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -225,7 +225,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -245,7 +245,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -261,7 +261,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02004b94
 	.thumb_func
 Func_02004b94:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d452c
 	.thumb_func
 Func_080d452c:
@@ -277,7 +277,7 @@ Import_EventSetExitRequest:
 	.global Func_02004bb4
 	.thumb_func
 Func_02004bb4:
-	overlay_veneer Func_080c82c0
+	overlay_veneer Field_FindNearbyTalkTargetFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:
@@ -369,7 +369,7 @@ Func_02004c64:
 	.global Func_02004c6c
 	.thumb_func
 Func_02004c6c:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global BattleEffect_StepVector3
 	.thumb_func
 BattleEffect_StepVector3:

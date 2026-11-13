@@ -101,11 +101,11 @@ Party_GetLeaderActor:
 	.global Func_020005e4
 	.thumb_func
 Func_020005e4:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_020005ec
 	.thumb_func
 Func_020005ec:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

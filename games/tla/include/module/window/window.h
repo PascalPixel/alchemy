@@ -43,7 +43,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 
 s32 Func_0804b8b8(s32 slot);
 
-void Func_08118130(s32 kind, u8 *counts);
+void BattleParty_CountStandbyDjinnFar(s32 kind, u8 *counts);
 
 void Window_MarkVisibleTextTiles(void);
 
@@ -64,8 +64,8 @@ s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 s32 Message_DecodeMode1(s32 message);
 void Func_0803cf6c(s32 message);
 
-void Func_08108030(struct NameCursorMotion *cursor);
-void Func_08108038(struct NameCursorMotion *cursor);
+void MenuCursor_AdvanceFar(struct NameCursorMotion *cursor);
+void MenuCursor_MoveTowardTargetFar(struct NameCursorMotion *cursor);
 
 void Portrait_CloseWindow(s32 id);
 

@@ -73,7 +73,7 @@ Map_SetScreenShake:
 	.global Func_02001478
 	.thumb_func
 Func_02001478:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global Func_02001480
 	.thumb_func
 Func_02001480:
@@ -133,7 +133,7 @@ Event_ResolvePendingActions:
 	.global Func_020014f0
 	.thumb_func
 Func_020014f0:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Func_020014f8
 	.thumb_func
 Func_020014f8:

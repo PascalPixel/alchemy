@@ -38,8 +38,9 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -66,8 +67,14 @@ struct HalfPair {
   u16 y;
 };
 
-/* VIEW(f186dfc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:35991: conflicting types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
+/* VIEW(f186dfc): variable gResourceTableEntries as extern struct
+ * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
+ * in tla-ja: games/tla/src/battle_effect/ability_effects.c:35991: conflicting
+ * types for `gResourceTableEntries'. */
+extern struct ResourceTableEntry
+    gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
 struct WingVertex {
   s8 x;
   s8 y;
@@ -120,9 +127,13 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-/* VIEW(f186dfc): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject *Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f186dfc): routine Func_0815b290 as struct SpriteObject
+ * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
+ * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
+ * attributes, s32 flags). */
+extern struct SpriteObject *
+Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
+                       u32 attributes) __asm__("Func_0815b290");
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 a, s32 b);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
@@ -860,7 +871,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   BattleEffect_SpawnObjects(11, 0x293, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   {
     Iwram_ClearWords(buffer, 0x6c00);

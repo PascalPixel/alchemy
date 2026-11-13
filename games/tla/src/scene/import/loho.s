@@ -205,7 +205,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -217,7 +217,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_020013c8
 	.thumb_func
 Func_020013c8:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -269,15 +269,15 @@ Func_080d3b28:
 	.global Func_02001430
 	.thumb_func
 Func_02001430:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02001438
 	.thumb_func
 Func_02001438:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02001440
 	.thumb_func
 Func_02001440:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

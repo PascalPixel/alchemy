@@ -14,7 +14,10 @@ struct Corner {
   s8 z;
 };
 
-/* VIEW(f17c6ac): tag struct RenderModel as struct RenderModel__f17c6ac; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunFume moves: 2 of 625 instructions in tla-ja. */
+/* VIEW(f17c6ac): tag struct RenderModel as struct RenderModel__f17c6ac;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunFume moves: 2 of 625 instructions in tla-ja.
+ */
 struct RenderModel__f17c6ac {
   s32 kind;
   s32 unk04;
@@ -35,7 +38,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -46,9 +50,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -63,15 +69,17 @@ struct StarTarget {
   s32 y;
   s32 z;
 };
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
 void *Resource_GetTableEntry(s32 resource);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 
 // Columns of Data_08199484, one row per Fume level (effect->variant): the
 // plume's width, the frame its tail starts, its arc's height, the sparks'

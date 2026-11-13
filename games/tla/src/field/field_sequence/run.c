@@ -87,7 +87,7 @@ s32 FieldSequence_Run(void) {
     mode = 3;
     Func_080c9e48(0);
   } else {
-    Func_08020108(gMainRoutineWork.map);
+    MapGrid_LoadMapFar(gMainRoutineWork.map);
     mode = 2;
     Func_080c9e48(1);
   }
@@ -112,7 +112,7 @@ s32 FieldSequence_Run(void) {
     Map_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gMainRoutineWork.x, gMainRoutineWork.z);
   } else {
-    Func_08020180();
+    Map_ApplySetFlagEditsFar();
     OVERLAY_CALL(13);
     Map_CenterOnFollowedPointFar();
   }
@@ -210,7 +210,7 @@ s32 FieldSequence_Run(void) {
     }
     if (GameFlag_Test(303)) {
       GameFlag_ClearBit(303);
-      Func_08038200(gMainRoutineWork.scene);
+      AreaNameWindow_ShowFar(gMainRoutineWork.scene);
     }
     if (gMainRoutineWork.pendingDjinnEvent != 0) {
       // UB: called with a second argument (1) its definition does not take.
@@ -464,7 +464,7 @@ s32 FieldSequence_Run(void) {
               *(u16 *)(objects + 4) = 1;
               wait(1);
             }
-            Func_08038358(0);
+            PauseMenu_RunFar(0);
             *(u16 *)(objects + 4) = 0;
           } else {
             FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable, 1);

@@ -352,13 +352,13 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
             work->shakeFrames = 8;
             Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
-            Func_08118088(effect->actors[0], 4);
+            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             for (i = 0; i != 32; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
             work->shakeFrames = 8;
             Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
-            Func_08118088(effect->actors[0], 4);
+            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             for (i = 0; i != 256; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else {
@@ -436,13 +436,13 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
           work->shakeFrames = 8;
           Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
-          Func_08118088(effect->actors[0], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           for (i = 0; i != 32; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
           work->shakeFrames = 8;
           Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
-          Func_08118088(effect->actors[0], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           for (i = 0; i != 256; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         }

@@ -165,7 +165,7 @@ Animation_ApplyChildValues:
 	.global Func_02005848
 	.thumb_func
 Func_02005848:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -181,7 +181,7 @@ PartyInventory_Discard:
 	.global Func_02005868
 	.thumb_func
 Func_02005868:
-	overlay_veneer Func_080ad2e0
+	overlay_veneer InventorySnapshot_RestoreFar
 	.global Func_02005870
 	.thumb_func
 Func_02005870:
@@ -321,7 +321,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02005980
 	.thumb_func
 Func_02005980:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -349,7 +349,7 @@ Party_SetFields1f2And1f4:
 	.global Func_020059b8
 	.thumb_func
 Func_020059b8:
-	overlay_veneer Func_080c82c0
+	overlay_veneer Field_FindNearbyTalkTargetFar
 	.global Func_020059c0
 	.thumb_func
 Func_020059c0:
@@ -377,7 +377,7 @@ Event_ResolvePendingActions:
 	.global Func_020059f0
 	.thumb_func
 Func_020059f0:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Actor_OffsetPositionAndReset
 	.thumb_func
 Actor_OffsetPositionAndReset:

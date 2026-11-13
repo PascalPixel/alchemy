@@ -427,7 +427,7 @@ struct MapBounds {
   s32 maxZ;
 };
 
-void Func_08020328(s32 map, struct MapBounds *bounds);
+void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
 void Map_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 
 // Opens the whole map to the view: keeps the view centre's position and the
@@ -487,7 +487,7 @@ void Func_080e89e4(s32 direction) {
   /* FAKEMATCH(barrier): the third; without it, 33 of 157 instructions differ
    * in tla-ja. */
   __asm__("");
-  Func_08020328(gMainRoutineWork.map, &bounds);
+  Map_GetHeaderSizeFar(gMainRoutineWork.map, &bounds);
   minX = bounds.minX;
   maxX = bounds.maxX;
   minZ = bounds.minZ;

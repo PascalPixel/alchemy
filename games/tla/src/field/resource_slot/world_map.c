@@ -267,7 +267,7 @@ void Func_0802be4c(s32 x, s32 z) {
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  Func_080c8970(buffer);
+  BattleEffect_LoadBufferPaletteFar(buffer);
   Resource_DecodeType01(Resource_GetTableEntry(resources[1]),
                         Ram_MapCollision + 0x1000);
   TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));

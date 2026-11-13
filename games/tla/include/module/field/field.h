@@ -934,7 +934,7 @@ extern const s32 gData_080f0ee8[];
 
 extern const s32 gData_080f0e78[];
 
-s32 Func_08020210(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 
 s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
@@ -942,7 +942,7 @@ void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position);
 
-u32 Func_080202f0(s32 terrain, s32 x, s32 z);
+u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 
 void Func_080cb82c(void);
 void Func_080cb8a4(void);
@@ -1042,7 +1042,7 @@ extern u8 gData_02028000[];
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
-void Func_080c8970(void *palette);
+void BattleEffect_LoadBufferPaletteFar(void *palette);
 
 void TilesetAnim_StartAll(const u16 *script);
 extern char ResourceId_DefaultMapCells;
@@ -1138,7 +1138,7 @@ void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
 void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
                                s32 value);
 
-void Func_08038248(s32 item);
+void Icon_DrawItemFar(s32 item);
 
 s32 Func_080cec24(s32 value, s32 *out);
 
@@ -1153,7 +1153,7 @@ extern const u8 Data_080f0e00[];
 
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
 
-s32 Func_080201d0(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 
 extern const u8 gData_080f3798[];
 extern const u8 gData_080f385e[];
@@ -1177,7 +1177,7 @@ void Func_080203a0(struct Actor *object, s32 kind);
 
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 
-s32 Func_08020258(s32 *position);
+s32 MapGrid_IsWallAtFar(s32 *position);
 
 extern const u16 Data_080f0890[];
 

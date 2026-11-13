@@ -129,7 +129,7 @@ Map_SetScreenShake:
 	.global Func_02005dd4
 	.thumb_func
 Func_02005dd4:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Map_EnableUpdateCallback
 	.thumb_func
 Map_EnableUpdateCallback:
@@ -249,7 +249,7 @@ Actor_SetSpritePriority:
 	.global Func_02005ec4
 	.thumb_func
 Func_02005ec4:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -265,11 +265,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_02005ee4
 	.thumb_func
 Func_02005ee4:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02005eec
 	.thumb_func
 Func_02005eec:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Func_02005ef4
 	.thumb_func
 Func_02005ef4:
@@ -317,7 +317,7 @@ Actor_SetActionCallback:
 	.global Func_02005f4c
 	.thumb_func
 Func_02005f4c:
-	overlay_veneer Func_080c8688
+	overlay_veneer Scene_QueueMusicFar
 	.global Func_02005f54
 	.thumb_func
 Func_02005f54:

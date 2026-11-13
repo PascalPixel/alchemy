@@ -129,7 +129,7 @@ Func_0802b450:
 	.global Func_02004cf8
 	.thumb_func
 Func_02004cf8:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -145,11 +145,11 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Func_02004d20
 	.thumb_func
 Func_02004d20:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -277,7 +277,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02004e20
 	.thumb_func
 Func_02004e20:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -305,7 +305,7 @@ PaletteFade_StartInterpolation:
 	.global Func_02004e58
 	.thumb_func
 Func_02004e58:
-	overlay_veneer Func_080c83e0
+	overlay_veneer BattleEffect_StartEffectObject22Far
 	.global Func_02004e60
 	.thumb_func
 Func_02004e60:
@@ -337,7 +337,7 @@ Event_ResolvePendingActions:
 	.global Func_02004e98
 	.thumb_func
 Func_02004e98:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Party_PlaySavedMusic
 	.thumb_func
 Party_PlaySavedMusic:
@@ -401,7 +401,7 @@ Func_02004f10:
 	.global Func_02004f18
 	.thumb_func
 Func_02004f18:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global BattleEffect_StepVector3
 	.thumb_func
 BattleEffect_StepVector3:

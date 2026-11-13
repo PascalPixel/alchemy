@@ -73,11 +73,11 @@ Actor_SetSingleChildFlags:
 	.global Func_02001d78
 	.thumb_func
 Func_02001d78:
-	overlay_veneer Func_08020240
+	overlay_veneer Graphics_EnableObjLayerAndCallbacksFar
 	.global Func_02001d80
 	.thumb_func
 Func_02001d80:
-	overlay_veneer Func_08020248
+	overlay_veneer ActorSystem_ResumeProjectionAndHideLayersFar
 	.global Func_0803ce64
 	.thumb_func
 Func_0803ce64:
@@ -85,7 +85,7 @@ Func_0803ce64:
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -185,7 +185,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -213,7 +213,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -225,7 +225,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001ea8
 	.thumb_func
 Func_02001ea8:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

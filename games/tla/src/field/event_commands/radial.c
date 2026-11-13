@@ -1598,7 +1598,7 @@ again:
     pos[0] = motion->x;
     pos[1] = motion->y;
     pos[2] = motion->z;
-    if (Func_08020210(scene->mainObject, pos) > 0) {
+    if (MapGrid_CheckCollisionFar(scene->mainObject, pos) > 0) {
       work->done = 1;
       work->result = -1;
       work->phase++;

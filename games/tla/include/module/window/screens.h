@@ -655,10 +655,10 @@ extern u8 gData_02000504[];
 void ObjectTable_SnapshotFar(void);
 
 void Func_080f8070(void);
-void Func_080f8078(void);
-void Func_080f8080(s32 shown);
+void MenuIcon_ReleaseObjectsFar(void);
+void Menu_SetEntryObjectsHiddenFar(s32 shown);
 
-void Func_080f8090(s32 index, s32 x, s32 y);
+void MenuIcon_SetPositionFar(s32 index, s32 x, s32 y);
 
 extern u8 Tile_BuildCellPicturesCode[];
 

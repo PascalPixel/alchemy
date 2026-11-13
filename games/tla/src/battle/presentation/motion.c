@@ -451,9 +451,9 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
       if (saved)
         Func_0811e7dc(saved);
       if (plan->presentationFlags & 0x4000)
-        Func_08138008(&work);
+        BattleEffect_DispatchByIdRangeFar(&work);
       else
-        Func_08138018(&work);
+        BattleEffect_RunTableEffectFar(&work);
     }
     if (saved) {
       Func_0811e830(saved);
@@ -565,9 +565,9 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
     if (plan->presentationFlags & 0x4000)
-      Func_08138008(&work);
+      BattleEffect_DispatchByIdRangeFar(&work);
     else
-      Func_08138018(&work);
+      BattleEffect_RunTableEffectFar(&work);
   } else {
     wait(60);
   }
@@ -751,9 +751,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       if (saved)
         Func_0811e7dc(saved);
       if (plan->presentationFlags & 0x4000)
-        Func_08138008(&work);
+        BattleEffect_DispatchByIdRangeFar(&work);
       else
-        Func_08138018(&work);
+        BattleEffect_RunTableEffectFar(&work);
     } else {
       BattleBackground_RestorePalette();
     }

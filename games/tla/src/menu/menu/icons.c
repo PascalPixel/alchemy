@@ -54,7 +54,7 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
 }
 
 s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
-                                    s32 resourceId) {
+                                  s32 resourceId) {
   s32 slot;
 
   slot = Resource_FindFreeEntry();
@@ -68,7 +68,7 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
 /// menu loaded.
 // The Broken Seal's Icon_CreateStatChangeArrow.
 s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
-                                 s32 variant) {
+                               s32 variant) {
   struct WindowSprite *object;
   u32 resource;
   s32 v = variant;
@@ -276,7 +276,7 @@ struct FigureMenuState {
   u8 unk50b[1];
 };
 
-s32 Func_080c82b8(s32 id);
+s32 Party_RemapCharacterIdByFlagsFar(s32 id);
 
 void Func_08104e38(s32 first, s32 second) {
   struct FigureMenuState *menu =
@@ -299,7 +299,7 @@ void Func_08104e38(s32 first, s32 second) {
       id = second;
     if (id != -1) {
       menu->ids[i] = id;
-      figure = ResourceObject_CreateFar(Func_080c82b8(id));
+      figure = ResourceObject_CreateFar(Party_RemapCharacterIdByFlagsFar(id));
       if (figure != NULL) {
         Animation_ApplyChildArgumentFar(figure, 1);
         figure->image.priority = 0;
@@ -327,7 +327,8 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   menu->count = Party_ListMembersFar(owners);
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
     menu->ids[i] = owners[first + i];
-    object = ResourceObject_CreateFar(Func_080c82b8(owners[first + i]));
+    object = ResourceObject_CreateFar(
+        Party_RemapCharacterIdByFlagsFar(owners[first + i]));
     if (object != NULL) {
       Animation_ApplyChildArgumentFar(object, 1);
       ((s8 *)object)[9] &= -13;
@@ -559,7 +560,7 @@ void Func_081053a8(void) {
 
       // As ids[i] the table and index combine into one walking pointer; the
       // byte offset kept apart is what matches.
-      Func_08038288(8, *(u16 *)(offset + (u32)ids), entry, 0);
+      Resource_LoadByModeIntoSlotFar(8, *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = &slot->attributes;
       *attributes++ = 0x40000000;
       *attributes = 0;
@@ -594,9 +595,9 @@ struct MenuSlotAttr {
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
   /* FAKEMATCH(temporary): the offset as a local of its own, which adds the row
-   * and the field offset before the work pointer, as in the shop's ItemIconGrid_SetPosition;
-   * as a plain field address, (struct MenuSlotAttr *)(menu +
-   * 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
+   * and the field offset before the work pointer, as in the shop's
+   * ItemIconGrid_SetPosition; as a plain field address, (struct MenuSlotAttr
+   * *)(menu + 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
   s32 offset =
       index * sizeof(struct MenuSlotAttr) + 0xbd0; /* slots[index] + 4 */
   struct MenuSlotAttr *slot = (struct MenuSlotAttr *)(menu + offset);
@@ -627,8 +628,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
   for (i = 0; i <= 4; i++) {
     if (enabled[i] != 0) {
       MenuIcon_SetSlot(i, icon_x, icon_y);
-      Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16,
-                                    y);
+      Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16, y);
       y += 16;
       icon_y += 16;
       count++;

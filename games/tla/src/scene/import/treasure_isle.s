@@ -101,7 +101,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001014
 	.thumb_func
 Func_02001014:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
 Field_RequestBattleFromEncounterTable:

@@ -81,7 +81,7 @@ Map_CopyCellPictureIndicesRect:
 	.global Func_02001f34
 	.thumb_func
 Func_02001f34:
-	overlay_veneer Func_08020198
+	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -93,7 +93,7 @@ FieldMessage_Show:
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -205,7 +205,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -225,7 +225,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -237,7 +237,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_0200206c
 	.thumb_func
 Func_0200206c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:

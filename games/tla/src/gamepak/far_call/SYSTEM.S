@@ -59,7 +59,7 @@ FarCall_RuntimeTable:
 	export Render_ProjectPointFar, Render_ProjectPoint
 	export Projection_SetFieldOfViewFar, Projection_SetFieldOfView
 	export Projection_SetFar, Projection_Set
-	export Func_08000280, System_CopyBuildStamp
+	export System_CopyBuildStampFar, System_CopyBuildStamp
 	export System_ReturnZeroFar, System_ReturnZero
 	export Resource_GetTableEntryFar, Resource_GetTableEntry
 	export Resource_ReservedNoOpFar, Resource_ReservedNoOp
@@ -91,9 +91,9 @@ FarCall_RuntimeTable:
 	export Serial_WaitForStatusMaskFar, Serial_WaitForStatusMask
 	export Serial_RemoveIrqHandlersFar, Serial_RemoveIrqHandlers
 	export Sound_LoadReverbCodeFar, Sound_LoadReverbCode
-	export Func_08000380, Serial_StartSend
+	export Serial_StartSendFar, Serial_StartSend
 	export Party_CheckFar, Serial_StartReceive
-	export Func_08000390, Serial_WaitForSend
+	export Serial_WaitForSendFar, Serial_WaitForSend
 	export Serial_WaitForReceiveFar, Serial_WaitForReceive
 	export Serial_WaitForTransfersFar, Serial_WaitForTransfers
 	export Serial_GetActiveTransfersFar, Serial_GetActiveTransfers
@@ -109,6 +109,6 @@ FarCall_RuntimeTable:
 	export GameFlag_IncrementByteFar, GameFlag_IncrementByte
 	export GameFlag_DecrementByteFar, GameFlag_DecrementByte
 	export GameFlag_GetNibbleFar, GameFlag_GetNibble
-	export Func_08000410, GameFlag_SetNibble
+	export GameFlag_SetNibbleFar, GameFlag_SetNibble
 	export Task_FindFar, Task_Find
-	export Func_08000420, VramCache_CountFreeBlocks
+	export VramCache_CountFreeBlocksFar, VramCache_CountFreeBlocks

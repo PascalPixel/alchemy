@@ -117,7 +117,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -189,15 +189,15 @@ BattleEffect_SetObjectUpdateMode:
 	.global Func_02002304
 	.thumb_func
 Func_02002304:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_0200230c
 	.thumb_func
 Func_0200230c:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02002314
 	.thumb_func
 Func_02002314:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

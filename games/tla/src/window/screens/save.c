@@ -1047,8 +1047,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       MenuTitle_Create(menuMode, (struct RenderInput *)fileList, 72, -24);
   Func_080f8070();
   for (i = 0, y = 144; i < 4; i++, y += 24)
-    Func_080f8090(i, y, 128);
-  Func_080f8080(0);
+    MenuIcon_SetPositionFar(i, y, 128);
+  Menu_SetEntryObjectsHiddenFar(0);
   wait(1);
 
   while (1) {
@@ -1078,15 +1078,15 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           FileList_DrawDjinnCounts(
               (struct RenderInput *)djinnWindow,
               (struct NumberRow *)&save->summary[selectedFile]);
-          Func_080f8080(1);
+          Menu_SetEntryObjectsHiddenFar(1);
         } else {
-          Func_080f8080(0);
+          Menu_SetEntryObjectsHiddenFar(0);
           Window_Close(djinnWindow, 2);
           djinnWindow = NULL;
         }
       } else {
         Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
-        Func_080f8080(0);
+        Menu_SetEntryObjectsHiddenFar(0);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         Window_Close(djinnWindow, 2);
         Window_Close(partyWindow, 2);
@@ -1136,7 +1136,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       break;
     }
   }
-  Func_080f8078();
+  MenuIcon_ReleaseObjectsFar();
   Menu_ClearFirstObjectRowAndScheduleUpdate();
   Window_Close(djinnWindow, 2);
   Window_Close(partyWindow, 2);

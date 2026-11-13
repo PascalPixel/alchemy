@@ -131,7 +131,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
-void Func_08118088(s32 actor, s32 motion);
+void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 
 void Func_0815e3ac(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
@@ -287,14 +287,14 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
     // The target recoils, harder for some kinds.
     if (frame == 4) {
       if (kind == 7)
-        Func_08118088(effect->actors[0], 4);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       else if (kind == 5 || kind == 6)
-        Func_08118088(effect->actors[0], 1);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       else if (kind == 8)
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x10000, 0x40000,
                                       0x30000, 150);
       else
-        Func_08118088(effect->actors[0], 0);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
     }
     EffectPosition_ProjectScaledBattler(effect->actor, &pos);
     pos.y += 16;
@@ -589,7 +589,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     if (frame == 5)
       Func_081180e8(134);
     if (frame == 4)
-      Func_08118088(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
     EffectPosition_ProjectScaledBattler(effect->actor, &pos);
     pos.y += 16;
     // The flash: four cels, two frames each.

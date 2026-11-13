@@ -8,7 +8,10 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f178710): tag struct RenderModel as struct RenderModel__f178710; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunRisingDragon moves: 1 of 882 instructions in tla-ja. */
+/* VIEW(f178710): tag struct RenderModel as struct RenderModel__f178710;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunRisingDragon moves: 1 of 882 instructions in
+ * tla-ja. */
 struct RenderModel__f178710 {
   s32 kind;
   s32 unk04;
@@ -48,13 +51,20 @@ void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f178710): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f175f74 has struct ActorPos **GetBattleObjectSlotFar(s32); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:25232: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f178710): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); f175f74 has struct ActorPos
+ * **GetBattleObjectSlotFar(s32); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:25232: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -99,8 +109,12 @@ struct StripVertex {
   s8 z;
   s8 unk3;
 };
-/* VIEW(f178710): variable gMapCellBuffer as extern struct StripVertex gMapCellBuffer[2][66]; f175f74 has extern u8 gMapCellBuffer[]; tried as the rest of the object declares it, BattleEffect_RunRisingDragon moves: 93 of 882 instructions in tla-ja. */
-extern struct StripVertex gMapCellBuffer__f178710[2][66] __asm__("gMapCellBuffer");
+/* VIEW(f178710): variable gMapCellBuffer as extern struct StripVertex
+ * gMapCellBuffer[2][66]; f175f74 has extern u8 gMapCellBuffer[]; tried as the
+ * rest of the object declares it, BattleEffect_RunRisingDragon moves: 93 of 882
+ * instructions in tla-ja. */
+extern struct StripVertex
+    gMapCellBuffer__f178710[2][66] __asm__("gMapCellBuffer");
 
 // Abilities: Rising Dragon.
 //
@@ -161,9 +175,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                                work->sheet + 0x4000, 1, 1);
-    Iwram_CopyWordsEntry((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                    128);
+    Iwram_CopyWordsEntry(
+        (void *)BG_PLTT,
+        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     REG_BG2PA = 0x80;
     Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 

@@ -153,11 +153,11 @@ Party_GetLeaderActor:
 	.global Func_02001190
 	.thumb_func
 Func_02001190:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02001198
 	.thumb_func
 Func_02001198:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Func_020011a0
 	.thumb_func
 Func_020011a0:

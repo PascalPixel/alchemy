@@ -153,7 +153,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Actor_ArmCallbackAndRefresh
 	.thumb_func
 Actor_ArmCallbackAndRefresh:
@@ -169,7 +169,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02000af0
 	.thumb_func
 Func_02000af0:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -213,7 +213,7 @@ Func_02000b40:
 	.global Func_02000b48
 	.thumb_func
 Func_02000b48:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global BattleEffect_StepVector3
 	.thumb_func
 BattleEffect_StepVector3:

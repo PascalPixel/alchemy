@@ -109,7 +109,7 @@ Map_CopyCellPictureIndicesRect:
 	.global Func_02003b70
 	.thumb_func
 Func_02003b70:
-	overlay_veneer Func_08020198
+	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
@@ -133,7 +133,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Func_02003ba8
 	.thumb_func
 Func_02003ba8:
@@ -205,11 +205,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_02003c30
 	.thumb_func
 Func_02003c30:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02003c38
 	.thumb_func
 Func_02003c38:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:
@@ -253,7 +253,7 @@ Event_ResolvePendingActions:
 	.global Func_02003c90
 	.thumb_func
 Func_02003c90:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Event_NoOp
 	.thumb_func
 Event_NoOp:

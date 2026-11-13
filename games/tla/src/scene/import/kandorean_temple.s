@@ -105,7 +105,7 @@ Map_CopyCellAttributeRect:
 	.global Func_02005180
 	.thumb_func
 Func_02005180:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -121,7 +121,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -129,7 +129,7 @@ FieldMessage_Show:
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -241,7 +241,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -249,7 +249,7 @@ Event_ShowMessageAndWait:
 	.global Event_AskYesNoAndShowResponse
 	.thumb_func
 Event_AskYesNoAndShowResponse:
-	overlay_veneer Func_080c81a8
+	overlay_veneer Event_AskYesNoAndShowResponseFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -273,7 +273,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -285,7 +285,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_020052e8
 	.thumb_func
 Func_020052e8:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:
@@ -321,7 +321,7 @@ Event_WaitTransitionFrames:
 	.global Func_02005330
 	.thumb_func
 Func_02005330:
-	overlay_veneer Func_080c83d8
+	overlay_veneer BattleEffect_RunActorRiseAndDescentFar
 	.global Func_02005338
 	.thumb_func
 Func_02005338:
@@ -365,7 +365,7 @@ Actor_WatchAndSetScript:
 	.global Func_02005388
 	.thumb_func
 Func_02005388:
-	overlay_veneer Func_080c8688
+	overlay_veneer Scene_QueueMusicFar
 	.global Func_02005390
 	.thumb_func
 Func_02005390:

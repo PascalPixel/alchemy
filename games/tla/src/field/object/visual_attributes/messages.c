@@ -10,7 +10,7 @@
 #include "module/field/object.h"
 #include "scene_call.h"
 
-s32 Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
+s32 Portrait_OpenWindowFar(s32 sprite, s32 zero, s32 x, s32 y);
 
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
@@ -173,9 +173,9 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         handle = Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
     }
     if (win[4] != 0)
-      portrait = Func_080380f8(sprite, 0, column, portraitTop);
+      portrait = Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
-      portrait = Func_080380f8(sprite, 0, column, portraitTop);
+      portrait = Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     while (!Message_AllTypedFar())
       wait(1);
   }
@@ -349,7 +349,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
 
   firstWindow = Message_OpenWindowFar((s16)event->messageId++, firstX, firstY,
                                       Speaker_GetVoice(firstSprite) << 16);
-  Func_080380f8(firstSprite, 0, firstPortraitX, firstPortraitY);
+  Portrait_OpenWindowFar(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
     while (!Message_AllTypedFar())
       wait(delay);
@@ -358,7 +358,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   secondWindow =
       Message_OpenWindowFar((s16)event->messageId++, secondX, secondY,
                             Speaker_GetVoice(secondSprite) << 16);
-  Func_080380f8(secondSprite, 0, secondPortraitX, secondPortraitY);
+  Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (!Message_AllTypedFar())
     wait(1);

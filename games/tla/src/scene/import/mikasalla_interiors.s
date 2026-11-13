@@ -81,12 +81,12 @@ Party_GetLeaderActor:
 	.global Func_0200063c
 	.thumb_func
 Func_0200063c:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000644
 	.thumb_func
 Func_02000644:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_0200064c
 	.thumb_func
 Func_0200064c:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar

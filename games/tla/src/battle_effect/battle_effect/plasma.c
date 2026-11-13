@@ -133,7 +133,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       // Four frames after each strike the targets recoil and flash.
       if (frame == start + 4) {
         for (k = 0; k != effect->count; k++) {
-          Func_08118088(effect->actors[k], 1);
+          BattleMotion_ApplyKnockbackFar(effect->actors[k], 1);
           Func_0814cd48(effect->actors[k], 7, 5, k, 8);
         }
       }
@@ -397,7 +397,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
       for (j = 0; j != effect->count; j++) {
         if (frame == start + 6) {
           Func_0814cd48(effect->actors[j], 7, 5, j, 10);
-          Func_08118088(effect->actors[j], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[j], 4);
         }
       }
     }

@@ -139,7 +139,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
         BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
       if (frame == total - 32) {
         Func_081180e8(134);
-        Func_08118088(effect->actors[0], 4);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {

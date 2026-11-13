@@ -42,7 +42,8 @@ struct BurstTexture {
 };
 
 // One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
-/* VIEW(f17e698): tag struct RenderPrimitive as struct RenderPrimitive__f17e698; ability_effects.c has another definition. */
+/* VIEW(f17e698): tag struct RenderPrimitive as struct RenderPrimitive__f17e698;
+ * ability_effects.c has another definition. */
 struct RenderPrimitive__f17e698 {
   s32 kind;
   s32 unk04;
@@ -113,13 +114,16 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   MIRROR_HALF(2, PICTURE_OFFSET + 0x11e4, 20, 64)
   if (mode == 3)
     Iwram_CopyWords((void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    128);
   else if (mode == 2)
     Iwram_CopyWords((void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_FireballSheet), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_FireballSheet),
+                    128);
   else
     Iwram_CopyWords((void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+                    128);
 
   // Centre the canvas's x 64 on the target.
   EffectPosition_ProjectBattler(effect->actors[0], &target);
@@ -216,7 +220,11 @@ typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 typedef volatile s32 vs32;
 
-/* VIEW(f17e698): tag struct Particle as struct Particle__f17e698; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:30472: structure has no member named `timer'. */
+/* VIEW(f17e698): tag struct Particle as struct Particle__f17e698;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:30472: structure has no member
+ * named `timer'. */
 typedef struct Particle__f17e698 {
   s32 x;
   s32 y;
@@ -274,7 +282,11 @@ typedef struct Bitmap {
   void *data;
 } Bitmap;
 
-/* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:30366: structure has no member named `transferMode'. */
+/* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:30366: structure has no member
+ * named `transferMode'. */
 struct SummonWork__f17e698 {
   Particle particles[48];
   u8 unk0540[0x1c0];
@@ -311,7 +323,11 @@ typedef void (*CopyFunc)(void *, const void *, s32);
 typedef void (*ClearFunc)(void *, s32);
 typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
-/* VIEW(f17e698): tag struct SystemWork as struct SystemWork__f17e698; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:30365: structure has no member named `map'. */
+/* VIEW(f17e698): tag struct SystemWork as struct SystemWork__f17e698;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:30365: structure has no member
+ * named `map'. */
 struct SystemWork__f17e698 {
   u8 unk00[0x24];
   s32 *bank;
@@ -335,7 +351,11 @@ struct SystemWork__f17e698 {
 #define VRAM_SLOTS gResourceTableEntries
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
-/* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:30276: conflicting types for `gInput'. */
+/* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput;
+ * input.h has extern struct InputState gInput; tried as the 3 declarations'
+ * extern u32 gInput, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:30276: conflicting types for
+ * `gInput'. */
 extern struct InputState gInput__f17e698 __asm__("gInput");
 
 extern char ResourceId_VioletSkyBackdrop;
@@ -373,11 +393,23 @@ void Func_08179e6c(void);
 
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
-/* VIEW(f17e698): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags); tried as the definition's struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the object already declares, BattleEffect_RunDaedalus moves: 4 of 3898 instructions in tla-ja. */
-extern struct SpriteObject *Func_0815b290__f17e698(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f17e698): routine Func_0815b3b0 as Sprite *Func_0815b3b0(s32, s32, u32, s32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, BattleEffect_RunDaedalus moves: 3 of 3898 instructions in tla-ja. */
-extern Sprite *Func_0815b3b0__f17e698(s32, s32, u32, s32) __asm__("Func_0815b3b0");
+/* VIEW(f17e698): routine Func_0815b290 as struct SpriteObject
+ * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
+ * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
+ * attributes, s32 flags); tried as the definition's struct EffectSprite
+ * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the
+ * object already declares, BattleEffect_RunDaedalus moves: 4 of 3898
+ * instructions in tla-ja. */
+extern struct SpriteObject *
+Func_0815b290__f17e698(s32 width, s32 height, u32 shape,
+                       u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f17e698): routine Func_0815b3b0 as Sprite *Func_0815b3b0(s32, s32, u32,
+ * s32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32
+ * kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0
+ * *Func_0815b3b0(s32 kind, s32 value), which the object already declares,
+ * BattleEffect_RunDaedalus moves: 3 of 3898 instructions in tla-ja. */
+extern Sprite *Func_0815b3b0__f17e698(s32, s32, u32,
+                                      s32) __asm__("Func_0815b3b0");
 
 void BattleEffect_FetchRectangleBlitters(s32, void **);
 s32 Trig_Cos(s32);
@@ -532,7 +564,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                     &work->frames[(j << 12) + i * 0x200], 0x200);
+                          &work->frames[(j << 12) + i * 0x200], 0x200);
         }
         obj = Func_0815b3b0__f17e698(32, 32, 0x80000000, 0xf000);
         work->sprites[j * 9 + 8] = obj;
@@ -550,7 +582,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                   DECODE_BUFFER + i * 0x400, 0x400);
+                        DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = Func_0815b290__f17e698(32, 64, 0xc000a000, 0);
       // Once-only: the store alone in its block.
@@ -563,7 +595,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
        * instructions differ in tla-en. */
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                 DECODE_BUFFER + i * 0x400, 0x800);
+                      DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
       Iwram_CopyWords((void *)0x050003c0, src, 32);
       src += 32;
@@ -572,7 +604,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       obj->priority = 1;
       work->sprites[41] = obj;
       Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                 DECODE_BUFFER, 0x100);
+                      DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's
        * hoisted constants; as no asm, 6 of 3921 instructions differ in tla-en.
        */
@@ -1315,7 +1347,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->transferPending = 1;
       wait(1);
       frame++;
-      if (frame != 800 && !(gInput__f17e698.held & 2) && !(gInput__f17e698.repeat & 1))
+      if (frame != 800 && !(gInput__f17e698.held & 2) &&
+          !(gInput__f17e698.repeat & 1))
         goto phase2;
     }
 
@@ -1491,7 +1524,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
 struct FxPartyList;
 
-/* VIEW(f17e698): tag struct RenderModel as struct RenderModel__f17e698; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunDaedalusAlt moves: 2 of 572 instructions in tla-ja. */
+/* VIEW(f17e698): tag struct RenderModel as struct RenderModel__f17e698;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunDaedalusAlt moves: 2 of 572 instructions in
+ * tla-ja. */
 struct RenderModel__f17e698 {
   s32 kind;
   s32 unk04;
@@ -1516,23 +1552,33 @@ void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
 
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 
 extern char ResourceId_Data0C9;
 extern u8 gMapCellBuffer[];
 
 extern const u8 Data_081995ec[]; // the seven strike frames
-/* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:31647: structure has no member named `x'. */
+/* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:31647: structure has no member
+ * named `x'. */
 struct PlacementSource__f17e698 {
   s32 x;
   s32 y;
 };
 extern const struct PlacementSource__f17e698
-    Data_08196ee8;                         // the summon's placement source
-extern const u8 Data_08199220[];           // the rings' mesh
-extern const u8 gData_081991b0[];          // their corners
-/* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:31579: request for member `variant' in something not a structure or union. */
-extern struct EffectStep gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks
+    Data_08196ee8;                // the summon's placement source
+extern const u8 Data_08199220[];  // the rings' mesh
+extern const u8 gData_081991b0[]; // their corners
+/* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep
+ * gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest
+ * of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:31579: request for member
+ * `variant' in something not a structure or union. */
+extern struct EffectStep
+    gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -1608,9 +1654,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       discY = 0x500000;
       work->transferMode = 2;
       work->transferValue = 50;
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame == 56) {
       Sound_PlayFar(140);

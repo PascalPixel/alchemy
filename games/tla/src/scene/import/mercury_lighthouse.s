@@ -117,11 +117,11 @@ Event_ResolvePendingActions:
 	.global FieldPsynergy_StartMindReadWave
 	.thumb_func
 FieldPsynergy_StartMindReadWave:
-	overlay_veneer Func_080c84e8
+	overlay_veneer FieldPsynergy_StartMindReadWaveFar
 	.global Func_02000608
 	.thumb_func
 Func_02000608:
-	overlay_veneer Func_080c84f0
+	overlay_veneer FieldPsynergy_StopMindReadWaveFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

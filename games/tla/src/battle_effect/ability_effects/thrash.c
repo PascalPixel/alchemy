@@ -235,7 +235,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
       Func_081180e8(PHASE_RESULTS);
     if (frame == HIT_FRAME) {
       work->shakeFrames = 8;
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
     }
     BattleCamera_Shake(16, 16);
     BattleEffect_CountDownBattlerTints();

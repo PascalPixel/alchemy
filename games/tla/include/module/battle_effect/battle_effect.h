@@ -114,8 +114,9 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
@@ -155,7 +156,7 @@ void VramBlock_Reset93Far(void);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 
-void Func_08020388(void);
+void VramBlock_Load93Far(void);
 
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 red, s32 green, s32 blue);

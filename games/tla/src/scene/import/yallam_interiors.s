@@ -117,7 +117,7 @@ Actor_SetSpritePriority:
 	.global Func_02000a40
 	.thumb_func
 Func_02000a40:
-	overlay_veneer Func_080c83e0
+	overlay_veneer BattleEffect_StartEffectObject22Far
 	.global Func_02000a48
 	.thumb_func
 Func_02000a48:
@@ -137,24 +137,24 @@ Func_02000a60:
 	.global Func_02000a68
 	.thumb_func
 Func_02000a68:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000a70
 	.thumb_func
 Func_02000a70:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02000a78
 	.thumb_func
 Func_02000a78:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Func_02000a80
 	.thumb_func
 Func_02000a80:
-	overlay_veneer Func_08108020
+	overlay_veneer Forge_RunFar
 	.global Func_02000a88
 	.thumb_func
 Func_02000a88:
-	overlay_veneer Func_08108098
+	overlay_veneer Forge_SetItemFar
 	.global Func_02000a90
 	.thumb_func
 Func_02000a90:
-	overlay_veneer Func_081080a0
+	overlay_veneer Forge_GetItemFar

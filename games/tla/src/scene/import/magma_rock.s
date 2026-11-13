@@ -121,7 +121,7 @@ Map_CopyCellAttributeRect:
 	.global Func_02003aac
 	.thumb_func
 Func_02003aac:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -137,7 +137,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global SetMapCellCollision
 	.thumb_func
 SetMapCellCollision:
@@ -145,7 +145,7 @@ SetMapCellCollision:
 	.global Func_02003adc
 	.thumb_func
 Func_02003adc:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -197,7 +197,7 @@ Func_02003b3c:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global ObjectVisual_CopyAttributes
 	.thumb_func
 ObjectVisual_CopyAttributes:
@@ -217,7 +217,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02003b6c
 	.thumb_func
 Func_02003b6c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d452c
 	.thumb_func
 Func_080d452c:
@@ -269,7 +269,7 @@ Event_ResolvePendingActions:
 	.global Func_02003bd4
 	.thumb_func
 Func_02003bd4:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Event_NoOp
 	.thumb_func
 Event_NoOp:
@@ -321,7 +321,7 @@ Func_02003c34:
 	.global Func_02003c3c
 	.thumb_func
 Func_02003c3c:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global BattleEffect_StepVector3
 	.thumb_func
 BattleEffect_StepVector3:

@@ -499,7 +499,8 @@ extern char SceneId_Ov6aeRoom1;
 
 void Func_02002f90(struct FieldEffect *effect, const s32 *script);
 
-struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
+struct RenderInput *Portrait_OpenWindowFar(s32 resource, s32 x, s32 y,
+                                           s32 mode);
 
 extern struct BattleUnit gOwnerStates[];
 

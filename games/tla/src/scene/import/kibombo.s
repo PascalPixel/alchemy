@@ -121,7 +121,7 @@ Animation_SetStateFlags:
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global Func_02005a8c
 	.thumb_func
 Func_02005a8c:
@@ -229,7 +229,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -237,7 +237,7 @@ Event_ShowMessageAndWait:
 	.global Event_AskYesNoAndShowResponse
 	.thumb_func
 Event_AskYesNoAndShowResponse:
-	overlay_veneer Func_080c81a8
+	overlay_veneer Event_AskYesNoAndShowResponseFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -261,7 +261,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -273,7 +273,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02005bb4
 	.thumb_func
 Func_02005bb4:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:
@@ -345,7 +345,7 @@ Event_ResolvePendingActions:
 	.global Func_02005c44
 	.thumb_func
 Func_02005c44:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:
@@ -377,15 +377,15 @@ Func_02005c7c:
 	.global Func_02005c84
 	.thumb_func
 Func_02005c84:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02005c8c
 	.thumb_func
 Func_02005c8c:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02005c94
 	.thumb_func
 Func_02005c94:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

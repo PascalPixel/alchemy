@@ -256,7 +256,7 @@ s32 Func_080cdc74(void) {
     return 0;
   terrain = target->terrainId;
   target->terrainId = 2;
-  result = Func_08020210(target, position);
+  result = MapGrid_CheckCollisionFar(target, position);
   target->terrainId = terrain;
   if (result > 0)
     return 0;
@@ -287,7 +287,7 @@ void Func_080cdd80(void) {
   Vector_AddPolarOffset(0x100000, angle, position);
   terrain = target->terrainId;
   target->terrainId = 2;
-  result = Func_08020210(target, position);
+  result = MapGrid_CheckCollisionFar(target, position);
   target->terrainId = terrain;
   if (result <= 0) {
     Actor_SetMode(owner, 8);

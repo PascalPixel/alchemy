@@ -107,8 +107,8 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   // The palette: BG colours 1-63 darkened eight steps in each channel.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
                              1, 0);
-  Iwram_CopyWordsEntry(palette,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
+  Iwram_CopyWordsEntry(
+      palette, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
   color = (u16 *)&BG_PLTT[1];
   for (i = 0; i != 63; i++) {
     s32 c = *color;
@@ -364,7 +364,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
           if (frame % 12 == 0)
             Func_0814cd48(effect->actors[i], 7, 5, i, 6);
           if ((frame & 3) == 0)
-            Func_08118088(effect->actors[i], 5);
+            BattleMotion_ApplyKnockbackFar(effect->actors[i], 5);
         }
       }
     }
@@ -386,7 +386,6 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();
 }
-
 
 /// Takes the first free animation entry of the 64 and clears it for use. With
 /// none free it clears the entry at address 0.
@@ -418,7 +417,6 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
   found->param = 0;
   return found;
 }
-
 
 struct AnimationEntry;
 

@@ -8,7 +8,10 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f17bd88): tag struct ModelTexture as struct ModelTexture__f17bd88; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunFirePuppet moves: 1 of 541 instructions in tla-ja. */
+/* VIEW(f17bd88): tag struct ModelTexture as struct ModelTexture__f17bd88;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunFirePuppet moves: 1 of 541 instructions in
+ * tla-ja. */
 struct ModelTexture__f17bd88 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -16,7 +19,10 @@ struct ModelTexture__f17bd88 {
   const u8 *pixels;
 };
 
-/* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunFirePuppet moves: 2 of 541 instructions in tla-ja. */
+/* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunFirePuppet moves: 2 of 541 instructions in
+ * tla-ja. */
 struct RenderModel__f17bd88 {
   long kind; // long: see the tag at the model's stores
   s32 unk04;
@@ -58,13 +64,20 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17bd88): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:27753: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f17bd88(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f17bd88): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:27753: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f17bd88(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -157,9 +170,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F2, work->sheet + 0x4000, 0,
                              0);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
-                  128);
+  Iwram_CopyWordsEntry(
+      (void *)BG_PLTT,
+      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
   REG_BG2PA = 0x80;
   Render_BuildQuadStrip(buffer, 4, 32, 32);
 
@@ -342,8 +355,8 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                  128);
+                       Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
+                       128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -399,7 +412,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
 
     // The hit, and the sparks sprayed from 48 pixels out.
     if (frame == SWING_HIT_FRAME) {
-      Func_08118088(effect->actors[0], 1);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       Func_081180e8(134);
       work->shakeFrames = 8;

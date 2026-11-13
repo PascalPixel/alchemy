@@ -21,7 +21,7 @@ Map_CopyCellPictureIndicesRect:
 	.global Func_02000620
 	.thumb_func
 Func_02000620:
-	overlay_veneer Func_080201a0
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:

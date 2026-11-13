@@ -209,11 +209,11 @@ Event_ResolvePendingActions:
 	.global WorldMap_StartZoom
 	.thumb_func
 WorldMap_StartZoom:
-	overlay_veneer Func_080c8638
+	overlay_veneer WorldMap_StartZoomFar
 	.global Func_02002094
 	.thumb_func
 Func_02002094:
-	overlay_veneer Func_080c86f0
+	overlay_veneer FlagEntries_GetTableFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

@@ -125,7 +125,7 @@ Field_CheckSpheresOverlap:
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -233,7 +233,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002130
 	.thumb_func
 Func_02002130:
-	overlay_veneer Func_080c83e0
+	overlay_veneer BattleEffect_StartEffectObject22Far
 	.global ObjectTable_Get
 	.thumb_func
 ObjectTable_Get:
@@ -261,7 +261,7 @@ Actor_CommitPositionAndActivate:
 	.global Func_02002168
 	.thumb_func
 Func_02002168:
-	overlay_veneer Func_080c8688
+	overlay_veneer Scene_QueueMusicFar
 	.global Func_02002170
 	.thumb_func
 Func_02002170:

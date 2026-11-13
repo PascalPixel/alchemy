@@ -13,8 +13,8 @@ GameFlag_ClearBit:
 	.global Func_02000178
 	.thumb_func
 Func_02000178:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000180
 	.thumb_func
 Func_02000180:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar

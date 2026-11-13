@@ -41,7 +41,6 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 
 // The Mercury Djinn's flames (effect kind 281).
 
-
 // Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
@@ -167,7 +166,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         if (frame == Data_0819850e[i] + 6) {
           for (j = 0; j != effect->count; j++) {
             Func_0814cd48(effect->actors[j], 7, 5, j, 6);
-            Func_08118088(effect->actors[j], 6);
+            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
           }
         }
       }
@@ -292,7 +291,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {
             Func_0814cd48(effect->actors[j], 7, 5, j, 6);
-            Func_08118088(effect->actors[j], 6);
+            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
           }
         }
       }
@@ -442,7 +441,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {
             Func_0814cd48(effect->actors[j], 7, 5, j, 6);
-            Func_08118088(effect->actors[j], 6);
+            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
           }
         }
         column->y -= 12;
@@ -625,7 +624,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     if (frame == 38) {
       for (member = 0; member != effect->count; member++) {
         Func_0814cd48(effect->actors[member], 7, 5, member, 16);
-        Func_08118088(effect->actors[member], 6);
+        BattleMotion_ApplyKnockbackFar(effect->actors[member], 6);
       }
     }
 

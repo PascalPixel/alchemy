@@ -10,7 +10,10 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f179f18): tag struct ModelTexture as struct ModelTexture__f179f18; ability_effects.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunFlora moves: 2 of 2567 instructions in tla-ja. */
+/* VIEW(f179f18): tag struct ModelTexture as struct ModelTexture__f179f18;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, BattleEffect_RunFlora moves: 2 of 2567 instructions in
+ * tla-ja. */
 struct ModelTexture__f179f18 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -18,7 +21,8 @@ struct ModelTexture__f179f18 {
   u8 *pixels;
 };
 
-/* VIEW(f179f18): tag struct RenderModel as struct RenderModel__f179f18; ability_effects.c has another definition. */
+/* VIEW(f179f18): tag struct RenderModel as struct RenderModel__f179f18;
+ * ability_effects.c has another definition. */
 struct RenderModel__f179f18 {
   s32 kind;
   s32 unk04;
@@ -59,8 +63,9 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -111,8 +116,14 @@ struct WordPair {
   s32 b;
 };
 
-/* VIEW(f179f18): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:26450: conflicting types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry gResourceTableEntries__f179f18[] __asm__("gResourceTableEntries");
+/* VIEW(f179f18): variable gResourceTableEntries as extern struct
+ * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
+ * in tla-ja: games/tla/src/battle_effect/ability_effects.c:26450: conflicting
+ * types for `gResourceTableEntries'. */
+extern struct ResourceTableEntry
+    gResourceTableEntries__f179f18[] __asm__("gResourceTableEntries");
 extern u8 gData_02014000[];
 extern const struct WordPair Data_08196ec8;
 extern u16 gData_08197410[];
@@ -140,11 +151,22 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
-/* VIEW(f179f18): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); f175f74 has struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32). */
-extern struct SpriteObject *Func_0815b290__f179f18(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:26593: too many arguments to function `Func_0815b3b0'. */
-extern struct FloraObject *Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
+/* VIEW(f179f18): routine Func_0815b290 as struct SpriteObject
+ * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); f175f74 has
+ * struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32). */
+extern struct SpriteObject *
+Func_0815b290__f179f18(s32 width, s32 height, u32 shape,
+                       u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32
+ * width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject
+ * *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct
+ * EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:26593: too many arguments to
+ * function `Func_0815b3b0'. */
+extern struct FloraObject *
+Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape,
+                       s32 mode) __asm__("Func_0815b3b0");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
@@ -243,14 +265,16 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Resource_DecodeType01(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
-        struct FloraObject *obj = Func_0815b290__f179f18(16, 16, 0x40000000, 0xf000);
+        struct FloraObject *obj =
+            Func_0815b290__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
         w->tiles[i] = ((struct FloraObject *)work->objects[12 + i])->tile;
       }
       for (i = 0; i != 17; i++) {
-        struct FloraObject *obj = Func_0815b3b0__f179f18(16, 16, 0x40000000, 0xf000);
+        struct FloraObject *obj =
+            Func_0815b3b0__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[27 + i] = obj;
         Iwram_CopyWordsEntry(obj, work->objects[12], 24);
       }
@@ -923,7 +947,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           s->variant = 15;
           work->shakeFrames = 4;
           Sound_PlayFar(133);
-          Func_08118088(effect->actors[i], 0);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
         }
       }
@@ -1262,9 +1286,9 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
     // The strike: pink palette, the caster lands at 120 percent and the
     // target is pushed to 80, and the stars burst upward from it.
     if (frame == STAR_BURST_FRAME) {
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet), 128);
       casterObject->z = targetObject->z;
       casterObject->x = targetObject->x * 120 / 100;
       targetObject->x = targetObject->x * 80 / 100;

@@ -109,7 +109,7 @@ Func_02000d88:
 	.global Func_02000d90
 	.thumb_func
 Func_02000d90:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -117,11 +117,11 @@ Camera_FollowActor:
 	.global Func_02000da0
 	.thumb_func
 Func_02000da0:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02000da8
 	.thumb_func
 Func_02000da8:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Func_02000db0
 	.thumb_func
 Func_02000db0:

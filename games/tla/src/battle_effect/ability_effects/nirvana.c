@@ -49,7 +49,8 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)0x05000000,
-                  Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
+                       128);
   object = GetBattleObjectSlotFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   orb = work->particles;
@@ -379,7 +380,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
                              work->sheet + SPARK_OFFSET, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -581,7 +583,10 @@ struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
 
-/* VIEW(f16d130): tag struct ModelTexture as struct ModelTexture__f16d130; ability_effects.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in tla-ja. */
+/* VIEW(f16d130): tag struct ModelTexture as struct ModelTexture__f16d130;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in
+ * tla-ja. */
 struct ModelTexture__f16d130 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -589,7 +594,10 @@ struct ModelTexture__f16d130 {
   const u8 *pixels;
 };
 
-/* VIEW(f16d130): tag struct RenderModel as struct RenderModel__f16d130; ability_effects.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in tla-ja. */
+/* VIEW(f16d130): tag struct RenderModel as struct RenderModel__f16d130;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in
+ * tla-ja. */
 struct RenderModel__f16d130 {
   s32 kind;
   s32 unk04;
@@ -619,7 +627,8 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
 
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -634,8 +643,12 @@ struct ProjectedPoint {
   s32 x, y, depth;
 };
 
-/* VIEW(f16d130): routine Render_ProjectPoint as s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen); fxdisp has s32 Render_ProjectPoint(const void *point, s32 *screen). */
-extern s32 Render_ProjectPoint__f16d130(const void *point, struct ProjectedPoint *screen) __asm__("Render_ProjectPoint");
+/* VIEW(f16d130): routine Render_ProjectPoint as s32 Render_ProjectPoint(const
+ * void *point, struct ProjectedPoint *screen); fxdisp has s32
+ * Render_ProjectPoint(const void *point, s32 *screen). */
+extern s32 Render_ProjectPoint__f16d130(
+    const void *point,
+    struct ProjectedPoint *screen) __asm__("Render_ProjectPoint");
 void Render_ProjectVertices(struct ModelVertex *vertices,
                             struct ProjectedVertex *screen, s32 count);
 
@@ -705,7 +718,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                              work->sheet + 0x4000, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                       128);
   // A block of its own: camera, savedYaw and target take their stack slots
   // after the blitter pair's address.
   {

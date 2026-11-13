@@ -135,7 +135,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   }
   REG_BG2CNT = 0x784;
   Iwram_CopyWords((void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
 
   for (frame = 0; frame != STORM_DUSK_FRAMES; frame++) {
     size = 2;
@@ -328,7 +328,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
                              work->sheet + STORM_MOTE_CELLS, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_CrystalSheet),
+                       128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
   REG_BLDALPHA = 0x1010;
   {
@@ -402,7 +403,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       if (frame == 10) {
         for (i = 0; i != effect->count; i++) {
           Func_0814cd48(effect->actors[i], 7, 5, i, 8);
-          Func_08118088(effect->actors[i], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         }
       }
       // Frames 80 to 143: the violet bolts, 2 frames apart, and the violet
@@ -449,7 +450,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               for (j = 0; j != effect->count; j++) {
                 Func_0814cd48(effect->actors[j], Data_0819855e[Random16() & 3],
                               5, j, 4);
-                Func_08118088(effect->actors[j], 4);
+                BattleMotion_ApplyKnockbackFar(effect->actors[j], 4);
               }
             }
           }

@@ -61,7 +61,7 @@ FieldMessage_Show:
 	.global Func_02001bb4
 	.thumb_func
 Func_02001bb4:
-	overlay_veneer Func_080ad208
+	overlay_veneer Party_RestoreHpPpFar
 	.global Party_FindOwnerWithAction
 	.thumb_func
 Party_FindOwnerWithAction:
@@ -161,7 +161,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -185,7 +185,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -197,7 +197,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001cc4
 	.thumb_func
 Func_02001cc4:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -269,7 +269,7 @@ Func_02001d4c:
 	.global Func_02001d54
 	.thumb_func
 Func_02001d54:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_02001d5c
 	.thumb_func
 Func_02001d5c:

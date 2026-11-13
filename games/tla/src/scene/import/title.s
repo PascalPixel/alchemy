@@ -97,7 +97,7 @@ Func_02000624:
 	.global Func_0200062c
 	.thumb_func
 Func_0200062c:
-	overlay_veneer Func_081a6018
+	overlay_veneer Title_ShowSplashScreenFar
 	.global Func_02000634
 	.thumb_func
 Func_02000634:

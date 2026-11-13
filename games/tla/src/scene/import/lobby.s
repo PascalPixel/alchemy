@@ -53,7 +53,7 @@ Sound_LoadReverbCode:
 	.global Func_0200192c
 	.thumb_func
 Func_0200192c:
-	overlay_veneer Func_08000380
+	overlay_veneer Serial_StartSendFar
 	.global Serial_StartReceive
 	.thumb_func
 Serial_StartReceive:
@@ -101,11 +101,11 @@ Map_CopyCellPictureIndicesRect:
 	.global Func_0200198c
 	.thumb_func
 Func_0200198c:
-	overlay_veneer Func_08020198
+	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global Func_02001994
 	.thumb_func
 Func_02001994:
-	overlay_veneer Func_080201a0
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -161,7 +161,7 @@ Party_CountMembers:
 	.global Func_02001a04
 	.thumb_func
 Func_02001a04:
-	overlay_veneer Func_080ad208
+	overlay_veneer Party_RestoreHpPpFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -253,7 +253,7 @@ Event_ResolvePendingActions:
 	.global Func_02001abc
 	.thumb_func
 Func_02001abc:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global DjinnRecovery_CountDownTwenty
 	.thumb_func
 DjinnRecovery_CountDownTwenty:

@@ -30,7 +30,9 @@ enum {
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
-/* VIEW(f18bc98): tag struct ModelTexture as struct ModelTexture__f18bc98; render_model.h has another definition; tried with the definition the rest of the object has, Func_0818bc98 moves: 1 of 1241 instructions in tla-ja. */
+/* VIEW(f18bc98): tag struct ModelTexture as struct ModelTexture__f18bc98;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, Func_0818bc98 moves: 1 of 1241 instructions in tla-ja. */
 struct ModelTexture__f18bc98 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -40,7 +42,11 @@ struct ModelTexture__f18bc98 {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:40081: structure has no member named `vertices'. */
+/* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:40081: structure has no member
+ * named `vertices'. */
 struct Model__f18bc98 {
   s32 kind;
   s32 next;
@@ -102,14 +108,17 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18bc98): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void Render_DrawModelList(struct Model__f18ad40 *model). */
-extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__("Render_DrawModelList");
+/* VIEW(f18bc98): routine Render_DrawModelList as void
+ * Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void
+ * Render_DrawModelList(struct Model__f18ad40 *model). */
+extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__(
+    "Render_DrawModelList");
 void Heap_Release(void *block);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void Func_08118088(s32 actor, s32 motion);
+void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -533,7 +542,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
       } else if (frame == Data_08199dc7[mode]) {
         // The others hit every target at once, and the screen flashes.
         for (i = 0; i != effect->count; i++) {
-          Func_08118088(effect->actors[i], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 8;
@@ -620,9 +629,9 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
   if (mode == 0) {
-    Iwram_CopyWordsEntry((void *)0x05000000,
-                    Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-                    128);
+    Iwram_CopyWordsEntry(
+        (void *)0x05000000,
+        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
     REG_BLDALPHA = 0x810;
     work->transferMode = 2;
     work->transferValue = 50;

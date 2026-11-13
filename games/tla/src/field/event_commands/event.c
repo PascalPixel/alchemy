@@ -31,8 +31,7 @@ void Event_Wait(s32 frames) {
 }
 
 void Leader_StopMoving(void) {
-  struct Actor *object =
-      ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = Q16_ONE;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -227,7 +226,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   retry:
     {
       FieldMessage_ShowFar((s32)&MsgItemDropPrompt, 1);
-      result = Func_08108068(&member, &slot);
+      result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
         if (((struct ItemHead *)Item_Get(item))->flags & 8) {
           MessageArgument_PushFar(item, 2);
@@ -353,8 +352,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   }
 
   answer = YesNoMenu_RunFar(useBottom, *(s16 *)(work + 0xcb0),
-                                       *(s16 *)(work + 0xcb2),
-                                       *(s16 *)(work + 0xcb4));
+                            *(s16 *)(work + 0xcb2), *(s16 *)(work + 0xcb4));
   if (answer != 0) {
     Actor_SetModeById(actor, 4);
     Window_CloseMatchingIdFar(sprite);
@@ -400,8 +398,11 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
 
 // Messages: teach an ability and display the learning message.
 
-/* VIEW(event_commands): routine Unit_LearnPsynergyFar as void Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void Unit_LearnPsynergyFar(s32 owner, s32 action). */
-extern void Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
+/* VIEW(event_commands): routine Unit_LearnPsynergyFar as void
+ * Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void
+ * Unit_LearnPsynergyFar(s32 owner, s32 action). */
+extern void
+Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 
 /// Teaches the ability, plays a sound, shows a message and waits for it to
 /// advance.

@@ -534,7 +534,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 /// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 phase);
 /// An actor's recoil motion, through a far call.
-void Func_08118088(s32 actor, s32 motion);
+void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 /// Shakes the camera while work->shakeFrames lasts.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /// Counts down the actors' flash timers.
@@ -656,14 +656,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       REG_BLDCNT = 0;
     } else if (mode == 16) {
       Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_LimePalette),
-                      128);
+                           Resource_GetTableEntry((s32)&ResourceId_LimePalette),
+                           128);
       Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                                  work->sheet + 0x22, 1, 0);
     } else {
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
       Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                                  work->sheet + 0x22, 1, 0);
     }
@@ -675,7 +675,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     work->transferValue = 0;
   } else if (mode == 2) {
     Iwram_CopyWordsEntry((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
+                         Resource_GetTableEntry((s32)&ResourceId_CometSheetA),
+                         128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);
     work->transferMode = 2;
@@ -986,9 +987,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               if (mode != 7 && mode != 9 && mode != 10 && mode != 18 &&
                   mode != 14 && mode != 15 && mode != 16 && mode != 17) {
                 if (mode == 5)
-                  Func_08118088(effect->actors[i], 4);
+                  BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
                 else
-                  Func_08118088(effect->actors[i], 5);
+                  BattleMotion_ApplyKnockbackFar(effect->actors[i], 5);
               }
               if (mode == 16 || mode == 17) {
                 // The streak lets its particle loose.

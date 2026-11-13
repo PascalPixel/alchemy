@@ -864,7 +864,7 @@ extern char ResourceId_RedPaletteC;
 extern char ResourceId_VioletPaletteD;
 
 s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Func_08138048(s32 slot, s32 modeAndFlags);
+s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 // The Broken Seal's five-argument blitter loader, named but never called.
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
                                  s32 flags, s32 mode);
@@ -886,8 +886,8 @@ static __inline__ s32 PolarY(s32 angle, s32 radius) {
 /// centre, three rings leaving it at thirds of a turn, the blue ring sheet and
 /// its palette with the mode's colour (0 yellow, 1 blue, 2 red, else violet)
 /// over the first 32 colours, BG2 unscaled at the origin, the additive and max
-/// blitters (Func_08138048, the veneer of BattleEffect_LoadBlitter), and the
-/// two frame callbacks.
+/// blitters (BattleEffect_LoadBlitterFar, the veneer of
+/// BattleEffect_LoadBlitter), and the two frame callbacks.
 s32 ElementGlow_InitializeStarField(s32 mode) {
   struct SparkWork *work;
   struct Spark *spark;
@@ -970,8 +970,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
    * instructions differ in tla-en (6 with an unused u8[4] in its place). */
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
-  Func_08138048(104, 0x03);
-  Func_08138048(188, 0x13);
+  BattleEffect_LoadBlitterFar(104, 0x03);
+  BattleEffect_LoadBlitterFar(188, 0x13);
   Task_Add(ElementGlow_UpdateStarField, 0x480);
   return Task_Add(ElementGlow_UploadStarField, 0x480);
 }
@@ -1006,7 +1006,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
 void Func_08138020(struct BattlePresentationWork *launch);
 void Func_08138030(struct BattlePresentationWork *launch);
 void Func_08138038(s32 mode);
-void Func_08138040(void);
+void BattleEffect_EndElementStreaksFar(void);
 
 // Plays a unit's element effect in one of four ways: 0, the star field
 // around the unit while the backdrop darkens over 25 frames (45 frames);
@@ -1064,7 +1064,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       IO_WRITE_QUEUE_PUSH(0x04000028, (u32)origin, 0x84000002);
       wait(1);
     }
-    Func_08138040();
+    BattleEffect_EndElementStreaksFar();
   } else if (mode == 2) {
     launch.flags = 0;
     launch.kind = kind;

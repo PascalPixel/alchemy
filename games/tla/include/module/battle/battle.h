@@ -232,8 +232,8 @@ extern u8 gData_03001ae8[];
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *);
 
-void Func_08138008(struct BattlePresentationWork *work);
-void Func_08138018(struct BattlePresentationWork *work);
+void BattleEffect_DispatchByIdRangeFar(struct BattlePresentationWork *work);
+void BattleEffect_RunTableEffectFar(struct BattlePresentationWork *work);
 void Func_08138020(struct BattlePresentationWork *work);
 
 s32 Func_081197f0(s32 enemyGroup);
@@ -319,7 +319,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void BattleBackground_RestorePalette(void);
 
-s32 Func_080381c0(struct BattleActionRecord *entries, void *buffer, s32 mode);
+s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *entries,
+                                   void *buffer, s32 mode);
 
 extern struct BattlePresentationTransition *gTransitionWork;
 

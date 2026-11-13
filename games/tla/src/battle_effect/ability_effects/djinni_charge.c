@@ -40,13 +40,20 @@ void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f172b00): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:21159: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f172b00): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:21159: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -66,7 +73,8 @@ void Transform_Pop(void);
 
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
                    s32 cellWidth, s32 cellHeight); // builds a grid's mesh
-void Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex *screen, s32 count);
+void Render_ProjectVertices(struct ModelVertex *vertices,
+                            struct ProjectedVertex *screen, s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 extern char ResourceId_Data134;
@@ -89,7 +97,8 @@ extern u16 gData_08197410[];
 // first frame) swells over the target and bursts; for Cannon it shoots
 // straight in and strikes once, behind a gust of petals.
 
-void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   u8 *mesh;
   u8 *projected;
   u8 *cells;
@@ -289,7 +298,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect, s32 mode)
           work->shakeFrames = 6;
           Func_081180e8(134);
           Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
-          Func_08118088(effect->actors[0], 0);
+          BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
           for (i = 0; i != 63; i++) {
             s32 angle;
             s32 speed;

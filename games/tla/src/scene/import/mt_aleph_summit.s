@@ -117,7 +117,7 @@ Event_SetMessageId:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -137,7 +137,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -149,7 +149,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_0200152c
 	.thumb_func
 Func_0200152c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -177,7 +177,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001564
 	.thumb_func
 Func_02001564:
-	overlay_veneer Func_080c87f8
+	overlay_veneer Field_StartColorTransitionFar
 	.global Field_StartPaletteTransition
 	.thumb_func
 Field_StartPaletteTransition:

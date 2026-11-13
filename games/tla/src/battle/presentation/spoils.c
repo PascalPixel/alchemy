@@ -236,7 +236,7 @@ void Battle_AwardSpoils(void) {
     else
       unit->experience += spoils->experience;
     while (Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit)),
-           Func_080ad0b0(unitId, gains) != 0) {
+           Unit_TryLevelUpFar(unitId, gains) != 0) {
       Sound_PlayFar(89);
       MessageArgument_ClearAllFar();
       MessageArgument_PushFar(unit->classIndex, 3);

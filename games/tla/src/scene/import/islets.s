@@ -81,7 +81,7 @@ Map_CopyCellAttributeRect:
 	.global Func_02003e2c
 	.thumb_func
 Func_02003e2c:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -233,7 +233,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -245,7 +245,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02003f74
 	.thumb_func
 Func_02003f74:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -273,19 +273,19 @@ Event_ResolvePendingActions:
 	.global FieldPsynergy_StartMindReadWave
 	.thumb_func
 FieldPsynergy_StartMindReadWave:
-	overlay_veneer Func_080c84e8
+	overlay_veneer FieldPsynergy_StartMindReadWaveFar
 	.global Func_02003fb4
 	.thumb_func
 Func_02003fb4:
-	overlay_veneer Func_080c84f0
+	overlay_veneer FieldPsynergy_StopMindReadWaveFar
 	.global Func_02003fbc
 	.thumb_func
 Func_02003fbc:
-	overlay_veneer Func_080c84f8
+	overlay_veneer FieldPsynergy_GreyMindReadPaletteFar
 	.global Func_02003fc4
 	.thumb_func
 Func_02003fc4:
-	overlay_veneer Func_080c8500
+	overlay_veneer FieldPsynergy_RestoreMindReadPaletteFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:
@@ -311,7 +311,7 @@ Func_02003fec:
 	.global Func_02003ff4
 	.thumb_func
 Func_02003ff4:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

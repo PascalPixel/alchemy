@@ -85,7 +85,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     sheet += 0x200;
     Resource_DecodeType01(sheet, tiles);
     for (i = 0; i != 8; i++) {
-      struct SpriteObject *object = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
+      struct SpriteObject *object =
+          Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
 
       object->priority = 1;
       work->objects[i] = object;
@@ -487,7 +488,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 16 + 8) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 8);
-        Func_08118088(effect->actors[i], 2);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
       }
     }
     for (i = 0; i != 1024; i++) {

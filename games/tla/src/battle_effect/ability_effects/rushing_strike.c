@@ -20,8 +20,14 @@ void Func_081180e8(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17d174): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:28796: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f17d174): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:28796: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 extern char ResourceId_FlashBurstSheet;
@@ -91,7 +97,8 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
                              work->sheet + 0x4000, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   work->transferMode = 2; // keeps 50 or 75 percent (see transferMode)
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -102,7 +109,8 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       struct EffectStep *thrown;
 
       for (i = 0, thrown = work->particles; i != STARS; i++, thrown++) {
-        struct StarTarget *caster = *GetBattleObjectSlotFar__f17d174(effect->actor);
+        struct StarTarget *caster =
+            *GetBattleObjectSlotFar__f17d174(effect->actor);
         s32 height = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
         s32 velocity;
 
@@ -263,7 +271,10 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f17d174): tag struct RenderModel as struct RenderModel__f17d174; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunRisingDragonEnemy moves: 5 of 1028 instructions in tla-ja. */
+/* VIEW(f17d174): tag struct RenderModel as struct RenderModel__f17d174;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunRisingDragonEnemy moves: 5 of 1028
+ * instructions in tla-ja. */
 struct RenderModel__f17d174 {
   s32 kind;
   s32 unk04;
@@ -299,7 +310,8 @@ void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -408,9 +420,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 186; frame++) {
     if (frame == 0) {
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
       }
@@ -443,9 +455,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
     if (frame == 165) {
       gCameraSceneParameters[4] = 120;
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame == 166) {
       camera[27] = savedYaw;

@@ -97,7 +97,7 @@ Party_AdjustCoins:
 	.global Func_02001358
 	.thumb_func
 Func_02001358:
-	overlay_veneer Func_080ad208
+	overlay_veneer Party_RestoreHpPpFar
 	.global PartyInventory_CountItem
 	.thumb_func
 PartyInventory_CountItem:
@@ -109,7 +109,7 @@ PartyInventory_CountFreeSlots:
 	.global Func_02001370
 	.thumb_func
 Func_02001370:
-	overlay_veneer Func_080ad2f8
+	overlay_veneer Class_GetSeriesFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -173,7 +173,7 @@ Event_StartScreenTransition:
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:
-	overlay_veneer Func_080c83e0
+	overlay_veneer BattleEffect_StartEffectObject22Far
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

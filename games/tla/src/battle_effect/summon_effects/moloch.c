@@ -574,7 +574,8 @@ void SceneTransform_ApplyYaw(s32 angle);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
@@ -752,9 +753,9 @@ void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 // The 128 background colours the scene fades (entries 96 to 223).
 #define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
-#define Iwram_FillWords(dest, size, value)                                          \
+#define Iwram_FillWords(dest, size, value)                                     \
   do {                                                                         \
-    Iwram_FillWords(dest, size, value);                                         \
+    Iwram_FillWords(dest, size, value);                                        \
   } while (0)
 
 #define DECODE_01(src, dest)                                                   \
@@ -3126,7 +3127,7 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   pixels = source->pixels;
   misalign = pixels & 3;
   Iwram_CopyWordsEntry((void *)copy->pixels, (void *)(pixels - misalign),
-                  (size + misalign + 3) & -4);
+                       (size + misalign + 3) & -4);
   copy->pixels += misalign;
   return 1;
 }

@@ -236,7 +236,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             wait(1);
           Window_CloseFar(window, 1);
           Iwram_CopyWordsEntry(work->tilemap, saved, size);
-          Func_08038290();
+          Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
@@ -268,7 +268,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             wait(1);
           Window_CloseFar(window, 1);
           Iwram_CopyWordsEntry(work->tilemap, saved, size);
-          Func_08038290();
+          Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           wait(1);
           redraw = 1;
@@ -318,10 +318,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       case 1:
         if (mode == 1)
           previewMode = 4;
-        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1], page, 0,
-                      previewMode, 0, 0);
-        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->shownMember[1], page,
-                      0, previewMode, selectedPages[1] + 1, 0);
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1],
+                                  page, 0, previewMode, 0, 0);
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0,
+                                  menu->shownMember[1], page, 0, previewMode,
+                                  selectedPages[1] + 1, 0);
         break;
       case 0:
         if (mode == 1) {
@@ -329,9 +330,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           addPairSlot = 0;
         }
         DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], page,
-                      addPairSlot, previewMode, page, 1);
-        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->pairMember[0], page,
-                      addPairSlot, previewMode, selectedPages[0] + 1, 1);
+                                  addPairSlot, previewMode, page, 1);
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0,
+                                  menu->pairMember[0], page, addPairSlot,
+                                  previewMode, selectedPages[0] + 1, 1);
         break;
       }
       work->menuBusy = 0;
@@ -394,8 +396,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
        * as the native does; as a direct call, 6 of 1244 instructions differ
        * in tla-en. */
       if ((frame & 4) != 0)
-        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWordsEntry, (void *)0x060052c0,
-                  32);
+        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWordsEntry,
+                  (void *)0x060052c0, 32);
       else
         /* FAKEMATCH(wrapper): the fill forwarded through shared.c's FillWords
          * inline, so the routine loads before its arguments; as a direct
@@ -535,10 +537,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   helpWindowSlot = &menu->helpWindow;
   WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
-                                0);
-  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
-                                0, 16);
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus, menu->statusWindow, 0, 0);
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow, 0,
+                             16);
   side = 0;
   while (1) {
     s32 *pageCount;
@@ -560,8 +561,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
       DjinnMenu_DrawStatPreview(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
-      DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
-                    selectedPages[0] + 1, 1);
+      DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0,
+                                0, 3, selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
     if (counts[side] > 1) {

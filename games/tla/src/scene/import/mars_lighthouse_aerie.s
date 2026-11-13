@@ -117,7 +117,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -133,7 +133,7 @@ FieldMessage_Show:
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global PartyInventory_Remove
 	.thumb_func
 PartyInventory_Remove:
@@ -141,7 +141,7 @@ PartyInventory_Remove:
 	.global Func_020055fc
 	.thumb_func
 Func_020055fc:
-	overlay_veneer Func_080ad208
+	overlay_veneer Party_RestoreHpPpFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -261,7 +261,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -285,7 +285,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -297,7 +297,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02005734
 	.thumb_func
 Func_02005734:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:
@@ -341,11 +341,11 @@ Event_ResolvePendingActions:
 	.global FieldPsynergy_StartMindReadWave
 	.thumb_func
 FieldPsynergy_StartMindReadWave:
-	overlay_veneer Func_080c84e8
+	overlay_veneer FieldPsynergy_StartMindReadWaveFar
 	.global Func_02005794
 	.thumb_func
 Func_02005794:
-	overlay_veneer Func_080c84f0
+	overlay_veneer FieldPsynergy_StopMindReadWaveFar
 	.global Camera_WorldToScreen
 	.thumb_func
 Camera_WorldToScreen:
@@ -361,11 +361,11 @@ Func_020057ac:
 	.global Func_020057b4
 	.thumb_func
 Func_020057b4:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_020057bc
 	.thumb_func
 Func_020057bc:
-	overlay_veneer Func_080c87f0
+	overlay_veneer BattleEffect_GetObjectDepthFar
 	.global Func_020057c4
 	.thumb_func
 Func_020057c4:

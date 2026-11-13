@@ -180,7 +180,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       Sound_PlayFar(157);
       for (i = 0; i != effect->count; i++)
-        Func_08118088(effect->actors[i], 6);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 6);
     }
     if (frame == 72)
       Sound_PlayFar(136);
@@ -1043,7 +1043,8 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
+                       128);
   BattleEffect_LoadBlitter(
       104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -3328,9 +3329,9 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     }
     variant = 1;
   } else {
-    Iwram_CopyWordsEntry((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
-                    128);
+    Iwram_CopyWordsEntry(
+        (void *)BG_PLTT,
+        Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet), 128);
     variant = effect->variant;
   }
 
@@ -3434,7 +3435,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i + 6) {
           Func_0814cd48(effect->actors[i], 7, 5, i, 10);
-          Func_08118088(effect->actors[i], 2);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
         }
       }
     } else {
@@ -3766,7 +3767,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
      * BattleEffect_RunProjectileVolleyB differ in tla-en. */
     if (mode == 17)
       Iwram_CopyWords((void *)BG_PLTT,
-                 Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                      128);
   } else if (mode == 20) {
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
@@ -3777,7 +3779,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
-               Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    128);
   } else if (mode == 21) {
     // A violet ramp from color 1, blended 16:4.
     for (i = 1; i != 64; i++) {
@@ -3792,11 +3795,13 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   } else if (mode == 18) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
-               Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    128);
   } else if (mode == 19) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
-               Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    128);
   } else if (mode == 24) {
     // Six smoke pictures, each with more holes punched at random.
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
@@ -3806,7 +3811,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         work->sheet[VOLLEY_B_PICTURE + i * 1152 + Random16() % 1152] = 0;
     }
     Iwram_CopyWords((void *)BG_PLTT,
-               Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    128);
   } else if (mode == 12 || mode == 16) {
     // The beam, each 24-pixel row drawn twice side by side.
     Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet, 1,
@@ -3821,10 +3827,12 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     }
     if (mode == 12)
       Iwram_CopyWords((void *)BG_PLTT,
-                 Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
+                      Resource_GetTableEntry((s32)&ResourceId_LimePalette),
+                      128);
     else
       Iwram_CopyWords((void *)BG_PLTT,
-                 Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
+                      Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
+                      128);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
@@ -4647,7 +4655,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     piece->priority = 1;
     work->objects[i] = piece;
     Iwram_CopyWordsEntry(OBJ_VRAM + gResourceTableEntries[piece->slot].offset,
-                    tiles + i * 0x400, 0x400);
+                         tiles + i * 0x400, 0x400);
   }
 
   // The slashes, the sky and the giant's path.
@@ -4887,7 +4895,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
             member = i % 6;
             if (member < effect->count) {
               Func_0814cd48(effect->actors[member], 7, 5, member, 8);
-              Func_08118088(effect->actors[member], 1);
+              BattleMotion_ApplyKnockbackFar(effect->actors[member], 1);
             }
           }
         }
@@ -5521,7 +5529,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
         work->shakeFrames = 4;
       if (frame == start + 4) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 6);
-        Func_08118088(effect->actors[i], 6);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 6);
       }
 
       // The bolt, 24 wide, grows 64 pixels a frame down to the ground.

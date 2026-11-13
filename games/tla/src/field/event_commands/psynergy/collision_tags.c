@@ -87,7 +87,7 @@ struct RestoreMap {
 extern u8 gMapShapeGrid[];
 
 void GameFlag_SetBit(s32 flag);
-u32 Func_080202f0(s32 terrain, s32 x, s32 z);
+u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 s32 Func_080eab98(s32 unused, s32 key, s32 value);
 
 void Func_080eaa14(struct ActorFlag *list) {
@@ -119,7 +119,7 @@ void Func_080eaa14(struct ActorFlag *list) {
 
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       slot = Func_080eab70(object);
-      key = Func_080202f0(object->terrainId, object->x, object->z);
+      key = MapGrid_GetTerrainKindFar(object->terrainId, object->x, object->z);
       height = MapGrid_GetTerrainHeightFar(object->terrainId, object->x,
                                            object->z) >>
                19;

@@ -30,14 +30,14 @@ s32 Shop_ChooseMember(void) {
   shop->listWindow = listWindow;
   shop->cursor.anchor->active = 4;
   shop->mode = 12;
-  Func_080f8060(listWindow, 2, 0);
+  Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
-        Func_080f8058(memberIndex / 4 * 4);
+        Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
         wait(1);
       }
       Shop_DrawParty(listWindow, memberIndex, 0);
@@ -142,13 +142,13 @@ s32 Shop_SelectSell(s32 unitId) {
         shop->mode = 3;
         if (shop->partyAction == 1)
           Shop_DrawItemPrice(priceWindow, itemId,
-                        Shop_SalePrice(unit->inventory[slot]), 1);
+                             Shop_SalePrice(unit->inventory[slot]), 1);
         else if (shop->partyAction == 3)
           Shop_DrawItemPrice(priceWindow, itemId,
-                        Shop_RepairPrice(unit->inventory[slot]), 2);
+                             Shop_RepairPrice(unit->inventory[slot]), 2);
         else
-          Shop_DrawItemPrice(priceWindow, itemId, Forge_GetMaterialChance(itemId),
-                        3);
+          Shop_DrawItemPrice(priceWindow, itemId,
+                             Forge_GetMaterialChance(itemId), 3);
         Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
       }
       if (gInput.pressed & 1) {
@@ -273,7 +273,7 @@ void Shop_DrawMemberItems(void *window, s32 item) {
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_X 120
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_X 104
 #else

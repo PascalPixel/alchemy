@@ -39,7 +39,6 @@ void Func_0815f0a0(s32 resource) {
   Dma_Set(dst, (void *)BG_PLTT, DMA_COPY_HALFWORDS(64), REG_DMA3);
 }
 
-
 struct Particle {
   s32 x;
   s32 y;
@@ -227,8 +226,14 @@ void SummonEffect_RunCanvasMode2(void *action);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 
-/* VIEW(fxdisp): routine Graphics_PackTileRows as void Graphics_PackTileRows(void *, void *, s32, s32); the definition has void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride); tried as the definition's void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride), which the object already declares, Func_0815f16c moves: 1 of 7568 instructions in tla-ja. */
-extern void Graphics_PackTileRows__fxdisp(void *, void *, s32, s32) __asm__("Graphics_PackTileRows");
+/* VIEW(fxdisp): routine Graphics_PackTileRows as void
+ * Graphics_PackTileRows(void *, void *, s32, s32); the definition has void
+ * Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride); tried as the
+ * definition's void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride), which
+ * the object already declares, Func_0815f16c moves: 1 of 7568 instructions in
+ * tla-ja. */
+extern void Graphics_PackTileRows__fxdisp(void *, void *, s32,
+                                          s32) __asm__("Graphics_PackTileRows");
 void Func_0818caa8(void *, s32, s32, s32);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
@@ -2473,19 +2478,19 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             kind == 12 || kind == 53 || kind == 64 || kind == 100 ||
             kind == 66 || kind == 81 || kind == 83 || kind == 76 ||
             kind == 98) {
-          Func_08118088(action->actors[0], 4);
+          BattleMotion_ApplyKnockbackFar(action->actors[0], 4);
           work->unk77a8 = 12;
         } else if (kind == 8 || kind == 79 || kind == 85) {
           work->unk77a8 = 8;
         } else if (kind == 50 || kind == 44 || kind == 63) {
-          Func_08118088(action->actors[0], 1);
+          BattleMotion_ApplyKnockbackFar(action->actors[0], 1);
           work->unk77a8 = 2;
         } else if (kind == 60 || kind == 38) {
-          Func_08118088(action->actors[0], 3);
+          BattleMotion_ApplyKnockbackFar(action->actors[0], 3);
           work->unk77a8 = 16;
         } else if (kind == 95 || kind == 99 || kind == 96 || kind == 97 ||
                    kind == 92 || kind == 93 || kind == 86 || kind == 74) {
-          Func_08118088(action->actors[0], 0);
+          BattleMotion_ApplyKnockbackFar(action->actors[0], 0);
           work->unk77a8 = 12;
         }
       }

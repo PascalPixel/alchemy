@@ -85,8 +85,12 @@ void Func_080d3928(u32 id, s32 rotation) {
     sprite->rotation = rotation;
 }
 
-/* VIEW(visual_attributes): routine Func_08038248 as void Func_08038248(s32 resource, u8 *buffer); module/field/field.h has void Func_08038248(s32 item). */
-extern void Func_08038248__visual_attributes(s32 resource, u8 *buffer) __asm__("Func_08038248");
+/* VIEW(visual_attributes): routine Icon_DrawItemFar as void
+ * Icon_DrawItemFar(s32 resource, u8 *buffer); module/field/field.h has void
+ * Icon_DrawItemFar(s32 item). */
+extern void
+Func_08038248__visual_attributes(s32 resource,
+                                 u8 *buffer) __asm__("Icon_DrawItemFar");
 
 void Func_080d3940(u32 id, u32 angle) {
   s32 position[3];
@@ -166,7 +170,7 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   sprite->rotation = angle + 0x4000;
 }
 
-/// Gives an actor's sprite a still picture: resource, drawn by Func_08038248
+/// Gives an actor's sprite a still picture: resource, drawn by Icon_DrawItemFar
 /// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
 /// into the sprite's VRAM block as its tile.
 void Func_080d3b28(u32 id, s32 resource) {

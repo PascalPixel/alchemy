@@ -7,7 +7,6 @@
 #undef HIT_FRAME
 #undef SE_HIT
 
-
 #define SHARD_COUNT 64
 #define STREAK_PICTURE_BYTES (48 * 72)
 #define BURST_PICTURE_BYTES (40 * 80)
@@ -173,7 +172,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
 
     // The hit's knock-back, and the target's flashes.
     if (frame == HIT_FRAME) {
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       work->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)

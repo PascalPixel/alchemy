@@ -334,7 +334,7 @@ static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
   s32 hit;
 
   object->ground += 0x100000;
-  hit = Func_08020210(object, position);
+  hit = MapGrid_CheckCollisionFar(object, position);
   object->ground -= 0x100000;
   return hit;
 }

@@ -109,7 +109,7 @@ Func_020005f0:
 	.global Func_020005f8
 	.thumb_func
 Func_020005f8:
-	overlay_veneer Func_080c87d0
+	overlay_veneer EffectSprite_DrawAtWorldPositionFar
 	.global Func_02000600
 	.thumb_func
 Func_02000600:

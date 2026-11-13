@@ -256,7 +256,7 @@ void Shop_BuyDone(s32 unit, s32 item, s32 quantity);
 void Shop_DrawStock(struct RenderInput *window, s32 selected);
 void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind);
 
-void Func_080f8040(void *window, s32 item, s32 count);
+void ItemMenu_DrawItemDetailsWithCountFar(void *window, s32 item, s32 count);
 
 void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId);
 void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId);
@@ -289,8 +289,8 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode);
 s32 ItemPicker_SelectItem(s32 unitId);
 void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot);
 
-s32 Func_080ad268(s32 unitId, s32 slot);
-s32 Func_080ad270(s32 unitId, s32 slot);
+s32 Inventory_CheckDiscardFar(s32 unitId, s32 slot);
+s32 Inventory_CheckUnequipFar(s32 unitId, s32 slot);
 
 void MenuCursor_Advance(struct ShopCursor *cursor);
 
@@ -351,8 +351,8 @@ extern const s16 Data_0810c38e[];
 
 extern const s16 gData_0810c3f4[][33];
 
-void Func_080f8060(void *window, s32 a, s32 b);
-void Func_080f8058(s32 first);
+void Menu_PlaceOwnerEntryObjectsFar(void *window, s32 a, s32 b);
+void Menu_CreateOwnerEntryObjectsFar(s32 first);
 void Menu_ReleaseEntryObjectsFar(void);
 
 void Shop_SellItem(s32 unitId, s32 slot, s32 count);

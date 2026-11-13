@@ -59,50 +59,139 @@
 
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
-/* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile u16 gLinkStatus. */
+/* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
+ * u16 gLinkStatus. */
 extern u16 gLinkStatus__menus __asm__("gLinkStatus");
-/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16 gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature gLinkPeerSignatures[]; tried as the 2 declarations' extern u16 gLinkPeerSignatures[][12], it does not compile in tla-ja: games/tla/src/window/menus.c:1344: conflicting types for `gLinkPeerSignatures'. */
-extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__("gLinkPeerSignatures");
-/* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/src/window/menus.c:1346: conflicting types for `gMainRoutineWork'. */
+/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16
+ * gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature
+ * gLinkPeerSignatures[]; tried as the 2 declarations' extern u16
+ * gLinkPeerSignatures[][12], it does not compile in tla-ja:
+ * games/tla/src/window/menus.c:1344: conflicting types for
+ * `gLinkPeerSignatures'. */
+extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__(
+    "gLinkPeerSignatures");
+/* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8
+ * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
+ * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
+ * it does not compile in tla-ja: games/tla/src/window/menus.c:1346: conflicting
+ * types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__battle_party_commands[] __asm__("gMainRoutineWork");
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
-/* VIEW(battle_party_commands): routine Link_DrawPageArrows as void Link_DrawPageArrows(u32 address); countdown has void Link_DrawPageArrows(s32 destination); tried as the rest of the object declares it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
-extern void Link_DrawShiftedTilePair__battle_party_commands(u32 address) __asm__("Link_DrawPageArrows");
+/* VIEW(battle_party_commands): routine Link_DrawPageArrows as void
+ * Link_DrawPageArrows(u32 address); countdown has void Link_DrawPageArrows(s32
+ * destination); tried as the rest of the object declares it,
+ * Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
+extern void Link_DrawShiftedTilePair__battle_party_commands(
+    u32 address) __asm__("Link_DrawPageArrows");
 void Menu_BuildLocalizedPatternTiles(void);
-/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16 *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...; tried as the rest of the object declares it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
-extern s32 Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction **cursor, s32 *forcedCount) __asm__("Func_0804babc");
-/* VIEW(battle_party_commands): routine PartyStatus_HighlightMembers as void PartyStatus_HighlightMembers(u16 *units); countdown has s32 PartyStatus_HighlightMembers(u16 *ids); tried as the definition's s32 PartyStatus_HighlightMembers(u16 *ids), which the object already declares, Battle_DrawPartyPanelsWithEmptyList.0 moves: 1 of 18 instructions, Battle_CollectPartyCommands moves: 3 of 1909 instructions in tla-ja. */
-extern void BattleLayout_HighlightPartyPanels__battle_party_commands(u16 *units) __asm__("PartyStatus_HighlightMembers");
-/* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32 BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32 BattleParty_ListActorIdsFar(s32 side, s32 group); tried as the rest of the object declares it, Battle_CollectPartyCommands moves: 2 of 1909 instructions in tla-ja. */
-extern s32 BattleParty_ListActorIdsFar__battle_party_commands(s32 side, u16 *units) __asm__("BattleParty_ListActorIdsFar");
-/* VIEW(battle_party_commands): routine Message_DecodeRaw as void Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object already declares, Link_DrawWaitingForOpponent.1 moves: 2 of 24 instructions in tla-ja. */
-extern void Message_DecodeRaw__battle_party_commands(s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
+/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16
+ * *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has
+ * s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct
+ * BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...;
+ * tried as the rest of the object declares it, Battle_CollectPartyCommands
+ * moves: 1 of 1909 instructions in tla-ja. */
+extern s32
+Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction **cursor,
+                                     s32 *forcedCount) __asm__("Func_0804babc");
+/* VIEW(battle_party_commands): routine PartyStatus_HighlightMembers as void
+ * PartyStatus_HighlightMembers(u16 *units); countdown has s32
+ * PartyStatus_HighlightMembers(u16 *ids); tried as the definition's s32
+ * PartyStatus_HighlightMembers(u16 *ids), which the object already declares,
+ * Battle_DrawPartyPanelsWithEmptyList.0 moves: 1 of 18 instructions,
+ * Battle_CollectPartyCommands moves: 3 of 1909 instructions in tla-ja. */
+extern void BattleLayout_HighlightPartyPanels__battle_party_commands(
+    u16 *units) __asm__("PartyStatus_HighlightMembers");
+/* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32
+ * BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32
+ * BattleParty_ListActorIdsFar(s32 side, s32 group); tried as the rest of the
+ * object declares it, Battle_CollectPartyCommands moves: 2 of 1909 instructions
+ * in tla-ja. */
+extern s32 BattleParty_ListActorIdsFar__battle_party_commands(
+    s32 side, u16 *units) __asm__("BattleParty_ListActorIdsFar");
+/* VIEW(battle_party_commands): routine Message_DecodeRaw as void
+ * Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void
+ * Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void
+ * Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object
+ * already declares, Link_DrawWaitingForOpponent.1 moves: 2 of 24 instructions
+ * in tla-ja. */
+extern void Message_DecodeRaw__battle_party_commands(
+    s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
 void *Unit_Get(s32 owner);
-/* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
-extern struct Window *Window_Create__battle_party_commands(s32 x, s32 y, s32 width, s32 height, s32 flags) __asm__("Window_Create");
-/* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y); menus has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
-extern void Text_DrawCharacterAtOffset__battle_party_commands(s32 message, struct Window *window, s32 x,
-                                s32 y) __asm__("Text_DrawMessageAsTiles");
-/* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y), Battle_CollectPartyCommands moves: 2 of 1909 instructions in tla-ja. */
-extern void Text_DrawNumberAtOffset__battle_party_commands(s32 value, s32 digits, struct Window *window,
-                             s32 x, s32 y) __asm__("Text_DrawNumberAtOffset");
-/* VIEW(battle_party_commands): routine Window_SetTilemapEntry as void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y, s32 flags); graphics.h has void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode); tried as the definition's void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode), which the object already declares, Battle_CollectPartyCommands moves: 11 of 1909 instructions in tla-ja. */
-extern void Window_SetTilemapEntry__battle_party_commands(struct Window *window, s32 entry, s32 x, s32 y,
-                            s32 flags) __asm__("Window_SetTilemapEntry");
+/* VIEW(battle_party_commands): routine Window_Create as struct Window
+ * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); menus has
+ * struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32
+ * flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y,
+ * s32 width, s32 height, s32 attrs), which the object already declares,
+ * Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
+extern struct Window *
+Window_Create__battle_party_commands(s32 x, s32 y, s32 width, s32 height,
+                                     s32 flags) __asm__("Window_Create");
+/* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void
+ * Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y);
+ * menus has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow
+ * *window, s32 x, s32 y); tried as the definition's void
+ * Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32
+ * offsetX, u32 offsetY), Battle_CollectPartyCommands moves: 7 of 1909
+ * instructions in tla-ja. */
+extern void Text_DrawCharacterAtOffset__battle_party_commands(
+    s32 message, struct Window *window, s32 x,
+    s32 y) __asm__("Text_DrawMessageAsTiles");
+/* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void
+ * Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x,
+ * s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format,
+ * struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the
+ * definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct
+ * RenderInput *work, s32 x, s32 y), Battle_CollectPartyCommands moves: 2 of
+ * 1909 instructions in tla-ja. */
+extern void Text_DrawNumberAtOffset__battle_party_commands(
+    s32 value, s32 digits, struct Window *window, s32 x,
+    s32 y) __asm__("Text_DrawNumberAtOffset");
+/* VIEW(battle_party_commands): routine Window_SetTilemapEntry as void
+ * Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y, s32
+ * flags); graphics.h has void Window_SetTilemapEntry(struct Window *window, s32
+ * value, s32 x, s32 y, u32 mode); tried as the definition's void
+ * Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32
+ * mode), which the object already declares, Battle_CollectPartyCommands moves:
+ * 11 of 1909 instructions in tla-ja. */
+extern void Window_SetTilemapEntry__battle_party_commands(
+    struct Window *window, s32 entry, s32 x, s32 y,
+    s32 flags) __asm__("Window_SetTilemapEntry");
 void Window_PutGlyph(struct Window *window, s32 character, s32 x, s32 y,
-                   s32 mode);
+                     s32 mode);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 void *Message_ShowAndWait(s32 message, s32 x, s32 y);
-/* VIEW(battle_party_commands): routine Item_Get as u16 *Item_Get(s32 item); item.h has struct ItemDefinition *Item_Get(s32 item); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/menus.c:2047: subscripted value is neither array nor pointer. */
+/* VIEW(battle_party_commands): routine Item_Get as u16 *Item_Get(s32 item);
+ * item.h has struct ItemDefinition *Item_Get(s32 item); tried as the rest of
+ * the object declares it, it does not compile in tla-ja:
+ * games/tla/src/window/menus.c:2047: subscripted value is neither array nor
+ * pointer. */
 extern u16 *Item_Get__battle_party_commands(s32 item) __asm__("Item_Get");
-/* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void Text_FillCanvasBackground(void); countdown has unsigned char Text_FillCanvasBackground(void); tried as the definition's void Text_FillCanvasBackground(void), which the object already declares, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
-extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__("Text_FillCanvasBackground");
-/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); menus has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:1419: conflicting types for `Message_CopyExpanded'. */
-extern s32 Message_CopyExpanded__battle_party_commands(s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
-/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); menus has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y), it does not compile in tla-ja: games/tla/src/window/menus.c:1421: conflicting types for `Text_DrawWideStringAtOffset'. */
-extern void Text_DrawWideStringAtOffset__battle_party_commands(u16 *text, struct Window *window, s32 x,
-                                 s32 y) __asm__("Text_DrawWideStringAtOffset");
+/* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void
+ * Text_FillCanvasBackground(void); countdown has unsigned char
+ * Text_FillCanvasBackground(void); tried as the definition's void
+ * Text_FillCanvasBackground(void), which the object already declares,
+ * Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
+extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__(
+    "Text_FillCanvasBackground");
+/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32
+ * Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); menus has void
+ * Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the
+ * definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32
+ * capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:1419:
+ * conflicting types for `Message_CopyExpanded'. */
+extern s32 Message_CopyExpanded__battle_party_commands(
+    s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
+/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void
+ * Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y);
+ * menus has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow
+ * *window, s32 x, s32 y); tried as the definition's void
+ * Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y),
+ * it does not compile in tla-ja: games/tla/src/window/menus.c:1421: conflicting
+ * types for `Text_DrawWideStringAtOffset'. */
+extern void Text_DrawWideStringAtOffset__battle_party_commands(
+    u16 *text, struct Window *window, s32 x,
+    s32 y) __asm__("Text_DrawWideStringAtOffset");
 
 #define SET_CURSOR(page_, row_, preferred_)                                    \
   do {                                                                         \
@@ -115,14 +204,14 @@ extern void Text_DrawWideStringAtOffset__battle_party_commands(u16 *text, struct
 
 /// Collects the party's commands for a turn into `commands`, one for each of
 /// the `commandCount` units in `actors`, with two nested functions: the party
-/// panels' clear and the link wait's message (Link_DrawWaitingForOpponent). Unlike The Broken
-/// Seal's, each round first appends the forced actions of statused members
-/// (Func_0804babc), whose count is added to the result; B on the party's row
-/// undoes a reserve swap; command 49 swaps a reserve member in (Func_0804b8b8
-/// after choosing the slot); Status lists the reserve as well; Flee is command
-/// 99; and the Djinn tutorial's hint follows an unleash.
+/// panels' clear and the link wait's message (Link_DrawWaitingForOpponent).
+/// Unlike The Broken Seal's, each round first appends the forced actions of
+/// statused members (Func_0804babc), whose count is added to the result; B on
+/// the party's row undoes a reserve swap; command 49 swaps a reserve member in
+/// (Func_0804b8b8 after choosing the slot); Status lists the reserve as well;
+/// Flee is command 99; and the Djinn tutorial's hint follows an unleash.
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
-                  s32 commandCount) {
+                                s32 commandCount) {
   u16 signatureHeader[2];
   struct BattleMenuWork *state;
   struct BattleAction *commandsOut;
@@ -194,7 +283,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signature[7] = 'T';
       missedLinkFrames = 0;
       for (;;) {
-        u16 *peerSignature = gLinkPeerSignatures__battle_party_commands[battle->linkSide ^ 1];
+        u16 *peerSignature =
+            gLinkPeerSignatures__battle_party_commands[battle->linkSide ^ 1];
 
         if (battle->linkPaused != 0) {
           commandCount = -1;
@@ -232,7 +322,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     commandsOut = commands;
     if (commandCount >= 0) {
       forcedCount = 0;
-      commandCount = Func_0804babc__battle_party_commands(actors, &commandsOut, &forcedCount);
+      commandCount = Func_0804babc__battle_party_commands(actors, &commandsOut,
+                                                          &forcedCount);
     }
     Battle_DrawPartyPanelsWithEmptyList();
     state->iconShown[2] = 0;
@@ -270,7 +361,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
       BattleActor_CommitPlacementFar();
       state->swappedUnit = -1;
-      Func_08118158();
+      BattleSummon_UpdateAvailabilityFar();
       NAVIGATION->commandSelection[0] = 1;
       continue;
     }
@@ -284,7 +375,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       mode = Func_0804b8b8(mode);
       if (mode == -1)
         goto choose_place;
-      Func_08118158();
+      BattleSummon_UpdateAvailabilityFar();
       NAVIGATION->commandSelection[0] = 0;
       continue;
     }
@@ -332,7 +423,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
     for (;;) {
       if (commandIndex == 0) {
-        Func_08118130(0, state->standbyDjinn[0]);
+        BattleParty_CountStandbyDjinnFar(0, state->standbyDjinn[0]);
       } else {
         s32 k;
 
@@ -381,7 +472,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       wait(1);
       if (mode == -2) {
         u16 *block = Heap_Alloc(12);
-        s32 count = BattleParty_ListActorIdsFar__battle_party_commands(1, block);
+        s32 count =
+            BattleParty_ListActorIdsFar__battle_party_commands(1, block);
 
         state->iconShown[2] = 0;
         wait(1);
@@ -418,8 +510,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       switch (mode) {
       case 0:
         commandWindow = Window_Create__battle_party_commands(11, 17, 11, 3, 6);
-        Text_DrawCharacterAtOffset__battle_party_commands((s32)MsgCommandName, commandWindow,
-                                   ATTACK_NAME_X, 0);
+        Text_DrawCharacterAtOffset__battle_party_commands(
+            (s32)MsgCommandName, commandWindow, ATTACK_NAME_X, 0);
         COMMAND_ICON_X(state) = 64;
         Sound_PlayFar(112);
         mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
@@ -495,21 +587,23 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           Text_SetColor(2);
         else if (unit->psySeal != 0)
           Text_SetColor(9);
-        Text_DrawCharacterAtOffset__battle_party_commands(parameter + (s32)MsgAbilityNothing,
-                                   commandWindow, 16, 0);
-        Text_DrawNumberAtOffset__battle_party_commands(ability->ppCost, 2, commandWindow, 104, 0);
+        Text_DrawCharacterAtOffset__battle_party_commands(
+            parameter + (s32)MsgAbilityNothing, commandWindow, 16, 0);
+        Text_DrawNumberAtOffset__battle_party_commands(ability->ppCost, 2,
+                                                       commandWindow, 104, 0);
         work->level = 15;
         Text_SetColor(15);
-        Window_SetTilemapEntry__battle_party_commands(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
-        Window_SetTilemapEntry__battle_party_commands(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
-                               0);
+        Window_SetTilemapEntry__battle_party_commands(
+            commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
+        Window_SetTilemapEntry__battle_party_commands(
+            commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0, 0);
         if (ability->element != 4)
-          Window_SetTilemapEntry__battle_party_commands(commandWindow, ability->element + 0x5001, 15,
-                                 0, 0);
+          Window_SetTilemapEntry__battle_party_commands(
+              commandWindow, ability->element + 0x5001, 15, 0, 0);
         command->range = cost;
         Sound_PlayFar(112);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
-                             Battle_ClassifyEntryKind(ability));
+                                         Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
         Window_Close(commandWindow, 1);
@@ -532,9 +626,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         SET_CURSOR(0, 0, 0);
       summon_menu:
         COMMAND_ICON_X(state) = SUMMON_MENU_ICON_X;
-        BattleLayout_HighlightPartyPanels__battle_party_commands(signatureHeader);
+        BattleLayout_HighlightPartyPanels__battle_party_commands(
+            signatureHeader);
         mode = BattleSummonMenu_Run(0, 0, state->standbyDjinn[commandIndex]);
-        BattleLayout_HighlightPartyPanels__battle_party_commands(signatureHeader);
+        BattleLayout_HighlightPartyPanels__battle_party_commands(
+            signatureHeader);
         if (mode == -1)
           goto mark_visible;
         commandKind = 6;
@@ -544,8 +640,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         summon = SummonDefinition_Get(mode);
         ability = Ability_Get(summon->nameMessageId);
         summonIconSlot = VramCache_AllocEntry(128);
-        commandWindow = Window_Create__battle_party_commands(SUMMON_WINDOW_X, 17, SUMMON_WINDOW_WIDTH,
-                                      3, commandKind);
+        commandWindow = Window_Create__battle_party_commands(
+            SUMMON_WINDOW_X, 17, SUMMON_WINDOW_WIDTH, 3, commandKind);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
@@ -569,15 +665,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         state->iconShown[1] = 1;
         if (ok == 0)
           Text_SetColor(2);
-        Text_DrawCharacterAtOffset__battle_party_commands(SummonDefinition_Get(mode)->nameMessageId +
-                                       (s32)MsgAbilityNothing,
-                                   commandWindow, 16, 0);
+        Text_DrawCharacterAtOffset__battle_party_commands(
+            SummonDefinition_Get(mode)->nameMessageId + (s32)MsgAbilityNothing,
+            commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {
-            Window_SetTilemapEntry__battle_party_commands(commandWindow, j + 0x5001,
-                                   n * 2 + SUMMON_COST_X, 0, 0);
+            Window_SetTilemapEntry__battle_party_commands(
+                commandWindow, j + 0x5001, n * 2 + SUMMON_COST_X, 0, 0);
             Window_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
-                          n * 2 + SUMMON_COST_X + 1, 0, 0);
+                            n * 2 + SUMMON_COST_X + 1, 0, 0);
             n++;
           }
         }
@@ -585,8 +681,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           Sound_PlayFar(112);
         else
           Sound_PlayFar(114);
-        mode = BattleTarget_RunSelection(actorId, ability->targetMode, ability->range,
-                             Battle_ClassifyEntryKind(ability));
+        mode = BattleTarget_RunSelection(actorId, ability->targetMode,
+                                         ability->range,
+                                         Battle_ClassifyEntryKind(ability));
         command->range = ability->range;
         state->iconShown[1] = 0;
         Resource_ResetEntry(summonIconSlot);
@@ -625,19 +722,20 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         element = (parameter >> 8) & 15;
         index = parameter & 255;
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
-          ability =
-              Ability_Get(Djinn_GetDefinitionHeaderFar(element, index));
+          ability = Ability_Get(Djinn_GetDefinitionHeaderFar(element, index));
           cost = ability->range;
-          commandWindow = Window_Create__battle_party_commands(11, 17, 10, 3, 6);
+          commandWindow =
+              Window_Create__battle_party_commands(11, 17, 10, 3, 6);
           COMMAND_ICON_X(state) = 64;
-          Window_SetTilemapEntry__battle_party_commands(commandWindow, element + 0x5001, 0, 0, 0);
-          Text_DrawCharacterAtOffset__battle_party_commands(element * 20 + index + (s32)MsgDjinnName,
-                                     commandWindow, 16, 0);
+          Window_SetTilemapEntry__battle_party_commands(
+              commandWindow, element + 0x5001, 0, 0, 0);
+          Text_DrawCharacterAtOffset__battle_party_commands(
+              element * 20 + index + (s32)MsgDjinnName, commandWindow, 16, 0);
           command->range = cost;
           wait(1);
           Sound_PlayFar(112);
           mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
-                               Battle_ClassifyEntryKind(ability));
+                                           Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
             void *hint = Message_ShowAndWait(Func_0804519c() + 14, 15, 8);
 
@@ -656,9 +754,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create__battle_party_commands(11, 17, 10, 3, 6);
         COMMAND_ICON_X(state) = 64;
         Text_SetColor(2);
-        Window_SetTilemapEntry__battle_party_commands(commandWindow, element + 0x5001, 0, 0, 0);
-        Text_DrawCharacterAtOffset__battle_party_commands(element * 20 + index + (s32)MsgDjinnName,
-                                   commandWindow, 16, 0);
+        Window_SetTilemapEntry__battle_party_commands(
+            commandWindow, element + 0x5001, 0, 0, 0);
+        Text_DrawCharacterAtOffset__battle_party_commands(
+            element * 20 + index + (s32)MsgDjinnName, commandWindow, 16, 0);
         Text_SetColor(15);
         command->range = 1;
         wait(1);
@@ -727,11 +826,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           goto mark_visible;
         selection = pick[mode];
         parameter = selection;
-        ability = Ability_Get(Item_Get__battle_party_commands(unit->inventory[selection])[20]);
+        ability = Ability_Get(
+            Item_Get__battle_party_commands(unit->inventory[selection])[20]);
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        commandWindow = Window_Create__battle_party_commands(9, 17, ITEM_WINDOW_WIDTH, 3, 6);
+        commandWindow = Window_Create__battle_party_commands(
+            9, 17, ITEM_WINDOW_WIDTH, 3, 6);
         COMMAND_ICON_X(state) = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
@@ -744,13 +845,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;
-        Text_DrawCharacterAtOffset__battle_party_commands((unit->inventory[selection] & 0x1ff) +
-                                       (s32)MsgItemName,
-                                   commandWindow, 24, 0);
+        Text_DrawCharacterAtOffset__battle_party_commands(
+            (unit->inventory[selection] & 0x1ff) + (s32)MsgItemName,
+            commandWindow, 24, 0);
         command->range = cost;
         Sound_PlayFar(112);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
-                             Battle_ClassifyEntryKind(ability));
+                                         Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
         Window_Close(commandWindow, 1);
@@ -813,24 +914,29 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       u16 text[64];
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-      Message_CopyExpanded__battle_party_commands((s32)MsgWaitingForOpponent, text, 52);
+      Message_CopyExpanded__battle_party_commands((s32)MsgWaitingForOpponent,
+                                                  text, 52);
 #else
-      Message_DecodeRaw__battle_party_commands((s32)MsgWaitingForOpponent, text, 32);
+      Message_DecodeRaw__battle_party_commands((s32)MsgWaitingForOpponent, text,
+                                               32);
 #endif
-      Text_DrawWideStringAtOffset__battle_party_commands(text, state->timerWindow, 0, 4);
+      Text_DrawWideStringAtOffset__battle_party_commands(
+          text, state->timerWindow, 0, 4);
     }
 
     link = Ram_HeapSlots->battleWork;
     mode = 0;
     if (state->timerWindow == NULL && link->linkPaused == 0) {
-      state->timerWindow = Window_Create__battle_party_commands(0, 16, 30, 4, 42);
+      state->timerWindow =
+          Window_Create__battle_party_commands(0, 16, 30, 4, 42);
       Vram_FillWindowBlockPattern__battle_party_commands();
       Link_DrawWaitingForOpponent();
     } else {
       state->timerWindow = NULL;
     }
     for (;;) {
-      u16 *peerSignature = gLinkPeerSignatures__battle_party_commands[link->linkSide ^ 1];
+      u16 *peerSignature =
+          gLinkPeerSignatures__battle_party_commands[link->linkSide ^ 1];
 
       if (link->linkPaused != 0) {
         commandCount = -1;
@@ -867,11 +973,17 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
-/* VIEW(battle_party_commands): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform); menus has s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine). */
-extern s32 AffineMatrix_BuildForEffect__battle_party_commands(struct AffineTransform *transform) __asm__("AffineMatrix_BuildForEffect");
+/* VIEW(battle_party_commands): routine AffineMatrix_BuildForEffect as s32
+ * AffineMatrix_BuildForEffect(struct AffineTransform *transform); menus has s32
+ * AffineMatrix_BuildForEffect(struct TargetAffine *affine). */
+extern s32 AffineMatrix_BuildForEffect__battle_party_commands(
+    struct AffineTransform *transform) __asm__("AffineMatrix_BuildForEffect");
 
-/* VIEW(menus): variable gWindowSprite_BounceScales as const u16 gWindowSprite_BounceScales[]; module/window/scales.h has const u16 gWindowSprite_BounceScales[32]. */
-extern const u16 gWindowSprite_BounceScales__menus[] __asm__("gWindowSprite_BounceScales");
+/* VIEW(menus): variable gWindowSprite_BounceScales as const u16
+ * gWindowSprite_BounceScales[]; module/window/scales.h has const u16
+ * gWindowSprite_BounceScales[32]. */
+extern const u16
+    gWindowSprite_BounceScales__menus[] __asm__("gWindowSprite_BounceScales");
 
 // The transition's byte after its fields; while it is set the window lines
 // are left alone.
@@ -1178,8 +1290,13 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
-/* VIEW(resource_work): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
-extern struct Window *Window_Create__resource_work(s32 x, s32 y, s32 width, s32 height, s32 style) __asm__("Window_Create");
+/* VIEW(resource_work): routine Window_Create as struct Window
+ * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); menus has
+ * struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32
+ * flags). */
+extern struct Window *
+Window_Create__resource_work(s32 x, s32 y, s32 width, s32 height,
+                             s32 style) __asm__("Window_Create");
 
 /// Decodes one command-icon table entry into the requested VRAM cache slot,
 /// through a 1 KB block it allocates and frees.
@@ -1449,8 +1566,11 @@ void Menu_DrawModeLabel(void) {
   }
 }
 
-/* VIEW(menus): routine Text_DrawMessage as void Text_DrawMessage(s32 message, void *window, s32 x, s32 y); module/window/window.h has void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3). */
-extern void Text_DrawMessage__menus(s32 message, void *window, s32 x, s32 y) __asm__("Text_DrawMessage");
+/* VIEW(menus): routine Text_DrawMessage as void Text_DrawMessage(s32 message,
+ * void *window, s32 x, s32 y); module/window/window.h has void
+ * Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3). */
+extern void Text_DrawMessage__menus(s32 message, void *window, s32 x,
+                                    s32 y) __asm__("Text_DrawMessage");
 
 // The Spanish descriptions are indented.
 #if LANGUAGE == LANGUAGE_SPANISH
@@ -1472,16 +1592,18 @@ void Menu_DrawModeIndicator(void) {
   if (*shown != *current) {
     if (*current == 0) {
       WindowSprite_ClearList(state->lowerWindow);
-      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow, 8, 4);
-      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
-                       16);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow,
+                              8, 4);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1,
+                              state->lowerWindow, 0, 16);
     } else if (*shown == 0) {
       WindowSprite_ClearList(state->lowerWindow);
-      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
-                       16);
-      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow, 0,
-                       28);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, 0,
+                              4);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow,
+                              0, 16);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow,
+                              0, 28);
     }
     // Through the pointers, the selection would be loaded once at the top.
     state->previousMode = state->selection;
@@ -1492,36 +1614,39 @@ void Menu_DrawModeIndicator(void) {
     WindowSprite_PrepareForRedraw(state->lowerWindow);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
     if (*current == 0) {
-      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow, HELP_X,
-                       4);
-      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1, state->lowerWindow,
-                       HELP_X, 16);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow,
+                              HELP_X, 4);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1,
+                              state->lowerWindow, HELP_X, 16);
     } else {
-      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, HELP_X,
-                       4);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow,
+                              HELP_X, 4);
       Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow,
-                       HELP_X, 16);
+                              HELP_X, 16);
       Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow,
-                       HELP_X, 28);
+                              HELP_X, 28);
     }
 #else
     switch (*current) {
     case 0:
-      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
-                       16);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp, state->lowerWindow,
+                              0, 4);
+      Text_DrawMessage__menus((s32)MsgPasswordTransferHelp + 1,
+                              state->lowerWindow, 0, 16);
       break;
     case 1:
-      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
-                       16);
-      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow, 0,
-                       28);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp, state->lowerWindow, 0,
+                              4);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 1, state->lowerWindow,
+                              0, 16);
+      Text_DrawMessage__menus((s32)MsgCableTransferHelp + 2, state->lowerWindow,
+                              0, 28);
       break;
     default:
-      Text_DrawMessage__menus((s32)MsgClearDataTransferHelp, state->lowerWindow, 0, 4);
-      Text_DrawMessage__menus((s32)MsgClearDataTransferHelp + 1, state->lowerWindow, 0,
-                       16);
+      Text_DrawMessage__menus((s32)MsgClearDataTransferHelp, state->lowerWindow,
+                              0, 4);
+      Text_DrawMessage__menus((s32)MsgClearDataTransferHelp + 1,
+                              state->lowerWindow, 0, 16);
       break;
     }
 #endif
@@ -1639,35 +1764,39 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   if (mode != 0) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create__resource_work(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, 2);
+    window = Window_Create__resource_work(PASSWORD_UPPER_X, 0,
+                                          PASSWORD_UPPER_WIDTH, 4, 2);
     msg = (s32)MsgPasswordEntry;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage__menus(msg, window, 0, 4);
-    window = Window_Create__resource_work(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
+    window = Window_Create__resource_work(PASSWORD_LOWER_X, 4,
+                                          PASSWORD_LOWER_WIDTH, 12, 2);
     work->lowerWindow = window;
     Text_DrawMessage__menus(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
     // French writes a third line: "Niveaux" (MsgPasswordLevel).
     Text_DrawMessage__menus(msg + 2, work->lowerWindow, PASSWORD_TEXT_X,
-                     PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
+                            PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
     msg += 3;
     Text_DrawMessage__menus(msg, work->lowerWindow, PASSWORD_TEXT_X,
-                     PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT * 2);
+                            PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT * 2);
 #else
     msg += 2;
     Text_DrawMessage__menus(msg, work->lowerWindow, PASSWORD_TEXT_X,
-                     PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
+                            PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
 #endif
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create__resource_work(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
+    window = Window_Create__resource_work(TRANSFER_UPPER_X, 0,
+                                          TRANSFER_UPPER_WIDTH, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
-    Text_DrawMessage__menus((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
-    work->lowerWindow =
-        Window_Create__resource_work(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
+    Text_DrawMessage__menus((s32)MsgTransferMethod, window, TRANSFER_TITLE_X,
+                            4);
+    work->lowerWindow = Window_Create__resource_work(
+        TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
   }
   result = IconMenu_Run(0);
   if (mode != 0)
@@ -1806,13 +1935,20 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
   return ret;
 }
 
-/* VIEW(resource_work): routine DebugSceneSelect_Run as void DebugSceneSelect_Run(void); the definition has s16 DebugSceneSelect_Run(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/menus.c:3143: `DebugSceneSelect_Run' undeclared (first use in this function). */
-extern void Menu_RunSelection__resource_work(void) __asm__("DebugSceneSelect_Run");
+/* VIEW(resource_work): routine DebugSceneSelect_Run as void
+ * DebugSceneSelect_Run(void); the definition has s16
+ * DebugSceneSelect_Run(void); tried as the rest of the object declares it, it
+ * does not compile in tla-ja: games/tla/src/window/menus.c:3143:
+ * `DebugSceneSelect_Run' undeclared (first use in this function). */
+extern void
+Menu_RunSelection__resource_work(void) __asm__("DebugSceneSelect_Run");
 
 /// Schedules the debug scene and entrance selector;
 /// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
-void DebugSceneSelect_Schedule(void) { Task_Add(Menu_RunSelection__resource_work, TASK_PASS_VBLANK); }
+void DebugSceneSelect_Schedule(void) {
+  Task_Add(Menu_RunSelection__resource_work, TASK_PASS_VBLANK);
+}
 #undef AFFINE_EFFECT_SLOT
 #undef SOUND_MENU_CURSOR_MOVE
 #undef SOUND_MENU_CONFIRM

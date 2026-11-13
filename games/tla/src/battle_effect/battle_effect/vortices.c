@@ -132,7 +132,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
           point->y = pos.y + (Random16() & 31) - 16;
           Func_0814cd48(effect->actors[i % effect->count], 7, 5,
                         i % effect->count, 4);
-          Func_08118088(effect->actors[i % effect->count], 0);
+          BattleMotion_ApplyKnockbackFar(effect->actors[i % effect->count], 0);
           work->shakeFrames = 4;
           Sound_PlayFar(132);
         }
@@ -275,7 +275,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
           Func_0814cd48(effect->actors[j], 7, 5, j, 4);
-          Func_08118088(effect->actors[j], 6);
+          BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
         }
       }
     }

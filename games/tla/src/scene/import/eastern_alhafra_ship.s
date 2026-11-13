@@ -125,7 +125,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -145,7 +145,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -157,7 +157,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02003218
 	.thumb_func
 Func_02003218:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
@@ -197,7 +197,7 @@ Func_080d3928:
 	.global Func_02003268
 	.thumb_func
 Func_02003268:
-	overlay_veneer Func_080c87f8
+	overlay_veneer Field_StartColorTransitionFar
 	.global Field_StartPaletteTransition
 	.thumb_func
 Field_StartPaletteTransition:

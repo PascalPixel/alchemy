@@ -62,7 +62,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
-               Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                    128);
   } else if (mode == QUADS_MARS) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 2, anchor, size);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
@@ -142,7 +143,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
         s32 lineX;
         s32 lineY;
 
-        Iwram_FillWordsEntry(work->sheet, 128, 0x28282828 - frame / 2 * 0x01010101);
+        Iwram_FillWordsEntry(work->sheet, 128,
+                             0x28282828 - frame / 2 * 0x01010101);
         i = 0;
         angle = frame << 9;
         for (; i != 16; i++) {
@@ -324,7 +326,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   BattleEffect_SelectLivingTargets(work->effect);
   wait(1);
   BattleEffect_SpawnObjects(ZAGAN_PARTS, 658, 1);
@@ -354,7 +357,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     if (frame == 161 || frame == 165 || frame == 169) {
     strike:
       for (i = 0; i != effect->count; i++) {
-        Func_08118088(effect->actors[i], 4);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         Func_0814cd48(effect->actors[i], 7, -1, i, 4);
       }
     }
@@ -375,9 +378,9 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       gBgScroll[1].x = savedScroll + 1128;
       Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
                                  1);
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
       work->transferMode = 2;
       work->transferValue = 50;
     }

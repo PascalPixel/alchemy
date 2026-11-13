@@ -65,7 +65,7 @@ Message_AllTyped:
 	.global Func_02000804
 	.thumb_func
 Func_02000804:
-	overlay_veneer Func_080380f8
+	overlay_veneer Portrait_OpenWindowFar
 	.global Text_GetMessageSize
 	.thumb_func
 Text_GetMessageSize:
@@ -105,7 +105,7 @@ Func_0200084c:
 	.global Func_02000854
 	.thumb_func
 Func_02000854:
-	overlay_veneer Func_081a0018
+	overlay_veneer SceneState_SetScrollTargetFar
 	.global Func_0200085c
 	.thumb_func
 Func_0200085c:

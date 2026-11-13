@@ -4,10 +4,10 @@
 	.global Resource_FarCall009
 Resource_FarCall009:
 	export Func_08118000, Func_08118958
-	export Func_08118008, BattleTransition_RunMosaicFadeOut
+	export BattleTransition_RunMosaicFadeOutFar, BattleTransition_RunMosaicFadeOut
 	export BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList
-	export Func_08118018, BattleBackground_FadeAlphaOut
-	export Func_08118020, BattleBackground_FadeAlphaIn
+	export BattleBackground_FadeAlphaOutFar, BattleBackground_FadeAlphaOut
+	export BattleBackground_FadeAlphaInFar, BattleBackground_FadeAlphaIn
 	export BattleCamera_SetViewFar, BattleCamera_SetView
 	export BattleCamera_SetViewAtPairMidpointFar, BattleCamera_SetViewAtPairMidpoint
 	export BattleStaging_ConfigurePaletteFadeFar, Func_0812628c
@@ -19,8 +19,8 @@ Resource_FarCall009:
 	export BattleClass_IsSmallFar, BattleClass_IsSmall
 	export BattleUnit_GetEffectHeightFar, BattleUnit_GetEffectHeight
 	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
-	export Func_08118080, BattleMotion_LeapBack
-	export Func_08118088, BattleMotion_ApplyKnockback
+	export BattleMotion_LeapBackFar, BattleMotion_LeapBack
+	export BattleMotion_ApplyKnockbackFar, BattleMotion_ApplyKnockback
 	export BattleParty_ListActorIdsFar, BattleParty_ListActorIds
 	export GetBattleObjectSlotFar, BattleObject_Get
 	export Battle_RunEncounterFar, Func_081197f0
@@ -41,9 +41,9 @@ Resource_FarCall009:
 	export BattleActor_CommitPlacementFar, BattleObject_Put
 	export ReleaseBattleObjectRecordsFar, ReleaseBattleObjectRecords
 	export Func_08118128, Func_08120060
-	export Func_08118130, BattleParty_CountStandbyDjinn
+	export BattleParty_CountStandbyDjinnFar, BattleParty_CountStandbyDjinn
 	export BattleParty_PrepareReserveOwnersFar, BattleParty_PrepareReserveOwners
-	export Func_08118140, BattleUnit_ListIds
-	export Func_08118148, BattleObject_SpawnObjectsForList
+	export BattleUnit_ListIdsFar, BattleUnit_ListIds
+	export BattleObject_SpawnObjectsForListFar, BattleObject_SpawnObjectsForList
 	export Func_08118150, Func_08119734
-	export Func_08118158, BattleSummon_UpdateAvailability
+	export BattleSummon_UpdateAvailabilityFar, BattleSummon_UpdateAvailability

@@ -373,7 +373,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
               burst->variant = (Random16() & 15) + 8;
               k++;
             } while (k != 32);
-            Func_08118088(effect->actors[i], 1);
+            BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
             Sound_PlayFar(SE_HIT);
           }
         }
@@ -451,7 +451,6 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #undef RESULTS_FRAME
 #undef SPARK_COUNT
 #undef HIT_FRAME
-
 
 // Here PARTICLES, the map cell buffer, holds the spray (and, at the start,
 // the serpent's tiles and the window's column noise).

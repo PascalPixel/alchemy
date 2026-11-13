@@ -81,7 +81,7 @@ Message_AllTyped:
 	.global Func_02000dec
 	.thumb_func
 Func_02000dec:
-	overlay_veneer Func_080380f8
+	overlay_veneer Portrait_OpenWindowFar
 	.global Func_02000df4
 	.thumb_func
 Func_02000df4:
@@ -213,11 +213,11 @@ Func_02000eec:
 	.global Func_02000ef4
 	.thumb_func
 Func_02000ef4:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_02000efc
 	.thumb_func
 Func_02000efc:
-	overlay_veneer Func_080c87f0
+	overlay_veneer BattleEffect_GetObjectDepthFar
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:
@@ -233,19 +233,19 @@ Func_02000f14:
 	.global Func_02000f1c
 	.thumb_func
 Func_02000f1c:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000f24
 	.thumb_func
 Func_02000f24:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02000f2c
 	.thumb_func
 Func_02000f2c:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Func_02000f34
 	.thumb_func
 Func_02000f34:
-	overlay_veneer Func_08108068
+	overlay_veneer ItemPicker_RunToDropFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

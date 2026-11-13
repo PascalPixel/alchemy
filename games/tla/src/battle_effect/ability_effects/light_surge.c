@@ -8,7 +8,10 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f171430): tag struct RenderModel as struct RenderModel__f171430; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunLightSurge moves: 2 of 823 instructions in tla-ja. */
+/* VIEW(f171430): tag struct RenderModel as struct RenderModel__f171430;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunLightSurge moves: 2 of 823 instructions in
+ * tla-ja. */
 struct RenderModel__f171430 {
   s32 kind;
   s32 unk04;
@@ -49,13 +52,20 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171430): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:20063: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f171430): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:20063: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -155,8 +165,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                  128);
+                       Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
+                       128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -355,7 +365,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         flash->variant = 0;
         work->shakeFrames = 4;
         Sound_PlayFar(145);
-        Func_08118088(effect->actors[0], 0);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
       }
       EffectPosition_ProjectPoint((struct EffectStep *)head, out);

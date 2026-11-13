@@ -25,7 +25,7 @@ Func_02000c9c:
 	.global Func_02000ca4
 	.thumb_func
 Func_02000ca4:
-	overlay_veneer Func_080201a0
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:
@@ -153,7 +153,7 @@ Func_02000d9c:
 	.global Func_02000da4
 	.thumb_func
 Func_02000da4:
-	overlay_veneer Func_080c83d8
+	overlay_veneer BattleEffect_RunActorRiseAndDescentFar
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:
@@ -181,19 +181,19 @@ Party_GetLeaderActor:
 	.global Func_02000ddc
 	.thumb_func
 Func_02000ddc:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000de4
 	.thumb_func
 Func_02000de4:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02000dec
 	.thumb_func
 Func_02000dec:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Func_02000df4
 	.thumb_func
 Func_02000df4:
-	overlay_veneer Func_08108068
+	overlay_veneer ItemPicker_RunToDropFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

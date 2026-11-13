@@ -41,8 +41,9 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -277,7 +278,7 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
         if (hit == 1) {
           work->shakeFrames = 4;
           if (i == 6) {
-            Func_08118088(effect->actors[0], 4);
+            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             Func_081180e8(134);
           } else {
             BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000,
@@ -554,7 +555,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
       work->shakeFrames = 12;
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
     }
     timer = work->particles[0].variant;
     if ((u32)(frame - 44) <= 13) {
@@ -644,7 +645,11 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
 void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Purgatory (kind 114).
-/* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:32640: structure has no member named `size'. */
+/* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:32640: structure has no member
+ * named `size'. */
 DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, Func_08181ed4, 0)
 
 /// Abilities: Djinn Blast (kind 461).
@@ -670,7 +675,11 @@ struct Texture__f1811d4 {
 
 // One entry of the list Render_DrawModelList draws; kind 7 is a textured mesh
 // whose texture scrolls by scrollU and scrollV.
-/* VIEW(f1811d4): tag struct RenderPrimitive as struct RenderPrimitive__f1811d4; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:32636: structure has no member named `scrollU'. */
+/* VIEW(f1811d4): tag struct RenderPrimitive as struct RenderPrimitive__f1811d4;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:32636: structure has no member
+ * named `scrollU'. */
 struct RenderPrimitive__f1811d4 {
   s32 kind;
   s32 unk04;
@@ -780,7 +789,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == GEYSER_PEAK_FRAME) {
         work->shakeFrames = 8;
         Func_081180e8(134);
-        Func_08118088(effect->actors[0], 1);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       }
 
       // The first frame clears every drop.
@@ -1022,7 +1031,8 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
         star->variant = 0;
       }
       Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+                           Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+                           128);
     }
 
     // Two palette steps a frame from frame 8.
@@ -1194,7 +1204,8 @@ void Func_08182898(struct BattleEffectArgument *effect) {
 
   // The blue beam's palette colours the bubble cels.
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet),
+                       128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work->sheet, 0, 0);
 
   for (frame = 0; frame != BUBBLE_FRAMES; frame++) {
@@ -1274,8 +1285,14 @@ struct SpriteView {
   u8 vramEntry;
 };
 
-/* VIEW(f1811d4): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:33051: conflicting types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry gResourceTableEntries__f1811d4[] __asm__("gResourceTableEntries");
+/* VIEW(f1811d4): variable gResourceTableEntries as extern struct
+ * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
+ * in tla-ja: games/tla/src/battle_effect/ability_effects.c:33051: conflicting
+ * types for `gResourceTableEntries'. */
+extern struct ResourceTableEntry
+    gResourceTableEntries__f1811d4[] __asm__("gResourceTableEntries");
 
 #define EFFECT_STEPS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
 extern u8 Data_02014400[];
@@ -1310,15 +1327,29 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data0FB;
 extern char ResourceId_Data0FC;
 
-/* VIEW(f1811d4): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags); tried as the definition's struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the object already declares, BattleEffect_RunCoatlicue moves: 1 of 2768 instructions in tla-ja. */
-extern struct SpriteObject *Func_0815b290__f1811d4(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f1811d4): routine Func_0815b290 as struct SpriteObject
+ * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
+ * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
+ * attributes, s32 flags); tried as the definition's struct EffectSprite
+ * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the
+ * object already declares, BattleEffect_RunCoatlicue moves: 1 of 2768
+ * instructions in tla-ja. */
+extern struct SpriteObject *
+Func_0815b290__f1811d4(s32 width, s32 height, u32 shape,
+                       u32 attributes) __asm__("Func_0815b290");
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments); the definition has void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles, s32 segments); tried as the definition's void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments), which the object already declares, BattleEffect_RunCoatlicue moves: 3 of 2768 instructions in tla-ja. */
-extern void Func_081885f0__f1811d4(struct MeshVertex *vertices, struct MeshTriangle *triangles,
-                   s32 segments) __asm__("Func_081885f0");
+/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex
+ * *vertices, struct MeshTriangle *triangles, s32 segments); the definition has
+ * void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle
+ * *triangles, s32 segments); tried as the definition's void
+ * Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
+ * s32 segments), which the object already declares, BattleEffect_RunCoatlicue
+ * moves: 3 of 2768 instructions in tla-ja. */
+extern void Func_081885f0__f1811d4(struct MeshVertex *vertices,
+                                   struct MeshTriangle *triangles,
+                                   s32 segments) __asm__("Func_081885f0");
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 
 void Palette_LoadBasicObjColors(void);
@@ -2212,7 +2243,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   wait(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                       128);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   Func_08164b2c(0, 0, 11);
   frame = 0;

@@ -81,7 +81,7 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Func_02001f9c
 	.thumb_func
 Func_02001f9c:
@@ -133,7 +133,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001ffc
 	.thumb_func
 Func_02001ffc:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

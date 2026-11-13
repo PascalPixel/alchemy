@@ -127,7 +127,7 @@ struct LinkRuntimeState {
 };
 
 s32 BattleParty_PrepareReserveOwnersFar(u16 *owners);
-s32 Func_08118140(s32, s32);
+s32 BattleUnit_ListIdsFar(s32, s32);
 
 extern u8 gWorkspace_ItemTitle[];
 extern u8 gWorkspace_EnergyTitle[];
@@ -135,7 +135,7 @@ extern u8 gWorkspace_StatusTitle[];
 extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 
-void Func_08118158(void);
+void BattleSummon_UpdateAvailabilityFar(void);
 
 s32 Func_08045528(s32 portrait, s32 slot);
 

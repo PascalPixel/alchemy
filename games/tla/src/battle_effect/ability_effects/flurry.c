@@ -278,12 +278,12 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
         if (i == blows - 1) {
-          Func_08118088(effect->actors[0], 4);
+          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           work->shakeFrames = 8;
           Func_081180e8(134);
         } else {
           if (i & 1)
-            Func_08118088(effect->actors[0], 7);
+            BattleMotion_ApplyKnockbackFar(effect->actors[0], 7);
           work->shakeFrames = 4;
           Sound_PlayFar(134);
         }

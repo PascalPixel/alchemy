@@ -27,7 +27,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -38,21 +39,30 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(summon_effects): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/include/battle/motobj.h:79: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__summon_effects(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(summon_effects): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/include/battle/motobj.h:79: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **GetBattleObjectSlotFar__summon_effects(s32 objectId) __asm__(
+    "GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Sound_PlayFar(s32 cue);
@@ -61,7 +71,8 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -234,8 +245,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
                                  0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data103, work->sheet + 0x1000,
                                  1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet + 0x2400,
-                                 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
+                                 work->sheet + 0x2400, 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = 0x1010;
       if (!effect->side) {
@@ -370,8 +381,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       target[4] = zero;
       work->transferMode = 2;
       work->transferValue = 50;
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+      Iwram_CopyWordsEntry(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame > 154) {
       s32 d = 16 - (frame - 155) / 2;
@@ -412,7 +424,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       Sound_PlayFar(145);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      Func_08118088(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->transferMode = 1;
       work->transferValue = 0x10101010;

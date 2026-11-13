@@ -38,8 +38,9 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -181,8 +182,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02011400, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                  128);
+                       Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
+                       128);
   for (i = 0, p = work->particles; i != 32; i++, p++) {
     s32 radius = i * 2;
     s32 angle = Random16() & 0xffff;
@@ -196,7 +197,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 104; frame++) {
     if (frame == 0) {
-      Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+      Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
+                           128);
     }
     if (frame > 76) {
       Func_0815f0a0(palette);
@@ -590,7 +592,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
                                0, 0);
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   // The blitter faces the caster's side.
   if (effect->side == 0)
     BattleEffect_LoadBlitter(104, 1 << 4 | 3);
@@ -705,12 +708,12 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
           work->shakeFrames = 4;
           if (mode == 0) {
             Func_081180e8(145);
-            Func_08118088(effect->actors[0], 4);
+            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
           } else {
             Sound_PlayFar(145);
             for (i = 0; i != effect->count; i++) {
-              Func_08118088(effect->actors[i], 3);
+              BattleMotion_ApplyKnockbackFar(effect->actors[i], 3);
               Func_0814cd48(effect->actors[i], 7, 5, i, 16);
             }
           }

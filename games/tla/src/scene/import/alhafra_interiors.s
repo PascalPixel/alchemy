@@ -103,7 +103,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -127,7 +127,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -139,11 +139,11 @@ Camera_MoveWithinMapBounds:
 	.global Func_02000b7c
 	.thumb_func
 Func_02000b7c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02000b84
 	.thumb_func
 Func_02000b84:
-	overlay_veneer Func_080c8248
+	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -163,7 +163,7 @@ Party_GetLeaderActor:
 	.global Func_02000bac
 	.thumb_func
 Func_02000bac:
-	overlay_veneer Func_080c88a0
+	overlay_veneer BattleEffect_FillOverlayTilesFar
 	.global Func_02000bb4
 	.thumb_func
 Func_02000bb4:
@@ -171,19 +171,19 @@ Func_02000bb4:
 	.global Func_02000bbc
 	.thumb_func
 Func_02000bbc:
-	overlay_veneer Func_080c88b0
+	overlay_veneer BattleEffect_DrawSpriteAtWorldPositionFar
 	.global Func_02000bc4
 	.thumb_func
 Func_02000bc4:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000bcc
 	.thumb_func
 Func_02000bcc:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02000bd4
 	.thumb_func
 Func_02000bd4:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

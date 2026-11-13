@@ -87,7 +87,7 @@ void Func_08044348(struct Window *window, const void *resource) {
 s32 Text_MeasureDecoded(s32 start, u32 *width, u32 *height, s32 mode);
 
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
-                                 s32 width, s32 height, u32 field) {
+                               s32 width, s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;
@@ -258,8 +258,10 @@ extern u8 gNameEntry_EndKeyLabel[];
 #endif
 
 void Portrait_OpenWindow(s32 member, s32 x, s32 y, s32 side);
-void Func_08108048(struct NameCursorMotion *cursor, s32 x, s32 y);
-void Func_08108040(struct NameCursorMotion *cursor, s32 x, s32 y, s32 speed);
+void MenuCursor_SetPositionImmediateFar(struct NameCursorMotion *cursor, s32 x,
+                                        s32 y);
+void MenuCursor_SetFar(struct NameCursorMotion *cursor, s32 x, s32 y,
+                       s32 speed);
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
 // it (Func_08044488 refuses a mark that cannot), takes a byte but is no
@@ -325,8 +327,9 @@ s32 Func_08044558(s32 member) {
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
-    Func_08108048(keyMotion, (s16)keyboardWindow->x * 8 + 140,
-                  (s16)keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
+    MenuCursor_SetPositionImmediateFar(
+        keyMotion, (s16)keyboardWindow->x * 8 + 140,
+        (s16)keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
   } else {
     keyMotion = &keyCursor.cursor;
   }
@@ -340,7 +343,7 @@ s32 Func_08044558(s32 member) {
     output->sentinel = 255;
     output->sprite.oam.priority = 0;
     x = 72 + Func_080444c4(editedName) * 10;
-    Func_08108048(&nameCaret.cursor, x, 22);
+    MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
   palette = (u16 *)0x050001c0;
   Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -362,16 +365,16 @@ s32 Func_08044558(s32 member) {
     Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
     if (cursorDirty) {
       cursorDirty = 0;
-      Func_08108040(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
-                    ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
+      MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
+                        ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
       x = 72 + Func_080444c4(editedName) * 10;
-      Func_08108040(&nameCaret.cursor, x, 22, 3);
+      MenuCursor_SetFar(&nameCaret.cursor, x, 22, 3);
     }
-    Func_08108030(keyMotion);
-    Func_08108038(&nameCaret.cursor);
+    MenuCursor_AdvanceFar(keyMotion);
+    MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
       u32 frame = (gVBlankCount >> 1) & 7;
 
@@ -611,8 +614,9 @@ s32 Func_08044558(s32 member) {
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
-    Func_08108048(keyMotion, (s16)keyboardWindow->x * 8 + 140,
-                  (s16)keyboardWindow->y * 8 + 52);
+    MenuCursor_SetPositionImmediateFar(keyMotion,
+                                       (s16)keyboardWindow->x * 8 + 140,
+                                       (s16)keyboardWindow->y * 8 + 52);
   } else {
     keyMotion = &keyCursor.cursor;
   }
@@ -625,7 +629,8 @@ s32 Func_08044558(s32 member) {
     nameCaret.sprite = output;
     output->sentinel = 255;
     output->sprite.oam.priority = 0;
-    Func_08108048(&nameCaret.cursor, Text_SetString(editedName) + 70, 22);
+    MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
+                                       Text_SetString(editedName) + 70, 22);
   }
   palette = (u16 *)0x050001c0;
   Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -645,15 +650,16 @@ s32 Func_08044558(s32 member) {
     Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
     if (cursorDirty) {
       cursorDirty = 0;
-      Func_08108040(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
-                    ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
+      MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
+                        ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
-      Func_08108040(&nameCaret.cursor, Text_SetString(editedName) + 70, 22, 3);
+      MenuCursor_SetFar(&nameCaret.cursor, Text_SetString(editedName) + 70, 22,
+                        3);
     }
-    Func_08108030(keyMotion);
-    Func_08108038(&nameCaret.cursor);
+    MenuCursor_AdvanceFar(keyMotion);
+    MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
       u32 frame = (gVBlankCount >> 1) & 7;
 

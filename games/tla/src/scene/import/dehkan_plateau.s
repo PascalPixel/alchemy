@@ -109,15 +109,15 @@ Map_SetScreenShake:
 	.global Map_WaitForShakeToSettle
 	.thumb_func
 Map_WaitForShakeToSettle:
-	overlay_veneer Func_08020230
+	overlay_veneer Map_WaitForShakeToSettleFar
 	.global Func_02003c10
 	.thumb_func
 Func_02003c10:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -209,7 +209,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global ObjectVisual_CopyAttributes
 	.thumb_func
 ObjectVisual_CopyAttributes:
@@ -225,7 +225,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02003cf0
 	.thumb_func
 Func_02003cf0:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_080d4568
 	.thumb_func
 Func_080d4568:
@@ -241,7 +241,7 @@ Func_080d2b4c:
 	.global Func_02003d10
 	.thumb_func
 Func_02003d10:
-	overlay_veneer Func_080c82c0
+	overlay_veneer Field_FindNearbyTalkTargetFar
 	.global Field_FindNearbyPsynergyTarget
 	.thumb_func
 Field_FindNearbyPsynergyTarget:
@@ -265,7 +265,7 @@ Event_WaitTransitionFrames:
 	.global Func_02003d40
 	.thumb_func
 Func_02003d40:
-	overlay_veneer Func_080c83d8
+	overlay_veneer BattleEffect_RunActorRiseAndDescentFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
@@ -297,7 +297,7 @@ Event_ResolvePendingActions:
 	.global Func_02003d80
 	.thumb_func
 Func_02003d80:
-	overlay_veneer Func_080c8518
+	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:

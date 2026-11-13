@@ -104,7 +104,7 @@ s32 BattleEscape_CheckSuccess(void) {
 
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   void *buffer = Heap_AllocEwram(17);
-  s32 count = Func_080381c0(entries, buffer, 0);
+  s32 count = Battle_CollectPartyCommandsFar(entries, buffer, 0);
   s32 result = -1;
 
   if (count >= 0)

@@ -209,7 +209,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -225,7 +225,7 @@ Camera_MoveWithinMapBounds:
 	.global MapGrid_SetCameraBounds
 	.thumb_func
 MapGrid_SetCameraBounds:
-	overlay_veneer Func_080c8260
+	overlay_veneer MapGrid_SetCameraBoundsFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

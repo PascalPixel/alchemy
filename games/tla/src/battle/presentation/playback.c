@@ -142,13 +142,13 @@ void BattleEvent_Playback(void) {
             break;
           case BATTLE_EVENT_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
-              Func_080381d0(events->queue.operands[eventIndex]);
+              BattleMessage_OpenFar(events->queue.operands[eventIndex]);
             events->phase = 3;
             gInput.pendingPressed = 0;
             break;
           case BATTLE_EVENT_MESSAGE_NO_WAIT:
             if ((s32)events->queue.operands[eventIndex] >= 0)
-              Func_080381d0(events->queue.operands[eventIndex]);
+              BattleMessage_OpenFar(events->queue.operands[eventIndex]);
             events->phase = 13;
             break;
           case BATTLE_EVENT_CLEAR_ARGUMENTS:

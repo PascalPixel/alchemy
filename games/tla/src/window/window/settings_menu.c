@@ -91,8 +91,8 @@ struct OptionWork {
 
 extern char ResourceId_ShopCursorPictures;
 
-void Func_08108030(union OptionCursor *cursor);
-void Func_08108038(union OptionCursor *cursor);
+void MenuCursor_AdvanceFar(union OptionCursor *cursor);
+void MenuCursor_MoveTowardTargetFar(union OptionCursor *cursor);
 void WindowSprite_Pulse(void *object);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
@@ -103,9 +103,9 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
 
   work = Ram_HeapSlots->unkd0[0];
   selection = work->page;
-  Func_08108030(&work->cursor);
-  Func_08108038(&work->marker[0]);
-  Func_08108038(&work->marker[1]);
+  MenuCursor_AdvanceFar(&work->cursor);
+  MenuCursor_MoveTowardTargetFar(&work->marker[0]);
+  MenuCursor_MoveTowardTargetFar(&work->marker[1]);
 
   if (selection == 0) {
     src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
@@ -152,8 +152,7 @@ void SettingsMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gMainRoutineWork.unk244[6];
   work->optionCount[4] = 2;
-  Task_Add(
-      GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
+  Task_Add(GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
 }
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
@@ -199,11 +198,10 @@ extern s8 gOptionMenu_SleepIcons[];
 extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 
-void *CommandIcon_Create(s32 frame, s32 flags,
-                                       struct RenderInput *input, s32 offsetX,
-                                       s32 offsetY);
+void *CommandIcon_Create(s32 frame, s32 flags, struct RenderInput *input,
+                         s32 offsetX, s32 offsetY);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void Func_08108048(void *object, s32 x, s32 y);
+void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
 // The option screen's work (heap slot 0xd0), as The Broken Seal's
 // workspace_options.h lays it out; the listing's offsets agree.
@@ -272,7 +270,7 @@ struct RenderInput *SettingsMenu_Open(void) {
   work->cursor.output = out;
   x = (s16)win->x * 8;
   y = (s16)win->y * 8 + 12;
-  Func_08108048(&work->cursor, x, y);
+  MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
@@ -302,7 +300,7 @@ struct RenderInput *SettingsMenu_Open(void) {
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[0] * 60, work->optionCount[0]);
     y = (s16)win->y * 8 + 4;
-    Func_08108048(&work->marker[0], x, y);
+    MenuCursor_SetPositionImmediateFar(&work->marker[0], x, y);
   }
 
   x = Resource_FindFreeEntry();
@@ -314,26 +312,26 @@ struct RenderInput *SettingsMenu_Open(void) {
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[1] * 60, work->optionCount[1]);
     y = (s16)win->y * 8 + 20;
-    Func_08108048(&work->marker[1], x, y);
+    MenuCursor_SetPositionImmediateFar(&work->marker[1], x, y);
   }
 
   y = 28;
-  work->frame[0][0] = CommandIcon_Create(
-      gOptionMenu_SpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
-  work->frame[0][1] = CommandIcon_Create(
-      gOptionMenu_SpeedIcons[1], 0, win, OPTION_CHOICE_X + 24, y);
-  work->frame[0][2] = CommandIcon_Create(
-      gOptionMenu_SpeedIcons[2], 0, win, OPTION_CHOICE_X + 48, y);
+  work->frame[0][0] =
+      CommandIcon_Create(gOptionMenu_SpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
+  work->frame[0][1] = CommandIcon_Create(gOptionMenu_SpeedIcons[1], 0, win,
+                                         OPTION_CHOICE_X + 24, y);
+  work->frame[0][2] = CommandIcon_Create(gOptionMenu_SpeedIcons[2], 0, win,
+                                         OPTION_CHOICE_X + 48, y);
   y = 52;
-  work->frame[1][0] = CommandIcon_Create(
-      gOptionMenu_SpeechIcons[0], 0, win, 100, y);
-  work->frame[1][1] = CommandIcon_Create(
-      gOptionMenu_SpeechIcons[1], 0, win, 124, y);
+  work->frame[1][0] =
+      CommandIcon_Create(gOptionMenu_SpeechIcons[0], 0, win, 100, y);
+  work->frame[1][1] =
+      CommandIcon_Create(gOptionMenu_SpeechIcons[1], 0, win, 124, y);
   y = 76;
-  work->frame[2][0] = CommandIcon_Create(
-      gOptionMenu_SleepIcons[0], 0, win, 100, y);
-  work->frame[2][1] = CommandIcon_Create(
-      gOptionMenu_SleepIcons[1], 0, win, 124, y);
+  work->frame[2][0] =
+      CommandIcon_Create(gOptionMenu_SleepIcons[0], 0, win, 100, y);
+  work->frame[2][1] =
+      CommandIcon_Create(gOptionMenu_SleepIcons[1], 0, win, 124, y);
   return win;
 }
 
@@ -394,12 +392,12 @@ void SettingsMenu_InitializeWork(void);
 void SettingsMenu_Release(void);
 struct RenderInput *SettingsMenu_Open(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
-struct WindowSprite *
-MenuTitle_Create(s32 group, struct RenderInput *input, s32 x, s32 y);
+struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
+                                      s32 x, s32 y);
 void MenuTitle_Bob(struct WindowSprite *pair);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
-void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
+void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 void FieldMessage_Show(s32 message, s32 mode);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
@@ -451,8 +449,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SpeedIcons[i], resourceIndex,
-                                       dimmed);
+        CommandIcon_Load(gOptionMenu_SpeedIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[1][i];
@@ -462,8 +459,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SpeechIcons[i],
-                                       resourceIndex, dimmed);
+        CommandIcon_Load(gOptionMenu_SpeechIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[2][i];
@@ -473,18 +469,17 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SleepIcons[i], resourceIndex,
-                                       dimmed);
+        CommandIcon_Load(gOptionMenu_SleepIcons[i], resourceIndex, dimmed);
       }
 
       x = (s16)settingsWindow->x * 8 + SLIDER_X;
       x += (*hue * 60) / work->optionCount[0];
       y = (s16)settingsWindow->y * 8 + 4;
-      Func_08108040(work->marker[0], x, y, 1);
+      MenuCursor_SetFar(work->marker[0], x, y, 1);
       x = (s16)settingsWindow->x * 8 + SLIDER_X;
       x += (*brightness * 60) / work->optionCount[1];
       y = (s16)settingsWindow->y * 8 + 20;
-      Func_08108040(work->marker[1], x, y, 1);
+      MenuCursor_SetFar(work->marker[1], x, y, 1);
 
       x = work->option[2] + (s32)MsgKey113b;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
@@ -508,7 +503,7 @@ s32 SettingsMenu_Run(void) {
       }
       if (selectedOption == 0)
         y += 8;
-      Func_08108040(work->cursor, x, y, 3);
+      MenuCursor_SetFar(work->cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
       Text_DrawMessage(selectedOption + (s32)MsgKey1146, (s32)helpWindow, 0, 0);
     }
@@ -590,7 +585,7 @@ struct ScreenPageWork {
 void PauseMenu_AnimateCursor(void) {
   struct ScreenPageWork *work = Ram_HeapSlots->unkd0[0];
 
-  Func_08108030((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
   WindowSprite_Pulse((void *)work->values[work->page]);
 }
 
@@ -682,8 +677,8 @@ struct RenderInput *PauseMenu_Open(void) {
                                      0x40000000, win, 0, 0);
   y = -4;
   for (i = 0; i < rows; i++) {
-    work->icons[i] = CommandIcon_Create(
-        gMenu_WorkspaceIcons[first + i], 0, win, 12, y);
+    work->icons[i] =
+        CommandIcon_Create(gMenu_WorkspaceIcons[first + i], 0, win, 12, y);
     y += 24;
   }
   return win;
@@ -710,13 +705,13 @@ extern const s8 gMenu_WorkspaceIcons[];
 void PauseMenu_Initialize(void);
 void PauseMenu_Release(void);
 struct RenderInput *PauseMenu_Open(void);
-struct WindowSprite *
-MenuTitle_Create(s32 group, struct RenderInput *input, s32 x, s32 y);
+struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
+                                      s32 x, s32 y);
 void MenuTitle_Bob(struct WindowSprite *pair);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
-void Func_08108048(void *cursor, s32 x, s32 y);
-void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
+void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
+void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 
@@ -777,8 +772,7 @@ s32 PauseMenu_Choose(s32 initial) {
           dimmed = 0;
           if (i != work->page)
             dimmed = 1;
-          CommandIcon_Load(*(s8 *)(j + (s32)pauseIcons),
-                                         resourceIndex, dimmed);
+          CommandIcon_Load(*(s8 *)(j + (s32)pauseIcons), resourceIndex, dimmed);
           i++;
           j++;
         } while (i < rows);
@@ -788,9 +782,9 @@ s32 PauseMenu_Choose(s32 initial) {
       y = (s16)top;
       y = (selected * 3 + y) * 8 + 16;
       if (-1 == redraw)
-        Func_08108048(work->cursor, x, y);
+        MenuCursor_SetPositionImmediateFar(work->cursor, x, y);
       else
-        Func_08108040(work->cursor, x, y, 3);
+        MenuCursor_SetFar(work->cursor, x, y, 3);
       redraw = 0;
     }
     MenuTitle_Bob(pair);

@@ -224,7 +224,8 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
           }
           if (RECORD(mode, RECORD_MOTION) != -1 && frame == k * 32 + 24) {
             work->shakeFrames = 4;
-            Func_08118088(effect->actors[k], RECORD(mode, RECORD_MOTION));
+            BattleMotion_ApplyKnockbackFar(effect->actors[k],
+                                           RECORD(mode, RECORD_MOTION));
           }
         }
       }

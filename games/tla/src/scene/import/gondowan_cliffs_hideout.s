@@ -49,7 +49,7 @@ Event_ShowMessageAndWait:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -61,7 +61,7 @@ Camera_SetSpeedParameters:
 	.global Func_0200020c
 	.thumb_func
 Func_0200020c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

@@ -30,7 +30,8 @@ s32 Func_0811d79c(s32 kind) {
 
 void Func_0811d7e4(void) {}
 
-/* VIEW(battle): routine Func_0811f4d4 as s32 Func_0811f4d4(); module/battle/presentation.h has s32 Func_0811f4d4(s32 party). */
+/* VIEW(battle): routine Func_0811f4d4 as s32 Func_0811f4d4();
+ * module/battle/presentation.h has s32 Func_0811f4d4(s32 party). */
 extern s32 Func_0811f4d4__battle() __asm__("Func_0811f4d4");
 
 void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
@@ -406,8 +407,11 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   return completed;
 }
 
-/* VIEW(battle): routine BattlePlayback_WaitForReady as void BattlePlayback_WaitForReady(void); module/battle/battle.h has s32 BattlePlayback_WaitForReady(void). */
-extern void BattlePlayback_WaitForReady__battle(void) __asm__("BattlePlayback_WaitForReady");
+/* VIEW(battle): routine BattlePlayback_WaitForReady as void
+ * BattlePlayback_WaitForReady(void); module/battle/battle.h has s32
+ * BattlePlayback_WaitForReady(void). */
+extern void BattlePlayback_WaitForReady__battle(void) __asm__(
+    "BattlePlayback_WaitForReady");
 
 s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
@@ -524,9 +528,9 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
     if (plan->presentationFlags & 0x8000)
       BattleEffect_RunSceneEffectFar((s32 *)&work);
     else if (plan->presentationFlags & 0x4000)
-      Func_08138008(&work);
+      BattleEffect_DispatchByIdRangeFar(&work);
     else
-      Func_08138018(&work);
+      BattleEffect_RunTableEffectFar(&work);
     BattlePlayback_WaitForReady__battle();
   }
 

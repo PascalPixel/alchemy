@@ -11,21 +11,31 @@
 #include "module/field/field.h"
 #include "module/system/system.h"
 
-/* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:56: arithmetic on pointer to an incomplete type. */
+/* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:56:
+ * arithmetic on pointer to an incomplete type. */
 struct SwitchCell__f0eabd0 {
   u8 unk00[2];
   u8 block;
   u8 flags;
 };
 
-/* VIEW(f0eabd0): tag struct RestoreLayer as struct RestoreLayer__f0eabd0; module/field/field.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:21: field `layers' has incomplete type. */
+/* VIEW(f0eabd0): tag struct RestoreLayer as struct RestoreLayer__f0eabd0;
+ * module/field/field.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/map/f0eabd0.c:21: field `layers' has incomplete type. */
 struct RestoreLayer__f0eabd0 {
   u8 unk00[0x138 - 0x108];
   struct SwitchCell__f0eabd0 *cells;
   u8 unk34[4];
 };
 
-/* VIEW(f0eabd0): tag struct RestoreMap as struct RestoreMap__f0eabd0; module/field/field.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:32: dereferencing pointer to incomplete type. */
+/* VIEW(f0eabd0): tag struct RestoreMap as struct RestoreMap__f0eabd0;
+ * module/field/field.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/map/f0eabd0.c:32: dereferencing pointer to incomplete
+ * type. */
 struct RestoreMap__f0eabd0 {
   u8 unk000[0x108];
   struct RestoreLayer__f0eabd0 layers[3];
@@ -37,7 +47,8 @@ struct Actor *Actor_GetById(u32 objectId);
 #include "field.h"
 
 void Func_080eabd0(u16 *actors) {
-  struct RestoreMap__f0eabd0 *map = (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
+  struct RestoreMap__f0eabd0 *map =
+      (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
   struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
@@ -45,9 +56,11 @@ void Func_080eabd0(u16 *actors) {
 
   for (; *actors != 0xffff; actors++) {
     struct Actor *object = Actor_GetById(*actors);
-    u32 key = Func_080202f0(object->terrainId, object->x, object->z);
+    u32 key =
+        MapGrid_GetTerrainKindFar(object->terrainId, object->x, object->z);
     s32 level =
-        MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >> 19;
+        MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
+        19;
     s32 slot = Func_080eab70(object);
     struct SwitchCell__f0eabd0 *cells = map->layers[object->terrainId].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
@@ -98,13 +111,15 @@ void Func_080eace8(u16 *actors) {
 
   for (; *actors != 0xffff; actors++) {
     if (target == Actor_GetById(*actors)) {
-      struct RestoreMap__f0eabd0 *map = (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
+      struct RestoreMap__f0eabd0 *map =
+          (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
       s32 zero = 0;
       u8 *grid = gMapShapeGrid;
       struct SwitchCell__f0eabd0 *cells = map->layers[target->terrainId].cells;
       struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
-      u32 key = Func_080202f0(target->terrainId, target->x, target->z);
+      u32 key =
+          MapGrid_GetTerrainKindFar(target->terrainId, target->x, target->z);
       s32 level =
           MapGrid_GetTerrainHeightFar(target->terrainId, target->x, target->z);
       s32 slot = Func_080eab70(target);
@@ -132,14 +147,17 @@ void Func_080eadfc(void) {
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
 
   if (target != NULL) {
-    struct RestoreMap__f0eabd0 *map = (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
+    struct RestoreMap__f0eabd0 *map =
+        (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
     /* FAKEMATCH(temporary): the cell table read split into its byte offset
      * and the read, with the grid's address read between them; as
      * cells = map->layers[target->terrainId].cells, 35 of 84 instructions
      * differ in tla-en. */
-    s32 offset = offsetof(struct RestoreMap__f0eabd0, layers[target->terrainId].cells);
+    s32 offset =
+        offsetof(struct RestoreMap__f0eabd0, layers[target->terrainId].cells);
     u8 *grid = gMapShapeGrid;
-    struct SwitchCell__f0eabd0 *cells = *(struct SwitchCell__f0eabd0 **)((u8 *)map + offset);
+    struct SwitchCell__f0eabd0 *cells =
+        *(struct SwitchCell__f0eabd0 **)((u8 *)map + offset);
     struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
     s32 index = ((s32)cells - (s32)Ram_MapCellBuffer) >> 2;
     u8 *shapes;
@@ -155,11 +173,11 @@ void Func_080eadfc(void) {
      * in tla-en. */
     asm("" : "+l"(index) : "l"(blocks));
     shapes = &grid[index];
-    key = Func_080202f0(target->terrainId, target->x, target->z);
+    key = MapGrid_GetTerrainKindFar(target->terrainId, target->x, target->z);
     /* FAKEMATCH(wrapper): x read through ActorX for the height call; as
      * target->x, 12 of 84 instructions differ in tla-en. */
-    level =
-        MapGrid_GetTerrainHeightFar(target->terrainId, ActorX(target), target->z);
+    level = MapGrid_GetTerrainHeightFar(target->terrainId, ActorX(target),
+                                        target->z);
     slot = Func_080eab70(target);
     shapes += slot;
     tag = Func_080eab98(target->terrainId, key, (level >> 19) + 4);
@@ -200,7 +218,11 @@ struct Actor *Func_080eaeb4(void) {
 
 #include "fixed_math.h"
 
-/* VIEW(f0eabd0): tag struct EventWork as struct EventWork__f0eabd0; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:205: dereferencing pointer to incomplete type. */
+/* VIEW(f0eabd0): tag struct EventWork as struct EventWork__f0eabd0;
+ * event_work.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/map/f0eabd0.c:205: dereferencing pointer to incomplete
+ * type. */
 struct EventWork__f0eabd0 {
   u8 unk00[20];
   struct Actor *objects[64];

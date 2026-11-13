@@ -164,7 +164,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
           work->shakeFrames = 2;
           for (i = 0; i != effect->count; i++) {
             Func_0814cd48(effect->actors[i], 10, 5, i, 8);
-            Func_08118088(effect->actors[i], 1);
+            BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
           }
         }
       }

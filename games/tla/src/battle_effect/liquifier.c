@@ -30,7 +30,10 @@ struct Model;
 #define KIND123_FRAMES 111
 
 // A model for the ARM renderer (Render_DrawModelList).
-/* VIEW(liquifier): tag struct RenderModel as struct RenderModel__liquifier; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunLiquifier moves: 2 of 892 instructions in tla-ja. */
+/* VIEW(liquifier): tag struct RenderModel as struct RenderModel__liquifier;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunLiquifier moves: 2 of 892 instructions in
+ * tla-ja. */
 struct RenderModel__liquifier {
   s32 kind;
   s32 unk04;
@@ -79,7 +82,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -603,11 +607,11 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
         if (mode == 0 || mode == 2 || mode == 3) {
           Func_081180e8(145);
           for (i = 0; i != effect->count; i++)
-            Func_08118088(effect->actors[i], 4);
+            BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         } else {
           Func_081180e8(133);
           for (i = 0; i != effect->count; i++)
-            Func_08118088(effect->actors[i], 0);
+            BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
         }
         for (i = 0; i != effect->count; i++)
           Func_0814cd48(effect->actors[i], 7, 5, i, 8);
@@ -715,4 +719,3 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     wait(1);
   }
 }
-

@@ -57,7 +57,7 @@ Map_CopyCellAttributeRect:
 	.global Func_02001b64
 	.thumb_func
 Func_02001b64:
-	overlay_veneer Func_08020210
+	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -173,7 +173,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001c4c
 	.thumb_func
 Func_02001c4c:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

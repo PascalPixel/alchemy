@@ -11,7 +11,9 @@ struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
 
-/* VIEW(f171bb0): tag struct ModelTexture as struct ModelTexture__f171bb0; ability_effects.c has another definition; tried with the definition the rest of the object has, Func_08171bb0 moves: 1 of 1741 instructions in tla-ja. */
+/* VIEW(f171bb0): tag struct ModelTexture as struct ModelTexture__f171bb0;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, Func_08171bb0 moves: 1 of 1741 instructions in tla-ja. */
 struct ModelTexture__f171bb0 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -19,7 +21,8 @@ struct ModelTexture__f171bb0 {
   const u8 *pixels;
 };
 
-/* VIEW(f171bb0): tag struct RenderModel as struct RenderModel__f171bb0; ability_effects.c has another definition. */
+/* VIEW(f171bb0): tag struct RenderModel as struct RenderModel__f171bb0;
+ * ability_effects.c has another definition. */
 struct RenderModel__f171bb0 {
   s32 kind;
   s32 unk04;
@@ -61,13 +64,20 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171bb0): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:20521: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f171bb0(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f171bb0): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:20521: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f171bb0(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -97,7 +107,8 @@ extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
 
-void Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex *screen, s32 count);
+void Render_ProjectVertices(struct ModelVertex *vertices,
+                            struct ProjectedVertex *screen, s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
@@ -162,9 +173,9 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           sheet[row * 64 + 0x237 - k] = sheet[(row * 2 + row) * 8 + 0x1000 + k];
         }
       }
-      Iwram_CopyWordsEntry(palette,
-                      Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                      128);
+      Iwram_CopyWordsEntry(
+          palette, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+          128);
     } else {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, sheet, 0, 0);
     }
@@ -638,7 +649,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
+                                  s32 mode);
 
 /// Abilities: Core (kind 236).
 void BattleEffect_RunCore(s32 a0) { BattleEffect_RunDjinniCharge(a0, 0); }

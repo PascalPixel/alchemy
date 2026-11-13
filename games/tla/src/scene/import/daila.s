@@ -161,7 +161,7 @@ Func_02000d68:
 	.global Import_ShopOpen
 	.thumb_func
 Import_ShopOpen:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

@@ -137,7 +137,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
 Camera_MoveWithinMapBounds:
@@ -145,7 +145,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02001134
 	.thumb_func
 Func_02001134:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:

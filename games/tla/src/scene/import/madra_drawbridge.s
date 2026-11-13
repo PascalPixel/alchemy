@@ -65,7 +65,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -85,7 +85,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02000338
 	.thumb_func
 Func_02000338:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

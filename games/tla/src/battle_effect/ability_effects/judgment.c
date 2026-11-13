@@ -55,7 +55,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   pal += 512;
   Resource_DecodeType01(pal, cells);
   for (i = 0; i != 16; i++) {
-    struct JudgmentObject *obj = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
+    struct JudgmentObject *obj =
+        Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
 
     obj->priority = 2;
     work->objects[i] = obj;
@@ -103,8 +104,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       for (i = 0; i != 16; i++) {
         struct JudgmentObject *obj = work->objects[i];
 
-        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
-                        0x400);
+        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
+                             Ram_MapCellBuffer + i * 0x400, 0x400);
       }
       depth = -0x400000;
       zoom = 0x80000;
@@ -402,7 +403,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 300) {
       for (i = 0; i != effect->count; i++) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 8);
-        Func_08118088(effect->actors[i], 1);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
       }
       Func_081180e8(145);
     }

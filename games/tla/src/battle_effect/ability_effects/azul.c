@@ -40,13 +40,20 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f15cde8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:5466: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f15cde8(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f15cde8): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:5466: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f15cde8(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -118,8 +125,16 @@ extern const u8 Data_081991e0[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
-/* VIEW(f15cde8): routine Func_0815b3b0 as struct AzulObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); the definition has struct EffectSprite *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:5655: too many arguments to function `Func_0815b3b0'. */
-extern struct AzulObject *Func_0815b3b0__f15cde8(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
+/* VIEW(f15cde8): routine Func_0815b3b0 as struct AzulObject *Func_0815b3b0(s32
+ * width, s32 height, u32 shape, s32 mode); the definition has struct
+ * EffectSprite *Func_0815b3b0(s32 kind, s32 value); tried as the definition's
+ * struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:5655: too many arguments to
+ * function `Func_0815b3b0'. */
+extern struct AzulObject *
+Func_0815b3b0__f15cde8(s32 width, s32 height, u32 shape,
+                       s32 mode) __asm__("Func_0815b3b0");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
@@ -131,7 +146,7 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void ReleaseBattleObjectRecordsFar(s32 actor);
 void *GetMotionRecordFar(void *object, s32 index);
 void ResourceMetadata_UnregisterFar(void *record, s32 entry);
-void Func_08118148(s16 *actors, s32 a, s32 b);
+void BattleObject_SpawnObjectsForListFar(s16 *actors, s32 a, s32 b);
 
 #define SLOT_ALT 188 // unkb8[1]
 
@@ -565,7 +580,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
       if (frame == 186) {
         effect->actors[effect->count] = 0xff;
-        Func_08118148(effect->actors, 0, 0);
+        BattleObject_SpawnObjectsForListFar(effect->actors, 0, 0);
       }
     }
     if (frame > 9) {
@@ -800,7 +815,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != effect->count; i++) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 16);
-        Func_08118088(effect->actors[i], 4);
+        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
       }
       Sound_PlayFar(145);
       work->shakeFrames = 16;

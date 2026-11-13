@@ -177,22 +177,54 @@ void Func_080231a0(void) {}
 
 #include "objdisp.h"
 #include "actor.h"
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32); the definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags); tried as the definition's s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:65: conflicting types for `Animation_ApplyChildArgument'. */
+/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildArgument as
+ * s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32); the
+ * definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state,
+ * s32 flags); tried as the definition's s32 Animation_ApplyChildArgument(struct
+ * AnimationGroup *state, s32 flags), which the object already declares, it does
+ * not compile in tla-ja: games/tla/include/actor_view.h:65: conflicting types
+ * for `Animation_ApplyChildArgument'. */
 struct ActorSpriteView;
-extern s32 Animation_ApplyChildArgument__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildArgument");
-#define Animation_ApplyChildArgument Animation_ApplyChildArgument__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildValue as void Animation_ApplyChildValue(struct ActorSpriteView *, s32); the definition has void Animation_ApplyChildValue(struct ChildGroup *group, s32 value); tried as the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:66: conflicting types for `Animation_ApplyChildValue'. */
+extern s32 Animation_ApplyChildArgument__render_animated_tile_picture(
+    struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildArgument");
+#define Animation_ApplyChildArgument                                           \
+  Animation_ApplyChildArgument__render_animated_tile_picture
+/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildValue as void
+ * Animation_ApplyChildValue(struct ActorSpriteView *, s32); the definition has
+ * void Animation_ApplyChildValue(struct ChildGroup *group, s32 value); tried as
+ * the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32
+ * value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/actor_view.h:66: conflicting types for
+ * `Animation_ApplyChildValue'. */
 struct ActorSpriteView;
-extern void Animation_ApplyChildValue__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildValue");
-#define Animation_ApplyChildValue Animation_ApplyChildValue__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine InitializeAnimationObjects as s32 InitializeAnimationObjects(struct ActorSpriteView *); the definition has s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state); tried as the definition's s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:67: conflicting types for `InitializeAnimationObjects'. */
+extern void Animation_ApplyChildValue__render_animated_tile_picture(
+    struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildValue");
+#define Animation_ApplyChildValue                                              \
+  Animation_ApplyChildValue__render_animated_tile_picture
+/* VIEW(render_animated_tile_picture): routine InitializeAnimationObjects as s32
+ * InitializeAnimationObjects(struct ActorSpriteView *); the definition has s32
+ * InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state);
+ * tried as the definition's s32 InitializeAnimationObjects(struct
+ * ActorSpriteView__resource_slot *state), which the object already declares, it
+ * does not compile in tla-ja: games/tla/include/actor_view.h:67: conflicting
+ * types for `InitializeAnimationObjects'. */
 struct ActorSpriteView;
-extern s32 InitializeAnimationObjects__render_animated_tile_picture(struct ActorSpriteView *) __asm__("InitializeAnimationObjects");
-#define InitializeAnimationObjects InitializeAnimationObjects__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ActorSpriteView *, s32); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); tried as the definition's s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:68: conflicting types for `ResourceMetadata_Register'. */
+extern s32 InitializeAnimationObjects__render_animated_tile_picture(
+    struct ActorSpriteView *) __asm__("InitializeAnimationObjects");
+#define InitializeAnimationObjects                                             \
+  InitializeAnimationObjects__render_animated_tile_picture
+/* VIEW(render_animated_tile_picture): routine ResourceMetadata_Register as s32
+ * ResourceMetadata_Register(struct ActorSpriteView *, s32); the definition has
+ * s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); tried
+ * as the definition's s32 ResourceMetadata_Register(struct MetadataSlotState
+ * *state, s32 id), which the object already declares, it does not compile in
+ * tla-ja: games/tla/include/actor_view.h:68: conflicting types for
+ * `ResourceMetadata_Register'. */
 struct ActorSpriteView;
-extern s32 ResourceMetadata_Register__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("ResourceMetadata_Register");
-#define ResourceMetadata_Register ResourceMetadata_Register__render_animated_tile_picture
+extern s32 ResourceMetadata_Register__render_animated_tile_picture(
+    struct ActorSpriteView *, s32) __asm__("ResourceMetadata_Register");
+#define ResourceMetadata_Register                                              \
+  ResourceMetadata_Register__render_animated_tile_picture
 #include "actor_view.h"
 #undef ResourceMetadata_Register
 #undef InitializeAnimationObjects
@@ -341,8 +373,8 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                   argument);
+      Animation_ApplyChildArgument__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), argument);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);
@@ -350,7 +382,8 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
       do {
         item = *items++;
         if (item != 0)
-          Animation_ApplyChildArgument__render_animated_tile_picture(item, argument);
+          Animation_ApplyChildArgument__render_animated_tile_picture(item,
+                                                                     argument);
         count--;
       } while (count >= 0);
       break;
@@ -366,8 +399,8 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildValue__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                value);
+      Animation_ApplyChildValue__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), value);
       return;
     case 2:
       children = ((struct ActorSpriteView **)object->sprite);
@@ -391,17 +424,18 @@ void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                   argument);
-      Animation_ApplyChildValue__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                value);
+      Animation_ApplyChildArgument__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), argument);
+      Animation_ApplyChildValue__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), value);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);
       for (count = 3; count >= 0; count--) {
         item = *items++;
         if (item != 0) {
-          Animation_ApplyChildArgument__render_animated_tile_picture(item, argument);
+          Animation_ApplyChildArgument__render_animated_tile_picture(item,
+                                                                     argument);
           Animation_ApplyChildValue__render_animated_tile_picture(item, value);
         }
       }
@@ -565,7 +599,8 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
 #include "render_input.h"
 #include "fixed_math.h"
 
-/* VIEW(resource_slot): tag struct IconSprite as struct IconSprite__resource_slot; item_icon.h has another definition. */
+/* VIEW(resource_slot): tag struct IconSprite as struct
+ * IconSprite__resource_slot; item_icon.h has another definition. */
 struct IconSprite__resource_slot {
   u8 unk00[4];
   struct RenderOam oam;
@@ -582,7 +617,7 @@ struct IconSprite__resource_slot {
   u8 unk1b;
 };
 
-/// Shows icon id on its owner's 16 by 16 sprite: Func_08038248 prepares the
+/// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
 // No ☀️ twin found.
@@ -599,7 +634,7 @@ void Func_0802372c(struct IconOwner *owner, s32 id) {
   if (sprite == 0)
     return;
   buffer = HeapSlot_Alloc(68, 0x608);
-  Func_08038248(id);
+  Icon_DrawItemFar(id);
   tile = VramCache_Load(sprite->vramSlot, 128, buffer + 0x400);
   HeapSlot_Release(68);
   sprite->unk1b = 0;
@@ -766,22 +801,32 @@ void Func_0802386c(void) {
              * instructions differ in tla-en. */
             basePriority = &BASE_PRIORITY(map);
             priority = *basePriority;
-            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) == object->terrainHeight) {
+            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
+                object->terrainHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
+              height =
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >>
+                  16;
               rise =
-                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
+                   16) -
+                  16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
                 priority = BASE_PRIORITY(map) + 1;
             }
             probeX += 0xd0000;
-            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) == object->terrainHeight) {
+            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
+                object->terrainHeight) {
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
+              height =
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >>
+                  16;
               rise =
-                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
+                   16) -
+                  16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
@@ -789,17 +834,22 @@ void Func_0802386c(void) {
             }
             probeX -= 0x60000;
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
-            height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
-            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+            height =
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
+            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
+                    16) -
+                   16;
             if (rise > height)
               height = rise;
             if (height > objectHeight)
               priority = BASE_PRIORITY(map) + 1;
           } else {
-            if (object->terrainHeight == MapGrid_GetTerrainHeight(layer, probeX, feetZ))
+            if (object->terrainHeight ==
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX += 0xd0000;
-            if (object->terrainHeight == MapGrid_GetTerrainHeight(layer, probeX, feetZ))
+            if (object->terrainHeight ==
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX -= 0x60000;
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);

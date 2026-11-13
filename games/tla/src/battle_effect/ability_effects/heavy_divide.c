@@ -39,8 +39,9 @@ void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void BattleMotion_ApplyKnockbackFar(
+    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -269,7 +270,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
 
     if (frame == Data_08198b96[mode]) {
       Func_081180e8(144);
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       work->shakeFrames = 8;
     }
@@ -368,7 +369,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + SPARK_OFFSET, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                       128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -431,7 +433,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
             s32 member = i % effect->count;
 
             Func_0814cd48(effect->actors[member], 7, 5, member, 3);
-            Func_08118088(effect->actors[member], 0);
+            BattleMotion_ApplyKnockbackFar(effect->actors[member], 0);
             Sound_PlayFar(212);
             work->shakeFrames = 3;
           }
@@ -776,7 +778,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     for (i = 0; i != 6; i++) {
       if (frame == i * 4 + 80) {
         work->shakeFrames = 2;
-        Func_08118088(effect->actors[0], 0);
+        BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
         if (i == 0) {
           Func_081180e8(134);
@@ -853,7 +855,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x1000, 0,
                              0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -909,7 +912,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     if (frame == 8) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
-      Func_08118088(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       Func_081180e8(145);
     }
@@ -924,7 +927,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
         if (burst->variant == 8) {
           Sound_PlayFar(144);
           work->shakeFrames = 8;
-          Func_08118088(effect->actors[0], 0);
+          BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
           Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         }
         if (burst->variant >= 0 && burst->variant < 32) {
@@ -1031,7 +1034,8 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
       104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_CyanPalette), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_CyanPalette),
+                       128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -1083,7 +1087,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
                                      3 << 16);
     if (frame == 46) {
       Func_081180e8(134);
-      Func_08118088(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
     }
 
     // Each splash rises and spreads through its six pictures, four frames

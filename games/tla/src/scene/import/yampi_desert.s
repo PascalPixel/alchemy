@@ -145,7 +145,7 @@ Map_DisableUpdateCallback:
 	.global Func_02004020
 	.thumb_func
 Func_02004020:
-	overlay_veneer Func_080202f0
+	overlay_veneer MapGrid_GetTerrainKindFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -153,7 +153,7 @@ FieldMessage_Show:
 	.global Func_02004030
 	.thumb_func
 Func_02004030:
-	overlay_veneer Func_08038248
+	overlay_veneer Icon_DrawItemFar
 	.global FieldEvent_Wait
 	.thumb_func
 FieldEvent_Wait:
@@ -237,7 +237,7 @@ Event_ShowMessageAndWait:
 	.global Func_020040d8
 	.thumb_func
 Func_020040d8:
-	overlay_veneer Func_080c81a8
+	overlay_veneer Event_AskYesNoAndShowResponseFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
@@ -261,7 +261,7 @@ Func_02004100:
 	.global Func_02004108
 	.thumb_func
 Func_02004108:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -277,7 +277,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02004128
 	.thumb_func
 Func_02004128:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Func_02004130
 	.thumb_func
 Func_02004130:
@@ -357,7 +357,7 @@ Actor_WatchAndSetScript:
 	.global Func_020041c8
 	.thumb_func
 Func_020041c8:
-	overlay_veneer Func_080c8688
+	overlay_veneer Scene_QueueMusicFar
 	.global Func_020041d0
 	.thumb_func
 Func_020041d0:

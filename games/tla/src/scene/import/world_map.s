@@ -137,7 +137,7 @@ Script_WaitForEventTimeout:
 	.global Map_SetWindowCellTile
 	.thumb_func
 Map_SetWindowCellTile:
-	overlay_veneer Func_08020200
+	overlay_veneer Map_SetWindowCellTileFar
 	.global Func_0802bdd0
 	.thumb_func
 Func_0802bdd0:
@@ -157,7 +157,7 @@ Animation_ApplyChildValues:
 	.global Func_02004b88
 	.thumb_func
 Func_02004b88:
-	overlay_veneer Func_08020318
+	overlay_veneer WorldMap_IsWalkableFar
 	.global Func_02004b90
 	.thumb_func
 Func_02004b90:
@@ -213,7 +213,7 @@ DjinnRecovery_AddStandby:
 	.global Func_02004bf8
 	.thumb_func
 Func_02004bf8:
-	overlay_veneer Func_080ad208
+	overlay_veneer Party_RestoreHpPpFar
 	.global Func_02004c00
 	.thumb_func
 Func_02004c00:
@@ -333,7 +333,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -353,7 +353,7 @@ Func_080d47b4:
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
-	overlay_veneer Func_080c8218
+	overlay_veneer FieldEffect_SetAttachedFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -369,7 +369,7 @@ Camera_MoveWithinMapBounds:
 	.global Func_02004d30
 	.thumb_func
 Func_02004d30:
-	overlay_veneer Func_080c8240
+	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -397,7 +397,7 @@ Party_SetFields1f2And1f4:
 	.global Func_02004d68
 	.thumb_func
 Func_02004d68:
-	overlay_veneer Func_080c82c0
+	overlay_veneer Field_FindNearbyTalkTargetFar
 	.global Func_02004d70
 	.thumb_func
 Func_02004d70:
@@ -469,7 +469,7 @@ Actor_WatchAndSetScript:
 	.global WorldMap_StartZoom
 	.thumb_func
 WorldMap_StartZoom:
-	overlay_veneer Func_080c8638
+	overlay_veneer WorldMap_StartZoomFar
 	.global Func_02004e00
 	.thumb_func
 Func_02004e00:
@@ -477,7 +477,7 @@ Func_02004e00:
 	.global Func_02004e08
 	.thumb_func
 Func_02004e08:
-	overlay_veneer Func_080c86f0
+	overlay_veneer FlagEntries_GetTableFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

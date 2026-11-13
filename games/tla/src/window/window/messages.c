@@ -409,7 +409,8 @@ s32 Message_DecodeMode1(s32 message) { return Message_Decode(message, 1); }
 
 s32 Message_Decode(s32 message, s32 mode);
 
-void Func_0803cf6c(s32 message) {
+/// Decodes message after the text decoded last, over its terminator.
+void Message_DecodeAppend(s32 message) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 count = work->count;
 
@@ -457,7 +458,7 @@ void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color);
 /// Draws a character on the canvas at (x, row) with its shadow and returns its
 /// width: a font glyph, or a kanji from KANJI_FIRST_CODE on, with the mark its
 /// code carries above TEXT_MARK_SHIFT drawn over it one pixel wider.
-s32 Func_0803cfd0(u8 *canvas, u32 ch, s32 x, s32 row) {
+s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
   const u16 *mark = NULL;
   const u16 *rows;
   s32 width;
@@ -492,7 +493,7 @@ s32 Func_0803cfd0(u8 *canvas, u32 ch, s32 x, s32 row) {
   return width;
 }
 #else
-s32 Func_0803cfd0(u8 *canvas, s32 ch, s32 x, s32 row) {
+s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
   u16 *glyph = (u16 *)((u8 *)gFont_Glyphs + (((ch & 0xff) - 32) << 5));
   s32 width = *glyph;
   u8 *dst = canvas + (x + row * 192);
@@ -509,7 +510,11 @@ s32 Func_0803cfd0(u8 *canvas, s32 ch, s32 x, s32 row) {
 s32 Message_Decode(s32 message, s32 mode);
 void Text_ResetStyle(void);
 
-s32 Func_0803d020(s32 message, u8 *canvas) {
+/// Draws message centred in a 192-pixel canvas of one byte a pixel, as the
+/// story crawl draws its lines. A line of dashes draws nothing and returns how
+/// many dashes past the first it has (the crawl waits on it); any other line
+/// returns 0.
+s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 x = 0;
   s32 y = 0;
@@ -574,7 +579,7 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
       }
     } else {
       // Japanese text folds a mark after a kana into the kana's code, which
-      // Func_0803cfd0 draws.
+      // Text_DrawGlyphToCanvas draws.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       if (*text == TEXT_MARK_VOICED) {
         code |= 1 << TEXT_MARK_SHIFT;
@@ -584,7 +589,7 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
         text++;
       }
 #endif
-      x += Func_0803cfd0(canvas, code, x, y);
+      x += Text_DrawGlyphToCanvas(canvas, code, x, y);
     }
     code = *text++;
   }

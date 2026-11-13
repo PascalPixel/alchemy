@@ -167,12 +167,13 @@ s32 Func_08042ff0(s32 partId) {
 // Each field comes from String_FormatNumber; a two-digit field is formatted
 // with 100 added, which gives it a leading zero in its last two digits.
 
-// XXX: what shows this clock; the overlays that call Func_08038400 would
-// settle it.
+// XXX: what shows this clock; the overlays that call String_FormatStopwatchFar
+// would settle it.
 
 /// Writes frames (60 a second) as "HHH:MM:SS:CC" into out and returns out.
-/// Reached only through the far call Func_08038400.
-u8 *Func_080430c4(u32 frames, u8 *out) {
+/// Reached only through the far call String_FormatStopwatchFar, which nothing
+/// calls.
+u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   u8 digits[16];
   u8 *digitsCursor;
   u8 *textCursor;

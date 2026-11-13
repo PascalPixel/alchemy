@@ -8,7 +8,8 @@
 #include "module/sound/sound.h"
 #include "sound.h"
 
-void Func_081c0c18(void) {}
+/// Does nothing; the far-call table exports it and nothing calls it.
+void Sound_NoOp(void) {}
 
 /// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin),
 /// clears every player's last sound and sets the fixed output rate. As The

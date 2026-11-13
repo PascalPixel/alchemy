@@ -10,21 +10,24 @@ struct ScreenWork {
   u8 panel[0x84]; ///< the cursor's panel
 };
 
-void Func_0804098c(void) {
+/// The sound test's per-frame task: moves the cursor.
+void DebugSoundTest_StepCursor(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
-void Func_080409a4(void) {
+/// Allocates the sound test's work block and starts its cursor task.
+void DebugSoundTest_Initialize(void) {
   void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
-  Task_Add(Func_0804098c, TASK_PASS_VBLANK);
+  Task_Add(DebugSoundTest_StepCursor, TASK_PASS_VBLANK);
 }
 
-void Func_080409dc(void) {
-  Task_Remove(Func_0804098c);
+/// Stops the sound test's cursor task and frees its work block.
+void DebugSoundTest_Release(void) {
+  Task_Remove(DebugSoundTest_StepCursor);
   HeapSlot_Release(208);
 }
 
@@ -36,7 +39,8 @@ struct ScreenCursorWork {
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
-struct RenderInput *Func_080409f0(void) {
+/// Opens the sound test's window and places the cursor on its first row.
+struct RenderInput *DebugSoundTest_Open(void) {
   struct ScreenCursorWork *work = Ram_HeapSlots->unkd0[0];
   struct RenderInput *window;
 
@@ -62,21 +66,19 @@ struct SoundTestValues {
   s32 values[4];
 };
 
-extern const struct SoundTestValues Data_0805ea98;
+extern const struct SoundTestValues gDebugSoundTest_StartValues;
 extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
     SoundTest_SeString[], SoundTest_FxString[];
 
-void Func_080409a4(void);
-void Func_080409dc(void);
-struct RenderInput *Func_080409f0(void);
 void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 s32 Sound_LoadReverbCode(s32 preset);
 
-/// The debug sound test. Four values (music, jingle, sound effect, sound
-/// preset) start from Data_0805ea98; up and down pick one, left and right
-/// step it by 1, L and R by 10; A plays it (the fourth loads its preset
-/// parameters), START plays sound 390 and stops, and B leaves.
-s32 Func_08040a48(void) {
+/// Unused: nothing calls it. The debug sound test. Four values (music, jingle,
+/// sound effect, sound preset) start from gDebugSoundTest_StartValues; up and
+/// down pick one, left and right step it by 1, L and R by 10; A plays it (the
+/// fourth loads its preset parameters), START plays sound 390 and stops, and B
+/// leaves.
+UNUSED s32 DebugSoundTest_Run(void) {
   struct SoundTestValues test;
   s32 redraw = 1;
   s32 cursor = 0;
@@ -87,10 +89,10 @@ s32 Func_08040a48(void) {
   s32 y;
   s32 *value;
 
-  test = Data_0805ea98;
-  Func_080409a4();
+  test = gDebugSoundTest_StartValues;
+  DebugSoundTest_Initialize();
   work = Ram_HeapSlots->unkd0[0];
-  window = Func_080409f0();
+  window = DebugSoundTest_Open();
   wait(1);
   do {
     if (redraw != 0) {
@@ -148,26 +150,29 @@ s32 Func_08040a48(void) {
     }
   } while (1);
   Window_Close((struct Window *)window, 2);
-  Func_080409dc();
+  DebugSoundTest_Release();
   wait(1);
   return 0;
 }
 
-void Func_08040c60(void) {
+/// The debug menu's per-frame task: moves the cursor.
+void DebugMenu_StepCursor(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
-void Func_08040c78(void) {
+/// Allocates the debug menu's work block and starts its cursor task.
+void DebugMenu_Initialize(void) {
   void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
-  Task_Add(Func_08040c60, TASK_PASS_VBLANK);
+  Task_Add(DebugMenu_StepCursor, TASK_PASS_VBLANK);
 }
 
-void Func_08040cb0(void) {
-  Task_Remove(Func_08040c60);
+/// Stops the debug menu's cursor task and frees its work block.
+void DebugMenu_Release(void) {
+  Task_Remove(DebugMenu_StepCursor);
   HeapSlot_Release(208);
 }
 
@@ -175,9 +180,9 @@ void Func_08040cb0(void) {
 
 extern u8 MsgFullPpAndMoney[];
 
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-
-struct Window *Func_08040cc4(void) {
+/// Opens the debug menu's window: its five rows, from "Full PP and Money"
+/// (MsgFullPpAndMoney) to "Change of hero", with a divider under each.
+struct Window *DebugMenu_Open(void) {
   void *work = Ram_HeapSlots->unkd0[0];
   struct Window *window = Window_Create(6, 2, 18, 16, 2);
   s32 i;
@@ -195,22 +200,19 @@ struct Window *Func_08040cc4(void) {
   return window;
 }
 
-void Func_08040c78(void);
-void Func_08040cb0(void);
-struct Window *Func_08040cc4(void);
-void MenuCursor_SetPositionImmediateFar(void *panel, s32 x, s32 y);
-void MenuCursor_SetFar(void *panel, s32 x, s32 y, s32 frames);
-
-s32 Func_08040d70(s32 index) {
+/// Unused: nothing calls it. Shows the debug menu with the cursor on row
+/// index, lets Up and Down move it (wrapping), and returns the row A chooses,
+/// or -1 for B.
+UNUSED s32 DebugMenu_Run(s32 index) {
   struct ScreenWork *work;
   struct Window *window;
   s32 moved;
 
-  Func_08040c78();
+  DebugMenu_Initialize();
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
   moved = -1;
-  window = Func_08040cc4();
+  window = DebugMenu_Open();
   do {
     if (moved != 0) {
       s32 x;
@@ -250,7 +252,7 @@ s32 Func_08040d70(s32 index) {
   } while (1);
 done:
   Window_Close(window, 2);
-  Func_08040cb0();
+  DebugMenu_Release();
   wait(1);
   return index;
 }
@@ -274,13 +276,16 @@ extern char SceneId_Ov6aeRoom1;
 
 extern char SceneId_Ov6abRoom1;
 
-void Func_08040e64(void) {
+/// The debug warp presets, each named for its row of gDebugWarp_Presets
+/// ("0:Jupiter" to "8:Kaoru Special1"): each sets the flags, items and
+/// events of a point in the story and sends the party to one room.
+void DebugWarp_Jupiter(void) {
   Inventory_AddItemFar(4, 243);
   Inventory_AddItemFar(4, 244);
   Event_SetDestinationFar((s32)&SceneId_Ov69dRoom1, 4);
 }
 
-void Func_08040e84(void) {
+void DebugWarp_Arafura2(void) {
   GameFlag_SetBit(0x8ab);
   GameFlag_ClearBit(0x8a7);
   GameFlag_SetBit(0x8aa);
@@ -293,9 +298,9 @@ void Func_08040e84(void) {
   Event_SetDestinationFar((s32)&SceneId_Ov665Room1, 1);
 }
 
-void Func_08040ed0(void) {}
+void DebugWarp_EnergySample(void) {}
 
-void Func_08040ed4(void) {
+void DebugWarp_Arafura3(void) {
   GameFlag_SetBit(0x8ab);
   GameFlag_SetBit(0x8a7);
   GameFlag_SetBit(0x8aa);
@@ -307,7 +312,7 @@ void Func_08040ed4(void) {
   Event_SetDestinationFar((s32)&SceneId_Ov668Room1, 1);
 }
 
-void Func_08040f14(void) {
+void DebugWarp_Champa2(void) {
   PartyInventory_AddFar(439);
   PartyInventory_AddFar(440);
   PartyInventory_AddFar(441);
@@ -320,7 +325,7 @@ void Func_08040f14(void) {
   Event_SetDestinationFar((s32)&SceneId_Ov682Room1, 9);
 }
 
-void Func_08040f58(void) {
+void DebugWarp_KaoruSpecial4(void) {
   GameFlag_SetBit(0x9fe);
   GameFlag_SetBit(0x94c);
   GameFlag_SetBit(0x9e1);
@@ -328,7 +333,7 @@ void Func_08040f58(void) {
   Event_SetDestinationFar((s32)&SceneId_ShamanVillage4, 30);
 }
 
-void Func_08040f90(void) {
+void DebugWarp_KaoruSpecial3(void) {
   GameFlag_SetBit(0x824);
   GameFlag_SetBit(0x17c);
   GameFlag_SetBit(0x9c5);
@@ -339,29 +344,32 @@ void Func_08040f90(void) {
   Event_SetDestinationFar((s32)&SceneId_Ov6a8Room2, 1);
 }
 
-void Func_08040fe4(void) {
+void DebugWarp_KaoruSpecial2(void) {
   Event_SetDestinationFar((s32)&SceneId_Ov6aeRoom1, 1);
 }
 
-void Func_08040ff4(void) {
+void DebugWarp_KaoruSpecial1(void) {
   Event_SetDestinationFar((s32)&SceneId_Ov6abRoom1, 20);
 }
 
-void Func_08041004(void) {
+/// The debug warp menu's per-frame task: moves the cursor.
+void DebugWarp_StepCursor(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
-void Func_0804101c(void) {
+/// Allocates the debug warp menu's work block and starts its cursor task.
+void DebugWarp_Initialize(void) {
   void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
-  Task_Add(Func_08041004, TASK_PASS_VBLANK);
+  Task_Add(DebugWarp_StepCursor, TASK_PASS_VBLANK);
 }
 
-void Func_08041054(void) {
-  Task_Remove(Func_08041004);
+/// Stops the debug warp menu's cursor task and frees its work block.
+void DebugWarp_Release(void) {
+  Task_Remove(DebugWarp_StepCursor);
   HeapSlot_Release(208);
 }
 
@@ -374,11 +382,9 @@ struct DebugWarpPreset {
 
 extern const struct DebugWarpPreset gDebugWarp_Presets[];
 
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-
 /// Opens the debug warp menu's window: nine preset names 16 pixels apart,
 /// with a divider under each but the last.
-struct RenderInput *Func_08041068(void) {
+struct RenderInput *DebugWarp_Open(void) {
   struct ScreenCursorWork *work = Ram_HeapSlots->unkd0[0];
   struct RenderInput *window;
   const struct DebugWarpPreset *line;
@@ -406,26 +412,21 @@ struct RenderInput *Func_08041068(void) {
   return window;
 }
 
-void Func_0804101c(void);
-void Func_08041054(void);
-void MenuCursor_SetPositionImmediateFar(void *panel, s32 x, s32 y);
-void MenuCursor_SetFar(void *panel, s32 x, s32 y, s32 frames);
-
-/// Shows the nine debug warp presets with the cursor on row index, lets Up
-/// and Down move it (wrapping), and returns the row A chooses after running
-/// its handler, or -1 for B.
-s32 DebugWarp_Run(s32 index) {
+/// Unused: nothing calls it. Shows the nine debug warp presets with the cursor
+/// on row index, lets Up and Down move it (wrapping), and returns the row A
+/// chooses after running its handler, or -1 for B.
+UNUSED s32 DebugWarp_Run(s32 index) {
   struct ScreenWork *work;
   struct Window *window;
   s32 moved;
   u32 down;
 
-  Func_0804101c();
+  DebugWarp_Initialize();
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
   // -1 places the cursor at once; 1 slides it to a new row.
   moved = -1;
-  window = Func_08041068();
+  window = DebugWarp_Open();
   do {
     if (moved != 0) {
       s32 x;
@@ -466,7 +467,7 @@ s32 DebugWarp_Run(s32 index) {
   } while (1);
 done:
   Window_Close(window, 2);
-  Func_08041054();
+  DebugWarp_Release();
   wait(1);
   /* FAKEMATCH(signature): the handlers are typed as returning s32, which
    * puts the handler in r0 for the call; as void (*)(void), 4 of 115
@@ -476,28 +477,31 @@ done:
   return index;
 }
 
-void Func_08041204(void) {
+/// The ability grid's per-frame task: moves the cursor.
+void DebugShortcut_StepCursor(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
   MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
-void Func_0804121c(void) {
+/// Allocates the ability grid's work block and starts its cursor task.
+void DebugShortcut_Initialize(void) {
   void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
-  Task_Add(Func_08041204, TASK_PASS_VBLANK);
+  Task_Add(DebugShortcut_StepCursor, TASK_PASS_VBLANK);
 }
 
-void Func_08041254(void) {
-  Task_Remove(Func_08041204);
+/// Stops the ability grid's cursor task and frees its work block.
+void DebugShortcut_Release(void) {
+  Task_Remove(DebugShortcut_StepCursor);
   HeapSlot_Release(208);
 }
 
 extern const u8 gPauseMenu_Icons[];
 
 /// Draws the ability's name; ability 0 draws a dash placeholder.
-void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
+void DebugShortcut_DrawAbility(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
   if (ability != 0)
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityNothing,
                             (struct RenderInput *)arg1, arg2, arg3);
@@ -505,13 +509,11 @@ void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
     Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, arg1, arg2, arg3);
 }
 
-extern const s16 gData_080aa170[4][9];
-
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
+extern const s16 gDebugShortcut_Abilities[4][9];
 
 /// Opens the ability grid's window: eight dividers, then the four columns
-/// of gData_080aa170 in nine rows, as Func_08040cc4 draws its grid.
-struct Window *Func_0804128c(void) {
+/// of gDebugShortcut_Abilities in nine rows, as DebugMenu_Open draws its grid.
+struct Window *DebugShortcut_Open(void) {
   void *work = Ram_HeapSlots->unkd0[0];
   struct Window *window = Window_Create(0, 0, 30, 19, 2);
   const s16 *abilities;
@@ -522,10 +524,14 @@ struct Window *Func_0804128c(void) {
   for (i = 0, rowY = 2; i < 8; i++, rowY += 2)
     Window_DrawDividerLine(window, 0, rowY, 29, rowY);
   for (y = 0, i = 0; i < 9; y += 16, i++) {
-    Func_08041268(gData_080aa170[0][i], (s32)window, 8, y);
-    Func_08041268(gData_080aa170[1][i], (s32)window, 64, y);
-    Func_08041268(gData_080aa170[2][i], (s32)window, 120, y);
-    Func_08041268(gData_080aa170[3][i], (s32)window, 176, y);
+    DebugShortcut_DrawAbility(gDebugShortcut_Abilities[0][i], (s32)window, 8,
+                              y);
+    DebugShortcut_DrawAbility(gDebugShortcut_Abilities[1][i], (s32)window, 64,
+                              y);
+    DebugShortcut_DrawAbility(gDebugShortcut_Abilities[2][i], (s32)window, 120,
+                              y);
+    DebugShortcut_DrawAbility(gDebugShortcut_Abilities[3][i], (s32)window, 176,
+                              y);
   }
   WORD_AT(work, 1444) = WindowSprite_Create(
       Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16,
@@ -533,19 +539,14 @@ struct Window *Func_0804128c(void) {
   return window;
 }
 
-extern const s16 gData_080aa170[4][9];
-
-void Func_0804121c(void);
-void Func_08041254(void);
-void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 s32 Party_FindOwnerWithActionFar(s32 action);
 
-/// The debug ability grid, drawn by Func_0804128c: the cursor moves over four
-/// columns of nine abilities (gData_080aa170); A, L and R give the chosen
-/// ability, packed with its owner, to slot 0, 1 or 2 and set units 4 to 7 to
-/// 500 PP; B cancels. Returns the slot, or -1.
-s32 Func_08041350(void) {
+/// Unused: nothing calls it. The debug ability grid, drawn by
+/// DebugShortcut_Open: the cursor moves over four columns of nine abilities
+/// (gDebugShortcut_Abilities); A, L and R give the chosen ability, packed with
+/// its owner, to slot 0, 1 or 2 and set units 4 to 7 to 500 PP; B cancels.
+/// Returns the slot, or -1.
+UNUSED s32 DebugShortcut_Run(void) {
   s32 row = 0;
   u8 *work;
   s16 left;
@@ -563,12 +564,12 @@ s32 Func_08041350(void) {
   // the compiler reduces to shifts, 84 of 261 instructions differ in tla-en.
   s32 columns = 4;
 
-  Func_0804121c();
+  DebugShortcut_Initialize();
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
   result = -1;
   column = 0;
-  window = Func_0804128c();
+  window = DebugShortcut_Open();
   do {
     if (result != 0) {
       column = (column + columns) % columns;
@@ -629,11 +630,11 @@ s32 Func_08041350(void) {
   } while (1);
 done:
   Window_Close((struct Window *)window, 2);
-  Func_08041254();
+  DebugShortcut_Release();
   wait(1);
   if (result != -1) {
     events = Ram_HeapSlots->eventWork;
-    ability = gData_080aa170[column][row];
+    ability = gDebugShortcut_Abilities[column][row];
     owner = Party_FindOwnerWithActionFar(ability);
     if (owner == -1)
       owner = gMainRoutineWork.currentOwner;

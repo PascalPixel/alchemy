@@ -44,8 +44,8 @@ gMenu_WorkspaceIcons:
 	.byte 0x29, 0x2a, 0x2b, 0x0b, 0x0b, 0x0b, 0x00, 0x00
 	.balign 4, 0
 @ The sound test's starting state and labels, then the debug warp presets' names
-	.global Data_0805ea98
-Data_0805ea98:
+	.global gDebugSoundTest_StartValues
+gDebugSoundTest_StartValues:
 	.4byte 0, 80, 100, 2
 	.global SoundTest_MusicString
 SoundTest_MusicString:

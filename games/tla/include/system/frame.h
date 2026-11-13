@@ -21,7 +21,7 @@ extern u32 gCartridgeResetMarker;
 extern u32 gFrameCount;
 extern u32 gFrameWaitCount;
 
-void m4aSoundVSyncOffFar(void);
+void Sound_SuspendDirectSoundFar(void);
 
 extern u32 gVBlankCount;
 // volatile: the VBlank handler sets it while System_WaitForFrameInterrupt

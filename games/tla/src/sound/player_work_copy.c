@@ -5,7 +5,7 @@
 #include "sound_driver.h"
 
 /// Unused: the work copy of MPlayContinue (sound.c).
-void Func_081c0490(struct SoundPlayer *player) {
+void MPlayContinueWorkCopy(struct SoundPlayer *player) {
   if (player->lock == SOUND_LOCK) {
     player->lock++;
     player->status &= ~SOUND_PLAYER_PAUSED;
@@ -14,7 +14,7 @@ void Func_081c0490(struct SoundPlayer *player) {
 }
 
 /// Unused: the work copy of MPlayFadeOut (sound.c).
-void Func_081c04ac(struct SoundPlayer *player, u16 speed) {
+void MPlayFadeOutWorkCopy(struct SoundPlayer *player, u16 speed) {
   if (player->lock == SOUND_LOCK) {
     player->lock++;
     player->fadeCounter = speed;

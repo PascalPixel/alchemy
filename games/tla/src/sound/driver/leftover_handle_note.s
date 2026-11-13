@@ -263,7 +263,7 @@ MusicTrack_HandleNoteLeftover:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	Func_081c0428
+	bl	MidiKeyToFreqWorkCopy
 .L_081c0370:
 	str	r0, [r4, #32]
 	movs	r0, #128

@@ -9,9 +9,9 @@
 
 .syntax unified
 	.thumb
-	.global Func_081c0428
+	.global MidiKeyToFreqWorkCopy
 	.thumb_func
-Func_081c0428:
+MidiKeyToFreqWorkCopy:
 	push	{r4, r5, r6, r7, lr}
 	mov	r12, r0
 	lsls	r1, r1, #24

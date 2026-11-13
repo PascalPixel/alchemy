@@ -62,7 +62,7 @@ void Text_UseExtraTiles(s32 alt);
 
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 s32 Message_DecodeMode1(s32 message);
-void Func_0803cf6c(s32 message);
+void Message_DecodeAppend(s32 message);
 
 void MenuCursor_AdvanceFar(struct NameCursorMotion *cursor);
 void MenuCursor_MoveTowardTargetFar(struct NameCursorMotion *cursor);

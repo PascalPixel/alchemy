@@ -113,7 +113,7 @@ LeftoverSoundDriver_StaleCallTarget:
 	.global Func_081c0168
 	.thumb_func
 Func_081c0168:
-	bl	Func_081c0428 + 0x84
+	bl	MidiKeyToFreqWorkCopy + 0x84
 	str	r0, [r4, #32]
 .L_081c016e:
 	ldr	r4, [r4, #52]

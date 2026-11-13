@@ -15,9 +15,9 @@
 	.thumb
 
 @ Unused: the copy of m4aSoundInit.
-	.global Func_081c04cc
+	.global m4aSoundInitWorkCopy
 	.thumb_func
-Func_081c04cc:
+m4aSoundInitWorkCopy:
 	push	{r4, r5, r6, lr}
 	ldr	r0, .L_081c0520
 	movs	r1, #2
@@ -77,9 +77,9 @@ Func_081c04cc:
 	.4byte	0	@ gSound_WorkBytes
 
 @ Unused: the copy of m4aSoundMain.
-	.global Func_081c0544
+	.global m4aSoundMainWorkCopy
 	.thumb_func
-Func_081c0544:
+m4aSoundMainWorkCopy:
 	push	{lr}
 	bl	Resource_FarCall010 - 0x7e4	@ 0x081bf81c: SoundMain in the twin
 	pop	{r0}
@@ -87,9 +87,9 @@ Func_081c0544:
 	.2byte	0
 
 @ Unused: the copy of m4aSongNumStart.
-	.global Func_081c0550
+	.global m4aSongNumStartWorkCopy
 	.thumb_func
-Func_081c0550:
+m4aSongNumStartWorkCopy:
 	push	{lr}
 	lsls	r0, r0, #16
 	ldr	r2, .L_081c0574
@@ -113,9 +113,9 @@ Func_081c0550:
 	.4byte	0	@ gSongTable
 
 @ Unused: the copy of m4aSongNumStartOrChange.
-	.global Func_081c057c
+	.global m4aSongNumStartOrChangeWorkCopy
 	.thumb_func
-Func_081c057c:
+m4aSongNumStartOrChangeWorkCopy:
 	push	{lr}
 	lsls	r0, r0, #16
 	ldr	r2, .L_081c05a8
@@ -158,9 +158,9 @@ Func_081c057c:
 
 @ Unused: the head of a second copy of m4aSongNumStart; its two loads reach
 @ words past its end, in the next routine.
-	.global Func_081c05c8
+	.global m4aSongNumStartWorkCopyHead
 	.thumb_func
-Func_081c05c8:
+m4aSongNumStartWorkCopyHead:
 	push	{lr}
 	lsls	r0, r0, #16
 	ldr	r2, [pc, #36]
@@ -175,9 +175,9 @@ Func_081c05c8:
 @ Unused: the high word of a 32 by 32 multiply, as umul3232H32
 @ (driver/umul_high.s) gives it in another form: a Thumb entry that switches to
 @ ARM. The head before it runs into it.
-	.global Func_081c05dc
+	.global umul3232H32WorkCopy
 	.thumb_func
-Func_081c05dc:
+umul3232H32WorkCopy:
 	bx	pc
 	nop
 	.arm

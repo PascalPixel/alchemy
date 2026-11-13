@@ -129,7 +129,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                      s32 mode) {
   volatile u32 fill;
   u8 offsets[128];
-  u8 *canvas;
+  void **cache;
+  void *canvas;
   DrawRectangle draw;
   s32 direction;
   struct BattleEffectWork *work;
@@ -173,19 +174,23 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   struct SpritePlacement position;
   s32 vector[3];
   struct ScreenPoint spot;
+  struct ScreenPoint *screenPosition;
   struct ScreenPoint screen;
   struct SpriteScale scale;
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  cache = &gBattleEffectWork[1];
+  canvas = cache[0];
+  work = cache[-1];
 
   // Begin: in Outer Space the user leaps up with a sound. The stream's
   // direction is 1 when that user stands on EFFECT_SIDE_PARTY, otherwise -1.
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
-  if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
+  // direction holds mode for this test before it takes the direction.
+  direction = mode;
+  if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
 
     // The leap: 10 pixels a frame upwards, against a gravity of Q16_ONE * 57 /
@@ -261,7 +266,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 shade = (Random16() & 63) + 64;
 
     // The tiled canvas byte for (x, y), as BattleEffect_WipeCanvas gives it.
-    canvas[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
+    ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   // Dissolve: start the background scroll, then erase the map from the top
@@ -317,8 +322,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    struct BattleBackgroundWork *view =
-        HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+    // One pointer serves both slot reads: two separate reads of gHeapSlots
+    // make the function 3656 bytes long, where tbs-en's is 3640.
+    void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
+    struct BattleBackgroundWork *view = slots[0];
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
@@ -335,12 +342,35 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     frame = 0;
     do {
       s32 angle = frame << 8;
-      s32 glow = work->frame / 4;
-      u16 *line = (u16 *)(work->sheet + PARTICLE_STREAMS_BACKDROP_LINES);
+      s32 count = work->frame;
+      u8 *sheet = work->sheet;
+      s32 dividend;
+      s32 glow;
+      u16 *line;
       s32 size;
       s32 x;
       s32 y;
 
+      /* FAKEMATCH(temporary): the division written out on a copy of count,
+       * which it tests and biases; as glow = dividend / 4, 27 of 1532
+       * instructions differ in tbs-en. */
+      dividend = count;
+      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count,
+       * so the test reads the copy; without them, 4 of 1532 instructions
+       * differ in tbs-en. */
+      if (sheet) {
+        count++;
+        count--;
+      }
+      if (dividend < 0)
+        dividend += 3;
+      glow = dividend >> 2;
+      /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
+       * and r3, so count keeps r2 and sheet takes r0; as line = (u16 *)
+       * (work->sheet + PARTICLE_STREAMS_BACKDROP_LINES), 69 of 1532
+       * instructions differ in tbs-en. */
+      __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
+      line = (u16 *)(sheet + PARTICLE_STREAMS_BACKDROP_LINES);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
           break;
@@ -348,8 +378,26 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 4)
           break;
       }
-      if (frame == 0)
-        Sound_PlayFar(SE_RUMBLE);
+      {
+        s32 hold;
+
+        /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
+         * call, so glow takes r4 and its sp+8 save; without hold, 354 of 1532
+         * instructions differ in tbs-en. */
+        __asm__("" : "=r"(hold));
+        /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
+         * without it, 354 of 1532 instructions differ in tbs-en. */
+        __asm__("" : : : "r6");
+        if (frame == 0)
+          Sound_PlayFar(SE_RUMBLE);
+        /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
+         * hold, keep it live across the call; without them, 354 of 1532
+         * instructions differ in tbs-en. */
+        if (hold) {
+          hold++;
+          hold--;
+        }
+      }
       // The backdrop's 160 colours, which BattleEffect_ArmPaletteHBlankDma
       // streams in one a line: black on lines 0 to 14 and 135 to 159, and
       // between them a blue glow, brightest at the bottom, that climbs and
@@ -359,9 +407,20 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       for (i = 0; i != 15; i++)
         *line++ = 0;
       for (; i != 135; i++) {
-        s32 level = (i - 16) / 4 + glow;
-        s32 blue = level - 32;
-        s32 green = level - 80;
+        s32 green = i - 16;
+        s32 quarter = green / 4;
+        s32 level = quarter + glow;
+        s32 blue;
+
+        /* FAKEMATCH(dead): updates of quarter that cancel out, under a test of
+         * quarter, keep it live past level's sum, so level takes r2; as level =
+         * quarter + glow alone, 18 of 1532 instructions differ in tbs-en. */
+        if (quarter) {
+          quarter++;
+          quarter--;
+        }
+        blue = level - 32;
+        green = level - 80;
 
         CLAMP(blue, 0, 31);
         CLAMP(green, 0, 31);
@@ -430,9 +489,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         SET_VECTOR(vector, px(gParticleStreams_OrbitPoints[i][0] / 2),
                    px(gParticleStreams_OrbitPoints[i][1] + frame),
                    px(gParticleStreams_OrbitPoints[i][2] / 2));
-        Projection_Point(vector, &spot);
-        spot.x = Q_16_16_TO_INT(spot.x) + 128;
-        spot.y = Q_16_16_TO_INT(spot.y) + 60;
+        /* FAKEMATCH(temporary): screenPosition holds &spot; as spot used
+         * directly, 66 of 1532 instructions differ in tbs-en. */
+        Projection_Point(vector, screenPosition = &spot);
+        screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
+        screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
         draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
              spot.x - 4, spot.y - 4, 8, 8);
       }

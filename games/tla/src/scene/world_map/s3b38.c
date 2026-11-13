@@ -20,6 +20,11 @@
 #include "module/system/system.h"
 #include "resource.h"
 
+extern u8 gData_02006f20[];
+extern u8 gData_02006e0e[];
+extern u8 gData_02006e0c[];
+void Func_02004da8(void);
+
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)

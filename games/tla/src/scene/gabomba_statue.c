@@ -18,6 +18,8 @@
 #include "scene_ids.h"
 #include "system.h"
 
+extern u8 Data_0202c001[];
+
 /* VIEW(gabomba_statue): routine Actor_SelectAnimation as void
  * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
  * module/scene/scene.h has void Actor_SelectAnimation(struct Actor *object, s32

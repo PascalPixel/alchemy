@@ -30,6 +30,8 @@
 #include "system.h"
 #include "task.h"
 
+extern u8 Data_0202c001[];
+
 void Func_0200033c(void) { Djinn_JoinParty(10, 3, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

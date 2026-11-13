@@ -1288,33 +1288,17 @@ struct YampiDesertCaveEventWork {
 s32 Math_Cosine(s32 angle);
 void Map_CenterOnFollowedPoint(void);
 
-void Func_02003c38(s32 actor, s32 a);
-
 extern char ResourceId_WhirlwindMap;
 extern char ResourceId_WhirlwindTiles;
 
 extern char ResourceId_LightningMap;
 extern char ResourceId_LightningTiles;
 
-void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02005eec(s32 actor, s32 a);
-
 extern u8 gField_CachedTilesA[];
 
 extern u8 gField_CachedTilesD[];
 
-s32 Func_02002e0c(struct Actor *object, s32 *position);
-
-void Func_02002dac(u32 *oam, s32 b);
-
-extern u8 Data_0202c001[];
-
 extern const u8 gField_Tiles679[];
-
-void Func_020028b0(const void *source, void *destination);
-
-s32 Func_02003d2c(struct Actor *object, struct Vector3 *target);
-void Func_02003c94(u32 *sprite, s32 depth);
 
 s32 BattleEffect_GetResourceId(s32 object);
 
@@ -1324,27 +1308,11 @@ extern char ResourceId_FieldEffectExplosion;
 
 extern char ResourceId_GlowDisc;
 
-void Func_02000180(s32 a, s32 b);
-
 extern char ResourceId_LogoOnBlack;
-
-void Func_02000ddc(s32 slot, s32 actor);
 
 void EventObject_Initialize(void);
 
-void Func_02003cc0(s32 id);
-s32 Func_02003c10(s32 layer, s32 x, s32 z);
-
-void Func_02004c6c(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_02004a0c(struct Actor *object, s32 mode);
-
 void Func_020032a0();
-
-void Func_020055cc(const u8 *data, void *buffer);
-
-void Func_020057b4(void);
-
-void Func_02005624(struct Actor *object, s32 mode);
 
 extern const u8 gField_Tiles64D[];
 
@@ -1352,72 +1320,11 @@ extern u8 gField_CachedTilesB[];
 
 extern u8 gField_CachedTilesC[];
 
-s32 Func_02001d2c(s32 x, s32 z, s32 layer);
-
-void Func_02001b34();
-
-s32 Func_02001bb4(struct Actor *actor);
-
-void Func_02001f00(s32 id);
-
-void Func_02001ef8();
-
-extern s32 gData_020062a4;
-
-void Func_02005330(struct Actor *object, s32 mode);
-
-void Func_0200103c(struct Actor *object, s32 value);
-
 // The scene's setup: places its actors, then plays what the entrance it was
 // reached by calls for.
 extern char SceneId_Ov688;
 
-extern u8 Data_02003098[];
-
-extern u8 Data_02002fd7[];
-
-extern u8 Data_02003090[];
-extern u8 Data_02003024[];
-extern u8 Data_02003060[];
-extern u8 Data_02003030[];
-
-s32 Func_0200210c();
-
-extern const u8 Data_02002620[];
-extern const u8 Data_02002af8[];
-
-extern s32 gData_02003094;
-extern s32 Data_02003088;
-extern s32 Data_02003058;
-
-void Func_02002104(struct Unk_020003a0Sprite *sprite, s32 a, s32 b, u32 attr,
-                   s32 tile);
-
-s32 Func_02001358();
-s32 Func_02001370();
-
-extern struct SpringTossMotion gData_02001760;
-extern struct SpringObstacle gData_020017c0[];
-extern s32 gData_02001824;
-extern s32 gData_02001828;
-
-void Func_020012e8(struct Actor *object, s32 mode);
-
-extern s32 gData_02001820;
-
-extern s32 gData_020024b4;
-extern s32 gData_020024b0;
-
-void Func_02001440(s32 a, s32 b);
-
 extern char SceneId_Ov6A6Room2;
-
-s32 Func_02001268();
-void Func_02001438(s32 id);
-
-void Func_02002c28(void);
-
-struct Actor *Func_0200120c(void);
 
 extern char SceneId_Ov65aRoom1;
 extern char SceneId_Ov65aRoom2;
@@ -1426,42 +1333,13 @@ extern char SceneId_Ov65aRoom4;
 extern char SceneId_Ov65aRoom5;
 extern char SceneId_Ov65aRoom6;
 
-void Func_020011ec(void);
-void Func_02001204(void);
-
 void Func_02001e80(s32 value);
 
-s32 Func_02004cf8(struct StagedActor *object, struct FieldPosition *position);
-void Func_02004ee0(s16 *cells);
-void Func_02004ee8(void);
-void Func_02004cb0(struct Actor *object);
-void Func_02004e78(s32 owner, u16 value);
-void Func_02004f28(struct Actor *object, s32 sound);
-void Func_02004e58(s32 item, s32 mode);
-
 // The cell stampers keep their last cell and the block they copy.
-extern s32 Data_020067ec;
-extern s32 Data_020067f0;
-extern s32 Data_020067f4;
-extern s32 Data_020067f8;
 
-void Func_02004ec0(void);
 void Func_02004c98(struct Actor *object, s32 a);
 
-extern u32 Data_0200eb60;
-
 extern char SceneId_Ov6ACRoom3;
-
-void Func_020055dc(s32 scene, s32 a1);
-void Func_02005734();
-
-extern u8 gData_02006c20[];
-extern u8 gData_02006b70[];
-
-void Func_020055fc();
-void Func_020057c4(void);
-
-void Func_02004c80();
 
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
@@ -1471,19 +1349,6 @@ extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
 
-void Func_02004dc8(void);
-void Func_02004dd0(void);
-
-extern u16 gData_020068a2;
-extern u32 Data_020068a4[3];
-extern s16 gData_020068a0;
-
-void Func_02004c88(s32 scene, s32 a1);
-s32 Func_02004d88();
-s32 Func_02004dd8();
-
-extern u8 Data_02006878[];
-
 void Func_02004bc0(struct Actor *object, s32 value);
 
 extern char SceneId_Ov6adRoom1;
@@ -1491,96 +1356,24 @@ extern char SceneId_Ov6adRoom2;
 extern char SceneId_Ov6adRoom3;
 extern char SceneId_Ov6adRoom4;
 
-void Func_020055b8(s32 id);
-void Func_02005638(s32 a0);
-void Func_02005670(void);
-void Func_02005678(s32 a0, s32 a1, s32 a2);
-void Func_020056b0(s32 id);
-void Func_020056b8(s32 id);
-void Func_02005548(s32 scene, s32 a1);
-
-extern u16 gData_02007088[];
-extern u16 gData_0200708c[];
-
-void Func_02005540();
-void Func_020056a8();
-
-extern s32 Data_02007064;
-
-s32 Func_020056a0(s32 x, s32 z, s32 layer);
 void Func_02005480(struct Actor *object, s32 mode);
 
-extern u16 gData_02004cf0[];
-
-void Func_020054a0(void *handle);
-
-void Func_02003130(void *handle);
 void Func_02003118(struct Actor *object, s32 value);
-void Func_02003230(s32 a, s32 b);
-void Func_02003228(void);
-void Func_020032a8(void);
-
-extern u16 Data_020039bc[];
-extern volatile u16 Data_020039dc[];
-extern u16 Data_02003a1c[];
-extern const u16 Data_0200ba70[];
-extern s16 Data_02003a7c;
-extern s16 gData_02003a7e;
-extern s16 gData_02003a80;
-extern s16 gData_02003a82;
 
 extern char SceneId_Ov6ACRoom6;
 extern char SceneId_Ov6ACRoom1;
 
-void Func_020031b8(s32 scene, s32 a1);
 void DisplayScroll_InitializeHBlankDma(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                        s32 g);
 
-s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
-
-extern u32 gData_020007e4;
-
-void Func_0200064c();
-
 extern char SceneId_Ov64c;
-
-void Func_02001198(s32 slot, s32 actor);
-const u8 *Func_020010b8(s32 item);
 
 extern char SceneId_Ov6a7Room1;
 extern char ResourceId_FieldEffectIceShard;
 
-s32 Func_02001f9c(struct Actor *actor);
-
-void Func_02001f4c(struct Actor *object, s32 value);
-
-extern u16 Data_02002580[160];
-
-void Func_02001f64();
-
-void Func_02001180();
-void Func_02001208();
-
-extern u16 gData_02003dbc;
-extern u16 gData_02003dbe;
-
-extern u8 Data_020020bc[];
-extern u8 Data_0200213c[];
-extern u8 Data_0200217c[];
-extern u8 Data_02002469[];
-
-void Func_0200207c(void);
-
 extern char ResourceId_FarCall00A;
 
-void Func_020020ac(s32 value);
-
-s32 Func_02002004(s32 *position);
 s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
-
-extern s16 gData_02003fc6;
-extern u8 gData_020040d8[][32];
-extern u32 Data_02003fcc[3];
 
 extern const u8 gWorldMapPackedTilesC[];
 
@@ -1588,80 +1381,15 @@ extern char SceneId_SuhallaGate2;
 extern char SceneId_SuhallaGate3;
 extern char SceneId_SuhallaGate1;
 
-s32 Func_02002850(struct Actor *object, struct Vector3 *position);
-void Func_02002960(s32 a);
-void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
-
 extern char SceneId_Ov650;
 extern char ResourceId_FarCall00B;
 
-extern s16 gData_020006dc;
-
-extern u16 Data_02001aa8[];
-extern volatile u16 Data_02001ae8[];
-extern u16 Data_02001b08[];
-
-s32 Func_02003180(s32 layer, s32 shape, s32 height);
-u32 Func_02003150(struct FieldSprite *sprite, u32 frame);
-
-void Func_02001ccc(s32 actor, s32 value);
-
-s32 Func_020028a4();
-s32 Func_0200299c();
-s32 Func_02002a04();
-void Func_02002994(s32 id, s32 useSetter);
-void Func_02002824(void *source, void *destination);
-void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
-                   s32 tile);
-void Func_0200285c(struct Actor *actor, s32 mode);
-void Func_02002874(struct Actor *actor);
-
 extern u8 gData_02006c08[];
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
-
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-
-void Func_02004b28(void);
-void Func_02004da8(void);
-void Func_02004db0(void);
-s32 Func_02004d68(s32 owner);
-s32 Func_02004b88(struct Actor *object, s32 *position);
-void Func_02004d70(s32 value);
-void Func_02004c00(void);
-void Func_02004e00(void);
-void Func_02004e28(void);
-void Func_02004bf8(s32 value);
-void Func_02004d30(void);
-
-extern s32 Data_02006be8[8];
 
 extern char SceneId_Ov676Room1;
 extern char SceneId_Ov676Room2;
 
-void Func_02002598(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
-
-void Func_02000a40(s32 item, s32 mode);
-
-void Func_02004100(s32 actor, s32 a, s32 b);
-void Func_02004108(s32 actor, s32 a);
-s32 Func_02004130();
-void Func_02004128();
-void Func_02004030(s32 item);
-void Func_02003fa8(struct Actor *object, s32 mode);
-void Func_02003f88(u32 *oam, s32 depth);
-
-s32 Func_02001850(struct Actor *object, s32 *position);
-struct Actor *Func_02001948(s32 *position, s32 mode);
-
-extern u16 *gData_02001fdc;
-extern u16 *gData_02001fe0;
-extern u16 *gData_02001fcc;
-
 extern char SceneId_Ov664Room4;
-
-void Func_020018c8(s32 id);
 
 struct SparkSprite__jupiter_lighthouse_room_5;
 struct Vector3;
@@ -1699,13 +1427,5 @@ struct FieldPart {
 };
 
 extern char SceneId_Ov6b5;
-
-extern u8 gData_0200265e[];
-
-extern u8 Data_02012f94[];
-
-void Func_020057d4(struct Actor *object);
-
-s32 Func_02005684(struct Actor *object, struct Vector3 *position);
 
 #endif

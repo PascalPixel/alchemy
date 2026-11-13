@@ -33,6 +33,19 @@
 #include "scene_ids.h"
 #include "module/scene/venus_lighthouse.h"
 
+extern u16 gData_02003dbc;
+extern u16 gData_02003dbe;
+extern u8 Data_020020bc[];
+extern u8 Data_0200213c[];
+extern u8 Data_0200217c[];
+extern u8 Data_02002469[];
+void Func_0200207c(void);
+void Func_020020ac(s32 value);
+s32 Func_02002004(s32 *position);
+extern s16 gData_02003fc6;
+extern u8 gData_020040d8[][32];
+extern u32 Data_02003fcc[3];
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

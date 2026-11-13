@@ -15,6 +15,8 @@
 #include "module/tla.h"
 #include "text/msg_ids.h"
 
+extern u8 Data_0202c001[];
+
 void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
 
 #include "battle.h"

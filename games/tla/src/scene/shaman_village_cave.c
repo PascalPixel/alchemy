@@ -21,6 +21,8 @@
 #include "module/scene/shaman_village_cave.h"
 #include "module/scene/garoh.h"
 
+void Func_02001208();
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

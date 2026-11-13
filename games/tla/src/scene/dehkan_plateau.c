@@ -14,6 +14,8 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
+void Func_02003cc0(s32 id);
+
 void Func_02000038(const u16 *list) {
   const u16 *spec;
   u16 id;

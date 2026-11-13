@@ -19,6 +19,11 @@
 #include "system.h"
 #include "text/msg_ids.h"
 
+void Func_020057b4(void);
+void Func_02004ec0(void);
+void Func_02005734();
+void Func_020057c4(void);
+
 extern s32 gData_02005b54[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);

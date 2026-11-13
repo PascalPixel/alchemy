@@ -12,6 +12,8 @@
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 
+void Func_02004dc8(void);
+
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 

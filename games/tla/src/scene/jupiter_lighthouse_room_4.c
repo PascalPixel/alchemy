@@ -30,6 +30,9 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
+void Func_02001f00(s32 id);
+void Func_02001ef8();
+
 extern u16 gData_0200271c[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

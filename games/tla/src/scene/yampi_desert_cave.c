@@ -17,6 +17,12 @@
 #include "module/scene/yampi_desert_cave.h"
 #include "scene_ids.h"
 
+struct Actor *Func_02001948(s32 *position, s32 mode);
+extern u16 *gData_02001fdc;
+extern u16 *gData_02001fe0;
+extern u16 *gData_02001fcc;
+void Func_020018c8(s32 id);
+
 extern s8 gData_02001974[];
 
 s32 Func_02000038(s32 id) {

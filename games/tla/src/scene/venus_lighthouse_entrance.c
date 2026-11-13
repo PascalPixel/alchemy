@@ -28,6 +28,13 @@
 #include "module/game/game.h"
 #include "text/msg_ids.h"
 
+s32 Func_0200299c();
+s32 Func_02002a04();
+void Func_02002824(void *source, void *destination);
+void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
+                   s32 tile);
+void Func_0200285c(struct Actor *actor, s32 mode);
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

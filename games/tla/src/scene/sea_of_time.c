@@ -11,6 +11,10 @@
 #include "module/scene/scene.h"
 #include "module/scene/sea_of_time.h"
 
+s32 Func_02001f9c(struct Actor *actor);
+void Func_02001f4c(struct Actor *object, s32 value);
+extern u16 Data_02002580[160];
+
 s32 Func_0200033c(struct Actor *object) {
   ((struct SeaOfTimeSprite *)object->sprite)->visible = 0;
   object->terrainId = 1;

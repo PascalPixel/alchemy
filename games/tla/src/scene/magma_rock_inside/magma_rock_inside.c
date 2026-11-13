@@ -22,6 +22,15 @@
 #include "scene.h"
 #include "text/msg_ids.h"
 
+void Func_02004ee0(s16 *cells);
+void Func_02004ee8(void);
+void Func_02004e78(s32 owner, u16 value);
+void Func_02004f28(struct Actor *object, s32 sound);
+extern s32 Data_020067ec;
+extern s32 Data_020067f0;
+extern s32 Data_020067f4;
+extern s32 Data_020067f8;
+
 extern s32 gData_02004fec[];
 
 DEFINE_BLOCK_PUSH_ONTO(Func_020003b4, gData_02004fec, MapGrid_CheckCollision,

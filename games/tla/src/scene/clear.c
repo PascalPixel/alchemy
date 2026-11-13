@@ -34,6 +34,9 @@
 #include "module/window/window.h"
 #include "serial.h"
 
+extern u8 gData_0200265e[];
+extern u8 Data_02012f94[];
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

@@ -21,6 +21,11 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "text/msg_ids.h"
+
+void Func_02004100(s32 actor, s32 a, s32 b);
+s32 Func_02004130();
+void Func_02003fa8(struct Actor *object, s32 mode);
+void Func_02003f88(u32 *oam, s32 depth);
 /* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script,
  * s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32
  * count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32

@@ -27,6 +27,13 @@
 #include "text_render.h"
 #include "uiflow.h"
 
+extern struct SpringTossMotion gData_02001760;
+extern struct SpringObstacle gData_020017c0[];
+extern s32 gData_02001824;
+extern s32 gData_02001828;
+void Func_020012e8(struct Actor *object, s32 mode);
+extern s32 gData_02001820;
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

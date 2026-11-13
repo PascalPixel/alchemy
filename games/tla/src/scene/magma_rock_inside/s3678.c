@@ -12,6 +12,8 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
+void Func_02004ec0(void);
+
 extern const u8 gData_02005074[];
 extern const u8 gData_020050d4[];
 extern const u8 gData_02005134[];

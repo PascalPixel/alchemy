@@ -18,6 +18,8 @@
 #include "module/scene/naribwe_interiors.h"
 #include "module/scene/scene.h"
 
+const u8 *Func_020010b8(s32 item);
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

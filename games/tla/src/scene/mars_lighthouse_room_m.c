@@ -24,6 +24,22 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+extern u16 gData_02004cf0[];
+void Func_02003130(void *handle);
+void Func_02003230(s32 a, s32 b);
+void Func_02003228(void);
+void Func_020032a8(void);
+extern u16 Data_020039bc[];
+extern volatile u16 Data_020039dc[];
+extern u16 Data_02003a1c[];
+extern const u16 Data_0200ba70[];
+extern s16 Data_02003a7c;
+extern s16 gData_02003a7e;
+extern s16 gData_02003a80;
+extern s16 gData_02003a82;
+void Func_020031b8(s32 scene, s32 a1);
+u32 Func_02003150(struct FieldSprite *sprite, u32 frame);
+
 void Func_02003278(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

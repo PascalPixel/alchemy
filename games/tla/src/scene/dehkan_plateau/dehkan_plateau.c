@@ -32,6 +32,8 @@
 #include "module/tla.h"
 #include "scene_call.h"
 
+void Func_02003cc0(s32 id);
+
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 

@@ -33,6 +33,8 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
+s32 Func_02001d2c(s32 x, s32 z, s32 layer);
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

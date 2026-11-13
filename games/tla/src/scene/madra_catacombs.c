@@ -21,6 +21,10 @@
 #include "module/tla.h"
 #include "text/msg_ids.h"
 
+struct Actor *Func_0200120c(void);
+void Func_020011ec(void);
+void Func_02001204(void);
+
 s32 Func_020011d4(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,

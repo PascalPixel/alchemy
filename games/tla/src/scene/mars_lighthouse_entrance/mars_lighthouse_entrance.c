@@ -19,6 +19,17 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+void Func_02004c80();
+void Func_02004dc8(void);
+void Func_02004dd0(void);
+extern u16 gData_020068a2;
+extern u32 Data_020068a4[3];
+extern s16 gData_020068a0;
+void Func_02004c88(s32 scene, s32 a1);
+s32 Func_02004d88();
+s32 Func_02004dd8();
+extern u8 Data_02006878[];
+
 s32 Func_0200012c();
 s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();

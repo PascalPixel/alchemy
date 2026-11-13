@@ -24,6 +24,8 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
+void Func_02001b34();
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

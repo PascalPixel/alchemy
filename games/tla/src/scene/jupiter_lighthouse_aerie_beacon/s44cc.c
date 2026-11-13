@@ -22,6 +22,8 @@
 #include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 #include "module/scene/scene.h"
 
+extern u8 gData_02006b70[];
+
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_Update(struct GustObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

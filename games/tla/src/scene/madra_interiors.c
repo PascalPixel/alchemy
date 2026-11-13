@@ -15,6 +15,8 @@
 #include "module/scene/madra_interiors.h"
 #include "module/scene/scene.h"
 
+void Func_02001ef8();
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

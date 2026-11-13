@@ -22,6 +22,10 @@
 #include "module/field/event_commands.h"
 #include "text/msg_ids.h"
 
+extern u16 Data_02001aa8[];
+extern volatile u16 Data_02001ae8[];
+extern u16 Data_02001b08[];
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

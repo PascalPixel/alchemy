@@ -174,6 +174,10 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
 #include "module/scene/taopo_swamp.h"
 #include "module/tla.h"
 
+s32 Func_02002850(struct Actor *object, struct Vector3 *position);
+void Func_02002960(s32 a);
+void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
+
 void Func_02000038(void) { Field_RequestDjinnBattle(8, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

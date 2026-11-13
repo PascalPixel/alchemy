@@ -23,6 +23,9 @@
 #include "module/scene/lemurian_ship_deck.h"
 #include "module/scene/scene.h"
 
+extern s32 gData_020024b4;
+extern s32 gData_020024b0;
+
 void Func_020001cc(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 

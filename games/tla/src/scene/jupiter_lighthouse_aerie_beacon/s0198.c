@@ -28,6 +28,8 @@
 #include "module/tla.h"
 #include "system.h"
 
+void Func_020057c4(void);
+
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 void Actor_StartScript(struct Actor *object, const void *script);

@@ -26,6 +26,8 @@
 #include "scene_ids.h"
 #include "resource.h"
 
+s32 Func_02001268();
+
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 
 /// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party

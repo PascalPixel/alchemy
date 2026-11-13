@@ -23,6 +23,9 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
+extern s32 gData_020024b4;
+extern s32 gData_020024b0;
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

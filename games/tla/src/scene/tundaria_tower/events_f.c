@@ -15,6 +15,8 @@
 #include "module/scene/tundaria_tower.h"
 #include "module/tla.h"
 
+s32 Func_02003180(s32 layer, s32 shape, s32 height);
+
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
 void Func_020017dc(void);

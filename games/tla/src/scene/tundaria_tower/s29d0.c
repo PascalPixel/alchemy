@@ -16,6 +16,9 @@
 #include "module/tla.h"
 #include "particle.h"
 
+s32 Func_02003180(s32 layer, s32 shape, s32 height);
+u32 Func_02003150(struct FieldSprite *sprite, u32 frame);
+
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 

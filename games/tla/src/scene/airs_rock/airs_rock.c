@@ -24,6 +24,8 @@
 #include "resource.h"
 #include "text/msg_ids.h"
 
+void Func_02003cc0(s32 id);
+
 DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, Func_02000348)
 
 void Func_02000468(struct Unk_02000468 *unk) {

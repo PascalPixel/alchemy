@@ -33,6 +33,8 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 
+extern s16 gData_020006dc;
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

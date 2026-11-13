@@ -16,6 +16,8 @@
 #include "system.h"
 #include "module/game/game.h"
 
+void Func_02001ccc(s32 actor, s32 value);
+
 /* VIEW(floor): variable gData_02001dd8 as extern const u8 gData_02001dd8[]; the
  * definition has s32 gData_02001dd8[] = { 39, 12, 22, 38, (s32)
  * OverlayObject_UpdateEveryFourFrames, (s32) 0x80010000, 22, 9, 0x11999, 22,

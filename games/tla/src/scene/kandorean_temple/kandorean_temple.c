@@ -7,6 +7,8 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
+extern s32 gData_020062a4;
+
 void Func_02000280(void) { Field_RequestDjinnBattle(11, 27); }
 
 u32 Func_0200028c(struct Actor *object) {

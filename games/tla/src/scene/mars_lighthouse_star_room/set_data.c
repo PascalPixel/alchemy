@@ -13,6 +13,9 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
+extern u16 gData_02004cf0[];
+s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void MarsLighthouseStarRoom_SlideOnIce(void);
 

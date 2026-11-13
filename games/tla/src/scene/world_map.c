@@ -40,6 +40,20 @@
 #include "module/game/game.h"
 #include "scene_ids.h"
 
+s32 Func_02004c38(s32 a, s32 b, s32 c);
+void Func_02004b28(void);
+void Func_02004da8(void);
+void Func_02004db0(void);
+s32 Func_02004d68(s32 owner);
+s32 Func_02004b88(struct Actor *object, s32 *position);
+void Func_02004d70(s32 value);
+void Func_02004c00(void);
+void Func_02004e00(void);
+void Func_02004e28(void);
+void Func_02004bf8(s32 value);
+void Func_02004d30(void);
+extern s32 Data_02006be8[8];
+
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
 // whole threshold first. The Japanese release has no render mode test.

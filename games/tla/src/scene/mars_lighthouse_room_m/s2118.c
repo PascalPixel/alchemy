@@ -9,6 +9,9 @@
 #include "module/scene/mars_lighthouse_room_m.h"
 #include "module/scene/scene.h"
 
+void Func_02003130(void *handle);
+s32 Func_02003180(s32 layer, s32 shape, s32 height);
+
 void Func_02002118(void) {
   struct MarsLighthouseRoomMRideWork *work =
       (struct MarsLighthouseRoomMRideWork *)(gInventorySnapshot + 0x188);

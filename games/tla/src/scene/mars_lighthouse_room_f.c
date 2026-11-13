@@ -26,6 +26,20 @@
 #include "module/tla.h"
 #include "scene_ids.h"
 
+void Func_020055b8(s32 id);
+void Func_02005638(s32 a0);
+void Func_02005670(void);
+void Func_02005678(s32 a0, s32 a1, s32 a2);
+void Func_020056b0(s32 id);
+void Func_020056b8(s32 id);
+void Func_02005548(s32 scene, s32 a1);
+extern u16 gData_02007088[];
+extern u16 gData_0200708c[];
+void Func_02005540();
+void Func_020056a8();
+extern s32 Data_02007064;
+s32 Func_020056a0(s32 x, s32 z, s32 layer);
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

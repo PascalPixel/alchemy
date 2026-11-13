@@ -29,6 +29,21 @@
 #include "module/scene/scene.h"
 #include "module/game/game.h"
 
+extern u8 Data_02003098[];
+extern u8 Data_02002fd7[];
+extern u8 Data_02003090[];
+extern u8 Data_02003024[];
+extern u8 Data_02003060[];
+extern u8 Data_02003030[];
+s32 Func_0200210c();
+extern const u8 Data_02002620[];
+extern const u8 Data_02002af8[];
+extern s32 gData_02003094;
+extern s32 Data_02003088;
+extern s32 Data_02003058;
+void Func_02002104(struct Unk_020003a0Sprite *sprite, s32 a, s32 b, u32 attr,
+                   s32 tile);
+
 void Event_Start();
 /* VIEW(lemuria_palace): routine Event_End as void Event_End(); event_work.h has
  * void Event_End(void); not tried: Event_End's bound declaration was not found.

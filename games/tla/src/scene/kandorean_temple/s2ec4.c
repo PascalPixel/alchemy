@@ -13,6 +13,8 @@
 #include "module/scene/kandorean_temple.h"
 #include "module/scene/scene.h"
 
+extern s32 gData_020062a4;
+
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

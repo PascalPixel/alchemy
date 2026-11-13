@@ -23,6 +23,8 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "scene_call.h"
+
+void Func_02003cc0(s32 id);
 extern struct Actor *gData_02004420;
 
 void Actor_StartScript(struct Actor *object, const void *script);

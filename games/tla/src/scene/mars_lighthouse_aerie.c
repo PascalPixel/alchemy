@@ -12,6 +12,14 @@
 #include "text/msg_ids.h"
 #include "module/field/event_commands.h"
 
+extern u32 Data_0200eb60;
+void Func_020055dc(s32 scene, s32 a1);
+void Func_02005734();
+extern u8 gData_02006c20[];
+extern u8 gData_02006b70[];
+void Func_020055fc();
+void Func_020057d4(struct Actor *object);
+
 void Func_02000038(struct Actor *object) {
   u8 *timer = &object->unk5c[6];
 
